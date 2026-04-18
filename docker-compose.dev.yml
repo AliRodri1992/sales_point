@@ -11,10 +11,14 @@ services:
 
     volumes:
       - .:/rails
+      - /rails/node_modules
       - bundle_cache:/bundle
 
     ports:
       - "3000:3000"
+
+    stdin_open: true
+    tty: true
 
     depends_on:
       db:
@@ -26,7 +30,7 @@ services:
       REDIS_URL: redis://redis:6379/0
       DATABASE_URL: postgres://postgres:postgres@db:5432/sale_point_development
 
-    command: bash -c "bin/rails db:prepare && bin/dev"
+    command: bash -c "bin/rails db:prepare && bin/rails server -b 0.0.0.0 -p 3000"
 
   db:
     image: postgres:16

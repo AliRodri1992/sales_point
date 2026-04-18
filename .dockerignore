@@ -31,7 +31,7 @@
 !/tmp/storage/.keep
 
 # Ignore assets.
-/node_modules/
+
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
@@ -49,3 +49,6 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+node_modules
+tmp
+log

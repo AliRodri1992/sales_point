@@ -28,16 +28,11 @@ RUN apt-get update -qq && \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
 # -------- NODE (compatible con Rails 8 + Hotwire + esbuild) --------
-ARG NODE_VERSION=20.11.1
-ARG YARN_VERSION=1.22.22
+ARG NODE_VERSION=20
 
-ENV PATH=/usr/local/node/bin:$PATH
-
-RUN curl -fsSL https://github.com/nodejs/node/archive/refs/tags/v${NODE_VERSION}.tar.gz | tar xz -C /tmp/ && \
-    curl -fsSL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
-    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
-    npm install -g yarn@${YARN_VERSION} && \
-    rm -rf /tmp/*
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g yarn@1.22.22
 
 # 🧩 Gems primero (cache optimizado)
 COPY Gemfile Gemfile.lock ./
