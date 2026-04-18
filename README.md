@@ -1,24 +1,86 @@
-# README
+# 🛒 Sales Point
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Sistema de Punto de Venta (POS) desarrollado con **Ruby on Rails 8**, enfocado en la gestión de ventas, productos, inventario y usuarios para negocios pequeños y medianos.
 
-Things you may want to cover:
+---
 
-* Ruby version
+## 🚀 Características
 
-* System dependencies
+- 📦 Gestión de productos (CRUD completo)
+- 🧾 Registro de ventas con detalle de productos
+- 📊 Control de inventario en tiempo real
+- 👤 Gestión de usuarios
+- 🔐 Autenticación con Devise
+- 🛡️ Autorización basada en roles con Pundit
+- 🌐 Soporte multi-idioma con i18n
+- ⚙️ Procesamiento en background con Sidekiq (opcional)
+- 🐳 Entorno de desarrollo con Docker
+- 🎨 UI moderna con TailwindCSS
 
-* Configuration
+---
 
-* Database creation
+## 🏗️ Arquitectura del proyecto
 
-* Database initialization
+app/
+├── controllers/
+├── models/
+├── views/
+├── policies/
+├── jobs/
+├── services/
+├── helpers/
 
-* How to run the test suite
+---
 
-* Services (job queues, cache servers, search engines, etc.)
+## 🧰 Tecnologías
 
-* Deployment instructions
+- Ruby on Rails 8
+- PostgreSQL
+- Redis (opcional)
+- Docker & Docker Compose
+- Devise
+- Pundit
+- Sidekiq
+- TailwindCSS
+- I18n
 
-* ...
+---
+
+## 📦 Instalación
+
+### 1. Clonar el repositorio
+
+git clone https://github.com/AliRodri1992/sales_point.git
+cd sales_point
+
+### 2. Variables de entorno
+
+cp .env.example .env
+
+### 3. Docker
+
+docker compose -f docker-compose.dev.yml build
+docker compose -f docker-compose.dev.yml up
+
+### 4. Migraciones
+
+docker compose exec web bin/rails db:create db:migrate db:seed
+
+---
+
+## 🧪 Testing
+
+bundle exec rspec
+
+---
+
+## 👤 Autor
+
+Ivan Rodriguez
+GitHub: https://github.com/AliRodri1992
+
+---
+
+## 📄 Licencia
+
+MIT
