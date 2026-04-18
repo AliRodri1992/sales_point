@@ -1,0 +1,91 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    container_name: rails_sale_point
+
+    env_file:
+      - .env.development
+
+    volumes:
+      - .:/rails
+      - bundle_cache:/bundle
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgres://postgres:postgres@db:5432/sale_point_development
+
+    command: bash -c "bin/rails db:prepare && bin/dev"
+
+  db:
+    image: postgres:16
+    container_name: postgres_sale_point
+
+    environment:
+      POSTGRES_DB: sale_point_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2.6-alpine
+    container_name: redis_sale_point
+
+    ports:
+      - "6379:6379"
+
+    command: redis-server --appendonly yes
+
+    volumes:
+      - redisdata:/data
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    container_name: sidekiq_sale_point
+
+    env_file:
+      - .env.development
+
+    depends_on:
+      - db
+      - redis
+
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      DATABASE_URL: postgres://postgres:postgres@db:5432/sale_point_development
+
+    volumes:
+      - .:/rails
+      - bundle_cache:/bundle
+
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+volumes:
+  pgdata:
+  bundle_cache:
+  redisdata:

@@ -1,0 +1,122 @@
+plugins:
+  - rubocop-rails
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.3
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - "bin/**/*"
+    - "db/migrate/*"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+    - "storage/**/*"
+    - "db/schema.rb"
+    - "db/cable_schema.rb"
+    - "db/cache_schema.rb"
+    - "db/queue_schema.rb"
+    - "bin/**/*"
+    - "config/initializers/**/*"
+    - "config/environments/**/*"
+
+# ─────────────────────────────
+# STYLE
+# ─────────────────────────────
+
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns:
+    - "^\\s*#"
+
+Layout/IndentationWidth:
+  Width: 2
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: true
+
+Style/IfUnlessModifier:
+  Enabled: true
+
+# ─────────────────────────────
+# METRICS (CLEAN ARCHITECTURE)
+# ─────────────────────────────
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/ClassLength:
+  Max: 120
+
+Metrics/ModuleLength:
+  Max: 120
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/CyclomaticComplexity:
+  Max: 8
+
+Metrics/PerceivedComplexity:
+  Max: 8
+
+# ─────────────────────────────
+# RAILS BEST PRACTICES
+# ─────────────────────────────
+
+Rails:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+Rails/OutputSafety:
+  Enabled: true
+
+Rails/FindBy:
+  Enabled: true
+
+Rails/SaveBang:
+  Enabled: true
+
+Rails/Presence:
+  Enabled: true
+
+Rails/Blank:
+  Enabled: true
+
+# ─────────────────────────────
+# PERFORMANCE
+# ─────────────────────────────
+
+Performance/CollectionLiteralInLoop:
+  Enabled: true
+
+Performance/RedundantMerge:
+  Enabled: true
+
+Performance/MapCompact:
+  Enabled: true
+
+# ─────────────────────────────
+# CLEAN CODE RULES
+# ─────────────────────────────
+
+Lint/UselessAssignment:
+  Enabled: true
+
+Lint/DuplicateMethods:
+  Enabled: true
+
+Lint/EmptyBlock:
+  Enabled: true
+
+Lint/UnusedMethodArgument:
+  AllowUnusedKeywordArguments: false

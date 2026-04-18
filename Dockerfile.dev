@@ -1,0 +1,63 @@
+# syntax=docker/dockerfile:1
+
+ARG RUBY_VERSION=3.3.6
+FROM ruby:$RUBY_VERSION-slim
+
+# 📁 App directory
+WORKDIR /rails
+
+# 🌍 Environment (DEV)
+ENV RAILS_ENV=development \
+    NODE_ENV=development \
+    BUNDLE_PATH=/usr/local/bundle \
+    BUNDLE_WITHOUT=production
+
+# 🧱 System dependencies (ERP + PostgreSQL + assets + build tools)
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    git \
+    libpq-dev \
+    libyaml-dev \
+    pkg-config \
+    python-is-python3 \
+    postgresql-client \
+    ca-certificates \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+
+# -------- NODE (compatible con Rails 8 + Hotwire + esbuild) --------
+ARG NODE_VERSION=20.11.1
+ARG YARN_VERSION=1.22.22
+
+ENV PATH=/usr/local/node/bin:$PATH
+
+RUN curl -fsSL https://github.com/nodejs/node/archive/refs/tags/v${NODE_VERSION}.tar.gz | tar xz -C /tmp/ && \
+    curl -fsSL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ && \
+    /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node && \
+    npm install -g yarn@${YARN_VERSION} && \
+    rm -rf /tmp/*
+
+# 🧩 Gems primero (cache optimizado)
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# 📦 JS dependencies (Hotwire / Stimulus / Tailwind / esbuild)
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+
+# 📂 App source
+COPY . .
+
+# 🏗️ Assets builds (IMPORTANTE para Rails 8 + esbuild)
+RUN mkdir -p app/assets/builds
+
+# 🔐 permisos para bin/*
+RUN chmod +x bin/*
+
+# 🚀 Expose Rails
+EXPOSE 3000
+
+# ⚡ Dev server (Hotwire + Rails + esbuild watcher)
+CMD ["bin/dev"]
