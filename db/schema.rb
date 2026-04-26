@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_032027) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_143447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_032027) do
     t.check_constraint "decimals = ANY (ARRAY[0, 2, 3, 4, 5, 6, 8])", name: "chk_sat_currencies_decimals_allowed"
     t.check_constraint "decimals >= 0 AND decimals <= 6", name: "chk_sat_currencies_decimals_range"
     t.check_constraint "variation_percentage >= 0::numeric OR variation_percentage IS NULL", name: "chk_sat_currencies_variation_positive"
+  end
+
+  create_table "sat_fiscal_regimes", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "person_type", limit: 1, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code", "valid_from"], name: "index_sat_fiscal_regimes_on_code_and_valid_from", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_fiscal_regimes_on_deleted_at"
+    t.index ["person_type"], name: "index_sat_fiscal_regimes_on_person_type", where: "(deleted_at IS NULL)"
+    t.index ["valid_from", "valid_to"], name: "index_sat_fiscal_regimes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying, 'M'::character varying]::text[])"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
   end
 
   create_table "sat_taxes", force: :cascade do |t|
