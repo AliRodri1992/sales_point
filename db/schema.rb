@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_25_235629) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_032027) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -74,6 +74,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_25_235629) do
     t.check_constraint "decimals = ANY (ARRAY[0, 2, 3, 4, 5, 6, 8])", name: "chk_sat_currencies_decimals_allowed"
     t.check_constraint "decimals >= 0 AND decimals <= 6", name: "chk_sat_currencies_decimals_range"
     t.check_constraint "variation_percentage >= 0::numeric OR variation_percentage IS NULL", name: "chk_sat_currencies_variation_positive"
+  end
+
+  create_table "sat_taxes", force: :cascade do |t|
+    t.string "applies_to"
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255
+    t.string "factor_type", default: "rate", null: false
+    t.boolean "is_retainable", default: false
+    t.boolean "is_transferrable", default: true
+    t.string "name", null: false
+    t.integer "priority", default: 1, null: false
+    t.boolean "status", default: true
+    t.string "tax_type", default: "transfer", null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index "lower(TRIM(BOTH FROM code))", name: "index_sat_taxes_on_LOWER_TRIM_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["applies_to"], name: "index_sat_taxes_on_applies_to"
+    t.index ["factor_type"], name: "index_sat_taxes_on_factor_type"
+    t.index ["status", "deleted_at"], name: "index_sat_taxes_on_status_and_deleted_at"
+    t.index ["status"], name: "index_sat_taxes_on_status"
+    t.index ["tax_type"], name: "index_sat_taxes_on_tax_type"
+    t.index ["valid_from", "valid_to"], name: "index_sat_taxes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying, 'service'::character varying, 'both'::character varying]::text[])) OR applies_to IS NULL"
+    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying, 'quota'::character varying, 'exempt'::character varying]::text[])"
+    t.check_constraint "tax_type::text = 'transfer'::text AND is_transferrable = true OR tax_type::text = 'withheld'::text AND is_retainable = true"
+    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying, 'withheld'::character varying]::text[])"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
   end
 
   create_table "system_roles", force: :cascade do |t|
