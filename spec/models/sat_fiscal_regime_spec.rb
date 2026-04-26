@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SatFiscalRegime, type: :model do
   subject(:regime) { build(:sat_fiscal_regime) }
-  
+
   describe 'validations' do
     it 'is valid with valid attributes' do
       expect(regime).to be_valid
@@ -29,7 +29,7 @@ RSpec.describe SatFiscalRegime, type: :model do
     end
 
     it 'is invalid if valid_to < valid_from' do
-      regime.valid_from = Date.today
+      regime.valid_from = Time.zone.today
       regime.valid_to = Date.yesterday
       expect(regime).not_to be_valid
     end
@@ -71,19 +71,17 @@ RSpec.describe SatFiscalRegime, type: :model do
       let!(:valid_regime) do
         create(:sat_fiscal_regime,
                valid_from: Date.yesterday,
-               valid_to: Date.tomorrow
-        )
+               valid_to: Date.tomorrow)
       end
 
       let!(:invalid_regime) do
         create(:sat_fiscal_regime,
                valid_from: 10.days.ago,
-               valid_to: 5.days.ago
-        )
+               valid_to: 5.days.ago)
       end
 
       it 'returns only regimes valid for given date' do
-        result = SatFiscalRegime.valid_on(Date.today)
+        result = SatFiscalRegime.valid_on(Time.zone.today)
 
         expect(result).to include(valid_regime)
         expect(result).not_to include(invalid_regime)
@@ -94,8 +92,7 @@ RSpec.describe SatFiscalRegime, type: :model do
       it 'returns active and valid records' do
         regime = create(:sat_fiscal_regime,
                         valid_from: Date.yesterday,
-                        valid_to: Date.tomorrow
-        )
+                        valid_to: Date.tomorrow)
 
         expect(SatFiscalRegime.current).to include(regime)
       end
@@ -107,12 +104,11 @@ RSpec.describe SatFiscalRegime, type: :model do
       create(:sat_fiscal_regime,
              code: '601',
              valid_from: Date.yesterday,
-             valid_to: Date.tomorrow
-      )
+             valid_to: Date.tomorrow)
     end
 
     it 'returns valid regime by code and date' do
-      result = SatFiscalRegime.for_cfdi('601', Date.today)
+      result = SatFiscalRegime.for_cfdi('601', Time.zone.today)
       expect(result).to eq(regime)
     end
 
@@ -127,8 +123,7 @@ RSpec.describe SatFiscalRegime, type: :model do
       create(:sat_fiscal_regime,
              code: '601',
              valid_from: Date.yesterday,
-             valid_to: Date.tomorrow
-      )
+             valid_to: Date.tomorrow)
     end
 
     it 'returns true if exists' do
@@ -172,14 +167,14 @@ RSpec.describe SatFiscalRegime, type: :model do
         regime.valid_from = Date.yesterday
         regime.valid_to = Date.tomorrow
 
-        expect(regime.valid_for_date?(Date.today)).to be true
+        expect(regime.valid_for_date?(Time.zone.today)).to be true
       end
 
       it 'returns false when date is out of range' do
         regime.valid_from = 10.days.ago
         regime.valid_to = 5.days.ago
 
-        expect(regime.valid_for_date?(Date.today)).to be false
+        expect(regime.valid_for_date?(Time.zone.today)).to be false
       end
     end
   end

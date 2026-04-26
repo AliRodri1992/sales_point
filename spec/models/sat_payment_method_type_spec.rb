@@ -32,7 +32,7 @@ RSpec.describe SatPaymentMethodType, type: :model do
 
     it 'allows same code if previous record is soft deleted' do
       record = create(:sat_payment_method_type, code: 'PUE')
-      record.update(deleted_at: Time.current)
+      record.update!(deleted_at: Time.current)
 
       new_record = build(:sat_payment_method_type, code: 'PUE')
       expect(new_record).to be_valid

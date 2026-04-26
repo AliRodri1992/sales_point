@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_180313) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_185648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_180313) do
     t.boolean "status"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
+  end
+
+  create_table "sat_banks", primary_key: "code", id: { type: :string, limit: 3 }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "name", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.datetime "valid_from", precision: nil
+    t.datetime "valid_to", precision: nil
+    t.index ["code"], name: "index_sat_banks_on_code", where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["deleted_at"], name: "index_sat_banks_on_deleted_at"
+    t.index ["name"], name: "index_sat_banks_on_name"
+    t.index ["valid_from", "valid_to"], name: "index_sat_banks_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::text = TRIM(BOTH FROM code)", name: "chk_sat_banks_code_trim"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_banks_code_format"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_banks_validity"
   end
 
   create_table "sat_currencies", force: :cascade do |t|
