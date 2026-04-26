@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_161554) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_180313) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -108,6 +108,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_161554) do
     t.index ["valid_from", "valid_to"], name: "index_sat_payment_method_types_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
     t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying, 'PPD'::character varying]::text[])", name: "chk_sat_payment_method_types_code"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_method_types_validity"
+  end
+
+  create_table "sat_payment_methods", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.datetime "valid_from", precision: nil
+    t.datetime "valid_to", precision: nil
+    t.index ["code"], name: "index_sat_payment_methods_active", where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["code"], name: "index_sat_payment_methods_unique", unique: true, where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["deleted_at"], name: "index_sat_payment_methods_on_deleted_at"
+    t.index ["description"], name: "index_sat_payment_methods_on_description"
+    t.index ["valid_from", "valid_to"], name: "index_sat_payment_methods_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_payment_methods_code_format"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_methods_validity"
   end
 
   create_table "sat_taxes", force: :cascade do |t|

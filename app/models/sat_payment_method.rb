@@ -5,15 +5,15 @@ class SatPaymentMethod < ApplicationRecord
 
   scope :valid_on, lambda { |date = Time.current|
     where(
-      "(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)",
+      '(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)',
       date, date
     )
   }
 
   scope :current, -> { active.valid_on(Time.current) }
 
-  scope :search, ->(term) {
-    where("description ILIKE ?", "%#{term}%") if term.present?
+  scope :search, lambda { |term|
+    term.present? ? where('description ILIKE ?', "%#{term}%") : all
   }
 
   validates :code,
@@ -30,12 +30,16 @@ class SatPaymentMethod < ApplicationRecord
   before_validation :normalize_fields
 
   def active?
-    status && deleted_at.nil?
+    status && !deleted?
   end
 
   def valid_for_date?(date = Time.current)
     (valid_from.nil? || valid_from <= date) &&
       (valid_to.nil? || valid_to >= date)
+  end
+
+  def display_name
+    "#{code} - #{description}"
   end
 
   def self.for_cfdi(code, date = Time.current)
@@ -47,7 +51,7 @@ class SatPaymentMethod < ApplicationRecord
   end
 
   def self.normalize_code(value)
-    value.to_s.strip.rjust(2, '0')
+    value.to_s.gsub(/\D/, '').rjust(2, '0')
   end
 
   private
@@ -60,8 +64,8 @@ class SatPaymentMethod < ApplicationRecord
   def valid_date_range
     return if valid_from.blank? || valid_to.blank?
 
-    if valid_to < valid_from
-      errors.add(:valid_to, 'must be greater than or equal to valid_from')
-    end
+    return unless valid_to < valid_from
+
+    errors.add(:valid_to, 'must be greater than or equal to valid_from')
   end
 end

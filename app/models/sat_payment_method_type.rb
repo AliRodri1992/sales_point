@@ -3,9 +3,9 @@ class SatPaymentMethodType < ApplicationRecord
 
   scope :active, -> { where(status: true) }
 
-  scope :valid_on, ->(date = Date.current) {
+  scope :valid_on, lambda { |date = Date.current|
     where(
-      "(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)",
+      '(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)',
       date, date
     )
   }
@@ -54,8 +54,8 @@ class SatPaymentMethodType < ApplicationRecord
   def valid_date_range
     return if valid_from.blank? || valid_to.blank?
 
-    if valid_to < valid_from
-      errors.add(:valid_to, 'must be greater than or equal to valid_from') if valid_to < valid_from
-    end
+    return unless valid_to < valid_from
+
+    errors.add(:valid_to, 'must be greater than or equal to valid_from') if valid_to < valid_from
   end
 end
