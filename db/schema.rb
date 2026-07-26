@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_204634) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_175559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -227,5 +227,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_204634) do
     t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
     t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying, 'branch'::character varying]::text[])", name: "check_system_roles_role_type"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'deprecated'::character varying]::text[])", name: "check_system_roles_status"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "current_session_token"
+    t.datetime "current_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.datetime "deleted_at", precision: nil
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.integer "failed_attempts", default: 0, null: false
+    t.datetime "last_sign_in_at"
+    t.string "last_sign_in_ip"
+    t.string "last_sign_in_ip_country", limit: 2
+    t.text "locked_Reason"
+    t.datetime "locked_at"
+    t.datetime "login_attempts_window_start"
+    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at"
+    t.string "reset_password_token"
+    t.datetime "session_expires_at"
+    t.datetime "session_revoked_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.string "status", default: "active", null: false
+    t.string "unique_session_id"
+    t.string "unlock_token"
+    t.datetime "updated_at", null: false
+    t.string "user_type", null: false
+    t.string "username"
+    t.index "lower((email)::text)", name: "idx_users_email", unique: true
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
+    t.index ["email", "status"], name: "index_users_on_email_and_status"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["session_expires_at"], name: "idx_users_session_active", where: "(session_expires_at IS NOT NULL)"
+    t.index ["status"], name: "idx_users_active", where: "((status)::text = 'active'::text)"
+    t.index ["status"], name: "index_users_on_status"
+    t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
+    t.index ["user_type"], name: "index_users_on_user_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'blocked'::character varying, 'suspended'::character varying, 'deleted'::character varying]::text[])", name: "chk_users_status"
+    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying, 'customer'::character varying, 'supplier'::character varying]::text[])", name: "chk_users_user_type"
   end
 end
