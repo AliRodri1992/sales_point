@@ -6,6 +6,10 @@ class LanguagesController < ApplicationController
 
     session[:language_id] = language.id
 
+    if user_signed_in?
+      current_user.update(language_id: language.id)
+    end
+
     I18n.locale = language.code.downcase.to_sym
 
     render json: { success: true }

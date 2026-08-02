@@ -17,6 +17,11 @@ module SalePoint
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.active_job.queue_adapter = :sidekiq
+
+    # Configure i18n
+    config.i18n.default_locale = :en
+    config.i18n.available_locales = [:en, :es, :ko]
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files

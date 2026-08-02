@@ -9,7 +9,5 @@ es:
         password: "Contraseña"
         forgot: "¿Olvidaste tu clave?"
         submit: "INICIAR SESIÓN Y ABRIR CAJA"
-
-  auth:
-    error_banner:
-      title: "Error de autenticación"
+        error_banner:
+          title: "Error de Autenticación"

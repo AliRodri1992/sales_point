@@ -9,7 +9,5 @@ en:
         password: "Security Password"
         forgot: "Forgot key?"
         submit: "SIGN IN & INITIALIZE SHIFT"
-
-  auth:
-    error_banner:
-      title: "Authentication failed"
+        error_banner:
+          title: "Authentication Failed"

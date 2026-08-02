@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+4# frozen_string_literal: true
 
 class AddPreferencesToUsers < ActiveRecord::Migration[8.1]
   DEFAULT_THEME = 'theme-material-red'
