@@ -46,7 +46,7 @@ gem 'solid_queue'
 gem 'stimulus-rails'
 gem 'thruster', require: false
 gem 'turbo-rails'
-gem 'tzinfo-data', platforms: %i[windows jruby]
+gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 gem 'view_component'
 gem 'wicked'
 gem 'wicked_pdf'
