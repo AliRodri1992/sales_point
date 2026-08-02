@@ -67,4 +67,3 @@ rescue StandardError
   Rails.logger.debug("Using default I18n file backend")
 end
 
-

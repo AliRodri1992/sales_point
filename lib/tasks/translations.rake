@@ -4,39 +4,6 @@ namespace :translations do
   desc "Load all translations from YAML files into database"
   task load: :environment do
     puts "🌱 Loading translations from YAML files..."
-    
-    # Load translations using the seeds function
-    def load_translations_from_file(file_path, locale_code)
-      return unless File.exist?(file_path)
-
-      content = YAML.safe_load(File.read(file_path))
-      locale_hash = content[locale_code.to_s]
-
-      return unless locale_hash
-
-      language = Language.find_by(code: locale_code)
-      return unless language
-
-      flatten_hash(locale_hash, "").each do |key, value|
-        next if value.is_a?(Hash)
-
-        translate = Translate.find_or_create_by(key: key, language: language)
-        translate.update(value: value.to_s)
-      end
-    end
-
-    def flatten_hash(hash, prefix = "")
-      result = {}
-      hash.each do |key, value|
-        current_key = prefix.empty? ? key.to_s : "#{prefix}.#{key}"
-        if value.is_a?(Hash)
-          result.merge!(flatten_hash(value, current_key))
-        else
-          result[current_key] = value
-        end
-      end
-      result
-    end
 
     # Load all locale files
     Dir.glob(Rails.root.join('config/locales/*.yml')).each do |file|
@@ -45,13 +12,13 @@ namespace :translations do
       filename = File.basename(file)
       case filename
       when 'en.yml', 'devise.en.yml'
-        load_translations_from_file(file, 'en')
+        Translate.load_from_file(file, 'en')
         puts "✅ Loaded #{filename} (English)"
       when 'es.yml', 'devise.es.yml'
-        load_translations_from_file(file, 'es')
+        Translate.load_from_file(file, 'es')
         puts "✅ Loaded #{filename} (Spanish)"
       when 'ko.yml', 'devise.ko.yml'
-        load_translations_from_file(file, 'ko')
+        Translate.load_from_file(file, 'ko')
         puts "✅ Loaded #{filename} (Korean)"
       end
     end
@@ -96,3 +63,4 @@ namespace :translations do
     puts "✅ Restored #{count} soft-deleted translations"
   end
 end
+
