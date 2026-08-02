@@ -1,9 +1,92 @@
 @import "tailwindcss";
 
 /* Components */
-@import "components/buttons.css";
-@import "components/inputs.css";
-@import "components/cards.css";
-@import "components/alerts.css";
-@import "components/themes.css";
-@import "pages/login.css";
+@import "./components/themes.css";
+
+body,
+input,
+button,
+select {
+    font-family: "Inter", sans-serif;
+    letter-spacing: -.01em;
+}
+
+.btn-submit-dynamic {
+    background: var(--brand);
+    transition: all .2s cubic-bezier(.4,0,.2,1);
+}
+
+.btn-submit-dynamic:hover {
+    background-image: linear-gradient(rgba(0,0,0,.12), rgba(0,0,0,.12));
+    transform: translateY(-1px);
+}
+
+.btn-submit-dynamic:active {
+    transform: translateY(0) scale(.98);
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px var(--brand-light);
+    background: white;
+}
+
+.theme-text {
+    color: var(--brand);
+}
+
+.theme-bg {
+    background: var(--brand);
+}
+
+.theme-bg-light {
+    background: var(--brand-light);
+}
+
+.theme-border {
+    border-color: var(--brand);
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-6px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(6px);
+    }
+}
+
+.animate-shake {
+    animation: shake .4s ease-in-out;
+}
+
+.dropdown-enter {
+    opacity: 0;
+    transform: scale(.95);
+}
+
+.dropdown-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all .15s ease;
+}
+
+.dropdown-leave {
+    opacity: 1;
+}
+
+.dropdown-leave-active {
+    opacity: 0;
+    transform: scale(.95);
+    transition: all .15s ease;
+}

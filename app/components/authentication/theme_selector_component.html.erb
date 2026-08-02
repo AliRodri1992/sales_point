@@ -1,0 +1,35 @@
+<div class="relative">
+  <button
+    type="button"
+    data-action="click->terminal#toggleThemeDropdown"
+    class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl border border-slate-100 bg-white text-slate-400 shadow-md transition-all hover:scale-105 hover:text-slate-700 active:scale-95">
+    <%= helpers.icon "swatch", variant: :outline, class: "w-5 h-5" %>
+  </button>
+
+  <div
+    data-terminal-target="themeDropdown"
+    class="absolute right-0 mt-2 hidden w-52 origin-top-right rounded-2xl border border-slate-100 bg-white p-4 opacity-0 scale-95 shadow-2xl transition-all">
+    <p class="mb-3 text-[9px] font-bold uppercase tracking-wider text-slate-400">
+      Branch Color
+    </p>
+    <div class="grid grid-cols-4 gap-3">
+      <% themes.each do |theme| %>
+
+        <button
+          type="button"
+          data-terminal-target="themeOption"
+          data-theme="<%= theme[:id] %>"
+          data-action="click->terminal#selectTheme"
+          class="<%= class_names(
+                       "flex h-7 w-7 cursor-pointer items-center justify-center transition-all hover:scale-110 active:scale-95",
+                       theme[:id] == current_theme ? "rounded-full" : "rounded-lg"
+                     ) %>"
+          style="background:<%= theme[:color] %>">
+          <% if theme[:id] == current_theme %>
+            <span class="<%= theme[:id] == "theme-material-school-yellow" ? "bg-zinc-800" : "bg-white" %> h-1.5 w-1.5 rounded-full"></span>
+          <% end %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>

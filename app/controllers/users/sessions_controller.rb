@@ -2,28 +2,69 @@
 
 module Users
   class SessionsController < Devise::SessionsController
+
     layout 'authentication'
 
-    def new
-      return redirect_to(authenticated_root_path) if user_signed_in?
 
-      super
+    before_action :store_terminal_preferences, only: :new
+
+
+    def create
+
+      super do |resource|
+
+        persist_terminal_preferences(resource)
+
+      end
+
     end
 
-    protected
-
-    def after_sign_in_path_for(_resource)
-      authenticated_root_path
-    end
-
-    def after_sign_out_path_for(_resource)
-      new_user_session_path
-    end
 
     private
 
-    def redirect_authenticated_user
-      redirect_to authenticated_root_path if user_signed_in?
+
+    def store_terminal_preferences
+
+      cookies[:terminal_language] ||=
+        'en'
+
+
+      cookies[:terminal_theme] ||=
+        'theme-material-red'
+
     end
+
+    def persist_terminal_preferences(_resource)
+
+      cookies[:terminal_language] =
+        terminal_language
+
+
+      cookies[:terminal_theme] =
+        terminal_theme
+
+    end
+
+    def terminal_language
+
+      params
+        .dig(:terminal, :language)
+        .presence ||
+        cookies[:terminal_language] ||
+        'en'
+
+    end
+
+    def terminal_theme
+
+      params
+        .dig(:terminal, :theme)
+        .presence ||
+        cookies[:terminal_theme] ||
+        'theme-material-red'
+
+    end
+
+
   end
 end

@@ -1,26 +1,193 @@
-<h2>Log in</h2>
-<%= render "devise/shared/error_messages" %>
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+<div
+  class="theme-material-red min-h-screen w-full bg-slate-50 p-4 flex flex-col items-center justify-center transition-colors duration-500"
+  data-controller="terminal"
+  data-terminal-target="wrapper">
+
+
+  <!-- TOP RIGHT ACTIONS -->
+
+  <div class="absolute top-4 right-4 z-50 flex items-center gap-2">
+
+    <%= render Authentication::LanguageSelectorComponent.new(
+      current_language: current_language,
+      languages: terminal_languages
+    ) %>
+
+
+    <%= render Authentication::ThemeSelectorComponent.new(
+      themes: terminal_themes,
+      current_theme: current_terminal_theme
+    ) %>
+
   </div>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+  <%= render Authentication::ErrorBannerComponent.new(
+    resource: resource
+  ) %>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
+  <!-- LOGIN CARD -->
+
+  <div data-terminal-target="loginCard" class="relative mt-16 w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-xl transition-all duration-200 sm:p-8">
+    <!-- ICON -->
+
+    <div class="absolute -top-12 left-1/2 flex -translate-x-1/2 items-center justify-center">
+
+      <div
+        class="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-[var(--brand-light)] text-[var(--brand)] shadow-lg transition-all duration-300 hover:scale-105">
+
+
+        <%= icon "lock-closed", class: "h-11 w-11" %>
+      </div>
+
     </div>
-  <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
+
+
+    <!-- HEADER -->
+
+    <div class="mb-7 pt-8 text-center">
+
+      <h1 class="text-xl font-bold leading-none tracking-tight text-slate-900">
+
+        <%= t(".title") %>
+
+      </h1>
+
+
+      <p class="mt-2 text-[11px] font-medium text-slate-400">
+
+        <%= t(".subtitle") %>
+
+      </p>
+
+    </div>
+
+
+
+    <!-- DEVISE FORM -->
+
+
+    <%= form_for(
+          resource,
+          as: resource_name,
+          url: session_path(resource_name),
+          html: {
+            class: "space-y-5",
+            autocomplete: "off"
+          }
+        ) do |f| %>
+
+
+
+      <!-- USER -->
+
+
+      <div>
+
+        <%= f.label(
+              :username,
+              t(".operator"),
+              class:
+                "mb-2 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
+            ) %>
+
+
+        <%= f.text_field(
+              :username,
+              autofocus: true,
+              autocomplete: "username",
+              placeholder: t(".username_placeholder"),
+              class:
+                "input-field w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+              data: {
+                terminal_target: "input",
+                action: "input->terminal#clearErrors"
+              }
+            ) %>
+
+
+      </div>
+
+
+
+      <!-- PASSWORD -->
+
+
+      <div>
+
+
+        <div class="mb-2 flex items-center justify-between">
+
+
+          <%= f.label(
+                :password,
+                t(".password"),
+                class:
+                  "text-[10px] font-bold uppercase tracking-wider text-slate-500"
+              ) %>
+
+
+          <%= link_to(
+                t(".forgot"),
+                new_password_path(resource_name),
+                class:
+                  "text-xs font-semibold text-[var(--brand)] transition-opacity hover:opacity-80"
+              ) %>
+
+
+        </div>
+
+
+
+        <div class="relative">
+
+
+          <%= f.password_field(
+                :password,
+                autocomplete: "current-password",
+                placeholder: "••••••••",
+                class:
+                  "input-field w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 transition-all duration-200",
+                data: {
+                  terminal_target: "password",
+                  action: "input->terminal#clearErrors"
+                }
+              ) %>
+
+
+
+          <button
+            type="button"
+            data-action="click->terminal#togglePassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer p-1 text-slate-400 hover:text-slate-600">
+            <%= icon "eye", variant: :outline, class: "h-4 w-4" %>
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- SUBMIT -->
+
+
+      <button
+        type="submit"
+        class="btn-submit-dynamic flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all duration-200">
+        <span>
+          <%= t(".submit") %>
+        </span>
+        <%= icon "arrow-right", variant: :outline, class: "h-4 w-4" %>
+      </button>
+
+
+    <% end %>
+
+
   </div>
-<% end %>
 
-<%= render "devise/shared/links" %>
+
+</div>

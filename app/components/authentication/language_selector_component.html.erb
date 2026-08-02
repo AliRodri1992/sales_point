@@ -1,0 +1,34 @@
+<div class="relative" data-controller="language-selector">
+  <button
+    type="button"
+    data-action="click->language-selector#toggle"
+    class="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-md overflow-hidden">
+
+    <img
+      data-language-selector-target="flag"
+      src="<%= current_language.flag_url %>"
+      srcset="<%= current_language.flag_srcset %>"
+      class="w-full h-full object-cover"
+      alt="<%= current_language.name %>">
+  </button>
+
+  <div data-language-selector-target="dropdown" class="hidden absolute right-0 mt-2 w-32 bg-white border border-slate-100 rounded-2xl shadow-xl p-1">
+    <% languages.each do |language| %>
+      <button
+        type="button"
+        data-action="click->language-selector#select"
+        data-language="<%= language.code %>"
+        data-flag="<%= language.flag_url %>"
+        class="w-full flex items-center gap-3 px-2.5 py-2 text-xs font-bold rounded-xl hover:bg-slate-50">
+
+        <img
+          src="<%= language.flag_url %>"
+          srcset="<%= language.flag_srcset %>"
+          class="w-7 h-7 rounded-full object-cover">
+        <span>
+          <%= language.code %>
+        </span>
+      </button>
+    <% end %>
+  </div>
+</div>

@@ -19,9 +19,9 @@ SecureHeaders::Configuration.default do |config|
     default_src: %w['self'],
     script_src: %w['self' 'unsafe-inline' https:],
     style_src: %w['self' 'unsafe-inline'],
-    img_src: %w['self' data:],
+    img_src: %w['self' data: https://flagcdn.com],
     connect_src: %w['self'],
-    font_src: %w['self'],
+    font_src: %w['self' data:],
     object_src: %w['none'],
     frame_ancestors: %w['none']
   }

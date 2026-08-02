@@ -1,6 +1,8 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  patch '/language', to: 'languages#update'
+
   devise_for :users,
              controllers: {
                sessions: 'users/sessions'

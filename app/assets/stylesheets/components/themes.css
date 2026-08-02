@@ -1,0 +1,99 @@
+.theme-material-red {
+    --brand: #b71c1c;
+    --brand-light: #ffebee;
+}
+
+.theme-material-navy {
+    --brand: #0d47a1;
+    --brand-light: #e3f2fd;
+}
+
+.theme-material-school-yellow {
+    --brand: #fbc02d;
+    --brand-light: #fffde7;
+}
+
+.theme-saas-blue {
+    --brand: #4f46e5;
+    --brand-light: #e0e7ff;
+}
+
+.theme-emerald-green {
+    --brand: #10b981;
+    --brand-light: #d1fae5;
+}
+
+.theme-commercial-orange {
+    --brand: #ea580c;
+    --brand-light: #ffedd5;
+}
+
+.theme-industrial-mono {
+    --brand: #18181b;
+    --brand-light: #f4f4f5;
+}
+
+.theme-tech-purple {
+    --brand: #9333ea;
+    --brand-light: #f3e8ff;
+}
+
+.theme-slate-charcoal {
+    --brand: #334155;
+    --brand-light: #e2e8f0;
+}
+
+.theme-ocean-cyan {
+    --brand: #0e7490;
+    --brand-light: #cffafe;
+}
+
+.theme-candy-pink {
+    --brand: #db2777;
+    --brand-light: #fce7f3;
+}
+
+.theme-earth-brown {
+    --brand: #78350f;
+    --brand-light: #fef3c7;
+}
+
+.theme-wheat-yellow {
+    --brand: #ca8a04;
+    --brand-light: #fef9c3;
+}
+
+.theme-silver-grey {
+    --brand: #4b5563;
+    --brand-light: #f3f4f6;
+}
+
+.theme-supermarket-red {
+    --brand: #dc2626;
+    --brand-light: #fee2e2;
+}
+
+.theme-mint-turquoise {
+    --brand: #0d9488;
+    --brand-light: #ccfbf1;
+}
+
+.theme-orchid-violet {
+    --brand: #7c3aed;
+    --brand-light: #ede9fe;
+}
+
+.theme-lime-green {
+    --brand: #65a30d;
+    --brand-light: #ecfccb;
+}
+
+.theme-denim-blue {
+    --brand: #2563eb;
+    --brand-light: #dbeafe;
+}
+
+.theme-material-light-blue {
+    --brand: #039be5;
+    --brand-light: #e1f5fe;
+}

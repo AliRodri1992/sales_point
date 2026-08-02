@@ -4,5 +4,8 @@
 
 import { application } from "./application"
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
+import Terminal_controller from "./terminal_controller";
+application.register("terminal", Terminal_controller)
+
+import LanguageSelectorController from "./language_selector_controller"
+application.register("language-selector", LanguageSelectorController)

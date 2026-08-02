@@ -1,0 +1,22 @@
+<div data-terminal-target="errorBanner"
+  class="<%= class_names(
+               'w-full max-w-md mb-4 transition-all duration-300 translate-y-2 opacity-0',
+               hidden: !visible?
+             ) %>">
+
+  <div class="rounded-xl border border-[#ef5350] bg-[#ffebee] p-4 shadow-md">
+    <div class="flex items-start gap-3">
+      <div class="mt-0.5 shrink-0 text-[#e53935]">
+        <%= helpers.icon "exclamation-circle", variant: :outline, class: "w-4 h-4" %>
+      </div>
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-[#b71c1c]">
+          <%= t(".title") %>
+        </h3>
+        <p class="mt-1 text-xs font-medium leading-relaxed text-[#c62828]">
+          <%= message %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

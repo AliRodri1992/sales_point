@@ -1,0 +1,15 @@
+es:
+  devise:
+    sessions:
+      new:
+        title: "Punto de Venta"
+        subtitle: "Ingresa tus credenciales para iniciar turno"
+        operator: "Usuario / Código de Cajero"
+        username_placeholder: "Ej. CAJERO-04"
+        password: "Contraseña"
+        forgot: "¿Olvidaste tu clave?"
+        submit: "INICIAR SESIÓN Y ABRIR CAJA"
+
+  auth:
+    error_banner:
+      title: "Error de autenticación"
