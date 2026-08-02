@@ -6,18 +6,39 @@ module I18n
     class DatabaseBackend < Simple
       def initialize
         super
-        load_all_from_database
+        @translations_loaded = false
       end
 
       def load_all_from_database
-        return unless defined?(Translate)
+        return if @translations_loaded
+        return unless defined?(Translate) && table_exists?
 
-        Translate.all.each do |translate|
-          store_translation(translate.locale.to_sym, translate.key, translate.value)
+        begin
+          Translate.all.each do |translate|
+            store_translation(translate.locale.to_sym, translate.key, translate.value)
+          end
+          @translations_loaded = true
+        rescue StandardError => e
+          Rails.logger.warn("Failed to load translations from database: #{e.message}")
         end
       end
 
+      def lookup(locale, key, scope = [], options = {})
+        load_all_from_database unless @translations_loaded
+        super
+      end
+
       private
+
+      def table_exists?
+        return false unless defined?(ActiveRecord)
+
+        begin
+          ActiveRecord::Base.connection.table_exists?('translates')
+        rescue StandardError
+          false
+        end
+      end
 
       def store_translation(locale, key, value)
         key_parts = key.split('.')
@@ -33,13 +54,13 @@ module I18n
   end
 end
 
-# Fallback to file-based translations if database is not available
+# Only set database backend if available and configured
 begin
-  if defined?(ActiveRecord)
-    if ActiveRecord::Base.connection.table_exists?('translates')
-      I18n.backend = I18n::Backend::DatabaseBackend.new
-    end
+  if defined?(ActiveRecord) && ActiveRecord::Base.connection.table_exists?('translates')
+    I18n.backend = I18n::Backend::DatabaseBackend.new
   end
 rescue StandardError
   # Database connection failed, use default backend
+  Rails.logger.debug("Using default I18n file backend")
 end
+
