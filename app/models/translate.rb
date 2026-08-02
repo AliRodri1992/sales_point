@@ -3,13 +3,22 @@
 class Translate < ApplicationRecord
   belongs_to :language, optional: true
 
-  validates :key, presence: true, uniqueness: { scope: :language_id, conditions: -> { without_deleted } }
+  validates :key, presence: true
   validates :value, presence: true
-  validates :language, presence: true
 
-  scope :by_language, ->(language) { where(language: language) }
+  # Only validate language presence if language_id column exists
+  validates :language, presence: true, if: -> { ActiveRecord::Base.connection.column_exists?(:translates, :language_id) }
+
+  # Conditional validation based on whether language_id exists
+  before_create :validate_uniqueness
+
+  scope :by_language, ->(language) { where(language: language) if column_exists?(:language_id) }
   scope :by_locale, ->(locale) do
-    joins(:language).where(languages: { code: locale })
+    if column_exists?(:language_id)
+      joins(:language).where(languages: { code: locale })
+    else
+      where(locale: locale)
+    end
   end
   scope :by_key, ->(key) { where(key: key) }
 
@@ -17,9 +26,13 @@ class Translate < ApplicationRecord
   scope :by_locale_code, ->(code) { by_locale(code) }
 
   def self.find_by_key_and_locale(key, locale)
-    joins(:language)
-      .where(key: key, languages: { code: locale })
-      .first
+    if column_exists?(:language_id)
+      joins(:language)
+        .where(key: key, languages: { code: locale })
+        .first
+    else
+      where(key: key, locale: locale).first
+    end
   end
 
   def self.value_for(key, locale, default = nil)
@@ -42,7 +55,11 @@ class Translate < ApplicationRecord
     flatten_hash(locale_hash, '').each do |key, value|
       next if value.is_a?(Hash)
 
-      translate = find_or_create_by(key: key, language: language)
+      if column_exists?(:language_id)
+        translate = find_or_create_by(key: key, language: language)
+      else
+        translate = find_or_create_by(key: key, locale: locale_code)
+      end
       translate.update(value: value.to_s)
     end
   end
@@ -61,9 +78,32 @@ class Translate < ApplicationRecord
     result
   end
 
-  # Return locale code from associated language
+  # Return locale code from associated language or locale column
   def locale
-    language&.code
+    if self.class.column_exists?(:language_id)
+      language&.code
+    else
+      self[:locale]
+    end
+  end
+
+  private
+
+  def self.column_exists?(column_name)
+    ActiveRecord::Base.connection.column_exists?(:translates, column_name)
+  end
+
+  def validate_uniqueness
+    # Custom validation for uniqueness based on whether language_id exists
+    if self.class.column_exists?(:language_id)
+      if Translate.where(key: key, language_id: language_id).where('deleted_at IS NULL').exists?
+        errors.add(:key, 'already exists for this language')
+      end
+    else
+      if Translate.where(key: key, locale: self[:locale]).exists?
+        errors.add(:key, 'already exists for this locale')
+      end
+    end
   end
 end
 

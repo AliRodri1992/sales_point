@@ -10,11 +10,19 @@ def load_translations_from_file(file_path, locale_code)
   language = Language.find_by(code: locale_code)
   return unless language
 
-  flatten_hash(locale_hash, "").each do |key, value|
+  flatten_hash(locale_hash, '').each do |key, value|
     next if value.is_a?(Hash)
 
-    Translate.find_or_create_by(key: key, language: language) do |t|
-      t.value = value.to_s
+    # Check if language_id column exists (for backward compatibility)
+    if ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
+      translate = Translate.find_or_create_by(key: key, language: language) do |t|
+        t.value = value.to_s
+      end
+    else
+      # Fallback: use locale column if language_id doesn't exist yet
+      translate = Translate.find_or_create_by(key: key, locale: locale_code) do |t|
+        t.value = value.to_s
+      end
     end
   end
 end
