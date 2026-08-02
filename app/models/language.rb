@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Language < ApplicationRecord
+  has_many :users,
+           dependent: :nullify
+
   validates :code,
             presence: true,
             uniqueness: true

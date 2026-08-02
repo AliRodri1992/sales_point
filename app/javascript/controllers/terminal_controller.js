@@ -37,6 +37,14 @@ export default class extends Controller {
             this.closeHandler
         )
 
+        // Show errors if banner is visible on initial load
+        if (
+            this.hasErrorBannerTarget &&
+            !this.errorBannerTarget.classList.contains("hidden")
+        ) {
+            this.showErrors()
+        }
+
     }
 
 
@@ -244,7 +252,9 @@ export default class extends Controller {
             this.errorBannerTarget
                 .classList
                 .add(
-                    "hidden"
+                    "hidden",
+                    "translate-y-2",
+                    "opacity-0"
                 )
         }
 
@@ -288,7 +298,9 @@ export default class extends Controller {
         this.errorBannerTarget
             .classList
             .remove(
-                "hidden"
+                "hidden",
+                "translate-y-2",
+                "opacity-0"
             )
 
 

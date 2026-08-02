@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_27_005626) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -249,6 +249,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_005626) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.integer "failed_attempts", default: 0, null: false
+    t.bigint "language_id"
     t.datetime "last_sign_in_at"
     t.string "last_sign_in_ip"
     t.string "last_sign_in_ip_country", limit: 2
@@ -262,6 +263,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_005626) do
     t.datetime "session_revoked_at"
     t.integer "sign_in_count", default: 0, null: false
     t.string "status", default: "active", null: false
+    t.string "theme", limit: 50, default: "theme-material-red", null: false
     t.string "unique_session_id"
     t.string "unlock_token"
     t.datetime "updated_at", null: false
@@ -270,6 +272,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_005626) do
     t.index "lower((email)::text)", name: "idx_users_email", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email", "status"], name: "index_users_on_email_and_status"
+    t.index ["language_id"], name: "index_users_on_language_id", where: "(language_id IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["session_expires_at"], name: "idx_users_session_active", where: "(session_expires_at IS NOT NULL)"
     t.index ["status"], name: "idx_users_active", where: "((status)::text = 'active'::text)"
@@ -279,4 +282,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_005626) do
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'blocked'::character varying, 'suspended'::character varying, 'deleted'::character varying]::text[])", name: "chk_users_status"
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying, 'customer'::character varying, 'supplier'::character varying]::text[])", name: "chk_users_user_type"
   end
+
+  add_foreign_key "users", "languages"
 end

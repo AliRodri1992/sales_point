@@ -4,6 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :session_limitable,
          :recoverable, :rememberable, :validatable, :trackable
 
+  belongs_to :language,
+             optional: true
+
   enum :user_type,
        {
          employee: 'employee',
@@ -30,4 +33,8 @@ class User < ApplicationRecord
 
   validates :status,
             presence: true
+
+  validates :theme,
+            presence: true,
+            inclusion: { in: Theme.ids }
 end
