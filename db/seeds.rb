@@ -1,27 +1,19 @@
-# Create default languages
-[
-  { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
-  { code: 'es', name: 'Español', flag_iso: 'es', status: 'active' },
-  { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
-].each do |lang_attrs|
-  Language.find_or_create_by(code: lang_attrs[:code]) do |language|
-    language.assign_attributes(lang_attrs)
-  end
-end
-
 # Load translations from YAML files into database
-def load_translations_from_file(file_path, locale)
+def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
 
   content = YAML.safe_load(File.read(file_path))
-  locale_hash = content[locale.to_s]
+  locale_hash = content[locale_code.to_s]
 
   return unless locale_hash
+
+  language = Language.find_by(code: locale_code)
+  return unless language
 
   flatten_hash(locale_hash, "").each do |key, value|
     next if value.is_a?(Hash)
 
-    Translate.find_or_create_by(key: key, locale: locale) do |t|
+    Translate.find_or_create_by(key: key, language: language) do |t|
       t.value = value.to_s
     end
   end
@@ -38,6 +30,17 @@ def flatten_hash(hash, prefix = "")
     end
   end
   result
+end
+
+# Create default languages
+[
+  { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
+  { code: 'es', name: 'Español', flag_iso: 'es', status: 'active' },
+  { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
+].each do |lang_attrs|
+  Language.find_or_create_by(code: lang_attrs[:code]) do |language|
+    language.assign_attributes(lang_attrs)
+  end
 end
 
 # Load all locale files

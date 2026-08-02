@@ -117,7 +117,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.index ["deleted_at"], name: "index_sat_fiscal_regimes_on_deleted_at"
     t.index ["person_type"], name: "index_sat_fiscal_regimes_on_person_type", where: "(deleted_at IS NULL)"
     t.index ["valid_from", "valid_to"], name: "index_sat_fiscal_regimes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying, 'M'::character varying]::text[])"
+    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying::text, 'M'::character varying::text])"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
   end
 
@@ -154,7 +154,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.index ["deleted_at"], name: "index_sat_payment_method_types_on_deleted_at"
     t.index ["status"], name: "index_sat_payment_method_types_on_status"
     t.index ["valid_from", "valid_to"], name: "index_sat_payment_method_types_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying, 'PPD'::character varying]::text[])", name: "chk_sat_payment_method_types_code"
+    t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying::text, 'PPD'::character varying::text])", name: "chk_sat_payment_method_types_code"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_method_types_validity"
   end
 
@@ -199,10 +199,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.index ["status"], name: "index_sat_taxes_on_status"
     t.index ["tax_type"], name: "index_sat_taxes_on_tax_type"
     t.index ["valid_from", "valid_to"], name: "index_sat_taxes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying, 'service'::character varying, 'both'::character varying]::text[])) OR applies_to IS NULL"
-    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying, 'quota'::character varying, 'exempt'::character varying]::text[])"
+    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying::text, 'service'::character varying::text, 'both'::character varying::text])) OR applies_to IS NULL"
+    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying::text, 'quota'::character varying::text, 'exempt'::character varying::text])"
     t.check_constraint "tax_type::text = 'transfer'::text AND is_transferrable = true OR tax_type::text = 'withheld'::text AND is_retainable = true"
-    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying, 'withheld'::character varying]::text[])"
+    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying::text, 'withheld'::character varying::text])"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
   end
 
@@ -236,8 +236,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
     t.index ["role_type", "status"], name: "index_system_roles_on_role_type_and_status"
     t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
-    t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying, 'branch'::character varying]::text[])", name: "check_system_roles_role_type"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'deprecated'::character varying]::text[])", name: "check_system_roles_status"
+    t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying::text, 'branch'::character varying::text])", name: "check_system_roles_role_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'deprecated'::character varying::text])", name: "check_system_roles_status"
+  end
+
+  create_table "translates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "key", limit: 255, null: false
+    t.string "locale", limit: 10, default: "en", null: false
+    t.datetime "updated_at", null: false
+    t.text "value", null: false
+    t.index ["deleted_at"], name: "index_translates_on_deleted_at"
+    t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["key"], name: "index_translates_on_key"
+    t.index ["locale"], name: "index_translates_on_locale"
   end
 
   create_table "users", force: :cascade do |t|
@@ -279,8 +292,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'blocked'::character varying, 'suspended'::character varying, 'deleted'::character varying]::text[])", name: "chk_users_status"
-    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying, 'customer'::character varying, 'supplier'::character varying]::text[])", name: "chk_users_user_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'blocked'::character varying::text, 'suspended'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
+    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
   add_foreign_key "users", "languages"

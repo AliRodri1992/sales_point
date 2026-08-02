@@ -6,18 +6,21 @@ namespace :translations do
     puts "🌱 Loading translations from YAML files..."
     
     # Load translations using the seeds function
-    def load_translations_from_file(file_path, locale)
+    def load_translations_from_file(file_path, locale_code)
       return unless File.exist?(file_path)
 
       content = YAML.safe_load(File.read(file_path))
-      locale_hash = content[locale.to_s]
+      locale_hash = content[locale_code.to_s]
 
       return unless locale_hash
+
+      language = Language.find_by(code: locale_code)
+      return unless language
 
       flatten_hash(locale_hash, "").each do |key, value|
         next if value.is_a?(Hash)
 
-        translate = Translate.find_or_create_by(key: key, locale: locale)
+        translate = Translate.find_or_create_by(key: key, language: language)
         translate.update(value: value.to_s)
       end
     end
@@ -54,9 +57,9 @@ namespace :translations do
     end
 
     puts "\n📊 Summary:"
-    %w[en es ko].each do |locale|
-      count = Translate.by_locale(locale).count
-      puts "  #{locale}: #{count} translations"
+    Language.where(status: 'active').each do |language|
+      count = language.translates.count
+      puts "  #{language.code}: #{count} translations"
     end
   end
 
@@ -79,10 +82,10 @@ namespace :translations do
     puts "Total soft-deleted: #{deleted}"
     puts "Total all:         #{total}"
     puts ""
-    puts "By locale:"
-    %w[en es ko].each do |locale|
-      count = Translate.by_locale(locale).count
-      puts "  #{locale}: #{count}"
+    puts "By language:"
+    Language.where(status: 'active').each do |language|
+      count = language.translates.count
+      puts "  #{language.code}: #{count}"
     end
   end
 

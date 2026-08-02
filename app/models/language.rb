@@ -3,6 +3,8 @@
 class Language < ApplicationRecord
   has_many :users,
            dependent: :nullify
+  has_many :translates,
+           dependent: :destroy
 
   validates :code,
             presence: true,
