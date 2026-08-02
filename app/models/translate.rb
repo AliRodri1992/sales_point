@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Translate < ApplicationRecord
-  acts_as_paranoid
-
   validates :key, presence: true, uniqueness: { scope: :locale, conditions: -> { without_deleted } }
   validates :value, presence: true
   validates :locale, presence: true, inclusion: { in: %w[en es ko] }
@@ -19,3 +17,4 @@ class Translate < ApplicationRecord
     translation&.value || default
   end
 end
+
