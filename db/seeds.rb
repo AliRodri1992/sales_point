@@ -15,12 +15,12 @@ def load_translations_from_file(file_path, locale_code)
 
     # Check if language_id column exists (for backward compatibility)
     if ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
-      translate = Translate.find_or_create_by(key: key, language: language) do |t|
+      Translate.find_or_create_by!(key: key, language: language) do |t|
         t.value = value.to_s
       end
     else
       # Fallback: use locale column if language_id doesn't exist yet
-      translate = Translate.find_or_create_by(key: key, locale: locale_code) do |t|
+      Translate.find_or_create_by!(key: key, locale: locale_code) do |t|
         t.value = value.to_s
       end
     end
@@ -43,7 +43,7 @@ end
 # Create default languages
 [
   { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
-  { code: 'es', name: 'Español', flag_iso: 'es', status: 'active' },
+  { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
   { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
 ].each do |lang_attrs|
   Language.find_or_create_by(code: lang_attrs[:code]) do |language|
@@ -52,7 +52,7 @@ end
 end
 
 # Load all locale files
-Dir.glob(Rails.root.join('config/locales/*.yml')).each do |file|
+Rails.root.glob('config/locales/*.yml').each do |file|
   next if file.include?('devise.security_extension')
 
   filename = File.basename(file)
@@ -63,6 +63,8 @@ Dir.glob(Rails.root.join('config/locales/*.yml')).each do |file|
     load_translations_from_file(file, 'es')
   when 'ko.yml', 'devise.ko.yml'
     load_translations_from_file(file, 'ko')
+  else
+    # type code here
   end
 end
 
