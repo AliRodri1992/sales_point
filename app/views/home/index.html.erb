@@ -1,25 +1,132 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<%= render Landing::NavbarComponent.new %>
 
-<table class="border-collapse border border-gray-400 ...">
-  <thead class="bg-gray-50 dark:bg-gray-700"><tr><th class="w-1/2 border border-gray-300 p-4 text-left font-semibold text-gray-900 dark:border-gray-600 dark:text-gray-200">State</th><th class="w-1/2 border border-gray-300 p-4 text-left font-semibold text-gray-900 dark:border-gray-600 dark:text-gray-200">City</th></tr></thead>
-  <tr>
-    <th class="border border-gray-300 ...">State</th>
-    <th class="border border-gray-300 ...">City</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td class="border border-gray-300 ...">Indiana</td>
-    <td class="border border-gray-300 ...">Indianapolis</td>
-  </tr>
-  <tr>
-    <td class="border border-gray-300 ...">Ohio</td>
-    <td class="border border-gray-300 ...">Columbus</td>
-  </tr>
-  <tr>
-    <td class="border border-gray-300 ...">Michigan</td>
-    <td class="border border-gray-300 ...">Detroit</td>
-  </tr>
-  </tbody>
-</table>
+<main>
+
+  <%= render Landing::HeroComponent.new(
+    badge: "Nuevo • POS en la nube",
+    title: "Administra tu negocio con",
+    highlighted: "PuntoVeloz",
+    description: "Controla ventas, inventario, clientes, compras, reportes y facturación desde cualquier dispositivo.",
+    image: "landing/dashboard.webp",
+    primary_button: Ui::ButtonComponent.new(
+      text: "Comenzar gratis",
+      href: new_user_registration_path,
+      icon: :rocket_launch,
+      size: :lg,
+      variant: :primary
+    ),
+    secondary_button: Ui::ButtonComponent.new(
+      text: "Ver demostración",
+      href: "#demo",
+      icon: :play_circle,
+      size: :lg,
+      variant: :outline
+    ),
+    statistics: [
+      Ui::StatisticComponent.new(
+        number: "+25K",
+        label: "Ventas diarias",
+        icon: :shopping_cart
+      ),
+      Ui::StatisticComponent.new(
+        number: "99.9%",
+        label: "Disponibilidad",
+        icon: :server
+      ),
+      Ui::StatisticComponent.new(
+        number: "24/7",
+        label: "Soporte",
+        icon: :lifebuoy
+      )
+    ]
+  ) %>
+
+  <%= render Landing::FeaturesComponent.new(
+    title: "Todo lo que necesitas para administrar tu negocio",
+    subtitle: "Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas.",
+    features: @features
+  ) %>
+
+  <%= render Landing::ModulesComponent.new(
+    title: "Módulos especializados",
+    subtitle: "Crece sin cambiar de sistema.",
+    modules: @modules
+  ) %>
+
+  <%= render Landing::ScreenshotComponent.new(
+    title: "Una interfaz moderna y sencilla",
+    description: "Toda la información importante al alcance de un clic.",
+    image: "landing/dashboard.webp"
+  ) %>
+
+  <section class="bg-slate-50 py-24">
+
+    <div class="mx-auto max-w-7xl px-6">
+
+      <%= render Ui::SectionTitleComponent.new(
+        badge: "Clientes",
+        title: "Empresas que confían en PuntoVeloz",
+        subtitle: "Nuestro software ayuda diariamente a cientos de negocios."
+      ) %>
+
+      <div class="mt-16 grid gap-8 lg:grid-cols-3">
+
+        <% @testimonials.each do |testimonial| %>
+
+          <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section
+    id="pricing"
+    class="bg-white py-28">
+
+    <div class="mx-auto max-w-7xl px-6">
+
+      <%= render Ui::SectionTitleComponent.new(
+        badge: "Precios",
+        title: "Planes para cualquier negocio",
+        subtitle: "Empieza gratis y crece cuando lo necesites."
+      ) %>
+
+      <div class="mt-16 grid gap-8 lg:grid-cols-3">
+
+        <% @plans.each do |plan| %>
+
+          <%= render Landing::PricingCardComponent.new(**plan.to_h) %>
+
+        <% end %>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <%= render Landing::FaqComponent.new(
+    title: "Preguntas frecuentes",
+    subtitle: "Resolvemos las dudas más comunes.",
+    questions: @questions
+  ) %>
+
+  <%= render Landing::CtaComponent.new(
+    title: "¿Listo para modernizar tu negocio?",
+    description: "Empieza hoy mismo con PuntoVeloz y descubre cómo simplificar la administración de tu empresa.",
+    button: Ui::ButtonComponent.new(
+      text: "Crear cuenta",
+      href: new_user_registration_path,
+      icon: :rocket_launch,
+      size: :lg,
+      variant: :secondary
+    )
+  ) %>
+
+</main>
+
+<%= render Landing::FooterComponent.new %>

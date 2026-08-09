@@ -1,0 +1,18 @@
+<%= render Ui::CardComponent.new(hover: true) do |card| %>
+  <% card.with_body do %>
+    <div class="space-y-6">
+      <div class="flex items-center gap-4">
+        <%= image_tag avatar, class: "h-14 w-14 rounded-full object-cover", alt: name %>
+        <div>
+          <div class="font-bold text-slate-900">
+            <%= name %>
+          </div>
+          <div class="text-sm text-slate-500">
+            <%= position %> · <%= company %>
+          </div>
+        </div>
+      </div>
+      <p class="leading-8 italic text-slate-600">"<%= quote %>"</p>
+    </div>
+  <% end %>
+<% end %>

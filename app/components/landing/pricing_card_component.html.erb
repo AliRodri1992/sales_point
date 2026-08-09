@@ -1,0 +1,28 @@
+<%= render Ui::CardComponent.new(hover: true, shadow: true) do |card| %>
+  <% card.with_body do %>
+    <div class="space-y-8">
+      <% if badge? %>
+        <%= render Ui::BadgeComponent.new(text: "Más popular", color: :primary) %>
+      <% end %>
+      <div>
+        <h3 class="text-2xl font-bold text-slate-900"><%= name %></h3>
+        <p class="mt-2 text-slate-500"><%= description %></p>
+      </div>
+      <div>
+        <span class="text-5xl font-black text-blue-600">
+          $<%= price %>
+        </span>
+        <span class="text-slate-500">/mes</span>
+      </div>
+      <ul class="space-y-4">
+        <% features.each do |feature| %>
+          <li class="flex items-center gap-3">
+            <%= render Ui::IconComponent.new(name: :check_circle, variant: :solid, color: :success) %>
+            <span><%= feature %></span>
+          </li>
+        <% end %>
+      </ul>
+      <%= render Ui::ButtonComponent.new(text: "Elegir plan", href: new_user_registration_path, variant: featured ? :primary : :outline, full_width: true) %>
+    </div>
+  <% end %>
+<% end %>

@@ -8,15 +8,9 @@ Rails.application.routes.draw do
                sessions: 'users/sessions'
              }
 
-  authenticated :user do
-    root 'dashboard#index', as: :authenticated_root
-  end
+  root 'home#index'
 
-  unauthenticated do
-    root to: redirect { |_params, _request|
-      Rails.application.routes.url_helpers.new_user_session_path
-    }
-  end
+
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 

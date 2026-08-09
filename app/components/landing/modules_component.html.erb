@@ -1,0 +1,10 @@
+<section id="modules" class="bg-slate-50 py-28">
+  <div class="mx-auto max-w-7xl px-6">
+    <%= render Ui::SectionTitleComponent.new(badge: "Módulos", title: title, subtitle: subtitle) %>
+    <div class="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <% modules.each do |feature| %>
+        <%= render Landing::FeatureCardComponent.new(icon: feature.icon, title: feature.title, description: feature.description) %>
+      <% end %>
+    </div>
+  </div>
+</section>

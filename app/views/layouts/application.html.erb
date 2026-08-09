@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="es" class="h-full scroll-smooth">
   <head>
-    <title><%= content_for(:title) || "Sale Point" %></title>
+    <title>
+      <%= content_for?(:title) ? yield(:title) : "PuntoVeloz | Sistema de Punto de Venta" %>
+    </title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Sale Point">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Sistema de Punto de Venta moderno para administrar ventas, inventario, compras y clientes desde cualquier dispositivo.">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <%= yield :head %>
 
@@ -23,11 +32,11 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
-    <h1 class="text-3xl font-bold underline">
-      Hello world! <%= icon "user", class: "w-5 h-5 text-gray-600" %>
-
-    </h1>
-    <%= yield %>
+  <body class="bg-slate-950 text-white antialiased selection:bg-blue-600 selection:text-white">
+     <%= render 'shared/navbar' %>
+     <main>
+       <%= yield %>
+     </main>
+     <%= render 'shared/footer' %>
   </body>
 </html>

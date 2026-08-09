@@ -1,0 +1,9 @@
+<%= render Ui::CardComponent.new(hover: true) do |card| %>
+  <% card.with_body do %>
+    <div class="space-y-6">
+      <%= render Ui::IconBoxComponent.new(icon: icon, color: :primary, size: :lg) %>
+      <h3 class="text-xl font-bold text-slate-900"><%= title %></h3>
+      <p class="leading-7 text-slate-600"><%= description %></p>
+    </div>
+  <% end %>
+<% end %>

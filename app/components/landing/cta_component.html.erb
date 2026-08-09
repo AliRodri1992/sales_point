@@ -1,0 +1,35 @@
+<section
+  class="bg-gradient-to-r from-blue-700 to-blue-600 py-24">
+
+  <div
+    class="mx-auto max-w-4xl px-6 text-center">
+
+    <h2
+      class="text-4xl font-black text-white lg:text-5xl">
+
+      <%= title %>
+
+    </h2>
+
+    <p
+      class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-blue-100">
+
+      <%= description %>
+
+    </p>
+
+    <div class="mt-10">
+
+      <%= render Ui::ButtonComponent.new(
+        text: button.text,
+        href: button.href,
+        size: :lg,
+        variant: :secondary,
+        icon: :rocket_launch
+      ) %>
+
+    </div>
+
+  </div>
+
+</section>
