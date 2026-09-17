@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" role="img" aria-label="Vista previa del panel de PuntoVeloz">
+  <rect width="1200" height="750" rx="24" fill="#f8fafc"/>
+  <rect x="0" y="0" width="1200" height="64" rx="24" fill="#ffffff"/>
+  <rect x="0" y="40" width="1200" height="24" fill="#ffffff"/>
+  <circle cx="40" cy="32" r="7" fill="#e2e8f0"/>
+  <circle cx="64" cy="32" r="7" fill="#e2e8f0"/>
+  <circle cx="88" cy="32" r="7" fill="#e2e8f0"/>
+  <rect x="120" y="24" width="220" height="16" rx="8" fill="#f1f5f9"/>
+  <line x1="0" y1="64" x2="1200" y2="64" stroke="#e2e8f0" stroke-width="2"/>
+
+  <rect x="0" y="64" width="240" height="686" fill="#ffffff"/>
+  <line x1="240" y1="64" x2="240" y2="750" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="32" y="104" width="176" height="40" rx="12" fill="#dbeafe"/>
+  <rect x="32" y="164" width="140" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="32" y="204" width="160" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="32" y="244" width="120" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="32" y="284" width="150" height="16" rx="8" fill="#e2e8f0"/>
+  <rect x="32" y="324" width="130" height="16" rx="8" fill="#e2e8f0"/>
+
+  <rect x="288" y="112" width="264" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="312" y="140" width="88" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="312" y="168" width="140" height="28" rx="8" fill="#2563eb"/>
+
+  <rect x="576" y="112" width="264" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="600" y="140" width="88" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="600" y="168" width="120" height="28" rx="8" fill="#93c5fd"/>
+
+  <rect x="864" y="112" width="264" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="888" y="140" width="88" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="888" y="168" width="100" height="28" rx="8" fill="#cbd5e1"/>
+
+  <rect x="288" y="264" width="552" height="330" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="312" y="292" width="160" height="14" rx="7" fill="#e2e8f0"/>
+  <rect x="336" y="470" width="48" height="90" rx="8" fill="#bfdbfe"/>
+  <rect x="408" y="422" width="48" height="138" rx="8" fill="#93c5fd"/>
+  <rect x="480" y="470" width="48" height="90" rx="8" fill="#bfdbfe"/>
+  <rect x="552" y="374" width="48" height="186" rx="8" fill="#3b82f6"/>
+  <rect x="624" y="446" width="48" height="114" rx="8" fill="#93c5fd"/>
+  <rect x="696" y="398" width="48" height="162" rx="8" fill="#60a5fa"/>
+  <line x1="312" y1="572" x2="816" y2="572" stroke="#e2e8f0" stroke-width="2"/>
+
+  <rect x="864" y="264" width="264" height="330" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <circle cx="996" cy="392" r="72" fill="#eff6ff"/>
+  <path d="M996 320a72 72 0 0 1 62.35 108.02L996 392Z" fill="#2563eb"/>
+  <path d="M1058.35 428.02A72 72 0 0 1 934 428.5L996 392Z" fill="#60a5fa"/>
+  <rect x="888" y="500" width="216" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="888" y="528" width="168" height="12" rx="6" fill="#f1f5f9"/>
+  <rect x="888" y="556" width="192" height="12" rx="6" fill="#f1f5f9"/>
+
+  <rect x="288" y="626" width="840" height="88" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="312" y="654" width="200" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="312" y="682" width="320" height="12" rx="6" fill="#f1f5f9"/>
+</svg>
