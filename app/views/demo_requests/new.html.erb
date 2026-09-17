@@ -1,0 +1,87 @@
+<% content_for :title, t('.page_title') %>
+
+<%= render Landing::NavbarComponent.new %>
+
+<main class="bg-white text-slate-900">
+  <section class="bg-slate-50 py-12">
+    <div class="mx-auto max-w-4xl px-6">
+      <%= link_to root_path, class: "mb-5 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800" do %>
+        <%= icon "arrow-left", class: "h-5 w-5" %>
+        <%= t('.back') %>
+      <% end %>
+
+      <%= render Ui::SectionTitleComponent.new(
+        badge: t('.badge'),
+        title: t('.title'),
+        subtitle: t('.description'),
+        centered: false
+      ) %>
+
+      <div class="mt-12">
+        <%= render Ui::CardComponent.new do %>
+          <% if flash[:notice].present? %>
+            <div class="mb-6 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+              <%= flash[:notice] %>
+            </div>
+          <% end %>
+
+          <% if @demo_request.errors.any? %>
+            <div class="mb-6 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+              <%= t('.error_summary', count: @demo_request.errors.count) %>
+            </div>
+          <% end %>
+
+          <%= form_with model: @demo_request, class: "space-y-6", html: { novalidate: true } do |f| %>
+              <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                  <%= f.label :name, t('.name'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                  <%= f.text_field :name, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <% f.object.errors.full_messages_for(:name).each do |message| %>
+                    <p class="mt-2 text-sm text-red-600"><%= message %></p>
+                  <% end %>
+                </div>
+
+                <div>
+                  <%= f.label :email, t('.email'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                  <%= f.email_field :email, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <% f.object.errors.full_messages_for(:email).each do |message| %>
+                    <p class="mt-2 text-sm text-red-600"><%= message %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                  <%= f.label :phone, t('.phone'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                  <%= f.telephone_field :phone, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <% f.object.errors.full_messages_for(:phone).each do |message| %>
+                    <p class="mt-2 text-sm text-red-600"><%= message %></p>
+                  <% end %>
+                </div>
+
+                <div>
+                  <%= f.label :company, t('.company'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                  <%= f.text_field :company, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <% f.object.errors.full_messages_for(:company).each do |message| %>
+                    <p class="mt-2 text-sm text-red-600"><%= message %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <div>
+                <%= f.label :message, t('.message'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                <%= f.text_area :message, rows: 5, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                <% f.object.errors.full_messages_for(:message).each do |message| %>
+                  <p class="mt-2 text-sm text-red-600"><%= message %></p>
+                <% end %>
+              </div>
+
+              <%= f.submit t('.submit'), class: "inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2563eb] px-8 py-4 text-lg font-semibold text-white shadow-md transition duration-300 hover:bg-[#1d4ed8] focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto" %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%= render Landing::FooterComponent.new %>

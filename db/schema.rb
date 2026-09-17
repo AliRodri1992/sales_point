@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_17_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_02_174319) do
     t.boolean "status"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
+  end
+
+  create_table "demo_requests", force: :cascade do |t|
+    t.string "company", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email", null: false
+    t.text "message"
+    t.string "name", null: false
+    t.string "phone"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
+    t.index ["email"], name: "index_demo_requests_on_email"
+    t.index ["status"], name: "index_demo_requests_on_status"
   end
 
   create_table "languages", force: :cascade do |t|

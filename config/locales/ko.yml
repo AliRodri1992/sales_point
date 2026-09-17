@@ -34,3 +34,33 @@ ko:
     attributes:
       user:
         user_type: "사용자 유형"
+      demo_request:
+        name: "이름"
+        email: "이메일"
+        phone: "전화번호"
+        company: "회사"
+        message: "메시지"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "을(를) 입력하십시오"
+      invalid: "이(가) 올바르지 않습니다"
+      too_long: "이(가) 너무 깁니다 (최대 %{count}자)"
+      too_short: "이(가) 너무 짧습니다 (최소 %{count}자)"
+      wrong_length: "길이가 올바르지 않습니다"
+  demo_requests:
+    new:
+      page_title: "데모 신청 | Nexo POS"
+      back: "홈으로 돌아가기"
+      badge: "맞춤 데모"
+      title: "Nexo POS를 만나보세요"
+      description: "정보를 남겨 주시면 전문가가 연락하여 Nexo POS가 비즈니스에 어떻게 도움이 되는지 안내해 드립니다."
+      name: "이름"
+      email: "이메일"
+      phone: "전화번호"
+      company: "회사"
+      message: "어떻게 도와드릴까요?"
+      submit: "데모 신청"
+      error_summary: "요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요."
+    create:
+      success: "요청이 접수되었습니다. 곧 연락드리겠습니다."

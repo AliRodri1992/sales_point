@@ -34,3 +34,33 @@ en:
     attributes:
       user:
         user_type: "User Type"
+      demo_request:
+        name: "Name"
+        email: "Email address"
+        phone: "Phone"
+        company: "Company"
+        message: "Message"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "can't be blank"
+      invalid: "is invalid"
+      too_long: "is too long (maximum %{count} characters)"
+      too_short: "is too short (minimum %{count} characters)"
+      wrong_length: "has an incorrect length"
+  demo_requests:
+    new:
+      page_title: "Request a demo | Nexo POS"
+      back: "Back to home"
+      badge: "Personalized demo"
+      title: "Discover Nexo POS"
+      description: "Share your details and a specialist will contact you to show you how Nexo POS can help your business."
+      name: "Name"
+      email: "Email address"
+      phone: "Phone"
+      company: "Company"
+      message: "How can we help?"
+      submit: "Request a demo"
+      error_summary: "The request could not be sent. Check the fields and try again."
+    create:
+      success: "Your request was received. We will contact you soon."

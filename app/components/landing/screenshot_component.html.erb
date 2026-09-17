@@ -3,7 +3,7 @@
     <div>
       <%= render Ui::SectionTitleComponent.new(badge: "Interfaz moderna", title: title, subtitle: description, centered: false) %>
       <div class="mt-10">
-        <%= render Ui::ButtonComponent.new(text: "Solicitar demostración", href: "#pricing", size: :lg, icon: :arrow_right) %>
+        <%= render Ui::ButtonComponent.new(text: "Solicitar demostración", href: new_demo_request_path, size: :lg, icon: :arrow_right) %>
       </div>
     </div>
     <%= render "shared/screenshot_dashboard" %>

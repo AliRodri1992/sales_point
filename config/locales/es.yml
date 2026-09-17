@@ -34,3 +34,33 @@ es:
     attributes:
       user:
         user_type: "Tipo de usuario"
+      demo_request:
+        name: "Nombre"
+        email: "Correo electrónico"
+        phone: "Teléfono"
+        company: "Empresa"
+        message: "Mensaje"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: "no puede estar vacío"
+      invalid: "no es válido"
+      too_long: "es demasiado largo (máximo %{count} caracteres)"
+      too_short: "es demasiado corto (mínimo %{count} caracteres)"
+      wrong_length: "tiene una longitud incorrecta"
+  demo_requests:
+    new:
+      page_title: "Solicitar demostración | Nexo POS"
+      back: "Volver al inicio"
+      badge: "Demostración personalizada"
+      title: "Conoce Nexo POS"
+      description: "Déjanos tus datos y un especialista se pondrá en contacto contigo para mostrarte cómo Nexo POS puede ayudar a tu negocio."
+      name: "Nombre"
+      email: "Correo electrónico"
+      phone: "Teléfono"
+      company: "Empresa"
+      message: "¿Cómo podemos ayudarte?"
+      submit: "Solicitar demostración"
+      error_summary: "No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente."
+    create:
+      success: "Recibimos tu solicitud. Nos pondremos en contacto contigo pronto."
