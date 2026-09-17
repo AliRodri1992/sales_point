@@ -3,7 +3,7 @@
 module Landing
   class FaqComponent < ViewComponent::Base
     def initialize(title:, subtitle:, questions:)
-      super
+      super()
 
       @title = title
       @subtitle = subtitle

@@ -9,7 +9,7 @@ module Landing
       quote:,
       avatar:
     )
-      super
+      super()
 
       @name = name
       @company = company

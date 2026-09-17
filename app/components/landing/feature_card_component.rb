@@ -3,7 +3,7 @@
 module Landing
   class FeatureCardComponent < ViewComponent::Base
     def initialize(icon:, title:, description:)
-      super
+      super()
       @icon = icon
       @title = title
       @description = description

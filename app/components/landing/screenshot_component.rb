@@ -3,7 +3,7 @@
 module Landing
   class ScreenshotComponent < ViewComponent::Base
     def initialize(title:, description:, image:)
-      super
+      super()
 
       @title = title
       @description = description

@@ -9,6 +9,8 @@ module Landing
                    secondary_button:,
                    statistics:)
 
+      super()
+
       @badge = badge
       @title = title
       @highlighted = highlighted

@@ -3,7 +3,7 @@
 module Authentication
   class ThemeSelectorComponent < ViewComponent::Base
     def initialize(themes:, current_theme:)
-      super
+      super()
 
       @themes = themes
       @current_theme = current_theme

@@ -3,7 +3,7 @@
 module Landing
   class FeaturesComponent < ViewComponent::Base
     def initialize(title:, subtitle:, features:)
-      super
+      super()
 
       @title = title
       @subtitle = subtitle

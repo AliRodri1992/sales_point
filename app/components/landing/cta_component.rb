@@ -3,7 +3,7 @@
 module Landing
   class CtaComponent < ViewComponent::Base
     def initialize(title:, description:, button:)
-      super
+      super()
 
       @title = title
       @description = description
