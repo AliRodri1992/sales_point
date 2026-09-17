@@ -6,9 +6,9 @@ en:
         subtitle: "Enter your credentials to open terminal shift"
         operator: "Operator ID / Username"
         username_placeholder: "e.g., CASHIER-04"
-        password: "Security Password"
+        password: "Password"
         forgot: "Forgot key?"
-        submit: "SIGN IN & INITIALIZE SHIFT"
+        submit: "SIGN IN"
         error_banner:
           title: "Authentication Failed"
     registrations:

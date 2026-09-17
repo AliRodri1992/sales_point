@@ -122,14 +122,21 @@ export default class extends Controller {
 
 
 
-    togglePassword() {
+    togglePassword(event) {
+        event.preventDefault()
+        event.stopPropagation()
 
+        const passwordField =
+            event.currentTarget
+                .closest(".relative")
+                ?.querySelector('input[type="password"], input[type="text"]')
 
-        this.passwordTarget.type =
-            this.passwordTarget.type === "password"
+        if (!passwordField) return
+
+        passwordField.type =
+            passwordField.type === "password"
                 ? "text"
                 : "password"
-
     }
 
 

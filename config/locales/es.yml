@@ -8,7 +8,7 @@ es:
         username_placeholder: "Ej. CAJERO-04"
         password: "Contraseña"
         forgot: "¿Olvidaste tu clave?"
-        submit: "INICIAR SESIÓN Y ABRIR CAJA"
+        submit: "INICIAR SESIÓN"
         error_banner:
           title: "Error de Autenticación"
     registrations:

@@ -6,9 +6,9 @@ ko:
         subtitle: "근무를 시작하려면 정보를 입력하십시오"
         operator: "운영자 ID / 사용자 이름"
         username_placeholder: "예: CASHIER-04"
-        password: "보안 비밀번호"
+        password: "비밀번호"
         forgot: "비밀번호 찾기"
-        submit: "로그인 및 교대 초기화"
+        submit: "로그인"
         error_banner:
           title: "인증 실패"
     registrations:
