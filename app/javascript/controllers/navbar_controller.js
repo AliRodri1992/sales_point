@@ -16,6 +16,7 @@ export default class extends Controller {
         this.open = !this.open
 
         this.menuTarget.classList.toggle("hidden", !this.open)
+        this.buttonTarget.setAttribute("aria-expanded", this.open)
 
         this.iconOpenTarget.classList.toggle("hidden", this.open)
         this.iconCloseTarget.classList.toggle("hidden", !this.open)
@@ -25,6 +26,7 @@ export default class extends Controller {
         this.open = false
 
         this.menuTarget.classList.add("hidden")
+        this.buttonTarget.setAttribute("aria-expanded", "false")
 
         this.iconOpenTarget.classList.remove("hidden")
         this.iconCloseTarget.classList.add("hidden")

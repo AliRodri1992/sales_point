@@ -9,3 +9,6 @@ application.register("terminal", Terminal_controller)
 
 import LanguageSelectorController from "./language_selector_controller"
 application.register("language-selector", LanguageSelectorController)
+
+import NavbarController from "./navbar_controller"
+application.register("navbar", NavbarController)

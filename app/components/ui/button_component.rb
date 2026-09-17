@@ -83,12 +83,12 @@ module Ui
 
     def variant_classes
       {
-        primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-300',
-        secondary: 'bg-slate-900 hover:bg-slate-800 text-white focus:ring-slate-300',
-        success: 'bg-emerald-600 hover:bg-emerald-700 text-white focus:ring-emerald-300',
+        primary: 'bg-[#2563eb] hover:bg-[#1d4ed8] text-white focus:ring-blue-300',
+        secondary: 'bg-[#0f172a] hover:bg-[#1d4ed8] text-white focus:ring-blue-300',
+        success: 'bg-emerald-500 hover:bg-emerald-600 text-white focus:ring-emerald-300',
         danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-300',
-        outline: 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
-        ghost: 'text-slate-700 hover:bg-slate-100'
+        outline: 'border border-[#2563eb] bg-[#f1f5f9] text-[#0f172a] hover:bg-[#e2e8f0]',
+        ghost: 'text-[#0f172a] hover:bg-cyan-50 hover:text-[#2563eb]'
       }.fetch(variant)
     end
   end

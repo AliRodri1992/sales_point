@@ -2,11 +2,12 @@
 
 module Landing
   class FeatureCardComponent < ViewComponent::Base
-    def initialize(icon:, title:, description:)
+    def initialize(icon:, title:, description:, color: :primary)
       super()
       @icon = icon
       @title = title
       @description = description
+      @color = color
 
     end
 
@@ -15,7 +16,8 @@ module Landing
     attr_reader(
       :icon,
       :title,
-      :description
+      :description,
+      :color
     )
   end
 end

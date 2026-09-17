@@ -1,5 +1,5 @@
 module LandingPage
-  Feature = Data.define(:icon, :title, :description)
+  Feature = Data.define(:icon, :title, :description, :color)
   Testimonial = Data.define(:name, :company, :position, :quote, :avatar)
   Plan = Data.define(:name, :price, :description, :features, :featured)
   Question = Data.define(:question, :answer)

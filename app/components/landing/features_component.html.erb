@@ -3,7 +3,12 @@
     <%= render Ui::SectionTitleComponent.new(badge: "Características", title: title, subtitle: subtitle) %>
     <div class="mt-20 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
       <% features.each do |feature| %>
-        <%= render Landing::FeatureCardComponent.new(icon: feature.icon, title: feature.title, description: feature.description) %>
+        <%= render Landing::FeatureCardComponent.new(
+          icon: feature.icon,
+          title: feature.title,
+          description: feature.description,
+          color: feature.color
+        ) %>
       <% end %>
     </div>
   </div>

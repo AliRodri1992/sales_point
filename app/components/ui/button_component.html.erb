@@ -14,9 +14,7 @@
 
 <% else %>
 
-  <button
-    type="button"
-    class="<%= classes %>"
+  <button type="button" class="<%= classes %>"
     <%= "disabled" if disabled %>>
 
     <% if icon.present? && icon_position == :left %>
@@ -28,7 +26,5 @@
     <% if icon.present? && icon_position == :right %>
       <%= helpers.icon icon_name, class: "h-5 w-5" %>
     <% end %>
-
   </button>
-
 <% end %>

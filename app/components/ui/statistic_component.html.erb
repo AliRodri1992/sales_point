@@ -1,30 +1,15 @@
 <div class="text-center">
-
   <% if icon.present? %>
-
     <div class="mb-3 flex justify-center">
-
-      <%= render Ui::IconBoxComponent.new(
-        icon: icon,
-        size: :sm
-      ) %>
-
+      <%= render Ui::IconBoxComponent.new(icon: icon, size: :sm) %>
     </div>
-
   <% end %>
 
-  <div
-    class="text-4xl font-extrabold text-blue-600">
-
+  <div class="text-4xl font-extrabold text-blue-600">
     <%= number %>
-
   </div>
 
-  <div
-    class="mt-2 text-sm font-medium uppercase tracking-wide text-slate-500">
-
+  <div class="mt-2 text-sm font-medium uppercase tracking-wide text-slate-500">
     <%= label %>
-
   </div>
-
 </div>

@@ -15,6 +15,12 @@ module Ui
       warning
       danger
       dark
+      blue
+      emerald
+      purple
+      amber
+      red
+      cyan
     ].freeze
 
     def initialize(
@@ -79,6 +85,12 @@ module Ui
     def color_classes
       {
         primary: 'bg-blue-100 text-blue-600',
+        blue: 'bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white',
+        emerald: 'bg-emerald-100 text-emerald-600 transition group-hover:bg-emerald-600 group-hover:text-white',
+        purple: 'bg-purple-100 text-purple-600 transition group-hover:bg-purple-600 group-hover:text-white',
+        amber: 'bg-amber-100 text-amber-600 transition group-hover:bg-amber-500 group-hover:text-white',
+        red: 'bg-red-100 text-red-600 transition group-hover:bg-red-600 group-hover:text-white',
+        cyan: 'bg-cyan-100 text-cyan-600 transition group-hover:bg-cyan-600 group-hover:text-white',
         success: 'bg-emerald-100 text-emerald-600',
         warning: 'bg-amber-100 text-amber-600',
         danger: 'bg-red-100 text-red-600',

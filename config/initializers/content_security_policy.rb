@@ -6,7 +6,7 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.font_src(
     :self,
-    :https,
+    "https://fonts.gstatic.com",
     :data
   )
 
@@ -24,7 +24,7 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.style_src(
     :self,
-    :https,
+    "https://fonts.googleapis.com",
     :unsafe_inline
   )
 

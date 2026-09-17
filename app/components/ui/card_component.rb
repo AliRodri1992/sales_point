@@ -10,12 +10,14 @@ module Ui
       padding: true,
       border: true,
       shadow: true,
-      hover: false
+      hover: false,
+      full_height: false
     )
       @padding = padding
       @border = border
       @shadow = shadow
       @hover = hover
+      @full_height = full_height
     end
 
     private
@@ -23,7 +25,8 @@ module Ui
     attr_reader :padding,
                 :border,
                 :shadow,
-                :hover
+                :hover,
+                :full_height
 
     def classes
       class_names(
@@ -31,7 +34,8 @@ module Ui
         @padding ? 'p-8' : nil,
         @border ? 'border border-slate-200' : nil,
         @shadow ? 'shadow-sm' : nil,
-        @hover ? 'hover:-translate-y-1 hover:shadow-xl' : nil
+        @hover ? 'hover:-translate-y-1 hover:shadow-xl' : nil,
+        @full_height ? 'h-full' : nil
       )
     end
   end

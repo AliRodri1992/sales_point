@@ -1,37 +1,15 @@
 <div class="<%= classes %>">
-
   <% if header? %>
-
-    <div class="mb-6">
-
-      <%= header %>
-
-    </div>
-
+    <div class="mb-6"><%= header %></div>
   <% end %>
 
   <% if body? %>
-
-    <div>
-
-      <%= body %>
-
-    </div>
-
+    <div><%= body %></div>
   <% else %>
-
     <%= content %>
-
   <% end %>
 
   <% if footer? %>
-
-    <div class="mt-8">
-
-      <%= footer %>
-
-    </div>
-
+    <div class="mt-8"><%= footer %></div>
   <% end %>
-
 </div>

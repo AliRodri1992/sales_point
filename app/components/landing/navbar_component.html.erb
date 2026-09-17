@@ -1,28 +1,49 @@
-<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+<header class="sticky top-0 z-50 border-b border-[#1d4ed8] bg-[#0f172a] backdrop-blur" data-controller="navbar">
   <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
     <%= link_to root_path, class: "flex items-center gap-3" do %>
-      <%= image_tag "logo.png", class: "h-10 w-auto", alt: "PuntoVeloz" %>
-      <div>
-        <h1 class="text-xl font-black text-slate-900">PuntoVeloz</h1>
-        <p class="text-xs text-slate-500">Punto de Venta Inteligente</p>
-      </div>
+      <%= image_tag "logo.png", class: "h-32 w-64 object-contain", alt: "PuntoVeloz" %>
     <% end %>
 
     <nav class="hidden items-center gap-10 lg:flex">
       <% menu_items.each do |item| %>
-        <%= link_to item.href, class: "font-medium text-slate-600 transition hover:text-blue-600" do %>
+        <%= link_to item.href, class: "font-medium text-white transition hover:text-[#06b6d4]" do %>
           <%= item.title %>
         <% end %>
       <% end %>
     </nav>
 
     <div class="hidden items-center gap-3 lg:flex">
-      <%= render Ui::ButtonComponent.new(text: "Iniciar sesión", href: new_user_session_path, variant: :ghost) %>
-      <%= render Ui::ButtonComponent.new(text: "Comenzar", href: new_user_registration_path) %>
+      <%= render Ui::ButtonComponent.new(text: "Iniciar sesión", href: new_user_session_path, variant: :outline) %>
+      <%= render Ui::ButtonComponent.new(text: "Comenzar", href: new_user_registration_path, variant: :success) %>
     </div>
 
-    <button class="lg:hidden">
-      <%= render Ui::IconComponent.new(name: 'bars-3', size: :xl) %>
+    <button
+      type="button"
+      class="rounded-lg p-2 text-white transition hover:bg-slate-800 lg:hidden"
+      data-navbar-target="button"
+      data-action="click->navbar#toggle"
+      aria-label="Abrir menú"
+      aria-expanded="false">
+      <span data-navbar-target="iconOpen">
+        <%= render Ui::IconComponent.new(name: 'bars-3', size: :xl, color: :white) %>
+      </span>
+      <span class="hidden" data-navbar-target="iconClose">
+        <%= render Ui::IconComponent.new(name: 'x-mark', size: :xl, color: :white) %>
+      </span>
     </button>
+  </div>
+
+  <div class="hidden border-t border-slate-700 px-6 pb-6 lg:hidden" data-navbar-target="menu">
+    <nav class="flex flex-col gap-2 pt-4">
+      <% menu_items.each do |item| %>
+        <%= link_to item.title, item.href,
+                    class: "rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]",
+                    data: { action: "click->navbar#close" } %>
+      <% end %>
+      <%= link_to "Iniciar sesión", new_user_session_path,
+                  class: "mt-2 rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]" %>
+      <%= link_to "Comenzar", new_user_registration_path,
+                  class: "mt-1 rounded-lg bg-emerald-500 px-3 py-2 text-center font-semibold text-white transition hover:bg-emerald-600" %>
+    </nav>
   </div>
 </header>
