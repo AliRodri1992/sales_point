@@ -4,7 +4,7 @@ module LandingPage
       [
         Question.new(
           question: '¿Necesito instalar algo en mi computadora?',
-          answer: 'No. PuntoVeloz funciona desde el navegador, así que puedes usarlo en cualquier equipo con internet.'
+          answer: 'No. Nexo POS funciona desde el navegador, así que puedes usarlo en cualquier equipo con internet.'
         ),
         Question.new(
           question: '¿Puedo seguir vendiendo si se cae el internet?',

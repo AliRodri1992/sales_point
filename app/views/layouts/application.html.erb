@@ -2,7 +2,7 @@
 <html lang="es" class="h-full scroll-smooth">
   <head>
     <title>
-      <%= content_for?(:title) ? yield(:title) : "PuntoVeloz | Sistema de Punto de Venta" %>
+      <%= content_for?(:title) ? yield(:title) : "Nexo POS | Sistema de Punto de Venta" %>
     </title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,9 +18,8 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <%= favicon_link_tag 'favicon.ico', rel: 'icon', sizes: 'any' %>
+    <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>

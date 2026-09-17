@@ -6,8 +6,6 @@
         <%= render Ui::ButtonComponent.new(text: "Solicitar demostración", href: "#pricing", size: :lg, icon: :arrow_right) %>
       </div>
     </div>
-    <div>
-      <%= image_tag image, class: "rounded-3xl border border-slate-200 shadow-2xl", alt: title %>
-    </div>
+    <%= render "shared/screenshot_dashboard" %>
   </div>
 </section>

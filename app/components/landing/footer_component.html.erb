@@ -1,84 +1,38 @@
-<footer
-  class="border-t border-slate-200 bg-white">
-
-  <div
-    class="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-3">
-
+<footer class="border-t border-slate-200 bg-white">
+  <div class="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-3">
     <div>
-
-      <%= image_tag "logo.png",
-                    class: "h-12 w-auto",
-                    alt: "PuntoVeloz" %>
-
-      <p
-        class="mt-4 leading-7 text-slate-600">
-
+      <%= image_tag "logo4.png", class: "h-auto w-full object-contain object-left", alt: "Nexo POS" %>
+      <p class="mt-4 leading-7 text-slate-600">
         Punto de venta moderno para negocios que desean vender más,
         administrar mejor su inventario y crecer sin complicaciones.
-
       </p>
-
     </div>
 
     <div>
-
-      <h3 class="font-bold text-slate-900">
-
-        Producto
-
-      </h3>
+      <h3 class="font-bold text-slate-900">Producto</h3>
 
       <ul class="mt-6 space-y-3">
-
         <% product_links.each do |link| %>
-
           <li>
-
-            <%= link_to link.title,
-                        link.href,
-                        class: "text-slate-600 transition hover:text-cyan-500" %>
-
+            <%= link_to link.title, link.href, class: "text-slate-600 transition hover:text-cyan-500" %>
           </li>
-
         <% end %>
-
       </ul>
-
     </div>
 
     <div>
-
-      <h3 class="font-bold text-slate-900">
-
-        Empresa
-
-      </h3>
-
+      <h3 class="font-bold text-slate-900">Empresa</h3>
       <ul class="mt-6 space-y-3">
-
         <% company_links.each do |link| %>
-
           <li>
-
-            <%= link_to link.title,
-                        link.href,
-                        class: "text-slate-600 transition hover:text-cyan-500" %>
-
+            <%= link_to link.title, link.href, class: "text-slate-600 transition hover:text-cyan-500" %>
           </li>
-
         <% end %>
-
       </ul>
-
     </div>
-
   </div>
 
-  <div
-    class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-
-    © <%= Date.current.year %> PuntoVeloz. Todos los derechos reservados.
-
+  <div class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
+    © <%= Date.current.year %> Nexo POS. Todos los derechos reservados.
   </div>
-
 </footer>

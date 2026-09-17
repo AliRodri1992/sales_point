@@ -11,18 +11,7 @@
 
       <%= yield :head %>
 
-      <link rel="icon" href="/icon.png" type="image/png">
-      <link rel="icon" href="/icon.svg" type="image/svg+xml">
-      <link rel="apple-touch-icon" href="/icon.png">
-
-      <%# 1. Favicon multi-resolución para navegadores clásicos y modernos %>
       <%= favicon_link_tag 'favicon.ico', rel: 'icon', sizes: 'any' %>
-
-      <%# 2. Favicons específicos en formato PNG (32x32 se prioriza en pantallas retina) %>
-      <%= favicon_link_tag 'favicon-32x32.png', rel: 'icon', type: 'image/png', sizes: '32x32' %>
-      <%= favicon_link_tag 'favicon-16x16.png', rel: 'icon', type: 'image/png', sizes: '16x16' %>
-
-      <%# 3. Icono de acceso directo exclusivo para Apple (iOS/Safari) %>
       <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
 
       <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
