@@ -11,3 +11,26 @@ ko:
         submit: "로그인 및 교대 초기화"
         error_banner:
           title: "인증 실패"
+    registrations:
+      new:
+        brand_alt: "Nexo POS 로고 심볼"
+        title: "계정 만들기"
+        subtitle: "Nexo POS 사용을 시작하려면 가입하십시오"
+        email: "이메일"
+        email_placeholder: "email@example.com"
+        password: "비밀번호"
+        password_minimum: "최소 %{count}자"
+        password_confirmation: "비밀번호 확인"
+        submit: "계정 만들기"
+        already_have_account: "이미 계정이 있으십니까?"
+        sign_in: "로그인"
+        user_type: "사용자 유형"
+        user_type_prompt: "사용자 유형을 선택하십시오"
+        user_type_options:
+          customer: "고객"
+          employee: "직원"
+          supplier: "공급업체"
+  activerecord:
+    attributes:
+      user:
+        user_type: "사용자 유형"

@@ -2,8 +2,13 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   before_action :set_locale
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   private
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:user_type])
+  end
 
   def set_locale
     if user_signed_in? && current_user.language

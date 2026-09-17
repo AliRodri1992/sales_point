@@ -11,3 +11,26 @@ en:
         submit: "SIGN IN & INITIALIZE SHIFT"
         error_banner:
           title: "Authentication Failed"
+    registrations:
+      new:
+        brand_alt: "Nexo POS logo mark"
+        title: "Create account"
+        subtitle: "Sign up to start using Nexo POS"
+        email: "Email address"
+        email_placeholder: "email@example.com"
+        password: "Password"
+        password_minimum: "%{count} characters minimum"
+        password_confirmation: "Confirm password"
+        submit: "Create account"
+        already_have_account: "Already have an account?"
+        sign_in: "Sign in"
+        user_type: "User Type"
+        user_type_prompt: "Select a user type"
+        user_type_options:
+          customer: "Customer"
+          employee: "Employee"
+          supplier: "Supplier"
+  activerecord:
+    attributes:
+      user:
+        user_type: "User Type"

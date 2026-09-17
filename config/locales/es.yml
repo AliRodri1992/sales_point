@@ -11,3 +11,26 @@ es:
         submit: "INICIAR SESIÓN Y ABRIR CAJA"
         error_banner:
           title: "Error de Autenticación"
+    registrations:
+      new:
+        brand_alt: "Isotipo de Nexo POS"
+        title: "Crear cuenta"
+        subtitle: "Regístrate para comenzar a usar Nexo POS"
+        email: "Correo electrónico"
+        email_placeholder: "correo@ejemplo.com"
+        password: "Contraseña"
+        password_minimum: "Mínimo %{count} caracteres"
+        password_confirmation: "Confirmar contraseña"
+        submit: "Crear cuenta"
+        already_have_account: "¿Ya tienes una cuenta?"
+        sign_in: "Iniciar sesión"
+        user_type: "Tipo de usuario"
+        user_type_prompt: "Selecciona un tipo de usuario"
+        user_type_options:
+          customer: "Cliente"
+          employee: "Empleado"
+          supplier: "Proveedor"
+  activerecord:
+    attributes:
+      user:
+        user_type: "Tipo de usuario"
