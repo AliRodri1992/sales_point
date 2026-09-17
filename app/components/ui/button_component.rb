@@ -57,6 +57,10 @@ module Ui
       raise ArgumentError, 'Size inválido' unless SIZES.include?(size)
     end
 
+    def icon_name
+      icon.to_s.tr('_', '-')
+    end
+
     def classes
       class_names(
         'inline-flex items-center justify-center gap-2 font-semibold transition duration-300 focus:outline-none focus:ring-4',

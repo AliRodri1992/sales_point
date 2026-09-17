@@ -36,6 +36,10 @@ module Ui
                 :color,
                 :rounded
 
+    def icon_name
+      icon.to_s.tr('_', '-')
+    end
+
     def wrapper_classes
       class_names(
         'inline-flex items-center justify-center shadow-lg',

@@ -1,13 +1,13 @@
 <% if href.present? %>
   <%= link_to href, class: classes do %>
     <% if icon.present? && icon_position == :left %>
-      <%= heroicon icon, options: { class: "h-5 w-5" } %>
+      <%= helpers.icon icon_name, class: "h-5 w-5" %>
     <% end %>
 
     <%= text %>
 
     <% if icon.present? && icon_position == :right %>
-      <%= heroicon icon, options: { class: "h-5 w-5" } %>
+      <%= helpers.icon icon_name, class: "h-5 w-5" %>
     <% end %>
 
   <% end %>
@@ -20,13 +20,13 @@
     <%= "disabled" if disabled %>>
 
     <% if icon.present? && icon_position == :left %>
-      <%= heroicon icon, options: { class: "h-5 w-5" } %>
+      <%= helpers.icon icon_name, class: "h-5 w-5" %>
     <% end %>
 
     <%= text %>
 
     <% if icon.present? && icon_position == :right %>
-      <%= heroicon icon, options: { class: "h-5 w-5" } %>
+      <%= helpers.icon icon_name, class: "h-5 w-5" %>
     <% end %>
 
   </button>

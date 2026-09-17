@@ -59,6 +59,10 @@ module Ui
       raise ArgumentError, 'Color inválido' unless COLORS.include?(color)
     end
 
+    def icon_name
+      name.to_s.tr('_', '-')
+    end
+
     def classes
       class_names(
         size_classes,
