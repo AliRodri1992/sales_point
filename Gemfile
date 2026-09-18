@@ -3,7 +3,6 @@
 source 'https://rubygems.org'
 
 gem 'apexcharts'
-gem 'audited'
 gem 'aws-sdk-s3'
 gem 'bootsnap', require: false
 gem 'chartkick'
@@ -12,6 +11,7 @@ gem 'cssbundling-rails'
 gem 'devise'
 gem 'devise-security'
 gem 'enum_help'
+gem 'erb', '~> 4.0'
 gem 'faraday'
 gem 'friendly_id'
 gem 'geocoder'

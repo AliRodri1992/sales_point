@@ -79,9 +79,6 @@ GEM
       public_suffix (>= 2.0.2, < 8.0)
     apexcharts (0.2.0)
     ast (2.4.3)
-    audited (5.8.0)
-      activerecord (>= 5.2, < 8.2)
-      activesupport (>= 5.2, < 8.2)
     awesome_print (1.9.2)
     aws-eventstream (1.4.0)
     aws-partitions (1.1240.0)
@@ -171,7 +168,8 @@ GEM
     ed25519 (1.4.0)
     enum_help (0.0.20)
       activesupport (>= 3.0.0)
-    erb (6.0.3)
+    erb (4.0.4.1)
+      cgi (>= 0.3.3)
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
@@ -638,7 +636,6 @@ PLATFORMS
 
 DEPENDENCIES
   apexcharts
-  audited
   awesome_print
   aws-sdk-s3
   better_errors
@@ -656,6 +653,7 @@ DEPENDENCIES
   devise-security
   dotenv-rails
   enum_help
+  erb (~> 4.0)
   factory_bot_rails
   faker
   faraday
@@ -729,7 +727,6 @@ CHECKSUMS
   addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
   apexcharts (0.2.0) sha256=7bda90d6389c5b6fd339f8f904ad26dbb07f4172a6ecc22839fa784f29d46a54
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
-  audited (5.8.0) sha256=35cd63f9ee1eb2a1f773e7abf5915bb4e870b6338173e27c31e0e604e353f371
   awesome_print (1.9.2) sha256=e99b32b704acff16d768b3468680793ced40bfdc4537eb07e06a4be11133786e
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1240.0) sha256=b885b21712fdad699c56a28434756ed27f1389b07231320796dda9e7551de4a7
@@ -775,7 +772,7 @@ CHECKSUMS
   drb (2.2.3) sha256=0b00d6fdb50995fe4a45dea13663493c841112e4068656854646f418fda13373
   ed25519 (1.4.0) sha256=16e97f5198689a154247169f3453ef4cfd3f7a47481fde0ae33206cdfdcac506
   enum_help (0.0.20) sha256=c3cdac74971b84af5ecfc2de72d3a5f0ab08216156dae0d6976b9885d706b98a
-  erb (6.0.3) sha256=e43685a8a0a0ea6a924871b2162e8953ef73147ce46b75b36d1f6774fd286e91
+  erb (4.0.4.1) sha256=47e2a70922ba4cec8c23c2304ad7e581665c37a297cb9a22a860162c7727ee24
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   et-orbi (1.4.0) sha256=6c7e3c90779821f9e3b324c5e96fda9767f72995d6ae435b96678a4f3e2de8bc
   factory_bot (6.5.6) sha256=12beb373214dccc086a7a63763d6718c49769d5606f0501e0a4442676917e077

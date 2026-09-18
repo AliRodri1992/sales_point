@@ -2,6 +2,8 @@
 
 require 'spec_helper'
 
+ENCODING_FLAG = '#' unless defined?(ENCODING_FLAG)
+
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
 
