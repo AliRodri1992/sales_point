@@ -12,6 +12,7 @@ gem 'cssbundling-rails'
 gem 'devise'
 gem 'devise-security'
 gem 'enum_help'
+gem 'faraday'
 gem 'friendly_id'
 gem 'geocoder'
 gem 'groupdate'
@@ -67,7 +68,6 @@ group :development, :test do
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'faraday'
   gem 'rspec-rails'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
@@ -84,10 +84,10 @@ group :test do
   gem 'webdrivers'
 end
 
-group :production do
+group :production, :staging do
   gem 'lograge'
 end
 
-group :development, :production do
+group :development, :production, :staging do
   gem 'mission_control-jobs'
 end

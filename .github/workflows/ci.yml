@@ -3,135 +3,140 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches:
+      - development
+      - master
+      - staging
+      - test
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
 
 jobs:
-  scan_ruby:
+  security:
+    name: Security scans
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version-file: .ruby-version
           bundler-cache: true
 
-      - name: Scan for common Rails security vulnerabilities using static analysis
+      - name: Scan Rails code
         run: bin/brakeman --no-pager
-      
-      - name: Scan for known security vulnerabilities in gems used
-        run: bin/bundler-audit
-      
+
+      - name: Scan gem dependencies
+        run: bin/bundler-audit check --update
+
   lint:
+    name: RuboCop
     runs-on: ubuntu-latest
     env:
       RUBOCOP_CACHE_ROOT: tmp/rubocop
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version-file: .ruby-version
           bundler-cache: true
 
-      - name: Prepare RuboCop cache
+      - name: Cache RuboCop
         uses: actions/cache@v4
-        env:
-          DEPENDENCIES_HASH: ${{ hashFiles('.ruby-version', '**/.rubocop.yml', '**/.rubocop_todo.yml', 'Gemfile.lock') }}
         with:
-          path: ${{ env.RUBOCOP_CACHE_ROOT }}
-          key: rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-${{ github.ref_name == github.event.repository.default_branch && github.run_id || 'default' }}
+          path: tmp/rubocop
+          key: rubocop-${{ runner.os }}-${{ hashFiles('.ruby-version', '.rubocop.yml', 'Gemfile.lock') }}
           restore-keys: |
-            rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
+            rubocop-${{ runner.os }}-
 
-      - name: Lint code for consistent style
+      - name: Lint Ruby code
         run: bin/rubocop -f github
 
   test:
+    name: RSpec
     runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres
+        image: postgres:16
         env:
+          POSTGRES_DB: sale_point_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
-      # redis:
-      #   image: valkey/valkey:8
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
-    steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips node-gyp
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test
-
-  system-test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+      redis:
+        image: redis:7.2-alpine
         ports:
-          - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      # redis:
-      #   image: valkey/valkey:8
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips node-gyp
-
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libpq-dev libvips
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version-file: .ruby-version
           bundler-cache: true
 
-      - name: Run System Tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test:system
-
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
-        if: failure()
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
-          if-no-files-found: ignore
+          node-version: 20
+          cache: yarn
+
+      - name: Install JavaScript dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+
+      - name: Prepare test database
+        run: bin/rails db:prepare
+
+      - name: Run RSpec
+        env:
+          COVERAGE: false
+        run: bundle exec rspec
