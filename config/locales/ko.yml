@@ -1,7 +1,16 @@
 ko:
+  authentication:
+    error_banner:
+      title: "인증 실패"
+  admin:
+    dashboard:
+      index:
+        title: "관리자 대시보드 | Nexo POS"
+        greeting: "안녕하세요"
   devise:
     sessions:
       new:
+        brand_alt: "Nexo POS 로고 심볼"
         title: "접속 터미널"
         subtitle: "근무를 시작하려면 정보를 입력하십시오"
         email: "이메일"
@@ -48,6 +57,11 @@ ko:
       too_long: "이(가) 너무 깁니다 (최대 %{count}자)"
       too_short: "이(가) 너무 짧습니다 (최소 %{count}자)"
       wrong_length: "길이가 올바르지 않습니다"
+  system_roles:
+    create:
+      success: "시스템 역할이 성공적으로 생성되었습니다"
+    destroy:
+      success: "시스템 역할이 성공적으로 삭제되었습니다"
   demo_requests:
     new:
       page_title: "데모 신청 | Nexo POS"

@@ -1,7 +1,16 @@
 en:
+  authentication:
+    error_banner:
+      title: "Authentication Failed"
+  admin:
+    dashboard:
+      index:
+        title: "Admin Dashboard | Nexo POS"
+        greeting: "Hello"
   devise:
     sessions:
       new:
+        brand_alt: "Nexo POS logo mark"
         title: "Access Terminal"
         subtitle: "Enter your credentials to open terminal shift"
         email: "Email address"
@@ -48,6 +57,11 @@ en:
       too_long: "is too long (maximum %{count} characters)"
       too_short: "is too short (minimum %{count} characters)"
       wrong_length: "has an incorrect length"
+  system_roles:
+    create:
+      success: "System role was successfully created"
+    destroy:
+      success: "System role was successfully deleted"
   demo_requests:
     new:
       page_title: "Request a demo | Nexo POS"

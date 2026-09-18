@@ -1,7 +1,16 @@
 es:
+  authentication:
+    error_banner:
+      title: "Error de Autenticación"
+  admin:
+    dashboard:
+      index:
+        title: "Panel de administración | Nexo POS"
+        greeting: "Hola"
   devise:
     sessions:
       new:
+        brand_alt: "Isotipo de Nexo POS"
         title: "Punto de Venta"
         subtitle: "Ingresa tus credenciales para iniciar turno"
         email: "Correo electrónico"
@@ -48,6 +57,11 @@ es:
       too_long: "es demasiado largo (máximo %{count} caracteres)"
       too_short: "es demasiado corto (mínimo %{count} caracteres)"
       wrong_length: "tiene una longitud incorrecta"
+  system_roles:
+    create:
+      success: "El rol del sistema fue creado exitosamente"
+    destroy:
+      success: "El rol del sistema fue eliminado exitosamente"
   demo_requests:
     new:
       page_title: "Solicitar demostración | Nexo POS"

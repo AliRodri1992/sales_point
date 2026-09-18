@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :sat_payment_method_type do
-    code { %w[PUE PPD].sample }
+    sequence(:code) { |n| n.odd? ? 'PUE' : 'PPD' }
     description { Faker::Commerce.product_name }
 
     status { true }

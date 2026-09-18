@@ -11,7 +11,7 @@
       </div>
       <div>
         <h3 class="text-xs font-bold uppercase tracking-wider text-[#b71c1c]">
-          <%= t("devise.sessions.new.error_banner.title") %>
+          <%= t("authentication.error_banner.title", default: t("devise.sessions.new.error_banner.title")) %>
         </h3>
         <p class="mt-1 text-xs font-medium leading-relaxed text-[#c62828]">
           <%= message %>

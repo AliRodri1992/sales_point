@@ -10,12 +10,13 @@ Rails.application.routes.draw do
              }
 
   root 'home#index'
+  get '/home/index', to: 'home#index'
+  get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
     get '/dashboard', to: 'dashboard#index', as: :dashboard
   end
+  resources :system_roles
   resources :demo_requests, only: %i[new create]
-
-
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
@@ -23,6 +24,6 @@ Rails.application.routes.draw do
 
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
-    mount MissionControl::Jobs::Engine, at: '/jobs'
+    mount MissionControl::Jobs::Engine, at: '/jobs' if defined?(MissionControl::Jobs)
   end
 end

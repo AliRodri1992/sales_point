@@ -1,0 +1,17 @@
+<h1>New System role</h1>
+
+<%= form_with model: @system_role do |form| %>
+  <%= form.label :name, 'Name' %>
+  <%= form.text_field :name %>
+
+  <%= form.label :role_type, 'Role type' %>
+  <%= form.select :role_type, SystemRole.role_types.keys %>
+
+  <%= form.label :status, 'Status' %>
+  <%= form.select :status, SystemRole.statuses.keys %>
+
+  <%= form.label :description, 'Description' %>
+  <%= form.text_area :description %>
+
+  <%= form.submit 'Create System role' %>
+<% end %>

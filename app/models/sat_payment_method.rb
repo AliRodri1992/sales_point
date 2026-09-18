@@ -57,7 +57,12 @@ class SatPaymentMethod < ApplicationRecord
   private
 
   def normalize_fields
-    self.code = self.class.normalize_code(code)
+    self.code =
+      if code.present? && code.to_s.match?(/\A\d+\z/)
+        self.class.normalize_code(code)
+      else
+        code.to_s.strip.presence
+      end
     self.description = description.to_s.strip.presence
   end
 

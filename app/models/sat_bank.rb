@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 class SatBank < ApplicationRecord
   CODE_FORMAT = /\A\d{3}\z/
 
   scope :active, -> { where(status: true) }
 
-  scope :valid_on, ->(date = Date.current) {
+  scope :valid_on, lambda { |date = Date.current|
     where(
-      "(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)",
+      '(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)',
       date, date
     )
   }
 
   scope :current, -> { active.valid_on(Date.current) }
 
-  scope :search, ->(term) {
-    term.present? ? where("name ILIKE ?", "%#{term}%") : all
+  scope :search, lambda { |term|
+    term.present? ? where('name ILIKE ?', "%#{term}%") : all
   }
 
   validates :code,
@@ -57,15 +59,18 @@ class SatBank < ApplicationRecord
   private
 
   def normalize_fields
-    self.code = self.class.normalize_code(code)
+    normalized_code = code.to_s.strip
+    self.code = if normalized_code.length == 1 && normalized_code.match?(/\A\d\z/)
+                  normalized_code.rjust(3, '0')
+                else
+                  normalized_code.presence
+                end
     self.name = name.to_s.strip.presence
   end
 
   def valid_date_range
     return if valid_from.blank? || valid_to.blank?
 
-    if valid_to < valid_from
-      errors.add(:valid_to, 'must be greater than or equal to valid_from')
-    end
+    errors.add(:valid_to, 'must be greater than or equal to valid_from') if valid_to < valid_from
   end
 end

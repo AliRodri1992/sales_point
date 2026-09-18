@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :sat_currency do
-    code { Faker::Currency.code.upcase }
+    sequence(:code) { |n| %w[EUR GBP JPY CAD AUD].fetch((n - 1) % 5) }
     description { Faker::Currency.name }
-    decimals { [0, 2, 3, 4, 5, 6, 8].sample }
+    decimals { 2 }
     variation_percentage { Faker::Number.decimal(l_digits: 1, r_digits: 2) }
     symbol { Faker::Currency.symbol }
 

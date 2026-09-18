@@ -1,4 +1,5 @@
-<div class="relative" data-controller="language-selector">
+<% if current_language %>
+  <div class="relative" data-controller="language-selector">
   <button
     type="button"
     data-action="click->language-selector#toggle"
@@ -30,5 +31,6 @@
         </span>
       </button>
     <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>

@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :system_role do
-    name { Faker::Job.unique.position }
+    sequence(:name) { |n| "#{Faker::Job.position} #{n}" }
     code { name.parameterize(separator: '_') }
     role_type { SystemRole.role_types.keys.sample }
-    status { SystemRole.statuses.keys.sample }
+    status { :active }
     description { Faker::Lorem.sentence(word_count: 8) }
 
     trait :system do
@@ -24,6 +24,7 @@ FactoryBot.define do
 
     trait :deprecated do
       status { :deprecated }
+      deleted_at { Time.current }
     end
 
     trait :deleted do

@@ -1,0 +1,11 @@
+<h1>System roles</h1>
+
+<% if notice %>
+  <p><%= notice %></p>
+<% end %>
+
+<%= link_to 'New System role', new_system_role_path %>
+
+<% @system_roles.each do |system_role| %>
+  <div><%= link_to system_role.name, system_role_path(system_role) %></div>
+<% end %>

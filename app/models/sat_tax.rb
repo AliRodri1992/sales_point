@@ -3,7 +3,9 @@ class SatTax < ApplicationRecord
   FACTOR_TYPES = %w[rate quota exempt].freeze
   APPLIES_TO = %w[product service both].freeze
 
-  validates :code, uniqueness: { case_sensitive: false, conditions: -> { where(deleted_at: nil) } }
+  validates :code,
+            presence: true,
+            uniqueness: { case_sensitive: false, conditions: -> { where(deleted_at: nil) } }
   validates :name, presence: true
 
   validates :tax_type, inclusion: { in: TAX_TYPES }
@@ -78,11 +80,11 @@ class SatTax < ApplicationRecord
   def valid_date_range
     return if valid_from.blank? || valid_to.blank?
 
-    errors.add(:valid_to, 'cannot be earlier than valid_from') if valid_to < valid_from
+    errors.add(:valid_to, 'must be greater than or equal to valid_from') if valid_to < valid_from
   end
 
   def tax_logic_consistency
-    errors.add(:valid_to, 'cannot be earlier than valid_from') if transfer? && !is_transferrable
+    errors.add(:is_transferrable, 'must be TRUE for transfer taxes') if transfer? && !is_transferrable
 
     errors.add(:is_retainable, 'must be TRUE for withheld taxes') if withheld? && !is_retainable
   end

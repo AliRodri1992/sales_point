@@ -27,9 +27,18 @@ class SystemRole < ApplicationRecord
 
   validates :name, uniqueness: { scope: :role_type }
 
+  before_validation :generate_code
+
   scope :system_roles, -> { where(role_type: 'system') }
   scope :branch_roles, -> { where(role_type: 'branch') }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :deprecated, -> { with_deleted.where(status: 'deprecated') }
   scope :available, -> { where(deleted_at: nil).where.not(status: 'deprecated') }
+
+  private
+
+  def generate_code
+    self.code = name.to_s.parameterize(separator: '_') if code.blank? && name.present?
+  end
 end

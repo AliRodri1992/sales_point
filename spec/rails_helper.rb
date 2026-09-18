@@ -11,6 +11,7 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 
 require 'rspec/rails'
 require 'capybara/rspec'
+require 'shoulda/matchers'
 # ─────────────────────────────
 # AUTOLOAD SUPPORT FILES
 # ─────────────────────────────
@@ -34,6 +35,13 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  Shoulda::Matchers.configure do |config|
+    config.integrate do |with|
+      with.test_framework :rspec
+      with.library :rails
+    end
   end
 
   config.mock_with :rspec do |mocks|

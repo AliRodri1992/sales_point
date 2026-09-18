@@ -16,7 +16,10 @@ class SatFiscalRegime < ApplicationRecord
 
   scope :current, ->(date = Date.current) { active.valid_on(date) }
 
-  validates :code, uniqueness: { conditions: -> { where(deleted_at: nil) } }
+  validates :code,
+            presence: true,
+            length: { is: 3 },
+            uniqueness: { conditions: -> { where(deleted_at: nil) } }
   validates :description, presence: true
   validates :person_type, inclusion: { in: PERSON_TYPES }
 
@@ -30,6 +33,10 @@ class SatFiscalRegime < ApplicationRecord
 
   def self.exists_for_cfdi?(code, date = Date.current)
     active.valid_on(date).exists?(code: code)
+  end
+
+  def active?
+    deleted_at.nil?
   end
 
   def physical_person?
