@@ -2,9 +2,9 @@
 
 <%= render Landing::NavbarComponent.new %>
 
-<main class="bg-white text-slate-900">
+<main class="overflow-x-hidden bg-white text-slate-900">
   <section class="bg-slate-50 py-12">
-    <div class="mx-auto max-w-4xl px-6">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
       <%= link_to root_path, class: "mb-5 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800" do %>
         <%= icon "arrow-left", class: "h-5 w-5" %>
         <%= t('.back') %>

@@ -31,7 +31,7 @@ module Ui
     def classes
       class_names(
         'rounded-3xl bg-white transition duration-300',
-        @padding ? 'p-8' : nil,
+        @padding ? 'p-6 sm:p-8' : nil,
         @border ? 'border border-slate-200' : nil,
         @shadow ? 'shadow-sm' : nil,
         @hover ? 'hover:-translate-y-1 hover:shadow-xl' : nil,
