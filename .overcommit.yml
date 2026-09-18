@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+gemfile: Gemfile
+
+PreCommit:
+  TrailingWhitespace:
+    enabled: true
+
+  RuboCop:
+    enabled: true
+    command: ['bundle', 'exec', 'rubocop', '--force-exclusion']
+    on_warn: fail
+
+PrePush:
+  BundleCheck:
+    enabled: true
+
+  Brakeman:
+    enabled: true
+    command: ['bundle', 'exec', 'brakeman', '--no-pager']
+
+  BundlerAudit:
+    enabled: true
+    command: ['bundle', 'exec', 'bundler-audit', 'check']
+
+  RSpec:
+    enabled: true
+    command: ['bundle', 'exec', 'rspec']
