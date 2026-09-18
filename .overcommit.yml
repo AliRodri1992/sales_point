@@ -21,7 +21,7 @@ PrePush:
 
   BundlerAudit:
     enabled: true
-    command: ['bundle', 'exec', 'bundler-audit', 'check']
+    command: ['bin/overcommit-bundler-audit']
 
   RSpec:
     enabled: true
