@@ -12,7 +12,10 @@ class SatPaymentMethodType < ApplicationRecord
 
   scope :current, -> { valid_on(Date.current).active }
 
-  validates :code, presence: true, inclusion: { in: CODES }
+  validates :code,
+            presence: true,
+            inclusion: { in: CODES },
+            uniqueness: { conditions: -> { where(deleted_at: nil) } }
 
   validates :description, presence: true
 

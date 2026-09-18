@@ -47,10 +47,10 @@ RSpec.describe SatPaymentMethodType, type: :model do
   end
 
   describe 'scopes' do
-    let!(:active_record) { create(:sat_payment_method_type, status: true) }
-    let!(:inactive_record) { create(:sat_payment_method_type, status: false) }
-
     describe '.active' do
+      let!(:active_record) { create(:sat_payment_method_type, code: 'PUE', status: true) }
+      let!(:inactive_record) { create(:sat_payment_method_type, code: 'PPD', status: false) }
+
       it 'returns only active records' do
         expect(described_class.active).to include(active_record)
         expect(described_class.active).not_to include(inactive_record)
@@ -61,6 +61,7 @@ RSpec.describe SatPaymentMethodType, type: :model do
       let!(:valid_record) do
         create(
           :sat_payment_method_type,
+          code: 'PUE',
           valid_from: Date.yesterday,
           valid_to: Date.tomorrow
         )
@@ -69,6 +70,7 @@ RSpec.describe SatPaymentMethodType, type: :model do
       let!(:invalid_record) do
         create(
           :sat_payment_method_type,
+          code: 'PPD',
           valid_from: Date.tomorrow,
           valid_to: Date.tomorrow + 5.days
         )
@@ -81,15 +83,28 @@ RSpec.describe SatPaymentMethodType, type: :model do
     end
 
     describe '.current' do
-      it 'returns active and valid records' do
-        record = create(
+      let!(:current_record) do
+        create(
           :sat_payment_method_type,
+          code: 'PUE',
           status: true,
           valid_from: Date.yesterday,
           valid_to: Date.tomorrow
         )
+      end
+      let!(:inactive_record) do
+        create(
+          :sat_payment_method_type,
+          code: 'PPD',
+          status: false,
+          valid_from: Date.yesterday,
+          valid_to: Date.tomorrow
+        )
+      end
 
-        expect(described_class.current).to include(record)
+      it 'returns active and valid records' do
+        expect(described_class.current).to include(current_record)
+        expect(described_class.current).not_to include(inactive_record)
       end
     end
   end

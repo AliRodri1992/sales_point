@@ -64,7 +64,7 @@ RSpec.describe SatMonth, type: :model do
 
     it 'orders by month_number' do
       create(:sat_month, month_number: 12, code: '12')
-      create(:sat_month, month_number: 1, code: '01')
+      create(:sat_month, month_number: 3, code: '03')
 
       first_month = SatMonth.ordered.first!
 

@@ -54,6 +54,17 @@ Metrics/MethodLength:
 
 Metrics/BlockLength:
   Max: 100
+  AllowedMethods:
+    - describe
+    - context
+    - feature
+    - scenario
+    - shared_examples
+    - shared_context
+  Exclude:
+    - "spec/**/*"
+    - "config/routes.rb"
+    - "config/routes/**/*"
 
 Metrics/ClassLength:
   Max: 120

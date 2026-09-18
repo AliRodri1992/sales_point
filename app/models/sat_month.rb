@@ -12,7 +12,7 @@ class SatMonth < ApplicationRecord
 
   scope :valid_on, lambda { |date = Date.current|
     where(
-      "(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)",
+      '(valid_from IS NULL OR valid_from <= ?) AND (valid_to IS NULL OR valid_to >= ?)',
       date, date
     )
   }
