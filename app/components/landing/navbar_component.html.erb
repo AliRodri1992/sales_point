@@ -13,8 +13,8 @@
     </nav>
 
     <div class="hidden items-center gap-3 lg:flex">
-      <%= render Ui::ButtonComponent.new(text: "Iniciar sesión", href: new_user_session_path, variant: :outline) %>
-      <%= render Ui::ButtonComponent.new(text: "Comenzar", href: new_user_registration_path, variant: :success) %>
+      <%= render Ui::ButtonComponent.new(text: t('landing.buttons.sign_in'), href: new_user_session_path, variant: :outline) %>
+      <%= render Ui::ButtonComponent.new(text: t('landing.buttons.start'), href: new_user_registration_path, variant: :success) %>
     </div>
 
     <button
@@ -22,7 +22,7 @@
       class="rounded-lg p-2 text-white transition hover:bg-slate-800 lg:hidden"
       data-navbar-target="button"
       data-action="click->navbar#toggle"
-      aria-label="Abrir menú"
+      aria-label="<%= t('landing.navbar.open_menu') %>"
       aria-expanded="false">
       <span data-navbar-target="iconOpen">
         <%= render Ui::IconComponent.new(name: 'bars-3', size: :xl, color: :white) %>
@@ -40,9 +40,9 @@
                     class: "rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]",
                     data: { action: "click->navbar#close" } %>
       <% end %>
-      <%= link_to "Iniciar sesión", new_user_session_path,
+      <%= link_to t('landing.buttons.sign_in'), new_user_session_path,
                   class: "mt-2 rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]" %>
-      <%= link_to "Comenzar", new_user_registration_path,
+      <%= link_to t('landing.buttons.start'), new_user_registration_path,
                   class: "mt-1 rounded-lg bg-emerald-500 px-3 py-2 text-center font-semibold text-white transition hover:bg-emerald-600" %>
     </nav>
   </div>

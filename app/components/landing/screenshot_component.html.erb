@@ -1,9 +1,9 @@
 <section id="demo" class="bg-white py-16 sm:py-28">
   <div class="mx-auto grid max-w-7xl gap-12 px-4 sm:gap-20 sm:px-6 lg:grid-cols-2 lg:items-center">
     <div>
-      <%= render Ui::SectionTitleComponent.new(badge: "Interfaz moderna", title: title, subtitle: description, centered: false) %>
+      <%= render Ui::SectionTitleComponent.new(badge: t('landing.screenshot.badge'), title: title, subtitle: description, centered: false) %>
       <div class="mt-8 sm:mt-10">
-        <%= render Ui::ButtonComponent.new(text: "Solicitar demostración", href: new_demo_request_path, size: :lg, icon: :arrow_right) %>
+        <%= render Ui::ButtonComponent.new(text: t('landing.buttons.request_demo'), href: new_demo_request_path, size: :lg, icon: :arrow_right) %>
       </div>
     </div>
     <%= render "shared/screenshot_dashboard" %>

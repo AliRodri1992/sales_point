@@ -3,7 +3,7 @@
     <div class="relative flex h-full flex-col gap-6">
       <% if badge? %>
         <div class="absolute right-0 top-0">
-          <%= render Ui::BadgeComponent.new(text: "Más popular", color: :primary) %>
+          <%= render Ui::BadgeComponent.new(text: t('landing.pricing.most_popular'), color: :primary) %>
         </div>
       <% end %>
       <div class="min-h-24">
@@ -14,7 +14,7 @@
         <span class="text-5xl font-black text-blue-600">
           $<%= price %>
         </span>
-        <span class="text-slate-500">/mes</span>
+        <span class="text-slate-500"><%= t('landing.pricing.per_month') %></span>
       </div>
       <ul class="flex-1 space-y-4">
         <% features.each do |feature| %>
@@ -24,7 +24,7 @@
           </li>
         <% end %>
       </ul>
-      <%= render Ui::ButtonComponent.new(text: "Elegir plan", href: new_user_registration_path, variant: :primary, full_width: true) %>
+      <%= render Ui::ButtonComponent.new(text: t('landing.pricing.choose_plan'), href: new_user_registration_path, variant: :primary, full_width: true) %>
     </div>
   <% end %>
 <% end %>

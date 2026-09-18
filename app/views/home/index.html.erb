@@ -3,20 +3,20 @@
 <main class="overflow-x-hidden">
 
   <%= render Landing::HeroComponent.new(
-    badge: "Nuevo • POS en la nube",
-    title: "Administra tu negocio con",
-    highlighted: "NEXO POS",
-    description: "Controla ventas, inventario, clientes, compras, reportes y facturación desde cualquier dispositivo.",
+    badge: t('landing.hero.badge'),
+    title: t('landing.hero.title'),
+    highlighted: t('landing.hero.highlighted'),
+    description: t('landing.hero.description'),
     image: "logo.png",
     primary_button: Ui::ButtonComponent.new(
-      text: "Comenzar gratis",
+      text: t('landing.buttons.start_free'),
       href: new_user_registration_path,
       icon: :rocket_launch,
       size: :lg,
       variant: :primary
     ),
     secondary_button: Ui::ButtonComponent.new(
-      text: "Ver demostración",
+      text: t('landing.buttons.view_demo'),
       href: "#demo",
       icon: :play_circle,
       size: :lg,
@@ -25,37 +25,37 @@
     statistics: [
       Ui::StatisticComponent.new(
         number: "+25K",
-        label: "Ventas diarias",
+        label: t('landing.statistics.daily_sales'),
         icon: :shopping_cart
       ),
       Ui::StatisticComponent.new(
         number: "99.9%",
-        label: "Disponibilidad",
+        label: t('landing.statistics.availability'),
         icon: :server
       ),
       Ui::StatisticComponent.new(
         number: "24/7",
-        label: "Soporte",
+        label: t('landing.statistics.support'),
         icon: :lifebuoy
       )
     ]
   ) %>
 
   <%= render Landing::FeaturesComponent.new(
-    title: "Todo lo que necesitas para administrar tu negocio",
-    subtitle: "Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas.",
+    title: t('landing.features.title'),
+    subtitle: t('landing.features.subtitle'),
     features: @features
   ) %>
 
   <%= render Landing::ModulesComponent.new(
-    title: "Módulos especializados",
-    subtitle: "Crece sin cambiar de sistema.",
+    title: t('landing.modules.title'),
+    subtitle: t('landing.modules.subtitle'),
     modules: @modules
   ) %>
 
   <%= render Landing::ScreenshotComponent.new(
-    title: "Una interfaz moderna y sencilla",
-    description: "Toda la información importante al alcance de un clic.",
+    title: t('landing.screenshot.title'),
+    description: t('landing.screenshot.description'),
     image: "logo.png"
   ) %>
 
@@ -64,9 +64,9 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
       <%= render Ui::SectionTitleComponent.new(
-        badge: "Clientes",
-        title: "Empresas que confían en Nexo POS",
-        subtitle: "Nuestro software ayuda diariamente a cientos de negocios."
+        badge: t('landing.testimonials.badge'),
+        title: t('landing.testimonials.title'),
+        subtitle: t('landing.testimonials.subtitle')
       ) %>
 
       <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
@@ -90,9 +90,9 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
       <%= render Ui::SectionTitleComponent.new(
-        badge: "Precios",
-        title: "Planes para cualquier negocio",
-        subtitle: "Empieza gratis y crece cuando lo necesites."
+        badge: t('landing.pricing.badge'),
+        title: t('landing.pricing.title'),
+        subtitle: t('landing.pricing.subtitle')
       ) %>
 
       <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
@@ -110,16 +110,16 @@
   </section>
 
   <%= render Landing::FaqComponent.new(
-    title: "Preguntas frecuentes",
-    subtitle: "Resolvemos las dudas más comunes.",
+    title: t('landing.faq.title'),
+    subtitle: t('landing.faq.subtitle'),
     questions: @questions
   ) %>
 
   <%= render Landing::CtaComponent.new(
-    title: "¿Listo para modernizar tu negocio?",
-    description: "Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración de tu empresa.",
+    title: t('landing.cta.title'),
+    description: t('landing.cta.description'),
     button: Ui::ButtonComponent.new(
-      text: "Crear cuenta",
+      text: t('landing.buttons.create_account'),
       href: new_user_registration_path,
       icon: :rocket_launch,
       size: :lg,

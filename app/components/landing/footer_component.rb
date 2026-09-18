@@ -11,17 +11,17 @@ module Landing
       super
 
       @product_links = [
-        Link.new('Características', '#features'),
-        Link.new('Módulos', '#modules'),
-        Link.new('Precios', '#pricing'),
-        Link.new('FAQ', '#faq')
+        Link.new(I18n.t('landing.navbar.features'), '#features'),
+        Link.new(I18n.t('landing.navbar.modules'), '#modules'),
+        Link.new(I18n.t('landing.navbar.pricing'), '#pricing'),
+        Link.new(I18n.t('landing.navbar.faq'), '#faq')
       ]
 
       @company_links = [
-        Link.new('Nosotros', '#'),
-        Link.new('Contacto', '#'),
-        Link.new('Privacidad', '#'),
-        Link.new('Términos', '#')
+        Link.new(I18n.t('landing.footer.about'), '#'),
+        Link.new(I18n.t('landing.footer.contact'), '#'),
+        Link.new(I18n.t('landing.footer.privacy'), '#'),
+        Link.new(I18n.t('landing.footer.terms'), '#')
       ]
     end
 

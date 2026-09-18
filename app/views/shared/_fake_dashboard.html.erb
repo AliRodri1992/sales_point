@@ -22,8 +22,8 @@
   <div class="min-w-0 bg-slate-50 p-3 sm:p-5">
     <div class="flex items-center justify-between">
       <div>
-        <div class="text-lg font-bold text-slate-900">Dashboard</div>
-        <div class="text-xs text-slate-500">Resumen de tu negocio</div>
+        <div class="text-lg font-bold text-slate-900"><%= t('landing.dashboard.title') %></div>
+        <div class="text-xs text-slate-500"><%= t('landing.dashboard.summary') %></div>
       </div>
       <div class="h-8 w-24 rounded-lg bg-white"></div>
     </div>
@@ -32,7 +32,7 @@
     <!-- Cards -->
     <div class="mt-5 grid gap-3 sm:grid-cols-3">
       <div class="rounded-xl bg-white p-4 shadow-sm">
-        <div class="text-[10px] text-slate-500">Ventas</div>
+        <div class="text-[10px] text-slate-500"><%= t('landing.dashboard.sales') %></div>
         <div class="mt-2 text-lg font-black">$84,250</div>
 
         <div class="mt-1 text-[10px] text-emerald-600">+12.5%</div>
@@ -43,7 +43,7 @@
         class="rounded-xl bg-white p-4 shadow-sm">
 
         <div class="text-[10px] text-slate-500">
-          Productos
+          <%= t('landing.dashboard.products') %>
         </div>
 
         <div class="mt-2 text-lg font-black">
@@ -52,7 +52,7 @@
 
         <div
           class="mt-1 text-[10px] text-blue-600">
-          Inventario
+          <%= t('landing.dashboard.inventory') %>
         </div>
 
       </div>
@@ -62,7 +62,7 @@
         class="rounded-xl bg-white p-4 shadow-sm">
 
         <div class="text-[10px] text-slate-500">
-          Clientes
+          <%= t('landing.dashboard.customers') %>
         </div>
 
         <div class="mt-2 text-lg font-black">
@@ -88,12 +88,12 @@
 
         <div
           class="text-sm font-bold">
-          Ventas
+          <%= t('landing.dashboard.sales') %>
         </div>
 
         <div
           class="text-xs text-slate-400">
-          Últimos 7 días
+          <%= t('landing.dashboard.last_seven_days') %>
         </div>
 
       </div>

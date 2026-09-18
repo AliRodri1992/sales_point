@@ -3,24 +3,24 @@ module LandingPage
     def self.all
       [
         Testimonial.new(
-          name: 'Laura Méndez',
-          company: 'Abarrotes La Esquina',
-          position: 'Propietaria',
-          quote: 'Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué me falta surtir en un minuto.',
+          name: I18n.t('landing.testimonial_items.laura.name'),
+          company: I18n.t('landing.testimonial_items.laura.company'),
+          position: I18n.t('landing.testimonial_items.laura.position'),
+          quote: I18n.t('landing.testimonial_items.laura.quote'),
           avatar: 'landing/avatar.svg'
         ),
         Testimonial.new(
-          name: 'Carlos Ibáñez',
-          company: 'Ferretería Norte',
-          position: 'Gerente de operaciones',
-          quote: 'Tenemos tres sucursales y por fin vemos el inventario de todas en la misma pantalla.',
+          name: I18n.t('landing.testimonial_items.carlos.name'),
+          company: I18n.t('landing.testimonial_items.carlos.company'),
+          position: I18n.t('landing.testimonial_items.carlos.position'),
+          quote: I18n.t('landing.testimonial_items.carlos.quote'),
           avatar: 'landing/avatar.svg'
         ),
         Testimonial.new(
-          name: 'Andrea Solís',
-          company: 'Boutique Aurora',
-          position: 'Fundadora',
-          quote: 'La capacitación del personal tomó una tarde. La interfaz es tan simple que casi no hubo preguntas.',
+          name: I18n.t('landing.testimonial_items.andrea.name'),
+          company: I18n.t('landing.testimonial_items.andrea.company'),
+          position: I18n.t('landing.testimonial_items.andrea.position'),
+          quote: I18n.t('landing.testimonial_items.andrea.quote'),
           avatar: 'landing/avatar.svg'
         )
       ]

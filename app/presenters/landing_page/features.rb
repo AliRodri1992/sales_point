@@ -4,38 +4,38 @@ module LandingPage
       [
         Feature.new(
           icon: 'shopping-cart',
-          title: 'Ventas rápidas',
-          description: 'Cobra en segundos con lector de códigos de barras, múltiples formas de pago y ticket inmediato.',
+          title: I18n.t('landing.feature_items.quick_sales.title'),
+          description: I18n.t('landing.feature_items.quick_sales.description'),
           color: :blue
         ),
         Feature.new(
           icon: 'cube',
-          title: 'Inventario en tiempo real',
-          description: 'Controla existencias por sucursal, recibe alertas de stock mínimo y evita ventas sin producto.',
+          title: I18n.t('landing.feature_items.realtime_inventory.title'),
+          description: I18n.t('landing.feature_items.realtime_inventory.description'),
           color: :emerald
         ),
         Feature.new(
           icon: 'users',
-          title: 'Clientes',
-          description: 'Registra a tus clientes, consulta su historial de compras y aplica descuentos personalizados.',
+          title: I18n.t('landing.feature_items.customers.title'),
+          description: I18n.t('landing.feature_items.customers.description'),
           color: :purple
         ),
         Feature.new(
           icon: 'chart-bar',
-          title: 'Reportes y Estadísticas',
-          description: 'Conoce tus ventas, utilidades y productos más vendidos con reportes que se actualizan solos.',
+          title: I18n.t('landing.feature_items.reports.title'),
+          description: I18n.t('landing.feature_items.reports.description'),
           color: :amber
         ),
         Feature.new(
           icon: 'document-text',
-          title: 'Facturación',
-          description: 'Emite comprobantes desde la misma venta y mantén tu información fiscal siempre ordenada.',
+          title: I18n.t('landing.feature_items.billing.title'),
+          description: I18n.t('landing.feature_items.billing.description'),
           color: :red
         ),
         Feature.new(
           icon: 'device-phone-mobile',
-          title: 'Acceso desde cualquier dispositivo',
-          description: 'Trabaja en computadora, tablet o celular. Solo necesitas un navegador y conexión a internet.',
+          title: I18n.t('landing.feature_items.any_device.title'),
+          description: I18n.t('landing.feature_items.any_device.description'),
           color: :cyan
         )
       ]

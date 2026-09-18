@@ -88,3 +88,112 @@ es:
         phone: "Teléfono"
         company: "Empresa"
         message: "Mensaje"
+  landing:
+    navbar:
+      features: "Características"
+      modules: "Módulos"
+      pricing: "Precios"
+      faq: "FAQ"
+      open_menu: "Abrir menú"
+    buttons:
+      start_free: "Comenzar gratis"
+      view_demo: "Ver demostración"
+      create_account: "Crear cuenta"
+      request_demo: "Solicitar demostración"
+      sign_in: "Iniciar sesión"
+      start: "Comenzar"
+    hero:
+      badge: "Nuevo • POS en la nube"
+      title: "Administra tu negocio con"
+      highlighted: "NEXO POS"
+      description: "Controla ventas, inventario, clientes, compras, reportes y facturación desde cualquier dispositivo."
+    statistics:
+      daily_sales: "Ventas diarias"
+      availability: "Disponibilidad"
+      support: "Soporte"
+    features:
+      title: "Todo lo que necesitas para administrar tu negocio"
+      subtitle: "Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas."
+    modules:
+      title: "Módulos especializados"
+      subtitle: "Crece sin cambiar de sistema."
+    screenshot:
+      badge: "Interfaz moderna"
+      title: "Una interfaz moderna y sencilla"
+      description: "Toda la información importante al alcance de un clic."
+    testimonials:
+      badge: "Clientes"
+      title: "Empresas que confían en Nexo POS"
+      subtitle: "Nuestro software ayuda diariamente a cientos de negocios."
+    pricing:
+      badge: "Precios"
+      title: "Planes para cualquier negocio"
+      subtitle: "Empieza gratis y crece cuando lo necesites."
+      most_popular: "Más popular"
+      per_month: "/mes"
+      choose_plan: "Elegir plan"
+    faq:
+      title: "Preguntas frecuentes"
+      subtitle: "Resolvemos las dudas más comunes."
+    cta:
+      title: "¿Listo para modernizar tu negocio?"
+      description: "Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración de tu empresa."
+    footer:
+      description: "Punto de venta moderno para negocios que desean vender más, administrar mejor su inventario y crecer sin complicaciones."
+      product: "Producto"
+      company: "Empresa"
+      about: "Nosotros"
+      contact: "Contacto"
+      privacy: "Privacidad"
+      terms: "Términos"
+      copyright: "© %{year} Nexo POS. Todos los derechos reservados."
+    feature_items:
+      quick_sales: { title: "Ventas rápidas", description: "Cobra en segundos con lector de códigos de barras, múltiples formas de pago y ticket inmediato." }
+      realtime_inventory: { title: "Inventario en tiempo real", description: "Controla existencias por sucursal, recibe alertas de stock mínimo y evita ventas sin producto." }
+      customers: { title: "Clientes", description: "Registra a tus clientes, consulta su historial de compras y aplica descuentos personalizados." }
+      reports: { title: "Reportes y Estadísticas", description: "Conoce tus ventas, utilidades y productos más vendidos con reportes que se actualizan solos." }
+      billing: { title: "Facturación", description: "Emite comprobantes desde la misma venta y mantén tu información fiscal siempre ordenada." }
+      any_device: { title: "Acceso desde cualquier dispositivo", description: "Trabaja en computadora, tablet o celular. Solo necesitas un navegador y conexión a internet." }
+    module_items:
+      multibranch: { title: "Multisucursal", description: "Administra varias sucursales desde una sola cuenta y compara su desempeño en un mismo panel." }
+      purchases: { title: "Compras y proveedores", description: "Registra órdenes de compra, controla costos y mantén al día la información de tus proveedores." }
+      cash_register: { title: "Caja y turnos", description: "Abre y cierra caja por turno, registra retiros y detecta diferencias al final del día." }
+      users: { title: "Usuarios y permisos", description: "Define roles para cajeros, supervisores y administradores con los permisos que cada uno necesita." }
+      returns: { title: "Devoluciones", description: "Procesa devoluciones y cancelaciones dejando siempre el inventario y la caja cuadrados." }
+      accounting: { title: "Cierres contables", description: "Exporta tus movimientos en el formato que tu contador necesita, sin capturas manuales." }
+    plan_items:
+      starter:
+        name: "Inicial"
+        description: "Para negocios que empiezan a ordenar sus ventas."
+        features: { branch_users: "1 sucursal y 2 usuarios", sales_inventory: "Ventas e inventario", basic_reports: "Reportes básicos", email_support: "Soporte por correo" }
+      professional:
+        name: "Profesional"
+        description: "El plan que elige la mayoría de nuestros clientes."
+        features: { branch_users: "3 sucursales y 10 usuarios", purchases: "Compras y proveedores", cash_returns: "Caja, turnos y devoluciones", advanced_reports: "Reportes avanzados", priority_support: "Soporte prioritario" }
+      enterprise:
+        name: "Empresarial"
+        description: "Para cadenas que necesitan control total."
+        features: { unlimited: "Sucursales y usuarios ilimitados", roles: "Roles y permisos a detalle", accounting: "Exportación contable", implementation: "Acompañamiento en la implementación", support: "Soporte 24/7" }
+    questions:
+      install: { question: "¿Necesito instalar algo en mi computadora?", answer: "No. Nexo POS funciona desde el navegador, así que puedes usarlo en cualquier equipo con internet." }
+      offline: { question: "¿Puedo seguir vendiendo si se cae el internet?", answer: "Sí. El punto de venta guarda las operaciones localmente y las sincroniza cuando vuelve la conexión." }
+      migration: { question: "¿Puedo migrar mi catálogo de productos?", answer: "Puedes importar tus productos desde un archivo de Excel o CSV y te acompañamos en la primera carga." }
+      commitment: { question: "¿Hay permanencia mínima?", answer: "No hay contratos forzosos. El plan es mensual y puedes cambiarlo o cancelarlo cuando lo necesites." }
+      trial: { question: "¿Qué incluye la prueba gratuita?", answer: "Todas las funciones del plan Profesional durante 14 días, sin registrar una tarjeta de crédito." }
+    testimonial_items:
+      laura: { name: "Laura Méndez", company: "Abarrotes La Esquina", position: "Propietaria", quote: "Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué me falta surtir en un minuto." }
+      carlos: { name: "Carlos Ibáñez", company: "Ferretería Norte", position: "Gerente de operaciones", quote: "Tenemos tres sucursales y por fin vemos el inventario de todas en la misma pantalla." }
+      andrea: { name: "Andrea Solís", company: "Boutique Aurora", position: "Fundadora", quote: "La capacitación del personal tomó una tarde. La interfaz es tan simple que casi no hubo preguntas." }
+    dashboard:
+      title: "Dashboard"
+      summary: "Resumen de tu negocio"
+      sales: "Ventas"
+      products: "Productos"
+      inventory: "Inventario"
+      customers: "Clientes"
+      last_seven_days: "Últimos 7 días"
+      today_sales: "Ventas del día"
+      sold_products: "Productos vendidos"
+      recent_sales: "Ventas recientes"
+      today: "Hoy"
+      minutes_ago: "Hace %{count} min"

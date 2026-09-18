@@ -4,38 +4,38 @@ module LandingPage
       [
         Feature.new(
           icon: 'building-storefront',
-          title: 'Multisucursal',
-          description: 'Administra varias sucursales desde una sola cuenta y compara su desempeño en un mismo panel.',
+          title: I18n.t('landing.module_items.multibranch.title'),
+          description: I18n.t('landing.module_items.multibranch.description'),
           color: :primary
         ),
         Feature.new(
           icon: 'truck',
-          title: 'Compras y proveedores',
-          description: 'Registra órdenes de compra, controla costos y mantén al día la información de tus proveedores.',
+          title: I18n.t('landing.module_items.purchases.title'),
+          description: I18n.t('landing.module_items.purchases.description'),
           color: :primary
         ),
         Feature.new(
           icon: 'banknotes',
-          title: 'Caja y turnos',
-          description: 'Abre y cierra caja por turno, registra retiros y detecta diferencias al final del día.',
+          title: I18n.t('landing.module_items.cash_register.title'),
+          description: I18n.t('landing.module_items.cash_register.description'),
           color: :primary
         ),
         Feature.new(
           icon: 'user-group',
-          title: 'Usuarios y permisos',
-          description: 'Define roles para cajeros, supervisores y administradores con los permisos que cada uno necesita.',
+          title: I18n.t('landing.module_items.users.title'),
+          description: I18n.t('landing.module_items.users.description'),
           color: :primary
         ),
         Feature.new(
           icon: 'arrow-path',
-          title: 'Devoluciones',
-          description: 'Procesa devoluciones y cancelaciones dejando siempre el inventario y la caja cuadrados.',
+          title: I18n.t('landing.module_items.returns.title'),
+          description: I18n.t('landing.module_items.returns.description'),
           color: :primary
         ),
         Feature.new(
           icon: 'calculator',
-          title: 'Cierres contables',
-          description: 'Exporta tus movimientos en el formato que tu contador necesita, sin capturas manuales.',
+          title: I18n.t('landing.module_items.accounting.title'),
+          description: I18n.t('landing.module_items.accounting.description'),
           color: :primary
         )
       ]

@@ -3,41 +3,41 @@ module LandingPage
     def self.all
       [
         Plan.new(
-          name: 'Inicial',
+          name: I18n.t('landing.plan_items.starter.name'),
           price: 19,
-          description: 'Para negocios que empiezan a ordenar sus ventas.',
+          description: I18n.t('landing.plan_items.starter.description'),
           featured: false,
           features: [
-            '1 sucursal y 2 usuarios',
-            'Ventas e inventario',
-            'Reportes básicos',
-            'Soporte por correo'
+            I18n.t('landing.plan_items.starter.features.branch_users'),
+            I18n.t('landing.plan_items.starter.features.sales_inventory'),
+            I18n.t('landing.plan_items.starter.features.basic_reports'),
+            I18n.t('landing.plan_items.starter.features.email_support')
           ]
         ),
         Plan.new(
-          name: 'Profesional',
+          name: I18n.t('landing.plan_items.professional.name'),
           price: 39,
-          description: 'El plan que elige la mayoría de nuestros clientes.',
+          description: I18n.t('landing.plan_items.professional.description'),
           featured: true,
           features: [
-            '3 sucursales y 10 usuarios',
-            'Compras y proveedores',
-            'Caja, turnos y devoluciones',
-            'Reportes avanzados',
-            'Soporte prioritario'
+            I18n.t('landing.plan_items.professional.features.branch_users'),
+            I18n.t('landing.plan_items.professional.features.purchases'),
+            I18n.t('landing.plan_items.professional.features.cash_returns'),
+            I18n.t('landing.plan_items.professional.features.advanced_reports'),
+            I18n.t('landing.plan_items.professional.features.priority_support')
           ]
         ),
         Plan.new(
-          name: 'Empresarial',
+          name: I18n.t('landing.plan_items.enterprise.name'),
           price: 79,
-          description: 'Para cadenas que necesitan control total.',
+          description: I18n.t('landing.plan_items.enterprise.description'),
           featured: false,
           features: [
-            'Sucursales y usuarios ilimitados',
-            'Roles y permisos a detalle',
-            'Exportación contable',
-            'Acompañamiento en la implementación',
-            'Soporte 24/7'
+            I18n.t('landing.plan_items.enterprise.features.unlimited'),
+            I18n.t('landing.plan_items.enterprise.features.roles'),
+            I18n.t('landing.plan_items.enterprise.features.accounting'),
+            I18n.t('landing.plan_items.enterprise.features.implementation'),
+            I18n.t('landing.plan_items.enterprise.features.support')
           ]
         )
       ]

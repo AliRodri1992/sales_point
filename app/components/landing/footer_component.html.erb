@@ -2,14 +2,11 @@
   <div class="mx-auto grid max-w-7xl gap-12 px-4 py-12 sm:px-6 sm:py-16 md:grid-cols-3">
     <div>
       <%= image_tag "logo4.png", class: "h-auto w-full object-contain object-left", alt: "Nexo POS" %>
-      <p class="mt-4 leading-7 text-slate-600">
-        Punto de venta moderno para negocios que desean vender más,
-        administrar mejor su inventario y crecer sin complicaciones.
-      </p>
+      <p class="mt-4 leading-7 text-slate-600"><%= t('landing.footer.description') %></p>
     </div>
 
     <div>
-      <h3 class="font-bold text-slate-900">Producto</h3>
+      <h3 class="font-bold text-slate-900"><%= t('landing.footer.product') %></h3>
 
       <ul class="mt-6 space-y-3">
         <% product_links.each do |link| %>
@@ -21,7 +18,7 @@
     </div>
 
     <div>
-      <h3 class="font-bold text-slate-900">Empresa</h3>
+      <h3 class="font-bold text-slate-900"><%= t('landing.footer.company') %></h3>
       <ul class="mt-6 space-y-3">
         <% company_links.each do |link| %>
           <li>
@@ -33,6 +30,6 @@
   </div>
 
   <div class="border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-    © <%= Date.current.year %> Nexo POS. Todos los derechos reservados.
+    <%= t('landing.footer.copyright', year: Date.current.year) %>
   </div>
 </footer>

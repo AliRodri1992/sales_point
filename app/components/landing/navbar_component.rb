@@ -11,10 +11,10 @@ module Landing
       super
 
       @menu_items = [
-        MenuItem.new('Características', '#features'),
-        MenuItem.new('Módulos', '#modules'),
-        MenuItem.new('Precios', '#pricing'),
-        MenuItem.new('FAQ', '#faq')
+        MenuItem.new(I18n.t('landing.navbar.features'), '#features'),
+        MenuItem.new(I18n.t('landing.navbar.modules'), '#modules'),
+        MenuItem.new(I18n.t('landing.navbar.pricing'), '#pricing'),
+        MenuItem.new(I18n.t('landing.navbar.faq'), '#faq')
       ]
     end
 

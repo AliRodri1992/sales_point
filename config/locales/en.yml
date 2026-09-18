@@ -88,3 +88,90 @@ en:
         phone: "Phone"
         company: "Company"
         message: "Message"
+  landing:
+    navbar: { features: "Features", modules: "Modules", pricing: "Pricing", faq: "FAQ", open_menu: "Open menu" }
+    buttons:
+      start_free: "Start for free"
+      view_demo: "View demo"
+      create_account: "Create account"
+      request_demo: "Request a demo"
+      sign_in: "Sign in"
+      start: "Get started"
+    hero:
+      badge: "New • Cloud POS"
+      title: "Manage your business with"
+      highlighted: "NEXO POS"
+      description: "Control sales, inventory, customers, purchases, reports, and billing from any device."
+    statistics: { daily_sales: "Daily sales", availability: "Availability", support: "Support" }
+    features: { title: "Everything you need to manage your business", subtitle: "A modern platform designed for small, medium, and large businesses." }
+    modules: { title: "Specialized modules", subtitle: "Grow without changing systems." }
+    screenshot: { badge: "Modern interface", title: "A modern and simple interface", description: "All the important information just one click away." }
+    testimonials: { badge: "Customers", title: "Businesses that trust Nexo POS", subtitle: "Our software helps hundreds of businesses every day." }
+    pricing:
+      badge: "Pricing"
+      title: "Plans for every business"
+      subtitle: "Start free and grow when you need to."
+      most_popular: "Most popular"
+      per_month: "/month"
+      choose_plan: "Choose plan"
+    faq: { title: "Frequently asked questions", subtitle: "Answers to the most common questions." }
+    cta: { title: "Ready to modernize your business?", description: "Start today with Nexo POS and discover how to simplify your business administration." }
+    footer:
+      description: "Modern point of sale for businesses that want to sell more, manage inventory better, and grow without complications."
+      product: "Product"
+      company: "Company"
+      about: "About us"
+      contact: "Contact"
+      privacy: "Privacy"
+      terms: "Terms"
+      copyright: "© %{year} Nexo POS. All rights reserved."
+    feature_items:
+      quick_sales: { title: "Quick sales", description: "Check out in seconds with barcode scanning, multiple payment methods, and instant receipts." }
+      realtime_inventory: { title: "Real-time inventory", description: "Control stock by branch, receive low-stock alerts, and avoid selling unavailable products." }
+      customers: { title: "Customers", description: "Register customers, review purchase history, and apply personalized discounts." }
+      reports: { title: "Reports and analytics", description: "Know your sales, profits, and best-selling products with self-updating reports." }
+      billing: { title: "Billing", description: "Issue receipts from the same sale and keep your tax information organized." }
+      any_device: { title: "Access from any device", description: "Work from a computer, tablet, or phone. You only need a browser and internet connection." }
+    module_items:
+      multibranch: { title: "Multi-branch", description: "Manage multiple branches from one account and compare their performance in one dashboard." }
+      purchases: { title: "Purchases and suppliers", description: "Record purchase orders, control costs, and keep supplier information up to date." }
+      cash_register: { title: "Cash register and shifts", description: "Open and close shifts, record withdrawals, and detect differences at the end of the day." }
+      users: { title: "Users and permissions", description: "Define roles for cashiers, supervisors, and administrators with the permissions each needs." }
+      returns: { title: "Returns", description: "Process returns and cancellations while keeping inventory and cash balanced." }
+      accounting: { title: "Accounting closings", description: "Export your transactions in the format your accountant needs, without manual entry." }
+    plan_items:
+      starter:
+        name: "Starter"
+        description: "For businesses starting to organize their sales."
+        features: { branch_users: "1 branch and 2 users", sales_inventory: "Sales and inventory", basic_reports: "Basic reports", email_support: "Email support" }
+      professional:
+        name: "Professional"
+        description: "The plan chosen by most of our customers."
+        features: { branch_users: "3 branches and 10 users", purchases: "Purchases and suppliers", cash_returns: "Cash, shifts, and returns", advanced_reports: "Advanced reports", priority_support: "Priority support" }
+      enterprise:
+        name: "Enterprise"
+        description: "For chains that need total control."
+        features: { unlimited: "Unlimited branches and users", roles: "Detailed roles and permissions", accounting: "Accounting export", implementation: "Implementation guidance", support: "24/7 support" }
+    questions:
+      install: { question: "Do I need to install anything on my computer?", answer: "No. Nexo POS runs in your browser, so you can use it on any computer with internet access." }
+      offline: { question: "Can I keep selling if the internet goes down?", answer: "Yes. The point of sale stores operations locally and syncs them when the connection returns." }
+      migration: { question: "Can I migrate my product catalog?", answer: "You can import products from an Excel or CSV file, and we will guide you through the first upload." }
+      commitment: { question: "Is there a minimum commitment?", answer: "There are no forced contracts. The plan is monthly, and you can change or cancel it whenever you need." }
+      trial: { question: "What does the free trial include?", answer: "All Professional plan features for 14 days, without registering a credit card." }
+    testimonial_items:
+      laura: { name: "Laura Méndez", company: "La Esquina Groceries", position: "Owner", quote: "I used to close the register with paper and a calculator. Now I know what I sold and what I need to restock in a minute." }
+      carlos: { name: "Carlos Ibáñez", company: "Norte Hardware", position: "Operations manager", quote: "We have three branches and can finally see all their inventory on the same screen." }
+      andrea: { name: "Andrea Solís", company: "Aurora Boutique", position: "Founder", quote: "Staff training took one afternoon. The interface is so simple there were barely any questions." }
+    dashboard:
+      title: "Dashboard"
+      summary: "Your business overview"
+      sales: "Sales"
+      products: "Products"
+      inventory: "Inventory"
+      customers: "Customers"
+      last_seven_days: "Last 7 days"
+      today_sales: "Today's sales"
+      sold_products: "Products sold"
+      recent_sales: "Recent sales"
+      today: "Today"
+      minutes_ago: "%{count} min ago"

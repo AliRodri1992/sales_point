@@ -28,7 +28,7 @@
         <div class="rounded-2xl bg-blue-50 p-5">
 
           <div class="text-sm text-blue-600">
-            Ventas del día
+            <%= t('landing.dashboard.today_sales') %>
           </div>
 
           <div class="mt-2 text-2xl font-black text-slate-900 sm:text-3xl">
@@ -49,7 +49,7 @@
         <div class="rounded-2xl bg-emerald-50 p-5">
 
           <div class="text-sm text-emerald-600">
-            Productos vendidos
+            <%= t('landing.dashboard.sold_products') %>
           </div>
 
           <div class="mt-2 text-2xl font-black text-slate-900 sm:text-3xl">
@@ -74,11 +74,11 @@
         <div class="flex items-center justify-between">
 
                   <span class="font-bold">
-                    Ventas recientes
+                    <%= t('landing.dashboard.recent_sales') %>
                   </span>
 
           <span class="text-xs text-slate-400">
-                    Hoy
+                    <%= t('landing.dashboard.today') %>
                   </span>
 
         </div>
@@ -100,7 +100,7 @@
                 </div>
 
                 <div class="text-xs text-slate-400">
-                  Hace 5 min
+                  <%= t('landing.dashboard.minutes_ago', count: 5) %>
                 </div>
 
               </div>
@@ -128,7 +128,7 @@
                 </div>
 
                 <div class="text-xs text-slate-400">
-                  Hace 12 min
+                  <%= t('landing.dashboard.minutes_ago', count: 12) %>
                 </div>
 
               </div>
@@ -156,7 +156,7 @@
                 </div>
 
                 <div class="text-xs text-slate-400">
-                  Hace 18 min
+                  <%= t('landing.dashboard.minutes_ago', count: 18) %>
                 </div>
 
               </div>
