@@ -47,7 +47,7 @@ gem 'solid_queue'
 gem 'stimulus-rails'
 gem 'thruster', require: false
 gem 'turbo-rails'
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+gem 'tzinfo-data'
 gem 'view_component'
 gem 'wicked'
 gem 'wicked_pdf'
@@ -65,7 +65,7 @@ end
 group :development, :test do
   gem 'brakeman', require: false
   gem 'bundler-audit', require: false
-  gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+  gem 'debug', require: 'debug/prelude'
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'faker'
