@@ -84,6 +84,60 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.index ["deleted_at"], name: "index_languages_on_deleted_at"
   end
 
+  create_table "membership_features", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.text "description"
+    t.string "key", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "value_type", default: "boolean", null: false
+    t.index ["active", "position"], name: "index_membership_features_on_active_and_position"
+    t.index ["deleted_at"], name: "index_membership_features_on_deleted_at"
+    t.index ["key"], name: "index_membership_features_on_key", unique: true
+    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying, 'integer'::character varying, 'decimal'::character varying, 'text'::character varying]::text[])", name: "chk_membership_features_value_type"
+  end
+
+  create_table "membership_plan_features", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.boolean "enabled", default: true, null: false
+    t.integer "limit"
+    t.bigint "membership_feature_id", null: false
+    t.bigint "membership_plan_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "value"
+    t.index ["deleted_at"], name: "index_membership_plan_features_on_deleted_at"
+    t.index ["membership_feature_id"], name: "index_membership_plan_features_on_membership_feature_id"
+    t.index ["membership_plan_id", "membership_feature_id"], name: "idx_membership_plan_features_unique_pair", unique: true
+    t.index ["membership_plan_id"], name: "index_membership_plan_features_on_membership_plan_id"
+    t.check_constraint "\"limit\" IS NULL OR \"limit\" >= 0", name: "chk_membership_plan_features_limit_non_negative"
+  end
+
+  create_table "membership_plans", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "billing_interval", default: "monthly", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.datetime "deleted_at"
+    t.text "description"
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.string "slug", null: false
+    t.integer "trial_days", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "position"], name: "index_membership_plans_on_active_and_position"
+    t.index ["deleted_at"], name: "index_membership_plans_on_deleted_at"
+    t.index ["slug"], name: "index_membership_plans_on_slug", unique: true
+    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying, 'yearly'::character varying]::text[])", name: "chk_membership_plans_billing_interval"
+    t.check_constraint "price >= 0::numeric", name: "chk_membership_plans_price_non_negative"
+    t.check_constraint "trial_days >= 0", name: "chk_membership_plans_trial_days_non_negative"
+  end
+
   create_table "noticed_events", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "notifications_count"
@@ -335,5 +389,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
+  add_foreign_key "membership_plan_features", "membership_features"
+  add_foreign_key "membership_plan_features", "membership_plans"
   add_foreign_key "users", "languages"
 end

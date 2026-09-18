@@ -1,0 +1,61 @@
+<%= render Ui::CardComponent.new do %>
+  <% if notice.present? %>
+    <div class="mb-6 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if demo_request.errors.any? %>
+    <div class="mb-6 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
+      <%= t('demo_requests.new.error_summary', count: demo_request.errors.count) %>
+    </div>
+  <% end %>
+
+  <%= form_with model: demo_request, class: "space-y-6", html: { novalidate: true } do |f| %>
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <%= f.label :name, t('demo_requests.new.name'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+        <%= f.text_field :name, class: field_classes %>
+        <% f.object.errors.full_messages_for(:name).each do |message| %>
+          <p class="mt-2 text-sm text-red-600"><%= message %></p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :email, t('demo_requests.new.email'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+        <%= f.email_field :email, class: field_classes %>
+        <% f.object.errors.full_messages_for(:email).each do |message| %>
+          <p class="mt-2 text-sm text-red-600"><%= message %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      <div>
+        <%= f.label :phone, t('demo_requests.new.phone'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+        <%= f.telephone_field :phone, class: field_classes %>
+        <% f.object.errors.full_messages_for(:phone).each do |message| %>
+          <p class="mt-2 text-sm text-red-600"><%= message %></p>
+        <% end %>
+      </div>
+
+      <div>
+        <%= f.label :company, t('demo_requests.new.company'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+        <%= f.text_field :company, class: field_classes %>
+        <% f.object.errors.full_messages_for(:company).each do |message| %>
+          <p class="mt-2 text-sm text-red-600"><%= message %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :message, t('demo_requests.new.message'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+      <%= f.text_area :message, rows: 5, class: field_classes %>
+      <% f.object.errors.full_messages_for(:message).each do |message| %>
+        <p class="mt-2 text-sm text-red-600"><%= message %></p>
+      <% end %>
+    </div>
+
+    <%= f.submit t('demo_requests.new.submit'), class: "inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2563eb] px-8 py-4 text-lg font-semibold text-white shadow-md transition duration-300 hover:bg-[#1d4ed8] focus:outline-none focus:ring-4 focus:ring-blue-300 sm:w-auto" %>
+  <% end %>
+<% end %>
