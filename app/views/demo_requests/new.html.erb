@@ -3,21 +3,45 @@
 <%= render Landing::NavbarComponent.new %>
 
 <main class="overflow-x-hidden bg-white text-slate-900">
-  <section class="bg-slate-50 py-12">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <%= link_to root_path, class: "mb-5 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800" do %>
+  <section class="bg-slate-50 pb-12 pt-4 sm:pb-16 sm:pt-6 lg:pb-20 lg:pt-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <%= link_to root_path, class: "mb-8 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800" do %>
         <%= icon "arrow-left", class: "h-5 w-5" %>
         <%= t('.back') %>
       <% end %>
 
-      <%= render Ui::SectionTitleComponent.new(
-        badge: t('.badge'),
-        title: t('.title'),
-        subtitle: t('.description'),
-        centered: false
-      ) %>
+      <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
+        <div>
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+            <span class="h-2 w-2 rounded-full bg-blue-600"></span>
+            <%= t('.badge') %>
+          </div>
 
-      <div class="mt-12">
+          <h1 class="max-w-xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            <%= t('.hero_title') %>
+            <span class="bg-gradient-to-r from-emerald-500 to-blue-600 bg-clip-text text-transparent"><%= t('.brand') %></span>
+            <%= t('.hero_title_suffix') %>
+          </h1>
+
+          <p class="mt-6 max-w-xl text-lg leading-8 text-slate-600">
+            <%= t('.hero_description') %>
+          </p>
+
+          <div class="mt-10 space-y-5">
+            <% %i[personalized resolve_questions no_commitment].each do |benefit| %>
+              <div class="flex gap-4">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--brand-light)] text-[var(--brand)]">
+                  ✓
+                </div>
+                <div>
+                  <h3 class="font-semibold text-slate-900"><%= t(".benefits.#{benefit}.title") %></h3>
+                  <p class="mt-1 text-sm leading-6 text-slate-600"><%= t(".benefits.#{benefit}.description") %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
         <%= render Ui::CardComponent.new do %>
           <% if flash[:notice].present? %>
             <div class="mb-6 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
@@ -35,7 +59,7 @@
               <div class="grid gap-6 sm:grid-cols-2">
                 <div>
                   <%= f.label :name, t('.name'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-                  <%= f.text_field :name, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <%= f.text_field :name, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[var(--brand)] focus:bg-white focus:ring-4 focus:ring-[var(--brand-light)]" %>
                   <% f.object.errors.full_messages_for(:name).each do |message| %>
                     <p class="mt-2 text-sm text-red-600"><%= message %></p>
                   <% end %>
@@ -43,7 +67,7 @@
 
                 <div>
                   <%= f.label :email, t('.email'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-                  <%= f.email_field :email, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <%= f.email_field :email, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[var(--brand)] focus:bg-white focus:ring-4 focus:ring-[var(--brand-light)]" %>
                   <% f.object.errors.full_messages_for(:email).each do |message| %>
                     <p class="mt-2 text-sm text-red-600"><%= message %></p>
                   <% end %>
@@ -53,7 +77,7 @@
               <div class="grid gap-6 sm:grid-cols-2">
                 <div>
                   <%= f.label :phone, t('.phone'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-                  <%= f.telephone_field :phone, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <%= f.telephone_field :phone, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[var(--brand)] focus:bg-white focus:ring-4 focus:ring-[var(--brand-light)]" %>
                   <% f.object.errors.full_messages_for(:phone).each do |message| %>
                     <p class="mt-2 text-sm text-red-600"><%= message %></p>
                   <% end %>
@@ -61,7 +85,7 @@
 
                 <div>
                   <%= f.label :company, t('.company'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-                  <%= f.text_field :company, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                  <%= f.text_field :company, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[var(--brand)] focus:bg-white focus:ring-4 focus:ring-[var(--brand-light)]" %>
                   <% f.object.errors.full_messages_for(:company).each do |message| %>
                     <p class="mt-2 text-sm text-red-600"><%= message %></p>
                   <% end %>
@@ -70,7 +94,7 @@
 
               <div>
                 <%= f.label :message, t('.message'), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-                <%= f.text_area :message, rows: 5, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-100" %>
+                <%= f.text_area :message, rows: 5, class: "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-[var(--brand)] focus:bg-white focus:ring-4 focus:ring-[var(--brand-light)]" %>
                 <% f.object.errors.full_messages_for(:message).each do |message| %>
                   <p class="mt-2 text-sm text-red-600"><%= message %></p>
                 <% end %>

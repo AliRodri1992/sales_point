@@ -55,6 +55,20 @@ en:
       badge: "Personalized demo"
       title: "Discover Nexo POS"
       description: "Share your details and a specialist will contact you to show you how Nexo POS can help your business."
+      hero_title: "Discover everything"
+      brand: "Nexo POS"
+      hero_title_suffix: "can do for your business"
+      hero_description: "Manage sales, inventory, customers, branches, and much more from one place."
+      benefits:
+        personalized:
+          title: "Personalized demo"
+          description: "Discover the features your business really needs."
+        resolve_questions:
+          title: "Get your questions answered"
+          description: "A specialist can explain how the platform works."
+        no_commitment:
+          title: "No commitment"
+          description: "Request your demo and explore the platform before deciding."
       name: "Name"
       email: "Email address"
       phone: "Phone"

@@ -55,6 +55,20 @@ es:
       badge: "Demostración personalizada"
       title: "Conoce Nexo POS"
       description: "Déjanos tus datos y un especialista se pondrá en contacto contigo para mostrarte cómo Nexo POS puede ayudar a tu negocio."
+      hero_title: "Conoce todo lo que"
+      brand: "Nexo POS"
+      hero_title_suffix: "puede hacer por tu negocio"
+      hero_description: "Descubre cómo puedes administrar ventas, inventario, clientes, sucursales y mucho más desde un solo lugar."
+      benefits:
+        personalized:
+          title: "Demostración personalizada"
+          description: "Conoce las funciones que realmente necesita tu negocio."
+        resolve_questions:
+          title: "Resuelve tus dudas"
+          description: "Un especialista podrá explicarte el funcionamiento de la plataforma."
+        no_commitment:
+          title: "Sin compromiso"
+          description: "Solicita tu demostración y conoce la plataforma antes de decidir."
       name: "Nombre"
       email: "Correo electrónico"
       phone: "Teléfono"
