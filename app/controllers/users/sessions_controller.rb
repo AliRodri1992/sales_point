@@ -65,6 +65,9 @@ module Users
 
     end
 
+    def after_sign_in_path_for(_resource)
+      admin_dashboard_path
+    end
 
   end
 end
