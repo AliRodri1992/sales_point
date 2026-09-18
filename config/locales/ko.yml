@@ -64,3 +64,13 @@ ko:
       error_summary: "요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요."
     create:
       success: "요청이 접수되었습니다. 곧 연락드리겠습니다."
+  demo_request_mailer:
+    new_request:
+      subject: "새 데모 신청 - Nexo POS"
+      title: "새 데모 신청"
+      fields:
+        name: "이름"
+        email: "이메일"
+        phone: "전화번호"
+        company: "회사"
+        message: "메시지"

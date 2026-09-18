@@ -64,3 +64,13 @@ en:
       error_summary: "The request could not be sent. Check the fields and try again."
     create:
       success: "Your request was received. We will contact you soon."
+  demo_request_mailer:
+    new_request:
+      subject: "New demo request - Nexo POS"
+      title: "New demo request"
+      fields:
+        name: "Name"
+        email: "Email"
+        phone: "Phone"
+        company: "Company"
+        message: "Message"

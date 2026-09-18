@@ -38,7 +38,10 @@ class DemoRequest < ApplicationRecord
   private
 
   def notify_demo_request
-    notification = DemoRequestNotification.with(demo_request: self)
+    notification = DemoRequestNotification.with(
+      demo_request: self,
+      locale: I18n.locale.to_s
+    )
     notification.deliver(self)
   end
 end

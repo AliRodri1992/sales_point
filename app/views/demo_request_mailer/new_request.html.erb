@@ -1,11 +1,11 @@
-<h1>Nueva solicitud de demostración</h1>
+<h1><%= t('demo_request_mailer.new_request.title') %></h1>
 
-<p><strong>Nombre:</strong> <%= @demo_request.name %></p>
-<p><strong>Correo:</strong> <%= @demo_request.email %></p>
-<p><strong>Teléfono:</strong> <%= @demo_request.phone %></p>
-<p><strong>Empresa:</strong> <%= @demo_request.company %></p>
+<p><strong><%= t('demo_request_mailer.new_request.fields.name') %>:</strong> <%= @demo_request.name %></p>
+<p><strong><%= t('demo_request_mailer.new_request.fields.email') %>:</strong> <%= @demo_request.email %></p>
+<p><strong><%= t('demo_request_mailer.new_request.fields.phone') %>:</strong> <%= @demo_request.phone %></p>
+<p><strong><%= t('demo_request_mailer.new_request.fields.company') %>:</strong> <%= @demo_request.company %></p>
 
 <% if @demo_request.message.present? %>
-  <p><strong>Mensaje:</strong></p>
+  <p><strong><%= t('demo_request_mailer.new_request.fields.message') %>:</strong></p>
   <p><%= simple_format(@demo_request.message) %></p>
 <% end %>

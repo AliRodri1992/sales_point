@@ -6,4 +6,5 @@ class DemoRequestNotification < Noticed::Base
              method: :new_request
 
   param :demo_request
+  param :locale
 end

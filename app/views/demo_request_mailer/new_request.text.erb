@@ -1,10 +1,10 @@
-Nueva solicitud de demostración
+<%= t('demo_request_mailer.new_request.title') %>
 
-Nombre: <%= @demo_request.name %>
-Correo: <%= @demo_request.email %>
-Teléfono: <%= @demo_request.phone %>
-Empresa: <%= @demo_request.company %>
+<%= t('demo_request_mailer.new_request.fields.name') %>: <%= @demo_request.name %>
+<%= t('demo_request_mailer.new_request.fields.email') %>: <%= @demo_request.email %>
+<%= t('demo_request_mailer.new_request.fields.phone') %>: <%= @demo_request.phone %>
+<%= t('demo_request_mailer.new_request.fields.company') %>: <%= @demo_request.company %>
 <% if @demo_request.message.present? %>
-Mensaje:
+<%= t('demo_request_mailer.new_request.fields.message') %>:
 <%= @demo_request.message %>
 <% end %>

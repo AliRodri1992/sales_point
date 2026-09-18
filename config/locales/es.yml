@@ -64,3 +64,13 @@ es:
       error_summary: "No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente."
     create:
       success: "Recibimos tu solicitud. Nos pondremos en contacto contigo pronto."
+  demo_request_mailer:
+    new_request:
+      subject: "Nueva solicitud de demostración - Nexo POS"
+      title: "Nueva solicitud de demostración"
+      fields:
+        name: "Nombre"
+        email: "Correo"
+        phone: "Teléfono"
+        company: "Empresa"
+        message: "Mensaje"
