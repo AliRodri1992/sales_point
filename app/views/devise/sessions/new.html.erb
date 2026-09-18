@@ -79,24 +79,24 @@
 
 
 
-      <!-- USER -->
+      <!-- EMAIL -->
 
 
       <div>
 
         <%= f.label(
-              :username,
-              t(".operator"),
+              :email,
+              t(".email"),
               class:
                 "mb-2 block text-[10px] font-bold uppercase tracking-wider text-slate-500"
             ) %>
 
 
-        <%= f.text_field(
-              :username,
+        <%= f.email_field(
+              :email,
               autofocus: true,
-              autocomplete: "username",
-              placeholder: t(".username_placeholder"),
+              autocomplete: "email",
+              placeholder: t(".email_placeholder"),
               class:
                 "input-field w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
               data: {

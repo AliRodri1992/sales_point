@@ -13,7 +13,14 @@
     </nav>
 
     <div class="hidden items-center gap-3 lg:flex">
-      <%= render Ui::ButtonComponent.new(text: t('landing.buttons.sign_in'), href: new_user_session_path, variant: :outline) %>
+      <% if helpers.user_signed_in? %>
+        <%= button_to t('landing.buttons.sign_out'),
+                      destroy_user_session_path,
+                      method: :delete,
+                      class: "inline-flex items-center justify-center gap-2 rounded-xl border border-[#2563eb] bg-transparent px-6 py-3 text-base font-semibold text-white transition hover:bg-[#2563eb] focus:outline-none focus:ring-4 focus:ring-blue-300" %>
+      <% else %>
+        <%= render Ui::ButtonComponent.new(text: t('landing.buttons.sign_in'), href: new_user_session_path, variant: :outline) %>
+      <% end %>
       <%= render Ui::ButtonComponent.new(text: t('landing.buttons.start'), href: new_user_registration_path, variant: :success) %>
       <%= render Authentication::LanguageSelectorComponent.new(
         current_language: helpers.current_language,
@@ -51,8 +58,15 @@
           languages: helpers.terminal_languages
         ) %>
       </div>
-      <%= link_to t('landing.buttons.sign_in'), new_user_session_path,
-                  class: "mt-1 rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]" %>
+      <% if helpers.user_signed_in? %>
+        <%= button_to t('landing.buttons.sign_out'),
+                      destroy_user_session_path,
+                      method: :delete,
+                      class: "mt-1 w-full rounded-lg px-3 py-2 text-left font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]" %>
+      <% else %>
+        <%= link_to t('landing.buttons.sign_in'), new_user_session_path,
+                    class: "mt-1 rounded-lg px-3 py-2 font-medium text-white transition hover:bg-slate-800 hover:text-[#06b6d4]" %>
+      <% end %>
       <%= link_to t('landing.buttons.start'), new_user_registration_path,
                   class: "mt-1 rounded-lg bg-emerald-500 px-3 py-2 text-center font-semibold text-white transition hover:bg-emerald-600" %>
     </nav>

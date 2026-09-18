@@ -4,8 +4,8 @@ en:
       new:
         title: "Access Terminal"
         subtitle: "Enter your credentials to open terminal shift"
-        operator: "Operator ID / Username"
-        username_placeholder: "e.g., CASHIER-04"
+        email: "Email address"
+        email_placeholder: "email@example.com"
         password: "Password"
         forgot: "Forgot key?"
         submit: "SIGN IN"
@@ -94,6 +94,7 @@ en:
       create_account: "Create account"
       request_demo: "Request a demo"
       sign_in: "Sign in"
+      sign_out: "Sign out"
       start: "Get started"
     hero:
       badge: "New • Cloud POS"

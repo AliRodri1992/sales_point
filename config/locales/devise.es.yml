@@ -16,8 +16,8 @@ es:
       unauthenticated: "Necesitas iniciar sesión o registrarte antes de continuar."
       unconfirmed: "Debes confirmar tu dirección de correo electrónico antes de continuar."
       user:
-        invalid: "Usuario o contraseña inválidos."
-        not_found_in_database: "Usuario o contraseña inválidos."
+        invalid: "Correo electrónico o contraseña inválidos."
+        not_found_in_database: "Correo electrónico o contraseña inválidos."
     mailer:
       confirmation_instructions:
         subject: "Instrucciones de confirmación"

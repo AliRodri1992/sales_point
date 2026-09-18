@@ -4,8 +4,8 @@ es:
       new:
         title: "Punto de Venta"
         subtitle: "Ingresa tus credenciales para iniciar turno"
-        operator: "Usuario / Código de Cajero"
-        username_placeholder: "Ej. CAJERO-04"
+        email: "Correo electrónico"
+        email_placeholder: "correo@ejemplo.com"
         password: "Contraseña"
         forgot: "¿Olvidaste tu clave?"
         submit: "INICIAR SESIÓN"
@@ -99,6 +99,7 @@ es:
       create_account: "Crear cuenta"
       request_demo: "Solicitar demostración"
       sign_in: "Iniciar sesión"
+      sign_out: "Cerrar sesión"
       start: "Comenzar"
     hero:
       badge: "Nuevo • POS en la nube"
