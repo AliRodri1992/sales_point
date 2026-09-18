@@ -1,27 +1,30 @@
-require 'simplecov'
+if ENV['COVERAGE'] == 'true'
+  require 'simplecov'
 
-SimpleCov.start 'rails' do
-  enable_coverage :branch
+  SimpleCov.command_name 'RSpec'
+  SimpleCov.start 'rails' do
+    enable_coverage :branch
+    primary_coverage :line
 
-  add_filter '/config/'
-  add_filter '/spec/'
-  add_filter '/db/'
-  add_filter '/bin/'
-  add_filter '/vendor/'
+    coverage_dir 'coverage'
+    add_filter '/config/'
+    add_filter '/spec/'
+    add_filter '/db/'
+    add_filter '/bin/'
+    add_filter '/vendor/'
 
-  add_group 'Models', 'app/models'
-  add_group 'Controllers', 'app/controllers'
-  add_group 'Services', 'app/services'
-  add_group 'Jobs', 'app/jobs'
-  add_group 'Mailers', 'app/mailers'
-  add_group 'Helpers', 'app/helpers'
+    add_group 'Models', 'app/models'
+    add_group 'Controllers', 'app/controllers'
+    add_group 'Services', 'app/services'
+    add_group 'Jobs', 'app/jobs'
+    add_group 'Mailers', 'app/mailers'
+    add_group 'Helpers', 'app/helpers'
 
-  minimum_coverage 85
-
-  formatter SimpleCov::Formatter::HTMLFormatter
+    minimum_coverage 85
+    formatter SimpleCov::Formatter::HTMLFormatter
+  end
 end
 
-# 👇 después de SimpleCov
 require 'rspec/rails'
 
 RSpec.configure do |config|
