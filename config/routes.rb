@@ -10,6 +10,9 @@ Rails.application.routes.draw do
              }
 
   root 'home#index'
+  namespace :admin do
+    get '/dashboard', to: 'dashboard#index', as: :dashboard
+  end
   resources :demo_requests, only: %i[new create]
 
 
