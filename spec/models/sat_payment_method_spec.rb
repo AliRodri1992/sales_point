@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe SatPaymentMethod, type: :model do
@@ -34,9 +36,9 @@ RSpec.describe SatPaymentMethod, type: :model do
     end
 
     it 'allows duplicate code if previous is soft deleted' do
-      create(:sat_payment_method, code: '01', deleted_at: Time.current)
+      create(:sat_payment_method, code: '02', deleted_at: Time.current)
 
-      new_record = build(:sat_payment_method, code: '01')
+      new_record = build(:sat_payment_method, code: '02')
       expect(new_record).to be_valid
     end
 
@@ -52,39 +54,68 @@ RSpec.describe SatPaymentMethod, type: :model do
   # SCOPES
   # =========================
   describe 'scopes' do
-    let!(:active_record) { create(:sat_payment_method, status: true) }
-    let!(:inactive_record) { create(:sat_payment_method, status: false) }
+    describe '.active' do
+      let!(:active_record) { create(:sat_payment_method, status: true) }
+      let!(:inactive_record) { create(:sat_payment_method, status: false) }
 
-    it 'returns only active records' do
-      expect(described_class.active).to include(active_record)
-      expect(described_class.active).not_to include(inactive_record)
+      it 'returns only active records' do
+        expect(described_class.active).to include(active_record)
+        expect(described_class.active).not_to include(inactive_record)
+      end
     end
 
-    it 'filters by valid_on date' do
-      record = create(
-        :sat_payment_method,
-        valid_from: 2.days.ago,
-        valid_to: 2.days.from_now
-      )
+    describe '.valid_on' do
+      let!(:valid_record) do
+        create(
+          :sat_payment_method,
+          valid_from: 2.days.ago,
+          valid_to: 2.days.from_now
+        )
+      end
+      let!(:expired_record) do
+        create(
+          :sat_payment_method,
+          valid_from: 10.days.ago,
+          valid_to: 2.days.ago
+        )
+      end
 
-      expect(described_class.valid_on(Time.current)).to include(record)
+      it 'filters by valid_on date' do
+        expect(described_class.valid_on(Date.current)).to include(valid_record)
+        expect(described_class.valid_on(Date.current)).not_to include(expired_record)
+      end
     end
 
-    it 'returns current records' do
-      record = create(
-        :sat_payment_method,
-        status: true,
-        valid_from: 1.day.ago,
-        valid_to: 1.day.from_now
-      )
+    describe '.current' do
+      let!(:current_record) do
+        create(
+          :sat_payment_method,
+          status: true,
+          valid_from: 1.day.ago,
+          valid_to: 1.day.from_now
+        )
+      end
+      let!(:inactive_record) do
+        create(
+          :sat_payment_method,
+          status: false,
+          valid_from: 1.day.ago,
+          valid_to: 1.day.from_now
+        )
+      end
 
-      expect(described_class.current).to include(record)
+      it 'returns current records' do
+        expect(described_class.current).to include(current_record)
+        expect(described_class.current).not_to include(inactive_record)
+      end
     end
 
-    it 'searches by description' do
-      record = create(:sat_payment_method, description: 'Transferencia bancaria')
+    describe '.search' do
+      let!(:record) { create(:sat_payment_method, description: 'Transferencia bancaria') }
 
-      expect(described_class.search('Transferencia')).to include(record)
+      it 'searches by description' do
+        expect(described_class.search('Transferencia')).to include(record)
+      end
     end
   end
 
@@ -109,7 +140,7 @@ RSpec.describe SatPaymentMethod, type: :model do
       subject.valid_from = 1.day.ago
       subject.valid_to = 1.day.from_now
 
-      expect(subject.valid_for_date?(Time.current)).to be true
+      expect(subject.valid_for_date?(Date.current)).to be true
     end
 
     it 'display_name returns formatted string' do
