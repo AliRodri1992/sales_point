@@ -53,7 +53,7 @@ end
 
 # Load all locale files
 Rails.root.glob('config/locales/*.yml').each do |file|
-  next if file.include?('devise.security_extension')
+  next if file.to_s.include?('devise.security_extension')
 
   filename = File.basename(file)
   case filename
@@ -75,5 +75,50 @@ end
     month.description = Date::MONTHNAMES[i]
     month.month_number = i
   end
-end
 
+  # Roles available to the authorization layer.
+  [
+    {
+      code: 'super_admin',
+      name: 'Super administrador',
+      description: 'Acceso total al sistema y a todas las sucursales.',
+      role_type: :system
+    },
+    {
+      code: 'administrator',
+      name: 'Administrador',
+      description: 'Administra la configuración y operación general del sistema.',
+      role_type: :system
+    },
+    {
+      code: 'accountant',
+      name: 'Contador',
+      description: 'Consulta y administra información fiscal y contable.',
+      role_type: :system
+    },
+    {
+      code: 'branch_manager',
+      name: 'Gerente de sucursal',
+      description: 'Administra la operación de una sucursal asignada.',
+      role_type: :branch
+    },
+    {
+      code: 'cashier',
+      name: 'Cajero',
+      description: 'Opera ventas, cobros y cortes de caja.',
+      role_type: :branch
+    },
+    {
+      code: 'inventory_manager',
+      name: 'Encargado de inventario',
+      description: 'Administra existencias, productos y movimientos de inventario.',
+      role_type: :branch
+    }
+  ].each do |role_attributes|
+    SystemRole.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
+      role.assign_attributes(role_attributes)
+      role.status = :active
+      role.save!
+    end
+  end
+end

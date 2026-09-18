@@ -317,6 +317,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
   end
 
   create_table "system_roles", force: :cascade do |t|
+    t.string "code", limit: 50, null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "description"
@@ -324,6 +325,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.string "role_type", limit: 20, null: false
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_system_roles_on_code", unique: true
     t.index ["created_at"], name: "index_system_roles_on_created_at"
     t.index ["deleted_at"], name: "index_system_roles_on_deleted_at"
     t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
@@ -344,6 +346,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
     t.index ["key"], name: "index_translates_on_key"
     t.index ["locale"], name: "index_translates_on_locale"
+  end
+
+  create_table "user_roles", force: :cascade do |t|
+    t.bigint "branch_id"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "system_role_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["branch_id"], name: "index_user_roles_on_branch_id"
+    t.index ["deleted_at"], name: "index_user_roles_on_deleted_at"
+    t.index ["system_role_id"], name: "index_user_roles_on_system_role_id"
+    t.index ["user_id", "system_role_id", "branch_id"], name: "idx_user_roles_branch_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NOT NULL))"
+    t.index ["user_id", "system_role_id"], name: "idx_user_roles_global_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL))"
+    t.index ["user_id"], name: "index_user_roles_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -391,5 +408,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
 
   add_foreign_key "membership_plan_features", "membership_features"
   add_foreign_key "membership_plan_features", "membership_plans"
+  add_foreign_key "user_roles", "branches"
+  add_foreign_key "user_roles", "system_roles"
+  add_foreign_key "user_roles", "users"
   add_foreign_key "users", "languages"
 end

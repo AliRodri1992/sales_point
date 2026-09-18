@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   belongs_to :language,
              optional: true
+  has_many :user_roles, dependent: :destroy
+  has_many :system_roles, through: :user_roles
 
   enum :user_type,
        {
@@ -37,4 +39,14 @@ class User < ApplicationRecord
   validates :theme,
             presence: true,
             inclusion: { in: Theme.ids }
+
+  def admin?
+    system_roles.active.exists?(code: %w[super_admin administrator])
+  end
+
+  def role?(role_code, branch: nil)
+    scope = user_roles.active.joins(:system_role).where(system_roles: { code: role_code })
+    scope = scope.where(branch: branch) if branch
+    scope.exists?
+  end
 end

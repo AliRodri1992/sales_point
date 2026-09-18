@@ -1,4 +1,7 @@
 class SystemRole < ApplicationRecord
+  has_many :user_roles, dependent: :restrict_with_exception
+  has_many :users, through: :user_roles
+
   enum :role_type, {
     system: 'system',
     branch: 'branch'
@@ -12,6 +15,12 @@ class SystemRole < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 50 }
 
+  validates :code,
+            presence: true,
+            length: { maximum: 50 },
+            format: { with: /\A[a-z0-9_]+\z/ },
+            uniqueness: true
+
   validates :role_type, presence: true
 
   validates :status, presence: true
@@ -23,18 +32,4 @@ class SystemRole < ApplicationRecord
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { where(deleted_at: nil).where.not(status: 'deprecated') }
-
-  private
-
-  def active?
-    status == 'active'
-  end
-
-  def inactive?
-    status == 'inactive'
-  end
-
-  def deprecated?
-    status == 'deprecated'
-  end
 end
