@@ -48,6 +48,18 @@ select {
     border-color: var(--brand);
 }
 
+.language-option-brand:hover,
+.language-option-brand:focus-visible {
+    background-color: var(--brand);
+    color: white;
+}
+
+.language-option-blue:hover,
+.language-option-blue:focus-visible {
+    background-color: #2563eb;
+    color: white;
+}
+
 @keyframes shake {
 
     0%,
