@@ -1,0 +1,10 @@
+Nueva solicitud de demostración
+
+Nombre: <%= @demo_request.name %>
+Correo: <%= @demo_request.email %>
+Teléfono: <%= @demo_request.phone %>
+Empresa: <%= @demo_request.company %>
+<% if @demo_request.message.present? %>
+Mensaje:
+<%= @demo_request.message %>
+<% end %>

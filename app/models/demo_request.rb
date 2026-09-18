@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DemoRequest < ApplicationRecord
+  after_create_commit :notify_demo_request
+
   enum :status,
        {
          pending: 'pending',
@@ -33,4 +35,10 @@ class DemoRequest < ApplicationRecord
             length: { maximum: 2_000 },
             allow_blank: true
 
+  private
+
+  def notify_demo_request
+    notification = DemoRequestNotification.with(demo_request: self)
+    notification.deliver(self)
+  end
 end

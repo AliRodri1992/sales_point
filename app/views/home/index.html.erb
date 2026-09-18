@@ -1,6 +1,6 @@
 <%= render Landing::NavbarComponent.new %>
 
-<main>
+<main class="overflow-x-hidden">
 
   <%= render Landing::HeroComponent.new(
     badge: "Nuevo • POS en la nube",
@@ -59,9 +59,9 @@
     image: "logo.png"
   ) %>
 
-  <section class="bg-slate-50 py-24">
+  <section class="bg-slate-50 py-16 sm:py-24">
 
-    <div class="mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
       <%= render Ui::SectionTitleComponent.new(
         badge: "Clientes",
@@ -69,7 +69,7 @@
         subtitle: "Nuestro software ayuda diariamente a cientos de negocios."
       ) %>
 
-      <div class="mt-16 grid gap-8 lg:grid-cols-3">
+      <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
 
         <% @testimonials.each do |testimonial| %>
 
@@ -85,9 +85,9 @@
 
   <section
     id="pricing"
-    class="bg-white py-28">
+    class="bg-white py-16 sm:py-28">
 
-    <div class="mx-auto max-w-7xl px-6">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
 
       <%= render Ui::SectionTitleComponent.new(
         badge: "Precios",
@@ -95,7 +95,7 @@
         subtitle: "Empieza gratis y crece cuando lo necesites."
       ) %>
 
-      <div class="mt-16 grid gap-8 lg:grid-cols-3">
+      <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
 
         <% @plans.each do |plan| %>
 

@@ -1,9 +1,9 @@
 <!-- Dashboard -->
 
-<div class="grid min-h-[430px] grid-cols-[72px_1fr]">
+<div class="grid min-h-[360px] grid-cols-[56px_1fr] sm:min-h-[430px] sm:grid-cols-[72px_1fr]">
   <!-- Sidebar -->
-  <div class="bg-slate-900 p-4">
-    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
+  <div class="bg-slate-900 p-3 sm:p-4">
+    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white sm:h-9 sm:w-9">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z"/>
       </svg>
@@ -19,7 +19,7 @@
   </div>
 
   <!-- Main dashboard -->
-  <div class="bg-slate-50 p-5">
+  <div class="min-w-0 bg-slate-50 p-3 sm:p-5">
     <div class="flex items-center justify-between">
       <div>
         <div class="text-lg font-bold text-slate-900">Dashboard</div>
@@ -30,7 +30,7 @@
 
 
     <!-- Cards -->
-    <div class="mt-5 grid grid-cols-3 gap-3">
+    <div class="mt-5 grid gap-3 sm:grid-cols-3">
       <div class="rounded-xl bg-white p-4 shadow-sm">
         <div class="text-[10px] text-slate-500">Ventas</div>
         <div class="mt-2 text-lg font-black">$84,250</div>

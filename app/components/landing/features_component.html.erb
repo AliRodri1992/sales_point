@@ -1,7 +1,7 @@
-<section id="features" class="bg-white py-28">
-  <div class="mx-auto max-w-7xl px-6">
+<section id="features" class="bg-white py-16 sm:py-28">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
     <%= render Ui::SectionTitleComponent.new(badge: "Características", title: title, subtitle: subtitle) %>
-    <div class="mt-20 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+    <div class="mt-12 grid gap-6 sm:mt-20 sm:gap-8 md:grid-cols-2 xl:grid-cols-3">
       <% features.each do |feature| %>
         <%= render Landing::FeatureCardComponent.new(
           icon: feature.icon,

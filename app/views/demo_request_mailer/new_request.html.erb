@@ -1,0 +1,11 @@
+<h1>Nueva solicitud de demostración</h1>
+
+<p><strong>Nombre:</strong> <%= @demo_request.name %></p>
+<p><strong>Correo:</strong> <%= @demo_request.email %></p>
+<p><strong>Teléfono:</strong> <%= @demo_request.phone %></p>
+<p><strong>Empresa:</strong> <%= @demo_request.company %></p>
+
+<% if @demo_request.message.present? %>
+  <p><strong>Mensaje:</strong></p>
+  <p><%= simple_format(@demo_request.message) %></p>
+<% end %>
