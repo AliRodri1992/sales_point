@@ -1,49 +1,58 @@
-<div class="relative">
-  <button
-    id="languageSelectorButton"
-    type="button"
-    class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
-    aria-label="<%= t('admin.shared.language_selector.toggle') %>"
-  >
-    <%= icon("globe-alt", class: "size-5 text-slate-400") %>
+<% current = current_language %>
 
-    <span class="hidden sm:inline">
-      ES
-    </span>
-
-    <%= icon("chevron-down", class: "size-3 text-slate-400") %>
-  </button>
-
-  <div
-    id="languageSelectorMenu"
-    class="absolute right-0 top-full z-50 mt-2 hidden w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
-  >
+<% if current %>
+  <div class="relative" data-controller="language-selector">
     <button
+      id="languageSelectorButton"
       type="button"
-      class="flex w-full items-center gap-3 rounded-lg bg-blue-50 px-3 py-2.5 text-left text-sm font-medium text-blue-700"
+      data-action="click->language-selector#toggle"
+      class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
+      aria-label="<%= t('admin.shared.language_selector.toggle') %>"
     >
-      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-100 text-xs font-bold">
-        ES
+      <img
+        data-language-selector-target="flag"
+        src="<%= current.flag_url %>"
+        srcset="<%= current.flag_srcset %>"
+        class="size-5 rounded-full object-cover"
+        alt="<%= current.name %>"
+      >
+
+      <span class="hidden sm:inline">
+        <%= current.code.upcase %>
       </span>
 
-      <span class="flex-1">
-        <%= t('admin.shared.language_selector.spanish') %>
-      </span>
-
-      <%= icon("check", variant: :solid, class: "size-3") %>
+      <%= icon("chevron-down", class: "size-3 text-slate-400") %>
     </button>
 
-    <button
-      type="button"
-      class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+    <div
+      id="languageSelectorMenu"
+      data-language-selector-target="dropdown"
+      class="absolute right-0 top-full z-50 mt-2 hidden w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
     >
-      <span class="flex h-7 w-7 items-center justify-center rounded-md bg-slate-100 text-xs font-bold">
-        EN
-      </span>
+      <% terminal_languages.each do |language| %>
+        <button
+          type="button"
+          data-action="click->language-selector#select"
+          data-language="<%= language.code %>"
+          data-flag="<%= language.flag_url %>"
+          class="language-option language-option-blue mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition first:mt-0 <%= language.id == current.id ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>"
+        >
+          <img
+            src="<%= language.flag_url %>"
+            srcset="<%= language.flag_srcset %>"
+            class="size-7 rounded-full object-cover"
+            alt="<%= language.name %>"
+          >
 
-      <span>
-        <%= t('admin.shared.language_selector.english') %>
-      </span>
-    </button>
+          <span class="flex-1">
+            <%= language.name %>
+          </span>
+
+          <% if language.id == current.id %>
+            <%= icon("check", variant: :solid, class: "size-3") %>
+          <% end %>
+        </button>
+      <% end %>
+    </div>
   </div>
-</div>
+<% end %>

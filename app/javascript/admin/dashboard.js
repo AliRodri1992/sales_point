@@ -35,14 +35,15 @@ document.addEventListener("turbo:load", () => {
             menu: document.getElementById("notificationsMenu")
         },
         {
-            button: document.getElementById("languageSelectorButton"),
-            menu: document.getElementById("languageSelectorMenu")
-        },
-        {
             button: document.getElementById("userMenuButton"),
             menu: document.getElementById("userMenu")
         }
     ]
+
+    // Note: the language selector dropdown is handled entirely by the
+    // Stimulus `language-selector` controller (see
+    // app/javascript/controllers/language_selector_controller.js), so it is
+    // intentionally excluded from this list to avoid double-toggling.
 
     /*
      * ============================================================
