@@ -575,18 +575,30 @@ select {
    Dashboard — GridStack Widget Spacing
    ============================================================ */
 
+#mainDashboardGrid {
+    margin-bottom: 1.5rem;
+}
+
+#mainDashboardGrid:not(.dashboard-editing) {
+    /* Keep absolute widgets from painting over the footer */
+    overflow: hidden;
+}
+
 #mainDashboardGrid .grid-stack-item-content {
-    overflow: visible;
+    overflow: hidden;
 }
 
 #mainDashboardGrid .dashboard-widget {
     min-width: 0;
 }
 
-/* Extra gap only between the top row (chart/actions) and bottom row */
-#mainDashboardGrid .grid-stack-item[gs-id="recent-sales"] > .grid-stack-item-content,
-#mainDashboardGrid .grid-stack-item[gs-id="low-stock"] > .grid-stack-item-content {
-    top: calc(var(--gs-item-margin-top) + 1.75rem);
+/*
+ * Gap between chart/actions and recent-sales/low-stock.
+ * Inset only the bottom-row content from the top; extra gs-h on those
+ * widgets keeps their inner layout comfortable without covering the footer.
+ */
+#mainDashboardGrid .dashboard-widget--row-gap {
+    top: calc(var(--gs-item-margin-top, 8px) + 2rem) !important;
 }
 
 
@@ -609,6 +621,8 @@ select {
    ============================================================ */
 
 footer {
+    position: relative;
+    z-index: 1;
     flex-shrink: 0;
 }
 

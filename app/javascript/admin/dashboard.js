@@ -72,7 +72,7 @@ document.addEventListener("turbo:load", () => {
                 animate: true,
                 disableDrag: true,
                 disableResize: true,
-                minRow: 11,
+                minRow: 12,
                 resizable: {
                     handles: "e,se,s,sw,w"
                 }
