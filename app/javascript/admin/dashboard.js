@@ -5,6 +5,21 @@ import { GridStack } from "gridstack"
 import Swal from "sweetalert2"
 
 document.addEventListener("turbo:load", () => {
+    const javascriptTranslationsElement =
+        document.getElementById(
+            "javascriptTranslations"
+        )
+
+    const javascriptTranslations =
+        javascriptTranslationsElement
+            ? JSON.parse(
+                javascriptTranslationsElement.textContent || "{}"
+            )
+            : {}
+
+    const translateDashboard = (key) =>
+        javascriptTranslations[key] || key
+
     const sidebar = document.getElementById("adminSidebar")
     const sidebarToggle = document.getElementById("sidebarToggle")
     const sidebarOverlay =
@@ -218,8 +233,12 @@ document.addEventListener("turbo:load", () => {
 
             Swal.fire({
                 icon: "success",
-                title: "Cambios guardados",
-                text: "El layout del dashboard se actualizó correctamente.",
+                title: translateDashboard(
+                    "saved_title"
+                ),
+                text: translateDashboard(
+                    "saved_text"
+                ),
                 toast: true,
                 position: "top-end",
                 timer: 2500,
@@ -234,8 +253,12 @@ document.addEventListener("turbo:load", () => {
 
             Swal.fire({
                 icon: "error",
-                title: "No se pudieron guardar los cambios",
-                text: "Hubo un problema al guardar el layout. Intentá de nuevo."
+                title: translateDashboard(
+                    "save_error_title"
+                ),
+                text: translateDashboard(
+                    "save_error_text"
+                )
             })
         }
     }
@@ -623,8 +646,8 @@ document.addEventListener("turbo:load", () => {
 
         if (textNode) {
             textNode.textContent = editing
-                ? " Guardar cambios"
-                : " Personalizar dashboard"
+                ? ` ${translateDashboard("save_changes")}`
+                : ` ${translateDashboard("customize_dashboard")}`
         }
     }
 

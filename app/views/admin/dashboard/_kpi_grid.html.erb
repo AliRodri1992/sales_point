@@ -13,7 +13,7 @@
   >
     <div class="grid-stack-item-content">
       <%= render Admin::KpiCardComponent.new(
-        title: "Ventas de hoy",
+        title: t('admin.dashboard.kpi_grid.sales_today'),
         value: "$48,250.00",
         change: "+12.5%",
         icon: "fa-solid fa-arrow-trend-up"
@@ -31,7 +31,7 @@
   >
     <div class="grid-stack-item-content">
       <%= render Admin::KpiCardComponent.new(
-        title: "Transacciones",
+        title: t('admin.dashboard.kpi_grid.transactions'),
         value: "186",
         change: "+8.2%",
         icon: "fa-solid fa-receipt"
@@ -49,7 +49,7 @@
   >
     <div class="grid-stack-item-content">
       <%= render Admin::KpiCardComponent.new(
-        title: "Ticket promedio",
+        title: t('admin.dashboard.kpi_grid.average_ticket'),
         value: "$259.41",
         change: "+4.7%",
         icon: "fa-solid fa-chart-line"
@@ -67,9 +67,9 @@
   >
     <div class="grid-stack-item-content">
       <%= render Admin::KpiCardComponent.new(
-        title: "Caja actual",
+        title: t('admin.dashboard.kpi_grid.current_cash'),
         value: "$32,840.00",
-        status: "Sesión abierta",
+        status: t('admin.dashboard.kpi_grid.session_open'),
         icon: "fa-solid fa-cash-register"
       ) %>
     </div>

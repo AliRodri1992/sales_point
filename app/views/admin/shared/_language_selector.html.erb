@@ -3,7 +3,7 @@
     id="languageSelectorButton"
     type="button"
     class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
-    aria-label="Seleccionar idioma"
+    aria-label="<%= t('admin.shared.language_selector.toggle') %>"
   >
     <i class="fa-solid fa-globe text-slate-400"></i>
 
@@ -27,7 +27,7 @@
       </span>
 
       <span class="flex-1">
-        Español
+        <%= t('admin.shared.language_selector.spanish') %>
       </span>
 
       <i class="fa-solid fa-check text-xs"></i>
@@ -42,7 +42,7 @@
       </span>
 
       <span>
-        English
+        <%= t('admin.shared.language_selector.english') %>
       </span>
     </button>
   </div>

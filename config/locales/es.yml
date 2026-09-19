@@ -7,6 +7,134 @@ es:
       index:
         title: "Panel de administración | Nexo POS"
         greeting: "Hola"
+      page_header:
+        title: "Resumen general"
+        subtitle: "Esto es lo que está pasando en tu negocio hoy."
+        customize: "Personalizar dashboard"
+        save_changes: "Guardar cambios"
+        new_sale: "Nueva venta"
+      kpi_grid:
+        sales_today: "Ventas de hoy"
+        transactions: "Transacciones"
+        average_ticket: "Ticket promedio"
+        current_cash: "Caja actual"
+        session_open: "Sesión abierta"
+      saved:
+        title: "Cambios guardados"
+        text: "El layout del dashboard se actualizó correctamente."
+      save_error:
+        title: "No se pudieron guardar los cambios"
+        text: "Hubo un problema al guardar el layout. Inténtalo de nuevo."
+      widgets:
+        sales:
+          title: "Ventas"
+          subtitle: "Comportamiento durante los últimos 7 días"
+          period_label: "Periodo de ventas"
+          periods:
+            '7_days': "Últimos 7 días"
+            '30_days': "Últimos 30 días"
+            year: "Este año"
+          days:
+            mon: "Lun"
+            tue: "Mar"
+            wed: "Mié"
+            thu: "Jue"
+            fri: "Vie"
+            sat: "Sáb"
+            today: "Hoy"
+        quick_actions:
+          title: "Acciones rápidas"
+          subtitle: "Accede rápidamente a las funciones principales"
+          new_sale: "Nueva venta"
+          open_pos: "Abrir POS"
+          product: "Producto"
+          add_product: "Agregar producto"
+          customer: "Cliente"
+          new_customer: "Nuevo cliente"
+          cash_cut: "Corte de caja"
+          check_cash: "Consultar caja"
+        recent_sales:
+          title: "Ventas recientes"
+          subtitle: "Últimas transacciones registradas"
+          view_all: "Ver todas"
+          columns:
+            folio: "Folio"
+            customer: "Cliente"
+            method: "Método"
+            total: "Total"
+            status: "Estado"
+          statuses:
+            completed: "Completada"
+            pending: "Pendiente"
+          payment_methods:
+            card: "Tarjeta"
+            cash: "Efectivo"
+            transfer: "Transferencia"
+        low_stock:
+          title: "Inventario"
+          subtitle: "Productos que requieren atención"
+          alerts: "%{count} alertas"
+          sku: "SKU: %{sku}"
+          view_inventory: "Ver inventario"
+          units: "%{count} uds."
+    shared:
+      sidebar:
+        section_main: "Principal"
+        dashboard: "Dashboard"
+        section_operations: "Operación"
+        sales: "Ventas"
+        cash_register: "Caja"
+        inventory: "Inventario"
+        customers: "Clientes"
+        suppliers: "Proveedores"
+        employees: "Empleados"
+        section_admin: "Administración"
+        reports: "Reportes"
+        settings: "Configuración"
+        role_admin: "Administrador"
+      topbar:
+        toggle_sidebar: "Alternar menú lateral"
+        morning_greeting: "Buenos días, %{name}"
+      branch_selector:
+        toggle: "Seleccionar sucursal"
+        branch_center: "Sucursal Centro"
+        branch_north: "Sucursal Norte"
+        branch_south: "Sucursal Sur"
+      language_selector:
+        toggle: "Seleccionar idioma"
+        spanish: "Español"
+        english: "Inglés"
+      notifications:
+        toggle: "Notificaciones"
+        title: "Notificaciones"
+        subtitle: "Tienes nuevas notificaciones."
+        mark_all_read: "Marcar todas como leídas"
+        low_stock: "Stock bajo"
+        low_stock_body: "Hay productos que requieren reposición."
+        minutes_ago: "Hace %{count} minutos"
+        hour_ago: "Hace 1 hora"
+        sale_completed: "Venta completada"
+        sale_completed_body: "La venta #V-10245 fue registrada correctamente."
+        cash_open: "Caja abierta"
+        cash_open_body: "La sesión de caja está activa."
+        view_all: "Ver todas las notificaciones"
+      user_menu:
+        toggle: "Menú de usuario"
+        my_profile: "Mi perfil"
+        settings: "Configuración"
+        sign_out: "Cerrar sesión"
+      footer:
+        copyright: "© %{year} NEXO POS. Todos los derechos reservados."
+        privacy: "Privacidad"
+        terms: "Términos"
+      chat:
+        assistant_name: "Asistente NEXO"
+        online: "En línea"
+        close: "Cerrar chat"
+        greeting: "Hola, %{name}. ¿En qué puedo ayudarte?"
+        input_placeholder: "Escribe un mensaje..."
+        send: "Enviar mensaje"
+        open: "Abrir chat"
   devise:
     sessions:
       new:

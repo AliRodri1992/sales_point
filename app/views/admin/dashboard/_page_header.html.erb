@@ -1,11 +1,11 @@
 <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
   <div>
     <h1 class="text-2xl font-bold tracking-tight text-slate-900">
-      Resumen general
+      <%= t('admin.dashboard.page_header.title') %>
     </h1>
 
     <p class="mt-1 text-sm text-slate-500">
-      Esto es lo que está pasando en tu negocio hoy.
+      <%= t('admin.dashboard.page_header.subtitle') %>
     </p>
   </div>
 
@@ -16,7 +16,7 @@
       class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
     >
       <i class="fa-solid fa-sliders"></i>
-      Personalizar dashboard
+      <%= t('admin.dashboard.page_header.customize') %>
     </button>
 
     <button
@@ -24,7 +24,7 @@
       class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
     >
       <i class="fa-solid fa-plus"></i>
-      Nueva venta
+      <%= t('admin.dashboard.page_header.new_sale') %>
     </button>
   </div>
 </div>

@@ -7,6 +7,134 @@ en:
       index:
         title: "Admin Dashboard | Nexo POS"
         greeting: "Hello"
+      page_header:
+        title: "General overview"
+        subtitle: "This is what is happening in your business today."
+        customize: "Customize dashboard"
+        save_changes: "Save changes"
+        new_sale: "New sale"
+      kpi_grid:
+        sales_today: "Today's sales"
+        transactions: "Transactions"
+        average_ticket: "Average ticket"
+        current_cash: "Current cash"
+        session_open: "Open session"
+      saved:
+        title: "Changes saved"
+        text: "The dashboard layout was updated successfully."
+      save_error:
+        title: "Could not save changes"
+        text: "There was a problem saving the layout. Please try again."
+      widgets:
+        sales:
+          title: "Sales"
+          subtitle: "Behavior over the last 7 days"
+          period_label: "Sales period"
+          periods:
+            '7_days': "Last 7 days"
+            '30_days': "Last 30 days"
+            year: "This year"
+          days:
+            mon: "Mon"
+            tue: "Tue"
+            wed: "Wed"
+            thu: "Thu"
+            fri: "Fri"
+            sat: "Sat"
+            today: "Today"
+        quick_actions:
+          title: "Quick actions"
+          subtitle: "Quickly access the main features"
+          new_sale: "New sale"
+          open_pos: "Open POS"
+          product: "Product"
+          add_product: "Add product"
+          customer: "Customer"
+          new_customer: "New customer"
+          cash_cut: "Cash close"
+          check_cash: "Check cash register"
+        recent_sales:
+          title: "Recent sales"
+          subtitle: "Latest registered transactions"
+          view_all: "View all"
+          columns:
+            folio: "Folio"
+            customer: "Customer"
+            method: "Method"
+            total: "Total"
+            status: "Status"
+          statuses:
+            completed: "Completed"
+            pending: "Pending"
+          payment_methods:
+            card: "Card"
+            cash: "Cash"
+            transfer: "Transfer"
+        low_stock:
+          title: "Inventory"
+          subtitle: "Products that need attention"
+          alerts: "%{count} alerts"
+          sku: "SKU: %{sku}"
+          view_inventory: "View inventory"
+          units: "%{count} units"
+    shared:
+      sidebar:
+        section_main: "Main"
+        dashboard: "Dashboard"
+        section_operations: "Operations"
+        sales: "Sales"
+        cash_register: "Cash register"
+        inventory: "Inventory"
+        customers: "Customers"
+        suppliers: "Suppliers"
+        employees: "Employees"
+        section_admin: "Administration"
+        reports: "Reports"
+        settings: "Settings"
+        role_admin: "Administrator"
+      topbar:
+        toggle_sidebar: "Toggle sidebar"
+        morning_greeting: "Good morning, %{name}"
+      branch_selector:
+        toggle: "Select branch"
+        branch_center: "Downtown branch"
+        branch_north: "North branch"
+        branch_south: "South branch"
+      language_selector:
+        toggle: "Select language"
+        spanish: "Spanish"
+        english: "English"
+      notifications:
+        toggle: "Notifications"
+        title: "Notifications"
+        subtitle: "You have new notifications."
+        mark_all_read: "Mark all as read"
+        low_stock: "Low stock"
+        low_stock_body: "There are products that need restocking."
+        minutes_ago: "%{count} minutes ago"
+        hour_ago: "1 hour ago"
+        sale_completed: "Sale completed"
+        sale_completed_body: "Sale #V-10245 was registered successfully."
+        cash_open: "Cash register open"
+        cash_open_body: "The cash register session is active."
+        view_all: "View all notifications"
+      user_menu:
+        toggle: "User menu"
+        my_profile: "My profile"
+        settings: "Settings"
+        sign_out: "Sign out"
+      footer:
+        copyright: "© %{year} NEXO POS. All rights reserved."
+        privacy: "Privacy"
+        terms: "Terms"
+      chat:
+        assistant_name: "NEXO Assistant"
+        online: "Online"
+        close: "Close chat"
+        greeting: "Hello, %{name}. How can I help you?"
+        input_placeholder: "Type a message..."
+        send: "Send message"
+        open: "Open chat"
   devise:
     sessions:
       new:

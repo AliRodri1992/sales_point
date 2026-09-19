@@ -5,9 +5,19 @@ module Admin
     ChartPoint = Data.define(:label, :height, :color, :highlight)
 
     PERIODS = {
-      '7_days' => 'Últimos 7 días',
-      '30_days' => 'Últimos 30 días',
-      'year' => 'Este año'
+      '7_days' => 'admin.dashboard.widgets.sales.periods.7_days',
+      '30_days' => 'admin.dashboard.widgets.sales.periods.30_days',
+      'year' => 'admin.dashboard.widgets.sales.periods.year'
+    }.freeze
+
+    DAY_LABELS = {
+      mon: 'admin.dashboard.widgets.sales.days.mon',
+      tue: 'admin.dashboard.widgets.sales.days.tue',
+      wed: 'admin.dashboard.widgets.sales.days.wed',
+      thu: 'admin.dashboard.widgets.sales.days.thu',
+      fri: 'admin.dashboard.widgets.sales.days.fri',
+      sat: 'admin.dashboard.widgets.sales.days.sat',
+      today: 'admin.dashboard.widgets.sales.days.today'
     }.freeze
 
     def initialize(period: '7_days', data: nil)
@@ -38,13 +48,13 @@ module Admin
 
     def default_data
       [
-        { label: 'Lun', height: 42, color: 'bg-blue-100' },
-        { label: 'Mar', height: 58, color: 'bg-blue-200' },
-        { label: 'Mié', height: 48, color: 'bg-blue-300' },
-        { label: 'Jue', height: 72, color: 'bg-blue-400' },
-        { label: 'Vie', height: 66, color: 'bg-blue-500' },
-        { label: 'Sáb', height: 86, color: 'bg-blue-600' },
-        { label: 'Hoy', height: 100, color: 'bg-nexus-green', highlight: true }
+        { label: DAY_LABELS[:mon], height: 42, color: 'bg-blue-100' },
+        { label: DAY_LABELS[:tue], height: 58, color: 'bg-blue-200' },
+        { label: DAY_LABELS[:wed], height: 48, color: 'bg-blue-300' },
+        { label: DAY_LABELS[:thu], height: 72, color: 'bg-blue-400' },
+        { label: DAY_LABELS[:fri], height: 66, color: 'bg-blue-500' },
+        { label: DAY_LABELS[:sat], height: 86, color: 'bg-blue-600' },
+        { label: DAY_LABELS[:today], height: 100, color: 'bg-nexus-green', highlight: true }
       ]
     end
   end

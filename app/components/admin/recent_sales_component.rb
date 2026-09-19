@@ -16,36 +16,36 @@ module Admin
       Sale.new(
         folio: '#NV-0186',
         customer: 'Juan Perez',
-        payment_method: 'Tarjeta',
+        payment_method: :card,
         total: '$1,250.00',
-        status: 'Completada',
+        status: :completed,
         status_background: 'bg-emerald-50',
         status_text: 'text-emerald-700'
       ),
       Sale.new(
         folio: '#NV-0185',
         customer: 'María Lopez',
-        payment_method: 'Efectivo',
+        payment_method: :cash,
         total: '$840.00',
-        status: 'Completada',
+        status: :completed,
         status_background: 'bg-emerald-50',
         status_text: 'text-emerald-700'
       ),
       Sale.new(
         folio: '#NV-0184',
         customer: 'Publico general',
-        payment_method: 'Efectivo',
+        payment_method: :cash,
         total: '$420.00',
-        status: 'Completada',
+        status: :completed,
         status_background: 'bg-emerald-50',
         status_text: 'text-emerald-700'
       ),
       Sale.new(
         folio: '#NV-0183',
         customer: 'Carlos Hernandez',
-        payment_method: 'Transferencia',
+        payment_method: :transfer,
         total: '$2,150.00',
-        status: 'Pendiente',
+        status: :pending,
         status_background: 'bg-amber-50',
         status_text: 'text-amber-700'
       )

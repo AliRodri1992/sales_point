@@ -12,29 +12,29 @@ module Admin
 
     ACTIONS = [
       Action.new(
-        label: 'Nueva venta',
-        description: 'Abrir POS',
+        label: 'admin.dashboard.widgets.quick_actions.new_sale',
+        description: 'admin.dashboard.widgets.quick_actions.open_pos',
         icon: 'plus',
         icon_background: 'bg-blue-500/20',
         icon_color: 'text-blue-400'
       ),
       Action.new(
-        label: 'Producto',
-        description: 'Agregar producto',
+        label: 'admin.dashboard.widgets.quick_actions.product',
+        description: 'admin.dashboard.widgets.quick_actions.add_product',
         icon: 'plus',
         icon_background: 'bg-emerald-500/20',
         icon_color: 'text-emerald-400'
       ),
       Action.new(
-        label: 'Cliente',
-        description: 'Nuevo cliente',
+        label: 'admin.dashboard.widgets.quick_actions.customer',
+        description: 'admin.dashboard.widgets.quick_actions.new_customer',
         icon: 'users',
         icon_background: 'bg-cyan-500/20',
         icon_color: 'text-cyan-400'
       ),
       Action.new(
-        label: 'Corte de caja',
-        description: 'Consultar caja',
+        label: 'admin.dashboard.widgets.quick_actions.cash_cut',
+        description: 'admin.dashboard.widgets.quick_actions.check_cash',
         icon: 'plus',
         icon_background: 'bg-violet-500/20',
         icon_color: 'text-violet-400'

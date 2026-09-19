@@ -10,13 +10,13 @@
 
       <div>
         <p class="text-sm font-semibold text-white">
-          Asistente NEXO
+          <%= t('admin.shared.chat.assistant_name') %>
         </p>
 
         <div class="flex items-center gap-1.5">
           <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
           <span class="text-xs text-slate-300">
-            En línea
+            <%= t('admin.shared.chat.online') %>
           </span>
         </div>
       </div>
@@ -26,7 +26,7 @@
       id="chatCloseButton"
       type="button"
       class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
-      aria-label="Cerrar chat"
+      aria-label="<%= t('admin.shared.chat.close') %>"
     >
       <i class="fa-solid fa-xmark"></i>
     </button>
@@ -40,7 +40,7 @@
 
       <div class="max-w-[80%] rounded-2xl rounded-tl-md bg-white px-3.5 py-2.5 shadow-sm">
         <p class="text-sm leading-relaxed text-slate-600">
-          Hola, Ivan. ¿En qué puedo ayudarte?
+          <%= t('admin.shared.chat.greeting', name: 'Ivan') %>
         </p>
       </div>
     </div>
@@ -51,7 +51,7 @@
       <input
         id="chatInput"
         type="text"
-        placeholder="Escribe un mensaje..."
+        placeholder="<%= t('admin.shared.chat.input_placeholder') %>"
         class="min-w-0 flex-1 border-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0"
         />
 
@@ -59,7 +59,7 @@
         id="chatSendButton"
         type="button"
         class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-700"
-        aria-label="Enviar mensaje"
+        aria-label="<%= t('admin.shared.chat.send') %>"
       >
         <i class="fa-solid fa-paper-plane text-xs"></i>
       </button>
@@ -71,7 +71,7 @@
   id="chatFloatingButton"
   type="button"
   class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"
-  aria-label="Abrir chat"
+  aria-label="<%= t('admin.shared.chat.open') %>"
 >
   <i class="fa-solid fa-comments text-lg"></i>
 </button>

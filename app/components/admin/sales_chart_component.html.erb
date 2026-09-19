@@ -13,21 +13,21 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h3 class="text-base font-bold">
-            Ventas
+            <%= t('admin.dashboard.widgets.sales.title') %>
           </h3>
 
           <p class="mt-1 text-xs text-slate-400">
-            Comportamiento durante los últimos 7 días
+            <%= t('admin.dashboard.widgets.sales.subtitle') %>
           </p>
         </div>
 
         <select
           class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none"
-          aria-label="Periodo de ventas"
+          aria-label="<%= t('admin.dashboard.widgets.sales.period_label') %>"
         >
           <% periods.each do |value, label| %>
             <option value="<%= value %>" <%= 'selected' if value == period %>>
-              <%= label %>
+              <%= t(label) %>
             </option>
           <% end %>
         </select>
@@ -46,7 +46,7 @@
             <span
               class="<%= point.highlight ? 'text-[11px] font-semibold text-slate-600' : 'text-[11px] text-slate-400' %>"
             >
-              <%= point.label %>
+              <%= t(point.label) %>
             </span>
 
           </div>

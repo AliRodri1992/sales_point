@@ -3,7 +3,7 @@
     id="userMenuButton"
     type="button"
     class="flex items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100"
-    aria-label="Menú de usuario"
+    aria-label="<%= t('admin.shared.user_menu.toggle') %>"
   >
     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
       IR
@@ -15,7 +15,7 @@
       </span>
 
       <span class="block text-xs text-slate-400">
-        Administrador
+        <%= t('admin.shared.sidebar.role_admin') %>
       </span>
     </span>
 
@@ -32,7 +32,7 @@
       </p>
 
       <p class="mt-0.5 text-xs text-slate-400">
-        Administrador
+        <%= t('admin.shared.sidebar.role_admin') %>
       </p>
     </div>
 
@@ -42,7 +42,7 @@
         class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
       >
         <i class="fa-regular fa-user w-4 text-center text-slate-400"></i>
-        <span>Mi perfil</span>
+        <span><%= t('admin.shared.user_menu.my_profile') %></span>
       </button>
 
       <button
@@ -50,7 +50,7 @@
         class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
       >
         <i class="fa-solid fa-gear w-4 text-center text-slate-400"></i>
-        <span>Configuración</span>
+        <span><%= t('admin.shared.user_menu.settings') %></span>
       </button>
     </div>
 
@@ -59,7 +59,7 @@
                     method: :delete,
                     class: "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50" do %>
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i>
-        <span>Cerrar sesión</span>
+        <span><%= t('admin.shared.user_menu.sign_out') %></span>
       <% end %>
     </div>
   </div>

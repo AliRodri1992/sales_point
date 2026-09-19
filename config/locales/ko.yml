@@ -7,6 +7,134 @@ ko:
       index:
         title: "관리자 대시보드 | Nexo POS"
         greeting: "안녕하세요"
+      page_header:
+        title: "일반 개요"
+        subtitle: "오늘 비즈니스에서 일어나고 있는 일입니다."
+        customize: "대시보드 맞춤 설정"
+        save_changes: "변경 사항 저장"
+        new_sale: "새 판매"
+      kpi_grid:
+        sales_today: "오늘의 판매"
+        transactions: "거래"
+        average_ticket: "평균 결제액"
+        current_cash: "현재 금전함"
+        session_open: "교대 시작됨"
+      saved:
+        title: "변경 사항 저장됨"
+        text: "대시보드 레이아웃이 성공적으로 업데이트되었습니다."
+      save_error:
+        title: "변경 사항을 저장하지 못했습니다"
+        text: "레이아웃을 저장하는 중 문제가 발생했습니다. 다시 시도해 주세요."
+      widgets:
+        sales:
+          title: "매출"
+          subtitle: "최근 7일 동안의 추이"
+          period_label: "매출 기간"
+          periods:
+            '7_days': "최근 7일"
+            '30_days': "최근 30일"
+            year: "올해"
+          days:
+            mon: "월"
+            tue: "화"
+            wed: "수"
+            thu: "목"
+            fri: "금"
+            sat: "토"
+            today: "오늘"
+        quick_actions:
+          title: "빠른 작업"
+          subtitle: "주요 기능에 빠르게 접근하세요"
+          new_sale: "새 판매"
+          open_pos: "POS 열기"
+          product: "상품"
+          add_product: "상품 추가"
+          customer: "고객"
+          new_customer: "새 고객"
+          cash_cut: "금전함 마감"
+          check_cash: "금전함 확인"
+        recent_sales:
+          title: "최근 판매"
+          subtitle: "최근 등록된 거래"
+          view_all: "모두 보기"
+          columns:
+            folio: "전표 번호"
+            customer: "고객"
+            method: "결제 방식"
+            total: "총액"
+            status: "상태"
+          statuses:
+            completed: "완료"
+            pending: "대기"
+          payment_methods:
+            card: "카드"
+            cash: "현금"
+            transfer: "계좌이체"
+        low_stock:
+          title: "재고"
+          subtitle: "관리가 필요한 상품"
+          alerts: "알림 %{count}개"
+          sku: "SKU: %{sku}"
+          view_inventory: "재고 보기"
+          units: "%{count}개"
+    shared:
+      sidebar:
+        section_main: "메인"
+        dashboard: "대시보드"
+        section_operations: "운영"
+        sales: "판매"
+        cash_register: "금전함"
+        inventory: "재고"
+        customers: "고객"
+        suppliers: "공급업체"
+        employees: "직원"
+        section_admin: "관리"
+        reports: "보고서"
+        settings: "설정"
+        role_admin: "관리자"
+      topbar:
+        toggle_sidebar: "사이드바 전환"
+        morning_greeting: "좋은 아침입니다, %{name}"
+      branch_selector:
+        toggle: "지점 선택"
+        branch_center: "중앙 지점"
+        branch_north: "북부 지점"
+        branch_south: "남부 지점"
+      language_selector:
+        toggle: "언어 선택"
+        spanish: "스페인어"
+        english: "영어"
+      notifications:
+        toggle: "알림"
+        title: "알림"
+        subtitle: "새 알림이 있습니다."
+        mark_all_read: "모두 읽음으로 표시"
+        low_stock: "재고 부족"
+        low_stock_body: "보충이 필요한 상품이 있습니다."
+        minutes_ago: "%{count}분 전"
+        hour_ago: "1시간 전"
+        sale_completed: "판매 완료"
+        sale_completed_body: "판매 #V-10245가 정상적으로 등록되었습니다."
+        cash_open: "금전함 열림"
+        cash_open_body: "금전함 교대 세션이 활성화되어 있습니다."
+        view_all: "모든 알림 보기"
+      user_menu:
+        toggle: "사용자 메뉴"
+        my_profile: "내 프로필"
+        settings: "설정"
+        sign_out: "로그아웃"
+      footer:
+        copyright: "© %{year} NEXO POS. 모든 권리 보유."
+        privacy: "개인정보 보호"
+        terms: "약관"
+      chat:
+        assistant_name: "NEXO 도우미"
+        online: "온라인"
+        close: "채팅 닫기"
+        greeting: "안녕하세요, %{name}. 무엇을 도와드릴까요?"
+        input_placeholder: "메시지를 입력하세요..."
+        send: "메시지 보내기"
+        open: "채팅 열기"
   devise:
     sessions:
       new:

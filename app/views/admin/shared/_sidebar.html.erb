@@ -23,7 +23,7 @@
   <nav class="flex-1 overflow-y-auto px-3 py-5">
     <div class="mb-6">
       <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-        Principal
+        <%= t('admin.shared.sidebar.section_main') %>
       </p>
 
       <div class="space-y-1">
@@ -32,14 +32,14 @@
           class="flex items-center gap-3 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-600"
         >
           <i class="fa-solid fa-chart-pie w-5 text-center"></i>
-          <span class="sidebar-label">Dashboard</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.dashboard') %></span>
         </a>
       </div>
     </div>
 
     <div class="mb-6">
       <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-        Operación
+        <%= t('admin.shared.sidebar.section_operations') %>
       </p>
 
       <div class="space-y-1">
@@ -48,7 +48,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-cart-shopping w-5 text-center"></i>
-          <span class="sidebar-label">Ventas</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.sales') %></span>
         </a>
 
         <a
@@ -56,7 +56,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-cash-register w-5 text-center"></i>
-          <span class="sidebar-label">Caja</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.cash_register') %></span>
         </a>
 
         <a
@@ -64,7 +64,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-boxes-stacked w-5 text-center"></i>
-          <span class="sidebar-label">Inventario</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.inventory') %></span>
         </a>
 
         <a
@@ -72,7 +72,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-users w-5 text-center"></i>
-          <span class="sidebar-label">Clientes</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.customers') %></span>
         </a>
 
         <a
@@ -80,7 +80,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-truck-field w-5 text-center"></i>
-          <span class="sidebar-label">Proveedores</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.suppliers') %></span>
         </a>
 
         <a
@@ -88,14 +88,14 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-user-tie w-5 text-center"></i>
-          <span class="sidebar-label">Empleados</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.employees') %></span>
         </a>
       </div>
     </div>
 
     <div class="mb-6">
       <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-        Administración
+        <%= t('admin.shared.sidebar.section_admin') %>
       </p>
 
       <div class="space-y-1">
@@ -104,7 +104,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-chart-column w-5 text-center"></i>
-          <span class="sidebar-label">Reportes</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
         <a
@@ -112,7 +112,7 @@
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <i class="fa-solid fa-gear w-5 text-center"></i>
-          <span class="sidebar-label">Configuración</span>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.settings') %></span>
         </a>
       </div>
     </div>
@@ -130,7 +130,7 @@
         </p>
 
         <p class="truncate text-xs text-slate-400">
-          Administrador
+          <%= t('admin.shared.sidebar.role_admin') %>
         </p>
       </div>
 

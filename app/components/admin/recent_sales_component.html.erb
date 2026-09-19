@@ -17,11 +17,11 @@
 
         <div>
           <h3 class="font-bold">
-            Ventas recientes
+            <%= t('admin.dashboard.widgets.recent_sales.title') %>
           </h3>
 
           <p class="mt-1 text-xs text-slate-400">
-            Últimas transacciones registradas
+            <%= t('admin.dashboard.widgets.recent_sales.subtitle') %>
           </p>
         </div>
 
@@ -29,7 +29,7 @@
           href="#"
           class="text-xs font-semibold text-nexus-blue hover:text-nexus-hover"
         >
-          Ver todas
+          <%= t('admin.dashboard.widgets.recent_sales.view_all') %>
         </a>
 
       </div>
@@ -42,23 +42,23 @@
           <tr class="border-y border-slate-100 text-xs text-slate-400">
 
             <th class="px-6 py-3 text-left font-medium">
-              Folio
+              <%= t('admin.dashboard.widgets.recent_sales.columns.folio') %>
             </th>
 
             <th class="px-6 py-3 text-left font-medium">
-              Cliente
+              <%= t('admin.dashboard.widgets.recent_sales.columns.customer') %>
             </th>
 
             <th class="px-6 py-3 text-left font-medium">
-              Método
+              <%= t('admin.dashboard.widgets.recent_sales.columns.method') %>
             </th>
 
             <th class="px-6 py-3 text-right font-medium">
-              Total
+              <%= t('admin.dashboard.widgets.recent_sales.columns.total') %>
             </th>
 
             <th class="px-6 py-3 text-right font-medium">
-              Estado
+              <%= t('admin.dashboard.widgets.recent_sales.columns.status') %>
             </th>
 
           </tr>
@@ -78,7 +78,7 @@
               </td>
 
               <td class="px-6 py-4 text-slate-500">
-                <%= sale.payment_method %>
+                <%= t('admin.dashboard.widgets.recent_sales.payment_methods.' + sale.payment_method.to_s) %>
               </td>
 
               <td class="px-6 py-4 text-right font-semibold tabular-nums">
@@ -90,7 +90,7 @@
                   <span
                     class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold <%= sale.status_background %> <%= sale.status_text %>"
                   >
-                    <%= sale.status %>
+                    <%= t('admin.dashboard.widgets.recent_sales.statuses.' + sale.status.to_s) %>
                   </span>
 
               </td>

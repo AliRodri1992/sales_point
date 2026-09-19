@@ -7,14 +7,14 @@
       id="sidebarToggle"
       type="button"
       class="inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
-      aria-label="Alternar menú lateral"
+      aria-label="<%= t('admin.shared.topbar.toggle_sidebar') %>"
     >
       <i class="fa-solid fa-bars"></i>
     </button>
 
     <div class="hidden min-w-0 sm:block">
       <p class="truncate text-sm font-semibold text-slate-800">
-        Buenos días, Ivan
+        <%= t('admin.shared.topbar.morning_greeting', name: 'Ivan') %>
       </p>
 
       <p class="truncate text-xs text-slate-400">
