@@ -4,13 +4,13 @@
     type="button"
     class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
   >
-    <i class="fa-solid fa-store text-blue-600"></i>
+    <%= icon("building-storefront", variant: :solid, class: "size-4 text-blue-600") %>
 
     <span class="hidden sm:inline">
       <%= t('admin.shared.branch_selector.branch_center') %>
     </span>
 
-    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+    <%= icon("chevron-down", class: "size-3 text-slate-400") %>
   </button>
 
   <div
@@ -21,20 +21,20 @@
       type="button"
       class="flex w-full items-center gap-3 rounded-lg bg-blue-50 px-3 py-2.5 text-left text-sm font-medium text-blue-700"
     >
-      <i class="fa-solid fa-store w-4 text-center"></i>
+      <%= icon("building-storefront", class: "size-4") %>
 
       <span class="flex-1">
         <%= t('admin.shared.branch_selector.branch_center') %>
       </span>
 
-      <i class="fa-solid fa-check text-xs"></i>
+      <%= icon("check", variant: :solid, class: "size-3") %>
     </button>
 
     <button
       type="button"
       class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
     >
-      <i class="fa-solid fa-store w-4 text-center"></i>
+      <%= icon("building-storefront", class: "size-4") %>
 
       <span>
         <%= t('admin.shared.branch_selector.branch_north') %>
@@ -45,7 +45,7 @@
       type="button"
       class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
     >
-      <i class="fa-solid fa-store w-4 text-center"></i>
+      <%= icon("building-storefront", class: "size-4") %>
 
       <span>
         <%= t('admin.shared.branch_selector.branch_south') %>

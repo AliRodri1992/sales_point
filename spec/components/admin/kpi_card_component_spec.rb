@@ -23,9 +23,9 @@ RSpec.describe Admin::KpiCardComponent, type: :component do
   end
 
   it 'renders the icon when provided' do
-    render_inline(described_class.new(title: "Today's sales", value: '$48,250.00', icon: 'fa-solid fa-arrow-trend-up'))
+    render_inline(described_class.new(title: "Today's sales", value: '$48,250.00', icon_name: 'banknotes'))
 
-    expect(page).to have_css('i.fa-solid.fa-arrow-trend-up')
+    expect(page).to have_css('svg')
   end
 
   it 'does not render change, status or icon when omitted' do
@@ -33,6 +33,6 @@ RSpec.describe Admin::KpiCardComponent, type: :component do
 
     expect(page).to have_no_text('+12.5%')
     expect(page).to have_no_css('span')
-    expect(page).to have_no_css('i.fa-solid')
+    expect(page).to have_no_css('svg')
   end
 end

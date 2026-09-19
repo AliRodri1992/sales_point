@@ -5,13 +5,13 @@
     class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
     aria-label="<%= t('admin.shared.language_selector.toggle') %>"
   >
-    <i class="fa-solid fa-globe text-slate-400"></i>
+    <%= icon("globe-alt", class: "size-5 text-slate-400") %>
 
     <span class="hidden sm:inline">
       ES
     </span>
 
-    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+    <%= icon("chevron-down", class: "size-3 text-slate-400") %>
   </button>
 
   <div
@@ -30,7 +30,7 @@
         <%= t('admin.shared.language_selector.spanish') %>
       </span>
 
-      <i class="fa-solid fa-check text-xs"></i>
+      <%= icon("check", variant: :solid, class: "size-3") %>
     </button>
 
     <button

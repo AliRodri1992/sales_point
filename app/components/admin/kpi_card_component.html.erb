@@ -10,9 +10,9 @@
       </p>
     </div>
 
-    <% if icon.present? %>
+    <% if icon_name.present? %>
       <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-        <i class="<%= icon %>"></i>
+        <%= icon(icon_name, class: "size-5") %>
       </div>
     <% end %>
   </div>

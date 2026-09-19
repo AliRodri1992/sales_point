@@ -5,7 +5,7 @@
   <div class="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-4 py-3">
     <div class="flex items-center gap-3">
       <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white">
-        <i class="fa-solid fa-headset"></i>
+        <%= icon("lifebuoy", variant: :solid, class: "size-5") %>
       </div>
 
       <div>
@@ -28,14 +28,14 @@
       class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
       aria-label="<%= t('admin.shared.chat.close') %>"
     >
-      <i class="fa-solid fa-xmark"></i>
+      <%= icon("x-mark", class: "size-4") %>
     </button>
   </div>
 
   <div class="h-80 overflow-y-auto bg-slate-50 p-4">
     <div class="flex items-start gap-2.5">
       <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-        <i class="fa-solid fa-robot text-sm"></i>
+        <%= icon("sparkles", variant: :solid, class: "size-4") %>
       </div>
 
       <div class="max-w-[80%] rounded-2xl rounded-tl-md bg-white px-3.5 py-2.5 shadow-sm">
@@ -61,7 +61,7 @@
         class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-700"
         aria-label="<%= t('admin.shared.chat.send') %>"
       >
-        <i class="fa-solid fa-paper-plane text-xs"></i>
+        <%= icon("paper-airplane", variant: :solid, class: "size-4") %>
       </button>
     </div>
   </div>
@@ -73,5 +73,5 @@
   class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"
   aria-label="<%= t('admin.shared.chat.open') %>"
 >
-  <i class="fa-solid fa-comments text-lg"></i>
+  <%= icon("chat-bubble-left-right", variant: :solid, class: "size-6") %>
 </button>
