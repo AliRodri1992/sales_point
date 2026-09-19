@@ -416,6 +416,112 @@ document.addEventListener("turbo:load", () => {
 
     /*
      * ============================================================
+     * Online Users + Conversation Panels
+     * ============================================================
+     */
+
+    const onlineUsersPanel =
+        document.getElementById("onlineUsersPanel")
+    const onlineUsersButton =
+        document.getElementById("onlineUsersButton")
+    const onlineUsersCloseButton =
+        document.getElementById("onlineUsersCloseButton")
+    const conversationPanel =
+        document.getElementById("conversationPanel")
+
+    const openOnlineUsers = () => {
+        if (!onlineUsersPanel) return
+
+        closeChat()
+        closeConversation()
+
+        onlineUsersPanel.classList.remove("panel-hidden")
+        onlineUsersPanel.classList.add("panel-visible")
+        onlineUsersButton?.setAttribute("aria-expanded", "true")
+    }
+
+    const closeOnlineUsers = () => {
+        if (!onlineUsersPanel) return
+
+        onlineUsersPanel.classList.remove("panel-visible")
+        onlineUsersPanel.classList.add("panel-hidden")
+        onlineUsersButton?.setAttribute("aria-expanded", "false")
+    }
+
+    const toggleOnlineUsers = () => {
+        if (!onlineUsersPanel) return
+
+        if (onlineUsersPanel.classList.contains("panel-visible")) {
+            closeOnlineUsers()
+        } else {
+            openOnlineUsers()
+        }
+    }
+
+    const openConversation = () => {
+        if (!conversationPanel) return
+
+        closeChat()
+        closeOnlineUsers()
+
+        conversationPanel.classList.remove("panel-hidden")
+        conversationPanel.classList.add("panel-visible")
+    }
+
+    const closeConversation = () => {
+        if (!conversationPanel) return
+
+        conversationPanel.classList.remove("panel-visible")
+        conversationPanel.classList.add("panel-hidden")
+    }
+
+    if (onlineUsersButton) {
+        onlineUsersButton.setAttribute("aria-expanded", "false")
+        onlineUsersButton.addEventListener("click", (event) => {
+            event.stopPropagation()
+            toggleOnlineUsers()
+        })
+    }
+
+    if (onlineUsersCloseButton) {
+        onlineUsersCloseButton.addEventListener("click", () => {
+            closeOnlineUsers()
+        })
+    }
+
+    if (onlineUsersPanel) {
+        onlineUsersPanel.addEventListener("click", (event) => {
+            event.stopPropagation()
+        })
+    }
+
+    if (conversationPanel) {
+        conversationPanel.addEventListener("click", (event) => {
+            if (event.target.closest("#conversationCloseButton")) {
+                closeConversation()
+            }
+            event.stopPropagation()
+        })
+    }
+
+    // Open the conversation panel when a conversation is loaded into the
+    // turbo-frame (after clicking a user avatar).
+    if (conversationPanel) {
+        conversationPanel.addEventListener(
+            "turbo:frame-load",
+            () => {
+                if (
+                    conversationPanel
+                        .querySelector("#conversation_messages")
+                ) {
+                    openConversation()
+                }
+            }
+        )
+    }
+
+    /*
+     * ============================================================
      * Chat
      * ============================================================
      */
@@ -692,6 +798,14 @@ document.addEventListener("turbo:load", () => {
 
             if (chatPanel) {
                 closeChat()
+            }
+
+            if (onlineUsersPanel) {
+                closeOnlineUsers()
+            }
+
+            if (conversationPanel) {
+                closeConversation()
             }
 
             if (

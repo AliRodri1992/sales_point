@@ -12,3 +12,9 @@ application.register("language-selector", LanguageSelectorController)
 
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
+
+import OnlineUsersController from "./online_users_controller"
+application.register("online-users", OnlineUsersController)
+
+import ConversationMessagesController from "./conversation_messages_controller"
+application.register("conversation-messages", ConversationMessagesController)

@@ -135,6 +135,20 @@ en:
         input_placeholder: "Type a message..."
         send: "Send message"
         open: "Open chat"
+      online_users:
+        title: "Online users"
+        subtitle: "Active now"
+        close: "Close"
+        open: "Online users"
+        loading: "Loading..."
+        empty: "No users online"
+      conversation:
+        online: "Online"
+        offline: "Offline"
+        close: "Close conversation"
+        select_user: "Select a user to start chatting"
+        input_placeholder: "Type a message..."
+        send: "Send message"
   devise:
     sessions:
       new:

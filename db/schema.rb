@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_170427) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_170427) do
     t.boolean "status"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
+  end
+
+  create_table "conversation_participants", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id", "user_id"], name: "idx_conv_participants_unique_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["conversation_id"], name: "index_conversation_participants_on_conversation_id"
+    t.index ["deleted_at"], name: "index_conversation_participants_on_deleted_at"
+    t.index ["user_id"], name: "index_conversation_participants_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.string "conversation_type", default: "direct", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.index ["conversation_type", "deleted_at"], name: "index_conversations_on_conversation_type_and_deleted_at"
+    t.index ["deleted_at"], name: "index_conversations_on_deleted_at"
   end
 
   create_table "dashboard_preferences", force: :cascade do |t|
@@ -152,6 +173,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_170427) do
     t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying::text, 'yearly'::character varying::text])", name: "chk_membership_plans_billing_interval"
     t.check_constraint "price >= 0::numeric", name: "chk_membership_plans_price_non_negative"
     t.check_constraint "trial_days >= 0", name: "chk_membership_plans_trial_days_non_negative"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["deleted_at"], name: "index_messages_on_deleted_at"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "noticed_events", force: :cascade do |t|
@@ -422,9 +456,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_170427) do
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
+  add_foreign_key "conversation_participants", "conversations"
+  add_foreign_key "conversation_participants", "users"
   add_foreign_key "dashboard_preferences", "users"
   add_foreign_key "membership_plan_features", "membership_features"
   add_foreign_key "membership_plan_features", "membership_plans"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"

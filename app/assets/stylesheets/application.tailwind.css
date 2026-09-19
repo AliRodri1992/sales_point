@@ -785,6 +785,77 @@ select:focus-visible {
 
 
 /* ============================================================
+   NEXO POS — Online Users & Conversation Panels
+   ============================================================ */
+
+#onlineUsersPanel,
+#conversationPanel {
+    transform-origin: bottom right;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            visibility 180ms ease;
+}
+
+#onlineUsersPanel.panel-hidden,
+#conversationPanel.panel-hidden {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#onlineUsersPanel.panel-visible,
+#conversationPanel.panel-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#onlineUsersPanel,
+#conversationPanel {
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.16),
+            0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+#onlineUsersButton {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+    box-shadow:
+            0 8px 20px rgba(5, 150, 105, 0.22);
+}
+
+#onlineUsersButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 12px 28px rgba(5, 150, 105, 0.28);
+}
+
+#onlineUsersButton:focus-visible,
+#onlineUsersCloseButton:focus-visible,
+#conversationCloseButton:focus-visible {
+    outline: none;
+    box-shadow:
+            0 0 0 3px rgba(5, 150, 105, 0.18);
+}
+
+#conversationPanel input {
+    outline: none;
+}
+
+#conversationPanel input:focus {
+    box-shadow: none;
+}
+
+#conversationPanel button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
    NEXO POS — Mobile
    ============================================================ */
 
@@ -799,4 +870,38 @@ select:focus-visible {
         right: 1rem;
         bottom: 1rem;
     }
+
+    #onlineUsersPanel,
+    #conversationPanel {
+        right: 1rem;
+        bottom: 5.5rem;
+        width: calc(100vw - 2rem);
+    }
+
+    #onlineUsersButton {
+        right: 5rem;
+        bottom: 1rem;
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Scrollbars (Online Users / Conversation)
+   ============================================================ */
+
+#conversation_messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#conversation_messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #cbd5e1;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }

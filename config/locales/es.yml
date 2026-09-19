@@ -135,6 +135,20 @@ es:
         input_placeholder: "Escribe un mensaje..."
         send: "Enviar mensaje"
         open: "Abrir chat"
+      online_users:
+        title: "Usuarios en línea"
+        subtitle: "Activos ahora"
+        close: "Cerrar"
+        open: "Usuarios en línea"
+        loading: "Cargando..."
+        empty: "No hay usuarios en línea"
+      conversation:
+        online: "En línea"
+        offline: "Desconectado"
+        close: "Cerrar conversación"
+        select_user: "Selecciona un usuario para chatear"
+        input_placeholder: "Escribe un mensaje..."
+        send: "Enviar mensaje"
   devise:
     sessions:
       new:

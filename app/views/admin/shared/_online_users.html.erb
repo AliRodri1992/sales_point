@@ -1,0 +1,62 @@
+<div
+  id="onlineUsersPanel"
+  data-controller="online-users"
+  data-online-users-current-user-id-value="<%= current_user.id %>"
+  class="panel-hidden fixed bottom-24 right-24 z-50 w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+>
+  <div class="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-4 py-3">
+    <div class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
+        <%= icon("users", variant: :solid, class: "size-5") %>
+      </div>
+      <div>
+        <p class="text-sm font-semibold text-white">
+          <%= t("admin.shared.online_users.title") %>
+        </p>
+        <div class="flex items-center gap-1.5">
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          <span class="text-xs text-slate-300">
+            <%= t("admin.shared.online_users.subtitle") %>
+          </span>
+        </div>
+      </div>
+    </div>
+    <button
+      id="onlineUsersCloseButton"
+      type="button"
+      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
+      aria-label="<%= t('admin.shared.online_users.close') %>"
+    >
+      <%= icon("x-mark", class: "size-4") %>
+    </button>
+  </div>
+
+  <%= turbo_stream_from "presence" %>
+
+  <div id="online_users_list" class="flex flex-wrap gap-3 p-4">
+    <%= render "admin/shared/online_users_list",
+          users: User.where(id: User.online_user_ids, status: :active) %>
+  </div>
+</div>
+
+<div
+  id="conversationPanel"
+  class="panel-hidden fixed bottom-24 right-24 z-50 w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+>
+  <turbo-frame id="conversation_panel">
+    <div class="flex items-center justify-center p-8">
+      <p class="text-sm text-slate-400">
+        <%= t("admin.shared.conversation.select_user") %>
+      </p>
+    </div>
+  </turbo-frame>
+</div>
+
+<button
+  id="onlineUsersButton"
+  type="button"
+  class="fixed bottom-6 right-24 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg"
+  aria-label="<%= t('admin.shared.online_users.open') %>"
+>
+  <%= icon("users", variant: :solid, class: "size-6") %>
+</button>

@@ -1,0 +1,23 @@
+<% if users.any? %>
+  <% users.each do |user| %>
+    <div data-online-user-id="<%= user.id %>">
+      <%= button_to conversations_path(participant_id: user.id),
+            data: { turbo_frame: "conversation_panel" },
+            class: "flex flex-col items-center gap-1 group" do %>
+        <div class="relative">
+          <%= user_avatar(user, size: "h-12 w-12 text-base", online_indicator: true) %>
+        </div>
+        <span class="max-w-[4rem] truncate text-xs font-medium text-slate-600 group-hover:text-slate-900">
+          <%= user.username.presence || user.email %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+  <p class="online-users-empty w-full py-4 text-center text-sm text-slate-400" style="display: none;">
+    <%= t("admin.shared.online_users.empty") %>
+  </p>
+<% else %>
+  <p class="w-full py-4 text-center text-sm text-slate-400">
+    <%= t("admin.shared.online_users.empty") %>
+  </p>
+<% end %>

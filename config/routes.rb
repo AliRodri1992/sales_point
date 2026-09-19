@@ -18,6 +18,9 @@ Rails.application.routes.draw do
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]
+  resources :conversations, only: %i[show create] do
+    resources :messages, only: %i[create]
+  end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
