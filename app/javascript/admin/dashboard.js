@@ -130,7 +130,7 @@ document.addEventListener("turbo:load", () => {
             const widget =
                 grid.getGridItems().find(
                     (item) =>
-                        item.el?.getAttribute("gs-id") ===
+                        item.getAttribute("gs-id") ===
                         preference.widget_id
                 )
 
@@ -155,16 +155,15 @@ document.addEventListener("turbo:load", () => {
 
         return grid.getGridItems()
             .map((item) => {
-                const widgetId =
-                    item.el?.getAttribute("gs-id")
+                const node = item.gridstackNode
 
                 return {
                     grid_type: gridType,
-                    widget_id: widgetId,
-                    x: item.x,
-                    y: item.y,
-                    w: item.w,
-                    h: item.h
+                    widget_id: node?.id,
+                    x: node?.x,
+                    y: node?.y,
+                    w: node?.w,
+                    h: node?.h
                 }
             })
             .filter(

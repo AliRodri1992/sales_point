@@ -35,10 +35,12 @@ module Admin
 
     def save_widget_preference(widget)
       preference = current_user.dashboard_preferences.find_or_initialize_by(
+        grid_type: widget[:grid_type],
         widget_id: widget[:widget_id]
       )
 
       preference.assign_attributes(
+        grid_type: widget[:grid_type],
         position_x: widget[:x],
         position_y: widget[:y],
         width: widget[:w],
