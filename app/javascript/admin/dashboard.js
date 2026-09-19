@@ -2,6 +2,7 @@
 // Sidebar + Dropdowns + Chat + Dashboard Customization
 
 import { GridStack } from "gridstack"
+import Swal from "sweetalert2"
 
 document.addEventListener("turbo:load", () => {
     const sidebar = document.getElementById("adminSidebar")
@@ -214,11 +215,28 @@ document.addEventListener("turbo:load", () => {
                     "No se pudieron guardar las preferencias del dashboard."
                 )
             }
+
+            Swal.fire({
+                icon: "success",
+                title: "Cambios guardados",
+                text: "El layout del dashboard se actualizó correctamente.",
+                toast: true,
+                position: "top-end",
+                timer: 2500,
+                showConfirmButton: false,
+                timerProgressBar: true
+            })
         } catch (error) {
             console.error(
                 "Error guardando preferencias del dashboard:",
                 error
             )
+
+            Swal.fire({
+                icon: "error",
+                title: "No se pudieron guardar los cambios",
+                text: "Hubo un problema al guardar el layout. Intentá de nuevo."
+            })
         }
     }
 
