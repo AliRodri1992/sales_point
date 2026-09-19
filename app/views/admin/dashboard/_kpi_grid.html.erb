@@ -1,0 +1,77 @@
+<div
+  id="kpiGrid"
+  class="grid-stack dashboard-grid mb-6"
+  data-grid-type="kpi"
+>
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-sales"
+    gs-x="0"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: "Ventas de hoy",
+        value: "$48,250.00",
+        change: "+12.5%",
+        icon: "fa-solid fa-arrow-trend-up"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-transactions"
+    gs-x="3"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: "Transacciones",
+        value: "186",
+        change: "+8.2%",
+        icon: "fa-solid fa-receipt"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-average-ticket"
+    gs-x="6"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: "Ticket promedio",
+        value: "$259.41",
+        change: "+4.7%",
+        icon: "fa-solid fa-chart-line"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-cash"
+    gs-x="9"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: "Caja actual",
+        value: "$32,840.00",
+        status: "Sesión abierta",
+        icon: "fa-solid fa-cash-register"
+      ) %>
+    </div>
+  </div>
+</div>

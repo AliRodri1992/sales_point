@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
   end
   resources :system_roles

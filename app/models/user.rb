@@ -8,6 +8,7 @@ class User < ApplicationRecord
              optional: true
   has_many :user_roles, dependent: :destroy
   has_many :system_roles, through: :user_roles
+  has_many :dashboard_preferences, dependent: :destroy
 
   enum :user_type,
        {

@@ -1,12 +1,20 @@
 <% content_for :title, t(".title", default: "Admin Dashboard | Nexo POS") %>
 
-<div class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-  <%= image_tag "isotipo.png", class: "mx-auto h-16 w-16 rounded-2xl object-cover", alt: "Nexo POS" %>
-  <h1 class="mt-6 text-2xl font-bold text-slate-900"><%= t(".greeting", default: "Hola") %></h1>
-  <p class="mt-2 break-words text-slate-600"><%= current_user.email %></p>
+<script
+  id="dashboardPreferences" type="application/json">
+  <%= raw @dashboard_preferences.to_json %>
+</script>
 
-  <%= button_to t("landing.buttons.sign_out", default: "Cerrar sesión"),
-                destroy_user_session_path,
-                method: :delete,
-                class: "mt-8 inline-flex w-full items-center justify-center rounded-2xl bg-[#2563eb] px-6 py-3 font-semibold text-white transition hover:bg-[#1d4ed8] focus:outline-none focus:ring-4 focus:ring-blue-300" %>
+<%= render "admin/dashboard/page_header" %>
+
+<%= render "admin/dashboard/kpi_grid" %>
+
+<div id="mainDashboardGrid" class="grid-stack dashboard-grid" data-grid-type="main">
+  <%= render "admin/dashboard/sales_chart" %>
+
+  <%= render "admin/dashboard/quick_actions" %>
+
+  <%= render "admin/dashboard/recent_sales" %>
+
+  <%= render "admin/dashboard/low_stock" %>
 </div>

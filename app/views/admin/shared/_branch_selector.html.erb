@@ -1,0 +1,55 @@
+<div class="relative">
+  <button
+    id="branchSelectorButton"
+    type="button"
+    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+  >
+    <i class="fa-solid fa-store text-blue-600"></i>
+
+    <span class="hidden sm:inline">
+      Sucursal Centro
+    </span>
+
+    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+  </button>
+
+  <div
+    id="branchSelectorMenu"
+    class="absolute right-0 top-full z-50 mt-2 hidden w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
+  >
+    <button
+      type="button"
+      class="flex w-full items-center gap-3 rounded-lg bg-blue-50 px-3 py-2.5 text-left text-sm font-medium text-blue-700"
+    >
+      <i class="fa-solid fa-store w-4 text-center"></i>
+
+      <span class="flex-1">
+        Sucursal Centro
+      </span>
+
+      <i class="fa-solid fa-check text-xs"></i>
+    </button>
+
+    <button
+      type="button"
+      class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+    >
+      <i class="fa-solid fa-store w-4 text-center"></i>
+
+      <span>
+        Sucursal Norte
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+    >
+      <i class="fa-solid fa-store w-4 text-center"></i>
+
+      <span>
+        Sucursal Sur
+      </span>
+    </button>
+  </div>
+</div>
