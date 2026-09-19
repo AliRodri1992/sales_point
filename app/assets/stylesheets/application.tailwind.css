@@ -583,6 +583,12 @@ select {
     min-width: 0;
 }
 
+/* Extra gap only between the top row (chart/actions) and bottom row */
+#mainDashboardGrid .grid-stack-item[gs-id="recent-sales"] > .grid-stack-item-content,
+#mainDashboardGrid .grid-stack-item[gs-id="low-stock"] > .grid-stack-item-content {
+    top: calc(var(--gs-item-margin-top) + 1.75rem);
+}
+
 
 /* ============================================================
    Dashboard — Responsive
