@@ -67,7 +67,7 @@ document.addEventListener("turbo:load", () => {
             {
                 column: 12,
                 cellHeight: 80,
-                margin: "16px 10px",
+                margin: "8px 10px",
                 float: false,
                 animate: true,
                 disableDrag: true,

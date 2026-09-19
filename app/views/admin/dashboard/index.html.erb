@@ -9,12 +9,12 @@
 
 <%= render "admin/dashboard/kpi_grid" %>
 
-<div id="mainDashboardGrid" class="grid-stack dashboard-grid" data-grid-type="main">
-  <%= render "admin/dashboard/sales_chart" %>
+<div id="mainDashboardGrid" class="grid-stack dashboard-grid gs-12 grid-stack-animate" data-grid-type="main">
+  <%= render Admin::SalesChartComponent.new %>
 
-  <%= render "admin/dashboard/quick_actions" %>
+  <%= render Admin::QuickActionsComponent.new %>
 
-  <%= render "admin/dashboard/recent_sales" %>
+  <%= render Admin::RecentSalesComponent.new %>
 
-  <%= render "admin/dashboard/low_stock" %>
+  <%= render Admin::LowStockComponent.new %>
 </div>
