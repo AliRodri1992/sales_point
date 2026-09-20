@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_011008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -434,6 +434,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_19_120000) do
     t.string "reset_password_token"
     t.datetime "session_expires_at"
     t.datetime "session_revoked_at"
+    t.boolean "sidebar_collapsed", default: false, null: false
     t.integer "sign_in_count", default: 0, null: false
     t.string "status", default: "active", null: false
     t.string "theme", limit: 50, default: "theme-material-red", null: false

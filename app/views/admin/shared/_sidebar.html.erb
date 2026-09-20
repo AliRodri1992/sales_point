@@ -1,6 +1,6 @@
 <aside
   id="adminSidebar"
-  class="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300"
+  class="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300<%= current_user.sidebar_collapsed? ? " sidebar-collapsed" : "" %>"
 >
   <div class="flex h-16 items-center border-b border-slate-200 px-5">
     <a href="#" class="flex items-center gap-3">
@@ -29,7 +29,7 @@
       <div class="space-y-1">
         <a
           href="#"
-          title="<%= t('admin.shared.sidebar.dashboard') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>"
           class="flex items-center gap-3 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-600"
         >
           <%= icon("chart-pie", class: "size-5") %>
@@ -46,6 +46,7 @@
       <div class="space-y-1">
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.sales') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("shopping-cart", class: "size-5") %>
@@ -54,6 +55,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("banknotes", class: "size-5") %>
@@ -62,6 +64,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.inventory') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("square-2-stack", class: "size-5") %>
@@ -70,6 +73,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.customers') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("users", class: "size-5") %>
@@ -78,6 +82,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.suppliers') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("truck", class: "size-5") %>
@@ -86,6 +91,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.employees') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("user", class: "size-5") %>
@@ -102,6 +108,7 @@
       <div class="space-y-1">
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.reports') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("chart-bar", class: "size-5") %>
@@ -110,6 +117,7 @@
 
         <a
           href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           <%= icon("cog-6-tooth", class: "size-5") %>
@@ -120,7 +128,7 @@
   </nav>
 
   <div class="border-t border-slate-200 p-3">
-    <div class="flex items-center gap-3 rounded-xl px-3 py-2">
+    <div class="flex items-center gap-3 rounded-xl px-3 py-2" data-tooltip="<%= current_user.display_name %>">
       <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
         <%= current_user.initials %>
       </div>

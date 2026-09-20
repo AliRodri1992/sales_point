@@ -368,10 +368,30 @@ document.addEventListener("turbo:load", () => {
                 return
             }
 
-            sidebar.classList.toggle(
+            const collapsed = sidebar.classList.toggle(
                 "sidebar-collapsed"
             )
+            persistSidebarState(collapsed)
         })
+    }
+
+    const persistSidebarState = (collapsed) => {
+        const csrf = document.querySelector(
+            'meta[name="csrf-token"]'
+        )
+        if (!csrf) return
+
+        fetch("/admin/sidebar", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrf.content,
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({
+                sidebar_collapsed: collapsed
+            })
+        }).catch(() => {})
     }
 
     if (sidebarOverlay) {

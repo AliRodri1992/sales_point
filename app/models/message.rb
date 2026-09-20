@@ -28,7 +28,7 @@ class Message < ApplicationRecord
     notification = event.notifications.find_by(recipient: recipient)
     return if notification.nil?
 
-    Turbo::StreamsChannel.broadcast_append_to(
+    Turbo::StreamsChannel.broadcast_prepend_to(
       "notifications_#{recipient.id}",
       target: 'notifications_list',
       partial: 'admin/shared/notification',

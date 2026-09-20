@@ -306,6 +306,7 @@ select {
     #adminSidebar.sidebar-collapsed nav {
         padding-left: .75rem;
         padding-right: .75rem;
+        overflow: visible;
     }
 
     #adminSidebar.sidebar-collapsed nav > div > p {
@@ -333,6 +334,45 @@ select {
 
     #adminSidebar.sidebar-collapsed > div:last-child button {
         display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a,
+    #adminSidebar.sidebar-collapsed > div:last-child > div {
+        position: relative;
+        z-index: 999;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a::after,
+    #adminSidebar.sidebar-collapsed > div:last-child > div::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: calc(100% + 16px);
+        top: 50%;
+        transform: translateY(-50%) scale(.96);
+        z-index: 9999;
+        padding: .375rem .625rem;
+        border-radius: .5rem;
+        background: #0f172a;
+        color: #fff;
+        font-size: .75rem;
+        font-weight: 600;
+        line-height: 1.25rem;
+        white-space: nowrap;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+                opacity 150ms ease,
+                transform 150ms ease,
+                visibility 150ms ease;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a:hover::after,
+    #adminSidebar.sidebar-collapsed > div:last-child > div:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(-50%) scale(1);
     }
 }
 

@@ -21,3 +21,6 @@ application.register("conversation-messages", ConversationMessagesController)
 
 import ConversationFormController from "./conversation_form_controller"
 application.register("conversation-form", ConversationFormController)
+
+import ClockController from "./clock_controller"
+application.register("clock", ClockController)

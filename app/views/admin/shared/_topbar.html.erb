@@ -17,8 +17,8 @@
         <%= t('admin.shared.topbar.morning_greeting', name: current_user.display_name) %>
       </p>
 
-      <p class="truncate text-xs text-slate-400">
-        <%= l(Time.current, format: :long) %>
+      <p class="truncate text-xs text-slate-400" data-controller="clock" data-clock-locale-value="<%= I18n.locale %>">
+        <time><%= l(Time.current, format: :long) %></time>
       </p>
     </div>
   </div>
