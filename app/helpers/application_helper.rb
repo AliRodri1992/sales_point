@@ -20,6 +20,19 @@ module ApplicationHelper
     user_avatar_theme(user)[:style]
   end
 
+  def breadcrumb_items
+    items = [{ label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }]
+
+    items << case params[:controller]
+             when 'admin/dashboard'
+               { label: t('admin.breadcrumbs.dashboard') }
+             else
+               { label: params[:controller].to_s.remove('admin/').humanize }
+             end
+
+    items
+  end
+
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)
     theme = user_avatar_theme(user)
 

@@ -77,6 +77,10 @@ es:
           sku: "SKU: %{sku}"
           view_inventory: "Ver inventario"
           units: "%{count} uds."
+    breadcrumbs:
+      label: "Ruta de migas"
+      home: "Inicio"
+      dashboard: "Dashboard"
     shared:
       sidebar:
         section_main: "Principal"

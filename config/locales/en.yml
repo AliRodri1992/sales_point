@@ -77,6 +77,10 @@ en:
           sku: "SKU: %{sku}"
           view_inventory: "View inventory"
           units: "%{count} units"
+    breadcrumbs:
+      label: "Breadcrumbs"
+      home: "Home"
+      dashboard: "Dashboard"
     shared:
       sidebar:
         section_main: "Main"
