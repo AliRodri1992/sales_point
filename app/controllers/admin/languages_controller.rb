@@ -82,7 +82,7 @@ module Admin
 
     def notify_language(user, language, action)
       LanguageNotification
-        .with(action: action, record: language)
+        .with(action: action, record: language, user: user)
         .deliver(user, enqueue_job: false)
 
       user.broadcast_notifications_refresh
