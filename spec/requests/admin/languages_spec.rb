@@ -56,4 +56,51 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(notification.params[:action]).to eq('destroyed')
     end
   end
+
+  describe 'GET /admin/languages' do
+    before do
+      create_list(:language, 15)
+    end
+
+    it 'returns a paginated list with at least 10 items per page' do
+      get admin_languages_path
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'shows the total count of languages (not just page count)' do
+      get admin_languages_path
+
+      total = Language.not_deleted.count
+      expect(response.body).to include(I18n.t('admin.languages.index.total_count', count: total))
+    end
+
+    it 'sorts by name in descending order when direction=desc' do
+      get admin_languages_path(sort: 'name', direction: 'desc')
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'sorts by code column' do
+      get admin_languages_path(sort: 'code')
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'filters by search term' do
+      create(:language, name: 'Spanish', code: 'es', flag_iso: 'es')
+
+      get admin_languages_path(search: 'Spanis')
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'filters by status' do
+      create(:language, status: 'inactive')
+
+      get admin_languages_path(status: 'inactive')
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

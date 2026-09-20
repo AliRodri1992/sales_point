@@ -6,8 +6,12 @@ module Admin
     before_action :authenticate_user!
     before_action :set_language, only: %i[show edit update destroy]
 
+    PER_PAGE = 10
+
+    SORTABLE_COLUMNS = %w[name code status created_at updated_at].freeze
+
     def index
-      @languages = Language.not_deleted.order(:name)
+      load_languages
     end
 
     def show; end
@@ -22,11 +26,13 @@ module Admin
       @language = Language.new(language_params)
 
       if @language.save
-        @languages = Language.not_deleted.order(:name)
+        load_languages
         notify_language(current_user, @language, 'created')
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
-          format.html { redirect_to admin_languages_path, notice: t('admin.languages.created') }
+          format.html do
+            redirect_to admin_languages_path(request.query_parameters), notice: t('admin.languages.created')
+          end
         end
       else
         render :new, status: :unprocessable_content
@@ -35,11 +41,13 @@ module Admin
 
     def update
       if @language.update(language_params)
-        @languages = Language.not_deleted.order(:name)
+        load_languages
         notify_language(current_user, @language, 'updated')
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
-          format.html { redirect_to admin_languages_path, notice: t('admin.languages.updated') }
+          format.html do
+            redirect_to admin_languages_path(request.query_parameters), notice: t('admin.languages.updated')
+          end
         end
       else
         render :edit, status: :unprocessable_content
@@ -48,11 +56,13 @@ module Admin
 
     def destroy
       @language.update!(deleted_at: Time.current)
-      @languages = Language.not_deleted.order(:name)
+      load_languages
       notify_language(current_user, @language, 'destroyed')
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
-        format.html { redirect_to admin_languages_path, notice: t('admin.languages.destroyed') }
+        format.html do
+          redirect_to admin_languages_path(request.query_parameters), notice: t('admin.languages.destroyed')
+        end
       end
     end
 
@@ -72,6 +82,40 @@ module Admin
         .deliver(user, enqueue_job: false)
 
       user.broadcast_notifications_refresh
+    end
+
+    def load_languages
+      @languages = filter_scope(Language.not_deleted)
+      @total_count = @languages.count
+      @languages = apply_sorting(@languages)
+      @languages = paginate(@languages)
+    end
+
+    def filter_scope(scope)
+      scope = scope.where('name ILIKE :q OR code ILIKE :q', q: "%#{params[:search]}%") if params[:search].present?
+
+      return scope unless params[:status].present? && params[:status] != 'all'
+
+      scope.where(status: params[:status])
+    end
+
+    def apply_sorting(scope)
+      sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'name'
+      sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+
+      scope.order(sort_column => sort_direction)
+    end
+
+    def paginate(scope)
+      page = (params[:page] || 1).to_i
+      page = 1 if page < 1
+      per_page = PER_PAGE
+
+      @total_pages = (scope.count / per_page.to_f).ceil
+      @total_pages = 1 if @total_pages < 1
+      page = @total_pages if page > @total_pages
+
+      scope.limit(per_page).offset((page - 1) * per_page)
     end
   end
 end

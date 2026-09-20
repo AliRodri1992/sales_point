@@ -95,7 +95,15 @@ es:
         subtitle: "Administra los idiomas disponibles en tu plataforma."
         new: "Nuevo idioma"
         card_title: "Idiomas registrados"
-        card_subtitle: "%{count} idiomas registrados"
+        total_count: "%{count} idiomas registrados"
+        search_placeholder: "Buscar por nombre o código..."
+        filters:
+          all_statuses: "Todos los estados"
+          apply: "Aplicar"
+        pagination:
+          prev: "Anterior"
+          next: "Siguiente"
+          page: "Página %{page} de %{total}"
         edit: "Editar"
         delete: "Eliminar"
         confirm_delete: "¿Seguro que quieres eliminar este idioma?"

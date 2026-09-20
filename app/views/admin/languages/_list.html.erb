@@ -1,11 +1,12 @@
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="flex items-center justify-between p-6">
+  <div class="flex items-center justify-between px-6 py-4">
     <div>
       <h3 class="font-bold"><%= t('admin.languages.index.card_title') %></h3>
       <p class="mt-1 text-xs text-slate-400">
-        <%= t('admin.languages.index.card_subtitle', count: languages.size) %>
+        <%= t('admin.languages.index.total_count', count: @total_count) %>
       </p>
     </div>
+    <%= pagination_links(@total_pages) if @total_pages && @total_pages > 1 %>
   </div>
 
   <% if languages.any? %>
@@ -14,16 +15,16 @@
         <thead>
           <tr class="border-y border-slate-100 text-xs text-slate-400">
             <th class="px-6 py-3 text-left font-medium">
-              <%= t('admin.languages.index.columns.language') %>
+              <%= sort_link('name', t('admin.languages.index.columns.language')) %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= t('admin.languages.index.columns.code') %>
+              <%= sort_link('code', t('admin.languages.index.columns.code')) %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
               <%= t('admin.languages.index.columns.flag') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= t('admin.languages.index.columns.status') %>
+              <%= sort_link('status', t('admin.languages.index.columns.status')) %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
               <%= t('admin.languages.index.columns.actions') %>
@@ -86,6 +87,12 @@
         </tbody>
       </table>
     </div>
+
+    <% if @total_pages && @total_pages > 1 %>
+      <div class="border-t border-slate-100 px-6 py-4">
+        <%= pagination_links(@total_pages) %>
+      </div>
+    <% end %>
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
       <%= icon('language', class: 'size-8 text-slate-300') %>

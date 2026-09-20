@@ -35,6 +35,55 @@ module ApplicationHelper
     items
   end
 
+  def sort_link(column, title = nil)
+    title ||= column.titleize
+    direction = params[:sort] == column && params[:direction] != 'asc' ? 'asc' : 'desc'
+    indicator = sort_indicator(column)
+
+    link_to(
+      safe_join([title, indicator]),
+      url_for(request.query_parameters.merge(sort: column, direction: direction, page: nil)),
+      class: 'inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800'
+    )
+  end
+
+  def sort_indicator(column)
+    return '' unless params[:sort] == column
+
+    css = 'text-slate-800'
+    if params[:direction] == 'asc'
+      icon('arrow-up', class: css)
+    else
+      icon('arrow-down', class: css)
+    end
+  end
+
+  def pagination_links(total_pages)
+    current_page = (params[:page] || 1).to_i
+
+    return '' if total_pages <= 1
+
+    prev_label = t('admin.languages.index.pagination.prev')
+    next_label = t('admin.languages.index.pagination.next')
+
+    links = []
+    links << pagination_link(prev_label, current_page - 1, current_page <= 1) if current_page > 1
+    links << pagination_link(current_page, current_page, true)
+    links << pagination_link(next_label, current_page + 1, current_page >= total_pages) if current_page < total_pages
+    safe_join(links, ' ')
+  end
+
+  def pagination_link(label, page, disabled)
+    classes = 'px-3 py-1 text-sm rounded-lg border transition '
+    classes += if disabled
+                 'border-slate-200 text-slate-400 cursor-not-allowed'
+               else
+                 'border-slate-300 text-slate-700 hover:bg-slate-100'
+               end
+
+    link_to label, url_for(request.query_parameters.merge(page: page)), class: classes
+  end
+
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)
     theme = user_avatar_theme(user)
 

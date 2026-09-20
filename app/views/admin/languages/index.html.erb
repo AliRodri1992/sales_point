@@ -7,12 +7,35 @@
       <%= t('admin.languages.index.subtitle') %>
     </p>
   </div>
-  <div class="flex items-center gap-2">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
     <%= link_to new_admin_language_path,
                 data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.index.new') },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
       <%= icon('plus', class: 'size-4') %>
       <%= t('admin.languages.index.new') %>
+    <% end %>
+
+    <%= form_with url: admin_languages_path, method: :get, data: { turbo_frame: '_top' }, class: 'flex items-center gap-2' do |f| %>
+      <%= text_field_tag :search, params[:search],
+            placeholder: t('admin.languages.index.search_placeholder'),
+            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+
+      <%= select_tag :status,
+            options_for_select(
+              [
+                [t('admin.languages.index.filters.all_statuses'), 'all'],
+                [t('admin.languages.statuses.active'), 'active'],
+                [t('admin.languages.statuses.inactive'), 'inactive']
+              ],
+              params[:status] || 'all'
+            ),
+            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+
+      <%= button_tag type: 'submit',
+            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
+        <%= icon('funnel', class: 'size-4') %>
+        <%= t('admin.languages.index.filters.apply') %>
+      <% end %>
     <% end %>
   </div>
 </div>
