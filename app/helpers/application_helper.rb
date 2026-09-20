@@ -50,7 +50,7 @@ module ApplicationHelper
   def sort_indicator(column)
     return '' unless params[:sort] == column
 
-    css = 'text-slate-800'
+    css = 'size-3 text-slate-800'
     if params[:direction] == 'asc'
       icon('arrow-up', class: css)
     else
@@ -63,14 +63,28 @@ module ApplicationHelper
 
     return '' if total_pages <= 1
 
-    prev_label = t('admin.languages.index.pagination.prev')
-    next_label = t('admin.languages.index.pagination.next')
-
     links = []
-    links << pagination_link(prev_label, current_page - 1, current_page <= 1) if current_page > 1
-    links << pagination_link(current_page, current_page, true)
-    links << pagination_link(next_label, current_page + 1, current_page >= total_pages) if current_page < total_pages
+    links << prev_link(current_page) if current_page > 1
+    links.concat(page_links(current_page, total_pages))
+    links << next_link(current_page, total_pages) if current_page < total_pages
+
     safe_join(links, ' ')
+  end
+
+  def prev_link(current_page)
+    label = t('admin.languages.index.pagination.prev')
+    pagination_link(label, current_page - 1, current_page <= 1)
+  end
+
+  def next_link(current_page, total_pages)
+    label = t('admin.languages.index.pagination.next')
+    pagination_link(label, current_page + 1, current_page >= total_pages)
+  end
+
+  def page_links(current_page, total_pages)
+    (1..total_pages).map do |page|
+      pagination_link(page, page, page == current_page)
+    end
   end
 
   def pagination_link(label, page, disabled)
