@@ -5,16 +5,6 @@
                 turbo_frame: 'language_modal',
                 swal_cancel_text: t('admin.languages.confirm.cancel')
               } do |form| %>
-  <% if language.errors.any? %>
-    <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
-      <ul class="space-y-1 text-sm text-rose-600">
-        <% language.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
   <div class="grid gap-5 sm:grid-cols-2">
     <div>
       <%= form.label :name, t('admin.languages.form.name'),

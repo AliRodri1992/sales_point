@@ -103,4 +103,45 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.sidebar_section_open?('languages')).to be(false)
     end
   end
+
+  describe '#form_state_classes' do
+    let(:language) { Language.new }
+
+    context 'when the attribute has no errors' do
+      it 'returns the slate border classes' do
+        classes = helper.form_state_classes(language, :name)
+        expect(classes).to include('border-slate-200', 'bg-slate-50')
+        expect(classes).not_to include('rose')
+      end
+    end
+
+    context 'when the attribute has errors' do
+      before { language.errors.add(:name, :blank) }
+
+      it 'returns the rose border classes' do
+        classes = helper.form_state_classes(language, :name)
+        expect(classes).to include('border-rose-500', 'bg-rose-50')
+        expect(classes).not_to include('slate-200')
+      end
+    end
+  end
+
+  describe '#error_message_for' do
+    let(:language) { Language.new }
+
+    context 'when the attribute has no errors' do
+      it 'returns an empty string' do
+        expect(helper.error_message_for(language, :name)).to eq('')
+      end
+    end
+
+    context 'when the attribute has errors' do
+      before { language.errors.add(:name, :blank) }
+
+      it 'returns a paragraph with the full message including the field name' do
+        result = helper.error_message_for(language, :name)
+        expect(result).to have_css('p.mt-1.text-xs.text-rose-600', text: /Name/i)
+      end
+    end
+  end
 end

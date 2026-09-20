@@ -43,9 +43,10 @@ module ApplicationHelper
   end
 
   def error_message_for(object, attribute)
-    return '' unless object.errors[attribute].any?
+    return '' unless object && object.errors[attribute].any?
 
-    content_tag(:p, object.errors[attribute].first, class: 'mt-1 text-xs text-rose-600')
+    content_tag(:p, object.errors.full_messages_for(attribute).first,
+                class: 'mt-1 text-xs text-rose-600')
   end
 
   def breadcrumb_items

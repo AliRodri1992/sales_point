@@ -194,6 +194,7 @@ ko:
         mark_all_read: "모두 읽음으로 표시"
         new_message: "새 메시지"
         message_unavailable: "메시지를 사용할 수 없음"
+        performed_by: "사용자: %{user}"
         empty: "알림이 없습니다."
         types:
           chat: "채팅"
@@ -303,6 +304,11 @@ ko:
         phone: "전화번호"
         company: "회사"
         message: "메시지"
+      language:
+        name: "이름"
+        code: "코드"
+        flag_iso: "국기"
+        status: "상태"
   errors:
     format: "%{attribute} %{message}"
     messages:

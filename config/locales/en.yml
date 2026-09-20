@@ -194,6 +194,7 @@ en:
         mark_all_read: "Mark all as read"
         new_message: "New message"
         message_unavailable: "Message unavailable"
+        performed_by: "By %{user}"
         empty: "You have no notifications."
         types:
           chat: "Chat"
@@ -303,6 +304,11 @@ en:
         phone: "Phone"
         company: "Company"
         message: "Message"
+      language:
+        name: "Name"
+        code: "Code"
+        flag_iso: "Flag"
+        status: "Status"
   errors:
     format: "%{attribute} %{message}"
     messages:
