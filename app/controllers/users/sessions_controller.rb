@@ -13,6 +13,11 @@ module Users
     def create
       super do |resource|
         persist_terminal_preferences(resource)
+
+        if flash[:notice].present?
+          flash[:swal_message] = flash[:notice]
+          flash[:notice] = nil
+        end
       end
     end
 

@@ -30,3 +30,6 @@ application.register("modal", ModalController)
 
 import SwalConfirmController from "./swal_confirm_controller"
 application.register("swal-confirm", SwalConfirmController)
+
+import SwalFlashController from "./swal_flash_controller"
+application.register("swal-flash", SwalFlashController)

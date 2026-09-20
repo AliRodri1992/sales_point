@@ -36,6 +36,13 @@
         <%= render "admin/shared/flash" %>
       <% end %>
 
+      <% if flash[:swal_message].present? %>
+        <div data-controller="swal-flash"
+             data-swal-flash-message-value="<%= flash[:swal_message] %>"
+             data-swal-flash-icon-value="success"
+             class="hidden"></div>
+      <% end %>
+
       <%= yield %>
     </main>
 
