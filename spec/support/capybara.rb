@@ -6,6 +6,7 @@ Capybara.configure do |config|
   config.default_max_wait_time = 5
   config.save_path = Rails.root.join('tmp/capybara')
   config.automatic_label_click = true
+  config.enable_aria_label = true
 end
 
 # ─────────────────────────────

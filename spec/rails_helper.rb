@@ -4,7 +4,9 @@ require 'spec_helper'
 
 ENCODING_FLAG = '#' unless defined?(ENCODING_FLAG)
 
-ENV['RAILS_ENV'] ||= 'test'
+# The docker images ship with RAILS_ENV=development, so the suite must force
+# the test environment instead of relying on `||=`.
+ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../config/environment', __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
@@ -30,6 +32,12 @@ RSpec.configure do |config|
   config.order = :random
 
   config.profile_examples = 10
+
+  # The app default locale is Spanish, but the suite expects English
+  # assertions, so force it for deterministic spec runs.
+  config.around(:each) do |example|
+    I18n.with_locale(:en) { example.run }
+  end
 
   config.disable_monkey_patching!
 

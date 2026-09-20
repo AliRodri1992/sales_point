@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DashboardPreference, type: :model do
-  subject(:dashboard_preference) { build(:dashboard_preference) }
+  subject(:dashboard_preference) { build(:dashboard_preference, user: create(:user)) }
 
   describe 'associations' do
     it { is_expected.to belong_to(:user) }

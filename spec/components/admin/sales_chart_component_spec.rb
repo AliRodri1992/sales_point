@@ -14,7 +14,7 @@ RSpec.describe Admin::SalesChartComponent, type: :component do
     render_inline(described_class.new)
 
     expect(page).to have_css('select[aria-label="Sales period"]')
-    expect(page).to have_select('Sales period', selected: 'Last 7 days')
+    expect(page).to have_css('select[aria-label="Sales period"] option[selected]', text: 'Last 7 days')
     expect(page).to have_text('Last 30 days')
     expect(page).to have_text('This year')
   end
