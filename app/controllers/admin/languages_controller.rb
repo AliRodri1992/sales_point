@@ -28,6 +28,7 @@ module Admin
       if @language.save
         load_languages
         notify_language(current_user, @language, 'created')
+        broadcast_languages_update
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
           format.html do
@@ -43,6 +44,7 @@ module Admin
       if @language.update(language_params)
         load_languages
         notify_language(current_user, @language, 'updated')
+        broadcast_languages_update
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
           format.html do
@@ -58,6 +60,7 @@ module Admin
       @language.update!(deleted_at: Time.current)
       load_languages
       notify_language(current_user, @language, 'destroyed')
+      broadcast_languages_update
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
         format.html do
@@ -82,6 +85,19 @@ module Admin
         .deliver(user, enqueue_job: false)
 
       user.broadcast_notifications_refresh
+    end
+
+    # Broadcasts a refreshed languages catalog to every subscribed client
+    # so changes are visible in real-time across devices (not just the
+    # requesting client that receives the HTTP turbo_stream response).
+    def broadcast_languages_update
+      total_count = Language.not_deleted.count
+      languages = Language.not_deleted.order(:name).limit(PER_PAGE)
+      total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
+      html = render_to_string(partial: 'admin/languages/list', formats: [:html],
+                              locals: { languages:, total_count:, total_pages: })
+      Turbo::StreamsChannel.broadcast_update_to('languages_catalog',
+                                                target: 'languages_list', html: html)
     end
 
     def load_languages

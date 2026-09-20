@@ -1,12 +1,18 @@
+<%# total_count / total_pages come from locals when rendered via
+    Turbo::StreamsChannel broadcast (no controller ivars), or fall
+    back to the controller-set instance variables for normal requests. %>
+<% total_count = local_assigns[:total_count] || @total_count || 0 %>
+<% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex items-center justify-between px-6 py-4">
     <div>
       <h3 class="font-bold"><%= t('admin.languages.index.card_title') %></h3>
       <p class="mt-1 text-xs text-slate-400">
-        <%= t('admin.languages.index.total_count', count: @total_count) %>
+        <%= t('admin.languages.index.total_count', count: total_count) %>
       </p>
     </div>
-    <%= pagination_links(@total_pages) if @total_pages && @total_pages > 1 %>
+    <%= pagination_links(total_pages) if total_pages && total_pages > 1 %>
   </div>
 
   <% if languages.any? %>
@@ -89,9 +95,9 @@
       </table>
     </div>
 
-    <% if @total_pages && @total_pages > 1 %>
+    <% if total_pages && total_pages > 1 %>
       <div class="border-t border-slate-100 px-6 py-4">
-        <%= pagination_links(@total_pages) %>
+        <%= pagination_links(total_pages) %>
       </div>
     <% end %>
   <% else %>

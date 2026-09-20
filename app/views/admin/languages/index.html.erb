@@ -40,6 +40,8 @@
   </div>
 </div>
 
+<%= turbo_stream_from "languages_catalog" %>
+
 <%= turbo_frame_tag "languages_list" do %>
   <%= render "list", languages: @languages %>
 <% end %>

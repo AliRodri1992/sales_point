@@ -1,4 +1,4 @@
 <%= turbo_stream.update "languages_list" do %>
-  <%= render "list", languages: @languages %>
+  <%= render "list", languages: @languages, total_count: @total_count, total_pages: @total_pages %>
 <% end %>
 <turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

@@ -26,6 +26,14 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(notification.recipient).to eq(user)
       expect(notification.params[:action]).to eq('created')
     end
+
+    it 'broadcasts the updated catalog to subscribed clients' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+
+      post admin_languages_path(format: :turbo_stream),
+           params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
+    end
   end
 
   describe 'PATCH /admin/languages/:id' do
@@ -41,6 +49,14 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(notification.recipient).to eq(user)
       expect(notification.params[:action]).to eq('updated')
     end
+
+    it 'broadcasts the updated catalog to subscribed clients' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+
+      patch admin_language_path(language, format: :turbo_stream),
+            params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'active' } }
+    end
   end
 
   describe 'DELETE /admin/languages/:id' do
@@ -54,6 +70,13 @@ RSpec.describe 'Admin::Languages', type: :request do
       notification = Noticed::Notification.last
       expect(notification.recipient).to eq(user)
       expect(notification.params[:action]).to eq('destroyed')
+    end
+
+    it 'broadcasts the updated catalog to subscribed clients' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+
+      delete admin_language_path(language, format: :turbo_stream)
     end
   end
 
