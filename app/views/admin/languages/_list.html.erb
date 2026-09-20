@@ -31,7 +31,7 @@
             <th class="px-6 py-3 text-left font-medium">
               <%= sort_link('status', t('admin.languages.index.columns.status')) %>
             </th>
-            <th class="px-6 py-3 text-right font-medium">
+            <th class="px-6 py-3 text-center font-medium">
               <%= t('admin.languages.index.columns.actions') %>
             </th>
           </tr>
@@ -61,7 +61,7 @@
                 </span>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-end gap-1">
+                <div class="flex items-center justify-center gap-1">
                   <%= link_to admin_language_path(language),
                               data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.show.title') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
