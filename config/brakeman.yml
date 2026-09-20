@@ -1,0 +1,23 @@
+---
+# Brakeman configuration
+# Docs: https://brakemanscanner.org/docs/options/
+#
+# Note: CI runs `bin/brakeman --no-pager`, which additionally passes
+# --ensure-latest so the scan fails when Brakeman is not the latest version.
+# That flag intentionally lives in the binstub only, so local scans keep
+# working offline or with a slightly outdated gem.
+
+# Fail the scan (non-zero exit) when warnings or errors are found.
+# These are Brakeman defaults, made explicit here for CI visibility.
+exit_on_warn: true
+exit_on_error: true
+
+# Treat every public controller method as a route (default).
+assume_all_routes: true
+
+# Do not scan the vendor directory (default).
+skip_vendor: true
+
+# Full default check suite runs — no checks are skipped.
+# Only add entries here (e.g. CheckSQL) with a documented justification.
+skip_checks: []
