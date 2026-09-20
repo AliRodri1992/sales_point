@@ -89,6 +89,13 @@ RSpec.describe 'Admin::Languages', type: :request do
       get admin_languages_path
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.languages.index.total_count', count: Language.not_deleted.count))
+    end
+
+    it 'respects the per_page query param' do
+      get admin_languages_path(per_page: 5)
+
+      expect(response).to have_http_status(:ok)
     end
 
     it 'shows the total count of languages (not just page count)' do

@@ -33,3 +33,7 @@ application.register("swal-confirm", SwalConfirmController)
 
 import SwalFlashController from "./swal_flash_controller"
 application.register("swal-flash", SwalFlashController)
+
+import LanguagesController from "./languages_controller"
+application.register("languages", LanguagesController)
+

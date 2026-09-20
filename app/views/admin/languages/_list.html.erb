@@ -12,7 +12,6 @@
         <%= t('admin.languages.index.total_count', count: total_count) %>
       </p>
     </div>
-    <%= pagination_links(total_pages) if total_pages && total_pages > 1 %>
   </div>
 
   <% if languages.any? %>
@@ -96,8 +95,18 @@
     </div>
 
     <% if total_pages && total_pages > 1 %>
-      <div class="border-t border-slate-100 px-6 py-4">
-        <%= pagination_links(total_pages) %>
+      <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
+                data-controller="languages">
+        <div class="flex items-center gap-2 text-sm text-slate-600">
+          <span><%= t('admin.languages.index.pagination.per_page_label') %>:</span>
+          <%= select_tag :per_page,
+                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
+                data: { action: "change->languages#perPageChanged" },
+                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+        </div>
+        <div class="flex items-center gap-1">
+          <%= pagination_links(total_pages) %>
+        </div>
       </div>
     <% end %>
   <% else %>

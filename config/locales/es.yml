@@ -104,6 +104,7 @@ es:
           prev: "Anterior"
           next: "Siguiente"
           page: "Página %{page} de %{total}"
+          per_page_label: "Mostrar"
         edit: "Editar"
         delete: "Eliminar"
         confirm_delete: "¿Seguro que quieres eliminar este idioma?"

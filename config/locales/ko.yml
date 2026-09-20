@@ -31,6 +31,7 @@ ko:
           prev: "이전"
           next: "다음"
           page: "%{page} / %{total} 페이지"
+          per_page_label: "표시"
         edit: "수정"
         delete: "삭제"
         confirm_delete: "이 언어를 삭제하시겠습니까?"

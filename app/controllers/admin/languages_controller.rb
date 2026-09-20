@@ -7,6 +7,7 @@ module Admin
     before_action :set_language, only: %i[show edit update destroy]
 
     PER_PAGE = 10
+    PER_PAGE_OPTIONS = [5, 10, 15].freeze
 
     SORTABLE_COLUMNS = %w[name code status created_at updated_at].freeze
 
@@ -125,13 +126,18 @@ module Admin
     def paginate(scope)
       page = (params[:page] || 1).to_i
       page = 1 if page < 1
-      per_page = PER_PAGE
+      per_page = per_page_param
 
       @total_pages = (scope.count / per_page.to_f).ceil
       @total_pages = 1 if @total_pages < 1
       page = @total_pages if page > @total_pages
 
       scope.limit(per_page).offset((page - 1) * per_page)
+    end
+
+    def per_page_param
+      per_page = params[:per_page]&.to_i
+      PER_PAGE_OPTIONS.include?(per_page) ? per_page : PER_PAGE
     end
   end
 end
