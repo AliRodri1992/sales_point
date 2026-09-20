@@ -85,7 +85,12 @@ en:
       sidebar:
         section_main: "Main"
         dashboard: "Dashboard"
+        catalogs: "Catalogs"
+        languages: "Languages"
+        products: "Products"
+        areas: "Areas"
         section_operations: "Operations"
+        section_catalogs: "Catalogs"
         sales: "Sales"
         cash_register: "Cash register"
         inventory: "Inventory"
