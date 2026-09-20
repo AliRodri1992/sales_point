@@ -112,3 +112,5 @@ vendor/
 app/assets/builds/.keep
 
 app/assets/builds/
+
+.qoder/
