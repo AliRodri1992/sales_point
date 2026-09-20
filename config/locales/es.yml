@@ -6,7 +6,6 @@ es:
     dashboard:
       index:
         title: "Panel de administración | Nexo POS"
-        greeting: "Hola"
       page_header:
         title: "Resumen general"
         subtitle: "Esto es lo que está pasando en tu negocio hoy."
@@ -121,31 +120,19 @@ es:
         toggle_sidebar: "Alternar menú lateral"
         morning_greeting: "Buenos días, %{name}"
       branch_selector:
-        toggle: "Seleccionar sucursal"
         branch_center: "Sucursal Centro"
         branch_north: "Sucursal Norte"
         branch_south: "Sucursal Sur"
       language_selector:
         toggle: "Seleccionar idioma"
-        spanish: "Español"
-        english: "Inglés"
       notifications:
         toggle: "Notificaciones"
         title: "Notificaciones"
         subtitle: "Tienes nuevas notificaciones."
         mark_all_read: "Marcar todas como leídas"
-        low_stock: "Stock bajo"
-        low_stock_body: "Hay productos que requieren reposición."
-        minutes_ago: "Hace %{count} minutos"
-        hour_ago: "Hace 1 hora"
-        sale_completed: "Venta completada"
-        sale_completed_body: "La venta #V-10245 fue registrada correctamente."
-        cash_open: "Caja abierta"
-        cash_open_body: "La sesión de caja está activa."
         new_message: "Nuevo mensaje de %{sender}"
         message_unavailable: "Mensaje no disponible"
         empty: "No tienes notificaciones."
-        view_all: "Ver todas las notificaciones"
       user_menu:
         toggle: "Menú de usuario"
         my_profile: "Mi perfil"
@@ -171,7 +158,6 @@ es:
         subtitle: "Activos ahora"
         close: "Cerrar"
         open: "Usuarios en línea"
-        loading: "Cargando..."
         empty: "No hay usuarios en línea"
       conversation:
         online: "En línea"
@@ -183,7 +169,6 @@ es:
   devise:
     sessions:
       new:
-        brand_alt: "Isotipo de Nexo POS"
         title: "Punto de Venta"
         subtitle: "Ingresa tus credenciales para iniciar turno"
         email: "Correo electrónico"
@@ -206,12 +191,6 @@ es:
         submit: "Crear cuenta"
         already_have_account: "¿Ya tienes una cuenta?"
         sign_in: "Iniciar sesión"
-        user_type: "Tipo de usuario"
-        user_type_prompt: "Selecciona un tipo de usuario"
-        user_type_options:
-          customer: "Cliente"
-          employee: "Empleado"
-          supplier: "Proveedor"
   activerecord:
     attributes:
       user:

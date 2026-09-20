@@ -10,7 +10,6 @@ ko:
     dashboard:
       index:
         title: "관리자 대시보드 | Nexo POS"
-        greeting: "안녕하세요"
       page_header:
         title: "일반 개요"
         subtitle: "오늘 비즈니스에서 일어나고 있는 일입니다."
@@ -121,28 +120,16 @@ ko:
         toggle_sidebar: "사이드바 전환"
         morning_greeting: "좋은 아침입니다, %{name}"
       branch_selector:
-        toggle: "지점 선택"
         branch_center: "중앙 지점"
         branch_north: "북부 지점"
         branch_south: "남부 지점"
       language_selector:
         toggle: "언어 선택"
-        spanish: "스페인어"
-        english: "영어"
       notifications:
         toggle: "알림"
         title: "알림"
         subtitle: "새 알림이 있습니다."
         mark_all_read: "모두 읽음으로 표시"
-        low_stock: "재고 부족"
-        low_stock_body: "보충이 필요한 상품이 있습니다."
-        minutes_ago: "%{count}분 전"
-        hour_ago: "1시간 전"
-        sale_completed: "판매 완료"
-        sale_completed_body: "판매 #V-10245가 정상적으로 등록되었습니다."
-        cash_open: "금전함 열림"
-        cash_open_body: "금전함 교대 세션이 활성화되어 있습니다."
-        view_all: "모든 알림 보기"
         new_message: "%{sender}의 새 메시지"
         message_unavailable: "메시지를 사용할 수 없음"
         empty: "알림이 없습니다."
@@ -171,7 +158,6 @@ ko:
         subtitle: "현재 활성"
         close: "닫기"
         open: "온라인 사용자"
-        loading: "로딩 중..."
         empty: "온라인 사용자가 없습니다"
       conversation:
         online: "온라인"
@@ -183,7 +169,6 @@ ko:
   devise:
     sessions:
       new:
-        brand_alt: "Nexo POS 로고 심볼"
         title: "접속 터미널"
         subtitle: "근무를 시작하려면 정보를 입력하십시오"
         email: "이메일"
@@ -206,12 +191,6 @@ ko:
         submit: "계정 만들기"
         already_have_account: "이미 계정이 있으십니까?"
         sign_in: "로그인"
-        user_type: "사용자 유형"
-        user_type_prompt: "사용자 유형을 선택하십시오"
-        user_type_options:
-          customer: "고객"
-          employee: "직원"
-          supplier: "공급업체"
   activerecord:
     attributes:
       user:

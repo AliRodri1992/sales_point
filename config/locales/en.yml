@@ -6,7 +6,6 @@ en:
     dashboard:
       index:
         title: "Admin Dashboard | Nexo POS"
-        greeting: "Hello"
       page_header:
         title: "General overview"
         subtitle: "This is what is happening in your business today."
@@ -121,31 +120,19 @@ en:
         toggle_sidebar: "Toggle sidebar"
         morning_greeting: "Good morning, %{name}"
       branch_selector:
-        toggle: "Select branch"
         branch_center: "Downtown branch"
         branch_north: "North branch"
         branch_south: "South branch"
       language_selector:
         toggle: "Select language"
-        spanish: "Spanish"
-        english: "English"
       notifications:
         toggle: "Notifications"
         title: "Notifications"
         subtitle: "You have new notifications."
         mark_all_read: "Mark all as read"
-        low_stock: "Low stock"
-        low_stock_body: "There are products that need restocking."
-        minutes_ago: "%{count} minutes ago"
-        hour_ago: "1 hour ago"
-        sale_completed: "Sale completed"
-        sale_completed_body: "Sale #V-10245 was registered successfully."
-        cash_open: "Cash register open"
-        cash_open_body: "The cash register session is active."
         new_message: "New message from %{sender}"
         message_unavailable: "Message unavailable"
         empty: "You have no notifications."
-        view_all: "View all notifications"
       user_menu:
         toggle: "User menu"
         my_profile: "My profile"
@@ -171,7 +158,6 @@ en:
         subtitle: "Active now"
         close: "Close"
         open: "Online users"
-        loading: "Loading..."
         empty: "No users online"
       conversation:
         online: "Online"
@@ -183,7 +169,6 @@ en:
   devise:
     sessions:
       new:
-        brand_alt: "Nexo POS logo mark"
         title: "Access Terminal"
         subtitle: "Enter your credentials to open terminal shift"
         email: "Email address"
@@ -206,12 +191,6 @@ en:
         submit: "Create account"
         already_have_account: "Already have an account?"
         sign_in: "Sign in"
-        user_type: "User Type"
-        user_type_prompt: "Select a user type"
-        user_type_options:
-          customer: "Customer"
-          employee: "Employee"
-          supplier: "Supplier"
   activerecord:
     attributes:
       user:
