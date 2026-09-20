@@ -8,7 +8,6 @@ module Landing
       @title = title
       @subtitle = subtitle
       @features = features
-
     end
 
     private

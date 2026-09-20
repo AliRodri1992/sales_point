@@ -7,6 +7,7 @@ module Ui
       label:,
       icon: nil
     )
+      super()
       @number = number
       @label = label
       @icon = icon

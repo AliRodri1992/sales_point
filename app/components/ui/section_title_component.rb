@@ -8,6 +8,7 @@ module Ui
       badge: nil,
       centered: true
     )
+      super()
       @title = title
       @subtitle = subtitle
       @badge = badge

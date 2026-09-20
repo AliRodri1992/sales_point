@@ -2,23 +2,17 @@
 
 module Landing
   class HeroComponent < ViewComponent::Base
-    def initialize(badge:,
-                   title:, highlighted:,
-                   description:, image:,
-                   primary_button:,
-                   secondary_button:,
-                   statistics:)
-
+    def initialize(attributes)
       super()
 
-      @badge = badge
-      @title = title
-      @highlighted = highlighted
-      @description = description
-      @image = image
-      @primary_button = primary_button
-      @secondary_button = secondary_button
-      @statistics = statistics
+      @badge = attributes[:badge]
+      @title = attributes.fetch(:title)
+      @highlighted = attributes.fetch(:highlighted)
+      @description = attributes.fetch(:description)
+      @image = attributes.fetch(:image)
+      @primary_button = attributes.fetch(:primary_button)
+      @secondary_button = attributes.fetch(:secondary_button)
+      @statistics = attributes.fetch(:statistics)
     end
 
     private

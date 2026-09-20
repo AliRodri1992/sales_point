@@ -19,7 +19,7 @@ RSpec.feature 'SystemRoles', type: :feature do
 
     visit system_roles_path
 
-    SystemRole.all.each do |role|
+    SystemRole.find_each do |role|
       expect(page).to have_content(role.name)
     end
   end

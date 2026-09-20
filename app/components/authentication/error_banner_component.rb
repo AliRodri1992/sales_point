@@ -3,6 +3,7 @@
 module Authentication
   class ErrorBannerComponent < ViewComponent::Base
     def initialize(resource:)
+      super()
       @resource = resource
     end
 
