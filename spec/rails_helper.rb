@@ -4,9 +4,15 @@ require 'spec_helper'
 
 ENCODING_FLAG = '#' unless defined?(ENCODING_FLAG)
 
-# The docker images ship with RAILS_ENV=development, so the suite must force
-# the test environment instead of relying on `||=`.
+# The docker images ship with RAILS_ENV=development and DATABASE_URL pointing
+# at the development database, so the suite must force the test environment
+# instead of relying on `||=`.
 ENV['RAILS_ENV'] = 'test'
+
+# Strip the container-level DATABASE_URL so the suite connects to the test
+# database (config/database.yml + POSTGRES_DB_TEST) instead of truncating the
+# development database (with the seeds) every time the specs run.
+ENV.delete('DATABASE_URL')
 require File.expand_path('../config/environment', __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
