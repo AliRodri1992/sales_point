@@ -37,6 +37,10 @@ document.addEventListener("turbo:load", () => {
         {
             button: document.getElementById("userMenuButton"),
             menu: document.getElementById("userMenu")
+        },
+        {
+            button: document.getElementById("sidebarUserMenuButton"),
+            menu: document.getElementById("sidebarUserMenu")
         }
     ]
 

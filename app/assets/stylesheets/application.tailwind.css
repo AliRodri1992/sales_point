@@ -361,6 +361,10 @@ select {
         justify-content: center;
     }
 
+    #adminSidebar.sidebar-collapsed .sidebar-user-row {
+        justify-content: center;
+    }
+
     #adminSidebar.sidebar-collapsed > div:last-child button {
         display: none;
     }
