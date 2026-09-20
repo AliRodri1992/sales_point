@@ -1,0 +1,22 @@
+<div class="relative">
+  <%= turbo_stream_from "notifications_#{current_user.id}" %>
+
+  <button
+    id="notificationsButton"
+    type="button"
+    class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+    aria-label="<%= t('admin.shared.notifications.toggle') %>"
+  >
+    <%= icon("bell", class: "size-5") %>
+    <%= render "admin/shared/notifications_badge", user: current_user %>
+  </button>
+
+  <div
+    id="notificationsMenu"
+    class="absolute right-0 top-full z-50 mt-2 hidden w-80 rounded-xl border border-slate-200 bg-white shadow-lg"
+  >
+    <%= render "admin/shared/notifications_header", user: current_user %>
+
+    <%= render "admin/shared/notifications_list", user: current_user %>
+  </div>
+</div>

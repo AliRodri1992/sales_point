@@ -13,10 +13,20 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
+    patch 'sidebar', to: 'sidebar#update'
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]
+  resources :notifications, only: [] do
+    collection do
+      post :mark_all_read
+    end
+  end
+  resources :conversations, only: %i[show create] do
+    resources :messages, only: %i[create]
+  end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 

@@ -13,13 +13,13 @@ class Translate < ApplicationRecord
   before_create :validate_uniqueness
 
   scope :by_language, ->(language) { where(language: language) if column_exists?(:language_id) }
-  scope :by_locale, ->(locale) do
+  scope :by_locale, lambda { |locale|
     if column_exists?(:language_id)
       joins(:language).where(languages: { code: locale })
     else
       where(locale: locale)
     end
-  end
+  }
   scope :by_key, ->(key) { where(key: key) }
 
   # Backward compatibility with locale string
@@ -36,7 +36,7 @@ class Translate < ApplicationRecord
   end
 
   def self.value_for(key, locale, default = nil)
-    translation = find_by_key_and_locale(key, locale)
+    translation = find_by(key: key, locale: locale)
     translation&.value || default
   end
 
@@ -44,7 +44,7 @@ class Translate < ApplicationRecord
   def self.load_from_file(file_path, locale_code)
     return unless File.exist?(file_path)
 
-    content = YAML.safe_load(File.read(file_path))
+    content = YAML.safe_load_file(file_path)
     locale_hash = content[locale_code.to_s]
 
     return unless locale_hash
@@ -55,12 +55,12 @@ class Translate < ApplicationRecord
     flatten_hash(locale_hash, '').each do |key, value|
       next if value.is_a?(Hash)
 
-      if column_exists?(:language_id)
-        translate = find_or_create_by(key: key, language: language)
-      else
-        translate = find_or_create_by(key: key, locale: locale_code)
-      end
-      translate.update(value: value.to_s)
+      translate = if column_exists?(:language_id)
+                    find_or_create_by!(key: key, language: language)
+                  else
+                    find_or_create_by!(key: key, locale: locale_code)
+                  end
+      translate.update!(value: value.to_s)
     end
   end
 
@@ -87,23 +87,20 @@ class Translate < ApplicationRecord
     end
   end
 
-  private
-
   def self.column_exists?(column_name)
     ActiveRecord::Base.connection.column_exists?(:translates, column_name)
   end
 
+  private
+
   def validate_uniqueness
     # Custom validation for uniqueness based on whether language_id exists
     if self.class.column_exists?(:language_id)
-      if Translate.where(key: key, language_id: language_id).where('deleted_at IS NULL').exists?
+      if Translate.where(key: key, language_id: language_id).exists?(deleted_at: nil)
         errors.add(:key, 'already exists for this language')
       end
-    else
-      if Translate.where(key: key, locale: self[:locale]).exists?
-        errors.add(:key, 'already exists for this locale')
-      end
+    elsif Translate.exists?(key: key, locale: self[:locale])
+      errors.add(:key, 'already exists for this locale')
     end
   end
 end
-

@@ -13,6 +13,7 @@ module Ui
       hover: false,
       full_height: false
     )
+      super()
       @padding = padding
       @border = border
       @shadow = shadow

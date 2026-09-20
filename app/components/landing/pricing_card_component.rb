@@ -9,6 +9,7 @@ module Landing
       features:,
       featured: false
     )
+      super()
       @name = name
       @price = price
       @description = description

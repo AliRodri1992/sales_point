@@ -6,11 +6,175 @@ es:
     dashboard:
       index:
         title: "Panel de administración | Nexo POS"
-        greeting: "Hola"
+      page_header:
+        title: "Resumen general"
+        subtitle: "Esto es lo que está pasando en tu negocio hoy."
+        customize: "Personalizar dashboard"
+        save_changes: "Guardar cambios"
+        new_sale: "Nueva venta"
+      kpi_grid:
+        sales_today: "Ventas de hoy"
+        transactions: "Transacciones"
+        average_ticket: "Ticket promedio"
+        current_cash: "Caja actual"
+        session_open: "Sesión abierta"
+      saved:
+        title: "Cambios guardados"
+        text: "El layout del dashboard se actualizó correctamente."
+      save_error:
+        title: "No se pudieron guardar los cambios"
+        text: "Hubo un problema al guardar el layout. Inténtalo de nuevo."
+      widgets:
+        sales:
+          title: "Ventas"
+          subtitle: "Comportamiento durante los últimos 7 días"
+          period_label: "Periodo de ventas"
+          periods:
+            '7_days': "Últimos 7 días"
+            '30_days': "Últimos 30 días"
+            year: "Este año"
+          days:
+            mon: "Lun"
+            tue: "Mar"
+            wed: "Mié"
+            thu: "Jue"
+            fri: "Vie"
+            sat: "Sáb"
+            today: "Hoy"
+        quick_actions:
+          title: "Acciones rápidas"
+          subtitle: "Accede rápidamente a las funciones principales"
+          new_sale: "Nueva venta"
+          open_pos: "Abrir POS"
+          product: "Producto"
+          add_product: "Agregar producto"
+          customer: "Cliente"
+          new_customer: "Nuevo cliente"
+          cash_cut: "Corte de caja"
+          check_cash: "Consultar caja"
+        recent_sales:
+          title: "Ventas recientes"
+          subtitle: "Últimas transacciones registradas"
+          view_all: "Ver todas"
+          columns:
+            folio: "Folio"
+            customer: "Cliente"
+            method: "Método"
+            total: "Total"
+            status: "Estado"
+          statuses:
+            completed: "Completada"
+            pending: "Pendiente"
+          payment_methods:
+            card: "Tarjeta"
+            cash: "Efectivo"
+            transfer: "Transferencia"
+        low_stock:
+          title: "Inventario"
+          subtitle: "Productos que requieren atención"
+          alerts: "%{count} alertas"
+          sku: "SKU: %{sku}"
+          view_inventory: "Ver inventario"
+          units: "%{count} uds."
+    breadcrumbs:
+      label: "Ruta de migas"
+      home: "Inicio"
+      dashboard: "Dashboard"
+    shared:
+      sidebar:
+        section_main: "Principal"
+        dashboard: "Dashboard"
+        catalogs: "Catálogos"
+        languages: "Idiomas"
+        products: "Productos"
+        areas: "Áreas"
+        section_operations: "Operación"
+        section_catalogs: "Catálogos"
+        sales: "Ventas"
+        new_sale: "Nueva venta"
+        sales_history: "Historial de ventas"
+        returns: "Devoluciones"
+        cash_register: "Caja"
+        inventory: "Inventario"
+        low_stock: "Bajo stock"
+        stock: "Existencias"
+        by_branch: "Por sucursal"
+        movements: "Movimientos"
+        adjustments: "Ajustes"
+        kardex: "Kardex"
+        customers: "Clientes"
+        suppliers: "Proveedores"
+        employees: "Empleados"
+        section_admin: "Administración"
+        reports: "Reportes"
+        settings: "Configuración"
+        general: "General"
+        system_users: "Usuarios del sistema"
+        roles: "Roles"
+        permissions: "Permisos"
+        branches: "Sucursales"
+        taxes: "Impuestos"
+        role_admin: "Administrador"
+        business_os: "BUSINESS OS"
+      topbar:
+        toggle_sidebar: "Alternar menú lateral"
+        morning_greeting: "Buenos días, %{name}"
+      branch_selector:
+        branch_center: "Sucursal Centro"
+        branch_north: "Sucursal Norte"
+        branch_south: "Sucursal Sur"
+      language_selector:
+        toggle: "Seleccionar idioma"
+      notifications:
+        toggle: "Notificaciones"
+        title: "Notificaciones"
+        subtitle:
+          one: "Tienes 1 notificación nueva"
+          other: "Tienes %{count} notificaciones nuevas"
+        subtitle_none: "No tienes notificaciones nuevas"
+        mark_all_read: "Marcar todas como leídas"
+        new_message: "Nuevo mensaje"
+        message_unavailable: "Mensaje no disponible"
+        empty: "No tienes notificaciones."
+        types:
+          chat: "Chat"
+          demo_request: "Solicitud de demo"
+      user_menu:
+        toggle: "Menú de usuario"
+        my_profile: "Mi perfil"
+        preferences: "Preferencias"
+        security: "Seguridad"
+        help_center: "Centro de ayuda"
+        settings: "Configuración"
+        sign_out: "Cerrar sesión"
+      footer:
+        copyright: "© %{year} NEXO POS. Todos los derechos reservados."
+        privacy: "Privacidad"
+        terms: "Términos"
+      chat:
+        assistant_name: "Asistente NEXO"
+        online: "En línea"
+        close: "Cerrar chat"
+        greeting: "Hola, %{name}. ¿En qué puedo ayudarte?"
+        input_placeholder: "Escribe un mensaje..."
+        send: "Enviar mensaje"
+        open: "Abrir chat"
+      online_users:
+        title: "Usuarios en línea"
+        subtitle: "Activos ahora"
+        close: "Cerrar"
+        open: "Usuarios en línea"
+        empty: "No hay usuarios en línea"
+      conversation:
+        online: "En línea"
+        offline: "Desconectado"
+        close: "Cerrar conversación"
+        select_user: "Selecciona un usuario para chatear"
+        input_placeholder: "Escribe un mensaje..."
+        send: "Enviar mensaje"
   devise:
     sessions:
       new:
-        brand_alt: "Isotipo de Nexo POS"
         title: "Punto de Venta"
         subtitle: "Ingresa tus credenciales para iniciar turno"
         email: "Correo electrónico"
@@ -20,6 +184,16 @@ es:
         submit: "INICIAR SESIÓN"
         error_banner:
           title: "Error de Autenticación"
+    passwords:
+      new:
+        title: "¿Olvidaste tu contraseña?"
+        submit: "Enviarme las instrucciones para restablecerla"
+      edit:
+        title: "Cambia tu contraseña"
+        new_password: "Nueva contraseña"
+        minimum: "Mínimo %{count} caracteres"
+        confirm_password: "Confirmar nueva contraseña"
+        submit: "Cambiar mi contraseña"
     registrations:
       new:
         brand_alt: "Isotipo de Nexo POS"
@@ -33,16 +207,32 @@ es:
         submit: "Crear cuenta"
         already_have_account: "¿Ya tienes una cuenta?"
         sign_in: "Iniciar sesión"
-        user_type: "Tipo de usuario"
-        user_type_prompt: "Selecciona un tipo de usuario"
-        user_type_options:
-          customer: "Cliente"
-          employee: "Empleado"
-          supplier: "Proveedor"
+      edit:
+        title: "Editar %{resource}"
+        leave_blank: "déjalo en blanco si no quieres cambiarla"
+        minimum: "Mínimo %{count} caracteres"
+        current_password_hint: "necesitamos tu contraseña actual para confirmar los cambios"
+        submit: "Actualizar"
+        cancel_account: "Cancelar mi cuenta"
+        unhappy: "¿No estás conforme?"
+        confirm: "¿Estás seguro?"
+        back: "Volver"
+    shared:
+      links:
+        log_in: "Iniciar sesión"
+        sign_up: "Crear cuenta"
+        forgot_password: "¿Olvidaste tu contraseña?"
+        no_confirmation: "¿No recibiste las instrucciones de confirmación?"
+        no_unlock: "¿No recibiste las instrucciones de desbloqueo?"
+        sign_in_with: "Iniciar sesión con %{provider}"
   activerecord:
     attributes:
       user:
         user_type: "Tipo de usuario"
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        current_password: "Contraseña actual"
       demo_request:
         name: "Nombre"
         email: "Correo electrónico"

@@ -2,45 +2,22 @@ module LandingPage
   module Plans
     def self.all
       [
-        Plan.new(
-          name: I18n.t('landing.plan_items.starter.name'),
-          price: 19,
-          description: I18n.t('landing.plan_items.starter.description'),
-          featured: false,
-          features: [
-            I18n.t('landing.plan_items.starter.features.branch_users'),
-            I18n.t('landing.plan_items.starter.features.sales_inventory'),
-            I18n.t('landing.plan_items.starter.features.basic_reports'),
-            I18n.t('landing.plan_items.starter.features.email_support')
-          ]
-        ),
-        Plan.new(
-          name: I18n.t('landing.plan_items.professional.name'),
-          price: 39,
-          description: I18n.t('landing.plan_items.professional.description'),
-          featured: true,
-          features: [
-            I18n.t('landing.plan_items.professional.features.branch_users'),
-            I18n.t('landing.plan_items.professional.features.purchases'),
-            I18n.t('landing.plan_items.professional.features.cash_returns'),
-            I18n.t('landing.plan_items.professional.features.advanced_reports'),
-            I18n.t('landing.plan_items.professional.features.priority_support')
-          ]
-        ),
-        Plan.new(
-          name: I18n.t('landing.plan_items.enterprise.name'),
-          price: 79,
-          description: I18n.t('landing.plan_items.enterprise.description'),
-          featured: false,
-          features: [
-            I18n.t('landing.plan_items.enterprise.features.unlimited'),
-            I18n.t('landing.plan_items.enterprise.features.roles'),
-            I18n.t('landing.plan_items.enterprise.features.accounting'),
-            I18n.t('landing.plan_items.enterprise.features.implementation'),
-            I18n.t('landing.plan_items.enterprise.features.support')
-          ]
-        )
+        plan(:starter, 19, false, %i[branch_users sales_inventory basic_reports email_support]),
+        plan(:professional, 39, true, %i[branch_users purchases cash_returns advanced_reports priority_support]),
+        plan(:enterprise, 79, false, %i[unlimited roles accounting implementation support])
       ]
+    end
+
+    def self.plan(key, price, featured, feature_keys)
+      Plan.new(
+        name: I18n.t("landing.plan_items.#{key}.name"),
+        price: price,
+        description: I18n.t("landing.plan_items.#{key}.description"),
+        featured: featured,
+        features: feature_keys.map do |feature|
+          I18n.t("landing.plan_items.#{key}.features.#{feature}")
+        end
+      )
     end
   end
 end

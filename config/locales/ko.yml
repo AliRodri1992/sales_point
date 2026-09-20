@@ -3,14 +3,178 @@ ko:
     error_banner:
       title: "인증 실패"
   admin:
+    breadcrumbs:
+      label: "이동 경로"
+      home: "홈"
+      dashboard: "대시보드"
     dashboard:
       index:
         title: "관리자 대시보드 | Nexo POS"
-        greeting: "안녕하세요"
+      page_header:
+        title: "일반 개요"
+        subtitle: "오늘 비즈니스에서 일어나고 있는 일입니다."
+        customize: "대시보드 맞춤 설정"
+        save_changes: "변경 사항 저장"
+        new_sale: "새 판매"
+      kpi_grid:
+        sales_today: "오늘의 판매"
+        transactions: "거래"
+        average_ticket: "평균 결제액"
+        current_cash: "현재 금전함"
+        session_open: "교대 시작됨"
+      saved:
+        title: "변경 사항 저장됨"
+        text: "대시보드 레이아웃이 성공적으로 업데이트되었습니다."
+      save_error:
+        title: "변경 사항을 저장하지 못했습니다"
+        text: "레이아웃을 저장하는 중 문제가 발생했습니다. 다시 시도해 주세요."
+      widgets:
+        sales:
+          title: "매출"
+          subtitle: "최근 7일 동안의 추이"
+          period_label: "매출 기간"
+          periods:
+            '7_days': "최근 7일"
+            '30_days': "최근 30일"
+            year: "올해"
+          days:
+            mon: "월"
+            tue: "화"
+            wed: "수"
+            thu: "목"
+            fri: "금"
+            sat: "토"
+            today: "오늘"
+        quick_actions:
+          title: "빠른 작업"
+          subtitle: "주요 기능에 빠르게 접근하세요"
+          new_sale: "새 판매"
+          open_pos: "POS 열기"
+          product: "상품"
+          add_product: "상품 추가"
+          customer: "고객"
+          new_customer: "새 고객"
+          cash_cut: "금전함 마감"
+          check_cash: "금전함 확인"
+        recent_sales:
+          title: "최근 판매"
+          subtitle: "최근 등록된 거래"
+          view_all: "모두 보기"
+          columns:
+            folio: "전표 번호"
+            customer: "고객"
+            method: "결제 방식"
+            total: "총액"
+            status: "상태"
+          statuses:
+            completed: "완료"
+            pending: "대기"
+          payment_methods:
+            card: "카드"
+            cash: "현금"
+            transfer: "계좌이체"
+        low_stock:
+          title: "재고"
+          subtitle: "관리가 필요한 상품"
+          alerts: "알림 %{count}개"
+          sku: "SKU: %{sku}"
+          view_inventory: "재고 보기"
+          units: "%{count}개"
+    shared:
+      sidebar:
+        section_main: "메인"
+        dashboard: "대시보드"
+        catalogs: "카탈로그"
+        languages: "언어"
+        products: "제품"
+        areas: "영역"
+        section_operations: "운영"
+        section_catalogs: "카탈로그"
+        sales: "판매"
+        new_sale: "새 판매"
+        sales_history: "판매 내역"
+        returns: "반품"
+        cash_register: "금전함"
+        inventory: "재고"
+        low_stock: "재고 부족"
+        stock: "재고 현황"
+        by_branch: "지점별"
+        movements: "이동"
+        adjustments: "조정"
+        kardex: "카덱스"
+        customers: "고객"
+        suppliers: "공급업체"
+        employees: "직원"
+        section_admin: "관리"
+        reports: "보고서"
+        settings: "설정"
+        general: "일반"
+        system_users: "시스템 사용자"
+        roles: "역할"
+        permissions: "권한"
+        branches: "지점"
+        taxes: "세금"
+        role_admin: "관리자"
+        business_os: "BUSINESS OS"
+      topbar:
+        toggle_sidebar: "사이드바 전환"
+        morning_greeting: "좋은 아침입니다, %{name}"
+      branch_selector:
+        branch_center: "중앙 지점"
+        branch_north: "북부 지점"
+        branch_south: "남부 지점"
+      language_selector:
+        toggle: "언어 선택"
+      notifications:
+        toggle: "알림"
+        title: "알림"
+        subtitle:
+          one: "새 알림이 1개 있습니다"
+          other: "새 알림이 %{count}개 있습니다"
+        subtitle_none: "새 알림이 없습니다"
+        mark_all_read: "모두 읽음으로 표시"
+        new_message: "새 메시지"
+        message_unavailable: "메시지를 사용할 수 없음"
+        empty: "알림이 없습니다."
+        types:
+          chat: "채팅"
+          demo_request: "데모 신청"
+      user_menu:
+        toggle: "사용자 메뉴"
+        my_profile: "내 프로필"
+        preferences: "선호 설정"
+        security: "보안"
+        help_center: "도움말 센터"
+        settings: "설정"
+        sign_out: "로그아웃"
+      footer:
+        copyright: "© %{year} NEXO POS. 모든 권리 보유."
+        privacy: "개인정보 보호"
+        terms: "약관"
+      chat:
+        assistant_name: "NEXO 도우미"
+        online: "온라인"
+        close: "채팅 닫기"
+        greeting: "안녕하세요, %{name}. 무엇을 도와드릴까요?"
+        input_placeholder: "메시지를 입력하세요..."
+        send: "메시지 보내기"
+        open: "채팅 열기"
+      online_users:
+        title: "온라인 사용자"
+        subtitle: "현재 활성"
+        close: "닫기"
+        open: "온라인 사용자"
+        empty: "온라인 사용자가 없습니다"
+      conversation:
+        online: "온라인"
+        offline: "오프라인"
+        close: "대화 닫기"
+        select_user: "채팅을 시작할 사용자를 선택하세요"
+        input_placeholder: "메시지를 입력하세요..."
+        send: "메시지 보내기"
   devise:
     sessions:
       new:
-        brand_alt: "Nexo POS 로고 심볼"
         title: "접속 터미널"
         subtitle: "근무를 시작하려면 정보를 입력하십시오"
         email: "이메일"
@@ -20,6 +184,16 @@ ko:
         submit: "로그인"
         error_banner:
           title: "인증 실패"
+    passwords:
+      new:
+        title: "비밀번호를 잊으셨나요?"
+        submit: "비밀번호 재설정 안내 보내기"
+      edit:
+        title: "비밀번호 변경"
+        new_password: "새 비밀번호"
+        minimum: "최소 %{count}자"
+        confirm_password: "새 비밀번호 확인"
+        submit: "비밀번호 변경"
     registrations:
       new:
         brand_alt: "Nexo POS 로고 심볼"
@@ -33,16 +207,32 @@ ko:
         submit: "계정 만들기"
         already_have_account: "이미 계정이 있으십니까?"
         sign_in: "로그인"
-        user_type: "사용자 유형"
-        user_type_prompt: "사용자 유형을 선택하십시오"
-        user_type_options:
-          customer: "고객"
-          employee: "직원"
-          supplier: "공급업체"
+      edit:
+        title: "%{resource} 편집"
+        leave_blank: "변경하지 않으려면 비워 두세요"
+        minimum: "최소 %{count}자"
+        current_password_hint: "변경 사항을 확인하려면 현재 비밀번호가 필요합니다"
+        submit: "업데이트"
+        cancel_account: "계정 삭제"
+        unhappy: "불만족스러우신가요?"
+        confirm: "정말 하시겠습니까?"
+        back: "뒤로"
+    shared:
+      links:
+        log_in: "로그인"
+        sign_up: "회원가입"
+        forgot_password: "비밀번호를 잊으셨나요?"
+        no_confirmation: "확인 안내를 받지 못하셨나요?"
+        no_unlock: "잠금 해제 안내를 받지 못하셨나요?"
+        sign_in_with: "%{provider}(으)로 로그인"
   activerecord:
     attributes:
       user:
         user_type: "사용자 유형"
+        email: "이메일"
+        password: "비밀번호"
+        password_confirmation: "비밀번호 확인"
+        current_password: "현재 비밀번호"
       demo_request:
         name: "이름"
         email: "이메일"

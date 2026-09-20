@@ -11,13 +11,13 @@ class DemoRequestsController < ApplicationController
     if @demo_request.save
       redirect_to new_demo_request_path, notice: t('.success')
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
   private
 
   def demo_request_params
-    params.require(:demo_request).permit(:name, :email, :phone, :company, :message)
+    params.expect(demo_request: %i[name email phone company message])
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,6 +58,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
+  create_table "conversation_participants", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id", "user_id"], name: "idx_conv_participants_unique_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["conversation_id"], name: "index_conversation_participants_on_conversation_id"
+    t.index ["deleted_at"], name: "index_conversation_participants_on_deleted_at"
+    t.index ["user_id"], name: "index_conversation_participants_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.string "conversation_type", default: "direct", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.index ["conversation_type", "deleted_at"], name: "index_conversations_on_conversation_type_and_deleted_at"
+    t.index ["deleted_at"], name: "index_conversations_on_deleted_at"
+  end
+
+  create_table "dashboard_preferences", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "grid_type", null: false
+    t.integer "height", default: 1, null: false
+    t.integer "position_x", default: 0, null: false
+    t.integer "position_y", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "widget_id", null: false
+    t.integer "width", default: 1, null: false
+    t.index ["deleted_at"], name: "index_dashboard_preferences_on_deleted_at"
+    t.index ["user_id", "widget_id"], name: "index_dashboard_preferences_on_user_id_and_widget_id", unique: true
+    t.index ["user_id"], name: "index_dashboard_preferences_on_user_id"
+  end
+
   create_table "demo_requests", force: :cascade do |t|
     t.string "company", null: false
     t.datetime "created_at", null: false
@@ -81,6 +118,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.string "name"
     t.string "status"
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_languages_on_code", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_languages_on_deleted_at"
   end
 
@@ -97,7 +135,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.index ["active", "position"], name: "index_membership_features_on_active_and_position"
     t.index ["deleted_at"], name: "index_membership_features_on_deleted_at"
     t.index ["key"], name: "index_membership_features_on_key", unique: true
-    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying, 'integer'::character varying, 'decimal'::character varying, 'text'::character varying]::text[])", name: "chk_membership_features_value_type"
+    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying::text, 'integer'::character varying::text, 'decimal'::character varying::text, 'text'::character varying::text])", name: "chk_membership_features_value_type"
   end
 
   create_table "membership_plan_features", force: :cascade do |t|
@@ -133,9 +171,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.index ["active", "position"], name: "index_membership_plans_on_active_and_position"
     t.index ["deleted_at"], name: "index_membership_plans_on_deleted_at"
     t.index ["slug"], name: "index_membership_plans_on_slug", unique: true
-    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying, 'yearly'::character varying]::text[])", name: "chk_membership_plans_billing_interval"
+    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying::text, 'yearly'::character varying::text])", name: "chk_membership_plans_billing_interval"
     t.check_constraint "price >= 0::numeric", name: "chk_membership_plans_price_non_negative"
     t.check_constraint "trial_days >= 0", name: "chk_membership_plans_trial_days_non_negative"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["deleted_at"], name: "index_messages_on_deleted_at"
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "noticed_events", force: :cascade do |t|
@@ -339,12 +390,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "key", limit: 255, null: false
-    t.string "locale", limit: 10, default: "en", null: false
+    t.bigint "language_id"
+    t.string "locale", limit: 10
     t.datetime "updated_at", null: false
     t.text "value", null: false
     t.index ["deleted_at"], name: "index_translates_on_deleted_at"
     t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
     t.index ["key"], name: "index_translates_on_key"
+    t.index ["language_id", "key"], name: "index_translates_on_language_id_and_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["language_id"], name: "index_translates_on_language_id"
     t.index ["locale"], name: "index_translates_on_locale"
   end
 
@@ -384,6 +438,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.string "reset_password_token"
     t.datetime "session_expires_at"
     t.datetime "session_revoked_at"
+    t.boolean "sidebar_collapsed", default: false, null: false
     t.integer "sign_in_count", default: 0, null: false
     t.string "status", default: "active", null: false
     t.string "theme", limit: 50, default: "theme-material-red", null: false
@@ -406,8 +461,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_011718) do
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
+  add_foreign_key "conversation_participants", "conversations"
+  add_foreign_key "conversation_participants", "users"
+  add_foreign_key "dashboard_preferences", "users"
   add_foreign_key "membership_plan_features", "membership_features"
   add_foreign_key "membership_plan_features", "membership_plans"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
+  add_foreign_key "translates", "languages"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"

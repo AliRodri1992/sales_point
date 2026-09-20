@@ -1,0 +1,20 @@
+<div id="online_users_list" class="flex max-h-72 flex-wrap gap-3 overflow-y-auto p-4">
+  <% if users.any? %>
+    <% users.each do |user| %>
+      <div data-online-user-id="<%= user.id %>">
+        <%= button_to conversations_path(participant_id: user.id),
+              data: { turbo_frame: "conversation_panel" },
+              class: "group" do %>
+          <%= user_avatar(user, size: "h-12 w-12 text-base", online_indicator: true) %>
+        <% end %>
+      </div>
+    <% end %>
+    <p class="online-users-empty w-full py-4 text-center text-sm text-slate-400" style="display: none;">
+      <%= t("admin.shared.online_users.empty") %>
+    </p>
+  <% else %>
+    <p class="w-full py-4 text-center text-sm text-slate-400">
+      <%= t("admin.shared.online_users.empty") %>
+    </p>
+  <% end %>
+</div>

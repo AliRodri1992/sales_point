@@ -1,0 +1,59 @@
+<!-- Sales Chart -->
+<div
+  class="grid-stack-item"
+  gs-id="sales-chart"
+  gs-x="0"
+  gs-y="0"
+  gs-w="8"
+  gs-h="5"
+>
+  <div class="grid-stack-item-content dashboard-widget">
+    <div class="dashboard-widget-card h-[calc(100%-2rem)] rounded-2xl border border-slate-200 bg-white p-6 md:h-full">
+
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold">
+            <%= t('admin.dashboard.widgets.sales.title') %>
+          </h3>
+
+          <p class="mt-1 text-xs text-slate-400">
+            <%= t('admin.dashboard.widgets.sales.subtitle') %>
+          </p>
+        </div>
+
+        <select
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none"
+          aria-label="<%= t('admin.dashboard.widgets.sales.period_label') %>"
+        >
+          <% periods.each do |value, label| %>
+            <option value="<%= value %>" <%= 'selected' if value == period %>>
+              <%= t(label) %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="flex h-64 items-end gap-3 border-b border-slate-100 px-2 sm:gap-6">
+
+        <% chart_points.each do |point| %>
+          <div class="flex h-full flex-1 flex-col items-center justify-end gap-2">
+
+            <div
+              class="w-full max-w-10 rounded-t-lg <%= point.color %>"
+              style="height: <%= point.height %>%"
+            ></div>
+
+            <span
+              class="<%= point.highlight ? 'text-[11px] font-semibold text-slate-600' : 'text-[11px] text-slate-400' %>"
+            >
+              <%= t(point.label) %>
+            </span>
+
+          </div>
+        <% end %>
+
+      </div>
+
+    </div>
+  </div>
+</div>

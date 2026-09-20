@@ -1,0 +1,58 @@
+<% current = current_language %>
+
+<% if current %>
+  <div class="relative" data-controller="language-selector">
+    <button
+      id="languageSelectorButton"
+      type="button"
+      data-action="click->language-selector#toggle"
+      class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-800"
+      aria-label="<%= t('admin.shared.language_selector.toggle') %>"
+    >
+      <img
+        data-language-selector-target="flag"
+        src="<%= current.flag_url %>"
+        srcset="<%= current.flag_srcset %>"
+        class="size-5 rounded-full object-cover"
+        alt="<%= current.name %>"
+      >
+
+      <span class="hidden sm:inline">
+        <%= current.code.upcase %>
+      </span>
+
+      <%= icon("chevron-down", class: "size-3 text-slate-400") %>
+    </button>
+
+    <div
+      id="languageSelectorMenu"
+      data-language-selector-target="dropdown"
+      class="absolute right-0 top-full z-50 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+    >
+      <% terminal_languages.each do |language| %>
+        <button
+          type="button"
+          data-action="click->language-selector#select"
+          data-language="<%= language.code %>"
+          data-flag="<%= language.flag_url %>"
+          class="language-option language-option-blue flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>"
+        >
+          <img
+            src="<%= language.flag_url %>"
+            srcset="<%= language.flag_srcset %>"
+            class="size-7 rounded-full object-cover"
+            alt="<%= language.name %>"
+          >
+
+          <span class="flex-1">
+            <%= language.name %>
+          </span>
+
+          <% if language.id == current.id %>
+            <%= icon("check", variant: :solid, class: "size-3") %>
+          <% end %>
+        </button>
+      <% end %>
+    </div>
+  </div>
+<% end %>

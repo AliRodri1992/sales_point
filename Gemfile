@@ -21,6 +21,9 @@ gem 'i18n-tasks', require: false
 gem 'image_processing', '~> 1.2'
 gem 'jbuilder'
 gem 'jsbundling-rails'
+# json 3.x breaks rack-session 2.1.2 (JSON.parse arity); 2.21.2 includes the
+# fix for the JSON generator heap buffer overflow advisory (CVE-2026-54696)
+gem 'json', '~> 2.21'
 gem 'kamal', require: false
 gem 'kredis'
 gem 'money'
@@ -56,6 +59,7 @@ group :development do
   gem 'awesome_print'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'foreman'
   gem 'letter_opener_web'
   gem 'overcommit'
   gem 'pry-rails'

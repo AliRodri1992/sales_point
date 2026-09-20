@@ -1,0 +1,77 @@
+<div
+  id="kpiGrid"
+  class="grid-stack dashboard-grid mb-6"
+  data-grid-type="kpi"
+>
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-sales"
+    gs-x="0"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: t('admin.dashboard.kpi_grid.sales_today'),
+        value: "$48,250.00",
+        change: "+12.5%",
+        icon_name: "arrow-trending-up"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-transactions"
+    gs-x="3"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: t('admin.dashboard.kpi_grid.transactions'),
+        value: "186",
+        change: "+8.2%",
+        icon_name: "receipt-percent"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-average-ticket"
+    gs-x="6"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: t('admin.dashboard.kpi_grid.average_ticket'),
+        value: "$259.41",
+        change: "+4.7%",
+        icon_name: "presentation-chart-line"
+      ) %>
+    </div>
+  </div>
+
+  <div
+    class="grid-stack-item"
+    gs-id="kpi-cash"
+    gs-x="9"
+    gs-y="0"
+    gs-w="3"
+    gs-h="2"
+  >
+    <div class="grid-stack-item-content">
+      <%= render Admin::KpiCardComponent.new(
+        title: t('admin.dashboard.kpi_grid.current_cash'),
+        value: "$32,840.00",
+        status: t('admin.dashboard.kpi_grid.session_open'),
+        icon_name: "banknotes"
+      ) %>
+    </div>
+  </div>
+</div>

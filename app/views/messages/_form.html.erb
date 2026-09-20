@@ -1,0 +1,20 @@
+<%= form_with model: [conversation, message],
+      id: "new_message_form_#{conversation.id}",
+      class: "flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2",
+      data: { controller: "conversation-form" } do |form| %>
+  <%= form.text_field :body,
+        autocomplete: "off",
+        maxlength: 1000,
+        placeholder: t("admin.shared.conversation.input_placeholder"),
+        class: "min-w-0 flex-1 border-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0",
+        data: { "conversation-form-target": "input", action: "input->conversation-form#update" } %>
+  <%= form.button type: "submit",
+        class: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-700",
+        aria: { label: t("admin.shared.conversation.send") },
+        data: { "conversation-form-target": "button" } do %>
+    <%= icon("paper-airplane", variant: :solid, class: "size-4") %>
+  <% end %>
+<% end %>
+<% if message.errors[:body].any? %>
+  <p class="mt-1 text-xs text-red-600"><%= message.errors[:body].first %></p>
+<% end %>

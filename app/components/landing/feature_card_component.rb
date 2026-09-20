@@ -8,7 +8,6 @@ module Landing
       @title = title
       @description = description
       @color = color
-
     end
 
     private

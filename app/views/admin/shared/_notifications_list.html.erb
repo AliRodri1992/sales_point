@@ -1,0 +1,12 @@
+<div id="notifications_list" class="max-h-80 overflow-y-auto">
+  <% notifications = user.notifications.limit(5) %>
+  <% if notifications.any? %>
+    <% notifications.each do |notification| %>
+      <%= render "admin/shared/notification", notification: notification %>
+    <% end %>
+  <% else %>
+    <p class="px-4 py-8 text-center text-sm text-slate-400">
+      <%= t('admin.shared.notifications.empty') %>
+    </p>
+  <% end %>
+</div>

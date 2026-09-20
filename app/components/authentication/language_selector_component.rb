@@ -7,6 +7,7 @@ module Authentication
       current_language:,
       hover: :brand
     )
+      super()
       @languages = languages
       @current_language = current_language
       @hover = hover

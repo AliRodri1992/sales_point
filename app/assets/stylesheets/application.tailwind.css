@@ -1,13 +1,19 @@
 @import "tailwindcss";
-
+@import "./fonts.css";
+@import "./gridstack.css";
 /* Components */
 @import "./components/themes.css";
+
+@theme {
+    --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-jakarta: "Plus Jakarta Sans", "Inter", sans-serif;
+}
 
 body,
 input,
 button,
 select {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -.01em;
 }
 
@@ -101,4 +107,909 @@ select {
     opacity: 0;
     transform: scale(.95);
     transition: all .15s ease;
+}
+
+/* ============================================================
+   NEXO POS — Admin Dashboard
+   ============================================================ */
+
+.dashboard-grid {
+    min-height: 100px;
+}
+
+.grid-stack-item-content {
+    overflow: visible;
+}
+
+.dashboard-widget {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+
+/* ============================================================
+   Dashboard — GridStack
+   ============================================================ */
+
+.dashboard-grid:not(.dashboard-editing) .grid-stack-item {
+    cursor: default;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item {
+    cursor: move;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item-content {
+    outline: 2px dashed rgba(37, 99, 235, 0.18);
+    outline-offset: -2px;
+    border-radius: 1rem;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item-content::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #2563EB;
+    opacity: 0.8;
+    z-index: 5;
+}
+
+.dashboard-editing .grid-stack-placeholder > .placeholder-content {
+    background: rgba(37, 99, 235, 0.06);
+    border: 2px dashed rgba(37, 99, 235, 0.25);
+    border-radius: 1rem;
+}
+
+
+/* ============================================================
+   Dashboard — Personalización
+   ============================================================ */
+
+#customizeDashboardButton.is-active {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+}
+
+
+/* ============================================================
+   Dashboard — Chat
+   ============================================================ */
+
+#chatPanel {
+    transform-origin: bottom right;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            visibility 180ms ease;
+}
+
+#chatPanel.chat-hidden {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#chatPanel.chat-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#chatFloatingButton {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+}
+
+#chatFloatingButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 12px 28px rgba(37, 99, 235, 0.28);
+}
+
+.chat-user {
+    transition:
+            background-color 150ms ease;
+}
+
+.chat-user:hover {
+    background-color: #f8fafc;
+}
+
+/* ============================================================
+   NEXO POS — Sidebar
+   ============================================================ */
+
+#adminSidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 30;
+    transition:
+            width 300ms cubic-bezier(.4, 0, .2, 1),
+            transform 300ms cubic-bezier(.4, 0, .2, 1);
+}
+
+#adminSidebar nav {
+    min-height: 0;
+}
+
+#adminSidebar > div:last-child {
+    position: relative;
+    z-index: 20;
+    background: #fff;
+}
+
+#adminSidebar .sidebar-brand,
+#adminSidebar .sidebar-label,
+#adminSidebar .sidebar-user {
+    transition:
+            opacity 180ms ease,
+            visibility 180ms ease;
+}
+
+
+/* ============================================================
+   NEXO POS — Topbar
+   ============================================================ */
+
+#adminTopbar {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+#adminTopbar button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
+   NEXO POS — Dropdowns
+   ============================================================ */
+
+#branchSelectorMenu,
+#notificationsMenu,
+#languageSelectorMenu,
+#userMenu {
+    transform-origin: top right;
+}
+
+
+/* ============================================================
+   NEXO POS — Responsive
+   ============================================================ */
+
+@media (max-width: 1023px) {
+    #adminSidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 50;
+        height: 100vh;
+        transform: translateX(-100%);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    #adminSidebar.sidebar-open {
+        transform: translateX(0);
+    }
+}
+
+#adminSidebar nav summary::-webkit-details-marker {
+    display: none;
+}
+
+#adminSidebar nav details .sidebar-chevron {
+    transition: transform 180ms ease;
+}
+
+#adminSidebar nav details[open] .sidebar-chevron {
+    transform: rotate(180deg);
+}
+
+@media (min-width: 1024px) {
+    #adminSidebar.sidebar-collapsed {
+        width: 5rem;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-label {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-brand,
+    #adminSidebar.sidebar-collapsed .sidebar-user {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-label {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav {
+        padding-left: .75rem;
+        padding-right: .75rem;
+        overflow: visible;
+    }
+
+    #adminSidebar.sidebar-collapsed nav > div > p {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a {
+        justify-content: center;
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    #adminSidebar.sidebar-collapsed nav summary {
+        justify-content: center;
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    #adminSidebar.sidebar-collapsed nav summary svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-chevron,
+    #adminSidebar.sidebar-collapsed .sidebar-submenu {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-badge {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child > div {
+        justify-content: center;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child {
+        padding-left: .25rem;
+        padding-right: .25rem;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user-row {
+        justify-content: center;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child button {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a,
+    #adminSidebar.sidebar-collapsed > div:last-child > div,
+    #adminSidebar.sidebar-collapsed nav summary {
+        position: relative;
+        z-index: 999;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a::after,
+    #adminSidebar.sidebar-collapsed > div:last-child > div::after,
+    #adminSidebar.sidebar-collapsed nav summary::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: calc(100% + 16px);
+        top: 50%;
+        transform: translateY(-50%) scale(.96);
+        z-index: 9999;
+        padding: .375rem .625rem;
+        border-radius: .5rem;
+        background: #0f172a;
+        color: #fff;
+        font-size: .75rem;
+        font-weight: 600;
+        line-height: 1.25rem;
+        white-space: nowrap;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+                opacity 150ms ease,
+                transform 150ms ease,
+                visibility 150ms ease;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a:hover::after,
+    #adminSidebar.sidebar-collapsed > div:last-child > div:hover::after,
+    #adminSidebar.sidebar-collapsed nav summary:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Mobile Overlay
+   ============================================================ */
+
+#sidebarOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+            opacity 200ms ease,
+            visibility 200ms ease;
+}
+
+#sidebarOverlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ============================================================
+   NEXO POS — KPI Cards
+   ============================================================ */
+
+#kpiGrid .dashboard-widget {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            border-color 180ms ease;
+}
+
+#kpiGrid .dashboard-widget:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+#kpiGrid .dashboard-widget > div {
+    min-width: 0;
+}
+
+#kpiGrid .dashboard-widget p {
+    line-height: 1.25;
+}
+
+
+/* ============================================================
+   KPI — Icon
+   ============================================================ */
+
+#kpiGrid .dashboard-widget .h-10.w-10 {
+    flex-shrink: 0;
+    transition:
+            transform 180ms ease,
+            background-color 180ms ease;
+}
+
+#kpiGrid .dashboard-widget:hover .h-10.w-10 {
+    transform: scale(1.05);
+}
+
+
+/* ============================================================
+   KPI — Positive Change / Status
+   ============================================================ */
+
+#kpiGrid .dashboard-widget .text-emerald-600 {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+
+/* ============================================================
+   KPI — GridStack
+   ============================================================ */
+
+#kpiGrid .grid-stack-item-content {
+    border-radius: 1rem;
+}
+
+#kpiGrid .grid-stack-item {
+    transition:
+            transform 180ms ease;
+}
+
+
+/* ============================================================
+   KPI — Responsive
+   ============================================================ */
+
+@media (max-width: 1023px) {
+    #kpiGrid .grid-stack-item {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 639px) {
+    #kpiGrid {
+        margin-bottom: 1rem;
+    }
+
+    #kpiGrid .dashboard-widget {
+        padding: 1rem;
+    }
+
+    #kpiGrid .dashboard-widget .h-10.w-10 {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
+
+/* ============================================================
+   NEXO POS — Dashboard Widgets
+   ============================================================ */
+
+.dashboard-widget {
+    transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease;
+}
+
+.dashboard-widget:hover {
+    border-color: #e2e8f0;
+    box-shadow:
+            0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ============================================================
+   Dashboard — Widget Headers
+   ============================================================ */
+
+.dashboard-widget h2,
+.dashboard-widget h3 {
+    letter-spacing: -.015em;
+}
+
+.dashboard-widget > .flex.items-center.justify-between {
+    min-height: 2.5rem;
+}
+
+
+/* ============================================================
+   Dashboard — Sales Chart
+   ============================================================ */
+
+#mainDashboardGrid .sales-chart-bar {
+    transform-origin: bottom;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease;
+}
+
+#mainDashboardGrid .sales-chart-bar:hover {
+    opacity: .85;
+    transform: scaleY(1.03);
+}
+
+
+/* ============================================================
+   Dashboard — Quick Actions
+   ============================================================ */
+
+#mainDashboardGrid .quick-action {
+    transition:
+            transform 180ms ease,
+            border-color 180ms ease,
+            background-color 180ms ease,
+            box-shadow 180ms ease;
+}
+
+#mainDashboardGrid .quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ============================================================
+   Dashboard — Tables
+   ============================================================ */
+
+#mainDashboardGrid table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#mainDashboardGrid thead th {
+    white-space: nowrap;
+}
+
+#mainDashboardGrid tbody tr {
+    transition:
+            background-color 150ms ease;
+}
+
+#mainDashboardGrid tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+
+/* ============================================================
+   Dashboard — Status Badges
+   ============================================================ */
+
+#mainDashboardGrid .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: 9999px;
+    padding: .25rem .625rem;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1rem;
+}
+
+
+/* ============================================================
+   Dashboard — Low Stock
+   ============================================================ */
+
+#mainDashboardGrid .stock-progress {
+    overflow: hidden;
+    height: .375rem;
+    border-radius: 9999px;
+    background: #f1f5f9;
+}
+
+#mainDashboardGrid .stock-progress-bar {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 300ms ease;
+}
+
+
+/* ============================================================
+   Dashboard — GridStack Widget Spacing
+   ============================================================ */
+
+#mainDashboardGrid {
+    margin-bottom: 1.5rem;
+}
+
+#mainDashboardGrid:not(.dashboard-editing) {
+    /* Keep absolute widgets from painting over the footer */
+    overflow: hidden;
+}
+
+#mainDashboardGrid .grid-stack-item-content {
+    overflow: hidden;
+}
+
+#mainDashboardGrid .dashboard-widget {
+    min-width: 0;
+}
+
+/*
+ * Gap between chart/actions and recent-sales/low-stock.
+ * Inset only the bottom-row content from the top; extra gs-h on those
+ * widgets keeps their inner layout comfortable without covering the footer.
+ */
+#mainDashboardGrid .dashboard-widget--row-gap {
+    top: calc(var(--gs-item-margin-top, 8px) + 2rem) !important;
+}
+
+
+/* ============================================================
+   Dashboard — Responsive
+   ============================================================ */
+
+@media (max-width: 767px) {
+    #mainDashboardGrid .dashboard-widget {
+        border-radius: .875rem;
+    }
+
+    #mainDashboardGrid table {
+        min-width: 640px;
+    }
+}
+
+/* ============================================================
+   NEXO POS — Footer
+   ============================================================ */
+
+footer {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+footer a {
+    transition:
+            color 150ms ease;
+}
+
+
+/* ============================================================
+   NEXO POS — Dropdown Menus
+   ============================================================ */
+
+#branchSelectorMenu,
+#notificationsMenu,
+#languageSelectorMenu,
+#userMenu {
+    box-shadow:
+            0 12px 30px rgba(15, 23, 42, 0.10),
+            0 4px 10px rgba(15, 23, 42, 0.04);
+
+    animation: dropdown-open 150ms ease-out;
+}
+
+@keyframes dropdown-open {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Topbar Buttons
+   ============================================================ */
+
+#adminTopbar button {
+    outline: none;
+}
+
+#adminTopbar button:focus-visible {
+    box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+
+/* ============================================================
+   NEXO POS — Sidebar
+   ============================================================ */
+
+#adminSidebar nav a {
+    transition:
+            background-color 150ms ease,
+            color 150ms ease,
+            transform 150ms ease;
+}
+
+#adminSidebar nav a:hover {
+    transform: translateX(1px);
+}
+
+#adminSidebar nav a i {
+    flex-shrink: 0;
+}
+
+
+/* ============================================================
+   NEXO POS — Chat
+   ============================================================ */
+
+#chatPanel {
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.16),
+            0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+#chatPanel input {
+    outline: none;
+}
+
+#chatPanel input:focus {
+    box-shadow: none;
+}
+
+#chatPanel button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+#chatFloatingButton {
+    box-shadow:
+            0 8px 20px rgba(37, 99, 235, 0.22);
+}
+
+#chatFloatingButton:focus-visible,
+#chatCloseButton:focus-visible,
+#chatSendButton:focus-visible {
+    outline: none;
+    box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+
+/* ============================================================
+   NEXO POS — Global Focus
+   ============================================================ */
+
+button,
+a,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+}
+
+
+/* ============================================================
+   NEXO POS — Scrollbars
+   ============================================================ */
+
+#adminSidebar nav::-webkit-scrollbar,
+#chatPanel .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+#adminSidebar nav::-webkit-scrollbar-track,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#adminSidebar nav::-webkit-scrollbar-thumb,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #cbd5e1;
+}
+
+#adminSidebar nav::-webkit-scrollbar-thumb:hover,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* ============================================================
+   NEXO POS — Online Users & Conversation Panels
+   ============================================================ */
+
+#onlineUsersPanel,
+#conversationPanel {
+    transform-origin: bottom right;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            visibility 180ms ease;
+}
+
+#onlineUsersPanel.panel-hidden,
+#conversationPanel.panel-hidden {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#onlineUsersPanel.panel-visible,
+#conversationPanel.panel-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#onlineUsersPanel,
+#conversationPanel {
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.16),
+            0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+#onlineUsersButton {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+    box-shadow:
+            0 8px 20px rgba(5, 150, 105, 0.22);
+}
+
+#onlineUsersButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 12px 28px rgba(5, 150, 105, 0.28);
+}
+
+#onlineUsersButton:focus-visible,
+#onlineUsersCloseButton:focus-visible,
+#conversationCloseButton:focus-visible {
+    outline: none;
+    box-shadow:
+            0 0 0 3px rgba(5, 150, 105, 0.18);
+}
+
+#conversationPanel input {
+    outline: none;
+}
+
+#conversationPanel input:focus {
+    box-shadow: none;
+}
+
+#conversationPanel button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
+   NEXO POS — Mobile
+   ============================================================ */
+
+@media (max-width: 639px) {
+    #chatPanel {
+        right: 1rem;
+        bottom: 5.5rem;
+        width: calc(100vw - 2rem);
+    }
+
+    #chatFloatingButton {
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+    #onlineUsersPanel,
+    #conversationPanel {
+        right: 1rem;
+        bottom: 5.5rem;
+        width: calc(100vw - 2rem);
+    }
+
+    #onlineUsersButton {
+        right: 5rem;
+        bottom: 1rem;
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Scrollbars (Online Users / Conversation)
+   ============================================================ */
+
+#conversation_messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#conversation_messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #cbd5e1;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }

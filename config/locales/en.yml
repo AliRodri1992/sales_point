@@ -6,11 +6,175 @@ en:
     dashboard:
       index:
         title: "Admin Dashboard | Nexo POS"
-        greeting: "Hello"
+      page_header:
+        title: "General overview"
+        subtitle: "This is what is happening in your business today."
+        customize: "Customize dashboard"
+        save_changes: "Save changes"
+        new_sale: "New sale"
+      kpi_grid:
+        sales_today: "Today's sales"
+        transactions: "Transactions"
+        average_ticket: "Average ticket"
+        current_cash: "Current cash"
+        session_open: "Open session"
+      saved:
+        title: "Changes saved"
+        text: "The dashboard layout was updated successfully."
+      save_error:
+        title: "Could not save changes"
+        text: "There was a problem saving the layout. Please try again."
+      widgets:
+        sales:
+          title: "Sales"
+          subtitle: "Behavior over the last 7 days"
+          period_label: "Sales period"
+          periods:
+            '7_days': "Last 7 days"
+            '30_days': "Last 30 days"
+            year: "This year"
+          days:
+            mon: "Mon"
+            tue: "Tue"
+            wed: "Wed"
+            thu: "Thu"
+            fri: "Fri"
+            sat: "Sat"
+            today: "Today"
+        quick_actions:
+          title: "Quick actions"
+          subtitle: "Quickly access the main features"
+          new_sale: "New sale"
+          open_pos: "Open POS"
+          product: "Product"
+          add_product: "Add product"
+          customer: "Customer"
+          new_customer: "New customer"
+          cash_cut: "Cash close"
+          check_cash: "Check cash register"
+        recent_sales:
+          title: "Recent sales"
+          subtitle: "Latest registered transactions"
+          view_all: "View all"
+          columns:
+            folio: "Folio"
+            customer: "Customer"
+            method: "Method"
+            total: "Total"
+            status: "Status"
+          statuses:
+            completed: "Completed"
+            pending: "Pending"
+          payment_methods:
+            card: "Card"
+            cash: "Cash"
+            transfer: "Transfer"
+        low_stock:
+          title: "Inventory"
+          subtitle: "Products that need attention"
+          alerts: "%{count} alerts"
+          sku: "SKU: %{sku}"
+          view_inventory: "View inventory"
+          units: "%{count} units"
+    breadcrumbs:
+      label: "Breadcrumbs"
+      home: "Home"
+      dashboard: "Dashboard"
+    shared:
+      sidebar:
+        section_main: "Main"
+        dashboard: "Dashboard"
+        catalogs: "Catalogs"
+        languages: "Languages"
+        products: "Products"
+        areas: "Areas"
+        section_operations: "Operations"
+        section_catalogs: "Catalogs"
+        sales: "Sales"
+        new_sale: "New sale"
+        sales_history: "Sales history"
+        returns: "Returns"
+        cash_register: "Cash register"
+        inventory: "Inventory"
+        low_stock: "Low stock"
+        stock: "Stock"
+        by_branch: "By branch"
+        movements: "Movements"
+        adjustments: "Adjustments"
+        kardex: "Kardex"
+        customers: "Customers"
+        suppliers: "Suppliers"
+        employees: "Employees"
+        section_admin: "Administration"
+        reports: "Reports"
+        settings: "Settings"
+        general: "General"
+        system_users: "System users"
+        roles: "Roles"
+        permissions: "Permissions"
+        branches: "Branches"
+        taxes: "Taxes"
+        role_admin: "Administrator"
+        business_os: "BUSINESS OS"
+      topbar:
+        toggle_sidebar: "Toggle sidebar"
+        morning_greeting: "Good morning, %{name}"
+      branch_selector:
+        branch_center: "Downtown branch"
+        branch_north: "North branch"
+        branch_south: "South branch"
+      language_selector:
+        toggle: "Select language"
+      notifications:
+        toggle: "Notifications"
+        title: "Notifications"
+        subtitle:
+          one: "You have 1 new notification"
+          other: "You have %{count} new notifications"
+        subtitle_none: "You have no new notifications"
+        mark_all_read: "Mark all as read"
+        new_message: "New message"
+        message_unavailable: "Message unavailable"
+        empty: "You have no notifications."
+        types:
+          chat: "Chat"
+          demo_request: "Demo request"
+      user_menu:
+        toggle: "User menu"
+        my_profile: "My profile"
+        preferences: "Preferences"
+        security: "Security"
+        help_center: "Help center"
+        settings: "Settings"
+        sign_out: "Sign out"
+      footer:
+        copyright: "© %{year} NEXO POS. All rights reserved."
+        privacy: "Privacy"
+        terms: "Terms"
+      chat:
+        assistant_name: "NEXO Assistant"
+        online: "Online"
+        close: "Close chat"
+        greeting: "Hello, %{name}. How can I help you?"
+        input_placeholder: "Type a message..."
+        send: "Send message"
+        open: "Open chat"
+      online_users:
+        title: "Online users"
+        subtitle: "Active now"
+        close: "Close"
+        open: "Online users"
+        empty: "No users online"
+      conversation:
+        online: "Online"
+        offline: "Offline"
+        close: "Close conversation"
+        select_user: "Select a user to start chatting"
+        input_placeholder: "Type a message..."
+        send: "Send message"
   devise:
     sessions:
       new:
-        brand_alt: "Nexo POS logo mark"
         title: "Access Terminal"
         subtitle: "Enter your credentials to open terminal shift"
         email: "Email address"
@@ -20,6 +184,16 @@ en:
         submit: "SIGN IN"
         error_banner:
           title: "Authentication Failed"
+    passwords:
+      new:
+        title: "Forgot your password?"
+        submit: "Send me reset password instructions"
+      edit:
+        title: "Change your password"
+        new_password: "New password"
+        minimum: "%{count} characters minimum"
+        confirm_password: "Confirm new password"
+        submit: "Change my password"
     registrations:
       new:
         brand_alt: "Nexo POS logo mark"
@@ -33,16 +207,32 @@ en:
         submit: "Create account"
         already_have_account: "Already have an account?"
         sign_in: "Sign in"
-        user_type: "User Type"
-        user_type_prompt: "Select a user type"
-        user_type_options:
-          customer: "Customer"
-          employee: "Employee"
-          supplier: "Supplier"
+      edit:
+        title: "Edit %{resource}"
+        leave_blank: "leave blank if you don't want to change it"
+        minimum: "%{count} characters minimum"
+        current_password_hint: "we need your current password to confirm your changes"
+        submit: "Update"
+        cancel_account: "Cancel my account"
+        unhappy: "Unhappy?"
+        confirm: "Are you sure?"
+        back: "Back"
+    shared:
+      links:
+        log_in: "Log in"
+        sign_up: "Sign up"
+        forgot_password: "Forgot your password?"
+        no_confirmation: "Didn't receive confirmation instructions?"
+        no_unlock: "Didn't receive unlock instructions?"
+        sign_in_with: "Sign in with %{provider}"
   activerecord:
     attributes:
       user:
         user_type: "User Type"
+        email: "Email address"
+        password: "Password"
+        password_confirmation: "Confirm password"
+        current_password: "Current password"
       demo_request:
         name: "Name"
         email: "Email address"

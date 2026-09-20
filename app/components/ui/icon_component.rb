@@ -36,6 +36,7 @@ module Ui
       color: :inherit,
       css_class: nil
     )
+      super()
       @name = name
       @variant = variant
       @size = size
