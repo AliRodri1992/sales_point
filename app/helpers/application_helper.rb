@@ -88,14 +88,14 @@ module ApplicationHelper
   end
 
   def pagination_link(label, page, disabled)
-    classes = 'px-3 py-1 text-sm rounded-lg border transition '
-    classes += if disabled
-                 'border-slate-200 text-slate-400 cursor-not-allowed'
-               else
-                 'border-slate-300 text-slate-700 hover:bg-slate-100'
-               end
+    base = 'px-3 py-1 text-sm rounded-lg border transition '
 
-    link_to label, url_for(request.query_parameters.merge(page: page)), class: classes
+    if disabled
+      tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default")
+    else
+      link_to(label, url_for(request.query_parameters.merge(page: page)),
+              class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100")
+    end
   end
 
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)
