@@ -223,10 +223,23 @@ select {
    ============================================================ */
 
 #adminSidebar {
-    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 30;
     transition:
             width 300ms cubic-bezier(.4, 0, .2, 1),
             transform 300ms cubic-bezier(.4, 0, .2, 1);
+}
+
+#adminSidebar nav {
+    min-height: 0;
+}
+
+#adminSidebar > div:last-child {
+    position: relative;
+    z-index: 20;
+    background: #fff;
 }
 
 #adminSidebar .sidebar-brand,
@@ -357,8 +370,21 @@ select {
         display: none;
     }
 
+    #adminSidebar.sidebar-collapsed .sidebar-badge {
+        display: none;
+    }
+
     #adminSidebar.sidebar-collapsed > div:last-child > div {
         justify-content: center;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child {
+        padding-left: .25rem;
+        padding-right: .25rem;
     }
 
     #adminSidebar.sidebar-collapsed .sidebar-user-row {
