@@ -23,11 +23,24 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    if user_signed_in? && current_user.language
-      I18n.locale = current_user.language.code.downcase.to_sym
-    elsif session[:language_id].present?
-      language = Language.find_by(id: session[:language_id])
-      I18n.locale = language.code.downcase.to_sym if language
-    end
+    locale = preferred_locale || I18n.default_locale
+    I18n.locale = locale if I18n.available_locales.include?(locale)
+  end
+
+  def preferred_locale
+    user_language_code || session_language_code
+  end
+
+  def user_language_code
+    return unless user_signed_in? && current_user.language
+
+    current_user.language.code.downcase.to_sym
+  end
+
+  def session_language_code
+    language = Language.find_by(id: session[:language_id])
+    return unless language
+
+    language.code.downcase.to_sym
   end
 end

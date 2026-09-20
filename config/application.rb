@@ -19,7 +19,7 @@ module SalePoint
     config.active_job.queue_adapter = :sidekiq
 
     # Configure i18n
-    config.i18n.default_locale = :en
+    config.i18n.default_locale = :es
     config.i18n.available_locales = %i[en es ko]
 
     # Configuration for the application, engines, and railties goes here.
