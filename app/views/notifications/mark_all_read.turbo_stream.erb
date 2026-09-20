@@ -1,0 +1,7 @@
+<%= turbo_stream.replace "notifications_badge" do %>
+  <%= render "admin/shared/notifications_badge", user: current_user %>
+<% end %>
+
+<%= turbo_stream.replace "notifications_list" do %>
+  <%= render "admin/shared/notifications_list", user: current_user %>
+<% end %>

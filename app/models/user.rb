@@ -61,6 +61,27 @@ class User < ApplicationRecord
     base.scan(/\b\w/).first(2).join.upcase
   end
 
+  def display_name
+    username.presence || initials
+  end
+
+  def notifications
+    Noticed::Notification
+      .where(recipient: self)
+      .joins(:event)
+      .where(noticed_events: { record_type: 'Message', record_id: Message.select(:id) })
+      .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
+  end
+
+  def unread_notifications
+    notifications.unread
+  end
+
+  def message_notifications_for(conversation)
+    notifications
+      .where(noticed_events: { record_type: 'Message', record_id: conversation.messages.select(:id) })
+  end
+
   def online?
     self.class.online_user_ids.include?(id)
   end

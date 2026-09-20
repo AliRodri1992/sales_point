@@ -6,12 +6,12 @@
     aria-label="<%= t('admin.shared.user_menu.toggle') %>"
   >
     <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
-      IR
+      <%= current_user.initials %>
     </span>
 
     <span class="hidden text-left lg:block">
       <span class="block text-sm font-semibold text-slate-700">
-        Ivan Rodriguez
+        <%= current_user.display_name %>
       </span>
 
       <span class="block text-xs text-slate-400">
@@ -28,7 +28,7 @@
   >
     <div class="border-b border-slate-100 px-3 py-3">
       <p class="text-sm font-semibold text-slate-800">
-        Ivan Rodriguez
+        <%= current_user.display_name %>
       </p>
 
       <p class="mt-0.5 text-xs text-slate-400">

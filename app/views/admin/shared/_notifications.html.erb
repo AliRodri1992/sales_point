@@ -1,4 +1,6 @@
 <div class="relative">
+  <%= turbo_stream_from "notifications_#{current_user.id}" %>
+
   <button
     id="notificationsButton"
     type="button"
@@ -6,10 +8,7 @@
     aria-label="<%= t('admin.shared.notifications.toggle') %>"
   >
     <%= icon("bell", class: "size-5") %>
-
-    <span
-      class="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"
-    ></span>
+    <%= render "admin/shared/notifications_badge", user: current_user %>
   </button>
 
   <div
@@ -27,92 +26,15 @@
         </p>
       </div>
 
-      <button
-        type="button"
-        class="text-xs font-medium text-blue-600 transition hover:text-blue-700"
-      >
-        <%= t('admin.shared.notifications.mark_all_read') %>
-      </button>
+      <% if current_user.unread_notifications.any? %>
+        <%= button_to mark_all_read_notifications_path,
+              data: { turbo_stream: true },
+              class: "text-xs font-medium text-blue-600 transition hover:text-blue-700" do %>
+          <%= t('admin.shared.notifications.mark_all_read') %>
+        <% end %>
+      <% end %>
     </div>
 
-    <div class="max-h-80 overflow-y-auto">
-      <button
-        type="button"
-        class="flex w-full gap-3 px-4 py-3 text-left transition hover:bg-slate-50"
-      >
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
-          <%= icon("cube", variant: :solid, class: "size-4") %>
-        </span>
-
-        <span class="min-w-0">
-          <span class="block text-sm font-medium text-slate-700">
-            <%= t('admin.shared.notifications.low_stock') %>
-          </span>
-
-          <span class="mt-0.5 block text-xs text-slate-400">
-            <%= t('admin.shared.notifications.low_stock_body') %>
-          </span>
-
-          <span class="mt-1 block text-[11px] text-slate-400">
-            <%= t('admin.shared.notifications.minutes_ago', count: 10) %>
-          </span>
-        </span>
-      </button>
-
-      <button
-        type="button"
-        class="flex w-full gap-3 border-t border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50"
-      >
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-          <%= icon("check-circle", variant: :solid, class: "size-4") %>
-        </span>
-
-        <span class="min-w-0">
-          <span class="block text-sm font-medium text-slate-700">
-            <%= t('admin.shared.notifications.sale_completed') %>
-          </span>
-
-          <span class="mt-0.5 block text-xs text-slate-400">
-            <%= t('admin.shared.notifications.sale_completed_body') %>
-          </span>
-
-          <span class="mt-1 block text-[11px] text-slate-400">
-            <%= t('admin.shared.notifications.minutes_ago', count: 25) %>
-          </span>
-        </span>
-      </button>
-
-      <button
-        type="button"
-        class="flex w-full gap-3 border-t border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50"
-      >
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-          <%= icon("banknotes", variant: :solid, class: "size-4") %>
-        </span>
-
-        <span class="min-w-0">
-          <span class="block text-sm font-medium text-slate-700">
-            <%= t('admin.shared.notifications.cash_open') %>
-          </span>
-
-          <span class="mt-0.5 block text-xs text-slate-400">
-            <%= t('admin.shared.notifications.cash_open_body') %>
-          </span>
-
-          <span class="mt-1 block text-[11px] text-slate-400">
-            <%= t('admin.shared.notifications.hour_ago') %>
-          </span>
-        </span>
-      </button>
-    </div>
-
-    <div class="border-t border-slate-100 p-2">
-      <button
-        type="button"
-        class="w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-blue-600 transition hover:bg-blue-50"
-      >
-        <%= t('admin.shared.notifications.view_all') %>
-      </button>
-    </div>
+    <%= render "admin/shared/notifications_list", user: current_user %>
   </div>
 </div>

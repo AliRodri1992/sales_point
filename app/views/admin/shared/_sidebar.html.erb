@@ -122,12 +122,12 @@
   <div class="border-t border-slate-200 p-3">
     <div class="flex items-center gap-3 rounded-xl px-3 py-2">
       <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
-        IR
+        <%= current_user.initials %>
       </div>
 
       <div class="sidebar-user min-w-0 flex-1">
         <p class="truncate text-sm font-semibold text-slate-800">
-          Ivan Rodriguez
+          <%= current_user.display_name %>
         </p>
 
         <p class="truncate text-xs text-slate-400">

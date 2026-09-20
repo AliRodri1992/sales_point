@@ -117,6 +117,9 @@ es:
         sale_completed_body: "La venta #V-10245 fue registrada correctamente."
         cash_open: "Caja abierta"
         cash_open_body: "La sesión de caja está activa."
+        new_message: "Nuevo mensaje de %{sender}"
+        message_unavailable: "Mensaje no disponible"
+        empty: "No tienes notificaciones."
         view_all: "Ver todas las notificaciones"
       user_menu:
         toggle: "Menú de usuario"

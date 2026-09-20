@@ -33,7 +33,7 @@
 
   <%= turbo_stream_from "presence" %>
 
-  <div id="online_users_list" class="flex flex-wrap gap-3 p-4">
+  <div id="online_users_list" class="flex max-h-72 flex-wrap gap-3 overflow-y-auto p-4">
     <%= render "admin/shared/online_users_list",
           users: User.where(id: User.online_user_ids, status: :active) %>
   </div>
@@ -44,7 +44,7 @@
   class="panel-hidden fixed bottom-24 right-24 z-50 w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
 >
   <turbo-frame id="conversation_panel">
-    <div class="flex items-center justify-center p-8">
+    <div class="flex h-80 items-center justify-center p-8">
       <p class="text-sm text-slate-400">
         <%= t("admin.shared.conversation.select_user") %>
       </p>

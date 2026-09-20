@@ -1,0 +1,29 @@
+<% message = notification.record %>
+<% sender = message&.user %>
+
+<button
+  type="button"
+  class="flex w-full gap-3 border-t border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 <%= notification.unread? ? "bg-blue-50/60" : "" %>"
+>
+  <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
+    <%= sender ? sender.initials : "?" %>
+  </span>
+
+  <span class="min-w-0">
+    <span class="block text-sm font-medium <%= notification.unread? ? "text-slate-900" : "text-slate-700" %>">
+      <%= t('admin.shared.notifications.new_message', sender: sender ? sender.initials : "?") %>
+    </span>
+
+    <span class="mt-0.5 block truncate text-xs text-slate-500">
+      <%= message&.body || t('admin.shared.notifications.message_unavailable') %>
+    </span>
+
+    <span class="mt-1 block text-[11px] text-slate-400">
+      <%= time_ago_in_words(notification.created_at) %>
+    </span>
+  </span>
+
+  <% if notification.unread? %>
+    <span class="ml-auto mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-600"></span>
+  <% end %>
+</button>

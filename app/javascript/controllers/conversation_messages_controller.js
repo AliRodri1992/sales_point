@@ -25,12 +25,22 @@ export default class extends Controller {
                 const bubble = el.querySelector(".rounded-2xl")
                 if (!bubble) return
 
+                const ownStyle =
+                    "background-color:#2563eb;color:#ffffff"
+                const incomingStyle =
+                    el.dataset.messageStyle ||
+                    "background-color:#ffffff;color:#334155"
+
                 el.classList.toggle("justify-end", isOwn)
                 el.classList.toggle("justify-start", !isOwn)
-                bubble.classList.toggle("bg-blue-600", isOwn)
-                bubble.classList.toggle("text-white", isOwn)
-                bubble.classList.toggle("bg-white", !isOwn)
-                bubble.classList.toggle("text-slate-700", !isOwn)
+
+                bubble.classList.remove(
+                    "bg-blue-600",
+                    "text-white",
+                    "bg-white",
+                    "text-slate-700"
+                )
+                bubble.style.cssText = isOwn ? ownStyle : incomingStyle
             })
     }
 }

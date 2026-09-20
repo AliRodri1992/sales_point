@@ -1,0 +1,8 @@
+<% unread_count = user.unread_notifications.count %>
+<span
+  id="notifications_badge"
+  class="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white ring-2 ring-white"
+  style="<%= "display:none" if unread_count.zero? %>"
+>
+  <%= unread_count > 99 ? "99+" : unread_count %>
+</span>

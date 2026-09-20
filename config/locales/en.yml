@@ -117,6 +117,9 @@ en:
         sale_completed_body: "Sale #V-10245 was registered successfully."
         cash_open: "Cash register open"
         cash_open_body: "The cash register session is active."
+        new_message: "New message from %{sender}"
+        message_unavailable: "Message unavailable"
+        empty: "You have no notifications."
         view_all: "View all notifications"
       user_menu:
         toggle: "User menu"

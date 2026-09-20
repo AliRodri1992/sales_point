@@ -18,6 +18,11 @@ Rails.application.routes.draw do
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]
+  resources :notifications, only: [] do
+    collection do
+      post :mark_all_read
+    end
+  end
   resources :conversations, only: %i[show create] do
     resources :messages, only: %i[create]
   end

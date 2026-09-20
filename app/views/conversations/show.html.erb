@@ -6,7 +6,7 @@
       <%= user_avatar(other, size: "h-9 w-9") %>
       <div>
         <p class="text-sm font-semibold text-white">
-          <%= other.username.presence || other.email %>
+          <%= other.initials %>
         </p>
         <span class="text-xs text-slate-300">
           <%= other.online? ? t("admin.shared.conversation.online") : t("admin.shared.conversation.offline") %>

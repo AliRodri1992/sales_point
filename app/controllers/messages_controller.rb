@@ -3,14 +3,17 @@ class MessagesController < ApplicationController
   before_action :set_conversation
 
   def create
-    @conversation.messages.create!(user: current_user, body: message_params[:body])
+    @message = @conversation.messages.create(user: current_user, body: message_params[:body])
 
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(
           "new_message_form_#{@conversation.id}",
           partial: 'messages/form',
-          locals: { conversation: @conversation, message: Message.new }
+          locals: {
+            conversation: @conversation,
+            message: @message.persisted? ? Message.new : @message
+          }
         )
       end
     end
