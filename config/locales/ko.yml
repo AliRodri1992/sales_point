@@ -121,6 +121,9 @@ ko:
       user_menu:
         toggle: "사용자 메뉴"
         my_profile: "내 프로필"
+        preferences: "선호 설정"
+        security: "보안"
+        help_center: "도움말 센터"
         settings: "설정"
         sign_out: "로그아웃"
       footer:

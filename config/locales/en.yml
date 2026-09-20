@@ -133,6 +133,9 @@ en:
       user_menu:
         toggle: "User menu"
         my_profile: "My profile"
+        preferences: "Preferences"
+        security: "Security"
+        help_center: "Help center"
         settings: "Settings"
         sign_out: "Sign out"
       footer:

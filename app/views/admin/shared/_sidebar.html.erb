@@ -172,15 +172,15 @@
     </div>
   </nav>
 
-  <div class="border-t border-slate-200 p-3">
+  <div class="border-t border-slate-100 p-4">
     <div class="relative" data-tooltip="<%= current_user.display_name %>">
-      <div class="sidebar-user-row flex items-center gap-3 rounded-xl px-3 py-2">
-        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-600">
+      <div class="sidebar-user-row flex items-center gap-3 p-2">
+        <div class="flex h-9 w-9 min-w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-nexus-blue">
           <%= current_user.initials %>
         </div>
 
-        <div class="sidebar-user min-w-0 flex-1">
-          <p class="truncate text-sm font-semibold text-slate-800">
+        <div class="sidebar-user min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+          <p class="truncate text-sm font-semibold">
             <%= current_user.display_name %>
           </p>
 
@@ -192,9 +192,10 @@
         <button
           id="sidebarUserMenuButton"
           type="button"
-          class="text-slate-400 transition hover:text-slate-600"
+          aria-expanded="false"
+          aria-controls="sidebarUserMenu"
           aria-label="<%= t('admin.shared.user_menu.toggle') %>"
-          aria-haspopup="true"
+          class="user-menu-button flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
         >
           <%= icon("ellipsis-vertical", class: "size-5") %>
         </button>
@@ -202,14 +203,14 @@
 
       <div
         id="sidebarUserMenu"
-        class="absolute bottom-full right-0 z-50 mb-2 hidden w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
+        class="absolute bottom-14 left-0 z-50 hidden w-60 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl"
       >
-        <div class="border-b border-slate-100 px-3 py-3">
-          <p class="text-sm font-semibold text-slate-800">
+        <div class="border-b border-slate-100 px-4 py-3">
+          <p class="truncate text-sm font-semibold text-slate-800">
             <%= current_user.display_name %>
           </p>
 
-          <p class="mt-0.5 text-xs text-slate-400">
+          <p class="mt-0.5 truncate text-xs text-slate-400">
             <%= t('admin.shared.sidebar.role_admin') %>
           </p>
         </div>
@@ -217,7 +218,7 @@
         <div class="py-1">
           <button
             type="button"
-            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
           >
             <%= icon("user", class: "size-4 text-slate-400") %>
             <span><%= t('admin.shared.user_menu.my_profile') %></span>
@@ -225,17 +226,33 @@
 
           <button
             type="button"
-            class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
           >
             <%= icon("cog-6-tooth", class: "size-4 text-slate-400") %>
-            <span><%= t('admin.shared.user_menu.settings') %></span>
+            <span><%= t('admin.shared.user_menu.preferences') %></span>
+          </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
+          >
+            <%= icon("shield-check", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.security') %></span>
+          </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
+          >
+            <%= icon("question-mark-circle", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.help_center') %></span>
           </button>
         </div>
 
-        <div class="border-t border-slate-100 pt-1">
+        <div class="border-t border-slate-100 py-1">
           <%= button_to destroy_user_session_path,
                         method: :delete,
-                        class: "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-red-600 transition hover:bg-red-50" do %>
+                        class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition hover:bg-red-50" do %>
             <%= icon("arrow-right-start-on-rectangle", class: "size-4") %>
             <span><%= t('admin.shared.user_menu.sign_out') %></span>
           <% end %>
