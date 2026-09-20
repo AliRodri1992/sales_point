@@ -14,6 +14,7 @@ export default class extends Controller {
     connect() {
         if (!this.messageValue) return
 
+        window.Swal.setLocale(document.documentElement.lang || "en")
         window.Swal.fire({
             toast: true,
             icon: this.iconValue,
@@ -21,8 +22,7 @@ export default class extends Controller {
             timer: 2600,
             showConfirmButton: false,
             timerProgressBar: true,
-            title: this.messageValue,
-            locale: document.documentElement.lang || "en"
+            title: this.messageValue
         })
     }
 }
