@@ -34,6 +34,15 @@ RSpec.describe 'Admin::Languages', type: :request do
       post admin_languages_path(format: :turbo_stream),
            params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
     end
+
+    it 'defaults the status to active when not provided' do
+      expect do
+        post admin_languages_path(format: :turbo_stream),
+             params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl' } }
+      end.to change(Language, :count).by(1)
+
+      expect(Language.find_by(code: 'tl').status).to eq('active')
+    end
   end
 
   describe 'PATCH /admin/languages/:id' do
@@ -72,11 +81,36 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(notification.params[:action]).to eq('destroyed')
     end
 
+    it 'stores the actor user in the notification params' do
+      delete admin_language_path(language, format: :turbo_stream)
+
+      notification = Noticed::Notification.last
+      expect(notification.params[:user]).to eq(user)
+    end
+
+    it 'keeps the soft-deleted language record accessible on the notification' do
+      delete admin_language_path(language, format: :turbo_stream)
+
+      notification = Noticed::Notification.last
+      expect(notification.record).to be_a(Language)
+      expect(notification.record.code).to eq('td')
+    end
+
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
         .with('languages_catalog', target: 'languages_list', html: kind_of(String))
 
       delete admin_language_path(language, format: :turbo_stream)
+    end
+
+    it 'appears in user.notifications even when the language is soft-deleted' do
+      delete admin_language_path(language, format: :turbo_stream)
+
+      notification = user.notifications.find_by(
+        noticed_events: { record_type: 'Language', record_id: language.id }
+      )
+      expect(notification).to be_present
+      expect(notification.params[:action]).to eq('destroyed')
     end
   end
 

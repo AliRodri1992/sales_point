@@ -23,6 +23,10 @@ class Language < ApplicationRecord
        },
        validate: true
 
+  # New languages always default to "active" so the status field doesn't
+  # need to be exposed on the create form.
+  after_initialize :set_default_status, if: :new_record?
+
   scope :available, lambda {
     where(status: :active)
   }
@@ -40,5 +44,11 @@ class Language < ApplicationRecord
       "#{flag_url('80x60')} 2x",
       "#{flag_url('96x72')} 3x"
     ].join(', ')
+  end
+
+  private
+
+  def set_default_status
+    self.status ||= 'active'
   end
 end

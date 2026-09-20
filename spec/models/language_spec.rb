@@ -33,6 +33,18 @@ RSpec.describe Language, type: :model do
     end
   end
 
+  describe 'defaults' do
+    it 'defaults new records to active status' do
+      language = Language.new(name: 'Test', code: 'tt', flag_iso: 'tt')
+      expect(language.status).to eq('active')
+    end
+
+    it 'does not override an explicitly set status' do
+      language = Language.new(name: 'Test', code: 'tt', flag_iso: 'tt', status: 'inactive')
+      expect(language.status).to eq('inactive')
+    end
+  end
+
   describe 'scopes' do
     before do
       create_list(:language, 2, status: 'active')

@@ -20,41 +20,32 @@ module ApplicationHelper
     user_avatar_theme(user)[:style]
   end
 
-  # Returns true when the sidebar item for the given controller should be
-  # highlighted as active. Because `controller_name` is unique per request,
-  # at most one item can be active at any given time.
   def sidebar_item_active?(controller)
     controller_name == controller.to_s
   end
 
-  # Composes the Tailwind CSS classes for a sidebar link. The item is
-  # highlighted when its controller matches the current page, guaranteeing
-  # that only the selected item is active.
-  #
-  # variant: :default renders a top-level item (py-2.5, slate-600) while
-  #           :submenu  renders a nested item   (py-2,    slate-500).
   def sidebar_link_classes(controller, variant: :default)
     active = sidebar_item_active?(controller)
-    submenu = variant == :submenu
-
     shared = 'flex items-center gap-3 rounded-xl text-sm transition'
-    spacing = submenu ? 'px-3 py-2' : 'px-3 py-2.5'
+    spacing = variant == :submenu ? 'px-3 py-2' : 'px-3 py-2.5'
+    return "#{shared} #{spacing} bg-blue-50 font-semibold text-blue-600" if active
 
-    if active
-      "#{shared} #{spacing} bg-blue-50 font-semibold text-blue-600"
-    else
-      text_color = submenu ? 'text-slate-500' : 'text-slate-600'
-      "#{shared} #{spacing} font-medium #{text_color} hover:bg-slate-50 hover:text-slate-900"
-    end
+    color = variant == :submenu ? 'text-slate-500' : 'text-slate-600'
+    "#{shared} #{spacing} font-medium #{color} hover:bg-slate-50 hover:text-slate-900"
   end
 
-  # Returns true when the current controller belongs to any of the given
-  # controllers, so parent <details> sections stay expanded while browsing
-  # a child page (e.g. "Languages" keeps "Catalogs" open). Because
-  # controller_name is unique per request, the parent that matches is
-  # the only one kept open.
   def sidebar_section_open?(*controllers)
     controllers.any? { |controller| sidebar_item_active?(controller) }
+  end
+
+  def form_state_classes(object, attribute)
+    object.errors[attribute].any? ? 'border border-rose-500 bg-rose-50' : 'border border-slate-200 bg-slate-50'
+  end
+
+  def error_message_for(object, attribute)
+    return '' unless object.errors[attribute].any?
+
+    content_tag(:p, object.errors[attribute].first, class: 'mt-1 text-xs text-rose-600')
   end
 
   def breadcrumb_items
