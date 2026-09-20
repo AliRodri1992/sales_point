@@ -15,9 +15,12 @@
       <%= t('admin.languages.index.new') %>
     <% end %>
 
-    <%= form_with url: admin_languages_path, method: :get, data: { turbo_frame: '_top' }, class: 'flex items-center gap-2' do |f| %>
+    <%= form_with url: admin_languages_path, method: :get,
+                  data: { turbo_frame: 'languages_list', controller: 'languages-search' },
+                  class: 'flex items-center gap-2' do |f| %>
       <%= text_field_tag :search, params[:search],
             placeholder: t('admin.languages.index.search_placeholder'),
+            data: { action: 'input->languages-search#debouncedSubmit' },
             class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
 
       <%= select_tag :status,

@@ -37,3 +37,6 @@ application.register("swal-flash", SwalFlashController)
 import LanguagesController from "./languages_controller"
 application.register("languages", LanguagesController)
 
+import LanguagesSearchController from "./languages_search_controller"
+application.register("languages-search", LanguagesSearchController)
+
