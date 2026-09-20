@@ -184,6 +184,16 @@ en:
         submit: "SIGN IN"
         error_banner:
           title: "Authentication Failed"
+    passwords:
+      new:
+        title: "Forgot your password?"
+        submit: "Send me reset password instructions"
+      edit:
+        title: "Change your password"
+        new_password: "New password"
+        minimum: "%{count} characters minimum"
+        confirm_password: "Confirm new password"
+        submit: "Change my password"
     registrations:
       new:
         brand_alt: "Nexo POS logo mark"
@@ -197,10 +207,32 @@ en:
         submit: "Create account"
         already_have_account: "Already have an account?"
         sign_in: "Sign in"
+      edit:
+        title: "Edit %{resource}"
+        leave_blank: "leave blank if you don't want to change it"
+        minimum: "%{count} characters minimum"
+        current_password_hint: "we need your current password to confirm your changes"
+        submit: "Update"
+        cancel_account: "Cancel my account"
+        unhappy: "Unhappy?"
+        confirm: "Are you sure?"
+        back: "Back"
+    shared:
+      links:
+        log_in: "Log in"
+        sign_up: "Sign up"
+        forgot_password: "Forgot your password?"
+        no_confirmation: "Didn't receive confirmation instructions?"
+        no_unlock: "Didn't receive unlock instructions?"
+        sign_in_with: "Sign in with %{provider}"
   activerecord:
     attributes:
       user:
         user_type: "User Type"
+        email: "Email address"
+        password: "Password"
+        password_confirmation: "Confirm password"
+        current_password: "Current password"
       demo_request:
         name: "Name"
         email: "Email address"

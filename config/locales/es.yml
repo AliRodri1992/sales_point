@@ -184,6 +184,16 @@ es:
         submit: "INICIAR SESIÓN"
         error_banner:
           title: "Error de Autenticación"
+    passwords:
+      new:
+        title: "¿Olvidaste tu contraseña?"
+        submit: "Enviarme las instrucciones para restablecerla"
+      edit:
+        title: "Cambia tu contraseña"
+        new_password: "Nueva contraseña"
+        minimum: "Mínimo %{count} caracteres"
+        confirm_password: "Confirmar nueva contraseña"
+        submit: "Cambiar mi contraseña"
     registrations:
       new:
         brand_alt: "Isotipo de Nexo POS"
@@ -197,10 +207,32 @@ es:
         submit: "Crear cuenta"
         already_have_account: "¿Ya tienes una cuenta?"
         sign_in: "Iniciar sesión"
+      edit:
+        title: "Editar %{resource}"
+        leave_blank: "déjalo en blanco si no quieres cambiarla"
+        minimum: "Mínimo %{count} caracteres"
+        current_password_hint: "necesitamos tu contraseña actual para confirmar los cambios"
+        submit: "Actualizar"
+        cancel_account: "Cancelar mi cuenta"
+        unhappy: "¿No estás conforme?"
+        confirm: "¿Estás seguro?"
+        back: "Volver"
+    shared:
+      links:
+        log_in: "Iniciar sesión"
+        sign_up: "Crear cuenta"
+        forgot_password: "¿Olvidaste tu contraseña?"
+        no_confirmation: "¿No recibiste las instrucciones de confirmación?"
+        no_unlock: "¿No recibiste las instrucciones de desbloqueo?"
+        sign_in_with: "Iniciar sesión con %{provider}"
   activerecord:
     attributes:
       user:
         user_type: "Tipo de usuario"
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        current_password: "Contraseña actual"
       demo_request:
         name: "Nombre"
         email: "Correo electrónico"

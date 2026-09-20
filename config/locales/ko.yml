@@ -184,6 +184,16 @@ ko:
         submit: "로그인"
         error_banner:
           title: "인증 실패"
+    passwords:
+      new:
+        title: "비밀번호를 잊으셨나요?"
+        submit: "비밀번호 재설정 안내 보내기"
+      edit:
+        title: "비밀번호 변경"
+        new_password: "새 비밀번호"
+        minimum: "최소 %{count}자"
+        confirm_password: "새 비밀번호 확인"
+        submit: "비밀번호 변경"
     registrations:
       new:
         brand_alt: "Nexo POS 로고 심볼"
@@ -197,10 +207,32 @@ ko:
         submit: "계정 만들기"
         already_have_account: "이미 계정이 있으십니까?"
         sign_in: "로그인"
+      edit:
+        title: "%{resource} 편집"
+        leave_blank: "변경하지 않으려면 비워 두세요"
+        minimum: "최소 %{count}자"
+        current_password_hint: "변경 사항을 확인하려면 현재 비밀번호가 필요합니다"
+        submit: "업데이트"
+        cancel_account: "계정 삭제"
+        unhappy: "불만족스러우신가요?"
+        confirm: "정말 하시겠습니까?"
+        back: "뒤로"
+    shared:
+      links:
+        log_in: "로그인"
+        sign_up: "회원가입"
+        forgot_password: "비밀번호를 잊으셨나요?"
+        no_confirmation: "확인 안내를 받지 못하셨나요?"
+        no_unlock: "잠금 해제 안내를 받지 못하셨나요?"
+        sign_in_with: "%{provider}(으)로 로그인"
   activerecord:
     attributes:
       user:
         user_type: "사용자 유형"
+        email: "이메일"
+        password: "비밀번호"
+        password_confirmation: "비밀번호 확인"
+        current_password: "현재 비밀번호"
       demo_request:
         name: "이름"
         email: "이메일"
