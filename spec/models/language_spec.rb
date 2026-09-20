@@ -26,6 +26,23 @@ RSpec.describe Language, type: :model do
       expect(language.errors[:code]).to include('has already been taken')
     end
 
+    it 'requires code to be at most 2 characters' do
+      language = build(:language, code: 'eng')
+      expect(language).not_to be_valid
+      expect(language.errors[:code]).to include('is too long (maximum 2 characters)')
+    end
+
+    it 'requires flag_iso to be exactly 2 characters' do
+      language = build(:language, flag_iso: 'usa')
+      expect(language).not_to be_valid
+      expect(language.errors[:flag_iso]).to include('has an incorrect length')
+    end
+
+    it 'accepts a 2-character code and flag_iso' do
+      language = build(:language, code: 'es', flag_iso: 'mx')
+      expect(language).to be_valid
+    end
+
     it 'requires a flag_iso' do
       language = build(:language, flag_iso: nil)
       expect(language).not_to be_valid

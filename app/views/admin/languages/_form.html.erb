@@ -5,7 +5,7 @@
                 turbo_frame: 'language_modal',
                 swal_cancel_text: t('admin.languages.confirm.cancel')
               } do |form| %>
-  <div class="grid gap-5 sm:grid-cols-2">
+  <div class="grid gap-5 sm:grid-cols-1">
     <div>
       <%= form.label :name, t('admin.languages.form.name'),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
@@ -28,7 +28,7 @@
       <%= error_message_for(language, :code) %>
     </div>
 
-    <div class="<%= 'sm:col-span-2' if language.new_record? %>">
+    <div>
       <%= form.label :flag_iso, t('admin.languages.form.flag_iso'),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :flag_iso,

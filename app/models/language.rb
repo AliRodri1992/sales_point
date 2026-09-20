@@ -8,13 +8,15 @@ class Language < ApplicationRecord
 
   validates :code,
             presence: true,
-            uniqueness: true
+            uniqueness: true,
+            length: { maximum: 2 }
 
   validates :name,
             presence: true
 
   validates :flag_iso,
-            presence: true
+            presence: true,
+            length: { is: 2 }
 
   enum :status,
        {
