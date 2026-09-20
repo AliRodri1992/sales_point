@@ -60,5 +60,13 @@
       },
       class: "language-modal fixed inset-0 z-[60] hidden items-center justify-center overflow-y-auto bg-slate-900/40 p-4 backdrop-blur-[2px] sm:p-6",
       aria: { hidden: "true" } %>
+
+<%= turbo_frame_tag "area_modal",
+      data: {
+        controller: "modal",
+        action: "turbo:frame-load->modal#frameLoaded keydown.esc@window->modal#close click->modal#background"
+      },
+      class: "area-modal fixed inset-0 z-[60] hidden items-center justify-center overflow-y-auto bg-slate-900/40 p-4 backdrop-blur-[2px] sm:p-6",
+      aria: { hidden: "true" } %>
 </body>
 </html>

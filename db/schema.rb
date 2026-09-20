@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -35,6 +35,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_120000) do
     t.index ["postal_code"], name: "index_addresses_on_postal_code"
     t.check_constraint "latitude >= '-90'::integer::numeric AND latitude <= 90::numeric OR latitude IS NULL", name: "check_latitude_range"
     t.check_constraint "longitude >= '-180'::integer::numeric AND longitude <= 180::numeric OR longitude IS NULL", name: "check_longitude_range"
+  end
+
+  create_table "areas", force: :cascade do |t|
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "name"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_areas_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_areas_on_deleted_at"
   end
 
   create_table "branches", force: :cascade do |t|

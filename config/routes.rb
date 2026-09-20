@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get '/dashboard', to: 'dashboard#index', as: :dashboard
     patch 'sidebar', to: 'sidebar#update'
     resources :languages
+    resources :areas
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]

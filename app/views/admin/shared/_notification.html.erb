@@ -3,9 +3,24 @@
 
 <% if record.is_a?(Language) %>
   <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
   <% avatar_text = record.flag_iso.upcase %>
   <% title_text = t("admin.shared.notifications.language.#{action}", name: record.name, default: record.name) %>
-  <% subtitle_text = record.code %>
+  <% if actor %>
+    <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
+  <% else %>
+    <% subtitle_text = record.code %>
+  <% end %>
+<% elsif record.is_a?(Area) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = record.name.to_s[0, 2].upcase %>
+  <% title_text = t("admin.shared.notifications.area.#{action}", name: record.name, default: record.name) %>
+  <% if actor %>
+    <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
+  <% else %>
+    <% subtitle_text = record.code %>
+  <% end %>
 <% else %>
   <% sender = record&.user %>
   <% avatar_text = sender ? sender.initials : "?" %>
