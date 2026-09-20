@@ -55,6 +55,14 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
+    // Below this width both grids stack into a single column.
+    const stackBreakpoint = 768
+
+    // KPI cards go full width when stacked, so they use shorter
+    // cells there to keep the same card proportions.
+    const kpiCellHeight = () =>
+        window.innerWidth <= stackBreakpoint ? 80 : 96
+
     const kpiGridElement =
         document.getElementById("kpiGrid")
 
@@ -68,7 +76,11 @@ document.addEventListener("turbo:load", () => {
         kpiGrid = GridStack.init(
             {
                 column: 12,
-                cellHeight: 96,
+                columnOpts: {
+                    breakpoints: [{ w: stackBreakpoint, c: 1 }],
+                    breakpointForWindow: true
+                },
+                cellHeight: kpiCellHeight(),
                 margin: 10,
                 float: false,
                 animate: true,
@@ -87,6 +99,10 @@ document.addEventListener("turbo:load", () => {
         mainDashboardGrid = GridStack.init(
             {
                 column: 12,
+                columnOpts: {
+                    breakpoints: [{ w: stackBreakpoint, c: 1 }],
+                    breakpointForWindow: true
+                },
                 cellHeight: 80,
                 margin: "8px 10px",
                 float: false,
@@ -101,6 +117,13 @@ document.addEventListener("turbo:load", () => {
             mainDashboardGridElement
         )
     }
+
+    // Keep the KPI cells compact when crossing the stacking breakpoint.
+    window.addEventListener("resize", () => {
+        if (!kpiGrid) return
+
+        kpiGrid.cellHeight(kpiCellHeight())
+    })
 
     /*
      * ============================================================
@@ -137,7 +160,13 @@ document.addEventListener("turbo:load", () => {
         gridType,
         preferences
     ) => {
-        if (!grid || !preferences.length) {
+        // Saved layouts describe the 12-column grid, so they are only
+        // applied while the grid is not remapped to a breakpoint column.
+        if (
+            !grid ||
+            !preferences.length ||
+            grid.getColumn() !== 12
+        ) {
             return
         }
 
@@ -193,13 +222,21 @@ document.addEventListener("turbo:load", () => {
             )
     }
 
+    const getBaseGridPreferences = (grid, gridType) => {
+        if (!grid || grid.getColumn() !== 12) {
+            return []
+        }
+
+        return getGridPreferences(grid, gridType)
+    }
+
     const saveDashboardPreferences = async () => {
         const widgets = [
-            ...getGridPreferences(
+            ...getBaseGridPreferences(
                 kpiGrid,
                 "kpi"
             ),
-            ...getGridPreferences(
+            ...getBaseGridPreferences(
                 mainDashboardGrid,
                 "main"
             )
@@ -717,8 +754,13 @@ document.addEventListener("turbo:load", () => {
         dashboardGrids.forEach((grid) => {
             if (!grid) return
 
-            grid.enableMove(editing)
-            grid.enableResize(editing)
+            // Only the base 12-column layout can be customized,
+            // since that is the layout that gets persisted.
+            const editable =
+                editing && grid.getColumn() === 12
+
+            grid.enableMove(editable)
+            grid.enableResize(editable)
         })
 
         const dashboardGridElements = [
@@ -787,6 +829,40 @@ document.addEventListener("turbo:load", () => {
             "aria-pressed",
             "false"
         )
+
+        const customizationAvailable = () =>
+            [kpiGrid, mainDashboardGrid].some(
+                (grid) => grid && grid.getColumn() === 12
+            )
+
+        const syncCustomizationAvailability = () => {
+            const available =
+                customizationAvailable()
+
+            customizeDashboardButton.disabled =
+                !available
+
+            if (
+                !available &&
+                customizeDashboardButton.classList.contains(
+                    "is-active"
+                )
+            ) {
+                setDashboardEditing(false)
+            }
+        }
+
+        syncCustomizationAvailability()
+
+        // GridStack remaps its columns through a throttled
+        // ResizeObserver, so the button state is re-checked once
+        // the viewport has settled (e.g. after a rotation).
+        window.addEventListener("resize", () => {
+            window.setTimeout(
+                syncCustomizationAvailability,
+                150
+            )
+        })
 
         customizeDashboardButton.addEventListener(
             "click",
