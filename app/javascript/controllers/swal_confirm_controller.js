@@ -17,6 +17,7 @@ if (!Turbo.StreamActions.swal) {
         const message = this.templateContent ? this.templateContent.textContent : ""
         if (!message) return
 
+        window.Swal.setLocale(document.documentElement.lang || "en")
         window.Swal.fire({
             toast: true,
             icon: "success",
@@ -24,8 +25,7 @@ if (!Turbo.StreamActions.swal) {
             timer: 2600,
             showConfirmButton: false,
             timerProgressBar: true,
-            html: message.trim(),
-            locale: document.documentElement.lang || "en"
+            html: message.trim()
         })
     }
 }
@@ -37,8 +37,9 @@ export default class extends Controller {
         if (confirmConfigured) return
         confirmConfigured = true
 
-        Turbo.config.forms.confirm = (message) =>
-            window.Swal.fire({
+        Turbo.config.forms.confirm = (message) => {
+            window.Swal.setLocale(document.documentElement.lang || "en")
+            return window.Swal.fire({
                 icon: "warning",
                 title: message,
                 showCancelButton: true,
@@ -46,8 +47,8 @@ export default class extends Controller {
                 focusCancel: true,
                 confirmButtonColor: "#dc2626",
                 cancelButtonColor: "#64748b",
-                cancelButtonText: this.element.dataset.swalCancelText || "Cancel",
-                locale: document.documentElement.lang || "en"
+                cancelButtonText: this.element.dataset.swalCancelText || "Cancel"
             }).then((result) => result.isConfirmed)
+        }
     }
 }
