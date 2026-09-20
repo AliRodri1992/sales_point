@@ -1,0 +1,5 @@
+<%= turbo_stream.update "language_modal", "" %>
+<%= turbo_stream.update "languages_list" do %>
+  <%= render "list", languages: @languages %>
+<% end %>
+<turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

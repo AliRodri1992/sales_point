@@ -1,0 +1,100 @@
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <div class="flex items-center justify-between p-6">
+    <div>
+      <h3 class="font-bold"><%= t('admin.languages.index.card_title') %></h3>
+      <p class="mt-1 text-xs text-slate-400">
+        <%= t('admin.languages.index.card_subtitle', count: languages.size) %>
+      </p>
+    </div>
+  </div>
+
+  <% if languages.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-y border-slate-100 text-xs text-slate-400">
+            <th class="px-6 py-3 text-left font-medium">
+              <%= t('admin.languages.index.columns.language') %>
+            </th>
+            <th class="px-6 py-3 text-left font-medium">
+              <%= t('admin.languages.index.columns.code') %>
+            </th>
+            <th class="px-6 py-3 text-left font-medium">
+              <%= t('admin.languages.index.columns.flag') %>
+            </th>
+            <th class="px-6 py-3 text-left font-medium">
+              <%= t('admin.languages.index.columns.status') %>
+            </th>
+            <th class="px-6 py-3 text-right font-medium">
+              <%= t('admin.languages.index.columns.actions') %>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% languages.each do |language| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4 font-semibold">
+                <%= language.name %>
+              </td>
+              <td class="px-6 py-4">
+                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                  <%= language.code %>
+                </code>
+              </td>
+              <td class="px-6 py-4">
+                <%= image_tag language.flag_url('64x48'),
+                              srcset: language.flag_srcset,
+                              alt: language.name,
+                              loading: 'lazy',
+                              class: 'h-6 w-8 rounded-sm object-cover' %>
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold
+                  <%= language.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+                  <%= t("admin.languages.statuses.#{language.status}") %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-end gap-1">
+                  <%= link_to admin_language_path(language),
+                              data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.show.title') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.languages.show.title') } do %>
+                    <%= icon('eye', class: 'size-4') %>
+                  <% end %>
+                  <%= link_to edit_admin_language_path(language),
+                              data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.index.edit') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.languages.index.edit') } do %>
+                    <%= icon('pencil-square', class: 'size-4') %>
+                  <% end %>
+                  <%= button_to admin_language_path(language),
+                                method: :delete,
+                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
+                                data: {
+                                  controller: 'swal-confirm',
+                                  turbo_confirm: t('admin.languages.index.confirm_delete'),
+                                  swal_cancel_text: t('admin.languages.confirm.cancel')
+                                },
+                                aria: { label: t('admin.languages.index.delete') } do %>
+                    <%= icon('trash', class: 'size-4') %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="flex flex-col items-center gap-2 p-12 text-center">
+      <%= icon('language', class: 'size-8 text-slate-300') %>
+      <p class="text-sm font-semibold text-slate-500">
+        <%= t('admin.languages.index.empty_title') %>
+      </p>
+      <p class="text-xs text-slate-400">
+        <%= t('admin.languages.index.empty_subtitle') %>
+      </p>
+    </div>
+  <% end %>
+</div>

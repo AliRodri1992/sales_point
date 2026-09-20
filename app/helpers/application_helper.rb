@@ -26,6 +26,8 @@ module ApplicationHelper
     items << case params[:controller]
              when 'admin/dashboard'
                { label: t('admin.breadcrumbs.dashboard') }
+             when 'admin/languages'
+               { label: t('admin.breadcrumbs.languages') }
              else
                { label: params[:controller].to_s.remove('admin/').humanize }
              end

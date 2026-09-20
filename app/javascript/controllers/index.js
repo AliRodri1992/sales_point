@@ -24,3 +24,9 @@ application.register("conversation-form", ConversationFormController)
 
 import ClockController from "./clock_controller"
 application.register("clock", ClockController)
+
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)
+
+import SwalConfirmController from "./swal_confirm_controller"
+application.register("swal-confirm", SwalConfirmController)

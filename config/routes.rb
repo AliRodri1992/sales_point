@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
     patch 'sidebar', to: 'sidebar#update'
+    resources :languages
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]

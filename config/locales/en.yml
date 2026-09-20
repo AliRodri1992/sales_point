@@ -80,6 +80,56 @@ en:
       label: "Breadcrumbs"
       home: "Home"
       dashboard: "Dashboard"
+      languages: "Languages"
+    languages:
+      created: "Language created successfully"
+      updated: "Language updated successfully"
+      destroyed: "Language deleted successfully"
+      confirm:
+        cancel: "Cancel"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+      index:
+        title: "Languages"
+        subtitle: "Manage the languages available in your platform."
+        new: "New language"
+        card_title: "Registered languages"
+        card_subtitle: "%{count} languages registered"
+        edit: "Edit"
+        delete: "Delete"
+        confirm_delete: "Are you sure you want to delete this language?"
+        empty_title: "No languages yet"
+        empty_subtitle: "Create your first language to get started."
+        columns:
+          language: "Language"
+          code: "Code"
+          flag: "Flag"
+          status: "Status"
+          actions: "Actions"
+      form:
+        name: "Name"
+        name_placeholder: "e.g. English"
+        code: "Code"
+        code_placeholder: "e.g. en"
+        code_hint: "ISO 639-1 language code."
+        flag_iso: "Flag"
+        flag_placeholder: "e.g. us"
+        flag_hint: "Two-letter country code used to display the flag."
+        status: "Status"
+        cancel: "Cancel"
+        create: "Create language"
+        update: "Update language"
+      show:
+        title: "Language details"
+        subtitle: "Review the details of this language."
+        close: "Close"
+      new:
+        title: "New language"
+        subtitle: "Add a language to your catalog."
+      edit:
+        title: "Edit %{name}"
+        subtitle: "Update the language details."
     shared:
       sidebar:
         section_main: "Main"

@@ -80,6 +80,56 @@ es:
       label: "Ruta de migas"
       home: "Inicio"
       dashboard: "Dashboard"
+      languages: "Idiomas"
+    languages:
+      created: "Idioma creado correctamente"
+      updated: "Idioma actualizado correctamente"
+      destroyed: "Idioma eliminado correctamente"
+      confirm:
+        cancel: "Cancelar"
+      statuses:
+        active: "Activo"
+        inactive: "Inactivo"
+      index:
+        title: "Idiomas"
+        subtitle: "Administra los idiomas disponibles en tu plataforma."
+        new: "Nuevo idioma"
+        card_title: "Idiomas registrados"
+        card_subtitle: "%{count} idiomas registrados"
+        edit: "Editar"
+        delete: "Eliminar"
+        confirm_delete: "¿Seguro que quieres eliminar este idioma?"
+        empty_title: "Aún no hay idiomas"
+        empty_subtitle: "Crea tu primer idioma para empezar."
+        columns:
+          language: "Idioma"
+          code: "Código"
+          flag: "Bandera"
+          status: "Estado"
+          actions: "Acciones"
+      form:
+        name: "Nombre"
+        name_placeholder: "ej. Español"
+        code: "Código"
+        code_placeholder: "ej. es"
+        code_hint: "Código de idioma ISO 639-1."
+        flag_iso: "Bandera"
+        flag_placeholder: "ej. mx"
+        flag_hint: "Código de país de dos letras usado para mostrar la bandera."
+        status: "Estado"
+        cancel: "Cancelar"
+        create: "Crear idioma"
+        update: "Actualizar idioma"
+      show:
+        title: "Detalles del idioma"
+        subtitle: "Revisa los detalles de este idioma."
+        close: "Cerrar"
+      new:
+        title: "Nuevo idioma"
+        subtitle: "Añade un idioma a tu catálogo."
+      edit:
+        title: "Editar %{name}"
+        subtitle: "Actualiza los datos del idioma."
     shared:
       sidebar:
         section_main: "Principal"

@@ -27,6 +27,10 @@ class Language < ApplicationRecord
     where(status: :active)
   }
 
+  scope :not_deleted, lambda {
+    where(deleted_at: nil)
+  }
+
   def flag_url(size = '64x48')
     "https://flagcdn.com/#{size}/#{flag_iso}.png"
   end

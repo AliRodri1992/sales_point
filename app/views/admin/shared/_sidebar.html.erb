@@ -208,8 +208,10 @@
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_languages_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.languages') %>"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition
+                <%= controller_name == 'languages' ? 'bg-blue-50 font-semibold text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900' %>"
             >
               <%= icon("language", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.languages') %></span>
