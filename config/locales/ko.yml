@@ -189,6 +189,11 @@ ko:
         types:
           chat: "채팅"
           demo_request: "데모 신청"
+          language: "언어"
+        language:
+          created: "언어 '%{name}'이(가) 생성되었습니다"
+          updated: "언어 '%{name}'이(가) 업데이트되었습니다"
+          destroyed: "언어 '%{name}'이(가) 삭제되었습니다"
       user_menu:
         toggle: "사용자 메뉴"
         my_profile: "내 프로필"

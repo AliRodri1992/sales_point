@@ -23,6 +23,7 @@ module Admin
 
       if @language.save
         @languages = Language.not_deleted.order(:name)
+        notify_language(current_user, @language, 'created')
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
           format.html { redirect_to admin_languages_path, notice: t('admin.languages.created') }
@@ -35,6 +36,7 @@ module Admin
     def update
       if @language.update(language_params)
         @languages = Language.not_deleted.order(:name)
+        notify_language(current_user, @language, 'updated')
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
           format.html { redirect_to admin_languages_path, notice: t('admin.languages.updated') }
@@ -47,6 +49,7 @@ module Admin
     def destroy
       @language.update!(deleted_at: Time.current)
       @languages = Language.not_deleted.order(:name)
+      notify_language(current_user, @language, 'destroyed')
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
         format.html { redirect_to admin_languages_path, notice: t('admin.languages.destroyed') }
@@ -61,6 +64,14 @@ module Admin
 
     def language_params
       params.expect(language: %i[name code flag_iso status])
+    end
+
+    def notify_language(user, language, action)
+      LanguageNotification
+        .with(action: action, record: language)
+        .deliver(user, enqueue_job: false)
+
+      user.broadcast_notifications_refresh
     end
   end
 end

@@ -66,10 +66,18 @@ class User < ApplicationRecord
   end
 
   def notifications
-    Noticed::Notification
-      .where(recipient: self)
-      .joins(:event)
-      .where(noticed_events: { record_type: 'Message', record_id: Message.select(:id) })
+    messages_relation = Noticed::Notification
+                        .where(recipient: self)
+                        .joins(:event)
+                        .where(noticed_events: { record_type: 'Message', record_id: Message.select(:id) })
+
+    languages_relation = Noticed::Notification
+                         .where(recipient: self)
+                         .joins(:event)
+                         .where(noticed_events: { record_type: 'Language', record_id: Language.select(:id) })
+
+    messages_relation
+      .or(languages_relation)
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 

@@ -189,6 +189,11 @@ es:
         types:
           chat: "Chat"
           demo_request: "Solicitud de demo"
+          language: "Idioma"
+        language:
+          created: "Se creó el idioma '%{name}'"
+          updated: "Se actualizó el idioma '%{name}'"
+          destroyed: "Se eliminó el idioma '%{name}'"
       user_menu:
         toggle: "Menú de usuario"
         my_profile: "Mi perfil"
