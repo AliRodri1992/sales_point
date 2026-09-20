@@ -1,13 +1,19 @@
 @import "tailwindcss";
+@import "./fonts.css";
 @import "./gridstack.css";
 /* Components */
 @import "./components/themes.css";
+
+@theme {
+    --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-jakarta: "Plus Jakarta Sans", "Inter", sans-serif;
+}
 
 body,
 input,
 button,
 select {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -.01em;
 }
 
