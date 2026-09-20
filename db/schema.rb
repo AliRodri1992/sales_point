@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_20_020154) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_20_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -390,12 +390,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_020154) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "key", limit: 255, null: false
-    t.string "locale", limit: 10, default: "en", null: false
+    t.bigint "language_id"
+    t.string "locale", limit: 10
     t.datetime "updated_at", null: false
     t.text "value", null: false
     t.index ["deleted_at"], name: "index_translates_on_deleted_at"
     t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
     t.index ["key"], name: "index_translates_on_key"
+    t.index ["language_id", "key"], name: "index_translates_on_language_id_and_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["language_id"], name: "index_translates_on_language_id"
     t.index ["locale"], name: "index_translates_on_locale"
   end
 
@@ -465,6 +468,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_020154) do
   add_foreign_key "membership_plan_features", "membership_plans"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "translates", "languages"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"

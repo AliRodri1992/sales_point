@@ -82,6 +82,18 @@ class User < ApplicationRecord
       .where(noticed_events: { record_type: 'Message', record_id: conversation.messages.select(:id) })
   end
 
+  # Replaces badge, list and header live for every open tab of this user.
+  def broadcast_notifications_refresh
+    %w[notifications_badge notifications_list notifications_header].each do |target|
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "notifications_#{id}",
+        target: target,
+        partial: "admin/shared/#{target}",
+        locals: { user: self }
+      )
+    end
+  end
+
   def online?
     self.class.online_user_ids.include?(id)
   end

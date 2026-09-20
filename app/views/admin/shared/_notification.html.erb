@@ -1,5 +1,6 @@
 <% message = notification.record %>
 <% sender = message&.user %>
+<% type_label = notification_type_label(notification) %>
 
 <button
   type="button"
@@ -10,8 +11,16 @@
   </span>
 
   <span class="min-w-0">
-    <span class="block text-sm font-medium <%= notification.unread? ? "text-slate-900" : "text-slate-700" %>">
-      <%= t('admin.shared.notifications.new_message', sender: sender ? sender.initials : "?") %>
+    <span class="flex flex-wrap items-center gap-2">
+      <span class="block text-sm font-medium <%= notification.unread? ? "text-slate-900" : "text-slate-700" %>">
+        <%= t('admin.shared.notifications.new_message') %>
+      </span>
+
+      <% if type_label %>
+        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          <%= type_label %>
+        </span>
+      <% end %>
     </span>
 
     <span class="mt-0.5 block truncate text-xs text-slate-500">

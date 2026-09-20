@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MessageNotification < Noticed::Event
+class ChatNotification < Noticed::Event
   required_param :message
 
   delegate :conversation, to: :message

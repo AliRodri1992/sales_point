@@ -5,3 +5,7 @@
 <%= turbo_stream.replace "notifications_list" do %>
   <%= render "admin/shared/notifications_list", user: current_user %>
 <% end %>
+
+<%= turbo_stream.replace "notifications_header" do %>
+  <%= render "admin/shared/notifications_header", user: current_user %>
+<% end %>

@@ -128,11 +128,17 @@ en:
       notifications:
         toggle: "Notifications"
         title: "Notifications"
-        subtitle: "You have new notifications."
+        subtitle:
+          one: "You have 1 new notification"
+          other: "You have %{count} new notifications"
+        subtitle_none: "You have no new notifications"
         mark_all_read: "Mark all as read"
-        new_message: "New message from %{sender}"
+        new_message: "New message"
         message_unavailable: "Message unavailable"
         empty: "You have no notifications."
+        types:
+          chat: "Chat"
+          demo_request: "Demo request"
       user_menu:
         toggle: "User menu"
         my_profile: "My profile"

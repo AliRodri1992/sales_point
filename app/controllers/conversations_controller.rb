@@ -20,16 +20,10 @@ class ConversationsController < ApplicationController
   private
 
   def mark_notifications_as_read
-    current_user.message_notifications_for(@conversation).unread.mark_as_read
-    refresh_notifications_badge
-  end
+    unread = current_user.message_notifications_for(@conversation).unread
+    return if unread.none?
 
-  def refresh_notifications_badge
-    Turbo::StreamsChannel.broadcast_replace_to(
-      "notifications_#{current_user.id}",
-      target: 'notifications_badge',
-      partial: 'admin/shared/notifications_badge',
-      locals: { user: current_user }
-    )
+    unread.mark_as_read
+    current_user.broadcast_notifications_refresh
   end
 end

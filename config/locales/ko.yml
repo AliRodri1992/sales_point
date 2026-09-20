@@ -128,11 +128,17 @@ ko:
       notifications:
         toggle: "알림"
         title: "알림"
-        subtitle: "새 알림이 있습니다."
+        subtitle:
+          one: "새 알림이 1개 있습니다"
+          other: "새 알림이 %{count}개 있습니다"
+        subtitle_none: "새 알림이 없습니다"
         mark_all_read: "모두 읽음으로 표시"
-        new_message: "%{sender}의 새 메시지"
+        new_message: "새 메시지"
         message_unavailable: "메시지를 사용할 수 없음"
         empty: "알림이 없습니다."
+        types:
+          chat: "채팅"
+          demo_request: "데모 신청"
       user_menu:
         toggle: "사용자 메뉴"
         my_profile: "내 프로필"
