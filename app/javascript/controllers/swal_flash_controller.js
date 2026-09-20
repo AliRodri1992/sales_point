@@ -14,7 +14,6 @@ export default class extends Controller {
     connect() {
         if (!this.messageValue) return
 
-        window.Swal.setLocale(document.documentElement.lang || "en")
         window.Swal.fire({
             toast: true,
             icon: this.iconValue,
