@@ -3,6 +3,10 @@ ko:
     error_banner:
       title: "인증 실패"
   admin:
+    breadcrumbs:
+      label: "이동 경로"
+      home: "홈"
+      dashboard: "대시보드"
     dashboard:
       index:
         title: "관리자 대시보드 | Nexo POS"
@@ -139,6 +143,9 @@ ko:
         cash_open: "금전함 열림"
         cash_open_body: "금전함 교대 세션이 활성화되어 있습니다."
         view_all: "모든 알림 보기"
+        new_message: "%{sender}의 새 메시지"
+        message_unavailable: "메시지를 사용할 수 없음"
+        empty: "알림이 없습니다."
       user_menu:
         toggle: "사용자 메뉴"
         my_profile: "내 프로필"
