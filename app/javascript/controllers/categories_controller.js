@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { Turbo } from "@hotwired/turbo-rails"
 
-// Handles the per-page selector in the areas catalog table.
+// Handles the per-page selector in the categories catalog table.
 // When the user picks 5, 10 or 15, we update the URL query params
 // preserving sort/search/status filters and reset to page 1.
 export default class extends Controller {

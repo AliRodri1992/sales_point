@@ -81,7 +81,7 @@ es:
       home: "Inicio"
       dashboard: "Dashboard"
       languages: "Idiomas"
-      areas: "Áreas"
+      categories: "Categorías"
     languages:
       created: "Idioma creado correctamente"
       updated: "Idioma actualizado correctamente"
@@ -140,21 +140,21 @@ es:
       edit:
         title: "Editar %{name}"
         subtitle: "Actualiza los datos del idioma."
-    areas:
-      created: "Área creada correctamente"
-      updated: "Área actualizada correctamente"
-      destroyed: "Área eliminada correctamente"
+    categories:
+      created: "Categoría creada correctamente"
+      updated: "Categoría actualizada correctamente"
+      destroyed: "Categoría eliminada correctamente"
       confirm:
         cancel: "Cancelar"
       statuses:
         active: "Activo"
         inactive: "Inactivo"
       index:
-        title: "Áreas"
-        subtitle: "Administra las áreas o departos de tu negocio."
-        new: "Nueva área"
-        card_title: "Áreas registradas"
-        total_count: "%{count} áreas registradas"
+        title: "Categorías"
+        subtitle: "Administra las categorys o departos de tu negocio."
+        new: "Nueva category"
+        card_title: "Categorías registradas"
+        total_count: "%{count} categorys registradas"
         search_placeholder: "Buscar por nombre o código..."
         filters:
           all_statuses: "Todos los estados"
@@ -166,9 +166,9 @@ es:
           per_page_label: "Mostrar"
         edit: "Editar"
         delete: "Eliminar"
-        confirm_delete: "¿Seguro que quieres eliminar esta área?"
-        empty_title: "Aún no hay áreas"
-        empty_subtitle: "Crea tu primer área para empezar."
+        confirm_delete: "¿Seguro que quieres eliminar esta category?"
+        empty_title: "Aún no hay categorys"
+        empty_subtitle: "Crea tu primer category para empezar."
         columns:
           name: "Nombre"
           code: "Código"
@@ -179,21 +179,21 @@ es:
         name_placeholder: "ej. Caja"
         code: "Código"
         code_placeholder: "ej. cashier"
-        code_hint: "Código único de la área (minúsculas, números y guion bajo)."
+        code_hint: "Código único de la category (minúsculas, números y guion bajo)."
         status: "Estado"
         cancel: "Cancelar"
-        create: "Crear área"
-        update: "Actualizar área"
+        create: "Crear category"
+        update: "Actualizar category"
       show:
-        title: "Detalles del área"
-        subtitle: "Revisa los detalles de esta área."
+        title: "Detalles del category"
+        subtitle: "Revisa los detalles de esta category."
         close: "Cerrar"
       new:
-        title: "Nueva área"
-        subtitle: "Añade un área a tu catálogo."
+        title: "Nueva category"
+        subtitle: "Añade un category a tu catálogo."
       edit:
         title: "Editar %{name}"
-        subtitle: "Actualiza los datos del área."
+        subtitle: "Actualiza los datos del category."
     shared:
       sidebar:
         section_main: "Principal"
@@ -201,7 +201,7 @@ es:
         catalogs: "Catálogos"
         languages: "Idiomas"
         products: "Productos"
-        areas: "Áreas"
+        categories: "Categorías"
         section_operations: "Operación"
         section_catalogs: "Catálogos"
         sales: "Ventas"
@@ -255,15 +255,15 @@ es:
           chat: "Chat"
           demo_request: "Solicitud de demo"
           language: "Idioma"
-          area: "Área"
+          category: "Categoría"
         language:
           created: "Se creó el idioma '%{name}'"
           updated: "Se actualizó el idioma '%{name}'"
           destroyed: "Se eliminó el idioma '%{name}'"
-        area:
-          created: "Se creó el área '%{name}'"
-          updated: "Se actualizó el área '%{name}'"
-          destroyed: "Se eliminó el área '%{name}'"
+        category:
+          created: "Se creó el category '%{name}'"
+          updated: "Se actualizó el category '%{name}'"
+          destroyed: "Se eliminó el category '%{name}'"
       user_menu:
         toggle: "Menú de usuario"
         my_profile: "Mi perfil"
@@ -369,7 +369,7 @@ es:
         code: "Código"
         flag_iso: "Bandera"
         status: "Estado"
-      area:
+      category:
         name: "Nombre"
         code: "Código"
         status: "Estado"

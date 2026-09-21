@@ -8,7 +8,7 @@ ko:
       home: "홈"
       dashboard: "대시보드"
       languages: "언어"
-      areas: "영역"
+      categories: "카테고리"
     languages:
       created: "언어가 성공적으로 생성되었습니다"
       updated: "언어가 성공적으로 업데이트되었습니다"
@@ -67,21 +67,21 @@ ko:
       edit:
         title: "%{name} 수정"
         subtitle: "언어 정보를 업데이트합니다."
-    areas:
-      created: "영역이 성공적으로 생성되었습니다"
-      updated: "영역이 성공적으로 업데이트되었습니다"
-      destroyed: "영역이 성공적으로 삭제되었습니다"
+    categories:
+      created: "카테고리이 성공적으로 생성되었습니다"
+      updated: "카테고리이 성공적으로 업데이트되었습니다"
+      destroyed: "카테고리이 성공적으로 삭제되었습니다"
       confirm:
         cancel: "취소"
       statuses:
         active: "활성"
         inactive: "비활성"
       index:
-        title: "영역"
-        subtitle: "비즈니스의 영역 또는 부서를 관리하세요."
-        new: "새 영역"
-        card_title: "등록된 영역"
-        total_count: "%{count}개의 영역 등록됨"
+        title: "카테고리"
+        subtitle: "비즈니스의 카테고리 또는 부서를 관리하세요."
+        new: "새 카테고리"
+        card_title: "등록된 카테고리"
+        total_count: "%{count}개의 카테고리 등록됨"
         search_placeholder: "이름 또는 코드로 검색..."
         filters:
           all_statuses: "모든 상태"
@@ -93,9 +93,9 @@ ko:
           per_page_label: "표시"
         edit: "수정"
         delete: "삭제"
-        confirm_delete: "이 영역을 삭제하시겠습니까?"
-        empty_title: "아직 영역이 없습니다"
-        empty_subtitle: "첫 번째 영역을 만들어 시작하세요."
+        confirm_delete: "이 카테고리을 삭제하시겠습니까?"
+        empty_title: "아직 카테고리이 없습니다"
+        empty_subtitle: "첫 번째 카테고리을 만들어 시작하세요."
         columns:
           name: "이름"
           code: "코드"
@@ -106,21 +106,21 @@ ko:
         name_placeholder: "예: 현금 register"
         code: "코드"
         code_placeholder: "예: cashier"
-        code_hint: "영역 코드 (소문자, 숫자 및 밑줄)."
+        code_hint: "카테고리 코드 (소문자, 숫자 및 밑줄)."
         status: "상태"
         cancel: "취소"
-        create: "영역 생성"
-        update: "영역 업데이트"
+        create: "카테고리 생성"
+        update: "카테고리 업데이트"
       show:
-        title: "영역 상세 정보"
-        subtitle: "이 영역의 세부 정보를 확인하세요."
+        title: "카테고리 상세 정보"
+        subtitle: "이 카테고리의 세부 정보를 확인하세요."
         close: "닫기"
       new:
-        title: "새 영역"
-        subtitle: "카탈로그에 영역을 추가합니다."
+        title: "새 카테고리"
+        subtitle: "카탈로그에 카테고리을 추가합니다."
       edit:
         title: "%{name} 수정"
-        subtitle: "영역 정보를 업데이트합니다."
+        subtitle: "카테고리 정보를 업데이트합니다."
     dashboard:
       index:
         title: "관리자 대시보드 | Nexo POS"
@@ -201,7 +201,7 @@ ko:
         catalogs: "카탈로그"
         languages: "언어"
         products: "제품"
-        areas: "영역"
+        categories: "카테고리"
         section_operations: "운영"
         section_catalogs: "카탈로그"
         sales: "판매"
@@ -255,15 +255,15 @@ ko:
           chat: "채팅"
           demo_request: "데모 신청"
           language: "언어"
-          area: "영역"
+          category: "카테고리"
         language:
           created: "언어 '%{name}'이(가) 생성되었습니다"
           updated: "언어 '%{name}'이(가) 업데이트되었습니다"
           destroyed: "언어 '%{name}'이(가) 삭제되었습니다"
-        area:
-          created: "영역 '%{name}'이(가) 생성되었습니다"
-          updated: "영역 '%{name}'이(가) 업데이트되었습니다"
-          destroyed: "영역 '%{name}'이(가) 삭제되었습니다"
+        category:
+          created: "카테고리 '%{name}'이(가) 생성되었습니다"
+          updated: "카테고리 '%{name}'이(가) 업데이트되었습니다"
+          destroyed: "카테고리 '%{name}'이(가) 삭제되었습니다"
       user_menu:
         toggle: "사용자 메뉴"
         my_profile: "내 프로필"
@@ -369,7 +369,7 @@ ko:
         code: "코드"
         flag_iso: "국기"
         status: "상태"
-      area:
+      category:
         name: "이름"
         code: "코드"
         status: "상태"

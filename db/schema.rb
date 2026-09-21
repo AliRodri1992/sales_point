@@ -37,15 +37,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_140000) do
     t.check_constraint "longitude >= '-180'::integer::numeric AND longitude <= 180::numeric OR longitude IS NULL", name: "check_longitude_range"
   end
 
-  create_table "areas", force: :cascade do |t|
+  create_table "categories", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "name"
     t.string "status"
     t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_areas_on_code", unique: true, where: "(deleted_at IS NULL)"
-    t.index ["deleted_at"], name: "index_areas_on_deleted_at"
+    t.index ["code"], name: "index_categories_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
   create_table "branches", force: :cascade do |t|
@@ -57,16 +57,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_20_140000) do
     t.boolean "status"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
-  end
-
-  create_table "categories", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "deleted_at", precision: nil
-    t.text "description"
-    t.string "name"
-    t.boolean "status"
-    t.datetime "updated_at", null: false
-    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
   create_table "conversation_participants", force: :cascade do |t|

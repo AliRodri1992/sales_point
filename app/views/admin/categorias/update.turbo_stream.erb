@@ -1,5 +1,0 @@
-<%= turbo_stream.update "area_modal", "" %>
-<%= turbo_stream.update "areas_list" do %>
-  <%= render "list", areas: @areas, total_count: @total_count, total_pages: @total_pages %>
-<% end %>
-<turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

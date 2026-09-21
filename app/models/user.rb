@@ -68,7 +68,7 @@ class User < ApplicationRecord
   def notifications
     notification_relation_for(Message)
       .or(notification_relation_for(Language))
-      .or(notification_relation_for(Area))
+      .or(notification_relation_for(Category))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 

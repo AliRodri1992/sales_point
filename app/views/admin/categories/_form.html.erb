@@ -1,0 +1,58 @@
+<%= form_with model: [:admin, category],
+              class: 'space-y-5',
+              data: {
+                controller: 'swal-confirm',
+                turbo_frame: 'category_modal',
+                swal_cancel_text: t('admin.categories.confirm.cancel')
+              } do |form| %>
+  <div class="mx-auto max-w-sm space-y-5">
+    <div class="grid gap-5 sm:grid-cols-1">
+      <div>
+        <%= form.label :name, t('admin.categories.form.name'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name,
+                            data: { autofocus: true },
+                            class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.categories.form.name_placeholder') %>
+        <%= error_message_for(category, :name) %>
+      </div>
+
+      <div>
+        <%= form.label :code, t('admin.categories.form.code'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :code,
+                            class: "input-field w-full rounded-xl #{form_state_classes(category, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.categories.form.code_placeholder') %>
+        <%= error_message_for(category, :code) %>
+      </div>
+
+      <% if category.persisted? %>
+        <div>
+          <%= form.label :status, t('admin.categories.form.status'),
+                         class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :status,
+                          options_for_select(
+                            Category.statuses.keys.map { |status| [t("admin.categories.statuses.#{status}"), status] },
+                            category.status || 'active'
+                          ),
+                          {},
+                          class: "input-field w-full rounded-xl #{form_state_classes(category, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(category, :status) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-center gap-2 border-t border-slate-100 pt-5">
+    <button
+      type="button"
+      data-modal-dismiss
+      data-action="modal#close"
+      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+    >
+      <%= t('admin.categories.form.cancel') %>
+    </button>
+    <%= form.submit category.persisted? ? t('admin.categories.form.update') : t('admin.categories.form.create'),
+                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+  </div>
+<% end %>

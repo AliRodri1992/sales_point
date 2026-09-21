@@ -7,71 +7,71 @@
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex items-center justify-between px-6 py-4">
     <div>
-      <h3 class="font-bold"><%= t('admin.areas.index.card_title') %></h3>
+      <h3 class="font-bold"><%= t('admin.categories.index.card_title') %></h3>
       <p class="mt-1 text-xs text-slate-400">
-        <%= t('admin.areas.index.total_count', count: total_count) %>
+        <%= t('admin.categories.index.total_count', count: total_count) %>
       </p>
     </div>
   </div>
 
-  <% if areas.any? %>
+  <% if categories.any? %>
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
           <tr class="border-y border-slate-100 text-xs text-slate-400">
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('name', t('admin.areas.index.columns.name'), frame: 'areas_list') %>
+              <%= sort_link('name', t('admin.categories.index.columns.name'), frame: 'categories_list') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('code', t('admin.areas.index.columns.code'), frame: 'areas_list') %>
+              <%= sort_link('code', t('admin.categories.index.columns.code'), frame: 'categories_list') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.areas.index.columns.status') %>
+              <%= t('admin.categories.index.columns.status') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.areas.index.columns.actions') %>
+              <%= t('admin.categories.index.columns.actions') %>
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <% areas.each do |area| %>
+          <% categories.each do |category| %>
             <tr class="hover:bg-slate-50">
               <td class="px-6 py-4 font-semibold">
-                <%= area.name %>
+                <%= category.name %>
               </td>
               <td class="px-6 py-4">
-                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= area.code %></code>
+                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= category.code %></code>
               </td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
-                  <%= area.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
-                  <%= t("admin.areas.statuses.#{area.status}") %>
+                  <%= category.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+                  <%= t("admin.categories.statuses.#{category.status}") %>
                 </span>
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center justify-center gap-1">
-                  <%= link_to admin_area_path(area),
-                              data: { turbo_frame: 'area_modal', tooltip: t('admin.areas.show.title') },
+                  <%= link_to admin_category_path(category),
+                              data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.areas.show.title') } do %>
+                              aria: { label: t('admin.categories.show.title') } do %>
                     <%= icon('eye', class: 'size-4') %>
                   <% end %>
-                  <%= link_to edit_admin_area_path(area),
-                              data: { turbo_frame: 'area_modal', tooltip: t('admin.areas.index.edit') },
+                  <%= link_to edit_admin_category_path(category),
+                              data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.edit') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.areas.index.edit') } do %>
+                              aria: { label: t('admin.categories.index.edit') } do %>
                     <%= icon('pencil-square', class: 'size-4') %>
                   <% end %>
-                  <%= button_to admin_area_path(area),
+                  <%= button_to admin_category_path(category),
                                 method: :delete,
                                 class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
                                 data: {
                                   controller: 'swal-confirm',
-                                  turbo_frame: 'areas_list',
-                                  turbo_confirm: t('admin.areas.index.confirm_delete'),
-                                  swal_cancel_text: t('admin.areas.confirm.cancel')
+                                  turbo_frame: 'categories_list',
+                                  turbo_confirm: t('admin.categories.index.confirm_delete'),
+                                  swal_cancel_text: t('admin.categories.confirm.cancel')
                                 },
-                                aria: { label: t('admin.areas.index.delete') } do %>
+                                aria: { label: t('admin.categories.index.delete') } do %>
                     <%= icon('trash', class: 'size-4') %>
                   <% end %>
                 </div>
@@ -84,16 +84,16 @@
 
     <% if total_pages && total_pages > 1 %>
       <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
-                data-controller="areas">
+                data-controller="categories">
         <div class="flex items-center gap-2 text-sm text-slate-600">
-          <span><%= t('admin.areas.index.pagination.per_page_label') %>:</span>
+          <span><%= t('admin.categories.index.pagination.per_page_label') %>:</span>
           <%= select_tag :per_page,
                 options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
-                data: { action: "change->areas#perPageChanged" },
+                data: { action: "change->categories#perPageChanged" },
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'areas_list') %>
+          <%= pagination_links(total_pages, frame: 'categories_list') %>
         </div>
       </div>
     <% end %>
@@ -101,10 +101,10 @@
     <div class="flex flex-col items-center gap-2 p-12 text-center">
       <%= icon('cog', class: 'size-8 text-slate-300') %>
       <p class="text-sm font-semibold text-slate-500">
-        <%= t('admin.areas.index.empty_title') %>
+        <%= t('admin.categories.index.empty_title') %>
       </p>
       <p class="text-xs text-slate-400">
-        <%= t('admin.areas.index.empty_subtitle') %>
+        <%= t('admin.categories.index.empty_subtitle') %>
       </p>
     </div>
   <% end %>

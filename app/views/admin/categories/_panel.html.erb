@@ -1,18 +1,18 @@
-<% area = @area %>
+<% category = @category %>
 <div
   data-modal-target="panel"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="area-modal-title"
+  aria-labelledby="category-modal-title"
   class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl"
 >
   <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
     <div>
-      <h2 id="area-modal-title" class="font-jakarta text-lg font-bold text-slate-900">
-        <%= area.persisted? ? t('admin.areas.edit.title', name: area.name) : t('admin.areas.new.title') %>
+      <h2 id="category-modal-title" class="font-jakarta text-lg font-bold text-slate-900">
+        <%= category.persisted? ? t('admin.categories.edit.title', name: category.name) : t('admin.categories.new.title') %>
       </h2>
       <p class="mt-0.5 text-sm text-slate-500">
-        <%= area.persisted? ? t('admin.areas.edit.subtitle') : t('admin.areas.new.subtitle') %>
+        <%= category.persisted? ? t('admin.categories.edit.subtitle') : t('admin.categories.new.subtitle') %>
       </p>
     </div>
     <button
@@ -20,13 +20,13 @@
       data-modal-dismiss
       data-action="modal#close"
       class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-      aria-label="<%= t('admin.areas.show.close') %>"
+      aria-label="<%= t('admin.categories.show.close') %>"
     >
       <%= icon('x-mark', class: 'size-5') %>
     </button>
   </div>
 
   <div class="px-6 py-6">
-    <%= render 'form', area: area %>
+    <%= render 'form', category: category %>
   </div>
 </div>

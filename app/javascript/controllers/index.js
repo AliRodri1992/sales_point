@@ -40,9 +40,9 @@ application.register("languages", LanguagesController)
 import LanguagesSearchController from "./languages_search_controller"
 application.register("languages-search", LanguagesSearchController)
 
-import AreasController from "./areas_controller"
-application.register("areas", AreasController)
+import CategoriesController from "./categories_controller"
+application.register("categories", CategoriesController)
 
-import AreasSearchController from "./areas_search_controller"
-application.register("areas-search", AreasSearchController)
+import CategoriesSearchController from "./categories_search_controller"
+application.register("categories-search", CategoriesSearchController)
 

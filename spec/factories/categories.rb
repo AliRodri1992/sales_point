@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :category do
-    name { 'MyString' }
-    description { 'MyText' }
-    status { false }
-    deleted_at { '2026-04-18 14:57:08' }
+    sequence(:code) { |n| "category_#{n}" }
+    sequence(:name) { |n| "Category #{n}" }
+    status { 'active' }
+    deleted_at { nil }
   end
 end

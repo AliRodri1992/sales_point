@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AreaNotification < Noticed::Event
+class CategoryNotification < Noticed::Event
   required_param :action
   required_param :user
 
@@ -15,11 +15,11 @@ class AreaNotification < Noticed::Event
   end
 
   def record
-    super || Area.with_deleted.find_by(id: record_id)
+    super || Category.with_deleted.find_by(id: record_id)
   end
 
   def message
-    t("admin.shared.notifications.area.#{action}",
+    t("admin.shared.notifications.category.#{action}",
       name: record.name,
       default: record.name)
   end
