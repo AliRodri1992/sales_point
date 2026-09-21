@@ -1,0 +1,50 @@
+<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="font-jakarta text-2xl font-bold text-slate-900">
+      <%= t('admin.products.index.title') %>
+    </h1>
+    <p class="mt-1 text-sm text-slate-500">
+      <%= t('admin.products.index.subtitle') %>
+    </p>
+  </div>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <%= link_to new_admin_product_path,
+                data: { turbo_frame: 'product_modal', tooltip: t('admin.products.index.new') },
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+      <%= icon('plus', class: 'size-4') %>
+      <%= t('admin.products.index.new') %>
+    <% end %>
+
+    <%= form_with url: admin_products_path, method: :get,
+                  data: { turbo_frame: 'products_list', controller: 'products-search' },
+                  class: 'flex items-center gap-2' do |f| %>
+      <%= text_field_tag :search, params[:search],
+            placeholder: t('admin.products.index.search_placeholder'),
+            data: { action: 'input->products-search#debouncedSubmit' },
+            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+
+      <%= select_tag :status,
+            options_for_select(
+              [
+                [t('admin.products.index.filters.all_statuses'), 'all'],
+                [t('admin.products.statuses.active'), 'active'],
+                [t('admin.products.statuses.inactive'), 'inactive']
+              ],
+              params[:status] || 'all'
+            ),
+            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+
+      <%= button_tag type: 'submit',
+            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
+        <%= icon('funnel', class: 'size-4') %>
+        <%= t('admin.products.index.filters.apply') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%= turbo_stream_from "products_catalog" %>
+
+<%= turbo_frame_tag "products_list" do %>
+  <%= render "list", products: @products %>
+<% end %>

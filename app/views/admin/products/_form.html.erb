@@ -1,0 +1,170 @@
+<%= form_with model: [:admin, product],
+              class: 'space-y-5',
+              data: {
+                controller: 'swal-confirm',
+                turbo_frame: 'product_modal',
+                swal_cancel_text: t('admin.products.confirm.cancel')
+              } do |form| %>
+  <div class="mx-auto max-w-3xl space-y-5">
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= form.label :code, t('admin.products.form.code'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :code,
+                            data: { autofocus: true },
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.code_placeholder') %>
+        <%= error_message_for(product, :code) %>
+        <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.code_hint') %></p>
+      </div>
+
+      <div>
+        <%= form.label :name, t('admin.products.form.name'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.name_placeholder') %>
+        <%= error_message_for(product, :name) %>
+      </div>
+    </div>
+
+    <div>
+      <%= form.label :description, t('admin.products.form.description'),
+                     class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_area :description,
+                         rows: 3,
+                         class: "input-field w-full rounded-xl #{form_state_classes(product, :description)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                         placeholder: t('admin.products.form.description_placeholder') %>
+      <%= error_message_for(product, :description) %>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= form.label :price, t('admin.products.form.price'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :price,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :price)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.price_placeholder') %>
+        <%= error_message_for(product, :price) %>
+        <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.price_hint') %></p>
+      </div>
+
+      <div>
+        <%= form.label :cost, t('admin.products.form.cost'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :cost,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :cost)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.cost_placeholder') %>
+        <%= error_message_for(product, :cost) %>
+        <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.cost_hint') %></p>
+      </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-3">
+      <div>
+        <%= form.label :stock, t('admin.products.form.stock'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :stock,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.stock_placeholder') %>
+        <%= error_message_for(product, :stock) %>
+      </div>
+
+      <div>
+        <%= form.label :min_stock, t('admin.products.form.min_stock'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :min_stock,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :min_stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.min_stock_placeholder') %>
+        <%= error_message_for(product, :min_stock) %>
+      </div>
+
+      <div>
+        <%= form.label :max_stock, t('admin.products.form.max_stock'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :max_stock,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :max_stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.max_stock_placeholder') %>
+        <%= error_message_for(product, :max_stock) %>
+        <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.hints.max_stock') %></p>
+      </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= form.label :barcode, t('admin.products.form.barcode'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :barcode,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :barcode)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.barcode_placeholder') %>
+        <%= error_message_for(product, :barcode) %>
+      </div>
+
+      <div>
+        <%= form.label :sku, t('admin.products.form.sku'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :sku,
+                            class: "input-field w-full rounded-xl #{form_state_classes(product, :sku)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.products.form.sku_placeholder') %>
+        <%= error_message_for(product, :sku) %>
+      </div>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-3">
+      <div>
+        <%= form.label :category_id, t('admin.products.form.category'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.collection_select :category_id, Category.all, :id, :name,
+                                   { include_blank: t('admin.products.form.category') },
+                                   class: "input-field w-full rounded-xl #{form_state_classes(product, :category_id)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+        <%= error_message_for(product, :category_id) %>
+      </div>
+
+      <div>
+        <%= form.label :sat_unit_key_id, t('admin.products.form.sat_unit_key'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.collection_select :sat_unit_key_id, SatUnitKey.not_deleted.order(:code), :id, :to_label,
+                                   { include_blank: t('admin.products.form.sat_unit_key') },
+                                   class: "input-field w-full rounded-xl #{form_state_classes(product, :sat_unit_key_id)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+        <%= error_message_for(product, :sat_unit_key_id) %>
+      </div>
+
+      <div>
+        <%= form.label :sat_tax_id, t('admin.products.form.sat_tax'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.collection_select :sat_tax_id, SatTax.not_deleted.for_products.order(:code), :id, :name,
+                                   { include_blank: t('admin.products.form.sat_tax') },
+                                   class: "input-field w-full rounded-xl #{form_state_classes(product, :sat_tax_id)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+        <%= error_message_for(product, :sat_tax_id) %>
+      </div>
+    </div>
+
+    <% if product.persisted? %>
+      <div>
+        <%= form.label :status, t('admin.products.form.status'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.select :status,
+                        options_for_select(
+                          Product.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] },
+                          product.status || 'active'
+                        ),
+                        {},
+                        class: "input-field w-full rounded-xl #{form_state_classes(product, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+        <%= error_message_for(product, :status) %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex items-center justify-center gap-2 border-t border-slate-100 pt-5">
+    <button
+      type="button"
+      data-modal-dismiss
+      data-action="modal#close"
+      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+    >
+      <%= t('admin.products.form.cancel') %>
+    </button>
+    <%= form.submit product.persisted? ? t('admin.products.form.update') : t('admin.products.form.create'),
+                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+  </div>
+<% end %>

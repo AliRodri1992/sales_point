@@ -1,0 +1,135 @@
+<%# total_count / total_pages come from locals when rendered via
+    Turbo::StreamsChannel broadcast (no controller ivars), or fall
+    back to the controller-set instance variables for normal requests. %>
+<% total_count = local_assigns[:total_count] || @total_count || 0 %>
+<% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <div class="flex items-center justify-between px-6 py-4">
+    <div>
+      <h3 class="font-bold"><%= t('admin.products.index.card_title') %></h3>
+      <p class="mt-1 text-xs text-slate-400">
+        <%= t('admin.products.index.total_count', count: total_count) %>
+      </p>
+    </div>
+  </div>
+
+  <% if products.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-y border-slate-100 text-xs text-slate-400">
+            <th class="px-6 py-3 text-left font-medium">
+              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: 'products_list') %>
+            </th>
+            <th class="px-6 py-3 text-left font-medium">
+              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: 'products_list') %>
+            </th>
+            <th class="px-6 py-3 text-right font-medium">
+              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'products_list') %>
+            </th>
+            <th class="px-6 py-3 text-right font-medium">
+              <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'products_list') %>
+            </th>
+            <th class="px-6 py-3 text-right font-medium">
+              <%= sort_link('products.cost', t('admin.products.index.columns.cost'), frame: 'products_list') %>
+            </th>
+            <th class="px-6 py-3 text-left font-medium">
+              <%= t('admin.products.index.columns.category') %>
+            </th>
+            <th class="px-6 py-3 text-center font-medium">
+              <%= t('admin.products.index.columns.status') %>
+            </th>
+            <th class="px-6 py-3 text-center font-medium">
+              <%= t('admin.products.index.columns.actions') %>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% products.each do |product| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4">
+                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= product.code %></code>
+              </td>
+              <td class="px-6 py-4 font-semibold">
+                <%= product.name %>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <%= number_to_currency(product.price) %>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <%= number_with_precision(product.stock, strip_insignificant_zeros: true, precision: 3) %>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <%= number_to_currency(product.cost) %>
+              </td>
+              <td class="px-6 py-4">
+                <%= product.category&.name || '-' %>
+              </td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
+                  <%= product.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+                  <%= t("admin.products.statuses.#{product.status}") %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center justify-center gap-1">
+                  <%= link_to admin_product_path(product),
+                              data: { turbo_frame: 'product_modal', tooltip: t('admin.products.show.title') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.products.show.title') } do %>
+                    <%= icon('eye', class: 'size-4') %>
+                  <% end %>
+                  <%= link_to edit_admin_product_path(product),
+                              data: { turbo_frame: 'product_modal', tooltip: t('admin.products.index.edit') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.products.index.edit') } do %>
+                    <%= icon('pencil-square', class: 'size-4') %>
+                  <% end %>
+                  <%= button_to admin_product_path(product),
+                                method: :delete,
+                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
+                                data: {
+                                  controller: 'swal-confirm',
+                                  turbo_frame: 'products_list',
+                                  turbo_confirm: t('admin.products.index.confirm_delete'),
+                                  swal_cancel_text: t('admin.products.confirm.cancel')
+                                },
+                                aria: { label: t('admin.products.index.delete') } do %>
+                    <%= icon('trash', class: 'size-4') %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if total_pages && total_pages > 1 %>
+      <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
+                data-controller="products">
+        <div class="flex items-center gap-2 text-sm text-slate-600">
+          <span><%= t('admin.products.index.pagination.per_page_label') %>:</span>
+          <%= select_tag :per_page,
+                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
+                data: { action: "change->products#perPageChanged" },
+                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+        </div>
+        <div class="flex items-center gap-1">
+          <%= pagination_links(total_pages, frame: 'products_list') %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="flex flex-col items-center gap-2 p-12 text-center">
+      <%= icon('cube', class: 'size-8 text-slate-300') %>
+      <p class="text-sm font-semibold text-slate-500">
+        <%= t('admin.products.index.empty_title') %>
+      </p>
+      <p class="text-xs text-slate-400">
+        <%= t('admin.products.index.empty_subtitle') %>
+      </p>
+    </div>
+  <% end %>
+</div>
