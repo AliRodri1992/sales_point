@@ -11,8 +11,10 @@ module Admin
 
     SORTABLE_COLUMNS = %w[
       products.name products.code products.price products.stock
-      products.cost products.created_at products.updated_at
+      products.cost products.created_at products.updated_at products.position
     ].freeze
+
+    SORT_DIRECTIONS = %w[asc desc].freeze
 
     def index
       load_products
@@ -76,7 +78,11 @@ module Admin
     private
 
     def set_product
-      @product = Product.not_deleted.find(params[:id])
+      @product = if params[:id].include?('/')
+                   Product.not_deleted.by_slug(params[:id]).first
+                 else
+                   Product.not_deleted.find(params[:id])
+                 end
     end
 
     def product_params
@@ -84,6 +90,7 @@ module Admin
         product: %i[
           code name description price cost stock min_stock max_stock
           barcode sku category_id sat_unit_key_id sat_tax_id status
+          image_url position featured slug view_count
         ]
       )
     end
@@ -122,6 +129,17 @@ module Admin
           'name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q',
           q: "%#{params[:search]}%"
         )
+      end
+
+      if params[:featured].present?
+        scope = case params[:featured]
+                when 'true'
+                  scope.where(featured: true)
+                when 'false'
+                  scope.where(featured: false)
+                else
+                  scope
+                end
       end
 
       return scope unless params[:status].present? && params[:status] != 'all'

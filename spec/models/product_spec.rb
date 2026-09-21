@@ -100,6 +100,52 @@ RSpec.describe Product, type: :model do
       expect(product).not_to be_valid
       expect(product.errors[:barcode]).to include('has already been taken')
     end
+
+    it 'validates image_url format' do
+      product = build(:product, image_url: 'not-a-url')
+      expect(product).not_to be_valid
+      expect(product.errors[:image_url]).to include('must be a valid URL')
+    end
+
+    it 'accepts valid image_url' do
+      product = build(:product, image_url: 'https://example.com/image.jpg')
+      expect(product).to be_valid
+    end
+
+    it 'allows image_url to be blank' do
+      product = build(:product, image_url: nil)
+      expect(product).to be_valid
+    end
+
+    it 'accepts valid slug format' do
+      product = build(:product, slug: 'my-product-slug')
+      expect(product).to be_valid
+    end
+
+    it 'rejects invalid slug format' do
+      product = build(:product, slug: 'invalid slug')
+      expect(product).not_to be_valid
+    end
+
+    it 'validates position is non-negative integer' do
+      product = build(:product, position: -1)
+      expect(product).not_to be_valid
+    end
+
+    it 'accepts true for featured' do
+      product = build(:product, featured: true)
+      expect(product).to be_valid
+    end
+
+    it 'accepts false for featured' do
+      product = build(:product, featured: false)
+      expect(product).to be_valid
+    end
+
+    it 'validates view_count is non-negative integer' do
+      product = build(:product, view_count: -1)
+      expect(product).not_to be_valid
+    end
   end
 
   describe 'defaults' do
@@ -111,6 +157,21 @@ RSpec.describe Product, type: :model do
     it 'does not override an explicitly set status' do
       product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1, status: 'inactive')
       expect(product.status).to eq('inactive')
+    end
+
+    it 'defaults position to 0' do
+      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      expect(product.position).to eq(0)
+    end
+
+    it 'defaults view_count to 0' do
+      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      expect(product.view_count).to eq(0)
+    end
+
+    it 'defaults featured to false' do
+      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      expect(product.featured).to eq(false)
     end
   end
 
@@ -127,6 +188,27 @@ RSpec.describe Product, type: :model do
 
     it 'not_deleted excludes soft-deleted products' do
       expect(Product.not_deleted.count).to eq(3)
+    end
+
+    it 'featured returns products with featured=true' do
+      create(:product, featured: true)
+      create(:product, featured: false)
+      expect(Product.featured.count).to eq(1)
+    end
+
+    it 'by_slug returns product with given slug' do
+      product = create(:product, slug: 'unique-slug')
+      result = Product.by_slug('unique-slug')
+      expect(result).to eq([product])
+    end
+
+    it 'sorted_by_position orders by position then name' do
+      Product.delete_all
+      p1 = create(:product, position: 2, name: 'C')
+      p2 = create(:product, position: 1, name: 'A')
+      p3 = create(:product, position: 1, name: 'B')
+      ordered = Product.sorted_by_position.to_a
+      expect(ordered).to eq([p2, p3, p1])
     end
   end
 
@@ -154,6 +236,22 @@ RSpec.describe Product, type: :model do
     it 'returns false when min_stock is zero' do
       product = build(:product, stock: 0, min_stock: 0)
       expect(product.low_stock?).to be false
+    end
+  end
+
+  describe '#increment_view_count!' do
+    it 'increments the view_count by 1' do
+      product = create(:product, view_count: 5)
+      product.increment_view_count!
+      expect(product.reload.view_count).to eq(6)
+    end
+  end
+
+  describe '#set_slug' do
+    it 'generates slug from name before validation' do
+      product = Product.new(code: 'TEST', name: 'My Product Name', price: 10, stock: 1)
+      product.valid?
+      expect(product.slug).to eq('my-product-name')
     end
   end
 end

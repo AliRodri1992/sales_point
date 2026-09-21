@@ -57,11 +57,36 @@ class Product < ApplicationRecord
        validate: true,
        default: 'active'
 
-  after_initialize :set_default_status, if: :new_record?
+  validates :position,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0 },
+            allow_nil: true
+
+  validates :image_url,
+            format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
+                      message: :invalid_url },
+            allow_blank: true
+
+  validates :slug,
+            format: { with: /\A[a-z0-9-]+\z/,
+                      message: :invalid_format },
+            allow_blank: true
+
+  validates :featured,
+            inclusion: { in: [true, false] }
+
+  validates :view_count,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0 },
+            allow_nil: true
+
+  before_validation :set_defaults, if: :new_record?
+  before_validation :set_slug, if: -> { name.present? && slug.blank? }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { where(status: :active) }
   scope :with_category, -> { includes(:category) }
+  scope :featured, -> { where(featured: true) }
+  scope :by_slug, ->(slug) { where(slug: slug) }
+  scope :sorted_by_position, -> { order(position: :asc, name: :asc) }
 
   def low_stock?
     return false if min_stock.nil? || min_stock.zero?
@@ -69,10 +94,27 @@ class Product < ApplicationRecord
     stock <= min_stock
   end
 
+  def increment_view_count!
+    increment!(:view_count)
+  end
+
+  def to_param
+    slug.presence
+  end
+
   private
 
-  def set_default_status
+  def set_defaults
     self.status ||= 'active'
+    self.position ||= 0
+    self.view_count ||= 0
+    self.featured = false if featured.nil?
+  end
+
+  def set_slug
+    return if slug.present?
+
+    self.slug = name.to_s.parameterize(separator: '-')
   end
 
   def max_stock_greater_than_min_stock

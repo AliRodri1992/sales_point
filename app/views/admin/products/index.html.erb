@@ -34,6 +34,16 @@
             ),
             class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
 
+      <%= select_tag :featured,
+            options_for_select(
+              [
+                [t('admin.products.index.filters.all_featured'), 'all'],
+                [t('admin.products.index.filters.featured_only'), 'true']
+              ],
+              params[:featured] || 'all'
+            ),
+            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+
       <%= button_tag type: 'submit',
             class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
         <%= icon('funnel', class: 'size-4') %>

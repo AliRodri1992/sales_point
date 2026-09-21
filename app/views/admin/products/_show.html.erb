@@ -55,6 +55,14 @@
       <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.stock') %></dt>
       <dd class="text-sm font-medium text-slate-900"><%= product.stock %></dd>
     </div>
+    <% if product.image_url.present? %>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image_url') %></dt>
+        <dd class="text-sm font-medium text-slate-900">
+          <%= link_to product.image_url, product.image_url, target: '_blank', class: 'text-blue-600 hover:underline' %>
+        </dd>
+      </div>
+    <% end %>
     <div class="flex items-center justify-between gap-4 py-4">
       <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.min_stock') %></dt>
       <dd class="text-sm font-medium text-slate-900"><%= product.min_stock %></dd>
@@ -93,6 +101,22 @@
         <dd class="text-sm font-medium text-slate-900"><%= product.sat_tax.name %></dd>
       </div>
     <% end %>
+    <div class="flex items-center justify-between gap-4 py-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.featured') %></dt>
+      <dd>
+        <% if product.featured? %>
+          <span class="inline-flex items-center rounded-full px-2 py-1 text-[11px] font-semibold bg-amber-100 text-amber-800">
+            <%= t('admin.products.index.columns.featured') %>
+          </span>
+        <% else %>
+          <span class="text-slate-400 text-sm"><%= t('admin.products.index.filters.all_featured') %></span>
+        <% end %>
+      </dd>
+    </div>
+    <div class="flex items-center justify-between gap-4 py-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.position') %></dt>
+      <dd class="text-sm font-medium text-slate-900"><%= product.position || 0 %></dd>
+    </div>
     <div class="flex items-center justify-between gap-4 py-4">
       <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.status') %></dt>
       <dd>
