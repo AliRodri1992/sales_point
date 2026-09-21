@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     patch 'sidebar', to: 'sidebar#update'
     resources :languages
     resources :categories
+    resources :products
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]
