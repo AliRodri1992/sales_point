@@ -20,10 +20,10 @@
         <thead>
           <tr class="border-y border-slate-100 text-xs text-slate-400">
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('name', t('admin.areas.index.columns.name')) %>
+              <%= sort_link('name', t('admin.areas.index.columns.name'), frame: 'areas_list') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('code', t('admin.areas.index.columns.code')) %>
+              <%= sort_link('code', t('admin.areas.index.columns.code'), frame: 'areas_list') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
               <%= t('admin.areas.index.columns.status') %>
@@ -93,7 +93,7 @@
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages) %>
+          <%= pagination_links(total_pages, frame: 'areas_list') %>
         </div>
       </div>
     <% end %>

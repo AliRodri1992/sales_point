@@ -66,7 +66,7 @@ module ApplicationHelper
     items
   end
 
-  def sort_link(column, title = nil)
+  def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
     direction = params[:sort] == column && params[:direction] != 'asc' ? 'asc' : 'desc'
     indicator = sort_indicator(column)
@@ -74,58 +74,56 @@ module ApplicationHelper
     link_to(
       safe_join([title, indicator]),
       url_for(request.query_parameters.merge(sort: column, direction: direction, page: nil)),
-      class: 'inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800'
+      class: 'inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800',
+      data: frame ? { turbo_frame: frame } : nil
     )
   end
 
   def sort_indicator(column)
-    return '' unless params[:sort] == column
+    active = params[:sort] == column
+    css = active ? 'size-3 text-slate-800' : 'size-3 text-slate-300 opacity-50'
 
-    css = 'size-3 text-slate-800'
-    if params[:direction] == 'asc'
-      icon('arrow-up', class: css)
-    else
-      icon('arrow-down', class: css)
-    end
+    icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
   end
 
-  def pagination_links(total_pages)
+  def pagination_links(total_pages, frame: nil)
     current_page = (params[:page] || 1).to_i
 
     return '' if total_pages <= 1
 
     links = []
-    links << prev_link(current_page) if current_page > 1
-    links.concat(page_links(current_page, total_pages))
-    links << next_link(current_page, total_pages) if current_page < total_pages
+    links << prev_link(current_page, frame:) if current_page > 1
+    links.concat(page_links(current_page, total_pages, frame:))
+    links << next_link(current_page, total_pages, frame:) if current_page < total_pages
 
     safe_join(links, ' ')
   end
 
-  def prev_link(current_page)
+  def prev_link(current_page, frame: nil)
     label = t('admin.languages.index.pagination.prev')
-    pagination_link(label, current_page - 1, current_page <= 1)
+    pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
   end
 
-  def next_link(current_page, total_pages)
+  def next_link(current_page, total_pages, frame: nil)
     label = t('admin.languages.index.pagination.next')
-    pagination_link(label, current_page + 1, current_page >= total_pages)
+    pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
 
-  def page_links(current_page, total_pages)
+  def page_links(current_page, total_pages, frame: nil)
     (1..total_pages).map do |page|
-      pagination_link(page, page, page == current_page)
+      pagination_link(page, page, page == current_page, frame: frame)
     end
   end
 
-  def pagination_link(label, page, disabled)
+  def pagination_link(label, page, disabled, frame: nil)
     base = 'px-3 py-1 text-sm rounded-lg border transition '
 
     if disabled
       tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default")
     else
       link_to(label, url_for(request.query_parameters.merge(page: page)),
-              class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100")
+              class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100",
+              data: frame ? { turbo_frame: frame } : nil)
     end
   end
 
