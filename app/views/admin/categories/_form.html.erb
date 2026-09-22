@@ -8,22 +8,22 @@
   <div class="mx-auto max-w-sm space-y-5">
     <div class="grid gap-5 sm:grid-cols-1">
       <div>
-        <%= form.label :name, t('admin.categories.form.name'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :name,
-                            data: { autofocus: true },
-                            class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.categories.form.name_placeholder') %>
-        <%= error_message_for(category, :name) %>
-      </div>
-
-      <div>
         <%= form.label :code, t('admin.categories.form.code'),
                        class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <%= form.text_field :code,
+                            data: { autofocus: true },
                             class: "input-field w-full rounded-xl #{form_state_classes(category, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
                             placeholder: t('admin.categories.form.code_placeholder') %>
         <%= error_message_for(category, :code) %>
+      </div>
+
+      <div>
+        <%= form.label :name, t('admin.categories.form.name'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name,
+                            class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.categories.form.name_placeholder') %>
+        <%= error_message_for(category, :name) %>
       </div>
 
       <% if category.persisted? %>
