@@ -11,16 +11,17 @@ class Category < ApplicationRecord
             length: { maximum: 20 },
             format: { with: /\A[a-z0-9_]+\z/ }
 
+  validates :description,
+            length: { maximum: 500 },
+            allow_blank: true
+
   enum :status,
        {
          active: 'active',
          inactive: 'inactive'
        },
-       validate: true
-
-  # New categories always default to "active" so the status field doesn't
-  # need to be exposed on the create form.
-  after_initialize :set_default_status, if: :new_record?
+       validate: true,
+       default: :active
 
   scope :available, lambda {
     where(status: :active)
@@ -29,10 +30,4 @@ class Category < ApplicationRecord
   scope :not_deleted, lambda {
     where(deleted_at: nil)
   }
-
-  private
-
-  def set_default_status
-    self.status ||= 'active'
-  end
 end
