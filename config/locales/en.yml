@@ -171,16 +171,18 @@ en:
         empty_title: "No categories yet"
         empty_subtitle: "Create your first category to get started."
         columns:
-          name: "Name"
           code: "Code"
+          name: "Name"
           status: "Status"
           actions: "Actions"
       form:
-        name: "Name"
-        name_placeholder: "e.g. Cash Register"
         code: "Code"
         code_placeholder: "e.g. cashier"
         code_hint: "Unique category code (lowercase, numbers and underscore)."
+        name: "Name"
+        name_placeholder: "e.g. Cash Register"
+        description: "Description"
+        description_placeholder: "Category description."
         status: "Status"
         cancel: "Cancel"
         create: "Create category"
@@ -472,6 +474,7 @@ en:
       category:
         name: "Name"
         code: "Code"
+        description: "Description"
         status: "Status"
       product:
         name: "Name"

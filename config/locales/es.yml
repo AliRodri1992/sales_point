@@ -171,16 +171,18 @@ es:
         empty_title: "Aún no hay categorys"
         empty_subtitle: "Crea tu primer category para empezar."
         columns:
-          name: "Nombre"
           code: "Código"
+          name: "Nombre"
           status: "Estado"
           actions: "Acciones"
       form:
-        name: "Nombre"
-        name_placeholder: "ej. Caja"
         code: "Código"
         code_placeholder: "ej. cashier"
-        code_hint: "Código único de la category (minúsculas, números y guion bajo)."
+        code_hint: "Código único de la categoría (minúsculas, números y guion bajo)."
+        name: "Nombre"
+        name_placeholder: "ej. Caja"
+        description: "Descripción"
+        description_placeholder: "Descripción de la categoría"
         status: "Estado"
         cancel: "Cancelar"
         create: "Crear category"
@@ -472,6 +474,7 @@ es:
       category:
         name: "Nombre"
         code: "Código"
+        description: "Descripción"
         status: "Estado"
       product:
         name: "Nombre"

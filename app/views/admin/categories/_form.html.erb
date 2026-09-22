@@ -15,6 +15,7 @@
                             class: "input-field w-full rounded-xl #{form_state_classes(category, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
                             placeholder: t('admin.categories.form.code_placeholder') %>
         <%= error_message_for(category, :code) %>
+        <p class="mt-1 text-xs text-slate-400"><%= t('admin.categories.form.code_hint') %></p>
       </div>
 
       <div>
@@ -24,6 +25,16 @@
                             class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
                             placeholder: t('admin.categories.form.name_placeholder') %>
         <%= error_message_for(category, :name) %>
+      </div>
+
+      <div>
+        <%= form.label :description, t('admin.categories.form.description'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_area :description,
+                           rows: 3,
+                           class: "input-field w-full rounded-xl #{form_state_classes(category, :description)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                           placeholder: t('admin.categories.form.description_placeholder') %>
+        <%= error_message_for(category, :description) %>
       </div>
 
       <% if category.persisted? %>
