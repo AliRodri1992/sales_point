@@ -5,6 +5,9 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   after_action :set_action_cable_user_id_cookie
 
+  # Helper method for views to get the currently selected language
+  helper_method :current_language
+
   private
 
   def configure_permitted_parameters
@@ -42,5 +45,17 @@ class ApplicationController < ActionController::Base
     return unless language
 
     language.code.downcase.to_sym
+  end
+
+  def current_language
+    # First check if user has a preferred language
+    return current_user.language if user_signed_in? && current_user.language
+
+    # Then check session language
+    language = Language.find_by(id: session[:language_id])
+    return language if language
+
+    # Fallback to a default language (e.g., English)
+    Language.available.first
   end
 end
