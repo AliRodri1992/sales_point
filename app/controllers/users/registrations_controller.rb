@@ -10,6 +10,7 @@ module Users
     end
 
     def after_sign_up_path_for(_resource)
+      flash[:swal_message] = t('devise.registrations.signed_up')
       admin_dashboard_path
     end
 

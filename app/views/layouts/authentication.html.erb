@@ -20,6 +20,10 @@
    </head>
 
    <body class="h-full antialiased relative select-none">
-      <%= yield %>
+      <div data-controller="swal-flash"
+           data-swal-flash-message-value="<%= flash[:swal_message] || flash[:notice] %>"
+           data-swal-flash-icon-value="success">
+         <%= yield %>
+      </div>
    </body>
 </html>
