@@ -1,21 +1,23 @@
 <% product = @product %>
-<div class="w-full rounded-2xl border border-slate-200 bg-white shadow-xl">
-  <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-    <div>
-      <h2 id="product-panel-title" class="font-jakarta text-lg font-bold text-slate-900">
-        <%= product.persisted? ? t('admin.products.edit.title', name: product.name) : t('admin.products.new.title') %>
-      </h2>
-      <p class="mt-0.5 text-sm text-slate-500">
-        <%= product.persisted? ? t('admin.products.edit.subtitle') : t('admin.products.new.subtitle') %>
-      </p>
+<%= turbo_frame_tag "admin_products_list" do %>
+  <div class="w-full rounded-2xl border border-slate-200 bg-white shadow-xl">
+    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <div>
+        <h2 id="product-panel-title" class="font-jakarta text-lg font-bold text-slate-900">
+          <%= product.persisted? ? t('admin.products.edit.title', name: product.name) : t('admin.products.new.title') %>
+        </h2>
+        <p class="mt-0.5 text-sm text-slate-500">
+          <%= product.persisted? ? t('admin.products.edit.subtitle') : t('admin.products.new.subtitle') %>
+        </p>
+      </div>
+      <%= link_to t("admin.products.#{product.persisted? ? 'edit.back' : 'new.back'}"),
+                  admin_products_path,
+                  data: { turbo: false },
+                  class: 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition' %>
     </div>
-    <%= link_to t("admin.products.#{product.persisted? ? 'edit.back' : 'new.back'}"),
-                admin_products_path,
-                data: { turbo: false },
-                class: 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition' %>
-  </div>
 
-  <div class="px-6 py-6">
-    <%= render 'form', product: product %>
+    <div class="px-6 py-6">
+      <%= render 'form', product: product %>
+    </div>
   </div>
-</div>
+<% end %>
