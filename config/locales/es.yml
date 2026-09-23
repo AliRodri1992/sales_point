@@ -229,6 +229,7 @@ es:
         empty_title: "Aún no hay productos"
         empty_subtitle: "Agrega tu primer producto para empezar."
         not_found: "Producto no encontrado"
+        destroy_failed: "No se pudo eliminar el producto"
         count: "%{count} productos"
         columns:
           code: "Código"

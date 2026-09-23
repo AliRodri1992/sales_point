@@ -61,11 +61,17 @@ module Admin
     end
 
     def destroy
-      @product.update!(deleted_at: Time.current)
-      load_products
-      notify_product(current_user, @product, 'destroyed')
-      broadcast_products_update
-      redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
+      if @product.update!(deleted_at: Time.current)
+        load_products
+        notify_product(current_user, @product, 'destroyed')
+        broadcast_products_update
+        redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
+      end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to admin_products_path, alert: t('admin.products.index.not_found')
+    rescue StandardError => e
+      Rails.logger.error "Error deleting product #{params[:id]}: #{e.message}"
+      redirect_to admin_products_path, alert: t('admin.products.destroy_failed')
     end
 
     private

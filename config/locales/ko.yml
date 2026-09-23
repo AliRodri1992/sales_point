@@ -153,6 +153,7 @@ ko:
         empty_title: "아직 상품이 없습니다"
         empty_subtitle: "첫 번째 상품을 추가하여 시작하세요."
         not_found: "상품을 찾을 수 없습니다"
+        destroy_failed: "상품 삭제 실패"
         columns:
           code: "코드"
           name: "이름"
