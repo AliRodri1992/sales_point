@@ -6,23 +6,24 @@
   aria-labelledby="product-panel-title"
   class="relative w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-xl"
 >
-  <%# Breadcrumbs for modal context %>
-  <nav aria-label="breadcrumb" class="border-b border-slate-100 bg-white">
+  <%# Add current product to breadcrumbs %>
+  <% breadcrumbs = breadcrumb_items + [{ label: product.persisted? ? product.name : t('admin.products.new.title') }] %>
+
+  <nav aria-label="<%= t('admin.breadcrumbs.label') %>" class="border-b border-slate-100 bg-white">
     <ol class="mx-auto flex h-10 items-center gap-1.5 px-4 text-sm lg:px-6">
-      <li class="flex min-w-0 items-center gap-1.5">
-        <span class="text-slate-300" aria-hidden="true">/</span>
-        <%= link_to t('admin.breadcrumbs.home'), admin_dashboard_path, class: "truncate text-slate-500 transition hover:text-slate-800" %>
-      </li>
-      <li class="flex min-w-0 items-center gap-1.5">
-        <span class="text-slate-300" aria-hidden="true">/</span>
-        <%= link_to t('admin.products.index.title'), admin_products_path, class: "truncate text-slate-500 transition hover:text-slate-800" %>
-      </li>
-      <li class="flex min-w-0 items-center gap-1.5">
-        <span class="text-slate-300" aria-hidden="true">/</span>
-        <span class="truncate font-medium text-slate-800" aria-current="page">
-          <%= product.persisted? ? product.name : t('admin.products.new.title') %>
-        </span>
-      </li>
+      <% breadcrumbs.each_with_index do |item, index| %>
+        <li class="flex min-w-0 items-center gap-1.5">
+          <% if index > 0 %>
+            <span class="text-slate-300" aria-hidden="true">/</span>
+          <% end %>
+
+          <% if item[:path] %>
+            <%= link_to item[:label], item[:path], class: "truncate text-slate-500 transition hover:text-slate-800" %>
+          <% else %>
+            <span class="truncate font-medium text-slate-800" aria-current="page"><%= item[:label] %></span>
+          <% end %>
+        </li>
+      <% end %>
     </ol>
   </nav>
 
