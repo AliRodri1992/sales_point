@@ -55,23 +55,30 @@ module ApplicationHelper
     items = [home]
 
     if params[:controller] == 'admin/products'
+      products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
       if params[:action] == 'new'
         items.push(
-          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          products_path,
           { label: t('admin.products.new.title') }
         )
       elsif params[:action] == 'edit'
         items.push(
-          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          products_path,
           { label: t('admin.products.edit.label') }
         )
       elsif params[:action] == 'show'
         items.push(
-          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          products_path,
           { label: t('admin.products.show.label') }
         )
+      elsif params[:action] == 'create'
+        items.push(products_path)
+      elsif params[:action] == 'update'
+        items.push(products_path)
+      elsif params[:action] == 'destroy'
+        items.push(products_path)
       else
-        items << { label: t('admin.breadcrumbs.products'), path: admin_products_path }
+        items.push(products_path)
       end
     elsif params[:controller] == 'admin/dashboard'
       items << { label: t('admin.breadcrumbs.dashboard') }
