@@ -217,8 +217,9 @@
             </a>
 
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_products_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.products') %>"
+              class="<%= sidebar_link_classes('products', variant: :submenu) %>"
             >
               <%= icon("cube", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
