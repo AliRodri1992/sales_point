@@ -16,7 +16,7 @@
     <% end %>
 
     <%= form_with url: admin_products_path, method: :get,
-                  data: { turbo_frame: 'products_list', controller: 'products-search' },
+                  data: { controller: 'products-search' },
                   class: 'flex items-center gap-2' do |f| %>
       <%= text_field_tag :search, params[:search],
             placeholder: t('admin.products.index.search_placeholder'),
@@ -31,8 +31,6 @@
     <% end %>
   </div>
 </div>
-
-<%= turbo_stream_from "products_catalog" %>
 
 <%= turbo_frame_tag "products_list" do %>
   <%= render "list", products: @products %>
