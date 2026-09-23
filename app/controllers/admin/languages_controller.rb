@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
-
 module Admin
   class LanguagesController < ApplicationController
     layout 'admin_dashboard'
@@ -31,7 +29,7 @@ module Admin
       if @language.save
         load_languages
         notify_language(current_user, @language, 'created')
-        broadcast_languages_update
+        broadcast_language_selector
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
           format.html do
@@ -47,7 +45,7 @@ module Admin
       if @language.update(language_params)
         load_languages
         notify_language(current_user, @language, 'updated')
-        broadcast_languages_update
+        broadcast_language_selector
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
           format.html do
@@ -63,13 +61,18 @@ module Admin
       @language.update!(deleted_at: Time.current)
       load_languages
       notify_language(current_user, @language, 'destroyed')
-      broadcast_languages_update
+      broadcast_language_selector
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
         format.html do
           redirect_to admin_languages_path(request.query_parameters), notice: t('admin.languages.destroyed')
         end
       end
+    end
+
+    def content
+      current = helpers.current_language
+      render partial: 'admin/shared/language_selector_content', locals: { current: }
     end
 
     private
@@ -88,32 +91,19 @@ module Admin
         .deliver(user, enqueue_job: false)
 
       user.broadcast_notifications_refresh
+      broadcast_language_selector
     end
 
-    # Broadcasts a refreshed languages catalog to every subscribed client
-    # so changes are visible in real-time across devices (not just the
-    # requesting client that receives the HTTP turbo_stream response).
-    def broadcast_languages_update
-      total_count = Language.available.count
-      languages = Language.available.order(:name).limit(PER_PAGE)
-      total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
-      html = render_to_string(partial: 'admin/languages/list', formats: [:html],
-                              locals: { languages:, total_count:, total_pages: })
-      Turbo::StreamsChannel.broadcast_update_to('languages_catalog',
-                                                target: 'languages_list', html: html)
-      broadcast_language_selector_dropdown
-    end
-
-    def broadcast_language_selector_dropdown
+    def broadcast_language_selector
       current = helpers.current_language
       html = render_to_string(
-        partial: 'admin/shared/language_selector_dropdown',
+        partial: 'admin/shared/language_selector_content',
         formats: [:html],
         locals: { current: }
       )
       Turbo::StreamsChannel.broadcast_update_to(
         'language_selector',
-        target: 'language_selector_dropdown_options',
+        target: 'language_selector_content',
         html: html
       )
     end
@@ -158,4 +148,3 @@ module Admin
     end
   end
 end
-# rubocop:enable Metrics/ClassLength
