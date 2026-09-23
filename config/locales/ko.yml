@@ -189,6 +189,8 @@ ko:
         sku_placeholder: "예: COCA-600ML"
         barcode: "바코드"
         barcode_placeholder: "예: 75010001"
+        image: "이미지"
+        image_help: "상품 이미지 파일을 업로드하십시오."
         category: "카테고리"
         sat_unit_key: "SAT 단위 키"
         sat_tax: "SAT 세금"
@@ -286,6 +288,7 @@ ko:
           sku: "SKU: %{sku}"
           view_inventory: "재고 보기"
           units: "%{count}개"
+      no_image: "이미지 없음"
     shared:
       sidebar:
         section_main: "메인"
@@ -482,6 +485,7 @@ ko:
         barcode: "바코드"
         sku: "SKU"
         status: "상태"
+        image: "이미지"
   errors:
     format: "%{attribute} %{message}"
     messages:

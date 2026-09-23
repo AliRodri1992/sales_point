@@ -108,7 +108,9 @@ module Admin
           barcode sku category_id sat_unit_key_id sat_tax_id status
           image_url position featured slug view_count
         ]
-      )
+      ).tap do |p|
+        p[:image] = params[:product][:image] if params[:product][:image].present?
+      end
     end
 
     def notify_product(user, product, action)

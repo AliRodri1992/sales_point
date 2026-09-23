@@ -269,9 +269,8 @@ es:
         sku_placeholder: "ej. COCA-600ML"
         barcode: "Código de barras"
         barcode_placeholder: "ej. 75010001"
-        image_url: "URL de imagen"
-        image_url_placeholder: "ej. https://ejemplo.com/imagen.jpg"
-        image_url_hint: "URL de la imagen del producto. Opcional."
+        image: "Imagen"
+        image_help: "Sube un archivo de imagen del producto."
         category: "Categoría"
         sat_unit_key: "Clave de unidad SAT"
         sat_tax: "Impuesto SAT"
@@ -300,6 +299,7 @@ es:
         back: "Volver"
       close: "Cerrar"
     shared:
+      no_image: "No image available"
       sidebar:
         section_main: "Principal"
         dashboard: "Dashboard"
@@ -496,7 +496,7 @@ es:
         barcode: "Código de barras"
         sku: "SKU"
         status: "Estado"
-        image_url: "URL de imagen"
+        image: "Imagen"
         position: "Posición"
         featured: "Destacado"
         view_count: "Contador de vistas"

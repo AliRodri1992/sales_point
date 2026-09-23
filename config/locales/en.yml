@@ -269,9 +269,8 @@ en:
         sku_placeholder: "e.g. COCA-600ML"
         barcode: "Barcode"
         barcode_placeholder: "e.g. 75010001"
-        image_url: "Image URL"
-        image_url_placeholder: "e.g. https://example.com/image.jpg"
-        image_url_hint: "URL of the product image. Optional."
+        image: "Image"
+        image_help: "Upload a product image file."
         category: "Category"
         sat_unit_key: "SAT unit key"
         sat_tax: "SAT tax"
@@ -375,6 +374,8 @@ en:
           created: "Product '%{name}' was created"
           updated: "Product '%{name}' was updated"
           destroyed: "Product '%{name}' was deleted"
+      shared:
+        no_image: "No image available"
       user_menu:
         toggle: "User menu"
         my_profile: "My profile"

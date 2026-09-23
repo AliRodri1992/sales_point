@@ -44,14 +44,16 @@
         <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.stock') %></dt>
         <dd class="text-sm font-medium text-slate-900"><%= product.stock %></dd>
       </div>
-      <% if product.image_url.present? %>
-        <div class="flex items-center justify-between gap-4 py-4">
-          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image_url') %></dt>
-          <dd class="text-sm font-medium text-slate-900">
-            <%= link_to product.image_url, product.image_url, target: '_blank', class: 'text-blue-600 hover:underline' %>
-          </dd>
-        </div>
-      <% end %>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image') %></dt>
+        <dd class="text-sm font-medium text-slate-900">
+          <% if product.image.attached? %>
+            <%= image_tag product.image.variant(resize_to_limit: [200, 200]), class: 'h-20 w-20 rounded-lg object-cover' %>
+          <% else %>
+            <span class="text-slate-400 text-sm">No image available</span>
+          <% end %>
+        </dd>
+      </div>
       <div class="flex items-center justify-between gap-4 py-4">
         <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.min_stock') %></dt>
         <dd class="text-sm font-medium text-slate-900"><%= product.min_stock %></dd>

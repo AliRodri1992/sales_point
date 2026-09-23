@@ -5,6 +5,8 @@ class Product < ApplicationRecord
   belongs_to :sat_unit_key, optional: true
   belongs_to :sat_tax, optional: true
 
+  has_one_attached :image
+
   validates :code,
             presence: true,
             uniqueness: { case_sensitive: false },
@@ -61,10 +63,7 @@ class Product < ApplicationRecord
             numericality: { only_integer: true, greater_than_or_equal_to: 0 },
             allow_nil: true
 
-  validates :image_url,
-            format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]),
-                      message: :invalid_url },
-            allow_blank: true
+  # Removed image_url validation - now using Active Storage for images
 
   validates :slug,
             format: { with: /\A[a-z0-9-]+\z/,
