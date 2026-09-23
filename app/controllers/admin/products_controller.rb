@@ -64,8 +64,6 @@ module Admin
       notify_product(current_user, @product, 'destroyed')
       broadcast_products_update
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
-    rescue ActiveRecord::RecordNotFound
-      redirect_to admin_products_path, alert: t('admin.products.destroyed')
     end
 
     private
