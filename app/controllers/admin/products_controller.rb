@@ -61,33 +61,28 @@ module Admin
     end
 
     def destroy
-      if @product.update!(deleted_at: Time.current)
-        load_products
-        notify_product(current_user, @product, 'destroyed')
-        broadcast_products_update
-        redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
-      end
+      @product.touch
+      @product.update!(deleted_at: Time.current)
+      load_products
+      notify_product(current_user, @product, 'destroyed')
+      broadcast_products_update
+      redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
-      redirect_to admin_products_path, alert: t('admin.products.index.not_found')
+      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.index.not_found'))
     rescue StandardError => e
       Rails.logger.error "Error deleting product #{params[:id]}: #{e.message}"
-      redirect_to admin_products_path, alert: t('admin.products.destroy_failed')
+      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.destroy_failed'))
     end
 
     private
 
     def set_product
-      @product = if params[:id].include?('/')
-                   product = Product.not_deleted.by_slug(params[:id]).first
-                   raise ActiveRecord::RecordNotFound, "Couldn't find Product with slug: #{params[:id]}" unless product
-                   product
-                 else
-                   Product.not_deleted.find(params[:id])
-                 end
+      @product = Product.not_deleted.find_by(id: params[:id], slug: params[:id])
+      raise ActiveRecord::RecordNotFound, "Product not found" unless @product
     end
 
     def product_not_found
-      redirect_to admin_products_path, alert: t('admin.products.index.not_found')
+      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.index.not_found'))
     end
 
     def product_params
