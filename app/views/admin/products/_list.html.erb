@@ -99,7 +99,7 @@
                     <%= icon('eye', class: 'size-4') %>
                   <% end %>
                   <%= link_to edit_admin_product_path(product),
-                              data: { turbo_frame: 'product_modal', tooltip: t('admin.products.index.edit') },
+                              data: { tooltip: t('admin.products.index.edit') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.products.index.edit') } do %>
                     <%= icon('pencil-square', class: 'size-4') %>
