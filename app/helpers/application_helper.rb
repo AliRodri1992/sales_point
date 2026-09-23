@@ -54,7 +54,12 @@ module ApplicationHelper
     items = [{ label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }]
 
     if params[:controller] == 'admin/products'
-      items += breadcrumb_for_products
+      product = assigns(:product)
+      products_label = product&.persisted? ? product.name : t('admin.products.new.title')
+      items.push(
+        { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+        { label: products_label }
+      )
     else
       items << breadcrumb_default
     end
@@ -63,19 +68,6 @@ module ApplicationHelper
   end
 
   private
-
-  def breadcrumb_for_products
-    return nil unless params[:controller] == 'admin/products'
-
-    product = assigns(:product)
-    products_breadcrumb = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
-
-    return products_breadcrumb unless %w[edit new].include?(params[:action])
-
-    product_label = product&.persisted? ? product.name : t('admin.products.new.title')
-
-    [products_breadcrumb, { label: product_label }]
-  end
 
   def breadcrumb_default
     case params[:controller]
