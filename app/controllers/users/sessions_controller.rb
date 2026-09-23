@@ -14,9 +14,13 @@ module Users
       super do |resource|
         persist_terminal_preferences(resource)
 
-        if flash[:notice].present?
+        # Move flash messages to SweetAlert2
+        if flash[:notice]
           flash[:swal_message] = flash[:notice]
-          flash[:notice] = nil
+          flash.delete(:notice)
+        elsif flash[:alert]&.match?(/already signed i/i)
+          flash[:swal_message] = flash[:alert]
+          flash.delete(:alert)
         end
       end
     end
