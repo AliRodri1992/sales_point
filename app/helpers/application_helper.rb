@@ -53,33 +53,25 @@ module ApplicationHelper
   def breadcrumb_items
     items = [{ label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }]
 
-    if params[:controller] == 'admin/products'
+    case params[:controller]
+    when 'admin/dashboard'
+      items << { label: t('admin.breadcrumbs.dashboard') }
+    when 'admin/languages'
+      items << { label: t('admin.breadcrumbs.languages') }
+    when 'admin/categories'
+      items << { label: t('admin.breadcrumbs.categories') }
+    when 'admin/products'
       product = assigns(:product)
-      products_label = product&.persisted? ? product.name : t('admin.products.new.title')
+      product_label = product&.persisted? ? product.name : t('admin.products.new.title')
       items.push(
         { label: t('admin.breadcrumbs.products'), path: admin_products_path },
-        { label: products_label }
+        { label: product_label }
       )
     else
-      items << breadcrumb_default
+      items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
 
     items
-  end
-
-  private
-
-  def breadcrumb_default
-    case params[:controller]
-    when 'admin/dashboard'
-      { label: t('admin.breadcrumbs.dashboard') }
-    when 'admin/languages'
-      { label: t('admin.breadcrumbs.languages') }
-    when 'admin/categories'
-      { label: t('admin.breadcrumbs.categories') }
-    else
-      { label: params[:controller].to_s.remove('admin/').humanize }
-    end
   end
 
   def sort_link(column, title = nil, frame: nil)
