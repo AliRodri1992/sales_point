@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'cgi'
+
 module Admin
   class ProductsController < ApplicationController
     layout 'admin_dashboard'
@@ -77,11 +79,19 @@ module Admin
     private
 
     def set_product
-      # Try to find by ID first (numeric), then by slug
-      if params[:id].match?(/\A\d+\z/)
+      # Try to find by ID first (if numeric), otherwise by slug
+      if params[:id].to_s =~ /\A\d+\z/
         @product = Product.not_deleted.find_by(id: params[:id])
       else
         @product = Product.not_deleted.find_by(slug: params[:id])
+        # If not found by slug, try fallback search by name/code (for edge cases)
+        if @product.nil?
+          search_term = CGI.unescape(params[:id])
+          @product = Product.not_deleted
+                          .where('lower(slug) = lower(?)', search_term)
+                          .or(Product.not_deleted.where(code: search_term.upcase))
+                          .first
+        end
       end
       raise ActiveRecord::RecordNotFound, "Product not found" unless @product
     end
