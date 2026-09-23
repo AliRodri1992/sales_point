@@ -30,7 +30,7 @@ class Language < ApplicationRecord
   after_initialize :set_default_status, if: :new_record?
 
   scope :available, lambda {
-    where(status: :active)
+    where(status: :active, deleted_at: nil)
   }
 
   scope :not_deleted, lambda {
