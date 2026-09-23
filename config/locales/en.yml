@@ -279,6 +279,7 @@ en:
         position_hint: "Position in catalog. Lower number appears first."
         status: "Status"
         cancel: "Cancel"
+        back: "Back"
         create: "Create product"
         update: "Update product"
       show:
