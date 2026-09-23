@@ -6,27 +6,6 @@
   aria-labelledby="product-panel-title"
   class="relative w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-xl"
 >
-  <%# Add current product to breadcrumbs %>
-  <% breadcrumbs = breadcrumb_items + [{ label: product.persisted? ? product.name : t('admin.products.new.title') }] %>
-
-  <nav aria-label="<%= t('admin.breadcrumbs.label') %>" class="border-b border-slate-100 bg-white">
-    <ol class="mx-auto flex h-10 items-center gap-1.5 px-4 text-sm lg:px-6">
-      <% breadcrumbs.each_with_index do |item, index| %>
-        <li class="flex min-w-0 items-center gap-1.5">
-          <% if index > 0 %>
-            <span class="text-slate-300" aria-hidden="true">/</span>
-          <% end %>
-
-          <% if item[:path] %>
-            <%= link_to item[:label], item[:path], class: "truncate text-slate-500 transition hover:text-slate-800" %>
-          <% else %>
-            <span class="truncate font-medium text-slate-800" aria-current="page"><%= item[:label] %></span>
-          <% end %>
-        </li>
-      <% end %>
-    </ol>
-  </nav>
-
   <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
     <div>
       <h2 id="product-panel-title" class="font-jakarta text-lg font-bold text-slate-900">
@@ -36,13 +15,6 @@
         <%= product.persisted? ? t('admin.products.edit.subtitle') : t('admin.products.new.subtitle') %>
       </p>
     </div>
-
-    <%= link_to admin_products_path,
-                class: "inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50",
-                data: { turbo_frame: 'products_list' } do %>
-      <%= icon("chevron-left", class: "size-4") %>
-      <%= t('admin.products.form.back') %>
-    <% end %>
   </div>
 
   <div class="px-6 py-6">
