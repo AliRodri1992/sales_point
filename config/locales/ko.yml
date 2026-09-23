@@ -206,6 +206,7 @@ ko:
       edit:
         title: "%{name} 수정"
         subtitle: "상품 정보를 업데이트합니다."
+        back: "뒤로"
         close: "닫기"
     dashboard:
       index:

@@ -15,7 +15,7 @@
         <%= product.persisted? ? t('admin.products.edit.subtitle') : t('admin.products.new.subtitle') %>
       </p>
     </div>
-    <%= link_to t('admin.products.back'),
+    <%= link_to t("admin.products.#{product.persisted? ? 'edit.back' : 'new.back'}"),
                 admin_products_path,
                 class: 'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition' %>
   </div>

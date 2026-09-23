@@ -292,6 +292,7 @@ es:
       edit:
         title: "Editar %{name}"
         subtitle: "Actualiza los datos del producto."
+        back: "Volver"
       close: "Cerrar"
     shared:
       sidebar:
