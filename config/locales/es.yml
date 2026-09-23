@@ -228,6 +228,7 @@ es:
         confirm_delete: "¿Seguro que quieres eliminar este producto?"
         empty_title: "Aún no hay productos"
         empty_subtitle: "Agrega tu primer producto para empezar."
+        not_found: "Producto no encontrado"
         count: "%{count} productos"
         columns:
           code: "Código"

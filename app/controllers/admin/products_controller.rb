@@ -6,6 +6,8 @@ module Admin
     before_action :authenticate_user!
     before_action :set_product, only: %i[show edit update destroy]
 
+    rescue_from ActiveRecord::RecordNotFound, with: :product_not_found
+
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
 
@@ -70,10 +72,16 @@ module Admin
 
     def set_product
       @product = if params[:id].include?('/')
-                   Product.not_deleted.by_slug(params[:id]).first
+                   product = Product.not_deleted.by_slug(params[:id]).first
+                   raise ActiveRecord::RecordNotFound, "Couldn't find Product with slug: #{params[:id]}" unless product
+                   product
                  else
                    Product.not_deleted.find(params[:id])
                  end
+    end
+
+    def product_not_found
+      redirect_to admin_products_path, alert: t('admin.products.index.not_found')
     end
 
     def product_params
