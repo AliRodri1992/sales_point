@@ -32,7 +32,7 @@ module ApplicationHelper
     return "#{shared} #{spacing} bg-blue-50 font-semibold text-blue-600" if active
 
     color = variant == :submenu ? 'text-slate-500' : 'text-slate-600'
-    "#{shared} #{spacing} font-medium #{color} hover:bg-slate-50 hover:text-slate-900"
+    "#{shared} #{spacing} font-medium #{color} hover:bg-slate-50 hover:text-slate-900}"
   end
 
   def sidebar_section_open?(*controllers)
@@ -51,22 +51,22 @@ module ApplicationHelper
   end
 
   def breadcrumb_items
-    items = [{ label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }]
+    home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
+    items = [home]
 
-    case params[:controller]
-    when 'admin/dashboard'
-      items << { label: t('admin.breadcrumbs.dashboard') }
-    when 'admin/languages'
-      items << { label: t('admin.breadcrumbs.languages') }
-    when 'admin/categories'
-      items << { label: t('admin.breadcrumbs.categories') }
-    when 'admin/products'
+    if params[:controller] == 'admin/products' && %w[new edit].include?(params[:action])
       product = assigns(:product)
-      product_label = product&.persisted? ? product.name : t('admin.products.new.title')
+      product_name = product&.persisted? ? product.name : t('admin.products.new.title')
       items.push(
         { label: t('admin.breadcrumbs.products'), path: admin_products_path },
-        { label: product_label }
+        { label: product_name }
       )
+    elsif params[:controller] == 'admin/dashboard'
+      items << { label: t('admin.breadcrumbs.dashboard') }
+    elsif params[:controller] == 'admin/languages'
+      items << { label: t('admin.breadcrumbs.languages') }
+    elsif params[:controller] == 'admin/categories'
+      items << { label: t('admin.breadcrumbs.categories') }
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
@@ -108,12 +108,12 @@ module ApplicationHelper
   end
 
   def prev_link(current_page, frame: nil)
-    label = t('admin.languages.index.pagination.prev')
+    label = t('admin.products.index.pagination.prev')
     pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
   end
 
   def next_link(current_page, total_pages, frame: nil)
-    label = t('admin.languages.index.pagination.next')
+    label = t('admin.products.index.pagination.next')
     pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
 
