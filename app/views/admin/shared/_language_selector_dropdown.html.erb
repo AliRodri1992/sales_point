@@ -1,29 +1,26 @@
 <% languages = Language.available.order(:code) %>
-<% current = current_language %>
-<div id="languageSelectorMenu" class="w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
-  <% languages.each do |language| %>
-    <button
-      type="button"
-      data-action="click->language-selector#select"
-      data-language="<%= language.code %>"
-      data-flag="<%= language.flag_url %>"
-      data-flag-srcset="<%= language.flag_srcset %>"
-      class="language-option language-option-blue flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>"
+<% languages.each do |language| %>
+  <button
+    type="button"
+    data-action="click->language-selector#select"
+    data-language="<%= language.code %>"
+    data-flag="<%= language.flag_url %>"
+    data-flag-srcset="<%= language.flag_srcset %>"
+    class="language-option language-option-blue flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50' %>"
+  >
+    <img
+      src="<%= language.flag_url %>"
+      srcset="<%= language.flag_srcset %>"
+      class="size-7 rounded-full object-cover"
+      alt="<%= language.name %>"
     >
-      <img
-        src="<%= language.flag_url %>"
-        srcset="<%= language.flag_srcset %>"
-        class="size-7 rounded-full object-cover"
-        alt="<%= language.name %>"
-      >
 
-      <span class="flex-1">
-        <%= language.name %>
-      </span>
+    <span class="flex-1">
+      <%= language.name %>
+    </span>
 
-      <% if language.id == current.id %>
-        <%= icon("check", variant: :solid, class: "size-3") %>
-      <% end %>
-    </button>
-  <% end %>
-</div>
+    <% if language.id == current.id %>
+      <%= icon("check", variant: :solid, class: "size-3") %>
+    <% end %>
+  </button>
+<% end %>

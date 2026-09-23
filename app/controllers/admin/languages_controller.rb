@@ -106,7 +106,7 @@ module Admin
       html = render_to_string(partial: 'admin/shared/language_selector_dropdown',
                               formats: [:html])
       Turbo::StreamsChannel.broadcast_update_to('language_selector',
-                                                target: 'language_selector_dropdown_content', html: html)
+                                                target: 'language_selector_dropdown_options', html: html)
     end
 
     def load_languages

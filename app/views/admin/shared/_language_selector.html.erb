@@ -29,7 +29,8 @@
       data-language-selector-target="dropdown"
       class="absolute right-0 top-full z-50 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
     >
-      <%= turbo_frame_tag "language_selector_dropdown_content", steam: true do %>
+      <%# Language dropdown content - will be updated via Turbo Stream broadcast %>
+      <div id="language_selector_dropdown_options" class="divide-y divide-slate-100">
         <% terminal_languages.each do |language| %>
           <button
             type="button"
@@ -55,7 +56,7 @@
             <% end %>
           </button>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
 <% end %>
