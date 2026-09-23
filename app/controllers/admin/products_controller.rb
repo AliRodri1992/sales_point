@@ -77,11 +77,17 @@ module Admin
     private
 
     def set_product
-      @product = Product.not_deleted.find_by(id: params[:id], slug: params[:id])
+      # Try to find by ID first (numeric), then by slug
+      if params[:id].match?(/\A\d+\z/)
+        @product = Product.not_deleted.find_by(id: params[:id])
+      else
+        @product = Product.not_deleted.find_by(slug: params[:id])
+      end
       raise ActiveRecord::RecordNotFound, "Product not found" unless @product
     end
 
-    def product_not_found
+    def product_not_found(exception = nil)
+      Rails.logger.error "Product not found: #{exception&.message}"
       redirect_back(fallback_location: admin_products_path, alert: t('admin.products.index.not_found'))
     end
 
