@@ -292,6 +292,7 @@ en:
       edit:
         title: "Edit %{name}"
         subtitle: "Update the product details."
+      close: "Close"
     shared:
       sidebar:
         section_main: "Main"

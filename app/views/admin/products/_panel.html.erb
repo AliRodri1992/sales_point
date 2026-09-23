@@ -1,4 +1,3 @@
-<% product = @product %>
 <div
   data-modal-target="panel"
   role="dialog"
@@ -15,6 +14,12 @@
         <%= product.persisted? ? t('admin.products.edit.subtitle') : t('admin.products.new.subtitle') %>
       </p>
     </div>
+    <button type="button"
+            data-action="click->modal#close"
+            class="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            aria-label="<%= t('admin.products.close') %>">
+      <%= icon('x', class: 'size-5') %>
+    </button>
   </div>
 
   <div class="px-6 py-6">

@@ -291,6 +291,7 @@ es:
       edit:
         title: "Editar %{name}"
         subtitle: "Actualiza los datos del producto."
+      close: "Cerrar"
     shared:
       sidebar:
         section_main: "Principal"

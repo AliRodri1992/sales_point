@@ -55,8 +55,7 @@ module ApplicationHelper
     items = [home]
 
     if params[:controller] == 'admin/products' && %w[new edit].include?(params[:action])
-      product = assigns(:product)
-      product_name = product&.persisted? ? product.name : t('admin.products.new.title')
+      product_name = @product&.persisted? ? @product.name : t('admin.products.new.title')
       items.push(
         { label: t('admin.breadcrumbs.products'), path: admin_products_path },
         { label: product_name }

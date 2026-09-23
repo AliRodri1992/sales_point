@@ -201,9 +201,11 @@ ko:
       new:
         title: "새 상품"
         subtitle: "카탈로그에 상품을 추가합니다."
+        close: "닫기"
       edit:
         title: "%{name} 수정"
         subtitle: "상품 정보를 업데이트합니다."
+        close: "닫기"
     dashboard:
       index:
         title: "관리자 대시보드 | Nexo POS"

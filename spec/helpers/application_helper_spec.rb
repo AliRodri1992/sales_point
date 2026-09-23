@@ -126,6 +126,43 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe '#breadcrumb_items' do
+    before do
+      allow(helper).to receive(:params).and_return(
+        ActionController::Parameters.new(controller: 'admin/products', action: action)
+      )
+    end
+
+    context 'when creating a product' do
+      let(:action) { 'new' }
+
+      it 'uses the new product title' do
+        assign(:product, Product.new)
+
+        labels = helper.breadcrumb_items.pluck(:label)
+
+        expect(labels).to eq([
+                                t('admin.breadcrumbs.home'),
+                                t('admin.breadcrumbs.products'),
+                                t('admin.products.new.title')
+                              ])
+      end
+    end
+
+    context 'when editing a product' do
+      let(:action) { 'edit' }
+
+      it 'uses the product name' do
+        product = instance_double(Product, persisted?: true, name: 'Coca-Cola')
+        assign(:product, product)
+
+        labels = helper.breadcrumb_items.pluck(:label)
+
+        expect(labels.last).to eq('Coca-Cola')
+      end
+    end
+  end
+
   describe '#error_message_for' do
     let(:language) { Language.new }
 
