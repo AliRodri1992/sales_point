@@ -129,7 +129,7 @@ module Admin
       html = render_to_string(partial: 'admin/products/list', formats: [:html],
                               locals: { products:, total_count:, total_pages: })
       Turbo::StreamsChannel.broadcast_update_to('products_catalog',
-                                                target: 'products_list', html: html)
+                                                target: 'admin_products_list', html: html)
     end
 
     def load_products

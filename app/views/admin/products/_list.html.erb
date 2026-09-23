@@ -20,19 +20,19 @@
         <thead>
           <tr class="border-y border-slate-100 text-xs text-slate-400">
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: 'products_list') %>
+              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: 'products_list') %>
+              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'products_list') %>
+              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'products_list') %>
+              <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.cost', t('admin.products.index.columns.cost'), frame: 'products_list') %>
+              <%= sort_link('products.cost', t('admin.products.index.columns.cost'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
               <%= t('admin.products.index.columns.category') %>
@@ -41,7 +41,7 @@
               <%= t('admin.products.index.columns.featured') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
-              <%= sort_link('products.position', t('admin.products.index.columns.position'), frame: 'products_list') %>
+              <%= sort_link('products.position', t('admin.products.index.columns.position'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
               <%= t('admin.products.index.columns.views') %>
@@ -134,7 +134,7 @@
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'products_list') %>
+          <%= pagination_links(total_pages, frame: 'admin_products_list') %>
         </div>
       </div>
     <% end %>
