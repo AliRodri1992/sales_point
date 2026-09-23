@@ -92,17 +92,25 @@ module Admin
     # so changes are visible in real-time across devices (not just the
     # requesting client that receives the HTTP turbo_stream response).
     def broadcast_languages_update
-      total_count = Language.not_deleted.count
-      languages = Language.not_deleted.order(:name).limit(PER_PAGE)
+      total_count = Language.available.count
+      languages = Language.available.order(:name).limit(PER_PAGE)
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
       html = render_to_string(partial: 'admin/languages/list', formats: [:html],
                               locals: { languages:, total_count:, total_pages: })
       Turbo::StreamsChannel.broadcast_update_to('languages_catalog',
                                                 target: 'languages_list', html: html)
+      broadcast_language_selector_dropdown
+    end
+
+    def broadcast_language_selector_dropdown
+      html = render_to_string(partial: 'admin/shared/language_selector_dropdown',
+                              formats: [:html])
+      Turbo::StreamsChannel.broadcast_update_to('language_selector',
+                                                target: 'language_selector_dropdown_content', html: html)
     end
 
     def load_languages
-      @languages = filter_scope(Language.not_deleted)
+      @languages = filter_scope(Language.available)
       @total_count = @languages.count
       @languages = apply_sorting(@languages)
       @languages = paginate(@languages)
