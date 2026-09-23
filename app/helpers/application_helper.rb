@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module ApplicationHelper
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
@@ -52,20 +53,41 @@ module ApplicationHelper
   def breadcrumb_items
     items = [{ label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }]
 
-    items << case params[:controller]
-             when 'admin/dashboard'
-               { label: t('admin.breadcrumbs.dashboard') }
-             when 'admin/languages'
-               { label: t('admin.breadcrumbs.languages') }
-             when 'admin/categories'
-               { label: t('admin.breadcrumbs.categories') }
-             when 'admin/products'
-               { label: t('admin.breadcrumbs.products') }
-             else
-               { label: params[:controller].to_s.remove('admin/').humanize }
-             end
+    if params[:controller] == 'admin/products'
+      items += breadcrumb_for_products
+    else
+      items << breadcrumb_default
+    end
 
     items
+  end
+
+  private
+
+  def breadcrumb_for_products
+    return nil unless params[:controller] == 'admin/products'
+
+    product = assigns(:product)
+    products_breadcrumb = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
+
+    return products_breadcrumb unless %w[edit new].include?(params[:action])
+
+    product_label = product&.persisted? ? product.name : t('admin.products.new.title')
+
+    [products_breadcrumb, { label: product_label }]
+  end
+
+  def breadcrumb_default
+    case params[:controller]
+    when 'admin/dashboard'
+      { label: t('admin.breadcrumbs.dashboard') }
+    when 'admin/languages'
+      { label: t('admin.breadcrumbs.languages') }
+    when 'admin/categories'
+      { label: t('admin.breadcrumbs.categories') }
+    else
+      { label: params[:controller].to_s.remove('admin/').humanize }
+    end
   end
 
   def sort_link(column, title = nil, frame: nil)
@@ -149,3 +171,4 @@ module ApplicationHelper
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
