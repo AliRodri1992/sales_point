@@ -288,6 +288,7 @@ es:
       new:
         title: "Nuevo producto"
         subtitle: "Añade un producto a tu catálogo."
+        back: "Volver"
       edit:
         title: "Editar %{name}"
         subtitle: "Actualiza los datos del producto."

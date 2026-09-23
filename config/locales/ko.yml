@@ -201,6 +201,7 @@ ko:
       new:
         title: "새 상품"
         subtitle: "카탈로그에 상품을 추가합니다."
+        back: "뒤로"
         close: "닫기"
       edit:
         title: "%{name} 수정"
