@@ -31,20 +31,11 @@
             <th class="px-6 py-3 text-right font-medium">
               <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'admin_products_list') %>
             </th>
-            <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.cost', t('admin.products.index.columns.cost'), frame: 'admin_products_list') %>
-            </th>
             <th class="px-6 py-3 text-left font-medium">
               <%= t('admin.products.index.columns.category') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
               <%= t('admin.products.index.columns.featured') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= sort_link('products.position', t('admin.products.index.columns.position'), frame: 'admin_products_list') %>
-            </th>
-            <th class="px-6 py-3 text-right font-medium">
-              <%= t('admin.products.index.columns.views') %>
             </th>
             <th class="px-6 py-3 text-center font-medium">
               <%= t('admin.products.index.columns.status') %>
@@ -69,20 +60,11 @@
               <td class="px-6 py-4 text-right">
                 <%= number_with_precision(product.stock, strip_insignificant_zeros: true, precision: 3) %>
               </td>
-              <td class="px-6 py-4 text-right">
-                <%= number_to_currency(product.cost) %>
-              </td>
               <td class="px-6 py-4">
                 <%= product.category&.name || '-' %>
               </td>
               <td class="px-6 py-4 text-center">
                 <%= icon('star', class: 'size-4 text-amber-500') if product.featured? %>
-              </td>
-              <td class="px-6 py-4 text-center">
-                <%= product.position || 0 %>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <%= number_with_precision(product.view_count, strip_insignificant_zeros: true, precision: 0) %>
               </td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
