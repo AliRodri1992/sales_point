@@ -196,7 +196,7 @@
       </p>
 
       <div class="space-y-1">
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('languages', 'categories') %>>
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.catalogs') %>"
