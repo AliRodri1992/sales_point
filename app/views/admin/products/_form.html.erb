@@ -111,27 +111,33 @@
       </div>
     </div>
 
-    <div class="grid gap-5 sm:grid-cols-2">
-      <div>
+    <div class="sm:col-span-2">
         <%= form.label :image, t('admin.products.form.image'),
                        class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.file_field :image,
-                            data: {
-                              controller: 'image-preview',
-                              image_preview: {
-                                file_target: 'file',
-                                preview_target: 'preview'
-                              },
-                              action: 'change->image-preview#update'
-                            },
-                            class: "input-field w-full rounded-xl #{form_state_classes(product, :image)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-        <%= error_message_for(product, :image) %>
-        <div data-image-preview-target="preview">
-          <% if product.image.attached? %>
-            <div class="mt-2">
-              <%= image_tag product.image.variant(resize_to_limit: [200, 200]), class: 'h-20 w-20 rounded-lg object-cover border border-slate-200' %>
-            </div>
-          <% end %>
+        <div class="flex items-center gap-4">
+          <div data-image-preview-target="preview" class="flex-shrink-0">
+            <% if product.image.attached? %>
+              <%= image_tag product.image.variant(resize_to_limit: [80, 80]), class: 'h-20 w-20 rounded-lg object-cover border border-slate-200 bg-slate-50' %>
+            <% else %>
+              <div class="h-20 w-20 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
+                <span class="text-slate-400 text-xs">No image</span>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex-1">
+            <%= form.file_field :image,
+                                data: {
+                                  controller: 'image-preview',
+                                  image_preview: {
+                                    fileTarget: 'file',
+                                    previewTarget: 'preview'
+                                  },
+                                  action: 'change->image-preview#update'
+                                },
+                                class: "input-field w-full rounded-xl #{form_state_classes(product, :image)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+            <%= error_message_for(product, :image) %>
+            <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.image_help') %></p>
+          </div>
         </div>
       </div>
 
