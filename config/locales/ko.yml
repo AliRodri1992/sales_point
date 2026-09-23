@@ -481,6 +481,7 @@ ko:
     format: "%{attribute} %{message}"
     messages:
       blank: "을(를) 입력하십시오"
+      taken: "이미 사용 중입니다"
       invalid: "이(가) 올바르지 않습니다"
       too_long: "이(가) 너무 깁니다 (최대 %{count}자)"
       too_short: "이(가) 너무 짧습니다 (최소 %{count}자)"

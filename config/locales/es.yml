@@ -500,6 +500,7 @@ es:
     format: "%{attribute} %{message}"
     messages:
       blank: "no puede estar vacío"
+      taken: "ya ha sido utilizado"
       invalid: "no es válido"
       invalid_url: "debe ser una URL válida"
       too_long: "es demasiado largo (máximo %{count} caracteres)"

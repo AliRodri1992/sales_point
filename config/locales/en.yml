@@ -501,6 +501,7 @@ en:
     format: "%{attribute} %{message}"
     messages:
       blank: "can't be blank"
+      taken: "has already been taken"
       invalid: "is invalid"
       invalid_url: "must be a valid URL"
       too_long: "is too long (maximum %{count} characters)"
