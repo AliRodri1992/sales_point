@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+
 module Admin
   class LanguagesController < ApplicationController
     layout 'admin_dashboard'
@@ -103,10 +105,17 @@ module Admin
     end
 
     def broadcast_language_selector_dropdown
-      html = render_to_string(partial: 'admin/shared/language_selector_dropdown',
-                              formats: [:html])
-      Turbo::StreamsChannel.broadcast_update_to('language_selector',
-                                                target: 'language_selector_dropdown_options', html: html)
+      current = helpers.current_language
+      html = render_to_string(
+        partial: 'admin/shared/language_selector_dropdown',
+        formats: [:html],
+        locals: { current: }
+      )
+      Turbo::StreamsChannel.broadcast_update_to(
+        'language_selector',
+        target: 'language_selector_dropdown_options',
+        html: html
+      )
     end
 
     def load_languages
@@ -149,3 +158,4 @@ module Admin
     end
   end
 end
+# rubocop:enable Metrics/ClassLength
