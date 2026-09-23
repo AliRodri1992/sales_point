@@ -35,12 +35,7 @@ module Admin
         load_products
         notify_product(current_user, @product, 'created')
         broadcast_products_update
-        respond_to do |format|
-          format.turbo_stream { @swal_message = t('admin.products.created') }
-          format.html do
-            redirect_to admin_products_path(request.query_parameters), notice: t('admin.products.created')
-          end
-        end
+        redirect_to admin_products_path, notice: t('admin.products.created')
       else
         render :new, status: :unprocessable_content
       end
@@ -51,12 +46,7 @@ module Admin
         load_products
         notify_product(current_user, @product, 'updated')
         broadcast_products_update
-        respond_to do |format|
-          format.turbo_stream { @swal_message = t('admin.products.updated') }
-          format.html do
-            redirect_to admin_products_path(request.query_parameters), notice: t('admin.products.updated')
-          end
-        end
+        redirect_to admin_products_path, notice: t('admin.products.updated')
       else
         render :edit, status: :unprocessable_content
       end
