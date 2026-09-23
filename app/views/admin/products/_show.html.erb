@@ -1,126 +1,130 @@
 <% product = @product %>
-<div class="w-full max-w-3xl rounded-2xl border border-slate-200 bg-white shadow-xl">
-  <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-    <div>
-      <h2 id="product-show-title" class="font-jakarta text-lg font-bold text-slate-900">
-        <%= t('admin.products.show.title') %>
-      </h2>
-      <p class="mt-0.5 text-sm text-slate-500">
-        <%= t('admin.products.show.subtitle') %>
-      </p>
-    </div>
-    <%= link_to t('admin.products.show.close'),
-                admin_products_path,
-                class: 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600' %>
-  </div>
-
-  <dl class="divide-y divide-slate-100 px-6">
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.code') %></dt>
-      <dd>
-        <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= product.code %></code>
-      </dd>
-    </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.name') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= product.name %></dd>
-    </div>
-    <% if product.description.present? %>
-      <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.description') %></dt>
-        <dd class="text-sm text-slate-700"><%= product.description %></dd>
+<%= turbo_frame_tag "admin_products_list" do %>
+  <div class="w-full max-w-3xl rounded-2xl border border-slate-200 bg-white shadow-xl">
+    <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <div>
+        <h2 id="product-show-title" class="font-jakarta text-lg font-bold text-slate-900">
+          <%= t('admin.products.show.title') %>
+        </h2>
+        <p class="mt-0.5 text-sm text-slate-500">
+          <%= t('admin.products.show.subtitle') %>
+        </p>
       </div>
-    <% end %>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.price') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= number_to_currency(product.price) %></dd>
+      <%= link_to t('admin.products.show.close'),
+                  admin_products_path,
+                  data: { turbo: false },
+                  class: 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600' %>
     </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.cost') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= number_to_currency(product.cost) %></dd>
-    </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.stock') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= product.stock %></dd>
-    </div>
-    <% if product.image_url.present? %>
+
+    <dl class="divide-y divide-slate-100 px-6">
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image_url') %></dt>
-        <dd class="text-sm font-medium text-slate-900">
-          <%= link_to product.image_url, product.image_url, target: '_blank', class: 'text-blue-600 hover:underline' %>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.code') %></dt>
+        <dd>
+          <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= product.code %></code>
         </dd>
       </div>
-    <% end %>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.min_stock') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= product.min_stock %></dd>
-    </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.max_stock') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= product.max_stock %></dd>
-    </div>
-    <% if product.barcode.present? %>
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.barcode') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.barcode %></dd>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.name') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= product.name %></dd>
       </div>
-    <% end %>
-    <% if product.sku.present? %>
+      <% if product.description.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.description') %></dt>
+          <dd class="text-sm text-slate-700"><%= product.description %></dd>
+        </div>
+      <% end %>
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sku') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.sku %></dd>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.price') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= number_to_currency(product.price) %></dd>
       </div>
-    <% end %>
-    <% if product.category_id.present? %>
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.category') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.category.name %></dd>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.cost') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= number_to_currency(product.cost) %></dd>
       </div>
-    <% end %>
-    <% if product.sat_unit_key_id.present? %>
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sat_unit_key') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.sat_unit_key.to_label %></dd>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.stock') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= product.stock %></dd>
       </div>
-    <% end %>
-    <% if product.sat_tax_id.present? %>
+      <% if product.image_url.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image_url') %></dt>
+          <dd class="text-sm font-medium text-slate-900">
+            <%= link_to product.image_url, product.image_url, target: '_blank', class: 'text-blue-600 hover:underline' %>
+          </dd>
+        </div>
+      <% end %>
       <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sat_tax') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.sat_tax.name %></dd>
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.min_stock') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= product.min_stock %></dd>
       </div>
-    <% end %>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.featured') %></dt>
-      <dd>
-        <% if product.featured? %>
-          <span class="inline-flex items-center rounded-full px-2 py-1 text-[11px] font-semibold bg-amber-100 text-amber-800">
-            <%= t('admin.products.index.columns.featured') %>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.max_stock') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= product.max_stock %></dd>
+      </div>
+      <% if product.barcode.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.barcode') %></dt>
+          <dd class="text-sm font-medium text-slate-900"><%= product.barcode %></dd>
+        </div>
+      <% end %>
+      <% if product.sku.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sku') %></dt>
+          <dd class="text-sm font-medium text-slate-900"><%= product.sku %></dd>
+        </div>
+      <% end %>
+      <% if product.category_id.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.category') %></dt>
+          <dd class="text-sm font-medium text-slate-900"><%= product.category.name %></dd>
+        </div>
+      <% end %>
+      <% if product.sat_unit_key_id.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sat_unit_key') %></dt>
+          <dd class="text-sm font-medium text-slate-900"><%= product.sat_unit_key.to_label %></dd>
+        </div>
+      <% end %>
+      <% if product.sat_tax_id.present? %>
+        <div class="flex items-center justify-between gap-4 py-4">
+          <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.sat_tax') %></dt>
+          <dd class="text-sm font-medium text-slate-900"><%= product.sat_tax.name %></dd>
+        </div>
+      <% end %>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.featured') %></dt>
+        <dd>
+          <% if product.featured? %>
+            <span class="inline-flex items-center rounded-full px-2 py-1 text-[11px] font-semibold bg-amber-100 text-amber-800">
+              <%= t('admin.products.index.columns.featured') %>
+            </span>
+          <% else %>
+            <span class="text-slate-400 text-sm"><%= t('admin.products.index.filters.all_featured') %></span>
+          <% end %>
+        </dd>
+      </div>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.position') %></dt>
+        <dd class="text-sm font-medium text-slate-900"><%= product.position || 0 %></dd>
+      </div>
+      <div class="flex items-center justify-between gap-4 py-4">
+        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.status') %></dt>
+        <dd>
+          <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold
+            <%= product.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+            <%= t("admin.products.statuses.#{product.status}") %>
           </span>
-        <% else %>
-          <span class="text-slate-400 text-sm"><%= t('admin.products.index.filters.all_featured') %></span>
-        <% end %>
-      </dd>
-    </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.position') %></dt>
-      <dd class="text-sm font-medium text-slate-900"><%= product.position || 0 %></dd>
-    </div>
-    <div class="flex items-center justify-between gap-4 py-4">
-      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.status') %></dt>
-      <dd>
-        <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold
-          <%= product.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
-          <%= t("admin.products.statuses.#{product.status}") %>
-        </span>
-      </dd>
-    </div>
-  </dl>
+        </dd>
+      </div>
+    </dl>
 
-  <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
-    <%= link_to edit_admin_product_path(product),
-                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
-      <%= icon('pencil-square', class: 'size-4') %>
-      <%= t('admin.products.index.edit') %>
-    <% end %>
+    <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
+      <%= link_to edit_admin_product_path(product),
+                  data: { turbo: false },
+                  class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+        <%= icon('pencil-square', class: 'size-4') %>
+        <%= t('admin.products.index.edit') %>
+      <% end %>
+    </div>
   </div>
-</div>
+<% end %>
