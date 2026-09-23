@@ -287,6 +287,7 @@ en:
       show:
         title: "Product details"
         subtitle: "Review the details of this product."
+        back: "Back"
         close: "Close"
       new:
         title: "New product"

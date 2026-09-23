@@ -286,6 +286,7 @@ es:
       show:
         title: "Detalles del producto"
         subtitle: "Revisa los detalles de este producto."
+        back: "Volver"
         close: "Cerrar"
       new:
         title: "Nuevo producto"

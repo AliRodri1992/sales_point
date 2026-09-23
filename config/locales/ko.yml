@@ -199,6 +199,7 @@ ko:
       show:
         title: "상품 세부 정보"
         subtitle: "이 상품의 세부 정보를 확인하세요."
+        back: "뒤로"
         close: "닫기"
       new:
         title: "새 상품"
