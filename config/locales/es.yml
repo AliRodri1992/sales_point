@@ -285,6 +285,7 @@ es:
         update: "Actualizar producto"
       show:
         title: "Detalles del producto"
+        label: "Mostrar Producto"
         subtitle: "Revisa los detalles de este producto."
         back: "Volver"
         close: "Cerrar"
@@ -294,6 +295,7 @@ es:
         back: "Volver"
       edit:
         title: "Editar %{name}"
+        label: "Editar Producto"
         subtitle: "Actualiza los datos del producto."
         back: "Volver"
       close: "Cerrar"

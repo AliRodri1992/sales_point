@@ -54,12 +54,25 @@ module ApplicationHelper
     home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
     items = [home]
 
-    if params[:controller] == 'admin/products' && %w[new edit].include?(params[:action])
-      product_name = @product&.persisted? ? @product.name : t('admin.products.new.title')
-      items.push(
-        { label: t('admin.breadcrumbs.products'), path: admin_products_path },
-        { label: product_name }
-      )
+    if params[:controller] == 'admin/products'
+      if params[:action] == 'new'
+        items.push(
+          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          { label: t('admin.products.new.title') }
+        )
+      elsif params[:action] == 'edit'
+        items.push(
+          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          { label: t('admin.products.edit.label') }
+        )
+      elsif params[:action] == 'show'
+        items.push(
+          { label: t('admin.breadcrumbs.products'), path: admin_products_path },
+          { label: t('admin.products.show.label') }
+        )
+      else
+        items << { label: t('admin.breadcrumbs.products'), path: admin_products_path }
+      end
     elsif params[:controller] == 'admin/dashboard'
       items << { label: t('admin.breadcrumbs.dashboard') }
     elsif params[:controller] == 'admin/languages'

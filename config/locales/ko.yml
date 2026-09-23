@@ -198,6 +198,7 @@ ko:
         update: "상품 업데이트"
       show:
         title: "상품 세부 정보"
+        label: "상품 보기"
         subtitle: "이 상품의 세부 정보를 확인하세요."
         back: "뒤로"
         close: "닫기"
@@ -208,6 +209,7 @@ ko:
         close: "닫기"
       edit:
         title: "%{name} 수정"
+        label: "상품 수정"
         subtitle: "상품 정보를 업데이트합니다."
         back: "뒤로"
         close: "닫기"

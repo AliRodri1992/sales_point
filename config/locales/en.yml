@@ -286,6 +286,7 @@ en:
         update: "Update product"
       show:
         title: "Product details"
+        label: "Show Product"
         subtitle: "Review the details of this product."
         back: "Back"
         close: "Close"
@@ -295,6 +296,7 @@ en:
         back: "Back"
       edit:
         title: "Edit %{name}"
+        label: "Edit Product"
         subtitle: "Update the product details."
         back: "Back"
       close: "Close"
