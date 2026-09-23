@@ -1,6 +1,7 @@
 <%= form_with model: [:admin, product],
               class: 'space-y-5',
               data: {
+                turbo: false,
                 controller: 'swal-confirm',
                 swal_cancel_text: t('admin.products.confirm.cancel')
               } do |form| %>
