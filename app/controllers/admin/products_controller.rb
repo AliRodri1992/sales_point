@@ -35,7 +35,7 @@ module Admin
         load_products
         notify_product(current_user, @product, 'created')
         broadcast_products_update
-        redirect_to admin_products_path, notice: t('admin.products.created')
+        redirect_to admin_products_path, flash: { swal_message: t('admin.products.created') }
       else
         render :new, status: :unprocessable_content
       end
@@ -49,7 +49,7 @@ module Admin
         load_products
         notify_product(current_user, @product, 'updated')
         broadcast_products_update
-        redirect_to admin_products_path, notice: t('admin.products.updated')
+        redirect_to admin_products_path, flash: { swal_message: t('admin.products.updated') }
       else
         render :edit, status: :unprocessable_content
       end
@@ -63,12 +63,7 @@ module Admin
       load_products
       notify_product(current_user, @product, 'destroyed')
       broadcast_products_update
-      respond_to do |format|
-        format.turbo_stream { @swal_message = t('admin.products.destroyed') }
-        format.html do
-          redirect_to admin_products_path(request.query_parameters), notice: t('admin.products.destroyed')
-        end
-      end
+      redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     end
 
     private
