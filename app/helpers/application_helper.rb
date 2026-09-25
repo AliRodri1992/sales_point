@@ -76,6 +76,16 @@ module ApplicationHelper
       items << { label: t('admin.breadcrumbs.languages') }
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
+    when 'admin/suppliers'
+      suppliers_path = { label: t('admin.breadcrumbs.suppliers'), path: admin_suppliers_path }
+      case params[:action]
+      when 'new'
+        items.push(suppliers_path, { label: t('admin.suppliers.new.title') })
+      when 'edit', 'show', 'create', 'update', 'destroy'
+        items.push(suppliers_path, { label: @supplier&.name || t('admin.suppliers.edit.title', name: '') })
+      else
+        items << suppliers_path
+      end
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end

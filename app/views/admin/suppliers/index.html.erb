@@ -1,0 +1,44 @@
+<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.suppliers.index.title') %></h1>
+    <p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.index.subtitle') %></p>
+  </div>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <% if policy(Supplier).new? %>
+      <%= link_to new_admin_supplier_path,
+                  data: { tooltip: t('admin.suppliers.index.new') },
+                  class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+        <%= icon('plus', class: 'size-4') %>
+        <%= t('admin.suppliers.index.new') %>
+      <% end %>
+    <% end %>
+
+    <%= form_with url: admin_suppliers_path, method: :get,
+                  data: { turbo_frame: 'suppliers_list' },
+                  class: 'flex items-center gap-2' do %>
+      <%= text_field_tag :search, params[:search],
+            placeholder: t('admin.suppliers.index.search_placeholder'),
+            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+      <%= select_tag :status,
+            options_for_select(
+              [
+                [t('admin.suppliers.index.filters.all_statuses'), 'all'],
+                [t('admin.suppliers.statuses.active'), 'active'],
+                [t('admin.suppliers.statuses.inactive'), 'inactive']
+              ],
+              params[:status] || 'all'
+            ),
+            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+      <%= button_tag type: 'submit',
+            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
+        <%= icon('funnel', class: 'size-4') %>
+        <%= t('admin.suppliers.index.filters.apply') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%= turbo_frame_tag "suppliers_list" do %>
+  <%= render "list", suppliers: @suppliers %>
+<% end %>

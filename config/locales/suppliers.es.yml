@@ -1,0 +1,82 @@
+es:
+  admin:
+    breadcrumbs:
+      suppliers: "Proveedores"
+    suppliers:
+      created: "Proveedor creado correctamente"
+      updated: "Proveedor actualizado correctamente"
+      destroyed: "Proveedor eliminado correctamente"
+      errors:
+        duplicate: "El código o RFC del proveedor ya está registrado."
+        unauthorized: "No tienes permiso para administrar proveedores."
+      confirm:
+        cancel: "Cancelar"
+      statuses:
+        active: "Activo"
+        inactive: "Inactivo"
+      index:
+        title: "Proveedores"
+        subtitle: "Administra los proveedores de tu negocio."
+        new: "Nuevo proveedor"
+        show: "Mostrar proveedor"
+        edit: "Editar"
+        delete: "Eliminar"
+        confirm_delete: "¿Seguro que quieres eliminar este proveedor?"
+        card_title: "Proveedores registrados"
+        total_count: "%{count} proveedores registrados"
+        search_placeholder: "Buscar por código, nombre, correo, teléfono o RFC..."
+        filters:
+          all_statuses: "Todos los estados"
+          apply: "Aplicar"
+        pagination:
+          per_page_label: "Mostrar"
+        empty_title: "Aún no hay proveedores"
+        empty_subtitle: "Agrega tu primer proveedor para empezar."
+        columns:
+          code: "Código"
+          name: "Nombre"
+          contact: "Contacto"
+          rfc: "RFC"
+          status: "Estado"
+          actions: "Acciones"
+      form:
+        code: "Código"
+        code_placeholder: "ej. SUP-0001"
+        name: "Nombre"
+        name_placeholder: "Nombre completo o razón social"
+        email: "Correo electrónico"
+        email_placeholder: "correo@ejemplo.com"
+        phone: "Teléfono"
+        phone_placeholder: "55 1234 5678"
+        rfc: "RFC"
+        rfc_placeholder: "XAXX010101000"
+        fiscal_regime: "Régimen fiscal"
+        fiscal_regime_blank: "Selecciona un régimen fiscal"
+        postal_code: "Código postal"
+        postal_code_placeholder: "00000"
+        status: "Estado"
+        notes: "Notas"
+        notes_placeholder: "Información adicional del proveedor."
+        cancel: "Cancelar"
+        create: "Crear proveedor"
+        update: "Actualizar proveedor"
+      show:
+        title: "Detalles del proveedor"
+        subtitle: "Revisa los datos registrados del proveedor."
+        back: "Volver a proveedores"
+        fields:
+          code: "Código"
+          name: "Nombre"
+          email: "Correo electrónico"
+          phone: "Teléfono"
+          rfc: "RFC"
+          fiscal_regime: "Régimen fiscal"
+          postal_code: "Código postal"
+          status: "Estado"
+          notes: "Notas"
+      new:
+        title: "Nuevo proveedor"
+        subtitle: "Agrega un proveedor a tu catálogo."
+      edit:
+        title: "Editar %{name}"
+        subtitle: "Actualiza los datos del proveedor."

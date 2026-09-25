@@ -1,0 +1,13 @@
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <div class="border-b border-slate-100 px-6 py-5">
+    <h1 class="font-jakarta text-xl font-bold text-slate-900">
+      <%= supplier.persisted? ? t('admin.suppliers.edit.title', name: supplier.name) : t('admin.suppliers.new.title') %>
+    </h1>
+    <p class="mt-1 text-sm text-slate-500">
+      <%= supplier.persisted? ? t('admin.suppliers.edit.subtitle') : t('admin.suppliers.new.subtitle') %>
+    </p>
+  </div>
+  <div class="px-6 py-6">
+    <%= render 'form', supplier: supplier %>
+  </div>
+</div>

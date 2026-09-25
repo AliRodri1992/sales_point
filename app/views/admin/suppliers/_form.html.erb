@@ -1,0 +1,84 @@
+<%= form_with model: [:admin, supplier], class: 'space-y-5' do |form| %>
+  <% if supplier.errors[:base].any? %>
+    <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      <%= supplier.errors.full_messages_for(:base).first %>
+    </div>
+  <% end %>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <%= form.label :code, t('admin.suppliers.form.code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :code, data: { autofocus: true },
+                          class: "input-field w-full rounded-xl #{form_state_classes(supplier, :code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.suppliers.form.code_placeholder') %>
+      <%= error_message_for(supplier, :code) %>
+    </div>
+    <div>
+      <%= form.label :name, t('admin.suppliers.form.name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :name,
+                          class: "input-field w-full rounded-xl #{form_state_classes(supplier, :name)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.suppliers.form.name_placeholder') %>
+      <%= error_message_for(supplier, :name) %>
+    </div>
+    <div>
+      <%= form.label :email, t('admin.suppliers.form.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.email_field :email,
+                           class: "input-field w-full rounded-xl #{form_state_classes(supplier, :email)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                           placeholder: t('admin.suppliers.form.email_placeholder') %>
+      <%= error_message_for(supplier, :email) %>
+    </div>
+    <div>
+      <%= form.label :phone, t('admin.suppliers.form.phone'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.telephone_field :phone,
+                               class: "input-field w-full rounded-xl #{form_state_classes(supplier, :phone)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                               placeholder: t('admin.suppliers.form.phone_placeholder') %>
+      <%= error_message_for(supplier, :phone) %>
+    </div>
+    <div>
+      <%= form.label :rfc, t('admin.suppliers.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :rfc, maxlength: 13,
+                          class: "input-field w-full rounded-xl #{form_state_classes(supplier, :rfc)} px-4 py-3 text-sm uppercase text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.suppliers.form.rfc_placeholder') %>
+      <%= error_message_for(supplier, :rfc) %>
+    </div>
+    <div>
+      <%= form.label :sat_fiscal_regime_id, t('admin.suppliers.form.fiscal_regime'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.collection_select :sat_fiscal_regime_id, @fiscal_regimes, :id,
+                                 ->(regime) { "#{regime.code} — #{regime.description}" },
+                                 { include_blank: t('admin.suppliers.form.fiscal_regime_blank') },
+                                 class: "input-field w-full rounded-xl #{form_state_classes(supplier, :sat_fiscal_regime_id)} px-4 py-3 text-sm text-slate-800" %>
+      <%= error_message_for(supplier, :sat_fiscal_regime_id) %>
+    </div>
+    <div>
+      <%= form.label :postal_code, t('admin.suppliers.form.postal_code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :postal_code, maxlength: 5, inputmode: 'numeric',
+                          class: "input-field w-full rounded-xl #{form_state_classes(supplier, :postal_code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.suppliers.form.postal_code_placeholder') %>
+      <%= error_message_for(supplier, :postal_code) %>
+    </div>
+    <% if supplier.persisted? %>
+      <div>
+        <%= form.label :status, t('admin.suppliers.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.select :status,
+                        options_for_select(Supplier.statuses.keys.map { |status| [t("admin.suppliers.statuses.#{status}"), status] }, supplier.status || 'active'),
+                        {},
+                        class: "input-field w-full rounded-xl #{form_state_classes(supplier, :status)} px-4 py-3 text-sm text-slate-800" %>
+        <%= error_message_for(supplier, :status) %>
+      </div>
+    <% end %>
+    <div class="sm:col-span-2">
+      <%= form.label :notes, t('admin.suppliers.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_area :notes, rows: 3,
+                         class: "input-field w-full rounded-xl #{form_state_classes(supplier, :notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                         placeholder: t('admin.suppliers.form.notes_placeholder') %>
+      <%= error_message_for(supplier, :notes) %>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
+    <%= link_to t('admin.suppliers.form.cancel'), admin_suppliers_path,
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
+    <%= form.submit supplier.persisted? ? t('admin.suppliers.form.update') : t('admin.suppliers.form.create'),
+                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+  </div>
+<% end %>

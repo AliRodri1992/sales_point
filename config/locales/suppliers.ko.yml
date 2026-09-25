@@ -1,0 +1,82 @@
+ko:
+  admin:
+    breadcrumbs:
+      suppliers: "공급업체"
+    suppliers:
+      created: "공급업체가 성공적으로 생성되었습니다"
+      updated: "공급업체가 성공적으로 수정되었습니다"
+      destroyed: "공급업체가 성공적으로 삭제되었습니다"
+      errors:
+        duplicate: "공급업체 코드 또는 RFC가 이미 등록되어 있습니다."
+        unauthorized: "공급업체를 관리할 권한이 없습니다."
+      confirm:
+        cancel: "취소"
+      statuses:
+        active: "활성"
+        inactive: "비활성"
+      index:
+        title: "공급업체"
+        subtitle: "비즈니스 공급업체를 관리합니다."
+        new: "새 공급업체"
+        show: "공급업체 보기"
+        edit: "수정"
+        delete: "삭제"
+        confirm_delete: "이 공급업체를 삭제하시겠습니까?"
+        card_title: "등록된 공급업체"
+        total_count: "등록된 공급업체 %{count}개"
+        search_placeholder: "코드, 이름, 이메일, 전화번호 또는 RFC로 검색..."
+        filters:
+          all_statuses: "모든 상태"
+          apply: "적용"
+        pagination:
+          per_page_label: "표시"
+        empty_title: "아직 공급업체가 없습니다"
+        empty_subtitle: "첫 번째 공급업체를 추가하여 시작하세요."
+        columns:
+          code: "코드"
+          name: "이름"
+          contact: "연락처"
+          rfc: "세금 ID"
+          status: "상태"
+          actions: "작업"
+      form:
+        code: "코드"
+        code_placeholder: "예. SUP-0001"
+        name: "이름"
+        name_placeholder: "전체 이름 또는 법인명"
+        email: "이메일"
+        email_placeholder: "email@example.com"
+        phone: "전화번호"
+        phone_placeholder: "55 1234 5678"
+        rfc: "RFC"
+        rfc_placeholder: "XAXX010101000"
+        fiscal_regime: "세금 체계"
+        fiscal_regime_blank: "세금 체계를 선택하세요"
+        postal_code: "우편번호"
+        postal_code_placeholder: "00000"
+        status: "상태"
+        notes: "메모"
+        notes_placeholder: "공급업체 추가 정보."
+        cancel: "취소"
+        create: "공급업체 생성"
+        update: "공급업체 수정"
+      show:
+        title: "공급업체 상세"
+        subtitle: "등록된 공급업체 정보를 확인합니다."
+        back: "공급업체로 돌아가기"
+        fields:
+          code: "코드"
+          name: "이름"
+          email: "이메일"
+          phone: "전화번호"
+          rfc: "세금 ID"
+          fiscal_regime: "세금 체계"
+          postal_code: "우편번호"
+          status: "상태"
+          notes: "메모"
+      new:
+        title: "새 공급업체"
+        subtitle: "카탈로그에 공급업체를 추가합니다."
+      edit:
+        title: "%{name} 수정"
+        subtitle: "공급업체 정보를 업데이트합니다."

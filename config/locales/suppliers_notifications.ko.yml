@@ -1,0 +1,10 @@
+ko:
+  admin:
+    shared:
+      notifications:
+        types:
+          supplier: "공급업체"
+        supplier:
+          created: "'%{name}' 공급업체가 생성되었습니다"
+          updated: "'%{name}' 공급업체가 수정되었습니다"
+          destroyed: "'%{name}' 공급업체가 삭제되었습니다"

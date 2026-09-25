@@ -1,0 +1,10 @@
+es:
+  admin:
+    shared:
+      notifications:
+        types:
+          supplier: "Proveedor"
+        supplier:
+          created: "Se creó el proveedor '%{name}'"
+          updated: "Se actualizó el proveedor '%{name}'"
+          destroyed: "Se eliminó el proveedor '%{name}'"

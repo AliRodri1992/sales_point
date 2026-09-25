@@ -1,0 +1,82 @@
+en:
+  admin:
+    breadcrumbs:
+      suppliers: "Suppliers"
+    suppliers:
+      created: "Supplier created successfully"
+      updated: "Supplier updated successfully"
+      destroyed: "Supplier deleted successfully"
+      errors:
+        duplicate: "The supplier code or RFC is already registered."
+        unauthorized: "You are not authorized to manage suppliers."
+      confirm:
+        cancel: "Cancel"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+      index:
+        title: "Suppliers"
+        subtitle: "Manage your business suppliers."
+        new: "New supplier"
+        show: "Show supplier"
+        edit: "Edit"
+        delete: "Delete"
+        confirm_delete: "Are you sure you want to delete this supplier?"
+        card_title: "Registered suppliers"
+        total_count: "%{count} suppliers registered"
+        search_placeholder: "Search by code, name, email, phone or RFC..."
+        filters:
+          all_statuses: "All statuses"
+          apply: "Apply"
+        pagination:
+          per_page_label: "Show"
+        empty_title: "No suppliers yet"
+        empty_subtitle: "Add your first supplier to get started."
+        columns:
+          code: "Code"
+          name: "Name"
+          contact: "Contact"
+          rfc: "Tax ID"
+          status: "Status"
+          actions: "Actions"
+      form:
+        code: "Code"
+        code_placeholder: "e.g. SUP-0001"
+        name: "Name"
+        name_placeholder: "Full name or legal business name"
+        email: "Email address"
+        email_placeholder: "email@example.com"
+        phone: "Phone"
+        phone_placeholder: "55 1234 5678"
+        rfc: "Tax ID"
+        rfc_placeholder: "XAXX010101000"
+        fiscal_regime: "Tax regime"
+        fiscal_regime_blank: "Select a tax regime"
+        postal_code: "Postal code"
+        postal_code_placeholder: "00000"
+        status: "Status"
+        notes: "Notes"
+        notes_placeholder: "Additional supplier information."
+        cancel: "Cancel"
+        create: "Create supplier"
+        update: "Update supplier"
+      show:
+        title: "Supplier details"
+        subtitle: "Review the supplier's registered information."
+        back: "Back to suppliers"
+        fields:
+          code: "Code"
+          name: "Name"
+          email: "Email address"
+          phone: "Phone"
+          rfc: "Tax ID"
+          fiscal_regime: "Tax regime"
+          postal_code: "Postal code"
+          status: "Status"
+          notes: "Notes"
+      new:
+        title: "New supplier"
+        subtitle: "Add a supplier to your catalog."
+      edit:
+        title: "Edit %{name}"
+        subtitle: "Update the supplier details."
