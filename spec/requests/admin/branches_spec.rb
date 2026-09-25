@@ -19,6 +19,29 @@ RSpec.describe 'Admin::Branches', type: :request do
   end
 
   describe 'POST /admin/branches' do
+
+    it 'shows validation messages below the corresponding fields' do
+      post admin_branches_path, params: {
+        branch: {
+          name: '',
+          phone: '5551234567',
+          status: true,
+          address_attributes: {
+            street: 'Av. Reforma',
+            exterior_number: '100',
+            city: 'Cuautitlán',
+            state: 'Estado de México',
+            country: 'MX',
+            postal_code: ''
+          }
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Nombre no puede estar vacío.')
+      expect(response.body).to include('Código postal no puede estar vacío.')
+    end
+
     it 'creates a branch, address and notification' do
       expect do
         post admin_branches_path, params: {

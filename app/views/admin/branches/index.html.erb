@@ -12,17 +12,6 @@
     </button>
   </div>
 
-  <% if @branch&.errors&.any? %>
-    <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-      <p class="font-semibold">No se pudo guardar la sucursal.</p>
-      <ul class="mt-1 list-inside list-disc">
-        <% @branch.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
   <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
     <% if @branches.any? %>
       <div class="hidden overflow-x-auto md:block">
@@ -175,6 +164,9 @@
           <%= form.label :name, 'Nombre', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
           <%= form.text_field :name, required: true, data: { branches_target: 'name' },
                               class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+          <% @branch.errors[:name].each do |message| %>
+            <p class="mt-1.5 text-xs font-medium text-red-600">Nombre <%= message %>.</p>
+          <% end %>
         </div>
 
         <div>
@@ -203,42 +195,66 @@
                 <%= address_form.label :exterior_number, 'No. exterior', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :exterior_number, data: { branches_target: 'exteriorNumber' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:street].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Calle <%= message %>.</p>
+                <% end %>
+                <% address_form.object.errors[:exterior_number].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">No. exterior <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :interior_number, 'No. interior', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :interior_number, data: { branches_target: 'interiorNumber' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:interior_number].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">No. interior <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :neighborhood, 'Colonia', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :neighborhood, data: { branches_target: 'neighborhood' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:neighborhood].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Colonia <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :postal_code, 'Código postal', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :postal_code, required: true, data: { branches_target: 'postalCode' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:postal_code].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Código postal <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :city, 'Ciudad', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :city, data: { branches_target: 'city' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:city].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Ciudad <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :state, 'Estado', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :state, data: { branches_target: 'state' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:state].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Estado <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :country, 'País', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :country, required: true, data: { branches_target: 'country' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:country].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">País <%= message %>.</p>
+                <% end %>
               </div>
             </div>
           </div>
