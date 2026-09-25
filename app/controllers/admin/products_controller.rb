@@ -70,17 +70,17 @@ module Admin
       # broadcast_products_update  # Temporarily disabled for debugging
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
-      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.index.not_found'))
+      redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))
     rescue StandardError => e
       Rails.logger.error "Error deleting product #{params[:id]}: #{e.message}"
-      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.destroy_failed'))
+      redirect_back_or_to(admin_products_path, alert: t('admin.products.destroy_failed'))
     end
 
     private
 
     def set_product
       # Try to find by ID first (if numeric), otherwise by slug
-      if params[:id].to_s =~ /\A\d+\z/
+      if /\A\d+\z/.match?(params[:id].to_s)
         @product = Product.not_deleted.find_by(id: params[:id])
       else
         @product = Product.not_deleted.find_by(slug: params[:id])
@@ -88,17 +88,17 @@ module Admin
         if @product.nil?
           search_term = CGI.unescape(params[:id])
           @product = Product.not_deleted
-                          .where('lower(slug) = lower(?)', search_term)
-                          .or(Product.not_deleted.where(code: search_term.upcase))
-                          .first
+                            .where('lower(slug) = lower(?)', search_term)
+                            .or(Product.not_deleted.where(code: search_term.upcase))
+                            .first
         end
       end
-      raise ActiveRecord::RecordNotFound, "Product not found" unless @product
+      raise ActiveRecord::RecordNotFound, 'Product not found' unless @product
     end
 
     def product_not_found(exception = nil)
       Rails.logger.error "Product not found: #{exception&.message}"
-      redirect_back(fallback_location: admin_products_path, alert: t('admin.products.index.not_found'))
+      redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))
     end
 
     def product_params

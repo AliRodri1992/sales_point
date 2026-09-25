@@ -27,7 +27,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('admin.products.index.total_count',
-                                               count: Product.not_deleted.count))
+                                              count: Product.not_deleted.count))
     end
 
     it 'shows the total count of products (not just page count)' do

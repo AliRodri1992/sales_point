@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :product do
-    sequence(:code) { |n| "PROD-%03d" % n }
+    sequence(:code) { |n| format('PROD-%03d', n) }
     sequence(:name) { |n| "Product #{n}" }
     sequence(:slug) { |n| "product-#{n}" }
-    description { "A sample product for testing." }
+    description { 'A sample product for testing.' }
     price { 25.50 }
     cost { 12.00 }
     stock { 100.000 }

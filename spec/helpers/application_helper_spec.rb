@@ -142,10 +142,10 @@ RSpec.describe ApplicationHelper, type: :helper do
         labels = helper.breadcrumb_items.pluck(:label)
 
         expect(labels).to eq([
-                                t('admin.breadcrumbs.home'),
-                                t('admin.breadcrumbs.products'),
-                                t('admin.products.new.title')
-                              ])
+                               t('admin.breadcrumbs.home'),
+                               t('admin.breadcrumbs.products'),
+                               t('admin.products.new.title')
+                             ])
       end
     end
 
