@@ -52,7 +52,7 @@ module Admin
       if @product.update(product_params)
         load_products
         notify_product(current_user, @product, 'updated')
-        # broadcast_products_update  # Temporarily disabled for debugging
+        broadcast_products_update
         redirect_to admin_products_path, flash: { swal_message: t('admin.products.updated') }
       else
         render :edit, status: :unprocessable_content
@@ -66,7 +66,7 @@ module Admin
       @product.update!(deleted_at: Time.current, updated_at: Time.current)
       load_products
       notify_product(current_user, @product, 'destroyed')
-      # broadcast_products_update  # Temporarily disabled for debugging
+      broadcast_products_update
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
       redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))

@@ -83,7 +83,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'products_list', html: kind_of(String))
+        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path(format: :turbo_stream),
            params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
@@ -151,7 +151,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'products_list', html: kind_of(String))
+        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
 
       patch admin_product_path(product, format: :turbo_stream),
             params: { product: { name: 'New Name', code: 'old_code' } }
@@ -202,7 +202,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'products_list', html: kind_of(String))
+        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
 
       delete admin_product_path(product, format: :turbo_stream)
     end
