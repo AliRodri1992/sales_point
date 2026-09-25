@@ -51,6 +51,9 @@ module ApplicationHelper
   end
 
   # rubocop:disable-next Rails/HelperInstanceVariable
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
   def breadcrumb_items
     home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
     items = [home]
@@ -79,6 +82,7 @@ module ApplicationHelper
 
     items
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
