@@ -1,0 +1,40 @@
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <div class="border-b border-slate-100 px-6 py-5">
+    <h1 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.clients.show.title') %></h1>
+    <p class="mt-1 text-sm text-slate-500"><%= t('admin.clients.show.subtitle') %></p>
+  </div>
+
+  <dl class="grid gap-x-8 px-6 py-2 sm:grid-cols-2">
+    <% fields = [
+      ['code', client.code],
+      ['name', client.name],
+      ['email', client.email.presence || '—'],
+      ['phone', client.phone.presence || '—'],
+      ['rfc', client.rfc.presence || '—'],
+      ['fiscal_regime', client.sat_fiscal_regime ? "#{client.sat_fiscal_regime.code} — #{client.sat_fiscal_regime.description}" : '—'],
+      ['postal_code', client.postal_code.presence || '—'],
+      ['credit_limit', number_to_currency(client.credit_limit)],
+      ['status', t("admin.clients.statuses.#{client.status}")],
+      ['notes', client.notes.presence || '—']
+    ] %>
+
+    <% fields.each do |key, value| %>
+      <div class="border-b border-slate-100 py-4 <%= key == 'notes' ? 'sm:col-span-2' : '' %>">
+        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <%= t("admin.clients.show.fields.#{key}") %>
+        </dt>
+        <dd class="mt-1 break-words text-sm font-medium text-slate-900"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+
+  <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
+    <%= link_to t('admin.clients.show.back'), admin_clients_path,
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
+    <%= link_to edit_admin_client_path(client),
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+      <%= icon('pencil-square', class: 'size-4') %>
+      <%= t('admin.clients.index.edit') %>
+    <% end %>
+  </div>
+</div>

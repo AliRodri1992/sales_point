@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     resources :languages
     resources :categories
     resources :products
+    resources :clients
     resources :branches, only: %i[index show new create edit update destroy]
   end
   resources :system_roles do
