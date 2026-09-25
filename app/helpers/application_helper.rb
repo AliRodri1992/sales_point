@@ -50,7 +50,7 @@ module ApplicationHelper
                 class: 'mt-1 text-xs text-rose-600')
   end
 
-  # rubocop:disable Rails/HelperInstanceVariable
+  # rubocop:disable-next Rails/HelperInstanceVariable
   def breadcrumb_items
     home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
     items = [home]
@@ -79,7 +79,6 @@ module ApplicationHelper
 
     items
   end
-  # rubocop:enable Rails/HelperInstanceVariable
 
   def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
