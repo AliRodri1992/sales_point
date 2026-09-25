@@ -1,6 +1,6 @@
 class AddPolymorphicAddressToBranches < ActiveRecord::Migration[8.1]
   def up
-    add_reference :addresses, :addressable, polymorphic: true, index: true
+    add_reference :addresses, :addressable, polymorphic: true, index: false
 
     say_with_time 'Migrating existing branch addresses' do
       execute <<~SQL.squish
