@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :address do
+    association :addressable, factory: :branch
     street { Faker::Address.street_name }
     exterior_number { Faker::Address.building_number }
     interior_number { Faker::Address.secondary_address }
