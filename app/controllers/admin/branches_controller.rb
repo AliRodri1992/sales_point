@@ -64,8 +64,16 @@ module Admin
       authorize @branch
       @branch.update!(deleted_at: Time.current)
       notify_branch_change('destroyed')
-      redirect_to admin_branches_path,
-                  flash: { swal_message: t('admin.branches.destroyed') }
+      load_branches
+      @can_manage_branches = policy(Branch).create?
+
+      respond_to do |format|
+        format.turbo_stream { @swal_message = t('admin.branches.destroyed') }
+        format.html do
+          redirect_to admin_branches_path,
+                      flash: { swal_message: t('admin.branches.destroyed') }
+        end
+      end
     end
 
     private

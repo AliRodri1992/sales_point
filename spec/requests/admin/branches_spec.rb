@@ -238,6 +238,19 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(notification.event.params['user_name']).to eq(user.display_name)
     end
 
+    it 'updates the list and shows a success toast for Turbo requests' do
+      allow(user).to receive(:admin?).and_return(true)
+      branch = create(:branch, name: 'Sucursal Centro')
+
+      delete admin_branch_path(branch), headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('branches_list')
+      expect(response.body).not_to include('Sucursal Centro')
+      expect(response.body).to include(t('admin.branches.destroyed'))
+      expect(branch.reload.deleted_at).to be_present
+    end
+
     it 'forbids branch-only users from deleting branches' do
       branch = create(:branch)
       create(:user_role, user:, system_role: branch_role, branch:)
