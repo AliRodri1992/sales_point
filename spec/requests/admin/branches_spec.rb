@@ -6,6 +6,8 @@ RSpec.describe 'Admin::Branches', type: :request do
   before { sign_in user }
 
   describe 'GET /admin/branches' do
+    before { allow(user).to receive(:admin?).and_return(true) }
+
     it 'renders the branches page' do
       create(:branch, name: 'Sucursal Centro')
       get admin_branches_path
@@ -30,10 +32,25 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body.scan('<tr class="transition hover:bg-slate-50">').size).to eq(5)
       expect(response.body).to include('value="5" selected="selected"')
     end
+
+    it 'does not expose branches outside the current user access' do
+      allow(user).to receive(:admin?).and_return(false)
+      branch_role = create(:system_role, :branch)
+      assigned_branch = create(:branch, name: 'Sucursal Asignada')
+      create(:branch, name: 'Sucursal Restringida')
+      create(:user_role, user:, system_role: branch_role, branch: assigned_branch)
+
+      get admin_branches_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Sucursal Asignada')
+      expect(response.body).not_to include('Sucursal Restringida')
+    end
   end
 
   describe 'GET /admin/branches/new' do
     it 'renders the new branch screen without a modal' do
+      allow(user).to receive(:admin?).and_return(true)
       get new_admin_branch_path
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Nueva sucursal')
@@ -44,6 +61,8 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'POST /admin/branches' do
     it 'shows validation messages below the corresponding fields' do
+      allow(user).to receive(:admin?).and_return(true)
+
       post admin_branches_path, params: {
         branch: {
           name: '',
@@ -59,12 +78,15 @@ RSpec.describe 'Admin::Branches', type: :request do
           }
         }
       }
+
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('Nombre no puede estar vacío.')
       expect(response.body).to include('Código postal no puede estar vacío.')
     end
 
     it 'creates a branch, address and notification' do
+      allow(user).to receive(:admin?).and_return(true)
+
       expect do
         post admin_branches_path, params: {
           branch: {
@@ -95,18 +117,25 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'GET /admin/branches/:id/edit' do
     it 'renders the edit branch screen without a modal' do
+      branch_role = create(:system_role, :branch)
       branch = create(:branch, name: 'Sucursal Centro')
+      create(:user_role, user:, system_role: branch_role, branch:)
+
       get edit_admin_branch_path(branch)
+
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Editar sucursal')
-      expect(response.body).to include("action="/admin/branches/#{branch.id}"")
+      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
       expect(response.body).not_to include('data-branches-target="modal"')
     end
   end
 
   describe 'PATCH /admin/branches/:id' do
     it 'updates a branch and creates a notification' do
+      branch_role = create(:system_role, :branch)
       branch = create(:branch, name: 'Sucursal Centro')
+      create(:user_role, user:, system_role: branch_role, branch:)
+
       expect do
         patch admin_branch_path(branch), params: {
           branch: {
@@ -115,6 +144,7 @@ RSpec.describe 'Admin::Branches', type: :request do
           }
         }
       end.to change(Noticed::Notification, :count).by(1)
+
       expect(response).to redirect_to(admin_branches_path)
       expect(branch.reload.name).to eq('Sucursal Norte')
       expect(branch.address.reload.city).to eq('Tlalnepantla')
@@ -126,16 +156,28 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'DELETE /admin/branches/:id' do
     it 'soft deletes a branch and creates a notification with the actor' do
+      branch_role = create(:system_role, :branch)
       branch = create(:branch)
+      create(:user_role, user:, system_role: branch_role, branch:)
+
       expect do
         delete admin_branch_path(branch)
       end.to change(Noticed::Notification, :count).by(1)
+
       expect(response).to redirect_to(admin_branches_path)
       expect(branch.reload.deleted_at).to be_present
       notification = user.notifications.last
       expect(notification.event.record).to eq(branch)
       expect(notification.event.params['action']).to eq('destroyed')
       expect(notification.event.params['user_name']).to eq(user.display_name)
+    end
+  end
+
+  describe 'authorization' do
+    it 'denies branch creation to a user without system administration access' do
+      post admin_branches_path, params: { branch: { name: 'No autorizada', status: true } }
+
+      expect(response).to have_http_status(:forbidden)
     end
   end
 end

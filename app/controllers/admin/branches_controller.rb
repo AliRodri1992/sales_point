@@ -10,20 +10,24 @@ module Admin
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
 
     def index
+      authorize Branch
       load_branches
     end
 
     def new
       @branch = Branch.new
+      authorize @branch
       @branch.build_address
     end
 
     def edit
+      authorize @branch
       @branch.build_address unless @branch.address
     end
 
     def create
       @branch = Branch.new(branch_params)
+      authorize @branch
 
       if @branch.save
         notify_branch_change('created')
@@ -36,6 +40,8 @@ module Admin
     end
 
     def update
+      authorize @branch
+
       if @branch.update(branch_params)
         notify_branch_change('updated')
         redirect_to admin_branches_path,
@@ -47,6 +53,7 @@ module Admin
     end
 
     def destroy
+      authorize @branch
       @branch.update!(deleted_at: Time.current)
       notify_branch_change('destroyed')
       redirect_to admin_branches_path,
@@ -60,7 +67,7 @@ module Admin
     end
 
     def load_branches
-      scope = Branch.where(deleted_at: nil).includes(:address).order(:name)
+      scope = policy_scope(Branch).includes(:address).order(:name)
       @total_count = scope.count
       @per_page = per_page_param
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
