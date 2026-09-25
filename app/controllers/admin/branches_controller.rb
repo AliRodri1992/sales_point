@@ -4,7 +4,7 @@ module Admin
   class BranchesController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
-    before_action :set_branch, only: %i[edit update destroy]
+    before_action :set_branch, only: %i[update destroy]
 
     def index
       @branches = Branch.where(deleted_at: nil).order(:name)
