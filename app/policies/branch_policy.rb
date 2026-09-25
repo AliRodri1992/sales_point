@@ -6,7 +6,7 @@ class BranchPolicy < ApplicationPolicy
   end
 
   def show?
-    manage_assigned_branch?
+    admin? || assigned_to_branch?
   end
 
   def create?
@@ -14,20 +14,19 @@ class BranchPolicy < ApplicationPolicy
   end
 
   def update?
-    manage_assigned_branch?
+    admin?
   end
 
   def destroy?
-    manage_assigned_branch?
+    admin?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      return scope.where(deleted_at: nil) if user.admin?
+      active_branches = scope.not_deleted
+      return active_branches if user.admin?
 
-      scope
-        .where(deleted_at: nil)
-        .where(id: active_branch_ids)
+      active_branches.where(id: active_branch_ids)
     end
 
     private
@@ -49,9 +48,9 @@ class BranchPolicy < ApplicationPolicy
     user.user_roles.active.where.not(branch_id: nil).exists?
   end
 
-  def manage_assigned_branch?
-    return false unless record.is_a?(Branch)
+  def assigned_to_branch?
+    return false unless user && record.is_a?(Branch)
 
-    admin? || user.user_roles.active.where(branch_id: record.id).exists?
+    user.user_roles.active.exists?(branch_id: record.id)
   end
 end
