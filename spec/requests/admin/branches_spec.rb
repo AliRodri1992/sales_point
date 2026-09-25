@@ -165,8 +165,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include('Nombre no puede estar vacío.')
-      expect(response.body).to include('Código postal no puede estar vacío.')
+      expect(response.body).to include('Nombre no puede estar vacío')
+      expect(response.body).to include('Código postal no puede estar vacío')
     end
 
     it 'creates a branch, address and notification' do

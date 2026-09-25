@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Branch < ApplicationRecord
   has_one :address, as: :addressable, dependent: :destroy
   accepts_nested_attributes_for :address
@@ -7,5 +9,15 @@ class Branch < ApplicationRecord
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 
-  validates :name, presence: true
+  validates :name,
+            presence: true,
+            length: { in: 2..100 }
+
+  validates :phone,
+            format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
+            length: { in: 7..20 },
+            allow_blank: true
+
+  validates :status,
+            inclusion: { in: [true, false] }
 end
