@@ -38,7 +38,7 @@ module Admin
       authorize @branch
 
       if @branch.save
-        notify_branch_change('created')
+        notify_branch(current_user, @branch, 'created')
         redirect_to admin_branches_path,
                     flash: { swal_message: t('admin.branches.created') }
       else
@@ -51,7 +51,7 @@ module Admin
       authorize @branch
 
       if @branch.update(branch_params)
-        notify_branch_change('updated')
+        notify_branch(current_user, @branch, 'updated')
         redirect_to admin_branches_path,
                     flash: { swal_message: t('admin.branches.updated') }
       else
@@ -63,7 +63,7 @@ module Admin
     def destroy
       authorize @branch
       @branch.update!(deleted_at: Time.current)
-      notify_branch_change('destroyed')
+      notify_branch(current_user, @branch, 'destroyed')
       load_branches
       @can_manage_branches = policy(Branch).create?
 
@@ -109,17 +109,12 @@ module Admin
       )
     end
 
-    def notify_branch_change(action)
+    def notify_branch(user, branch, action)
       BranchNotification
-        .with(
-          action: action,
-          record: @branch,
-          user: current_user,
-          user_name: current_user.display_name
-        )
-        .deliver(current_user, enqueue_job: false)
+        .with(action: action, record: branch, user:)
+        .deliver(user, enqueue_job: false)
 
-      current_user.broadcast_notifications_refresh
+      user.broadcast_notifications_refresh
     end
 
     def forbidden

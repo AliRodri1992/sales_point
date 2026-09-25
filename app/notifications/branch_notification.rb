@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class BranchNotification < Noticed::Event
-  required_params :action, :user, :user_name
+  required_param :action
+  required_param :user
 
   delegate :name, to: :record
 
@@ -9,20 +10,17 @@ class BranchNotification < Noticed::Event
     params[:action] || 'updated'
   end
 
+  # The user who triggered the action (the logged-in user in the session).
   def user
     params[:user]
   end
 
-  def user_name
-    params[:user_name].presence || user&.display_name
-  end
-
-  notification_methods do
-    def message
-      t("admin.shared.notifications.branch.#{params[:action]}",
-        name: record.name,
-        user: params[:user_name],
-        default: record.name)
-    end
+  # Human-readable description used by the notifications list and by
+  # any delivery method (email, SMS, …) that needs a summary string.
+  def message
+    t("admin.shared.notifications.branch.#{action}",
+      name: record.name,
+      user: user.display_name,
+      default: record.name)
   end
 end

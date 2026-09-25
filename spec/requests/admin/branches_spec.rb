@@ -150,8 +150,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to redirect_to(admin_branches_path)
       notification = user.notifications.last
       expect(notification.event.params['action']).to eq('created')
-      expect(notification.event.params['user_name']).to eq(user.display_name)
-    end
+          end
 
     it 'forbids branch-only users from creating branches' do
       allow(user).to receive(:admin?).and_return(false)
@@ -206,8 +205,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       notification = user.notifications.last
       expect(notification.event.params['action']).to eq('updated')
-      expect(notification.event.params['user_name']).to eq(user.display_name)
-    end
+          end
 
     it 'forbids branch-only users from updating branches' do
       branch = create(:branch)
@@ -235,8 +233,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       notification = user.notifications.last
       expect(notification.event.record).to eq(branch)
       expect(notification.event.params['action']).to eq('destroyed')
-      expect(notification.event.params['user_name']).to eq(user.display_name)
-    end
+          end
 
     it 'updates the list and shows a success toast for Turbo requests' do
       allow(user).to receive(:admin?).and_return(true)
