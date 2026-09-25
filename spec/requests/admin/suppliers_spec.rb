@@ -74,17 +74,29 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
-  it 'creates, updates and soft deletes with SweetAlert feedback' do
-    post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+  it 'creates, updates and soft deletes with SweetAlert feedback and Noticed' do
+    expect do
+      post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+    end.to change(Supplier, :count).by(1)
+      .and change { user.notifications.count }.by(1)
+
     expect(response).to redirect_to(admin_suppliers_path)
     expect(flash[:swal_message]).to eq('Supplier created successfully')
 
     supplier = Supplier.order(:id).last
-    patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated Supplier' } }
+
+    expect do
+      patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated Supplier' } }
+    end.to change { user.notifications.count }.by(1)
+
     expect(response).to redirect_to(admin_suppliers_path)
     expect(flash[:swal_message]).to eq('Supplier updated successfully')
+    expect(supplier.reload.name).to eq('Updated Supplier')
 
-    delete admin_supplier_path(supplier)
+    expect do
+      delete admin_supplier_path(supplier)
+    end.to change { user.notifications.count }.by(1)
+
     expect(response).to redirect_to(admin_suppliers_path)
     expect(flash[:swal_message]).to eq('Supplier deleted successfully')
     expect(supplier.reload.deleted_at).to be_present
