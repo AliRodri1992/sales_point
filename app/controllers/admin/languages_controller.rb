@@ -29,7 +29,6 @@ module Admin
       if @language.save
         load_languages
         notify_language(current_user, @language, 'created')
-        broadcast_language_selector
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
           format.html do
@@ -45,7 +44,6 @@ module Admin
       if @language.update(language_params)
         load_languages
         notify_language(current_user, @language, 'updated')
-        broadcast_language_selector
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
           format.html do
@@ -61,7 +59,6 @@ module Admin
       @language.update!(deleted_at: Time.current)
       load_languages
       notify_language(current_user, @language, 'destroyed')
-      broadcast_language_selector
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
         format.html do

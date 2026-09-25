@@ -29,7 +29,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+        .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       post admin_languages_path(format: :turbo_stream),
            params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
@@ -61,7 +61,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+        .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       patch admin_language_path(language, format: :turbo_stream),
             params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'active' } }
@@ -98,7 +98,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('languages_catalog', target: 'languages_list', html: kind_of(String))
+        .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       delete admin_language_path(language, format: :turbo_stream)
     end
