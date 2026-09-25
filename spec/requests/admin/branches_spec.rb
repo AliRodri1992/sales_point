@@ -37,6 +37,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       get new_admin_branch_path
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Nueva sucursal')
+      expect(response.body).to include('action="/admin/branches"')
       expect(response.body).not_to include('data-branches-target="modal"')
     end
   end
@@ -98,6 +99,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       get edit_admin_branch_path(branch)
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Editar sucursal')
+      expect(response.body).to include("action="/admin/branches/#{branch.id}"")
       expect(response.body).not_to include('data-branches-target="modal"')
     end
   end
