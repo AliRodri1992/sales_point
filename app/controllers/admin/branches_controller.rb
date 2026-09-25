@@ -18,7 +18,7 @@ module Admin
       if @branch.save
         notify_branch_change('created')
         redirect_to admin_branches_path,
-                    flash: { swal_message: 'Sucursal creada correctamente.' }
+                    flash: { swal_message: t('admin.branches.created') }
       else
         prepare_index
         render :index, status: :unprocessable_content
@@ -29,7 +29,7 @@ module Admin
       if @branch.update(branch_params)
         notify_branch_change('updated')
         redirect_to admin_branches_path,
-                    flash: { swal_message: 'Sucursal actualizada correctamente.' }
+                    flash: { swal_message: t('admin.branches.updated') }
       else
         prepare_index
         render :index, status: :unprocessable_content
@@ -38,9 +38,9 @@ module Admin
 
     def destroy
       @branch.update!(deleted_at: Time.current)
-      notify_branch_change('deleted')
+      notify_branch_change('destroyed')
       redirect_to admin_branches_path,
-                  flash: { swal_message: 'Sucursal eliminada correctamente.' }
+                  flash: { swal_message: t('admin.branches.destroyed') }
     end
 
     private
@@ -76,7 +76,11 @@ module Admin
     end
 
     def notify_branch_change(action)
-      BranchNotification.with(branch: @branch, action: action).deliver(current_user)
+      BranchNotification
+        .with(action: action, record: @branch, user: current_user)
+        .deliver(current_user, enqueue_job: false)
+
+      current_user.broadcast_notifications_refresh
     end
   end
 end

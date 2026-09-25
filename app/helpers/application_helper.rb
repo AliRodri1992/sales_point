@@ -76,6 +76,8 @@ module ApplicationHelper
       items << { label: t('admin.breadcrumbs.languages') }
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
+    when 'admin/branches'
+      items << { label: t('admin.breadcrumbs.branches') }
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end

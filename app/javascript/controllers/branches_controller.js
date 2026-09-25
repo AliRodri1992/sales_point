@@ -1,6 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static values = {
+    newTitle: String,
+    editTitle: String,
+    createSubmit: String,
+    updateSubmit: String
+  }
+
   static targets = [
     "modal",
     "modalTitle",
@@ -20,14 +27,14 @@ export default class extends Controller {
   ]
 
   openCreate() {
-    this.modalTitleTarget.textContent = "Nueva sucursal"
+    this.modalTitleTarget.textContent = this.newTitleValue
     this.formTarget.action = this.createUrl
     this.resetMethod()
     this.nameTarget.value = ""
     this.phoneTarget.value = ""
     this.statusTarget.checked = true
     this.resetAddress()
-    this.submitTarget.textContent = "Guardar sucursal"
+    this.submitTarget.textContent = this.createSubmitValue
     this.showModal()
   }
 
@@ -35,7 +42,7 @@ export default class extends Controller {
     const button = event.currentTarget
     const id = button.dataset.branchId
 
-    this.modalTitleTarget.textContent = "Editar sucursal"
+    this.modalTitleTarget.textContent = this.editTitleValue
     this.formTarget.action = window.location.pathname + "/" + id
     this.setMethod("patch")
     this.nameTarget.value = button.dataset.branchName || ""
@@ -54,7 +61,7 @@ export default class extends Controller {
     const addressIdInput = this.formTarget.querySelector('input[name="branch[address_attributes][id]"]')
     if (addressIdInput) addressIdInput.value = button.dataset.addressId || ""
 
-    this.submitTarget.textContent = "Guardar cambios"
+    this.submitTarget.textContent = this.updateSubmitValue
     this.showModal()
   }
 

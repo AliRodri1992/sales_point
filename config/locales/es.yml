@@ -82,6 +82,7 @@ es:
       dashboard: "Dashboard"
       languages: "Idiomas"
       categories: "Categorías"
+      branches: "Sucursales"
       products: "Productos"
     languages:
       created: "Idioma creado correctamente"
@@ -141,6 +142,59 @@ es:
       edit:
         title: "Editar %{name}"
         subtitle: "Actualiza los datos del idioma."
+    branches:
+      created: "Sucursal creada correctamente."
+      updated: "Sucursal actualizada correctamente."
+      destroyed: "Sucursal eliminada correctamente."
+      confirm_delete: "¿Estás seguro de que deseas eliminar esta sucursal?"
+      statuses:
+        active: "Activa"
+        inactive: "Inactiva"
+      actions:
+        edit: "Editar sucursal"
+        delete: "Eliminar sucursal"
+      index:
+        page_title: "Sucursales | Nexo POS"
+        title: "Sucursales"
+        subtitle: "Administra las sucursales de tu negocio."
+        new: "Nueva sucursal"
+        no_data: "—"
+        columns:
+          branch: "Sucursal"
+          phone: "Teléfono"
+          address: "Dirección"
+          status: "Estado"
+          actions: "Acciones"
+      empty:
+        title: "No hay sucursales"
+        subtitle: "Crea la primera sucursal de tu negocio."
+      form:
+        new_title: "Nueva sucursal"
+        edit_title: "Editar sucursal"
+        subtitle: "Completa los datos de la sucursal."
+        close: "Cerrar"
+        fields:
+          name: "Nombre"
+          phone: "Teléfono"
+          street: "Calle"
+          exterior_number: "No. exterior"
+          interior_number: "No. interior"
+          neighborhood: "Colonia"
+          postal_code: "Código postal"
+          city: "Ciudad"
+          state: "Estado"
+          country: "País"
+        address:
+          title: "Dirección"
+          description: "Captura la dirección para geocodificación y futuras funcionalidades de ubicación."
+        status:
+          active: "Sucursal activa"
+          description: "Permite utilizar la sucursal en el sistema."
+        buttons:
+          cancel: "Cancelar"
+          create: "Guardar sucursal"
+          update: "Guardar cambios"
+
     categories:
       created: "Categoría creada correctamente"
       updated: "Categoría actualizada correctamente"
@@ -382,6 +436,10 @@ es:
           created: "Se creó el producto '%{name}'"
           updated: "Se actualizó el producto '%{name}'"
           destroyed: "Se eliminó el producto '%{name}'"
+        branch:
+          created: "Se creó la sucursal '%{name}'"
+          updated: "Se actualizó la sucursal '%{name}'"
+          destroyed: "Se eliminó la sucursal '%{name}'"
       user_menu:
         toggle: "Menú de usuario"
         my_profile: "Mi perfil"
