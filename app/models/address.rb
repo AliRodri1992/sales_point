@@ -1,4 +1,6 @@
 class Address < ApplicationRecord
+  belongs_to :addressable, polymorphic: true
+
   enum :geocoding_status, {
     pending: 'pending',
     success: 'success',
