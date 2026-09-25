@@ -7,9 +7,16 @@ export default class extends Controller {
     "form",
     "name",
     "phone",
-    "address",
     "status",
-    "submit"
+    "submit",
+    "street",
+    "exteriorNumber",
+    "interiorNumber",
+    "neighborhood",
+    "city",
+    "state",
+    "country",
+    "postalCode"
   ]
 
   openCreate() {
@@ -18,8 +25,8 @@ export default class extends Controller {
     this.resetMethod()
     this.nameTarget.value = ""
     this.phoneTarget.value = ""
-    this.addressTarget.value = ""
     this.statusTarget.checked = true
+    this.resetAddress()
     this.submitTarget.textContent = "Guardar sucursal"
     this.showModal()
   }
@@ -33,8 +40,20 @@ export default class extends Controller {
     this.setMethod("patch")
     this.nameTarget.value = button.dataset.branchName || ""
     this.phoneTarget.value = button.dataset.branchPhone || ""
-    this.addressTarget.value = button.dataset.branchAddress || ""
     this.statusTarget.checked = button.dataset.branchStatus === "true"
+
+    this.streetTarget.value = button.dataset.addressStreet || ""
+    this.exteriorNumberTarget.value = button.dataset.addressExteriorNumber || ""
+    this.interiorNumberTarget.value = button.dataset.addressInteriorNumber || ""
+    this.neighborhoodTarget.value = button.dataset.addressNeighborhood || ""
+    this.cityTarget.value = button.dataset.addressCity || ""
+    this.stateTarget.value = button.dataset.addressState || ""
+    this.countryTarget.value = button.dataset.addressCountry || "MX"
+    this.postalCodeTarget.value = button.dataset.addressPostalCode || ""
+
+    const addressIdInput = this.formTarget.querySelector('input[name="branch[address_attributes][id]"]')
+    if (addressIdInput) addressIdInput.value = button.dataset.addressId || ""
+
     this.submitTarget.textContent = "Guardar cambios"
     this.showModal()
   }
@@ -69,6 +88,20 @@ export default class extends Controller {
 
   resetMethod() {
     this.formTarget.querySelector('input[name="_method"]')?.remove()
+  }
+
+  resetAddress() {
+    this.streetTarget.value = ""
+    this.exteriorNumberTarget.value = ""
+    this.interiorNumberTarget.value = ""
+    this.neighborhoodTarget.value = ""
+    this.cityTarget.value = ""
+    this.stateTarget.value = ""
+    this.countryTarget.value = "MX"
+    this.postalCodeTarget.value = ""
+
+    const addressIdInput = this.formTarget.querySelector('input[name="branch[address_attributes][id]"]')
+    if (addressIdInput) addressIdInput.value = ""
   }
 
   showModal() {
