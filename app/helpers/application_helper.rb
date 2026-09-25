@@ -129,7 +129,7 @@ module ApplicationHelper
     pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
 
-  def page_links(current_page, total_pages, frame: nil, scope: 'admin.products.index.pagination')
+  def page_links(current_page, total_pages, frame: nil, _scope: 'admin.products.index.pagination')
     (1..total_pages).map do |page|
       pagination_link(page, page, page == current_page, frame: frame)
     end
