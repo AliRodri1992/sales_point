@@ -47,6 +47,7 @@ es:
           new_sale: "Nueva venta"
           open_pos: "Abrir POS"
           product: "Producto"
+          branch: "Sucursal"
           add_product: "Agregar producto"
           customer: "Cliente"
           new_customer: "Nuevo cliente"
@@ -191,6 +192,66 @@ es:
           active: "Sucursal activa"
           description: "Permite utilizar la sucursal en el sistema."
         buttons:
+          cancel: "Cancelar"
+          create: "Guardar sucursal"
+          update: "Guardar cambios"
+
+    branches:
+      created: "Sucursal creada correctamente."
+      updated: "Sucursal actualizada correctamente."
+      destroyed: "Sucursal eliminada correctamente."
+      confirm_delete: "¿Estás seguro de que deseas eliminar esta sucursal?"
+      statuses:
+        active: "Activa"
+        inactive: "Inactiva"
+      actions:
+        edit: "Editar sucursal"
+        delete: "Eliminar sucursal"
+      index:
+        page_title: "Sucursales | Nexo POS"
+        title: "Sucursales"
+        subtitle: "Administra las sucursales de tu negocio."
+        new: "Nueva sucursal"
+        no_data: "—"
+        no_phone: "Sin teléfono"
+        no_address: "Sin dirección"
+        columns:
+          branch: "Sucursal"
+          phone: "Teléfono"
+          address: "Dirección"
+          status: "Estado"
+          actions: "Acciones"
+        pagination:
+          per_page_label: "Mostrar"
+          prev: "Anterior"
+          next: "Siguiente"
+          navigation: "Paginación de sucursales"
+      empty:
+        title: "No hay sucursales"
+        subtitle: "Crea la primera sucursal de tu negocio."
+      form:
+        new_title: "Nueva sucursal"
+        edit_title: "Editar sucursal"
+        subtitle: "Completa los datos de la sucursal."
+        fields:
+          name: "Nombre"
+          phone: "Teléfono"
+          street: "Calle"
+          exterior_number: "No. exterior"
+          interior_number: "No. interior"
+          neighborhood: "Colonia"
+          postal_code: "Código postal"
+          city: "Ciudad"
+          state: "Estado"
+          country: "País"
+        address:
+          title: "Dirección"
+          description: "Captura la dirección para geocodificación y futuras funcionalidades de ubicación."
+        status:
+          active: "Sucursal activa"
+          description: "Permite utilizar la sucursal en el sistema."
+        buttons:
+          back: "Volver a sucursales"
           cancel: "Cancelar"
           create: "Guardar sucursal"
           update: "Guardar cambios"
@@ -417,6 +478,7 @@ es:
         new_message: "Nuevo mensaje"
         message_unavailable: "Mensaje no disponible"
         performed_by: "Por %{user}"
+        actor_unknown: "Usuario desconocido"
         empty: "No tienes notificaciones."
         types:
           chat: "Chat"
@@ -437,9 +499,9 @@ es:
           updated: "Se actualizó el producto '%{name}'"
           destroyed: "Se eliminó el producto '%{name}'"
         branch:
-          created: "Se creó la sucursal '%{name}'"
-          updated: "Se actualizó la sucursal '%{name}'"
-          destroyed: "Se eliminó la sucursal '%{name}'"
+          created: "Se creó la sucursal '%{name}' por %{user}"
+          updated: "Se actualizó la sucursal '%{name}' por %{user}"
+          destroyed: "Se eliminó la sucursal '%{name}' por %{user}"
       user_menu:
         toggle: "Menú de usuario"
         my_profile: "Mi perfil"

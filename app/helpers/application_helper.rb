@@ -106,30 +106,30 @@ module ApplicationHelper
     icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
   end
 
-  def pagination_links(total_pages, frame: nil)
+  def pagination_links(total_pages, frame: nil, scope: 'admin.products.index.pagination')
     current_page = (params[:page] || 1).to_i
 
     return '' if total_pages <= 1
 
     links = []
-    links << prev_link(current_page, frame:) if current_page > 1
-    links.concat(page_links(current_page, total_pages, frame:))
-    links << next_link(current_page, total_pages, frame:) if current_page < total_pages
+    links << prev_link(current_page, frame:, scope:) if current_page > 1
+    links.concat(page_links(current_page, total_pages, frame:, scope:))
+    links << next_link(current_page, total_pages, frame:, scope:) if current_page < total_pages
 
     safe_join(links, ' ')
   end
 
-  def prev_link(current_page, frame: nil)
-    label = t('admin.products.index.pagination.prev')
+  def prev_link(current_page, frame: nil, scope: 'admin.products.index.pagination')
+    label = t("#{scope}.prev")
     pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
   end
 
-  def next_link(current_page, total_pages, frame: nil)
-    label = t('admin.products.index.pagination.next')
+  def next_link(current_page, total_pages, frame: nil, scope: 'admin.products.index.pagination')
+    label = t("#{scope}.next")
     pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
 
-  def page_links(current_page, total_pages, frame: nil)
+  def page_links(current_page, total_pages, frame: nil, scope: 'admin.products.index.pagination')
     (1..total_pages).map do |page|
       pagination_link(page, page, page == current_page, frame: frame)
     end

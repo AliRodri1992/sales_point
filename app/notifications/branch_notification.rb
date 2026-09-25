@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class BranchNotification < Noticed::Event
-  required_param :action
-  required_param :user
+  required_params :action, :user, :user_name
 
   delegate :name, to: :record
 
@@ -14,9 +13,16 @@ class BranchNotification < Noticed::Event
     params[:user]
   end
 
-  def message
-    t("admin.shared.notifications.branch.#{action}",
-      name: record.name,
-      default: record.name)
+  def user_name
+    params[:user_name].presence || user&.display_name
+  end
+
+  notification_methods do
+    def message
+      t("admin.shared.notifications.branch.#{params[:action]}",
+        name: record.name,
+        user: params[:user_name],
+        default: record.name)
+    end
   end
 end
