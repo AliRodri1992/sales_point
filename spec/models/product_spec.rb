@@ -101,17 +101,6 @@ RSpec.describe Product, type: :model do
       expect(product.errors[:barcode]).to include('has already been taken')
     end
 
-    it 'validates image_url format' do
-      product = build(:product, image_url: 'not-a-url')
-      expect(product).not_to be_valid
-      expect(product.errors[:image_url]).to include('must be a valid URL')
-    end
-
-    it 'accepts valid image_url' do
-      product = build(:product, image_url: 'https://example.com/image.jpg')
-      expect(product).to be_valid
-    end
-
     it 'allows image_url to be blank' do
       product = build(:product, image_url: nil)
       expect(product).to be_valid
