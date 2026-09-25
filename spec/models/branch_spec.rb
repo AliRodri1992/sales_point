@@ -7,6 +7,10 @@ RSpec.describe Branch, type: :model do
     it { is_expected.to have_many(:users).through(:user_roles) }
   end
 
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:name) }
+  end
+
   describe 'nested address' do
     it 'accepts nested address attributes' do
       branch = build(:branch)

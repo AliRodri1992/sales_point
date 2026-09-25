@@ -77,7 +77,24 @@ module ApplicationHelper
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
     when 'admin/branches'
-      items << { label: t('admin.breadcrumbs.branches') }
+      branches_path = { label: t('admin.breadcrumbs.branches'), path: admin_branches_path }
+
+      case params[:action]
+      when 'new'
+        items.push(branches_path, { label: t('admin.branches.form.new_title') })
+      when 'show'
+        branch_name = @branch&.name || t('admin.branches.form.edit_title')
+        items.push(branches_path, { label: branch_name })
+      when 'edit'
+        branch_name = @branch&.name || t('admin.branches.form.edit_title')
+        items.push(
+          branches_path,
+          { label: branch_name, path: @branch ? admin_branch_path(@branch) : nil },
+          { label: t('admin.branches.form.edit_title') }
+        )
+      else
+        items << branches_path
+      end
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end

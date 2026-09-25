@@ -85,13 +85,15 @@ module Admin
     def load_branches
       scope = policy_scope(Branch).includes(:address).order(:name)
       @total_count = scope.count
-      @per_page = per_page_param
+      @per_page = per_page_param(@total_count)
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
       @current_page = params[:page].to_i.clamp(1, @total_pages)
       @branches = scope.limit(@per_page).offset((@current_page - 1) * @per_page)
     end
 
-    def per_page_param
+    def per_page_param(total_count)
+      return PER_PAGE if total_count <= PER_PAGE
+
       value = params[:per_page].to_i
       PER_PAGE_OPTIONS.include?(value) ? value : PER_PAGE
     end

@@ -18,7 +18,27 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('Sucursal Centro')
     end
 
-    it 'paginates branches with 10 records by default' do
+    it 'does not render pagination controls for 9 branches' do
+      Array.new(9) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+
+      get admin_branches_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('Sucursal 9')
+    end
+
+    it 'does not render pagination controls for exactly 10 branches' do
+      Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+
+      get admin_branches_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('Sucursal 10')
+    end
+
+    it 'paginates branches with 10 records by default when more than 10 exist' do
       Array.new(11) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
@@ -43,6 +63,28 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('value="5" selected="selected"')
     end
 
+    it 'allows selecting 15 records per page' do
+      Array.new(16) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+
+      get admin_branches_path, params: { per_page: 15 }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Sucursal 1')
+      expect(response.body).to include('Sucursal 15')
+      expect(response.body).not_to include('Sucursal 16')
+      expect(response.body).to include('value="15" selected="selected"')
+    end
+
+    it 'ignores a smaller per-page value when exactly 10 branches exist' do
+      Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+
+      get admin_branches_path, params: { per_page: 5 }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Sucursal 10')
+      expect(response.body).not_to include('branches-per-page')
+    end
+
     it 'does not expose branches outside the current user access' do
       allow(user).to receive(:admin?).and_return(false)
       assigned_branch = create(:branch, name: 'Sucursal Asignada')
@@ -65,6 +107,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Nueva sucursal')
+      expect(response.body).to include('href="/admin/branches"')
       expect(response.body).to include('action="/admin/branches"')
       expect(response.body).not_to include('data-branches-target="modal"')
     end
@@ -87,6 +130,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sucursal Centro')
+      expect(response.body).to include('href="/admin/branches"')
       expect(response.body).to include('Av. Reforma')
     end
 
@@ -148,9 +192,15 @@ RSpec.describe 'Admin::Branches', type: :request do
                                                                .and change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
+      expect(flash[:swal_message]).to eq(t('admin.branches.created'))
       notification = user.notifications.last
       expect(notification.event.params['action']).to eq('created')
       expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.message).to eq(
+        t('admin.shared.notifications.branch.created',
+          name: 'Sucursal Centro',
+          user: user.display_name)
+      )
     end
 
     it 'forbids branch-only users from creating branches' do
@@ -172,6 +222,8 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Editar sucursal')
+      expect(response.body).to include('href="/admin/branches"')
+      expect(response.body).to include("href=\"/admin/branches/#{branch.id}\"")
       expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
       expect(response.body).not_to include('data-branches-target="modal"')
     end
@@ -201,12 +253,18 @@ RSpec.describe 'Admin::Branches', type: :request do
       end.to change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
+      expect(flash[:swal_message]).to eq(t('admin.branches.updated'))
       expect(branch.reload.name).to eq('Sucursal Norte')
       expect(branch.address.reload.city).to eq('Tlalnepantla')
 
       notification = user.notifications.last
       expect(notification.event.params['action']).to eq('updated')
       expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.message).to eq(
+        t('admin.shared.notifications.branch.updated',
+          name: 'Sucursal Norte',
+          user: user.display_name)
+      )
     end
 
     it 'forbids branch-only users from updating branches' do
@@ -230,12 +288,18 @@ RSpec.describe 'Admin::Branches', type: :request do
       end.to change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
+      expect(flash[:swal_message]).to eq(t('admin.branches.destroyed'))
       expect(branch.reload.deleted_at).to be_present
 
       notification = user.notifications.last
       expect(notification.event.record).to eq(branch)
       expect(notification.event.params['action']).to eq('destroyed')
       expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.message).to eq(
+        t('admin.shared.notifications.branch.destroyed',
+          name: branch.name,
+          user: user.display_name)
+      )
     end
 
     it 'updates the list and shows a success toast for Turbo requests' do
