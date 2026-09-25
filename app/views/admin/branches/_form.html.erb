@@ -16,17 +16,21 @@
                   url: @branch.persisted? ? admin_branch_path(@branch) : admin_branches_path,
                   class: 'space-y-6 p-6 lg:p-8' do |form| %>
       <div>
-        <%= form.label :name, t('admin.branches.form.fields.name'), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
+        <%= form.label :name,
+                       t('admin.branches.form.fields.name'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <%= form.text_field :name,
                             required: true,
-                            class: "w-full rounded-lg #{form_state_classes(@branch, :name)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+                            class: "input-field w-full rounded-xl #{form_state_classes(@branch, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
         <%= error_message_for(@branch, :name) %>
       </div>
 
       <div>
-        <%= form.label :phone, t('admin.branches.form.fields.phone'), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
+        <%= form.label :phone,
+                       t('admin.branches.form.fields.phone'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <%= form.telephone_field :phone,
-                                 class: "w-full rounded-lg #{form_state_classes(@branch, :phone)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+                                 class: "input-field w-full rounded-xl #{form_state_classes(@branch, :phone)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
         <%= error_message_for(@branch, :phone) %>
       </div>
 
@@ -38,7 +42,7 @@
           </div>
           <%= address_form.hidden_field :id %>
 
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-5 sm:grid-cols-2">
             <% {
               street: 'street',
               exterior_number: 'exterior_number',
@@ -50,10 +54,12 @@
               country: 'country'
             }.each do |attribute, translation_key| %>
               <div class="<%= attribute == :street ? 'sm:col-span-2' : '' %>">
-                <%= address_form.label attribute, t("admin.branches.form.fields.#{translation_key}"), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
+                <%= address_form.label attribute,
+                                       t("admin.branches.form.fields.#{translation_key}"),
+                                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
                 <%= address_form.text_field attribute,
                                             required: !%i[interior_number].include?(attribute),
-                                            class: "w-full rounded-lg #{form_state_classes(address_form.object, attribute)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+                                            class: "input-field w-full rounded-xl #{form_state_classes(address_form.object, attribute)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
                 <%= error_message_for(address_form.object, attribute) %>
               </div>
             <% end %>
