@@ -2,7 +2,7 @@
 
 class LanguagesController < ApplicationController
   def update
-    language = Language.available.find_by!(code: params[:language])
+    language = Language.available.find_by!(code: params[:language].downcase)
 
     session[:language_id] = language.id
 

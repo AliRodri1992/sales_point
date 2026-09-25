@@ -24,3 +24,25 @@ application.register("conversation-form", ConversationFormController)
 
 import ClockController from "./clock_controller"
 application.register("clock", ClockController)
+
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)
+
+import SwalConfirmController from "./swal_confirm_controller"
+application.register("swal-confirm", SwalConfirmController)
+
+import SwalFlashController from "./swal_flash_controller"
+application.register("swal-flash", SwalFlashController)
+
+import LanguagesController from "./languages_controller"
+application.register("languages", LanguagesController)
+
+import LanguagesSearchController from "./languages_search_controller"
+application.register("languages-search", LanguagesSearchController)
+
+import CategoriesController from "./categories_controller"
+application.register("categories", CategoriesController)
+
+import CategoriesSearchController from "./categories_search_controller"
+application.register("categories-search", CategoriesSearchController)
+

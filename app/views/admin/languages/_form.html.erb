@@ -1,0 +1,73 @@
+<%= form_with model: [:admin, language],
+              class: 'space-y-5',
+              data: {
+                controller: 'swal-confirm',
+                turbo_frame: 'language_modal',
+                swal_cancel_text: t('admin.languages.confirm.cancel')
+              } do |form| %>
+  <div class="mx-auto max-w-sm space-y-5">
+    <div class="grid gap-5 sm:grid-cols-1">
+      <div>
+        <%= form.label :name, t('admin.languages.form.name'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name,
+                            data: { autofocus: true },
+                            class: "input-field w-full rounded-xl #{form_state_classes(language, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.languages.form.name_placeholder') %>
+        <%= error_message_for(language, :name) %>
+      </div>
+
+      <div>
+        <%= form.label :code, t('admin.languages.form.code'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :code,
+                            class: "input-field w-full rounded-xl #{form_state_classes(language, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.languages.form.code_placeholder') %>
+        <p class="mt-2 text-xs text-slate-400">
+          <%= t('admin.languages.form.code_hint') %>
+        </p>
+        <%= error_message_for(language, :code) %>
+      </div>
+
+      <div>
+        <%= form.label :flag_iso, t('admin.languages.form.flag_iso'),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :flag_iso,
+                            class: "input-field w-full rounded-xl #{form_state_classes(language, :flag_iso)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            placeholder: t('admin.languages.form.flag_placeholder') %>
+        <p class="mt-2 text-xs text-slate-400">
+          <%= t('admin.languages.form.flag_hint') %>
+        </p>
+        <%= error_message_for(language, :flag_iso) %>
+      </div>
+
+      <% if language.persisted? %>
+        <div>
+          <%= form.label :status, t('admin.languages.form.status'),
+                         class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :status,
+                          options_for_select(
+                            Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] },
+                            language.status || 'active'
+                          ),
+                          {},
+                          class: "input-field w-full rounded-xl #{form_state_classes(language, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(language, :status) %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
+      <button
+        type="button"
+        data-modal-dismiss
+        data-action="modal#close"
+        class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+      >
+        <%= t('admin.languages.form.cancel') %>
+      </button>
+      <%= form.submit language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'),
+                      class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+    </div>
+  </div>
+<% end %>

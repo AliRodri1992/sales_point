@@ -30,7 +30,7 @@
         <a
           href="<%= admin_dashboard_path %>"
           data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>"
-          class="flex items-center gap-3 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-600"
+          class="<%= sidebar_link_classes('dashboard') %>"
         >
           <%= icon("chart-pie", class: "size-5") %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.dashboard') %></span>
@@ -196,7 +196,7 @@
       </p>
 
       <div class="space-y-1">
-        <details class="sidebar-catalog">
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.catalogs') %>"
@@ -208,27 +208,30 @@
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_languages_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.languages') %>"
+              class="<%= sidebar_link_classes('languages', variant: :submenu) %>"
             >
               <%= icon("language", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.languages') %></span>
             </a>
 
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_products_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.products') %>"
+              class="<%= sidebar_link_classes('products', variant: :submenu) %>"
             >
               <%= icon("cube", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
 
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_categories_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
+              class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
             >
               <%= icon("building-storefront", class: "size-4") %>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.areas') %></span>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
             </a>
           </div>
         </details>
@@ -250,7 +253,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
-        <details class="sidebar-catalog">
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
@@ -269,7 +272,7 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.general') %></span>
             </a>
 
-            <details class="sidebar-catalog">
+            <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles') %>>
               <summary
                 class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
               >

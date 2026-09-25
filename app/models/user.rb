@@ -66,10 +66,10 @@ class User < ApplicationRecord
   end
 
   def notifications
-    Noticed::Notification
-      .where(recipient: self)
-      .joins(:event)
-      .where(noticed_events: { record_type: 'Message', record_id: Message.select(:id) })
+    notification_relation_for(Message)
+      .or(notification_relation_for(Language))
+      .or(notification_relation_for(Category))
+      .or(notification_relation_for(Product))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 
@@ -79,7 +79,7 @@ class User < ApplicationRecord
 
   def message_notifications_for(conversation)
     notifications
-      .where(noticed_events: { record_type: 'Message', record_id: conversation.messages.select(:id) })
+      .where(noticed_events: { record_type: 'Message', record_id: conversation.messages.with_deleted.select(:id) })
   end
 
   # Replaces badge, list and header live for every open tab of this user.
@@ -100,5 +100,15 @@ class User < ApplicationRecord
 
   def self.online_user_ids
     Kredis.set(ONLINE_USERS_KEY).members.map(&:to_i)
+  end
+
+  private
+
+  def notification_relation_for(model_class)
+    Noticed::Notification
+      .where(recipient: self)
+      .joins(:event)
+      .where(noticed_events: { record_type: model_class.name,
+                               record_id: model_class.with_deleted.select(:id) })
   end
 end

@@ -1,19 +1,55 @@
-<% message = notification.record %>
-<% sender = message&.user %>
+<% record = notification.record %>
 <% type_label = notification_type_label(notification) %>
+
+<% if record.is_a?(Language) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = record.flag_iso.upcase %>
+  <% title_text = t("admin.shared.notifications.language.#{action}", name: record.name, default: record.name) %>
+  <% if actor %>
+    <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
+  <% else %>
+    <% subtitle_text = record.code %>
+  <% end %>
+<% elsif record.is_a?(Category) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = record.name.to_s[0, 2].upcase %>
+  <% title_text = t("admin.shared.notifications.category.#{action}", name: record.name, default: record.name) %>
+  <% if actor %>
+    <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
+  <% else %>
+    <% subtitle_text = record.code %>
+  <% end %>
+<% elsif record.is_a?(Product) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = record.name.to_s[0, 2].upcase %>
+  <% title_text = t("admin.shared.notifications.product.#{action}", name: record.name, default: record.name) %>
+  <% if actor %>
+    <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
+  <% else %>
+    <% subtitle_text = record.code %>
+  <% end %>
+<% else %>
+  <% sender = record&.user %>
+  <% avatar_text = sender ? sender.initials : "?" %>
+  <% title_text = t('admin.shared.notifications.new_message') %>
+  <% subtitle_text = record&.body || t('admin.shared.notifications.message_unavailable') %>
+<% end %>
 
 <button
   type="button"
   class="flex w-full gap-3 border-t border-slate-100 px-4 py-3 text-left transition hover:bg-slate-50 <%= notification.unread? ? "bg-blue-50/60" : "" %>"
 >
   <span class="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
-    <%= sender ? sender.initials : "?" %>
+    <%= avatar_text %>
   </span>
 
   <span class="min-w-0">
     <span class="flex flex-wrap items-center gap-2">
       <span class="block text-sm font-medium <%= notification.unread? ? "text-slate-900" : "text-slate-700" %>">
-        <%= t('admin.shared.notifications.new_message') %>
+        <%= title_text %>
       </span>
 
       <% if type_label %>
@@ -24,7 +60,7 @@
     </span>
 
     <span class="mt-0.5 block truncate text-xs text-slate-500">
-      <%= message&.body || t('admin.shared.notifications.message_unavailable') %>
+      <%= subtitle_text %>
     </span>
 
     <span class="mt-1 block text-[11px] text-slate-400">
