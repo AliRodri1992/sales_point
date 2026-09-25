@@ -1,155 +1,152 @@
 # 🛒 Sales Point
 
-Sistema de Punto de Venta (POS) desarrollado con **Ruby on Rails 8**, enfocado en la gestión de ventas, productos, inventario y usuarios para negocios pequeños y medianos.
+A modern **Point of Sale (POS)** system built with **Ruby on Rails 8**, designed for inventory management, sales tracking, and user administration for small to medium-sized businesses.
 
 ---
 
-## 🚀 Características
+## 🚀 Features
 
-### 📦 Gestión de Productos
-- Catálogo de productos con búsqueda y filtrado avanzado
-- Gestión de stock y precios
-- Soporte para categorías y unidades SAT
-- Campos de margen y valor total
-- Estados y productos destacados
+### 📦 Product Management
+- Complete product catalog with advanced search and filtering
+- Real-time inventory tracking with low stock alerts
+- Product categorization and SAT unit management
+- Support for featured products and status management
+- Gross margin and total value calculations
 
-### 🧾 Sistema de Ventas
-- Registro de ventas con detalle de productos
-- Cálculo automático de precios con impuestos
-- Historial de ventas
+### 🧾 Sales System
+- Complete sales registration with product details
+- Automatic price calculation with taxes
+- Sales history and reporting
+- Multi-language support
 
-### ⚙️ Configuración
-- Gestión de idiomas (multilenguaje)
-- Gestión de categorías de productos
-- Configuración de unidades SAT
-- Tipos de régimen fiscal
+### ⚙️ Administration
+- User management and role-based access control
+- Multi-language configuration (i18n)
+- System categories and fiscal regimes
+- Configuration management
 
-### 🔐 Seguridad
-- Autenticación con Devise
-- Autorización basada en roles con Pundit
-- Roles: admin, empleado, supervisor
-
-### 📊 Interfaz de Usuario
-- Dashboard administrativo
-- UI moderna con TailwindCSS
-- Notificaciones en tiempo real con Turbo Streams
-- Mensajes flash como SweetAlert2 toasts
+### 📊 Real-time Updates
+- Turbo Streams for live data synchronization
+- SweetAlert2 notifications
+- Real-time product catalog updates
 
 ---
 
-## 🏗️ Arquitectura del proyecto
+## 🏗️ Architecture
 
 ```
 app/
 ├── controllers/
-│   └── admin/              # Controladores administrativos
-├── models/                 # Modelos Prisma estilo Rails
+│   └── admin/              # Admin controllers
+├── models/                 # Database models
 ├── views/
-│   └── admin/              # Vistas del panel de administración
-├── policies/               # Políticas de autorización con Pundit
-├── jobs/                   # Trabajos en background
-├── services/               # Servicios de negocio
-├── helpers/                # Helpers de vistas
-└── channels/               # Canales de ActionCable para Turbo Streams
+│   └── admin/              # Admin panel views
+├── policies/               # Pundit authorization policies
+├── jobs/                   # Background jobs
+├── services/               # Business logic services
+├── helpers/                # View helpers
+└── channels/               # ActionCable channels
 
 db/
-├── migrate/                # Migraciones
+├── migrate/                # Database migrations
 ├── schema.rb
 └── seeds.rb
 
 spec/
-├── models/                 # Tests de modelos
-├── requests/               # Tests de requests/controladores
-├── helpers/                # Tests de helpers
-└── factories/              # Factories para tests
+├── models/                 # Model tests
+├── requests/               # Request/controller tests
+├── helpers/                # Helper tests
+└── factories/              # Test factories
 ```
 
 ---
 
-## 📋 Endpoints principales (v1/api)
+## 📋 API Endpoints
 
-### Autenticación
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/users/sign_in` | Iniciar sesión |
-| DELETE | `/users/sign_out` | Cerrar sesión |
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/users/sign_in` | User sign in |
+| DELETE | `/users/sign_out` | User sign out |
 
-### Productos (Admin)
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/admin/products` | Listar productos |
-| POST | `/admin/products` | Crear producto |
-| GET | `/admin/products/:id` | Ver producto |
-| PATCH | `/admin/products/:id` | Actualizar producto |
-| DELETE | `/admin/products/:id` | Eliminar producto (soft delete) |
+### Products (Admin)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/admin/products` | List products |
+| POST | `/admin/products` | Create product |
+| GET | `/admin/products/new` | New product form |
+| GET | `/admin/products/:id` | Show product |
+| GET | `/admin/products/:id/edit` | Edit product form |
+| PATCH | `/admin/products/:id` | Update product |
+| DELETE | `/admin/products/:id` | Delete product (soft delete) |
 
-### Categorías (Admin)
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/admin/categories` | Listar categorías |
-| POST | `/admin/categories` | Crear categoría |
+### Categories (Admin)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/admin/categories` | List categories |
+| POST | `/admin/categories` | Create category |
 
-### Idiomas (Admin)
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET | `/admin/languages` | Listar idiomas |
-| POST | `/admin/languages` | Crear idioma |
+### Languages (Admin)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/admin/languages` | List languages |
+| POST | `/admin/languages` | Create language |
 
 ---
 
-## 🛠️ Tecnologías
+## 🛠️ Technologies
 
 ### Backend
-- **Ruby on Rails 8** - Framework principal
-- **PostgreSQL** - Base de datos
-- **Devise** - Autenticación
-- **Pundit** - Autorización
-- **Sidekiq** - Procesamiento en background
-- **Turbo Streams** - Actualizaciones en tiempo real
+- **Ruby on Rails 8** - Web framework
+- **PostgreSQL** - Database
+- **Devise** - Authentication
+- **Pundit** - Authorization
+- **Sidekiq** - Background processing
+- **Turbo Streams** - Real-time updates
 
 ### Frontend
-- **TailwindCSS** - Estilos
-- **Stimulus** - Interactividad
-- **SweetAlert2** - Notificaciones
-- **Hotwire** - Sin JavaScript adicional
+- **Tailwind CSS** - Styling
+- **Stimulus** - JavaScript framework
+- **SweetAlert2** - Notification system
+- **Hotwire** - Modern web development
 
 ### Testing
-- **RSpec** - Tests
-- **FactoryBot** - Factories
-- **Shoulda Matchers** - Matchers
+- **RSpec** - Testing framework
+- **FactoryBot** - Test factories
+- **Shoulda Matchers** - Model matchers
 
 ---
 
-## 📦 Instalación
+## 📦 Installation
 
-### 1. Clonar el repositorio
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/AliRodri1992/sales_point.git
 cd sales_point
 ```
 
-### 2. Variables de entorno
+### 2. Environment setup
 
 ```bash
 cp .env.example .env
-# Editar .env con tus credenciales
+# Edit .env with your credentials
 ```
 
-### 3. Docker (recomendado)
+### 3. Docker setup (recommended)
 
 ```bash
 docker compose -f docker-compose.dev.yml build
 docker compose -f docker-compose.dev.yml up
 ```
 
-### 4. Migraciones y seed
+### 4. Database setup
 
 ```bash
 docker compose exec web bin/rails db:create db:migrate db:seed
 ```
 
-### 5. Ejecutar tests
+### 5. Run tests
 
 ```bash
 docker compose exec web bundle exec rspec
@@ -159,26 +156,26 @@ docker compose exec web bundle exec rspec
 
 ## 🧪 Testing
 
-### Ejecutar todos los tests
+### Run all tests
 
 ```bash
 bundle exec rspec
 ```
 
-### Ejecutar tests específicos
+### Run specific tests
 
 ```bash
-# Test de modelo
+# Model tests
 bundle exec rspec spec/models/product_spec.rb
 
-# Test de controlador
+# Request/controller tests
 bundle exec rspec spec/requests/admin/products_spec.rb
 
-# Test de helper
+# Helper tests
 bundle exec rspec spec/helpers/application_helper_spec.rb
 ```
 
-### Coverage
+### Test output format
 
 ```bash
 bundle exec rspec --format documentation
@@ -186,43 +183,43 @@ bundle exec rspec --format documentation
 
 ---
 
-## 🚀 Deploy
+## 🚀 Deployment
 
-### Configuración necesaria
+### Required configuration
 
-1. Variables de entorno de producción
-2. Base de datos PostgreSQL
-3. Redis para Sidekiq
-4. SSL/TLS configurado
+1. Production environment variables
+2. PostgreSQL database
+3. Redis for Sidekiq
+4. SSL/TLS configured
 
-### Comandos útiles
+### Useful commands
 
 ```bash
 # Precompile assets
 RAILS_ENV=production bundle exec rails assets:precompile
 
-# Migrar base de datos
+# Run database migrations
 RAILS_ENV=production bundle exec rails db:migrate
 
-# Ejecutar servidor
+# Start the server
 RAILS_ENV=production bundle exec rails server -b 0.0.0.0
 ```
 
 ---
 
-## 📖 Documentación API
+## 📖 API Documentation
 
-La API está documentada con Swagger/OpenAPI. Acceder a `/api-docs` cuando el servidor esté corriendo.
+OpenAPI/Swagger documentation is available at `/api-docs` when the server is running.
 
 ---
 
-## 👤 Autor
+## 👤 Author
 
 Ivan Rodriguez
 GitHub: https://github.com/AliRodri1992
 
 ---
 
-## 📄 Licencia
+## 📄 License
 
-MIT - Puedes usar, modificar y distribuir este software libremente.
+MIT License - Feel free to use, modify, and distribute this software.
