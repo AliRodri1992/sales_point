@@ -189,15 +189,15 @@
                 <%= address_form.label :street, 'Calle', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :street, data: { branches_target: 'street' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
+                <% address_form.object.errors[:street].each do |message| %>
+                  <p class="mt-1.5 text-xs font-medium text-red-600">Calle <%= message %>.</p>
+                <% end %>
               </div>
 
               <div>
                 <%= address_form.label :exterior_number, 'No. exterior', class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field :exterior_number, data: { branches_target: 'exteriorNumber' },
                                             class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-                <% address_form.object.errors[:street].each do |message| %>
-                  <p class="mt-1.5 text-xs font-medium text-red-600">Calle <%= message %>.</p>
-                <% end %>
                 <% address_form.object.errors[:exterior_number].each do |message| %>
                   <p class="mt-1.5 text-xs font-medium text-red-600">No. exterior <%= message %>.</p>
                 <% end %>
