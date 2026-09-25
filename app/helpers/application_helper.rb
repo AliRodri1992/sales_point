@@ -50,6 +50,7 @@ module ApplicationHelper
                 class: 'mt-1 text-xs text-rose-600')
   end
 
+  # rubocop:disable Rails/HelperInstanceVariable
   def breadcrumb_items
     home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
     items = [home]
@@ -60,10 +61,9 @@ module ApplicationHelper
       case params[:action]
       when 'new'
         items.push(products_path, { label: t('admin.products.new.title') })
-      when 'edit'
-        items.push(products_path, { label: t('admin.products.edit.label') })
-      when 'show'
-        items.push(products_path, { label: t('admin.products.show.label') })
+      when 'edit', 'show', 'create', 'update', 'destroy'
+        product_name = @product&.name || t('admin.products.edit.label')
+        items.push(products_path, { label: product_name })
       else
         items.push(products_path)
       end
@@ -79,6 +79,7 @@ module ApplicationHelper
 
     items
   end
+  # rubocop:enable Rails/HelperInstanceVariable
 
   def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
