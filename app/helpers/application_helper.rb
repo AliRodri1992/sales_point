@@ -1,4 +1,4 @@
-# rubocop:disable Metrics/ModuleLength
+# rubocop:disable-next Metrics/ModuleLength
 module ApplicationHelper
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
@@ -54,37 +54,24 @@ module ApplicationHelper
     home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
     items = [home]
 
-    if params[:controller] == 'admin/products'
+    case params[:controller]
+    when 'admin/products'
       products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
-      if params[:action] == 'new'
-        items.push(
-          products_path,
-          { label: t('admin.products.new.title') }
-        )
-      elsif params[:action] == 'edit'
-        items.push(
-          products_path,
-          { label: t('admin.products.edit.label') }
-        )
-      elsif params[:action] == 'show'
-        items.push(
-          products_path,
-          { label: t('admin.products.show.label') }
-        )
-      elsif params[:action] == 'create'
-        items.push(products_path)
-      elsif params[:action] == 'update'
-        items.push(products_path)
-      elsif params[:action] == 'destroy'
-        items.push(products_path)
+      case params[:action]
+      when 'new'
+        items.push(products_path, { label: t('admin.products.new.title') })
+      when 'edit'
+        items.push(products_path, { label: t('admin.products.edit.label') })
+      when 'show'
+        items.push(products_path, { label: t('admin.products.show.label') })
       else
         items.push(products_path)
       end
-    elsif params[:controller] == 'admin/dashboard'
+    when 'admin/dashboard'
       items << { label: t('admin.breadcrumbs.dashboard') }
-    elsif params[:controller] == 'admin/languages'
+    when 'admin/languages'
       items << { label: t('admin.breadcrumbs.languages') }
-    elsif params[:controller] == 'admin/categories'
+    when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
@@ -174,4 +161,3 @@ module ApplicationHelper
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

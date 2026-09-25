@@ -63,8 +63,7 @@ module Admin
     end
 
     def destroy
-      @product.touch
-      @product.update!(deleted_at: Time.current)
+      @product.update!(deleted_at: Time.current, updated_at: Time.current)
       load_products
       notify_product(current_user, @product, 'destroyed')
       # broadcast_products_update  # Temporarily disabled for debugging
@@ -79,21 +78,23 @@ module Admin
     private
 
     def set_product
-      # Try to find by ID first (if numeric), otherwise by slug
-      if /\A\d+\z/.match?(params[:id].to_s)
-        @product = Product.not_deleted.find_by(id: params[:id])
-      else
-        @product = Product.not_deleted.find_by(slug: params[:id])
-        # If not found by slug, try fallback search by name/code (for edge cases)
-        if @product.nil?
-          search_term = CGI.unescape(params[:id])
-          @product = Product.not_deleted
-                            .where('lower(slug) = lower(?)', search_term)
-                            .or(Product.not_deleted.where(code: search_term.upcase))
-                            .first
-        end
-      end
+      @product = find_product_by_id_or_slug(params[:id])
       raise ActiveRecord::RecordNotFound, 'Product not found' unless @product
+    end
+
+    def find_product_by_id_or_slug(id_param)
+      return Product.not_deleted.find_by(id: id_param) if id_param.to_s.match?(/\A\d+\z/)
+
+      Product.not_deleted.find_by(slug: id_param) ||
+        find_product_by_code(id_param)
+    end
+
+    def find_product_by_code(id_param)
+      search_term = CGI.unescape(id_param)
+      Product.not_deleted
+             .where('lower(slug) = lower(?)', search_term)
+             .or(Product.not_deleted.where(code: search_term.upcase))
+             .first
     end
 
     def product_not_found(exception = nil)
@@ -142,24 +143,27 @@ module Admin
     end
 
     def filter_scope(scope)
-      if params[:search].present?
-        scope = scope.where(
-          'name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q',
-          q: "%#{params[:search]}%"
-        )
-      end
+      scope = apply_search_filter(scope)
+      scope = apply_featured_filter(scope)
+      apply_status_filter(scope)
+    end
 
-      if params[:featured].present?
-        scope = case params[:featured]
-                when 'true'
-                  scope.where(featured: true)
-                when 'false'
-                  scope.where(featured: false)
-                else
-                  scope
-                end
-      end
+    def apply_search_filter(scope)
+      return scope if params[:search].blank?
 
+      scope.where(
+        'name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q',
+        q: "%#{params[:search]}%"
+      )
+    end
+
+    def apply_featured_filter(scope)
+      return scope if params[:featured].blank?
+
+      scope.where(featured: params[:featured] == 'true')
+    end
+
+    def apply_status_filter(scope)
       return scope unless params[:status].present? && params[:status] != 'all'
 
       scope.where(status: params[:status])
