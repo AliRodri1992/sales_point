@@ -51,6 +51,6 @@ class BranchPolicy < ApplicationPolicy
   def assigned_to_branch?
     return false unless user && record.is_a?(Branch)
 
-    user.user_roles.active.where(branch_id: record.id).exists?
+    user.user_roles.active.exists?(branch_id: record.id)
   end
 end

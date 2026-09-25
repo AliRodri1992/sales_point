@@ -79,7 +79,7 @@ module Admin
       @total_count = scope.count
       @per_page = per_page_param
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
-      @current_page = [[params[:page].to_i, 1].max, @total_pages].min
+      @current_page = params[:page].to_i.clamp(1, @total_pages)
       @branches = scope.limit(@per_page).offset((@current_page - 1) * @per_page)
     end
 
@@ -94,9 +94,9 @@ module Admin
           :name,
           :phone,
           :status,
-          address_attributes: %i[
+          { address_attributes: %i[
             id street exterior_number interior_number neighborhood city state country postal_code
-          ]
+          ] }
         ]
       )
     end

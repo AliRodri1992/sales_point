@@ -19,7 +19,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'paginates branches with 10 records by default' do
-      branches = 11.times.map { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(11) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
@@ -32,7 +32,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'allows selecting 5 records per page' do
-      11.times.map { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(11) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
@@ -144,8 +144,8 @@ RSpec.describe 'Admin::Branches', type: :request do
           }
         }
       end.to change(Branch, :count).by(1)
-        .and change(Address, :count).by(1)
-        .and change(Noticed::Notification, :count).by(1)
+           .and change(Address, :count).by(1)
+           .and change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
       notification = user.notifications.last
@@ -172,7 +172,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Editar sucursal')
-      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
+      expect(response.body).to include("action="/admin/branches/#{branch.id}"")
       expect(response.body).not_to include('data-branches-target="modal"')
     end
 
