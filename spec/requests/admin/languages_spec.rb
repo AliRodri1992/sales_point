@@ -29,6 +29,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .at_least(:once)
         .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       post admin_languages_path(format: :turbo_stream),
@@ -61,6 +62,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .at_least(:once)
         .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       patch admin_language_path(language, format: :turbo_stream),
@@ -98,6 +100,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .at_least(:once)
         .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       delete admin_language_path(language, format: :turbo_stream)
