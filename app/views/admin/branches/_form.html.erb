@@ -17,18 +17,17 @@
                   class: 'space-y-6 p-6 lg:p-8' do |form| %>
       <div>
         <%= form.label :name, t('admin.branches.form.fields.name'), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
-        <%= form.text_field :name, required: true, class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-        <% @branch.errors[:name].each do |message| %>
-          <p class="mt-1.5 text-xs font-medium text-red-600"><%= t('admin.branches.form.fields.name') %> <%= message %>.</p>
-        <% end %>
+        <%= form.text_field :name,
+                            required: true,
+                            class: "w-full rounded-lg #{form_state_classes(@branch, :name)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+        <%= error_message_for(@branch, :name) %>
       </div>
 
       <div>
         <%= form.label :phone, t('admin.branches.form.fields.phone'), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
-        <%= form.telephone_field :phone, class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-        <% @branch.errors[:phone].each do |message| %>
-          <p class="mt-1.5 text-xs font-medium text-red-600"><%= t('admin.branches.form.fields.phone') %> <%= message %>.</p>
-        <% end %>
+        <%= form.telephone_field :phone,
+                                 class: "w-full rounded-lg #{form_state_classes(@branch, :phone)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+        <%= error_message_for(@branch, :phone) %>
       </div>
 
       <%= form.fields_for :address do |address_form| %>
@@ -53,11 +52,9 @@
               <div class="<%= attribute == :street ? 'sm:col-span-2' : '' %>">
                 <%= address_form.label attribute, t("admin.branches.form.fields.#{translation_key}"), class: 'mb-1.5 block text-sm font-medium text-slate-700' %>
                 <%= address_form.text_field attribute,
-                                            required: attribute == :postal_code || attribute == :country,
-                                            class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-                <% address_form.object.errors[attribute].each do |message| %>
-                  <p class="mt-1.5 text-xs font-medium text-red-600"><%= t("admin.branches.form.fields.#{translation_key}") %> <%= message %>.</p>
-                <% end %>
+                                            required: !%i[interior_number].include?(attribute),
+                                            class: "w-full rounded-lg #{form_state_classes(address_form.object, attribute)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+                <%= error_message_for(address_form.object, attribute) %>
               </div>
             <% end %>
           </div>

@@ -7,8 +7,37 @@ class Address < ApplicationRecord
     failed: 'failed'
   }
 
-  validates :country, presence: true, length: { maximum: 100 }
-  validates :postal_code, presence: true, length: { maximum: 10 }
+  validates :street,
+            presence: true,
+            length: { in: 2..150 }
+
+  validates :exterior_number,
+            presence: true,
+            length: { in: 1..20 }
+
+  validates :interior_number,
+            length: { maximum: 20 },
+            allow_blank: true
+
+  validates :neighborhood,
+            presence: true,
+            length: { in: 2..100 }
+
+  validates :city,
+            presence: true,
+            length: { in: 2..100 }
+
+  validates :state,
+            presence: true,
+            length: { in: 2..100 }
+
+  validates :country,
+            presence: true,
+            length: { in: 2..100 }
+
+  validates :postal_code,
+            presence: true,
+            format: { with: /\A[0-9]{5}\z/ }
 
   validates :latitude,
             numericality: {

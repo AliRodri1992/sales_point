@@ -9,6 +9,12 @@ RSpec.describe Branch, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_length_of(:name).is_at_least(2).is_at_most(100) }
+    it { is_expected.to allow_value('5551234567').for(:phone) }
+    it { is_expected.to allow_value('+52 55 5123 4567').for(:phone) }
+    it { is_expected.not_to allow_value('abc123').for(:phone) }
+    it { is_expected.to validate_length_of(:phone).is_at_least(7).is_at_most(20).allow_blank }
+    it { is_expected.to validate_inclusion_of(:status).in_array([true, false]) }
   end
 
   describe 'nested address' do
