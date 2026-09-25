@@ -21,8 +21,8 @@
 
    <body class="h-full antialiased relative select-none">
       <div data-controller="swal-flash"
-           data-swal-flash-message-value="<%= flash[:swal_message] || flash[:notice] %>"
-           data-swal-flash-icon-value="success">
+           data-swal-flash-message-value="<%= flash[:swal_message] || flash[:alert] || flash[:notice] %>"
+           data-swal-flash-icon-value="<%= flash[:alert] ? 'error' : 'success' %>">
          <%= yield %>
       </div>
    </body>
