@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     resources :languages
     resources :categories
     resources :products
+    resources :clients
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]

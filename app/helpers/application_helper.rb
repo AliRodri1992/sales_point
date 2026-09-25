@@ -76,6 +76,16 @@ module ApplicationHelper
       items << { label: t('admin.breadcrumbs.languages') }
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
+    when 'admin/clients'
+      clients_path = { label: t('admin.breadcrumbs.clients'), path: admin_clients_path }
+      case params[:action]
+      when 'new'
+        items.push(clients_path, { label: t('admin.clients.new.title') })
+      when 'edit', 'show', 'create', 'update', 'destroy'
+        items.push(clients_path, { label: @client&.name || t('admin.clients.edit.title', name: '') })
+      else
+        items << clients_path
+      end
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
@@ -118,12 +128,12 @@ module ApplicationHelper
   end
 
   def prev_link(current_page, frame: nil)
-    label = t('admin.products.index.pagination.prev')
+    label = t('admin.pagination.prev')
     pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
   end
 
   def next_link(current_page, total_pages, frame: nil)
-    label = t('admin.products.index.pagination.next')
+    label = t('admin.pagination.next')
     pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
 

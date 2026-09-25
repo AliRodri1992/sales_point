@@ -1,0 +1,85 @@
+es:
+  admin:
+    breadcrumbs:
+      clients: "Clientes"
+    clients:
+      created: "Cliente creado correctamente"
+      updated: "Cliente actualizado correctamente"
+      destroyed: "Cliente eliminado correctamente"
+      errors:
+        duplicate: "El código o RFC del cliente ya está registrado."
+      confirm:
+        cancel: "Cancelar"
+      statuses:
+        active: "Activo"
+        inactive: "Inactivo"
+      index:
+        title: "Clientes"
+        subtitle: "Administra los clientes de tu negocio."
+        new: "Nuevo cliente"
+        show: "Mostrar cliente"
+        edit: "Editar"
+        delete: "Eliminar"
+        confirm_delete: "¿Seguro que quieres eliminar este cliente?"
+        card_title: "Clientes registrados"
+        total_count: "%{count} clientes registrados"
+        search_placeholder: "Buscar por código, nombre, correo, teléfono o RFC..."
+        filters:
+          all_statuses: "Todos los estados"
+          apply: "Aplicar"
+        pagination:
+          per_page_label: "Mostrar"
+        empty_title: "Aún no hay clientes"
+        empty_subtitle: "Agrega tu primer cliente para empezar."
+        columns:
+          code: "Código"
+          name: "Nombre"
+          contact: "Contacto"
+          rfc: "RFC"
+          status: "Estado"
+          actions: "Acciones"
+      form:
+        code: "Código"
+        code_placeholder: "ej. CLI-0001"
+        name: "Nombre"
+        name_placeholder: "Nombre completo o razón social"
+        email: "Correo electrónico"
+        email_placeholder: "correo@ejemplo.com"
+        phone: "Teléfono"
+        phone_placeholder: "55 1234 5678"
+        rfc: "RFC"
+        rfc_placeholder: "XAXX010101000"
+        fiscal_regime: "Régimen fiscal"
+        fiscal_regime_blank: "Selecciona un régimen fiscal"
+        postal_code: "Código postal"
+        postal_code_placeholder: "00000"
+        credit_limit: "Límite de crédito"
+        credit_limit_placeholder: "0.00"
+        status: "Estado"
+        notes: "Notas"
+        notes_placeholder: "Información adicional del cliente..."
+        cancel: "Cancelar"
+        create: "Crear cliente"
+        update: "Actualizar cliente"
+      show:
+        title: "Detalles del cliente"
+        subtitle: "Revisa la información registrada del cliente."
+        close: "Cerrar"
+        back: "Volver a clientes"
+        fields:
+          code: "Código"
+          name: "Nombre"
+          email: "Correo electrónico"
+          phone: "Teléfono"
+          rfc: "RFC"
+          fiscal_regime: "Régimen fiscal"
+          postal_code: "Código postal"
+          credit_limit: "Límite de crédito"
+          status: "Estado"
+          notes: "Notas"
+      new:
+        title: "Nuevo cliente"
+        subtitle: "Agrega un cliente a tu catálogo."
+      edit:
+        title: "Editar %{name}"
+        subtitle: "Actualiza los datos del cliente."

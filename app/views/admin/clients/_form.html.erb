@@ -1,0 +1,91 @@
+<%= form_with model: [:admin, client], class: 'space-y-5' do |form| %>
+  <% if client.errors[:base].any? %>
+    <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      <%= client.errors.full_messages_for(:base).first %>
+    </div>
+  <% end %>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <%= form.label :code, t('admin.clients.form.code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :code, data: { autofocus: true },
+                          class: "input-field w-full rounded-xl #{form_state_classes(client, :code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.clients.form.code_placeholder') %>
+      <%= error_message_for(client, :code) %>
+    </div>
+    <div>
+      <%= form.label :name, t('admin.clients.form.name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :name,
+                          class: "input-field w-full rounded-xl #{form_state_classes(client, :name)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.clients.form.name_placeholder') %>
+      <%= error_message_for(client, :name) %>
+    </div>
+    <div>
+      <%= form.label :email, t('admin.clients.form.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.email_field :email,
+                           class: "input-field w-full rounded-xl #{form_state_classes(client, :email)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                           placeholder: t('admin.clients.form.email_placeholder') %>
+      <%= error_message_for(client, :email) %>
+    </div>
+    <div>
+      <%= form.label :phone, t('admin.clients.form.phone'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.telephone_field :phone,
+                               class: "input-field w-full rounded-xl #{form_state_classes(client, :phone)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                               placeholder: t('admin.clients.form.phone_placeholder') %>
+      <%= error_message_for(client, :phone) %>
+    </div>
+    <div>
+      <%= form.label :rfc, t('admin.clients.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :rfc, maxlength: 13,
+                          class: "input-field w-full rounded-xl #{form_state_classes(client, :rfc)} px-4 py-3 text-sm uppercase text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.clients.form.rfc_placeholder') %>
+      <%= error_message_for(client, :rfc) %>
+    </div>
+    <div>
+      <%= form.label :sat_fiscal_regime_id, t('admin.clients.form.fiscal_regime'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.collection_select :sat_fiscal_regime_id, @fiscal_regimes, :id,
+                                 ->(regime) { "#{regime.code} — #{regime.description}" },
+                                 { include_blank: t('admin.clients.form.fiscal_regime_blank') },
+                                 class: "input-field w-full rounded-xl #{form_state_classes(client, :sat_fiscal_regime_id)} px-4 py-3 text-sm text-slate-800" %>
+      <%= error_message_for(client, :sat_fiscal_regime_id) %>
+    </div>
+    <div>
+      <%= form.label :postal_code, t('admin.clients.form.postal_code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :postal_code, maxlength: 5, inputmode: 'numeric',
+                          class: "input-field w-full rounded-xl #{form_state_classes(client, :postal_code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                          placeholder: t('admin.clients.form.postal_code_placeholder') %>
+      <%= error_message_for(client, :postal_code) %>
+    </div>
+    <div>
+      <%= form.label :credit_limit, t('admin.clients.form.credit_limit'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.number_field :credit_limit, min: 0, step: 0.01,
+                            class: "input-field w-full rounded-xl #{form_state_classes(client, :credit_limit)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                            placeholder: t('admin.clients.form.credit_limit_placeholder') %>
+      <%= error_message_for(client, :credit_limit) %>
+    </div>
+    <% if client.persisted? %>
+      <div>
+        <%= form.label :status, t('admin.clients.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.select :status,
+                        options_for_select(Client.statuses.keys.map { |status| [t("admin.clients.statuses.#{status}"), status] }, client.status || 'active'),
+                        {},
+                        class: "input-field w-full rounded-xl #{form_state_classes(client, :status)} px-4 py-3 text-sm text-slate-800" %>
+        <%= error_message_for(client, :status) %>
+      </div>
+    <% end %>
+    <div class="sm:col-span-2">
+      <%= form.label :notes, t('admin.clients.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_area :notes, rows: 3,
+                         class: "input-field w-full rounded-xl #{form_state_classes(client, :notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
+                         placeholder: t('admin.clients.form.notes_placeholder') %>
+      <%= error_message_for(client, :notes) %>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
+    <%= link_to t('admin.clients.form.cancel'), admin_clients_path,
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
+    <%= form.submit client.persisted? ? t('admin.clients.form.update') : t('admin.clients.form.create'),
+                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+  </div>
+<% end %>

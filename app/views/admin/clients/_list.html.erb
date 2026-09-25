@@ -1,0 +1,104 @@
+<% total_count = local_assigns[:total_count] || @total_count || 0 %>
+<% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+  <div class="flex items-center justify-between px-6 py-4">
+    <div>
+      <h3 class="font-bold"><%= t('admin.clients.index.card_title') %></h3>
+      <p class="mt-1 text-xs text-slate-400"><%= t('admin.clients.index.total_count', count: total_count) %></p>
+    </div>
+  </div>
+
+  <% if clients.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-y border-slate-100 text-xs text-slate-400">
+            <th class="px-6 py-3 text-left font-medium"><%= sort_link('code', t('admin.clients.index.columns.code'), frame: 'clients_list') %></th>
+            <th class="px-6 py-3 text-left font-medium"><%= sort_link('name', t('admin.clients.index.columns.name'), frame: 'clients_list') %></th>
+            <th class="px-6 py-3 text-left font-medium"><%= t('admin.clients.index.columns.contact') %></th>
+            <th class="px-6 py-3 text-left font-medium"><%= t('admin.clients.index.columns.rfc') %></th>
+            <th class="px-6 py-3 text-center font-medium"><%= t('admin.clients.index.columns.status') %></th>
+            <th class="px-6 py-3 text-center font-medium"><%= t('admin.clients.index.columns.actions') %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% clients.each do |client| %>
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4"><code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= client.code %></code></td>
+              <td class="px-6 py-4 font-semibold text-slate-900"><%= client.name %></td>
+              <td class="px-6 py-4">
+                <div class="space-y-0.5">
+                  <div class="text-slate-700"><%= client.email.presence || '—' %></div>
+                  <div class="text-xs text-slate-400"><%= client.phone.presence || '—' %></div>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-slate-600"><%= client.rfc.presence || '—' %></td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold <%= client.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+                  <%= t("admin.clients.statuses.#{client.status}") %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <%= link_to admin_client_path(client),
+                              data: { tooltip: t('admin.clients.index.show') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.clients.index.show') } do %>
+                    <%= icon('eye', class: 'size-4') %>
+                  <% end %>
+                  <%= link_to edit_admin_client_path(client),
+                              data: { tooltip: t('admin.clients.index.edit') },
+                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
+                              aria: { label: t('admin.clients.index.edit') } do %>
+                    <%= icon('pencil-square', class: 'size-4') %>
+                  <% end %>
+                  <%= button_to admin_client_path(client), method: :delete,
+                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
+                                data: {
+                                  controller: 'swal-confirm',
+                                  turbo_frame: 'clients_list',
+                                  turbo_confirm: t('admin.clients.index.confirm_delete'),
+                                  swal_cancel_text: t('admin.clients.confirm.cancel')
+                                },
+                                aria: { label: t('admin.clients.index.delete') } do %>
+                    <%= icon('trash', class: 'size-4') %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if total_pages > 1 %>
+      <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-6 py-4">
+        <%= form_with url: admin_clients_path, method: :get, id: 'client-pagination-form',
+                      data: { turbo_frame: 'clients_list' },
+                      class: 'flex items-center gap-2 text-sm text-slate-600' do %>
+          <span><%= t('admin.clients.index.pagination.per_page_label') %>:</span>
+          <%= hidden_field_tag :search, params[:search] if params[:search].present? %>
+          <%= hidden_field_tag :status, params[:status] if params[:status].present? %>
+          <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+          <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+          <%= select_tag :per_page,
+                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
+                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700' %>
+          <%= button_tag t('admin.pagination.apply'), type: 'submit',
+                class: 'rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-50' %>
+        <% end %>
+
+        <div class="flex items-center gap-1">
+          <%= pagination_links(total_pages, frame: 'clients_list') %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="flex flex-col items-center gap-2 p-12 text-center">
+      <%= icon('users', class: 'size-8 text-slate-300') %>
+      <p class="text-sm font-semibold text-slate-500"><%= t('admin.clients.index.empty_title') %></p>
+      <p class="text-xs text-slate-400"><%= t('admin.clients.index.empty_subtitle') %></p>
+    </div>
+  <% end %>
+</div>
