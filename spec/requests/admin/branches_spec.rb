@@ -144,8 +144,8 @@ RSpec.describe 'Admin::Branches', type: :request do
           }
         }
       end.to change(Branch, :count).by(1)
-           .and change(Address, :count).by(1)
-           .and change(Noticed::Notification, :count).by(1)
+              .and change(Address, :count).by(1)
+              .and change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
       notification = user.notifications.last
