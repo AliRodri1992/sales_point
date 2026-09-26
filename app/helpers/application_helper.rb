@@ -99,7 +99,7 @@ module ApplicationHelper
       branch_name = current_branch&.name || t('admin.branches.form.edit_title')
       [branches_path, { label: branch_name }]
     when 'edit'
-      branch_name = @branch&.name || t('admin.branches.form.edit_title')
+      branch_name = current_branch&.name || t('admin.branches.form.edit_title')
       [
         branches_path,
         { label: branch_name, path: current_branch ? admin_branch_path(current_branch) : nil },
