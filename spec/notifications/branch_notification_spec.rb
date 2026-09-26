@@ -17,8 +17,9 @@ RSpec.describe BranchNotification, type: :model do
     notification = user.notifications.last
     expect(notification.type).to eq('BranchNotification::Notification')
     expect(notification.event.record).to eq(branch)
-    expect(notification.event.params['action']).to eq('destroyed')
-    expect(notification.event.params['user_name']).to eq(user.display_name)
+    expect(notification.event.params[:action]).to eq('destroyed')
+    expect(notification.event.params[:user]).to eq(user)
+    expect(notification.event.params[:user_name]).to eq(user.display_name)
   end
 
   it 'provides a descriptive translated notification message' do
@@ -33,7 +34,7 @@ RSpec.describe BranchNotification, type: :model do
 
     notification = user.notifications.last
 
-    expect(notification.message).to eq(
+    expect(notification.event.message).to eq(
       t('admin.shared.notifications.branch.destroyed',
         name: branch.name,
         user: user.display_name)
