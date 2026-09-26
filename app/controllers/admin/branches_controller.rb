@@ -96,8 +96,8 @@ module Admin
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
       @current_page = params[:page].to_i.clamp(1, @total_pages)
       @branches = apply_sorting(scope)
-                       .limit(@per_page)
-                       .offset((@current_page - 1) * @per_page)
+                   .limit(@per_page)
+                   .offset((@current_page - 1) * @per_page)
     end
 
     def apply_sorting(scope)
