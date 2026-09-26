@@ -85,6 +85,38 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).not_to include('branches-per-page')
     end
 
+    it 'sorts branches by name in ascending order' do
+      create(:branch, name: 'Sucursal Norte')
+      create(:branch, name: 'Sucursal Centro')
+
+      get admin_branches_path, params: { sort: 'branches.name', direction: 'asc' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.index('Sucursal Centro')).to be < response.body.index('Sucursal Norte')
+    end
+
+    it 'sorts branches by name in descending order' do
+      create(:branch, name: 'Sucursal Centro')
+      create(:branch, name: 'Sucursal Norte')
+
+      get admin_branches_path, params: { sort: 'branches.name', direction: 'desc' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.index('Sucursal Norte')).to be < response.body.index('Sucursal Centro')
+    end
+
+    it 'sorts branches by address street' do
+      center = create(:branch, name: 'Sucursal Centro')
+      north = create(:branch, name: 'Sucursal Norte')
+      center.address.update!(street: 'Reforma')
+      north.address.update!(street: 'Zaragoza')
+
+      get admin_branches_path, params: { sort: 'addresses.street', direction: 'asc' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.index('Sucursal Centro')).to be < response.body.index('Sucursal Norte')
+    end
+
     it 'does not expose branches outside the current user access' do
       allow(user).to receive(:admin?).and_return(false)
       assigned_branch = create(:branch, name: 'Sucursal Asignada')
