@@ -50,7 +50,6 @@ module ApplicationHelper
                 class: 'mt-1 text-xs text-rose-600')
   end
 
-  # rubocop:disable-next Rails/HelperInstanceVariable
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/MethodLength
@@ -83,7 +82,7 @@ module ApplicationHelper
     when 'new'
       [products_path, { label: t('admin.products.new.title') }]
     when 'edit', 'show', 'create', 'update', 'destroy'
-      product_name = @product&.name || t('admin.products.edit.label')
+      product_name = current_product&.name || t('admin.products.edit.label')
       [products_path, { label: product_name }]
     else
       [products_path]
@@ -97,13 +96,13 @@ module ApplicationHelper
     when 'new'
       [branches_path, { label: t('admin.branches.form.new_title') }]
     when 'show'
-      branch_name = @branch&.name || t('admin.branches.form.edit_title')
+      branch_name = current_branch&.name || t('admin.branches.form.edit_title')
       [branches_path, { label: branch_name }]
     when 'edit'
       branch_name = @branch&.name || t('admin.branches.form.edit_title')
       [
         branches_path,
-        { label: branch_name, path: @branch ? admin_branch_path(@branch) : nil },
+        { label: branch_name, path: current_branch ? admin_branch_path(current_branch) : nil },
         { label: t('admin.branches.form.edit_title') }
       ]
     else
@@ -111,6 +110,14 @@ module ApplicationHelper
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+  def current_product
+    controller.instance_variable_get(:@product)
+  end
+
+  def current_branch
+    controller.instance_variable_get(:@branch)
+  end
 
   def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
