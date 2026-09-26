@@ -112,11 +112,11 @@ module ApplicationHelper
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def current_product
-    controller.instance_variable_get(:@product)
+    controller.view_assigns['product']
   end
 
   def current_branch
-    controller.instance_variable_get(:@branch)
+    controller.view_assigns['branch']
   end
 
   def sort_link(column, title = nil, frame: nil)
