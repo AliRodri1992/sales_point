@@ -9,6 +9,12 @@ FactoryBot.define do
       without_address { false }
     end
 
+    trait :without_address do
+      transient do
+        without_address { true }
+      end
+    end
+
     after(:build) do |branch, evaluator|
       unless evaluator.without_address || branch.address
         branch.build_address(
