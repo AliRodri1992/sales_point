@@ -20,7 +20,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
-      it { is_expected.to permit_action(:index) }
+      it { expect(policy.index?).to be(true) }
     end
 
     context 'when the user has no branch access' do
@@ -42,7 +42,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
-      it { is_expected.to permit_action(:show) }
+      it { expect(policy.show?).to be(true) }
     end
 
     context 'when the user is assigned to another branch' do
