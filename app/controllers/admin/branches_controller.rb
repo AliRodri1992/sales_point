@@ -10,6 +10,13 @@ module Admin
 
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    SORTABLE_COLUMNS = %w[
+      branches.name
+      branches.phone
+      addresses.street
+      branches.status
+    ].freeze
+    SORT_DIRECTIONS = %w[asc desc].freeze
 
     def index
       authorize Branch
@@ -83,12 +90,21 @@ module Admin
     end
 
     def load_branches
-      scope = policy_scope(Branch).includes(:address).order(:name)
+      scope = policy_scope(Branch).left_joins(:address).includes(:address)
       @total_count = scope.count
       @per_page = per_page_param(@total_count)
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
       @current_page = params[:page].to_i.clamp(1, @total_pages)
-      @branches = scope.limit(@per_page).offset((@current_page - 1) * @per_page)
+      @branches = apply_sorting(scope)
+                       .limit(@per_page)
+                       .offset((@current_page - 1) * @per_page)
+    end
+
+    def apply_sorting(scope)
+      sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'branches.name'
+      sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
+
+      scope.order(sort_column => sort_direction)
     end
 
     def per_page_param(total_count)
