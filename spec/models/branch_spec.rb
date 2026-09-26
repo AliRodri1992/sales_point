@@ -22,6 +22,8 @@ RSpec.describe Branch, type: :model do
       branch = build(:branch)
       branch.build_address(
         street: 'Av. Reforma',
+        exterior_number: '100',
+        neighborhood: 'Centro',
         city: 'Cuautitlán',
         state: 'Estado de México',
         country: 'MX',
