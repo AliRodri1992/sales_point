@@ -5,8 +5,12 @@ FactoryBot.define do
     status { true }
     deleted_at { nil }
 
-    after(:build) do |branch|
-      unless branch.address
+    transient do
+      without_address { false }
+    end
+
+    after(:build) do |branch, evaluator|
+      unless evaluator.without_address || branch.address
         branch.build_address(
           street: 'Av. Reforma',
           exterior_number: '100',
