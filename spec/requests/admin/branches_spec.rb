@@ -224,12 +224,12 @@ RSpec.describe 'Admin::Branches', type: :request do
                                                                .and change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
-      expect(flash[:swal_message]).to eq(t('admin.branches.created'))
+      expect(flash[:swal_message]).to eq(I18n.t('admin.branches.created'))
       notification = user.notifications.last
-      expect(notification.event.params['action']).to eq('created')
-      expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.params[:action]).to eq('created')
+      expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
-        t('admin.shared.notifications.branch.created',
+        I18n.t('admin.shared.notifications.branch.created',
           name: 'Sucursal Centro',
           user: user.display_name)
       )
@@ -285,15 +285,15 @@ RSpec.describe 'Admin::Branches', type: :request do
       end.to change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
-      expect(flash[:swal_message]).to eq(t('admin.branches.updated'))
+      expect(flash[:swal_message]).to eq(I18n.t('admin.branches.updated'))
       expect(branch.reload.name).to eq('Sucursal Norte')
       expect(branch.address.reload.city).to eq('Tlalnepantla')
 
       notification = user.notifications.last
-      expect(notification.event.params['action']).to eq('updated')
-      expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.params[:action]).to eq('updated')
+      expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
-        t('admin.shared.notifications.branch.updated',
+        I18n.t('admin.shared.notifications.branch.updated',
           name: 'Sucursal Norte',
           user: user.display_name)
       )
@@ -320,15 +320,15 @@ RSpec.describe 'Admin::Branches', type: :request do
       end.to change(Noticed::Notification, :count).by(1)
 
       expect(response).to redirect_to(admin_branches_path)
-      expect(flash[:swal_message]).to eq(t('admin.branches.destroyed'))
+      expect(flash[:swal_message]).to eq(I18n.t('admin.branches.destroyed'))
       expect(branch.reload.deleted_at).to be_present
 
       notification = user.notifications.last
       expect(notification.event.record).to eq(branch)
-      expect(notification.event.params['action']).to eq('destroyed')
-      expect(notification.event.params['user']).to eq(user)
+      expect(notification.event.params[:action]).to eq('destroyed')
+      expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
-        t('admin.shared.notifications.branch.destroyed',
+        I18n.t('admin.shared.notifications.branch.destroyed',
           name: branch.name,
           user: user.display_name)
       )
@@ -343,7 +343,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('branches_list')
       expect(response.body).not_to include('Sucursal Centro')
-      expect(response.body).to include(t('admin.branches.destroyed'))
+      expect(response.body).to include(I18n.t('admin.branches.destroyed'))
       expect(branch.reload.deleted_at).to be_present
     end
 
