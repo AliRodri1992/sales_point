@@ -73,10 +73,7 @@
         </span>
       </label>
 
-      <div class="flex justify-end gap-3 border-t border-slate-100 pt-5">
-        <%= link_to admin_branches_path, class: 'rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
-          <%= t('admin.branches.form.buttons.cancel') %>
-        <% end %>
+      <div class="flex justify-end border-t border-slate-100 pt-5">
         <%= form.submit submit_label, class: 'rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700' %>
       </div>
     <% end %>
