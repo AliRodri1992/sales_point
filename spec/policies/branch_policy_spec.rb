@@ -12,7 +12,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it { is_expected.to permit_action(:index) }
+      it { expect(policy.index?).to be(true) }
     end
 
     context 'when the user has an active branch role' do
@@ -26,7 +26,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user has no branch access' do
       let(:user) { create(:user) }
 
-      it { is_expected.not_to permit_action(:index) }
+      it { expect(policy.index?).to be(false) }
     end
   end
 
@@ -34,7 +34,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it { is_expected.to permit_action(:show) }
+      it { expect(policy.show?).to be(true) }
     end
 
     context 'when the user is assigned to the branch' do
@@ -50,7 +50,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch: other_branch) }
 
-      it { is_expected.not_to permit_action(:show) }
+      it { expect(policy.show?).to be(false) }
     end
   end
 
@@ -58,7 +58,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it { is_expected.to permit_action(:create) }
+      it { expect(policy.create?).to be(true) }
     end
 
     context 'when the user only has branch access' do
@@ -66,7 +66,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
-      it { is_expected.not_to permit_action(:create) }
+      it { expect(policy.create?).to be(false) }
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it { is_expected.to permit_action(:update) }
+      it { expect(policy.update?).to be(true) }
     end
 
     context 'when the user only has branch access' do
@@ -82,7 +82,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
-      it { is_expected.not_to permit_action(:update) }
+      it { expect(policy.update?).to be(false) }
     end
   end
 
@@ -90,7 +90,7 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it { is_expected.to permit_action(:destroy) }
+      it { expect(policy.destroy?).to be(true) }
     end
 
     context 'when the user only has branch access' do
@@ -98,7 +98,7 @@ RSpec.describe BranchPolicy, type: :policy do
 
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
-      it { is_expected.not_to permit_action(:destroy) }
+      it { expect(policy.destroy?).to be(false) }
     end
   end
 
