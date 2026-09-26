@@ -60,16 +60,7 @@ module ApplicationHelper
 
     case params[:controller]
     when 'admin/products'
-      products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
-      case params[:action]
-      when 'new'
-        items.push(products_path, { label: t('admin.products.new.title') })
-      when 'edit', 'show', 'create', 'update', 'destroy'
-        product_name = @product&.name || t('admin.products.edit.label')
-        items.push(products_path, { label: product_name })
-      else
-        items.push(products_path)
-      end
+      items.concat(product_breadcrumb_items)
     when 'admin/dashboard'
       items << { label: t('admin.breadcrumbs.dashboard') }
     when 'admin/languages'
@@ -77,29 +68,47 @@ module ApplicationHelper
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
     when 'admin/branches'
-      branches_path = { label: t('admin.breadcrumbs.branches'), path: admin_branches_path }
-
-      case params[:action]
-      when 'new'
-        items.push(branches_path, { label: t('admin.branches.form.new_title') })
-      when 'show'
-        branch_name = @branch&.name || t('admin.branches.form.edit_title')
-        items.push(branches_path, { label: branch_name })
-      when 'edit'
-        branch_name = @branch&.name || t('admin.branches.form.edit_title')
-        items.push(
-          branches_path,
-          { label: branch_name, path: @branch ? admin_branch_path(@branch) : nil },
-          { label: t('admin.branches.form.edit_title') }
-        )
-      else
-        items << branches_path
-      end
+      items.concat(branch_breadcrumb_items)
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
 
     items
+  end
+
+  def product_breadcrumb_items
+    products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
+
+    case params[:action]
+    when 'new'
+      [products_path, { label: t('admin.products.new.title') }]
+    when 'edit', 'show', 'create', 'update', 'destroy'
+      product_name = @product&.name || t('admin.products.edit.label')
+      [products_path, { label: product_name }]
+    else
+      [products_path]
+    end
+  end
+
+  def branch_breadcrumb_items
+    branches_path = { label: t('admin.breadcrumbs.branches'), path: admin_branches_path }
+
+    case params[:action]
+    when 'new'
+      [branches_path, { label: t('admin.branches.form.new_title') }]
+    when 'show'
+      branch_name = @branch&.name || t('admin.branches.form.edit_title')
+      [branches_path, { label: branch_name }]
+    when 'edit'
+      branch_name = @branch&.name || t('admin.branches.form.edit_title')
+      [
+        branches_path,
+        { label: branch_name, path: @branch ? admin_branch_path(@branch) : nil },
+        { label: t('admin.branches.form.edit_title') }
+      ]
+    else
+      [branches_path]
+    end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
