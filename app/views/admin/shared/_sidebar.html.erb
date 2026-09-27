@@ -253,7 +253,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles') %>>
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
@@ -301,8 +301,9 @@
             </details>
 
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_branches_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.branches') %>"
+              class="<%= sidebar_link_classes('branches', variant: :submenu) %>"
             >
               <%= icon("building-storefront", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>

@@ -30,6 +30,7 @@ Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 # ─────────────────────────────
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
+  config.include Devise::Test::IntegrationHelpers, type: :request
 
   config.filter_rails_from_backtrace!
 

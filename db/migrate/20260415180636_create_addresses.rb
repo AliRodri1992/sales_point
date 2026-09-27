@@ -1,6 +1,7 @@
 class CreateAddresses < ActiveRecord::Migration[8.1]
   def change
     create_table :addresses do |t|
+      t.references :addressable, polymorphic: true, null: false, index: true
       t.string :street, limit: 150
       t.string :exterior_number, limit: 20
       t.string :interior_number, limit: 20

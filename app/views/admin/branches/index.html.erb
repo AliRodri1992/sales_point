@@ -1,0 +1,29 @@
+<% content_for :title, t('admin.branches.index.page_title') %>
+
+<div>
+  <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.branches.index.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.branches.index.subtitle') %></p>
+    </div>
+
+    <% if @can_manage_branches %>
+      <%= link_to new_admin_branch_path,
+                  class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+        <%= icon('plus', class: 'size-4') %>
+        <%= t('admin.branches.index.new') %>
+      <% end %>
+    <% end %>
+  </div>
+
+
+  <%= turbo_frame_tag "branches_list" do %>
+    <%= render "list",
+               branches: @branches,
+               total_count: @total_count,
+               total_pages: @total_pages,
+               current_page: @current_page,
+               per_page: @per_page,
+               can_manage_branches: @can_manage_branches %>
+  <% end %>
+</div>
