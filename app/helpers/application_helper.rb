@@ -46,7 +46,15 @@ module ApplicationHelper
   def error_message_for(object, attribute)
     return '' unless object && object.errors[attribute].any?
 
-    content_tag(:p, object.errors.full_messages_for(attribute).first,
+    # Get translated attribute name
+    attribute_name = I18n.t("errors.attributes.#{attribute}", default: attribute.to_s.humanize)
+    # Get the error message
+    error_message = object.errors[attribute].first
+
+    # Format the full message
+    formatted_message = "#{attribute_name} #{error_message}"
+
+    content_tag(:p, formatted_message,
                 class: 'mt-1 text-xs text-rose-600')
   end
 

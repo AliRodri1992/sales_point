@@ -35,9 +35,9 @@ RSpec.describe BranchNotification, type: :model do
     notification = user.notifications.last
 
     expect(notification.event.message).to eq(
-      t('admin.shared.notifications.branch.destroyed',
-        name: branch.name,
-        user: user.display_name)
+      I18n.t('admin.shared.notifications.branch.destroyed',
+             name: branch.name,
+             user: user.display_name)
     )
   end
 end
