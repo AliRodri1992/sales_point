@@ -33,14 +33,14 @@ module Admin
 
     def edit
       load_fiscal_regimes
-      render :new
     end
 
     def create
       @client = Client.new(client_params)
 
       if @client.save
-        redirect_to admin_clients_path, notice: t('admin.clients.created')
+        notify_client(current_user, @client, 'created')
+        redirect_to admin_clients_path, flash: { swal_message: t('admin.clients.created') }
       else
         load_fiscal_regimes
         render :new, status: :unprocessable_content
@@ -51,10 +51,11 @@ module Admin
 
     def update
       if @client.update(client_params)
-        redirect_to admin_clients_path, notice: t('admin.clients.updated')
+        notify_client(current_user, @client, 'updated')
+        redirect_to admin_clients_path, flash: { swal_message: t('admin.clients.updated') }
       else
         load_fiscal_regimes
-        render :new, status: :unprocessable_content
+        render :edit, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
       render_duplicate_error
@@ -62,7 +63,15 @@ module Admin
 
     def destroy
       @client.update!(deleted_at: Time.current)
-      redirect_to admin_clients_path, notice: t('admin.clients.destroyed')
+      notify_client(current_user, @client, 'destroyed')
+
+      respond_to do |format|
+        format.turbo_stream { @swal_message = t('admin.clients.destroyed') }
+        format.html do
+          redirect_to admin_clients_path,
+                      flash: { swal_message: t('admin.clients.destroyed') }
+        end
+      end
     end
 
     private
@@ -143,6 +152,14 @@ module Admin
       @client.errors.add(:base, t('admin.clients.errors.duplicate'))
       load_fiscal_regimes
       render :new, status: :unprocessable_content
+    end
+
+    def notify_client(user, client, action)
+      ClientNotification
+        .with(action: action, record: client, user:)
+        .deliver(user, enqueue_job: false)
+
+      user.broadcast_notifications_refresh
     end
   end
 end

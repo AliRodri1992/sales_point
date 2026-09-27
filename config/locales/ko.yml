@@ -439,6 +439,10 @@ ko:
           created: 카테고리 '%{name}'이(가) 생성되었습니다
           destroyed: 카테고리 '%{name}'이(가) 삭제되었습니다
           updated: 카테고리 '%{name}'이(가) 업데이트되었습니다
+        client:
+          created: 고객 '%{name}'이(가) %{user}에 의해 생성되었습니다
+          destroyed: 고객 '%{name}'이(가) %{user}에 의해 삭제되었습니다
+          updated: 고객 '%{name}'이(가) %{user}에 의해 업데이트되었습니다
         empty: 알림이 없습니다.
         language:
           created: 언어 '%{name}'이(가) 생성되었습니다
@@ -461,6 +465,7 @@ ko:
         types:
           category: 카테고리
           chat: 채팅
+          client: 고객
           demo_request: 데모 신청
           language: 언어
           product: 상품

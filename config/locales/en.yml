@@ -440,6 +440,10 @@ en:
           created: Category '%{name}' was created
           destroyed: Category '%{name}' was deleted
           updated: Category '%{name}' was updated
+        client:
+          created: Client '%{name}' was created by %{user}
+          destroyed: Client '%{name}' was deleted by %{user}
+          updated: Client '%{name}' was updated by %{user}
         empty: You have no notifications.
         language:
           created: Language '%{name}' was created
@@ -462,6 +466,7 @@ en:
         types:
           category: Category
           chat: Chat
+          client: Client
           demo_request: Demo request
           language: Language
           product: Product
