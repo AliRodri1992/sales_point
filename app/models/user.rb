@@ -56,6 +56,13 @@ class User < ApplicationRecord
     scope.exists?
   end
 
+  def permission?(permission_code)
+    return admin? if user_type == 'employee' # Admins have all permissions
+
+    system_roles.active
+                .exists?(permissions: { code: permission_code, status: 'active' })
+  end
+
   def initials
     base = username.presence || email.to_s
     base.scan(/\b\w/).first(2).join.upcase

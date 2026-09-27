@@ -5,6 +5,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_category, only: %i[show edit update destroy]
+    before_action :check_permissions, except: %i[index]
 
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
@@ -138,6 +139,10 @@ module Admin
     def per_page_param
       per_page = params[:per_page]&.to_i
       PER_PAGE_OPTIONS.include?(per_page) ? per_page : PER_PAGE
+    end
+
+    def check_permissions
+      authorize Category
     end
   end
 end
