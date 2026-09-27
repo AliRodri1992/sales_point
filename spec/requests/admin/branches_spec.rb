@@ -230,8 +230,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
         I18n.t('admin.shared.notifications.branch.created',
-          name: 'Sucursal Centro',
-          user: user.display_name)
+               name: 'Sucursal Centro',
+               user: user.display_name)
       )
     end
 
@@ -294,8 +294,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
         I18n.t('admin.shared.notifications.branch.updated',
-          name: 'Sucursal Norte',
-          user: user.display_name)
+               name: 'Sucursal Norte',
+               user: user.display_name)
       )
     end
 
@@ -329,8 +329,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(notification.event.params[:user]).to eq(user)
       expect(notification.event.message).to eq(
         I18n.t('admin.shared.notifications.branch.destroyed',
-          name: branch.name,
-          user: user.display_name)
+               name: branch.name,
+               user: user.display_name)
       )
     end
 
