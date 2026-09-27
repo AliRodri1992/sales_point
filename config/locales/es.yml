@@ -148,6 +148,8 @@ es:
       created: "Sucursal creada correctamente."
       updated: "Sucursal actualizada correctamente."
       destroyed: "Sucursal eliminada correctamente."
+      confirm:
+        cancel: "Cancelar"
       confirm_delete: "¿Estás seguro de que deseas eliminar esta sucursal?"
       statuses:
         active: "Activa"
@@ -262,6 +264,12 @@ es:
         subtitle: "Actualiza los datos de la categoría."
     products:
       created: "Producto creado correctamente"
+      new:
+        title: "Nuevo producto"
+      edit:
+        label: "Editar Producto"
+      show:
+        label: "Mostrar Producto"
       updated: "Producto actualizado correctamente"
       destroyed: "Producto eliminado correctamente"
       confirm:
@@ -400,6 +408,7 @@ es:
         settings: "Configuración"
         general: "General"
         system_users: "Usuarios del sistema"
+        admins: "Administradores"
         roles: "Roles"
         permissions: "Permisos"
         branches: "Sucursales"
