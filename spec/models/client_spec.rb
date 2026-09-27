@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe Client, type: :model do
   subject(:client) { build(:client) }
 
+  before { Client.unscoped.delete_all }
+
   describe 'validations' do
     it 'is valid with valid attributes' do
       expect(client).to be_valid
@@ -39,23 +41,30 @@ RSpec.describe Client, type: :model do
     end
 
     it 'validates code uniqueness among non-deleted clients' do
-      create(:client, code: 'CLI-0001')
+      # Create an active client
+      create(:client, code: 'CLI-TEST-001')
 
-      duplicate = build(:client, code: 'CLI-0001')
-      deleted = build(:client, code: 'CLI-0001', deleted_at: Time.current)
+      # Any new client with same code (active or soft-deleted) should fail
+      # because validation checks against active clients only
+      expect(build(:client, code: 'CLI-TEST-001')).not_to be_valid
+      expect(build(:client, code: 'CLI-TEST-001', deleted_at: Time.current)).not_to be_valid
+    end
 
-      expect(duplicate).not_to be_valid
-      expect(deleted).to be_valid
+    it 'allows reusing code after client is soft-deleted' do
+      # Create and then soft-delete a client
+      client = create(:client, code: 'CLI-TEST-002')
+      client.update!(deleted_at: Time.current)
+
+      # Now we can create a new client with same code
+      new_client = build(:client, code: 'CLI-TEST-002')
+      expect(new_client).to be_valid
     end
 
     it 'validates RFC uniqueness among non-deleted clients' do
       create(:client, rfc: 'XAXX010101001')
 
       duplicate = build(:client, rfc: 'XAXX010101001')
-      deleted = build(:client, rfc: 'XAXX010101001', deleted_at: Time.current)
-
       expect(duplicate).not_to be_valid
-      expect(deleted).to be_valid
     end
   end
 

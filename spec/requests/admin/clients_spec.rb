@@ -99,7 +99,7 @@ RSpec.describe 'Admin clients', type: :request do
       get new_admin_client_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('New customer')
+      expect(response.body).to include(I18n.t('admin.clients.new.title'))
     end
   end
 
@@ -128,7 +128,7 @@ RSpec.describe 'Admin clients', type: :request do
       get edit_admin_client_path(client)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Update customer')
+      expect(response.body).to include(I18n.t('admin.clients.edit.title', name: client.name))
     end
   end
 
@@ -157,10 +157,10 @@ RSpec.describe 'Admin clients', type: :request do
 
       expect do
         delete admin_client_path(client)
-      end.not_to change(Client, :count)
+      end.to change { client.reload.deleted_at }.from(nil).to(be_present)
 
       expect(response).to redirect_to(admin_clients_path)
-      expect(client.reload.deleted_at).to be_present
+      expect(Client.unscoped.count).to eq(1)
     end
   end
 end
