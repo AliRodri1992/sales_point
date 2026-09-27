@@ -105,6 +105,7 @@ es:
       update_permissions:
         success: Los permisos del rol se actualizaron correctamente.
     breadcrumbs:
+      roles: Roles
       branches: Sucursales
       categories: Categorías
       dashboard: Dashboard
