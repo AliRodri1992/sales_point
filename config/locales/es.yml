@@ -74,6 +74,36 @@ es:
         active: Activa
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
+    system_roles:
+      index:
+        page_title: Roles | Nexo POS
+        eyebrow: Seguridad y acceso
+        title: Roles
+        subtitle: Define qué módulos puede utilizar cada rol del sistema.
+        new: Nuevo rol
+        manage_permissions: Administrar permisos
+        no_description: Sin descripción.
+        empty_title: No hay roles disponibles
+        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
+      show:
+        back: Volver a roles
+        code: Código
+        type: Tipo
+        assigned_permissions: Permisos asignados
+        permissions_title: Permisos del rol
+        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios se aplican al guardar.
+        save_permissions: Guardar permisos
+        module_permissions:
+          one: 1 permiso disponible
+          other: "%{count} permisos disponibles"
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      types:
+        system: Sistema
+        branch: Sucursal
+      update_permissions:
+        success: Los permisos del rol se actualizaron correctamente.
     breadcrumbs:
       branches: Sucursales
       categories: Categorías
