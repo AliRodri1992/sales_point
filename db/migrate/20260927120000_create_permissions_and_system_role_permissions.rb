@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
-  # rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize
   def change
     create_table :permissions do |t|
       t.string :code, null: false, limit: 80

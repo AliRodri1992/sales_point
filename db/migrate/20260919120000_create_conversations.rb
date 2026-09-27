@@ -1,4 +1,3 @@
-# rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize
 class CreateConversations < ActiveRecord::Migration[8.1]
   def change
     create_table :conversations do |t|

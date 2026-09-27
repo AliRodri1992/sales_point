@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize
 class CreateProducts < ActiveRecord::Migration[8.1]
   def change
     create_table :products do |t|
