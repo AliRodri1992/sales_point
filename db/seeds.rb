@@ -53,11 +53,14 @@ def load_translations_from_file(file_path, locale_code)
 end
 
 def persist_translation(key, value, locale_code, language)
-  if ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
-    Translate.find_or_create_by!(key: key, language: language) { |t| t.value = value }
+  translation = Translate.find_by(key: key, language: language)
+  if translation
+    translation.update!(value: value) if translation.value != value
+  elsif ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
+    Translate.create!(key: key, language: language, value: value)
   else
     # Fallback: use locale column if language_id doesn't exist yet
-    Translate.find_or_create_by!(key: key, locale: locale_code) { |t| t.value = value }
+    Translate.create!(key: key, locale: locale_code, value: value)
   end
 end
 
@@ -147,3 +150,35 @@ end
 
 seed_system_roles
 seed_admin_user
+
+require 'faker'
+
+20.times do |index|
+  code = "CLI#{format('%04d', index + 1)}"
+
+  name = Faker::Company.name
+                       .gsub(/[^A-Za-z0-9ÁÉÍÓÚáéíóúÑñ&.-]/, '')
+                       .strip
+
+  rfc_prefix = index.even? ? 3 : 4
+
+  rfc = "#{Faker::Alphanumeric.alpha(number: rfc_prefix).upcase}" \
+        "#{Faker::Number.number(digits: 6)}" \
+        "#{Faker::Alphanumeric.alphanumeric(number: 3).upcase}"
+
+  postal_code = format('%05d', Faker::Number.between(from: 1, to: 99_999))
+
+  Client.create!(
+    code: code,
+    email: Faker::Internet.unique.email,
+    name: name,
+    notes: Faker::Lorem.sentence(word_count: 8),
+    phone: Faker::PhoneNumber.cell_phone,
+    postal_code: postal_code,
+    credit_limit: Faker::Number.between(from: 0, to: 100_000),
+    rfc: rfc,
+    status: %w[active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping client seed due to error: #{e.message}"
+end
