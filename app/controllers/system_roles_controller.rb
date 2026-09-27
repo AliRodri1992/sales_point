@@ -20,7 +20,8 @@ class SystemRolesController < ApplicationController
   end
 
   def new
-    @system_role = SystemRole.new
+    @system_role = SystemRole.new(status: :active, role_type: :system)
+    @permissions = Permission.available
     authorize @system_role
   end
 
@@ -28,11 +29,19 @@ class SystemRolesController < ApplicationController
     @system_role = SystemRole.new(system_role_params)
     authorize @system_role
 
-    if @system_role.save
-      redirect_to system_roles_path, notice: t('.success')
-    else
-      render :new, status: :unprocessable_content
+    permission_ids = Array(params[:permission_ids]).compact_blank.map(&:to_i)
+
+    SystemRole.transaction do
+      @system_role.save!
+      permission_ids.each do |permission_id|
+        @system_role.system_role_permissions.create!(permission_id: permission_id)
+      end
     end
+
+    redirect_to system_role_path(@system_role), notice: t('.success')
+  rescue ActiveRecord::RecordInvalid
+    @permissions = Permission.available
+    render :new, status: :unprocessable_content
   end
 
   def destroy
