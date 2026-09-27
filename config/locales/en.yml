@@ -102,6 +102,25 @@ en:
         inactive: Inactive
       updated: Branch updated successfully.
     system_roles:
+      new:
+        page_title: New role | Nexo POS
+        title: New role
+        subtitle: Create a role and assign the permissions it will have available.
+        back: Back to roles
+        details_title: Role information
+        details_subtitle: Define the basic details of the new role.
+        permissions_title: Role permissions
+        permissions_subtitle: Enable the permissions this role will be able to use.
+        error_title: The role could not be created
+        cancel: Cancel
+        submit: Create role
+        fields:
+          name: Name
+          name_placeholder: e.g. Sales supervisor
+          type: Type
+          status: Status
+          description: Description
+          description_placeholder: Describe the scope of this role.
       index:
         page_title: Roles | Nexo POS
         eyebrow: Security and access
