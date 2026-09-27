@@ -24,15 +24,27 @@ module PaginationHelper
 
   def page_links(current_page, total_pages, frame: nil)
     (1..total_pages).map do |page|
-      pagination_link(page.to_s, page, page == current_page, frame:)
+      if page == current_page
+        active_link(page.to_s)
+      else
+        pagination_link(page.to_s, page, false, frame:)
+      end
     end
+  end
+
+  def active_link(label)
+    tag.span(label,
+             class: 'px-3 py-1 text-sm rounded-lg border border-blue-600 bg-blue-600 ' \
+                    'font-semibold text-white cursor-default',
+             aria: { current: 'page' })
   end
 
   def pagination_link(label, page, disabled, frame: nil)
     base = 'px-3 py-1 text-sm rounded-lg border transition '
 
     if disabled
-      tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default")
+      tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default",
+                      aria: { disabled: true })
     else
       link_to(url_for(request.query_parameters.merge(page: page)),
               class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100",
