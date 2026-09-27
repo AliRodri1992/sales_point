@@ -3,9 +3,30 @@ require 'rails_helper'
 RSpec.describe Address, type: :model do
   subject { build(:address) }
 
-  # =========================
-  # VALIDATIONS
-  # =========================
+  describe 'associations' do
+    it { is_expected.to belong_to(:addressable) }
+  end
+
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:street) }
+    it { is_expected.to validate_length_of(:street).is_at_least(2).is_at_most(150) }
+    it { is_expected.to validate_presence_of(:exterior_number) }
+    it { is_expected.to validate_length_of(:exterior_number).is_at_least(1).is_at_most(20) }
+    it { is_expected.to validate_length_of(:interior_number).is_at_most(20).allow_blank }
+    it { is_expected.to validate_presence_of(:neighborhood) }
+    it { is_expected.to validate_length_of(:neighborhood).is_at_least(2).is_at_most(100) }
+    it { is_expected.to validate_presence_of(:city) }
+    it { is_expected.to validate_length_of(:city).is_at_least(2).is_at_most(100) }
+    it { is_expected.to validate_presence_of(:state) }
+    it { is_expected.to validate_length_of(:state).is_at_least(2).is_at_most(100) }
+    it { is_expected.to validate_presence_of(:country) }
+    it { is_expected.to validate_length_of(:country).is_at_least(2).is_at_most(100) }
+    it { is_expected.to validate_presence_of(:postal_code) }
+    it { is_expected.to allow_value('54800').for(:postal_code) }
+    it { is_expected.not_to allow_value('5480').for(:postal_code) }
+    it { is_expected.not_to allow_value('ABCDE').for(:postal_code) }
+  end
+
   it 'is valid with valid attributes' do
     expect(subject).to be_valid
   end
@@ -30,17 +51,13 @@ RSpec.describe Address, type: :model do
     expect(subject).not_to be_valid
   end
 
-  # =========================
-  # ENUM
-  # =========================
-  it 'has valid geocoding statuses' do
-    expect(Address.geocoding_statuses.keys)
-      .to include('pending', 'success', 'failed')
+  describe 'enum' do
+    it 'has valid geocoding statuses' do
+      expect(Address.geocoding_statuses.keys)
+        .to include('pending', 'success', 'failed')
+    end
   end
 
-  # =========================
-  # SCOPES
-  # =========================
   describe 'scopes' do
     before do
       create_list(:address, 2, :success)
@@ -61,10 +78,6 @@ RSpec.describe Address, type: :model do
     end
   end
 
-  # =========================
-  # PARANOIA / SOFT DELETE
-  # =========================
-
   describe 'destroy' do
     it 'soft deletes record' do
       address = create(:address)
@@ -81,9 +94,7 @@ RSpec.describe Address, type: :model do
 
       expect(address.deleted_at).not_to be_nil
     end
-  end
 
-  describe 'restore' do
     it 'restores a deleted record' do
       address = create(:address)
 
@@ -111,17 +122,17 @@ RSpec.describe Address, type: :model do
       expect(Address.only_deleted).to include(address)
     end
   end
-  # =========================
-  # HELPERS
-  # =========================
+
   describe 'helpers' do
     describe '#full_address' do
       it 'builds full address string' do
-        address = build(:address,
-                        street: 'Av. Reforma',
-                        city: 'CDMX',
-                        country: 'MX',
-                        postal_code: '06000')
+        address = build(
+          :address,
+          street: 'Av. Reforma',
+          city: 'CDMX',
+          country: 'MX',
+          postal_code: '06000'
+        )
 
         expect(address.full_address).to include('Av. Reforma')
         expect(address.full_address).to include('CDMX')
@@ -136,17 +147,13 @@ RSpec.describe Address, type: :model do
       end
     end
 
-    describe '#geocoding helpers' do
+    describe 'geocoding helpers' do
       it '#geocoded? returns true when success' do
-        address = build(:address, geocoding_status: :success)
-
-        expect(address.geocoded?).to be true
+        expect(build(:address, geocoding_status: :success).geocoded?).to be true
       end
 
       it '#needs_geocoding? returns true when pending' do
-        address = build(:address, geocoding_status: :pending)
-
-        expect(address.needs_geocoding?).to be true
+        expect(build(:address, geocoding_status: :pending).needs_geocoding?).to be true
       end
     end
   end

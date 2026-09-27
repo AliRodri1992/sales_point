@@ -1,0 +1,10 @@
+<%= turbo_stream.update "branches_list" do %>
+  <%= render "list",
+             branches: @branches,
+             total_count: @total_count,
+             total_pages: @total_pages,
+             current_page: @current_page,
+             per_page: @per_page,
+             can_manage_branches: @can_manage_branches %>
+<% end %>
+<turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

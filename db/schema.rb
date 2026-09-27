@@ -43,6 +43,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_122602) do
   end
 
   create_table "addresses", force: :cascade do |t|
+    t.bigint "addressable_id", null: false
+    t.string "addressable_type", null: false
     t.string "city", limit: 100
     t.string "country", limit: 100, null: false
     t.datetime "created_at", null: false
@@ -57,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_122602) do
     t.string "state", limit: 100
     t.string "street", limit: 150
     t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
     t.index ["deleted_at"], name: "index_addresses_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["geocoding_status"], name: "index_addresses_on_geocoding_status"
     t.index ["postal_code", "country", "geocoding_status"], name: "idx_on_postal_code_country_geocoding_status_2c6ededc92"

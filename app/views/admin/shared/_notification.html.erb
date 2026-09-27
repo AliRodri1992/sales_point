@@ -31,6 +31,12 @@
   <% else %>
     <% subtitle_text = record.code %>
   <% end %>
+<% elsif record.is_a?(Branch) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor_name = notification.params[:user_name].presence || notification.params[:user]&.display_name %>
+  <% avatar_text = actor_name.to_s.split.map { |part| part[0] }.join[0, 2].upcase.presence || record.name.to_s[0, 2].upcase %>
+  <% title_text = t("admin.shared.notifications.branch.#{action}", name: record.name, user: actor_name, default: record.name) %>
+  <% subtitle_text = actor_name ? t('admin.shared.notifications.performed_by', user: actor_name) : t('admin.shared.notifications.actor_unknown') %>
 <% else %>
   <% sender = record&.user %>
   <% avatar_text = sender ? sender.initials : "?" %>

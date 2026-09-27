@@ -81,6 +81,33 @@ def create_sat_month(number)
   end
 end
 
+# rubocop:disable Metrics/MethodLength
+def seed_admin_user
+  language = Language.find_by!(code: 'es')
+  administrator_role = SystemRole.find_by!(code: 'administrator')
+
+  user = User.find_or_initialize_by(email: 'administrador@delta.com')
+  user.assign_attributes(
+    username: 'administrador',
+    password: 'administrador',
+    password_confirmation: 'administrador',
+    user_type: :employee,
+    status: :active,
+    theme: Theme::DEFAULT,
+    language:
+  )
+  user.save!
+
+  UserRole.find_or_create_by!(
+    user:,
+    system_role: administrator_role,
+    branch: nil
+  ) do |user_role|
+    user_role.deleted_at = nil
+  end
+  # rubocop:enable Metrics/MethodLength
+end
+
 def seed_system_roles
   SYSTEM_ROLES.each do |role_attributes|
     SystemRole.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
@@ -116,5 +143,7 @@ end
 
 (1..12).each do |i|
   create_sat_month(i)
-  seed_system_roles
 end
+
+seed_system_roles
+seed_admin_user
