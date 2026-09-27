@@ -54,7 +54,8 @@ class SystemRolesController < ApplicationController
       end
     end
 
-    redirect_to system_role_path(@system_role), notice: t('.success')
+    redirect_to system_role_path(@system_role),
+                flash: { swal_message: t('admin.system_roles.update_permissions.success') }
   end
 
   private
