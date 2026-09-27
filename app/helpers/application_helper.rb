@@ -46,12 +46,8 @@ module ApplicationHelper
   def error_message_for(object, attribute)
     return '' unless object && object.errors[attribute].any?
 
-    # Get translated attribute name
     attribute_name = I18n.t("errors.attributes.#{attribute}", default: attribute.to_s.humanize)
-    # Get the error message
     error_message = object.errors[attribute].first
-
-    # Format the full message
     formatted_message = "#{attribute_name} #{error_message}"
 
     content_tag(:p, formatted_message,
@@ -76,6 +72,8 @@ module ApplicationHelper
       items << { label: t('admin.breadcrumbs.categories') }
     when 'admin/branches'
       items.concat(branch_breadcrumb_items)
+    when 'system_roles'
+      items.concat(system_role_breadcrumb_items)
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
@@ -117,6 +115,15 @@ module ApplicationHelper
       [branches_path]
     end
   end
+
+  def system_role_breadcrumb_items
+    roles_path = { label: t('admin.breadcrumbs.roles'), path: system_roles_path }
+
+    return [roles_path] unless params[:action] == 'show'
+
+    [roles_path, { label: @system_role.name }]
+  end
+
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def current_product
@@ -183,9 +190,11 @@ module ApplicationHelper
     if disabled
       tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default")
     else
-      link_to(label, url_for(request.query_parameters.merge(page: page)),
+      link_to(url_for(request.query_parameters.merge(page: page)),
               class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100",
-              data: frame ? { turbo_frame: frame } : nil)
+              data: frame ? { turbo_frame: frame } : nil) do
+        label
+      end
     end
   end
 
@@ -193,8 +202,7 @@ module ApplicationHelper
     theme = user_avatar_theme(user)
 
     online_dot = if online_indicator && user.online?
-                   tag.span(class: 'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full ' \
-                                   'border-2 border-white bg-emerald-500')
+                   tag.span(class: 'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full '                                    'border-2 border-white bg-emerald-500')
                  end
 
     tag.div(
