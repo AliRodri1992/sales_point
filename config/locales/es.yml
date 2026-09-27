@@ -1009,3 +1009,26 @@ es:
           city: "Ciudad"
           state: "Estado"
           country: "País"
+
+  # Additional error attribute translations for catalogs
+  errors:
+    attributes:
+      code: "Código"
+      description: "Descripción"
+      price: "Precio"
+      cost: "Costo"
+      stock: "Existencias"
+      min_stock: "Stock mínimo"
+      max_stock: "Stock máximo"
+      barcode: "Código de barras"
+      image: "Imagen"
+      category: "Categoría"
+      featured: "Destacado"
+      position: "Posición"
+      sat_unit_key: "Unidad SAT"
+      sat_tax: "Impuesto SAT"
+      sku: "SKU"
+      flag_iso: "Bandera"
+      view_count: "Contador de vistas"
+      slug: "Slug"
+      status: "Estado"
