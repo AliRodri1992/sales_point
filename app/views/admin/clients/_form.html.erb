@@ -1,4 +1,5 @@
-<%= form_with model: [:admin, client], class: 'space-y-5' do |form| %>
+<%= form_with model: [:admin, client],
+                  class: 'space-y-6 p-6 lg:p-8' do |form| %>
   <% if client.errors[:base].any? %>
     <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
       <%= client.errors.full_messages_for(:base).first %>
