@@ -21,6 +21,10 @@ class SystemRolePolicy < ApplicationPolicy
     admin?
   end
 
+  def update_permissions?
+    admin?
+  end
+
   private
 
   def admin?
