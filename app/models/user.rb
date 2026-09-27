@@ -57,10 +57,9 @@ class User < ApplicationRecord
   end
 
   def permission?(permission_code)
-    return admin? if user_type == 'employee' # Admins have all permissions
-
-    system_roles.active
-                .exists?(permissions: { code: permission_code, status: 'active' })
+    user_roles.active
+              .joins(system_role: :permissions)
+              .exists?(permissions: { code: permission_code, status: 'active' })
   end
 
   def initials
