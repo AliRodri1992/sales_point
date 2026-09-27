@@ -794,3 +794,28 @@ es:
       recent_sales: "Ventas recientes"
       today: "Hoy"
       minutes_ago: "Hace %{count} min"
+
+  # Active Record error messages for Branch model
+  activerecord:
+    errors:
+      attributes:
+        branch:
+          name: "Nombre"
+          phone: "Teléfono"
+          street: "Calle"
+          exterior_number: "No. exterior"
+          interior_number: "No. interior"
+          neighborhood: "Colonia"
+          postal_code: "Código postal"
+          city: "Ciudad"
+          state: "Estado"
+          country: "País"
+        address:
+          street: "Calle"
+          exterior_number: "No. exterior"
+          interior_number: "No. interior"
+          neighborhood: "Colonia"
+          postal_code: "Código postal"
+          city: "Ciudad"
+          state: "Estado"
+          country: "País"
