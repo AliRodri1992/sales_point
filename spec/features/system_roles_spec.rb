@@ -11,7 +11,7 @@ RSpec.feature 'SystemRoles', type: :feature do
   end
 
   let!(:admin) do
-    create(:user).tap do |user|
+    create(:user, :english).tap do |user|
       create(:user_role, user:, system_role: admin_role)
     end
   end
@@ -54,6 +54,9 @@ RSpec.feature 'SystemRoles', type: :feature do
     click_button 'Save permissions'
 
     expect(role.reload.permissions).to contain_exactly(disabled)
-    expect(page).to have_content('Role permissions were updated successfully.')
+    expect(page).to have_css(
+      '[data-controller="swal-flash"][data-swal-flash-message-value="Role permissions were updated successfully."]',
+      visible: :all
+    )
   end
 end
