@@ -40,7 +40,6 @@ class Client < ApplicationRecord
 
   private
 
-  # rubocop:disable-next Metrics/AbcSize
   def normalize_fields
     normalize_contact_info
     normalize_identifiers
