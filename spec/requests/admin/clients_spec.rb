@@ -163,4 +163,50 @@ RSpec.describe 'Admin clients', type: :request do
       expect(Client.unscoped.count).to eq(1)
     end
   end
+
+  describe 'UI elements' do
+    it 'shows back button with arrow icon in show view' do
+      client = create(:client, name: 'Test Customer')
+
+      get admin_client_path(client)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Volver a clientes')
+      expect(response.body).to include('data-turbo-frame="_top"')
+    end
+
+    it 'shows back button in new form' do
+      get new_admin_client_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Volver a clientes')
+      expect(response.body).to include('data-turbo-frame="_top"')
+    end
+
+    it 'shows back button in edit form' do
+      client = create(:client)
+
+      get edit_admin_client_path(client)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Volver a clientes')
+      expect(response.body).to include('data-turbo-frame="_top"')
+    end
+
+    it 'renders form in styled container' do
+      get new_admin_client_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('max-w-6xl')
+      expect(response.body).to include('rounded-xl')
+      expect(response.body).to include('border border-slate-200')
+    end
+
+    it 'renders breadcrumbs on index page' do
+      get admin_clients_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Clientes')
+    end
+  end
 end
