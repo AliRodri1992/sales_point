@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 module Admin
   class ClientsController < ApplicationController
     layout 'admin_dashboard'
@@ -162,4 +163,5 @@ module Admin
       user.broadcast_notifications_refresh
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end
