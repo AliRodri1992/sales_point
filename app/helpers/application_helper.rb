@@ -138,6 +138,19 @@ module ApplicationHelper
       [clients_path]
     end
   end
+
+  def system_role_breadcrumb_items
+    roles_path = { label: t('admin.breadcrumbs.system_roles'), path: system_roles_path }
+
+    case params[:action]
+    when 'new', 'create'
+      [roles_path, { label: t('admin.system_roles.new.title') }]
+    when 'edit'
+      [roles_path, { label: t('admin.system_roles.edit.title') }]
+    else
+      roles_path
+    end
+  end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def current_product
