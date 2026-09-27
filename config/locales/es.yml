@@ -5,6 +5,7 @@ es:
       address: Dirección
       branch: Sucursal
       category: Categoría
+      client: Cliente
       demo_request: Solicitud de demo
       language: Idioma
       product: Producto
@@ -447,6 +448,10 @@ es:
           created: Se creó la categoría '%{name}'
           destroyed: Se eliminó la categoría '%{name}'
           updated: Se actualizó la categoría '%{name}'
+        client:
+          created: Se creó el cliente '%{name}' por %{user}
+          destroyed: Se eliminó el cliente '%{name}' por %{user}
+          updated: Se actualizó el cliente '%{name}' por %{user}
         empty: No tienes notificaciones.
         language:
           created: Se creó el idioma '%{name}'
@@ -469,6 +474,7 @@ es:
         types:
           category: Categoría
           chat: Chat
+          client: Cliente
           demo_request: Solicitud de demo
           language: Idioma
           product: Producto

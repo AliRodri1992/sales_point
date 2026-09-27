@@ -32,6 +32,7 @@
     <%= link_to t('admin.clients.show.back'), admin_clients_path,
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
     <%= link_to edit_admin_client_path(@client),
+                data: { turbo_frame: '_top' },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
       <%= icon('pencil-square', class: 'size-4') %>
       <%= t('admin.clients.index.edit') %>
