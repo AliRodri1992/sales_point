@@ -40,6 +40,7 @@ class Client < ApplicationRecord
 
   private
 
+  # rubocop:disable-next Metrics/AbcSize
   def normalize_fields
     self.code = code.to_s.strip
     self.name = name.to_s.strip
