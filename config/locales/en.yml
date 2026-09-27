@@ -101,6 +101,36 @@ en:
         active: Active
         inactive: Inactive
       updated: Branch updated successfully.
+    system_roles:
+      index:
+        page_title: Roles | Nexo POS
+        eyebrow: Security and access
+        title: Roles
+        subtitle: Define which system modules each role can access.
+        new: New role
+        manage_permissions: Manage permissions
+        no_description: No description.
+        empty_title: No roles available
+        empty_subtitle: Create a role to start configuring its permissions.
+      show:
+        back: Back to roles
+        code: Code
+        type: Type
+        assigned_permissions: Assigned permissions
+        permissions_title: Role permissions
+        permissions_subtitle: Enable or disable access to each module. Changes are applied when you save.
+        save_permissions: Save permissions
+        module_permissions:
+          one: 1 permission available
+          other: "%{count} permissions available"
+      statuses:
+        active: Active
+        inactive: Inactive
+      types:
+        system: System
+        branch: Branch
+      update_permissions:
+        success: Role permissions were updated successfully.
     breadcrumbs:
       branches: Branches
       categories: Categories
