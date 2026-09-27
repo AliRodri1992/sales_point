@@ -5,6 +5,7 @@ es:
       address: Dirección
       branch: Sucursal
       category: Categoría
+      client: Cliente
       demo_request: Solicitud de demo
       language: Idioma
       product: Producto
@@ -108,6 +109,7 @@ es:
       roles: Roles
       branches: Sucursales
       categories: Categorías
+      clients: Clientes
       dashboard: Dashboard
       home: Inicio
       label: Ruta de migas
@@ -447,6 +449,10 @@ es:
           created: Se creó la categoría '%{name}'
           destroyed: Se eliminó la categoría '%{name}'
           updated: Se actualizó la categoría '%{name}'
+        client:
+          created: Se creó el cliente '%{name}' por %{user}
+          destroyed: Se eliminó el cliente '%{name}' por %{user}
+          updated: Se actualizó el cliente '%{name}' por %{user}
         empty: No tienes notificaciones.
         language:
           created: Se creó el idioma '%{name}'
@@ -469,6 +475,7 @@ es:
         types:
           category: Categoría
           chat: Chat
+          client: Cliente
           demo_request: Solicitud de demo
           language: Idioma
           product: Producto
@@ -528,6 +535,78 @@ es:
   authentication:
     error_banner:
       title: Error de Autenticación
+  clients:
+    confirm:
+      cancel: Cancelar
+    created: Cliente creado correctamente
+    destroyed: Cliente eliminado correctamente
+    edit:
+      subtitle: Actualiza los datos del cliente.
+      title: Editar %{name}
+    form:
+      cancel: Cancelar
+      code: Código
+      code_hint: Código único del cliente. Se requiere para identificar al cliente en el sistema.
+      code_placeholder: ej. CLI-0001
+      create: Crear cliente
+      credit_limit: Límite de crédito
+      credit_limit_placeholder: ej. 5000.00
+      email: Email
+      email_placeholder: ej. cliente@empresa.com
+      name: Nombre
+      name_placeholder: Nombre del cliente
+      notes: Notas
+      notes_placeholder: Información adicional sobre el cliente
+      phone: Teléfono
+      phone_placeholder: ej. 5512345678
+      postal_code: Código postal
+      postal_code_placeholder: ej. 01234
+      rfc: RFC
+      rfc_placeholder: ej. ABC010101ABC
+      status: Estado
+      update: Actualizar cliente
+      fiscal_regime: Regimen fiscal
+      fiscal_regime_blank: Selecciona el régimen fiscal
+    index:
+      card_title: Clientes registrados
+      columns:
+        actions: Acciones
+        code: Código
+        contact: Contacto
+        name: Nombre
+        rfc: RFC
+        status: Estado
+      confirm_delete: "¿Seguro que quieres eliminar este cliente?"
+      delete: Eliminar
+      edit: Editar
+      empty_subtitle: Crea tu primer cliente para empezar.
+      empty_title: Aún no hay clientes
+      filters:
+        all_statuses: Todos los estados
+        apply: Aplicar
+      new: Nuevo cliente
+      pagination:
+        next: Siguiente
+        page: Página %{page} de %{total}
+        per_page_label: Mostrar
+        prev: Anterior
+      search_placeholder: Buscar por nombre, código o RFC...
+      show: Ver
+      subtitle: Administra los clientes de tu negocio.
+      title: Clientes
+      total_count: "%{count} clientes registrados"
+    new:
+      subtitle: Añade un cliente a tu negocio.
+      title: Nuevo cliente
+    show:
+      back: Volver
+      close: Cerrar
+      subtitle: Revisa los detalles de este cliente.
+      title: Detalles del cliente
+    statuses:
+      active: Activo
+      inactive: Inactivo
+    updated: Cliente actualizado correctamente
   demo_request_mailer:
     new_request:
       fields:
