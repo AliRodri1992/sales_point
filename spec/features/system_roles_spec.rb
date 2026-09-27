@@ -41,6 +41,24 @@ RSpec.feature 'SystemRoles', type: :feature do
     expect(page).to have_field("permission_#{permission.id}", checked: true)
   end
 
+  scenario 'admin creates a role with selected permissions' do
+    sales = create(:permission, code: 'sales.access', name: 'Sales access', module_name: 'Sales')
+    inventory = create(:permission, code: 'inventory.access', name: 'Inventory access', module_name: 'Inventory')
+
+    visit new_system_role_path
+
+    fill_in 'Name', with: 'Sales Supervisor'
+    select 'Branch', from: 'Role type'
+    fill_in 'Description', with: 'Manages sales operations.'
+    check "permission_#{sales.id}"
+    click_button 'Create role'
+
+    role = SystemRole.find_by!(name: 'Sales Supervisor')
+    expect(role.permissions).to contain_exactly(sales)
+    expect(role.permissions).not_to include(inventory)
+    expect(page).to have_content('Sales Supervisor')
+  end
+
   scenario 'admin updates role permissions with toggles' do
     role = create(:system_role, name: 'Cajero', code: 'cashier', role_type: :branch)
     enabled = create(:permission, code: 'sales.access', name: 'Acceso a ventas', module_name: 'Ventas')
