@@ -105,6 +105,7 @@ ko:
     breadcrumbs:
       branches: 지점
       categories: 카테고리
+      clients: 고객
       dashboard: 대시보드
       home: 홈
       label: 이동 경로
