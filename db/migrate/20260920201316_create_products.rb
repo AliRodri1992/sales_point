@@ -26,10 +26,6 @@ class CreateProducts < ActiveRecord::Migration[8.1]
     add_index :products, :code, unique: true, where: '(deleted_at IS NULL)'
     add_index :products, :sku, unique: true, where: '(deleted_at IS NULL)'
     add_index :products, :barcode, where: '(deleted_at IS NULL)'
-    add_index :products, :category_id, where: '(deleted_at IS NULL)'
-    add_index :products, :sat_unit_key_id, where: '(deleted_at IS NULL)'
-    add_index :products, :sat_tax_id, where: '(deleted_at IS NULL)'
-    add_index :products, :status, where: '(deleted_at IS NULL)'
     add_index :products, :deleted_at
   end
 end
