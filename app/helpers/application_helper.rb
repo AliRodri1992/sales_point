@@ -185,12 +185,14 @@ module ApplicationHelper
     safe_join(links, ' ')
   end
 
-  def prev_link(current_page, frame: nil)
+  # rubocop:disable-next Lint/UnusedMethodArgument
+  def prev_link(current_page, frame: nil, scope: nil)
     label = t('admin.products.index.pagination.prev')
     pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
   end
 
-  def next_link(current_page, total_pages, frame: nil)
+  # rubocop:disable-next Lint/UnusedMethodArgument
+  def next_link(current_page, total_pages, frame: nil, scope: nil)
     label = t('admin.products.index.pagination.next')
     pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
   end
