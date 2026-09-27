@@ -1,17 +1,17 @@
 FactoryBot.define do
   factory :address do
     association :addressable, factory: %i[branch without_address]
-    street { Faker::Address.street_name }
-    exterior_number { Faker::Address.building_number }
-    interior_number { Faker::Address.secondary_address }
-    neighborhood { Faker::Address.community }
-    city { Faker::Address.city }
-    state { Faker::Address.state }
+    street { 'Av. Reforma' }
+    exterior_number { '100' }
+    interior_number { '446' }
+    neighborhood { 'Centro' }
+    city { 'Cuautitlán' }
+    state { 'Estado de México' }
     country { 'MX' }
-    postal_code { Faker::Address.zip_code }
+    postal_code { '54800' }
 
-    latitude { Faker::Address.latitude }
-    longitude { Faker::Address.longitude }
+    latitude { 19.4326 }
+    longitude { -99.1332 }
 
     geocoding_status { :pending }
 
