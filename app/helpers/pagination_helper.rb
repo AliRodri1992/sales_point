@@ -13,18 +13,18 @@ module PaginationHelper
   end
 
   def prev_link(current_page, frame: nil)
-    label = t('admin.products.index.pagination.prev')
+    label = t('admin.pagination.prev')
     pagination_link(label, current_page - 1, current_page <= 1, frame:)
   end
 
   def next_link(current_page, total_pages, frame: nil)
-    label = t('admin.products.index.pagination.next')
+    label = t('admin.pagination.next')
     pagination_link(label, current_page + 1, current_page >= total_pages, frame:)
   end
 
   def page_links(current_page, total_pages, frame: nil)
     (1..total_pages).map do |page|
-      pagination_link(page, page, page == current_page, frame:)
+      pagination_link(page.to_s, page, page == current_page, frame:)
     end
   end
 
