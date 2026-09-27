@@ -9,17 +9,6 @@ module Admin
 
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
-    SORTABLE_COLUMNS = {
-      'code' => 'clients.code',
-      'name' => 'clients.name',
-      'email' => 'clients.email',
-      'phone' => 'clients.phone',
-      'rfc' => 'clients.rfc',
-      'credit_limit' => 'clients.credit_limit',
-      'status' => 'clients.status',
-      'created_at' => 'clients.created_at'
-    }.freeze
-    SORT_DIRECTIONS = %w[asc desc].freeze
 
     def index
       load_clients
@@ -97,12 +86,12 @@ module Admin
     def load_clients
       @clients = filter_scope(Client.not_deleted.includes(:sat_fiscal_regime))
       @total_count = @clients.count
-      @clients = apply_sorting(@clients)
+      @clients = ClientFilter.new(@clients, params).call
       @clients = paginate(@clients)
     end
 
     def filter_scope(scope)
-      scope = apply_search_filter(scope)
+      apply_search_filter(scope)
       apply_status_filter(scope)
     end
 
@@ -128,8 +117,8 @@ module Admin
     end
 
     def apply_sorting(scope)
-      column = SORTABLE_COLUMNS.fetch(params[:sort], 'clients.name')
-      direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
+      column = ClientFilter::SORTABLE_COLUMNS.fetch(params[:sort], 'clients.name')
+      direction = ClientFilter::SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
       scope.order(column => direction)
     end
