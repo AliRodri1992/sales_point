@@ -90,7 +90,15 @@
         <% end %>
 
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'clients_list', scope: 'admin.clients.index.pagination') %>
+          <% (1..total_pages).each do |page| %>
+            <% if page == (params[:page] || 1).to_i %>
+              <span class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-600" aria-current="page"><%= page %></span>
+            <% else %>
+              <%= link_to page,
+                          admin_clients_path(request.query_parameters.merge(page: page, per_page: params[:per_page])),
+                          class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100' %>
+            <% end %>
+          <% end %>
         </div>
       </div>
     <% end %>
