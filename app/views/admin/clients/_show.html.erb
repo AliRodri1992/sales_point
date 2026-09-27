@@ -30,6 +30,7 @@
 
   <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
     <%= link_to admin_clients_path,
+                data: { turbo_frame: '_top' },
                 class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50' do %>
       <%= icon('arrow-left', class: 'size-4') %>
       <%= t('admin.clients.show.back') %>
