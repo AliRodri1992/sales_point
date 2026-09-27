@@ -135,6 +135,7 @@ en:
       roles: Roles
       branches: Branches
       categories: Categories
+      clients: Clients
       dashboard: Dashboard
       home: Home
       label: Breadcrumbs

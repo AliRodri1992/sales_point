@@ -109,6 +109,7 @@ es:
       roles: Roles
       branches: Sucursales
       categories: Categorías
+      clients: Clientes
       dashboard: Dashboard
       home: Inicio
       label: Ruta de migas

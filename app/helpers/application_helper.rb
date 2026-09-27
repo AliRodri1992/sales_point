@@ -70,18 +70,12 @@ module ApplicationHelper
       items << { label: t('admin.breadcrumbs.languages') }
     when 'admin/categories'
       items << { label: t('admin.breadcrumbs.categories') }
-    when 'admin/clients'
-      clients_path = { label: t('admin.breadcrumbs.clients'), path: admin_clients_path }
-      case params[:action]
-      when 'new'
-        items.push(clients_path, { label: t('admin.clients.new.title') })
-      when 'edit', 'show', 'create', 'update', 'destroy'
-        items.push(clients_path, { label: @client&.name || t('admin.clients.edit.title', name: '') })
-      else
-        items << clients_path
-      end
     when 'system_roles'
       items.concat(system_role_breadcrumb_items)
+    when 'admin/branches'
+      items.concat(branch_breadcrumb_items)
+    when 'admin/clients'
+      items.concat(client_breadcrumb_items)
     else
       items << { label: params[:controller].to_s.remove('admin/').humanize }
     end
@@ -124,6 +118,27 @@ module ApplicationHelper
     end
   end
 
+  def client_breadcrumb_items
+    clients_path = { label: t('admin.breadcrumbs.clients'), path: admin_clients_path }
+
+    case params[:action]
+    when 'new'
+      [clients_path, { label: t('admin.clients.new.title') }]
+    when 'show'
+      client_name = current_client&.name || t('admin.clients.show.title')
+      [clients_path, { label: client_name }]
+    when 'edit'
+      client_name = current_client&.name || t('admin.clients.edit.title', name: '')
+      [
+        clients_path,
+        { label: client_name, path: current_client ? admin_client_path(current_client) : nil },
+        { label: t('admin.clients.edit.title', name: client_name) }
+      ]
+    else
+      [clients_path]
+    end
+  end
+
   def system_role_breadcrumb_items
     roles_path = { label: t('admin.breadcrumbs.roles'), path: system_roles_path }
 
@@ -140,6 +155,10 @@ module ApplicationHelper
 
   def current_branch
     controller.view_assigns['branch']
+  end
+
+  def current_client
+    controller.view_assigns['client']
   end
 
   def sort_link(column, title = nil, frame: nil)
