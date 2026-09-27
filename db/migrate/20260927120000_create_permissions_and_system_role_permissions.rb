@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
+  # rubocop:disable-next Metrics/MethodLength
   def change
     create_table :permissions do |t|
       t.string :code, null: false, limit: 80
@@ -8,12 +9,16 @@ class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
       t.string :module_name, null: false, limit: 50
       t.string :description
       t.string :status, null: false, default: 'active', limit: 20
+      t.timestamp :deleted_at
 
       t.timestamps
     end
 
     add_index :permissions, :code, unique: true
+    add_index :permissions, :status
     add_index :permissions, %i[module_name status]
+    add_index :permissions, :deleted_at
+    add_index :permissions, %i[deleted_at status]
 
     add_check_constraint :permissions,
                          "status IN ('active', 'inactive')",
