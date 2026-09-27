@@ -90,14 +90,25 @@
         <% end %>
 
         <div class="flex items-center gap-1">
+          <% page_num = (params[:page] || 1).to_i %>
+          <% if page_num > 1 %>
+            <%= link_to t('admin.pagination.prev'),
+                        admin_clients_path(request.query_parameters.merge(page: page_num - 1, per_page: params[:per_page])),
+                        class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100' %>
+          <% end %>
           <% (1..total_pages).each do |page| %>
-            <% if page == (params[:page] || 1).to_i %>
+            <% if page == page_num %>
               <span class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-semibold text-slate-600" aria-current="page"><%= page %></span>
             <% else %>
               <%= link_to page,
                           admin_clients_path(request.query_parameters.merge(page: page, per_page: params[:per_page])),
                           class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100' %>
             <% end %>
+          <% end %>
+          <% if page_num < total_pages %>
+            <%= link_to t('admin.pagination.next'),
+                        admin_clients_path(request.query_parameters.merge(page: page_num + 1, per_page: params[:per_page])),
+                        class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100' %>
           <% end %>
         </div>
       </div>
