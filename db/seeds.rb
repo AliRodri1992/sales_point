@@ -39,6 +39,22 @@ SYSTEM_ROLES = [
   }
 ].freeze
 
+DEFAULT_PERMISSIONS = [
+  { code: 'dashboard.access', name: 'Acceso al dashboard', module_name: 'Dashboard', description: 'Permite acceder al panel principal.' },
+  { code: 'sales.access', name: 'Acceso a ventas', module_name: 'Ventas', description: 'Permite acceder al módulo de ventas.' },
+  { code: 'cash_register.access', name: 'Acceso a caja', module_name: 'Caja', description: 'Permite acceder al módulo de caja.' },
+  { code: 'inventory.access', name: 'Acceso a inventario', module_name: 'Inventario', description: 'Permite acceder al módulo de inventario.' },
+  { code: 'customers.access', name: 'Acceso a clientes', module_name: 'Clientes', description: 'Permite acceder al módulo de clientes.' },
+  { code: 'suppliers.access', name: 'Acceso a proveedores', module_name: 'Proveedores', description: 'Permite acceder al módulo de proveedores.' },
+  { code: 'employees.access', name: 'Acceso a empleados', module_name: 'Empleados', description: 'Permite acceder al módulo de empleados.' },
+  { code: 'reports.access', name: 'Acceso a reportes', module_name: 'Reportes', description: 'Permite acceder al módulo de reportes.' },
+  { code: 'products.access', name: 'Acceso a productos', module_name: 'Productos', description: 'Permite acceder al catálogo de productos.' },
+  { code: 'categories.access', name: 'Acceso a categorías', module_name: 'Categorías', description: 'Permite acceder al catálogo de categorías.' },
+  { code: 'branches.access', name: 'Acceso a sucursales', module_name: 'Sucursales', description: 'Permite administrar las sucursales.' },
+  { code: 'languages.access', name: 'Acceso a idiomas', module_name: 'Idiomas', description: 'Permite administrar los idiomas disponibles.' },
+  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles', description: 'Permite administrar roles y sus permisos.' }
+].freeze
+
 def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
 
@@ -82,6 +98,27 @@ def create_sat_month(number)
 end
 
 # rubocop:disable Metrics/MethodLength
+def seed_permissions
+  DEFAULT_PERMISSIONS.each do |permission_attributes|
+    Permission.find_or_initialize_by(code: permission_attributes[:code]).tap do |permission|
+      permission.assign_attributes(permission_attributes)
+      permission.status = :active
+      permission.save!
+    end
+  end
+end
+
+def assign_default_role_permissions
+  role_codes = %w[super_admin administrator]
+  permissions = Permission.available
+
+  SystemRole.where(code: role_codes).find_each do |role|
+    permissions.find_each do |permission|
+      SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
+    end
+  end
+end
+
 def seed_admin_user
   language = Language.find_by!(code: 'es')
   administrator_role = SystemRole.find_by!(code: 'administrator')
@@ -146,4 +183,6 @@ end
 end
 
 seed_system_roles
+seed_permissions
+assign_default_role_permissions
 seed_admin_user
