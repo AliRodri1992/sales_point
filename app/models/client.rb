@@ -42,12 +42,24 @@ class Client < ApplicationRecord
 
   # rubocop:disable-next Metrics/AbcSize
   def normalize_fields
+    normalize_contact_info
+    normalize_identifiers
+    normalize_optional_fields
+  end
+
+  def normalize_contact_info
+    self.phone = phone.to_s.strip.presence
+    self.postal_code = postal_code.to_s.strip.presence
+  end
+
+  def normalize_identifiers
     self.code = code.to_s.strip
     self.name = name.to_s.strip
-    self.email = email.to_s.strip.downcase.presence
-    self.phone = phone.to_s.strip.presence
+  end
+
+  def normalize_optional_fields
     self.rfc = rfc.to_s.strip.upcase.presence
-    self.postal_code = postal_code.to_s.strip.presence
     self.notes = notes.to_s.strip.presence
+    self.email = email.to_s.strip.downcase.presence
   end
 end
