@@ -1,3 +1,4 @@
+# rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize
 class CreateClients < ActiveRecord::Migration[8.1]
   def change
     create_table :clients do |t|
@@ -16,11 +17,12 @@ class CreateClients < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :clients, :code, unique: true, where: "deleted_at IS NULL"
+    add_index :clients, :code, unique: true, where: 'deleted_at IS NULL'
     add_index :clients, :rfc, unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL"
     add_index :clients, :email
     add_index :clients, :phone
     add_index :clients, :status
+    add_index :clients, :sat_fiscal_regime_id, where: 'deleted_at IS NULL'
     add_index :clients, :deleted_at
   end
 end
