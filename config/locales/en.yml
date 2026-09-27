@@ -132,6 +132,7 @@ en:
       update_permissions:
         success: Role permissions were updated successfully.
     breadcrumbs:
+      roles: Roles
       branches: Branches
       categories: Categories
       dashboard: Dashboard
