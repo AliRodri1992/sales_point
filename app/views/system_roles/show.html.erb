@@ -1,3 +1,113 @@
-<h1><%= @system_role.name %></h1>
+<% content_for :title, "#{@system_role.name} | #{t('admin.system_roles.index.title')}" %>
 
-<%= button_to 'Delete', system_role_path(@system_role), method: :delete %>
+<div>
+  <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= t('admin.system_roles.index.title') %></p>
+      <div class="mt-1 flex items-center gap-3">
+        <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= @system_role.name %></h1>
+        <% if @system_role.active? %>
+          <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+            <%= t('admin.system_roles.statuses.active') %>
+          </span>
+        <% else %>
+          <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
+            <%= t('admin.system_roles.statuses.inactive') %>
+          </span>
+        <% end %>
+      </div>
+      <p class="mt-1 text-sm text-slate-500">
+        <%= @system_role.description.presence || t('admin.system_roles.index.no_description') %>
+      </p>
+    </div>
+
+    <%= link_to system_roles_path,
+                class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
+      <%= icon('arrow-left', class: 'size-4') %>
+      <%= t('admin.system_roles.show.back') %>
+    <% end %>
+  </div>
+
+  <% if notice %>
+    <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <div class="mb-6 grid gap-4 sm:grid-cols-3">
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t('admin.system_roles.show.code') %></p>
+      <p class="mt-2 font-mono text-sm font-semibold text-slate-800"><%= @system_role.code %></p>
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t('admin.system_roles.show.type') %></p>
+      <p class="mt-2 text-sm font-semibold text-slate-800">
+        <%= @system_role.system? ? t('admin.system_roles.types.system') : t('admin.system_roles.types.branch') %>
+      </p>
+    </div>
+
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t('admin.system_roles.show.assigned_permissions') %></p>
+      <p class="mt-2 text-sm font-semibold text-slate-800">
+        <%= @assigned_permission_ids.size %> / <%= @permissions.size %>
+      </p>
+    </div>
+  </div>
+
+  <%= form_with url: permissions_system_role_path(@system_role), method: :patch do %>
+    <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex flex-col gap-2 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div>
+          <h2 class="font-jakarta text-base font-bold text-slate-900">
+            <%= t('admin.system_roles.show.permissions_title') %>
+          </h2>
+          <p class="mt-1 text-sm text-slate-500">
+            <%= t('admin.system_roles.show.permissions_subtitle') %>
+          </p>
+        </div>
+
+        <%= submit_tag t('admin.system_roles.show.save_permissions'),
+                       class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+      </div>
+
+      <div class="divide-y divide-slate-100">
+        <% @permissions.group_by(&:module_name).each do |module_name, permissions| %>
+          <section class="px-5 py-5 sm:px-6">
+            <div class="mb-3 flex items-center gap-3">
+              <div class="flex size-9 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                <%= icon('squares-2x2', class: 'size-4') %>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900"><%= module_name %></h3>
+                <p class="text-xs text-slate-400"><%= t('admin.system_roles.show.module_permissions', count: permissions.size) %></p>
+              </div>
+            </div>
+
+            <div class="divide-y divide-slate-100 rounded-xl border border-slate-200">
+              <% permissions.each do |permission| %>
+                <% checked = @assigned_permission_ids.include?(permission.id) %>
+                <label for="permission_<%= permission.id %>" class="flex cursor-pointer items-center justify-between gap-4 px-4 py-4 transition hover:bg-slate-50">
+                  <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-slate-800"><%= permission.name %></span>
+                    <span class="mt-0.5 block text-xs text-slate-400"><%= permission.description %></span>
+                  </span>
+
+                  <span class="relative inline-flex shrink-0 items-center">
+                    <%= check_box_tag 'permission_ids[]',
+                                      permission.id,
+                                      checked,
+                                      id: "permission_#{permission.id}",
+                                      class: 'peer sr-only' %>
+                    <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"></span>
+                    <span class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5"></span>
+                  </span>
+                </label>
+              <% end %>
+            </div>
+          </section>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
