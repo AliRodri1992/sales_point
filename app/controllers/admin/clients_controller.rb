@@ -83,43 +83,10 @@ module Admin
     end
 
     def load_clients
-      @clients = filter_scope(Client.not_deleted.includes(:sat_fiscal_regime))
+      @clients = ClientFilter.new(Client.not_deleted, params).call
       @total_count = @clients.count
-      @clients = ClientFilter.new(@clients, params).call
+      @clients = @clients.includes(:sat_fiscal_regime)
       @clients = paginate(@clients)
-    end
-
-    def filter_scope(scope)
-      apply_search_filter(scope)
-      apply_status_filter(scope)
-    end
-
-    def apply_search_filter(scope)
-      return scope if params[:search].blank?
-
-      term = "%#{params[:search]}%"
-      search_sql = [
-        'clients.code ILIKE :q',
-        'clients.name ILIKE :q',
-        'clients.email ILIKE :q',
-        'clients.phone ILIKE :q',
-        'clients.rfc ILIKE :q'
-      ].join(' OR ')
-
-      scope.where(search_sql, q: term)
-    end
-
-    def apply_status_filter(scope)
-      return scope unless params[:status].present? && params[:status] != 'all'
-
-      scope.where(status: params[:status])
-    end
-
-    def apply_sorting(scope)
-      column = ClientFilter::SORTABLE_COLUMNS.fetch(params[:sort], 'clients.name')
-      direction = ClientFilter::SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
-
-      scope.order(column => direction)
     end
 
     def paginate(scope)

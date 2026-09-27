@@ -90,7 +90,7 @@
         <% end %>
 
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'clients_list') %>
+          <%= pagination_links(total_pages, frame: 'clients_list', scope: 'admin.clients.index.pagination') %>
         </div>
       </div>
     <% end %>

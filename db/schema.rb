@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_25_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -277,6 +277,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_030000) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "permissions", force: :cascade do |t|
+    t.string "code", limit: 80, null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "module_name", limit: 50, null: false
+    t.string "name", limit: 80, null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_permissions_on_code", unique: true
+    t.index ["module_name", "status"], name: "index_permissions_on_module_name_and_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_permissions_status"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "barcode"
     t.bigint "category_id"
@@ -466,6 +479,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_030000) do
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_unit_keys_valid_range"
   end
 
+  create_table "system_role_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "permission_id", null: false
+    t.bigint "system_role_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["permission_id"], name: "index_system_role_permissions_on_permission_id"
+    t.index ["system_role_id", "permission_id"], name: "idx_system_role_permissions_unique", unique: true
+    t.index ["system_role_id"], name: "index_system_role_permissions_on_system_role_id"
+  end
+
   create_table "system_roles", force: :cascade do |t|
     t.string "code", limit: 50, null: false
     t.datetime "created_at", null: false
@@ -573,6 +596,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_25_030000) do
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "system_role_permissions", "permissions"
+  add_foreign_key "system_role_permissions", "system_roles"
   add_foreign_key "translates", "languages"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
