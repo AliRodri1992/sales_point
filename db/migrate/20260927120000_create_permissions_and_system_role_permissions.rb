@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
-  # rubocop:disable-next Metrics/MethodLength
+  # rubocop:disable-next Metrics/MethodLength,Metrics/AbcSize
   def change
     create_table :permissions do |t|
       t.string :code, null: false, limit: 80
@@ -27,6 +27,7 @@ class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
     create_table :system_role_permissions do |t|
       t.references :system_role, null: false, foreign_key: true
       t.references :permission, null: false, foreign_key: true
+      t.timestamp :deleted_at
 
       t.timestamps
     end
@@ -35,5 +36,6 @@ class CreatePermissionsAndSystemRolePermissions < ActiveRecord::Migration[8.1]
               %i[system_role_id permission_id],
               unique: true,
               name: 'idx_system_role_permissions_unique'
+    add_index :system_role_permissions, :deleted_at
   end
 end
