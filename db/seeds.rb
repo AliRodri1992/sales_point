@@ -40,18 +40,78 @@ SYSTEM_ROLES = [
 ].freeze
 
 DEFAULT_PERMISSIONS = [
-  { code: 'dashboard.access', name: 'Acceso al dashboard', module_name: 'Dashboard', description: 'Permite acceder al panel principal.' },
-  { code: 'sales.access', name: 'Acceso a ventas', module_name: 'Ventas', description: 'Permite acceder al módulo de ventas.' },
-  { code: 'cash_register.access', name: 'Acceso a caja', module_name: 'Caja', description: 'Permite acceder al módulo de caja.' },
-  { code: 'inventory.access', name: 'Acceso a inventario', module_name: 'Inventario', description: 'Permite acceder al módulo de inventario.' },
-  { code: 'customers.access', name: 'Acceso a clientes', module_name: 'Clientes', description: 'Permite acceder al módulo de clientes.' },
-  { code: 'suppliers.access', name: 'Acceso a proveedores', module_name: 'Proveedores', description: 'Permite acceder al módulo de proveedores.' },
-  { code: 'employees.access', name: 'Acceso a empleados', module_name: 'Empleados', description: 'Permite acceder al módulo de empleados.' },
-  { code: 'reports.access', name: 'Acceso a reportes', module_name: 'Reportes', description: 'Permite acceder al módulo de reportes.' },
-  { code: 'products.access', name: 'Acceso a productos', module_name: 'Productos', description: 'Permite acceder al catálogo de productos.' },
-  { code: 'categories.access', name: 'Acceso a categorías', module_name: 'Categorías', description: 'Permite acceder al catálogo de categorías.' },
-  { code: 'branches.access', name: 'Acceso a sucursales', module_name: 'Sucursales', description: 'Permite administrar las sucursales.' },
-  { code: 'languages.access', name: 'Acceso a idiomas', module_name: 'Idiomas', description: 'Permite administrar los idiomas disponibles.' },
+  {
+    code: 'dashboard.access',
+    name: 'Acceso al dashboard',
+    module_name: 'Dashboard',
+    description: 'Permite acceder al panel principal.'
+  },
+  {
+    code: 'sales.access',
+    name: 'Acceso a ventas',
+    module_name: 'Ventas',
+    description: 'Permite acceder al módulo de ventas.'
+  },
+  {
+    code: 'cash_register.access',
+    name: 'Acceso a caja',
+    module_name: 'Caja',
+    description: 'Permite acceder al módulo de caja.'
+  },
+  {
+    code: 'inventory.access',
+    name: 'Acceso a inventario',
+    module_name: 'Inventario',
+    description: 'Permite acceder al módulo de inventario.'
+  },
+  {
+    code: 'customers.access',
+    name: 'Acceso a clientes',
+    module_name: 'Clientes',
+    description: 'Permite acceder al módulo de clientes.'
+  },
+  {
+    code: 'suppliers.access',
+    name: 'Acceso a proveedores',
+    module_name: 'Proveedores',
+    description: 'Permite acceder al módulo de proveedores.'
+  },
+  {
+    code: 'employees.access',
+    name: 'Acceso a empleados',
+    module_name: 'Empleados',
+    description: 'Permite acceder al módulo de empleados.'
+  },
+  {
+    code: 'reports.access',
+    name: 'Acceso a reportes',
+    module_name: 'Reportes',
+    description: 'Permite acceder al módulo de reportes.'
+  },
+  {
+    code: 'products.access',
+    name: 'Acceso a productos',
+    module_name: 'Productos',
+    description: 'Permite acceder al catálogo de productos.'
+  },
+  {
+    code: 'categories.access',
+    name: 'Acceso a categorías',
+    module_name: 'Categorías',
+    description: 'Permite acceder al catálogo de categorías.'
+  },
+  {
+    code: 'branches.access',
+    name: 'Acceso a sucursales',
+    module_name: 'Sucursales',
+    description: 'Permite administrar las sucursales.'
+  },
+  {
+    code: 'languages.access',
+    name: 'Acceso a idiomas',
+    module_name: 'Idiomas',
+    description: 'Permite administrar los idiomas disponibles.'
+  },
   { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles', description: 'Permite administrar roles y sus permisos.' }
 ].freeze
 
