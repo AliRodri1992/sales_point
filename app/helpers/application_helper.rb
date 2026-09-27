@@ -148,7 +148,7 @@ module ApplicationHelper
     when 'edit'
       [roles_path, { label: t('admin.system_roles.edit.title') }]
     else
-      roles_path
+      [roles_path]
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
