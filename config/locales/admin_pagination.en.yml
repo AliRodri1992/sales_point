@@ -1,0 +1,6 @@
+en:
+  admin:
+    pagination:
+      prev: "Previous"
+      next: "Next"
+      apply: "Apply"

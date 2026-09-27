@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :categories
     resources :products
     resources :branches, only: %i[index show new create edit update destroy]
+    resources :clients
   end
   resources :system_roles
   resources :demo_requests, only: %i[new create]
