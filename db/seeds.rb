@@ -112,7 +112,8 @@ DEFAULT_PERMISSIONS = [
     module_name: 'Idiomas',
     description: 'Permite administrar los idiomas disponibles.'
   },
-  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles', description: 'Permite administrar roles y sus permisos.' }
+  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
+    description: 'Permite administrar roles y sus permisos.' }
 ].freeze
 
 def load_translations_from_file(file_path, locale_code)

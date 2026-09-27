@@ -44,7 +44,7 @@ class SystemRolesController < ApplicationController
   def update_permissions
     authorize @system_role
 
-    permission_ids = Array(params[:permission_ids]).reject(&:blank?).map(&:to_i)
+    permission_ids = Array(params[:permission_ids]).compact_blank.map(&:to_i)
 
     Permission.transaction do
       @system_role.system_role_permissions.where.not(permission_id: permission_ids).delete_all

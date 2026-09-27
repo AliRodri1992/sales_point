@@ -138,15 +138,6 @@ module ApplicationHelper
       [clients_path]
     end
   end
-
-  def system_role_breadcrumb_items
-    roles_path = { label: t('admin.breadcrumbs.roles'), path: system_roles_path }
-
-    return [roles_path] unless params[:action] == 'show'
-
-    [roles_path, { label: @system_role.name }]
-  end
-
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def current_product
@@ -227,10 +218,8 @@ module ApplicationHelper
 
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)
     theme = user_avatar_theme(user)
-
-    online_dot = if online_indicator && user.online?
-                   tag.span(class: 'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full '                                    'border-2 border-white bg-emerald-500')
-                 end
+    online_classes = 'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500'
+    online_dot = online_indicator && user.online? ? tag.span(class: online_classes) : nil
 
     tag.div(
       class: "relative inline-flex #{size} items-center justify-center rounded-full text-sm font-semibold",

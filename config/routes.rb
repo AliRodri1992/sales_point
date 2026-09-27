@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :products
     resources :clients
     resources :branches, only: %i[index show new create edit update destroy]
+    resources :clients
   end
   resources :system_roles do
     member do
