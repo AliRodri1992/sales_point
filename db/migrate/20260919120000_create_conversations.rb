@@ -34,6 +34,5 @@ class CreateConversations < ActiveRecord::Migration[8.1]
 
     add_index :messages, :deleted_at
     add_index :messages, %i[conversation_id created_at]
-    add_index :messages, :user_id, where: 'deleted_at IS NULL'
   end
 end
