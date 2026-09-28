@@ -18,6 +18,7 @@ module Admin
     def show
       authorize @membership_plan
       @plan_features = @membership_plan.membership_plan_features
+                                        .where(deleted_at: nil)
                                         .includes(:membership_feature)
                                         .order(:position)
     end
