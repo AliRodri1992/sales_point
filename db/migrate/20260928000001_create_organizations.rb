@@ -22,6 +22,14 @@ class CreateOrganizations < ActiveRecord::Migration[8.1]
     add_index :organizations, :deleted_at
 
     add_check_constraint :organizations,
+                         "btrim(name) <> ''",
+                         name: 'chk_organizations_name_not_blank'
+    add_check_constraint :organizations,
+                         "code ~ '^[A-Za-z0-9_-]+  end
+end
+",
+                         name: 'chk_organizations_code_format'
+    add_check_constraint :organizations,
                          "status IN ('active', 'inactive')",
                          name: 'chk_organizations_status'
   end
