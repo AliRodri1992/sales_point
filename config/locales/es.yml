@@ -306,6 +306,38 @@ es:
         subtitle: "Actualiza los datos del producto."
         back: "Volver"
       close: "Cerrar"
+    profile:
+      page_title: "Mi perfil | NEXO POS"
+      eyebrow: "Cuenta"
+      title: "Mi perfil"
+      subtitle: "Administra tu información personal y preferencias de la cuenta."
+      account_type: "Tipo de usuario"
+      last_sign_in: "Último acceso"
+      never: "Sin accesos registrados"
+      status:
+        active: "Activo"
+        suspended: "Suspendido"
+        blocked: "Bloqueado"
+        deleted: "Eliminado"
+      user_type:
+        employee: "Empleado"
+        customer: "Cliente"
+        supplier: "Proveedor"
+      personal_information:
+        title: "Información personal"
+        subtitle: "Actualiza los datos básicos de tu perfil."
+      fields:
+        username: "Nombre de usuario"
+        email: "Correo electrónico"
+        language: "Idioma"
+        language_placeholder: "Selecciona un idioma"
+        theme: "Tema"
+      roles:
+        title: "Roles asignados"
+        subtitle: "Roles del sistema asociados a tu cuenta."
+        empty: "No tienes roles asignados."
+      save: "Guardar cambios"
+      error_title: "No se pudieron guardar los cambios."
     shared:
       no_image: "No image available"
       sidebar:
