@@ -24,9 +24,9 @@
       <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.organizations.show.subscription') %></h2>
       <% if @organization.current_subscription %>
         <div class="mt-5">
-          <p class="text-xl font-bold text-slate-900"><%= @organization.subscription.membership_plan.name %></p>
-          <p class="mt-1 text-sm text-slate-500"><%= @organization.subscription.status.humanize %></p>
-          <%= link_to 'Ver suscripción', admin_subscription_path(@organization.subscription), class: 'mt-4 inline-block text-sm font-semibold text-blue-600' %>
+          <p class="text-xl font-bold text-slate-900"><%= @organization.current_subscription.membership_plan.name %></p>
+          <p class="mt-1 text-sm text-slate-500"><%= @organization.current_subscription.status.humanize %></p>
+          <%= link_to 'Ver suscripción', admin_subscription_path(@organization.current_subscription), class: 'mt-4 inline-block text-sm font-semibold text-blue-600' %>
         </div>
       <% else %>
         <p class="mt-5 text-sm text-slate-500"><%= t('admin.organizations.show.no_subscription') %></p>
