@@ -1,0 +1,206 @@
+es:
+  activerecord:
+    models:
+      organization: Organización
+      membership_plan: Plan de membresía
+      membership_feature: Característica de membresía
+      subscription: Suscripción
+      subscription_event: Evento de suscripción
+    attributes:
+      organization:
+        name: Nombre
+        code: Código
+        legal_name: Razón social
+        tax_id: RFC
+        email: Correo electrónico
+        phone: Teléfono
+        status: Estado
+      membership_plan:
+        name: Nombre
+        slug: Código
+        description: Descripción
+        price: Precio
+        currency: Moneda
+        billing_interval: Periodicidad
+        trial_days: Días de prueba
+        position: Posición
+      subscription:
+        organization: Organización
+        membership_plan: Plan de membresía
+        status: Estado
+        starts_at: Inicio
+        ends_at: Fin
+        trial_ends_at: Fin de prueba
+  errors:
+    attributes:
+      name: Nombre
+      code: Código
+      legal_name: Razón social
+      tax_id: RFC
+      email: Correo electrónico
+      phone: Teléfono
+      price: Precio
+      slug: Código
+      starts_at: Inicio
+      membership_plan: Plan de membresía
+      organization: Organización
+  admin:
+    shared:
+      sidebar:
+        organizations: Organizaciones
+        membership_plans: Planes de membresía
+        subscriptions: Suscripciones
+      notifications:
+        organization:
+          created: "La organización '%{name}' fue creada por %{user}"
+          updated: "La organización '%{name}' fue actualizada por %{user}"
+        membership_plan:
+          created: "El plan '%{name}' fue creado por %{user}"
+          updated: "El plan '%{name}' fue actualizado por %{user}"
+        subscription:
+          created: "La suscripción de '%{organization}' fue creada por %{user}"
+          updated: "La suscripción de '%{organization}' fue actualizada por %{user}"
+          plan_changed: "La suscripción de '%{organization}' cambió de plan por %{user}"
+          canceled: "La suscripción de '%{organization}' fue cancelada por %{user}"
+          paused: "La suscripción de '%{organization}' fue pausada por %{user}"
+          resumed: "La suscripción de '%{organization}' fue reanudada por %{user}"
+    breadcrumbs:
+      organizations: Organizaciones
+      membership_plans: Planes de membresía
+      subscriptions: Suscripciones
+    organizations:
+      index:
+        page_title: Organizaciones | Nexo POS
+        title: Organizaciones
+        subtitle: Administra los negocios registrados en Delta POS.
+        new: Nueva organización
+        empty_title: No hay organizaciones
+        empty_subtitle: Crea la primera organización para comenzar.
+        columns:
+          name: Organización
+          code: Código
+          subscription: Suscripción
+          status: Estado
+          actions: Acciones
+        view: Ver
+      new:
+        title: Nueva organización
+        subtitle: Registra un negocio en Delta POS.
+        submit: Crear organización
+        back: Volver a organizaciones
+      edit:
+        title: Editar organización
+        subtitle: Actualiza la información del negocio.
+        submit: Guardar cambios
+        back: Volver a organizaciones
+      show:
+        title: Detalle de organización
+        back: Volver a organizaciones
+        subscription: Suscripción
+        plan: Plan
+        no_subscription: Sin suscripción
+        status: Estado
+        usage: Uso actual
+        users: Usuarios
+        branches: Sucursales
+        products: Productos
+      created: Organización creada correctamente.
+      updated: Organización actualizada correctamente.
+    membership_plans:
+      index:
+        page_title: Planes de membresía | Nexo POS
+        title: Planes de membresía
+        subtitle: Configura las capacidades y límites comerciales de Delta POS.
+        new: Nuevo plan
+        empty_title: No hay planes
+        empty_subtitle: Crea el primer plan de membresía.
+        columns:
+          name: Plan
+          price: Precio
+          interval: Periodicidad
+          trial: Prueba
+          status: Estado
+          actions: Acciones
+        view: Ver
+        edit: Editar
+      new:
+        title: Nuevo plan de membresía
+        subtitle: Define el precio y las capacidades del plan.
+        submit: Crear plan
+        back: Volver a planes
+      edit:
+        title: Editar plan de membresía
+        subtitle: Actualiza la configuración comercial y funcional.
+        submit: Guardar cambios
+        back: Volver a planes
+      show:
+        title: Detalle del plan
+        back: Volver a planes
+        features: Características
+        limits: Límites
+        enabled: Habilitada
+        disabled: Deshabilitada
+        unlimited: Ilimitado
+        edit: Editar
+      created: Plan de membresía creado correctamente.
+      updated: Plan de membresía actualizado correctamente.
+    subscriptions:
+      index:
+        page_title: Suscripciones | Nexo POS
+        title: Suscripciones
+        subtitle: Administra las suscripciones de las organizaciones.
+        new: Nueva suscripción
+        empty_title: No hay suscripciones
+        empty_subtitle: Crea una suscripción para una organización.
+        columns:
+          organization: Organización
+          plan: Plan
+          status: Estado
+          starts_at: Inicio
+          trial_ends_at: Prueba
+          actions: Acciones
+        view: Ver
+        edit: Editar
+      new:
+        title: Nueva suscripción
+        subtitle: Asigna un plan a una organización.
+        submit: Crear suscripción
+        back: Volver a suscripciones
+      edit:
+        title: Editar suscripción
+        subtitle: Actualiza el plan y el estado de la suscripción.
+        submit: Guardar cambios
+        back: Volver a suscripciones
+      show:
+        title: Detalle de suscripción
+        back: Volver a suscripciones
+        organization: Organización
+        plan: Plan
+        status: Estado
+        starts_at: Inicio
+        ends_at: Fin
+        trial_ends_at: Fin de prueba
+        days_remaining: Días restantes de prueba
+        features: Características
+        limits: Límites
+        events: Historial
+        change_plan: Cambiar plan
+        cancel: Cancelar
+        pause: Pausar
+        resume: Reanudar
+      created: Suscripción creada correctamente.
+      updated: Suscripción actualizada correctamente.
+      plan_changed: Plan de suscripción actualizado correctamente.
+      canceled: Suscripción cancelada correctamente.
+      paused: Suscripción pausada correctamente.
+      resumed: Suscripción reanudada correctamente.
+      statuses:
+        trialing: En prueba
+        active: Activa
+        past_due: Pago pendiente
+        paused: Pausada
+        canceled: Cancelada
+        expired: Expirada
+      intervals:
+        monthly: Mensual
+        yearly: Anual
