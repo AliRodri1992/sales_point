@@ -1,0 +1,193 @@
+en:
+  activerecord:
+    models:
+      organization: Organization
+      membership_plan: Membership plan
+      membership_feature: Membership feature
+      subscription: Subscription
+      subscription_event: Subscription event
+    attributes:
+      organization:
+        name: Name
+        code: Code
+        legal_name: Legal name
+        tax_id: Tax ID
+        email: Email
+        phone: Phone
+        status: Status
+      membership_plan:
+        name: Name
+        slug: Code
+        description: Description
+        price: Price
+        currency: Currency
+        billing_interval: Billing interval
+        trial_days: Trial days
+        position: Position
+      subscription:
+        organization: Organization
+        membership_plan: Membership plan
+        status: Status
+        starts_at: Start
+        ends_at: End
+        trial_ends_at: Trial end
+  admin:
+    shared:
+      sidebar:
+        organizations: Organizations
+        membership_plans: Membership plans
+        subscriptions: Subscriptions
+      notifications:
+        organization:
+          created: "Organization '%{name}' was created by %{user}"
+          updated: "Organization '%{name}' was updated by %{user}"
+        membership_plan:
+          created: "Plan '%{name}' was created by %{user}"
+          updated: "Plan '%{name}' was updated by %{user}"
+        subscription:
+          created: "Subscription for '%{organization}' was created by %{user}"
+          updated: "Subscription for '%{organization}' was updated by %{user}"
+          plan_changed: "Subscription for '%{organization}' changed plan by %{user}"
+          canceled: "Subscription for '%{organization}' was canceled by %{user}"
+          paused: "Subscription for '%{organization}' was paused by %{user}"
+          resumed: "Subscription for '%{organization}' was resumed by %{user}"
+    breadcrumbs:
+      organizations: Organizations
+      membership_plans: Membership plans
+      subscriptions: Subscriptions
+    organizations:
+      index:
+        page_title: Organizations | Nexo POS
+        title: Organizations
+        subtitle: Manage businesses registered in Delta POS.
+        new: New organization
+        empty_title: No organizations
+        empty_subtitle: Create the first organization to get started.
+        columns:
+          name: Organization
+          code: Code
+          subscription: Subscription
+          status: Status
+          actions: Actions
+        view: View
+      new:
+        title: New organization
+        subtitle: Register a business in Delta POS.
+        submit: Create organization
+        back: Back to organizations
+      edit:
+        title: Edit organization
+        subtitle: Update the business information.
+        submit: Save changes
+        back: Back to organizations
+      show:
+        title: Organization details
+        back: Back to organizations
+        subscription: Subscription
+        plan: Plan
+        no_subscription: No subscription
+        status: Status
+        usage: Current usage
+        users: Users
+        branches: Branches
+        products: Products
+      created: Organization created successfully.
+      updated: Organization updated successfully.
+    membership_plans:
+      index:
+        page_title: Membership plans | Nexo POS
+        title: Membership plans
+        subtitle: Configure Delta POS commercial capabilities and limits.
+        new: New plan
+        empty_title: No plans
+        empty_subtitle: Create the first membership plan.
+        columns:
+          name: Plan
+          price: Price
+          interval: Billing interval
+          trial: Trial
+          status: Status
+          actions: Actions
+        view: View
+        edit: Edit
+      new:
+        title: New membership plan
+        subtitle: Define the plan price and capabilities.
+        submit: Create plan
+        back: Back to plans
+      edit:
+        title: Edit membership plan
+        subtitle: Update commercial and functional settings.
+        submit: Save changes
+        back: Back to plans
+      show:
+        title: Plan details
+        back: Back to plans
+        features: Features
+        limits: Limits
+        enabled: Enabled
+        disabled: Disabled
+        unlimited: Unlimited
+        edit: Edit
+      created: Membership plan created successfully.
+      updated: Membership plan updated successfully.
+    subscriptions:
+      index:
+        page_title: Subscriptions | Nexo POS
+        title: Subscriptions
+        subtitle: Manage organization subscriptions.
+        new: New subscription
+        empty_title: No subscriptions
+        empty_subtitle: Create a subscription for an organization.
+        columns:
+          organization: Organization
+          plan: Plan
+          status: Status
+          starts_at: Start
+          trial_ends_at: Trial
+          actions: Actions
+        view: View
+        edit: Edit
+      new:
+        title: New subscription
+        subtitle: Assign a plan to an organization.
+        submit: Create subscription
+        back: Back to subscriptions
+      edit:
+        title: Edit subscription
+        subtitle: Update the subscription plan and status.
+        submit: Save changes
+        back: Back to subscriptions
+      show:
+        title: Subscription details
+        back: Back to subscriptions
+        organization: Organization
+        plan: Plan
+        status: Status
+        starts_at: Start
+        ends_at: End
+        trial_ends_at: Trial end
+        days_remaining: Trial days remaining
+        features: Features
+        limits: Limits
+        events: History
+        change_plan: Change plan
+        cancel: Cancel
+        pause: Pause
+        resume: Resume
+      created: Subscription created successfully.
+      updated: Subscription updated successfully.
+      plan_changed: Subscription plan updated successfully.
+      canceled: Subscription canceled successfully.
+      paused: Subscription paused successfully.
+      resumed: Subscription resumed successfully.
+      statuses:
+        trialing: Trialing
+        active: Active
+        past_due: Past due
+        paused: Paused
+        canceled: Canceled
+        expired: Expired
+      intervals:
+        monthly: Monthly
+        yearly: Yearly

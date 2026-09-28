@@ -20,7 +20,7 @@ if ENV['COVERAGE'] == 'true'
     add_group 'Mailers', 'app/mailers'
     add_group 'Helpers', 'app/helpers'
 
-    minimum_coverage 85
+    minimum_coverage 90
     formatter SimpleCov::Formatter::HTMLFormatter
   end
 end

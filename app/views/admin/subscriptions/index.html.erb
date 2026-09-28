@@ -1,0 +1,32 @@
+<% content_for :title, t('admin.subscriptions.index.page_title') %>
+<div>
+  <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div><h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.subscriptions.index.title') %></h1><p class="mt-1 text-sm text-slate-500"><%= t('admin.subscriptions.index.subtitle') %></p></div>
+    <%= link_to new_admin_subscription_path, class: 'inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white' do %><%= icon('plus', class: 'size-4') %><%= t('admin.subscriptions.index.new') %><% end %>
+  </div>
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <% if @subscriptions.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100">
+          <thead class="bg-slate-50"><tr>
+            <% %w[organization plan status starts_at trial_ends_at actions].each do |column| %><th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("admin.subscriptions.index.columns.#{column}") %></th><% end %>
+          </tr></thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @subscriptions.each do |subscription| %>
+              <tr class="hover:bg-slate-50">
+                <td class="px-5 py-4 font-semibold text-slate-800"><%= subscription.organization.name %></td>
+                <td class="px-5 py-4 text-sm text-slate-600"><%= subscription.membership_plan.name %></td>
+                <td class="px-5 py-4 text-sm font-semibold"><%= t("admin.subscriptions.statuses.#{subscription.status}") %></td>
+                <td class="px-5 py-4 text-sm text-slate-500"><%= l(subscription.starts_at, format: :short) %></td>
+                <td class="px-5 py-4 text-sm text-slate-500"><%= subscription.trial_ends_at ? l(subscription.trial_ends_at, format: :short) : '—' %></td>
+                <td class="px-5 py-4"><%= link_to t('admin.subscriptions.index.view'), admin_subscription_path(subscription), class: 'text-sm font-semibold text-blue-600' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-14 text-center"><h2 class="text-lg font-semibold text-slate-800"><%= t('admin.subscriptions.index.empty_title') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.subscriptions.index.empty_subtitle') %></p></div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<% content_for :title, t('admin.organizations.index.page_title') %>
+
+<div>
+  <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.organizations.index.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.organizations.index.subtitle') %></p>
+    </div>
+    <%= link_to new_admin_organization_path, class: 'inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700' do %>
+      <%= icon('plus', class: 'size-4') %><%= t('admin.organizations.index.new') %>
+    <% end %>
+  </div>
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <% if @organizations.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-100">
+          <thead class="bg-slate-50">
+            <tr>
+              <% %w[name code subscription status actions].each do |column| %>
+                <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t("admin.organizations.index.columns.#{column}") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @organizations.each do |organization| %>
+              <tr class="hover:bg-slate-50">
+                <td class="px-5 py-4 font-semibold text-slate-800"><%= organization.name %></td>
+                <td class="px-5 py-4 text-sm text-slate-500"><%= organization.code %></td>
+                <td class="px-5 py-4 text-sm text-slate-600"><%= organization.current_subscription&.membership_plan&.name || t('admin.organizations.show.no_subscription') %></td>
+                <td class="px-5 py-4 text-sm"><%= organization.status == 'active' ? 'Activa' : 'Inactiva' %></td>
+                <td class="px-5 py-4"><%= link_to t('admin.organizations.index.view'), admin_organization_path(organization), class: 'text-sm font-semibold text-blue-600 hover:text-blue-800' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-14 text-center">
+        <h2 class="text-lg font-semibold text-slate-800"><%= t('admin.organizations.index.empty_title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.organizations.index.empty_subtitle') %></p>
+      </div>
+    <% end %>
+  </div>
+</div>

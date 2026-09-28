@@ -255,7 +255,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches') %>>
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'organizations', 'membership_plans', 'subscriptions') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
@@ -310,6 +310,33 @@
             >
               <%= icon("building-storefront", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>
+            </a>
+
+            <a
+              href="<%= admin_organizations_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.organizations') %>"
+              class="<%= sidebar_link_classes('organizations', variant: :submenu) %>"
+            >
+              <%= icon("building-office-2", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.organizations') %></span>
+            </a>
+
+            <a
+              href="<%= admin_membership_plans_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.membership_plans') %>"
+              class="<%= sidebar_link_classes('membership_plans', variant: :submenu) %>"
+            >
+              <%= icon("rectangle-stack", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.membership_plans') %></span>
+            </a>
+
+            <a
+              href="<%= admin_subscriptions_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.subscriptions') %>"
+              class="<%= sidebar_link_classes('subscriptions', variant: :submenu) %>"
+            >
+              <%= icon("credit-card", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.subscriptions') %></span>
             </a>
 
             <a
