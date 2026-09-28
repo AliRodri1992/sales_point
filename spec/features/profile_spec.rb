@@ -25,7 +25,10 @@ RSpec.describe 'User profile', type: :feature do
     fill_in 'Email address', with: 'ivan.rodriguez@example.com'
     click_button 'Save changes'
 
-    expect(page).to have_content('Profile updated successfully')
+    expect(page).to have_css(
+      '[data-controller="swal-flash"][data-swal-flash-message-value="Profile updated successfully"]',
+      visible: :all
+    )
     expect(user.reload.username).to eq('Ivan Rodriguez')
     expect(user.email).to eq('ivan.rodriguez@example.com')
   end

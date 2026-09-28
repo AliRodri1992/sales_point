@@ -8,138 +8,121 @@
     <p class="mt-1 max-w-2xl text-slate-500"><%= t('.subtitle') %></p>
   </header>
 
-  <div class="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-    <aside class="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div class="flex flex-col items-center text-center">
-        <%= user_avatar(@profile, size: 'h-24 w-24') %>
+  <!-- Hero: resumen de cuenta -->
+  <div class="mb-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+    <div class="px-6 py-8">
+      <div class="flex flex-col items-center justify-between gap-5 sm:flex-row sm:items-end">
+        <div class="flex items-center gap-5">
+          <%= user_avatar(@profile, size: 'h-24 w-24') %>
+          <div class="text-center sm:text-left">
+            <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= @profile.display_name %></h2>
+            <p class="mt-1 break-all text-sm text-slate-500"><%= @profile.email %></p>
+          </div>
+        </div>
 
-        <h2 class="mt-4 font-jakarta text-xl font-bold text-slate-900">
-          <%= @profile.display_name %>
-        </h2>
-        <p class="mt-1 break-all text-sm text-slate-500"><%= @profile.email %></p>
-
-        <span class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
           <span class="size-1.5 rounded-full bg-emerald-500"></span>
           <%= t(".status.#{@profile.status}") %>
         </span>
       </div>
 
-      <div class="mt-6 border-t border-slate-100 pt-5">
-        <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-4 text-sm">
-          <dt class="flex items-center gap-2 text-slate-400">
-            <%= icon('key', class: 'size-4', aria: { hidden: true }) %>
-            <%= t('.account_type') %>
-          </dt>
-          <dd class="font-medium text-slate-700"><%= t(".user_type.#{@profile.user_type}") %></dd>
+      <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-200 pt-4 text-sm text-slate-600">
+        <span class="inline-flex items-center gap-2">
+          <%= icon('key', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+          <span class="font-medium"><%= t(".user_type.#{@profile.user_type}") %></span>
+        </span>
+        <span class="inline-flex items-center gap-2">
+          <%= icon('clock', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+          <span class="font-medium"><%= @profile.last_sign_in_at ? l(@profile.last_sign_in_at, format: :long) : t('.never') %></span>
+        </span>
+      </div>
+    </div>
+  </div>
 
-          <dt class="flex items-center gap-2 text-slate-400">
-            <%= icon('clock', class: 'size-4', aria: { hidden: true }) %>
-            <%= t('.last_sign_in') %>
-          </dt>
-          <dd class="font-medium text-slate-700">
-            <%= @profile.last_sign_in_at ? l(@profile.last_sign_in_at, format: :long) : t('.never') %>
-          </dd>
-        </dl>
+  <!-- Contenido principal -->
+  <div class="grid gap-6 lg:grid-cols-[2fr_300px]">
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-100 px-6 py-5">
+        <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('.personal_information.title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('.personal_information.subtitle') %></p>
+      </div>
+
+      <%= form_with model: @profile, url: admin_profile_path, method: :patch, scope: :profile, class: 'p-6' do |form| %>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <%= icon('user', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= form.label :username, t('.fields.username'), class: 'block text-sm font-medium text-slate-700' %>
+            </div>
+            <%= form.text_field :username,
+                                class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :username)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
+                                autocomplete: 'username' %>
+            <%= error_message_for(@profile, :username) %>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <%= icon('at-symbol', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= form.label :email, t('.fields.email'), class: 'block text-sm font-medium text-slate-700' %>
+            </div>
+            <%= form.email_field :email,
+                                 class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :email)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
+                                 autocomplete: 'email' %>
+            <%= error_message_for(@profile, :email) %>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <%= icon('language', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= form.label :language_id, t('.fields.language'), class: 'block text-sm font-medium text-slate-700' %>
+            </div>
+            <%= form.collection_select :language_id, @languages, :id, :name,
+                                       { include_blank: t('.fields.language_placeholder') },
+                                       class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :language_id)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+            <%= error_message_for(@profile, :language_id) %>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <%= icon('swatch', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= form.label :theme, t('.fields.theme'), class: 'block text-sm font-medium text-slate-700' %>
+            </div>
+            <%= form.select :theme,
+                            @themes.map { |theme| [theme[:id].humanize, theme[:id]] },
+                            {},
+                            class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :theme)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100" %>
+            <%= error_message_for(@profile, :theme) %>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <%= form.submit t('.save'),
+                          class: 'inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2' %>
+        </div>
+      <% end %>
+    </section>
+
+    <aside class="h-fit rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-100 px-6 py-5">
+        <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('.roles.title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('.roles.subtitle') %></p>
+      </div>
+
+      <div class="p-6">
+        <% if @roles.any? %>
+          <div class="flex flex-wrap gap-2">
+            <% @roles.each do |role| %>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
+                <%= icon('shield-check', class: 'size-4 text-blue-600', aria: { hidden: true }) %>
+                <%= role.name %>
+              </span>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500"><%= t('.roles.empty') %></p>
+        <% end %>
       </div>
     </aside>
-
-    <div class="space-y-6">
-      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-100 px-6 py-5">
-          <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('.personal_information.title') %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t('.personal_information.subtitle') %></p>
-        </div>
-
-        <%= form_with model: @profile, url: admin_profile_path, method: :patch, scope: :profile, class: 'p-6' do |form| %>
-          <% if @profile.errors.any? %>
-            <div class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4" role="alert">
-              <p class="flex items-start gap-2 text-sm font-semibold text-rose-800">
-                <%= icon('exclamation-circle', class: 'size-5 shrink-0', aria: { hidden: true }) %>
-                <%= t('.error_title') %>
-              </p>
-              <ul class="mt-2 space-y-1 text-sm text-rose-700">
-                <% @profile.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
-
-          <div class="grid gap-5 sm:grid-cols-2">
-            <div>
-              <div class="flex items-center gap-2">
-                <%= icon('user', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
-                <%= form.label :username, t('.fields.username'), class: 'block text-sm font-medium text-slate-700' %>
-              </div>
-              <%= form.text_field :username,
-                                  class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :username)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
-                                  autocomplete: 'username' %>
-              <%= error_message_for(@profile, :username) %>
-            </div>
-
-            <div>
-              <div class="flex items-center gap-2">
-                <%= icon('at-symbol', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
-                <%= form.label :email, t('.fields.email'), class: 'block text-sm font-medium text-slate-700' %>
-              </div>
-              <%= form.email_field :email,
-                                   class: "mt-2 w-full rounded-xl #{form_state_classes(@profile, :email)} px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100",
-                                   autocomplete: 'email' %>
-              <%= error_message_for(@profile, :email) %>
-            </div>
-
-            <div>
-              <div class="flex items-center gap-2">
-                <%= icon('language', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
-                <%= form.label :language_id, t('.fields.language'), class: 'block text-sm font-medium text-slate-700' %>
-              </div>
-              <%= form.collection_select :language_id, @languages, :id, :name,
-                                         { include_blank: t('.fields.language_placeholder') },
-                                         class: 'mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-              <%= error_message_for(@profile, :language_id) %>
-            </div>
-
-            <div>
-              <div class="flex items-center gap-2">
-                <%= icon('swatch', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
-                <%= form.label :theme, t('.fields.theme'), class: 'block text-sm font-medium text-slate-700' %>
-              </div>
-              <%= form.select :theme,
-                              @themes.map { |theme| [theme[:id].humanize, theme[:id]] },
-                              {},
-                              class: 'mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100' %>
-              <%= error_message_for(@profile, :theme) %>
-            </div>
-          </div>
-
-          <div class="mt-6 flex justify-end">
-            <%= form.submit t('.save'),
-                            class: 'inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2' %>
-          </div>
-        <% end %>
-      </section>
-
-      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <div class="border-b border-slate-100 px-6 py-5">
-          <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('.roles.title') %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t('.roles.subtitle') %></p>
-        </div>
-
-        <div class="p-6">
-          <% if @roles.any? %>
-            <div class="flex flex-wrap gap-2">
-              <% @roles.each do |role| %>
-                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
-                  <%= icon('shield-check', class: 'size-4 text-blue-600', aria: { hidden: true }) %>
-                  <%= role.name %>
-                </span>
-              <% end %>
-            </div>
-          <% else %>
-            <p class="text-sm text-slate-500"><%= t('.roles.empty') %></p>
-          <% end %>
-        </div>
-      </section>
-    </div>
   </div>
 </div>

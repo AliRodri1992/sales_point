@@ -15,7 +15,7 @@ module Admin
       @profile = current_user
 
       if @profile.update(profile_params)
-        redirect_to admin_profile_path, notice: t('.success')
+        redirect_to admin_profile_path, flash: { swal_message: t('.success') }
       else
         load_form_options
         render :show, status: :unprocessable_content
