@@ -22,5 +22,43 @@ RSpec.describe 'SystemRoles', type: :request do
       expect(flash[:swal_message]).to eq(I18n.t('system_roles.create.success'))
       expect(flash[:notice]).to be_nil
     end
+
+    it 'delivers a notification to the admin notifications panel' do
+      expect do
+        post system_roles_path,
+             params: { system_role: { name: 'Auditor', role_type: 'branch', status: 'active' } }
+      end.to change(Noticed::Notification, :count).by(1)
+
+      notification = admin.notifications.last
+      expect(notification.type).to eq('SystemRoleNotification::Notification')
+      expect(notification.event.record.name).to eq('Auditor')
+      expect(notification.event.params[:action]).to eq('created')
+    end
+  end
+
+  describe 'PATCH /system_roles/:id/permissions' do
+    let!(:role) { create(:system_role, name: 'Cajero', code: 'cashier', role_type: :branch) }
+    let!(:permission) { create(:permission) }
+
+    it 'delivers a notification to the admin notifications panel' do
+      expect do
+        patch permissions_system_role_path(role), params: { permission_ids: [permission.id] }
+      end.to change(Noticed::Notification, :count).by(1)
+
+      notification = admin.notifications.last
+      expect(notification.type).to eq('SystemRoleNotification::Notification')
+      expect(notification.event.record).to eq(role)
+      expect(notification.event.params[:action]).to eq('updated')
+    end
+
+    it 'shows the notification in the panel' do
+      patch permissions_system_role_path(role), params: { permission_ids: [permission.id] }
+
+      get system_role_path(role)
+
+      panel = Nokogiri::HTML4(response.body).at_css('#notifications_list').text
+      expect(panel).to include(I18n.t('admin.shared.notifications.system_role.updated', name: role.name))
+      expect(panel).to include(I18n.t('admin.shared.notifications.types.system_role'))
+    end
   end
 end

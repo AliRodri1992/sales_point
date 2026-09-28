@@ -490,6 +490,9 @@ ko:
           one: 새 알림이 1개 있습니다
           other: 새 알림이 %{count}개 있습니다
         subtitle_none: 새 알림이 없습니다
+        system_role:
+          created: 시스템 역할 '%{name}'이(가) 생성되었습니다
+          updated: 시스템 역할 '%{name}'이(가) 업데이트되었습니다
         title: 알림
         toggle: 알림
         types:
@@ -499,6 +502,7 @@ ko:
           demo_request: 데모 신청
           language: 언어
           product: 상품
+          system_role: 시스템 역할
       online_users:
         close: 닫기
         empty: 온라인 사용자가 없습니다

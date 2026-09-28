@@ -512,6 +512,9 @@ en:
           one: You have 1 new notification
           other: You have %{count} new notifications
         subtitle_none: You have no new notifications
+        system_role:
+          created: System role '%{name}' was created
+          updated: System role '%{name}' was updated
         title: Notifications
         toggle: Notifications
         types:
@@ -521,6 +524,7 @@ en:
           demo_request: Demo request
           language: Language
           product: Product
+          system_role: System role
       online_users:
         close: Close
         empty: No users online

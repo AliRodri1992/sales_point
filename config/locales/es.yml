@@ -489,6 +489,9 @@ es:
           one: Tienes 1 notificación nueva
           other: Tienes %{count} notificaciones nuevas
         subtitle_none: No tienes notificaciones nuevas
+        system_role:
+          created: Se creó el rol del sistema '%{name}'
+          updated: Se actualizó el rol del sistema '%{name}'
         title: Notificaciones
         toggle: Notificaciones
         types:
@@ -498,6 +501,7 @@ es:
           demo_request: Solicitud de demo
           language: Idioma
           product: Producto
+          system_role: Rol del sistema
       online_users:
         close: Cerrar
         empty: No hay usuarios en línea
