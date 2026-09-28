@@ -6,7 +6,7 @@ RSpec.describe 'User profile', type: :feature do
   let(:user) { create(:user, username: 'Ivan', email: 'ivan@example.com') }
 
   before do
-    login_as(user, scope: :user)
+    sign_in user
   end
 
   scenario 'user views their profile' do
