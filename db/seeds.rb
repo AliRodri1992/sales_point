@@ -500,7 +500,7 @@ def seed_demo_organization
   organization.save!
 
   plan = MembershipPlan.find_by!(slug: 'professional')
-  subscription = Subscription.find_or_initialize_by(organization: organization)
+  subscription = organization.subscriptions.current.first_or_initialize
   subscription.assign_attributes(
     membership_plan: plan,
     status: 'active',
