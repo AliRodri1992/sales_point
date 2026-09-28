@@ -693,15 +693,28 @@ en:
         title: Create account
     sessions:
       new:
-        email: Email address
-        email_placeholder: email@example.com
+        brand_alt: Delta POS logo mark
+        email: Corporate email address
+        email_placeholder: carlos@yourcompany.com
         error_banner:
           title: Authentication Failed
-        forgot: Forgot key?
-        password: Password
-        submit: SIGN IN
-        subtitle: Enter your credentials to open terminal shift
-        title: Access Terminal
+        forgot: Forgot your password?
+        password: Secure access password
+        remember_me: Remember my session
+        submit: Sign in to Terminal
+        subtitle: Enter your credentials to open your cloud point of sale.
+        title: Cloud System Access
+        toggle_password: Show or hide password
+        register_prompt: New to the platform?
+        register: Register here
+        panel_badge: Secure Access Terminal
+        panel_title: Return to your Cloud Point of Sale
+        panel_description: Sign in to instantly synchronize your registers, inventory reports, and active Delta POS terminals.
+        realtime_title: Real-Time Synchronization
+        realtime_description: Monitor sales, inventory levels, and cash flow from anywhere with millisecond-level updates.
+        multichannel_title: Multichannel Persistence Enabled
+        multichannel_description: Start register shifts simultaneously from mobile devices or fixed terminals.
+        copyright: "© %{year} Delta POS Inc. All rights reserved."
     shared:
       links:
         forgot_password: Forgot your password?
