@@ -27,5 +27,9 @@ class CreateSubscriptionEvents < ActiveRecord::Migration[8.1]
     add_index :subscription_events, :performed_by_id
     add_index :subscription_events, :from_membership_plan_id
     add_index :subscription_events, :to_membership_plan_id
+
+    add_check_constraint :subscription_events,
+                         "event_type IN ('subscription_created', 'subscription_updated', 'trial_started', 'trial_ended', 'plan_changed', 'paused', 'resumed', 'canceled', 'expired')",
+                         name: 'chk_subscription_events_event_type'
   end
 end
