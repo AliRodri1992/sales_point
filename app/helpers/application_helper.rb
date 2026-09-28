@@ -76,6 +76,17 @@ module ApplicationHelper
     icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
   end
 
+  def user_status_badge(status)
+    classes = case status
+              when 'active' then 'bg-emerald-50 text-emerald-700'
+              when 'suspended' then 'bg-amber-50 text-amber-700'
+              when 'blocked' then 'bg-rose-50 text-rose-700'
+              else 'bg-slate-100 text-slate-600'
+              end
+    label = t("admin.users.statuses.#{status}")
+    tag.span(label, class: "inline-flex rounded-full px-2.5 py-1 text-xs font-semibold #{classes}")
+  end
+
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)
     theme = user_avatar_theme(user)
     online_classes = 'absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500'

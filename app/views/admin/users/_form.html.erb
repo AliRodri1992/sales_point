@@ -1,0 +1,115 @@
+<div>
+  <div class="mb-7 flex items-start justify-between gap-4">
+    <div>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= title %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.users.form.subtitle') %></p>
+    </div>
+    <%= link_to admin_users_path,
+                class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100' do %>
+      <%= icon('arrow-left', class: 'size-4') %>
+      <%= t('admin.users.form.buttons.back') %>
+    <% end %>
+  </div>
+
+  <div class="max-w-6xl rounded-xl border border-slate-200 bg-white shadow-sm">
+    <%= form_with model: @user,
+                  url: @user.persisted? ? admin_user_path(@user) : admin_users_path,
+                  class: 'space-y-6 p-6 lg:p-8' do |form| %>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.email_field :email,
+                              class: "input-field w-full rounded-xl #{form_state_classes(@user, :email)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                              autocomplete: 'email' %>
+          <%= error_message_for(@user, :email) %>
+        </div>
+
+        <div>
+          <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_field :username,
+                            class: "input-field w-full rounded-xl #{form_state_classes(@user, :username)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                            autocomplete: 'username' %>
+          <%= error_message_for(@user, :username) %>
+        </div>
+
+        <div>
+          <%= form.label :password, t('admin.users.form.fields.password'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.password_field :password,
+                                 class: "input-field w-full rounded-xl #{form_state_classes(@user, :password)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                                 autocomplete: 'new-password' %>
+          <% if @user.persisted? %>
+            <p class="mt-1 text-xs text-slate-500"><%= t('admin.users.form.password_hint') %></p>
+          <% end %>
+          <%= error_message_for(@user, :password) %>
+        </div>
+
+        <div>
+          <%= form.label :password_confirmation, t('admin.users.form.fields.password_confirmation'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.password_field :password_confirmation,
+                                 class: "input-field w-full rounded-xl #{form_state_classes(@user, :password_confirmation)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
+                                 autocomplete: 'new-password' %>
+          <%= error_message_for(@user, :password_confirmation) %>
+        </div>
+
+        <div>
+          <%= form.label :user_type, t('admin.users.form.fields.user_type'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :user_type,
+                          options_for_select(
+                            User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] },
+                            @user.user_type
+                          ),
+                          { include_blank: t('admin.users.form.fields.user_type_placeholder') },
+                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :user_type)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(@user, :user_type) %>
+        </div>
+
+        <div>
+          <%= form.label :status, t('admin.users.form.fields.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :status,
+                          options_for_select(
+                            (User.statuses.keys - ['deleted']).map { |status| [t("admin.users.statuses.#{status}"), status] },
+                            @user.status
+                          ),
+                          { include_blank: t('admin.users.form.fields.status_placeholder') },
+                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(@user, :status) %>
+        </div>
+
+        <div>
+          <%= form.label :language_id, t('admin.users.form.fields.language'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.collection_select :language_id,
+                                    @languages, :id, :name,
+                                    { include_blank: t('admin.users.form.fields.language_placeholder') },
+                                    class: "input-field w-full rounded-xl #{form_state_classes(@user, :language_id)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(@user, :language_id) %>
+        </div>
+
+        <div>
+          <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :theme,
+                          @themes.map { |theme| [theme[:id].humanize, theme[:id]] },
+                          { include_blank: true },
+                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :theme)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+          <%= error_message_for(@user, :theme) %>
+        </div>
+
+        <div class="sm:col-span-2">
+          <%= form.label :system_role_ids, t('admin.users.form.fields.system_roles'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.collection_check_boxes :system_role_ids, @roles, :id, :name, class: 'mt-1' do |b| %>
+            <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700">
+              <%= b.check_box class: 'size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500' %>
+              <span class="truncate"><%= b.text %></span>
+              <span class="ml-auto text-xs text-slate-500"><%= b.value %></span>
+            </label>
+          <% end %>
+          <%= error_message_for(@user, :system_role_ids) %>
+        </div>
+      </div>
+
+      <div class="flex justify-end border-t border-slate-100 pt-5">
+        <%= form.submit submit_label,
+                        class: 'rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2' %>
+      </div>
+    <% end %>
+  </div>
+</div>

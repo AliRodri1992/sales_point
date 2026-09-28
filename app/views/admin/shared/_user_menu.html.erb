@@ -37,13 +37,11 @@
     </div>
 
     <div class="py-1">
-      <button
-        type="button"
-        class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-      >
+      <%= link_to admin_profile_path,
+                  class: "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50" do %>
         <%= icon("user", class: "size-4 text-slate-400") %>
         <span><%= t('admin.shared.user_menu.my_profile') %></span>
-      </button>
+      <% end %>
 
       <button
         type="button"

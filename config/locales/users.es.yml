@@ -1,0 +1,100 @@
+---
+es:
+  admin:
+    breadcrumbs:
+      users: Usuarios
+    shared:
+      sidebar:
+        users: Usuarios
+      notifications:
+        user:
+          created: "Se creó el usuario '%{name}' por %{user}"
+          destroyed: "Se eliminó el usuario '%{name}' por %{user}"
+          updated: "Se actualizó el usuario '%{name}' por %{user}"
+    users:
+      created: "Usuario creado correctamente."
+      updated: "Usuario actualizado correctamente."
+      destroyed: "Usuario eliminado correctamente."
+      cannot_delete_self: "No puedes eliminar tu propia cuenta."
+      confirm_delete: "¿Estás seguro de que deseas eliminar al usuario %{name}?"
+      confirm:
+        cancel: Cancelar
+      actions:
+        view: Ver
+        edit: Editar
+        delete: Eliminar
+      user_types:
+        employee: Empleado
+        customer: Cliente
+        supplier: Proveedor
+      statuses:
+        active: Activo
+        suspended: Suspendido
+        blocked: Bloqueado
+        deleted: Eliminado
+      index:
+        page_title: Usuarios
+        title: Usuarios
+        subtitle: Administra los usuarios del sistema.
+        new: Nuevo usuario
+        columns:
+          email: Correo
+          username: Usuario
+          user_type: Tipo
+          status: Estado
+          roles: Roles
+          created_at: Creado
+          actions: Acciones
+        no_data: —
+        no_roles: Sin roles
+        empty:
+          title: Sin usuarios
+          subtitle: Aún no hay usuarios registrados.
+        pagination:
+          per_page_label: Mostrar
+          prev: Anterior
+          next: Siguiente
+          navigation: Navegación de usuarios
+        filters:
+          search_placeholder: Buscar por correo o nombre de usuario...
+          apply: Filtrar
+          reset: Limpiar
+          all_types: Todos los tipos
+          all_statuses: Todos los estados
+          all_roles: Todos los roles
+      form:
+        new_title: Nuevo usuario
+        edit_title: Editar usuario
+        subtitle: Completa la información del usuario.
+        fields:
+          email: Correo electrónico
+          username: Nombre de usuario
+          password: Contraseña
+          password_confirmation: Confirmar contraseña
+          user_type: Tipo de usuario
+          status: Estado
+          language: Idioma
+          theme: Tema
+          system_roles: Roles
+          user_type_placeholder: Selecciona un tipo
+          status_placeholder: Selecciona un estado
+          language_placeholder: Selecciona un idioma
+        password_hint: Déjalo en blanco para mantener la contraseña actual.
+        buttons:
+          back: Volver
+          create: Crear usuario
+          update: Guardar cambios
+      show:
+        identity_title: Información de la cuenta
+        access_title: Acceso y seguridad
+        email: Correo electrónico
+        username: Nombre de usuario
+        user_type: Tipo de usuario
+        theme: Tema
+        status: Estado
+        language: Idioma
+        last_sign_in_at: Último acceso
+        sign_in_count: Inicios de sesión
+        roles: Roles
+        never: Nunca
+        no_roles: Sin roles asignados

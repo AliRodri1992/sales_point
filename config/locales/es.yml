@@ -134,6 +134,7 @@ es:
       label: Ruta de migas
       languages: Idiomas
       products: Productos
+      profile: Perfil
     categories:
       confirm:
         cancel: Cancelar
@@ -431,6 +432,40 @@ es:
         active: Activo
         inactive: Inactivo
       updated: Producto actualizado correctamente
+    profiles:
+      show:
+        account_type: Tipo de cuenta
+        error_title: No se pudo guardar el perfil
+        fields:
+          email: Correo electrónico
+          language: Idioma
+          language_placeholder: Selecciona un idioma
+          theme: Tema
+          username: Usuario
+        last_sign_in: Último acceso
+        never: Nunca
+        page_title: Mi perfil | Nexo POS
+        personal_information:
+          subtitle: Actualiza tus datos básicos y preferencias de acceso.
+          title: Información personal
+        roles:
+          empty: Aún no tienes roles asignados.
+          subtitle: Los roles definen qué puedes ver y hacer en la plataforma.
+          title: Tus roles
+        save: Guardar cambios
+        status:
+          active: Activo
+          blocked: Bloqueado
+          deleted: Eliminado
+          suspended: Suspendido
+        subtitle: Revisa tus datos y ajusta tus preferencias de acceso.
+        title: Mi perfil
+        user_type:
+          customer: Cliente
+          employee: Empleado
+          supplier: Proveedor
+      update:
+        success: Perfil actualizado correctamente
     shared:
       branch_selector:
         branch_center: Sucursal Centro
@@ -533,6 +568,7 @@ es:
         returns: Devoluciones
         role_admin: Administrador
         roles: Roles
+        roles_permissions: Roles y Permisos
         sales: Ventas
         sales_history: Historial de ventas
         section_admin: Administración
