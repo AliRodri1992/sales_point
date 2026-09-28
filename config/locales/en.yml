@@ -552,6 +552,9 @@ en:
       wrong_length: "has an incorrect length"
       invalid_format: "is invalid"
       greater_than_min: "must be greater than or equal to min_stock"
+  profiles:
+    update:
+      success: "Your profile was updated successfully."
   system_roles:
     create:
       success: "System role was successfully created"
