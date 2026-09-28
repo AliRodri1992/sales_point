@@ -34,11 +34,13 @@ module Membership
     end
 
     def cancel!
+      from_status = subscription.status
+
       Subscription.transaction do
         subscription.update!(status: 'canceled', canceled_at: Time.current)
         record_event!(
           'canceled',
-          from_status: subscription.status_before_last_save,
+          from_status:,
           to_status: 'canceled',
           description: 'Subscription canceled.'
         )
