@@ -553,6 +553,9 @@ es:
       wrong_length: "tiene una longitud incorrecta"
       invalid_format: "no es válido"
       greater_than_min: "debe ser mayor o igual que min_stock"
+  profiles:
+    update:
+      success: "Tu perfil se actualizó correctamente."
   system_roles:
     create:
       success: "El rol del sistema fue creado exitosamente"
