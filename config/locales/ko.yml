@@ -668,15 +668,28 @@ ko:
         title: 계정 만들기
     sessions:
       new:
-        email: 이메일
-        email_placeholder: email@example.com
+        brand_alt: Delta POS 로고 심볼
+        email: 회사 이메일
+        email_placeholder: carlos@yourcompany.com
         error_banner:
           title: 인증 실패
-        forgot: 비밀번호 찾기
-        password: 비밀번호
-        submit: 로그인
-        subtitle: 근무를 시작하려면 정보를 입력하십시오
-        title: 접속 터미널
+        forgot: 비밀번호를 잊으셨나요?
+        password: 안전한 로그인 비밀번호
+        remember_me: 로그인 상태 유지
+        submit: 터미널 로그인
+        subtitle: 클라우드 POS를 열려면 로그인 정보를 입력하세요.
+        title: 클라우드 시스템 접속
+        toggle_password: 비밀번호 표시 또는 숨기기
+        register_prompt: 플랫폼이 처음이신가요?
+        register: 여기에서 가입
+        panel_badge: 보안 접속 터미널
+        panel_title: 클라우드 POS로 돌아가세요
+        panel_description: 로그인하여 판매대, 재고 보고서 및 활성 Delta POS 터미널을 즉시 동기화하세요.
+        realtime_title: 실시간 동기화
+        realtime_description: 어디서나 판매, 재고 수준 및 현금 흐름을 실시간으로 모니터링하세요.
+        multichannel_title: 멀티채널 사용 지원
+        multichannel_description: 모바일 기기 또는 고정 터미널에서 동시에 금전함 교대를 시작할 수 있습니다.
+        copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
     shared:
       links:
         forgot_password: 비밀번호를 잊으셨나요?
