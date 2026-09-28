@@ -123,7 +123,6 @@ en:
           description_placeholder: Describe the scope of this role.
       index:
         page_title: Roles | Nexo POS
-        eyebrow: Security and access
         title: Roles
         subtitle: Define which system modules each role can access.
         new: New role

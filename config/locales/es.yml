@@ -97,7 +97,6 @@ es:
           description_placeholder: Describe el alcance de este rol.
       index:
         page_title: Roles | Nexo POS
-        eyebrow: Seguridad y acceso
         title: Roles
         subtitle: Define qué módulos puede utilizar cada rol del sistema.
         new: Nuevo rol
