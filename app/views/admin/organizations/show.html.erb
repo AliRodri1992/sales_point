@@ -22,7 +22,7 @@
     </div>
     <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.organizations.show.subscription') %></h2>
-      <% if @organization.subscription %>
+      <% if @organization.current_subscription %>
         <div class="mt-5">
           <p class="text-xl font-bold text-slate-900"><%= @organization.subscription.membership_plan.name %></p>
           <p class="mt-1 text-sm text-slate-500"><%= @organization.subscription.status.humanize %></p>
