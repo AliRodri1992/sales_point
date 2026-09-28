@@ -12,5 +12,9 @@ FactoryBot.define do
     trait :english do
       association(:language, :english)
     end
+
+    trait :spanish do
+      association(:language, code: 'es', name: 'Español', flag_iso: 'es')
+    end
   end
 end

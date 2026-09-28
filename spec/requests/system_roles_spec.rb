@@ -36,6 +36,30 @@ RSpec.describe 'SystemRoles', type: :request do
     end
   end
 
+  describe 'breadcrumb' do
+    def breadcrumb_trail
+      Nokogiri::HTML4(response.body).at_css('nav ol').css('a').map { |node| node.text.strip }
+    end
+
+    it 'renders the roles trail in English' do
+      get system_roles_path
+
+      expect(breadcrumb_trail).to eq(%w[Home Roles])
+      expect(response.body).not_to include('translation missing')
+    end
+
+    it 'renders the roles trail in Spanish' do
+      spanish_user = create(:user, :spanish)
+      create(:user_role, user: spanish_user, system_role: admin_role)
+      sign_in spanish_user
+
+      get system_roles_path
+
+      expect(breadcrumb_trail).to eq(%w[Inicio Roles])
+      expect(response.body).not_to include('translation missing')
+    end
+  end
+
   describe 'PATCH /system_roles/:id/permissions' do
     let!(:role) { create(:system_role, name: 'Cajero', code: 'cashier', role_type: :branch) }
     let!(:permission) { create(:permission) }

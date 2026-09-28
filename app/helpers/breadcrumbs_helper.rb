@@ -111,7 +111,7 @@ module BreadcrumbsHelper
   end
 
   def system_role_breadcrumb_items
-    roles_path = { label: t('admin.breadcrumbs.system_roles'), path: system_roles_path }
+    roles_path = { label: t('admin.breadcrumbs.roles'), path: system_roles_path }
 
     case params[:action]
     when 'new', 'create'
