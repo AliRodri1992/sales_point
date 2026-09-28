@@ -1,0 +1,154 @@
+ko:
+  activerecord:
+    models:
+      organization: 조직
+      membership_plan: 멤버십 플랜
+      membership_feature: 멤버십 기능
+      subscription: 구독
+      subscription_event: 구독 이벤트
+  admin:
+    shared:
+      sidebar:
+        organizations: 조직
+        membership_plans: 멤버십 플랜
+        subscriptions: 구독
+      breadcrumbs:
+        organizations: 조직
+        membership_plans: 멤버십 플랜
+        subscriptions: 구독
+    organizations:
+      index:
+        page_title: 조직 | Nexo POS
+        title: 조직
+        subtitle: Delta POS에 등록된 사업자를 관리합니다.
+        new: 새 조직
+        empty_title: 조직이 없습니다
+        empty_subtitle: 첫 번째 조직을 생성하세요.
+        columns:
+          name: 조직
+          code: 코드
+          subscription: 구독
+          status: 상태
+          actions: 작업
+        view: 보기
+      new:
+        title: 새 조직
+        subtitle: Delta POS에 사업자를 등록합니다.
+        submit: 조직 생성
+        back: 조직으로 돌아가기
+      edit:
+        title: 조직 수정
+        subtitle: 사업자 정보를 수정합니다.
+        submit: 변경 저장
+        back: 조직으로 돌아가기
+      show:
+        title: 조직 상세
+        back: 조직으로 돌아가기
+        subscription: 구독
+        plan: 플랜
+        no_subscription: 구독 없음
+        status: 상태
+        usage: 현재 사용량
+        users: 사용자
+        branches: 지점
+        products: 상품
+      created: 조직이 생성되었습니다.
+      updated: 조직이 수정되었습니다.
+    membership_plans:
+      index:
+        page_title: 멤버십 플랜 | Nexo POS
+        title: 멤버십 플랜
+        subtitle: Delta POS의 기능과 사용 한도를 관리합니다.
+        new: 새 플랜
+        empty_title: 플랜이 없습니다
+        empty_subtitle: 첫 번째 멤버십 플랜을 생성하세요.
+        columns:
+          name: 플랜
+          price: 가격
+          interval: 결제 주기
+          trial: 체험
+          status: 상태
+          actions: 작업
+        view: 보기
+        edit: 수정
+      new:
+        title: 새 멤버십 플랜
+        subtitle: 플랜의 가격과 기능을 설정합니다.
+        submit: 플랜 생성
+        back: 플랜으로 돌아가기
+      edit:
+        title: 멤버십 플랜 수정
+        subtitle: 상업 및 기능 설정을 수정합니다.
+        submit: 변경 저장
+        back: 플랜으로 돌아가기
+      show:
+        title: 플랜 상세
+        back: 플랜으로 돌아가기
+        features: 기능
+        limits: 한도
+        enabled: 활성화
+        disabled: 비활성화
+        unlimited: 무제한
+        edit: 수정
+      created: 멤버십 플랜이 생성되었습니다.
+      updated: 멤버십 플랜이 수정되었습니다.
+    subscriptions:
+      index:
+        page_title: 구독 | Nexo POS
+        title: 구독
+        subtitle: 조직의 구독을 관리합니다.
+        new: 새 구독
+        empty_title: 구독이 없습니다
+        empty_subtitle: 조직에 구독을 생성하세요.
+        columns:
+          organization: 조직
+          plan: 플랜
+          status: 상태
+          starts_at: 시작
+          trial_ends_at: 체험 종료
+          actions: 작업
+        view: 보기
+        edit: 수정
+      new:
+        title: 새 구독
+        subtitle: 조직에 플랜을 할당합니다.
+        submit: 구독 생성
+        back: 구독으로 돌아가기
+      edit:
+        title: 구독 수정
+        subtitle: 구독 플랜과 상태를 수정합니다.
+        submit: 변경 저장
+        back: 구독으로 돌아가기
+      show:
+        title: 구독 상세
+        back: 구독으로 돌아가기
+        organization: 조직
+        plan: 플랜
+        status: 상태
+        starts_at: 시작
+        ends_at: 종료
+        trial_ends_at: 체험 종료
+        days_remaining: 체험 남은 일수
+        features: 기능
+        limits: 한도
+        events: 기록
+        change_plan: 플랜 변경
+        cancel: 취소
+        pause: 일시 중지
+        resume: 재개
+      created: 구독이 생성되었습니다.
+      updated: 구독이 수정되었습니다.
+      plan_changed: 구독 플랜이 변경되었습니다.
+      canceled: 구독이 취소되었습니다.
+      paused: 구독이 일시 중지되었습니다.
+      resumed: 구독이 재개되었습니다.
+      statuses:
+        trialing: 체험 중
+        active: 활성
+        past_due: 결제 대기
+        paused: 일시 중지
+        canceled: 취소됨
+        expired: 만료됨
+      intervals:
+        monthly: 월간
+        yearly: 연간
