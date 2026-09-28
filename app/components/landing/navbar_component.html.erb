@@ -1,86 +1,33 @@
-<header class="sticky top-0 z-50 border-b border-slate-800 bg-slate-900/95 text-white shadow-sm backdrop-blur">
+<header class="sticky top-0 z-50 border-b border-slate-700 bg-slate-900 text-white shadow-md">
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
     <%= link_to root_path, class: "flex items-center gap-3", aria: { label: "Delta POS" } do %>
-      <%= image_tag "logo.png", class: "h-10 w-auto object-contain", alt: "Delta POS" %>
-      <span class="hidden font-jakarta text-lg font-extrabold tracking-tight sm:inline">
-        DELTA <span class="text-emerald-500">POS</span>
-      </span>
+      <%= image_tag "delta-pos-logo.svg", class: "h-11 w-11 shrink-0", alt: "Delta POS" %>
+      <div class="flex flex-col leading-none">
+        <span class="font-jakarta text-2xl font-extrabold tracking-tight text-white">DELTA <span class="text-emerald-500">POS</span></span>
+        <span class="mt-0.5 font-inter text-[10px] font-medium uppercase tracking-[0.2em] text-gray-400">Point of Sale</span>
+      </div>
     <% end %>
-
     <nav class="hidden items-center gap-8 text-sm font-medium md:flex">
       <% menu_items.each do |item| %>
-        <%= link_to item.href, class: "text-slate-300 transition hover:text-white" do %>
-          <%= item.title %>
-        <% end %>
+        <%= link_to item.title, item.href, class: "text-slate-300 transition hover:text-white" %>
       <% end %>
     </nav>
-
-    <div class="hidden items-center gap-5 md:flex">
-      <% if helpers.user_signed_in? %>
-        <%= button_to t("landing.buttons.sign_out"),
-                      destroy_user_session_path,
-                      method: :delete,
-                      class: "text-sm font-medium text-slate-300 transition hover:text-white" %>
-      <% else %>
-        <%= link_to t("landing.buttons.sign_in"),
-                    new_user_session_path,
-                    class: "text-sm font-medium text-slate-300 transition hover:text-white" %>
-      <% end %>
-
-      <%= link_to t("landing.buttons.start"),
-                  new_user_registration_path,
-                  class: "rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-900" %>
-
-      <%= render Authentication::LanguageSelectorComponent.new(
-        current_language: helpers.current_language,
-        languages: helpers.terminal_languages,
-        hover: :blue
-      ) %>
+    <div class="hidden items-center gap-6 md:flex">
+      <%= link_to "Iniciar Sesión", new_user_session_path, class: "text-sm font-medium text-slate-300 transition hover:text-white" %>
+      <%= link_to "Comenzar", "#precios", class: "rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-emerald-700 hover:to-teal-700" %>
     </div>
-
-    <button
-      type="button"
-      class="rounded-lg p-2 text-white transition hover:bg-slate-800 md:hidden"
-      data-navbar-target="button"
-      data-action="click->navbar#toggle"
-      aria-label="<%= t("landing.navbar.open_menu") %>"
-      aria-expanded="false">
-      <span data-navbar-target="iconOpen">
-        <%= render Ui::IconComponent.new(name: "bars-3", size: :xl, color: :white) %>
-      </span>
-      <span class="hidden" data-navbar-target="iconClose">
-        <%= render Ui::IconComponent.new(name: "x-mark", size: :xl, color: :white) %>
-      </span>
+    <button type="button" class="rounded-lg p-2 text-white transition hover:bg-slate-800 md:hidden" data-navbar-target="button" data-action="click->navbar#toggle" aria-label="Abrir menú" aria-expanded="false">
+      <span data-navbar-target="iconOpen"><%= render Ui::IconComponent.new(name: "bars-3", size: :xl, color: :white) %></span>
+      <span class="hidden" data-navbar-target="iconClose"><%= render Ui::IconComponent.new(name: "x-mark", size: :xl, color: :white) %></span>
     </button>
   </div>
-
-  <div class="hidden border-t border-slate-800 px-4 pb-5 md:hidden" data-navbar-target="menu">
+  <div class="hidden border-t border-slate-700 px-4 pb-5 md:hidden" data-navbar-target="menu">
     <nav class="flex flex-col gap-1 pt-4">
       <% menu_items.each do |item| %>
-        <%= link_to item.title, item.href,
-                    class: "rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white",
-                    data: { action: "click->navbar#close" } %>
+        <%= link_to item.title, item.href, class: "rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white", data: { action: "click->navbar#close" } %>
       <% end %>
-
-      <div class="mt-3 border-t border-slate-800 pt-3">
-        <%= render Authentication::LanguageSelectorComponent.new(
-          current_language: helpers.current_language,
-          languages: helpers.terminal_languages
-        ) %>
-      </div>
-
-      <% if helpers.user_signed_in? %>
-        <%= button_to t("landing.buttons.sign_out"),
-                      destroy_user_session_path,
-                      method: :delete,
-                      class: "mt-2 w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white" %>
-      <% else %>
-        <%= link_to t("landing.buttons.sign_in"), new_user_session_path,
-                    class: "mt-2 block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white" %>
-      <% end %>
-
-      <%= link_to t("landing.buttons.start"), new_user_registration_path,
-                  class: "mt-2 rounded-xl bg-emerald-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-emerald-700" %>
+      <%= link_to "Iniciar Sesión", new_user_session_path, class: "mt-2 block rounded-lg px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white" %>
+      <%= link_to "Comenzar", "#precios", class: "mt-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-2.5 text-center text-sm font-semibold text-white transition hover:from-emerald-700 hover:to-teal-700" %>
     </nav>
   </div>
 </header>
