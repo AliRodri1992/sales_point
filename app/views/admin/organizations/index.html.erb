@@ -27,7 +27,7 @@
               <tr class="hover:bg-slate-50">
                 <td class="px-5 py-4 font-semibold text-slate-800"><%= organization.name %></td>
                 <td class="px-5 py-4 text-sm text-slate-500"><%= organization.code %></td>
-                <td class="px-5 py-4 text-sm text-slate-600"><%= organization.subscription&.membership_plan&.name || t('admin.organizations.show.no_subscription') %></td>
+                <td class="px-5 py-4 text-sm text-slate-600"><%= organization.current_subscription&.membership_plan&.name || t('admin.organizations.show.no_subscription') %></td>
                 <td class="px-5 py-4 text-sm"><%= organization.status == 'active' ? 'Activa' : 'Inactiva' %></td>
                 <td class="px-5 py-4"><%= link_to t('admin.organizations.index.view'), admin_organization_path(organization), class: 'text-sm font-semibold text-blue-600 hover:text-blue-800' %></td>
               </tr>
