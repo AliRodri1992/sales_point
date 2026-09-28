@@ -43,21 +43,21 @@ class Subscription < ApplicationRecord
   end
 
   def feature_enabled?(key)
-    plan_feature = membership_plan.membership_plan_features
+    plan_feature = membership_plan.active_membership_plan_features
                                   .joins(:membership_feature)
                                   .find_by(membership_features: { key: key })
     plan_feature&.enabled?
   end
 
   def limit_for(key)
-    feature = membership_plan.membership_plan_features
+    feature = membership_plan.active_membership_plan_features
                              .joins(:membership_feature)
                              .find_by(membership_features: { key: key })
     feature&.limit
   end
 
   def unlimited?(key)
-    feature = membership_plan.membership_plan_features
+    feature = membership_plan.active_membership_plan_features
                              .joins(:membership_feature)
                              .find_by(membership_features: { key: key })
     feature&.value == 'unlimited'
