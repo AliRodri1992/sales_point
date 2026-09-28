@@ -11,7 +11,7 @@ module Admin
     def index
       authorize Organization
       @organizations = policy_scope(Organization)
-                       .includes(subscription: :membership_plan)
+                       .includes(current_subscription: :membership_plan)
                        .order(:name)
     end
 
