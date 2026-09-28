@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Subscription < ApplicationRecord
-  belongs_to :organization
+  belongs_to :organization, inverse_of: :subscriptions
   belongs_to :membership_plan
 
   has_many :subscription_events, dependent: :destroy
