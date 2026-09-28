@@ -592,6 +592,7 @@ en:
         returns: Returns
         role_admin: Administrator
         roles: Roles
+        roles_permissions: Roles and Permissions
         sales: Sales
         sales_history: Sales history
         section_admin: Administration

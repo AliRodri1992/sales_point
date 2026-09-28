@@ -568,6 +568,7 @@ ko:
         returns: 반품
         role_admin: 관리자
         roles: 역할
+        roles_permissions: 역할 및 권한
         sales: 판매
         sales_history: 판매 내역
         section_admin: 관리

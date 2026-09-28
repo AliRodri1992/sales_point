@@ -568,6 +568,7 @@ es:
         returns: Devoluciones
         role_admin: Administrador
         roles: Roles
+        roles_permissions: Roles y Permisos
         sales: Ventas
         sales_history: Historial de ventas
         section_admin: Administración
