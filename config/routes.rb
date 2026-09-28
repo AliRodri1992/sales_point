@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :products
     resources :clients
     resources :branches, only: %i[index show new create edit update destroy]
+    resources :users
     resources :clients
     resource :profile, only: %i[show update]
   end

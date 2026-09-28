@@ -1,0 +1,100 @@
+---
+ko:
+  admin:
+    breadcrumbs:
+      users: 사용자
+    shared:
+      sidebar:
+        users: 사용자
+      notifications:
+        user:
+          created: "%{user}님께서 사용자 '%{name}'를(을) 생성했습니다"
+          destroyed: "%{user}님께서 사용자 '%{name}'를(을) 삭제했습니다"
+          updated: "%{user}님께서 사용자 '%{name}'를(을) 수정했습니다"
+    users:
+      created: "사용자가 성공적으로 생성되었습니다."
+      updated: "사용자가 성공적으로 수정되었습니다."
+      destroyed: "사용자가 성공적으로 삭제되었습니다."
+      cannot_delete_self: "자신의 계정을 삭제할 수 없습니다."
+      confirm_delete: "사용자 %{name}을(를) 삭제하시겠습니까?"
+      confirm:
+        cancel: 취소
+      actions:
+        view: 보기
+        edit: 편집
+        delete: 삭제
+      user_types:
+        employee: 직원
+        customer: 고객
+        supplier: 공급자
+      statuses:
+        active: 활성
+        suspended: 정지
+        blocked: 차단
+        deleted: 삭제됨
+      index:
+        page_title: 사용자
+        title: 사용자
+        subtitle: 시스템 사용자를 관리합니다.
+        new: 새 사용자
+        columns:
+          email: 이메일
+          username: 사용자명
+          user_type: 유형
+          status: 상태
+          roles: 역할
+          created_at: 생성일
+          actions: 작업
+        no_data: —
+        no_roles: 없음
+        empty:
+          title: 등록된 사용자 없음
+          subtitle: 아직 등록된 사용자가 없습니다.
+        pagination:
+          per_page_label: 표시
+          prev: 이전
+          next: 다음
+          navigation: 사용자 네비게이션
+        filters:
+          search_placeholder: 이메일 또는 사용자명으로 검색...
+          apply: 필터
+          reset: 지우기
+          all_types: 모든 유형
+          all_statuses: 모든 상태
+          all_roles: 모든 역할
+      form:
+        new_title: 새 사용자
+        edit_title: 사용자 편집
+        subtitle: 사용자 정보를 입력하세요.
+        fields:
+          email: 이메일 주소
+          username: 사용자명
+          password: 비밀번호
+          password_confirmation: 비밀번호 확인
+          user_type: 사용자 유형
+          status: 상태
+          language: 언어
+          theme: 테마
+          system_roles: 역할
+          user_type_placeholder: 유형 선택
+          status_placeholder: 상태 선택
+          language_placeholder: 언어 선택
+        password_hint: 현재 비밀번호를 유지하려면 비워 두세요.
+        buttons:
+          back: 뒤로
+          create: 사용자 생성
+          update: 변경 사항 저장
+      show:
+        identity_title: 계정 정보
+        access_title: 액세스 및 보안
+        email: 이메일 주소
+        username: 사용자명
+        user_type: 사용자 유형
+        theme: 테마
+        status: 상태
+        language: 언어
+        last_sign_in_at: 최근 로그인
+        sign_in_count: 로그인 횟수
+        roles: 역할
+        never: 없음
+        no_roles: 할당된 역할 없음

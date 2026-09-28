@@ -7,7 +7,8 @@ module BreadcrumbsHelper
     'system_roles' => :system_role_breadcrumb_items,
     'admin/profiles' => :profile_breadcrumb_items,
     'admin/branches' => :branch_breadcrumb_items,
-    'admin/clients' => :client_breadcrumb_items
+    'admin/clients' => :client_breadcrumb_items,
+    'admin/users' => :user_breadcrumb_items
   }.freeze
 
   def breadcrumb_items
@@ -104,6 +105,19 @@ module BreadcrumbsHelper
        { label: t('admin.clients.edit.title', name: client_name) }]
     else
       [clients_path]
+    end
+  end
+
+  def user_breadcrumb_items
+    base = { label: t('admin.breadcrumbs.users'), path: admin_users_path }
+    record = controller.view_assigns['user']
+    name = record&.display_name || t('admin.users.form.edit_title')
+
+    case params[:action]
+    when 'new' then [base, { label: t('admin.users.form.new_title') }]
+    when 'show' then [base, { label: name }]
+    when 'edit' then [base, { label: name, path: admin_user_path(record) }, { label: t('admin.users.form.edit_title') }]
+    else [base]
     end
   end
 
