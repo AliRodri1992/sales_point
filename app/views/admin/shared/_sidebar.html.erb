@@ -162,9 +162,9 @@
         </details>
 
         <a
-          href="#"
+          href="<%= admin_clients_path %>"
           data-tooltip="<%= t('admin.shared.sidebar.customers') %>"
-          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          class="<%= sidebar_link_classes('clients') %>"
         >
           <%= icon("users", class: "size-5") %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.customers') %></span>
@@ -225,14 +225,16 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
 
-            <a
-              href="<%= admin_categories_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
-              class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
-            >
-              <%= icon("building-storefront", class: "size-4") %>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
-            </a>
+            <% if current_user.permission?('categories.access') %>
+              <a
+                href="<%= admin_categories_path %>"
+                data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
+                class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
+              >
+                <%= icon("building-storefront", class: "size-4") %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
+              </a>
+            <% end %>
           </div>
         </details>
       </div>
@@ -253,7 +255,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles') %>>
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
@@ -284,7 +286,8 @@
               <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
                 <a
                   href="<%= system_roles_path %>"
-                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+                  data-tooltip="<%= t('admin.shared.sidebar.roles') %>"
+                  class="<%= sidebar_link_classes('system_roles', variant: :submenu) %>"
                 >
                   <%= icon("shield-check", class: "size-4") %>
                   <span class="sidebar-label"><%= t('admin.shared.sidebar.roles') %></span>
@@ -301,8 +304,9 @@
             </details>
 
             <a
-              href="#"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              href="<%= admin_branches_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.branches') %>"
+              class="<%= sidebar_link_classes('branches', variant: :submenu) %>"
             >
               <%= icon("building-storefront", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>

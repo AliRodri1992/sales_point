@@ -5,5 +5,11 @@ FactoryBot.define do
     flag_iso { 'us' }
     status { 'active' }
     deleted_at { nil }
+
+    trait :english do
+      code { 'en' }
+      name { 'English' }
+      flag_iso { 'us' }
+    end
   end
 end

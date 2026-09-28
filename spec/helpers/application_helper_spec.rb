@@ -151,10 +151,10 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context 'when editing a product' do
       let(:action) { 'edit' }
+      let(:product) { instance_double(Product, persisted?: true, name: 'Coca-Cola') }
 
       it 'uses the product name' do
-        product = instance_double(Product, persisted?: true, name: 'Coca-Cola')
-        assign(:product, product)
+        allow(helper).to receive(:current_product).and_return(product)
 
         labels = helper.breadcrumb_items.pluck(:label)
 

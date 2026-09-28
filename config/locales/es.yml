@@ -1,711 +1,982 @@
+---
 es:
-  authentication:
-    error_banner:
-      title: "Error de Autenticación"
+  activerecord:
+    models:
+      address: Dirección
+      branch: Sucursal
+      category: Categoría
+      client: Cliente
+      demo_request: Solicitud de demo
+      language: Idioma
+      product: Producto
+      sat_currency: Moneda SAT
+      system_role: Rol del sistema
+      user: Usuario
   admin:
+    branches:
+      actions:
+        delete: Eliminar sucursal
+        edit: Editar sucursal
+      confirm:
+        cancel: Cancelar
+      confirm_delete: "¿Estás seguro de que deseas eliminar esta sucursal?"
+      created: Sucursal creada correctamente.
+      destroyed: Sucursal eliminada correctamente.
+      empty:
+        subtitle: Crea la primera sucursal de tu negocio.
+        title: No hay sucursales
+      form:
+        address:
+          description: Captura la dirección para geocodificación y futuras funcionalidades
+            de ubicación.
+          title: Dirección
+        buttons:
+          back: Volver a sucursales
+          cancel: Cancelar
+          create: Guardar sucursal
+          update: Guardar cambios
+        edit_title: Editar sucursal
+        fields:
+          city: Ciudad
+          country: País
+          exterior_number: No. exterior
+          interior_number: No. interior
+          name: Nombre
+          neighborhood: Colonia
+          phone: Teléfono
+          postal_code: Código postal
+          state: Estado
+          street: Calle
+        new_title: Nueva sucursal
+        status:
+          active: Sucursal activa
+          description: Permite utilizar la sucursal en el sistema.
+        subtitle: Completa los datos de la sucursal.
+      index:
+        columns:
+          actions: Acciones
+          address: Dirección
+          branch: Sucursal
+          phone: Teléfono
+          status: Estado
+        new: Nueva sucursal
+        no_address: Sin dirección
+        no_data: "—"
+        no_phone: Sin teléfono
+        page_title: Sucursales | Nexo POS
+        pagination:
+          navigation: Paginación de sucursales
+          next: Siguiente
+          per_page_label: Mostrar
+          prev: Anterior
+        subtitle: Administra las sucursales de tu negocio.
+        title: Sucursales
+      statuses:
+        active: Activa
+        inactive: Inactiva
+      updated: Sucursal actualizada correctamente.
+    system_roles:
+      new:
+        page_title: Nuevo rol | Nexo POS
+        title: Nuevo rol
+        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
+        back: Volver a roles
+        details_title: Información del rol
+        details_subtitle: Define los datos básicos del nuevo rol.
+        permissions_title: Permisos del rol
+        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
+        error_title: No se pudo crear el rol
+        cancel: Cancelar
+        submit: Crear rol
+        fields:
+          name: Nombre
+          name_placeholder: Ej. Supervisor de ventas
+          type: Tipo
+          status: Estado
+          description: Descripción
+          description_placeholder: Describe el alcance de este rol.
+      index:
+        page_title: Roles | Nexo POS
+        eyebrow: Seguridad y acceso
+        title: Roles
+        subtitle: Define qué módulos puede utilizar cada rol del sistema.
+        new: Nuevo rol
+        manage_permissions: Administrar permisos
+        no_description: Sin descripción.
+        empty_title: No hay roles disponibles
+        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
+      show:
+        back: Volver a roles
+        code: Código
+        type: Tipo
+        assigned_permissions: Permisos asignados
+        permissions_title: Permisos del rol
+        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios se aplican al guardar.
+        save_permissions: Guardar permisos
+        module_permissions:
+          one: 1 permiso disponible
+          other: "%{count} permisos disponibles"
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      types:
+        system: Sistema
+        branch: Sucursal
+      update_permissions:
+        success: Los permisos del rol se actualizaron correctamente.
+    breadcrumbs:
+      roles: Roles
+      branches: Sucursales
+      categories: Categorías
+      clients: Clientes
+      dashboard: Dashboard
+      home: Inicio
+      label: Ruta de migas
+      languages: Idiomas
+      products: Productos
+    categories:
+      confirm:
+        cancel: Cancelar
+      created: Categoría creada correctamente
+      destroyed: Categoría eliminada correctamente
+      edit:
+        subtitle: Actualiza los datos de la categoría.
+        title: Editar %{name}
+      form:
+        cancel: Cancelar
+        code: Código
+        code_hint: Código único de la categoría (minúsculas, números y guion bajo).
+        code_placeholder: ej. cashier
+        create: Crear categoría
+        description: Descripción
+        description_placeholder: Descripción de la categoría
+        name: Nombre
+        name_placeholder: ej. Caja
+        status: Estado
+        update: Actualizar categoría
+      index:
+        card_title: Categorías registradas
+        columns:
+          actions: Acciones
+          code: Código
+          name: Nombre
+          status: Estado
+        confirm_delete: "¿Seguro que quieres eliminar esta categoría?"
+        delete: Eliminar
+        edit: Editar
+        empty_subtitle: Crea tu primera categoría para empezar.
+        empty_title: Aún no hay categorías
+        filters:
+          all_statuses: Todos los estados
+          apply: Aplicar
+        new: Nueva categoría
+        pagination:
+          next: Siguiente
+          page: Página %{page} de %{total}
+          per_page_label: Mostrar
+          prev: Anterior
+        search_placeholder: Buscar por nombre o código...
+        subtitle: Administra las categorías o departos de tu negocio.
+        title: Categorías
+        total_count: "%{count} categorías registradas"
+      new:
+        subtitle: Añade una categoría a tu catálogo.
+        title: Nueva categoría
+      show:
+        close: Cerrar
+        subtitle: Revisa los detalles de esta categoría.
+        title: Detalles de la categoría
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      updated: Categoría actualizada correctamente
     dashboard:
       index:
-        title: "Panel de administración | Nexo POS"
-      page_header:
-        title: "Resumen general"
-        subtitle: "Esto es lo que está pasando en tu negocio hoy."
-        customize: "Personalizar dashboard"
-        save_changes: "Guardar cambios"
-        new_sale: "Nueva venta"
+        title: Panel de administración | Nexo POS
       kpi_grid:
-        sales_today: "Ventas de hoy"
-        transactions: "Transacciones"
-        average_ticket: "Ticket promedio"
-        current_cash: "Caja actual"
-        session_open: "Sesión abierta"
-      saved:
-        title: "Cambios guardados"
-        text: "El layout del dashboard se actualizó correctamente."
+        average_ticket: Ticket promedio
+        current_cash: Caja actual
+        sales_today: Ventas de hoy
+        session_open: Sesión abierta
+        transactions: Transacciones
+      page_header:
+        customize: Personalizar dashboard
+        new_sale: Nueva venta
+        save_changes: Guardar cambios
+        subtitle: Esto es lo que está pasando en tu negocio hoy.
+        title: Resumen general
       save_error:
-        title: "No se pudieron guardar los cambios"
-        text: "Hubo un problema al guardar el layout. Inténtalo de nuevo."
+        text: Hubo un problema al guardar el layout. Inténtalo de nuevo.
+        title: No se pudieron guardar los cambios
+      saved:
+        text: El layout del dashboard se actualizó correctamente.
+        title: Cambios guardados
       widgets:
-        sales:
-          title: "Ventas"
-          subtitle: "Comportamiento durante los últimos 7 días"
-          period_label: "Periodo de ventas"
-          periods:
-            '7_days': "Últimos 7 días"
-            '30_days': "Últimos 30 días"
-            year: "Este año"
-          days:
-            mon: "Lun"
-            tue: "Mar"
-            wed: "Mié"
-            thu: "Jue"
-            fri: "Vie"
-            sat: "Sáb"
-            today: "Hoy"
-        quick_actions:
-          title: "Acciones rápidas"
-          subtitle: "Accede rápidamente a las funciones principales"
-          new_sale: "Nueva venta"
-          open_pos: "Abrir POS"
-          product: "Producto"
-          add_product: "Agregar producto"
-          customer: "Cliente"
-          new_customer: "Nuevo cliente"
-          cash_cut: "Corte de caja"
-          check_cash: "Consultar caja"
-        recent_sales:
-          title: "Ventas recientes"
-          subtitle: "Últimas transacciones registradas"
-          view_all: "Ver todas"
-          columns:
-            folio: "Folio"
-            customer: "Cliente"
-            method: "Método"
-            total: "Total"
-            status: "Estado"
-          statuses:
-            completed: "Completada"
-            pending: "Pendiente"
-          payment_methods:
-            card: "Tarjeta"
-            cash: "Efectivo"
-            transfer: "Transferencia"
         low_stock:
-          title: "Inventario"
-          subtitle: "Productos que requieren atención"
           alerts: "%{count} alertas"
-          sku: "SKU: %{sku}"
-          view_inventory: "Ver inventario"
+          sku: 'SKU: %{sku}'
+          subtitle: Productos que requieren atención
+          title: Inventario
           units: "%{count} uds."
-    breadcrumbs:
-      label: "Ruta de migas"
-      home: "Inicio"
-      dashboard: "Dashboard"
-      languages: "Idiomas"
-      categories: "Categorías"
-      products: "Productos"
+          view_inventory: Ver inventario
+        quick_actions:
+          add_product: Agregar producto
+          branch: Sucursal
+          cash_cut: Corte de caja
+          check_cash: Consultar caja
+          customer: Cliente
+          new_customer: Nuevo cliente
+          new_sale: Nueva venta
+          open_pos: Abrir POS
+          product: Producto
+          subtitle: Accede rápidamente a las funciones principales
+          title: Acciones rápidas
+        recent_sales:
+          columns:
+            customer: Cliente
+            folio: Folio
+            method: Método
+            status: Estado
+            total: Total
+          payment_methods:
+            card: Tarjeta
+            cash: Efectivo
+            transfer: Transferencia
+          statuses:
+            completed: Completada
+            pending: Pendiente
+          subtitle: Últimas transacciones registradas
+          title: Ventas recientes
+          view_all: Ver todas
+        sales:
+          days:
+            fri: Vie
+            mon: Lun
+            sat: Sáb
+            thu: Jue
+            today: Hoy
+            tue: Mar
+            wed: Mié
+          period_label: Periodo de ventas
+          periods:
+            30_days: Últimos 30 días
+            7_days: Últimos 7 días
+            year: Este año
+          subtitle: Comportamiento durante los últimos 7 días
+          title: Ventas
     languages:
-      created: "Idioma creado correctamente"
-      updated: "Idioma actualizado correctamente"
-      destroyed: "Idioma eliminado correctamente"
       confirm:
-        cancel: "Cancelar"
-      statuses:
-        active: "Activo"
-        inactive: "Inactivo"
+        cancel: Cancelar
+      created: Idioma creado correctamente
+      destroyed: Idioma eliminado correctamente
+      edit:
+        subtitle: Actualiza los datos del idioma.
+        title: Editar %{name}
+      form:
+        cancel: Cancelar
+        code: Código
+        code_hint: Código de idioma ISO 639-1.
+        code_placeholder: ej. es
+        create: Crear idioma
+        flag_hint: Código de país de dos letras usado para mostrar la bandera.
+        flag_iso: Bandera
+        flag_placeholder: ej. mx
+        name: Nombre
+        name_placeholder: ej. Español
+        status: Estado
+        update: Actualizar idioma
       index:
-        title: "Idiomas"
-        subtitle: "Administra los idiomas disponibles en tu plataforma."
-        new: "Nuevo idioma"
-        card_title: "Idiomas registrados"
-        total_count: "%{count} idiomas registrados"
-        search_placeholder: "Buscar por nombre o código..."
-        filters:
-          all_statuses: "Todos los estados"
-          apply: "Aplicar"
-        pagination:
-          prev: "Anterior"
-          next: "Siguiente"
-          page: "Página %{page} de %{total}"
-          per_page_label: "Mostrar"
-        edit: "Editar"
-        delete: "Eliminar"
+        card_title: Idiomas registrados
+        columns:
+          actions: Acciones
+          code: Código
+          flag: Bandera
+          language: Idioma
+          status: Estado
         confirm_delete: "¿Seguro que quieres eliminar este idioma?"
-        empty_title: "Aún no hay idiomas"
-        empty_subtitle: "Crea tu primer idioma para empezar."
-        columns:
-          language: "Idioma"
-          code: "Código"
-          flag: "Bandera"
-          status: "Estado"
-          actions: "Acciones"
-      form:
-        name: "Nombre"
-        name_placeholder: "ej. Español"
-        code: "Código"
-        code_placeholder: "ej. es"
-        code_hint: "Código de idioma ISO 639-1."
-        flag_iso: "Bandera"
-        flag_placeholder: "ej. mx"
-        flag_hint: "Código de país de dos letras usado para mostrar la bandera."
-        status: "Estado"
-        cancel: "Cancelar"
-        create: "Crear idioma"
-        update: "Actualizar idioma"
-      show:
-        title: "Detalles del idioma"
-        subtitle: "Revisa los detalles de este idioma."
-        close: "Cerrar"
-      new:
-        title: "Nuevo idioma"
-        subtitle: "Añade un idioma a tu catálogo."
-      edit:
-        title: "Editar %{name}"
-        subtitle: "Actualiza los datos del idioma."
-    categories:
-      created: "Categoría creada correctamente"
-      updated: "Categoría actualizada correctamente"
-      destroyed: "Categoría eliminada correctamente"
-      confirm:
-        cancel: "Cancelar"
-      statuses:
-        active: "Activo"
-        inactive: "Inactivo"
-      index:
-        title: "Categorías"
-        subtitle: "Administra las categorys o departos de tu negocio."
-        new: "Nueva category"
-        card_title: "Categorías registradas"
-        total_count: "%{count} categorys registradas"
-        search_placeholder: "Buscar por nombre o código..."
+        delete: Eliminar
+        edit: Editar
+        empty_subtitle: Crea tu primer idioma para empezar.
+        empty_title: Aún no hay idiomas
         filters:
-          all_statuses: "Todos los estados"
-          apply: "Aplicar"
+          all_statuses: Todos los estados
+          apply: Aplicar
+        new: Nuevo idioma
         pagination:
-          prev: "Anterior"
-          next: "Siguiente"
-          page: "Página %{page} de %{total}"
-          per_page_label: "Mostrar"
-        edit: "Editar"
-        delete: "Eliminar"
-        confirm_delete: "¿Seguro que quieres eliminar esta category?"
-        empty_title: "Aún no hay categorys"
-        empty_subtitle: "Crea tu primer category para empezar."
-        columns:
-          code: "Código"
-          name: "Nombre"
-          status: "Estado"
-          actions: "Acciones"
-      form:
-        code: "Código"
-        code_placeholder: "ej. cashier"
-        code_hint: "Código único de la categoría (minúsculas, números y guion bajo)."
-        name: "Nombre"
-        name_placeholder: "ej. Caja"
-        description: "Descripción"
-        description_placeholder: "Descripción de la categoría"
-        status: "Estado"
-        cancel: "Cancelar"
-        create: "Crear category"
-        update: "Actualizar category"
-      show:
-        title: "Detalles del category"
-        subtitle: "Revisa los detalles de esta category."
-        close: "Cerrar"
+          next: Siguiente
+          page: Página %{page} de %{total}
+          per_page_label: Mostrar
+          prev: Anterior
+        search_placeholder: Buscar por nombre o código...
+        subtitle: Administra los idiomas disponibles en tu plataforma.
+        title: Idiomas
+        total_count: "%{count} idiomas registrados"
       new:
-        title: "Nueva category"
-        subtitle: "Añade un category a tu catálogo."
-      edit:
-        title: "Editar %{name}"
-        subtitle: "Actualiza los datos del category."
+        subtitle: Añade un idioma a tu catálogo.
+        title: Nuevo idioma
+      show:
+        close: Cerrar
+        subtitle: Revisa los detalles de este idioma.
+        title: Detalles del idioma
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      updated: Idioma actualizado correctamente
     products:
-      created: "Producto creado correctamente"
-      updated: "Producto actualizado correctamente"
-      destroyed: "Producto eliminado correctamente"
+      close: Cerrar
       confirm:
-        cancel: "Cancelar"
-      statuses:
-        active: "Activo"
-        inactive: "Inactivo"
-      index:
-        title: "Productos"
-        subtitle: "Administra el catálogo de productos de tu negocio."
-        new: "Nuevo producto"
-        card_title: "Productos registrados"
-        total_count: "%{count} productos registrados"
-        search_placeholder: "Buscar por nombre, código, sku o código de barras..."
-        filters:
-          all_statuses: "Todos los estados"
-          featured_only: "Solo destacados"
-          all_featured: "Todos"
-          apply: "Aplicar"
-        pagination:
-          prev: "Anterior"
-          next: "Siguiente"
-          page: "Página %{page} de %{total}"
-          per_page_label: "Mostrar"
-        edit: "Editar"
-        delete: "Eliminar"
-        confirm_delete: "¿Seguro que quieres eliminar este producto?"
-        empty_title: "Aún no hay productos"
-        empty_subtitle: "Agrega tu primer producto para empezar."
-        not_found: "Producto no encontrado"
-        destroy_failed: "No se pudo eliminar el producto"
-        count: "%{count} productos"
-        columns:
-          code: "Código"
-          name: "Nombre"
-          price: "Precio"
-          stock: "Existencias"
-          cost: "Costo"
-          category: "Categoría"
-          featured: "Destacado"
-          position: "Orden"
-          views: "Vistas"
-          status: "Estado"
-          sat_unit_key: "Unidad SAT"
-          sat_tax: "Impuesto SAT"
-          actions: "Acciones"
-      form:
-        name: "Nombre"
-        name_placeholder: "ej. Coca-Cola 600ml"
-        code: "Código"
-        code_placeholder: "ej. PROD-COLA"
-        code_hint: "Código único de producto (letras, números, guion y guion bajo)."
-        description: "Descripción"
-        description_placeholder: "ej. Un refresco gaseoso refrescante."
-        price: "Precio"
-        price_placeholder: "ej. 25.50"
-        price_hint: "Precio de venta. Debe ser >= 0."
-        cost: "Costo"
-        cost_placeholder: "ej. 12.00"
-        cost_hint: "Costo de compra. Opcional."
-        stock: "Existencias"
-        stock_placeholder: "ej. 100.000"
-        min_stock: "Stock mínimo"
-        min_stock_placeholder: "ej. 10.000"
-        max_stock: "Stock máximo"
-        max_stock_placeholder: "ej. 500.000"
-        hints:
-          max_stock: "Stock máximo antes de reabastecer. Debe ser >= stock mínimo."
-        sku: "SKU"
-        sku_placeholder: "ej. COCA-600ML"
-        barcode: "Código de barras"
-        barcode_placeholder: "ej. 75010001"
-        image: "Imagen"
-        image_help: "Sube un archivo de imagen del producto."
-        category: "Categoría"
-        sat_unit_key: "Clave de unidad SAT"
-        sat_tax: "Impuesto SAT"
-        featured: "Producto destacado"
-        featured_desc: "Aparecerá en la sección de productos destacados."
-        position: "Orden"
-        position_placeholder: "ej. 1"
-        position_hint: "Posición en el catálogo. Menor número aparece primero."
-        status: "Estado"
-        additional_info: "Información adicional"
-        margin: "Margen%"
-        gross_margin: "Utilidad"
-        total_value: "Valor total"
-        cancel: "Cancelar"
-        create: "Crear producto"
-        update: "Actualizar producto"
-        back: "Volver"
-      show:
-        title: "Detalles del producto"
-        label: "Mostrar Producto"
-        subtitle: "Revisa los detalles de este producto."
-        back: "Volver"
-        close: "Cerrar"
-      new:
-        title: "Nuevo producto"
-        subtitle: "Añade un producto a tu catálogo."
-        back: "Volver"
+        cancel: Cancelar
+      created: Producto creado correctamente
+      destroyed: Producto eliminado correctamente
       edit:
-        title: "Editar %{name}"
-        label: "Editar Producto"
-        subtitle: "Actualiza los datos del producto."
-        back: "Volver"
-      close: "Cerrar"
-    profile:
-      page_title: "Mi perfil | NEXO POS"
-      eyebrow: "Cuenta"
-      title: "Mi perfil"
-      subtitle: "Administra tu información personal y preferencias de la cuenta."
-      account_type: "Tipo de usuario"
-      last_sign_in: "Último acceso"
-      never: "Sin accesos registrados"
-      status:
-        active: "Activo"
-        suspended: "Suspendido"
-        blocked: "Bloqueado"
-        deleted: "Eliminado"
-      user_type:
-        employee: "Empleado"
-        customer: "Cliente"
-        supplier: "Proveedor"
-      personal_information:
-        title: "Información personal"
-        subtitle: "Actualiza los datos básicos de tu perfil."
-      fields:
-        username: "Nombre de usuario"
-        email: "Correo electrónico"
-        language: "Idioma"
-        language_placeholder: "Selecciona un idioma"
-        theme: "Tema"
-      roles:
-        title: "Roles asignados"
-        subtitle: "Roles del sistema asociados a tu cuenta."
-        empty: "No tienes roles asignados."
-      save: "Guardar cambios"
-      error_title: "No se pudieron guardar los cambios."
+        back: Volver
+        label: Editar Producto
+        subtitle: Actualiza los datos del producto.
+        title: Editar %{name}
+      form:
+        additional_info: Información adicional
+        back: Volver
+        barcode: Código de barras
+        barcode_placeholder: ej. 75010001
+        cancel: Cancelar
+        category: Categoría
+        code: Código
+        code_hint: Código único de producto (letras, números, guion y guion bajo).
+        code_placeholder: ej. PROD-COLA
+        cost: Costo
+        cost_hint: Costo de compra. Opcional.
+        cost_placeholder: ej. 12.00
+        create: Crear producto
+        description: Descripción
+        description_placeholder: ej. Un refresco gaseoso refrescante.
+        featured: Producto destacado
+        featured_desc: Aparecerá en la sección de productos destacados.
+        gross_margin: Utilidad
+        hints:
+          max_stock: Stock máximo antes de reabastecer. Debe ser >= stock mínimo.
+        image: Imagen
+        image_help: Sube un archivo de imagen del producto.
+        margin: Margen%
+        max_stock: Stock máximo
+        max_stock_placeholder: ej. 500.000
+        min_stock: Stock mínimo
+        min_stock_placeholder: ej. 10.000
+        name: Nombre
+        name_placeholder: ej. Coca-Cola 600ml
+        position: Orden
+        position_hint: Posición en el catálogo. Menor número aparece primero.
+        position_placeholder: ej. 1
+        price: Precio
+        price_hint: Precio de venta. Debe ser >= 0.
+        price_placeholder: ej. 25.50
+        sat_tax: Impuesto SAT
+        sat_unit_key: Clave de unidad SAT
+        sku: SKU
+        sku_placeholder: ej. COCA-600ML
+        status: Estado
+        stock: Existencias
+        stock_placeholder: ej. 100.000
+        total_value: Valor total
+        update: Actualizar producto
+      index:
+        card_title: Productos registrados
+        columns:
+          actions: Acciones
+          category: Categoría
+          code: Código
+          cost: Costo
+          featured: Destacado
+          name: Nombre
+          position: Orden
+          price: Precio
+          sat_tax: Impuesto SAT
+          sat_unit_key: Unidad SAT
+          status: Estado
+          stock: Existencias
+          views: Vistas
+        confirm_delete: "¿Seguro que quieres eliminar este producto?"
+        count: "%{count} productos"
+        delete: Eliminar
+        destroy_failed: No se pudo eliminar el producto
+        edit: Editar
+        empty_subtitle: Agrega tu primer producto para empezar.
+        empty_title: Aún no hay productos
+        filters:
+          all_featured: Todos
+          all_statuses: Todos los estados
+          apply: Aplicar
+          featured_only: Solo destacados
+        new: Nuevo producto
+        not_found: Producto no encontrado
+        pagination:
+          next: Siguiente
+          page: Página %{page} de %{total}
+          per_page_label: Mostrar
+          prev: Anterior
+        search_placeholder: Buscar por nombre, código, sku o código de barras...
+        subtitle: Administra el catálogo de productos de tu negocio.
+        title: Productos
+        total_count: "%{count} productos registrados"
+      new:
+        back: Volver
+        subtitle: Añade un producto a tu catálogo.
+        title: Nuevo producto
+      show:
+        back: Volver
+        close: Cerrar
+        label: Mostrar Producto
+        subtitle: Revisa los detalles de este producto.
+        title: Detalles del producto
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      updated: Producto actualizado correctamente
     shared:
-      no_image: "No image available"
-      sidebar:
-        section_main: "Principal"
-        dashboard: "Dashboard"
-        catalogs: "Catálogos"
-        languages: "Idiomas"
-        products: "Productos"
-        categories: "Categorías"
-        section_operations: "Operación"
-        section_catalogs: "Catálogos"
-        sales: "Ventas"
-        new_sale: "Nueva venta"
-        sales_history: "Historial de ventas"
-        returns: "Devoluciones"
-        cash_register: "Caja"
-        inventory: "Inventario"
-        low_stock: "Bajo stock"
-        stock: "Existencias"
-        by_branch: "Por sucursal"
-        movements: "Movimientos"
-        adjustments: "Ajustes"
-        kardex: "Kardex"
-        customers: "Clientes"
-        suppliers: "Proveedores"
-        employees: "Empleados"
-        section_admin: "Administración"
-        reports: "Reportes"
-        settings: "Configuración"
-        general: "General"
-        system_users: "Usuarios del sistema"
-        roles: "Roles"
-        permissions: "Permisos"
-        branches: "Sucursales"
-        taxes: "Impuestos"
-        role_admin: "Administrador"
-        business_os: "BUSINESS OS"
-      topbar:
-        toggle_sidebar: "Alternar menú lateral"
-        morning_greeting: "Buenos días, %{name}"
       branch_selector:
-        branch_center: "Sucursal Centro"
-        branch_north: "Sucursal Norte"
-        branch_south: "Sucursal Sur"
-      language_selector:
-        toggle: "Seleccionar idioma"
-      notifications:
-        toggle: "Notificaciones"
-        title: "Notificaciones"
-        subtitle:
-          one: "Tienes 1 notificación nueva"
-          other: "Tienes %{count} notificaciones nuevas"
-        subtitle_none: "No tienes notificaciones nuevas"
-        mark_all_read: "Marcar todas como leídas"
-        new_message: "Nuevo mensaje"
-        message_unavailable: "Mensaje no disponible"
-        performed_by: "Por %{user}"
-        empty: "No tienes notificaciones."
-        types:
-          chat: "Chat"
-          demo_request: "Solicitud de demo"
-          language: "Idioma"
-          category: "Categoría"
-          product: "Producto"
-        language:
-          created: "Se creó el idioma '%{name}'"
-          updated: "Se actualizó el idioma '%{name}'"
-          destroyed: "Se eliminó el idioma '%{name}'"
-        category:
-          created: "Se creó el category '%{name}'"
-          updated: "Se actualizó el category '%{name}'"
-          destroyed: "Se eliminó el category '%{name}'"
-        product:
-          created: "Se creó el producto '%{name}'"
-          updated: "Se actualizó el producto '%{name}'"
-          destroyed: "Se eliminó el producto '%{name}'"
-      user_menu:
-        toggle: "Menú de usuario"
-        my_profile: "Mi perfil"
-        preferences: "Preferencias"
-        security: "Seguridad"
-        help_center: "Centro de ayuda"
-        settings: "Configuración"
-        sign_out: "Cerrar sesión"
+        branch_center: Sucursal Centro
+        branch_north: Sucursal Norte
+        branch_south: Sucursal Sur
+      chat:
+        assistant_name: Asistente NEXO
+        close: Cerrar chat
+        greeting: Hola, %{name}. ¿En qué puedo ayudarte?
+        input_placeholder: Escribe un mensaje...
+        online: En línea
+        open: Abrir chat
+        send: Enviar mensaje
+      conversation:
+        close: Cerrar conversación
+        input_placeholder: Escribe un mensaje...
+        offline: Desconectado
+        online: En línea
+        select_user: Selecciona un usuario para chatear
+        send: Enviar mensaje
       footer:
         copyright: "© %{year} NEXO POS. Todos los derechos reservados."
-        privacy: "Privacidad"
-        terms: "Términos"
-      chat:
-        assistant_name: "Asistente NEXO"
-        online: "En línea"
-        close: "Cerrar chat"
-        greeting: "Hola, %{name}. ¿En qué puedo ayudarte?"
-        input_placeholder: "Escribe un mensaje..."
-        send: "Enviar mensaje"
-        open: "Abrir chat"
+        privacy: Privacidad
+        terms: Términos
+      language_selector:
+        toggle: Seleccionar idioma
+      no_image: No image available
+      notifications:
+        actor_unknown: Usuario desconocido
+        branch:
+          created: Se creó la sucursal '%{name}' por %{user}
+          destroyed: Se eliminó la sucursal '%{name}' por %{user}
+          updated: Se actualizó la sucursal '%{name}' por %{user}
+        category:
+          created: Se creó la categoría '%{name}'
+          destroyed: Se eliminó la categoría '%{name}'
+          updated: Se actualizó la categoría '%{name}'
+        client:
+          created: Se creó el cliente '%{name}' por %{user}
+          destroyed: Se eliminó el cliente '%{name}' por %{user}
+          updated: Se actualizó el cliente '%{name}' por %{user}
+        empty: No tienes notificaciones.
+        language:
+          created: Se creó el idioma '%{name}'
+          destroyed: Se eliminó el idioma '%{name}'
+          updated: Se actualizó el idioma '%{name}'
+        mark_all_read: Marcar todas como leídas
+        message_unavailable: Mensaje no disponible
+        new_message: Nuevo mensaje
+        performed_by: Por %{user}
+        product:
+          created: Se creó el producto '%{name}'
+          destroyed: Se eliminó el producto '%{name}'
+          updated: Se actualizó el producto '%{name}'
+        subtitle:
+          one: Tienes 1 notificación nueva
+          other: Tienes %{count} notificaciones nuevas
+        subtitle_none: No tienes notificaciones nuevas
+        system_role:
+          created: Se creó el rol del sistema '%{name}'
+          updated: Se actualizó el rol del sistema '%{name}'
+        title: Notificaciones
+        toggle: Notificaciones
+        types:
+          category: Categoría
+          chat: Chat
+          client: Cliente
+          demo_request: Solicitud de demo
+          language: Idioma
+          product: Producto
+          system_role: Rol del sistema
       online_users:
-        title: "Usuarios en línea"
-        subtitle: "Activos ahora"
-        close: "Cerrar"
-        open: "Usuarios en línea"
-        empty: "No hay usuarios en línea"
-      conversation:
-        online: "En línea"
-        offline: "Desconectado"
-        close: "Cerrar conversación"
-        select_user: "Selecciona un usuario para chatear"
-        input_placeholder: "Escribe un mensaje..."
-        send: "Enviar mensaje"
-  devise:
-    sessions:
-      new:
-        title: "Punto de Venta"
-        subtitle: "Ingresa tus credenciales para iniciar turno"
-        email: "Correo electrónico"
-        email_placeholder: "correo@ejemplo.com"
-        password: "Contraseña"
-        forgot: "¿Olvidaste tu clave?"
-        submit: "INICIAR SESIÓN"
-        error_banner:
-          title: "Error de Autenticación"
-    passwords:
-      new:
-        title: "¿Olvidaste tu contraseña?"
-        submit: "Enviarme las instrucciones para restablecerla"
-      edit:
-        title: "Cambia tu contraseña"
-        new_password: "Nueva contraseña"
-        minimum: "Mínimo %{count} caracteres"
-        confirm_password: "Confirmar nueva contraseña"
-        submit: "Cambiar mi contraseña"
-    registrations:
-      new:
-        brand_alt: "Isotipo de Nexo POS"
-        title: "Crear cuenta"
-        subtitle: "Regístrate para comenzar a usar Nexo POS"
-        email: "Correo electrónico"
-        email_placeholder: "correo@ejemplo.com"
-        password: "Contraseña"
-        password_minimum: "Mínimo %{count} caracteres"
-        password_confirmation: "Confirmar contraseña"
-        submit: "Crear cuenta"
-        already_have_account: "¿Ya tienes una cuenta?"
-        sign_in: "Iniciar sesión"
-      edit:
-        title: "Editar %{resource}"
-        leave_blank: "déjalo en blanco si no quieres cambiarla"
-        minimum: "Mínimo %{count} caracteres"
-        current_password_hint: "necesitamos tu contraseña actual para confirmar los cambios"
-        submit: "Actualizar"
-        cancel_account: "Cancelar mi cuenta"
-        unhappy: "¿No estás conforme?"
-        confirm: "¿Estás seguro?"
-        back: "Volver"
-    shared:
-      links:
-        log_in: "Iniciar sesión"
-        sign_up: "Crear cuenta"
-        forgot_password: "¿Olvidaste tu contraseña?"
-        no_confirmation: "¿No recibiste las instrucciones de confirmación?"
-        no_unlock: "¿No recibiste las instrucciones de desbloqueo?"
-        sign_in_with: "Iniciar sesión con %{provider}"
-  activerecord:
-    attributes:
-      user:
-        user_type: "Tipo de usuario"
-        email: "Correo electrónico"
-        password: "Contraseña"
-        password_confirmation: "Confirmar contraseña"
-        current_password: "Contraseña actual"
-      demo_request:
-        name: "Nombre"
-        email: "Correo electrónico"
-        phone: "Teléfono"
-        company: "Empresa"
-        message: "Mensaje"
-      language:
-        name: "Nombre"
-        code: "Código"
-        flag_iso: "Bandera"
-        status: "Estado"
-      category:
-        name: "Nombre"
-        code: "Código"
-        description: "Descripción"
-        status: "Estado"
-      product:
-        name: "Nombre"
-        code: "Código"
-        description: "Descripción"
-        price: "Precio"
-        cost: "Costo"
-        stock: "Existencias"
-        min_stock: "Stock mínimo"
-        max_stock: "Stock máximo"
-        barcode: "Código de barras"
-        sku: "SKU"
-        status: "Estado"
-        image: "Imagen"
-        position: "Posición"
-        featured: "Destacado"
-        view_count: "Contador de vistas"
-        slug: "Slug"
-  errors:
-    format: "%{attribute} %{message}"
-    messages:
-      blank: "no puede estar vacío"
-      taken: "ya ha sido utilizado"
-      invalid: "no es válido"
-      invalid_url: "debe ser una URL válida"
-      too_long: "es demasiado largo (máximo %{count} caracteres)"
-      too_short: "es demasiado corto (mínimo %{count} caracteres)"
-      wrong_length: "tiene una longitud incorrecta"
-      invalid_format: "no es válido"
-      greater_than_min: "debe ser mayor o igual que min_stock"
-  profiles:
-    update:
-      success: "Tu perfil se actualizó correctamente."
-  system_roles:
-    create:
-      success: "El rol del sistema fue creado exitosamente"
-    destroy:
-      success: "El rol del sistema fue eliminado exitosamente"
-  demo_requests:
+        close: Cerrar
+        empty: No hay usuarios en línea
+        open: Usuarios en línea
+        subtitle: Activos ahora
+        title: Usuarios en línea
+      sidebar:
+        adjustments: Ajustes
+        admins: Administradores
+        branches: Sucursales
+        business_os: BUSINESS OS
+        by_branch: Por sucursal
+        cash_register: Caja
+        catalogs: Catálogos
+        categories: Categorías
+        customers: Clientes
+        dashboard: Dashboard
+        employees: Empleados
+        general: General
+        inventory: Inventario
+        kardex: Kardex
+        languages: Idiomas
+        low_stock: Bajo stock
+        movements: Movimientos
+        new_sale: Nueva venta
+        permissions: Permisos
+        products: Productos
+        reports: Reportes
+        returns: Devoluciones
+        role_admin: Administrador
+        roles: Roles
+        sales: Ventas
+        sales_history: Historial de ventas
+        section_admin: Administración
+        section_catalogs: Catálogos
+        section_main: Principal
+        section_operations: Operación
+        settings: Configuración
+        stock: Existencias
+        suppliers: Proveedores
+        system_users: Usuarios del sistema
+        taxes: Impuestos
+      topbar:
+        morning_greeting: Buenos días, %{name}
+        toggle_sidebar: Alternar menú lateral
+      user_menu:
+        help_center: Centro de ayuda
+        my_profile: Mi perfil
+        preferences: Preferencias
+        security: Seguridad
+        settings: Configuración
+        sign_out: Cerrar sesión
+        toggle: Menú de usuario
+  authentication:
+    error_banner:
+      title: Error de Autenticación
+  clients:
+    confirm:
+      cancel: Cancelar
+    created: Cliente creado correctamente
+    destroyed: Cliente eliminado correctamente
+    edit:
+      subtitle: Actualiza los datos del cliente.
+      title: Editar %{name}
+    form:
+      cancel: Cancelar
+      code: Código
+      code_hint: Código único del cliente. Se requiere para identificar al cliente en el sistema.
+      code_placeholder: ej. CLI-0001
+      create: Crear cliente
+      credit_limit: Límite de crédito
+      credit_limit_placeholder: ej. 5000.00
+      email: Email
+      email_placeholder: ej. cliente@empresa.com
+      name: Nombre
+      name_placeholder: Nombre del cliente
+      notes: Notas
+      notes_placeholder: Información adicional sobre el cliente
+      phone: Teléfono
+      phone_placeholder: ej. 5512345678
+      postal_code: Código postal
+      postal_code_placeholder: ej. 01234
+      rfc: RFC
+      rfc_placeholder: ej. ABC010101ABC
+      status: Estado
+      update: Actualizar cliente
+      fiscal_regime: Regimen fiscal
+      fiscal_regime_blank: Selecciona el régimen fiscal
+    index:
+      card_title: Clientes registrados
+      columns:
+        actions: Acciones
+        code: Código
+        contact: Contacto
+        name: Nombre
+        rfc: RFC
+        status: Estado
+      confirm_delete: "¿Seguro que quieres eliminar este cliente?"
+      delete: Eliminar
+      edit: Editar
+      empty_subtitle: Crea tu primer cliente para empezar.
+      empty_title: Aún no hay clientes
+      filters:
+        all_statuses: Todos los estados
+        apply: Aplicar
+      new: Nuevo cliente
+      pagination:
+        next: Siguiente
+        page: Página %{page} de %{total}
+        per_page_label: Mostrar
+        prev: Anterior
+      search_placeholder: Buscar por nombre, código o RFC...
+      show: Ver
+      subtitle: Administra los clientes de tu negocio.
+      title: Clientes
+      total_count: "%{count} clientes registrados"
     new:
-      page_title: "Solicitar demostración | Nexo POS"
-      back: "Volver al inicio"
-      badge: "Demostración personalizada"
-      hero_title: "Conoce todo lo que"
-      brand: "Nexo POS"
-      hero_title_suffix: "puede hacer por tu negocio"
-      hero_description: "Descubre cómo puedes administrar ventas, inventario, clientes, sucursales y mucho más desde un solo lugar."
-      benefits:
-        personalized:
-          title: "Demostración personalizada"
-          description: "Conoce las funciones que realmente necesita tu negocio."
-        resolve_questions:
-          title: "Resuelve tus dudas"
-          description: "Un especialista podrá explicarte el funcionamiento de la plataforma."
-        no_commitment:
-          title: "Sin compromiso"
-          description: "Solicita tu demostración y conoce la plataforma antes de decidir."
-      name: "Nombre"
-      email: "Correo electrónico"
-      phone: "Teléfono"
-      company: "Empresa"
-      message: "¿Cómo podemos ayudarte?"
-      submit: "Solicitar demostración"
-      error_summary: "No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente."
-    create:
-      success: "Recibimos tu solicitud. Nos pondremos en contacto contigo pronto."
+      subtitle: Añade un cliente a tu negocio.
+      title: Nuevo cliente
+    show:
+      back: Volver
+      close: Cerrar
+      subtitle: Revisa los detalles de este cliente.
+      title: Detalles del cliente
+    statuses:
+      active: Activo
+      inactive: Inactivo
+    updated: Cliente actualizado correctamente
   demo_request_mailer:
     new_request:
-      subject: "Nueva solicitud de demostración - Nexo POS"
-      title: "Nueva solicitud de demostración"
       fields:
-        name: "Nombre"
-        email: "Correo"
-        phone: "Teléfono"
-        company: "Empresa"
-        message: "Mensaje"
+        company: Empresa
+        email: Correo
+        message: Mensaje
+        name: Nombre
+        phone: Teléfono
+      subject: Nueva solicitud de demostración - Nexo POS
+      title: Nueva solicitud de demostración
+  demo_requests:
+    create:
+      success: Recibimos tu solicitud. Nos pondremos en contacto contigo pronto.
+    new:
+      back: Volver al inicio
+      badge: Demostración personalizada
+      benefits:
+        no_commitment:
+          description: Solicita tu demostración y conoce la plataforma antes de decidir.
+          title: Sin compromiso
+        personalized:
+          description: Conoce las funciones que realmente necesita tu negocio.
+          title: Demostración personalizada
+        resolve_questions:
+          description: Un especialista podrá explicarte el funcionamiento de la plataforma.
+          title: Resuelve tus dudas
+      brand: Nexo POS
+      company: Empresa
+      email: Correo electrónico
+      error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo
+        nuevamente.
+      hero_description: Descubre cómo puedes administrar ventas, inventario, clientes,
+        sucursales y mucho más desde un solo lugar.
+      hero_title: Conoce todo lo que
+      hero_title_suffix: puede hacer por tu negocio
+      message: "¿Cómo podemos ayudarte?"
+      name: Nombre
+      page_title: Solicitar demostración | Nexo POS
+      phone: Teléfono
+      submit: Solicitar demostración
+  devise:
+    passwords:
+      edit:
+        confirm_password: Confirmar nueva contraseña
+        minimum: Mínimo %{count} caracteres
+        new_password: Nueva contraseña
+        submit: Cambiar mi contraseña
+        title: Cambia tu contraseña
+      new:
+        submit: Enviarme las instrucciones para restablecerla
+        title: "¿Olvidaste tu contraseña?"
+    registrations:
+      edit:
+        back: Volver
+        cancel_account: Cancelar mi cuenta
+        confirm: "¿Estás seguro?"
+        current_password_hint: necesitamos tu contraseña actual para confirmar los
+          cambios
+        leave_blank: déjalo en blanco si no quieres cambiarla
+        minimum: Mínimo %{count} caracteres
+        submit: Actualizar
+        title: Editar %{resource}
+        unhappy: "¿No estás conforme?"
+      new:
+        already_have_account: "¿Ya tienes una cuenta?"
+        brand_alt: Isotipo de Nexo POS
+        email: Correo electrónico
+        email_placeholder: correo@ejemplo.com
+        password: Contraseña
+        password_confirmation: Confirmar contraseña
+        password_minimum: Mínimo %{count} caracteres
+        sign_in: Iniciar sesión
+        submit: Crear cuenta
+        subtitle: Regístrate para comenzar a usar Nexo POS
+        title: Crear cuenta
+    sessions:
+      new:
+        email: Correo electrónico
+        email_placeholder: correo@ejemplo.com
+        error_banner:
+          title: Error de Autenticación
+        forgot: "¿Olvidaste tu clave?"
+        password: Contraseña
+        submit: INICIAR SESIÓN
+        subtitle: Ingresa tus credenciales para iniciar turno
+        title: Punto de Venta
+    shared:
+      links:
+        forgot_password: "¿Olvidaste tu contraseña?"
+        log_in: Iniciar sesión
+        no_confirmation: "¿No recibiste las instrucciones de confirmación?"
+        no_unlock: "¿No recibiste las instrucciones de desbloqueo?"
+        sign_in_with: Iniciar sesión con %{provider}
+        sign_up: Crear cuenta
+  errors:
+    attributes:
+      barcode: Código de barras
+      category: Categoría
+      city: Ciudad
+      code: Código
+      cost: Costo
+      country: País
+      description: Descripción
+      exterior_number: No. exterior
+      featured: Destacado
+      flag_iso: Bandera
+      image: Imagen
+      interior_number: No. interior
+      max_stock: Stock máximo
+      min_stock: Stock mínimo
+      name: Nombre
+      neighborhood: Colonia
+      phone: Teléfono
+      position: Orden
+      postal_code: Código postal
+      price: Precio
+      sat_tax: Impuesto SAT
+      sat_unit_key: Unidad SAT
+      sku: SKU
+      slug: Slug
+      state: Estado
+      status: Estado
+      stock: Existencias
+      street: Calle
+      view_count: Contador de vistas
+    format: "%{attribute} %{message}"
+    messages:
+      acceptance: no ha sido aceptado
+      blank: no puede estar vacío
+      confirmation: no coincide
+      equal_to: debe ser igual a %{count}
+      equality: no es igual
+      even: debe ser par
+      exclusion: no está permitido
+      greater_than: debe ser mayor que %{count}
+      greater_than_or_equal_to: debe ser mayor o igual que %{count}
+      inclusion: no está incluido en la lista
+      invalid: no es válido
+      invalid_format: no es válido
+      less_than: debe ser menor que %{count}
+      less_than_or_equal_to: debe ser menor o igual que %{count}
+      none: debe ser nil
+      numeric: no es numérico
+      odd: debe ser impar
+      other_than: debe ser diferente a %{count}
+      present: no debe estar presente
+      some: debe estar definido
+      taken: ya ha sido utilizado
+      too_long: es demasiado largo (máximo %{count} caracteres)
+      too_short: es demasiado corto (mínimo %{count} caracteres)
+      wrong_length: tiene una longitud incorrecta
   landing:
-    navbar:
-      features: "Características"
-      modules: "Módulos"
-      pricing: "Precios"
-      faq: "FAQ"
-      open_menu: "Abrir menú"
     buttons:
-      start_free: "Comenzar gratis"
-      view_demo: "Ver demostración"
-      create_account: "Crear cuenta"
-      request_demo: "Solicitar demostración"
-      sign_in: "Iniciar sesión"
-      sign_out: "Cerrar sesión"
-      start: "Comenzar"
-    hero:
-      badge: "Nuevo • POS en la nube"
-      title: "Administra tu negocio con"
-      highlighted: "NEXO POS"
-      description: "Controla ventas, inventario, clientes, compras, reportes y facturación desde cualquier dispositivo."
-    statistics:
-      daily_sales: "Ventas diarias"
-      availability: "Disponibilidad"
-      support: "Soporte"
-    features:
-      title: "Todo lo que necesitas para administrar tu negocio"
-      subtitle: "Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas."
-    modules:
-      title: "Módulos especializados"
-      subtitle: "Crece sin cambiar de sistema."
-    screenshot:
-      badge: "Interfaz moderna"
-      title: "Una interfaz moderna y sencilla"
-      description: "Toda la información importante al alcance de un clic."
-    testimonials:
-      badge: "Clientes"
-      title: "Empresas que confían en Nexo POS"
-      subtitle: "Nuestro software ayuda diariamente a cientos de negocios."
-    pricing:
-      badge: "Precios"
-      title: "Planes para cualquier negocio"
-      subtitle: "Empieza gratis y crece cuando lo necesites."
-      most_popular: "Más popular"
-      per_month: "/mes"
-      choose_plan: "Elegir plan"
-    faq:
-      title: "Preguntas frecuentes"
-      subtitle: "Resolvemos las dudas más comunes."
+      create_account: Crear cuenta
+      request_demo: Solicitar demostración
+      sign_in: Iniciar sesión
+      sign_out: Cerrar sesión
+      start: Comenzar
+      start_free: Comenzar gratis
+      view_demo: Ver demostración
     cta:
+      description: Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración
+        de tu empresa.
       title: "¿Listo para modernizar tu negocio?"
-      description: "Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración de tu empresa."
-    footer:
-      description: "Punto de venta moderno para negocios que desean vender más, administrar mejor su inventario y crecer sin complicaciones."
-      product: "Producto"
-      company: "Empresa"
-      about: "Nosotros"
-      contact: "Contacto"
-      privacy: "Privacidad"
-      terms: "Términos"
-      copyright: "© %{year} Nexo POS. Todos los derechos reservados."
-    feature_items:
-      quick_sales: { title: "Ventas rápidas", description: "Cobra en segundos con lector de códigos de barras, múltiples formas de pago y ticket inmediato." }
-      realtime_inventory: { title: "Inventario en tiempo real", description: "Controla existencias por sucursal, recibe alertas de stock mínimo y evita ventas sin producto." }
-      customers: { title: "Clientes", description: "Registra a tus clientes, consulta su historial de compras y aplica descuentos personalizados." }
-      reports: { title: "Reportes y Estadísticas", description: "Conoce tus ventas, utilidades y productos más vendidos con reportes que se actualizan solos." }
-      billing: { title: "Facturación", description: "Emite comprobantes desde la misma venta y mantén tu información fiscal siempre ordenada." }
-      any_device: { title: "Acceso desde cualquier dispositivo", description: "Trabaja en computadora, tablet o celular. Solo necesitas un navegador y conexión a internet." }
-    module_items:
-      multibranch: { title: "Multisucursal", description: "Administra varias sucursales desde una sola cuenta y compara su desempeño en un mismo panel." }
-      purchases: { title: "Compras y proveedores", description: "Registra órdenes de compra, controla costos y mantén al día la información de tus proveedores." }
-      cash_register: { title: "Caja y turnos", description: "Abre y cierra caja por turno, registra retiros y detecta diferencias al final del día." }
-      users: { title: "Usuarios y permisos", description: "Define roles para cajeros, supervisores y administradores con los permisos que cada uno necesita." }
-      returns: { title: "Devoluciones", description: "Procesa devoluciones y cancelaciones dejando siempre el inventario y la caja cuadrados." }
-      accounting: { title: "Cierres contables", description: "Exporta tus movimientos en el formato que tu contador necesita, sin capturas manuales." }
-    plan_items:
-      starter:
-        name: "Inicial"
-        description: "Para negocios que empiezan a ordenar sus ventas."
-        features: { branch_users: "1 sucursal y 2 usuarios", sales_inventory: "Ventas e inventario", basic_reports: "Reportes básicos", email_support: "Soporte por correo" }
-      professional:
-        name: "Profesional"
-        description: "El plan que elige la mayoría de nuestros clientes."
-        features: { branch_users: "3 sucursales y 10 usuarios", purchases: "Compras y proveedores", cash_returns: "Caja, turnos y devoluciones", advanced_reports: "Reportes avanzados", priority_support: "Soporte prioritario" }
-      enterprise:
-        name: "Empresarial"
-        description: "Para cadenas que necesitan control total."
-        features: { unlimited: "Sucursales y usuarios ilimitados", roles: "Roles y permisos a detalle", accounting: "Exportación contable", implementation: "Acompañamiento en la implementación", support: "Soporte 24/7" }
-    questions:
-      install: { question: "¿Necesito instalar algo en mi computadora?", answer: "No. Nexo POS funciona desde el navegador, así que puedes usarlo en cualquier equipo con internet." }
-      offline: { question: "¿Puedo seguir vendiendo si se cae el internet?", answer: "Sí. El punto de venta guarda las operaciones localmente y las sincroniza cuando vuelve la conexión." }
-      migration: { question: "¿Puedo migrar mi catálogo de productos?", answer: "Puedes importar tus productos desde un archivo de Excel o CSV y te acompañamos en la primera carga." }
-      commitment: { question: "¿Hay permanencia mínima?", answer: "No hay contratos forzosos. El plan es mensual y puedes cambiarlo o cancelarlo cuando lo necesites." }
-      trial: { question: "¿Qué incluye la prueba gratuita?", answer: "Todas las funciones del plan Profesional durante 14 días, sin registrar una tarjeta de crédito." }
-    testimonial_items:
-      laura: { name: "Laura Méndez", company: "Abarrotes La Esquina", position: "Propietaria", quote: "Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué me falta surtir en un minuto." }
-      carlos: { name: "Carlos Ibáñez", company: "Ferretería Norte", position: "Gerente de operaciones", quote: "Tenemos tres sucursales y por fin vemos el inventario de todas en la misma pantalla." }
-      andrea: { name: "Andrea Solís", company: "Boutique Aurora", position: "Fundadora", quote: "La capacitación del personal tomó una tarde. La interfaz es tan simple que casi no hubo preguntas." }
     dashboard:
-      title: "Dashboard"
-      summary: "Resumen de tu negocio"
-      sales: "Ventas"
-      products: "Productos"
-      inventory: "Inventario"
-      customers: "Clientes"
-      last_seven_days: "Últimos 7 días"
-      today_sales: "Ventas del día"
-      sold_products: "Productos vendidos"
-      recent_sales: "Ventas recientes"
-      today: "Hoy"
-      minutes_ago: "Hace %{count} min"
+      customers: Clientes
+      inventory: Inventario
+      last_seven_days: Últimos 7 días
+      minutes_ago: Hace %{count} min
+      products: Productos
+      recent_sales: Ventas recientes
+      sales: Ventas
+      sold_products: Productos vendidos
+      summary: Resumen de tu negocio
+      title: Dashboard
+      today: Hoy
+      today_sales: Ventas del día
+    faq:
+      subtitle: Resolvemos las dudas más comunes.
+      title: Preguntas frecuentes
+    feature_items:
+      any_device:
+        description: Trabaja en computadora, tablet o celular. Solo necesitas un navegador
+          y conexión a internet.
+        title: Acceso desde cualquier dispositivo
+      billing:
+        description: Emite comprobantes desde la misma venta y mantén tu información
+          fiscal siempre ordenada.
+        title: Facturación
+      customers:
+        description: Registra a tus clientes, consulta su historial de compras y aplica
+          descuentos personalizados.
+        title: Clientes
+      quick_sales:
+        description: Cobra en segundos con lector de códigos de barras, múltiples
+          formas de pago y ticket inmediato.
+        title: Ventas rápidas
+      realtime_inventory:
+        description: Controla existencias por sucursal, recibe alertas de stock mínimo
+          y evita ventas sin producto.
+        title: Inventario en tiempo real
+      reports:
+        description: Conoce tus ventas, utilidades y productos más vendidos con reportes
+          que se actualizan solos.
+        title: Reportes y Estadísticas
+    features:
+      subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes
+        empresas.
+      title: Todo lo que necesitas para administrar tu negocio
+    footer:
+      about: Nosotros
+      company: Empresa
+      contact: Contacto
+      copyright: "© %{year} Nexo POS. Todos los derechos reservados."
+      description: Punto de venta moderno para negocios que desean vender más, administrar
+        mejor su inventario y crecer sin complicaciones.
+      privacy: Privacidad
+      product: Producto
+      terms: Términos
+    hero:
+      badge: Nuevo • POS en la nube
+      description: Controla ventas, inventario, clientes, compras, reportes y facturación
+        desde cualquier dispositivo.
+      highlighted: NEXO POS
+      title: Administra tu negocio con
+    module_items:
+      accounting:
+        description: Exporta tus movimientos en el formato que tu contador necesita,
+          sin capturas manuales.
+        title: Cierres contables
+      cash_register:
+        description: Abre y cierra caja por turno, registra retiros y detecta diferencias
+          al final del día.
+        title: Caja y turnos
+      multibranch:
+        description: Administra varias sucursales desde una sola cuenta y compara
+          su desempeño en un mismo panel.
+        title: Multisucursal
+      purchases:
+        description: Registra órdenes de compra, controla costos y mantén al día la
+          información de tus proveedores.
+        title: Compras y proveedores
+      returns:
+        description: Procesa devoluciones y cancelaciones dejando siempre el inventario
+          y la caja cuadrados.
+        title: Devoluciones
+      users:
+        description: Define roles para cajeros, supervisores y administradores con
+          los permisos que cada uno necesita.
+        title: Usuarios y permisos
+    modules:
+      subtitle: Crece sin cambiar de sistema.
+      title: Módulos especializados
+    navbar:
+      faq: FAQ
+      features: Características
+      modules: Módulos
+      open_menu: Abrir menú
+      pricing: Precios
+    plan_items:
+      enterprise:
+        description: Para cadenas que necesitan control total.
+        features:
+          accounting: Exportación contable
+          implementation: Acompañamiento en la implementación
+          roles: Roles y permisos a detalle
+          support: Soporte 24/7
+          unlimited: Sucursales y usuarios ilimitados
+        name: Empresarial
+      professional:
+        description: El plan que elige la mayoría de nuestros clientes.
+        features:
+          advanced_reports: Reportes avanzados
+          branch_users: 3 sucursales y 10 usuarios
+          cash_returns: Caja, turnos y devoluciones
+          priority_support: Soporte prioritario
+          purchases: Compras y proveedores
+        name: Profesional
+      starter:
+        description: Para negocios que empiezan a ordenar sus ventas.
+        features:
+          basic_reports: Reportes básicos
+          branch_users: 1 sucursal y 2 usuarios
+          email_support: Soporte por correo
+          sales_inventory: Ventas e inventario
+        name: Inicial
+    pricing:
+      badge: Precios
+      choose_plan: Elegir plan
+      most_popular: Más popular
+      per_month: "/mes"
+      subtitle: Empieza gratis y crece cuando lo necesites.
+      title: Planes para cualquier negocio
+    questions:
+      commitment:
+        answer: No hay contratos forzosos. El plan es mensual y puedes cambiarlo o
+          cancelarlo cuando lo necesites.
+        question: "¿Hay permanencia mínima?"
+      install:
+        answer: No. Nexo POS funciona desde el navegador, así que puedes usarlo en
+          cualquier equipo con internet.
+        question: "¿Necesito instalar algo en mi computadora?"
+      migration:
+        answer: Puedes importar tus productos desde un archivo de Excel o CSV y te
+          acompañamos en la primera carga.
+        question: "¿Puedo migrar mi catálogo de productos?"
+      offline:
+        answer: Sí. El punto de venta guarda las operaciones localmente y las sincroniza
+          cuando vuelve la conexión.
+        question: "¿Puedo seguir vendiendo si se cae el internet?"
+      trial:
+        answer: Todas las funciones del plan Profesional durante 14 días, sin registrar
+          una tarjeta de crédito.
+        question: "¿Qué incluye la prueba gratuita?"
+    screenshot:
+      badge: Interfaz moderna
+      description: Toda la información importante al alcance de un clic.
+      title: Una interfaz moderna y sencilla
+    statistics:
+      availability: Disponibilidad
+      daily_sales: Ventas diarias
+      support: Soporte
+    testimonial_items:
+      andrea:
+        company: Boutique Aurora
+        name: Andrea Solís
+        position: Fundadora
+        quote: La capacitación del personal tomó una tarde. La interfaz es tan simple
+          que casi no hubo preguntas.
+      carlos:
+        company: Ferretería Norte
+        name: Carlos Ibáñez
+        position: Gerente de operaciones
+        quote: Tenemos tres sucursales y por fin vemos el inventario de todas en la
+          misma pantalla.
+      laura:
+        company: Abarrotes La Esquina
+        name: Laura Méndez
+        position: Propietaria
+        quote: Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué
+          me falta surtir en un minuto.
+    testimonials:
+      badge: Clientes
+      subtitle: Nuestro software ayuda diariamente a cientos de negocios.
+      title: Empresas que confían en Nexo POS
+  system_roles:
+    create:
+      success: El rol del sistema fue creado exitosamente
+    destroy:
+      success: El rol del sistema fue eliminado exitosamente

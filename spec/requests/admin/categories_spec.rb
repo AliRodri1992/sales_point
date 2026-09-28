@@ -6,8 +6,12 @@ RSpec.describe 'Admin::Categories', type: :request do
   include Devise::Test::IntegrationHelpers
 
   let!(:user) { create(:user, status: 'active') }
+  let!(:role) { create(:system_role, :system) }
+  let!(:categories_permission) { create(:permission, code: 'categories.access') }
 
   before do
+    create(:user_role, user:, system_role: role)
+    create(:system_role_permission, system_role: role, permission: categories_permission)
     sign_in user
   end
 
@@ -16,6 +20,14 @@ RSpec.describe 'Admin::Categories', type: :request do
   end
 
   describe 'GET /admin/categories' do
+    it 'forbids access when the user role no longer has categories.access' do
+      role.system_role_permissions.delete_all
+
+      get admin_categories_path
+
+      expect(response).to have_http_status(:forbidden)
+    end
+
     let!(:category) { create(:category, name: 'Caja', code: 'cashier') }
 
     before do

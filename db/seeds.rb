@@ -39,6 +39,83 @@ SYSTEM_ROLES = [
   }
 ].freeze
 
+DEFAULT_PERMISSIONS = [
+  {
+    code: 'dashboard.access',
+    name: 'Acceso al dashboard',
+    module_name: 'Dashboard',
+    description: 'Permite acceder al panel principal.'
+  },
+  {
+    code: 'sales.access',
+    name: 'Acceso a ventas',
+    module_name: 'Ventas',
+    description: 'Permite acceder al módulo de ventas.'
+  },
+  {
+    code: 'cash_register.access',
+    name: 'Acceso a caja',
+    module_name: 'Caja',
+    description: 'Permite acceder al módulo de caja.'
+  },
+  {
+    code: 'inventory.access',
+    name: 'Acceso a inventario',
+    module_name: 'Inventario',
+    description: 'Permite acceder al módulo de inventario.'
+  },
+  {
+    code: 'customers.access',
+    name: 'Acceso a clientes',
+    module_name: 'Clientes',
+    description: 'Permite acceder al módulo de clientes.'
+  },
+  {
+    code: 'suppliers.access',
+    name: 'Acceso a proveedores',
+    module_name: 'Proveedores',
+    description: 'Permite acceder al módulo de proveedores.'
+  },
+  {
+    code: 'employees.access',
+    name: 'Acceso a empleados',
+    module_name: 'Empleados',
+    description: 'Permite acceder al módulo de empleados.'
+  },
+  {
+    code: 'reports.access',
+    name: 'Acceso a reportes',
+    module_name: 'Reportes',
+    description: 'Permite acceder al módulo de reportes.'
+  },
+  {
+    code: 'products.access',
+    name: 'Acceso a productos',
+    module_name: 'Productos',
+    description: 'Permite acceder al catálogo de productos.'
+  },
+  {
+    code: 'categories.access',
+    name: 'Acceso a categorías',
+    module_name: 'Categorías',
+    description: 'Permite acceder al catálogo de categorías.'
+  },
+  {
+    code: 'branches.access',
+    name: 'Acceso a sucursales',
+    module_name: 'Sucursales',
+    description: 'Permite administrar las sucursales.'
+  },
+  {
+    code: 'languages.access',
+    name: 'Acceso a idiomas',
+    module_name: 'Idiomas',
+    description: 'Permite administrar los idiomas disponibles.'
+  },
+  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
+    description: 'Permite administrar roles y sus permisos.' }
+].freeze
+
 def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
 
@@ -53,11 +130,14 @@ def load_translations_from_file(file_path, locale_code)
 end
 
 def persist_translation(key, value, locale_code, language)
-  if ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
-    Translate.find_or_create_by!(key: key, language: language) { |t| t.value = value }
+  translation = Translate.find_by(key: key, language: language)
+  if translation
+    translation.update!(value: value) if translation.value != value
+  elsif ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
+    Translate.create!(key: key, language: language, value: value)
   else
     # Fallback: use locale column if language_id doesn't exist yet
-    Translate.find_or_create_by!(key: key, locale: locale_code) { |t| t.value = value }
+    Translate.create!(key: key, locale: locale_code, value: value)
   end
 end
 
@@ -78,6 +158,58 @@ def create_sat_month(number)
   SatMonth.find_or_create_by!(code: format('%02d', number)) do |month|
     month.description = Date::MONTHNAMES[number]
     month.month_number = number
+  end
+end
+
+def seed_permissions
+  DEFAULT_PERMISSIONS.each do |permission_attributes|
+    Permission.find_or_initialize_by(code: permission_attributes[:code]).tap do |permission|
+      permission.assign_attributes(permission_attributes)
+      permission.status = :active
+      permission.save!
+    end
+  end
+end
+
+def assign_default_role_permissions
+  role_codes = %w[super_admin administrator]
+  permissions = Permission.available
+
+  SystemRole.where(code: role_codes).find_each do |role|
+    assign_permissions_to_role(role, permissions)
+  end
+end
+
+def assign_permissions_to_role(role, permissions)
+  permissions.find_each do |permission|
+    SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
+  end
+end
+
+def seed_admin_user
+  language = Language.find_by!(code: 'es')
+  administrator_role = SystemRole.find_by!(code: 'administrator')
+  user = User.find_or_initialize_by(email: 'administrador@delta.com')
+  assign_admin_user_attributes(user, language)
+  user.save!
+  assign_admin_role(user, administrator_role)
+end
+
+def assign_admin_user_attributes(user, language)
+  user.assign_attributes(
+    username: 'administrador',
+    password: 'administrador',
+    password_confirmation: 'administrador',
+    user_type: :employee,
+    status: :active,
+    theme: Theme::DEFAULT,
+    language:
+  )
+end
+
+def assign_admin_role(user, administrator_role)
+  UserRole.find_or_create_by!(user:, system_role: administrator_role, branch: nil) do |user_role|
+    user_role.deleted_at = nil
   end
 end
 
@@ -116,5 +248,114 @@ end
 
 (1..12).each do |i|
   create_sat_month(i)
-  seed_system_roles
+end
+
+seed_system_roles
+seed_permissions
+assign_default_role_permissions
+seed_admin_user
+
+require 'faker'
+
+# Create client examples
+20.times do |index|
+  code = "CLI#{format('%04d', index + 1)}"
+
+  name = Faker::Company.name
+                       .gsub(/[^A-Za-z0-9ÁÉÍÓÚáéíóúÑñ&.-]/, '')
+                       .strip
+
+  rfc_prefix = index.even? ? 3 : 4
+
+  rfc = "#{Faker::Alphanumeric.alpha(number: rfc_prefix).upcase}" \
+        "#{Faker::Number.number(digits: 6)}" \
+        "#{Faker::Alphanumeric.alphanumeric(number: 3).upcase}"
+
+  postal_code = format('%05d', Faker::Number.between(from: 1, to: 99_999))
+
+  Client.create!(
+    code: code,
+    email: Faker::Internet.unique.email,
+    name: name,
+    notes: Faker::Lorem.sentence(word_count: 8),
+    phone: Faker::PhoneNumber.cell_phone,
+    postal_code: postal_code,
+    credit_limit: Faker::Number.between(from: 0, to: 100_000),
+    rfc: rfc,
+    status: %w[active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping client seed due to error: #{e.message}"
+end
+
+# Create category examples
+15.times do |index|
+  name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
+  name = "Categoria#{index + 1}" if name.blank?
+
+  Category.create!(
+    code: "cat#{format('%04d', index + 1)}",
+    name: name[0, 50],
+    description: Faker::Lorem.sentence(word_count: 8),
+    status: %w[active active active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping category seed due to error: #{e.message}"
+end
+
+categories = Category.not_deleted.to_a
+
+# Create product examples
+15.times do |index|
+  code = "PROD#{format('%04d', index + 1)}"
+
+  name = Faker::Commerce.product_name
+  price = Faker::Commerce.price(range: 50.0..5000.0)
+  stock = Faker::Number.between(from: 10, to: 500)
+
+  Product.create!(
+    code: code,
+    name: name,
+    description: Faker::Lorem.sentence(word_count: 12),
+    price: price,
+    cost: (price * 0.6).round(2),
+    stock: stock,
+    min_stock: 5,
+    max_stock: stock + 100,
+    sku: "SKU-#{Faker::Alphanumeric.alphanumeric(number: 8).upcase}",
+    barcode: "75#{Faker::Number.number(digits: 10)}",
+    category: categories.sample,
+    status: %w[active active active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping product seed due to error: #{e.message}"
+end
+
+# Create branch examples
+15.times do |index|
+  street = Faker::Address.street_name
+  neighborhood = Faker::Address.city
+  city = Faker::Address.city
+  state = Faker::Address.state
+  exterior_number = Faker::Address.building_number.to_s.strip
+  exterior_number = Faker::Number.between(from: 1, to: 999).to_s if exterior_number.blank?
+  postal_code = format('%05d', Faker::Address.zip_code.to_s.gsub(/\D/, '')[0, 5].to_i)
+  phone = Faker::PhoneNumber.cell_phone.gsub(/[^0-9+\-()\s]/, '')[0, 20]
+
+  Branch.create!(
+    name: "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100],
+    phone: phone,
+    status: [true, true, true, false].sample,
+    address_attributes: {
+      street: street[0, 150],
+      exterior_number: exterior_number,
+      neighborhood: neighborhood[0, 100],
+      city: city[0, 100],
+      state: state[0, 100],
+      country: 'España',
+      postal_code: postal_code
+    }
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping branch seed due to error: #{e.message}"
 end

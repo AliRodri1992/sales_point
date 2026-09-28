@@ -56,6 +56,12 @@ class User < ApplicationRecord
     scope.exists?
   end
 
+  def permission?(permission_code)
+    user_roles.active
+              .joins(system_role: :permissions)
+              .exists?(permissions: { code: permission_code, status: 'active' })
+  end
+
   def initials
     base = username.presence || email.to_s
     base.scan(/\b\w/).first(2).join.upcase
@@ -70,6 +76,9 @@ class User < ApplicationRecord
       .or(notification_relation_for(Language))
       .or(notification_relation_for(Category))
       .or(notification_relation_for(Product))
+      .or(notification_relation_for(Branch))
+      .or(notification_relation_for(Client))
+      .or(notification_relation_for(SystemRole))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 
@@ -105,10 +114,12 @@ class User < ApplicationRecord
   private
 
   def notification_relation_for(model_class)
+    record_scope = model_class.respond_to?(:with_deleted) ? model_class.with_deleted : model_class
+
     Noticed::Notification
       .where(recipient: self)
       .joins(:event)
       .where(noticed_events: { record_type: model_class.name,
-                               record_id: model_class.with_deleted.select(:id) })
+                               record_id: record_scope.select(:id) })
   end
 end
