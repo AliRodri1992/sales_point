@@ -49,3 +49,6 @@ application.register("categories-search", CategoriesSearchController)
 
 import BranchesPaginationController from "./branches_pagination_controller"
 application.register("branches-pagination", BranchesPaginationController)
+
+import UsersPaginationController from "./users_pagination_controller"
+application.register("users-pagination", UsersPaginationController)

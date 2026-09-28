@@ -255,7 +255,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches') %>>
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'users') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
@@ -274,34 +274,14 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.general') %></span>
             </a>
 
-            <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles') %>>
-              <summary
-                class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
-              >
-                <%= icon("identification", class: "size-4") %>
-                <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.system_users') %></span>
-                <%= icon("chevron-down", class: "sidebar-chevron size-3.5 text-slate-400") %>
-              </summary>
-
-              <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-                <a
-                  href="<%= system_roles_path %>"
-                  data-tooltip="<%= t('admin.shared.sidebar.roles') %>"
-                  class="<%= sidebar_link_classes('system_roles', variant: :submenu) %>"
-                >
-                  <%= icon("shield-check", class: "size-4") %>
-                  <span class="sidebar-label"><%= t('admin.shared.sidebar.roles') %></span>
-                </a>
-
-                <a
-                  href="#"
-                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
-                >
-                  <%= icon("lock-closed", class: "size-4") %>
-                  <span class="sidebar-label"><%= t('admin.shared.sidebar.permissions') %></span>
-                </a>
-              </div>
-            </details>
+            <a
+              href="<%= system_roles_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.roles_permissions') %>"
+              class="<%= sidebar_link_classes('system_roles', variant: :submenu) %>"
+            >
+              <%= icon("shield-check", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.roles_permissions') %></span>
+            </a>
 
             <a
               href="<%= admin_branches_path %>"
@@ -310,6 +290,15 @@
             >
               <%= icon("building-storefront", class: "size-4") %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>
+            </a>
+
+            <a
+              href="<%= admin_users_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.users') %>"
+              class="<%= sidebar_link_classes('users', variant: :submenu) %>"
+            >
+              <%= icon("users", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.users') %></span>
             </a>
 
             <a
@@ -369,13 +358,11 @@
         </div>
 
         <div class="py-1">
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
-          >
+          <%= link_to admin_profile_path,
+                      class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue" do %>
             <%= icon("user", class: "size-4 text-slate-400") %>
             <span><%= t('admin.shared.user_menu.my_profile') %></span>
-          </button>
+          <% end %>
 
           <button
             type="button"

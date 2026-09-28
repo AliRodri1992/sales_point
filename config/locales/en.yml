@@ -160,6 +160,7 @@ en:
       label: Breadcrumbs
       languages: Languages
       products: Products
+      profile: Profile
     categories:
       confirm:
         cancel: Cancel
@@ -455,6 +456,40 @@ en:
         active: Active
         inactive: Inactive
       updated: Product updated successfully
+    profiles:
+      show:
+        account_type: Account type
+        error_title: The profile could not be saved
+        fields:
+          email: Email address
+          language: Language
+          language_placeholder: Select a language
+          theme: Theme
+          username: Username
+        last_sign_in: Last sign in
+        never: Never
+        page_title: My profile | Nexo POS
+        personal_information:
+          subtitle: Update your basic details and preferences.
+          title: Personal information
+        roles:
+          empty: You have no roles assigned yet.
+          subtitle: Roles define what you can see and do in the platform.
+          title: Your roles
+        save: Save changes
+        status:
+          active: Active
+          blocked: Blocked
+          deleted: Deleted
+          suspended: Suspended
+        subtitle: Review your details and adjust your access preferences.
+        title: My profile
+        user_type:
+          customer: Customer
+          employee: Employee
+          supplier: Supplier
+      update:
+        success: Profile updated successfully
     shared:
       branch_selector:
         branch_center: Downtown branch
@@ -557,6 +592,7 @@ en:
         returns: Returns
         role_admin: Administrator
         roles: Roles
+        roles_permissions: Roles and Permissions
         sales: Sales
         sales_history: Sales history
         section_admin: Administration
