@@ -24,7 +24,14 @@ Rails.application.routes.draw do
     resources :branches, only: %i[index show new create edit update destroy]
     resources :organizations
     resources :membership_plans
-    resources :subscriptions, only: %i[index show new create edit update]
+    resources :subscriptions, only: %i[index show new create edit update] do
+      member do
+        patch :change_plan
+        patch :pause
+        patch :resume
+        patch :cancel
+      end
+    end
     resources :clients
   end
   resources :system_roles do
