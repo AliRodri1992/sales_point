@@ -3,7 +3,7 @@
 SYSTEM_ROLES = [
   {
     code: 'super_admin',
-    name: 'Super administrador',
+    name: 'Superadministrador',
     description: 'Acceso total al sistema y a todas las sucursales.',
     role_type: :system
   },
@@ -14,28 +14,58 @@ SYSTEM_ROLES = [
     role_type: :system
   },
   {
-    code: 'accountant',
-    name: 'Contador',
-    description: 'Consulta y administra información fiscal y contable.',
+    code: 'manager',
+    name: 'Gerente',
+    description: 'Administra operaciones y sucursales asignadas.',
     role_type: :system
   },
   {
-    code: 'branch_manager',
-    name: 'Gerente de sucursal',
-    description: 'Administra la operación de una sucursal asignada.',
-    role_type: :branch
+    code: 'supervisor',
+    name: 'Supervisor',
+    description: 'Supervisa equipos de operación y producción.',
+    role_type: :system
   },
   {
     code: 'cashier',
     name: 'Cajero',
-    description: 'Opera ventas, cobros y cortes de caja.',
-    role_type: :branch
+    description: 'Opera la caja, cobros y cortes de caja.',
+    role_type: :system
   },
   {
-    code: 'inventory_manager',
-    name: 'Encargado de inventario',
+    code: 'salesman',
+    name: 'Vendedor',
+    description: 'Gestiona carteras, cotizaciones y ventas.',
+    role_type: :system
+  },
+  {
+    code: 'inventory',
+    name: 'Inventarios',
     description: 'Administra existencias, productos y movimientos de inventario.',
-    role_type: :branch
+    role_type: :system
+  },
+  {
+    code: 'purchases',
+    name: 'Compras',
+    description: 'Administra órdenes de compra y proveedores.',
+    role_type: :system
+  },
+  {
+    code: 'finance',
+    name: 'Finanzas',
+    description: 'Consulta y administra información fiscal y financiera.',
+    role_type: :system
+  },
+  {
+    code: 'auditor',
+    name: 'Auditor',
+    description: 'Audita registros, movimientos y conciliaciones.',
+    role_type: :system
+  },
+  {
+    code: 'support',
+    name: 'Soporte',
+    description: 'Soporte técnico y resolución de incidencias.',
+    role_type: :system
   }
 ].freeze
 
@@ -213,6 +243,32 @@ def assign_admin_role(user, administrator_role)
   end
 end
 
+USER_SEED_ROLES = %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
+
+def seed_users(count = 15)
+  roles = SystemRole.where(code: USER_SEED_ROLES)
+  language = Language.find_by!(code: 'es')
+
+  count.times do |index|
+    user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
+    assign_user_attributes(user, language, index)
+    user.save!
+    UserRole.find_or_create_by!(user:, system_role: roles.sample, branch: nil)
+  end
+end
+
+def assign_user_attributes(user, language, index)
+  user.assign_attributes(
+    username: "user#{index + 1}",
+    password: 'password123',
+    password_confirmation: 'password123',
+    user_type: :employee,
+    status: :active,
+    theme: Theme::DEFAULT,
+    language:
+  )
+end
+
 def seed_system_roles
   SYSTEM_ROLES.each do |role_attributes|
     SystemRole.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
@@ -254,6 +310,7 @@ seed_system_roles
 seed_permissions
 assign_default_role_permissions
 seed_admin_user
+seed_users
 
 require 'faker'
 
