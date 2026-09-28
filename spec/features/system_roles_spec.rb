@@ -48,7 +48,7 @@ RSpec.feature 'SystemRoles', type: :feature do
     visit new_system_role_path
 
     fill_in 'Name', with: 'Sales Supervisor'
-    select 'Branch', from: 'Role type'
+    select 'Branch', from: 'Type'
     fill_in 'Description', with: 'Manages sales operations.'
     check "permission_#{sales.id}"
     click_button 'Create role'
