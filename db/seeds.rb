@@ -113,7 +113,13 @@ DEFAULT_PERMISSIONS = [
     description: 'Permite administrar los idiomas disponibles.'
   },
   { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
-    description: 'Permite administrar roles y sus permisos.' }
+    description: 'Permite administrar roles y sus permisos.' },
+  { code: 'organizations.access', name: 'Acceso a organizaciones', module_name: 'Organizaciones',
+    description: 'Permite administrar organizaciones.' },
+  { code: 'membership_plans.access', name: 'Acceso a planes de membresía', module_name: 'Membresías',
+    description: 'Permite administrar planes de membresía.' },
+  { code: 'subscriptions.access', name: 'Acceso a suscripciones', module_name: 'Membresías',
+    description: 'Permite administrar suscripciones.' }
 ].freeze
 
 def load_translations_from_file(file_path, locale_code)
