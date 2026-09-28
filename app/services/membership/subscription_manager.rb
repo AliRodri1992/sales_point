@@ -26,14 +26,17 @@ module Membership
     end
 
     def pause!
+      ensure_status!('trialing', 'active')
       transition!('paused')
     end
 
     def resume!
+      ensure_status!('paused')
       transition!(subscription.trialing? ? 'trialing' : 'active')
     end
 
     def cancel!
+      ensure_status!('trialing', 'active', 'past_due', 'paused')
       from_status = subscription.status
 
       Subscription.transaction do
@@ -51,6 +54,13 @@ module Membership
     private
 
     attr_reader :subscription, :actor
+
+    def ensure_status!(*allowed_statuses)
+      return if allowed_statuses.include?(subscription.status)
+
+      subscription.errors.add(:status, :invalid, message: "cannot transition from #{subscription.status}")
+      raise ActiveRecord::RecordInvalid, subscription
+    end
 
     def transition!(status)
       from_status = subscription.status
