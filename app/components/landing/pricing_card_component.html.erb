@@ -3,28 +3,35 @@
     <div class="relative flex h-full flex-col gap-6">
       <% if badge? %>
         <div class="absolute right-0 top-0">
-          <%= render Ui::BadgeComponent.new(text: t('landing.pricing.most_popular'), color: :primary) %>
+          <%= render Ui::BadgeComponent.new(text: t("landing.pricing.most_popular"), color: :primary) %>
         </div>
       <% end %>
-      <div class="min-h-24">
-        <h3 class="text-2xl font-bold text-slate-900"><%= name %></h3>
-        <p class="mt-2 text-slate-500"><%= description %></p>
+
+      <div>
+        <h3 class="font-jakarta text-xl font-bold text-slate-900"><%= name %></h3>
+        <p class="mt-1 text-sm text-slate-400"><%= description %></p>
       </div>
-      <div class="min-h-16">
-        <span class="text-5xl font-black text-blue-600">
-          $<%= price %>
-        </span>
-        <span class="text-slate-500"><%= t('landing.pricing.per_month') %></span>
+
+      <div>
+        <span class="font-jakarta text-4xl font-extrabold text-slate-900">$<%= price %></span>
+        <span class="text-sm font-medium text-slate-400"><%= t("landing.pricing.per_month") %></span>
       </div>
-      <ul class="flex-1 space-y-4">
+
+      <ul class="flex-1 space-y-3.5 text-sm">
         <% features.each do |feature| %>
-          <li class="flex items-center gap-3">
-            <%= render Ui::IconComponent.new(name: :check_circle, variant: :solid, color: :success) %>
+          <li class="flex items-center gap-2.5 text-slate-600">
+            <%= render Ui::IconComponent.new(name: :check, variant: :solid, color: :success) %>
             <span><%= feature %></span>
           </li>
         <% end %>
       </ul>
-      <%= render Ui::ButtonComponent.new(text: t('landing.pricing.choose_plan'), href: new_user_registration_path, variant: :primary, full_width: true) %>
+
+      <%= render Ui::ButtonComponent.new(
+        text: t("landing.pricing.choose_plan"),
+        href: new_user_registration_path,
+        variant: badge? ? :success : :outline,
+        full_width: true
+      ) %>
     </div>
   <% end %>
 <% end %>

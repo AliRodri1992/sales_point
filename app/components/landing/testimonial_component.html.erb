@@ -1,18 +1,25 @@
 <%= render Ui::CardComponent.new(hover: true) do |card| %>
   <% card.with_body do %>
-    <div class="space-y-6">
-      <div class="flex items-center gap-4">
-        <%= image_tag avatar, class: "h-14 w-14 rounded-full object-cover", alt: name %>
+    <div class="flex h-full flex-col justify-between gap-5">
+      <div class="space-y-4">
+        <div class="flex gap-1 text-emerald-500" aria-label="5 estrellas">
+          <% 5.times do %>
+            <span aria-hidden="true">★</span>
+          <% end %>
+        </div>
+
+        <p class="text-sm leading-7 text-slate-500">
+          "<%= quote %>"
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
+        <%= image_tag avatar, class: "h-10 w-10 rounded-full object-cover", alt: name %>
         <div>
-          <div class="font-bold text-slate-900">
-            <%= name %>
-          </div>
-          <div class="text-sm text-slate-500">
-            <%= position %> · <%= company %>
-          </div>
+          <div class="font-jakarta text-sm font-semibold text-slate-900"><%= name %></div>
+          <div class="text-xs font-medium text-emerald-600"><%= company %></div>
         </div>
       </div>
-      <p class="leading-8 italic text-slate-600">"<%= quote %>"</p>
     </div>
   <% end %>
 <% end %>
