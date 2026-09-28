@@ -3,14 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe 'User profile', type: :feature do
-  let(:user) { create(:user, username: 'Ivan', email: 'ivan@example.com') }
+  let(:user) { create(:user, :english, username: 'Ivan', email: 'ivan@example.com') }
 
   before do
     sign_in user
   end
 
   scenario 'user views their profile' do
-    visit profile_path
+    visit admin_profile_path
 
     expect(page).to have_content('My profile')
     expect(page).to have_content('Ivan')
@@ -19,7 +19,7 @@ RSpec.describe 'User profile', type: :feature do
   end
 
   scenario 'user updates their profile' do
-    visit profile_path
+    visit admin_profile_path
 
     fill_in 'Username', with: 'Ivan Rodriguez'
     fill_in 'Email address', with: 'ivan.rodriguez@example.com'

@@ -5,6 +5,7 @@ module BreadcrumbsHelper
     'admin/languages' => :language_breadcrumb_items,
     'admin/categories' => :category_breadcrumb_items,
     'system_roles' => :system_role_breadcrumb_items,
+    'admin/profiles' => :profile_breadcrumb_items,
     'admin/branches' => :branch_breadcrumb_items,
     'admin/clients' => :client_breadcrumb_items
   }.freeze
@@ -59,6 +60,10 @@ module BreadcrumbsHelper
 
   def language_breadcrumb_items
     [{ label: t('admin.breadcrumbs.languages') }]
+  end
+
+  def profile_breadcrumb_items
+    [{ label: t('admin.breadcrumbs.profile') }]
   end
 
   def category_breadcrumb_items

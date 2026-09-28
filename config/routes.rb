@@ -23,13 +23,13 @@ Rails.application.routes.draw do
     resources :clients
     resources :branches, only: %i[index show new create edit update destroy]
     resources :clients
+    resource :profile, only: %i[show update]
   end
   resources :system_roles do
     member do
       patch :permissions, action: :update_permissions
     end
   end
-  resource :profile, only: %i[show update]
   resources :demo_requests, only: %i[new create]
   resources :notifications, only: [] do
     collection do
