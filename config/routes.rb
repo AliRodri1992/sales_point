@@ -22,6 +22,9 @@ Rails.application.routes.draw do
     resources :products
     resources :clients
     resources :branches, only: %i[index show new create edit update destroy]
+    resources :organizations
+    resources :membership_plans
+    resources :subscriptions, only: %i[index show new create edit update]
     resources :clients
   end
   resources :system_roles do
