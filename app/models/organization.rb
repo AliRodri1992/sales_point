@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 class Organization < ApplicationRecord
-  has_one :subscription, dependent: :restrict_with_exception
+  has_many :subscriptions, dependent: :restrict_with_exception
+  has_one :current_subscription,
+          -> { current },
+          class_name: 'Subscription',
+          inverse_of: :organization
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :active, -> { not_deleted.where(status: 'active') }
@@ -19,8 +23,4 @@ class Organization < ApplicationRecord
             format: { with: /\A[0-9+\-\s()]{7,30}\z/ },
             allow_blank: true
   validates :status, inclusion: { in: %w[active inactive] }
-
-  def active_subscription
-    subscription if subscription&.active_or_trialing?
-  end
 end
