@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :products
   end
   resources :system_roles
+  resource :profile, only: %i[show update]
   resources :demo_requests, only: %i[new create]
   resources :notifications, only: [] do
     collection do
