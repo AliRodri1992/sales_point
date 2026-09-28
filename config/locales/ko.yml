@@ -103,6 +103,7 @@ ko:
         inactive: 비활성
       updated: 지점이 성공적으로 업데이트되었습니다.
     breadcrumbs:
+      roles: 역할
       branches: 지점
       categories: 카테고리
       clients: 고객
@@ -300,6 +301,34 @@ ko:
         active: 활성
         inactive: 비활성
       updated: 언어가 성공적으로 업데이트되었습니다
+    system_roles:
+      manage_permissions: 권한 관리
+      index:
+        page_title: 역할 | Nexo POS
+        subtitle: 시스템 모듈에 대한 액세스 권한을 정의하세요.
+        title: 역할
+        new: 새 역할
+        empty_title: 사용 가능한 역할이 없습니다
+        empty_subtitle: 권한을 구성하려면 역할을 만드세요.
+      show:
+        back: 역할로 돌아가기
+        code: 코드
+        type: 유형
+        assigned_permissions: 할당된 권한
+        permissions_title: 역할 권한
+        permissions_subtitle: 각 모듈에 대한 액세스를 활성화或Disable하세요. 저장하면 적용됩니다.
+        save_permissions: 권한 저장
+        module_permissions:
+          one: 1개의 사용 가능한 권한
+          other: "%{count}개의 사용 가능한 권한"
+      statuses:
+        active: 활성
+        inactive: 비활성
+      types:
+        system: 시스템
+        branch: 지점
+      update_permissions:
+        success: 역할 권한이 성공적으로 업데이트되었습니다.
     products:
       close: 닫기
       confirm:
@@ -461,6 +490,9 @@ ko:
           one: 새 알림이 1개 있습니다
           other: 새 알림이 %{count}개 있습니다
         subtitle_none: 새 알림이 없습니다
+        system_role:
+          created: 시스템 역할 '%{name}'이(가) 생성되었습니다
+          updated: 시스템 역할 '%{name}'이(가) 업데이트되었습니다
         title: 알림
         toggle: 알림
         types:
@@ -470,6 +502,7 @@ ko:
           demo_request: 데모 신청
           language: 언어
           product: 상품
+          system_role: 시스템 역할
       online_users:
         close: 닫기
         empty: 온라인 사용자가 없습니다

@@ -1,5 +1,7 @@
-# rubocop:disable-next Metrics/ModuleLength
 module ApplicationHelper
+  include BreadcrumbsHelper
+  include PaginationHelper
+
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
     { classes: 'bg-emerald-100 text-emerald-600', style: 'background-color:#d1fae5;color:#059669' },
@@ -54,117 +56,6 @@ module ApplicationHelper
                 class: 'mt-1 text-xs text-rose-600')
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/MethodLength
-  def breadcrumb_items
-    home = { label: t('admin.breadcrumbs.home'), path: admin_dashboard_path }
-    items = [home]
-
-    case params[:controller]
-    when 'admin/products'
-      items.concat(product_breadcrumb_items)
-    when 'admin/dashboard'
-      items << { label: t('admin.breadcrumbs.dashboard') }
-    when 'admin/languages'
-      items << { label: t('admin.breadcrumbs.languages') }
-    when 'admin/categories'
-      items << { label: t('admin.breadcrumbs.categories') }
-    when 'system_roles'
-      items.concat(system_role_breadcrumb_items)
-    when 'admin/branches'
-      items.concat(branch_breadcrumb_items)
-    when 'admin/clients'
-      items.concat(client_breadcrumb_items)
-    else
-      items << { label: params[:controller].to_s.remove('admin/').humanize }
-    end
-
-    items
-  end
-
-  def product_breadcrumb_items
-    products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
-
-    case params[:action]
-    when 'new'
-      [products_path, { label: t('admin.products.new.title') }]
-    when 'edit', 'show', 'create', 'update', 'destroy'
-      product_name = current_product&.name || t('admin.products.edit.label')
-      [products_path, { label: product_name }]
-    else
-      [products_path]
-    end
-  end
-
-  def branch_breadcrumb_items
-    branches_path = { label: t('admin.breadcrumbs.branches'), path: admin_branches_path }
-
-    case params[:action]
-    when 'new'
-      [branches_path, { label: t('admin.branches.form.new_title') }]
-    when 'show'
-      branch_name = current_branch&.name || t('admin.branches.form.edit_title')
-      [branches_path, { label: branch_name }]
-    when 'edit'
-      branch_name = current_branch&.name || t('admin.branches.form.edit_title')
-      [
-        branches_path,
-        { label: branch_name, path: current_branch ? admin_branch_path(current_branch) : nil },
-        { label: t('admin.branches.form.edit_title') }
-      ]
-    else
-      [branches_path]
-    end
-  end
-
-  def client_breadcrumb_items
-    clients_path = { label: t('admin.breadcrumbs.clients'), path: admin_clients_path }
-
-    case params[:action]
-    when 'new'
-      [clients_path, { label: t('admin.clients.new.title') }]
-    when 'show'
-      client_name = current_client&.name || t('admin.clients.show.title')
-      [clients_path, { label: client_name }]
-    when 'edit'
-      client_name = current_client&.name || t('admin.clients.edit.title', name: '')
-      [
-        clients_path,
-        { label: client_name, path: current_client ? admin_client_path(current_client) : nil },
-        { label: t('admin.clients.edit.title', name: client_name) }
-      ]
-    else
-      [clients_path]
-    end
-  end
-
-  def system_role_breadcrumb_items
-    roles_path = { label: t('admin.breadcrumbs.system_roles'), path: system_roles_path }
-
-    case params[:action]
-    when 'new', 'create'
-      [roles_path, { label: t('admin.system_roles.new.title') }]
-    when 'edit'
-      [roles_path, { label: t('admin.system_roles.edit.title') }]
-    else
-      roles_path
-    end
-  end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
-
-  def current_product
-    controller.view_assigns['product']
-  end
-
-  def current_branch
-    controller.view_assigns['branch']
-  end
-
-  def current_client
-    controller.view_assigns['client']
-  end
-
   def sort_link(column, title = nil, frame: nil)
     title ||= column.titleize
     direction = params[:sort] == column && params[:direction] != 'asc' ? 'asc' : 'desc'
@@ -183,52 +74,6 @@ module ApplicationHelper
     css = active ? 'size-3 text-slate-800' : 'size-3 text-slate-300 opacity-50'
 
     icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
-  end
-
-  def pagination_links(total_pages, frame: nil, scope: 'admin.products.index.pagination')
-    current_page = (params[:page] || 1).to_i
-
-    return '' if total_pages <= 1
-
-    links = []
-    links << prev_link(current_page, frame:, scope:) if current_page > 1
-    links.concat(page_links(current_page, total_pages, frame:, scope:))
-    links << next_link(current_page, total_pages, frame:, scope:) if current_page < total_pages
-
-    safe_join(links, ' ')
-  end
-
-  # rubocop:disable-next Lint/UnusedMethodArgument
-  def prev_link(current_page, frame: nil, scope: nil)
-    label = t('admin.products.index.pagination.prev')
-    pagination_link(label, current_page - 1, current_page <= 1, frame: frame)
-  end
-
-  # rubocop:disable-next Lint/UnusedMethodArgument
-  def next_link(current_page, total_pages, frame: nil, scope: nil)
-    label = t('admin.products.index.pagination.next')
-    pagination_link(label, current_page + 1, current_page >= total_pages, frame: frame)
-  end
-
-  # rubocop:disable-next Lint/UnusedMethodArgument
-  def page_links(current_page, total_pages, frame: nil, scope: 'admin.products.index.pagination')
-    (1..total_pages).map do |page|
-      pagination_link(page, page, page == current_page, frame: frame)
-    end
-  end
-
-  def pagination_link(label, page, disabled, frame: nil)
-    base = 'px-3 py-1 text-sm rounded-lg border transition '
-
-    if disabled
-      tag.span(label, class: "#{base}border-slate-200 text-slate-400 cursor-default")
-    else
-      link_to(url_for(request.query_parameters.merge(page: page)),
-              class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100",
-              data: frame ? { turbo_frame: frame } : nil) do
-        label
-      end
-    end
   end
 
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)

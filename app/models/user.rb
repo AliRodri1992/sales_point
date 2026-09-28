@@ -56,6 +56,12 @@ class User < ApplicationRecord
     scope.exists?
   end
 
+  def permission?(permission_code)
+    user_roles.active
+              .joins(system_role: :permissions)
+              .exists?(permissions: { code: permission_code, status: 'active' })
+  end
+
   def initials
     base = username.presence || email.to_s
     base.scan(/\b\w/).first(2).join.upcase
@@ -72,6 +78,7 @@ class User < ApplicationRecord
       .or(notification_relation_for(Product))
       .or(notification_relation_for(Branch))
       .or(notification_relation_for(Client))
+      .or(notification_relation_for(SystemRole))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 

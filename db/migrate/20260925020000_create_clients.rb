@@ -16,7 +16,7 @@ class CreateClients < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :clients, :code, unique: true, where: "deleted_at IS NULL"
+    add_index :clients, :code, unique: true, where: 'deleted_at IS NULL'
     add_index :clients, :rfc, unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL"
     add_index :clients, :email
     add_index :clients, :phone

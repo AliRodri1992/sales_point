@@ -93,9 +93,8 @@ class Product < ApplicationRecord
     stock <= min_stock
   end
 
-  # rubocop:disable-next Rails/SkipsModelValidations
   def increment_view_count!
-    increment!(:view_count)
+    update!(view_count: view_count.to_i + 1)
   end
 
   def to_param

@@ -76,6 +76,25 @@ es:
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
     system_roles:
+      new:
+        page_title: Nuevo rol | Nexo POS
+        title: Nuevo rol
+        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
+        back: Volver a roles
+        details_title: Información del rol
+        details_subtitle: Define los datos básicos del nuevo rol.
+        permissions_title: Permisos del rol
+        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
+        error_title: No se pudo crear el rol
+        cancel: Cancelar
+        submit: Crear rol
+        fields:
+          name: Nombre
+          name_placeholder: Ej. Supervisor de ventas
+          type: Tipo
+          status: Estado
+          description: Descripción
+          description_placeholder: Describe el alcance de este rol.
       index:
         page_title: Roles | Nexo POS
         eyebrow: Seguridad y acceso
@@ -470,6 +489,9 @@ es:
           one: Tienes 1 notificación nueva
           other: Tienes %{count} notificaciones nuevas
         subtitle_none: No tienes notificaciones nuevas
+        system_role:
+          created: Se creó el rol del sistema '%{name}'
+          updated: Se actualizó el rol del sistema '%{name}'
         title: Notificaciones
         toggle: Notificaciones
         types:
@@ -479,6 +501,7 @@ es:
           demo_request: Solicitud de demo
           language: Idioma
           product: Producto
+          system_role: Rol del sistema
       online_users:
         close: Cerrar
         empty: No hay usuarios en línea

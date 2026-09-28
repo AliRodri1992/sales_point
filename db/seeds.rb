@@ -161,7 +161,6 @@ def create_sat_month(number)
   end
 end
 
-# rubocop:disable Metrics/MethodLength
 def seed_permissions
   DEFAULT_PERMISSIONS.each do |permission_attributes|
     Permission.find_or_initialize_by(code: permission_attributes[:code]).tap do |permission|
@@ -177,17 +176,26 @@ def assign_default_role_permissions
   permissions = Permission.available
 
   SystemRole.where(code: role_codes).find_each do |role|
-    permissions.find_each do |permission|
-      SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
-    end
+    assign_permissions_to_role(role, permissions)
+  end
+end
+
+def assign_permissions_to_role(role, permissions)
+  permissions.find_each do |permission|
+    SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
   end
 end
 
 def seed_admin_user
   language = Language.find_by!(code: 'es')
   administrator_role = SystemRole.find_by!(code: 'administrator')
-
   user = User.find_or_initialize_by(email: 'administrador@delta.com')
+  assign_admin_user_attributes(user, language)
+  user.save!
+  assign_admin_role(user, administrator_role)
+end
+
+def assign_admin_user_attributes(user, language)
   user.assign_attributes(
     username: 'administrador',
     password: 'administrador',
@@ -197,16 +205,12 @@ def seed_admin_user
     theme: Theme::DEFAULT,
     language:
   )
-  user.save!
+end
 
-  UserRole.find_or_create_by!(
-    user:,
-    system_role: administrator_role,
-    branch: nil
-  ) do |user_role|
+def assign_admin_role(user, administrator_role)
+  UserRole.find_or_create_by!(user:, system_role: administrator_role, branch: nil) do |user_role|
     user_role.deleted_at = nil
   end
-  # rubocop:enable Metrics/MethodLength
 end
 
 def seed_system_roles
@@ -253,6 +257,7 @@ seed_admin_user
 
 require 'faker'
 
+# Create client examples
 20.times do |index|
   code = "CLI#{format('%04d', index + 1)}"
 
@@ -281,4 +286,76 @@ require 'faker'
   )
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping client seed due to error: #{e.message}"
+end
+
+# Create category examples
+15.times do |index|
+  name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
+  name = "Categoria#{index + 1}" if name.blank?
+
+  Category.create!(
+    code: "cat#{format('%04d', index + 1)}",
+    name: name[0, 50],
+    description: Faker::Lorem.sentence(word_count: 8),
+    status: %w[active active active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping category seed due to error: #{e.message}"
+end
+
+categories = Category.not_deleted.to_a
+
+# Create product examples
+15.times do |index|
+  code = "PROD#{format('%04d', index + 1)}"
+
+  name = Faker::Commerce.product_name
+  price = Faker::Commerce.price(range: 50.0..5000.0)
+  stock = Faker::Number.between(from: 10, to: 500)
+
+  Product.create!(
+    code: code,
+    name: name,
+    description: Faker::Lorem.sentence(word_count: 12),
+    price: price,
+    cost: (price * 0.6).round(2),
+    stock: stock,
+    min_stock: 5,
+    max_stock: stock + 100,
+    sku: "SKU-#{Faker::Alphanumeric.alphanumeric(number: 8).upcase}",
+    barcode: "75#{Faker::Number.number(digits: 10)}",
+    category: categories.sample,
+    status: %w[active active active inactive].sample
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping product seed due to error: #{e.message}"
+end
+
+# Create branch examples
+15.times do |index|
+  street = Faker::Address.street_name
+  neighborhood = Faker::Address.city
+  city = Faker::Address.city
+  state = Faker::Address.state
+  exterior_number = Faker::Address.building_number.to_s.strip
+  exterior_number = Faker::Number.between(from: 1, to: 999).to_s if exterior_number.blank?
+  postal_code = format('%05d', Faker::Address.zip_code.to_s.gsub(/\D/, '')[0, 5].to_i)
+  phone = Faker::PhoneNumber.cell_phone.gsub(/[^0-9+\-()\s]/, '')[0, 20]
+
+  Branch.create!(
+    name: "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100],
+    phone: phone,
+    status: [true, true, true, false].sample,
+    address_attributes: {
+      street: street[0, 150],
+      exterior_number: exterior_number,
+      neighborhood: neighborhood[0, 100],
+      city: city[0, 100],
+      state: state[0, 100],
+      country: 'España',
+      postal_code: postal_code
+    }
+  )
+rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+  Rails.logger.warn "Skipping branch seed due to error: #{e.message}"
 end

@@ -225,14 +225,16 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
 
-            <a
-              href="<%= admin_categories_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
-              class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
-            >
-              <%= icon("building-storefront", class: "size-4") %>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
-            </a>
+            <% if current_user.permission?('categories.access') %>
+              <a
+                href="<%= admin_categories_path %>"
+                data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
+                class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
+              >
+                <%= icon("building-storefront", class: "size-4") %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
+              </a>
+            <% end %>
           </div>
         </details>
       </div>

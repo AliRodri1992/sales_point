@@ -1,27 +1,18 @@
 # frozen_string_literal: true
 
-require 'cgi'
-
 module Admin
   class ProductsController < ApplicationController
+    include Admin::ProductsListing
+    include Admin::ProductsLookup
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_product, only: %i[show edit update destroy]
 
     rescue_from ActiveRecord::RecordNotFound, with: :product_not_found
 
-    PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
-
-    SORTABLE_COLUMNS = %w[
-      products.name products.code products.price products.stock
-      products.cost products.created_at products.updated_at products.position
-    ].freeze
-
     SORT_DIRECTIONS = %w[asc desc].freeze
 
-    # rubocop:disable Metrics/ClassLength
-    # Controller size is acceptable given the admin dashboard scope
     def index
       load_products
     end
@@ -38,9 +29,7 @@ module Admin
       @product = Product.new(product_params)
 
       if @product.save
-        load_products
-        notify_product(current_user, @product, 'created')
-        broadcast_products_update
+        refresh_product_catalog('created')
         redirect_to admin_products_path, flash: { swal_message: t('admin.products.created') }
       else
         render :new, status: :unprocessable_content
@@ -52,9 +41,7 @@ module Admin
 
     def update
       if @product.update(product_params)
-        load_products
-        notify_product(current_user, @product, 'updated')
-        broadcast_products_update
+        refresh_product_catalog('updated')
         redirect_to admin_products_path, flash: { swal_message: t('admin.products.updated') }
       else
         render :edit, status: :unprocessable_content
@@ -64,48 +51,17 @@ module Admin
       render :edit, status: :unprocessable_content
     end
 
-    # rubocop:disable Metrics/AbcSize
-    # Method complexity is necessary for error handling with logging
     def destroy
       @product.update!(deleted_at: Time.current, updated_at: Time.current)
-      load_products
-      notify_product(current_user, @product, 'destroyed')
-      broadcast_products_update
+      refresh_product_catalog('destroyed')
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
       redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))
     rescue StandardError => e
-      Rails.logger.error "Error deleting product #{params[:id]}: #{e.message}"
-      redirect_back_or_to(admin_products_path, alert: t('admin.products.destroy_failed'))
+      handle_destroy_error(e)
     end
-    # rubocop:enable Metrics/AbcSize
 
     private
-
-    def set_product
-      @product = find_product_by_id_or_slug(params[:id])
-      raise ActiveRecord::RecordNotFound, 'Product not found' unless @product
-    end
-
-    def find_product_by_id_or_slug(id_param)
-      return Product.not_deleted.find_by(id: id_param) if id_param.to_s.match?(/\A\d+\z/)
-
-      Product.not_deleted.find_by(slug: id_param) ||
-        find_product_by_code(id_param)
-    end
-
-    def find_product_by_code(id_param)
-      search_term = CGI.unescape(id_param)
-      Product.not_deleted
-             .where('lower(slug) = lower(?)', search_term)
-             .or(Product.not_deleted.where(code: search_term.upcase))
-             .first
-    end
-
-    def product_not_found(exception = nil)
-      Rails.logger.error "Product not found: #{exception&.message}"
-      redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))
-    end
 
     def product_params
       params.expect(
@@ -197,6 +153,5 @@ module Admin
       per_page = params[:per_page]&.to_i
       PER_PAGE_OPTIONS.include?(per_page) ? per_page : PER_PAGE
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end
