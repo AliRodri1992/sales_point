@@ -14,6 +14,13 @@
         <div><dt class="text-slate-400"><%= t('admin.subscriptions.show.trial_ends_at') %></dt><dd><%= @subscription.trial_ends_at ? l(@subscription.trial_ends_at, format: :short) : '—' %></dd></div>
         <% if @subscription.trial? %><div><dt class="text-slate-400"><%= t('admin.subscriptions.show.days_remaining') %></dt><dd><%= @subscription.trial_days_remaining %></dd></div><% end %>
       </dl>
+      <div class="mt-6 rounded-xl border border-slate-100 bg-slate-50 p-4">
+        <p class="mb-3 text-sm font-semibold text-slate-700"><%= t('admin.subscriptions.show.change_plan') %></p>
+        <%= form_with url: change_plan_admin_subscription_path(@subscription), method: :patch, class: 'flex gap-2' do %>
+          <%= select_tag :membership_plan_id, options_from_collection_for_select(MembershipPlan.where(deleted_at: nil).order(:position), :id, :name, @subscription.membership_plan_id), class: 'flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm' %>
+          <%= submit_tag t('admin.subscriptions.show.change_plan'), class: 'rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white' %>
+        <% end %>
+      </div>
       <div class="mt-6 flex flex-wrap gap-2">
         <% if @subscription.active_or_trialing? %>
           <%= button_to t('admin.subscriptions.show.pause'), pause_admin_subscription_path(@subscription), method: :patch, class: 'rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700' %>
