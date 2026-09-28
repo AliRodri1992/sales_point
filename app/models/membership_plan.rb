@@ -3,8 +3,11 @@
 class MembershipPlan < ApplicationRecord
   has_many :membership_plan_features,
            dependent: :destroy
+  has_many :active_membership_plan_features,
+           -> { where(deleted_at: nil) },
+           class_name: 'MembershipPlanFeature'
   has_many :membership_features,
-           through: :membership_plan_features
+           through: :active_membership_plan_features
 
   enum :billing_interval,
        {
