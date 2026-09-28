@@ -304,6 +304,38 @@ en:
         subtitle: "Update the product details."
         back: "Back"
       close: "Close"
+    profile:
+      page_title: "My profile | NEXO POS"
+      eyebrow: "Account"
+      title: "My profile"
+      subtitle: "Manage your personal information and account preferences."
+      account_type: "User type"
+      last_sign_in: "Last sign in"
+      never: "No sign-ins recorded"
+      status:
+        active: "Active"
+        suspended: "Suspended"
+        blocked: "Blocked"
+        deleted: "Deleted"
+      user_type:
+        employee: "Employee"
+        customer: "Customer"
+        supplier: "Supplier"
+      personal_information:
+        title: "Personal information"
+        subtitle: "Update the basic details of your profile."
+      fields:
+        username: "Username"
+        email: "Email address"
+        language: "Language"
+        language_placeholder: "Select a language"
+        theme: "Theme"
+      roles:
+        title: "Assigned roles"
+        subtitle: "System roles associated with your account."
+        empty: "You have no assigned roles."
+      save: "Save changes"
+      error_title: "The changes could not be saved."
     shared:
       sidebar:
         section_main: "Main"
