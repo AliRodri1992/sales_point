@@ -2,22 +2,9 @@ module LandingPage
   module Plans
     def self.all
       [
-        plan(:starter, 19, false, %i[branch_users sales_inventory basic_reports email_support]),
-        plan(:professional, 39, true, %i[branch_users purchases cash_returns advanced_reports priority_support]),
-        plan(:enterprise, 79, false, %i[unlimited roles accounting implementation support])
+        Plan.new(name: "Delta Esencial", price: 29, description: "Ideal para comercios locales independientes.", features: ["1 Sucursal y 2 Cajas integradas", "Inventario estándar de productos"], featured: false),
+        Plan.new(name: "Delta Pro Cloud", price: 59, description: "Para empresas en expansión y cadenas regionales.", features: ["Sucursales y Cajas **Ilimitadas**", "Inventario Automatizado Multi-sucursal", "Analíticas en tiempo real + API Acceso"], featured: true)
       ]
-    end
-
-    def self.plan(key, price, featured, feature_keys)
-      Plan.new(
-        name: I18n.t("landing.plan_items.#{key}.name"),
-        price: price,
-        description: I18n.t("landing.plan_items.#{key}.description"),
-        featured: featured,
-        features: feature_keys.map do |feature|
-          I18n.t("landing.plan_items.#{key}.features.#{feature}")
-        end
-      )
     end
   end
 end

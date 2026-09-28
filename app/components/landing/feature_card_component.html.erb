@@ -1,9 +1,5 @@
-<%= render Ui::CardComponent.new(hover: true) do |card| %>
-  <% card.with_body do %>
-    <div class="group space-y-6">
-      <%= render Ui::IconBoxComponent.new(icon: icon, color: color, size: :lg) %>
-      <h3 class="text-xl font-bold text-slate-900"><%= title %></h3>
-      <p class="leading-7 text-slate-600"><%= description %></p>
-    </div>
-  <% end %>
-<% end %>
+<article class="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md">
+  <div class="<%= icon_wrapper_classes %>"><%= icon_svg.html_safe %></div>
+  <h3 class="mb-2 font-jakarta text-xl font-bold text-slate-900"><%= title %></h3>
+  <p class="text-sm leading-relaxed text-slate-500"><%= description %></p>
+</article>

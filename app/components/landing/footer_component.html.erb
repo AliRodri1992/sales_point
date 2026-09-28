@@ -1,51 +1,17 @@
-<footer class="border-t border-slate-800 bg-slate-900 text-slate-300">
-  <div class="mx-auto max-w-7xl px-4 pb-8 pt-14 sm:px-6 lg:px-8">
-    <div class="grid gap-10 border-b border-slate-800 pb-10 sm:grid-cols-2 lg:grid-cols-5">
-      <div class="space-y-4 sm:col-span-2">
-        <div class="flex items-center gap-3">
-          <%= image_tag "logo.png", class: "h-9 w-auto object-contain", alt: "Delta POS" %>
-          <span class="font-jakarta text-lg font-extrabold text-white">DELTA <span class="text-emerald-500">POS</span></span>
-        </div>
-        <p class="max-w-sm text-xs leading-6 text-slate-400">
-          <%= t("landing.footer.description") %>
-        </p>
+<footer class="border-t border-slate-800 bg-slate-900 pt-16 text-slate-300">
+  <div class="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 gap-8 border-b border-slate-800 pb-12 md:grid-cols-5">
+      <div class="col-span-2 space-y-4">
+        <div class="flex items-center gap-3"><%= image_tag "delta-pos-logo.svg", class: "h-9 w-9", alt: "Delta POS" %><span class="font-jakarta text-lg font-extrabold text-white">DELTA <span class="text-emerald-500">POS</span></span></div>
+        <p class="max-w-xs text-xs leading-relaxed text-slate-400">Tecnología de punto de venta en la nube diseñada para maximizar la eficiencia y rendimiento de comercios minoristas y cadenas corporativas.</p>
       </div>
-
-      <div>
-        <h3 class="font-jakarta text-sm font-semibold tracking-wide text-white"><%= t("landing.footer.product") %></h3>
-        <ul class="mt-4 space-y-2 text-xs text-slate-400">
-          <% product_links.each do |link| %>
-            <li><%= link_to link.title, link.href, class: "transition hover:text-white" %></li>
-          <% end %>
-        </ul>
-      </div>
-
-      <div>
-        <h3 class="font-jakarta text-sm font-semibold tracking-wide text-white">Soporte</h3>
-        <ul class="mt-4 space-y-2 text-xs text-slate-400">
-          <li><a href="#faq" class="transition hover:text-white">Preguntas frecuentes</a></li>
-          <li><a href="#contacto" class="transition hover:text-white">Contacto</a></li>
-          <li><a href="#caracteristicas" class="transition hover:text-white">Funcionalidades</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3 class="font-jakarta text-sm font-semibold tracking-wide text-white"><%= t("landing.footer.company") %></h3>
-        <ul class="mt-4 space-y-2 text-xs text-slate-400">
-          <% company_links.each do |link| %>
-            <li><%= link_to link.title, link.href, class: "transition hover:text-white" %></li>
-          <% end %>
-        </ul>
-      </div>
+      <div><h3 class="mb-4 font-jakarta text-sm font-semibold tracking-wide text-white">Producto</h3><ul class="space-y-2 text-xs text-slate-400"><% product_links.each do |link| %><li><%= link_to link.title, link.href, class: "transition hover:text-white" %></li><% end %></ul></div>
+      <div><h3 class="mb-4 font-jakarta text-sm font-semibold tracking-wide text-white">Soporte</h3><ul class="space-y-2 text-xs text-slate-400"><li><a href="#" class="transition hover:text-white">Centro de Ayuda</a></li><li><a href="#" class="transition hover:text-white">Documentación API</a></li><li><a href="#" class="transition hover:text-white">Estatus del Servidor</a></li></ul></div>
+      <div><h3 class="mb-4 font-jakarta text-sm font-semibold tracking-wide text-white">Compañía</h3><ul class="space-y-2 text-xs text-slate-400"><% company_links.each do |link| %><li><%= link_to link.title, link.href, class: "transition hover:text-white" %></li><% end %></ul></div>
     </div>
-
-    <div class="flex flex-col items-center justify-between gap-4 pt-7 text-xs text-slate-500 md:flex-row">
-      <p>&copy; <%= Date.current.year %> Delta POS. Todos los derechos reservados.</p>
-      <div class="flex gap-6">
-        <a href="#" class="transition hover:text-slate-300">Términos del Servicio</a>
-        <a href="#" class="transition hover:text-slate-300">Política de Privacidad</a>
-        <a href="#" class="transition hover:text-slate-300">Seguridad</a>
-      </div>
+    <div class="flex flex-col items-center justify-between gap-4 pt-8 text-xs text-slate-500 md:flex-row">
+      <p>&copy; 2026 Delta POS Inc. Todos los derechos reservados.</p>
+      <div class="flex gap-6"><a href="#" class="transition hover:text-slate-300">Términos del Servicio</a><a href="#" class="transition hover:text-slate-300">Política de Privacidad</a><a href="#" class="transition hover:text-slate-300">Security Cloud</a></div>
     </div>
   </div>
 </footer>

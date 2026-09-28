@@ -1,25 +1,10 @@
-<%= render Ui::CardComponent.new(hover: true) do |card| %>
-  <% card.with_body do %>
-    <div class="flex h-full flex-col justify-between gap-5">
-      <div class="space-y-4">
-        <div class="flex gap-1 text-emerald-500" aria-label="5 estrellas">
-          <% 5.times do %>
-            <span aria-hidden="true">★</span>
-          <% end %>
-        </div>
-
-        <p class="text-sm leading-7 text-slate-500">
-          "<%= quote %>"
-        </p>
-      </div>
-
-      <div class="flex items-center gap-3 border-t border-slate-100 pt-4">
-        <%= image_tag avatar, class: "h-10 w-10 rounded-full object-cover", alt: name %>
-        <div>
-          <div class="font-jakarta text-sm font-semibold text-slate-900"><%= name %></div>
-          <div class="text-xs font-medium text-emerald-600"><%= company %></div>
-        </div>
-      </div>
-    </div>
-  <% end %>
-<% end %>
+<article class="flex flex-col justify-between space-y-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+  <div class="space-y-2">
+    <div class="flex items-center gap-1 text-amber-400" aria-label="5 estrellas"><% 5.times { %><span aria-hidden="true">★</span><% } %></div>
+    <p class="text-xs leading-relaxed italic text-slate-500">"<%= quote %>"</p>
+  </div>
+  <div class="mt-2 flex items-center gap-3 border-t border-slate-100 pt-3">
+    <div class="flex h-10 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-jakarta text-xs font-bold text-emerald-600"><%= initials %></div>
+    <div><h3 class="font-jakarta text-xs font-semibold text-slate-900"><%= name %></h3><p class="text-[10px] font-medium text-emerald-600"><%= company %></p></div>
+  </div>
+</article>

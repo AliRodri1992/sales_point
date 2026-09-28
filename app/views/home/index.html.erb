@@ -2,113 +2,47 @@
 
 <main class="overflow-x-hidden">
   <%= render Landing::HeroComponent.new(
-    badge: t("landing.hero.badge"),
-    title: t("landing.hero.title"),
-    highlighted: t("landing.hero.highlighted"),
-    description: t("landing.hero.description"),
-    image: "logo.png",
-    primary_button: Ui::ButtonComponent.new(
-      text: t("landing.buttons.start_free"),
-      href: new_user_registration_path,
-      icon: :rocket_launch,
-      size: :lg,
-      variant: :primary
-    ),
-    secondary_button: Ui::ButtonComponent.new(
-      text: t("landing.buttons.view_demo"),
-      href: new_demo_request_path,
-      icon: :play_circle,
-      size: :lg,
-      variant: :outline
-    ),
-    statistics: []
+    badge: "✨ Nueva versión Cloud de Delta POS",
+    title: "El punto de venta que impulsa tu",
+    highlighted: "crecimiento",
+    description: "Administra tu inventario, procesa pagos al instante y analiza tus márgenes de ganancia con la plataforma más rápida y confiable del mercado.",
+    primary_button_text: "Comenzar",
+    primary_button_href: "#precios",
+    secondary_button_text: "Solicitar Demo",
+    secondary_button_href: "#contacto"
   ) %>
 
-  <section id="solucion" class="border-y border-slate-200/60 bg-slate-100/60 py-14 sm:py-16">
+  <section id="solucion" class="border-y border-slate-200/50 bg-slate-100/60 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <%= render Ui::SectionTitleComponent.new(
-        title: "¿Cansado de sistemas lentos que frenan tu negocio?",
-        subtitle: "Delta POS está diseñado para reducir fricciones operativas y darte una visión clara de tu negocio."
-      ) %>
-
-      <div class="mx-auto mt-10 grid max-w-5xl gap-8 md:grid-cols-2">
-        <article class="rounded-2xl border border-rose-100 bg-rose-50/50 p-7">
-          <h3 class="font-jakarta text-xl font-bold text-rose-800">El modelo obsoleto</h3>
-          <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-600">
-            <li>• Filas largas por procesos de venta lentos.</li>
-            <li>• Descuadres de inventario entre sucursales.</li>
-            <li>• Reportes manuales y difíciles de consolidar.</li>
-          </ul>
-        </article>
-
-        <article class="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-7">
-          <h3 class="font-jakarta text-xl font-bold text-emerald-700">La experiencia Delta POS</h3>
-          <ul class="mt-5 space-y-3 text-sm leading-6 text-slate-600">
-            <li>• Cobros ágiles con una interfaz clara e intuitiva.</li>
-            <li>• Inventario centralizado y preparado para múltiples sucursales.</li>
-            <li>• Información operativa disponible desde cualquier dispositivo.</li>
-          </ul>
-        </article>
+      <div class="mx-auto mb-12 max-w-3xl text-center">
+        <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">¿Cansado de sistemas lentos que frenan tu negocio?</h2>
+        <p class="mt-4 text-base text-slate-500 sm:text-lg">Los negocios modernos no pueden depender de software obsoleto. Diseñamos Delta POS para solucionar las fricciones diarias de tu operación.</p>
+      </div>
+      <div class="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
+        <article class="space-y-4 rounded-2xl border border-rose-100 bg-rose-50/50 p-8"><h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-rose-800">❌ El modelo obsoleto</h3><ul class="space-y-3 text-sm text-slate-600"><li>👉 Filas largas en caja debido a un software lento que se traba constantemente.</li><li>👉 Descuadres de inventario entre sucursales y pérdidas sin explicación.</li><li>👉 Reportes manuales complejos al final de cada mes en hojas de cálculo.</li></ul></article>
+        <article class="space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-8"><h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-emerald-600">🚀 La experiencia Delta POS</h3><ul class="space-y-3 text-sm text-slate-600"><li>✅ Cobros en menos de 2 segundos con interfaces fluidas e intuitivas.</li><li>✅ Control de stock automatizado en la nube con alertas instantáneas de resurtido.</li><li>✅ Dashboard analítico en vivo accesible desde cualquier celular o tablet.</li></ul></article>
       </div>
     </div>
   </section>
 
-  <%= render Landing::FeaturesComponent.new(
-    title: t("landing.features.title"),
-    subtitle: t("landing.features.subtitle"),
-    features: @features
-  ) %>
+  <%= render Landing::FeaturesComponent.new(title: "Todo lo que necesitas en una sola plataforma", subtitle: nil, features: @features) %>
 
-  <section class="border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 py-16 sm:py-20">
+  <section class="relative min-h-[460px] overflow-hidden border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <%= render Ui::SectionTitleComponent.new(
-        title: t("landing.testimonials.title"),
-        subtitle: t("landing.testimonials.subtitle")
-      ) %>
-
-      <div class="mt-10 grid gap-6 md:grid-cols-3">
-        <% @testimonials.each do |testimonial| %>
-          <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
-        <% end %>
-      </div>
+      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900">Historias de Éxito Comercial</h2></div>
+      <div class="grid gap-8 md:grid-cols-3"><% @testimonials.each do |testimonial| %><%= render Landing::TestimonialComponent.new(**testimonial.to_h) %><% end %></div>
     </div>
   </section>
 
-  <section id="precios" class="border-t border-slate-200/60 bg-slate-100/50 py-16 sm:py-20">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-      <%= render Ui::SectionTitleComponent.new(
-        badge: t("landing.pricing.badge"),
-        title: t("landing.pricing.title"),
-        subtitle: t("landing.pricing.subtitle")
-      ) %>
-
-      <div class="mt-10 grid gap-8 md:grid-cols-2">
-        <% @plans.first(2).each do |plan| %>
-          <%= render Landing::PricingCardComponent.new(**plan.to_h) %>
-        <% end %>
-      </div>
+  <section id="precios" class="border-t border-slate-200/60 bg-slate-100/50 py-12 lg:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Planes transparentes a tu medida</h2></div>
+      <div class="mx-auto grid max-w-4xl items-stretch gap-8 md:grid-cols-2"><% @plans.first(2).each do |plan| %><%= render Landing::PricingCardComponent.new(**plan.to_h) %><% end %></div>
     </div>
   </section>
 
-  <%= render Landing::FaqComponent.new(
-    title: t("landing.faq.title"),
-    subtitle: t("landing.faq.subtitle"),
-    questions: @questions
-  ) %>
-
-  <div id="contacto">
-    <%= render Landing::CtaComponent.new(
-      title: t("landing.cta.title"),
-      description: t("landing.cta.description"),
-      button: Ui::ButtonComponent.new(
-        text: t("landing.buttons.create_account"),
-        href: new_user_registration_path,
-        icon: :rocket_launch,
-        size: :lg,
-        variant: :secondary
-      )
-    ) %>
-  </div>
+  <%= render Landing::FaqComponent.new(title: "Preguntas Frecuentes", subtitle: nil, questions: @questions) %>
+  <%= render Landing::CtaComponent.new(title: "¿Listo para modernizar tu punto de venta?", description: "Únete a cientos de comercios en crecimiento que ya escalaron sus ventas operativas.", button_text: "Comenzar", button_href: "#precios") %>
 </main>
 
 <%= render Landing::FooterComponent.new %>
