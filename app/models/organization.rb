@@ -4,8 +4,7 @@ class Organization < ApplicationRecord
   has_many :subscriptions, dependent: :restrict_with_exception
   has_one :current_subscription,
           -> { current },
-          class_name: 'Subscription',
-          inverse_of: :organization
+          class_name: 'Subscription'
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :active, -> { not_deleted.where(status: 'active') }
