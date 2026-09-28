@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Organization #{n}" }
     sequence(:code) { |n| "ORG#{n}" }
     legal_name { name }
-    tax_id { "AAA010101AAA" }
+    sequence(:tax_id) { |n| "AAA0101#{format('%02d', n)}AA" }
     email { Faker::Internet.unique.email }
     phone { '5555555555' }
     status { 'active' }
