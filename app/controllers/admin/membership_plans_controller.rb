@@ -101,7 +101,6 @@ module Admin
 
       selected_ids.each_with_index do |feature_id, index|
         plan_feature = @membership_plan.membership_plan_features
-                                       .with_deleted
                                        .find_or_initialize_by(membership_feature_id: feature_id)
         plan_feature.assign_attributes(
           enabled: enabled.include?(feature_id),
