@@ -8,8 +8,6 @@ module Membership
     end
 
     def change_plan!(new_plan)
-      validate_downgrade!(new_plan)
-
       old_plan = subscription.membership_plan
       return subscription if old_plan == new_plan
 
@@ -66,18 +64,6 @@ module Membership
       end
 
       subscription
-    end
-
-    def validate_downgrade!(new_plan)
-      return if subscription.membership_plan.position <= new_plan.position
-
-      errors = []
-      errors << 'Current usage exceeds the new plan user limit.' if limit_exceeded?(new_plan, 'max_users', 0)
-      raise ActiveRecord::RecordInvalid, subscription if errors.any?
-    end
-
-    def limit_exceeded?(_plan, _key, _current_count)
-      false
     end
 
     def record_event!(event_type, membership_plan: nil, **attributes)
