@@ -22,6 +22,7 @@ class Subscription < ApplicationRecord
   validates :starts_at, presence: true
   validates :ends_at, comparison: { greater_than_or_equal_to: :starts_at }, allow_nil: true
   validates :trial_ends_at, comparison: { greater_than_or_equal_to: :starts_at }, allow_nil: true
+  validate :only_one_current_subscription_per_organization
 
   def active_or_trialing?
     active? || trialing?
@@ -69,3 +70,15 @@ class Subscription < ApplicationRecord
     limit.present? && current_count >= limit
   end
 end
+
+  private
+
+  def only_one_current_subscription_per_organization
+    return unless active_or_trialing?
+    return unless organization
+
+    relation = organization.subscriptions.current
+    relation = relation.where.not(id: id) if persisted?
+
+    errors.add(:organization, 'already has an active subscription') if relation.exists?
+  end
