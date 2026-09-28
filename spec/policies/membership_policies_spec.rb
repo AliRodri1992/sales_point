@@ -36,7 +36,6 @@ RSpec.describe 'Membership policies', type: :policy do
   it 'denies non-administrators membership plan and subscription access' do
     expect(MembershipPlanPolicy.new(non_admin, MembershipPlan.new).index?).to be(false)
     expect(SubscriptionPolicy.new(non_admin, Subscription.new).index?).to be(false)
-    expect(SubscriptionPolicy.new(non_admin, Subscription.new).change_plan?).to be(false
-    )
+    expect(SubscriptionPolicy.new(non_admin, Subscription.new).change_plan?).to be(false)
   end
 end
