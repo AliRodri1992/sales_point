@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
+  has_many :translation_generations, foreign_key: :actor_id, dependent: :nullify
 
   ONLINE_USERS_KEY = 'online_users'.freeze
 
@@ -79,6 +80,7 @@ class User < ApplicationRecord
       .or(notification_relation_for(Branch))
       .or(notification_relation_for(Client))
       .or(notification_relation_for(SystemRole))
+      .or(notification_relation_for(TranslationGeneration))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 

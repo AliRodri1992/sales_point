@@ -17,7 +17,16 @@ Rails.application.routes.draw do
     get '/dashboard', to: 'dashboard#index', as: :dashboard
     patch 'sidebar', to: 'sidebar#update'
     get 'languages/content', to: 'languages#content'
-    resources :languages
+    resources :languages do
+      member do
+        post :generate
+        post :retry_generation
+        post :resume_generation
+        post :cancel_generation
+        post :restore
+        delete :really_destroy
+      end
+    end
     resources :categories
     resources :products
     resources :clients

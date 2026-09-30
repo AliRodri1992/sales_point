@@ -295,3 +295,40 @@ Backend automatically falls back to YAML in case of issues.
 - [Paranoia Documentation](https://github.com/ruanpienaar/paranoia)
 - [Rails I18n Documentation](https://guides.rubyonrails.org/i18n.html)
 - [ActiveRecord Basics](https://guides.rubyonrails.org/active_record_basics.html)
+
+
+## Automatic Translation Generation
+
+The language catalog uses the database as the operational source of truth and YAML as the versioned fallback/baseline. Creating a language queues an ActiveJob-backed generation from the configured Rails default locale.
+
+Generation guarantees:
+
+- Existing translations are never overwritten automatically.
+- Existing records loaded from YAML are treated as protected/manual records.
+- Automatically generated records are marked with `translation_source: automatic` and retain the source text and digest.
+- Source changes are detected as `stale` without replacing the current translation.
+- A generation records its source language, catalog version, provider, provider configuration version, actor, progress, errors and timestamps.
+- PostgreSQL prevents two pending/processing generations for the same target language and catalog version.
+- LibreTranslate calls are isolated behind `TranslationProviders::LibreTranslateProvider`.
+- Transient provider failures use ActiveJob retry with exponential backoff and jitter.
+- Provider credentials are read from environment variables and are never persisted in generation metadata.
+- Runtime YAML synchronization is disabled by default. Set `TRANSLATION_RUNTIME_YAML_SYNC=true` only when the filesystem is explicitly persistent/shared and the deployment strategy permits runtime writes. Synchronization uses a temporary file and atomic replacement.
+- The I18n database backend can be reloaded after a generation completes, so generated translations become available without restarting the application.
+
+### LibreTranslate configuration
+
+Use:
+
+```text
+LIBRETRANSLATE_URL
+LIBRETRANSLATE_API_KEY
+LIBRETRANSLATE_ALLOWED_HOSTS
+LIBRETRANSLATE_CONNECT_TIMEOUT
+LIBRETRANSLATE_READ_TIMEOUT
+LIBRETRANSLATE_WRITE_TIMEOUT
+TRANSLATION_PROVIDER_LANGUAGE_MAP
+TRANSLATION_RUNTIME_YAML_SYNC
+```
+
+The provider accepts LibreTranslate batch requests and validates the returned `translatedText` collection before persistence.
+

@@ -19,7 +19,7 @@ module I18n
 
         begin
           Translate.includes(:language).each do |translate|
-            locale = translate.language&.code
+            locale = translate.language&.locale || translate.language&.code
             next unless locale
 
             store_translation(locale.to_sym, translate.key, translate.value)
@@ -28,6 +28,11 @@ module I18n
         rescue StandardError => e
           Rails.logger.warn("Failed to load translations from database: #{e.message}")
         end
+      end
+
+      def reload!
+        @translations_loaded = false
+        @translations = {}
       end
 
       def lookup(locale, key, scope = [], options = {})

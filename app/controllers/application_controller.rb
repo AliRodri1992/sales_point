@@ -29,7 +29,8 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     locale = preferred_locale || I18n.default_locale
-    I18n.locale = locale if I18n.available_locales.include?(locale)
+    available_locales = I18n.available_locales | Language.available.pluck(:locale).map { |value| value.downcase.to_sym }
+    I18n.locale = locale if available_locales.include?(locale)
   end
 
   def preferred_locale
@@ -39,14 +40,14 @@ class ApplicationController < ActionController::Base
   def user_language_code
     return unless user_signed_in? && current_user.language
 
-    current_user.language.code.downcase.to_sym
+    current_user.language.locale.downcase.to_sym
   end
 
   def session_language_code
     language = Language.find_by(id: session[:language_id])
     return unless language
 
-    language.code.downcase.to_sym
+    language.locale.downcase.to_sym
   end
 
   def current_language
