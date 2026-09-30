@@ -110,7 +110,8 @@ es:
         type: Tipo
         assigned_permissions: Permisos asignados
         permissions_title: Permisos del rol
-        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios se aplican al guardar.
+        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios
+          se aplican al guardar.
         save_permissions: Guardar permisos
         module_permissions:
           one: 1 permiso disponible
@@ -604,7 +605,8 @@ es:
     form:
       cancel: Cancelar
       code: Código
-      code_hint: Código único del cliente. Se requiere para identificar al cliente en el sistema.
+      code_hint: Código único del cliente. Se requiere para identificar al cliente
+        en el sistema.
       code_placeholder: ej. CLI-0001
       create: Crear cliente
       credit_limit: Límite de crédito
@@ -820,11 +822,12 @@ es:
     buttons:
       create_account: Crear cuenta
       request_demo: Solicitar demostración
-      sign_in: Iniciar sesión
+      sign_in: Iniciar Sesión
       sign_out: Cerrar sesión
       start: Comenzar
       start_free: Comenzar gratis
       view_demo: Ver demostración
+      open_menu: Abrir menú
     cta:
       description: Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración
         de tu empresa.
@@ -1015,3 +1018,46 @@ es:
       success: El rol del sistema fue creado exitosamente
     destroy:
       success: El rol del sistema fue eliminado exitosamente
+  landing.hero:
+    problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
+    old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
+    old_model_title: "❌ El modelo obsoleto"
+    new_model_title: "\U0001F680 La experiencia Delta POS"
+    testimonials_title: Historias de Éxito Comercial
+    prices_title: Planes transparentes a tu medida
+    faq_title: Preguntas Frecuentes
+    cta_title: "¿Listo para modernizar tu punto de venta?"
+    cta_description: Únete a cientos de comercios en crecimiento que ya escalaron
+      sus ventas operativas.
+    features_title: Todo lo que necesitas en una sola plataforma
+  home:
+    old_model_items:
+    - "\U0001F449 Filas largas en caja debido a un software lento que se traba constantemente."
+    - "\U0001F449 Descuadres de inventario entre sucursales y pérdidas sin explicación."
+    - "\U0001F449 Reportes manuales complejos al final de cada mes en hojas de cálculo."
+    new_model_items:
+    - "✅ Cobros en menos de 2 segundos con interfaces fluidas e intuitivas."
+    - "✅ Control de stock automatizado en la nube con alertas instantáneas de resurtido."
+    - "✅ Dashboard analítico en vivo accesible desde cualquier celular o tablet."
+    old_model:
+      item_1: "\U0001F449 Filas largas en caja debido a un software lento que se traba
+        constantemente."
+      item_2: "\U0001F449 Descuadres de inventario entre sucursales y pérdidas sin
+        explicación."
+      item_3: "\U0001F449 Reportes manuales complejos al final de cada mes en hojas
+        de cálculo."
+    new_model:
+      item_1: "✅ Cobros en menos de 2 segundos con interfaces fluidas e intuitivas."
+      item_2: "✅ Control de stock automatizado en la nube con alertas instantáneas
+        de resurtido."
+      item_3: "✅ Dashboard analítico en vivo accesible desde cualquier celular o tablet."
+  app:
+    name: Delta
+    short_name: POS
+    slogan: Punto de Venta
+    title: Delta POS - Sistema de Punto de Venta Inteligente
+    description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
+      y operación comercial.'
+  landing.features:
+    title: Todo lo que necesitas en una sola plataforma
+    subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas.

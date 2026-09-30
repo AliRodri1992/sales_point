@@ -871,3 +871,9 @@ ko:
       success: 시스템 역할이 성공적으로 생성되었습니다
     destroy:
       success: 시스템 역할이 성공적으로 삭제되었습니다
+  app:
+    name: 델타
+    short_name: 포스
+    slogan: 지점 판매
+    title: 델타 포스 - 지능형 포인트 오브 세일스 시스템
+    description: '델타 포스: 판매, 재고 및 비즈니스 운영을 위한 지능형 포인트 오브 세일스 시스템입니다.'
