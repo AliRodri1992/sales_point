@@ -757,10 +757,11 @@ ko:
       product: 제품
       terms: 약관
     hero:
-      badge: 신규 • 클라우드 POS
-      description: 어떤 기기에서든 판매, 재고, 고객, 구매, 보고서 및 청구를 관리하세요.
-      highlighted: NEXO POS
-      title: '다음으로 비즈니스를 관리하세요:'
+      badge: ✨ 신규 Delta POS 클라우드 버전
+      description: 언제 어디서나 빠르고 신뢰할 수 있는 플랫폼에서 재고를 관리하고 즉시 결제를 처리하며 이익 마진을 분석하세요.
+      highlighted: 성장
+      title: 당신의 비즈니스를 고속으로 하는 포인트 오프 세일스
+
     module_items:
       accounting:
         description: 수동 입력 없이 회계 담당자가 필요한 형식으로 거래 내역을 내보내세요.

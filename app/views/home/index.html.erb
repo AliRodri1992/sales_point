@@ -2,13 +2,13 @@
 
 <main class="overflow-x-hidden">
   <%= render Landing::HeroComponent.new(
-    badge: "✨ Nueva versión Cloud de Delta POS",
-    title: "El punto de venta que impulsa tu",
-    highlighted: "crecimiento",
-    description: "Administra tu inventario, procesa pagos al instante y analiza tus márgenes de ganancia con la plataforma más rápida y confiable del mercado.",
-    primary_button_text: "Comenzar",
+    badge: t('landing.hero.badge'),
+    title: t('landing.hero.title'),
+    highlighted: t('landing.hero.highlighted'),
+    description: t('landing.hero.description'),
+    primary_button_text: t('landing.buttons.start'),
     primary_button_href: "#precios",
-    secondary_button_text: "Solicitar Demo",
+    secondary_button_text: t('landing.buttons.request_demo'),
     secondary_button_href: "#contacto"
   ) %>
 
