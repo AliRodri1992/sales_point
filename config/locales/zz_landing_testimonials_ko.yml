@@ -2,6 +2,10 @@ ko:
   landing:
     hero:
       testimonials_title: 비즈니스 성공 사례
+    testimonials:
+      badge: 고객
+      subtitle: 저희 소프트웨어는 매일 수백 개의 비즈니스를 돕습니다.
+      title: Delta POS를 신뢰하는 기업
     testimonial_items:
       alejandro:
         company: El Triunfo 미니마켓
