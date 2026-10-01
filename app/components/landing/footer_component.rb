@@ -2,24 +2,29 @@
 
 module Landing
   class FooterComponent < ViewComponent::Base
-    Link = Data.define(:title, :href)
+    Link = Data.define(:title_key, :href)
 
     def initialize
       super
       @product_links = [
-        Link.new("Funcionalidades", "#caracteristicas"),
-        Link.new("Planes de Precios", "#precios"),
-        Link.new("Hardware Compatible", "#")
+        Link.new("features", "#caracteristicas"),
+        Link.new("pricing", "#precios"),
+        Link.new("hardware", "#")
+      ]
+      @support_links = [
+        Link.new("help_center", "#"),
+        Link.new("api_docs", "#"),
+        Link.new("server_status", "#")
       ]
       @company_links = [
-        Link.new("Sobre Nosotros", "#"),
-        Link.new("Contacto de Ventas", "#contacto"),
-        Link.new("Socio Comercial", "#")
+        Link.new("about", "#"),
+        Link.new("sales_contact", "#contacto"),
+        Link.new("business_partner", "#")
       ]
     end
 
     private
 
-    attr_reader :product_links, :company_links
+    attr_reader :product_links, :support_links, :company_links
   end
 end
