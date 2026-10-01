@@ -1,0 +1,35 @@
+ko:
+  landing:
+    hero:
+      testimonials_title: 비즈니스 성공 사례
+    testimonial_items:
+      alejandro:
+        company: El Triunfo 미니마켓
+        name: Alejandro Gómez
+        position: null
+        quote: "계산대 대기 줄이 40% 줄었습니다. 인터페이스가 매우 직관적이어서 신규 계산원 교육에 10분도 걸리지 않습니다."
+      beatriz:
+        company: Bloom 부티크
+        name: Beatriz Mendoza
+        position: null
+        quote: "클라우드 재고 동기화가 실제로 작동합니다. 이제 수동 감사를 기다리지 않고 매시간 어떤 상품이 가장 많이 판매되는지 정확히 알 수 있습니다."
+      carlos:
+        company: El Candado 철물점
+        name: Carlos Ramírez
+        position: null
+        quote: "통합 전자 세금계산서 기능 덕분에 관리 업무에 들던 시간을 크게 줄였습니다. 시스템이 모든 법적 요건을 즉시 충족합니다."
+      diana:
+        company: Urban Central 카페
+        name: Diana Silva
+        position: null
+        quote: "카드 처리 속도가 빨라져 피크 시간대 매출이 증가했습니다. 비즈니스에 큰 변화를 가져왔습니다."
+      eduardo:
+        company: Minimix 매장 (5개 지점)
+        name: Eduardo Marín
+        position: null
+        quote: "다지점 관리 기능으로 세 도시의 매장을 하나의 대시보드에서 관리할 수 있게 되었습니다. 성장에 꼭 필요한 기능입니다."
+      sofia:
+        company: Glamour 부티크
+        name: Sofia Palacios
+        position: null
+        quote: "재고 부족 알림이 핵심 재고 손실을 막아 주었습니다. 궁금한 점이 있으면 기술 지원팀이 몇 분 안에 답변합니다."
