@@ -679,6 +679,7 @@ en:
         submit: Update
         title: Edit %{resource}
         unhappy: Unhappy?
+        pending_confirmation: "Currently waiting confirmation for: %{email}"
       new:
         already_have_account: Already have an account?
         brand_alt: Delta POS logo mark
@@ -710,6 +711,28 @@ en:
         no_unlock: Didn't receive unlock instructions?
         sign_in_with: Sign in with %{provider}
         sign_up: Sign up
+    unlocks:
+      new:
+        title: Resend unlock instructions
+        submit: Resend unlock instructions
+    confirmations:
+      new:
+        title: Resend confirmation instructions
+        submit: Resend confirmation instructions
+    mailer:
+      confirmation_instructions:
+        greeting: "Welcome %{email}!"
+        instruction: You can confirm your account email through the link below:
+        action: Confirm my account
+      unlock_instructions:
+        greeting: "Hello %{email}!"
+        notification: Your account has been locked due to an excessive number of unsuccessful sign-in attempts.
+        instruction: Click the link below to unlock your account:
+        action: Unlock my account
+      email_changed:
+        greeting: "Hello %{email}!"
+        pending: "We're contacting you to notify you that your email is being changed to %{email}."
+        confirmed: "We're contacting you to notify you that your email has been changed to %{email}."
   errors:
     format: "%{attribute} %{message}"
     messages:
