@@ -1,6 +1,47 @@
 ---
 es:
   activerecord:
+    attributes:
+      category:
+        code: Código
+        description: Descripción
+        name: Nombre
+        status: Estado
+      demo_request:
+        company: Empresa
+        email: Correo electrónico
+        message: Mensaje
+        name: Nombre
+        phone: Teléfono
+      language:
+        code: Código
+        flag_iso: Bandera
+        name: Nombre
+        status: Estado
+      product:
+        barcode: Código de barras
+        code: Código
+        cost: Costo
+        description: Descripción
+        featured: Destacado
+        image: Imagen
+        image_url: URL de imagen
+        max_stock: Stock máximo
+        min_stock: Stock mínimo
+        name: Nombre
+        position: Orden
+        price: Precio
+        sku: SKU
+        slug: Slug
+        status: Estado
+        stock: Existencias
+        view_count: Contador de vistas
+      user:
+        current_password: Contraseña actual
+        email: Correo electrónico
+        password: Contraseña
+        password_confirmation: Confirmar contraseña
+        user_type: Tipo de usuario
     models:
       address: Dirección
       branch: Sucursal
@@ -12,47 +53,6 @@ es:
       sat_currency: Moneda SAT
       system_role: Rol del sistema
       user: Usuario
-    attributes:
-      category:
-        code: "Código"
-        description: "Descripción"
-        name: "Nombre"
-        status: "Estado"
-      demo_request:
-        company: "Empresa"
-        email: "Correo electrónico"
-        message: "Mensaje"
-        name: "Nombre"
-        phone: "Teléfono"
-      language:
-        code: "Código"
-        flag_iso: "Bandera"
-        name: "Nombre"
-        status: "Estado"
-      product:
-        barcode: "Código de barras"
-        code: "Código"
-        cost: "Costo"
-        description: "Descripción"
-        featured: "Destacado"
-        image_url: "URL de imagen"
-        max_stock: "Stock máximo"
-        min_stock: "Stock mínimo"
-        name: "Nombre"
-        position: "Orden"
-        price: "Precio"
-        sku: "SKU"
-        slug: "Slug"
-        status: "Estado"
-        stock: "Existencias"
-        view_count: "Contador de vistas"
-        image: "Imagen"
-      user:
-        current_password: "Contraseña actual"
-        email: "Correo electrónico"
-        password: "Contraseña"
-        password_confirmation: "Confirmar contraseña"
-        user_type: "Tipo de usuario"
   admin:
     branches:
       actions:
@@ -116,62 +116,7 @@ es:
         active: Activa
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
-    system_roles:
-      new:
-        page_title: Nuevo rol | Delta POS
-        title: Nuevo rol
-        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
-        back: Volver a roles
-        details_title: Información del rol
-        details_subtitle: Define los datos básicos del nuevo rol.
-        permissions_title: Permisos del rol
-        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
-        error_title: No se pudo crear el rol
-        cancel: Cancelar
-        submit: Crear rol
-        fields:
-          name: Nombre
-          name_placeholder: Ej. Supervisor de ventas
-          type: Tipo
-          status: Estado
-          description: Descripción
-          description_placeholder: Describe el alcance de este rol.
-      index:
-        page_title: Roles | Delta POS
-        title: Roles
-        subtitle: Define qué módulos puede utilizar cada rol del sistema.
-        new: Nuevo rol
-        manage_permissions: Administrar permisos
-        no_description: Sin descripción.
-        empty_title: No hay roles disponibles
-        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
-      show:
-        back: Volver a roles
-        code: Código
-        type: Tipo
-        assigned_permissions: Permisos asignados
-        permissions_title: Permisos del rol
-        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios
-          se aplican al guardar.
-        save_permissions: Guardar permisos
-        module_permissions:
-          one: 1 permiso disponible
-          other: "%{count} permisos disponibles"
-      statuses:
-        active: Activo
-        inactive: Inactivo
-      types:
-        system: Sistema
-        branch: Sucursal
-      update_permissions:
-        success: Los permisos del rol se actualizaron correctamente.
-      create:
-        success: "El rol del sistema fue creado correctamente"
-      destroy:
-        success: "El rol del sistema fue eliminado correctamente"
-      manage_permissions: "Administrar permisos"
     breadcrumbs:
-      roles: Roles
       branches: Sucursales
       categories: Categorías
       clients: Clientes
@@ -181,6 +126,7 @@ es:
       languages: Idiomas
       products: Productos
       profile: Perfil
+      roles: Roles
     categories:
       confirm:
         cancel: Cancelar
@@ -246,6 +192,7 @@ es:
         sales_today: Ventas de hoy
         session_open: Sesión abierta
         transactions: Transacciones
+      no_image: Sin imagen disponible
       page_header:
         customize: Personalizar dashboard
         new_sale: Nueva venta
@@ -311,7 +258,6 @@ es:
             year: Este año
           subtitle: Comportamiento durante los últimos 7 días
           title: Ventas
-      no_image: "Sin imagen disponible"
     languages:
       confirm:
         cancel: Cancelar
@@ -378,10 +324,10 @@ es:
       destroyed: Producto eliminado correctamente
       edit:
         back: Volver
+        close: Cerrar
         label: Editar Producto
         subtitle: Actualiza los datos del producto.
         title: Editar %{name}
-        close: "Cerrar"
       form:
         additional_info: Información adicional
         back: Volver
@@ -468,9 +414,9 @@ es:
         total_count: "%{count} productos registrados"
       new:
         back: Volver
+        close: Cerrar
         subtitle: Añade un producto a tu catálogo.
         title: Nuevo producto
-        close: "Cerrar"
       show:
         back: Volver
         close: Cerrar
@@ -640,6 +586,67 @@ es:
         settings: Configuración
         sign_out: Cerrar sesión
         toggle: Menú de usuario
+    system_roles:
+      create:
+        success: El rol del sistema fue creado correctamente
+      destroy:
+        success: El rol del sistema fue eliminado correctamente
+      index:
+        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
+        empty_title: No hay roles disponibles
+        manage_permissions: Administrar permisos
+        new: Nuevo rol
+        no_description: Sin descripción.
+        page_title: Roles | Delta POS
+        subtitle: Define qué módulos puede utilizar cada rol del sistema.
+        title: Roles
+      manage_permissions: Administrar permisos
+      new:
+        back: Volver a roles
+        cancel: Cancelar
+        details_subtitle: Define los datos básicos del nuevo rol.
+        details_title: Información del rol
+        error_title: No se pudo crear el rol
+        fields:
+          description: Descripción
+          description_placeholder: Describe el alcance de este rol.
+          name: Nombre
+          name_placeholder: Ej. Supervisor de ventas
+          status: Estado
+          type: Tipo
+        page_title: Nuevo rol | Delta POS
+        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
+        permissions_title: Permisos del rol
+        submit: Crear rol
+        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
+        title: Nuevo rol
+      show:
+        assigned_permissions: Permisos asignados
+        back: Volver a roles
+        code: Código
+        module_permissions:
+          one: 1 permiso disponible
+          other: "%{count} permisos disponibles"
+        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios
+          se aplican al guardar.
+        permissions_title: Permisos del rol
+        save_permissions: Guardar permisos
+        type: Tipo
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      types:
+        branch: Sucursal
+        system: Sistema
+      update_permissions:
+        success: Los permisos del rol se actualizaron correctamente.
+  app:
+    description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
+      y operación comercial.'
+    name: Delta
+    short_name: POS
+    slogan: Punto de Venta
+    title: Delta POS - Sistema de Punto de Venta Inteligente
   authentication:
     error_banner:
       title: Error de Autenticación
@@ -662,6 +669,8 @@ es:
       credit_limit_placeholder: ej. 5000.00
       email: Email
       email_placeholder: ej. cliente@empresa.com
+      fiscal_regime: Regimen fiscal
+      fiscal_regime_blank: Selecciona el régimen fiscal
       name: Nombre
       name_placeholder: Nombre del cliente
       notes: Notas
@@ -674,8 +683,6 @@ es:
       rfc_placeholder: ej. ABC010101ABC
       status: Estado
       update: Actualizar cliente
-      fiscal_regime: Regimen fiscal
-      fiscal_regime_blank: Selecciona el régimen fiscal
     index:
       card_title: Clientes registrados
       columns:
@@ -757,6 +764,28 @@ es:
       phone: Teléfono
       submit: Solicitar demostración
   devise:
+    confirmations:
+      new:
+        submit: Reenviar instrucciones de confirmación
+        title: Reenviar instrucciones de confirmación
+    mailer:
+      confirmation_instructions:
+        action: Confirmar mi cuenta
+        greeting: "¡Bienvenido %{email}!"
+        instruction: 'Puedes confirmar el correo electrónico de tu cuenta mediante
+          el siguiente enlace:'
+      email_changed:
+        confirmed: Te contactamos para informarte que tu correo electrónico ha cambiado
+          a %{email}.
+        greeting: "¡Hola %{email}!"
+        pending: Te contactamos para informarte que tu correo electrónico está cambiando
+          a %{email}.
+      unlock_instructions:
+        action: Desbloquear mi cuenta
+        greeting: "¡Hola %{email}!"
+        instruction: 'Haz clic en el siguiente enlace para desbloquear tu cuenta:'
+        notification: Tu cuenta ha sido bloqueada debido a un número excesivo de intentos
+          fallidos de inicio de sesión.
     passwords:
       edit:
         confirm_password: Confirmar nueva contraseña
@@ -776,10 +805,10 @@ es:
           cambios
         leave_blank: déjalo en blanco si no quieres cambiarla
         minimum: Mínimo %{count} caracteres
+        pending_confirmation: 'La confirmación está pendiente para: %{email}'
         submit: Actualizar
         title: Editar %{resource}
         unhappy: "¿No estás conforme?"
-        pending_confirmation: "La confirmación está pendiente para: %{email}"
       new:
         already_have_account: "¿Ya tienes una cuenta?"
         brand_alt: Isotipo de Delta POS
@@ -813,26 +842,8 @@ es:
         sign_up: Crear cuenta
     unlocks:
       new:
-        title: Reenviar instrucciones de desbloqueo
         submit: Reenviar instrucciones de desbloqueo
-    confirmations:
-      new:
-        title: Reenviar instrucciones de confirmación
-        submit: Reenviar instrucciones de confirmación
-    mailer:
-      confirmation_instructions:
-        greeting: "¡Bienvenido %{email}!"
-        instruction: "Puedes confirmar el correo electrónico de tu cuenta mediante el siguiente enlace:"
-        action: Confirmar mi cuenta
-      unlock_instructions:
-        greeting: "¡Hola %{email}!"
-        notification: Tu cuenta ha sido bloqueada debido a un número excesivo de intentos fallidos de inicio de sesión.
-        instruction: "Haz clic en el siguiente enlace para desbloquear tu cuenta:"
-        action: Desbloquear mi cuenta
-      email_changed:
-        greeting: "¡Hola %{email}!"
-        pending: "Te contactamos para informarte que tu correo electrónico está cambiando a %{email}."
-        confirmed: "Te contactamos para informarte que tu correo electrónico ha cambiado a %{email}."
+        title: Reenviar instrucciones de desbloqueo
   errors:
     attributes:
       barcode: Código de barras
@@ -874,10 +885,12 @@ es:
       even: debe ser par
       exclusion: no está permitido
       greater_than: debe ser mayor que %{count}
+      greater_than_min: debe ser mayor o igual que el stock mínimo
       greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
       invalid_format: no es válido
+      invalid_url: debe ser una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor o igual que %{count}
       none: debe ser nil
@@ -890,21 +903,29 @@ es:
       too_long: es demasiado largo (máximo %{count} caracteres)
       too_short: es demasiado corto (mínimo %{count} caracteres)
       wrong_length: tiene una longitud incorrecta
-      greater_than_min: "debe ser mayor o igual que el stock mínimo"
-      invalid_url: "debe ser una URL válida"
+  home:
+    new_model:
+      item_1: Cobros en menos de 2 segundos con interfaces fluidas e intuitivas.
+      item_2: Control de stock automatizado en la nube con alertas instantáneas de
+        resurtido.
+      item_3: Dashboard analítico en vivo accesible desde cualquier celular o tablet.
+    old_model:
+      item_1: Filas largas en caja debido a un software lento que se traba constantemente.
+      item_2: Descuadres de inventario entre sucursales y pérdidas sin explicación.
+      item_3: Reportes manuales complejos al final de cada mes en hojas de cálculo.
   landing:
     buttons:
       create_account: Crear cuenta
+      open_menu: Abrir menú
       request_demo: Solicitar demostración
       sign_in: Iniciar Sesión
       sign_out: Cerrar sesión
       start: Comenzar
       start_free: Comenzar gratis
       view_demo: Ver demostración
-      open_menu: Abrir menú
     cta:
-      description: Empieza hoy mismo con Delta POS y descubre cómo simplificar la administración
-        de tu empresa.
+      description: Empieza hoy mismo con Delta POS y descubre cómo simplificar la
+        administración de tu empresa.
       title: "¿Listo para modernizar tu negocio?"
     dashboard:
       customers: Clientes
@@ -920,9 +941,9 @@ es:
       today: Hoy
       today_sales: Ventas del día
     faq:
+      sale: Venta
       subtitle: Resolvemos las dudas más comunes.
       title: Preguntas frecuentes
-      sale: Venta
     feature_items:
       any_device:
         description: Trabaja en computadora, tablet o celular. Solo necesitas un navegador
@@ -949,30 +970,34 @@ es:
           que se actualizan solos.
         title: Reportes y Estadísticas
     features:
+      items:
+        analytics_reports:
+          description: Visualiza tus ganancias netas, horas pico de venta y rendimiento
+            de tus cajeros desde cualquier dispositivo móvil o computadora.
+          title: Reportes Analíticos
+        fast_sales:
+          description: Cobra en caja en segundos. Compatible con lectores de código
+            de barra, terminales bancarias y facturación electrónica instantánea.
+          title: Ventas Veloces
+        inventory_control:
+          description: Sincronización multi-sucursal en tiempo real. Recibe alertas
+            automatizadas cuando tus productos estrella se estén agotando.
+          title: Control de Inventarios
       subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes
         empresas.
       title: Todo lo que necesitas para administrar tu negocio
-      items:
-        fast_sales:
-          title: Ventas Veloces
-          description: Cobra en caja en segundos. Compatible con lectores de código de barra, terminales bancarias y facturación electrónica instantánea.
-        inventory_control:
-          title: Control de Inventarios
-          description: Sincronización multi-sucursal en tiempo real. Recibe alertas automatizadas cuando tus productos estrella se estén agotando.
-        analytics_reports:
-          title: Reportes Analíticos
-          description: Visualiza tus ganancias netas, horas pico de venta y rendimiento de tus cajeros desde cualquier dispositivo móvil o computadora.
     footer:
       about: Sobre Nosotros
+      api_docs: Documentación API
       brand_alt: Delta POS
       business_partner: Socio Comercial
       company: Compañía
       copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
-      description: Tecnología de punto de venta en la nube diseñada para maximizar la eficiencia y rendimiento de comercios minoristas y cadenas corporativas.
+      description: Tecnología de punto de venta en la nube diseñada para maximizar
+        la eficiencia y rendimiento de comercios minoristas y cadenas corporativas.
       features: Funcionalidades
       hardware: Hardware Compatible
       help_center: Centro de Ayuda
-      api_docs: Documentación API
       pricing: Planes de Precios
       privacy: Política de Privacidad
       product: Producto
@@ -983,25 +1008,27 @@ es:
       terms: Términos del Servicio
     hero:
       badge: Nueva versión Cloud de Delta POS
-      description: Administra tu inventario, procesa pagos al instante y analiza tus márgenes de ganancia con la plataforma más rápida y confiable del mercado.
-      highlighted: crecimiento
-      title: El punto de venta que impulsa tu
-      testimonials_title: Historias de Éxito Comercial
-      problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
-      old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
-      old_model_title: "El modelo obsoleto"
-      new_model_title: "La experiencia Delta POS"
-      prices_title: Planes transparentes a tu medida
-      faq_title: Preguntas Frecuentes
+      cta_description: Únete a cientos de comercios en crecimiento que ya escalaron
+        sus ventas operativas.
       cta_title: "¿Listo para modernizar tu punto de venta?"
-      cta_description: Únete a cientos de comercios en crecimiento que ya escalaron sus ventas operativas.
+      description: Administra tu inventario, procesa pagos al instante y analiza tus
+        márgenes de ganancia con la plataforma más rápida y confiable del mercado.
+      faq_title: Preguntas Frecuentes
       features_title: Todo lo que necesitas en una sola plataforma
+      highlighted: crecimiento
+      new_model_title: La experiencia Delta POS
+      old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
+      old_model_title: El modelo obsoleto
+      prices_title: Planes transparentes a tu medida
+      problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
+      testimonials_title: Historias de Éxito Comercial
+      title: El punto de venta que impulsa tu
     hero_preview:
-      today_sales: Ventas de hoy
-      transactions: Transacciones
+      action_required: Acción requerida
       realtime: En tiempo real
       stock_alerts: Alertas de stock
-      action_required: Acción requerida
+      today_sales: Ventas de hoy
+      transactions: Transacciones
     module_items:
       accounting:
         description: Exporta tus movimientos en el formato que tu contador necesita,
@@ -1031,12 +1058,12 @@ es:
       subtitle: Crece sin cambiar de sistema.
       title: Módulos especializados
     navbar:
-      solution: Solución
       faq: FAQ
       features: Características
       modules: Módulos
       open_menu: Abrir menú
       pricing: Precios
+      solution: Solución
     plan_items:
       enterprise:
         description: Para cadenas que necesitan control total.
@@ -1104,38 +1131,44 @@ es:
       alejandro:
         company: Minimarket El Triunfo
         name: Alejandro Gómez
-        position: null
-        quote: "Redujo nuestras filas un 40%. La interfaz es tan intuitiva que el entrenamiento de nuevos cajeros toma menos de diez minutos."
+        position:
+        quote: Redujo nuestras filas un 40%. La interfaz es tan intuitiva que el entrenamiento
+          de nuevos cajeros toma menos de diez minutos.
       beatriz:
         company: Boutique Bloom
         name: Beatriz Mendoza
-        position: null
-        quote: "La sincronización de stock en la nube es real. Ahora sé exactamente qué producto se vende más a cada hora sin esperar auditorías manuales."
+        position:
+        quote: La sincronización de stock en la nube es real. Ahora sé exactamente
+          qué producto se vende más a cada hora sin esperar auditorías manuales.
       carlos:
         company: Ferretería El Candado
         name: Carlos Ramírez
-        position: null
-        quote: "La facturación electrónica integrada nos ahorró horas de trabajo administrativo. El sistema cumple con todo lo legal al instante."
+        position:
+        quote: La facturación electrónica integrada nos ahorró horas de trabajo administrativo.
+          El sistema cumple con todo lo legal al instante.
       diana:
         company: Cafetería Urban Central
         name: Diana Silva
-        position: null
-        quote: "La velocidad de procesamiento de tarjetas aumentó nuestras ventas en horas pico. Un cambio radical para el negocio."
+        position:
+        quote: La velocidad de procesamiento de tarjetas aumentó nuestras ventas en
+          horas pico. Un cambio radical para el negocio.
       eduardo:
         company: Tiendas Minimix (5 sucursales)
         name: Eduardo Marín
-        position: null
-        quote: "La gestión multi-sucursal nos permitió controlar las tiendas de tres ciudades desde un solo panel. Indispensable para crecer."
+        position:
+        quote: La gestión multi-sucursal nos permitió controlar las tiendas de tres
+          ciudades desde un solo panel. Indispensable para crecer.
       sofia:
         company: Boutique Glamour
         name: Sofia Palacios
-        position: null
-        quote: "Las alertas de inventario bajo evitaron pérdidas de stock crítico. El soporte técnico responde en minutos ante dudas."
+        position:
+        quote: Las alertas de inventario bajo evitaron pérdidas de stock crítico.
+          El soporte técnico responde en minutos ante dudas.
     testimonials:
-      stars_label: 5 estrellas
-      previous: Historias anteriores
-      next: Historias siguientes
       badge: Clientes
+      next: Historias siguientes
+      previous: Historias anteriores
+      stars_label: 5 estrellas
       subtitle: Nuestro software ayuda diariamente a cientos de negocios.
       title: Empresas que confían en Delta POS
   system_roles:
@@ -1143,19 +1176,3 @@ es:
       success: El rol del sistema fue creado exitosamente
     destroy:
       success: El rol del sistema fue eliminado exitosamente
-  home:
-    old_model:
-      item_1: "Filas largas en caja debido a un software lento que se traba constantemente."
-      item_2: "Descuadres de inventario entre sucursales y pérdidas sin explicación."
-      item_3: "Reportes manuales complejos al final de cada mes en hojas de cálculo."
-    new_model:
-      item_1: "Cobros en menos de 2 segundos con interfaces fluidas e intuitivas."
-      item_2: "Control de stock automatizado en la nube con alertas instantáneas de resurtido."
-      item_3: "Dashboard analítico en vivo accesible desde cualquier celular o tablet."
-  app:
-    name: Delta
-    short_name: POS
-    slogan: Punto de Venta
-    title: Delta POS - Sistema de Punto de Venta Inteligente
-    description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
-      y operación comercial.'
