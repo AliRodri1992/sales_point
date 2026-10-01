@@ -1122,6 +1122,8 @@ ko:
         quote: "재고 부족 알림 덕분에 중요한 상품의 품절을 방지할 수 있었습니다. 문의가 있을 때 지원도 빠르게 응답합니다."
     testimonials:
       stars_label: 별 5개
+      previous: 이전 성공 사례
+      next: 다음 성공 사례
       badge: 고객
       subtitle: 저희 소프트웨어는 매일 수백 개의 비즈니스를 돕습니다.
       title: Delta POS를 신뢰하는 기업
