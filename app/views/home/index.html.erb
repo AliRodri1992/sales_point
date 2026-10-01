@@ -47,38 +47,16 @@
         <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900"><%= t('landing.hero.testimonials_title') %></h2>
       </div>
 
-      <div class="relative">
-        <div
-          class="flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth pb-4 scrollbar-none"
-          data-testimonials-carousel-target="viewport"
-          aria-label="<%= t('landing.testimonials.title') %>"
-        >
-          <% @testimonials.each do |testimonial| %>
-            <div class="w-full shrink-0 snap-start md:w-[calc((100%_-_4rem)/3)]">
-              <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
+      <div class="overflow-hidden" data-testimonials-carousel-target="viewport" aria-label="<%= t('landing.testimonials.title') %>">
+        <div class="flex transition-transform duration-700 ease-in-out" data-testimonials-carousel-target="track">
+          <% @testimonials.each_slice(3) do |testimonials| %>
+            <div class="grid w-full shrink-0 grid-cols-1 gap-8 md:grid-cols-3">
+              <% testimonials.each do |testimonial| %>
+                <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
+              <% end %>
             </div>
           <% end %>
         </div>
-
-        <button
-          type="button"
-          class="absolute left-0 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-md transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          data-action="testimonials-carousel#previous"
-          data-testimonials-carousel-target="previous"
-          aria-label="<%= t('landing.testimonials.previous') %>"
-        >
-          <span aria-hidden="true">←</span>
-        </button>
-
-        <button
-          type="button"
-          class="absolute right-0 top-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-md transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          data-action="testimonials-carousel#next"
-          data-testimonials-carousel-target="next"
-          aria-label="<%= t('landing.testimonials.next') %>"
-        >
-          <span aria-hidden="true">→</span>
-        </button>
       </div>
     </div>
   </section>
