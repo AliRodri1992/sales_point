@@ -753,13 +753,23 @@ ko:
       title: 비즈니스 관리에 필요한 모든 것
     footer:
       about: 회사 소개
+      brand_alt: Delta POS
+      business_partner: 비즈니스 파트너
       company: 회사
-      contact: 문의
-      copyright: "© %{year} Nexo POS. 모든 권리 보유."
-      description: 더 많이 판매하고 재고를 효율적으로 관리하며 복잡함 없이 성장하려는 비즈니스를 위한 현대적인 POS입니다.
-      privacy: 개인정보 보호
+      copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
+      description: 소매점과 기업 체인의 효율성과 성과를 극대화하도록 설계된 클라우드 기반 포인트 오브 세일스 기술입니다.
+      features: 기능
+      hardware: 호환 하드웨어
+      help_center: 고객 지원 센터
+      api_docs: API 문서
+      pricing: 요금제
+      privacy: 개인정보 보호정책
       product: 제품
-      terms: 약관
+      sales_contact: 영업 문의
+      security: 클라우드 보안
+      server_status: 서버 상태
+      support: 지원
+      terms: 서비스 이용약관
     hero:
       badge: ✨ 신규 Delta POS 클라우드 버전
       description: 언제 어디서나 빠르고 신뢰할 수 있는 플랫폼에서 재고를 관리하고 즉시 결제를 처리하며 이익 마진을 분석하세요.
