@@ -1,6 +1,8 @@
 <article class="flex flex-col justify-between space-y-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
   <div class="space-y-2">
-    <div class="flex items-center gap-1 text-amber-400" aria-label="5 estrellas"><% 5.times { %><span aria-hidden="true">★</span><% } %></div>
+    <div class="flex items-center gap-1 text-amber-400" aria-label="<%= t("landing.testimonials.stars_label") %>">
+      <% 5.times { %><span aria-hidden="true">★</span><% } %>
+    </div>
     <p class="text-xs leading-relaxed italic text-slate-500">"<%= quote %>"</p>
   </div>
   <div class="mt-2 flex items-center gap-3 border-t border-slate-100 pt-3">
