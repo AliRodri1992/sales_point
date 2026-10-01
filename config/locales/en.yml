@@ -775,6 +775,7 @@ en:
     faq:
       subtitle: Answers to the most common questions.
       title: Frequently asked questions
+      sale: Sale
     feature_items:
       any_device:
         description: Work from a computer, tablet, or phone. You only need a browser
