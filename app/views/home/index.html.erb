@@ -54,7 +54,7 @@
           aria-label="<%= t('landing.testimonials.title') %>"
         >
           <% @testimonials.each do |testimonial| %>
-            <div class="w-full shrink-0 snap-start md:w-[calc((100%-4rem)/3)]">
+            <div class="w-full shrink-0 snap-start md:w-[calc((100%_-_4rem)/3)]">
               <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
             </div>
           <% end %>
