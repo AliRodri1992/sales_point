@@ -197,8 +197,7 @@ es:
       kpi_grid:
         average_ticket: Ticket promedio
         current_cash: Caja actual
-        sales_today: Ventas de hoy        session_open: Sesión abierta
-        transactions: Transacciones
+        sales_today: Ventas de hoy        session_open: Sesión abierta        transactions: Transacciones
       page_header:
         customize: Personalizar dashboard
         new_sale: Nueva venta
@@ -397,8 +396,7 @@ es:
         confirm_delete: "¿Seguro que quieres eliminar este producto?"
         count: "%{count} productos"
         delete: Eliminar        destroy_failed: No se pudo eliminar el producto
-        edit: Editar
-        empty_subtitle: Agrega tu primer producto para empezar.
+        edit: Editar        empty_subtitle: Agrega tu primer producto para empezar.
         empty_title: Aún no hay productos
         filters:
           all_featured: Todos
@@ -597,8 +595,7 @@ es:
       cancel: Cancelar
     created: Cliente creado correctamente    destroyed: Cliente eliminado correctamente
     edit:
-      subtitle: Actualiza los datos del cliente.
-      title: Editar %{name}
+      subtitle: Actualiza los datos del cliente.      title: Editar %{name}
     form:
       cancel: Cancelar
       code: Código
@@ -797,8 +794,7 @@ es:
       equal_to: debe ser igual a %{count}      equality: no es igual
       even: debe ser par
       exclusion: no está permitido
-      greater_than: debe ser mayor que %{count}
-      greater_than_or_equal_to: debe ser mayor o igual que %{count}
+      greater_than: debe ser mayor que %{count}      greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
       invalid_format: no es válido
@@ -994,7 +990,8 @@ es:
       title: Una interfaz moderna y sencilla
     statistics:
       availability: Disponibilidad
-      daily_sales: Ventas diarias      support: Soporte
+      daily_sales: Ventas diarias
+      support: Soporte
     testimonial_items:
       alejandro:
         company: Minimarket El Triunfo
@@ -1030,9 +1027,6 @@ es:
       badge: Clientes
       subtitle: Nuestro software ayuda diariamente a cientos de negocios.
       title: Empresas que confían en Delta POS
-      badge: Clientes
-      subtitle: Nuestro software ayuda diariamente a cientos de negocios.
-      title: Empresas que confían en Nexo POS
   system_roles:
     create:
       success: El rol del sistema fue creado exitosamente
