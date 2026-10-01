@@ -16,9 +16,21 @@
           <span class="font-mono text-xs font-medium text-slate-400">dashboard_live_analytics.json</span>
         </div>
         <div class="mb-6 grid grid-cols-3 gap-4">
-          <div class="rounded-xl border border-emerald-100/50 bg-emerald-50/50 p-3"><span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ventas de Hoy</span><div class="mt-1 text-xl font-bold text-slate-800">$4,820</div><span class="text-xs font-medium text-emerald-600">↑ +12.4%</span></div>
-          <div class="rounded-xl border border-teal-100/50 bg-teal-50/50 p-3"><span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Transacciones</span><div class="mt-1 text-xl font-bold text-slate-800">142</div><span class="text-xs font-medium text-emerald-600">En tiempo real</span></div>
-          <div class="rounded-xl border border-slate-100 bg-slate-50 p-3"><span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Stock Alertas</span><div class="mt-1 text-xl font-bold text-slate-800">3</div><span class="text-xs font-medium text-rose-500">Acción requerida</span></div>
+          <div class="rounded-xl border border-emerald-100/50 bg-emerald-50/50 p-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("landing.hero_preview.today_sales") %></span>
+            <div class="mt-1 text-xl font-bold text-slate-800">$4,820</div>
+            <span class="text-xs font-medium text-emerald-600">↑ +12.4%</span>
+          </div>
+          <div class="rounded-xl border border-teal-100/50 bg-teal-50/50 p-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("landing.hero_preview.transactions") %></span>
+            <div class="mt-1 text-xl font-bold text-slate-800">142</div>
+            <span class="text-xs font-medium text-emerald-600"><%= t("landing.hero_preview.realtime") %></span>
+          </div>
+          <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t("landing.hero_preview.stock_alerts") %></span>
+            <div class="mt-1 text-xl font-bold text-slate-800">3</div>
+            <span class="text-xs font-medium text-rose-500"><%= t("landing.hero_preview.action_required") %></span>
+          </div>
         </div>
         <div class="space-y-3" aria-hidden="true"><div class="h-4 w-full rounded-md bg-gradient-to-r from-emerald-600 to-teal-600"></div><div class="h-4 w-5/6 rounded-md bg-slate-100"></div><div class="h-4 w-4/6 rounded-md bg-slate-100"></div></div>
       </div>
