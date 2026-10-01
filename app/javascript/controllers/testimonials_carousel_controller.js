@@ -1,43 +1,43 @@
 import { Controller } from "@hotwired/stimulus"
 
+const AUTOPLAY_INTERVAL = 5000
+
 export default class extends Controller {
-  static targets = ["viewport", "previous", "next"]
+  static targets = ["track"]
 
   connect() {
-    this.updateControls()
-    this.boundUpdateControls = this.updateControls.bind(this)
-    this.viewportTarget.addEventListener("scroll", this.boundUpdateControls, { passive: true })
-    window.addEventListener("resize", this.boundUpdateControls)
+    this.currentSlide = 0
+    this.totalSlides = this.trackTarget.children.length
+    this.startAutoplay()
   }
 
   disconnect() {
-    this.viewportTarget.removeEventListener("scroll", this.boundUpdateControls)
-    window.removeEventListener("resize", this.boundUpdateControls)
+    this.stopAutoplay()
   }
 
-  previous() {
-    this.scrollByPage(-1)
+  startAutoplay() {
+    this.stopAutoplay()
+
+    if (this.totalSlides <= 1) return
+
+    this.interval = window.setInterval(() => {
+      this.next()
+    }, AUTOPLAY_INTERVAL)
+  }
+
+  stopAutoplay() {
+    if (this.interval) {
+      window.clearInterval(this.interval)
+      this.interval = null
+    }
   }
 
   next() {
-    this.scrollByPage(1)
+    this.currentSlide = (this.currentSlide + 1) % this.totalSlides
+    this.updatePosition()
   }
 
-  scrollByPage(direction) {
-    this.viewportTarget.scrollBy({
-      left: direction * this.viewportTarget.clientWidth,
-      behavior: "smooth"
-    })
-  }
-
-  updateControls() {
-    const maxScrollLeft = this.viewportTarget.scrollWidth - this.viewportTarget.clientWidth
-    const atStart = this.viewportTarget.scrollLeft <= 1
-    const atEnd = this.viewportTarget.scrollLeft >= maxScrollLeft - 1
-
-    this.previousTarget.disabled = atStart
-    this.nextTarget.disabled = atEnd
-    this.previousTarget.setAttribute("aria-disabled", atStart)
-    this.nextTarget.setAttribute("aria-disabled", atEnd)
+  updatePosition() {
+    this.trackTarget.style.transform = `translateX(-${this.currentSlide * 100}%)`
   }
 }
