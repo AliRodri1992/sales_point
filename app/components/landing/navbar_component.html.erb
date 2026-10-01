@@ -24,8 +24,13 @@
           </button>
           <div data-language-selector-target="dropdown" class="absolute right-0 top-full z-50 mt-2 hidden w-40 rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
             <% Language.available.order(:code).each do |language| %>
-              <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center justify-between px-3 py-2 text-sm font-medium <%= language.code == helpers.current_language.code ? 'bg-emerald-50 text-emerald-700' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' %>">
-                <span><%= language.code.upcase %></span>
+              <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium <%= language.code == helpers.current_language.code ? 'bg-emerald-50 text-emerald-700' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' %>">
+                <img
+                  src="<%= language.flag_url %>"
+                  srcset="<%= language.flag_srcset %>"
+                  class="h-6 w-6 shrink-0 rounded-full object-cover"
+                  alt="<%= language.name %>">
+                <span class="flex-1 text-left"><%= language.code.upcase %></span>
                 <% if language.code == helpers.current_language.code %>
                   <%= render Ui::IconComponent.new(name: "check", size: :sm, color: :success) %>
                 <% end %>
