@@ -89,7 +89,7 @@ en:
         no_address: No address
         no_data: "—"
         no_phone: No phone
-        page_title: Branches | Nexo POS
+        page_title: Branches | Delta POS
         pagination:
           navigation: Branch pagination
           next: Next
@@ -103,7 +103,7 @@ en:
       updated: Branch updated successfully.
     system_roles:
       new:
-        page_title: New role | Nexo POS
+        page_title: New role | Delta POS
         title: New role
         subtitle: Create a role and assign the permissions it will have available.
         back: Back to roles
@@ -122,7 +122,7 @@ en:
           description: Description
           description_placeholder: Describe the scope of this role.
       index:
-        page_title: Roles | Nexo POS
+        page_title: Roles | Delta POS
         title: Roles
         subtitle: Define which system modules each role can access.
         new: New role
@@ -219,7 +219,7 @@ en:
       updated: Category updated successfully
     dashboard:
       index:
-        title: Admin Dashboard | Nexo POS
+        title: Admin Dashboard | Delta POS
       kpi_grid:
         average_ticket: Average ticket
         current_cash: Current cash
@@ -468,7 +468,7 @@ en:
           username: Username
         last_sign_in: Last sign in
         never: Never
-        page_title: My profile | Nexo POS
+        page_title: My profile | Delta POS
         personal_information:
           subtitle: Update your basic details and preferences.
           title: Personal information
@@ -511,7 +511,7 @@ en:
         select_user: Select a user to start chatting
         send: Send message
       footer:
-        copyright: "© %{year} NEXO POS. All rights reserved."
+        copyright: "© %{year} Delta POS. All rights reserved."
         privacy: Privacy
         terms: Terms
       language_selector:
@@ -626,7 +626,7 @@ en:
         message: Message
         name: Name
         phone: Phone
-      subject: New demo request - Nexo POS
+      subject: New demo request - Delta POS
       title: New demo request
   demo_requests:
     create:
@@ -644,7 +644,7 @@ en:
         resolve_questions:
           description: A specialist can explain how the platform works.
           title: Get your questions answered
-      brand: Nexo POS
+      brand: Delta POS
       company: Company
       email: Email address
       error_summary: The request could not be sent. Check the fields and try again.
@@ -654,7 +654,7 @@ en:
       hero_title_suffix: can do for your business
       message: How can we help?
       name: Name
-      page_title: Request a demo | Nexo POS
+      page_title: Request a demo | Delta POS
       phone: Phone
       submit: Request a demo
   devise:
@@ -681,7 +681,7 @@ en:
         unhappy: Unhappy?
       new:
         already_have_account: Already have an account?
-        brand_alt: Nexo POS logo mark
+        brand_alt: Delta POS logo mark
         email: Email address
         email_placeholder: email@example.com
         password: Password
@@ -689,7 +689,7 @@ en:
         password_minimum: "%{count} characters minimum"
         sign_in: Sign in
         submit: Create account
-        subtitle: Sign up to start using Nexo POS
+        subtitle: Sign up to start using Delta POS
         title: Create account
     sessions:
       new:
@@ -733,7 +733,7 @@ en:
       view_demo: View demo
       open_menu: Open menu
     cta:
-      description: Start today with Nexo POS and discover how to simplify your business
+      description: Start today with Delta POS and discover how to simplify your business
         administration.
       title: Ready to modernize your business?
     dashboard:
@@ -803,7 +803,7 @@ en:
       badge: New • Cloud POS
       description: Control sales, inventory, customers, purchases, reports, and billing
         from any device.
-      highlighted: NEXO POS
+      highlighted: Delta POS
       title: Manage your business with
     module_items:
       accounting:
@@ -879,7 +879,7 @@ en:
           or cancel it whenever you need.
         question: Is there a minimum commitment?
       install:
-        answer: No. Nexo POS runs in your browser, so you can use it on any computer
+        answer: No. Delta POS runs in your browser, so you can use it on any computer
           with internet access.
         question: Do I need to install anything on my computer?
       migration:
@@ -924,7 +924,7 @@ en:
     testimonials:
       badge: Customers
       subtitle: Our software helps hundreds of businesses every day.
-      title: Businesses that trust Nexo POS
+      title: Businesses that trust Delta POS
   clients:
     confirm:
       cancel: Cancel
