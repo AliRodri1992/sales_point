@@ -1013,3 +1013,54 @@ select:focus-visible {
 #conversation_messages::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
 }
+
+/* ============================================================
+   DELTA POS Login Page Styles (from login.html template)
+   ============================================================ */
+
+:root {
+    --theme-primary-start: #059669;
+    --theme-primary-end: #0d9488;
+    --theme-hover-start: rgb(4, 120, 87);
+    --theme-hover-end: rgb(15, 118, 110);
+    --theme-active-start: rgb(6, 95, 70);
+    --theme-active-end: rgb(19, 78, 74);
+}
+
+.font-jakarta {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+.bg-delta-dark {
+    background-color: oklch(20.8% 0.042 265.755);
+}
+
+.btn-delta-gradient {
+    background: linear-gradient(135deg, var(--theme-primary-start) 0%, var(--theme-primary-end) 100%);
+}
+
+.btn-delta-gradient:hover {
+    background: linear-gradient(135deg, var(--theme-hover-start), var(--theme-hover-end));
+}
+
+.btn-delta-gradient:active {
+    background: linear-gradient(135deg, var(--theme-active-start), var(--theme-active-end));
+}
+
+.dropdown-opt-hover:hover {
+    background: linear-gradient(135deg, var(--theme-hover-start), var(--theme-hover-end)) !important;
+    color: #ffffff !important;
+}
+
+.dropdown-opt-active {
+    background: linear-gradient(135deg, var(--theme-active-start), var(--theme-active-end)) !important;
+    color: #ffffff !important;
+}
+
+.bg-grid-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'%3E%3Cpath d='M24 0H0v24'/%3E%3C/svg%3E");
+}
