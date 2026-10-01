@@ -722,12 +722,12 @@ en:
     mailer:
       confirmation_instructions:
         greeting: "Welcome %{email}!"
-        instruction: You can confirm your account email through the link below:
+        instruction: "You can confirm your account email through the link below:"
         action: Confirm my account
       unlock_instructions:
         greeting: "Hello %{email}!"
         notification: Your account has been locked due to an excessive number of unsuccessful sign-in attempts.
-        instruction: Click the link below to unlock your account:
+        instruction: "Click the link below to unlock your account:"
         action: Unlock my account
       email_changed:
         greeting: "Hello %{email}!"
@@ -835,10 +835,19 @@ en:
       terms: Terms of Service
     hero:
       badge: New • Cloud POS
-      description: Control sales, inventory, customers, purchases, reports, and billing
-        from any device.
+      description: Control sales, inventory, customers, purchases, reports, and billing from any device.
       highlighted: Delta POS
       title: Manage your business with
+      problem_title: Tired of slow systems that slow down your business?
+      old_model_intro: Modern businesses cannot depend on obsolete software.
+      old_model_title: "The outdated model"
+      new_model_title: "The Delta POS experience"
+      testimonials_title: Commercial Success Stories
+      prices_title: Transparent plans tailored to your needs
+      faq_title: Frequently Asked Questions
+      cta_title: Ready to modernize your point of sale?
+      cta_description: Join hundreds of growing businesses that already scaled their operations.
+      features_title: Everything you need in one platform
     module_items:
       accounting:
         description: Export your transactions in the format your accountant needs,
@@ -1036,18 +1045,6 @@ en:
       success: System role was successfully created
     destroy:
       success: System role was successfully deleted
-  landing.hero:
-    problem_title: Tired of slow systems that slow down your business?
-    old_model_intro: Modern businesses cannot depend on obsolete software.
-    old_model_title: "The outdated model"
-    new_model_title: "The Delta POS experience"
-    testimonials_title: Commercial Success Stories
-    prices_title: Transparent plans tailored to your needs
-    faq_title: Frequently Asked Questions
-    cta_title: Ready to modernize your point of sale?
-    cta_description: Join hundreds of growing businesses that already scaled their
-      operations.
-    features_title: Everything you need in one platform
   home:
     old_model:
       item_1: "Long checkout lines due to slow software that constantly hangs."
@@ -1064,6 +1061,3 @@ en:
     title: Delta POS - Intelligent Point of Sale System
     description: 'Delta POS: intelligent point of sale system for sales, inventory
       and business operations.'
-  landing.features:
-    title: Everything you need in one platform
-    subtitle: A modern platform designed for small, medium, and large businesses.
