@@ -878,15 +878,24 @@ es:
         empresas.
       title: Todo lo que necesitas para administrar tu negocio
     footer:
-      about: Nosotros
-      company: Empresa
-      contact: Contacto
-      copyright: "© %{year} Nexo POS. Todos los derechos reservados."
-      description: Punto de venta moderno para negocios que desean vender más, administrar
-        mejor su inventario y crecer sin complicaciones.
-      privacy: Privacidad
+      about: Sobre Nosotros
+      brand_alt: Delta POS
+      business_partner: Socio Comercial
+      company: Compañía
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+      description: Tecnología de punto de venta en la nube diseñada para maximizar la eficiencia y rendimiento de comercios minoristas y cadenas corporativas.
+      features: Funcionalidades
+      hardware: Hardware Compatible
+      help_center: Centro de Ayuda
+      api_docs: Documentación API
+      pricing: Planes de Precios
+      privacy: Política de Privacidad
       product: Producto
-      terms: Términos
+      sales_contact: Contacto de Ventas
+      security: Seguridad en la Nube
+      server_status: Estatus del Servidor
+      support: Soporte
+      terms: Términos del Servicio
     hero:
       badge: Nuevo • POS en la nube
       description: Controla ventas, inventario, clientes, compras, reportes y facturación
