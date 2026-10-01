@@ -350,6 +350,10 @@ ko:
         branch: 지점
       update_permissions:
         success: 역할 권한이 성공적으로 업데이트되었습니다.
+    create:
+      success: 시스템 역할이 성공적으로 생성되었습니다
+    destroy:
+      success: 시스템 역할이 성공적으로 삭제되었습니다
     products:
       close: 닫기
       confirm:
@@ -888,11 +892,6 @@ ko:
       badge: 고객
       subtitle: 저희 소프트웨어는 매일 수백 개의 비즈니스를 돕습니다.
       title: Nexo POS를 신뢰하는 기업
-  system_roles:
-    create:
-      success: 시스템 역할이 성공적으로 생성되었습니다
-    destroy:
-      success: 시스템 역할이 성공적으로 삭제되었습니다
   app:
     name: 델타
     short_name: 포스
