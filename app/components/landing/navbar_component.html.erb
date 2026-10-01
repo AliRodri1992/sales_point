@@ -22,7 +22,7 @@
             <span><%= helpers.current_language.code.upcase %></span>
             <%= render Ui::IconComponent.new(name: "chevron-down", size: :xs, color: :white) %>
           </button>
-          <div data-language-selector-target="dropdown" class="absolute right-0 top-full z-50 mt-2 hidden w-40 rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+          <div data-language-selector-target="dropdown" class="absolute right-0 top-full z-50 mt-2 hidden w-40 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
             <% Language.available.order(:code).each do |language| %>
               <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium <%= language.code == helpers.current_language.code ? 'bg-emerald-50 text-emerald-700' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' %>">
                 <img
