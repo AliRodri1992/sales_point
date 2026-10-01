@@ -848,6 +848,7 @@ ko:
       greater_than_min: 최소 재고보다 크거나 같아야 합니다
       invalid: 이(가) 올바르지 않습니다
       invalid_format: 이(가) 올바르지 않습니다
+      invalid_url: 유효한 URL이 아닙니다
       taken: 이미 사용 중입니다
       too_long: 이(가) 너무 깁니다 (최대 %{count}자)
       too_short: 이(가) 너무 짧습니다 (최소 %{count}자)
