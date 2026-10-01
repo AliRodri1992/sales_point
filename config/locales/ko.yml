@@ -805,10 +805,10 @@ ko:
       support: 지원
       terms: 서비스 이용약관
     hero:
-      badge: ✨ 신규 Delta POS 클라우드 버전
-      description: 언제 어디서나 빠르고 신뢰할 수 있는 플랫폼에서 재고를 관리하고 즉시 결제를 처리하며 이익 마진을 분석하세요.
-      highlighted: 성장
-      title: 당신의 비즈니스를 고속으로 하는 포인트 오브 세일스
+      badge: ✨ 새로운 Delta POS 클라우드 버전
+      description: 가장 빠르고 신뢰할 수 있는 플랫폼으로 재고를 관리하고 결제를 즉시 처리하며 수익 마진을 분석하세요.
+      highlighted: 성장을
+      title: 성장을 이끄는 포인트 오브 세일
       problem_title: "사업을 느리게 만드는 오래된 시스템에 지치셨나요?"
       old_model_intro: 현대적인 비즈니스는 오래된 소프트웨어에 의존할 수 없습니다.
       old_model_title: "낡은 방식"
