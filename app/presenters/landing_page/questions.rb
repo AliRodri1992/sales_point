@@ -5,8 +5,8 @@ module LandingPage
     def self.all
       KEYS.map do |key|
         Question.new(
-          question: I18n.t('landing.questions.%<key>s.question', key:),
-          answer: I18n.t('landing.questions.%<key>s.answer', key:)
+          question: I18n.t('landing.questions.#{key}.question', key:),
+          answer: I18n.t('landing.questions.#{key}.answer', key:)
         )
       end
     end
