@@ -156,6 +156,9 @@ export default class extends Controller {
             button.dataset.theme
 
 
+        // Save to cookie
+        document.cookie = `terminal_theme=${theme}; path=/; max-age=31536000`;
+
 
         this.wrapperTarget.className =
             this.wrapperTarget.className.replace(

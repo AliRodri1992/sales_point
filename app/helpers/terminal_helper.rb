@@ -6,7 +6,7 @@ module TerminalHelper
   end
 
   def current_terminal_theme
-    session[:theme].presence || Theme::DEFAULT
+    cookies[:terminal_theme].presence || Theme::DEFAULT
   end
 
   def terminal_languages
