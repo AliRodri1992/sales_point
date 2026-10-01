@@ -773,12 +773,12 @@ es:
     mailer:
       confirmation_instructions:
         greeting: "¡Bienvenido %{email}!"
-        instruction: Puedes confirmar el correo electrónico de tu cuenta mediante el siguiente enlace:
+        instruction: "Puedes confirmar el correo electrónico de tu cuenta mediante el siguiente enlace:"
         action: Confirmar mi cuenta
       unlock_instructions:
         greeting: "¡Hola %{email}!"
         notification: Tu cuenta ha sido bloqueada debido a un número excesivo de intentos fallidos de inicio de sesión.
-        instruction: Haz clic en el siguiente enlace para desbloquear tu cuenta:
+        instruction: "Haz clic en el siguiente enlace para desbloquear tu cuenta:"
         action: Desbloquear mi cuenta
       email_changed:
         greeting: "¡Hola %{email}!"
@@ -1074,18 +1074,22 @@ es:
       success: El rol del sistema fue creado exitosamente
     destroy:
       success: El rol del sistema fue eliminado exitosamente
-  landing.hero:
-    problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
-    old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
-    old_model_title: "El modelo obsoleto"
-    new_model_title: "La experiencia Delta POS"
-    testimonials_title: Historias de Éxito Comercial
-    prices_title: Planes transparentes a tu medida
-    faq_title: Preguntas Frecuentes
-    cta_title: "¿Listo para modernizar tu punto de venta?"
-    cta_description: Únete a cientos de comercios en crecimiento que ya escalaron
-      sus ventas operativas.
-    features_title: Todo lo que necesitas en una sola plataforma
+  landing:
+    hero:
+      badge: Nuevo • POS en la nube
+      description: Controla ventas, inventario, clientes, compras, reportes y facturación desde cualquier dispositivo.
+      highlighted: Delta POS
+      title: Administra tu negocio con
+      problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
+      old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
+      old_model_title: "El modelo obsoleto"
+      new_model_title: "La experiencia Delta POS"
+      testimonials_title: Historias de Éxito Comercial
+      prices_title: Planes transparentes a tu medida
+      faq_title: Preguntas Frecuentes
+      cta_title: "¿Listo para modernizar tu punto de venta?"
+      cta_description: Únete a cientos de comercios en crecimiento que ya escalaron sus ventas operativas.
+      features_title: Todo lo que necesitas en una sola plataforma
   home:
     old_model:
       item_1: "Filas largas en caja debido a un software lento que se traba constantemente."
@@ -1102,6 +1106,3 @@ es:
     title: Delta POS - Sistema de Punto de Venta Inteligente
     description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
       y operación comercial.'
-  landing.features:
-    title: Todo lo que necesitas en una sola plataforma
-    subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes empresas.
