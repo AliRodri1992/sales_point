@@ -46,6 +46,7 @@ es:
         status: "Estado"
         stock: "Existencias"
         view_count: "Contador de vistas"
+        image: "Imagen"
       user:
         current_password: "Contraseña actual"
         email: "Correo electrónico"
@@ -164,6 +165,11 @@ es:
         branch: Sucursal
       update_permissions:
         success: Los permisos del rol se actualizaron correctamente.
+      create:
+        success: "El rol del sistema fue creado correctamente"
+      destroy:
+        success: "El rol del sistema fue eliminado correctamente"
+      manage_permissions: "Administrar permisos"
     breadcrumbs:
       roles: Roles
       branches: Sucursales
@@ -305,6 +311,7 @@ es:
             year: Este año
           subtitle: Comportamiento durante los últimos 7 días
           title: Ventas
+      no_image: "Sin imagen disponible"
     languages:
       confirm:
         cancel: Cancelar
@@ -374,6 +381,7 @@ es:
         label: Editar Producto
         subtitle: Actualiza los datos del producto.
         title: Editar %{name}
+        close: "Cerrar"
       form:
         additional_info: Información adicional
         back: Volver
@@ -462,6 +470,7 @@ es:
         back: Volver
         subtitle: Añade un producto a tu catálogo.
         title: Nuevo producto
+        close: "Cerrar"
       show:
         back: Volver
         close: Cerrar

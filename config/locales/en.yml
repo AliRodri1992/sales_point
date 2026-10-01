@@ -35,6 +35,7 @@ en:
         status: Status
         stock: Stock
         view_count: View count
+        image: "Image"
       user:
         current_password: Current password
         email: Email address
@@ -163,6 +164,11 @@ en:
         branch: Branch
       update_permissions:
         success: Role permissions were updated successfully.
+      create:
+        success: "System role was successfully created"
+      destroy:
+        success: "System role was successfully deleted"
+      manage_permissions: "Manage permissions"
     breadcrumbs:
       roles: Roles
       branches: Branches
@@ -304,6 +310,7 @@ en:
             year: This year
           subtitle: Behavior over the last 7 days
           title: Sales
+      no_image: "No image available"
     languages:
       confirm:
         cancel: Cancel
@@ -373,6 +380,7 @@ en:
         label: Edit Product
         subtitle: Update the product details.
         title: Edit %{name}
+        close: "Close"
       form:
         additional_info: Additional Information
         back: Back
@@ -461,6 +469,7 @@ en:
         back: Back
         subtitle: Add a product to your catalog.
         title: New product
+        close: "Close"
       show:
         back: Back
         close: Close
