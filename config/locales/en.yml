@@ -997,7 +997,7 @@ en:
     problem_title: Tired of slow systems that slow down your business?
     old_model_intro: Modern businesses cannot depend on obsolete software.
     old_model_title: "The outdated model"
-    new_model_title: "Delta POS Experience"
+    new_model_title: "The Delta POS experience"
     testimonials_title: Commercial Success Stories
     prices_title: Transparent plans tailored to your needs
     faq_title: Frequently Asked Questions
@@ -1015,12 +1015,12 @@ en:
     - "Automated cloud inventory with instant low-stock alerts."
     - "Live analytics dashboard accessible from any phone or tablet."
     old_model:
-      item_1: "Long rows at checkout due to a slow software that constantly hangs."
-      item_2: "Inventory gaps between branches and unexplained losses."
+      item_1: "Long checkout lines due to slow software that constantly hangs."
+      item_2: "Inventory discrepancies between branches and unexplained losses."
       item_3: "Complex manual reports at the end of each month in spreadsheets."
     new_model:
-      item_1: "Get paid in under 2 seconds with smooth and intuitive interfaces."
-      item_2: "Automated cloud inventory with instant low-stock alerts."
+      item_1: "Payments completed in under 2 seconds with smooth and intuitive interfaces."
+      item_2: "Automated cloud inventory control with instant restocking alerts."
       item_3: "Live analytics dashboard accessible from any phone or tablet."
   app:
     name: Delta
