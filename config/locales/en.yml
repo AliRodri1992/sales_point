@@ -496,7 +496,7 @@ en:
         branch_north: North branch
         branch_south: South branch
       chat:
-        assistant_name: NEXO Assistant
+        assistant_name: DELTA Assistant
         close: Close chat
         greeting: Hello, %{name}. How can I help you?
         input_placeholder: Type a message...
