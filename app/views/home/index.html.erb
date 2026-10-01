@@ -15,34 +15,48 @@
   <section id="solucion" class="border-y border-slate-200/50 bg-slate-100/60 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto mb-12 max-w-3xl text-center">
-        <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">¿Cansado de sistemas lentos que frenan tu negocio?</h2>
-        <p class="mt-4 text-base text-slate-500 sm:text-lg">Los negocios modernos no pueden depender de software obsoleto. Diseñamos Delta POS para solucionar las fricciones diarias de tu operación.</p>
+        <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= t('landing.hero.problem_title') %></h2>
+        <p class="mt-4 text-base text-slate-500 sm:text-lg"><%= t('landing.hero.problem_subtitle') %></p>
       </div>
       <div class="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
-        <article class="space-y-4 rounded-2xl border border-rose-100 bg-rose-50/50 p-8"><h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-rose-800">❌ El modelo obsoleto</h3><ul class="space-y-3 text-sm text-slate-600"><li>👉 Filas largas en caja debido a un software lento que se traba constantemente.</li><li>👉 Descuadres de inventario entre sucursales y pérdidas sin explicación.</li><li>👉 Reportes manuales complejos al final de cada mes en hojas de cálculo.</li></ul></article>
-        <article class="space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-8"><h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-emerald-600">🚀 La experiencia Delta POS</h3><ul class="space-y-3 text-sm text-slate-600"><li>✅ Cobros en menos de 2 segundos con interfaces fluidas e intuitivas.</li><li>✅ Control de stock automatizado en la nube con alertas instantáneas de resurtido.</li><li>✅ Dashboard analítico en vivo accesible desde cualquier celular o tablet.</li></ul></article>
+        <article class="space-y-4 rounded-2xl border border-rose-100 bg-rose-50/50 p-8">
+          <h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-rose-800"><%= t('landing.hero.old_model_title') %></h3>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><%= t('home.old_model.item_1') %></li>
+            <li><%= t('home.old_model.item_2') %></li>
+            <li><%= t('home.old_model.item_3') %></li>
+          </ul>
+        </article>
+        <article class="space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-8">
+          <h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-emerald-600"><%= t('landing.hero.new_model_title') %></h3>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><%= t('home.new_model.item_1') %></li>
+            <li><%= t('home.new_model.item_2') %></li>
+            <li><%= t('home.new_model.item_3') %></li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
 
-  <%= render Landing::FeaturesComponent.new(title: "Todo lo que necesitas en una sola plataforma", subtitle: nil, features: @features) %>
+  <%= render Landing::FeaturesComponent.new(title: t('landing.hero.features_title'), subtitle: nil, features: @features) %>
 
   <section class="relative min-h-[460px] overflow-hidden border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900">Historias de Éxito Comercial</h2></div>
+      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900"><%= t('landing.hero.testimonials_title') %></h2></div>
       <div class="grid gap-8 md:grid-cols-3"><% @testimonials.each do |testimonial| %><%= render Landing::TestimonialComponent.new(**testimonial.to_h) %><% end %></div>
     </div>
   </section>
 
   <section id="precios" class="border-t border-slate-200/60 bg-slate-100/50 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">Planes transparentes a tu medida</h2></div>
+      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= t('landing.hero.prices_title') %></h2></div>
       <div class="mx-auto grid max-w-4xl items-stretch gap-8 md:grid-cols-2"><% @plans.first(2).each do |plan| %><%= render Landing::PricingCardComponent.new(**plan.to_h) %><% end %></div>
     </div>
   </section>
 
-  <%= render Landing::FaqComponent.new(title: "Preguntas Frecuentes", subtitle: nil, questions: @questions) %>
-  <%= render Landing::CtaComponent.new(title: "¿Listo para modernizar tu punto de venta?", description: "Únete a cientos de comercios en crecimiento que ya escalaron sus ventas operativas.", button_text: "Comenzar", button_href: "#precios") %>
+  <%= render Landing::FaqComponent.new(title: t('landing.faq.title'), subtitle: t('landing.faq.subtitle'), questions: @questions) %>
+  <%= render Landing::CtaComponent.new(title: t('landing.hero.cta_title'), description: t('landing.hero.cta_description'), button_text: t('landing.buttons.start'), button_href: "#precios") %>
 </main>
 
 <%= render Landing::FooterComponent.new %>
