@@ -781,15 +781,24 @@ en:
       subtitle: A modern platform designed for small, medium, and large businesses.
       title: Everything you need to manage your business
     footer:
-      about: About us
+      about: About Us
+      brand_alt: Delta POS
+      business_partner: Business Partner
       company: Company
-      contact: Contact
-      copyright: "© %{year} Nexo POS. All rights reserved."
-      description: Modern point of sale for businesses that want to sell more, manage
-        inventory better, and grow without complications.
-      privacy: Privacy
+      copyright: "© %{year} Delta POS Inc. All rights reserved."
+      description: Cloud-based point-of-sale technology designed to maximize the efficiency and performance of retail businesses and corporate chains.
+      features: Features
+      hardware: Compatible Hardware
+      help_center: Help Center
+      api_docs: API Documentation
+      pricing: Pricing Plans
+      privacy: Privacy Policy
       product: Product
-      terms: Terms
+      sales_contact: Sales Contact
+      security: Cloud Security
+      server_status: Server Status
+      support: Support
+      terms: Terms of Service
     hero:
       badge: New • Cloud POS
       description: Control sales, inventory, customers, purchases, reports, and billing
