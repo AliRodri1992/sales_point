@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full scroll-smooth">
+<html lang="<%= I18n.locale %>" class="h-full scroll-smooth">
   <head>
-    <title><%= content_for?(:title) ? yield(:title) : "Delta POS - Sistema de Punto de Venta Inteligente" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : t("app.title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Delta POS">
+    <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="Delta POS: sistema de punto de venta inteligente para ventas, inventario y operación comercial.">
+    <meta name="description" content="<%= t("app.description") %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
