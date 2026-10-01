@@ -2,6 +2,8 @@
 
 module Authentication
   class ErrorBannerComponent < ViewComponent::Base
+    delegate :icon, :class_names, to: :view_context
+
     def initialize(resource:)
       super()
       @resource = resource
