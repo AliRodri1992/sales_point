@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale %>" class="h-full bg-slate-900">
-  <head>
-    <title><%= content_for?(:title) ? yield(:title) : "Iniciar Sesión - Delta POS" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Delta POS">
-    <meta name="mobile-web-app-capable" content="yes">
+<html lang="<%= I18n.locale %>" class="h-full bg-slate-50">
+   <head>
+      <title><%= content_for?(:title) ? yield(:title) : "Post - Terminal" %></title>
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
+      <meta name="mobile-web-app-capable" content="yes">
+      <%= csrf_meta_tags %>
+      <%= csp_meta_tag %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

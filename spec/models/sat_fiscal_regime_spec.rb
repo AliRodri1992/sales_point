@@ -70,12 +70,14 @@ RSpec.describe SatFiscalRegime, type: :model do
     describe '.valid_on' do
       let!(:valid_regime) do
         create(:sat_fiscal_regime,
+               code: 'VLD',
                valid_from: Date.yesterday,
                valid_to: Date.tomorrow)
       end
 
       let!(:invalid_regime) do
         create(:sat_fiscal_regime,
+               code: 'INV',
                valid_from: 10.days.ago,
                valid_to: 5.days.ago)
       end

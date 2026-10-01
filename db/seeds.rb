@@ -155,7 +155,10 @@ def load_translations_from_file(file_path, locale_code)
   return unless locale_hash && language
 
   flatten_hash(locale_hash, '').each do |key, value|
-    persist_translation(key, value.to_s, locale_code, language) unless value.is_a?(Hash)
+    next if value.is_a?(Hash)
+    next if value.blank? || value.to_s.strip.empty?
+
+    persist_translation(key, value.to_s, locale_code, language)
   end
 end
 

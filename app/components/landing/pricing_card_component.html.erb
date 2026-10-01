@@ -1,30 +1,24 @@
-<%= render Ui::CardComponent.new(hover: true, shadow: true, full_height: true) do |card| %>
-  <% card.with_body do %>
-    <div class="relative flex h-full flex-col gap-6">
-      <% if badge? %>
-        <div class="absolute right-0 top-0">
-          <%= render Ui::BadgeComponent.new(text: t('landing.pricing.most_popular'), color: :primary) %>
-        </div>
-      <% end %>
-      <div class="min-h-24">
-        <h3 class="text-2xl font-bold text-slate-900"><%= name %></h3>
-        <p class="mt-2 text-slate-500"><%= description %></p>
-      </div>
-      <div class="min-h-16">
-        <span class="text-5xl font-black text-blue-600">
-          $<%= price %>
-        </span>
-        <span class="text-slate-500"><%= t('landing.pricing.per_month') %></span>
-      </div>
-      <ul class="flex-1 space-y-4">
-        <% features.each do |feature| %>
-          <li class="flex items-center gap-3">
-            <%= render Ui::IconComponent.new(name: :check_circle, variant: :solid, color: :success) %>
-            <span><%= feature %></span>
-          </li>
-        <% end %>
-      </ul>
-      <%= render Ui::ButtonComponent.new(text: t('landing.pricing.choose_plan'), href: new_user_registration_path, variant: :primary, full_width: true) %>
-    </div>
+<article class="<%= card_classes %>">
+  <% if badge? %>
+    <span class="absolute right-8 top-0 -translate-y-1/2 rounded-full bg-emerald-600 px-3 py-1 font-jakarta text-xs font-semibold uppercase tracking-wide text-white">
+      <%= t("landing.pricing.most_popular") %>
+    </span>
   <% end %>
-<% end %>
+  <div>
+    <h3 class="font-jakarta text-xl font-bold text-slate-900"><%= name %></h3>
+    <p class="mt-1 text-sm text-slate-400"><%= description %></p>
+    <div class="mb-6 mt-6">
+      <span class="font-jakarta text-4xl font-extrabold text-slate-900">$<%= price %></span>
+      <span class="text-sm font-medium text-slate-400"><%= t("landing.pricing.per_month") %></span>
+    </div>
+    <ul class="space-y-3.5 text-sm">
+      <% features.each do |feature| %>
+        <li class="flex items-center gap-2.5 text-slate-600">
+          <svg class="h-4 w-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+          <span><%= feature %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <%= link_to plan_button_text, new_user_registration_path, class: button_classes %>
+</article>

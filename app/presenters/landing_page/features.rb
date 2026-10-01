@@ -1,23 +1,20 @@
 module LandingPage
   module Features
-    def self.all
-      [
-        feature(:quick_sales, 'shopping-cart', :blue),
-        feature(:realtime_inventory, 'cube', :emerald),
-        feature(:customers, 'users', :purple),
-        feature(:reports, 'chart-bar', :amber),
-        feature(:billing, 'document-text', :red),
-        feature(:any_device, 'device-phone-mobile', :cyan)
-      ]
-    end
+    ITEMS = [
+      %i[fast_sales bolt emerald],
+      %i[inventory_control inventory teal],
+      %i[analytics_reports chart dark_emerald]
+    ].freeze
 
-    def self.feature(key, icon, color)
-      Feature.new(
-        icon: icon,
-        title: I18n.t("landing.feature_items.#{key}.title"),
-        description: I18n.t("landing.feature_items.#{key}.description"),
-        color: color
-      )
+    def self.all
+      ITEMS.map do |key, icon, color|
+        Feature.new(
+          icon: icon,
+          title: I18n.t("landing.features.items.#{key}.title"),
+          description: I18n.t("landing.features.items.#{key}.description"),
+          color: color
+        )
+      end
     end
   end
 end
