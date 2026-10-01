@@ -197,8 +197,7 @@ es:
       kpi_grid:
         average_ticket: Ticket promedio
         current_cash: Caja actual
-        sales_today: Ventas de hoy
-        session_open: Sesión abierta
+        sales_today: Ventas de hoy        session_open: Sesión abierta
         transactions: Transacciones
       page_header:
         customize: Personalizar dashboard
@@ -397,8 +396,7 @@ es:
           views: Vistas
         confirm_delete: "¿Seguro que quieres eliminar este producto?"
         count: "%{count} productos"
-        delete: Eliminar
-        destroy_failed: No se pudo eliminar el producto
+        delete: Eliminar        destroy_failed: No se pudo eliminar el producto
         edit: Editar
         empty_subtitle: Agrega tu primer producto para empezar.
         empty_title: Aún no hay productos
@@ -597,8 +595,7 @@ es:
   clients:
     confirm:
       cancel: Cancelar
-    created: Cliente creado correctamente
-    destroyed: Cliente eliminado correctamente
+    created: Cliente creado correctamente    destroyed: Cliente eliminado correctamente
     edit:
       subtitle: Actualiza los datos del cliente.
       title: Editar %{name}
@@ -797,8 +794,7 @@ es:
       acceptance: no ha sido aceptado
       blank: no puede estar vacío
       confirmation: no coincide
-      equal_to: debe ser igual a %{count}
-      equality: no es igual
+      equal_to: debe ser igual a %{count}      equality: no es igual
       even: debe ser par
       exclusion: no está permitido
       greater_than: debe ser mayor que %{count}
@@ -902,6 +898,7 @@ es:
         desde cualquier dispositivo.
       highlighted: NEXO POS
       title: Administra tu negocio con
+      testimonials_title: Historias de Éxito Comercial
     module_items:
       accounting:
         description: Exporta tus movimientos en el formato que tu contador necesita,
@@ -997,28 +994,42 @@ es:
       title: Una interfaz moderna y sencilla
     statistics:
       availability: Disponibilidad
-      daily_sales: Ventas diarias
-      support: Soporte
+      daily_sales: Ventas diarias      support: Soporte
     testimonial_items:
-      andrea:
-        company: Boutique Aurora
-        name: Andrea Solís
-        position: Fundadora
-        quote: La capacitación del personal tomó una tarde. La interfaz es tan simple
-          que casi no hubo preguntas.
+      alejandro:
+        company: Minimarket El Triunfo
+        name: Alejandro Gómez
+        position: null
+        quote: "Redujo nuestras filas un 40%. La interfaz es tan intuitiva que el entrenamiento de nuevos cajeros toma menos de diez minutos."
+      beatriz:
+        company: Boutique Bloom
+        name: Beatriz Mendoza
+        position: null
+        quote: "La sincronización de stock en la nube es real. Ahora sé exactamente qué producto se vende más a cada hora sin esperar auditorías manuales."
       carlos:
-        company: Ferretería Norte
-        name: Carlos Ibáñez
-        position: Gerente de operaciones
-        quote: Tenemos tres sucursales y por fin vemos el inventario de todas en la
-          misma pantalla.
-      laura:
-        company: Abarrotes La Esquina
-        name: Laura Méndez
-        position: Propietaria
-        quote: Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué
-          me falta surtir en un minuto.
+        company: Ferretería El Candado
+        name: Carlos Ramírez
+        position: null
+        quote: "La facturación electrónica integrada nos ahorró horas de trabajo administrativo. El sistema cumple con todo lo legal al instante."
+      diana:
+        company: Cafetería Urban Central
+        name: Diana Silva
+        position: null
+        quote: "La velocidad de procesamiento de tarjetas aumentó nuestras ventas en horas pico. Un cambio radical para el negocio."
+      eduardo:
+        company: Tiendas Minimix (5 sucursales)
+        name: Eduardo Marín
+        position: null
+        quote: "La gestión multi-sucursal nos permitió controlar las tiendas de tres ciudades desde un solo panel. Indispensable para crecer."
+      sofia:
+        company: Boutique Glamour
+        name: Sofia Palacios
+        position: null
+        quote: "Las alertas de inventario bajo evitaron pérdidas de stock crítico. El soporte técnico responde en minutos ante dudas."
     testimonials:
+      badge: Clientes
+      subtitle: Nuestro software ayuda diariamente a cientos de negocios.
+      title: Empresas que confían en Delta POS
       badge: Clientes
       subtitle: Nuestro software ayuda diariamente a cientos de negocios.
       title: Empresas que confían en Nexo POS
