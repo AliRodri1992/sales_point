@@ -90,7 +90,7 @@ ko:
         no_address: 주소 없음
         no_data: "—"
         no_phone: 전화번호 없음
-        page_title: 지점 | Nexo POS
+        page_title: 지점 | Delta POS
         pagination:
           navigation: 지점 페이지 탐색
           next: 다음
@@ -171,7 +171,7 @@ ko:
       updated: 카테고리이 성공적으로 업데이트되었습니다
     dashboard:
       index:
-        title: 관리자 대시보드 | Nexo POS
+        title: 관리자 대시보드 | Delta POS
       kpi_grid:
         average_ticket: 평균 결제액
         current_cash: 현재 금전함
@@ -305,7 +305,7 @@ ko:
     system_roles:
       manage_permissions: 권한 관리
       index:
-        page_title: 역할 | Nexo POS
+        page_title: 역할 | Delta POS
         subtitle: 시스템 모듈에 대한 액세스 권한을 정의하세요.
         title: 역할
         new: 새 역할
@@ -450,7 +450,7 @@ ko:
           username: 사용자 이름
         last_sign_in: 마지막 로그인
         never: 기록 없음
-        page_title: 내 프로필 | Nexo POS
+        page_title: 내 프로필 | Delta POS
         personal_information:
           subtitle: 기본 정보와 접근 설정을 수정하세요.
           title: 개인 정보
@@ -493,7 +493,7 @@ ko:
         select_user: 채팅을 시작할 사용자를 선택하세요
         send: 메시지 보내기
       footer:
-        copyright: "© %{year} NEXO POS. 모든 권리 보유."
+        copyright: "© %{year} Delta POS. 모든 권리 보유."
         privacy: 개인정보 보호
         terms: 약관
       language_selector:
@@ -606,7 +606,7 @@ ko:
         message: 메시지
         name: 이름
         phone: 전화번호
-      subject: 새 데모 신청 - Nexo POS
+      subject: 새 데모 신청 - Delta POS
       title: 새 데모 신청
   demo_requests:
     create:
@@ -629,11 +629,11 @@ ko:
       email: 이메일
       error_summary: 요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.
       hero_description: 한 곳에서 판매, 재고, 고객, 지점 등을 편리하게 관리하는 방법을 알아보세요.
-      hero_title: Nexo POS가 비즈니스에 제공하는
+      hero_title: Delta POS가 비즈니스에 제공하는
       hero_title_suffix: 확인해 보세요
       message: 어떻게 도와드릴까요?
       name: 이름
-      page_title: 데모 신청 | Nexo POS
+      page_title: 데모 신청 | Delta POS
       phone: 전화번호
       submit: 데모 신청
   devise:
@@ -660,7 +660,7 @@ ko:
         unhappy: 불만족스러우신가요?
       new:
         already_have_account: 이미 계정이 있으십니까?
-        brand_alt: Nexo POS 로고 심볼
+        brand_alt: Delta POS 로고 심볼
         email: 이메일
         email_placeholder: email@example.com
         password: 비밀번호
@@ -668,7 +668,7 @@ ko:
         password_minimum: 최소 %{count}자
         sign_in: 로그인
         submit: 계정 만들기
-        subtitle: Nexo POS 사용을 시작하려면 가입하십시오
+        subtitle: Delta POS 사용을 시작하려면 가입하십시오
         title: 계정 만들기
     sessions:
       new:
@@ -711,7 +711,7 @@ ko:
       view_demo: 데모 보기
       open_menu: 메뉴 열기
     cta:
-      description: 오늘 Nexo POS를 시작하고 비즈니스 관리를 간소화하는 방법을 알아보세요.
+      description: 오늘 Delta POS를 시작하고 비즈니스 관리를 간소화하는 방법을 알아보세요.
       title: 비즈니스를 현대화할 준비가 되셨나요?
     dashboard:
       customers: 고객
@@ -843,7 +843,7 @@ ko:
         answer: 강제 계약은 없습니다. 월간 요금제이며 언제든 변경하거나 취소할 수 있습니다.
         question: 최소 약정 기간이 있나요?
       install:
-        answer: 아니요. Nexo POS는 브라우저에서 작동하므로 인터넷이 연결된 모든 컴퓨터에서 사용할 수 있습니다.
+        answer: 아니요. Delta POS는 브라우저에서 작동하므로 인터넷이 연결된 모든 컴퓨터에서 사용할 수 있습니다.
         question: 컴퓨터에 무언가를 설치해야 하나요?
       migration:
         answer: Excel 또는 CSV 파일에서 상품을 가져올 수 있으며 첫 업로드를 도와드립니다.
@@ -881,7 +881,7 @@ ko:
     testimonials:
       badge: 고객
       subtitle: 저희 소프트웨어는 매일 수백 개의 비즈니스를 돕습니다.
-      title: Nexo POS를 신뢰하는 기업
+      title: Delta POS를 신뢰하는 기업
   app:
     name: 델타
     short_name: 포스
