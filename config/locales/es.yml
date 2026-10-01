@@ -472,7 +472,7 @@ es:
         branch_north: Sucursal Norte
         branch_south: Sucursal Sur
       chat:
-        assistant_name: Asistente NEXO
+        assistant_name: Asistente DELTA
         close: Cerrar chat
         greeting: Hola, %{name}. ¿En qué puedo ayudarte?
         input_placeholder: Escribe un mensaje...
