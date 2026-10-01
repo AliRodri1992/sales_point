@@ -848,6 +848,12 @@ en:
       cta_title: Ready to modernize your point of sale?
       cta_description: Join hundreds of growing businesses that already scaled their operations.
       features_title: Everything you need in one platform
+    hero_preview:
+      today_sales: Today's sales
+      transactions: Transactions
+      realtime: Real time
+      stock_alerts: Stock alerts
+      action_required: Action required
     module_items:
       accounting:
         description: Export your transactions in the format your accountant needs,
@@ -877,6 +883,7 @@ en:
       subtitle: Grow without changing systems.
       title: Specialized modules
     navbar:
+      solution: Solution
       faq: FAQ
       features: Features
       modules: Modules
@@ -946,25 +953,38 @@ en:
       daily_sales: Daily sales
       support: Support
     testimonial_items:
-      andrea:
-        company: Aurora Boutique
-        name: Andrea Solís
-        position: Founder
-        quote: Staff training took one afternoon. The interface is so simple there
-          were barely any questions.
-      carlos:
-        company: Norte Hardware
-        name: Carlos Ibáñez
-        position: Operations manager
-        quote: We have three branches and can finally see all their inventory on the
-          same screen.
-      laura:
-        company: La Esquina Groceries
-        name: Laura Méndez
+      alejandro:
+        company: Minimarket El Triunfo
+        name: Alejandro Gómez
         position: Owner
-        quote: I used to close the register with paper and a calculator. Now I know
-          what I sold and what I need to restock in a minute.
+        quote: "It reduced our checkout lines by 40%. The interface is intuitive, so training new cashiers takes less than ten minutes."
+      beatriz:
+        company: Boutique Bloom
+        name: Beatriz Mendoza
+        position: Owner
+        quote: "Cloud stock synchronization is real. I can now see exactly which products sell best at each hour without waiting for manual audits."
+      carlos:
+        company: Ferretería El Candado
+        name: Carlos Ramírez
+        position: Owner
+        quote: "Integrated electronic invoicing saved us hours of administrative work. The system keeps our operation organized."
+      diana:
+        company: Cafetería Urban Central
+        name: Diana Silva
+        position: Owner
+        quote: "Faster card processing improved our peak-hour sales. It made a noticeable difference for the business."
+      eduardo:
+        company: Tiendas Minimix (5 branches)
+        name: Eduardo Marín
+        position: Operations Manager
+        quote: "Multi-branch management lets us control stores in three cities from one dashboard. It is essential for our growth."
+      sofia:
+        company: Boutique Glamour
+        name: Sofia Palacios
+        position: Owner
+        quote: "Low-stock alerts helped us avoid critical inventory shortages. Support also responds quickly when we have questions."
     testimonials:
+      stars_label: 5 stars
       badge: Customers
       subtitle: Our software helps hundreds of businesses every day.
       title: Businesses that trust Delta POS
