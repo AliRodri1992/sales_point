@@ -478,7 +478,7 @@ ko:
         branch_north: 북부 지점
         branch_south: 남부 지점
       chat:
-        assistant_name: NEXO 도우미
+        assistant_name: DELTA 도우미
         close: 채팅 닫기
         greeting: 안녕하세요, %{name}. 무엇을 도와드릴까요?
         input_placeholder: 메시지를 입력하세요...
