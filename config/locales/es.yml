@@ -1031,14 +1031,6 @@ es:
       sus ventas operativas.
     features_title: Todo lo que necesitas en una sola plataforma
   home:
-    old_model_items:
-    - "Filas largas en caja debido a un software lento que se traba constantemente."
-    - "Descuadres de inventario entre sucursales y pérdidas sin explicación."
-    - "Reportes manuales complejos al final de cada mes en hojas de cálculo."
-    new_model_items:
-    - "Cobros en menos de 2 segundos con interfaces fluidas e intuitivas."
-    - "Control de stock automatizado en la nube con alertas instantáneas de resurtido."
-    - "Dashboard analítico en vivo accesible desde cualquier celular o tablet."
     old_model:
       item_1: "Filas largas en caja debido a un software lento que se traba constantemente."
       item_2: "Descuadres de inventario entre sucursales y pérdidas sin explicación."
