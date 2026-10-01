@@ -1133,6 +1133,8 @@ es:
         quote: "Las alertas de inventario bajo evitaron pérdidas de stock crítico. El soporte técnico responde en minutos ante dudas."
     testimonials:
       stars_label: 5 estrellas
+      previous: Historias anteriores
+      next: Historias siguientes
       badge: Clientes
       subtitle: Nuestro software ayuda diariamente a cientos de negocios.
       title: Empresas que confían en Delta POS
