@@ -2,6 +2,10 @@ en:
   landing:
     hero:
       testimonials_title: Business Success Stories
+    testimonials:
+      badge: Customers
+      subtitle: Our software helps hundreds of businesses every day.
+      title: Businesses that trust Delta POS
     testimonial_items:
       alejandro:
         company: El Triunfo Minimarket
