@@ -492,7 +492,7 @@ es:
         terms: Términos
       language_selector:
         toggle: Seleccionar idioma
-      no_image: No image available
+      no_image: Sin imagen disponible
       notifications:
         actor_unknown: Usuario desconocido
         branch:
