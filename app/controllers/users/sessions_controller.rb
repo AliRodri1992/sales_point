@@ -11,18 +11,7 @@ module Users
     end
 
     def create
-      super do |resource|
-        persist_terminal_preferences(resource)
-
-        # Move flash messages to SweetAlert2
-        if flash[:notice]
-          flash[:swal_message] = flash[:notice]
-          flash.delete(:notice)
-        elsif flash[:alert]
-          flash[:swal_message] = flash[:alert]
-          flash.delete(:alert)
-        end
-      end
+      super
     end
 
     private
@@ -33,14 +22,6 @@ module Users
 
       cookies[:terminal_theme] ||=
         'theme-material-red'
-    end
-
-    def persist_terminal_preferences(_resource)
-      cookies[:terminal_language] =
-        terminal_language
-
-      cookies[:terminal_theme] =
-        terminal_theme
     end
 
     def terminal_language
