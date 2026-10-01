@@ -1,0 +1,35 @@
+en:
+  landing:
+    hero:
+      testimonials_title: Business Success Stories
+    testimonial_items:
+      alejandro:
+        company: El Triunfo Minimarket
+        name: Alejandro Gómez
+        position: null
+        quote: "It reduced our checkout lines by 40%. The interface is so intuitive that training new cashiers takes less than ten minutes."
+      beatriz:
+        company: Bloom Boutique
+        name: Beatriz Mendoza
+        position: null
+        quote: "Cloud stock synchronization is real. Now I know exactly which product sells the most each hour without waiting for manual audits."
+      carlos:
+        company: El Candado Hardware
+        name: Carlos Ramírez
+        position: null
+        quote: "Integrated electronic invoicing saved us hours of administrative work. The system complies with all legal requirements instantly."
+      diana:
+        company: Urban Central Café
+        name: Diana Silva
+        position: null
+        quote: "Card processing speed increased our sales during peak hours. A radical change for the business."
+      eduardo:
+        company: Minimix Stores (5 branches)
+        name: Eduardo Marín
+        position: null
+        quote: "Multi-branch management allowed us to control stores in three cities from a single dashboard. Essential for growth."
+      sofia:
+        company: Glamour Boutique
+        name: Sofia Palacios
+        position: null
+        quote: "Low-inventory alerts prevented losses of critical stock. Technical support responds within minutes when questions arise."
