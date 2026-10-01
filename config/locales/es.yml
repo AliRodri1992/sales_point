@@ -197,7 +197,9 @@ es:
       kpi_grid:
         average_ticket: Ticket promedio
         current_cash: Caja actual
-        sales_today: Ventas de hoy        session_open: Sesión abierta        transactions: Transacciones
+        sales_today: Ventas de hoy
+        session_open: Sesión abierta
+        transactions: Transacciones
       page_header:
         customize: Personalizar dashboard
         new_sale: Nueva venta
@@ -395,8 +397,10 @@ es:
           views: Vistas
         confirm_delete: "¿Seguro que quieres eliminar este producto?"
         count: "%{count} productos"
-        delete: Eliminar        destroy_failed: No se pudo eliminar el producto
-        edit: Editar        empty_subtitle: Agrega tu primer producto para empezar.
+        delete: Eliminar
+        destroy_failed: No se pudo eliminar el producto
+        edit: Editar
+        empty_subtitle: Agrega tu primer producto para empezar.
         empty_title: Aún no hay productos
         filters:
           all_featured: Todos
@@ -593,9 +597,11 @@ es:
   clients:
     confirm:
       cancel: Cancelar
-    created: Cliente creado correctamente    destroyed: Cliente eliminado correctamente
+    created: Cliente creado correctamente
+    destroyed: Cliente eliminado correctamente
     edit:
-      subtitle: Actualiza los datos del cliente.      title: Editar %{name}
+      subtitle: Actualiza los datos del cliente.
+      title: Editar %{name}
     form:
       cancel: Cancelar
       code: Código
@@ -791,10 +797,12 @@ es:
       acceptance: no ha sido aceptado
       blank: no puede estar vacío
       confirmation: no coincide
-      equal_to: debe ser igual a %{count}      equality: no es igual
+      equal_to: debe ser igual a %{count}
+      equality: no es igual
       even: debe ser par
       exclusion: no está permitido
-      greater_than: debe ser mayor que %{count}      greater_than_or_equal_to: debe ser mayor o igual que %{count}
+      greater_than: debe ser mayor que %{count}
+      greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
       invalid_format: no es válido
