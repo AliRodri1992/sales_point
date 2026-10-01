@@ -1,6 +1,47 @@
 ---
 es:
   activerecord:
+    attributes:
+      category:
+        code: Código
+        description: Descripción
+        name: Nombre
+        status: Estado
+      demo_request:
+        company: Empresa
+        email: Correo electrónico
+        message: Mensaje
+        name: Nombre
+        phone: Teléfono
+      language:
+        code: Código
+        flag_iso: Bandera
+        name: Nombre
+        status: Estado
+      product:
+        barcode: Código de barras
+        code: Código
+        cost: Costo
+        description: Descripción
+        featured: Destacado
+        image: Imagen
+        image_url: URL de imagen
+        max_stock: Stock máximo
+        min_stock: Stock mínimo
+        name: Nombre
+        position: Orden
+        price: Precio
+        sku: SKU
+        slug: Slug
+        status: Estado
+        stock: Existencias
+        view_count: Contador de vistas
+      user:
+        current_password: Contraseña actual
+        email: Correo electrónico
+        password: Contraseña
+        password_confirmation: Confirmar contraseña
+        user_type: Tipo de usuario
     models:
       address: Dirección
       branch: Sucursal
@@ -63,7 +104,7 @@ es:
         no_address: Sin dirección
         no_data: "—"
         no_phone: Sin teléfono
-        page_title: Sucursales | Nexo POS
+        page_title: Sucursales | Delta POS
         pagination:
           navigation: Paginación de sucursales
           next: Siguiente
@@ -75,57 +116,7 @@ es:
         active: Activa
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
-    system_roles:
-      new:
-        page_title: Nuevo rol | Nexo POS
-        title: Nuevo rol
-        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
-        back: Volver a roles
-        details_title: Información del rol
-        details_subtitle: Define los datos básicos del nuevo rol.
-        permissions_title: Permisos del rol
-        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
-        error_title: No se pudo crear el rol
-        cancel: Cancelar
-        submit: Crear rol
-        fields:
-          name: Nombre
-          name_placeholder: Ej. Supervisor de ventas
-          type: Tipo
-          status: Estado
-          description: Descripción
-          description_placeholder: Describe el alcance de este rol.
-      index:
-        page_title: Roles | Nexo POS
-        eyebrow: Seguridad y acceso
-        title: Roles
-        subtitle: Define qué módulos puede utilizar cada rol del sistema.
-        new: Nuevo rol
-        manage_permissions: Administrar permisos
-        no_description: Sin descripción.
-        empty_title: No hay roles disponibles
-        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
-      show:
-        back: Volver a roles
-        code: Código
-        type: Tipo
-        assigned_permissions: Permisos asignados
-        permissions_title: Permisos del rol
-        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios se aplican al guardar.
-        save_permissions: Guardar permisos
-        module_permissions:
-          one: 1 permiso disponible
-          other: "%{count} permisos disponibles"
-      statuses:
-        active: Activo
-        inactive: Inactivo
-      types:
-        system: Sistema
-        branch: Sucursal
-      update_permissions:
-        success: Los permisos del rol se actualizaron correctamente.
     breadcrumbs:
-      roles: Roles
       branches: Sucursales
       categories: Categorías
       clients: Clientes
@@ -135,6 +126,7 @@ es:
       languages: Idiomas
       products: Productos
       profile: Perfil
+      roles: Roles
     categories:
       confirm:
         cancel: Cancelar
@@ -193,13 +185,14 @@ es:
       updated: Categoría actualizada correctamente
     dashboard:
       index:
-        title: Panel de administración | Nexo POS
+        title: Panel de administración | Delta POS
       kpi_grid:
         average_ticket: Ticket promedio
         current_cash: Caja actual
         sales_today: Ventas de hoy
         session_open: Sesión abierta
         transactions: Transacciones
+      no_image: Sin imagen disponible
       page_header:
         customize: Personalizar dashboard
         new_sale: Nueva venta
@@ -331,6 +324,7 @@ es:
       destroyed: Producto eliminado correctamente
       edit:
         back: Volver
+        close: Cerrar
         label: Editar Producto
         subtitle: Actualiza los datos del producto.
         title: Editar %{name}
@@ -420,6 +414,7 @@ es:
         total_count: "%{count} productos registrados"
       new:
         back: Volver
+        close: Cerrar
         subtitle: Añade un producto a tu catálogo.
         title: Nuevo producto
       show:
@@ -444,7 +439,7 @@ es:
           username: Usuario
         last_sign_in: Último acceso
         never: Nunca
-        page_title: Mi perfil | Nexo POS
+        page_title: Mi perfil | Delta POS
         personal_information:
           subtitle: Actualiza tus datos básicos y preferencias de acceso.
           title: Información personal
@@ -472,7 +467,7 @@ es:
         branch_north: Sucursal Norte
         branch_south: Sucursal Sur
       chat:
-        assistant_name: Asistente NEXO
+        assistant_name: Asistente DELTA
         close: Cerrar chat
         greeting: Hola, %{name}. ¿En qué puedo ayudarte?
         input_placeholder: Escribe un mensaje...
@@ -487,12 +482,12 @@ es:
         select_user: Selecciona un usuario para chatear
         send: Enviar mensaje
       footer:
-        copyright: "© %{year} NEXO POS. Todos los derechos reservados."
+        copyright: "© %{year} Delta POS. Todos los derechos reservados."
         privacy: Privacidad
         terms: Términos
       language_selector:
         toggle: Seleccionar idioma
-      no_image: No image available
+      no_image: Sin imagen disponible
       notifications:
         actor_unknown: Usuario desconocido
         branch:
@@ -591,6 +586,67 @@ es:
         settings: Configuración
         sign_out: Cerrar sesión
         toggle: Menú de usuario
+    system_roles:
+      create:
+        success: El rol del sistema fue creado correctamente
+      destroy:
+        success: El rol del sistema fue eliminado correctamente
+      index:
+        empty_subtitle: Crea un rol para comenzar a configurar sus permisos.
+        empty_title: No hay roles disponibles
+        manage_permissions: Administrar permisos
+        new: Nuevo rol
+        no_description: Sin descripción.
+        page_title: Roles | Delta POS
+        subtitle: Define qué módulos puede utilizar cada rol del sistema.
+        title: Roles
+      manage_permissions: Administrar permisos
+      new:
+        back: Volver a roles
+        cancel: Cancelar
+        details_subtitle: Define los datos básicos del nuevo rol.
+        details_title: Información del rol
+        error_title: No se pudo crear el rol
+        fields:
+          description: Descripción
+          description_placeholder: Describe el alcance de este rol.
+          name: Nombre
+          name_placeholder: Ej. Supervisor de ventas
+          status: Estado
+          type: Tipo
+        page_title: Nuevo rol | Delta POS
+        permissions_subtitle: Activa los permisos que este rol podrá utilizar.
+        permissions_title: Permisos del rol
+        submit: Crear rol
+        subtitle: Crea un rol y asigna los permisos que tendrá disponibles.
+        title: Nuevo rol
+      show:
+        assigned_permissions: Permisos asignados
+        back: Volver a roles
+        code: Código
+        module_permissions:
+          one: 1 permiso disponible
+          other: "%{count} permisos disponibles"
+        permissions_subtitle: Activa o desactiva el acceso a cada módulo. Los cambios
+          se aplican al guardar.
+        permissions_title: Permisos del rol
+        save_permissions: Guardar permisos
+        type: Tipo
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      types:
+        branch: Sucursal
+        system: Sistema
+      update_permissions:
+        success: Los permisos del rol se actualizaron correctamente.
+  app:
+    description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
+      y operación comercial.'
+    name: Delta
+    short_name: POS
+    slogan: Punto de Venta
+    title: Delta POS - Sistema de Punto de Venta Inteligente
   authentication:
     error_banner:
       title: Error de Autenticación
@@ -605,13 +661,16 @@ es:
     form:
       cancel: Cancelar
       code: Código
-      code_hint: Código único del cliente. Se requiere para identificar al cliente en el sistema.
+      code_hint: Código único del cliente. Se requiere para identificar al cliente
+        en el sistema.
       code_placeholder: ej. CLI-0001
       create: Crear cliente
       credit_limit: Límite de crédito
       credit_limit_placeholder: ej. 5000.00
       email: Email
       email_placeholder: ej. cliente@empresa.com
+      fiscal_regime: Regimen fiscal
+      fiscal_regime_blank: Selecciona el régimen fiscal
       name: Nombre
       name_placeholder: Nombre del cliente
       notes: Notas
@@ -624,8 +683,6 @@ es:
       rfc_placeholder: ej. ABC010101ABC
       status: Estado
       update: Actualizar cliente
-      fiscal_regime: Regimen fiscal
-      fiscal_regime_blank: Selecciona el régimen fiscal
     index:
       card_title: Clientes registrados
       columns:
@@ -674,7 +731,7 @@ es:
         message: Mensaje
         name: Nombre
         phone: Teléfono
-      subject: Nueva solicitud de demostración - Nexo POS
+      subject: Nueva solicitud de demostración - Delta POS
       title: Nueva solicitud de demostración
   demo_requests:
     create:
@@ -692,7 +749,7 @@ es:
         resolve_questions:
           description: Un especialista podrá explicarte el funcionamiento de la plataforma.
           title: Resuelve tus dudas
-      brand: Nexo POS
+      brand: Delta POS
       company: Empresa
       email: Correo electrónico
       error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo
@@ -703,10 +760,32 @@ es:
       hero_title_suffix: puede hacer por tu negocio
       message: "¿Cómo podemos ayudarte?"
       name: Nombre
-      page_title: Solicitar demostración | Nexo POS
+      page_title: Solicitar demostración | Delta POS
       phone: Teléfono
       submit: Solicitar demostración
   devise:
+    confirmations:
+      new:
+        submit: Reenviar instrucciones de confirmación
+        title: Reenviar instrucciones de confirmación
+    mailer:
+      confirmation_instructions:
+        action: Confirmar mi cuenta
+        greeting: "¡Bienvenido %{email}!"
+        instruction: 'Puedes confirmar el correo electrónico de tu cuenta mediante
+          el siguiente enlace:'
+      email_changed:
+        confirmed: Te contactamos para informarte que tu correo electrónico ha cambiado
+          a %{email}.
+        greeting: "¡Hola %{email}!"
+        pending: Te contactamos para informarte que tu correo electrónico está cambiando
+          a %{email}.
+      unlock_instructions:
+        action: Desbloquear mi cuenta
+        greeting: "¡Hola %{email}!"
+        instruction: 'Haz clic en el siguiente enlace para desbloquear tu cuenta:'
+        notification: Tu cuenta ha sido bloqueada debido a un número excesivo de intentos
+          fallidos de inicio de sesión.
     passwords:
       edit:
         confirm_password: Confirmar nueva contraseña
@@ -726,12 +805,13 @@ es:
           cambios
         leave_blank: déjalo en blanco si no quieres cambiarla
         minimum: Mínimo %{count} caracteres
+        pending_confirmation: 'La confirmación está pendiente para: %{email}'
         submit: Actualizar
         title: Editar %{resource}
         unhappy: "¿No estás conforme?"
       new:
         already_have_account: "¿Ya tienes una cuenta?"
-        brand_alt: Isotipo de Nexo POS
+        brand_alt: Isotipo de Delta POS
         email: Correo electrónico
         email_placeholder: correo@ejemplo.com
         password: Contraseña
@@ -739,7 +819,7 @@ es:
         password_minimum: Mínimo %{count} caracteres
         sign_in: Iniciar sesión
         submit: Crear cuenta
-        subtitle: Regístrate para comenzar a usar Nexo POS
+        subtitle: Regístrate para comenzar a usar Delta POS
         title: Crear cuenta
     sessions:
       new:
@@ -760,6 +840,10 @@ es:
         no_unlock: "¿No recibiste las instrucciones de desbloqueo?"
         sign_in_with: Iniciar sesión con %{provider}
         sign_up: Crear cuenta
+    unlocks:
+      new:
+        submit: Reenviar instrucciones de desbloqueo
+        title: Reenviar instrucciones de desbloqueo
   errors:
     attributes:
       barcode: Código de barras
@@ -801,10 +885,12 @@ es:
       even: debe ser par
       exclusion: no está permitido
       greater_than: debe ser mayor que %{count}
+      greater_than_min: debe ser mayor o igual que el stock mínimo
       greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
       invalid_format: no es válido
+      invalid_url: debe ser una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor o igual que %{count}
       none: debe ser nil
@@ -817,18 +903,29 @@ es:
       too_long: es demasiado largo (máximo %{count} caracteres)
       too_short: es demasiado corto (mínimo %{count} caracteres)
       wrong_length: tiene una longitud incorrecta
+  home:
+    new_model:
+      item_1: Cobros en menos de 2 segundos con interfaces fluidas e intuitivas.
+      item_2: Control de stock automatizado en la nube con alertas instantáneas de
+        resurtido.
+      item_3: Dashboard analítico en vivo accesible desde cualquier celular o tablet.
+    old_model:
+      item_1: Filas largas en caja debido a un software lento que se traba constantemente.
+      item_2: Descuadres de inventario entre sucursales y pérdidas sin explicación.
+      item_3: Reportes manuales complejos al final de cada mes en hojas de cálculo.
   landing:
     buttons:
       create_account: Crear cuenta
+      open_menu: Abrir menú
       request_demo: Solicitar demostración
-      sign_in: Iniciar sesión
+      sign_in: Iniciar Sesión
       sign_out: Cerrar sesión
       start: Comenzar
       start_free: Comenzar gratis
       view_demo: Ver demostración
     cta:
-      description: Empieza hoy mismo con Nexo POS y descubre cómo simplificar la administración
-        de tu empresa.
+      description: Empieza hoy mismo con Delta POS y descubre cómo simplificar la
+        administración de tu empresa.
       title: "¿Listo para modernizar tu negocio?"
     dashboard:
       customers: Clientes
@@ -844,6 +941,7 @@ es:
       today: Hoy
       today_sales: Ventas del día
     faq:
+      sale: Venta
       subtitle: Resolvemos las dudas más comunes.
       title: Preguntas frecuentes
     feature_items:
@@ -872,25 +970,65 @@ es:
           que se actualizan solos.
         title: Reportes y Estadísticas
     features:
+      items:
+        analytics_reports:
+          description: Visualiza tus ganancias netas, horas pico de venta y rendimiento
+            de tus cajeros desde cualquier dispositivo móvil o computadora.
+          title: Reportes Analíticos
+        fast_sales:
+          description: Cobra en caja en segundos. Compatible con lectores de código
+            de barra, terminales bancarias y facturación electrónica instantánea.
+          title: Ventas Veloces
+        inventory_control:
+          description: Sincronización multi-sucursal en tiempo real. Recibe alertas
+            automatizadas cuando tus productos estrella se estén agotando.
+          title: Control de Inventarios
       subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes
         empresas.
       title: Todo lo que necesitas para administrar tu negocio
     footer:
-      about: Nosotros
-      company: Empresa
-      contact: Contacto
-      copyright: "© %{year} Nexo POS. Todos los derechos reservados."
-      description: Punto de venta moderno para negocios que desean vender más, administrar
-        mejor su inventario y crecer sin complicaciones.
-      privacy: Privacidad
+      about: Sobre Nosotros
+      api_docs: Documentación API
+      brand_alt: Delta POS
+      business_partner: Socio Comercial
+      company: Compañía
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+      description: Tecnología de punto de venta en la nube diseñada para maximizar
+        la eficiencia y rendimiento de comercios minoristas y cadenas corporativas.
+      features: Funcionalidades
+      hardware: Hardware Compatible
+      help_center: Centro de Ayuda
+      pricing: Planes de Precios
+      privacy: Política de Privacidad
       product: Producto
-      terms: Términos
+      sales_contact: Contacto de Ventas
+      security: Seguridad en la Nube
+      server_status: Estatus del Servidor
+      support: Soporte
+      terms: Términos del Servicio
     hero:
-      badge: Nuevo • POS en la nube
-      description: Controla ventas, inventario, clientes, compras, reportes y facturación
-        desde cualquier dispositivo.
-      highlighted: NEXO POS
-      title: Administra tu negocio con
+      badge: Nueva versión Cloud de Delta POS
+      cta_description: Únete a cientos de comercios en crecimiento que ya escalaron
+        sus ventas operativas.
+      cta_title: "¿Listo para modernizar tu punto de venta?"
+      description: Administra tu inventario, procesa pagos al instante y analiza tus
+        márgenes de ganancia con la plataforma más rápida y confiable del mercado.
+      faq_title: Preguntas Frecuentes
+      features_title: Todo lo que necesitas en una sola plataforma
+      highlighted: crecimiento
+      new_model_title: La experiencia Delta POS
+      old_model_intro: Los negocios modernos no pueden depender de software obsoleto.
+      old_model_title: El modelo obsoleto
+      prices_title: Planes transparentes a tu medida
+      problem_title: "¿Cansado de sistemas lentos que frenan tu negocio?"
+      testimonials_title: Historias de Éxito Comercial
+      title: El punto de venta que impulsa tu
+    hero_preview:
+      action_required: Acción requerida
+      realtime: En tiempo real
+      stock_alerts: Alertas de stock
+      today_sales: Ventas de hoy
+      transactions: Transacciones
     module_items:
       accounting:
         description: Exporta tus movimientos en el formato que tu contador necesita,
@@ -925,6 +1063,7 @@ es:
       modules: Módulos
       open_menu: Abrir menú
       pricing: Precios
+      solution: Solución
     plan_items:
       enterprise:
         description: Para cadenas que necesitan control total.
@@ -965,7 +1104,7 @@ es:
           cancelarlo cuando lo necesites.
         question: "¿Hay permanencia mínima?"
       install:
-        answer: No. Nexo POS funciona desde el navegador, así que puedes usarlo en
+        answer: No. Delta POS funciona desde el navegador, así que puedes usarlo en
           cualquier equipo con internet.
         question: "¿Necesito instalar algo en mi computadora?"
       migration:
@@ -989,28 +1128,49 @@ es:
       daily_sales: Ventas diarias
       support: Soporte
     testimonial_items:
-      andrea:
-        company: Boutique Aurora
-        name: Andrea Solís
-        position: Fundadora
-        quote: La capacitación del personal tomó una tarde. La interfaz es tan simple
-          que casi no hubo preguntas.
-      carlos:
-        company: Ferretería Norte
-        name: Carlos Ibáñez
-        position: Gerente de operaciones
-        quote: Tenemos tres sucursales y por fin vemos el inventario de todas en la
-          misma pantalla.
-      laura:
-        company: Abarrotes La Esquina
-        name: Laura Méndez
+      alejandro:
+        company: Minimarket El Triunfo
+        name: Alejandro Gómez
+        position: Propietario
+        quote: Redujo nuestras filas un 40%. La interfaz es tan intuitiva que el entrenamiento
+          de nuevos cajeros toma menos de diez minutos.
+      beatriz:
+        company: Boutique Bloom
+        name: Beatriz Mendoza
         position: Propietaria
-        quote: Antes cerraba caja con papel y calculadora. Hoy sé cuánto vendí y qué
-          me falta surtir en un minuto.
+        quote: La sincronización de stock en la nube es real. Ahora sé exactamente
+          qué producto se vende más a cada hora sin esperar auditorías manuales.
+      carlos:
+        company: Ferretería El Candado
+        name: Carlos Ramírez
+        position: Propietario
+        quote: La facturación electrónica integrada nos ahorró horas de trabajo administrativo.
+          El sistema cumple con todo lo legal al instante.
+      diana:
+        company: Cafetería Urban Central
+        name: Diana Silva
+        position: Propietaria
+        quote: La velocidad de procesamiento de tarjetas aumentó nuestras ventas en
+          horas pico. Un cambio radical para el negocio.
+      eduardo:
+        company: Tiendas Minimix (5 sucursales)
+        name: Eduardo Marín
+        position: Administrador de operaciones
+        quote: La gestión multi-sucursal nos permitió controlar las tiendas de tres
+          ciudades desde un solo panel. Indispensable para crecer.
+      sofia:
+        company: Boutique Glamour
+        name: Sofia Palacios
+        position: Propietaria
+        quote: Las alertas de inventario bajo evitaron pérdidas de stock crítico.
+          El soporte técnico responde en minutos ante dudas.
     testimonials:
       badge: Clientes
+      next: Historias siguientes
+      previous: Historias anteriores
+      stars_label: 5 estrellas
       subtitle: Nuestro software ayuda diariamente a cientos de negocios.
-      title: Empresas que confían en Nexo POS
+      title: Empresas que confían en Delta POS
   system_roles:
     create:
       success: El rol del sistema fue creado exitosamente

@@ -24,6 +24,7 @@ en:
         cost: Cost
         description: Description
         featured: Featured
+        image: Image
         image_url: Image URL
         max_stock: Max stock
         min_stock: Min stock
@@ -41,11 +42,24 @@ en:
         password: Password
         password_confirmation: Confirm password
         user_type: User Type
+    models:
+      address: Address
+      branch: Branch
+      category: Category
+      client: Client
+      demo_request: Demo request
+      language: Language
+      product: Product
+      sat_currency: SAT currency
+      system_role: System role
+      user: User
   admin:
     branches:
       actions:
         delete: Delete branch
         edit: Edit branch
+      confirm:
+        cancel: Cancel
       confirm_delete: Are you sure you want to delete this branch?
       created: Branch created successfully.
       destroyed: Branch deleted successfully.
@@ -89,7 +103,7 @@ en:
         no_address: No address
         no_data: "—"
         no_phone: No phone
-        page_title: Branches | Nexo POS
+        page_title: Branches | Delta POS
         pagination:
           navigation: Branch pagination
           next: Next
@@ -101,57 +115,7 @@ en:
         active: Active
         inactive: Inactive
       updated: Branch updated successfully.
-    system_roles:
-      new:
-        page_title: New role | Nexo POS
-        title: New role
-        subtitle: Create a role and assign the permissions it will have available.
-        back: Back to roles
-        details_title: Role information
-        details_subtitle: Define the basic details of the new role.
-        permissions_title: Role permissions
-        permissions_subtitle: Enable the permissions this role will be able to use.
-        error_title: The role could not be created
-        cancel: Cancel
-        submit: Create role
-        fields:
-          name: Name
-          name_placeholder: e.g. Sales supervisor
-          type: Type
-          status: Status
-          description: Description
-          description_placeholder: Describe the scope of this role.
-      index:
-        page_title: Roles | Nexo POS
-        eyebrow: Security and access
-        title: Roles
-        subtitle: Define which system modules each role can access.
-        new: New role
-        manage_permissions: Manage permissions
-        no_description: No description.
-        empty_title: No roles available
-        empty_subtitle: Create a role to start configuring its permissions.
-      show:
-        back: Back to roles
-        code: Code
-        type: Type
-        assigned_permissions: Assigned permissions
-        permissions_title: Role permissions
-        permissions_subtitle: Enable or disable access to each module. Changes are applied when you save.
-        save_permissions: Save permissions
-        module_permissions:
-          one: 1 permission available
-          other: "%{count} permissions available"
-      statuses:
-        active: Active
-        inactive: Inactive
-      types:
-        system: System
-        branch: Branch
-      update_permissions:
-        success: Role permissions were updated successfully.
     breadcrumbs:
-      roles: Roles
       branches: Branches
       categories: Categories
       clients: Clients
@@ -161,6 +125,7 @@ en:
       languages: Languages
       products: Products
       profile: Profile
+      roles: Roles
     categories:
       confirm:
         cancel: Cancel
@@ -219,13 +184,14 @@ en:
       updated: Category updated successfully
     dashboard:
       index:
-        title: Admin Dashboard | Nexo POS
+        title: Admin Dashboard | Delta POS
       kpi_grid:
         average_ticket: Average ticket
         current_cash: Current cash
         sales_today: Today's sales
         session_open: Open session
         transactions: Transactions
+      no_image: No image available
       page_header:
         customize: Customize dashboard
         new_sale: New sale
@@ -357,6 +323,7 @@ en:
       destroyed: Product deleted successfully
       edit:
         back: Back
+        close: Close
         label: Edit Product
         subtitle: Update the product details.
         title: Edit %{name}
@@ -416,6 +383,8 @@ en:
           name: Name
           position: Position
           price: Price
+          sat_tax: SAT tax
+          sat_unit_key: SAT unit key
           status: Status
           stock: Stock
           views: Views
@@ -444,6 +413,7 @@ en:
         total_count: "%{count} products registered"
       new:
         back: Back
+        close: Close
         subtitle: Add a product to your catalog.
         title: New product
       show:
@@ -468,7 +438,7 @@ en:
           username: Username
         last_sign_in: Last sign in
         never: Never
-        page_title: My profile | Nexo POS
+        page_title: My profile | Delta POS
         personal_information:
           subtitle: Update your basic details and preferences.
           title: Personal information
@@ -496,7 +466,7 @@ en:
         branch_north: North branch
         branch_south: South branch
       chat:
-        assistant_name: NEXO Assistant
+        assistant_name: DELTA Assistant
         close: Close chat
         greeting: Hello, %{name}. How can I help you?
         input_placeholder: Type a message...
@@ -511,11 +481,12 @@ en:
         select_user: Select a user to start chatting
         send: Send message
       footer:
-        copyright: "© %{year} NEXO POS. All rights reserved."
+        copyright: "© %{year} Delta POS. All rights reserved."
         privacy: Privacy
         terms: Terms
       language_selector:
         toggle: Select language
+      no_image: No image available
       notifications:
         actor_unknown: Unknown user
         branch:
@@ -566,10 +537,9 @@ en:
         open: Online users
         subtitle: Active now
         title: Online users
-      shared:
-        no_image: No image available
       sidebar:
         adjustments: Adjustments
+        admins: Administrators
         branches: Branches
         business_os: BUSINESS OS
         by_branch: By branch
@@ -615,306 +585,70 @@ en:
         settings: Settings
         sign_out: Sign out
         toggle: User menu
+    system_roles:
+      create:
+        success: System role was successfully created
+      destroy:
+        success: System role was successfully deleted
+      index:
+        empty_subtitle: Create a role to start configuring its permissions.
+        empty_title: No roles available
+        manage_permissions: Manage permissions
+        new: New role
+        no_description: No description.
+        page_title: Roles | Delta POS
+        subtitle: Define which system modules each role can access.
+        title: Roles
+      manage_permissions: Manage permissions
+      new:
+        back: Back to roles
+        cancel: Cancel
+        details_subtitle: Define the basic details of the new role.
+        details_title: Role information
+        error_title: The role could not be created
+        fields:
+          description: Description
+          description_placeholder: Describe the scope of this role.
+          name: Name
+          name_placeholder: e.g. Sales supervisor
+          status: Status
+          type: Type
+        page_title: New role | Delta POS
+        permissions_subtitle: Enable the permissions this role will be able to use.
+        permissions_title: Role permissions
+        submit: Create role
+        subtitle: Create a role and assign the permissions it will have available.
+        title: New role
+      show:
+        assigned_permissions: Assigned permissions
+        back: Back to roles
+        code: Code
+        module_permissions:
+          one: 1 permission available
+          other: "%{count} permissions available"
+        permissions_subtitle: Enable or disable access to each module. Changes are
+          applied when you save.
+        permissions_title: Role permissions
+        save_permissions: Save permissions
+        type: Type
+      statuses:
+        active: Active
+        inactive: Inactive
+      types:
+        branch: Branch
+        system: System
+      update_permissions:
+        success: Role permissions were updated successfully.
+  app:
+    description: 'Delta POS: intelligent point of sale system for sales, inventory
+      and business operations.'
+    name: Delta
+    short_name: POS
+    slogan: Point of Sale
+    title: Delta POS - Intelligent Point of Sale System
   authentication:
     error_banner:
       title: Authentication Failed
-  demo_request_mailer:
-    new_request:
-      fields:
-        company: Company
-        email: Email
-        message: Message
-        name: Name
-        phone: Phone
-      subject: New demo request - Nexo POS
-      title: New demo request
-  demo_requests:
-    create:
-      success: Your request was received. We will contact you soon.
-    new:
-      back: Back to home
-      badge: Personalized demo
-      benefits:
-        no_commitment:
-          description: Request your demo and explore the platform before deciding.
-          title: No commitment
-        personalized:
-          description: Discover the features your business really needs.
-          title: Personalized demo
-        resolve_questions:
-          description: A specialist can explain how the platform works.
-          title: Get your questions answered
-      brand: Nexo POS
-      company: Company
-      email: Email address
-      error_summary: The request could not be sent. Check the fields and try again.
-      hero_description: Manage sales, inventory, customers, branches, and much more
-        from one place.
-      hero_title: Discover everything
-      hero_title_suffix: can do for your business
-      message: How can we help?
-      name: Name
-      page_title: Request a demo | Nexo POS
-      phone: Phone
-      submit: Request a demo
-  devise:
-    passwords:
-      edit:
-        confirm_password: Confirm new password
-        minimum: "%{count} characters minimum"
-        new_password: New password
-        submit: Change my password
-        title: Change your password
-      new:
-        submit: Send me reset password instructions
-        title: Forgot your password?
-    registrations:
-      edit:
-        back: Back
-        cancel_account: Cancel my account
-        confirm: Are you sure?
-        current_password_hint: we need your current password to confirm your changes
-        leave_blank: leave blank if you don't want to change it
-        minimum: "%{count} characters minimum"
-        submit: Update
-        title: Edit %{resource}
-        unhappy: Unhappy?
-      new:
-        already_have_account: Already have an account?
-        brand_alt: Nexo POS logo mark
-        email: Email address
-        email_placeholder: email@example.com
-        password: Password
-        password_confirmation: Confirm password
-        password_minimum: "%{count} characters minimum"
-        sign_in: Sign in
-        submit: Create account
-        subtitle: Sign up to start using Nexo POS
-        title: Create account
-    sessions:
-      new:
-        email: Email address
-        email_placeholder: email@example.com
-        error_banner:
-          title: Authentication Failed
-        forgot: Forgot key?
-        password: Password
-        submit: SIGN IN
-        subtitle: Enter your credentials to open terminal shift
-        title: Access Terminal
-    shared:
-      links:
-        forgot_password: Forgot your password?
-        log_in: Log in
-        no_confirmation: Didn't receive confirmation instructions?
-        no_unlock: Didn't receive unlock instructions?
-        sign_in_with: Sign in with %{provider}
-        sign_up: Sign up
-  errors:
-    format: "%{attribute} %{message}"
-    messages:
-      blank: can't be blank
-      greater_than_min: must be greater than or equal to min_stock
-      invalid: is invalid
-      invalid_format: is invalid
-      invalid_url: must be a valid URL
-      taken: has already been taken
-      too_long: is too long (maximum %{count} characters)
-      too_short: is too short (minimum %{count} characters)
-      wrong_length: has an incorrect length
-  landing:
-    buttons:
-      create_account: Create account
-      request_demo: Request a demo
-      sign_in: Sign in
-      sign_out: Sign out
-      start: Get started
-      start_free: Start for free
-      view_demo: View demo
-    cta:
-      description: Start today with Nexo POS and discover how to simplify your business
-        administration.
-      title: Ready to modernize your business?
-    dashboard:
-      customers: Customers
-      inventory: Inventory
-      last_seven_days: Last 7 days
-      minutes_ago: "%{count} min ago"
-      products: Products
-      recent_sales: Recent sales
-      sales: Sales
-      sold_products: Products sold
-      summary: Your business overview
-      title: Dashboard
-      today: Today
-      today_sales: Today's sales
-    faq:
-      subtitle: Answers to the most common questions.
-      title: Frequently asked questions
-    feature_items:
-      any_device:
-        description: Work from a computer, tablet, or phone. You only need a browser
-          and internet connection.
-        title: Access from any device
-      billing:
-        description: Issue receipts from the same sale and keep your tax information
-          organized.
-        title: Billing
-      customers:
-        description: Register customers, review purchase history, and apply personalized
-          discounts.
-        title: Customers
-      quick_sales:
-        description: Check out in seconds with barcode scanning, multiple payment
-          methods, and instant receipts.
-        title: Quick sales
-      realtime_inventory:
-        description: Control stock by branch, receive low-stock alerts, and avoid
-          selling unavailable products.
-        title: Real-time inventory
-      reports:
-        description: Know your sales, profits, and best-selling products with self-updating
-          reports.
-        title: Reports and analytics
-    features:
-      subtitle: A modern platform designed for small, medium, and large businesses.
-      title: Everything you need to manage your business
-    footer:
-      about: About us
-      company: Company
-      contact: Contact
-      copyright: "© %{year} Nexo POS. All rights reserved."
-      description: Modern point of sale for businesses that want to sell more, manage
-        inventory better, and grow without complications.
-      privacy: Privacy
-      product: Product
-      terms: Terms
-    hero:
-      badge: New • Cloud POS
-      description: Control sales, inventory, customers, purchases, reports, and billing
-        from any device.
-      highlighted: NEXO POS
-      title: Manage your business with
-    module_items:
-      accounting:
-        description: Export your transactions in the format your accountant needs,
-          without manual entry.
-        title: Accounting closings
-      cash_register:
-        description: Open and close shifts, record withdrawals, and detect differences
-          at the end of the day.
-        title: Cash register and shifts
-      multibranch:
-        description: Manage multiple branches from one account and compare their performance
-          in one dashboard.
-        title: Multi-branch
-      purchases:
-        description: Record purchase orders, control costs, and keep supplier information
-          up to date.
-        title: Purchases and suppliers
-      returns:
-        description: Process returns and cancellations while keeping inventory and
-          cash balanced.
-        title: Returns
-      users:
-        description: Define roles for cashiers, supervisors, and administrators with
-          the permissions each needs.
-        title: Users and permissions
-    modules:
-      subtitle: Grow without changing systems.
-      title: Specialized modules
-    navbar:
-      faq: FAQ
-      features: Features
-      modules: Modules
-      open_menu: Open menu
-      pricing: Pricing
-    plan_items:
-      enterprise:
-        description: For chains that need total control.
-        features:
-          accounting: Accounting export
-          implementation: Implementation guidance
-          roles: Detailed roles and permissions
-          support: 24/7 support
-          unlimited: Unlimited branches and users
-        name: Enterprise
-      professional:
-        description: The plan chosen by most of our customers.
-        features:
-          advanced_reports: Advanced reports
-          branch_users: 3 branches and 10 users
-          cash_returns: Cash, shifts, and returns
-          priority_support: Priority support
-          purchases: Purchases and suppliers
-        name: Professional
-      starter:
-        description: For businesses starting to organize their sales.
-        features:
-          basic_reports: Basic reports
-          branch_users: 1 branch and 2 users
-          email_support: Email support
-          sales_inventory: Sales and inventory
-        name: Starter
-    pricing:
-      badge: Pricing
-      choose_plan: Choose plan
-      most_popular: Most popular
-      per_month: "/month"
-      subtitle: Start free and grow when you need to.
-      title: Plans for every business
-    questions:
-      commitment:
-        answer: There are no forced contracts. The plan is monthly, and you can change
-          or cancel it whenever you need.
-        question: Is there a minimum commitment?
-      install:
-        answer: No. Nexo POS runs in your browser, so you can use it on any computer
-          with internet access.
-        question: Do I need to install anything on my computer?
-      migration:
-        answer: You can import products from an Excel or CSV file, and we will guide
-          you through the first upload.
-        question: Can I migrate my product catalog?
-      offline:
-        answer: Yes. The point of sale stores operations locally and syncs them when
-          the connection returns.
-        question: Can I keep selling if the internet goes down?
-      trial:
-        answer: All Professional plan features for 14 days, without registering a
-          credit card.
-        question: What does the free trial include?
-    screenshot:
-      badge: Modern interface
-      description: All the important information just one click away.
-      title: A modern and simple interface
-    statistics:
-      availability: Availability
-      daily_sales: Daily sales
-      support: Support
-    testimonial_items:
-      andrea:
-        company: Aurora Boutique
-        name: Andrea Solís
-        position: Founder
-        quote: Staff training took one afternoon. The interface is so simple there
-          were barely any questions.
-      carlos:
-        company: Norte Hardware
-        name: Carlos Ibáñez
-        position: Operations manager
-        quote: We have three branches and can finally see all their inventory on the
-          same screen.
-      laura:
-        company: La Esquina Groceries
-        name: Laura Méndez
-        position: Owner
-        quote: I used to close the register with paper and a calculator. Now I know
-          what I sold and what I need to restock in a minute.
-    testimonials:
-      badge: Customers
-      subtitle: Our software helps hundreds of businesses every day.
-      title: Businesses that trust Nexo POS
   clients:
     confirm:
       cancel: Cancel
@@ -933,6 +667,8 @@ en:
       credit_limit_placeholder: e.g. 5000.00
       email: Email
       email_placeholder: e.g. client@company.com
+      fiscal_regime: Fiscal regime
+      fiscal_regime_blank: Select the fiscal regime
       name: Name
       name_placeholder: Client's name
       notes: Notes
@@ -945,8 +681,6 @@ en:
       rfc_placeholder: e.g. ABC010101ABC
       status: Status
       update: Update client
-      fiscal_regime: Fiscal regime
-      fiscal_regime_blank: Select the fiscal regime
     index:
       card_title: Registered clients
       columns:
@@ -987,6 +721,449 @@ en:
       active: Active
       inactive: Inactive
     updated: Client updated successfully
+  demo_request_mailer:
+    new_request:
+      fields:
+        company: Company
+        email: Email
+        message: Message
+        name: Name
+        phone: Phone
+      subject: New demo request - Delta POS
+      title: New demo request
+  demo_requests:
+    create:
+      success: Your request was received. We will contact you soon.
+    new:
+      back: Back to home
+      badge: Personalized demo
+      benefits:
+        no_commitment:
+          description: Request your demo and explore the platform before deciding.
+          title: No commitment
+        personalized:
+          description: Discover the features your business really needs.
+          title: Personalized demo
+        resolve_questions:
+          description: A specialist can explain how the platform works.
+          title: Get your questions answered
+      brand: Delta POS
+      company: Company
+      email: Email address
+      error_summary: The request could not be sent. Check the fields and try again.
+      hero_description: Manage sales, inventory, customers, branches, and much more
+        from one place.
+      hero_title: Discover everything
+      hero_title_suffix: can do for your business
+      message: How can we help?
+      name: Name
+      page_title: Request a demo | Delta POS
+      phone: Phone
+      submit: Request a demo
+  devise:
+    confirmations:
+      new:
+        submit: Resend confirmation instructions
+        title: Resend confirmation instructions
+    mailer:
+      confirmation_instructions:
+        action: Confirm my account
+        greeting: Welcome %{email}!
+        instruction: 'You can confirm your account email through the link below:'
+      email_changed:
+        confirmed: We're contacting you to notify you that your email has been changed
+          to %{email}.
+        greeting: Hello %{email}!
+        pending: We're contacting you to notify you that your email is being changed
+          to %{email}.
+      unlock_instructions:
+        action: Unlock my account
+        greeting: Hello %{email}!
+        instruction: 'Click the link below to unlock your account:'
+        notification: Your account has been locked due to an excessive number of unsuccessful
+          sign-in attempts.
+    passwords:
+      edit:
+        confirm_password: Confirm new password
+        minimum: "%{count} characters minimum"
+        new_password: New password
+        submit: Change my password
+        title: Change your password
+      new:
+        submit: Send me reset password instructions
+        title: Forgot your password?
+    registrations:
+      edit:
+        back: Back
+        cancel_account: Cancel my account
+        confirm: Are you sure?
+        current_password_hint: we need your current password to confirm your changes
+        leave_blank: leave blank if you don't want to change it
+        minimum: "%{count} characters minimum"
+        pending_confirmation: 'Currently waiting confirmation for: %{email}'
+        submit: Update
+        title: Edit %{resource}
+        unhappy: Unhappy?
+      new:
+        already_have_account: Already have an account?
+        brand_alt: Delta POS logo mark
+        email: Email address
+        email_placeholder: email@example.com
+        password: Password
+        password_confirmation: Confirm password
+        password_minimum: "%{count} characters minimum"
+        sign_in: Sign in
+        submit: Create account
+        subtitle: Sign up to start using Delta POS
+        title: Create account
+    sessions:
+      new:
+        email: Email address
+        email_placeholder: email@example.com
+        error_banner:
+          title: Authentication Failed
+        forgot: Forgot key?
+        password: Password
+        submit: SIGN IN
+        subtitle: Enter your credentials to open terminal shift
+        title: Access Terminal
+    shared:
+      links:
+        forgot_password: Forgot your password?
+        log_in: Log in
+        no_confirmation: Didn't receive confirmation instructions?
+        no_unlock: Didn't receive unlock instructions?
+        sign_in_with: Sign in with %{provider}
+        sign_up: Sign up
+    unlocks:
+      new:
+        submit: Resend unlock instructions
+        title: Resend unlock instructions
+  errors:
+    attributes:
+      barcode: Barcode
+      category: Category
+      city: City
+      code: Code
+      cost: Cost
+      country: Country
+      description: Description
+      exterior_number: Exterior number
+      featured: Featured
+      flag_iso: Flag
+      image: Image
+      interior_number: Interior number
+      max_stock: Max stock
+      min_stock: Min stock
+      name: Name
+      neighborhood: Neighborhood
+      phone: Phone
+      position: Position
+      postal_code: Postal code
+      price: Price
+      sat_tax: SAT tax
+      sat_unit_key: SAT unit key
+      sku: SKU
+      slug: Slug
+      state: State
+      status: Status
+      stock: Stock
+      street: Street
+      view_count: View count
+    format: "%{attribute} %{message}"
+    messages:
+      acceptance: must be accepted
+      blank: can't be blank
+      confirmation: doesn't match
+      equal_to: must be equal to %{count}
+      equality: is not equal
+      even: must be even
+      exclusion: is reserved
+      greater_than: must be greater than %{count}
+      greater_than_min: must be greater than or equal to min_stock
+      greater_than_or_equal_to: must be greater than or equal to %{count}
+      inclusion: is not included in the list
+      invalid: is invalid
+      invalid_format: is invalid
+      invalid_url: must be a valid URL
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
+      none: must be nil
+      numeric: is not a number
+      odd: must be odd
+      other_than: must be other than %{count}
+      present: must be blank
+      some: must be defined
+      taken: has already been taken
+      too_long: is too long (maximum %{count} characters)
+      too_short: is too short (minimum %{count} characters)
+      wrong_length: has an incorrect length
+  home:
+    new_model:
+      item_1: Payments completed in under 2 seconds with smooth and intuitive interfaces.
+      item_2: Automated cloud inventory control with instant restocking alerts.
+      item_3: Live analytics dashboard accessible from any phone or tablet.
+    old_model:
+      item_1: Long checkout lines due to slow software that constantly hangs.
+      item_2: Inventory discrepancies between branches and unexplained losses.
+      item_3: Complex manual reports at the end of each month in spreadsheets.
+  landing:
+    buttons:
+      create_account: Create account
+      open_menu: Open menu
+      request_demo: Request a demo
+      sign_in: Sign in
+      sign_out: Sign out
+      start: Start
+      start_free: Start for free
+      view_demo: View demo
+    cta:
+      description: Start today with Delta POS and discover how to simplify your business
+        administration.
+      title: Ready to modernize your business?
+    dashboard:
+      customers: Customers
+      inventory: Inventory
+      last_seven_days: Last 7 days
+      minutes_ago: "%{count} min ago"
+      products: Products
+      recent_sales: Recent sales
+      sales: Sales
+      sold_products: Products sold
+      summary: Your business overview
+      title: Dashboard
+      today: Today
+      today_sales: Today's sales
+    faq:
+      sale: Sale
+      subtitle: Answers to the most common questions.
+      title: Frequently asked questions
+    feature_items:
+      any_device:
+        description: Work from a computer, tablet, or phone. You only need a browser
+          and internet connection.
+        title: Access from any device
+      billing:
+        description: Issue receipts from the same sale and keep your tax information
+          organized.
+        title: Billing
+      customers:
+        description: Register customers, review purchase history, and apply personalized
+          discounts.
+        title: Customers
+      quick_sales:
+        description: Check out in seconds with barcode scanning, multiple payment
+          methods, and instant receipts.
+        title: Quick sales
+      realtime_inventory:
+        description: Control stock by branch, receive low-stock alerts, and avoid
+          selling unavailable products.
+        title: Real-time inventory
+      reports:
+        description: Know your sales, profits, and best-selling products with self-updating
+          reports.
+        title: Reports and analytics
+    features:
+      items:
+        analytics_reports:
+          description: View your net profits, peak sales hours, and cashier performance
+            from any mobile device or computer.
+          title: Analytics Reports
+        fast_sales:
+          description: Check out in seconds. Compatible with barcode scanners, payment
+            terminals, and instant electronic invoicing.
+          title: Fast Sales
+        inventory_control:
+          description: Real-time multi-branch synchronization. Receive automated alerts
+            when your best-selling products are running low.
+          title: Inventory Control
+      subtitle: A modern platform designed for small, medium, and large businesses.
+      title: Everything you need to manage your business
+    footer:
+      about: About Us
+      api_docs: API Documentation
+      brand_alt: Delta POS
+      business_partner: Business Partner
+      company: Company
+      copyright: "© %{year} Delta POS Inc. All rights reserved."
+      description: Cloud-based point-of-sale technology designed to maximize the efficiency
+        and performance of retail businesses and corporate chains.
+      features: Features
+      hardware: Compatible Hardware
+      help_center: Help Center
+      pricing: Pricing Plans
+      privacy: Privacy Policy
+      product: Product
+      sales_contact: Sales Contact
+      security: Cloud Security
+      server_status: Server Status
+      support: Support
+      terms: Terms of Service
+    hero:
+      badge: New Delta POS Cloud version
+      cta_description: Join hundreds of growing businesses that already scaled their
+        operations.
+      cta_title: Ready to modernize your point of sale?
+      description: Manage your inventory, process payments instantly, and analyze
+        your profit margins with the fastest and most reliable platform on the market.
+      faq_title: Frequently Asked Questions
+      features_title: Everything you need in one platform
+      highlighted: growth
+      new_model_title: The Delta POS experience
+      old_model_intro: Modern businesses cannot depend on obsolete software.
+      old_model_title: The outdated model
+      prices_title: Transparent plans tailored to your needs
+      problem_title: Tired of slow systems that slow down your business?
+      testimonials_title: Commercial Success Stories
+      title: The point of sale that drives your
+    hero_preview:
+      action_required: Action required
+      realtime: Real time
+      stock_alerts: Stock alerts
+      today_sales: Today's sales
+      transactions: Transactions
+    module_items:
+      accounting:
+        description: Export your transactions in the format your accountant needs,
+          without manual entry.
+        title: Accounting closings
+      cash_register:
+        description: Open and close shifts, record withdrawals, and detect differences
+          at the end of the day.
+        title: Cash register and shifts
+      multibranch:
+        description: Manage multiple branches from one account and compare their performance
+          in one dashboard.
+        title: Multi-branch
+      purchases:
+        description: Record purchase orders, control costs, and keep supplier information
+          up to date.
+        title: Purchases and suppliers
+      returns:
+        description: Process returns and cancellations while keeping inventory and
+          cash balanced.
+        title: Returns
+      users:
+        description: Define roles for cashiers, supervisors, and administrators with
+          the permissions each needs.
+        title: Users and permissions
+    modules:
+      subtitle: Grow without changing systems.
+      title: Specialized modules
+    navbar:
+      faq: FAQ
+      features: Features
+      modules: Modules
+      open_menu: Open menu
+      pricing: Pricing
+      solution: Solution
+    plan_items:
+      enterprise:
+        description: For chains that need total control.
+        features:
+          accounting: Accounting export
+          implementation: Implementation guidance
+          roles: Detailed roles and permissions
+          support: 24/7 support
+          unlimited: Unlimited branches and users
+        name: Enterprise
+      professional:
+        description: The plan chosen by most of our customers.
+        features:
+          advanced_reports: Advanced reports
+          branch_users: 3 branches and 10 users
+          cash_returns: Cash, shifts, and returns
+          priority_support: Priority support
+          purchases: Purchases and suppliers
+        name: Professional
+      starter:
+        description: For businesses starting to organize their sales.
+        features:
+          basic_reports: Basic reports
+          branch_users: 1 branch and 2 users
+          email_support: Email support
+          sales_inventory: Sales and inventory
+        name: Starter
+    pricing:
+      badge: Pricing
+      choose_plan: Choose plan
+      most_popular: Most popular
+      per_month: "/month"
+      subtitle: Start free and grow when you need to.
+      title: Plans for every business
+    questions:
+      commitment:
+        answer: There are no forced contracts. The plan is monthly, and you can change
+          or cancel it whenever you need.
+        question: Is there a minimum commitment?
+      install:
+        answer: No. Delta POS runs in your browser, so you can use it on any computer
+          with internet access.
+        question: Do I need to install anything on my computer?
+      migration:
+        answer: You can import products from an Excel or CSV file, and we will guide
+          you through the first upload.
+        question: Can I migrate my product catalog?
+      offline:
+        answer: Yes. The point of sale stores operations locally and syncs them when
+          the connection returns.
+        question: Can I keep selling if the internet goes down?
+      trial:
+        answer: All Professional plan features for 14 days, without registering a
+          credit card.
+        question: What does the free trial include?
+    screenshot:
+      badge: Modern interface
+      description: All the important information just one click away.
+      title: A modern and simple interface
+    statistics:
+      availability: Availability
+      daily_sales: Daily sales
+      support: Support
+    testimonial_items:
+      alejandro:
+        company: Minimarket El Triunfo
+        name: Alejandro Gómez
+        position: Owner
+        quote: It reduced our checkout lines by 40%. The interface is intuitive, so
+          training new cashiers takes less than ten minutes.
+      beatriz:
+        company: Boutique Bloom
+        name: Beatriz Mendoza
+        position: Owner
+        quote: Cloud stock synchronization is real. I can now see exactly which products
+          sell best at each hour without waiting for manual audits.
+      carlos:
+        company: Ferretería El Candado
+        name: Carlos Ramírez
+        position: Owner
+        quote: Integrated electronic invoicing saved us hours of administrative work.
+          The system keeps our operation organized.
+      diana:
+        company: Cafetería Urban Central
+        name: Diana Silva
+        position: Owner
+        quote: Faster card processing improved our peak-hour sales. It made a noticeable
+          difference for the business.
+      eduardo:
+        company: Tiendas Minimix (5 branches)
+        name: Eduardo Marín
+        position: Operations Manager
+        quote: Multi-branch management lets us control stores in three cities from
+          one dashboard. It is essential for our growth.
+      sofia:
+        company: Boutique Glamour
+        name: Sofia Palacios
+        position: Owner
+        quote: Low-stock alerts helped us avoid critical inventory shortages. Support
+          also responds quickly when we have questions.
+    testimonials:
+      badge: Customers
+      next: Next stories
+      previous: Previous stories
+      stars_label: 5 stars
+      subtitle: Our software helps hundreds of businesses every day.
+      title: Businesses that trust Delta POS
   system_roles:
     create:
       success: System role was successfully created

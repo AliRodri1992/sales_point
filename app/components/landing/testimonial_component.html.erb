@@ -1,18 +1,12 @@
-<%= render Ui::CardComponent.new(hover: true) do |card| %>
-  <% card.with_body do %>
-    <div class="space-y-6">
-      <div class="flex items-center gap-4">
-        <%= image_tag avatar, class: "h-14 w-14 rounded-full object-cover", alt: name %>
-        <div>
-          <div class="font-bold text-slate-900">
-            <%= name %>
-          </div>
-          <div class="text-sm text-slate-500">
-            <%= position %> · <%= company %>
-          </div>
-        </div>
-      </div>
-      <p class="leading-8 italic text-slate-600">"<%= quote %>"</p>
+<article class="flex flex-col justify-between space-y-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+  <div class="space-y-2">
+    <div class="flex items-center gap-1 text-amber-400" aria-label="<%= t("landing.testimonials.stars_label") %>">
+      <% 5.times { %><span aria-hidden="true">★</span><% } %>
     </div>
-  <% end %>
-<% end %>
+    <p class="text-xs leading-relaxed italic text-slate-500">"<%= quote %>"</p>
+  </div>
+  <div class="mt-2 flex items-center gap-3 border-t border-slate-100 pt-3">
+    <div class="flex h-10 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-jakarta text-xs font-bold text-emerald-600"><%= initials %></div>
+    <div><h3 class="font-jakarta text-xs font-semibold text-slate-900"><%= name %></h3><p class="text-[10px] font-medium text-emerald-600"><%= company %></p></div>
+  </div>
+</article>
