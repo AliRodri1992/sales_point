@@ -20,8 +20,8 @@ RSpec.describe 'LngSwitchProbe', type: :request do
     patch '/language', params: { language: 'en' }.to_json,
                        headers: { 'Content-Type' => 'application/json' }
 
-    # Language switch may return :ok or :redirect depending on implementation
-    expect(%i[ok redirect]).to include(response.status)
+    # Language switch may return :ok (200) or :redirect (3xx) depending on implementation
+    expect([200, 301, 302, 303, 307, 308]).to include(response.status)
 
     get '/home/index'
 
