@@ -7,7 +7,7 @@
     highlighted: t('landing.hero.highlighted'),
     description: t('landing.hero.description'),
     primary_button_text: t('landing.buttons.start'),
-    primary_button_href: "#precios",
+    primary_button_href: new_user_registration_path,
     secondary_button_text: t('landing.buttons.request_demo'),
     secondary_button_href: "#contacto"
   ) %>
@@ -69,7 +69,7 @@
   </section>
 
   <%= render Landing::FaqComponent.new(title: t('landing.faq.title'), subtitle: t('landing.faq.subtitle'), questions: @questions) %>
-  <%= render Landing::CtaComponent.new(title: t('landing.hero.cta_title'), description: t('landing.hero.cta_description'), button_text: t('landing.buttons.start'), button_href: "#precios") %>
+  <%= render Landing::CtaComponent.new(title: t('landing.hero.cta_title'), description: t('landing.hero.cta_description'), button_text: t('landing.buttons.start'), button_href: new_user_registration_path) %>
 </main>
 
 <%= render Landing::FooterComponent.new %>
