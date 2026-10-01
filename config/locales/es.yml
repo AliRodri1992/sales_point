@@ -877,6 +877,16 @@ es:
       subtitle: Una plataforma moderna diseñada para pequeñas, medianas y grandes
         empresas.
       title: Todo lo que necesitas para administrar tu negocio
+      items:
+        fast_sales:
+          title: Ventas Veloces
+          description: Cobra en caja en segundos. Compatible con lectores de código de barra, terminales bancarias y facturación electrónica instantánea.
+        inventory_control:
+          title: Control de Inventarios
+          description: Sincronización multi-sucursal en tiempo real. Recibe alertas automatizadas cuando tus productos estrella se estén agotando.
+        analytics_reports:
+          title: Reportes Analíticos
+          description: Visualiza tus ganancias netas, horas pico de venta y rendimiento de tus cajeros desde cualquier dispositivo móvil o computadora.
     footer:
       about: Sobre Nosotros
       brand_alt: Delta POS
