@@ -18,7 +18,7 @@ module Users
         if flash[:notice]
           flash[:swal_message] = flash[:notice]
           flash.delete(:notice)
-        elsif flash[:alert]&.match?(/already signed i/i)
+        elsif flash[:alert]
           flash[:swal_message] = flash[:alert]
           flash.delete(:alert)
         end
