@@ -27,10 +27,11 @@ module Landing
     end
 
     def button_classes
+      featured_button_classes = 'bg-emerald-600 text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700'
+      regular_button_classes = 'border border-slate-200 text-slate-700 hover:bg-slate-50'
       class_names(
         'mt-8 block w-full rounded-xl py-3 text-center text-sm font-medium transition',
-        featured ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700' :
-          'border border-slate-200 text-slate-700 hover:bg-slate-50'
+        featured ? featured_button_classes : regular_button_classes
       )
     end
 

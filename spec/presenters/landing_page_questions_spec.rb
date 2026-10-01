@@ -16,8 +16,8 @@ RSpec.describe LandingPage::Questions do
           questions.each do |question|
             expect(question.question).not_to include('translation missing')
             expect(question.answer).not_to include('translation missing')
-            expect(question.question).not_to include('#{key}')
-            expect(question.answer).not_to include('#{key}')
+            expect(question.question).not_to include("\#{key}")
+            expect(question.answer).not_to include("\#{key}")
           end
         end
       end

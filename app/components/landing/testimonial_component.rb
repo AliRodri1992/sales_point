@@ -2,7 +2,7 @@
 
 module Landing
   class TestimonialComponent < ViewComponent::Base
-    def initialize(name:, company:, position: nil, quote:, avatar: nil)
+    def initialize(name:, company:, quote:, position: nil, avatar: nil)
       super()
       @name = name
       @company = company

@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Locale coverage', type: :model do
-  LOCALES = %w[es en ko].freeze
-  BASE_LOCALE = 'es'
+LOCALES = %w[es en ko].freeze
+BASE_LOCALE = 'es'
 
+RSpec.describe 'Locale coverage', type: :model do
   def flatten_keys(value, prefix = nil, result = [])
     return result unless value.is_a?(Hash)
 
@@ -36,7 +36,7 @@ RSpec.describe 'Locale coverage', type: :model do
       missing = base_keys - locale_keys
 
       expect(missing).to be_empty,
-        "Missing #{locale} translations: #{missing.join(', ')}"
+                         "Missing #{locale} translations: #{missing.join(', ')}"
     end
   end
 
