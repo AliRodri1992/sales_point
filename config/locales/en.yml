@@ -780,6 +780,16 @@ en:
     features:
       subtitle: A modern platform designed for small, medium, and large businesses.
       title: Everything you need to manage your business
+      items:
+        fast_sales:
+          title: Fast Sales
+          description: Check out in seconds. Compatible with barcode scanners, payment terminals, and instant electronic invoicing.
+        inventory_control:
+          title: Inventory Control
+          description: Real-time multi-branch synchronization. Receive automated alerts when your best-selling products are running low.
+        analytics_reports:
+          title: Analytics Reports
+          description: View your net profits, peak sales hours, and cashier performance from any mobile device or computer.
     footer:
       about: About Us
       brand_alt: Delta POS
