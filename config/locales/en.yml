@@ -996,8 +996,8 @@ en:
   landing.hero:
     problem_title: Tired of slow systems that slow down your business?
     old_model_intro: Modern businesses cannot depend on obsolete software.
-    old_model_title: "❌ The outdated model"
-    new_model_title: "\U0001F680 Delta POS Experience"
+    old_model_title: "The outdated model"
+    new_model_title: "Delta POS Experience"
     testimonials_title: Commercial Success Stories
     prices_title: Transparent plans tailored to your needs
     faq_title: Frequently Asked Questions
@@ -1007,22 +1007,21 @@ en:
     features_title: Everything you need in one platform
   home:
     old_model_items:
-    - "\U0001F449 Long rows at checkout due to a slow software that constantly hangs."
-    - "\U0001F449 Inventory gaps between branches and unexplained losses."
-    - "\U0001F449 Complex manual reports at the end of each month in spreadsheets."
+    - "Long rows at checkout due to a slow software that constantly hangs."
+    - "Inventory gaps between branches and unexplained losses."
+    - "Complex manual reports at the end of each month in spreadsheets."
     new_model_items:
-    - "✅ Get paid in under 2 seconds with smooth and intuitive interfaces."
-    - "✅ Automated cloud inventory with instant low-stock alerts."
-    - "✅ Live analytics dashboard accessible from any phone or tablet."
+    - "Get paid in under 2 seconds with smooth and intuitive interfaces."
+    - "Automated cloud inventory with instant low-stock alerts."
+    - "Live analytics dashboard accessible from any phone or tablet."
     old_model:
-      item_1: "\U0001F449 Long rows at checkout due to a slow software that constantly
-        hangs."
-      item_2: "\U0001F449 Inventory gaps between branches and unexplained losses."
-      item_3: "\U0001F449 Complex manual reports at the end of each month in spreadsheets."
+      item_1: "Long rows at checkout due to a slow software that constantly hangs."
+      item_2: "Inventory gaps between branches and unexplained losses."
+      item_3: "Complex manual reports at the end of each month in spreadsheets."
     new_model:
-      item_1: "✅ Get paid in under 2 seconds with smooth and intuitive interfaces."
-      item_2: "✅ Automated cloud inventory with instant low-stock alerts."
-      item_3: "✅ Live analytics dashboard accessible from any phone or tablet."
+      item_1: "Get paid in under 2 seconds with smooth and intuitive interfaces."
+      item_2: "Automated cloud inventory with instant low-stock alerts."
+      item_3: "Live analytics dashboard accessible from any phone or tablet."
   app:
     name: Delta
     short_name: POS
