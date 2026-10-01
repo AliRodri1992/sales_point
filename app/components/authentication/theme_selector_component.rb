@@ -2,7 +2,7 @@
 
 module Authentication
   class ThemeSelectorComponent < ViewComponent::Base
-    delegate :icon, to: :view_context
+    delegate :icon, :class_names, to: :view_context
 
     def initialize(themes:, current_theme:)
       super()
