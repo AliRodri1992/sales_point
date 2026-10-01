@@ -12,6 +12,46 @@ es:
       sat_currency: Moneda SAT
       system_role: Rol del sistema
       user: Usuario
+    attributes:
+      category:
+        code: "Código"
+        description: "Descripción"
+        name: "Nombre"
+        status: "Estado"
+      demo_request:
+        company: "Empresa"
+        email: "Correo electrónico"
+        message: "Mensaje"
+        name: "Nombre"
+        phone: "Teléfono"
+      language:
+        code: "Código"
+        flag_iso: "Bandera"
+        name: "Nombre"
+        status: "Estado"
+      product:
+        barcode: "Código de barras"
+        code: "Código"
+        cost: "Costo"
+        description: "Descripción"
+        featured: "Destacado"
+        image_url: "URL de imagen"
+        max_stock: "Stock máximo"
+        min_stock: "Stock mínimo"
+        name: "Nombre"
+        position: "Orden"
+        price: "Precio"
+        sku: "SKU"
+        slug: "Slug"
+        status: "Estado"
+        stock: "Existencias"
+        view_count: "Contador de vistas"
+      user:
+        current_password: "Contraseña actual"
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        user_type: "Tipo de usuario"
   admin:
     branches:
       actions:
@@ -841,6 +881,8 @@ es:
       too_long: es demasiado largo (máximo %{count} caracteres)
       too_short: es demasiado corto (mínimo %{count} caracteres)
       wrong_length: tiene una longitud incorrecta
+      greater_than_min: "debe ser mayor o igual que el stock mínimo"
+      invalid_url: "debe ser una URL válida"
   landing:
     buttons:
       create_account: Crear cuenta

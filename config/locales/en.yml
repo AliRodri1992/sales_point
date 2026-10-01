@@ -581,8 +581,6 @@ en:
         open: Online users
         subtitle: Active now
         title: Online users
-      shared:
-        no_image: No image available
       sidebar:
         adjustments: Adjustments
         branches: Branches
