@@ -751,6 +751,16 @@ ko:
     features:
       subtitle: 소규모부터 대규모 기업까지 설계된 현대적인 플랫폼입니다.
       title: 비즈니스 관리에 필요한 모든 것
+      items:
+        fast_sales:
+          title: 빠른 판매
+          description: 계산대에서 몇 초 만에 결제하세요. 바코드 스캐너, 결제 단말기 및 즉시 전자 세금계산서를 지원합니다.
+        inventory_control:
+          title: 재고 관리
+          description: 실시간 다지점 재고 동기화를 제공합니다. 인기 상품의 재고가 부족해지면 자동 알림을 받습니다.
+        analytics_reports:
+          title: 분석 보고서
+          description: 모든 모바일 기기나 컴퓨터에서 순이익, 판매 피크 시간 및 계산원 성과를 확인하세요.
     footer:
       about: 회사 소개
       brand_alt: Delta POS
