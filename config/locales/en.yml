@@ -41,17 +41,17 @@ en:
         password: Password
         password_confirmation: Confirm password
         user_type: User Type
-  models:
-    address: "Address"
-    branch: "Branch"
-    category: "Category"
-    client: "Client"
-    demo_request: "Demo request"
-    language: "Language"
-    product: "Product"
-    sat_currency: "SAT currency"
-    system_role: "System role"
-    user: "User"
+    models:
+      address: "Address"
+      branch: "Branch"
+      category: "Category"
+      client: "Client"
+      demo_request: "Demo request"
+      language: "Language"
+      product: "Product"
+      sat_currency: "SAT currency"
+      system_role: "System role"
+      user: "User"
   admin:
     branches:
       actions:
@@ -112,8 +112,8 @@ en:
         active: Active
         inactive: Inactive
       updated: Branch updated successfully.
-    confirm:
-      cancel: "Cancel"
+      confirm:
+        cancel: "Cancel"
     system_roles:
       new:
         page_title: New role | Delta POS
@@ -432,8 +432,8 @@ en:
           status: Status
           stock: Stock
           views: Views
-        sat_tax: "SAT tax"
-        sat_unit_key: "SAT unit key"
+          sat_tax: "SAT tax"
+          sat_unit_key: "SAT unit key"
         confirm_delete: Are you sure you want to delete this product?
         count: "%{count} products"
         delete: Delete
@@ -619,7 +619,7 @@ en:
         suppliers: Suppliers
         system_users: System users
         taxes: Taxes
-      admins: "Administrators"
+        admins: "Administrators"
       topbar:
         morning_greeting: Good morning, %{name}
         toggle_sidebar: Toggle sidebar
@@ -631,7 +631,7 @@ en:
         settings: Settings
         sign_out: Sign out
         toggle: User menu
-    no_image: "No image available"
+      no_image: "No image available"
   authentication:
     error_banner:
       title: Authentication Failed
@@ -762,53 +762,53 @@ en:
       too_long: is too long (maximum %{count} characters)
       too_short: is too short (minimum %{count} characters)
       wrong_length: has an incorrect length
-    acceptance: "must be accepted"
-    confirmation: "doesn't match"
-    equal_to: "must be equal to %{count}"
-    equality: "is not equal"
-    even: "must be even"
-    exclusion: "is reserved"
-    greater_than: "must be greater than %{count}"
-    greater_than_or_equal_to: "must be greater than or equal to %{count}"
-    inclusion: "is not included in the list"
-    less_than: "must be less than %{count}"
-    less_than_or_equal_to: "must be less than or equal to %{count}"
-    none: "must be nil"
-    numeric: "is not a number"
-    odd: "must be odd"
-    other_than: "must be other than %{count}"
-    present: "must be blank"
-    some: "must be defined"
-  attributes:
-    barcode: "Barcode"
-    category: "Category"
-    city: "City"
-    code: "Code"
-    cost: "Cost"
-    country: "Country"
-    description: "Description"
-    exterior_number: "Exterior number"
-    featured: "Featured"
-    flag_iso: "Flag"
-    image: "Image"
-    interior_number: "Interior number"
-    max_stock: "Max stock"
-    min_stock: "Min stock"
-    name: "Name"
-    neighborhood: "Neighborhood"
-    phone: "Phone"
-    position: "Position"
-    postal_code: "Postal code"
-    price: "Price"
-    sat_tax: "SAT tax"
-    sat_unit_key: "SAT unit key"
-    sku: "SKU"
-    slug: "Slug"
-    state: "State"
-    status: "Status"
-    stock: "Stock"
-    street: "Street"
-    view_count: "View count"
+      acceptance: "must be accepted"
+      confirmation: "doesn't match"
+      equal_to: "must be equal to %{count}"
+      equality: "is not equal"
+      even: "must be even"
+      exclusion: "is reserved"
+      greater_than: "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
+      inclusion: "is not included in the list"
+      less_than: "must be less than %{count}"
+      less_than_or_equal_to: "must be less than or equal to %{count}"
+      none: "must be nil"
+      numeric: "is not a number"
+      odd: "must be odd"
+      other_than: "must be other than %{count}"
+      present: "must be blank"
+      some: "must be defined"
+    attributes:
+      barcode: "Barcode"
+      category: "Category"
+      city: "City"
+      code: "Code"
+      cost: "Cost"
+      country: "Country"
+      description: "Description"
+      exterior_number: "Exterior number"
+      featured: "Featured"
+      flag_iso: "Flag"
+      image: "Image"
+      interior_number: "Interior number"
+      max_stock: "Max stock"
+      min_stock: "Min stock"
+      name: "Name"
+      neighborhood: "Neighborhood"
+      phone: "Phone"
+      position: "Position"
+      postal_code: "Postal code"
+      price: "Price"
+      sat_tax: "SAT tax"
+      sat_unit_key: "SAT unit key"
+      sku: "SKU"
+      slug: "Slug"
+      state: "State"
+      status: "Status"
+      stock: "Stock"
+      street: "Street"
+      view_count: "View count"
   landing:
     buttons:
       create_account: Create account
