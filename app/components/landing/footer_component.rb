@@ -7,19 +7,19 @@ module Landing
     def initialize
       super
       @product_links = [
-        Link.new("features", "#caracteristicas"),
-        Link.new("pricing", "#precios"),
-        Link.new("hardware", "#")
+        Link.new('features', '#caracteristicas'),
+        Link.new('pricing', '#precios'),
+        Link.new('hardware', '#')
       ]
       @support_links = [
-        Link.new("help_center", "#"),
-        Link.new("api_docs", "#"),
-        Link.new("server_status", "#")
+        Link.new('help_center', '#'),
+        Link.new('api_docs', '#'),
+        Link.new('server_status', '#')
       ]
       @company_links = [
-        Link.new("about", "#"),
-        Link.new("sales_contact", "#contacto"),
-        Link.new("business_partner", "#")
+        Link.new('about', '#'),
+        Link.new('sales_contact', '#contacto'),
+        Link.new('business_partner', '#')
       ]
     end
 

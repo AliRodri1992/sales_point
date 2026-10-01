@@ -16,7 +16,7 @@ module Landing
     attr_reader :name, :company, :position, :quote, :avatar
 
     def initials
-      name.split.map { |part| part[0] }.first(2).join.upcase
+      name.split.pluck(0).first(2).join.upcase
     end
   end
 end

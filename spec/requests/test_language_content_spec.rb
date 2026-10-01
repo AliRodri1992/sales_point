@@ -14,12 +14,6 @@ RSpec.describe 'Language selector content endpoint', type: :request do
   it 'returns the dropdown content HTML with language buttons' do
     get '/admin/languages/content'
 
-    puts '=== STATUS ==='
-    puts response.status
-    puts '=== BODY ==='
-    puts response.body
-    puts '=== END ==='
-
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('language_selector_content')
     expect(response.body).to include('language-selector#select')

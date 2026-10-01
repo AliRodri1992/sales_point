@@ -7,10 +7,10 @@ module Landing
     def initialize
       super
       @menu_items = [
-        MenuItem.new(I18n.t("landing.navbar.solution"), "#solucion"),
-        MenuItem.new(I18n.t("landing.navbar.features"), "#caracteristicas"),
-        MenuItem.new(I18n.t("landing.navbar.pricing"), "#precios"),
-        MenuItem.new(I18n.t("landing.navbar.faq"), "#faq")
+        MenuItem.new(I18n.t('landing.navbar.solution'), '#solucion'),
+        MenuItem.new(I18n.t('landing.navbar.features'), '#caracteristicas'),
+        MenuItem.new(I18n.t('landing.navbar.pricing'), '#precios'),
+        MenuItem.new(I18n.t('landing.navbar.faq'), '#faq')
       ]
     end
 
