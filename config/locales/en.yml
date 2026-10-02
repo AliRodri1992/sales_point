@@ -814,7 +814,7 @@ en:
         email_placeholder: email@example.com
         password: Password
         password_confirmation: Confirm password
-        password_minimum: "%{count} characters minimum
+        password_minimum: "%{count} characters minimum"
         sign_in: Sign in
         submit: Create account
         subtitle: Sign up to start using Delta POS
