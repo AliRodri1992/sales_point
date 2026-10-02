@@ -107,10 +107,20 @@ def main() -> int:
         return 1
 
     parsed = {}
+    errors = []
     for path in paths:
-        locale, data = load_locale(path)
+        try:
+            locale, data = load_locale(path)
+        except SystemExit as exc:
+            errors.append(str(exc))
+            continue
         parsed[path] = (locale, data)
         print(f"OK YAML: {path} ({locale})")
+    if errors:
+        print("YAML AUDIT ERRORS:")
+        for error in errors:
+            print(f"  - {error}")
+        return 1
 
     roots = {}
     for path, (locale, _) in parsed.items():
