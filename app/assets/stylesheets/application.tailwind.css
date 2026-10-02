@@ -60,6 +60,14 @@ select {
     color: var(--brand);
 }
 
+.theme-control:checked {
+    accent-color: #059669;
+}
+
+.theme-selected .theme-control:checked {
+    accent-color: var(--brand);
+}
+
 .theme-bg {
     background: var(--brand);
 }
