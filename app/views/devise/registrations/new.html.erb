@@ -1,7 +1,7 @@
 <% content_for :title, t(".page_title") %>
 
 <div
-  class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
+  class="registration-page min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal registration-wizard"
   data-terminal-target="wrapper"
   data-registration-wizard-target="wrapper"
@@ -61,7 +61,7 @@
       </div>
 
       <p class="relative z-10 text-[11px] tracking-wide text-slate-500">
-        <%= t(".copyright", year: Time.current.year) %>
+        <%= t(".copyright") %>
       </p>
     </aside>
 
