@@ -837,6 +837,7 @@ es:
         password: Contraseña de acceso seguro
         remember_me: Recordar mi sesión
         submit: Ingresar a la Terminal
+        submitting: Iniciando sesión…
         subtitle: Introduce tus credenciales para abrir tu línea de cajas.
         title: Acceso al Sistema Cloud
         toggle_password: Mostrar u ocultar contraseña
