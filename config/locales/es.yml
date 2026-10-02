@@ -826,7 +826,7 @@ es:
         title: Crear cuenta
     sessions:
       new:
-      page_title: Delta POS | Inicio de Sesión
+        page_title: Delta POS | Inicio de Sesión
         brand_tagline: Punto de Venta
         brand_alt: Isotipo de Delta POS
         email: Correo electrónico corporativo
