@@ -917,6 +917,50 @@ es:
             card: "Habilitar Cobro con Tarjeta"
             qr: "Habilitar Pagos Digitales QR"
           terms: "Acepto los términos de servicio y la política de privacidad de Delta POS."
+        panel_badge: "⚡ Configuración de Entorno Comercial Cloud"
+        panel_title: "Inicializa tu Punto de Venta en la Nube"
+        panel_description: "Completa el registro asistido para activar de forma segura la infraestructura transaccional de Delta POS."
+        benefit_one_title: "Monitoreo de Caja y Turnos"
+        benefit_one_description: "Evita descuadres. Controla aperturas, retiros de efectivo y cierres de cajeros al instante."
+        benefit_two_title: "Compatibilidad Universal POS"
+        benefit_two_description: "Conexión nativa con lectores de código de barra, básculas e impresoras térmicas de tickets."
+        step_one:
+          title: "Tipo de Implementación"
+          subtitle: "Cuéntanos sobre tu situación para adaptar el entorno a tu negocio."
+          new_title: "Es un sistema completamente nuevo"
+          new_description: "Inicializa una base de datos limpia. Ideal si abres tu primer comercio minorista."
+          migration_title: "Es una migración de un sistema existente"
+          migration_description: "Migra tu catálogo e información operativa actual a Delta POS de forma segura."
+        step_three:
+          company_name: "Nombre Comercial / Razón Social"
+          company_name_placeholder: "Ej. Comercializadora Delta S.A."
+          tax_id: "Identificación Fiscal / RFC"
+          tax_id_placeholder: "Ej. ABC123456XYZ"
+        step_four:
+          business_sector: "Giro o Sector del Negocio"
+          select_sector: "Selecciona el giro..."
+          migration_volume: "Volumen estimado de productos"
+          select_volume: "Selecciona volumen..."
+          migration_priority: "Prioridad de datos a rescatar"
+          select_priority: "Selecciona prioridad..."
+          branches: "Sucursales Iniciales"
+          currency: "Moneda Principal"
+        step_five:
+          title: "Estaciones y Cajas"
+          subtitle: "Define cuántas cajas operarán en modo táctil y tus métodos de cobro integrados."
+          terminals: "Número de Cajas Táctiles Activas"
+          payments: "Integración de Terminal Bancaria"
+          terminal_options:
+            one: "1 Caja Principal (Estándar)"
+            two: "2 Cajas en Red Local"
+            three_five: "3 a 5 Cajas (Alta Demanda)"
+            over_five: "Más de 5 Cajas (Corporativo)"
+          payment_options:
+            cash: "Solo Efectivo (Por el momento)"
+            card: "Habilitar Cobro con Tarjeta (Terminal Bluetooth/USB)"
+            qr: "Habilitar Pagos Digitales (Códigos QR)"
+          terms: "Acepto los Términos del Servicio y la Política de Privacidad de Delta POS."
+          initialize: "Inicializar Entorno"
     sessions:
       new:
         page_title: Delta POS | Inicio de Sesión
