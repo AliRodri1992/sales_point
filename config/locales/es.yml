@@ -812,18 +812,6 @@ es:
         submit: Actualizar
         title: Editar %{resource}
         unhappy: "¿No estás conforme?"
-      edit:
-        back: Volver
-        cancel_account: Cancelar mi cuenta
-        confirm: "¿Estás seguro?"
-        current_password_hint: necesitamos tu contraseña actual para confirmar los
-          cambios
-        leave_blank: déjalo en blanco si no quieres cambiarla
-        minimum: Mínimo %{count} caracteres
-        pending_confirmation: 'La confirmación está pendiente para: %{email}'
-        submit: Actualizar
-        title: Editar %{resource}
-        unhappy: "¿No estás conforme?"
       new:
         brand_alt: "Isotipo de Delta POS"
         email: "Correo electrónico"
