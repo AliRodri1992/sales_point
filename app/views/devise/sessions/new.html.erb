@@ -148,8 +148,8 @@
                       action: "input->terminal#clearErrors"
                     }
                   ) %>
-                  <%= error_message_for(resource, :email) %>
                 </div>
+                <%= error_message_for(resource, :email) %>
               </div>
 
               <div>
@@ -174,7 +174,6 @@
                       terminal_target: "input password"
                     }
                   ) %>
-                  <%= error_message_for(resource, :password) %>
 
                   <button
                     type="button"
@@ -184,6 +183,7 @@
                     <%= icon "eye", variant: :outline, class: "h-4 w-4" %>
                   </button>
                 </div>
+                <%= error_message_for(resource, :password) %>
               </div>
 
               <div class="flex items-center justify-between">
