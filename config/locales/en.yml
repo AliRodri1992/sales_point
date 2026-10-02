@@ -832,6 +832,7 @@ en:
         password: Secure access password
         remember_me: Remember my session
         submit: Sign in to Terminal
+        submitting: Signing in…
         subtitle: Enter your credentials to open your cloud point of sale.
         title: Cloud System Access
         toggle_password: Show or hide password
