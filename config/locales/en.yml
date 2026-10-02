@@ -912,6 +912,50 @@ en:
             card: "Enable card payments"
             qr: "Enable digital QR payments"
           terms: "I accept the Delta POS terms of service and privacy policy."
+        panel_badge: "⚡ Cloud Commercial Environment Setup"
+        panel_title: "Initialize Your Point of Sale in the Cloud"
+        panel_description: "Complete the guided registration to securely activate Delta POS transactional infrastructure."
+        benefit_one_title: "Cash Register & Shift Monitoring"
+        benefit_one_description: "Prevent discrepancies and control openings, cash withdrawals, and cashier closings instantly."
+        benefit_two_title: "Universal POS Compatibility"
+        benefit_two_description: "Connect natively with barcode scanners, scales, and thermal receipt printers."
+        step_one:
+          title: "Implementation Type"
+          subtitle: "Tell us about your situation so we can adapt the environment to your business."
+          new_title: "It is a completely new system"
+          new_description: "Start with a clean database. Ideal if you are opening your first retail business."
+          migration_title: "It is a migration from an existing system"
+          migration_description: "Safely migrate your current catalog and operational information to Delta POS."
+        step_three:
+          company_name: "Commercial Name / Legal Business Name"
+          company_name_placeholder: "E.g. Delta Commercial Ltd."
+          tax_id: "Tax Identification / Tax ID"
+          tax_id_placeholder: "E.g. ABC123456XYZ"
+        step_four:
+          business_sector: "Business Sector"
+          select_sector: "Select the sector..."
+          migration_volume: "Estimated product volume"
+          select_volume: "Select volume..."
+          migration_priority: "Data migration priority"
+          select_priority: "Select priority..."
+          branches: "Initial Branches"
+          currency: "Primary Currency"
+        step_five:
+          title: "Stations & Cash Registers"
+          subtitle: "Define how many touch-enabled registers will operate and your integrated payment methods."
+          terminals: "Active Touch Cash Registers"
+          payments: "Bank Terminal Integration"
+          terminal_options:
+            one: "1 Main Register (Standard)"
+            two: "2 Registers on Local Network"
+            three_five: "3 to 5 Registers (High Demand)"
+            over_five: "More than 5 Registers (Corporate)"
+          payment_options:
+            cash: "Cash Only (For Now)"
+            card: "Enable Card Payments (Bluetooth/USB Terminal)"
+            qr: "Enable Digital Payments (QR Codes)"
+          terms: "I accept Delta POS Terms of Service and Privacy Policy."
+          initialize: "Initialize Environment"
     sessions:
       new:
         page_title: Delta POS | Sign In
