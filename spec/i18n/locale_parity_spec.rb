@@ -22,10 +22,11 @@ RSpec.describe 'Locale coverage', type: :model do
   end
 
   def locale_data(locale)
-    YAML.safe_load_file(
-      Rails.root.join('config', 'locales', "#{locale}.yml"),
-      aliases: true
-    ).fetch(locale)
+    Dir[Rails.root.join('config', 'locales', '**', '*.{yml,yaml}')].each_with_object({}) do |path, data|
+      parsed = YAML.safe_load_file(path, aliases: true)
+      locale_data = parsed.fetch(locale, nil)
+      data.deep_merge!(locale_data) if locale_data.is_a?(Hash)
+    end
   end
 
   it 'loads every locale and keeps all Spanish translation keys available' do
