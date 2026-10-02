@@ -21,8 +21,8 @@
       <div data-terminal-target="wrapper">
         <div
           data-controller="swal-flash"
-          data-swal-flash-message-value="<%= flash[:swal_message] || '' %>"
-          data-swal-flash-icon-value="<%= flash[:swal_icon] || 'success' %>">
+          data-swal-flash-message-value="<%= flash[:alert] || flash[:notice] || '' %>"
+          data-swal-flash-icon-value="<%= flash[:alert].present? ? 'error' : 'success' %>">
           <%= yield %>
         </div>
       </div>
