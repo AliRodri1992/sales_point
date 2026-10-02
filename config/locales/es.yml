@@ -837,7 +837,6 @@ es:
         back: "Atrás"
         next: "Continuar"
         already_have_account: "¿Ya tienes una cuenta operativa?"
-        sign_in: "Inicia sesión aquí"
         client_validation_required: "Completa la información requerida antes de continuar."
         client_validation_password_match: "Las contraseñas no coinciden."
         client_validation_tax_id: "El RFC o identificador fiscal debe contener 12 o 13 caracteres."
