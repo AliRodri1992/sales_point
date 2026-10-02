@@ -90,7 +90,9 @@
             </div>
           </div>
 
-          <%= render Authentication::ErrorBannerComponent.new(resource: resource) %>\n\n          <p data-registration-wizard-target="error" data-error="setup" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600"></p>
+          <%= render Authentication::ErrorBannerComponent.new(resource: resource) %>
+
+          <p data-registration-wizard-target="error" data-error="setup" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600"></p>
 
           <%= form_for(
             resource,
@@ -139,7 +141,6 @@
                   </button>
                 <% end %>
               </div>
-              <p data-registration-wizard-target="error" data-error="setup" class="hidden text-xs font-medium text-rose-600"></p>
             </section>
 
             <section data-registration-wizard-target="step" data-step="2" class="hidden space-y-5">
