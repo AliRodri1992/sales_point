@@ -4,7 +4,8 @@
   class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal registration-wizard"
   data-terminal-target="wrapper"
-  data-registration-wizard-target="wrapper"\n  data-validation-required="<%= t(".client_validation_required") %>"\n  data-validation-password-match="<%= t(".client_validation_password_match") %>"\n  data-validation-tax-id="<%= t(".client_validation_tax_id") %>"\n  data-validation-branches="<%= t(".client_validation_branches") %>"\n  data-validation-terms="<%= t(".client_validation_terms") %>">
+  data-registration-wizard-target="wrapper"
+  data-validation-required="<%= t(".client_validation_required") %>"\n  data-validation-password-match="<%= t(".client_validation_password_match") %>"\n  data-validation-tax-id="<%= t(".client_validation_tax_id") %>"\n  data-validation-branches="<%= t(".client_validation_branches") %>"\n  data-validation-terms="<%= t(".client_validation_terms") %>">
 
   <div class="flex min-h-screen w-full flex-col lg:flex-row">
     <aside class="relative hidden min-h-screen select-none overflow-hidden bg-slate-900 text-white lg:flex lg:w-[42%] lg:flex-col lg:justify-between lg:p-12">
@@ -12,7 +13,7 @@
       <div class="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.16)_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
       <div class="relative z-10 flex items-center gap-3">
-        <%= image_tag "isotipo.png", class: "h-20 w-20 shrink-0 rounded-full", alt: t(".brand_alt") %>
+        <%= image_tag "delta-pos-logo.svg", class: "h-20 w-20 shrink-0", alt: t(".brand_alt") %>
         <div class="flex flex-col leading-none">
           <span class="font-jakarta text-[30px] font-extrabold tracking-tight text-white">
             DELTA <span class="text-emerald-500">POS</span>
@@ -106,7 +107,7 @@
             }
           ) do |f| %>
 
-            <%= hidden_field_tag :setup_type, "new", data: { registration_wizard_target: "setupType" } %>
+            <%= hidden_field_tag :setup_type, "", data: { registration_wizard_target: "setupType" } %>
             <%= hidden_field_tag :business_sector, "", data: { registration_wizard_target: "businessSector" } %>
             <%= hidden_field_tag :migration_volume, "", data: { registration_wizard_target: "migrationVolume" } %>
             <%= hidden_field_tag :migration_priority, "", data: { registration_wizard_target: "migrationPriority" } %>
@@ -132,7 +133,7 @@
                     data-setup-type="<%= type %>"
                     data-registration-wizard-target="setupCard"
                     class="rounded-2xl border-2 border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-emerald-300 hover:shadow-md"
-                    aria-pressed="<%= type == "new" %>">
+                    aria-pressed="false">
                     <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                       <%= icon(type == "new" ? "sparkles" : "arrow-path", variant: :outline, class: "h-5 w-5") %>
                     </span>
