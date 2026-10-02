@@ -761,6 +761,9 @@ en:
       phone: Phone
       submit: Request a demo
   devise:
+    failure:
+      invalid: invalid email or password.
+      not_found_in_database: invalid email or password.
     confirmations:
       new:
         submit: Resend confirmation instructions
@@ -818,15 +821,31 @@ en:
         title: Create account
     sessions:
       new:
-        email: Email address
-        email_placeholder: email@example.com
+        page_title: Delta POS | Sign In
+        brand_tagline: Point of Sale
+        brand_alt: Delta POS logo mark
+        email: Corporate email address
+        email_placeholder: carlos@yourcompany.com
         error_banner:
           title: Authentication Failed
-        forgot: Forgot key?
-        password: Password
-        submit: SIGN IN
-        subtitle: Enter your credentials to open terminal shift
-        title: Access Terminal
+        forgot: Forgot your password?
+        password: Secure access password
+        remember_me: Remember my session
+        submit: Sign in to Terminal
+        submitting: Signing in…
+        subtitle: Enter your credentials to open your cloud point of sale.
+        title: Cloud System Access
+        toggle_password: Show or hide password
+        register_prompt: New to the platform?
+        register: Register here
+        panel_badge: Secure Access Terminal
+        panel_title: Return to your Cloud Point of Sale
+        panel_description: Sign in to instantly synchronize your registers, inventory reports, and active Delta POS terminals.
+        realtime_title: Real-Time Synchronization
+        realtime_description: Monitor sales, inventory levels, and cash flow from anywhere with millisecond-level updates.
+        multichannel_title: Multichannel Persistence Enabled
+        multichannel_description: Start register shifts simultaneously from mobile devices or fixed terminals.
+        copyright: "© %{year} Delta POS Inc. All rights reserved."
     shared:
       links:
         forgot_password: Forgot your password?
@@ -841,35 +860,21 @@ en:
         title: Resend unlock instructions
   errors:
     attributes:
-      barcode: Barcode
-      category: Category
-      city: City
-      code: Code
-      cost: Cost
-      country: Country
-      description: Description
-      exterior_number: Exterior number
-      featured: Featured
-      flag_iso: Flag
-      image: Image
-      interior_number: Interior number
-      max_stock: Max stock
-      min_stock: Min stock
-      name: Name
-      neighborhood: Neighborhood
-      phone: Phone
-      position: Position
-      postal_code: Postal code
-      price: Price
-      sat_tax: SAT tax
-      sat_unit_key: SAT unit key
-      sku: SKU
-      slug: Slug
-      state: State
-      status: Status
-      stock: Stock
-      street: Street
-      view_count: View count
+      branch:
+        name: Name
+        phone: Phone
+        status: Status
+      address:
+        city: City
+        country: Country
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        postal_code: Postal code
+        state: State
+        street: Street
+      email: Email
+      password: Password
     format: "%{attribute} %{message}"
     messages:
       acceptance: must be accepted

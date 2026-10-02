@@ -8,22 +8,23 @@
       <meta name="mobile-web-app-capable" content="yes">
       <%= csrf_meta_tags %>
       <%= csp_meta_tag %>
-
       <%= yield :head %>
 
-      <%= favicon_link_tag 'favicon.ico', rel: 'icon', sizes: 'any' %>
+      <%= favicon_link_tag 'delta-pos-favicon.svg', rel: 'icon', type: 'image/svg+xml' %>
       <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
 
       <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
       <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    </head>
 
-   </head>
-
-   <body class="h-full antialiased relative select-none">
-      <div data-controller="swal-flash"
-           data-swal-flash-message-value="<%= flash[:swal_message] || flash[:alert] || flash[:notice] %>"
-           data-swal-flash-icon-value="<%= flash[:alert] ? 'error' : 'success' %>">
-         <%= yield %>
+    <body class="min-h-screen overflow-x-hidden bg-slate-900 font-sans text-slate-600 antialiased <%= "theme-#{current_terminal_theme}" %>" data-controller="terminal">
+      <div data-terminal-target="wrapper">
+        <div
+          data-controller="swal-flash"
+          data-swal-flash-message-value="<%= flash[:alert] || flash[:notice] || '' %>"
+          data-swal-flash-icon-value="<%= flash[:alert].present? ? 'error' : 'success' %>">
+          <%= yield %>
+        </div>
       </div>
-   </body>
+    </body>
 </html>

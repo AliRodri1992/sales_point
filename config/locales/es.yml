@@ -764,6 +764,9 @@ es:
       phone: Teléfono
       submit: Solicitar demostración
   devise:
+    failure:
+      invalid: correo electrónico o contraseña no válidos.
+      not_found_in_database: correo electrónico o contraseña no válidos.
     confirmations:
       new:
         submit: Reenviar instrucciones de confirmación
@@ -823,15 +826,31 @@ es:
         title: Crear cuenta
     sessions:
       new:
-        email: Correo electrónico
-        email_placeholder: correo@ejemplo.com
+        page_title: Delta POS | Inicio de Sesión
+        brand_tagline: Punto de Venta
+        brand_alt: Isotipo de Delta POS
+        email: Correo electrónico corporativo
+        email_placeholder: carlos@tuempresa.com
         error_banner:
-          title: Error de Autenticación
-        forgot: "¿Olvidaste tu clave?"
-        password: Contraseña
-        submit: INICIAR SESIÓN
-        subtitle: Ingresa tus credenciales para iniciar turno
-        title: Punto de Venta
+          title: Autenticación fallida
+        forgot: ¿Olvidaste tu contraseña?
+        password: Contraseña de acceso seguro
+        remember_me: Recordar mi sesión
+        submit: Ingresar a la Terminal
+        submitting: Iniciando sesión…
+        subtitle: Introduce tus credenciales para abrir tu línea de cajas.
+        title: Acceso al Sistema Cloud
+        toggle_password: Mostrar u ocultar contraseña
+        register_prompt: ¿Nuevo en la plataforma?
+        register: Regístrate aquí
+        panel_badge: Terminal de Acceso Seguro
+        panel_title: Regresa a tu Punto de Venta en la Nube
+        panel_description: Inicia sesión para sincronizar instantáneamente tus cajas, reportes de inventario y terminales activas de Delta POS.
+        realtime_title: Sincronización en Tiempo Real
+        realtime_description: Monitorea tus ventas, niveles de inventario y flujo de efectivo desde cualquier lugar con actualizaciones al milisegundo.
+        multichannel_title: Persistencia Multicanal Habilitada
+        multichannel_description: Inicia turnos en caja de forma simultánea en tus dispositivos móviles o terminales fijas.
+        copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
     shared:
       links:
         forgot_password: "¿Olvidaste tu contraseña?"
@@ -846,35 +865,21 @@ es:
         title: Reenviar instrucciones de desbloqueo
   errors:
     attributes:
-      barcode: Código de barras
-      category: Categoría
-      city: Ciudad
-      code: Código
-      cost: Costo
-      country: País
-      description: Descripción
-      exterior_number: No. exterior
-      featured: Destacado
-      flag_iso: Bandera
-      image: Imagen
-      interior_number: No. interior
-      max_stock: Stock máximo
-      min_stock: Stock mínimo
-      name: Nombre
-      neighborhood: Colonia
-      phone: Teléfono
-      position: Orden
-      postal_code: Código postal
-      price: Precio
-      sat_tax: Impuesto SAT
-      sat_unit_key: Unidad SAT
-      sku: SKU
-      slug: Slug
-      state: Estado
-      status: Estado
-      stock: Existencias
-      street: Calle
-      view_count: Contador de vistas
+      branch:
+        name: Nombre
+        phone: Teléfono
+        status: Estado
+      address:
+        city: Ciudad
+        country: País
+        exterior_number: No. exterior
+        interior_number: No. interior
+        neighborhood: Colonia
+        postal_code: Código postal
+        state: Estado
+        street: Calle
+      email: Correo electrónico
+      password: Contraseña
     format: "%{attribute} %{message}"
     messages:
       acceptance: no ha sido aceptado

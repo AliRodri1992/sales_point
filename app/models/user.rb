@@ -34,7 +34,8 @@ class User < ApplicationRecord
 
   validates :email,
             presence: true,
-            uniqueness: { case_sensitive: false }
+            uniqueness: { case_sensitive: false },
+            'valid_email_2/email': true
 
   validates :user_type,
             presence: true

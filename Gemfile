@@ -51,6 +51,7 @@ gem 'stimulus-rails'
 gem 'thruster', require: false
 gem 'turbo-rails'
 gem 'tzinfo-data'
+gem 'valid_email2', '~> 7.0'
 gem 'view_component'
 gem 'wicked'
 gem 'wicked_pdf'

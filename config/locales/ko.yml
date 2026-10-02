@@ -758,6 +758,9 @@ ko:
       phone: 전화번호
       submit: 데모 신청
   devise:
+    failure:
+      invalid: 이메일 또는 비밀번호가 올바르지 않습니다.
+      not_found_in_database: 이메일 또는 비밀번호가 올바르지 않습니다.
     confirmations:
       new:
         submit: 확인 안내 다시 보내기
@@ -812,15 +815,31 @@ ko:
         title: 계정 만들기
     sessions:
       new:
-        email: 이메일
-        email_placeholder: email@example.com
+        page_title: 델타 포스 | 로그인
+        brand_tagline: 판매 시점 관리
+        brand_alt: Delta POS 로고 심볼
+        email: 회사 이메일
+        email_placeholder: carlos@yourcompany.com
         error_banner:
           title: 인증 실패
-        forgot: 비밀번호 찾기
-        password: 비밀번호
-        submit: 로그인
-        subtitle: 근무를 시작하려면 정보를 입력하십시오
-        title: 접속 터미널
+        forgot: 비밀번호를 잊으셨나요?
+        password: 안전한 로그인 비밀번호
+        remember_me: 로그인 상태 유지
+        submit: 터미널 로그인
+        submitting: 로그인 중…
+        subtitle: 클라우드 POS를 열려면 로그인 정보를 입력하세요.
+        title: 클라우드 시스템 접속
+        toggle_password: 비밀번호 표시 또는 숨기기
+        register_prompt: 플랫폼이 처음이신가요?
+        register: 여기에서 가입
+        panel_badge: 보안 접속 터미널
+        panel_title: 클라우드 POS로 돌아가세요
+        panel_description: 로그인하여 판매대, 재고 보고서 및 활성 Delta POS 터미널을 즉시 동기화하세요.
+        realtime_title: 실시간 동기화
+        realtime_description: 어디서나 판매, 재고 수준 및 현금 흐름을 실시간으로 모니터링하세요.
+        multichannel_title: 멀티채널 사용 지원
+        multichannel_description: 모바일 기기 또는 고정 터미널에서 동시에 금전함 교대를 시작할 수 있습니다.
+        copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
     shared:
       links:
         forgot_password: 비밀번호를 잊으셨나요?
@@ -835,35 +854,21 @@ ko:
         title: 잠금 해제 안내 다시 보내기
   errors:
     attributes:
-      barcode: 바코드
-      category: 카테고리
-      city: 도시
-      code: 코드
-      cost: 비용
-      country: 국가
-      description: 설명
-      exterior_number: 외부 번호
-      featured: 추천
-      flag_iso: 국가 코드
-      image: 이미지
-      interior_number: 내부 번호
-      max_stock: 최대 재고
-      min_stock: 최소 재고
-      name: 이름
-      neighborhood: 동네
-      phone: 전화번호
-      position: 순서
-      postal_code: 우편번호
-      price: 가격
-      sat_tax: SAT 세금
-      sat_unit_key: SAT 단위 키
-      sku: SKU
-      slug: 슬러그
-      state: 주/도
-      status: 상태
-      stock: 재고
-      street: 도로명
-      view_count: 조회수
+      branch:
+        name: 이름
+        phone: 전화번호
+        status: 상태
+      address:
+        city: 도시
+        country: 국가
+        exterior_number: 외부 번호
+        interior_number: 내부 번호
+        neighborhood: 동네
+        postal_code: 우편번호
+        state: 주/도
+        street: 도로명
+      email: 이메일
+      password: 비밀번호
     format: "%{attribute} %{message}"
     messages:
       acceptance: 동의해야 합니다

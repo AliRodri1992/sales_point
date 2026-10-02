@@ -27,4 +27,20 @@ RSpec.describe User, type: :model do
       expect(user.permission?('categories.access')).to be(false)
     end
   end
+  describe 'email validation' do
+    subject(:user) { build(:user) }
+
+    it 'accepts a valid email address' do
+      user.email = 'user@example.com'
+
+      expect(user).to be_valid
+    end
+
+    it 'rejects an invalid email address' do
+      user.email = 'invalid-email'
+
+      expect(user).to be_invalid
+      expect(user.errors[:email]).to be_present
+    end
+  end
 end
