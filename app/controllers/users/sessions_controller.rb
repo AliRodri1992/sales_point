@@ -11,10 +11,26 @@ module Users
     end
 
     def create
+      return render_with_model_errors unless login_credentials_present?
+
       super
     end
 
     private
+
+    def render_with_model_errors
+      self.resource = resource_class.new
+      resource.email = params.dig(resource_name, :email)
+      resource.password = params.dig(resource_name, :password)
+      resource.valid?
+
+      render :new, status: :unprocessable_content
+    end
+
+    def login_credentials_present?
+      params.dig(resource_name, :email).present? &&
+        params.dig(resource_name, :password).present?
+    end
 
     def store_terminal_preferences
       cookies[:terminal_language] ||=
