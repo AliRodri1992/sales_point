@@ -758,6 +758,9 @@ ko:
       phone: 전화번호
       submit: 데모 신청
   devise:
+    failure:
+      invalid: 이메일 또는 비밀번호가 올바르지 않습니다.
+      not_found_in_database: 이메일 또는 비밀번호가 올바르지 않습니다.
     confirmations:
       new:
         submit: 확인 안내 다시 보내기
