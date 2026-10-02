@@ -809,7 +809,6 @@ en:
         subtitle: Update your Delta POS account
         title: Edit account
       new:
-        already_have_account: Already have an operational account?
         brand_alt: Delta POS logo symbol
         email: Email address
         email_placeholder: email@example.com
@@ -938,7 +937,7 @@ en:
         realtime_description: Monitor sales, inventory levels, and cash flow from anywhere with millisecond-level updates.
         multichannel_title: Multichannel Persistence Enabled
         multichannel_description: Start register shifts simultaneously from mobile devices or fixed terminals.
-        copyright: "© %{year} Delta POS Inc. All rights reserved."
+        copyright: "© 2026 Delta POS Inc. All rights reserved."
     shared:
       links:
         forgot_password: Forgot your password?
