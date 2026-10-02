@@ -836,7 +836,6 @@ es:
         step_label: "Progreso del registro"
         back: "Atrás"
         next: "Continuar"
-        submit: "Crear cuenta"
         already_have_account: "¿Ya tienes una cuenta operativa?"
         sign_in: "Inicia sesión aquí"
         client_validation_required: "Completa la información requerida antes de continuar."
