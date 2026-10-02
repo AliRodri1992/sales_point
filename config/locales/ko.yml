@@ -906,6 +906,50 @@ ko:
             card: "카드 결제 활성화"
             qr: "디지털 QR 결제 활성화"
           terms: "Delta POS 서비스 약관 및 개인정보 보호정책에 동의합니다."
+        panel_badge: "⚡ 클라우드 비즈니스 환경 설정"
+        panel_title: "클라우드에서 POS를 시작하세요"
+        panel_description: "안내에 따라 등록을 완료하고 Delta POS 거래 인프라를 안전하게 활성화하세요."
+        benefit_one_title: "금전함 및 교대 모니터링"
+        benefit_one_description: "차이를 방지하고 금전함 오픈, 현금 인출 및 마감 업무를 즉시 관리하세요."
+        benefit_two_title: "범용 POS 호환성"
+        benefit_two_description: "바코드 스캐너, 저울 및 영수증 프린터를 기본으로 연결하세요."
+        step_one:
+          title: "구축 유형"
+          subtitle: "비즈니스에 맞게 환경을 구성할 수 있도록 현재 상황을 알려주세요."
+          new_title: "완전히 새로운 시스템입니다"
+          new_description: "깨끗한 데이터베이스로 시작합니다. 첫 번째 소매점을 여는 경우에 적합합니다."
+          migration_title: "기존 시스템을 마이그레이션합니다"
+          migration_description: "현재 상품 카탈로그와 운영 정보를 Delta POS로 안전하게 이전합니다."
+        step_three:
+          company_name: "상호 / 법인명"
+          company_name_placeholder: "예: Delta Commercial Ltd."
+          tax_id: "세금 식별 / 사업자 번호"
+          tax_id_placeholder: "예: ABC123456XYZ"
+        step_four:
+          business_sector: "사업 업종"
+          select_sector: "업종을 선택하세요..."
+          migration_volume: "예상 상품 규모"
+          select_volume: "규모를 선택하세요..."
+          migration_priority: "데이터 마이그레이션 우선순위"
+          select_priority: "우선순위를 선택하세요..."
+          branches: "초기 지점 수"
+          currency: "기본 통화"
+        step_five:
+          title: "판매 스테이션 및 금전함"
+          subtitle: "터치형 금전함 수와 통합 결제 방식을 설정하세요."
+          terminals: "활성 터치 금전함 수"
+          payments: "결제 단말기 연동"
+          terminal_options:
+            one: "메인 금전함 1개 (표준)"
+            two: "로컬 네트워크 금전함 2개"
+            three_five: "금전함 3~5개 (고수요)"
+            over_five: "금전함 5개 초과 (기업용)"
+          payment_options:
+            cash: "현금만 사용 (현재)"
+            card: "카드 결제 활성화 (Bluetooth/USB 단말기)"
+            qr: "디지털 결제 활성화 (QR 코드)"
+          terms: "Delta POS 서비스 약관 및 개인정보 보호정책에 동의합니다."
+          initialize: "환경 초기화"
     sessions:
       new:
         page_title: 델타 포스 | 로그인
