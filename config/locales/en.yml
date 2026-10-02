@@ -860,6 +860,19 @@ en:
         title: Resend unlock instructions
   errors:
     attributes:
+      branch:
+        name: Name
+        phone: Phone
+        status: Status
+      address:
+        city: City
+        country: Country
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        postal_code: Postal code
+        state: State
+        street: Street
       email: Email
       password: Password
     format: "%{attribute} %{message}"

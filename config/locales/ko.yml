@@ -854,6 +854,19 @@ ko:
         title: 잠금 해제 안내 다시 보내기
   errors:
     attributes:
+      branch:
+        name: 이름
+        phone: 전화번호
+        status: 상태
+      address:
+        city: 도시
+        country: 국가
+        exterior_number: 외부 번호
+        interior_number: 내부 번호
+        neighborhood: 동네
+        postal_code: 우편번호
+        state: 주/도
+        street: 도로명
       email: 이메일
       password: 비밀번호
     format: "%{attribute} %{message}"
