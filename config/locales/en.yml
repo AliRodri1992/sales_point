@@ -761,6 +761,9 @@ en:
       phone: Phone
       submit: Request a demo
   devise:
+    failure:
+      invalid: invalid email or password.
+      not_found_in_database: invalid email or password.
     confirmations:
       new:
         submit: Resend confirmation instructions
