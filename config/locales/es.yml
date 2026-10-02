@@ -825,7 +825,6 @@ es:
         title: Editar %{resource}
         unhappy: "¿No estás conforme?"
       new:
-        already_have_account: "¿Ya tienes una cuenta?"
         brand_alt: "Isotipo de Delta POS"
         email: "Correo electrónico"
         email_placeholder: "correo@ejemplo.com"
@@ -954,7 +953,7 @@ es:
         realtime_description: Monitorea tus ventas, niveles de inventario y flujo de efectivo desde cualquier lugar con actualizaciones al milisegundo.
         multichannel_title: Persistencia Multicanal Habilitada
         multichannel_description: Inicia turnos en caja de forma simultánea en tus dispositivos móviles o terminales fijas.
-        copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+        copyright: "© 2026 Delta POS Inc. Todos los derechos reservados."
     shared:
       links:
         forgot_password: "¿Olvidaste tu contraseña?"
