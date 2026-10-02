@@ -764,6 +764,9 @@ es:
       phone: Teléfono
       submit: Solicitar demostración
   devise:
+    failure:
+      invalid: correo electrónico o contraseña no válidos.
+      not_found_in_database: correo electrónico o contraseña no válidos.
     confirmations:
       new:
         submit: Reenviar instrucciones de confirmación
