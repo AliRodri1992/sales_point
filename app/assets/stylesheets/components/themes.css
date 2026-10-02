@@ -35,7 +35,7 @@
 
 .theme-tech-purple {
     --brand: #9333ea;
-    --brand-light: #f3e8ff;
+    --brand-light: #f3e8f5;
 }
 
 .theme-slate-charcoal {
@@ -93,7 +93,7 @@
     --brand-light: #dbeafe;
 }
 
-.theme-material-light-blue {
-    --brand: #039be5;
-    --brand-light: #e1f5fe;
+.theme-delta-emerald {
+    --brand: #059669;
+    --brand-light: #d1fae5;
 }
