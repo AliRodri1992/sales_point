@@ -39,6 +39,8 @@ export default class extends Controller {
             this.closeHandler
         )
 
+        this.restoreSelectedTheme()
+
         // Show errors if banner is visible on initial load
         if (
             this.hasErrorBannerTarget &&
@@ -48,6 +50,40 @@ export default class extends Controller {
         }
 
     }
+
+    restoreSelectedTheme() {
+
+        const theme = localStorage.getItem("terminal_theme")
+
+        if (!theme) return
+
+        this.wrapperTarget.className = this.wrapperTarget.className.replace(
+            /theme-[a-z0-9-]+/,
+            theme
+        )
+
+        this.wrapperTarget.classList.add("theme-selected")
+
+        document.cookie = `terminal_theme=${theme}; path=/; max-age=31536000`
+        document.cookie = "terminal_theme_selected=1; path=/; max-age=31536000"
+
+        this.themeOptionTargets.forEach(option => {
+            const selected = option.dataset.theme === theme
+
+            option.classList.toggle("rounded-full", selected)
+            option.classList.toggle("rounded-lg", !selected)
+            option.innerHTML = ""
+
+            if (!selected) return
+
+            const dot = document.createElement("span")
+            dot.className = theme === "theme-material-school-yellow"
+                ? "block w-1.5 h-1.5 rounded-full bg-zinc-800"
+                : "block w-1.5 h-1.5 rounded-full bg-white"
+            option.appendChild(dot)
+        })
+    }
+
 
 
 
@@ -180,6 +216,7 @@ export default class extends Controller {
         // Save to cookie
         document.cookie = `terminal_theme=${theme}; path=/; max-age=31536000`;
         document.cookie = "terminal_theme_selected=1; path=/; max-age=31536000";
+        localStorage.setItem("terminal_theme", theme);
 
 
         this.wrapperTarget.className =
