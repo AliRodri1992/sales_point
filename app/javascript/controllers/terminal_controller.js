@@ -18,7 +18,9 @@ export default class extends Controller {
 
         "input",
 
-        "themeOption"
+        "themeOption",
+
+        "loginSubmit"
 
     ]
 
@@ -57,6 +59,25 @@ export default class extends Controller {
         )
 
     }
+
+
+
+    submitLogin(event) {
+
+        if (!this.hasLoginSubmitTarget) return
+
+        if (this.loginSubmitTarget.disabled) {
+            event.preventDefault()
+            return
+        }
+
+        this.loginSubmitTarget.disabled = true
+        this.loginSubmitTarget.setAttribute("aria-busy", "true")
+
+        const label = this.loginSubmitTarget.querySelector("span")
+        if (label) label.textContent = this.loginSubmitTarget.dataset.loadingText
+    }
+
 
 
 
