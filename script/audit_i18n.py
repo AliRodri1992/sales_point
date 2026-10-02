@@ -143,6 +143,9 @@ def main() -> int:
     if missing_main:
         raise SystemExit(f"Missing main locale files: {', '.join(sorted(missing_main))}")
 
+    # Main locale files intentionally contain some different Devise scopes because
+    # additional Devise locale files also exist in config/locales/. Report those
+    # differences without treating them as YAML errors.
     reference = main_files["en"]
     reference_paths = set(flatten(reference))
     for locale in REQUIRED_LOCALES[1:]:
@@ -155,17 +158,32 @@ def main() -> int:
         if extra:
             print("  Extra examples:", " | ".join(".".join(p) for p in extra[:20]))
 
-    interpolation = {
-        locale: interpolation_map(main_files[locale]) for locale in REQUIRED_LOCALES
-    }
-    for path, variables in interpolation["en"].items():
+    # The registration wizard is application-owned and must remain structurally
+    # identical across the three supported UI locales.
+    registration_paths = {}
+    registration_interpolations = {}
+    for locale in REQUIRED_LOCALES:
+        node = main_files[locale].get("devise", {}).get("registrations", {}).get("new")
+        if not isinstance(node, dict):
+            raise SystemExit(f"Missing devise.registrations.new in {locale}.yml")
+        registration_paths[locale] = set(flatten(node))
+        registration_interpolations[locale] = interpolation_map(node)
+
+    for locale in REQUIRED_LOCALES[1:]:
+        missing = sorted(registration_paths["en"] - registration_paths[locale])
+        extra = sorted(registration_paths[locale] - registration_paths["en"])
+        if missing or extra:
+            raise SystemExit(
+                f"Registration structure mismatch for {locale}: "
+                f"missing={len(missing)} extra={len(extra)}"
+            )
+
+    for path, variables in registration_interpolations["en"].items():
         for locale in REQUIRED_LOCALES[1:]:
-            if path not in interpolation[locale]:
-                continue
-            if variables != interpolation[locale][path]:
+            if registration_interpolations[locale].get(path) != variables:
                 raise SystemExit(
-                    f"Interpolation mismatch at {path}: "
-                    f"en={variables}, {locale}={interpolation[locale][path]}"
+                    f"Registration interpolation mismatch at {path}: "
+                    f"en={variables}, {locale}={registration_interpolations[locale].get(path)}"
                 )
 
     print(f"PASS: audited {len(paths)} locale files with strict duplicate-key detection.")
