@@ -9,6 +9,10 @@ module TerminalHelper
     cookies[:terminal_theme].presence || Theme::DEFAULT
   end
 
+  def terminal_theme_selected?
+    cookies[:terminal_theme_selected].present?
+  end
+
   def terminal_languages
     Language.available
   end
