@@ -1,3 +1,6 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+
 @import "tailwindcss";
 @import "./fonts.css";
 @import "./gridstack.css";
