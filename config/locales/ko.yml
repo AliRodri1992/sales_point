@@ -801,17 +801,6 @@ ko:
         submit: 업데이트
         title: "%{resource} 편집"
         unhappy: 불만족스러우신가요?
-      edit:
-        back: 뒤로
-        cancel_account: 계정 삭제
-        confirm: 정말 하시겠습니까?
-        current_password_hint: 변경 사항을 확인하려면 현재 비밀번호가 필요합니다
-        leave_blank: 변경하지 않으려면 비워 두세요
-        minimum: 최소 %{count}자
-        pending_confirmation: '다음 이메일의 확인을 기다리고 있습니다: %{email}'
-        submit: 업데이트
-        title: "%{resource} 편집"
-        unhappy: 불만족스러우신가요?
       new:
         brand_alt: "Delta POS 로고"
         email: "이메일 주소"
