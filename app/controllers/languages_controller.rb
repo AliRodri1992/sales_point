@@ -5,6 +5,11 @@ class LanguagesController < ApplicationController
     language = Language.available.find_by!(code: params[:language].downcase)
 
     session[:language_id] = language.id
+    cookies[:terminal_language] = {
+      value: language.code.downcase,
+      path: '/',
+      max_age: 31_536_000
+    }
 
     current_user.update!(language_id: language.id) if user_signed_in?
 
