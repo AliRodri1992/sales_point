@@ -16,6 +16,8 @@
     "@tailwindcss/cli": "^4.2.2",
     "gridstack": "^13.3.0",
     "sweetalert2": "^11.26.25",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.2",
+    "@fontsource-variable/inter": "^5.2.6",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.6"
   }
 }
