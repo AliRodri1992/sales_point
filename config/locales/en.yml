@@ -832,7 +832,6 @@ en:
         step_label: "Registration progress"
         back: "Back"
         next: "Continue"
-        submit: "Create account"
         already_have_account: "Already have an operational account?"
         sign_in: "Sign in here"
         client_validation_required: "Complete the required information before continuing."
