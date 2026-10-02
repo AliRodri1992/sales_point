@@ -798,16 +798,24 @@ en:
     registrations:
       edit:
         already_have_account: Already have an account?
+        back: Back
         brand_alt: Delta POS logo mark
+        cancel_account: Cancel my account
+        confirm: "Are you sure?"
+        current_password_hint: We need your current password to confirm your changes.
         email: Email address
         email_placeholder: email@example.com
+        leave_blank: Leave blank if you don't want to change it.
+        minimum: "Minimum %{count} characters"
         password: Password
         password_confirmation: Confirm password
         password_minimum: "%{count} characters minimum"
+        pending_confirmation: "Currently waiting confirmation for: %{email}"
         sign_in: Sign in
         submit: Update account
         subtitle: Update your Delta POS account
-        title: Edit account
+        title: "Edit %{resource}"
+        unhappy: Are you unhappy?
       new:
         brand_alt: Delta POS logo symbol
         email: Email address
