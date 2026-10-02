@@ -1046,15 +1046,15 @@ select:focus-visible {
 }
 
 .btn-delta-gradient {
-    background: linear-gradient(135deg, var(--theme-primary-start) 0%, var(--theme-primary-end) 100%);
+    background: var(--brand);
 }
 
 .btn-delta-gradient:hover {
-    background: linear-gradient(135deg, var(--theme-hover-start), var(--theme-hover-end));
+    background: color-mix(in srgb, var(--brand) 88%, black);
 }
 
 .btn-delta-gradient:active {
-    background: linear-gradient(135deg, var(--theme-active-start), var(--theme-active-end));
+    background: color-mix(in srgb, var(--brand) 76%, black);
 }
 
 .dropdown-opt-hover:hover {
