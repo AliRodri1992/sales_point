@@ -4,7 +4,7 @@
   class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal registration-wizard"
   data-terminal-target="wrapper"
-  data-registration-wizard-target="wrapper">
+  data-registration-wizard-target="wrapper"\n  data-validation-required="<%= t(".client_validation_required") %>"\n  data-validation-password-match="<%= t(".client_validation_password_match") %>"\n  data-validation-tax-id="<%= t(".client_validation_tax_id") %>"\n  data-validation-branches="<%= t(".client_validation_branches") %>"\n  data-validation-terms="<%= t(".client_validation_terms") %>">
 
   <div class="flex min-h-screen w-full flex-col lg:flex-row">
     <aside class="relative hidden min-h-screen select-none overflow-hidden bg-slate-900 text-white lg:flex lg:w-[42%] lg:flex-col lg:justify-between lg:p-12">
@@ -90,7 +90,7 @@
             </div>
           </div>
 
-          <%= render Authentication::ErrorBannerComponent.new(resource: resource) %>
+          <%= render Authentication::ErrorBannerComponent.new(resource: resource) %>\n\n          <p data-registration-wizard-target="error" data-error="setup" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600"></p>
 
           <%= form_for(
             resource,
@@ -291,7 +291,7 @@
                 <span aria-hidden="true">←</span> <%= t(".back") %>
               </button>
               <span class="flex-1"></span>
-              <button type="button" data-action="click->registration-wizard#next" data-registration-wizard-target="next" class="btn-submit-dynamic flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-semibold tracking-wide text-white shadow-md transition-all duration-200">
+              <button type="button" data-action="click->registration-wizard#next" data-registration-wizard-target="next" data-next-label="<%= t(".next") %>" data-submit-label="<%= t(".submit") %>" class="btn-submit-dynamic flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-semibold tracking-wide text-white shadow-md transition-all duration-200">
                 <span><%= t(".next") %></span>
                 <%= icon "arrow-right", variant: :outline, class: "h-4 w-4" %>
               </button>
