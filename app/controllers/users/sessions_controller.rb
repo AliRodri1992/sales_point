@@ -23,6 +23,7 @@ module Users
       resource.email = params.dig(resource_name, :email)
       resource.password = params.dig(resource_name, :password)
       resource.valid?
+      flash.now[:alert] = t("devise.failure.invalid")
 
       render :new, status: :unprocessable_content
     end
