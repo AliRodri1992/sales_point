@@ -857,35 +857,8 @@ en:
         title: Resend unlock instructions
   errors:
     attributes:
-      barcode: Barcode
-      category: Category
-      city: City
-      code: Code
-      cost: Cost
-      country: Country
-      description: Description
-      exterior_number: Exterior number
-      featured: Featured
-      flag_iso: Flag
-      image: Image
-      interior_number: Interior number
-      max_stock: Max stock
-      min_stock: Min stock
-      name: Name
-      neighborhood: Neighborhood
-      phone: Phone
-      position: Position
-      postal_code: Postal code
-      price: Price
-      sat_tax: SAT tax
-      sat_unit_key: SAT unit key
-      sku: SKU
-      slug: Slug
-      state: State
-      status: Status
-      stock: Stock
-      street: Street
-      view_count: View count
+      email: Email
+      password: Password
     format: "%{attribute} %{message}"
     messages:
       acceptance: must be accepted
