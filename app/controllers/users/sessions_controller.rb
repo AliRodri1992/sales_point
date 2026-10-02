@@ -5,6 +5,7 @@ module Users
     layout 'authentication'
 
     before_action :store_terminal_preferences, only: :new
+    after_action :convert_flash_to_swal, only: :create
 
     def new
       super
@@ -22,6 +23,18 @@ module Users
 
       cookies[:terminal_theme] ||=
         'theme-material-red'
+    end
+
+    def convert_flash_to_swal
+      if flash[:alert].present?
+        flash[:swal_message] = flash[:alert]
+        flash[:swal_icon] = 'error'
+        flash.delete(:alert)
+      elsif flash[:notice].present?
+        flash[:swal_message] = flash[:notice]
+        flash[:swal_icon] = 'success'
+        flash.delete(:notice)
+      end
     end
 
     def terminal_language
