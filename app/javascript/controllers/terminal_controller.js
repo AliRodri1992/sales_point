@@ -166,6 +166,8 @@ export default class extends Controller {
                 theme
             )
 
+        this.wrapperTarget.classList.add("theme-selected")
+
 
 
         this.themeOptionTargets.forEach(
