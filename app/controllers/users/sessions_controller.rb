@@ -19,13 +19,17 @@ module Users
     private
 
     def render_with_model_errors
+      build_resource_with_params
+      resource.valid?
+      flash.now[:alert] = t('devise.failure.invalid')
+
+      render :new, status: :unprocessable_content
+    end
+
+    def build_resource_with_params
       self.resource = resource_class.new
       resource.email = params.dig(resource_name, :email)
       resource.password = params.dig(resource_name, :password)
-      resource.valid?
-      flash.now[:alert] = t("devise.failure.invalid")
-
-      render :new, status: :unprocessable_content
     end
 
     def login_credentials_present?
@@ -40,7 +44,6 @@ module Users
       cookies[:terminal_theme] ||=
         'theme-material-red'
     end
-
 
     def terminal_language
       params
