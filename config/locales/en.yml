@@ -821,6 +821,7 @@ en:
         title: Create account
     sessions:
       new:
+      page_title: Delta POS | Sign In
         brand_tagline: Point of Sale
         brand_alt: Delta POS logo mark
         email: Corporate email address
