@@ -797,17 +797,6 @@ en:
         title: Forgot your password?
     registrations:
       edit:
-        back: Back
-        cancel_account: Cancel my account
-        confirm: Are you sure?
-        current_password_hint: we need your current password to confirm your changes
-        leave_blank: leave blank if you don't want to change it
-        minimum: "%{count} characters minimum"
-        pending_confirmation: 'Currently waiting confirmation for: %{email}'
-        submit: Update
-        title: Edit %{resource}
-        unhappy: Unhappy?
-      new:
         already_have_account: Already have an account?
         brand_alt: Delta POS logo mark
         email: Email address
@@ -816,15 +805,30 @@ en:
         password_confirmation: Confirm password
         password_minimum: "%{count} characters minimum"
         sign_in: Sign in
+        submit: Update account
+        subtitle: Update your Delta POS account
+        title: Edit account
+      new:
+        already_have_account: Already have an operational account?
+        brand_alt: Delta POS logo symbol
+        email: Email address
+        email_placeholder: email@example.com
+        password: Password
+        password_confirmation: Confirm password
+        password_minimum: "%{count} characters minimum
+        sign_in: Sign in
         submit: Create account
         subtitle: Sign up to start using Delta POS
         title: Create account
-
         page_title: "Professional Registration | Delta POS"
-        brand_alt: "Delta POS logo symbol"
         brand_tagline: "Point of Sale"
-        panel_title: "Initialize your point of sale in the cloud"
-        panel_description: "Complete the guided registration to configure your Delta POS environment and start operating with a setup tailored to your business."
+        panel_badge: "⚡ Cloud Commercial Environment Setup"
+        panel_title: "Initialize Your Point of Sale in the Cloud"
+        panel_description: "Complete the guided registration to securely activate Delta POS transactional infrastructure."
+        benefit_one_title: "Cash Register & Shift Monitoring"
+        benefit_one_description: "Prevent discrepancies and control openings, cash withdrawals, and cashier closings instantly."
+        benefit_two_title: "Universal POS Compatibility"
+        benefit_two_description: "Connect natively with barcode scanners, scales, and thermal receipt printers."
         cloud_badge: "Delta POS Cloud"
         step_label: "Registration progress"
         back: "Back"
@@ -837,39 +841,42 @@ en:
         client_validation_tax_id: "The tax ID must contain 12 or 13 characters."
         client_validation_branches: "The number of branches must be at least 1."
         client_validation_terms: "You must accept the terms to create your account."
-
-          subtitle: "Tell us how you want to start with Delta POS."
-          new_title: "New implementation"
-          new_description: "Start a new cloud environment and configure your operation from scratch."
-          migration_title: "Migrate an existing operation"
-          migration_description: "Move your catalog and operational information into Delta POS."
+        step_one:
+          title: "Implementation Type"
+          subtitle: "Tell us about your situation so we can adapt the environment to your business."
+          new_title: "It is a completely new system"
+          new_description: "Start with a clean database. Ideal if you are opening your first retail business."
+          migration_title: "It is a migration from an existing system"
+          migration_description: "Safely migrate your current catalog and operational information to Delta POS."
         step_two:
-          title: "Administrator identity"
+          title: "Administrator Identity"
           subtitle: "Create the administrator credentials for your Delta POS environment."
-          name: "Full name"
+          name: "Full Name"
           name_placeholder: "Your full name"
-          email: "Business email"
+          email: "Business Email"
           email_placeholder: "you@company.com"
           password: "Password"
-          password_confirmation: "Confirm password"
+          password_confirmation: "Confirm Password"
           password_minimum: "Minimum %{count} characters"
           toggle_password: "Show or hide password"
-
+        step_three:
+          title: "Company Identity"
           subtitle: "Enter the basic information that identifies your business."
-          company_name: "Company name"
+          company_name: "Company Name"
           company_name_placeholder: "Your company name"
           tax_id: "Tax ID"
           tax_id_placeholder: "RFC or local tax ID"
-
+        step_four:
+          title: "Business Environment"
           subtitle: "Configure the environment according to your operation."
-          business_sector: "Business sector"
+          business_sector: "Business Sector"
           select_sector: "Select your sector..."
-          migration_volume: "Catalog volume"
+          migration_volume: "Catalog Volume"
           select_volume: "Select catalog volume..."
-          migration_priority: "Migration priority"
+          migration_priority: "Migration Priority"
           select_priority: "Select migration priority..."
-          branches: "Number of branches"
-          currency: "Operating currency"
+          branches: "Number of Branches"
+          currency: "Operating Currency"
           sectors:
             grocery: "Grocery and supermarkets"
             fashion: "Clothing, footwear and accessories"
@@ -889,48 +896,6 @@ en:
             usd: "US dollar (USD)"
             jpy: "Japanese yen (JPY)"
             krw: "South Korean won (KRW)"
-
-          subtitle: "Configure the initial checkout environment."
-          terminals: "Cash registers"
-          payments: "Payment integration"
-          terminal_options:
-            one: "1 Main register (Standard)"
-            two: "2 registers on local network"
-            three_five: "3 to 5 registers"
-            over_five: "More than 5 registers"
-          payment_options:
-            cash: "Cash only (for now)"
-            card: "Enable card payments"
-            qr: "Enable digital QR payments"
-          terms: "I accept the Delta POS terms of service and privacy policy."
-        panel_badge: "⚡ Cloud Commercial Environment Setup"
-        panel_title: "Initialize Your Point of Sale in the Cloud"
-        panel_description: "Complete the guided registration to securely activate Delta POS transactional infrastructure."
-        benefit_one_title: "Cash Register & Shift Monitoring"
-        benefit_one_description: "Prevent discrepancies and control openings, cash withdrawals, and cashier closings instantly."
-        benefit_two_title: "Universal POS Compatibility"
-        benefit_two_description: "Connect natively with barcode scanners, scales, and thermal receipt printers."
-        step_one:
-          title: "Implementation Type"
-          subtitle: "Tell us about your situation so we can adapt the environment to your business."
-          new_title: "It is a completely new system"
-          new_description: "Start with a clean database. Ideal if you are opening your first retail business."
-          migration_title: "It is a migration from an existing system"
-          migration_description: "Safely migrate your current catalog and operational information to Delta POS."
-        step_three:
-          company_name: "Commercial Name / Legal Business Name"
-          company_name_placeholder: "E.g. Delta Commercial Ltd."
-          tax_id: "Tax Identification / Tax ID"
-          tax_id_placeholder: "E.g. ABC123456XYZ"
-        step_four:
-          business_sector: "Business Sector"
-          select_sector: "Select the sector..."
-          migration_volume: "Estimated product volume"
-          select_volume: "Select volume..."
-          migration_priority: "Data migration priority"
-          select_priority: "Select priority..."
-          branches: "Initial Branches"
-          currency: "Primary Currency"
         step_five:
           title: "Stations & Cash Registers"
           subtitle: "Define how many touch-enabled registers will operate and your integrated payment methods."
