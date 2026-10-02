@@ -38,6 +38,12 @@ select {
     background: white;
 }
 
+.input-field-error:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.14);
+    background: #fff1f2;
+}
+
 .theme-text {
     color: var(--brand);
 }
