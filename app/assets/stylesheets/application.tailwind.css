@@ -1057,11 +1057,11 @@ select:focus-visible {
 }
 
 .font-jakarta {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
 }
 
 .font-inter {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter Variable', 'Inter', sans-serif;
 }
 
 .bg-delta-dark {
