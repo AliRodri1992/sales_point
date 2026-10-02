@@ -847,8 +847,7 @@ es:
         client_validation_tax_id: "El RFC o identificador fiscal debe contener 12 o 13 caracteres."
         client_validation_branches: "El número de sucursales debe ser al menos 1."
         client_validation_terms: "Debes aceptar los términos para crear tu cuenta."
-        step_one:
-          title: "Tipo de implementación"
+
           subtitle: "Indícanos cómo quieres comenzar con Delta POS."
           new_title: "Implementación nueva"
           new_description: "Inicia un nuevo entorno Cloud y configura tu operación desde cero."
@@ -865,15 +864,13 @@ es:
           password_confirmation: "Confirmar contraseña"
           password_minimum: "Mínimo %{count} caracteres"
           toggle_password: "Mostrar u ocultar contraseña"
-        step_three:
-          title: "Identidad de la empresa"
+
           subtitle: "Ingresa la información básica que identifica a tu negocio."
           company_name: "Nombre de la empresa"
           company_name_placeholder: "Nombre de tu empresa"
           tax_id: "RFC"
           tax_id_placeholder: "RFC de la empresa"
-        step_four:
-          title: "Entorno comercial"
+
           subtitle: "Configura el entorno de acuerdo con tu operación."
           business_sector: "Sector empresarial"
           select_sector: "Selecciona tu sector..."
@@ -902,8 +899,7 @@ es:
             usd: "Dólar estadounidense (USD)"
             jpy: "Yen japonés (JPY)"
             krw: "Won surcoreano (KRW)"
-        step_five:
-          title: "Terminales y pagos"
+
           subtitle: "Configura el entorno inicial de cobro."
           terminals: "Cajas"
           payments: "Integración de pagos"
