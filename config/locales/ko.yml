@@ -826,7 +826,6 @@ ko:
         back: "뒤로"
         next: "계속"
         already_have_account: "이미 운영 중인 계정이 있나요?"
-        sign_in: "여기에서 로그인"
         client_validation_required: "계속하기 전에 필수 정보를 입력하세요."
         client_validation_password_match: "비밀번호가 일치하지 않습니다."
         client_validation_tax_id: "세금 식별 번호는 12~13자여야 합니다."
