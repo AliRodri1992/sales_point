@@ -1,7 +1,7 @@
 <% content_for :title, t('.page_title') %>
 
 <div
-  class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %>"
+  class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal"
   data-terminal-target="wrapper">
 
