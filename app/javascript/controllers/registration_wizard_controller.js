@@ -2,30 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    "wrapper",
-    "step",
-    "node",
-    "progress",
-    "stepCounter",
-    "setupType",
-    "setupCard",
-    "businessSector",
-    "migrationVolume",
-    "migrationPriority",
-    "branchesHidden",
-    "currency",
-    "terminals",
-    "payments",
-    "migrationFields",
-    "terms",
-    "back",
-    "next",
-    "error",
-    "companyName",
-    "taxId",
-    "input",
-    "password",
-    "confirmation"
+    "wrapper", "step", "node", "progress", "stepCounter", "setupType",
+    "setupCard", "businessSector", "migrationVolume", "migrationPriority",
+    "branchesHidden", "currency", "terminals", "payments", "migrationFields",
+    "terms", "back", "next", "error", "companyName", "taxId", "input",
+    "password", "confirmation"
   ]
 
   connect() {
@@ -44,9 +25,10 @@ export default class extends Controller {
   }
 
   previous() {
-    if (this.currentStep <= 1) return
-    this.currentStep -= 1
-    this.updateStep()
+    if (this.currentStep > 1) {
+      this.currentStep -= 1
+      this.updateStep()
+    }
   }
 
   selectSetup(event) {
@@ -86,8 +68,7 @@ export default class extends Controller {
   }
 
   togglePassword(event) {
-    const wrapper = event.currentTarget.closest(".relative")
-    const field = wrapper?.querySelector("input")
+    const field = event.currentTarget.closest(".relative")?.querySelector("input")
     if (!field) return
     field.type = field.type === "password" ? "text" : "password"
   }
@@ -101,65 +82,63 @@ export default class extends Controller {
   validateStep() {
     this.clearErrors()
 
-    caseValue = this.currentStep
+    return {
+      1: () => Boolean(this.setupTypeTarget.value),
+      2: () => this.validateAdministrator(),
+      3: () => this.validateCompany(),
+      4: () => this.validateEnvironment(),
+      5: () => this.validateTerms()
+    }[this.currentStep]()
+  }
 
-    if (caseValue === 1) {
-      return Boolean(this.setupTypeTarget.value)
+  validateAdministrator() {
+    const name = this.inputTargets.find((input) => input.name === "user[username]")
+    const email = this.inputTargets.find((input) => input.name === "user[email]")
+
+    if (!name?.value.trim() || !email?.value.trim() || !this.passwordTarget.value || !this.confirmationTarget.value) {
+      return this.setError("setup", this.message("required"))
     }
 
-    if (caseValue === 2) {
-      const name = this.inputTargets.find((input) => input.name === "user[username]")
-      const email = this.inputTargets.find((input) => input.name === "user[email]")
-      const password = this.passwordTarget
-      const confirmation = this.confirmationTarget
-
-      if (!name?.value.trim() || !email?.value.trim() || !password?.value || !confirmation?.value) {
-        return this.setError("setup", "<%= t(".client_validation_required") %>")
-      }
-
-      if (password.value !== confirmation.value) {
-        return this.setError("setup", "<%= t(".client_validation_password_match") %>")
-      }
-
-      return true
-    }
-
-    if (caseValue === 3) {
-      if (!this.companyNameTarget.value.trim() || !this.taxIdTarget.value.trim()) {
-        return this.setError("setup", "<%= t(".client_validation_required") %>")
-      }
-
-      const taxIdLength = this.taxIdTarget.value.trim().length
-      if (taxIdLength < 12 || taxIdLength > 13) {
-        return this.setError("setup", "<%= t(".client_validation_tax_id") %>")
-      }
-
-      return true
-    }
-
-    if (caseValue === 4) {
-      if (!this.businessSectorTarget.value) {
-        return this.setError("setup", "<%= t(".client_validation_required") %>")
-      }
-
-      if (this.selectedSetupType === "migration" &&
-          (!this.migrationVolumeTarget.value || !this.migrationPriorityTarget.value)) {
-        return this.setError("setup", "<%= t(".client_validation_required") %>")
-      }
-
-      const branches = Number(this.branchesHiddenTarget.value)
-      if (!Number.isInteger(branches) || branches < 1) {
-        return this.setError("setup", "<%= t(".client_validation_branches") %>")
-      }
-
-      return true
-    }
-
-    if (!this.termsTarget.checked) {
-      return this.setError("terms", "<%= t(".client_validation_terms") %>")
+    if (this.passwordTarget.value !== this.confirmationTarget.value) {
+      return this.setError("setup", this.message("passwordMatch"))
     }
 
     return true
+  }
+
+  validateCompany() {
+    if (!this.companyNameTarget.value.trim() || !this.taxIdTarget.value.trim()) {
+      return this.setError("setup", this.message("required"))
+    }
+
+    const length = this.taxIdTarget.value.trim().length
+    return length >= 12 && length <= 13
+      ? true
+      : this.setError("setup", this.message("taxId"))
+  }
+
+  validateEnvironment() {
+    if (!this.businessSectorTarget.value) {
+      return this.setError("setup", this.message("required"))
+    }
+
+    if (
+      this.selectedSetupType === "migration" &&
+      (!this.migrationVolumeTarget.value || !this.migrationPriorityTarget.value)
+    ) {
+      return this.setError("setup", this.message("required"))
+    }
+
+    const branches = Number(this.branchesHiddenTarget.value)
+    return Number.isInteger(branches) && branches >= 1
+      ? true
+      : this.setError("setup", this.message("branches"))
+  }
+
+  validateTerms() {
+    return this.termsTarget.checked
+      ? true
+      : this.setError("terms", this.message("terms"))
   }
 
   updateStep() {
@@ -168,7 +147,7 @@ export default class extends Controller {
     })
 
     const progress = ((this.currentStep - 1) / 4) * 100
-    this.progressTarget.style.width = `calc(${progress}% - ${progress ? 0 : 0}px)`
+    this.progressTarget.style.width = `${progress}%`
 
     this.nodeTargets.forEach((node) => {
       const active = Number(node.dataset.step) <= this.currentStep
@@ -182,8 +161,8 @@ export default class extends Controller {
     this.stepCounterTarget.textContent = `${this.currentStep} / 5`
     this.backTarget.classList.toggle("hidden", this.currentStep === 1)
 
-    const nextLabel = this.nextTarget.querySelector("span")
-    nextLabel.textContent = this.currentStep === 5
+    const label = this.nextTarget.querySelector("span")
+    label.textContent = this.currentStep === 5
       ? this.nextTarget.dataset.submitLabel
       : this.nextTarget.dataset.nextLabel
 
@@ -203,9 +182,7 @@ export default class extends Controller {
       card.setAttribute("aria-pressed", selected)
     })
 
-    if (this.hasMigrationFieldsTarget) {
-      this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
-    }
+    this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
   }
 
   setError(type, message) {
@@ -217,11 +194,14 @@ export default class extends Controller {
   }
 
   clearError(type) {
-    const error = this.errorTargets.find((element) => element.dataset.error === type)
-    error?.classList.add("hidden")
+    this.errorTargets.find((element) => element.dataset.error === type)?.classList.add("hidden")
   }
 
   clearErrors() {
     this.errorTargets.forEach((error) => error.classList.add("hidden"))
+  }
+
+  message(key) {
+    return this.wrapperTarget.dataset[`validation${key.charAt(0).toUpperCase() + key.slice(1)}`]
   }
 }
