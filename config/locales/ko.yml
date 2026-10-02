@@ -813,7 +813,6 @@ ko:
         title: "%{resource} 편집"
         unhappy: 불만족스러우신가요?
       new:
-        already_have_account: "이미 운영 중인 계정이 있나요?"
         brand_alt: "Delta POS 로고"
         email: "이메일 주소"
         email_placeholder: "email@example.com"
@@ -942,7 +941,7 @@ ko:
         realtime_description: 어디서나 판매, 재고 수준 및 현금 흐름을 실시간으로 모니터링하세요.
         multichannel_title: 멀티채널 사용 지원
         multichannel_description: 모바일 기기 또는 고정 터미널에서 동시에 금전함 교대를 시작할 수 있습니다.
-        copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
+        copyright: "© 2026 Delta POS Inc. 모든 권리 보유."
     shared:
       links:
         forgot_password: 비밀번호를 잊으셨나요?
