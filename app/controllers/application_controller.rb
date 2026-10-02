@@ -33,7 +33,14 @@ class ApplicationController < ActionController::Base
   end
 
   def preferred_locale
-    user_language_code || session_language_code
+    user_language_code || session_language_code || cookie_language_code
+  end
+
+  def cookie_language_code
+    code = cookies[:terminal_language].presence
+    return unless code
+
+    code.downcase.to_sym if I18n.available_locales.include?(code.downcase.to_sym)
   end
 
   def user_language_code
@@ -55,6 +62,9 @@ class ApplicationController < ActionController::Base
 
     # Then check session language
     language = Language.find_by(id: session[:language_id])
+    return language if language
+
+    language = Language.available.find_by(code: cookies[:terminal_language].to_s.downcase)
     return language if language
 
     # Fallback to a default language (e.g., English)
