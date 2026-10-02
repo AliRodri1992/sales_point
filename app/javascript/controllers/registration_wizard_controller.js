@@ -11,7 +11,7 @@ export default class extends Controller {
 
   connect() {
     this.currentStep = 1
-    this.selectedSetupType = this.setupTypeTarget.value || "new"
+    this.selectedSetupType = this.setupTypeTarget.value || ""
     this.updateSetupCards()
     this.updateStep()
   }
@@ -83,12 +83,18 @@ export default class extends Controller {
     this.clearErrors()
 
     return {
-      1: () => Boolean(this.setupTypeTarget.value),
+      1: () => this.validateSetupType(),
       2: () => this.validateAdministrator(),
       3: () => this.validateCompany(),
       4: () => this.validateEnvironment(),
       5: () => this.validateTerms()
     }[this.currentStep]()
+  }
+
+  validateSetupType() {
+    return this.selectedSetupType
+      ? true
+      : this.setError("setup", this.message("required"))
   }
 
   validateAdministrator() {
@@ -150,7 +156,7 @@ export default class extends Controller {
     this.progressTarget.style.width = `${progress}%`
 
     this.nodeTargets.forEach((node) => {
-      const active = Number(node.dataset.step) <= this.currentStep
+      const active = Number(node.dataset.step) < this.currentStep || (Number(node.dataset.step) === this.currentStep && this.currentStep === 1 && Boolean(this.selectedSetupType))
       node.classList.toggle("border-emerald-600", active)
       node.classList.toggle("bg-emerald-600", active)
       node.classList.toggle("text-white", active)
@@ -167,6 +173,7 @@ export default class extends Controller {
       : this.nextTarget.dataset.nextLabel
 
     this.nextTarget.type = this.currentStep === 5 ? "submit" : "button"
+    this.nextTarget.disabled = this.currentStep === 1 && !this.selectedSetupType
 
     if (this.currentStep === 4) {
       this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
@@ -174,6 +181,8 @@ export default class extends Controller {
   }
 
   updateSetupCards() {
+    this.nextTarget.disabled = this.currentStep === 1 && !this.selectedSetupType
+
     this.setupCardTargets.forEach((card) => {
       const selected = card.dataset.setupType === this.selectedSetupType
       card.classList.toggle("border-emerald-500", selected)
