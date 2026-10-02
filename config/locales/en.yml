@@ -833,7 +833,6 @@ en:
         back: "Back"
         next: "Continue"
         already_have_account: "Already have an operational account?"
-        sign_in: "Sign in here"
         client_validation_required: "Complete the required information before continuing."
         client_validation_password_match: "The passwords do not match."
         client_validation_tax_id: "The tax ID must contain 12 or 13 characters."
