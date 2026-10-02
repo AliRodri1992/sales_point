@@ -104,9 +104,9 @@ class Theme
       light: '#dbeafe'
     },
     {
-      id: 'theme-material-light-blue',
-      color: '#039be5',
-      light: '#e1f5fe'
+      id: 'theme-delta-emerald',
+      color: '#059669',
+      light: '#d1fae5'
     }
   ].freeze
 
