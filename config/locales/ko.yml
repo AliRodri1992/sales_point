@@ -851,35 +851,8 @@ ko:
         title: 잠금 해제 안내 다시 보내기
   errors:
     attributes:
-      barcode: 바코드
-      category: 카테고리
-      city: 도시
-      code: 코드
-      cost: 비용
-      country: 국가
-      description: 설명
-      exterior_number: 외부 번호
-      featured: 추천
-      flag_iso: 국가 코드
-      image: 이미지
-      interior_number: 내부 번호
-      max_stock: 최대 재고
-      min_stock: 최소 재고
-      name: 이름
-      neighborhood: 동네
-      phone: 전화번호
-      position: 순서
-      postal_code: 우편번호
-      price: 가격
-      sat_tax: SAT 세금
-      sat_unit_key: SAT 단위 키
-      sku: SKU
-      slug: 슬러그
-      state: 주/도
-      status: 상태
-      stock: 재고
-      street: 도로명
-      view_count: 조회수
+      email: 이메일
+      password: 비밀번호
     format: "%{attribute} %{message}"
     messages:
       acceptance: 동의해야 합니다
