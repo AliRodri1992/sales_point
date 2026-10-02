@@ -801,69 +801,86 @@ ko:
         submit: 업데이트
         title: "%{resource} 편집"
         unhappy: 불만족스러우신가요?
+      edit:
+        back: 뒤로
+        cancel_account: 계정 삭제
+        confirm: 정말 하시겠습니까?
+        current_password_hint: 변경 사항을 확인하려면 현재 비밀번호가 필요합니다
+        leave_blank: 변경하지 않으려면 비워 두세요
+        minimum: 최소 %{count}자
+        pending_confirmation: '다음 이메일의 확인을 기다리고 있습니다: %{email}'
+        submit: 업데이트
+        title: "%{resource} 편집"
+        unhappy: 불만족스러우신가요?
       new:
-        already_have_account: 이미 계정이 있으십니까?
-        brand_alt: Delta POS 로고 심볼
-        email: 이메일
-        email_placeholder: email@example.com
-        password: 비밀번호
-        password_confirmation: 비밀번호 확인
-        password_minimum: 최소 %{count}자
-        sign_in: 로그인
-        submit: 계정 만들기
-        subtitle: Delta POS 사용을 시작하려면 가입하십시오
-        title: 계정 만들기
-
-        page_title: "전문 회원가입 | Delta POS"
-        brand_alt: "Delta POS 로고 심볼"
-        brand_tagline: "포인트 오브 세일"
+        already_have_account: "이미 운영 중인 계정이 있나요?"
+        brand_alt: "Delta POS 로고"
+        email: "이메일 주소"
+        email_placeholder: "email@example.com"
+        password: "비밀번호"
+        password_confirmation: "비밀번호 확인"
+        password_minimum: "최소 %{count}자"
+        sign_in: "로그인"
+        submit: "계정 만들기"
+        subtitle: "Delta POS 사용을 시작하려면 가입하세요"
+        title: "계정 만들기"
+        page_title: "전문가 등록 | Delta POS"
+        brand_tagline: "판매 시점 관리"
+        panel_badge: "⚡ 클라우드 비즈니스 환경 설정"
         panel_title: "클라우드에서 POS를 시작하세요"
-        panel_description: "안내에 따라 등록을 완료하고 비즈니스에 맞는 Delta POS 환경을 구성하세요."
+        panel_description: "안내에 따라 등록을 완료하고 Delta POS 거래 인프라를 안전하게 활성화하세요."
+        benefit_one_title: "금전함 및 교대 모니터링"
+        benefit_one_description: "차이를 방지하고 금전함 오픈, 현금 인출 및 마감 업무를 즉시 관리하세요."
+        benefit_two_title: "범용 POS 호환성"
+        benefit_two_description: "바코드 스캐너, 저울 및 영수증 프린터를 기본으로 연결하세요."
         cloud_badge: "Delta POS Cloud"
-        step_label: "회원가입 진행"
+        step_label: "등록 진행률"
         back: "뒤로"
         next: "계속"
         submit: "계정 만들기"
-        already_have_account: "이미 운영 계정이 있으신가요?"
+        already_have_account: "이미 운영 중인 계정이 있나요?"
         sign_in: "여기에서 로그인"
         client_validation_required: "계속하기 전에 필수 정보를 입력하세요."
         client_validation_password_match: "비밀번호가 일치하지 않습니다."
-        client_validation_tax_id: "세금 식별자는 12자 또는 13자여야 합니다."
+        client_validation_tax_id: "세금 식별 번호는 12~13자여야 합니다."
         client_validation_branches: "지점 수는 최소 1개여야 합니다."
         client_validation_terms: "계정을 만들려면 약관에 동의해야 합니다."
-
-          subtitle: "Delta POS를 어떻게 시작할지 선택하세요."
-          new_title: "새로운 구축"
-          new_description: "새 클라우드 환경을 시작하고 운영을 처음부터 구성합니다."
-          migration_title: "기존 운영 환경 마이그레이션"
-          migration_description: "상품 카탈로그와 운영 정보를 Delta POS로 이전합니다."
+        step_one:
+          title: "구축 유형"
+          subtitle: "비즈니스에 맞게 환경을 구성할 수 있도록 현재 상황을 알려주세요."
+          new_title: "완전히 새로운 시스템입니다"
+          new_description: "깨끗한 데이터베이스로 시작합니다. 첫 번째 소매점을 여는 경우에 적합합니다."
+          migration_title: "기존 시스템을 마이그레이션합니다"
+          migration_description: "현재 상품 카탈로그와 운영 정보를 Delta POS로 안전하게 이전합니다."
         step_two:
           title: "관리자 정보"
-          subtitle: "Delta POS 환경의 관리자 로그인 정보를 만드세요."
+          subtitle: "Delta POS 환경의 관리자 계정을 만드세요."
           name: "이름"
           name_placeholder: "이름을 입력하세요"
-          email: "비즈니스 이메일"
+          email: "업무용 이메일"
           email_placeholder: "you@company.com"
           password: "비밀번호"
           password_confirmation: "비밀번호 확인"
           password_minimum: "최소 %{count}자"
           toggle_password: "비밀번호 표시 또는 숨기기"
-
+        step_three:
+          title: "회사 정보"
           subtitle: "비즈니스를 식별하는 기본 정보를 입력하세요."
           company_name: "회사명"
           company_name_placeholder: "회사명을 입력하세요"
-          tax_id: "세금 식별자"
-          tax_id_placeholder: "사업자 또는 세금 식별자"
-
+          tax_id: "세금 식별 번호"
+          tax_id_placeholder: "사업자 번호"
+        step_four:
+          title: "비즈니스 환경"
           subtitle: "운영 방식에 맞게 환경을 구성하세요."
           business_sector: "업종"
           select_sector: "업종을 선택하세요..."
-          migration_volume: "카탈로그 규모"
-          select_volume: "카탈로그 규모를 선택하세요..."
+          migration_volume: "상품 카탈로그 규모"
+          select_volume: "규모를 선택하세요..."
           migration_priority: "마이그레이션 우선순위"
           select_priority: "우선순위를 선택하세요..."
-          branches: "지점 수"
-          currency: "운영 통화"
+          branches: "초기 지점 수"
+          currency: "기본 통화"
           sectors:
             grocery: "식료품점 및 슈퍼마켓"
             fashion: "의류, 신발 및 액세서리"
@@ -875,56 +892,14 @@ ko:
             over_5000: "5,000개 초과 상품"
           priorities:
             catalog: "상품 카탈로그 및 가격"
-            inventory: "현재 재고 및 수량"
+            inventory: "현재 재고"
             customers: "고객 이력 및 외상"
-            all: "위의 모든 항목"
+            all: "모두"
           currencies:
             mxn: "멕시코 페소 (MXN)"
             usd: "미국 달러 (USD)"
             jpy: "일본 엔 (JPY)"
             krw: "대한민국 원 (KRW)"
-
-          subtitle: "초기 결제 환경을 구성하세요."
-          terminals: "금전함"
-          payments: "결제 연동"
-          terminal_options:
-            one: "메인 금전함 1개 (표준)"
-            two: "로컬 네트워크 금전함 2개"
-            three_five: "금전함 3~5개"
-            over_five: "금전함 5개 초과"
-          payment_options:
-            cash: "현금만 사용 (현재)"
-            card: "카드 결제 활성화"
-            qr: "디지털 QR 결제 활성화"
-          terms: "Delta POS 서비스 약관 및 개인정보 보호정책에 동의합니다."
-        panel_badge: "⚡ 클라우드 비즈니스 환경 설정"
-        panel_title: "클라우드에서 POS를 시작하세요"
-        panel_description: "안내에 따라 등록을 완료하고 Delta POS 거래 인프라를 안전하게 활성화하세요."
-        benefit_one_title: "금전함 및 교대 모니터링"
-        benefit_one_description: "차이를 방지하고 금전함 오픈, 현금 인출 및 마감 업무를 즉시 관리하세요."
-        benefit_two_title: "범용 POS 호환성"
-        benefit_two_description: "바코드 스캐너, 저울 및 영수증 프린터를 기본으로 연결하세요."
-        step_one:
-          title: "구축 유형"
-          subtitle: "비즈니스에 맞게 환경을 구성할 수 있도록 현재 상황을 알려주세요."
-          new_title: "완전히 새로운 시스템입니다"
-          new_description: "깨끗한 데이터베이스로 시작합니다. 첫 번째 소매점을 여는 경우에 적합합니다."
-          migration_title: "기존 시스템을 마이그레이션합니다"
-          migration_description: "현재 상품 카탈로그와 운영 정보를 Delta POS로 안전하게 이전합니다."
-        step_three:
-          company_name: "상호 / 법인명"
-          company_name_placeholder: "예: Delta Commercial Ltd."
-          tax_id: "세금 식별 / 사업자 번호"
-          tax_id_placeholder: "예: ABC123456XYZ"
-        step_four:
-          business_sector: "사업 업종"
-          select_sector: "업종을 선택하세요..."
-          migration_volume: "예상 상품 규모"
-          select_volume: "규모를 선택하세요..."
-          migration_priority: "데이터 마이그레이션 우선순위"
-          select_priority: "우선순위를 선택하세요..."
-          branches: "초기 지점 수"
-          currency: "기본 통화"
         step_five:
           title: "판매 스테이션 및 금전함"
           subtitle: "터치형 금전함 수와 통합 결제 방식을 설정하세요."
