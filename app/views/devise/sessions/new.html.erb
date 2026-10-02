@@ -190,14 +190,14 @@
                 <label class="inline-flex cursor-pointer items-center">
                   <%= f.check_box(
                     :remember_me,
-                    class: "h-4 w-4 rounded-md border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    class: "h-4 w-4 rounded-md border-slate-300 text-[var(--brand)] focus:ring-[var(--brand)]"
                   ) %>
                   <span class="ml-2 text-[11px] text-slate-500"><%= t(".remember_me") %></span>
                 </label>
                 <%= link_to(
                   t(".forgot"),
                   new_password_path(resource_name),
-                  class: "text-xs font-medium text-emerald-600 transition hover:text-emerald-500"
+                  class: "text-xs font-medium theme-text transition hover:opacity-80"
                 ) %>
               </div>
 
@@ -215,7 +215,7 @@
                 <%= link_to(
                   t(".register"),
                   new_user_registration_path,
-                  class: "font-semibold text-emerald-600 transition hover:text-emerald-500"
+                  class: "font-semibold theme-text transition hover:opacity-80"
                 ) %>
               </p>
             </div>
