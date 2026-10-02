@@ -173,16 +173,12 @@ export default class extends Controller {
       : this.nextTarget.dataset.nextLabel
 
     this.nextTarget.type = this.currentStep === 5 ? "submit" : "button"
-    this.nextTarget.disabled = this.currentStep === 1 && !this.selectedSetupType
-
     if (this.currentStep === 4) {
       this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
     }
   }
 
   updateSetupCards() {
-    this.nextTarget.disabled = this.currentStep === 1 && !this.selectedSetupType
-
     this.setupCardTargets.forEach((card) => {
       const selected = card.dataset.setupType === this.selectedSetupType
       card.classList.toggle("border-emerald-500", selected)
