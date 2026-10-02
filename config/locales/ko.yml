@@ -836,8 +836,7 @@ ko:
         client_validation_tax_id: "세금 식별자는 12자 또는 13자여야 합니다."
         client_validation_branches: "지점 수는 최소 1개여야 합니다."
         client_validation_terms: "계정을 만들려면 약관에 동의해야 합니다."
-        step_one:
-          title: "구축 유형"
+
           subtitle: "Delta POS를 어떻게 시작할지 선택하세요."
           new_title: "새로운 구축"
           new_description: "새 클라우드 환경을 시작하고 운영을 처음부터 구성합니다."
@@ -854,15 +853,13 @@ ko:
           password_confirmation: "비밀번호 확인"
           password_minimum: "최소 %{count}자"
           toggle_password: "비밀번호 표시 또는 숨기기"
-        step_three:
-          title: "회사 정보"
+
           subtitle: "비즈니스를 식별하는 기본 정보를 입력하세요."
           company_name: "회사명"
           company_name_placeholder: "회사명을 입력하세요"
           tax_id: "세금 식별자"
           tax_id_placeholder: "사업자 또는 세금 식별자"
-        step_four:
-          title: "비즈니스 환경"
+
           subtitle: "운영 방식에 맞게 환경을 구성하세요."
           business_sector: "업종"
           select_sector: "업종을 선택하세요..."
@@ -891,8 +888,7 @@ ko:
             usd: "미국 달러 (USD)"
             jpy: "일본 엔 (JPY)"
             krw: "대한민국 원 (KRW)"
-        step_five:
-          title: "단말기 및 결제"
+
           subtitle: "초기 결제 환경을 구성하세요."
           terminals: "금전함"
           payments: "결제 연동"
