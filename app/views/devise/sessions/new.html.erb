@@ -126,6 +126,7 @@
             ) do |f| %>
 
               <div>
+                <% email_has_error = resource.errors[:email].present? %>
                 <%= f.label(
                   :email,
                   t(".email"),
@@ -142,16 +143,18 @@
                     autofocus: true,
                     autocomplete: "email",
                     placeholder: t(".email_placeholder"),
-                    class: "input-field block w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-xs text-slate-800 shadow-sm transition-all placeholder:text-slate-400",
+                    class: "input-field block w-full appearance-none rounded-xl border bg-white py-2 pl-9 pr-3 text-xs text-slate-800 shadow-sm transition-all placeholder:text-slate-400 #{email_has_error ? "input-field-error border-rose-500 bg-rose-50" : "border-slate-200"}",
                     data: {
                       terminal_target: "input",
                       action: "input->terminal#clearErrors"
                     }
                   ) %>
+                  <%= error_message_for(resource, :email) %>
                 </div>
               </div>
 
               <div>
+                <% password_has_error = resource.errors[:password].present? %>
                 <%= f.label(
                   :password,
                   t(".password"),
@@ -167,12 +170,13 @@
                     :password,
                     autocomplete: "current-password",
                     placeholder: "••••••••",
-                    class: "input-field block w-full appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-10 text-xs text-slate-900 shadow-sm transition-all",
+                    class: "input-field block w-full appearance-none rounded-xl border bg-white py-2 pl-9 pr-10 text-xs text-slate-900 shadow-sm transition-all #{password_has_error ? "input-field-error border-rose-500 bg-rose-50" : "border-slate-200"}",
                     data: {
                       terminal_target: "input",
                       terminal_target: "password"
                     }
                   ) %>
+                  <%= error_message_for(resource, :password) %>
 
                   <button
                     type="button"
