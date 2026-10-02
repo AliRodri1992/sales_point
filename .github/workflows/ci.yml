@@ -8,6 +8,7 @@ on:
       - master
       - staging
       - test
+      - feature/register
 
 permissions:
   contents: read
@@ -140,3 +141,32 @@ jobs:
         env:
           COVERAGE: false
         run: bundle exec rspec
+
+  i18n:
+    name: Rails I18n and YAML audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Audit locale YAML files
+        run: python script/audit_i18n.py
+
+      - name: Validate Rails I18n loading
+        run: |
+          bin/rails runner 'I18n.available_locales.each { |locale| I18n.backend.send(:init_translations); I18n.backend.send(:translations)[locale] }'
