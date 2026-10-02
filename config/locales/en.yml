@@ -842,8 +842,7 @@ en:
         client_validation_tax_id: "The tax ID must contain 12 or 13 characters."
         client_validation_branches: "The number of branches must be at least 1."
         client_validation_terms: "You must accept the terms to create your account."
-        step_one:
-          title: "Implementation type"
+
           subtitle: "Tell us how you want to start with Delta POS."
           new_title: "New implementation"
           new_description: "Start a new cloud environment and configure your operation from scratch."
@@ -860,15 +859,13 @@ en:
           password_confirmation: "Confirm password"
           password_minimum: "Minimum %{count} characters"
           toggle_password: "Show or hide password"
-        step_three:
-          title: "Company identity"
+
           subtitle: "Enter the basic information that identifies your business."
           company_name: "Company name"
           company_name_placeholder: "Your company name"
           tax_id: "Tax ID"
           tax_id_placeholder: "RFC or local tax ID"
-        step_four:
-          title: "Commercial environment"
+
           subtitle: "Configure the environment according to your operation."
           business_sector: "Business sector"
           select_sector: "Select your sector..."
@@ -897,8 +894,7 @@ en:
             usd: "US dollar (USD)"
             jpy: "Japanese yen (JPY)"
             krw: "South Korean won (KRW)"
-        step_five:
-          title: "Terminals and payments"
+
           subtitle: "Configure the initial checkout environment."
           terminals: "Cash registers"
           payments: "Payment integration"
