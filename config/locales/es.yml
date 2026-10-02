@@ -865,6 +865,19 @@ es:
         title: Reenviar instrucciones de desbloqueo
   errors:
     attributes:
+      branch:
+        name: Nombre
+        phone: Teléfono
+        status: Estado
+      address:
+        city: Ciudad
+        country: País
+        exterior_number: No. exterior
+        interior_number: No. interior
+        neighborhood: Colonia
+        postal_code: Código postal
+        state: Estado
+        street: Calle
       email: Correo electrónico
       password: Contraseña
     format: "%{attribute} %{message}"

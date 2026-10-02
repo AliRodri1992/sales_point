@@ -48,7 +48,11 @@ module ApplicationHelper
   def error_message_for(object, attribute)
     return '' unless object && object.errors[attribute].any?
 
-    attribute_name = I18n.t("errors.attributes.#{attribute}", default: attribute.to_s.humanize)
+    model = object.class.name.underscore
+    model_attribute = "errors.attributes.#{model}.#{attribute}"
+    general_attribute = "errors.attributes.#{attribute}"
+
+    attribute_name = I18n.t(model_attribute, default: I18n.t(general_attribute, default: attribute.to_s.humanize))
     error_message = object.errors[attribute].first
     formatted_message = "#{attribute_name} #{error_message}"
 
