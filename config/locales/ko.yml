@@ -815,7 +815,7 @@ ko:
         title: 계정 만들기
     sessions:
       new:
-      page_title: 델타 포스 | 로그인
+        page_title: 델타 포스 | 로그인
         brand_tagline: 판매 시점 관리
         brand_alt: Delta POS 로고 심볼
         email: 회사 이메일
