@@ -826,6 +826,7 @@ ko:
         password: 안전한 로그인 비밀번호
         remember_me: 로그인 상태 유지
         submit: 터미널 로그인
+        submitting: 로그인 중…
         subtitle: 클라우드 POS를 열려면 로그인 정보를 입력하세요.
         title: 클라우드 시스템 접속
         toggle_password: 비밀번호 표시 또는 숨기기
