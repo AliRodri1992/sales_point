@@ -179,6 +179,7 @@ export default class extends Controller {
 
         // Save to cookie
         document.cookie = `terminal_theme=${theme}; path=/; max-age=31536000`;
+        document.cookie = "terminal_theme_selected=1; path=/; max-age=31536000";
 
 
         this.wrapperTarget.className =
