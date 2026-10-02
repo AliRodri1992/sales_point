@@ -45,6 +45,18 @@ select {
 }
 
 .theme-text {
+    color: #059669;
+}
+
+.theme-selected .theme-text {
+    color: var(--brand);
+}
+
+.theme-control {
+    color: #059669;
+}
+
+.theme-selected .theme-control {
     color: var(--brand);
 }
 
@@ -1046,14 +1058,26 @@ select:focus-visible {
 }
 
 .btn-delta-gradient {
+    background: #059669;
+}
+
+.theme-selected .btn-delta-gradient {
     background: var(--brand);
 }
 
 .btn-delta-gradient:hover {
+    background: color-mix(in srgb, #059669 88%, black);
+}
+
+.theme-selected .btn-delta-gradient:hover {
     background: color-mix(in srgb, var(--brand) 88%, black);
 }
 
 .btn-delta-gradient:active {
+    background: color-mix(in srgb, #059669 76%, black);
+}
+
+.theme-selected .btn-delta-gradient:active {
     background: color-mix(in srgb, var(--brand) 76%, black);
 }
 
