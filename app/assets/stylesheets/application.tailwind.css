@@ -1105,3 +1105,114 @@ select:focus-visible {
 .bg-grid-pattern {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'%3E%3Cpath d='M24 0H0v24'/%3E%3C/svg%3E");
 }
+
+
+/* ============================================================
+   DELTA POS — Registration Wizard
+   Scoped enhancements from the registration template.
+   ============================================================ */
+
+.registration-page {
+    --registration-surface: #ffffff;
+    --registration-muted: #64748b;
+    --registration-border: #e2e8f0;
+    --registration-focus: rgba(5, 150, 105, 0.16);
+}
+
+.registration-page [data-registration-wizard-target="step"] {
+    animation: registration-step-enter 180ms ease-out;
+}
+
+.registration-page [data-registration-wizard-target="setupCard"] {
+    border: 1px solid var(--registration-border);
+    transition:
+            transform 150ms ease,
+            border-color 150ms ease,
+            background-color 150ms ease,
+            box-shadow 150ms ease;
+}
+
+.registration-page [data-registration-wizard-target="setupCard"]:hover {
+    transform: translateY(-1px);
+    border-color: rgba(5, 150, 105, 0.35);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.registration-page [data-registration-wizard-target="setupCard"][aria-pressed="true"] {
+    border-color: var(--brand, #059669);
+    background-color: rgba(5, 150, 105, 0.05);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
+}
+
+.registration-page input:not([type="checkbox"]):not([type="radio"]),
+.registration-page select {
+    transition:
+            border-color 150ms ease,
+            box-shadow 150ms ease,
+            background-color 150ms ease;
+}
+
+.registration-page input:not([type="checkbox"]):not([type="radio"]):focus,
+.registration-page select:focus {
+    border-color: var(--brand, #059669);
+    box-shadow: 0 0 0 3px var(--registration-focus);
+    outline: none;
+}
+
+.registration-page input[aria-invalid="true"],
+.registration-page select[aria-invalid="true"] {
+    border-color: #f43f5e;
+}
+
+.registration-page [data-registration-wizard-target="node"] {
+    transition:
+            background-color 150ms ease,
+            color 150ms ease,
+            border-color 150ms ease,
+            transform 150ms ease;
+}
+
+.registration-page [data-registration-wizard-target="progress"] {
+    transform-origin: left center;
+    transition: width 220ms ease;
+}
+
+.registration-page [data-registration-wizard-target="back"]:focus-visible,
+.registration-page [data-registration-wizard-target="next"]:focus-visible {
+    outline: 2px solid var(--brand, #059669);
+    outline-offset: 3px;
+}
+
+@keyframes registration-step-enter {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 639px) {
+    .registration-page [data-registration-wizard-target="node"] {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: .65rem;
+    }
+
+    .registration-page [data-registration-wizard-target="stepCounter"] {
+        font-size: .65rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .registration-page [data-registration-wizard-target="step"],
+    .registration-page [data-registration-wizard-target="setupCard"],
+    .registration-page [data-registration-wizard-target="node"],
+    .registration-page [data-registration-wizard-target="progress"] {
+        animation: none;
+        transition: none;
+    }
+}
