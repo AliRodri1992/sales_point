@@ -81,7 +81,7 @@ class RegistrationService
   end
 
   def validate_terms!
-    return if @params[:terms].to_s == '1'
+    return if ActiveModel::Type::Boolean.new.cast(@params[:terms])
 
     @user.errors.add(:base, I18n.t('devise.registrations.new.client_validation_terms'))
     raise ActiveRecord::RecordInvalid, @user
