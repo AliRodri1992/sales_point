@@ -1,15 +1,15 @@
-<% content_for :title, t(".title") %>
+<% content_for :title, t("admin.onboarding.title") %>
 
 <div class="mx-auto max-w-6xl space-y-6">
   <div class="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-600 p-6 text-white shadow-lg sm:p-8">
-    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100"><%= t(".eyebrow") %></p>
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100"><%= t("admin.onboarding.eyebrow") %></p>
     <div class="mt-2 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
       <div>
-        <h1 class="font-jakarta text-2xl font-extrabold sm:text-3xl"><%= t(".title") %></h1>
-        <p class="mt-2 max-w-2xl text-sm leading-6 text-emerald-50"><%= t(".description") %></p>
+        <h1 class="font-jakarta text-2xl font-extrabold sm:text-3xl"><%= t("admin.onboarding.title") %></h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-emerald-50"><%= t("admin.onboarding.description") %></p>
       </div>
       <div class="rounded-2xl bg-white/10 px-5 py-4">
-        <p class="text-xs font-medium text-emerald-100"><%= t(".overall") %></p>
+        <p class="text-xs font-medium text-emerald-100"><%= t("admin.onboarding.overall") %></p>
         <p class="mt-1 text-3xl font-extrabold"><%= @progress[:percentage] %>%</p>
       </div>
     </div>
@@ -19,9 +19,9 @@
     <% (1..5).each do |step| %>
       <%= link_to admin_onboarding_path(step: step),
                   class: "rounded-2xl border p-4 #{step == @step ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-white'}" do %>
-        <span class="text-xs font-bold text-emerald-600"><%= t(".step_number", number: step) %></span>
-        <p class="mt-1 text-sm font-bold text-slate-900"><%= t(".steps.#{step}.title") %></p>
-        <p class="mt-1 text-xs text-slate-500"><%= t(".steps.#{step}.description") %></p>
+        <span class="text-xs font-bold text-emerald-600"><%= t("admin.onboarding.step_number", number: step) %></span>
+        <p class="mt-1 text-sm font-bold text-slate-900"><%= t("admin.onboarding.steps.#{step}.title") %></p>
+        <p class="mt-1 text-xs text-slate-500"><%= t("admin.onboarding.steps.#{step}.description") %></p>
       <% end %>
     <% end %>
   </div>
@@ -35,31 +35,31 @@
       <% case @step %>
       <% when 1 %>
         <div>
-          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t(".steps.1.heading") %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t(".steps.1.help") %></p>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.1.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.1.help") %></p>
         </div>
         <div class="grid gap-5 md:grid-cols-2">
-          <%= form.text_field "organization[name]", value: @organization.name, placeholder: t(".fields.company_name"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
-          <%= form.text_field "organization[tax_id]", value: @organization.tax_id, placeholder: t(".fields.tax_id"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm uppercase" %>
+          <%= form.text_field "organization[name]", value: @organization.name, placeholder: t("admin.onboarding.fields.company_name"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+          <%= form.text_field "organization[tax_id]", value: @organization.tax_id, placeholder: t("admin.onboarding.fields.tax_id"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm uppercase" %>
           <%= form.select "organization[business_sector]",
             options_for_select(%w[grocery fashion restaurant pharmacy].map { |key| [t("registration.step_four.sectors.#{key}"), key] }, @organization.business_sector),
             {}, class: "rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm md:col-span-2" %>
         </div>
       <% when 2 %>
         <div>
-          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t(".steps.2.heading") %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t(".steps.2.help") %></p>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.2.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.2.help") %></p>
         </div>
         <% if @branch %>
           <%= fields_for :branch, @branch do |branch_fields| %>
             <div class="grid gap-5 md:grid-cols-2">
-              <%= branch_fields.text_field :name, placeholder: t(".fields.branch_name"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
-              <%= branch_fields.telephone_field :phone, placeholder: t(".fields.phone"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+              <%= branch_fields.text_field :name, placeholder: t("admin.onboarding.fields.branch_name"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+              <%= branch_fields.telephone_field :phone, placeholder: t("admin.onboarding.fields.phone"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
             </div>
             <%= branch_fields.fields_for :address do |address_fields| %>
               <div class="grid gap-5 pt-2 md:grid-cols-2">
                 <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
-                  <%= address_fields.text_field field, placeholder: t(".fields.#{field}"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
+                  <%= address_fields.text_field field, placeholder: t("admin.onboarding.fields.#{field}"), class: "rounded-xl border border-slate-200 px-4 py-3 text-sm" %>
                 <% end %>
               </div>
             <% end %>
@@ -67,8 +67,8 @@
         <% end %>
       <% when 3 %>
         <div>
-          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t(".steps.3.heading") %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t(".steps.3.help") %></p>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.3.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.3.help") %></p>
         </div>
         <%= form.select "terminals[count]",
           options_for_select(
@@ -78,7 +78,7 @@
         <div class="grid gap-4 md:grid-cols-2">
           <% @terminals.each_with_index do |terminal, index| %>
             <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t(".terminal", number: index + 1) %></label>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t("admin.onboarding.terminal", number: index + 1) %></label>
               <%= form.text_field "terminal_names[#{index}]", value: terminal.name, class: "mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
               <p class="mt-2 text-xs text-slate-400"><%= terminal.code %></p>
             </div>
@@ -86,29 +86,29 @@
         </div>
       <% when 4 %>
         <div>
-          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t(".steps.4.heading") %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t(".steps.4.help") %></p>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.4.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.4.help") %></p>
         </div>
         <%= form.select "payment[method]",
           options_for_select(%w[cash card qr].map { |key| [t("registration.step_five.payment_options.#{key}"), key] }, @settings&.payment_method),
           {}, class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
       <% else %>
         <div>
-          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t(".steps.5.heading") %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= t(".steps.5.help") %></p>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.5.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.5.help") %></p>
         </div>
         <div class="grid gap-3 md:grid-cols-2">
           <% @progress[:sections].each do |section| %>
             <div class="flex items-center justify-between rounded-xl border border-slate-200 p-4">
-              <span class="text-sm font-semibold text-slate-700"><%= t(".sections.#{section[:key]}") %></span>
+              <span class="text-sm font-semibold text-slate-700"><%= t("admin.onboarding.sections.#{section[:key]}") %></span>
               <span class="text-sm font-bold <%= section[:percentage] == 100 ? 'text-emerald-600' : 'text-amber-600' %>"><%= section[:percentage] %>%</span>
             </div>
           <% end %>
         </div>
         <% if @migration %>
           <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
-            <p class="font-bold"><%= t(".migration.title") %></p>
-            <p class="mt-1"><%= t(".migration.description") %></p>
+            <p class="font-bold"><%= t("admin.onboarding.migration.title") %></p>
+            <p class="mt-1"><%= t("admin.onboarding.migration.description") %></p>
           </div>
         <% end %>
       <% end %>
@@ -116,9 +116,9 @@
       <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
         <%= link_to @step == 1 ? admin_dashboard_path : admin_onboarding_path(step: @step - 1),
                     class: "rounded-xl border border-slate-200 px-5 py-3 text-center text-sm font-semibold text-slate-700" do %>
-          <%= t(".back") %>
+          <%= t("admin.onboarding.back") %>
         <% end %>
-        <%= form.submit @step == 5 ? t(".finish") : t(".continue"),
+        <%= form.submit @step == 5 ? t("admin.onboarding.finish") : t("admin.onboarding.continue"),
                          class: "rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-bold text-white" %>
       </div>
     <% end %>
