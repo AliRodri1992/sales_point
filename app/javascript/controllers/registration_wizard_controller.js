@@ -3,7 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "wrapper", "step", "node", "progress", "stepCounter", "setupType",
-    "setupCard", "input", "businessSector", "migrationVolume", "migrationPriority",
+    "setupCard", "input", "dropdown", "dropdownMenu", "dropdownLabel",
+    "businessSector", "migrationVolume", "migrationPriority",
     "branchesHidden", "currency", "terminals", "payments", "migrationFields",
     "terms", "back", "next", "error", "companyName", "taxId", "firstName", "lastName",
     "password", "confirmation"
@@ -14,6 +15,12 @@ export default class extends Controller {
     this.selectedSetupType = this.setupTypeTarget.value || ""
     this.updateSetupCards()
     this.updateStep()
+    this.closeHandler = this.closeDropdowns.bind(this)
+    document.addEventListener("click", this.closeHandler)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.closeHandler)
   }
 
   next() {
@@ -43,8 +50,53 @@ export default class extends Controller {
     this.clearError("setup")
   }
 
-  selectBusiness(event) {
-    this.businessSectorTarget.value = event.currentTarget.value
+  toggleDropdown(event) {
+    event.stopPropagation()
+
+    const name = event.currentTarget.dataset.dropdownName
+    const menu = this.dropdownMenuTargets.find((target) => target.dataset.dropdownName === name)
+    if (!menu) return
+
+    this.dropdownMenuTargets.forEach((target) => {
+      if (target !== menu) target.classList.add("hidden")
+    })
+
+    menu.classList.toggle("hidden")
+  }
+
+  selectDropdown(event) {
+    event.stopPropagation()
+
+    const option = event.currentTarget
+    const name = option.dataset.dropdownName
+    const value = option.dataset.dropdownValue
+    const label = option.dataset.dropdownLabel
+    const inputTargetName = this.dropdownInputTarget(name)
+
+    if (!inputTargetName || !value || !label) return
+
+    this[inputTargetName + "Target"].value = value
+
+    const labelTarget = this.dropdownLabelTargets.find(
+      (target) => target.closest("[data-dropdown-name]")?.dataset.dropdownName === name
+    )
+
+    if (labelTarget) labelTarget.textContent = label
+
+    this.closeDropdowns()
+  }
+
+  dropdownInputTarget(name) {
+    return {
+      "business-sector": "businessSector",
+      currency: "currency",
+      terminals: "terminals",
+      "payment-integration": "payments"
+    }[name]
+  }
+
+  closeDropdowns() {
+    this.dropdownMenuTargets.forEach((menu) => menu.classList.add("hidden"))
   }
 
   selectVolume(event) {
@@ -55,20 +107,8 @@ export default class extends Controller {
     this.migrationPriorityTarget.value = event.currentTarget.value
   }
 
-  selectCurrency(event) {
-    this.currencyTarget.value = event.currentTarget.value
-  }
-
   syncBranches(event) {
     this.branchesHiddenTarget.value = event.currentTarget.value
-  }
-
-  selectTerminals(event) {
-    this.terminalsTarget.value = event.currentTarget.value
-  }
-
-  selectPayments(event) {
-    this.paymentsTarget.value = event.currentTarget.value
   }
 
   togglePassword(event) {
