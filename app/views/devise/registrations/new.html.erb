@@ -141,8 +141,8 @@
                     <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
                       <%= icon(type == "new" ? "sparkles" : "arrow-path", variant: :outline, class: "h-5 w-5") %>
                     </span>
-                    <span class="block font-jakarta text-sm font-bold text-slate-900"><%= t(title_key) %></span>
-                    <span class="mt-1 block text-[11px] leading-relaxed text-slate-500"><%= t(description_key) %></span>
+                    <span class="block font-jakarta text-sm font-bold text-slate-900"><%= t(".#{title_key}") %></span>
+                    <span class="mt-1 block text-[11px] leading-relaxed text-slate-500"><%= t(".#{description_key}") %></span>
                   </button>
                 <% end %>
               </div>
@@ -223,7 +223,7 @@
               <div data-registration-wizard-target="migrationFields" class="hidden grid gap-4 sm:grid-cols-2">
                 <div>
                   <label for="migration-volume" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.migration_volume") %></label>
-                  <select id="migration-volume" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectVolume">
+                  <select id="migration-volume" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectMigrationVolume">
                     <option value=""><%= t(".step_four.select_volume") %></option>
                     <option value="under_500"><%= t(".step_four.volumes.under_500") %></option>
                     <option value="500_5000"><%= t(".step_four.volumes.500_5000") %></option>
@@ -232,7 +232,7 @@
                 </div>
                 <div>
                   <label for="migration-priority" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.migration_priority") %></label>
-                  <select id="migration-priority" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectPriority">
+                  <select id="migration-priority" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectMigrationPriority">
                     <option value=""><%= t(".step_four.select_priority") %></option>
                     <option value="catalog"><%= t(".step_four.priorities.catalog") %></option>
                     <option value="inventory"><%= t(".step_four.priorities.inventory") %></option>
@@ -244,8 +244,8 @@
 
               <div class="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label for="branch-count" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.branches") %></label>
-                  <input id="branch-count" type="number" min="1" value="1" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="input->registration-wizard#syncBranches">
+                  <label for="branches-input" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.branches") %></label>
+                  <input id="branches-input" type="number" min="1" value="1" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="input->registration-wizard#syncBranches">
                 </div>
                 <div>
                   <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.currency") %></label>
@@ -265,50 +265,44 @@
                 <p class="text-xs text-slate-500"><%= t(".step_five.subtitle") %></p>
               </div>
 
-              <div class="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label for="terminals" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.terminals") %></label>
-                  <select id="terminal-count" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectTerminals">
-                    <option value="1"><%= t(".step_five.terminal_options.one") %></option>
-                    <option value="2"><%= t(".step_five.terminal_options.two") %></option>
-                    <option value="3_5"><%= t(".step_five.terminal_options.three_five") %></option>
-                    <option value="over_5"><%= t(".step_five.terminal_options.over_five") %></option>
-                  </select>
-                </div>
-                <div>
-                  <label for="payment-method" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.payments") %></label>
-                  <select id="payment-method" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white py-2.5 px-3 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectPayments">
-                    <option value="cash"><%= t(".step_five.payment_options.cash") %></option>
-                    <option value="card"><%= t(".step_five.payment_options.card") %></option>
-                    <option value="qr"><%= t(".step_five.payment_options.qr") %></option>
-                  </select>
-                </div>
+              <div>
+                <label for="terminals" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.terminals") %></label>
+                <select id="terminals" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectTerminals">
+                  <option value="1"><%= t(".step_five.terminal_options.one") %></option>
+                  <option value="2"><%= t(".step_five.terminal_options.two") %></option>
+                  <option value="3_5"><%= t(".step_five.terminal_options.three_to_five") %></option>
+                  <option value="over_5"><%= t(".step_five.terminal_options.over_five") %></option>
+                </select>
               </div>
 
-              <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                <input type="checkbox" id="terms" class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" data-registration-wizard-target="terms">
-                <span class="text-[11px] leading-relaxed text-slate-600"><%= t(".step_five.terms") %></span>
-              </label>
-              <p data-registration-wizard-target="error" data-error="terms" class="hidden text-xs font-medium text-rose-600"></p>
+              <div>
+                <label for="payment-integration" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.payment_integration") %></label>
+                <select id="payment-integration" class="mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-800 shadow-sm" data-action="change->registration-wizard#selectPayments">
+                  <option value="cash"><%= t(".step_five.payment_options.cash") %></option>
+                  <option value="card"><%= t(".step_five.payment_options.card") %></option>
+                  <option value="qr"><%= t(".step_five.payment_options.qr") %></option>
+                </select>
+              </div>
+
+              <div class="flex items-start pt-1">
+                <input id="terms" name="terms" type="checkbox" class="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--theme-primary-start)] focus:ring-[var(--theme-primary-start)]">
+                <label for="terms" class="ml-2 block text-[11px] leading-normal text-slate-500">
+                  <%= t(".step_five.terms_html") %>
+                </label>
+              </div>
             </section>
 
-            <div class="flex items-center justify-between border-t border-slate-100 pt-5">
-              <button type="button" data-action="click->registration-wizard#previous" data-registration-wizard-target="back" class="hidden rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-500 transition hover:bg-slate-100">
-                <span aria-hidden="true">←</span> <%= t(".back") %>
-              </button>
-              <span class="flex-1"></span>
-              <button type="button" data-action="click->registration-wizard#next" data-registration-wizard-target="next" data-next-label="<%= t(".next") %>" data-submit-label="<%= t(".step_five.initialize", default: t(".submit")) %>" class="btn-submit-dynamic flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-semibold tracking-wide text-white shadow-md transition-all duration-200">
-                <span><%= t(".next") %></span>
-                <%= icon "arrow-right", variant: :outline, class: "h-4 w-4" %>
-              </button>
+            <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-5">
+              <button type="button" data-registration-wizard-target="backButton" data-action="click->registration-wizard#back" class="hidden rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"><%= t(".back") %></button>
+              <div class="ml-auto">
+                <button type="button" data-registration-wizard-target="nextButton" data-action="click->registration-wizard#next" class="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-emerald-700"><%= t(".next") %></button>
+                <%= f.submit t(".submit"), data: { registration_wizard_target: "submitButton" }, class: "hidden rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-emerald-700" %>
+              </div>
             </div>
           <% end %>
 
           <div class="border-t border-slate-100 pt-4 text-center">
-            <p class="text-xs text-slate-500">
-              <%= t(".already_have_account") %>
-              <%= link_to t(".sign_in"), new_user_session_path, class: "font-semibold theme-text transition hover:opacity-80" %>
-            </p>
+            <p class="text-xs text-slate-500"><%= t(".already_have_account") %> <%= link_to t(".sign_in"), new_user_session_path, class: "font-semibold text-emerald-600 hover:text-emerald-700" %></p>
           </div>
         </div>
       </div>
