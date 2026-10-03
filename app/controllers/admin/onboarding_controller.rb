@@ -16,13 +16,13 @@ module Admin
 
       if update_current_step
         if @step == 5
-          redirect_to admin_dashboard_path, flash: { swal_message: t('.completed') }
+          redirect_to admin_dashboard_path, flash: { swal_message: t('admin.onboarding.completed') }
         else
           redirect_to admin_onboarding_path(step: @step + 1)
         end
       else
         load_onboarding
-        flash.now[:alert] = t('.incomplete')
+        flash.now[:alert] = t('admin.onboarding.incomplete')
         render :show, status: :unprocessable_content
       end
     end
@@ -130,6 +130,7 @@ module Admin
       @terminals = @branch&.terminals&.active_records&.order(:id) || []
       @migration = @organization.organization_migrations.first
       @progress = Onboarding::ProgressCalculator.call(@organization)
+      @branch.build_address if @branch && @branch.address.nil?
     end
 
     def active_branch
