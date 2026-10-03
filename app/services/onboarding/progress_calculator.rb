@@ -63,6 +63,12 @@ module Onboarding
       section(:migration, migration.nil? || migration.volume.present? && migration.priority.present? ? 100 : 0)
     end
 
+    def migration_section
+      migration = @organization.organization_migrations.first
+      complete = migration.nil? || (migration.volume.present? && migration.priority.present?)
+      section(:migration, complete ? 100 : 0)
+    end
+
     def team_section
       section(:team, @organization.employees.active.exists? ? 100 : 0)
     end
