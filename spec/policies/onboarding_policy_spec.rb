@@ -12,7 +12,9 @@ RSpec.describe OnboardingPolicy do
       create(:organization_membership, user:)
     end
 
-    it { is_expected.to permit_action(:show) }
+    it 'permits access' do
+      expect(policy.show?).to be(true)
+    end
   end
 
   it 'denies access without administrator role' do

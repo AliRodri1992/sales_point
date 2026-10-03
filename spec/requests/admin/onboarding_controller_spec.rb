@@ -15,7 +15,7 @@ RSpec.describe Admin::OnboardingController, type: :request do
     get admin_onboarding_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('Initial Setup')
-    expect(response.body).to include('Overall progress')
+    expect(response.body).to include(I18n.t('admin.onboarding.show.title'))
+    expect(response.body).to include(I18n.t('admin.onboarding.show.overall'))
   end
 end
