@@ -18,10 +18,14 @@ export default class extends Controller {
 
   next() {
     if (!this.validateStep()) return
+
     if (this.currentStep < 5) {
       this.currentStep += 1
       this.updateStep()
+      return
     }
+
+    this.element.querySelector("form")?.requestSubmit()
   }
 
   previous() {
@@ -179,7 +183,7 @@ export default class extends Controller {
       ? this.nextTarget.dataset.submitLabel
       : this.nextTarget.dataset.nextLabel
 
-    this.nextTarget.type = this.currentStep === 5 ? "submit" : "button"
+    this.nextTarget.type = "button"
 
     if (this.currentStep === 4) {
       this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
@@ -201,6 +205,7 @@ export default class extends Controller {
       card.classList.toggle("ring-transparent", !selected)
       card.setAttribute("aria-pressed", selected.toString())
       card.dataset.selected = selected.toString()
+      card.querySelector("[data-registration-wizard-selected-indicator]")?.classList.toggle("hidden", !selected)
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
