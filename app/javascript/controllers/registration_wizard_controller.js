@@ -70,7 +70,6 @@ export default class extends Controller {
 
   selectDropdown(event) {
     event.preventDefault()
-    event.stopPropagation()
 
     const option = event.currentTarget
     const name = option.dataset.dropdownName
@@ -89,10 +88,6 @@ export default class extends Controller {
     if (labelTarget) labelTarget.textContent = label
 
     this.updateDropdownOptions(name, value)
-
-    const menu = option.closest('[data-registration-wizard-target="dropdownMenu"]')
-    menu?.classList.add("hidden")
-    if (menu) menu.hidden = true
     this.closeDropdowns()
   }
 
