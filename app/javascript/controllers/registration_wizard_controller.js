@@ -212,7 +212,7 @@ export default class extends Controller {
       card.dataset.selected = selected ? "true" : "false"
       card.style.borderColor = selected ? "#059669" : ""
       card.style.backgroundColor = selected ? "rgba(5, 150, 105, 0.05)" : ""
-      card.style.boxShadow = selected ? "inset 0 0 0 2px #059669, 0 0 0 3px rgba(5, 150, 105, 0.08)" : ""
+      card.style.boxShadow = selected ? "inset 0 0 0 1px #059669, 0 0 0 2px rgba(5, 150, 105, 0.08)" : ""
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
