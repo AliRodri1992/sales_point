@@ -26,7 +26,7 @@ module Onboarding
 
     def company_section
       fields = [@organization.name, @organization.business_sector, settings&.currency]
-      section(:company, fields.count(&:present?) * 25)
+      section(:company, percentage_for(fields))
     end
 
     def fiscal_section
@@ -35,7 +35,13 @@ module Onboarding
 
     def branch_section
       branch = @organization.branches.where(status: true).first
-      percentage = branch ? (branch.address.present? ? 100 : 50) : 0
+      percentage = if branch.nil?
+                     0
+                   elsif branch.address.present?
+                     100
+                   else
+                     50
+                   end
       section(:branches, percentage)
     end
 
@@ -45,8 +51,7 @@ module Onboarding
     end
 
     def payment_section
-      configured = @organization.payment_integrations.active.exists? || settings.present?
-      section(:payments, configured ? 100 : 0)
+      section(:payments, settings&.payment_method.present? ? 100 : 0)
     end
 
     def team_section
@@ -55,6 +60,10 @@ module Onboarding
 
     def settings
       @settings ||= @organization.organization_settings.first
+    end
+
+    def percentage_for(fields)
+      (fields.count(&:present?) * 100) / fields.length
     end
 
     def section(key, percentage)

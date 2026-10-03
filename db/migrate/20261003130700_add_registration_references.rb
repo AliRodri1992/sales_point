@@ -6,8 +6,19 @@ class AddRegistrationReferences < ActiveRecord::Migration[8.1]
     add_column :users, :terms_accepted_at, :datetime
 
     add_reference :branches, :organization, foreign_key: true, null: true
-    add_index :branches, [:organization_id, 'LOWER(name)'], unique: true,
-              where: 'organization_id IS NOT NULL AND deleted_at IS NULL',
-              name: 'idx_branches_org_name_active'
+
+    reversible do |dir|
+      dir.up do
+        execute <<~SQL
+          CREATE UNIQUE INDEX idx_branches_org_name_active
+          ON branches (organization_id, LOWER(name))
+          WHERE organization_id IS NOT NULL AND deleted_at IS NULL
+        SQL
+      end
+
+      dir.down do
+        execute 'DROP INDEX IF EXISTS idx_branches_org_name_active'
+      end
+    end
   end
 end

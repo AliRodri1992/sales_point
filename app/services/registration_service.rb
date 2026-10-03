@@ -33,7 +33,7 @@ class RegistrationService
     save_user!
     create_membership(organization)
     provision_access
-    create_initial_configuration(organization)
+    RegistrationConfigurationProvisioner.call(organization:, params: @params)
   end
 
   def create_organization
@@ -78,69 +78,6 @@ class RegistrationService
     role = SystemRole.available.find_by!(code: 'administrator')
     AdministratorPermissionProvisioner.call(role:)
     UserRole.create!(user: @user, system_role: role)
-  end
-
-  def create_initial_configuration(organization)
-    create_settings(organization)
-    branch = create_branch(organization)
-    create_terminals(branch)
-    create_payment_integration(organization)
-    create_migration(organization) if migration_setup?
-  end
-
-  def create_settings(organization)
-    OrganizationSetting.create!(
-      organization:,
-      currency: parameter(:currency).upcase,
-      timezone: 'UTC',
-      payment_method: parameter(:payment_integration)
-    )
-  end
-
-  def create_branch(organization)
-    Branch.create!(
-      organization:,
-      name: I18n.t('registration.initial_branch_name'),
-      status: true
-    )
-  end
-
-  def create_terminals(branch)
-    terminal_count.times do |index|
-      Terminal.create!(
-        branch:,
-        name: I18n.t('registration.initial_terminal_name', number: index + 1),
-        code: format('POS-%03d', index + 1),
-        status: :active
-      )
-    end
-  end
-
-  def create_payment_integration(organization)
-    return if parameter(:payment_integration) == 'cash'
-
-    PaymentIntegration.create!(
-      organization:,
-      provider: parameter(:payment_integration),
-      status: :pending
-    )
-  end
-
-  def create_migration(organization)
-    OrganizationMigration.create!(
-      organization:,
-      volume: @params[:migration_volume],
-      priority: @params[:migration_priority],
-      status: :pending
-    )
-  end
-
-  def terminal_count
-    { '1' => 1, '2' => 2, '3_5' => 3, 'over_5' => 6 }.fetch(@params[:terminals].to_s, 1)
-  end
-
-  def migration_setup?
-    @params[:setup_type] == 'migration'
   end
 
   def validate_terms!

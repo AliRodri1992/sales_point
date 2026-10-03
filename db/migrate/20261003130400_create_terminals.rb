@@ -12,8 +12,21 @@ class CreateTerminals < ActiveRecord::Migration[8.1]
     end
 
     add_index :terminals, :deleted_at
-    add_index :terminals, [:branch_id, 'LOWER(code)'], unique: true,
-              where: 'deleted_at IS NULL', name: 'idx_terminals_branch_code_active'
+
+    reversible do |dir|
+      dir.up do
+        execute <<~SQL
+          CREATE UNIQUE INDEX idx_terminals_branch_code_active
+          ON terminals (branch_id, LOWER(code))
+          WHERE deleted_at IS NULL
+        SQL
+      end
+
+      dir.down do
+        execute 'DROP INDEX IF EXISTS idx_terminals_branch_code_active'
+      end
+    end
+
     add_check_constraint :terminals,
                          "status IN ('active', 'inactive')",
                          name: 'check_terminals_status'

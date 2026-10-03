@@ -12,8 +12,21 @@ class CreateOrganizations < ActiveRecord::Migration[8.1]
     end
 
     add_index :organizations, :deleted_at
-    add_index :organizations, 'LOWER(tax_id)', unique: true, where: 'deleted_at IS NULL',
-              name: 'idx_organizations_tax_id_active'
+
+    reversible do |dir|
+      dir.up do
+        execute <<~SQL
+          CREATE UNIQUE INDEX idx_organizations_tax_id_active
+          ON organizations (LOWER(tax_id))
+          WHERE deleted_at IS NULL
+        SQL
+      end
+
+      dir.down do
+        execute 'DROP INDEX IF EXISTS idx_organizations_tax_id_active'
+      end
+    end
+
     add_check_constraint :organizations,
                          "status IN ('active', 'inactive', 'suspended')",
                          name: 'check_organizations_status'

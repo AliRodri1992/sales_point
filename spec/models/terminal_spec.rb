@@ -9,7 +9,7 @@ RSpec.describe Terminal, type: :model do
 
   it 'soft deletes and restores' do
     terminal = create(:terminal)
-    terminal.destroy
+    terminal.destroy!
 
     expect(Terminal.find_by(id: terminal.id)).to be_nil
     expect(Terminal.with_deleted).to include(terminal)
