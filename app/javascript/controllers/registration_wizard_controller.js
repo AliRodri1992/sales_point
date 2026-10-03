@@ -156,11 +156,11 @@ export default class extends Controller {
     this.progressTarget.style.width = `${progress}%`
 
     this.nodeTargets.forEach((node) => {
-      const active = Number(node.dataset.step) < this.currentStep || (Number(node.dataset.step) === this.currentStep && this.currentStep === 1 && Boolean(this.selectedSetupType))
-      node.classList.toggle("border-emerald-600", active)
-      node.classList.toggle("bg-emerald-600", active)
+      const active = Number(node.dataset.step) <= this.currentStep
+      node.classList.toggle("btn-delta-gradient", active)
       node.classList.toggle("text-white", active)
-      node.classList.toggle("border-slate-200", !active)
+      node.classList.toggle("shadow-sm", active)
+      node.classList.toggle("bg-slate-100", !active)
       node.classList.toggle("text-slate-400", !active)
     })
 
@@ -173,6 +173,7 @@ export default class extends Controller {
       : this.nextTarget.dataset.nextLabel
 
     this.nextTarget.type = this.currentStep === 5 ? "submit" : "button"
+
     if (this.currentStep === 4) {
       this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
     }
