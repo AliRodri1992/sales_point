@@ -145,7 +145,7 @@ jobs:
 
       - name: Inspect coverage
         if: always()
-        run: ruby -rjson -e 'd=JSON.parse(File.read("coverage/.resultset.json")); p d.keys; p d.values.map(&:keys); p d.values.first.keys'
+        run: ruby -rjson -e 'd=JSON.parse(File.read("coverage/.resultset.json")); lines=d.values.first["coverage"]["lines"]; rows=lines.map { |file,values| total=values.compact.length; covered=values.compact.count { |v| v.to_i > 0 }; [total.zero? ? 100.0 : covered*100.0/total,covered,total,file] }.sort_by(&:first); rows.first(40).each { |row| puts "%6.2f%% %4d/%-4d %s" % row }'
 
 
   i18n:
