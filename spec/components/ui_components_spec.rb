@@ -1,0 +1,120 @@
+# frozen_string_literal: true
+
+RSpec.describe 'UI components', type: :component do
+  describe Ui::ButtonComponent do
+    it 'renders every supported variant and size' do
+      Ui::ButtonComponent::VARIANTS.product(Ui::ButtonComponent::SIZES).each do |variant, size|
+        rendered = render_inline(described_class.new(text: 'Action', variant:, size:))
+
+        expect(rendered).to have_text('Action')
+      end
+    end
+
+    it 'renders links and button states' do
+      rendered = render_inline(described_class.new(
+        text: 'Save',
+        href: '/save',
+        variant: :success,
+        size: :lg,
+        full_width: true,
+        disabled: true,
+        icon: :arrow_right,
+        icon_position: :right
+      ))
+
+      expect(rendered.css('a')).to be_present
+      expect(rendered).to have_text('Save')
+      expect(rendered.to_html).to include('w-full', 'opacity-50', 'cursor-not-allowed')
+    end
+
+    it 'rejects unsupported variants and sizes' do
+      expect { described_class.new(text: 'Action', variant: :unknown) }.to raise_error(ArgumentError)
+      expect { described_class.new(text: 'Action', size: :unknown) }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe Ui::BadgeComponent do
+    it 'renders all supported colors' do
+      Ui::BadgeComponent::COLORS.each do |color|
+        rendered = render_inline(described_class.new(text: 'Status', color:))
+        expect(rendered).to have_text('Status')
+      end
+    end
+
+    it 'rejects unsupported colors' do
+      expect { described_class.new(text: 'Status', color: :unknown) }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe Ui::IconBoxComponent do
+    it 'renders every supported size' do
+      Ui::IconBoxComponent::SIZES.each do |size|
+        rendered = render_inline(described_class.new(icon: :check, size:))
+        expect(rendered.to_html).to include(Ui::IconBoxComponent::SIZES.fetch(size).to_s)
+      end
+    end
+
+    it 'renders every supported color and rounded shape' do
+      Ui::IconBoxComponent::COLORS.each do |color|
+        %i[lg xl].each do |size|
+          %i[lg xl xxl full].each do |rounded|
+            rendered = render_inline(described_class.new(icon: :check, size:, color:, rounded:))
+            expect(rendered).to have_css('div')
+          end
+        end
+      end
+    end
+  end
+
+  describe Ui::CardComponent do
+    it 'renders all configurable styles' do
+      rendered = render_inline(described_class.new(
+        padding: false,
+        border: false,
+        shadow: false,
+        hover: true,
+        full_height: true
+      ))
+
+      expect(rendered.to_html).to include('hover:-translate-y-1', 'h-full')
+    end
+
+    it 'renders optional content slots' do
+      rendered = render_inline(described_class.new) do |component|
+        component.with_header { 'Header' }
+        component.with_body { 'Body' }
+        component.with_footer { 'Footer' }
+      end
+
+      expect(rendered).to have_text('Header')
+      expect(rendered).to have_text('Body')
+      expect(rendered).to have_text('Footer')
+    end
+  end
+
+  describe Ui::SectionTitleComponent do
+    it 'renders optional title content' do
+      rendered = render_inline(described_class.new(
+        title: 'Section',
+        subtitle: 'Details',
+        badge: 'New'
+      ))
+
+      expect(rendered).to have_text('Section')
+      expect(rendered).to have_text('Details')
+      expect(rendered).to have_text('New')
+    end
+
+    it 'supports non-centered titles' do
+      rendered = render_inline(described_class.new(title: 'Section', centered: false))
+      expect(rendered.to_html).not_to include('text-center')
+    end
+  end
+
+  describe Ui::StatisticComponent do
+    it 'renders the statistic with and without an icon' do
+      expect(render_inline(described_class.new(number: 10, label: 'Sales'))).to have_text('10', 'Sales')
+      expect(render_inline(described_class.new(number: 20, label: 'Orders', icon: :chart_bar))).to have_text('20', 'Orders')
+    end
+  end
+end
