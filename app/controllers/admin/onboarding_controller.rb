@@ -8,27 +8,21 @@ module Admin
     before_action :authorize_onboarding
 
     def show
-      @step = normalized_step
-      @branch = active_branch
-      @settings = @organization.organization_settings.first
-      @terminals = @branch.terminals.active_records.order(:id)
-      @migration = @organization.organization_migrations.first
-      @progress = Onboarding::ProgressCalculator.call(@organization)
+      load_onboarding
     end
 
     def update
       @step = normalized_step
-      result = update_step
 
-      if result
-        if @step == final_step
-          redirect_to admin_dashboard_path,
-                      flash: { swal_message: t('.completed') }
+      if update_current_step
+        if @step == 5
+          redirect_to admin_dashboard_path, flash: { swal_message: t('.completed') }
         else
           redirect_to admin_onboarding_path(step: @step + 1)
         end
       else
-        prepare_form
+        load_onboarding
+        flash.now[:alert] = t('.incomplete')
         render :show, status: :unprocessable_content
       end
     end
@@ -46,26 +40,19 @@ module Admin
 
     def normalized_step
       value = params[:step].to_i
-      value.between?(1, final_step) ? value : 1
+      value.between?(1, 5) ? value : 1
     end
 
-    def final_step
-      5
-    end
-
-    def active_branch
-      @organization.branches.not_deleted.where(status: true).first ||
-        @organization.branches.not_deleted.first
-    end
-
-    def update_step
+    def update_current_step
       case @step
       when 1 then update_company
       when 2 then update_branch
       when 3 then update_terminals
-      when 4 then update_payments
-      when 5 then complete_onboarding?
+      when 4 then update_payment
+      when 5 then onboarding_complete?
       end
+    rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
+      false
     end
 
     def update_company
@@ -73,29 +60,31 @@ module Admin
     end
 
     def update_branch
-      return false unless @branch
+      branch = active_branch
+      return false unless branch
 
-      @branch.update(branch_params)
+      branch.update(branch_params)
     end
 
     def update_terminals
-      return false unless @branch
+      branch = active_branch
+      return false unless branch
 
-      desired_count = terminal_count
-      current_terminals = @branch.terminals.active_records.order(:id).to_a
+      desired = terminal_count
+      terminals = branch.terminals.active_records.order(:id).to_a
 
       ActiveRecord::Base.transaction do
-        current_terminals.first(desired_count).each_with_index do |terminal, index|
+        terminals.first(desired).each_with_index do |terminal, index|
           terminal.update!(name: terminal_name(index), code: terminal_code(index))
         end
 
-        current_terminals.drop(desired_count).each do |terminal|
+        terminals.drop(desired).each do |terminal|
           terminal.update!(deleted_at: Time.current, status: :inactive)
         end
 
-        (current_terminals.length...desired_count).each do |index|
+        (terminals.length...desired).each do |index|
           Terminal.create!(
-            branch: @branch,
+            branch:,
             name: terminal_name(index),
             code: terminal_code(index),
             status: :active
@@ -104,57 +93,52 @@ module Admin
       end
 
       true
-    rescue ActiveRecord::RecordInvalid
-      false
     end
 
-    def update_payments
-      return false unless @settings
+    def update_payment
+      settings = @organization.organization_settings.first
+      return false unless settings
+
+      method = params.expect(payment: [:method]).fetch(:method)
+      return false unless %w[cash card qr].include?(method)
 
       ActiveRecord::Base.transaction do
-        payment_method = params.require(:payment).fetch(:method)
-        @settings.update!(payment_method:)
+        settings.update!(payment_method: method)
 
-        @organization.payment_integrations.where.not(deleted_at: nil).update_all(deleted_at: nil) if false
-
-        if payment_method == 'cash'
+        if method == 'cash'
           @organization.payment_integrations.where(deleted_at: nil).update_all(
             deleted_at: Time.current,
             status: 'inactive'
           )
         else
-          integration = @organization.payment_integrations.find_or_initialize_by(
-            provider: payment_method
-          )
-          integration.assign_attributes(status: :pending, deleted_at: nil)
-          integration.save!
+          integration = @organization.payment_integrations.find_or_initialize_by(provider: method)
+          integration.update!(status: :pending, deleted_at: nil)
         end
       end
 
       true
-    rescue ActiveRecord::RecordInvalid, ActionController::ParameterMissing
-      false
     end
 
-    def complete_onboarding?
-      return true if @progress[:percentage] == 100
-
-      errors.add(:base, t('.incomplete'))
-      false
+    def onboarding_complete?
+      Onboarding::ProgressCalculator.call(@organization)[:percentage] == 100
     end
 
-    def prepare_form
-      @branch ||= active_branch
-      @settings ||= @organization.organization_settings.first
-      @terminals ||= @branch&.terminals&.active_records&.order(:id) || []
-      @migration ||= @organization.organization_migrations.first
+    def load_onboarding
+      @step = normalized_step
+      @branch = active_branch
+      @settings = @organization.organization_settings.first
+      @terminals = @branch&.terminals&.active_records&.order(:id) || []
+      @migration = @organization.organization_migrations.first
       @progress = Onboarding::ProgressCalculator.call(@organization)
     end
 
+    def active_branch
+      @organization.branches.not_deleted.where(status: true).first ||
+        @organization.branches.not_deleted.first
+    end
+
     def company_params
-      params.expect(
-        organization: %i[name tax_id business_sector]
-      )
+      params.expect(organization: %i[name tax_id business_sector])
     end
 
     def branch_params
@@ -170,15 +154,12 @@ module Admin
     end
 
     def terminal_count
-      value = params.require(:terminals).fetch(:count)
       {
         '1' => 1,
         '2' => 2,
         '3_5' => 3,
         'over_5' => 6
-      }.fetch(value)
-    rescue KeyError, ActionController::ParameterMissing
-      raise ActiveRecord::RecordInvalid.new(@branch)
+      }.fetch(params.expect(terminals: [:count]).fetch(:count))
     end
 
     def terminal_name(index)
@@ -188,10 +169,6 @@ module Admin
 
     def terminal_code(index)
       format('POS-%03d', index + 1)
-    end
-
-    def errors
-      @errors ||= ActiveModel::Errors.new(self)
     end
   end
 end
