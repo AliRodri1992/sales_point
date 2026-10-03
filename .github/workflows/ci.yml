@@ -147,8 +147,9 @@ jobs:
         run: |
           ruby -rjson -e '
             result = JSON.parse(File.read("coverage/.resultset.json"))
-            lines = result.values.first.fetch("coverage").fetch("lines")
-            lines.each do |file, values|
+            coverage = result.values.first.fetch("coverage")
+            coverage.each do |file, data|
+              values = data.fetch("lines")
               total = values.compact.length
               covered = values.compact.count { |value| value.to_i.positive? }
               percentage = total.zero? ? 100.0 : covered * 100.0 / total
