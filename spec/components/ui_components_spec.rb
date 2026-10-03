@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe 'UI components', type: :component do
-  ICON_BOX_ROUNDED = %i[lg xl xxl full].freeze
+ICON_BOX_ROUNDED = %i[lg xl xxl full].freeze
 
+RSpec.describe 'UI components', type: :component do
   describe Ui::ButtonComponent do
     it 'renders every supported variant and size' do
       Ui::ButtonComponent::VARIANTS.product(Ui::ButtonComponent::SIZES).each do |variant, size|
@@ -14,15 +14,15 @@ RSpec.describe 'UI components', type: :component do
 
     it 'renders links and button states' do
       rendered = render_inline(described_class.new(
-        text: 'Save',
-        href: '/save',
-        variant: :success,
-        size: :lg,
-        full_width: true,
-        disabled: true,
-        icon: :arrow_right,
-        icon_position: :right
-      ))
+                                 text: 'Save',
+                                 href: '/save',
+                                 variant: :success,
+                                 size: :lg,
+                                 full_width: true,
+                                 disabled: true,
+                                 icon: :arrow_right,
+                                 icon_position: :right
+                               ))
 
       expect(rendered.css('a')).to be_present
       expect(rendered).to have_text('Save')
