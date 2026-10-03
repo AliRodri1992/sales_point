@@ -36,6 +36,29 @@ RSpec.describe RegistrationService, type: :service do
     expect(user.employee.organization.branches.first.terminals.count).to eq(2)
   end
 
+  it 'provisions card payment and migration configuration' do
+    migration_params = params.merge(
+      setup_type: 'migration',
+      terminals: 'over_5',
+      payment_integration: 'card',
+      migration_volume: '500_5000',
+      migration_priority: 'catalog'
+    )
+
+    result = described_class.call(resource: user, params: migration_params)
+
+    expect(result).to be_success
+    organization = user.reload.employee.organization
+    expect(organization.organization_settings.first.payment_method).to eq('card')
+    expect(organization.payment_integrations.pluck(:provider)).to contain_exactly('card')
+    expect(organization.organization_migrations.first).to have_attributes(
+      volume: 'medium',
+      priority: 'catalog',
+      status: 'pending'
+    )
+    expect(organization.branches.first.terminals.count).to eq(6)
+  end
+
   it 'rolls back domain records when the user is invalid' do
     user.email = nil
 
