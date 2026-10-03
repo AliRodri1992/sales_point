@@ -31,7 +31,6 @@ export default class extends Controller {
     }
   }
 
-
   selectSetup(event) {
     event.preventDefault()
     this.selectedSetupType = event.currentTarget.dataset.setupType
@@ -101,9 +100,15 @@ export default class extends Controller {
   validateAdministrator() {
     const firstName = this.firstNameTarget.value.trim()
     const lastName = this.lastNameTarget.value.trim()
-    const email = this.inputTargets.find((input) => input.name === "user[email]")
+    const email = this.element.querySelector('input[name="user[email]"]')
 
-    if (!firstName || !lastName || !email?.value.trim() || !this.passwordTarget.value || !this.confirmationTarget.value) {
+    if (
+      !firstName ||
+      !lastName ||
+      !email?.value.trim() ||
+      !this.passwordTarget.value ||
+      !this.confirmationTarget.value
+    ) {
       return this.setError("setup", this.message("required"))
     }
 
