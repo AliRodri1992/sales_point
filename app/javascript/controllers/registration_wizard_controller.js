@@ -186,6 +186,7 @@ export default class extends Controller {
       card.classList.toggle("bg-emerald-50/40", selected)
       card.classList.toggle("border-slate-200", !selected)
       card.setAttribute("aria-pressed", selected)
+      card.dataset.selected = selected ? "true" : "false"
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
