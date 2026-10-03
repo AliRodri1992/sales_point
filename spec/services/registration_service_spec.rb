@@ -70,6 +70,12 @@ RSpec.describe RegistrationService, type: :service do
     expect(OrganizationMembership.count).to eq(0)
   end
 
+  it 'accepts the native checkbox value' do
+    result = described_class.call(resource: user, params: params.merge(terms: 'on'))
+
+    expect(result).to be_success
+  end
+
   it 'requires terms acceptance' do
     result = described_class.call(resource: user, params: params.merge(terms: '0'))
 
