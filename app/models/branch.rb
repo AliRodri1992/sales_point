@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class Branch < ApplicationRecord
+  belongs_to :organization, optional: true
   has_one :address, as: :addressable, dependent: :destroy
   accepts_nested_attributes_for :address
 
   has_many :user_roles, dependent: :restrict_with_exception
   has_many :users, through: :user_roles
+  has_many :terminals, dependent: :restrict_with_exception
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 

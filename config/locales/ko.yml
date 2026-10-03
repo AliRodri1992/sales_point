@@ -841,7 +841,10 @@ ko:
         step_two:
           title: "관리자 정보"
           subtitle: "Delta POS 환경의 관리자 계정을 만드세요."
-          name: "이름"
+          first_name: "이름"
+          first_name_placeholder: "이름을 입력하세요"
+          last_name: "성"
+          last_name_placeholder: "성을 입력하세요"
           name_placeholder: "이름을 입력하세요"
           email: "업무용 이메일"
           email_placeholder: "you@company.com"

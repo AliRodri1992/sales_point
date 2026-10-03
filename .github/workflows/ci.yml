@@ -139,7 +139,7 @@ jobs:
 
       - name: Run RSpec
         env:
-          COVERAGE: false
+          COVERAGE: true
         run: bundle exec rspec
 
   i18n:

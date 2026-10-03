@@ -852,7 +852,10 @@ es:
         step_two:
           title: "Identidad del administrador"
           subtitle: "Crea las credenciales del administrador de tu entorno Delta POS."
-          name: "Nombre completo"
+          first_name: "Nombre(s)"
+          first_name_placeholder: "Tu nombre"
+          last_name: "Apellidos"
+          last_name_placeholder: "Tus apellidos"
           name_placeholder: "Tu nombre completo"
           email: "Correo empresarial"
           email_placeholder: "tu@empresa.com"

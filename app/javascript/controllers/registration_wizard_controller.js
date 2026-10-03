@@ -5,7 +5,7 @@ export default class extends Controller {
     "wrapper", "step", "node", "progress", "stepCounter", "setupType",
     "setupCard", "businessSector", "migrationVolume", "migrationPriority",
     "branchesHidden", "currency", "terminals", "payments", "migrationFields",
-    "terms", "back", "next", "error", "companyName", "taxId", "input",
+    "terms", "back", "next", "error", "companyName", "taxId", "firstName", "lastName",
     "password", "confirmation"
   ]
 
@@ -13,10 +13,6 @@ export default class extends Controller {
     this.currentStep = 1
     this.selectedSetupType = this.setupTypeTarget.value || ""
     this.updateSetupCards()
-    this.setupCardTargets.forEach((card) => {
-      card.addEventListener("mouseenter", this.handleSetupCardEnter)
-      card.addEventListener("mouseleave", this.handleSetupCardLeave)
-    })
     this.updateStep()
   }
 
@@ -36,22 +32,6 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.setupCardTargets.forEach((card) => {
-      card.removeEventListener("mouseenter", this.handleSetupCardEnter)
-      card.removeEventListener("mouseleave", this.handleSetupCardLeave)
-    })
-  }
-
-  handleSetupCardEnter = (event) => {
-    if (event.currentTarget.dataset.selected !== "true") {
-      event.currentTarget.style.boxShadow = "inset 0 0 0 2px #059669, 0 8px 20px rgba(15, 23, 42, 0.06)"
-    }
-  }
-
-  handleSetupCardLeave = (event) => {
-    if (event.currentTarget.dataset.selected !== "true") {
-      event.currentTarget.style.boxShadow = ""
-    }
   }
 
   selectSetup(event) {
@@ -121,10 +101,11 @@ export default class extends Controller {
   }
 
   validateAdministrator() {
-    const name = this.inputTargets.find((input) => input.name === "user[username]")
+    const firstName = this.firstNameTarget.value.trim()
+    const lastName = this.lastNameTarget.value.trim()
     const email = this.inputTargets.find((input) => input.name === "user[email]")
 
-    if (!name?.value.trim() || !email?.value.trim() || !this.passwordTarget.value || !this.confirmationTarget.value) {
+    if (!firstName || !lastName || !email?.value.trim() || !this.passwordTarget.value || !this.confirmationTarget.value) {
       return this.setError("setup", this.message("required"))
     }
 
@@ -210,9 +191,6 @@ export default class extends Controller {
       card.classList.toggle("border-slate-200", !selected)
       card.setAttribute("aria-pressed", selected)
       card.dataset.selected = selected ? "true" : "false"
-      card.style.borderColor = selected ? "#059669" : ""
-      card.style.backgroundColor = selected ? "rgba(5, 150, 105, 0.05)" : ""
-      card.style.boxShadow = selected ? "inset 0 0 0 1px #059669, 0 0 0 2px rgba(5, 150, 105, 0.08)" : ""
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")

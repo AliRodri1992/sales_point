@@ -856,7 +856,10 @@ en:
         step_two:
           title: "Administrator Identity"
           subtitle: "Create the administrator credentials for your Delta POS environment."
-          name: "Full Name"
+          first_name: "First Name"
+          first_name_placeholder: "Your first name"
+          last_name: "Last Name"
+          last_name_placeholder: "Your last name"
           name_placeholder: "Your full name"
           email: "Business Email"
           email_placeholder: "you@company.com"

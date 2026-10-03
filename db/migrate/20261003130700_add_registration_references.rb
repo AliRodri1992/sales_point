@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+class AddRegistrationReferences < ActiveRecord::Migration[8.1]
+  def change
+    add_reference :users, :employee, foreign_key: true, null: true
+    add_column :users, :terms_accepted_at, :datetime
+
+    add_reference :branches, :organization, foreign_key: true, null: true
+    add_index :branches, [:organization_id, 'LOWER(name)'], unique: true,
+              where: 'organization_id IS NOT NULL AND deleted_at IS NULL',
+              name: 'idx_branches_org_name_active'
+  end
+end
