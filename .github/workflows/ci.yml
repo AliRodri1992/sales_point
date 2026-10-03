@@ -145,7 +145,7 @@ jobs:
 
       - name: Inspect coverage
         if: always()
-        run: ruby -rjson -e 'd=JSON.parse(File.read("coverage/.resultset.json")); r=d.values.first["result"]; p r.keys; p r["coverage"].keys; p r["coverage"]'
+        run: ruby -rjson -e 'd=JSON.parse(File.read("coverage/.resultset.json")); p d.keys; p d.values.map(&:keys); p d.values.first.keys'
 
 
   i18n:
