@@ -1124,7 +1124,7 @@ select:focus-visible {
 }
 
 .registration-page [data-registration-wizard-target="setupCard"] {
-    border: 1px solid var(--registration-border);
+    border: 2px solid var(--registration-border);
     transition:
             transform 150ms ease,
             border-color 150ms ease,
