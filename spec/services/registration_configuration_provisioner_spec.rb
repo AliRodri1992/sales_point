@@ -13,12 +13,12 @@ RSpec.describe RegistrationConfigurationProvisioner, type: :service do
   end
 
   it 'provisions the initial operational configuration' do
-    expect {
+    expect do
       described_class.call(organization:, params:)
-    }.to change(OrganizationSetting, :count).by(1)
-      .and change(Branch, :count).by(1)
-      .and change(Terminal, :count).by(3)
-      .and change(PaymentIntegration, :count).by(1)
+    end.to change(OrganizationSetting, :count).by(1)
+      .and(change(Branch, :count).by(1))
+      .and(change(Terminal, :count).by(3))
+      .and(change(PaymentIntegration, :count).by(1))
 
     expect(organization.reload.organization_settings.first).to have_attributes(
       currency: 'MXN',
@@ -36,10 +36,10 @@ RSpec.describe RegistrationConfigurationProvisioner, type: :service do
       migration_priority: 'inventory'
     )
 
-    expect {
+    expect do
       described_class.call(organization:, params: migration_params)
-    }.to change(OrganizationMigration, :count).by(1)
-      .and change(PaymentIntegration, :count).by(0)
+    end.to change(OrganizationMigration, :count).by(1)
+      .and(change(PaymentIntegration, :count).by(0))
 
     expect(organization.organization_migrations.first).to have_attributes(
       volume: 'small',
