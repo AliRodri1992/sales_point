@@ -1134,7 +1134,7 @@ select:focus-visible {
 
 .registration-page [data-registration-wizard-target="setupCard"]:hover {
     transform: translateY(-1px);
-    border-color: rgba(5, 150, 105, 0.35);
+    border-color: #059669;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
