@@ -14,6 +14,7 @@ export default class extends Controller {
     this.currentStep = 1
     this.selectedSetupType = this.setupTypeTarget.value || ""
     this.updateSetupCards()
+    this.updateDropdownSelections()
     this.updateStep()
     this.closeHandler = this.closeDropdowns.bind(this)
     document.addEventListener("click", this.closeHandler)
@@ -83,6 +84,7 @@ export default class extends Controller {
 
     if (labelTarget) labelTarget.textContent = label
 
+    this.updateDropdownOptions(name, value)
     this.closeDropdowns()
   }
 
