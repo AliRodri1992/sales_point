@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "wrapper", "step", "node", "progress", "stepCounter", "setupType",
-    "setupCard", "businessSector", "migrationVolume", "migrationPriority",
+    "setupCard", "input", "businessSector", "migrationVolume", "migrationPriority",
     "branchesHidden", "currency", "terminals", "payments", "migrationFields",
     "terms", "back", "next", "error", "companyName", "taxId", "firstName", "lastName",
     "password", "confirmation"
@@ -31,8 +31,6 @@ export default class extends Controller {
     }
   }
 
-  disconnect() {
-  }
 
   selectSetup(event) {
     event.preventDefault()
@@ -148,7 +146,7 @@ export default class extends Controller {
   validateTerms() {
     return this.termsTarget.checked
       ? true
-      : this.setError("terms", this.message("terms"))
+      : this.setError("setup", this.message("terms"))
   }
 
   updateStep() {
