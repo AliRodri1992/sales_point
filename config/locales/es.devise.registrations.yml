@@ -1,0 +1,12 @@
+---
+es:
+  devise:
+    registrations:
+      new:
+        step_one:
+          title: "Tipo de Implementación"
+          subtitle: "Cuéntanos sobre tu situación para adaptar el entorno a tu negocio."
+          new_title: "Es un sistema completamente nuevo"
+          new_description: "Inicializa una base de datos limpia. Ideal si abres tu primer comercio minorista."
+          migration_title: "Es una migración de un sistema existente"
+          migration_description: "Trae tus datos existentes a Delta POS y continúa operando sin empezar desde cero."
