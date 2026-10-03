@@ -94,7 +94,8 @@ class RegistrationService
     OrganizationSetting.create!(
       organization:,
       currency: @params[:currency].to_s.upcase,
-      timezone: 'UTC'
+      timezone: 'UTC',
+      payment_method: @params[:payment_integration]
     )
   end
 

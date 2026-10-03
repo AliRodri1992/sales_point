@@ -3,5 +3,6 @@ FactoryBot.define do
     association :organization
     currency { 'MXN' }
     timezone { 'UTC' }
+    payment_method { :cash }
   end
 end

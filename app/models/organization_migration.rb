@@ -13,7 +13,7 @@ class OrganizationMigration < ApplicationRecord
     catalog: 'catalog',
     inventory: 'inventory',
     customers: 'customers',
-    all: 'all'
+    everything: 'all'
   }
 
   enum :status, {
