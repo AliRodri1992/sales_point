@@ -74,7 +74,7 @@ jobs:
             rubocop-${{ runner.os }}-
 
       - name: Lint Ruby code
-        run: bin/rubocop -f simple
+        run: bin/rubocop -f github
 
   test:
     name: RSpec
