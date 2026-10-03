@@ -14,33 +14,32 @@ class RegistrationService
   def initialize(resource:, params:)
     @user = resource
     @params = params
-    @result = nil
   end
 
   def call
-    ApplicationRecord.transaction do
-      organization = create_organization
-      employee = create_employee(organization)
-      prepare_user(employee)
-      save_user_or_rollback
-      create_membership(organization)
-      provision_access
-      create_initial_configuration(organization)
-      @result = Result.new(user: @user, organization:, errors: nil)
-    end
-    @result
+    ApplicationRecord.transaction { register }
+    success_result
   rescue ActiveRecord::RecordInvalid => e
-    add_record_error(e.record)
-    Result.new(user: @user, organization: nil, errors: @user.errors)
+    failure_result(e.record)
   end
 
   private
 
-  def create_organization
+  def register
     validate_terms!
+    organization = create_organization
+    employee = create_employee(organization)
+    prepare_user(employee)
+    save_user!
+    create_membership(organization)
+    provision_access
+    create_initial_configuration(organization)
+  end
+
+  def create_organization
     Organization.create!(
-      name: @params[:company_name].to_s.strip,
-      tax_id: @params[:tax_id].to_s.strip.upcase,
+      name: parameter(:company_name),
+      tax_id: parameter(:tax_id).upcase,
       business_sector: @params[:business_sector],
       status: :active
     )
@@ -49,8 +48,8 @@ class RegistrationService
   def create_employee(organization)
     Employee.create!(
       organization:,
-      first_name: @params[:first_name].to_s.strip,
-      last_name: @params[:last_name].to_s.strip,
+      first_name: parameter(:first_name),
+      last_name: parameter(:last_name),
       email: @user.email,
       status: :active
     )
@@ -65,11 +64,10 @@ class RegistrationService
     )
   end
 
-  def save_user_or_rollback
+  def save_user!
     return if @user.save
 
-    @result = Result.new(user: @user, organization: nil, errors: @user.errors)
-    raise ActiveRecord::Rollback, 'User validation failed'
+    raise ActiveRecord::RecordInvalid, @user
   end
 
   def create_membership(organization)
@@ -87,15 +85,15 @@ class RegistrationService
     branch = create_branch(organization)
     create_terminals(branch)
     create_payment_integration(organization)
-    create_migration(organization) if @params[:setup_type] == 'migration'
+    create_migration(organization) if migration_setup?
   end
 
   def create_settings(organization)
     OrganizationSetting.create!(
       organization:,
-      currency: @params[:currency].to_s.upcase,
+      currency: parameter(:currency).upcase,
       timezone: 'UTC',
-      payment_method: @params[:payment_integration]
+      payment_method: parameter(:payment_integration)
     )
   end
 
@@ -119,11 +117,11 @@ class RegistrationService
   end
 
   def create_payment_integration(organization)
-    return if @params[:payment_integration] == 'cash'
+    return if parameter(:payment_integration) == 'cash'
 
     PaymentIntegration.create!(
       organization:,
-      provider: @params[:payment_integration],
+      provider: parameter(:payment_integration),
       status: :pending
     )
   end
@@ -141,6 +139,10 @@ class RegistrationService
     { '1' => 1, '2' => 2, '3_5' => 3, 'over_5' => 6 }.fetch(@params[:terminals].to_s, 1)
   end
 
+  def migration_setup?
+    @params[:setup_type] == 'migration'
+  end
+
   def validate_terms!
     return if @params[:terms].to_s == '1'
 
@@ -148,7 +150,16 @@ class RegistrationService
     raise ActiveRecord::RecordInvalid, @user
   end
 
-  def add_record_error(record)
-    @user.errors.add(:base, record.errors.full_messages.to_sentence)
+  def parameter(key)
+    @params[key].to_s.strip
+  end
+
+  def success_result
+    Result.new(user: @user, organization: @user.employee.organization, errors: nil)
+  end
+
+  def failure_result(record)
+    @user.errors.add(:base, record.errors.full_messages.to_sentence) unless record.equal?(@user)
+    Result.new(user: @user, organization: nil, errors: @user.errors)
   end
 end

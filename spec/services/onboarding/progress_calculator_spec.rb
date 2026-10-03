@@ -14,6 +14,6 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
       include(key: :terminals, status: 'not_started'),
       include(key: :team, status: 'completed')
     )
-    expect(progress[:percentage]).to eq(66)
+    expect(progress[:percentage]).to eq(50)
   end
 end

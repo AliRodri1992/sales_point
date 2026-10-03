@@ -9,16 +9,10 @@ class Organization < ApplicationRecord
   has_many :payment_integrations, dependent: :restrict_with_exception
   has_many :organization_migrations, dependent: :restrict_with_exception
 
-  enum :status, {
-    active: 'active',
-    inactive: 'inactive',
-    suspended: 'suspended'
-  }
+  enum :status, { active: 'active', inactive: 'inactive', suspended: 'suspended' }
 
   validates :name, presence: true, length: { in: 2..150 }
-  validates :tax_id,
-            presence: true,
-            length: { in: 12..13 },
+  validates :tax_id, presence: true, length: { in: 12..13 },
             format: { with: /\A[A-Z0-9]+\z/i },
             uniqueness: { conditions: -> { where(deleted_at: nil) } }
   validates :business_sector, presence: true, length: { maximum: 50 }

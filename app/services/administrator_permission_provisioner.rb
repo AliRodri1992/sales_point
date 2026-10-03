@@ -11,12 +11,8 @@ class AdministratorPermissionProvisioner
 
   def call
     Permission.available.find_each do |permission|
-      SystemRolePermission.find_or_create_by!(
-        system_role: @role,
-        permission:
-      )
+      SystemRolePermission.find_or_create_by!(system_role: @role, permission:)
     end
-
     @role
   end
 end
