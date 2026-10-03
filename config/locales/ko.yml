@@ -132,6 +132,15 @@ ko:
       created: 카테고리이 성공적으로 생성되었습니다
       destroyed: 카테고리이 성공적으로 삭제되었습니다
       edit:
+        already_have_account: "이미 계정이 있으신가요?"
+        brand_alt: "Delta POS 로고"
+        email: "이메일 주소"
+        email_placeholder: "email@example.com"
+        password: "비밀번호"
+        password_confirmation: "비밀번호 확인"
+        password_minimum: "최소 %{count}자"
+        sign_in: "로그인"
+        subtitle: "Delta POS 계정 정보를 업데이트하세요"
         subtitle: 카테고리 정보를 업데이트합니다.
         title: "%{name} 수정"
       form:
@@ -791,15 +800,6 @@ ko:
         title: 비밀번호를 잊으셨나요?
     registrations:
       edit:
-        already_have_account: "이미 계정이 있으신가요?"
-        brand_alt: "Delta POS 로고"
-        email: "이메일 주소"
-        email_placeholder: "email@example.com"
-        password: "비밀번호"
-        password_confirmation: "비밀번호 확인"
-        password_minimum: "최소 %{count}자"
-        sign_in: "로그인"
-        subtitle: "Delta POS 계정 정보를 업데이트하세요"
         back: 뒤로
         cancel_account: 계정 삭제
         confirm: 정말 하시겠습니까?
