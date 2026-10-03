@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -73,10 +73,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "name"
+    t.bigint "organization_id"
     t.string "phone"
     t.boolean "status"
     t.datetime "updated_at", null: false
+    t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
+    t.index ["organization_id"], name: "index_branches_on_organization_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -171,6 +174,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
     t.index ["email"], name: "index_demo_requests_on_email"
     t.index ["status"], name: "index_demo_requests_on_status"
+  end
+
+  create_table "employees", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email", null: false
+    t.string "first_name", limit: 80, null: false
+    t.string "last_name", limit: 120, null: false
+    t.bigint "organization_id", null: false
+    t.string "phone", limit: 30
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index "organization_id, lower((email)::text)", name: "idx_employees_org_email_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_employees_on_deleted_at"
+    t.index ["organization_id"], name: "index_employees_on_organization_id"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'terminated'::character varying]::text[])", name: "check_employees_status"
   end
 
   create_table "languages", force: :cascade do |t|
@@ -275,6 +294,76 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
+  end
+
+  create_table "organization_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["deleted_at"], name: "index_organization_memberships_on_deleted_at"
+    t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
+    t.index ["user_id"], name: "index_organization_memberships_on_user_id"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_org_memberships_status"
+  end
+
+  create_table "organization_migrations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
+    t.string "priority", limit: 20, null: false
+    t.string "status", limit: 20, default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.string "volume", limit: 20, null: false
+    t.index ["deleted_at"], name: "index_organization_migrations_on_deleted_at"
+    t.index ["organization_id"], name: "idx_org_migrations_org_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_migrations_on_organization_id"
+    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying, 'inventory'::character varying, 'customers'::character varying, 'all'::character varying]::text[])", name: "check_org_migrations_priority"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_org_migrations_status"
+    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying, '500_5000'::character varying, 'over_5000'::character varying]::text[])", name: "check_org_migrations_volume"
+  end
+
+  create_table "organization_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "currency", limit: 3, null: false
+    t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
+    t.string "timezone", default: "UTC", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
+    t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "business_sector", limit: 50, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "name", limit: 150, null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.string "tax_id", limit: 13, null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'suspended'::character varying]::text[])", name: "check_organizations_status"
+  end
+
+  create_table "payment_integrations", force: :cascade do |t|
+    t.jsonb "configuration", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.bigint "organization_id", null: false
+    t.string "provider", limit: 30, null: false
+    t.string "status", limit: 20, default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_payment_integrations_on_deleted_at"
+    t.index ["organization_id", "provider"], name: "idx_payment_integrations_org_provider_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_payment_integrations_on_organization_id"
+    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying, 'qr'::character varying]::text[])", name: "check_payment_integrations_provider"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name: "check_payment_integrations_status"
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -514,6 +603,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'deprecated'::character varying::text])", name: "check_system_roles_status"
   end
 
+  create_table "terminals", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.string "code", limit: 40, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "name", limit: 80, null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index "branch_id, lower((code)::text)", name: "idx_terminals_branch_code_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["branch_id"], name: "index_terminals_on_branch_id"
+    t.index ["deleted_at"], name: "index_terminals_on_deleted_at"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_terminals_status"
+  end
+
   create_table "translates", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
@@ -552,6 +655,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.string "current_sign_in_ip"
     t.datetime "deleted_at", precision: nil
     t.string "email", default: "", null: false
+    t.bigint "employee_id"
     t.string "encrypted_password", default: "", null: false
     t.integer "failed_attempts", default: 0, null: false
     t.bigint "language_id"
@@ -569,6 +673,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.boolean "sidebar_collapsed", default: false, null: false
     t.integer "sign_in_count", default: 0, null: false
     t.string "status", default: "active", null: false
+    t.datetime "terms_accepted_at"
     t.string "theme", limit: 50, default: "theme-material-red", null: false
     t.string "unique_session_id"
     t.string "unlock_token"
@@ -578,6 +683,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
     t.index "lower((email)::text)", name: "idx_users_email", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email", "status"], name: "index_users_on_email_and_status"
+    t.index ["employee_id"], name: "index_users_on_employee_id"
     t.index ["language_id"], name: "index_users_on_language_id", where: "(language_id IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["session_expires_at"], name: "idx_users_session_active", where: "(session_expires_at IS NOT NULL)"
@@ -591,22 +697,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_27_120000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "branches", "organizations"
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
   add_foreign_key "dashboard_preferences", "users"
+  add_foreign_key "employees", "organizations"
   add_foreign_key "membership_plan_features", "membership_features"
   add_foreign_key "membership_plan_features", "membership_plans"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "organization_memberships", "organizations"
+  add_foreign_key "organization_memberships", "users"
+  add_foreign_key "organization_migrations", "organizations"
+  add_foreign_key "organization_settings", "organizations"
+  add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
+  add_foreign_key "terminals", "branches"
   add_foreign_key "translates", "languages"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
+  add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
 end
