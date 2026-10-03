@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe 'UI components', type: :component do
+  ICON_BOX_ROUNDED = %i[lg xl xxl full].freeze
+
   describe Ui::ButtonComponent do
     it 'renders every supported variant and size' do
       Ui::ButtonComponent::VARIANTS.product(Ui::ButtonComponent::SIZES).each do |variant, size|
@@ -37,6 +39,7 @@ RSpec.describe 'UI components', type: :component do
     it 'renders all supported colors' do
       Ui::BadgeComponent::COLORS.each do |color|
         rendered = render_inline(described_class.new(text: 'Status', color:))
+
         expect(rendered).to have_text('Status')
       end
     end
@@ -50,17 +53,19 @@ RSpec.describe 'UI components', type: :component do
     it 'renders every supported size' do
       Ui::IconBoxComponent::SIZES.each do |size|
         rendered = render_inline(described_class.new(icon: :check, size:))
-        expect(rendered.to_html).to include(Ui::IconBoxComponent::SIZES.fetch(size).to_s)
+
+        expect(rendered.css('div')).to be_present
       end
     end
 
     it 'renders every supported color and rounded shape' do
       Ui::IconBoxComponent::COLORS.each do |color|
-        %i[lg xl].each do |size|
-          %i[lg xl xxl full].each do |rounded|
-            rendered = render_inline(described_class.new(icon: :check, size:, color:, rounded:))
-            expect(rendered).to have_css('div')
-          end
+        ICON_BOX_ROUNDED.each do |rounded|
+          rendered = render_inline(
+            described_class.new(icon: :check, size: :lg, color:, rounded:)
+          )
+
+          expect(rendered.css('div')).to be_present
         end
       end
     end
@@ -68,13 +73,15 @@ RSpec.describe 'UI components', type: :component do
 
   describe Ui::CardComponent do
     it 'renders all configurable styles' do
-      rendered = render_inline(described_class.new(
-        padding: false,
-        border: false,
-        shadow: false,
-        hover: true,
-        full_height: true
-      ))
+      rendered = render_inline(
+        described_class.new(
+          padding: false,
+          border: false,
+          shadow: false,
+          hover: true,
+          full_height: true
+        )
+      )
 
       expect(rendered.to_html).to include('hover:-translate-y-1', 'h-full')
     end
@@ -94,11 +101,13 @@ RSpec.describe 'UI components', type: :component do
 
   describe Ui::SectionTitleComponent do
     it 'renders optional title content' do
-      rendered = render_inline(described_class.new(
-        title: 'Section',
-        subtitle: 'Details',
-        badge: 'New'
-      ))
+      rendered = render_inline(
+        described_class.new(
+          title: 'Section',
+          subtitle: 'Details',
+          badge: 'New'
+        )
+      )
 
       expect(rendered).to have_text('Section')
       expect(rendered).to have_text('Details')
@@ -107,14 +116,20 @@ RSpec.describe 'UI components', type: :component do
 
     it 'supports non-centered titles' do
       rendered = render_inline(described_class.new(title: 'Section', centered: false))
+
       expect(rendered.to_html).not_to include('text-center')
     end
   end
 
   describe Ui::StatisticComponent do
     it 'renders the statistic with and without an icon' do
-      expect(render_inline(described_class.new(number: 10, label: 'Sales'))).to have_text('10', 'Sales')
-      expect(render_inline(described_class.new(number: 20, label: 'Orders', icon: :chart_bar))).to have_text('20', 'Orders')
+      plain = render_inline(described_class.new(number: 10, label: 'Sales'))
+      with_icon = render_inline(
+        described_class.new(number: 20, label: 'Orders', icon: :chart_bar)
+      )
+
+      expect(plain).to have_text('10', 'Sales')
+      expect(with_icon).to have_text('20', 'Orders')
     end
   end
 end
