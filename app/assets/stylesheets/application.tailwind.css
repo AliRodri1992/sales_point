@@ -1134,13 +1134,13 @@ select:focus-visible {
 
 .registration-page [data-registration-wizard-target="setupCard"]:hover {
     transform: translateY(-1px);
-    border-color: #059669;
+    border-color: #059669 !important;
     box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
 .registration-page [data-registration-wizard-target="setupCard"][aria-pressed="true"] {
-    border-color: #059669;
-    background-color: rgba(5, 150, 105, 0.05);
+    border-color: #059669 !important;
+    background-color: rgba(5, 150, 105, 0.05) !important;
     box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
 }
 
