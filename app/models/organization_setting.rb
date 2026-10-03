@@ -3,6 +3,8 @@
 class OrganizationSetting < ApplicationRecord
   belongs_to :organization
 
+  attribute :payment_method, :string
+
   enum :payment_method, {
     cash: 'cash',
     card: 'card',
