@@ -217,6 +217,8 @@ export default class extends Controller {
 
     this.stepCounterTarget.textContent = `${this.currentStep} / 5`
     this.backTarget.classList.toggle("hidden", this.currentStep === 1)
+    this.nextTarget.classList.toggle("col-span-2", this.currentStep === 1)
+    this.nextTarget.classList.toggle("col-start-2", this.currentStep !== 1)
 
     const label = this.nextTarget.querySelector("span")
     label.textContent = this.currentStep === 5
