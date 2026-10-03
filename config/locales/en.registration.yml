@@ -1,0 +1,5 @@
+---
+en:
+  registration:
+    initial_branch_name: "Main Branch"
+    initial_terminal_name: "POS Terminal %{number}"
