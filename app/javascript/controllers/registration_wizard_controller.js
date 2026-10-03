@@ -205,7 +205,6 @@ export default class extends Controller {
       card.classList.toggle("ring-transparent", !selected)
       card.setAttribute("aria-pressed", selected.toString())
       card.dataset.selected = selected.toString()
-      card.querySelector("[data-registration-wizard-selected-indicator]")?.classList.toggle("hidden", !selected)
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
