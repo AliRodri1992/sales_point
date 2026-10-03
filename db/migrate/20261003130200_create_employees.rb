@@ -14,8 +14,21 @@ class CreateEmployees < ActiveRecord::Migration[8.1]
     end
 
     add_index :employees, :deleted_at
-    add_index :employees, [:organization_id, 'LOWER(email)'], unique: true,
-              where: 'deleted_at IS NULL', name: 'idx_employees_org_email_active'
+
+    reversible do |dir|
+      dir.up do
+        execute <<~SQL
+          CREATE UNIQUE INDEX idx_employees_org_email_active
+          ON employees (organization_id, LOWER(email))
+          WHERE deleted_at IS NULL
+        SQL
+      end
+
+      dir.down do
+        execute 'DROP INDEX IF EXISTS idx_employees_org_email_active'
+      end
+    end
+
     add_check_constraint :employees,
                          "status IN ('active', 'inactive', 'terminated')",
                          name: 'check_employees_status'
