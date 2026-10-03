@@ -1139,7 +1139,7 @@ select:focus-visible {
 }
 
 .registration-page [data-registration-wizard-target="setupCard"][aria-pressed="true"] {
-    border-color: var(--brand, #059669);
+    border-color: #059669;
     background-color: rgba(5, 150, 105, 0.05);
     box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
 }
