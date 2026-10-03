@@ -133,6 +133,15 @@ es:
       created: Categoría creada correctamente
       destroyed: Categoría eliminada correctamente
       edit:
+        already_have_account: "¿Ya tienes una cuenta?"
+        brand_alt: "Isotipo de Delta POS"
+        email: "Correo electrónico"
+        email_placeholder: "correo@ejemplo.com"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        password_minimum: "%{count} caracteres mínimo"
+        sign_in: "Iniciar sesión"
+        subtitle: "Actualiza tu cuenta de Delta POS"
         subtitle: Actualiza los datos de la categoría.
         title: Editar %{name}
       form:
@@ -801,15 +810,6 @@ es:
         title: "¿Olvidaste tu contraseña?"
     registrations:
       edit:
-        already_have_account: "¿Ya tienes una cuenta?"
-        brand_alt: "Isotipo de Delta POS"
-        email: "Correo electrónico"
-        email_placeholder: "correo@ejemplo.com"
-        password: "Contraseña"
-        password_confirmation: "Confirmar contraseña"
-        password_minimum: "%{count} caracteres mínimo"
-        sign_in: "Iniciar sesión"
-        subtitle: "Actualiza tu cuenta de Delta POS"
         back: Volver
         cancel_account: Cancelar mi cuenta
         confirm: "¿Estás seguro?"
