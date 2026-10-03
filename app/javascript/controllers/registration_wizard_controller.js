@@ -189,11 +189,18 @@ export default class extends Controller {
   updateSetupCards() {
     this.setupCardTargets.forEach((card) => {
       const selected = card.dataset.setupType === this.selectedSetupType
+
       card.classList.toggle("border-emerald-500", selected)
+      card.classList.toggle("border-slate-100", !selected)
       card.classList.toggle("bg-emerald-50/40", selected)
-      card.classList.toggle("border-slate-200", !selected)
-      card.setAttribute("aria-pressed", selected)
-      card.dataset.selected = selected ? "true" : "false"
+      card.classList.toggle("bg-white", !selected)
+      card.classList.toggle("shadow-md", selected)
+      card.classList.toggle("shadow-sm", !selected)
+      card.classList.toggle("ring-2", selected)
+      card.classList.toggle("ring-emerald-500/20", selected)
+      card.classList.toggle("ring-transparent", !selected)
+      card.setAttribute("aria-pressed", selected.toString())
+      card.dataset.selected = selected.toString()
     })
 
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
