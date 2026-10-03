@@ -35,7 +35,13 @@ module Onboarding
 
     def branch_section
       branch = @organization.branches.where(status: true).first
-      percentage = branch ? (branch.address.present? ? 100 : 50) : 0
+      percentage = if branch.nil?
+                     0
+                   elsif branch.address.present?
+                     100
+                   else
+                     50
+                   end
       section(:branches, percentage)
     end
 

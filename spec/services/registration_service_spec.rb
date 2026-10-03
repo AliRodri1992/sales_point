@@ -53,4 +53,3 @@ RSpec.describe RegistrationService, type: :service do
     expect(result).not_to be_success
     expect(Organization.count).to eq(0)
   end
-end

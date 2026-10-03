@@ -69,7 +69,7 @@ class RegistrationService
     return if @user.save
 
     @result = Result.new(user: @user, organization: nil, errors: @user.errors)
-    raise ActiveRecord::Rollback
+    raise ActiveRecord::Rollback, 'User validation failed'
   end
 
   def create_membership(organization)
@@ -92,21 +92,27 @@ class RegistrationService
 
   def create_settings(organization)
     OrganizationSetting.create!(
-      organization:, currency: @params[:currency].to_s.upcase, timezone: 'UTC'
+      organization:,
+      currency: @params[:currency].to_s.upcase,
+      timezone: 'UTC'
     )
   end
 
   def create_branch(organization)
     Branch.create!(
-      organization:, name: I18n.t('registration.initial_branch_name'), status: true
+      organization:,
+      name: I18n.t('registration.initial_branch_name'),
+      status: true
     )
   end
 
   def create_terminals(branch)
     terminal_count.times do |index|
       Terminal.create!(
-        branch:, name: I18n.t('registration.initial_terminal_name', number: index + 1),
-        code: format('POS-%03d', index + 1), status: :active
+        branch:,
+        name: I18n.t('registration.initial_terminal_name', number: index + 1),
+        code: format('POS-%03d', index + 1),
+        status: :active
       )
     end
   end
@@ -115,14 +121,18 @@ class RegistrationService
     return if @params[:payment_integration] == 'cash'
 
     PaymentIntegration.create!(
-      organization:, provider: @params[:payment_integration], status: :pending
+      organization:,
+      provider: @params[:payment_integration],
+      status: :pending
     )
   end
 
   def create_migration(organization)
     OrganizationMigration.create!(
-      organization:, volume: @params[:migration_volume],
-      priority: @params[:migration_priority], status: :pending
+      organization:,
+      volume: @params[:migration_volume],
+      priority: @params[:migration_priority],
+      status: :pending
     )
   end
 
@@ -134,7 +144,7 @@ class RegistrationService
     return if @params[:terms].to_s == '1'
 
     @user.errors.add(:base, I18n.t('devise.registrations.new.client_validation_terms'))
-    raise ActiveRecord::RecordInvalid.new(@user)
+    raise ActiveRecord::RecordInvalid, @user
   end
 
   def add_record_error(record)
