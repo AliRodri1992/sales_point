@@ -183,6 +183,74 @@ es:
         active: Activo
         inactive: Inactivo
       updated: Categoría actualizada correctamente
+    onboarding:
+      eyebrow: Configuración inicial
+      title: Configura tu Delta POS
+      description: Completa estos pasos para configurar tu negocio antes de entrar al panel de administración.
+      overall: Progreso general
+      step_number: "Paso %{number}"
+      steps:
+        "1":
+          title: Negocio
+          description: Confirma la información de tu empresa.
+          heading: Tu negocio
+          help: Revisa la información creada durante el registro.
+        "2":
+          title: Sucursal
+          description: Completa la dirección de la sucursal principal.
+          heading: Sucursal principal
+          help: Agrega la dirección y los datos de contacto de tu primera sucursal.
+        "3":
+          title: Cajas
+          description: Configura las cajas activas.
+          heading: Cajas registradoras
+          help: Elige el número de cajas activas y asígnales un nombre.
+        "4":
+          title: Pagos
+          description: Selecciona el método de pago inicial.
+          heading: Configuración de pagos
+          help: Confirma cómo recibirá pagos tu negocio.
+        "5":
+          title: Finalizar
+          description: Revisa tu configuración.
+          heading: Todo listo
+          help: Revisa la configuración y finaliza el onboarding cuando todo esté completo.
+      fields:
+        company_name: Nombre de la empresa
+        tax_id: RFC
+        business_sector: Sector empresarial
+        branch_name: Nombre de la sucursal
+        phone: Teléfono
+        street: Calle
+        exterior_number: Número exterior
+        interior_number: Número interior
+        neighborhood: Colonia
+        city: Ciudad
+        state: Estado
+        country: País
+        postal_code: Código postal
+        terminal_count: Cajas activas
+        payment_method: Método de pago inicial
+      terminal: Caja %{number}
+      migration:
+        title: Configuración de migración
+        description: Tu solicitud de migración fue creada durante el registro y permanecerá disponible para su procesamiento.
+      ready:
+        title: Tu entorno está listo
+        description: Revisa la configuración y finaliza el onboarding.
+      sections:
+        company: Negocio
+        fiscal: Información fiscal
+        branches: Sucursal principal
+        terminals: Cajas
+        payments: Pagos
+        migration: Migración
+        team: Equipo
+      back: Regresar
+      continue: Continuar
+      finish: Finalizar onboarding
+      completed: El onboarding se completó correctamente.
+      incomplete: Completa todos los pasos requeridos antes de finalizar el onboarding.
     dashboard:
       index:
         title: Panel de administración | Delta POS
