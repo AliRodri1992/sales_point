@@ -182,6 +182,74 @@ en:
         active: Active
         inactive: Inactive
       updated: Category updated successfully
+    onboarding:
+      eyebrow: Initial setup
+      title: Set up your Delta POS
+      description: Complete these steps to configure your business before entering the administration dashboard.
+      overall: Overall progress
+      step_number: "Step %{number}"
+      steps:
+        "1":
+          title: Business
+          description: Confirm company information.
+          heading: Your business
+          help: Review the information created during registration.
+        "2":
+          title: Branch
+          description: Complete the main branch address.
+          heading: Main branch
+          help: Add the address and contact details for your first branch.
+        "3":
+          title: Terminals
+          description: Configure active cash registers.
+          heading: Cash registers
+          help: Choose the number of active terminals and name them.
+        "4":
+          title: Payments
+          description: Select the initial payment method.
+          heading: Payment setup
+          help: Confirm how your business will receive payments.
+        "5":
+          title: Finish
+          description: Review your configuration.
+          heading: Ready to go
+          help: Review the setup and finish onboarding when everything is complete.
+      fields:
+        company_name: Company name
+        tax_id: Tax ID
+        business_sector: Business sector
+        branch_name: Branch name
+        phone: Phone
+        street: Street
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        city: City
+        state: State
+        country: Country
+        postal_code: Postal code
+        terminal_count: Active terminals
+        payment_method: Initial payment method
+      terminal: Terminal %{number}
+      migration:
+        title: Migration setup
+        description: Your migration request was created during registration and will remain available for processing.
+      ready:
+        title: Your environment is ready
+        description: Review the configuration below and finish onboarding.
+      sections:
+        company: Business
+        fiscal: Fiscal information
+        branches: Main branch
+        terminals: Terminals
+        payments: Payments
+        migration: Migration
+        team: Team
+      back: Back
+      continue: Continue
+      finish: Finish onboarding
+      completed: Onboarding completed successfully.
+      incomplete: Complete all required setup steps before finishing onboarding.
     dashboard:
       index:
         title: Admin Dashboard | Delta POS
