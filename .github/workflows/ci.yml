@@ -146,7 +146,21 @@ jobs:
       - name: Inspect coverage
         if: always()
         run: |
-          ruby -rjson -e 'data = JSON.parse(File.read("coverage/.resultset.json")); result = data.values.first["result"]["coverage"]; rows = result.map { |file, lines| covered = lines.compact.count { |v| v.positive? }; total = lines.compact.length; [total.zero? ? 100.0 : (covered * 100.0 / total), covered, total, file] }.sort_by(&:first); rows.first(40).each { |row| puts "%6.2f%% %4d/%-4d %s" % row }'
+          python - <<'PY'
+import json
+
+data = json.load(open("coverage/.resultset.json"))
+result = next(iter(data.values()))["result"]
+lines = result["coverage"]["lines"]
+rows = []
+for path, values in lines.items():
+    total = len([value for value in values if value is not None])
+    covered = len([value for value in values if value and value > 0])
+    percentage = 100.0 if total == 0 else covered * 100.0 / total
+    rows.append((percentage, covered, total, path))
+for row in sorted(rows)[:40]:
+    print(f"{row[0]:6.2f}% {row[1]:4d}/{row[2]:-4d} {row[3]}")
+PY
 
   i18n:
     name: Rails I18n and YAML audit
