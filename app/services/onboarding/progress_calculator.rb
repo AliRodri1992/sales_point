@@ -17,9 +17,13 @@ module Onboarding
         branch_section,
         terminal_section,
         payment_section,
+        migration_section,
         team_section
       ]
-      { sections:, percentage: sections.sum { |section| section[:percentage] } / sections.length }
+      {
+        sections:,
+        percentage: sections.sum { |section| section[:percentage] } / sections.length
+      }
     end
 
     private
@@ -34,7 +38,7 @@ module Onboarding
     end
 
     def branch_section
-      branch = @organization.branches.where(status: true).first
+      branch = @organization.branches.not_deleted.where(status: true).first
       percentage = if branch.nil?
                      0
                    elsif branch.address.present?
@@ -52,6 +56,11 @@ module Onboarding
 
     def payment_section
       section(:payments, settings&.payment_method.present? ? 100 : 0)
+    end
+
+    def migration_section
+      migration = @organization.organization_migrations.first
+      section(:migration, migration.nil? || migration.volume.present? && migration.priority.present? ? 100 : 0)
     end
 
     def team_section
