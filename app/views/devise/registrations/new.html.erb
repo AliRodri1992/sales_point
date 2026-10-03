@@ -209,15 +209,19 @@
                 <p class="mt-1 text-[11px] text-slate-400"><%= t(".step_four.subtitle") %></p>
               </div>
 
-              <div>
+              <div class="relative">
                 <label for="business-sector" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.business_sector") %></label>
-                <select id="business-sector" class="mt-1 block h-[46px] w-full rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 shadow-sm" data-action="change->registration-wizard#selectBusiness">
-                  <option value=""><%= t(".step_four.select_sector") %></option>
-                  <option value="grocery"><%= t(".step_four.sectors.grocery") %></option>
-                  <option value="fashion"><%= t(".step_four.sectors.fashion") %></option>
-                  <option value="restaurant"><%= t(".step_four.sectors.restaurant") %></option>
-                  <option value="pharmacy"><%= t(".step_four.sectors.pharmacy") %></option>
-                </select>
+                <button type="button" id="business-sector" data-registration-wizard-target="dropdown" data-dropdown-name="business-sector" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex h-[46px] w-full items-center justify-between rounded-[10px] border border-slate-200 bg-white px-3.5 text-left text-sm text-slate-800 shadow-sm">
+                  <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.select_sector") %></span>
+                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                </button>
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="business-sector" class="absolute z-30 mt-1 hidden w-full rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                  <% [["grocery", ".step_four.sectors.grocery"], ["fashion", ".step_four.sectors.fashion"], ["restaurant", ".step_four.sectors.restaurant"], ["pharmacy", ".step_four.sectors.pharmacy"]].each do |value, label_key| %>
+                    <button type="button" data-dropdown-name="business-sector" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+                      <%= t(label_key) %>
+                    </button>
+                  <% end %>
+                </div>
               </div>
 
               <div data-registration-wizard-target="migrationFields" class="hidden grid gap-4 sm:grid-cols-2">
@@ -247,14 +251,19 @@
                   <label for="branches-input" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.branches") %></label>
                   <input id="branches-input" type="number" min="1" value="1" class="mt-1 block h-[46px] w-full cursor-not-allowed rounded-[10px] border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-500 shadow-sm" disabled>
                 </div>
-                <div>
+                <div class="relative">
                   <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.currency") %></label>
-                  <select id="currency" class="mt-1 block h-[46px] w-full rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 shadow-sm" data-action="change->registration-wizard#selectCurrency">
-                    <option value="MXN"><%= t(".step_four.currencies.mxn") %></option>
-                    <option value="USD"><%= t(".step_four.currencies.usd") %></option>
-                    <option value="JPY"><%= t(".step_four.currencies.jpy") %></option>
-                    <option value="KRW"><%= t(".step_four.currencies.krw") %></option>
-                  </select>
+                  <button type="button" id="currency" data-registration-wizard-target="dropdown" data-dropdown-name="currency" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex h-[46px] w-full items-center justify-between rounded-[10px] border border-slate-200 bg-white px-3.5 text-left text-sm text-slate-800 shadow-sm">
+                    <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.currencies.mxn") %></span>
+                    <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                  </button>
+                  <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="currency" class="absolute z-30 mt-1 hidden w-full rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                    <% [["MXN", ".step_four.currencies.mxn"], ["USD", ".step_four.currencies.usd"], ["JPY", ".step_four.currencies.jpy"], ["KRW", ".step_four.currencies.krw"]].each do |value, label_key| %>
+                      <button type="button" data-dropdown-name="currency" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+                        <%= t(label_key) %>
+                      </button>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             </section>
@@ -265,27 +274,38 @@
                 <p class="mt-1 text-[11px] text-slate-400"><%= t(".step_five.subtitle") %></p>
               </div>
 
-              <div>
+              <div class="relative">
                 <label for="terminals" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.terminals") %></label>
-                <select id="terminals" class="mt-1 block h-[46px] w-full rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 shadow-sm" data-action="change->registration-wizard#selectTerminals">
-                  <option value="1"><%= t(".step_five.terminal_options.one") %></option>
-                  <option value="2"><%= t(".step_five.terminal_options.two") %></option>
-                  <option value="3_5"><%= t(".step_five.terminal_options.three_to_five") %></option>
-                  <option value="over_5"><%= t(".step_five.terminal_options.over_five") %></option>
-                </select>
+                <button type="button" id="terminals" data-registration-wizard-target="dropdown" data-dropdown-name="terminals" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex h-[46px] w-full items-center justify-between rounded-[10px] border border-slate-200 bg-white px-3.5 text-left text-sm text-slate-800 shadow-sm">
+                  <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.terminal_options.one") %></span>
+                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                </button>
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="terminals" class="absolute z-30 mt-1 hidden w-full rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                  <% [["1", ".step_five.terminal_options.one"], ["2", ".step_five.terminal_options.two"], ["3_5", ".step_five.terminal_options.three_to_five"], ["over_5", ".step_five.terminal_options.over_five"]].each do |value, label_key| %>
+                    <button type="button" data-dropdown-name="terminals" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+                      <%= t(label_key) %>
+                    </button>
+                  <% end %>
+                </div>
               </div>
 
-              <div>
+              <div class="relative">
                 <label for="payment-integration" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.payment_integration") %></label>
-                <select id="payment-integration" class="mt-1 block h-[46px] w-full rounded-[10px] border border-slate-200 bg-white px-3.5 text-sm text-slate-800 shadow-sm" data-action="change->registration-wizard#selectPayments">
-                  <option value="cash"><%= t(".step_five.payment_options.cash") %></option>
-                  <option value="card"><%= t(".step_five.payment_options.card") %></option>
-                  <option value="qr"><%= t(".step_five.payment_options.qr") %></option>
-                </select>
+                <button type="button" id="payment-integration" data-registration-wizard-target="dropdown" data-dropdown-name="payment-integration" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex h-[46px] w-full items-center justify-between rounded-[10px] border border-slate-200 bg-white px-3.5 text-left text-sm text-slate-800 shadow-sm">
+                  <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.payment_options.cash") %></span>
+                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                </button>
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="payment-integration" class="absolute z-30 mt-1 hidden w-full rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                  <% [["cash", ".step_five.payment_options.cash"], ["card", ".step_five.payment_options.card"], ["qr", ".step_five.payment_options.qr"]].each do |value, label_key| %>
+                    <button type="button" data-dropdown-name="payment-integration" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+                      <%= t(label_key) %>
+                    </button>
+                  <% end %>
+                </div>
               </div>
 
               <div class="flex items-start pt-1">
-                <input id="terms" name="terms" type="checkbox" class="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--theme-primary-start)] focus:ring-[var(--theme-primary-start)]" data-registration-wizard-target="terms">
+                <input id="terms" name="terms" type="checkbox" class="mt-0.5 h-4 w-4 rounded-md border border-slate-300 bg-white shadow-sm accent-[var(--theme-primary-start)] checked:border-[var(--theme-primary-start)] checked:bg-[var(--theme-primary-start)] focus:ring-[var(--theme-primary-start)]" data-registration-wizard-target="terms">
                 <label for="terms" class="ml-2 block text-[11px] leading-normal text-slate-500">
                   <%= t(".step_five.terms") %>
                 </label>
