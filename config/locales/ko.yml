@@ -182,6 +182,74 @@ ko:
         active: 활성
         inactive: 비활성
       updated: 카테고리이 성공적으로 업데이트되었습니다
+    onboarding:
+      eyebrow: 초기 설정
+      title: Delta POS 설정
+      description: 관리자 대시보드에 들어가기 전에 비즈니스 설정을 완료하세요.
+      overall: 전체 진행률
+      step_number: "%{number}단계"
+      steps:
+        "1":
+          title: 비즈니스
+          description: 회사 정보를 확인합니다.
+          heading: 비즈니스
+          help: 가입 시 생성된 정보를 확인하세요.
+        "2":
+          title: 지점
+          description: 기본 지점 주소를 입력합니다.
+          heading: 기본 지점
+          help: 첫 번째 지점의 주소와 연락처를 입력하세요.
+        "3":
+          title: 계산대
+          description: 활성 계산대를 설정합니다.
+          heading: 계산대
+          help: 활성 계산대 수를 선택하고 이름을 지정하세요.
+        "4":
+          title: 결제
+          description: 초기 결제 방법을 선택합니다.
+          heading: 결제 설정
+          help: 비즈니스에서 결제를 받을 방법을 확인하세요.
+        "5":
+          title: 완료
+          description: 설정을 검토합니다.
+          heading: 시작할 준비가 되었습니다
+          help: 설정을 검토하고 모든 항목이 완료되면 온보딩을 마치세요.
+      fields:
+        company_name: 회사명
+        tax_id: 세금 ID
+        business_sector: 사업 분야
+        branch_name: 지점명
+        phone: 전화번호
+        street: 도로명
+        exterior_number: 외부 번호
+        interior_number: 내부 번호
+        neighborhood: 동네
+        city: 도시
+        state: 주/도
+        country: 국가
+        postal_code: 우편번호
+        terminal_count: 활성 계산대
+        payment_method: 초기 결제 방법
+      terminal: 계산대 %{number}
+      migration:
+        title: 마이그레이션 설정
+        description: 가입 과정에서 마이그레이션 요청이 생성되었으며 처리할 수 있도록 유지됩니다.
+      ready:
+        title: 환경이 준비되었습니다
+        description: 아래 설정을 확인하고 온보딩을 완료하세요.
+      sections:
+        company: 비즈니스
+        fiscal: 세무 정보
+        branches: 기본 지점
+        terminals: 계산대
+        payments: 결제
+        migration: 마이그레이션
+        team: 팀
+      back: 뒤로
+      continue: 계속
+      finish: 온보딩 완료
+      completed: 온보딩이 성공적으로 완료되었습니다.
+      incomplete: 온보딩을 완료하기 전에 필요한 모든 설정 단계를 완료하세요.
     dashboard:
       index:
         title: 관리자 대시보드 | Delta POS
