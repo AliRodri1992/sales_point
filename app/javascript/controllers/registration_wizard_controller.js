@@ -52,20 +52,24 @@ export default class extends Controller {
   }
 
   toggleDropdown(event) {
+    event.preventDefault()
     event.stopPropagation()
 
     const name = event.currentTarget.dataset.dropdownName
     const menu = this.dropdownMenuTargets.find((target) => target.dataset.dropdownName === name)
     if (!menu) return
 
-    this.dropdownMenuTargets.forEach((target) => {
-      if (target !== menu) target.classList.add("hidden")
-    })
+    const shouldOpen = menu.classList.contains("hidden")
+    this.closeDropdowns()
 
-    menu.classList.toggle("hidden")
+    if (shouldOpen) {
+      menu.hidden = false
+      menu.classList.remove("hidden")
+    }
   }
 
   selectDropdown(event) {
+    event.preventDefault()
     event.stopPropagation()
 
     const option = event.currentTarget
@@ -98,7 +102,10 @@ export default class extends Controller {
   }
 
   closeDropdowns() {
-    this.dropdownMenuTargets.forEach((menu) => menu.classList.add("hidden"))
+    this.dropdownMenuTargets.forEach((menu) => {
+      menu.classList.add("hidden")
+      menu.hidden = true
+    })
   }
 
   selectVolume(event) {
