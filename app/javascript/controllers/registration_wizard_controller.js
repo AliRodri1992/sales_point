@@ -79,7 +79,7 @@ export default class extends Controller {
 
     if (!inputTargetName || !value || !label) return
 
-    this[inputTargetName + "Target"].value = value
+    this[`${inputTargetName}Target`].value = value
 
     const labelTarget = this.dropdownLabelTargets.find(
       (target) => target.closest("[data-dropdown-name]")?.dataset.dropdownName === name
@@ -104,6 +104,33 @@ export default class extends Controller {
     this.dropdownMenuTargets.forEach((menu) => {
       menu.classList.add("hidden")
       menu.hidden = true
+    })
+  }
+
+  updateDropdownSelections() {
+    [
+      ["business-sector", this.businessSectorTarget.value],
+      ["currency", this.currencyTarget.value],
+      ["terminals", this.terminalsTarget.value],
+      ["payment-integration", this.paymentsTarget.value]
+    ].forEach(([name, value]) => this.updateDropdownOptions(name, value))
+  }
+
+  updateDropdownOptions(name, selectedValue) {
+    const menu = this.dropdownMenuTargets.find(
+      (target) => target.dataset.dropdownName === name
+    )
+    if (!menu) return
+
+    menu.querySelectorAll("[data-dropdown-option]").forEach((option) => {
+      const selected = option.dataset.dropdownValue === selectedValue
+
+      option.classList.toggle("text-white", selected)
+      option.classList.toggle("text-slate-600", !selected)
+      option.classList.toggle("bg-gradient-to-br", selected)
+      option.classList.toggle("from-emerald-600", selected)
+      option.classList.toggle("to-teal-600", selected)
+      option.setAttribute("aria-selected", selected.toString())
     })
   }
 
