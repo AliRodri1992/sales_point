@@ -212,9 +212,9 @@
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.select_sector") %></span>
                   <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
-                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="business-sector" class="absolute z-30 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="business-sector" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["grocery", ".step_four.sectors.grocery"], ["fashion", ".step_four.sectors.fashion"], ["restaurant", ".step_four.sectors.restaurant"], ["pharmacy", ".step_four.sectors.pharmacy"]].each do |value, label_key| %>
-                    <button type="button" data-dropdown-name="business-sector" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700 focus:outline-none">
+                    <button type="button" data-dropdown-name="business-sector" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-600 transition-all duration-150 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-0" data-dropdown-option="true">
                       <%= t(label_key) %>
                     </button>
                   <% end %>
@@ -254,9 +254,9 @@
                     <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.currencies.mxn") %></span>
                     <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
                   </button>
-                  <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="currency" class="absolute z-30 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                  <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="currency" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                     <% [["MXN", ".step_four.currencies.mxn"], ["USD", ".step_four.currencies.usd"], ["JPY", ".step_four.currencies.jpy"], ["KRW", ".step_four.currencies.krw"]].each do |value, label_key| %>
-                      <button type="button" data-dropdown-name="currency" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700 focus:outline-none">
+                      <button type="button" data-dropdown-name="currency" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-600 transition-all duration-150 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-0" data-dropdown-option="true">
                         <%= t(label_key) %>
                       </button>
                     <% end %>
@@ -277,9 +277,9 @@
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.terminal_options.one") %></span>
                   <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
-                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="terminals" class="absolute z-30 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="terminals" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["1", ".step_five.terminal_options.one"], ["2", ".step_five.terminal_options.two"], ["3_5", ".step_five.terminal_options.three_five"], ["over_5", ".step_five.terminal_options.over_five"]].each do |value, label_key| %>
-                    <button type="button" data-dropdown-name="terminals" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700 focus:outline-none">
+                    <button type="button" data-dropdown-name="terminals" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-600 transition-all duration-150 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-0" data-dropdown-option="true">
                       <%= t(label_key) %>
                     </button>
                   <% end %>
@@ -292,9 +292,9 @@
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.payment_options.cash") %></span>
                   <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
-                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="payment-integration" class="absolute z-30 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-lg">
+                <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="payment-integration" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["cash", ".step_five.payment_options.cash"], ["card", ".step_five.payment_options.card"], ["qr", ".step_five.payment_options.qr"]].each do |value, label_key| %>
-                    <button type="button" data-dropdown-name="payment-integration" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="block w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus:bg-emerald-50 focus:text-emerald-700 focus:outline-none">
+                    <button type="button" data-dropdown-name="payment-integration" data-dropdown-value="<%= value %>" data-dropdown-label="<%= t(label_key) %>" data-action="click->registration-wizard#selectDropdown" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-600 transition-all duration-150 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-0" data-dropdown-option="true">
                       <%= t(label_key) %>
                     </button>
                   <% end %>
