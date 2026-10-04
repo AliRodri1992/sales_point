@@ -327,7 +327,17 @@ document.addEventListener("turbo:load", () => {
      */
 
     const closeAllDropdowns = (except = null) => {
-        dropdowns.forEach(({ button, menu }) => {
+        const branchSelector = document.querySelector("[data-dashboard-selector] details")
+
+    if (branchSelector) {
+        const branchMenu = branchSelector.querySelector("[data-dashboard-selector-menu]")
+
+        branchSelector.querySelector("summary")?.addEventListener("click", () => {
+            closeAllDropdowns(branchMenu)
+        })
+    }
+
+    dropdowns.forEach(({ button, menu }) => {
             if (!button || !menu || menu === except) return
 
             menu.classList.add("hidden")
