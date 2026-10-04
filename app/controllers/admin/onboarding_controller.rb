@@ -46,7 +46,7 @@ module Admin
     end
 
     def start_onboarding
-      was_pending = @organization.onboarding_status_pending?
+      was_pending = @organization.onboarding_status == 'pending'
       @organization.start_onboarding!
       Onboarding::ProgressSynchronizer.call(organization: @organization)
       return unless was_pending
