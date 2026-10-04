@@ -75,6 +75,9 @@ RSpec.describe 'Admin onboarding', type: :request do
 
     expect(response).to redirect_to(admin_onboarding_path(step: 4))
 
+    terminal_audit = organization.reload.onboarding_audits.where(action: 'step_updated', step: 3).order(:created_at).last
+    expect(terminal_audit.metadata.dig('changes', '0', 'name', 'to')).to eq('Caja Principal')
+
     patch admin_onboarding_path(step: 4), params: {
       payment: { method: 'card' }
     }
