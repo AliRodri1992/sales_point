@@ -3,19 +3,14 @@ import { closeDashboardSelectors } from "./selector_coordinator"
 
 export default class extends Controller {
     connect() {
-        this.button = this.element.querySelector("#notificationsButton")
-        this.menu = this.element.querySelector("#notificationsMenu")
-        this.boundToggle = this.toggle.bind(this)
         this.boundOutsideClick = this.closeOnOutsideClick.bind(this)
         this.boundEscape = this.closeOnEscape.bind(this)
 
-        this.button?.addEventListener("click", this.boundToggle)
         document.addEventListener("click", this.boundOutsideClick)
         document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        this.button?.removeEventListener("click", this.boundToggle)
         document.removeEventListener("click", this.boundOutsideClick)
         document.removeEventListener("keydown", this.boundEscape)
     }
@@ -34,6 +29,14 @@ export default class extends Controller {
         closeDashboardSelectors(this.element)
         this.menu?.classList.remove("hidden")
         this.button?.setAttribute("aria-expanded", "true")
+    }
+
+    get button() {
+        return this.element.querySelector("#notificationsButton")
+    }
+
+    get menu() {
+        return this.element.querySelector("#notificationsMenu")
     }
 
     close() {
