@@ -144,7 +144,7 @@ en:
         title: Branches
       statuses:
         active: Active
-        inactive: Inactive
+        blocked: Blocked
       updated: Branch updated successfully.
     shared:
 
@@ -163,7 +163,7 @@ en:
           category: Category
           product: Product
           branch: Branch
-          client: Client
+          customer: Customer
           system_role: System role
         language:
           created: "Language %{name} created"
