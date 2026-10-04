@@ -14,12 +14,15 @@ module Onboarding
     end
 
     def call
-      result = execute_step
-      return false unless result
+      ApplicationRecord.transaction do
+        result = execute_step
+        return false unless result
 
-      persist_progress
-      advance_step if @step == @organization.onboarding_current_step && @step < 5
-      audit_step
+        persist_progress
+        advance_step if @step == @organization.onboarding_current_step && @step < 5
+        audit_step
+      end
+
       true
     rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
       false
