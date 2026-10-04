@@ -164,7 +164,7 @@ es:
           category: Categoría
           product: Producto
           branch: Sucursal
-          client: Cliente
+          customer: Cliente
           system_role: Rol del sistema
         language:
           created: "Idioma %{name} creado"
@@ -274,7 +274,7 @@ es:
         title: Detalles del idioma
       statuses:
         active: Activo
-        inactive: Inactivo
+        blocked: Bloqueado
     products:
       confirm:
         cancel: Cancelar
