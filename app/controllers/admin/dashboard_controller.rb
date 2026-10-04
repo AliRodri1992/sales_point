@@ -6,7 +6,7 @@ module Admin
     def index
       organization = current_user.organizations.active_records.first
       @onboarding_progress = onboarding_progress_data(organization)
-      @sales_requirements = sales_requirements_data(organization) if organization
+      @sales_requirements = sales_requirements_data(organization)
       @dashboard_preferences = dashboard_preferences_data
     end
 
@@ -17,6 +17,8 @@ module Admin
     end
 
     def sales_requirements_data(organization)
+      return {} unless organization
+
       %i[branches terminals payments].index_with do |section|
         Onboarding::Requirement.call(organization:, section:)
       end
