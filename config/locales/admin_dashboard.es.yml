@@ -7,6 +7,12 @@ es:
         subtitle: "Consulta el rendimiento de tu negocio de un vistazo."
         customize: "Personalizar panel"
         new_sale: "Nueva venta"
+      saved:
+        title: "Panel guardado"
+        text: "Los cambios del panel se guardaron correctamente."
+      save_error:
+        title: "No se pudo guardar"
+        text: "No se pudieron guardar los cambios del panel."
       kpi_grid:
         sales_today: "Ventas de hoy"
         transactions: "Transacciones"
