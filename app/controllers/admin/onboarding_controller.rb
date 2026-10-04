@@ -115,7 +115,8 @@ module Admin
 
     def handle_update_failure
       load_onboarding
-      flash.now[:alert] = t('admin.onboarding.incomplete')
+      flash.now[:swal_message] = t('admin.onboarding.incomplete')
+      flash.now[:swal_icon] = 'error'
       render :show, status: :unprocessable_content
     end
   end
