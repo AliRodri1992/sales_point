@@ -18,7 +18,7 @@ module Onboarding
       method = @params.expect(payment: [:method]).fetch(:method)
       return false unless valid_payment_method?(method)
 
-      settings.update!(payment_method: method)
+      return false unless settings.update(payment_method: method)
       update_payment_integrations(method)
       true
     end
