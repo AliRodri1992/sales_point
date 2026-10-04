@@ -15,8 +15,6 @@ module Admin
     end
 
     def reset
-      authorize :onboarding, :reset?
-
       ApplicationRecord.transaction do
         @organization.update!(reset_attributes)
         log_reset_action
@@ -89,13 +87,6 @@ module Admin
     def active_branch
       @organization.branches.not_deleted.where(status: true).first ||
         @organization.branches.not_deleted.first
-    end
-
-    def reset
-      authorize :onboarding, :reset?
-      @organization.update!(reset_attributes)
-      log_reset_action
-      redirect_to admin_onboarding_path(step: 1), flash: { swal_message: t('admin.onboarding.reset') }
     end
 
     def reset_attributes
