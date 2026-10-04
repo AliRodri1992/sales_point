@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :organization do
     sequence(:name) { |n| "Organization #{n}" }
-    sequence(:tax_id) { |n| "ABC#{format('%09d', n)}" }
+    sequence(:tax_id) { |n| "ABC#{format('%06d', n)}AB1" }
     business_sector { 'grocery' }
     status { :active }
 
