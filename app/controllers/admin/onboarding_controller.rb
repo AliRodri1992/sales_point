@@ -14,6 +14,17 @@ module Admin
       load_onboarding
     end
 
+    def reset
+      authorize :onboarding, :reset?
+
+      ApplicationRecord.transaction do
+        @organization.update!(reset_attributes)
+        log_reset_action
+      end
+
+      redirect_to admin_onboarding_path(step: 1), flash: { swal_message: t('admin.onboarding.reset') }
+    end
+
     def update
       @step = normalized_step
 
@@ -37,8 +48,18 @@ module Admin
     end
 
     def start_onboarding
+      was_pending = @organization.onboarding_status_pending?
       @organization.start_onboarding!
       Onboarding::ProgressSynchronizer.call(organization: @organization)
+      return unless was_pending
+
+      Onboarding::Auditor.call(
+        organization: @organization,
+        user: current_user,
+        action: 'started',
+        step: @organization.onboarding_current_step,
+        metadata: { 'percentage' => @progress_percentage }
+      )
     end
 
     def normalized_step
@@ -49,6 +70,7 @@ module Admin
     end
 
     def load_onboarding
+      @progress_percentage = Onboarding::ProgressCalculator.call(@organization)[:percentage]
       @step = normalized_step
       @branch = active_branch
       @settings = @organization.organization_settings.first
