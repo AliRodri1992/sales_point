@@ -230,13 +230,12 @@ es:
         country: País
         postal_code: Código postal
         terminal_count: Cajas activas
-        terminal_count: Cajas activas
         terminal_name: Nombre de la caja
         terminal_code: Código de caja
         branch: Sucursal
         payment_method: Método de pago inicial
-        payment_method: Método de pago inicial
       active: Activa
+      not_available: No disponible
       no_terminals: No hay cajas activas configuradas para esta sucursal.
       terminal: Caja %{number}
       migration:
