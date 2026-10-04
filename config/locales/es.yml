@@ -149,6 +149,48 @@ es:
       updated: Sucursal actualizada correctamente.
     shared:
 
+      notifications:
+        title: Notificaciones
+        subtitle: "%{count} notificaciones sin leer"
+        subtitle_none: Sin notificaciones nuevas
+        empty: No tienes notificaciones
+        mark_all_read: Marcar todas como leídas
+        performed_by: Realizado por %{user}
+        actor_unknown: Usuario desconocido
+        new_message: Nuevo mensaje
+        message_unavailable: Mensaje no disponible
+        types:
+          language: Idioma
+          category: Categoría
+          product: Producto
+          branch: Sucursal
+          client: Cliente
+          system_role: Rol del sistema
+        language:
+          created: "Idioma %{name} creado"
+          updated: "Idioma %{name} actualizado"
+          destroyed: "Idioma %{name} eliminado"
+        category:
+          created: "Categoría %{name} creada"
+          updated: "Categoría %{name} actualizada"
+          destroyed: "Categoría %{name} eliminada"
+        product:
+          created: "Producto %{name} creado"
+          updated: "Producto %{name} actualizado"
+          destroyed: "Producto %{name} eliminado"
+        branch:
+          created: "Sucursal %{name} creada"
+          updated: "Sucursal %{name} actualizada"
+          destroyed: "Sucursal %{name} eliminada"
+        client:
+          created: "Cliente %{name} creado"
+          updated: "Cliente %{name} actualizado"
+          destroyed: "Cliente %{name} eliminado"
+        system_role:
+          created: "Rol %{name} creado"
+          updated: "Rol %{name} actualizado"
+          destroyed: "Rol %{name} eliminado"
+
       branch_selector:
         label: Sucursal
         no_branch: Sin sucursal
