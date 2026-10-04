@@ -213,7 +213,7 @@
                     <div class="space-y-3">
                       <% employees.each do |employee| %>
                         <%= render "admin/onboarding/detail",
-                          label: employee.full_name.presence || [employee.first_name, employee.last_name].compact.join(" "),
+                          label: [employee.first_name, employee.last_name].compact.join(" "),
                           value: employee.email %>
                       <% end %>
                     </div>
