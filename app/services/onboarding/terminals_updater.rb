@@ -20,7 +20,7 @@ module Onboarding
       return false if terminals.empty?
 
       terminals.each_with_index do |terminal, index|
-        terminal.update!(name: terminal_name(index))
+        return false unless terminal.update(name: terminal_name(index))
       end
 
       true
