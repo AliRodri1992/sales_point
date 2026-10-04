@@ -33,7 +33,7 @@ RSpec.describe Organization, type: :model do
     organization = create(:organization, onboarding_status: :in_progress, onboarding_current_step: 3)
     organization.start_onboarding!
 
-    expect(organization.reload).to be_onboarding_status_in_progress
+    expect(organization.reload.onboarding_status).to eq('in_progress')
     expect(organization.onboarding_current_step).to eq(3)
   end
 
@@ -41,12 +41,12 @@ RSpec.describe Organization, type: :model do
     organization = create(:organization)
     organization.start_onboarding!
 
-    expect(organization).to be_onboarding_status_in_progress
+    expect(organization.onboarding_status).to eq('in_progress')
 
     organization.complete_onboarding!
     organization.start_onboarding!
 
-    expect(organization).to be_onboarding_status_completed
+    expect(organization.onboarding_status).to eq('completed')
     expect(organization.onboarding_completed_at).to be_present
   end
 
