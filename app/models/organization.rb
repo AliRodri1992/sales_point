@@ -26,7 +26,7 @@ class Organization < ApplicationRecord
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 
   def start_onboarding!
-    return if onboarding_status_in_progress? || onboarding_status_completed?
+    return if onboarding_status.in?(%w[in_progress completed])
 
     update!(onboarding_status: :in_progress)
   end
@@ -40,6 +40,6 @@ class Organization < ApplicationRecord
   end
 
   def onboarding_completed?
-    onboarding_status_completed?
+    onboarding_status == 'completed'
   end
 end
