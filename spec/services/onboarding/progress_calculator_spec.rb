@@ -40,7 +40,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
   it 'reports partial address completion accurately' do
     organization = create(:organization)
     branch = create(:branch, organization:)
-    branch.address.update_columns(
+    branch.address.assign_attributes(
       street: '',
       exterior_number: '',
       neighborhood: 'Centro',
