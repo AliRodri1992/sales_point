@@ -1,0 +1,73 @@
+---
+ko:
+  admin:
+    dashboard:
+      page_header:
+        title: "대시보드"
+        subtitle: "비즈니스 성과를 한눈에 확인하세요."
+        customize: "대시보드 사용자 지정"
+        new_sale: "새 판매"
+      kpi_grid:
+        sales_today: "오늘의 판매"
+        transactions: "거래"
+        average_ticket: "평균 거래 금액"
+        current_cash: "현재 현금"
+        session_open: "금전함 세션 열림"
+      widgets:
+        quick_actions:
+          title: "빠른 작업"
+          subtitle: "일상적인 운영에 자주 사용하는 작업입니다."
+          new_sale: "새 판매"
+          open_pos: "POS 열기"
+          product: "상품"
+          add_product: "상품 추가"
+          customer: "고객"
+          new_customer: "새 고객"
+          cash_cut: "금전함"
+          check_cash: "금전함 확인"
+        sales:
+          title: "판매 현황"
+          subtitle: "시간에 따른 판매 실적입니다."
+          period_label: "판매 기간"
+          periods:
+            7_days: "최근 7일"
+            30_days: "최근 30일"
+            year: "올해"
+          days:
+            mon: "월"
+            tue: "화"
+            wed: "수"
+            thu: "목"
+            fri: "금"
+            sat: "토"
+            today: "오늘"
+        recent_sales:
+          title: "최근 판매"
+          subtitle: "시스템에 기록된 최신 거래입니다."
+          view_all: "모두 보기"
+          columns:
+            folio: "전표 번호"
+            customer: "고객"
+            method: "결제 방법"
+            total: "합계"
+            status: "상태"
+          payment_methods:
+            card: "카드"
+            cash: "현금"
+            transfer: "은행 이체"
+            qr: "QR 결제"
+          statuses:
+            completed: "완료"
+            pending: "대기 중"
+            cancelled: "취소됨"
+        low_stock:
+          title: "재고 부족"
+          subtitle: "확인이 필요한 상품입니다."
+          alerts:
+            one: "알림 %{count}건"
+            other: "알림 %{count}건"
+          sku: "SKU: %{sku}"
+          units:
+            one: "%{count}개"
+            other: "%{count}개"
+          view_inventory: "재고 보기"
