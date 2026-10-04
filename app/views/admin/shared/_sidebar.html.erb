@@ -32,7 +32,7 @@
           data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>"
           class="<%= sidebar_link_classes('dashboard') %>"
         >
-          <%= icon("chart-pie", class: "size-5") %>
+          <%= delta_sidebar_icon(:dashboard) %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.dashboard') %></span>
         </a>
 
@@ -72,7 +72,7 @@
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.sales') %>"
           >
-            <%= icon("shopping-cart", class: "size-5") %>
+            <%= delta_sidebar_icon(:cash_register) %>
             <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.sales') %></span>
             <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
           </summary>
@@ -109,7 +109,7 @@
           data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
-          <%= icon("banknotes", class: "size-5") %>
+          <%= delta_sidebar_icon(:payments) %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.cash_register') %></span>
         </a>
 
@@ -118,7 +118,7 @@
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.inventory') %>"
           >
-            <%= icon("square-2-stack", class: "size-5") %>
+            <%= delta_sidebar_icon(:inventory) %>
             <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.inventory') %></span>
             <span
               class="sidebar-badge ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-100 px-1.5 text-xs font-semibold text-amber-700"
@@ -189,7 +189,7 @@
           data-tooltip="<%= t('admin.shared.sidebar.customers') %>"
           class="<%= sidebar_link_classes('clients') %>"
         >
-          <%= icon("users", class: "size-5") %>
+          <%= delta_sidebar_icon(:clients) %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.customers') %></span>
         </a>
 
@@ -274,7 +274,7 @@
           data-tooltip="<%= t('admin.shared.sidebar.reports') %>"
           class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
-          <%= icon("chart-bar", class: "size-5") %>
+          <%= delta_sidebar_icon(:reports) %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </a>
 
@@ -283,7 +283,7 @@
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
           >
-            <%= icon("cog-6-tooth", class: "size-5") %>
+            <%= delta_sidebar_icon(:settings) %>
             <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.settings') %></span>
             <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
           </summary>
