@@ -215,17 +215,47 @@ es:
           description: Revisa tu configuración.
           heading: Todo listo
           help: Revisa la configuración y finaliza el onboarding cuando todo esté completo.
-        payment_method: Método de pago inicial
+      fields:
+        company_name: Nombre de la empresa
+        tax_id: RFC
+        business_sector: Giro empresarial
+        select_business_sector: Selecciona el giro empresarial
         currency: Moneda
         select_currency: Selecciona la moneda
         timezone: Zona horaria
         select_timezone: Selecciona la zona horaria
-        select_business_sector: Selecciona el sector empresarial
+        branch_name: Nombre de la sucursal
+        phone: Teléfono
+        street: Calle
+        exterior_number: Número exterior
+        interior_number: Número interior
+        neighborhood: Colonia
+        city: Ciudad
+        state: Estado
+        country: País
+        postal_code: Código postal
+        terminal_name: Nombre de la caja
+        terminal_code: Código de caja
+        terminal_status: Estado
+        branch: Sucursal
+        payment_method: Método de pago inicial
         payment_integration: Integración de pago
         migration_volume: Volumen de migración
         migration_priority: Prioridad de migración
         migration_status: Estado de migración
         team_members: Miembros del equipo
+      sections:
+        company: Negocio
+        fiscal: Información fiscal
+        branches: Sucursal principal
+        terminals: Cajas
+        payments: Pagos
+        migration: Migración
+        team: Equipo
+      statuses:
+        not_started: Pendiente
+        in_progress: En progreso
+        completed: Completado
       migration:
         title: Configuración de migración
         description: Tu solicitud de migración fue creada durante el registro y permanecerá disponible para su procesamiento.
@@ -236,7 +266,6 @@ es:
           completed: Completada
       active: Activa
       not_available: No disponible
-.
   app:
     description: 'Delta POS: sistema de punto de venta inteligente para ventas, inventario
       y operación comercial.'
