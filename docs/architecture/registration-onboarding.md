@@ -20,11 +20,19 @@ The registering account is an employee. Administrator is a SystemRole, not a Use
 
 AdministratorPermissionProvisioner is idempotent and provisions the active permissions that already exist in the permission catalog. It does not invent future permissions.
 
+Registration is non-blocking: after automatic sign-in, the user lands on the Admin Dashboard. The dashboard and sidebar expose persistent onboarding progress without forcing the user into the onboarding flow.
+
 ## Onboarding
 
 Onboarding is informational and progressive. Its overall percentage never gates access to the application. Individual modules may enforce their own operational prerequisites.
 
-Progress is calculated from actual configuration rather than a stored global completion flag.
+Progress is calculated from actual configuration and synchronized to the organization's persistent onboarding state.
+
+The lifecycle is `pending -> in_progress -> completed`. Starting onboarding records an audit event. Each completed step records the organization, user, step, section, percentage, and before/after configuration changes. Completion records a final audit event and timestamp. Administrative reset returns the lifecycle to `pending` without deleting provisioned business data and records the reset.
+
+Once completed, onboarding does not reopen automatically. Later configuration changes are independent of the original onboarding lifecycle; dependent functionality should evaluate its own prerequisites and display contextual setup warnings when necessary.
+
+Onboarding reviews and adjusts resources already provisioned during registration. In particular, cash registers/terminals are not recreated or silently duplicated during onboarding.
 
 ## Soft delete
 
