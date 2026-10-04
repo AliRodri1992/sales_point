@@ -8,7 +8,7 @@ class Terminal < ApplicationRecord
     inactive: 'inactive'
   }
 
-  validates :name, presence: true, length: { in: 2..80 }
+  validates :name, presence: true, length: { in: 2..80 }, on: %i[create update]
   validates :code,
             presence: true,
             length: { in: 2..40 },
@@ -16,10 +16,14 @@ class Terminal < ApplicationRecord
             uniqueness: {
               scope: :branch_id,
               conditions: -> { where(deleted_at: nil) }
-            }
+            },
+            on: %i[create update]
   validates :status,
             presence: true,
-            inclusion: { in: statuses.keys }
+            inclusion: { in: statuses.keys },
+            on: %i[create update]
+
+  validates :name, presence: true, length: { in: 2..80 }, on: :onboarding_step_3
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 end
