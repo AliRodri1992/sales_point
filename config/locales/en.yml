@@ -182,6 +182,13 @@ en:
         active: Active
         inactive: Inactive
       updated: Category updated successfully
+    dashboard:
+      onboarding:
+        title: Complete your initial setup
+        description: Your organization is %{percentage}% configured.
+        continue: Continue setup
+        action_required: Setup required
+        sales_dependency: Before starting sales, complete %{sections}.
     onboarding:
       eyebrow: Initial setup
       title: Set up your Delta POS
