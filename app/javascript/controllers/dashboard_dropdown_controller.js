@@ -1,63 +1,42 @@
 import { Controller } from "@hotwired/stimulus"
+import { closeDashboardSelectors, isDashboardSelectorOpen } from "./selector_coordinator"
 
 export default class extends Controller {
     connect() {
-        this.boundCloseOnClickOutside = this.closeOnClickOutside.bind(this)
-        this.boundCloseOnEscape = this.closeOnEscape.bind(this)
-        this.boundCloseOnSelectorOpened = this.closeOnSelectorOpened.bind(this)
-        this.boundToggleSelector = this.toggleSelector.bind(this)
+        this.boundClick = this.handleClick.bind(this)
+        this.boundOutsideClick = this.handleOutsideClick.bind(this)
+        this.boundEscape = this.handleEscape.bind(this)
 
-        this.element.addEventListener("click", this.boundToggleSelector)
-        document.addEventListener("click", this.boundCloseOnClickOutside)
-        document.addEventListener("keydown", this.boundCloseOnEscape)
-        document.addEventListener("dashboard:selector-opened", this.boundCloseOnSelectorOpened)
+        this.element.addEventListener("click", this.boundClick)
+        document.addEventListener("click", this.boundOutsideClick)
+        document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        this.element.removeEventListener("click", this.boundToggleSelector)
-        document.removeEventListener("click", this.boundCloseOnClickOutside)
-        document.removeEventListener("keydown", this.boundCloseOnEscape)
-        document.removeEventListener("dashboard:selector-opened", this.boundCloseOnSelectorOpened)
+        this.element.removeEventListener("click", this.boundClick)
+        document.removeEventListener("click", this.boundOutsideClick)
+        document.removeEventListener("keydown", this.boundEscape)
     }
 
-    toggleSelector(event) {
+    handleClick(event) {
         if (!event.target.closest("summary")) return
 
         requestAnimationFrame(() => {
-            const details = this.element.querySelector("details")
-
-            if (details?.open) {
-                document.dispatchEvent(new CustomEvent("dashboard:selector-opened", {
-                    detail: { source: this.element }
-                }))
+            if (isDashboardSelectorOpen(this.element)) {
+                closeDashboardSelectors(this.element)
             }
         })
     }
 
-    closeOnClickOutside(event) {
-        if (!this.element.querySelector("details")?.open) return
+    handleOutsideClick(event) {
         if (this.element.contains(event.target)) return
 
-        this.element.querySelector("details").open = false
+        closeDashboardSelectors()
     }
 
-    closeOnEscape(event) {
+    handleEscape(event) {
         if (event.key !== "Escape") return
 
-        const details = this.element.querySelector("details")
-
-        if (details?.open) {
-            details.open = false
-        }
-    }
-
-    closeOnSelectorOpened(event) {
-        if (event.detail?.source === this.element) return
-
-        const details = this.element.querySelector("details")
-
-        if (details?.open) {
-            details.open = false
-        }
+        closeDashboardSelectors()
     }
 }
