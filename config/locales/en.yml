@@ -224,6 +224,7 @@ en:
       reset_button: Reset setup
       reset_confirm: "Are you sure you want to reset onboarding? Saved onboarding progress will be cleared."
       reset: Initial setup reset.
+      incomplete: Complete the initial setup before continuing.
       step_number: "Step %{number}"
       steps:
         "1":
