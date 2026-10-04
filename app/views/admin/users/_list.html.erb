@@ -38,7 +38,7 @@
                 <% if user.system_roles.active.any? %>
                   <div class="flex flex-wrap gap-1.5">
                     <% user.system_roles.active.each do |role| %>
-                      <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"><%= role.name %></span>
+                      <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"><%= system_role_name(role) %></span>
                     <% end %>
                   </div>
                 <% else %>
@@ -101,7 +101,7 @@
           <div class="mt-3 flex items-center gap-1.5 flex-wrap">
             <% if user.system_roles.active.any? %>
               <% user.system_roles.active.each do |role| %>
-                <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"><%= role.name %></span>
+                <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"><%= system_role_name(role) %></span>
               <% end %>
             <% else %>
               <span class="text-slate-400"><%= t('admin.users.index.no_roles') %></span>
