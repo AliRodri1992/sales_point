@@ -31,8 +31,8 @@ RSpec.describe Onboarding::StepUpdater do
     expect(Terminal).not_to receive(:create!)
     expect(terminal_one).to receive(:assign_attributes).with(name: 'Caja Principal')
     expect(terminal_two).to receive(:assign_attributes).with(name: 'Caja Secundaria')
-    expect(terminal_one).to receive(:save!).with(context: :onboardingstep3)
-    expect(terminal_two).to receive(:save!).with(context: :onboardingstep3)
+    expect(terminal_one).to receive(:save!).with(context: :onboardingstep3).and_return(true)
+    expect(terminal_two).to receive(:save!).with(context: :onboardingstep3).and_return(true)
 
     expect(
       described_class.call(
