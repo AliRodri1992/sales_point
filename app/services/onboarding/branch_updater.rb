@@ -18,17 +18,23 @@ module Onboarding
                @organization.branches.not_deleted.first
       return false unless branch
 
-      branch.update(
-        @params.expect(
-          branch: [
-            :name,
-            :phone,
-            { address_attributes: %i[
-              id street exterior_number interior_number neighborhood city state country postal_code
-            ] }
-          ]
-        )
+      attributes = @params.expect(
+        branch: [
+          :name,
+          :phone,
+          { address_attributes: %i[
+            id street exterior_number interior_number neighborhood city state country postal_code
+          ] }
+        ]
       )
+
+      branch.assign_attributes(attributes)
+      return false unless branch.save(context: :onboarding_step_2)
+
+      address = branch.address
+      return true unless address
+
+      address.save(context: :onboarding_step_2)
     end
   end
 end
