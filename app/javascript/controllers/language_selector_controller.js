@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { openDashboardSelector, closeDashboardSelectors } from "./selector_coordinator"
+import { closeDashboardSelectors, openDashboardSelector } from "./selector_coordinator"
 
 export default class extends Controller {
     static targets = ["dropdown"]
