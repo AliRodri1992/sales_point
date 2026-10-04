@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_012000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -189,7 +189,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index "organization_id, lower((email)::text)", name: "idx_employees_org_email_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_employees_on_deleted_at"
     t.index ["organization_id"], name: "index_employees_on_organization_id"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'terminated'::character varying]::text[])", name: "check_employees_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'terminated'::character varying::text])", name: "check_employees_status"
   end
 
   create_table "languages", force: :cascade do |t|
@@ -296,6 +296,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "onboarding_audits", force: :cascade do |t|
+    t.string "action", limit: 50, null: false
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "organization_id", null: false
+    t.string "section", limit: 50
+    t.integer "step"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["action"], name: "index_onboarding_audits_on_action"
+    t.index ["organization_id", "created_at"], name: "index_onboarding_audits_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_onboarding_audits_on_organization_id"
+    t.index ["user_id", "created_at"], name: "index_onboarding_audits_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_onboarding_audits_on_user_id"
+  end
+
   create_table "organization_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
@@ -307,7 +323,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
     t.index ["user_id"], name: "index_organization_memberships_on_user_id"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_org_memberships_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_org_memberships_status"
   end
 
   create_table "organization_migrations", force: :cascade do |t|
@@ -321,9 +337,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index ["deleted_at"], name: "index_organization_migrations_on_deleted_at"
     t.index ["organization_id"], name: "idx_org_migrations_org_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_migrations_on_organization_id"
-    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying, 'inventory'::character varying, 'customers'::character varying, 'all'::character varying]::text[])", name: "check_org_migrations_priority"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_org_migrations_status"
-    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying, '500_5000'::character varying, 'over_5000'::character varying]::text[])", name: "check_org_migrations_volume"
+    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying::text, 'inventory'::character varying::text, 'customers'::character varying::text, 'all'::character varying::text])", name: "check_org_migrations_priority"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'in_progress'::character varying::text, 'completed'::character varying::text])", name: "check_org_migrations_status"
+    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying::text, '500_5000'::character varying::text, 'over_5000'::character varying::text])", name: "check_org_migrations_volume"
   end
 
   create_table "organization_settings", force: :cascade do |t|
@@ -331,11 +347,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.string "currency", limit: 3, null: false
     t.datetime "deleted_at"
     t.bigint "organization_id", null: false
+    t.string "payment_method", limit: 20, default: "cash", null: false
     t.string "timezone", default: "UTC", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
+    t.check_constraint "payment_method::text = ANY (ARRAY['cash'::character varying::text, 'card'::character varying::text, 'qr'::character varying::text])", name: "check_organization_settings_payment_method"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -343,12 +361,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.string "name", limit: 150, null: false
+    t.datetime "onboarding_completed_at"
+    t.integer "onboarding_current_step", default: 1, null: false
+    t.jsonb "onboarding_sections", default: {}, null: false
+    t.string "onboarding_status", limit: 20, default: "pending", null: false
     t.string "status", limit: 20, default: "active", null: false
     t.string "tax_id", limit: 13, null: false
     t.datetime "updated_at", null: false
     t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'suspended'::character varying]::text[])", name: "check_organizations_status"
+    t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
+    t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
+    t.check_constraint "onboarding_status::text = ANY (ARRAY['pending'::character varying::text, 'in_progress'::character varying::text, 'completed'::character varying::text])", name: "check_organizations_onboarding_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'suspended'::character varying::text])", name: "check_organizations_status"
   end
 
   create_table "payment_integrations", force: :cascade do |t|
@@ -362,8 +387,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index ["deleted_at"], name: "index_payment_integrations_on_deleted_at"
     t.index ["organization_id", "provider"], name: "idx_payment_integrations_org_provider_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_payment_integrations_on_organization_id"
-    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying, 'qr'::character varying]::text[])", name: "check_payment_integrations_provider"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name: "check_payment_integrations_status"
+    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying::text, 'qr'::character varying::text])", name: "check_payment_integrations_provider"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'inactive'::character varying::text])", name: "check_payment_integrations_status"
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -614,7 +639,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
     t.index "branch_id, lower((code)::text)", name: "idx_terminals_branch_code_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["branch_id"], name: "index_terminals_on_branch_id"
     t.index ["deleted_at"], name: "index_terminals_on_deleted_at"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_terminals_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_terminals_status"
   end
 
   create_table "translates", force: :cascade do |t|
@@ -707,6 +732,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_130700) do
   add_foreign_key "membership_plan_features", "membership_plans"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "onboarding_audits", "organizations"
+  add_foreign_key "onboarding_audits", "users"
   add_foreign_key "organization_memberships", "organizations"
   add_foreign_key "organization_memberships", "users"
   add_foreign_key "organization_migrations", "organizations"
