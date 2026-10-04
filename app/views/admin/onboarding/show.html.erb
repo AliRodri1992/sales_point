@@ -61,7 +61,7 @@
             <%= form.select "organization[business_sector]",
               options_for_select(%w[grocery fashion restaurant pharmacy].map { |key| [t("registration.step_four.sectors.#{key}"), key] }, @organization.business_sector),
               { include_blank: t("admin.onboarding.fields.select_business_sector") },
-              class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
+              class: "w-full rounded-xl border #{@settings&.errors&.[]( :currency).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
             <%= render "admin/onboarding/field_errors", object: @organization, attribute: :business_sector %>
           </div>
           <div>
@@ -69,7 +69,7 @@
             <%= form.select "organization[currency]",
               options_for_select(%w[MXN USD JPY KRW].map { |key| [t("registration.step_four.currencies.#{key.downcase}"), key] }, @settings&.currency),
               { include_blank: t("admin.onboarding.fields.select_currency") },
-              class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
+              class: "w-full rounded-xl border #{@settings&.errors&.[](:timezone).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
             <%= render "admin/onboarding/field_errors", object: @settings, attribute: :currency %>
           </div>
           <div>
@@ -162,7 +162,7 @@
           <%= form.label "payment[method]", t("admin.onboarding.fields.payment_method"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
           <%= form.select "payment[method]",
             options_for_select(%w[cash card qr].map { |key| [t("registration.step_five.payment_options.#{key}"), key] }, @settings&.payment_method),
-            {}, class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
+            {}, class: "w-full rounded-xl border #{@settings&.errors&.[](:payment_method).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
           <%= render "admin/onboarding/field_errors", object: @settings, attribute: :payment_method %>
         </div>
       <% else %>
