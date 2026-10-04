@@ -147,6 +147,11 @@ ko:
         inactive: 비활성
       updated: 지점이 성공적으로 업데이트되었습니다.
     shared:
+
+      branch_selector:
+        label: 지점
+        no_branch: 지점 없음
+        empty: 사용 가능한 활성 지점이 없습니다.
       sidebar:
         onboarding:
           title: 초기 설정
