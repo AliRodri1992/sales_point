@@ -172,6 +172,11 @@ es:
         open: Ver agentes en línea
       conversation:
         select_user: Selecciona un agente para iniciar una conversación.
+        online: En línea
+        offline: Desconectado
+        close: Cerrar conversación
+        input_placeholder: Escribe un mensaje...
+        send: Enviar mensaje
     breadcrumbs:
       branches: Sucursales
       categories: Categorías
