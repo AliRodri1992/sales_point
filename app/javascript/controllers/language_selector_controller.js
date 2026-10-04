@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { closeDashboardSelectors } from "./selector_coordinator"
+import { openDashboardSelector, closeDashboardSelectors } from "./selector_coordinator"
 
 export default class extends Controller {
     static targets = ["dropdown"]
@@ -14,10 +14,7 @@ export default class extends Controller {
             return
         }
 
-        this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
-            bubbles: true,
-            detail: { source: this.element }
-        }))
+        openDashboardSelector(this.element)
         this.dropdownTarget.classList.remove("hidden")
         this.refreshDropdownContent()
     }
