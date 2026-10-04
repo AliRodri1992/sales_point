@@ -2,15 +2,18 @@
 
 module Onboarding
   class StepUpdater
-    def self.call(organization:, step:, params:, user:)
-      new(organization, step, params, user).call
+    def self.call(organization:, step:, params:, user:, branch: nil, settings: nil, terminals: nil)
+      new(organization, step, params, user, branch, settings, terminals).call
     end
 
-    def initialize(organization, step, params, user)
+    def initialize(organization, step, params, user, branch, settings, terminals)
       @organization = organization
       @step = step
       @params = params
       @user = user
+      @branch = branch
+      @settings = settings
+      @terminals = terminals
       @before_state = {}
       @after_state = {}
     end
@@ -36,10 +39,10 @@ module Onboarding
 
     def execute_step
       case @step
-      when 1 then CompanyUpdater.call(@organization, @params)
-      when 2 then BranchUpdater.call(@organization, @params)
-      when 3 then TerminalsUpdater.call(@organization, @params)
-      when 4 then PaymentUpdater.call(@organization, @params)
+      when 1 then CompanyUpdater.call(@organization, @params, settings: @settings)
+      when 2 then BranchUpdater.call(@organization, @params, branch: @branch)
+      when 3 then TerminalsUpdater.call(@organization, @params, terminals: @terminals)
+      when 4 then PaymentUpdater.call(@organization, @params, settings: @settings)
       when 5 then complete_onboarding?
       else false
       end
