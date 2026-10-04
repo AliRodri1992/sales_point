@@ -8,6 +8,7 @@ class Organization < ApplicationRecord
   has_many :organization_settings, dependent: :destroy
   has_many :payment_integrations, dependent: :restrict_with_exception
   has_many :organization_migrations, dependent: :restrict_with_exception
+  has_many :onboarding_audits, dependent: :restrict_with_exception
 
   enum :status, { active: 'active', inactive: 'inactive', suspended: 'suspended' }
   enum :onboarding_status, { pending: 'pending', in_progress: 'in_progress', completed: 'completed' }
