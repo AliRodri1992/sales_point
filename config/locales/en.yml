@@ -194,6 +194,9 @@ en:
       title: Set up your Delta POS
       description: Complete these steps to configure your business before entering the administration dashboard.
       overall: Overall progress
+      reset_button: Reset setup
+      reset_confirm: "Are you sure you want to reset onboarding? Saved onboarding progress will be cleared."
+      reset: Initial setup reset.
       step_number: "Step %{number}"
       steps:
         "1":

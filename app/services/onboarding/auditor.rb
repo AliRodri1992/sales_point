@@ -2,14 +2,12 @@
 
 module Onboarding
   class Auditor
-    def self.call(organization:, user:, action:, step: nil, section: nil, metadata: {})
+    def self.call(organization:, user:, action:, **attributes)
       OnboardingAudit.create!(
         organization:,
         user:,
         action:,
-        step:,
-        section:,
-        metadata:
+        **attributes
       )
     end
   end

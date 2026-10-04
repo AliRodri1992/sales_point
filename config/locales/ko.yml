@@ -194,6 +194,9 @@ ko:
       title: Delta POS 설정
       description: 관리자 대시보드에 들어가기 전에 비즈니스 설정을 완료하세요.
       overall: 전체 진행률
+      reset_button: 설정 초기화
+      reset_confirm: "온보딩을 초기화하시겠습니까? 저장된 온보딩 진행률이 삭제됩니다."
+      reset: 초기 설정이 초기화되었습니다.
       step_number: "%{number}단계"
       steps:
         "1":

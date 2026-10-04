@@ -24,7 +24,9 @@ module ApplicationHelper
   end
 
   def onboarding_progress_for_current_user
-    organization = current_user&.organizations&.active_records&.first
+    return unless current_user
+
+    organization = current_user.organizations.active_records.first
     return unless organization && !organization.onboarding_completed?
 
     Onboarding::ProgressCalculator.call(organization)

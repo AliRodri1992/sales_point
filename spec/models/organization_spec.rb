@@ -29,6 +29,19 @@ RSpec.describe Organization, type: :model do
     expect(organization.onboarding_current_step).to eq(1)
   end
 
+  it 'starts onboarding without changing a completed organization' do
+    organization = create(:organization)
+    organization.start_onboarding!
+
+    expect(organization).to be_onboarding_status_in_progress
+
+    organization.complete_onboarding!
+    organization.start_onboarding!
+
+    expect(organization).to be_onboarding_status_completed
+    expect(organization.onboarding_completed_at).to be_present
+  end
+
   it 'soft deletes and restores' do
     organization = create(:organization)
     organization.destroy!

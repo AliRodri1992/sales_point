@@ -5,11 +5,25 @@ module Admin
 
     def index
       organization = current_user.organizations.active_records.first
-      @onboarding_progress = if organization && !organization.onboarding_completed?
-                               Onboarding::ProgressCalculator.call(organization)
-                             end
+      @onboarding_progress = onboarding_progress_data(organization)
+      @sales_requirements = sales_requirements_data(organization) if organization
+      @dashboard_preferences = dashboard_preferences_data
+    end
 
-      @dashboard_preferences = current_user.dashboard_preferences.map do |preference|
+    def onboarding_progress_data(organization)
+      return unless organization && !organization.onboarding_completed?
+
+      Onboarding::ProgressCalculator.call(organization)
+    end
+
+    def sales_requirements_data(organization)
+      %i[branches terminals payments].index_with do |section|
+        Onboarding::Requirement.call(organization:, section:)
+      end
+    end
+
+    def dashboard_preferences_data
+      current_user.dashboard_preferences.map do |preference|
         {
           grid_type: preference.grid_type,
           widget_id: preference.widget_id,

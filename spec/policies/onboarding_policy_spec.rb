@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
-RSpec.describe OnboardingPolicy do
+RSpec.describe OnboardingPolicy, type: :policy do
   subject(:policy) { described_class.new(user, :onboarding) }
 
-  let(:user) { create(:user) }
+  let(:user) { instance_double(User) }
 
-  context 'when the user is an administrator with an organization' do
-    before do
-      role = create(:system_role, :system, code: 'administrator')
-      create(:user_role, user:, system_role: role)
-      create(:organization_membership, user:)
-    end
-
-    it 'permits access' do
-      expect(policy.show?).to be(true)
-    end
+  before do
+    allow(user).to receive(:admin?).and_return(true)
+    allow(user).to receive_message_chain(:organizations, :active_records, :exists?).and_return(true)
   end
 
-  it 'denies access without administrator role' do
-    expect(policy.show?).to be(false)
+  it { is_expected.to permit_action(:show) }
+  it { is_expected.to permit_action(:reset) }
+
+  context 'when the user is not an administrator' do
+    before { allow(user).to receive(:admin?).and_return(false) }
+
+    it { is_expected.not_to permit_action(:show) }
+    it { is_expected.not_to permit_action(:reset) }
   end
 end

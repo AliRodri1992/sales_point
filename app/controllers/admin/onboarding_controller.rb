@@ -71,24 +71,27 @@ module Admin
 
     def reset
       authorize :onboarding, :reset?
+      @organization.update!(reset_attributes)
+      log_reset_action
+      redirect_to admin_onboarding_path(step: 1), flash: { swal_message: t('admin.onboarding.reset') }
+    end
 
-      ApplicationRecord.transaction do
-        @organization.update!(
-          onboarding_status: :pending,
-          onboarding_current_step: 1,
-          onboarding_sections: {},
-          onboarding_completed_at: nil
-        )
-        Onboarding::Auditor.call(
-          organization: @organization,
-          user: current_user,
-          action: 'reset',
-          metadata: { 'reason' => 'administrative_reset' }
-        )
-      end
+    def reset_attributes
+      {
+        onboarding_status: :pending,
+        onboarding_current_step: 1,
+        onboarding_sections: {},
+        onboarding_completed_at: nil
+      }
+    end
 
-      redirect_to admin_onboarding_path(step: 1),
-                  flash: { swal_message: t('admin.onboarding.reset') }
+    def log_reset_action
+      Onboarding::Auditor.call(
+        organization: @organization,
+        user: current_user,
+        action: 'reset',
+        metadata: { 'reason' => 'administrative_reset' }
+      )
     end
 
     def success_path

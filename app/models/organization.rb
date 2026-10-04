@@ -15,8 +15,8 @@ class Organization < ApplicationRecord
 
   validates :name, presence: true, length: { in: 2..150 }
   validates :tax_id, presence: true, length: { in: 12..13 },
-            format: { with: /\A[A-Z0-9]+\z/i },
-            uniqueness: { conditions: -> { where(deleted_at: nil) } }
+                     format: { with: /\A[A-Z0-9]+\z/i },
+                     uniqueness: { conditions: -> { where(deleted_at: nil) } }
   validates :business_sector, presence: true, length: { maximum: 50 }
   validates :status, presence: true
   validates :onboarding_status, presence: true

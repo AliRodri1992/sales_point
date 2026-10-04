@@ -195,6 +195,9 @@ es:
       title: Configura tu Delta POS
       description: Completa estos pasos para configurar tu negocio antes de entrar al panel de administración.
       overall: Progreso general
+      reset_button: Reiniciar configuración
+      reset_confirm: "¿Seguro que deseas reiniciar el onboarding? El progreso guardado se perderá."
+      reset: Configuración inicial reiniciada.
       step_number: "Paso %{number}"
       steps:
         "1":

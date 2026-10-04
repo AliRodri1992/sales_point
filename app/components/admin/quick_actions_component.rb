@@ -2,26 +2,22 @@
 
 module Admin
   class QuickActionsComponent < ViewComponent::Base
-    def initialize(onboarding_progress: nil)
+    def initialize(onboarding_progress: nil, sales_requirements: nil)
+      super()
       @onboarding_progress = onboarding_progress
+      @sales_requirements = sales_requirements || {}
     end
 
     def sales_ready?
       return true unless @onboarding_progress
 
-      required_sections = %i[branches terminals payments]
-      required_sections.all? do |section|
-        @onboarding_progress[:sections].find { |item| item[:key] == section }&.fetch(:percentage, 0) == 100
-      end
+      @sales_requirements.values.all? { |requirement| requirement[:complete] }
     end
 
     def sales_missing_sections
       return [] unless @onboarding_progress
 
-      %i[branches terminals payments].filter_map do |section|
-        item = @onboarding_progress[:sections].find { |entry| entry[:key] == section }
-        section unless item && item[:percentage] == 100
-      end
+      @sales_requirements.filter_map { |section, requirement| section unless requirement[:complete] }
     end
 
     Action = Data.define(
