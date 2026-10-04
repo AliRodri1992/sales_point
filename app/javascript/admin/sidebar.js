@@ -52,21 +52,24 @@ const showSidebarTooltip = (event) => {
     tooltip.textContent = message
     document.body.appendChild(tooltip)
     positionSidebarTooltip(target)
+
     requestAnimationFrame(() => tooltip.classList.add("is-visible"))
 }
 
 const refreshSidebarTooltip = (event) => {
     const tooltip = sidebarTooltip()
     const target = event.target.closest("[data-tooltip]")
-    if (tooltip && target) positionSidebarTooltip(target)
+
+    if (tooltip && target) {
+        positionSidebarTooltip(target)
+    }
 }
 
 const flyoutItemMarkup = (submenu) => {
     const fragment = document.createDocumentFragment()
 
     submenu.querySelectorAll(":scope > a, :scope > details").forEach((item) => {
-        const clone = item.cloneNode(true)
-        fragment.appendChild(clone)
+        fragment.appendChild(item.cloneNode(true))
     })
 
     return fragment
@@ -82,16 +85,18 @@ const positionSidebarFlyout = (target, flyout) => {
     const flyoutHeight = flyout.offsetHeight
     const preferredTop = rect.top
     const maxTop = window.innerHeight - flyoutHeight - viewportPadding
-    const top = Math.max(viewportPadding, Math.min(preferredTop, maxTop))
 
-    flyout.style.top = `${top}px`
+    flyout.style.top = `${Math.max(viewportPadding, Math.min(preferredTop, maxTop))}px`
 }
 
 const showSidebarFlyout = (target) => {
     if (!isCollapsedSidebar()) return
 
     const submenu = target.parentElement?.querySelector(":scope > .sidebar-submenu")
-    if (!submenu) return
+    if (!submenu) {
+        removeSidebarFlyout()
+        return
+    }
 
     removeSidebarTooltip()
     removeSidebarFlyout()
@@ -101,11 +106,15 @@ const showSidebarFlyout = (target) => {
     flyout.id = FLYOUT_ID
     flyout.className = "admin-sidebar-flyout"
     flyout.setAttribute("role", "menu")
-    flyout.setAttribute("aria-label", target.querySelector(".sidebar-label")?.textContent?.trim() || "")
+    flyout.setAttribute(
+        "aria-label",
+        target.querySelector(".sidebar-label")?.textContent?.trim() || ""
+    )
 
     const title = document.createElement("div")
     title.className = "admin-sidebar-flyout__title"
-    title.textContent = target.querySelector(".sidebar-label")?.textContent?.trim() || ""
+    title.textContent =
+        target.querySelector(".sidebar-label")?.textContent?.trim() || ""
 
     const items = document.createElement("div")
     items.className = "admin-sidebar-flyout__items"
@@ -116,48 +125,77 @@ const showSidebarFlyout = (target) => {
     positionSidebarFlyout(target, flyout)
 
     requestAnimationFrame(() => flyout.classList.add("is-visible"))
-
-    flyout.addEventListener("mouseleave", () => {
-        if (!target.matches(":hover")) removeSidebarFlyout()
-    })
 }
 
-const refreshSidebarFlyout = (target) => {
+const refreshSidebarFlyout = () => {
     const flyout = sidebarFlyout()
-    if (flyout && isCollapsedSidebar()) {
-        positionSidebarFlyout(target, flyout)
+
+    if (flyout && activeFlyoutTarget && isCollapsedSidebar()) {
+        positionSidebarFlyout(activeFlyoutTarget, flyout)
     }
 }
 
-document.addEventListener("mouseover", (event) => {
+const sidebarSummaryAtEvent = (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    const target = event.target.closest(".sidebar-catalog > summary")
+    if (!sidebar?.classList.contains("sidebar-collapsed")) return null
 
-    if (target && sidebar?.contains(target) && sidebar.classList.contains("sidebar-collapsed")) {
-        const cameFromInsideTarget = event.relatedTarget && target.contains(event.relatedTarget)
+    const target = event.target instanceof Element
+        ? event.target.closest(".sidebar-catalog > summary")
+        : null
 
-        if (!cameFromInsideTarget && activeFlyoutTarget !== target) {
-            showSidebarFlyout(target)
+    return target && sidebar.contains(target) ? target : null
+}
+
+const syncFlyoutWithPointer = (event) => {
+    const summary = sidebarSummaryAtEvent(event)
+
+    if (summary) {
+        if (activeFlyoutTarget !== summary) {
+            showSidebarFlyout(summary)
         }
 
         return
     }
 
+    const sidebar = document.getElementById("adminSidebar")
+    const flyout = sidebarFlyout()
+
+    if (
+        activeFlyoutTarget &&
+        sidebar?.contains(event.target) &&
+        !flyout?.contains(event.target)
+    ) {
+        removeSidebarFlyout()
+    }
+}
+
+document.addEventListener("mouseover", (event) => {
+    syncFlyoutWithPointer(event)
+
+    if (sidebarSummaryAtEvent(event)) return
+
     showSidebarTooltip(event)
 })
 
 document.addEventListener("mouseout", (event) => {
-    const target = event.target.closest("[data-tooltip]")
+    const target = event.target instanceof Element
+        ? event.target.closest("[data-tooltip]")
+        : null
+
     if (!target) return
 
     const nextTarget = event.relatedTarget
-    if (nextTarget && target.contains(nextTarget)) return
+
+    if (nextTarget instanceof Node && target.contains(nextTarget)) return
 
     removeSidebarTooltip()
 })
 
 document.addEventListener("focusin", (event) => {
-    const target = event.target.closest(".sidebar-catalog > summary")
+    const target = event.target instanceof Element
+        ? event.target.closest(".sidebar-catalog > summary")
+        : null
+
     if (target && document.getElementById("adminSidebar")?.contains(target)) {
         showSidebarFlyout(target)
         return
@@ -167,8 +205,14 @@ document.addEventListener("focusin", (event) => {
 })
 
 document.addEventListener("focusout", (event) => {
-    const target = event.target.closest(".sidebar-catalog > summary")
-    if (target && !event.relatedTarget?.closest?.("#adminSidebarTooltip, #adminSidebarFlyout")) {
+    const target = event.target instanceof Element
+        ? event.target.closest(".sidebar-catalog > summary")
+        : null
+
+    if (
+        target &&
+        !event.relatedTarget?.closest?.("#adminSidebarTooltip, #adminSidebarFlyout")
+    ) {
         removeSidebarFlyout()
     }
 
@@ -177,15 +221,24 @@ document.addEventListener("focusout", (event) => {
 
 document.addEventListener("click", (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    const target = event.target.closest(".sidebar-catalog > summary")
+    const target = event.target instanceof Element
+        ? event.target.closest(".sidebar-catalog > summary")
+        : null
 
-    if (target && sidebar?.contains(target) && sidebar.classList.contains("sidebar-collapsed")) {
+    if (
+        target &&
+        sidebar?.contains(target) &&
+        sidebar.classList.contains("sidebar-collapsed")
+    ) {
         event.preventDefault()
         showSidebarFlyout(target)
         return
     }
 
-    if (!event.target.closest("#adminSidebarFlyout") && !event.target.closest(".sidebar-catalog > summary")) {
+    if (
+        !event.target.closest?.("#adminSidebarFlyout") &&
+        !event.target.closest?.(".sidebar-catalog > summary")
+    ) {
         removeSidebarFlyout()
     }
 })
@@ -197,7 +250,10 @@ document.addEventListener("keydown", (event) => {
         return
     }
 
-    if ((event.key === "Enter" || event.key === " ") && event.target.matches(".sidebar-catalog > summary")) {
+    if (
+        (event.key === "Enter" || event.key === " ") &&
+        event.target.matches(".sidebar-catalog > summary")
+    ) {
         if (!isCollapsedSidebar()) return
 
         event.preventDefault()
@@ -218,12 +274,7 @@ window.addEventListener("resize", () => {
 })
 
 document.addEventListener("mousemove", (event) => {
+    syncFlyoutWithPointer(event)
     refreshSidebarTooltip(event)
-
-    const target = event.target.closest(".sidebar-catalog > summary")
-    if (!target || !isCollapsedSidebar()) return
-
-    if (sidebarFlyout() && activeFlyoutTarget === target) {
-        refreshSidebarFlyout(target)
-    }
+    refreshSidebarFlyout()
 })
