@@ -380,6 +380,36 @@ en:
       created: User created successfully.
       destroyed: User deleted successfully.
       updated: User updated successfully.
+      statuses:
+        active: Active
+        inactive: Inactive
+        suspended: Suspended
+        deleted: Deleted
+      user_types:
+        employee: Employee
+        client: Client
+        supplier: Supplier
+      themes:
+        theme-material-red: Material red
+        theme-material-navy: Material navy
+        theme-material-school-yellow: Material school yellow
+        theme-saas-blue: SaaS blue
+        theme-emerald-green: Emerald green
+        theme-commercial-orange: Commercial orange
+        theme-industrial-mono: Industrial monochrome
+        theme-tech-purple: Tech purple
+        theme-slate-charcoal: Slate charcoal
+        theme-ocean-cyan: Ocean cyan
+        theme-candy-pink: Candy pink
+        theme-earth-brown: Earth brown
+        theme-wheat-yellow: Wheat yellow
+        theme-silver-grey: Silver grey
+        theme-supermarket-red: Supermarket red
+        theme-mint-turquoise: Mint turquoise
+        theme-orchid-violet: Orchid violet
+        theme-lime-green: Lime green
+        theme-denim-blue: Denim blue
+        theme-delta-emerald: Delta emerald
       form:
         buttons:
           back: Back to users
