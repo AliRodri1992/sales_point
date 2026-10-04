@@ -14,6 +14,12 @@ export function closeDashboardSelectors(except = null) {
     })
 }
 
+export function openDashboardSelector(container) {
+    if (!container) return
+
+    closeDashboardSelectors(container)
+}
+
 export function isDashboardSelectorOpen(container) {
     if (!container) return false
 
