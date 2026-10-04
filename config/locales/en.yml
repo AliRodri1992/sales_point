@@ -171,6 +171,11 @@ en:
         open: View online agents
       conversation:
         select_user: Select an agent to start a conversation.
+        online: Online
+        offline: Offline
+        close: Close conversation
+        input_placeholder: Write a message...
+        send: Send message
     breadcrumbs:
       branches: Branches
       categories: Categories
