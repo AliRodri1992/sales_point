@@ -38,7 +38,7 @@ module Users
     end
 
     def after_sign_up_path_for(_resource)
-      admin_onboarding_path
+      admin_dashboard_path
     end
   end
 end
