@@ -53,7 +53,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     progress = described_class.call(organization)
     section = progress[:sections].find { |item| item[:key] == :branches }
 
-    expect(section[:percentage]).to eq(42)
+    expect(section[:percentage]).to eq(71)
     expect(section[:status]).to eq('in_progress')
   end
 
