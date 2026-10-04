@@ -148,6 +148,48 @@ en:
       updated: Branch updated successfully.
     shared:
 
+      notifications:
+        title: Notifications
+        subtitle: "%{count} unread notifications"
+        subtitle_none: No new notifications
+        empty: You have no notifications
+        mark_all_read: Mark all as read
+        performed_by: Performed by %{user}
+        actor_unknown: Unknown user
+        new_message: New message
+        message_unavailable: Message unavailable
+        types:
+          language: Language
+          category: Category
+          product: Product
+          branch: Branch
+          client: Client
+          system_role: System role
+        language:
+          created: "Language %{name} created"
+          updated: "Language %{name} updated"
+          destroyed: "Language %{name} deleted"
+        category:
+          created: "Category %{name} created"
+          updated: "Category %{name} updated"
+          destroyed: "Category %{name} deleted"
+        product:
+          created: "Product %{name} created"
+          updated: "Product %{name} updated"
+          destroyed: "Product %{name} deleted"
+        branch:
+          created: "Branch %{name} created"
+          updated: "Branch %{name} updated"
+          destroyed: "Branch %{name} deleted"
+        client:
+          created: "Client %{name} created"
+          updated: "Client %{name} updated"
+          destroyed: "Client %{name} deleted"
+        system_role:
+          created: "System role %{name} created"
+          updated: "System role %{name} updated"
+          destroyed: "System role %{name} deleted"
+
       branch_selector:
         label: Branch
         no_branch: No branch
