@@ -4,22 +4,8 @@ import { closeDashboardSelectors } from "./selector_coordinator"
 export default class extends Controller {
     static targets = ["dropdown"]
 
-    connect() {
-        this.boundOutsideClick = this.closeOnClickOutside.bind(this)
-        this.boundEscape = this.closeOnEscape.bind(this)
-
-        document.addEventListener("click", this.boundOutsideClick)
-        document.addEventListener("keydown", this.boundEscape)
-    }
-
-    disconnect() {
-        document.removeEventListener("click", this.boundOutsideClick)
-        document.removeEventListener("keydown", this.boundEscape)
-    }
-
     toggle(event) {
         event.preventDefault()
-        event.stopPropagation()
 
         const willOpen = this.dropdownTarget.classList.contains("hidden")
 
@@ -28,27 +14,16 @@ export default class extends Controller {
             return
         }
 
-        document.dispatchEvent(new CustomEvent("dashboard:selector:open", {
-            detail: { source: this.element }
-        }))
+        this.dispatch("open", {
+            detail: { source: this.element },
+            bubbles: true
+        })
         this.dropdownTarget.classList.remove("hidden")
         this.refreshDropdownContent()
     }
 
     close() {
         this.dropdownTarget.classList.add("hidden")
-    }
-
-    closeOnClickOutside(event) {
-        if (!this.element.contains(event.target)) {
-            closeDashboardSelectors()
-        }
-    }
-
-    closeOnEscape(event) {
-        if (event.key === "Escape") {
-            closeDashboardSelectors()
-        }
     }
 
     async refreshDropdownContent() {
