@@ -646,7 +646,7 @@ es:
           per_page_label: Mostrar
           prev: Anterior
         search_placeholder: Buscar por nombre o código...
-        subtitle: Administra las categorías o departos de tu negocio.
+        subtitle: Administra las categorías o departamentos de tu negocio.
         title: Categorías
         total_count: "%{count} categorías registradas"
       new:
@@ -802,7 +802,7 @@ es:
       credit_limit_placeholder: ej. 5000.00
       email: Email
       email_placeholder: ej. cliente@empresa.com
-      fiscal_regime: Regimen fiscal
+      fiscal_regime: Régimen fiscal
       fiscal_regime_blank: Selecciona el régimen fiscal
       name: Nombre
       name_placeholder: Nombre del cliente
