@@ -16,7 +16,7 @@ module Onboarding
                @organization.branches.not_deleted.first
       return false unless branch
 
-      branch.update!(
+      branch.update(
         @params.expect(
           branch: [
             :name,
