@@ -36,6 +36,34 @@ es:
         status: Estado
         stock: Existencias
         view_count: Contador de vistas
+      organization:
+        name: Nombre
+        tax_id: RFC
+        business_sector: Giro empresarial
+        status: Estado
+        onboarding_status: Estado de configuración
+        onboarding_current_step: Paso actual de configuración
+      branch:
+        name: Nombre
+        phone: Teléfono
+        status: Estado
+      address:
+        street: Calle
+        exterior_number: Número exterior
+        interior_number: Número interior
+        neighborhood: Colonia
+        city: Ciudad
+        state: Estado
+        country: País
+        postal_code: Código postal
+      terminal:
+        name: Nombre
+        code: Código
+        status: Estado
+      organization_setting:
+        currency: Moneda
+        timezone: Zona horaria
+        payment_method: Método de pago
       user:
         current_password: Contraseña actual
         email: Correo electrónico
@@ -52,6 +80,9 @@ es:
       product: Producto
       sat_currency: Moneda SAT
       system_role: Rol del sistema
+      organization: Organización
+      organization_setting: Configuración de la organización
+      terminal: Caja registradora
       user: Usuario
   admin:
     branches:
