@@ -18,6 +18,15 @@
 </head>
 
 <body class="min-h-full bg-slate-100 text-slate-900 antialiased">
+<% if session[:swal_message].present? %>
+  <div
+    data-controller="swal-flash"
+    data-swal-flash-message-value="<%= session.delete(:swal_message) %>"
+    data-swal-flash-icon-value="<%= session.delete(:swal_icon) || 'success' %>"
+    class="hidden"
+  ></div>
+<% end %>
+
 <script
   id="javascriptTranslations" type="application/json">
   <%= raw javascript_dashboard_translations %>
@@ -34,13 +43,6 @@
     <main class="flex-1 px-4 py-6 lg:px-6">
       <%= turbo_frame_tag "flash" do %>
         <%= render "admin/shared/flash" %>
-      <% end %>
-
-      <% if flash[:swal_message].present? %>
-        <div data-controller="swal-flash"
-             data-swal-flash-message-value="<%= flash[:swal_message] %>"
-             data-swal-flash-icon-value="<%= flash[:swal_icon].presence || "success" %>"
-             class="hidden"></div>
       <% end %>
 
       <%= yield %>
