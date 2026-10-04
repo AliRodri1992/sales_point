@@ -10,7 +10,6 @@ export function closeDashboardSelectors(except = null) {
             menu.classList.add("hidden")
         })
 
-        container.querySelector("#notificationsMenu")?.classList.add("hidden")
         container.querySelector("#notificationsButton")?.setAttribute("aria-expanded", "false")
 
         container.querySelectorAll('[data-language-selector-target="dropdown"]').forEach((dropdown) => {
@@ -31,14 +30,17 @@ export function isDashboardSelectorOpen(container) {
     return detailsOpen || menusOpen
 }
 
-const closeOnDocumentClick = (event) => {
+const closeOtherSelectorsAfterClick = (event) => {
     const selector = event.target instanceof Element
         ? event.target.closest("[data-dashboard-selector]")
         : null
 
-    if (!selector) {
-        closeDashboardSelectors()
+    if (selector) {
+        closeDashboardSelectors(selector)
+        return
     }
+
+    closeDashboardSelectors()
 }
 
-document.addEventListener("click", closeOnDocumentClick)
+document.addEventListener("click", closeOtherSelectorsAfterClick)
