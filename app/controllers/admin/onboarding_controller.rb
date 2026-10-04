@@ -8,6 +8,8 @@ module Admin
     before_action :authorize_onboarding
 
     def show
+      return redirect_to admin_dashboard_path if @organization.onboarding_completed?
+
       start_onboarding
       load_onboarding
     end
