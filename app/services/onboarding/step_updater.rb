@@ -28,7 +28,7 @@ module Onboarding
         raise ActiveRecord::Rollback unless result
 
         persist_progress
-        advance_step unless @step == 5
+        advance_step if @step == @organization.onboarding_current_step && @step < 5
         success = true
       end
 
