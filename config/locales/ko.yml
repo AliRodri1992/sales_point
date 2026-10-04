@@ -218,6 +218,350 @@ ko:
         close: 대화 닫기
         input_placeholder: 메시지를 입력하세요...
         send: 메시지 보내기
+    languages:
+      confirm:
+        cancel: 취소
+      created: 언어가 성공적으로 생성되었습니다
+      destroyed: 언어가 성공적으로 삭제되었습니다
+      edit:
+        subtitle: 언어 정보를 업데이트합니다.
+        title: "%{name} 수정"
+      form:
+        cancel: 취소
+        code: 코드
+        code_hint: 고유한 언어 코드입니다.
+        code_placeholder: "예: ko"
+        create: 언어 생성
+        flag_hint: ISO 국기 코드입니다(예: kr).
+        flag_iso: 국기 코드
+        flag_placeholder: "예: kr"
+        name: 이름
+        name_placeholder: "예: 한국어"
+        status: 상태
+        update: 언어 업데이트
+      index:
+        card_title: 등록된 언어
+        columns:
+          actions: 작업
+          code: 코드
+          flag: 국기
+          language: 언어
+          status: 상태
+        confirm_delete: 이 언어를 삭제하시겠습니까?
+        delete: 삭제
+        edit: 수정
+        empty_subtitle: 첫 번째 언어를 추가하여 시작하세요.
+        empty_title: 아직 언어가 없습니다
+        filters:
+          all_statuses: 모든 상태
+          apply: 적용
+        new: 새 언어
+        pagination:
+          next: 다음
+          per_page_label: 표시
+          prev: 이전
+        search_placeholder: 이름 또는 코드로 검색...
+        subtitle: Delta POS에서 사용할 언어를 관리하세요.
+        title: 언어
+        total_count: 등록된 언어 %{count}개
+      new:
+        subtitle: 카탈로그에 언어를 추가합니다.
+        title: 새 언어
+      show:
+        close: 닫기
+        subtitle: 언어의 세부 정보를 확인하세요.
+        title: 언어 상세 정보
+      statuses:
+        active: 활성
+        inactive: 비활성
+    products:
+      confirm:
+        cancel: 취소
+      created: 상품이 성공적으로 생성되었습니다
+      destroyed: 상품이 성공적으로 삭제되었습니다
+      edit:
+        back: 상품 목록으로
+        label: 상품 수정
+        subtitle: 상품 정보를 업데이트합니다.
+      form:
+        additional_info: 추가 정보
+        barcode: 바코드
+        barcode_placeholder: "예: 7501234567890"
+        category: 카테고리
+        code: 코드
+        code_hint: 고유한 상품 코드입니다.
+        code_placeholder: "예: PROD-0001"
+        cost: 원가
+        cost_hint: 상품의 매입 원가입니다.
+        cost_placeholder: "예: 100.00"
+        create: 상품 생성
+        description: 설명
+        description_placeholder: 상품 설명
+        featured: 추천 상품
+        featured_desc: 이 상품을 추천 상품으로 표시합니다.
+        gross_margin: 매출 총이익
+        hints:
+          max_stock: 권장 최대 재고 수준을 설정합니다.
+        image: 이미지
+        image_help: 상품 이미지를 선택하세요.
+        margin: 마진
+        max_stock: 최대 재고
+        max_stock_placeholder: "예: 100"
+        min_stock: 최소 재고
+        min_stock_placeholder: "예: 10"
+        name: 이름
+        name_placeholder: 상품 이름
+        position: 표시 순서
+        position_hint: 상품 표시 순서입니다.
+        position_placeholder: "예: 1"
+        price: 판매 가격
+        price_hint: 상품 판매 가격입니다.
+        price_placeholder: "예: 199.99"
+        sat_tax: SAT 세금
+        sat_unit_key: SAT 단위
+        sku: SKU
+        sku_placeholder: "예: SKU-ABC12345"
+        status: 상태
+        stock: 재고
+        stock_placeholder: "예: 50"
+        total_value: 총 가치
+        update: 상품 업데이트
+      index:
+        card_title: 등록된 상품
+        columns:
+          actions: 작업
+          category: 카테고리
+          code: 코드
+          featured: 추천
+          name: 이름
+          price: 가격
+          status: 상태
+          stock: 재고
+        confirm_delete: 이 상품을 삭제하시겠습니까?
+        delete: 삭제
+        edit: 수정
+        empty_subtitle: 첫 번째 상품을 추가하여 시작하세요.
+        empty_title: 아직 상품이 없습니다
+        filters:
+          all_featured: 전체
+          apply: 적용
+        new: 새 상품
+        pagination:
+          next: 다음
+          per_page_label: 표시
+          prev: 이전
+        search_placeholder: 이름 또는 코드로 검색...
+        subtitle: 상품 카탈로그를 관리하세요.
+        title: 상품
+        total_count: 등록된 상품 %{count}개
+      new:
+        back: 상품 목록으로
+        subtitle: 카탈로그에 상품을 추가합니다.
+        title: 새 상품
+      show:
+        back: 상품 목록으로
+        close: 닫기
+        no_image: 사용 가능한 이미지가 없습니다
+        subtitle: 상품의 세부 정보를 확인하세요.
+        title: 상품 상세 정보
+      statuses:
+        active: 활성
+        inactive: 비활성
+      updated: 상품이 성공적으로 업데이트되었습니다
+    users:
+      actions:
+        delete: 사용자 삭제
+        edit: 사용자 수정
+        view: 사용자 보기
+      cannot_delete_self: 자신의 사용자를 삭제할 수 없습니다.
+      confirm:
+        cancel: 취소
+      confirm_delete: 이 사용자를 삭제하시겠습니까?
+      created: 사용자가 성공적으로 생성되었습니다.
+      destroyed: 사용자가 성공적으로 삭제되었습니다.
+      updated: 사용자가 성공적으로 업데이트되었습니다.
+      form:
+        buttons:
+          back: 사용자 목록으로
+          create: 사용자 생성
+          update: 사용자 업데이트
+        edit_title: "%{name} 수정"
+        fields:
+          email: 이메일
+          language: 언어
+          language_placeholder: 언어를 선택하세요
+          password: 비밀번호
+          password_confirmation: 비밀번호 확인
+          status: 상태
+          status_placeholder: 상태를 선택하세요
+          system_roles: 시스템 역할
+          theme: 테마
+          user_type: 사용자 유형
+          user_type_placeholder: 사용자 유형을 선택하세요
+          username: 사용자 이름
+        new_title: 새 사용자
+        password_hint: 현재 비밀번호를 유지하려면 비워 두세요.
+        subtitle: 사용자 계정, 접근 권한 및 환경설정을 구성하세요.
+      index:
+        columns:
+          actions: 작업
+          created_at: 생성일
+          email: 이메일
+          roles: 역할
+          status: 상태
+          user_type: 사용자 유형
+          username: 사용자 이름
+        empty:
+          subtitle: 첫 번째 사용자를 만들어 시작하세요.
+          title: 사용자가 없습니다
+        filters:
+          all_roles: 모든 역할
+          all_statuses: 모든 상태
+          all_types: 모든 유형
+          apply: 적용
+          reset: 초기화
+          search_placeholder: 이메일 또는 사용자 이름으로 검색...
+        new: 새 사용자
+        no_data: "—"
+        no_roles: 역할 없음
+        page_title: 사용자 | Delta POS
+        pagination:
+          navigation: 사용자 페이지 탐색
+          next: 다음
+          per_page_label: 표시
+          prev: 이전
+        subtitle: 사용자와 접근 권한을 관리하세요.
+        title: 사용자
+      show:
+        access_title: 접근
+        email: 이메일
+        language: 언어
+        last_sign_in_at: 마지막 로그인
+        never: 없음
+        no_roles: 할당된 역할 없음
+        roles: 역할
+        sign_in_count: 로그인 횟수
+        status: 상태
+        theme: 테마
+        user_type: 사용자 유형
+        username: 사용자 이름
+        identity_title: 신원
+    system_roles:
+      index:
+        empty_subtitle: 역할을 만들어 시작하세요.
+        empty_title: 사용 가능한 역할이 없습니다
+        manage_permissions: 권한 관리
+        no_description: 설명 없음
+        new: 새 역할
+        page_title: 역할 및 권한 | Delta POS
+        subtitle: 시스템에서 사용할 수 있는 역할과 권한을 구성합니다.
+        title: 역할 및 권한
+      new:
+        back: 역할로 돌아가기
+        cancel: 취소
+        details_subtitle: 역할 이름, 유형, 상태 및 설명을 정의합니다.
+        details_title: 역할 정보
+        error_title: 역할을 저장할 수 없습니다
+        fields:
+          description: 설명
+          description_placeholder: 이 역할의 책임을 설명하세요.
+          name: 이름
+          name_placeholder: "예: 지점 감독자"
+          status: 상태
+          type: 역할 유형
+        page_title: 새 역할 | Delta POS
+        permissions_subtitle: 이 역할에 부여할 권한을 선택하세요.
+        permissions_title: 권한
+        submit: 역할 생성
+      show:
+        assigned_permissions: 할당된 권한
+        back: 역할로 돌아가기
+        code: 코드
+        module_permissions: 사용 가능한 권한 (%{count})
+        permissions_subtitle: 이 역할에 할당된 권한을 활성화하거나 비활성화합니다.
+        permissions_title: 역할 권한
+        save_permissions: 권한 저장
+        type: 역할 유형
+      statuses:
+        active: 활성
+        inactive: 비활성
+      types:
+        branch: 지점 역할
+        system: 시스템 역할
+      roles:
+        super_admin:
+          name: 최고 관리자
+          description: 시스템과 모든 지점에 대한 전체 접근 권한을 가집니다.
+        administrator:
+          name: 관리자
+          description: 시스템의 일반 설정과 운영을 관리합니다.
+        manager:
+          name: 관리자
+          description: 할당된 운영과 지점을 관리합니다.
+        supervisor:
+          name: 감독자
+          description: 운영 및 생산 팀을 감독합니다.
+        cashier:
+          name: 계산원
+          description: 계산대, 결제 및 마감 업무를 운영합니다.
+        salesman:
+          name: 영업 담당자
+          description: 고객 포트폴리오, 견적 및 판매를 관리합니다.
+        inventory:
+          name: 재고 관리자
+          description: 재고, 상품 및 재고 이동을 관리합니다.
+        purchases:
+          name: 구매 담당
+          description: 구매 주문과 공급업체를 관리합니다.
+        finance:
+          name: 재무
+          description: 세무 및 재무 정보를 조회하고 관리합니다.
+        auditor:
+          name: 감사 담당자
+          description: 기록, 이동 및 조정을 감사하고 확인합니다.
+        support:
+          name: 지원
+          description: 기술 지원 및 문제 해결을 제공합니다.
+      permissions:
+        dashboard_access:
+          name: 대시보드 접근
+          description: 메인 대시보드에 접근할 수 있습니다.
+        sales_access:
+          name: 판매 접근
+          description: 판매 모듈에 접근할 수 있습니다.
+        cash_register_access:
+          name: 계산대 접근
+          description: 계산대 모듈에 접근할 수 있습니다.
+        inventory_access:
+          name: 재고 접근
+          description: 재고 모듈에 접근할 수 있습니다.
+        customers_access:
+          name: 고객 접근
+          description: 고객 모듈에 접근할 수 있습니다.
+        suppliers_access:
+          name: 공급업체 접근
+          description: 공급업체 모듈에 접근할 수 있습니다.
+        employees_access:
+          name: 직원 접근
+          description: 직원 모듈에 접근할 수 있습니다.
+        reports_access:
+          name: 보고서 접근
+          description: 보고서 모듈에 접근할 수 있습니다.
+        products_access:
+          name: 상품 접근
+          description: 상품 카탈로그에 접근할 수 있습니다.
+        categories_access:
+          name: 카테고리 접근
+          description: 카테고리 카탈로그에 접근할 수 있습니다.
+        branches_access:
+          name: 지점 접근
+          description: 지점을 관리할 수 있습니다.
+        languages_access:
+          name: 언어 접근
+          description: 사용 가능한 언어를 관리할 수 있습니다.
+        roles_access:
+          name: 역할 접근
+          description: 역할과 권한을 관리할 수 있습니다.
     breadcrumbs:
       branches: 지점
       categories: 카테고리
@@ -472,6 +816,18 @@ ko:
       close: 닫기
       subtitle: 고객의 세부 정보를 확인하세요.
       title: 고객 상세 정보
+    show:
+      fields:
+        code: 코드
+        name: 이름
+        email: 이메일
+        phone: 전화번호
+        rfc: RFC
+        fiscal_regime: 세무 체계
+        postal_code: 우편번호
+        credit_limit: 신용 한도
+        status: 상태
+        notes: 메모
     statuses:
       active: 활성
       inactive: 비활성
