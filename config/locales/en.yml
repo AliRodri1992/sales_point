@@ -229,13 +229,12 @@ en:
         country: Country
         postal_code: Postal code
         terminal_count: Active terminals
-        terminal_count: Active terminals
         terminal_name: Cash register name
         terminal_code: Register code
         branch: Branch
         payment_method: Initial payment method
-        payment_method: Initial payment method
       active: Active
+      not_available: Not available
       no_terminals: No active cash registers are configured for this branch.
       terminal: Terminal %{number}
       migration:
