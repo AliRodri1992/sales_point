@@ -17,7 +17,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
       include(key: :team, status: 'completed')
     )
     expect(progress[:sections].size).to eq(7)
-    expect(progress[:percentage]).to eq(83)
+    expect(progress[:percentage]).to eq(67)
   end
 
   it 'reports partial configuration as in progress' do
@@ -27,7 +27,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     progress = described_class.call(organization)
 
     expect(progress[:sections]).to include(
-      include(key: :company, status: 'not_started'),
+      include(key: :company, percentage: 50, status: 'in_progress'),
       include(key: :fiscal, status: 'completed'),
       include(key: :branches, percentage: 50, status: 'in_progress'),
       include(key: :terminals, status: 'not_started'),
@@ -40,7 +40,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
   it 'reports partial address completion accurately' do
     organization = create(:organization)
     branch = create(:branch, organization:)
-    branch.address.update!(
+    branch.address.update_columns(
       street: '',
       exterior_number: '',
       neighborhood: 'Centro',

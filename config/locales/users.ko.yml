@@ -100,31 +100,32 @@ ko:
         never: 없음
         no_roles: 할당된 역할 없음
     profiles:
-      page_title: 내 프로필
-      title: 내 프로필
-      subtitle: 계정 정보와 환경설정을 관리합니다.
-      status:
-        active: 활성
-        suspended: 일시 중지
-        blocked: 차단됨
-        deleted: 삭제됨
-      user_type:
-        employee: 직원
-        customer: 고객
-        supplier: 공급업체
-      personal_information:
-        title: 개인 정보
-        subtitle: 개인 정보를 업데이트하세요.
-      fields:
-        username: 사용자명
-        email: 이메일 주소
-        language: 언어
-        language_placeholder: 언어를 선택하세요
-        theme: 테마
-      save: 변경 사항 저장
-      success: 프로필이 성공적으로 업데이트되었습니다
-      never: 없음
-      roles:
-        title: 역할
-        subtitle: 계정에 할당된 역할입니다.
-        empty: 할당된 역할이 없습니다
+      show:
+        page_title: 내 프로필
+        title: 내 프로필
+        subtitle: 계정 정보와 환경설정을 관리합니다.
+        status:
+          active: 활성
+          suspended: 일시 중지
+          blocked: 차단됨
+          deleted: 삭제됨
+        user_type:
+          employee: 직원
+          customer: 고객
+          supplier: 공급업체
+        personal_information:
+          title: 개인 정보
+          subtitle: 개인 정보를 업데이트하세요.
+        fields:
+          username: 사용자명
+          email: 이메일 주소
+          language: 언어
+          language_placeholder: 언어를 선택하세요
+          theme: 테마
+        save: 변경 사항 저장
+        success: 프로필이 성공적으로 업데이트되었습니다
+        never: 없음
+        roles:
+          title: 역할
+          subtitle: 계정에 할당된 역할입니다.
+          empty: 할당된 역할이 없습니다

@@ -6,7 +6,6 @@ RSpec.describe Onboarding::StepUpdater do
   let(:terminal_one) { instance_double(Terminal) }
   let(:terminal_two) { instance_double(Terminal) }
   let(:terminals) { [terminal_one, terminal_two] }
-  let(:branch) { instance_double(Branch) }
 
   let(:params) do
     ActionController::Parameters.new(
@@ -18,7 +17,9 @@ RSpec.describe Onboarding::StepUpdater do
     allow(ApplicationRecord).to receive(:transaction).and_yield
     allow(Onboarding::ProgressSynchronizer).to receive(:call)
     allow(Onboarding::Auditor).to receive(:call)
-    allow(organization).to receive_message_chain(:branches, :not_deleted, :where, :first).and_return(branch)
+    allow(Onboarding::StateCalculator).to receive(:new).and_return(
+      instance_double(Onboarding::StateCalculator, call: {})
+    )
     allow(terminal_one).to receive(:update!)
     allow(terminal_two).to receive(:update!)
     allow(organization).to receive(:update!)

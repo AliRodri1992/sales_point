@@ -18,11 +18,11 @@
 </head>
 
 <body class="min-h-full bg-slate-100 text-slate-900 antialiased">
-<% if session[:swal_message].present? %>
+<% if flash[:swal_message].present? %>
   <div
     data-controller="swal-flash"
-    data-swal-flash-message-value="<%= session.delete(:swal_message) %>"
-    data-swal-flash-icon-value="<%= session.delete(:swal_icon) || 'success' %>"
+    data-swal-flash-message-value="<%= flash.delete(:swal_message) %>"
+    data-swal-flash-icon-value="<%= flash.delete(:swal_icon) || 'success' %>"
     class="hidden"
   ></div>
 <% end %>

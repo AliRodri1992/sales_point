@@ -1,0 +1,10 @@
+---
+ko:
+  admin:
+    shared:
+      footer:
+        copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
+        privacy: 개인정보 보호정책
+        terms: 서비스 이용약관
+      online_users:
+        empty: 비어 있음
