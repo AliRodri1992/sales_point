@@ -13,19 +13,22 @@ module Onboarding
     end
 
     def call
-      result = case @step
-               when 1 then update_company
-               when 2 then update_branch
-               when 3 then update_terminals
-               when 4 then update_payment
-               when 5 then complete_onboarding
-               else false
-               end
+      ApplicationRecord.transaction do
+        result = case @step
+                 when 1 then update_company
+                 when 2 then update_branch
+                 when 3 then update_terminals
+                 when 4 then update_payment
+                 when 5 then complete_onboarding
+                 else false
+                 end
 
-      return false unless result
+        raise ActiveRecord::Rollback unless result
 
-      persist_progress
-      advance_step unless @step == 5
+        persist_progress
+        advance_step unless @step == 5
+      end
+
       true
     rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
       false
@@ -46,13 +49,11 @@ module Onboarding
       settings = @organization.organization_settings.first
       return false unless settings
 
-      ActiveRecord::Base.transaction do
-        @organization.update!(organization_attributes.slice(:name, :tax_id, :business_sector))
-        settings.update!(
-          currency: organization_attributes[:currency],
-          timezone: organization_attributes[:timezone]
-        )
-      end
+      @organization.update!(organization_attributes.slice(:name, :tax_id, :business_sector))
+      settings.update!(
+        currency: organization_attributes[:currency],
+        timezone: organization_attributes[:timezone]
+      )
 
       true
     end
@@ -79,10 +80,8 @@ module Onboarding
       terminals = branch.terminals.active_records.order(:id).to_a
       return false if terminals.empty?
 
-      ActiveRecord::Base.transaction do
-        terminals.each_with_index do |terminal, index|
-          terminal.update!(name: terminal_name(index))
-        end
+      terminals.each_with_index do |terminal, index|
+        terminal.update!(name: terminal_name(index))
       end
 
       true
@@ -95,10 +94,9 @@ module Onboarding
       method = @params.expect(payment: [:method]).fetch(:method)
       return false unless %w[cash card qr].include?(method)
 
-      ActiveRecord::Base.transaction do
-        settings.update!(payment_method: method)
-        update_payment_integrations(method)
-      end
+      settings.update!(payment_method: method)
+      update_payment_integrations(method)
+      true
     end
 
     def update_payment_integrations(method)
