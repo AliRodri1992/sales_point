@@ -2,14 +2,15 @@
 
 module Onboarding
   class StepUpdater
-    def self.call(organization:, step:, params:)
-      new(organization, step, params).call
+    def self.call(organization:, step:, params:, user:)
+      new(organization, step, params, user).call
     end
 
-    def initialize(organization, step, params)
+    def initialize(organization, step, params, user)
       @organization = organization
       @step = step
       @params = params
+      @user = user
     end
 
     def call
@@ -29,6 +30,7 @@ module Onboarding
 
         persist_progress
         advance_step if @step == @organization.onboarding_current_step && @step < 5
+        audit_step
         success = true
       end
 
@@ -133,6 +135,22 @@ module Onboarding
 
     def persist_progress
       Onboarding::ProgressSynchronizer.call(organization: @organization)
+    end
+
+    def audit_step
+      action = @step == 5 ? 'completed' : 'step_updated'
+      Onboarding::Auditor.call(
+        organization: @organization,
+        user: @user,
+        action:,
+        step: @step,
+        section: section_key,
+        metadata: { 'percentage' => Onboarding::ProgressCalculator.call(@organization)[:percentage] }
+      )
+    end
+
+    def section_key
+      %i[company fiscal branches terminals payments migration team][@step - 1]
     end
 
     def advance_step
