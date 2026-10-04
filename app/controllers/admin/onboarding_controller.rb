@@ -8,13 +8,14 @@ module Admin
     before_action :authorize_onboarding
 
     def show
+      start_onboarding
       load_onboarding
     end
 
     def update
       @step = normalized_step
 
-      if Onboarding::StepUpdater.call(organization: @organization, step: @step, params: params)
+      if Onboarding::StepUpdater.call(organization: @organization, step: @step, params:)
         flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
         redirect_to success_path
       else
@@ -33,8 +34,15 @@ module Admin
       authorize :onboarding, :show?
     end
 
+    def start_onboarding
+      @organization.start_onboarding!
+      Onboarding::ProgressSynchronizer.call(organization: @organization)
+    end
+
     def normalized_step
       value = params[:step].to_i
+      return @organization.onboarding_current_step if params[:step].blank?
+
       value.between?(1, 5) ? value : 1
     end
 
@@ -60,11 +68,9 @@ module Admin
     end
 
     def success_path
-      if @step == 5
-        admin_dashboard_path
-      else
-        admin_onboarding_path(step: @step + 1)
-      end
+      return admin_dashboard_path if @step == 5
+
+      admin_onboarding_path(step: @step + 1)
     end
 
     def handle_update_failure
