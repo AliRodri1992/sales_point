@@ -194,21 +194,34 @@
                   </div>
                 <% when :payments %>
                   <div class="grid gap-4 sm:grid-cols-2">
-                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.payment_method"), value: @settings&.payment_method %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.payment_method"), value: t("registration.step_five.payment_options.#{@settings&.payment_method}", default: @settings&.payment_method) %>
                     <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.payment_integration"), value: @organization.payment_integrations.where(deleted_at: nil).pluck(:provider).join(", ").presence || t("admin.onboarding.not_available") %>
                   </div>
                 <% when :migration %>
                   <% if @migration %>
                     <div class="grid gap-4 sm:grid-cols-3">
-                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_volume"), value: @migration.volume %>
-                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_priority"), value: @migration.priority %>
-                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_status"), value: @migration.status %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_volume"), value: t("registration.step_four.volumes.#{@migration.volume}", default: @migration.volume) %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_priority"), value: t("registration.step_four.priorities.#{@migration.priority}", default: @migration.priority) %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_status"), value: t("admin.onboarding.migration.statuses.#{@migration.status}", default: @migration.status) %>
                     </div>
                   <% else %>
                     <p class="text-sm text-slate-500"><%= t("admin.onboarding.migration.not_applicable") %></p>
                   <% end %>
                 <% when :team %>
-                  <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.team_members"), value: @organization.employees.active.count %>
+                  <% employees = @organization.employees.active.order(:id) %>
+                  <% if employees.any? %>
+                    <div class="space-y-3">
+                      <% employees.each do |employee| %>
+                        <%= render "admin/onboarding/detail",
+                          label: employee.full_name.presence || [employee.first_name, employee.last_name].compact.join(" "),
+                          value: employee.email %>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <%= render "admin/onboarding/detail",
+                      label: t("admin.onboarding.fields.team_members"),
+                      value: 0 %>
+                  <% end %>
                 <% end %>
               </div>
             </details>
