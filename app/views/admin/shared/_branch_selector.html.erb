@@ -27,8 +27,8 @@
         <% branches.each do |branch| %>
           <%= button_to select_admin_branch_path(branch),
                         method: :patch,
-                        class: "-mx-2 flex w-[calc(100%+1rem)] items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition #{branch.id == selected_branch&.id ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' : 'text-slate-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'}" do %>
-            <%= icon("building-storefront", class: "size-4 shrink-0") %>
+                        class: "group/branch -mx-2 flex w-[calc(100%+1rem)] items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition #{branch.id == selected_branch&.id ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' : 'text-slate-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'}" do %>
+            <%= icon("building-storefront", class: "size-4 shrink-0 text-emerald-600 transition-colors group-hover/branch:text-white") %>
             <span class="min-w-0 flex-1 truncate"><%= branch.name %></span>
             <% if branch.id == selected_branch&.id %>
               <%= icon("check", variant: :solid, class: "size-3 shrink-0") %>
