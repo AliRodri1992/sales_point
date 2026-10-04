@@ -606,8 +606,8 @@ ko:
     categories:
       confirm:
         cancel: 취소
-      created: 카테고리이 성공적으로 생성되었습니다
-      destroyed: 카테고리이 성공적으로 삭제되었습니다
+      created: 카테고리가 성공적으로 생성되었습니다
+      destroyed: 카테고리가 성공적으로 삭제되었습니다
       edit:
         subtitle: 카테고리 정보를 업데이트합니다.
         title: "%{name} 수정"
@@ -620,7 +620,7 @@ ko:
         description: 설명
         description_placeholder: '예: 카테고리 설명'
         name: 이름
-        name_placeholder: '예: 현금 register'
+        name_placeholder: '예: 계산대'
         status: 상태
         update: 카테고리 업데이트
       index:
@@ -630,11 +630,11 @@ ko:
           code: 코드
           name: 이름
           status: 상태
-        confirm_delete: 이 카테고리을 삭제하시겠습니까?
+        confirm_delete: 이 카테고리를 삭제하시겠습니까?
         delete: 삭제
         edit: 수정
-        empty_subtitle: 첫 번째 카테고리을 만들어 시작하세요.
-        empty_title: 아직 카테고리이 없습니다
+        empty_subtitle: 첫 번째 카테고리를 만들어 시작하세요.
+        empty_title: 아직 카테고리가 없습니다
         filters:
           all_statuses: 모든 상태
           apply: 적용
@@ -649,7 +649,7 @@ ko:
         title: 카테고리
         total_count: "%{count}개의 카테고리 등록됨"
       new:
-        subtitle: 카탈로그에 카테고리을 추가합니다.
+        subtitle: 카탈로그에 카테고리를 추가합니다.
         title: 새 카테고리
       show:
         close: 닫기
@@ -658,7 +658,7 @@ ko:
       statuses:
         active: 활성
         inactive: 비활성
-      updated: 카테고리이 성공적으로 업데이트되었습니다
+      updated: 카테고리가 성공적으로 업데이트되었습니다
     dashboard:
       index:
         title: 대시보드
