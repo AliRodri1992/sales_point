@@ -2,17 +2,18 @@
 
 module Onboarding
   class CompanyUpdater
-    def self.call(organization, params)
-      new(organization, params).call
+    def self.call(organization, params, settings: nil)
+      new(organization, params, settings).call
     end
 
-    def initialize(organization, params)
+    def initialize(organization, params, settings)
       @organization = organization
       @params = params
+      @settings = settings
     end
 
     def call
-      settings = @organization.organization_settings.first
+      settings = @settings || @organization.organization_settings.first
       return false unless settings
 
       attributes = @params.expect(organization: %i[name tax_id business_sector currency timezone])
