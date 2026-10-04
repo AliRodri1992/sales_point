@@ -382,12 +382,12 @@ ko:
       updated: 사용자가 성공적으로 업데이트되었습니다.
       statuses:
         active: 활성
-        inactive: 비활성
+        blocked: 차단됨
         suspended: 일시 중지
         deleted: 삭제됨
       user_types:
         employee: 직원
-        client: 고객
+        customer: 고객
         supplier: 공급업체
       themes:
         theme-material-red: 머티리얼 레드
