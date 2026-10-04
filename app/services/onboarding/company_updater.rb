@@ -16,8 +16,8 @@ module Onboarding
       return false unless settings
 
       attributes = @params.expect(organization: %i[name tax_id business_sector currency timezone])
-      @organization.update!(attributes.slice(:name, :tax_id, :business_sector))
-      settings.update!(currency: attributes[:currency], timezone: attributes[:timezone])
+      return false unless @organization.update(attributes.slice(:name, :tax_id, :business_sector))
+      return false unless settings.update(currency: attributes[:currency], timezone: attributes[:timezone])
 
       true
     end
