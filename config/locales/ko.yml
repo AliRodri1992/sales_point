@@ -188,6 +188,8 @@ ko:
         inactive: 비활성
       updated: 카테고리이 성공적으로 업데이트되었습니다
     dashboard:
+      index:
+        title: 대시보드
       page_header:
         title: 대시보드
         subtitle: 비즈니스 운영 현황을 한눈에 확인하세요.
