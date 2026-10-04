@@ -188,6 +188,11 @@ ko:
         inactive: 비활성
       updated: 카테고리이 성공적으로 업데이트되었습니다
     dashboard:
+      page_header:
+        title: 대시보드
+        subtitle: 비즈니스 운영 현황을 한눈에 확인하세요.
+        customize: 대시보드 사용자 지정
+        new_sale: 새 판매
       onboarding:
         title: 초기 설정 완료
         description: 조직 설정이 %{percentage}% 완료되었습니다.
@@ -278,6 +283,10 @@ ko:
           pending: 대기 중
           in_progress: 진행 중
           completed: 완료
+      no_terminals: 아직 등록된 계산대가 없습니다.
+      back: 뒤로
+      continue: 계속
+      finish: 설정 완료
       terminal: 계산대 %{number}
       terminal_statuses:
         active: 활성
