@@ -16,20 +16,38 @@ class Organization < ApplicationRecord
   ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
   TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
 
-  validates :name, presence: true, length: { in: 2..150 }
+  validates :name, presence: true, length: { in: 2..150 }, on: %i[create update]
   validates :tax_id,
             presence: true,
             length: { in: 12..13 },
             format: { with: TAX_ID_FORMAT },
-            uniqueness: { conditions: -> { where(deleted_at: nil) } }
+            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            on: %i[create update]
   validates :business_sector,
             presence: true,
-            inclusion: { in: ONBOARDING_BUSINESS_SECTORS }
-  validates :status, presence: true, inclusion: { in: statuses.keys }
-  validates :onboarding_status, presence: true, inclusion: { in: onboarding_statuses.keys }
+            inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
+            on: %i[create update]
+  validates :status, presence: true, inclusion: { in: statuses.keys }, on: %i[create update]
+  validates :onboarding_status,
+            presence: true,
+            inclusion: { in: onboarding_statuses.keys },
+            on: %i[create update]
   validates :onboarding_current_step,
             presence: true,
-            numericality: { only_integer: true, in: 1..5 }
+            numericality: { only_integer: true, in: 1..5 },
+            on: %i[create update]
+
+  validates :name, presence: true, length: { in: 2..150 }, on: :onboarding_step_1
+  validates :tax_id,
+            presence: true,
+            length: { in: 12..13 },
+            format: { with: TAX_ID_FORMAT },
+            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            on: :onboarding_step_1
+  validates :business_sector,
+            presence: true,
+            inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
+            on: :onboarding_step_1
 
   before_validation :normalize_tax_id
 
@@ -50,10 +68,11 @@ class Organization < ApplicationRecord
   end
 
   def complete_onboarding!
-    update!(
-      onboarding_status: :completed,
+    update_columns(
+      onboarding_status: 'completed',
       onboarding_completed_at: Time.current,
-      onboarding_current_step: 5
+      onboarding_current_step: 5,
+      updated_at: Time.current
     )
   end
 
