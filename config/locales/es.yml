@@ -219,6 +219,350 @@ es:
         close: Cerrar conversación
         input_placeholder: Escribe un mensaje...
         send: Enviar mensaje
+    languages:
+      confirm:
+        cancel: Cancelar
+      created: Idioma creado correctamente
+      destroyed: Idioma eliminado correctamente
+      edit:
+        subtitle: Actualiza los datos del idioma.
+        title: Editar %{name}
+      form:
+        cancel: Cancelar
+        code: Código
+        code_hint: Código único del idioma.
+        code_placeholder: ej. es
+        create: Crear idioma
+        flag_hint: Código ISO de la bandera, por ejemplo mx.
+        flag_iso: Código de bandera
+        flag_placeholder: ej. mx
+        name: Nombre
+        name_placeholder: ej. Español
+        status: Estado
+        update: Actualizar idioma
+      index:
+        card_title: Idiomas registrados
+        columns:
+          actions: Acciones
+          code: Código
+          flag: Bandera
+          language: Idioma
+          status: Estado
+        confirm_delete: "¿Seguro que quieres eliminar este idioma?"
+        delete: Eliminar
+        edit: Editar
+        empty_subtitle: Agrega tu primer idioma para comenzar.
+        empty_title: Aún no hay idiomas
+        filters:
+          all_statuses: Todos los estados
+          apply: Aplicar
+        new: Nuevo idioma
+        pagination:
+          next: Siguiente
+          per_page_label: Mostrar
+          prev: Anterior
+        search_placeholder: Buscar por nombre o código...
+        subtitle: Administra los idiomas disponibles en Delta POS.
+        title: Idiomas
+        total_count: "%{count} idiomas registrados"
+      new:
+        subtitle: Agrega un idioma al catálogo.
+        title: Nuevo idioma
+      show:
+        close: Cerrar
+        subtitle: Revisa los detalles de este idioma.
+        title: Detalles del idioma
+      statuses:
+        active: Activo
+        inactive: Inactivo
+    products:
+      confirm:
+        cancel: Cancelar
+      created: Producto creado correctamente
+      destroyed: Producto eliminado correctamente
+      edit:
+        back: Volver a productos
+        label: Editar producto
+        subtitle: Actualiza los datos del producto.
+      form:
+        additional_info: Información adicional
+        barcode: Código de barras
+        barcode_placeholder: ej. 7501234567890
+        category: Categoría
+        code: Código
+        code_hint: Código único del producto.
+        code_placeholder: ej. PROD-0001
+        cost: Costo
+        cost_hint: Costo de adquisición del producto.
+        cost_placeholder: ej. 100.00
+        create: Crear producto
+        description: Descripción
+        description_placeholder: Descripción del producto
+        featured: Producto destacado
+        featured_desc: Mostrar este producto como destacado.
+        gross_margin: Margen bruto
+        hints:
+          max_stock: Define el nivel máximo recomendado de existencias.
+        image: Imagen
+        image_help: Selecciona una imagen del producto.
+        margin: Margen
+        max_stock: Stock máximo
+        max_stock_placeholder: ej. 100
+        min_stock: Stock mínimo
+        min_stock_placeholder: ej. 10
+        name: Nombre
+        name_placeholder: Nombre del producto
+        position: Orden
+        position_hint: Orden de visualización del producto.
+        position_placeholder: ej. 1
+        price: Precio
+        price_hint: Precio de venta del producto.
+        price_placeholder: ej. 199.99
+        sat_tax: Impuesto SAT
+        sat_unit_key: Unidad SAT
+        sku: SKU
+        sku_placeholder: ej. SKU-ABC12345
+        status: Estado
+        stock: Existencias
+        stock_placeholder: ej. 50
+        total_value: Valor total
+        update: Actualizar producto
+      index:
+        card_title: Productos registrados
+        columns:
+          actions: Acciones
+          category: Categoría
+          code: Código
+          featured: Destacado
+          name: Nombre
+          price: Precio
+          status: Estado
+          stock: Existencias
+        confirm_delete: "¿Seguro que quieres eliminar este producto?"
+        delete: Eliminar
+        edit: Editar
+        empty_subtitle: Agrega tu primer producto para comenzar.
+        empty_title: Aún no hay productos
+        filters:
+          all_featured: Todos
+          apply: Aplicar
+        new: Nuevo producto
+        pagination:
+          next: Siguiente
+          per_page_label: Mostrar
+          prev: Anterior
+        search_placeholder: Buscar por nombre o código...
+        subtitle: Administra los productos de tu catálogo.
+        title: Productos
+        total_count: "%{count} productos registrados"
+      new:
+        back: Volver a productos
+        subtitle: Agrega un producto a tu catálogo.
+        title: Nuevo producto
+      show:
+        back: Volver a productos
+        close: Cerrar
+        no_image: No hay imagen disponible
+        subtitle: Revisa los detalles de este producto.
+        title: Detalles del producto
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      updated: Producto actualizado correctamente
+    users:
+      actions:
+        delete: Eliminar usuario
+        edit: Editar usuario
+        view: Ver usuario
+      cannot_delete_self: No puedes eliminar tu propio usuario.
+      confirm:
+        cancel: Cancelar
+      confirm_delete: "¿Seguro que quieres eliminar este usuario?"
+      created: Usuario creado correctamente.
+      destroyed: Usuario eliminado correctamente.
+      updated: Usuario actualizado correctamente.
+      form:
+        buttons:
+          back: Volver a usuarios
+          create: Crear usuario
+          update: Actualizar usuario
+        edit_title: Editar %{name}
+        fields:
+          email: Correo electrónico
+          language: Idioma
+          language_placeholder: Selecciona un idioma
+          password: Contraseña
+          password_confirmation: Confirmar contraseña
+          status: Estado
+          status_placeholder: Selecciona un estado
+          system_roles: Roles del sistema
+          theme: Tema
+          user_type: Tipo de usuario
+          user_type_placeholder: Selecciona un tipo de usuario
+          username: Nombre de usuario
+        new_title: Nuevo usuario
+        password_hint: Deja este campo vacío para conservar la contraseña actual.
+        subtitle: Configura la cuenta, acceso y preferencias del usuario.
+      index:
+        columns:
+          actions: Acciones
+          created_at: Creado
+          email: Correo electrónico
+          roles: Roles
+          status: Estado
+          user_type: Tipo de usuario
+          username: Usuario
+        empty:
+          subtitle: Crea el primer usuario para comenzar.
+          title: No hay usuarios
+        filters:
+          all_roles: Todos los roles
+          all_statuses: Todos los estados
+          all_types: Todos los tipos
+          apply: Aplicar
+          reset: Restablecer
+          search_placeholder: Buscar por correo o usuario...
+        new: Nuevo usuario
+        no_data: "—"
+        no_roles: Sin roles
+        page_title: Usuarios | Delta POS
+        pagination:
+          navigation: Paginación de usuarios
+          next: Siguiente
+          per_page_label: Mostrar
+          prev: Anterior
+        subtitle: Administra los usuarios y sus accesos.
+        title: Usuarios
+      show:
+        access_title: Acceso
+        email: Correo electrónico
+        language: Idioma
+        last_sign_in_at: Último acceso
+        never: Nunca
+        no_roles: Sin roles asignados
+        roles: Roles
+        sign_in_count: Inicios de sesión
+        status: Estado
+        theme: Tema
+        user_type: Tipo de usuario
+        username: Nombre de usuario
+        identity_title: Identidad
+    system_roles:
+      index:
+        empty_subtitle: Crea un rol para comenzar.
+        empty_title: No hay roles disponibles
+        manage_permissions: Administrar permisos
+        no_description: Sin descripción
+        new: Nuevo rol
+        page_title: Roles y permisos | Delta POS
+        subtitle: Configura roles y asigna los permisos que pueden utilizar en el sistema.
+        title: Roles y permisos
+      new:
+        back: Volver a roles
+        cancel: Cancelar
+        details_subtitle: Define el nombre, tipo, estado y descripción del rol.
+        details_title: Datos del rol
+        error_title: No se pudo guardar el rol
+        fields:
+          description: Descripción
+          description_placeholder: Describe las responsabilidades de este rol.
+          name: Nombre
+          name_placeholder: ej. Supervisor de sucursal
+          status: Estado
+          type: Tipo de rol
+        page_title: Nuevo rol | Delta POS
+        permissions_subtitle: Selecciona los permisos que tendrá este rol.
+        permissions_title: Permisos
+        submit: Crear rol
+      show:
+        assigned_permissions: Permisos asignados
+        back: Volver a roles
+        code: Código
+        module_permissions: Permisos disponibles (%{count})
+        permissions_subtitle: Activa o desactiva los permisos asignados a este rol.
+        permissions_title: Permisos del rol
+        save_permissions: Guardar permisos
+        type: Tipo de rol
+      statuses:
+        active: Activo
+        inactive: Inactivo
+      types:
+        branch: Rol de sucursal
+        system: Rol del sistema
+      roles:
+        super_admin:
+          name: Superadministrador
+          description: Acceso total al sistema y a todas las sucursales.
+        administrator:
+          name: Administrador
+          description: Administra la configuración y operación general del sistema.
+        manager:
+          name: Gerente
+          description: Administra operaciones y sucursales asignadas.
+        supervisor:
+          name: Supervisor
+          description: Supervisa equipos de operación y producción.
+        cashier:
+          name: Cajero
+          description: Opera la caja, cobros y cortes de caja.
+        salesman:
+          name: Vendedor
+          description: Gestiona carteras, cotizaciones y ventas.
+        inventory:
+          name: Inventarios
+          description: Administra existencias, productos y movimientos de inventario.
+        purchases:
+          name: Compras
+          description: Administra órdenes de compra y proveedores.
+        finance:
+          name: Finanzas
+          description: Consulta y administra información fiscal y financiera.
+        auditor:
+          name: Auditor
+          description: Audita registros, movimientos y conciliaciones.
+        support:
+          name: Soporte
+          description: Soporte técnico y resolución de incidencias.
+      permissions:
+        dashboard_access:
+          name: Acceso al panel
+          description: Permite acceder al panel principal.
+        sales_access:
+          name: Acceso a ventas
+          description: Permite acceder al módulo de ventas.
+        cash_register_access:
+          name: Acceso a caja
+          description: Permite acceder al módulo de caja.
+        inventory_access:
+          name: Acceso a inventario
+          description: Permite acceder al módulo de inventario.
+        customers_access:
+          name: Acceso a clientes
+          description: Permite acceder al módulo de clientes.
+        suppliers_access:
+          name: Acceso a proveedores
+          description: Permite acceder al módulo de proveedores.
+        employees_access:
+          name: Acceso a empleados
+          description: Permite acceder al módulo de empleados.
+        reports_access:
+          name: Acceso a reportes
+          description: Permite acceder al módulo de reportes.
+        products_access:
+          name: Acceso a productos
+          description: Permite acceder al catálogo de productos.
+        categories_access:
+          name: Acceso a categorías
+          description: Permite acceder al catálogo de categorías.
+        branches_access:
+          name: Acceso a sucursales
+          description: Permite administrar las sucursales.
+        languages_access:
+          name: Acceso a idiomas
+          description: Permite administrar los idiomas disponibles.
+        roles_access:
+          name: Acceso a roles
+          description: Permite administrar roles y sus permisos.
     breadcrumbs:
       branches: Sucursales
       categories: Categorías
@@ -478,6 +822,18 @@ es:
       close: Cerrar
       subtitle: Revisa los detalles de este cliente.
       title: Detalles del cliente
+    show:
+      fields:
+        code: Código
+        name: Nombre
+        email: Correo electrónico
+        phone: Teléfono
+        rfc: RFC
+        fiscal_regime: Régimen fiscal
+        postal_code: Código postal
+        credit_limit: Límite de crédito
+        status: Estado
+        notes: Notas
     statuses:
       active: Activo
       inactive: Inactivo
