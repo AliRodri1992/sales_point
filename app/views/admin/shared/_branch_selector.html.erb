@@ -4,7 +4,7 @@
 <div class="relative">
   <details class="group">
     <summary
-      class="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+      class="flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-emerald-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
       aria-label="<%= t('admin.shared.branch_selector.label') %>"
     >
       <%= icon("building-storefront", variant: :solid, class: "size-4 text-emerald-600") %>
@@ -27,7 +27,7 @@
         <% branches.each do |branch| %>
           <%= button_to select_admin_branch_path(branch),
                         method: :patch,
-                        class: "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition #{branch.id == selected_branch&.id ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'}" do %>
+                        class: "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition #{branch.id == selected_branch&.id ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' : 'text-slate-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'}" do %>
             <%= icon("building-storefront", class: "size-4 shrink-0") %>
             <span class="min-w-0 flex-1 truncate"><%= branch.name %></span>
             <% if branch.id == selected_branch&.id %>
