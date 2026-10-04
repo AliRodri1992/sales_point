@@ -1,33 +1,75 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-    static targets = ["dropdown", "flag", "languageCode"]
+    static targets = ["dropdown"]
 
-    connect(){
+    connect() {
         this.boundCloseOnClickOutside = this.closeOnClickOutside.bind(this)
         this.boundCloseOnEscape = this.closeOnEscape.bind(this)
+        this.boundCloseOtherSelector = this.closeOtherSelector.bind(this)
 
         document.addEventListener("click", this.boundCloseOnClickOutside)
         document.addEventListener("keydown", this.boundCloseOnEscape)
+        document.addEventListener("dashboard:selector-opened", this.boundCloseOtherSelector)
     }
 
-    disconnect(){
+    disconnect() {
         document.removeEventListener("click", this.boundCloseOnClickOutside)
         document.removeEventListener("keydown", this.boundCloseOnEscape)
+        document.removeEventListener("dashboard:selector-opened", this.boundCloseOtherSelector)
     }
 
-    toggle(event){
+    toggle(event) {
         event.stopPropagation()
-        const dropdown = this.dropdownTarget
 
-        // Show dropdown and refresh content
-        dropdown.classList.remove("hidden")
+        const willOpen = this.dropdownTarget.classList.contains("hidden")
+
+        if (willOpen) {
+            this.open()
+        } else {
+            this.close()
+        }
+    }
+
+    open() {
+        this.closeOtherSelector()
+
+        this.dropdownTarget.classList.remove("hidden")
+        document.dispatchEvent(new CustomEvent("dashboard:selector-opened", {
+            detail: { source: this.element }
+        }))
         this.refreshDropdownContent()
     }
 
-    async refreshDropdownContent(){
+    close() {
+        this.dropdownTarget.classList.add("hidden")
+    }
+
+    closeOnClickOutside(event) {
+        if (this.dropdownTarget.classList.contains("hidden")) return
+        if (this.element.contains(event.target)) return
+
+        this.close()
+    }
+
+    closeOnEscape(event) {
+        if (event.key !== "Escape") return
+
+        this.close()
+    }
+
+    closeOtherSelector(event) {
+        if (event?.detail?.source === this.element) return
+
+        const details = this.element.querySelector("details")
+
+        if (details?.open) {
+            details.open = false
+        }
+    }
+
+    async refreshDropdownContent() {
         try {
-            // Fetch the updated dropdown content from the server
             const response = await fetch("/admin/languages/content", {
                 method: "GET",
                 headers: {
@@ -37,12 +79,8 @@ export default class extends Controller {
 
             if (response.ok) {
                 const html = await response.text()
-
-                // Parse the response and extract dropdown content
                 const parser = new DOMParser()
                 const doc = parser.parseFromString(html, "text/html")
-
-                // Find the dropdown content element
                 const newContent = doc.getElementById("language_selector_content")
                 const currentContent = document.getElementById("language_selector_content")
 
@@ -55,20 +93,7 @@ export default class extends Controller {
         }
     }
 
-    closeOnClickOutside(event){
-        if (this.dropdownTarget.classList.contains("hidden")) return
-        if (this.element.contains(event.target)) return
-
-        this.dropdownTarget.classList.add("hidden")
-    }
-
-    closeOnEscape(event){
-        if (event.key !== "Escape") return
-
-        this.dropdownTarget.classList.add("hidden")
-    }
-
-    select(event){
+    select(event) {
         event.stopPropagation()
 
         const button = event.currentTarget
@@ -83,8 +108,7 @@ export default class extends Controller {
             body: JSON.stringify({ language: language })
         })
             .then(() => {
-                // Close dropdown and reload page to apply language
-                this.dropdownTarget.classList.add("hidden")
+                this.close()
                 window.location.reload()
             })
             .catch((error) => {
