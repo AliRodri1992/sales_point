@@ -10,15 +10,31 @@ RSpec.describe OnboardingPolicy, type: :policy do
     allow(user).to receive_message_chain(:organizations, :active_records, :exists?).and_return(true)
   end
 
-  it { is_expected.to permit_action(:show) }
-  it { is_expected.to permit_action(:update) }
-  it { is_expected.to permit_action(:reset) }
+  it 'permits administrators with an active organization' do
+    expect(policy.show?).to be(true)
+    expect(policy.update?).to be(true)
+    expect(policy.reset?).to be(true)
+  end
 
   context 'when the user is not an administrator' do
     before { allow(user).to receive(:admin?).and_return(false) }
 
-    it { is_expected.not_to permit_action(:show) }
-    it { is_expected.not_to permit_action(:update) }
-    it { is_expected.not_to permit_action(:reset) }
+    it 'denies all onboarding actions' do
+      expect(policy.show?).to be(false)
+      expect(policy.update?).to be(false)
+      expect(policy.reset?).to be(false)
+    end
+  end
+
+  context 'when the organization is inactive' do
+    before do
+      allow(user).to receive_message_chain(:organizations, :active_records, :exists?).and_return(false)
+    end
+
+    it 'denies all onboarding actions' do
+      expect(policy.show?).to be(false)
+      expect(policy.update?).to be(false)
+      expect(policy.reset?).to be(false)
+    end
   end
 end

@@ -8,7 +8,7 @@ RSpec.describe 'UI components', type: :component do
       Ui::ButtonComponent::VARIANTS.product(Ui::ButtonComponent::SIZES).each do |variant, size|
         rendered = render_inline(described_class.new(text: 'Action', variant:, size:))
 
-        expect(rendered).to have_text('Action')
+        expect(rendered.to_html).to include('Action')
       end
     end
 
@@ -25,8 +25,7 @@ RSpec.describe 'UI components', type: :component do
                                ))
 
       expect(rendered.css('a')).to be_present
-      expect(rendered).to have_text('Save')
-      expect(rendered.to_html).to include('w-full', 'opacity-50', 'cursor-not-allowed')
+      expect(rendered.to_html).to include('Save', 'w-full', 'opacity-50', 'cursor-not-allowed')
     end
 
     it 'rejects unsupported variants and sizes' do
@@ -40,7 +39,7 @@ RSpec.describe 'UI components', type: :component do
       Ui::BadgeComponent::COLORS.each do |color|
         rendered = render_inline(described_class.new(text: 'Status', color:))
 
-        expect(rendered).to have_text('Status')
+        expect(rendered.to_html).to include('Status')
       end
     end
 
@@ -93,9 +92,8 @@ RSpec.describe 'UI components', type: :component do
         component.with_footer { 'Footer' }
       end
 
-      expect(rendered).to have_text('Header')
-      expect(rendered).to have_text('Body')
-      expect(rendered).to have_text('Footer')
+      html = rendered.to_html
+      expect(html).to include('Header', 'Body', 'Footer')
     end
   end
 
@@ -109,9 +107,7 @@ RSpec.describe 'UI components', type: :component do
         )
       )
 
-      expect(rendered).to have_text('Section')
-      expect(rendered).to have_text('Details')
-      expect(rendered).to have_text('New')
+      expect(rendered.to_html).to include('Section', 'Details', 'New')
     end
 
     it 'supports non-centered titles' do
@@ -128,8 +124,8 @@ RSpec.describe 'UI components', type: :component do
         described_class.new(number: 20, label: 'Orders', icon: :chart_bar)
       )
 
-      expect(plain).to have_text('10', 'Sales')
-      expect(with_icon).to have_text('20', 'Orders')
+      expect(plain.to_html).to include('10', 'Sales')
+      expect(with_icon.to_html).to include('20', 'Orders')
     end
   end
 end

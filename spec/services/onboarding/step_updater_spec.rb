@@ -6,8 +6,7 @@ RSpec.describe Onboarding::StepUpdater do
   let(:terminal_one) { instance_double(Terminal) }
   let(:terminal_two) { instance_double(Terminal) }
   let(:terminals) { [terminal_one, terminal_two] }
-  let(:branch) { instance_double(Branch, terminals: terminal_scope) }
-  let(:terminal_scope) { instance_double(ActiveRecord::Relation) }
+  let(:branch) { instance_double(Branch) }
   let(:params) { ActionController::Parameters.new(terminal_names: { '0' => 'Caja Principal', '1' => 'Caja Secundaria' }) }
 
   before do
@@ -15,7 +14,6 @@ RSpec.describe Onboarding::StepUpdater do
     allow(Onboarding::ProgressSynchronizer).to receive(:call)
     allow(Onboarding::Auditor).to receive(:call)
     allow(organization).to receive_message_chain(:branches, :not_deleted, :where, :first).and_return(branch)
-    allow(branch).to receive_message_chain(:terminals, :active_records, :order).and_return(terminals)
     allow(terminal_one).to receive(:update!)
     allow(terminal_two).to receive(:update!)
     allow(organization).to receive(:update!)
@@ -31,7 +29,8 @@ RSpec.describe Onboarding::StepUpdater do
         organization: organization,
         step: 3,
         params: params,
-        user: user
+        user: user,
+        terminals:
       )
     ).to be(true)
   end
