@@ -2,17 +2,19 @@
 
 module Onboarding
   class BranchUpdater
-    def self.call(organization, params)
-      new(organization, params).call
+    def self.call(organization, params, branch: nil)
+      new(organization, params, branch).call
     end
 
-    def initialize(organization, params)
+    def initialize(organization, params, branch)
       @organization = organization
       @params = params
+      @branch = branch
     end
 
     def call
-      branch = @organization.branches.not_deleted.where(status: true).first ||
+      branch = @branch ||
+               @organization.branches.not_deleted.where(status: true).first ||
                @organization.branches.not_deleted.first
       return false unless branch
 
