@@ -218,6 +218,350 @@ en:
         close: Close conversation
         input_placeholder: Write a message...
         send: Send message
+    languages:
+      confirm:
+        cancel: Cancel
+      created: Language created successfully
+      destroyed: Language deleted successfully
+      edit:
+        subtitle: Update the language details.
+        title: Edit %{name}
+      form:
+        cancel: Cancel
+        code: Code
+        code_hint: Unique language code.
+        code_placeholder: e.g. en
+        create: Create language
+        flag_hint: ISO flag code, for example us.
+        flag_iso: Flag code
+        flag_placeholder: e.g. us
+        name: Name
+        name_placeholder: e.g. English
+        status: Status
+        update: Update language
+      index:
+        card_title: Registered languages
+        columns:
+          actions: Actions
+          code: Code
+          flag: Flag
+          language: Language
+          status: Status
+        confirm_delete: Are you sure you want to delete this language?
+        delete: Delete
+        edit: Edit
+        empty_subtitle: Add your first language to get started.
+        empty_title: No languages yet
+        filters:
+          all_statuses: All statuses
+          apply: Apply
+        new: New language
+        pagination:
+          next: Next
+          per_page_label: Show
+          prev: Previous
+        search_placeholder: Search by name or code...
+        subtitle: Manage the languages available in Delta POS.
+        title: Languages
+        total_count: "%{count} languages registered"
+      new:
+        subtitle: Add a language to the catalog.
+        title: New language
+      show:
+        close: Close
+        subtitle: Review the details of this language.
+        title: Language details
+      statuses:
+        active: Active
+        inactive: Inactive
+    products:
+      confirm:
+        cancel: Cancel
+      created: Product created successfully
+      destroyed: Product deleted successfully
+      edit:
+        back: Back to products
+        label: Edit product
+        subtitle: Update the product details.
+      form:
+        additional_info: Additional information
+        barcode: Barcode
+        barcode_placeholder: e.g. 7501234567890
+        category: Category
+        code: Code
+        code_hint: Unique product code.
+        code_placeholder: e.g. PROD-0001
+        cost: Cost
+        cost_hint: Product acquisition cost.
+        cost_placeholder: e.g. 100.00
+        create: Create product
+        description: Description
+        description_placeholder: Product description
+        featured: Featured product
+        featured_desc: Show this product as featured.
+        gross_margin: Gross margin
+        hints:
+          max_stock: Defines the recommended maximum stock level.
+        image: Image
+        image_help: Select a product image.
+        margin: Margin
+        max_stock: Maximum stock
+        max_stock_placeholder: e.g. 100
+        min_stock: Minimum stock
+        min_stock_placeholder: e.g. 10
+        name: Name
+        name_placeholder: Product name
+        position: Display order
+        position_hint: Product display order.
+        position_placeholder: e.g. 1
+        price: Price
+        price_hint: Product sale price.
+        price_placeholder: e.g. 199.99
+        sat_tax: SAT tax
+        sat_unit_key: SAT unit
+        sku: SKU
+        sku_placeholder: e.g. SKU-ABC12345
+        status: Status
+        stock: Stock
+        stock_placeholder: e.g. 50
+        total_value: Total value
+        update: Update product
+      index:
+        card_title: Registered products
+        columns:
+          actions: Actions
+          category: Category
+          code: Code
+          featured: Featured
+          name: Name
+          price: Price
+          status: Status
+          stock: Stock
+        confirm_delete: Are you sure you want to delete this product?
+        delete: Delete
+        edit: Edit
+        empty_subtitle: Add your first product to get started.
+        empty_title: No products yet
+        filters:
+          all_featured: All
+          apply: Apply
+        new: New product
+        pagination:
+          next: Next
+          per_page_label: Show
+          prev: Previous
+        search_placeholder: Search by name or code...
+        subtitle: Manage your product catalog.
+        title: Products
+        total_count: "%{count} products registered"
+      new:
+        back: Back to products
+        subtitle: Add a product to your catalog.
+        title: New product
+      show:
+        back: Back to products
+        close: Close
+        no_image: No image available
+        subtitle: Review the product details.
+        title: Product details
+      statuses:
+        active: Active
+        inactive: Inactive
+      updated: Product updated successfully
+    users:
+      actions:
+        delete: Delete user
+        edit: Edit user
+        view: View user
+      cannot_delete_self: You cannot delete your own user.
+      confirm:
+        cancel: Cancel
+      confirm_delete: Are you sure you want to delete this user?
+      created: User created successfully.
+      destroyed: User deleted successfully.
+      updated: User updated successfully.
+      form:
+        buttons:
+          back: Back to users
+          create: Create user
+          update: Update user
+        edit_title: Edit %{name}
+        fields:
+          email: Email
+          language: Language
+          language_placeholder: Select a language
+          password: Password
+          password_confirmation: Confirm password
+          status: Status
+          status_placeholder: Select a status
+          system_roles: System roles
+          theme: Theme
+          user_type: User type
+          user_type_placeholder: Select a user type
+          username: Username
+        new_title: New user
+        password_hint: Leave this field blank to keep the current password.
+        subtitle: Configure the user's account, access, and preferences.
+      index:
+        columns:
+          actions: Actions
+          created_at: Created
+          email: Email
+          roles: Roles
+          status: Status
+          user_type: User type
+          username: Username
+        empty:
+          subtitle: Create the first user to get started.
+          title: No users
+        filters:
+          all_roles: All roles
+          all_statuses: All statuses
+          all_types: All types
+          apply: Apply
+          reset: Reset
+          search_placeholder: Search by email or username...
+        new: New user
+        no_data: "—"
+        no_roles: No roles
+        page_title: Users | Delta POS
+        pagination:
+          navigation: User pagination
+          next: Next
+          per_page_label: Show
+          prev: Previous
+        subtitle: Manage users and their access.
+        title: Users
+      show:
+        access_title: Access
+        email: Email
+        language: Language
+        last_sign_in_at: Last sign-in
+        never: Never
+        no_roles: No roles assigned
+        roles: Roles
+        sign_in_count: Sign-ins
+        status: Status
+        theme: Theme
+        user_type: User type
+        username: Username
+        identity_title: Identity
+    system_roles:
+      index:
+        empty_subtitle: Create a role to get started.
+        empty_title: No roles available
+        manage_permissions: Manage permissions
+        no_description: No description
+        new: New role
+        page_title: Roles & Permissions | Delta POS
+        subtitle: Configure roles and assign the permissions they can use in the system.
+        title: Roles & Permissions
+      new:
+        back: Back to roles
+        cancel: Cancel
+        details_subtitle: Define the role name, type, status, and description.
+        details_title: Role details
+        error_title: The role could not be saved
+        fields:
+          description: Description
+          description_placeholder: Describe this role's responsibilities.
+          name: Name
+          name_placeholder: e.g. Branch Supervisor
+          status: Status
+          type: Role type
+        page_title: New role | Delta POS
+        permissions_subtitle: Select the permissions this role will have.
+        permissions_title: Permissions
+        submit: Create role
+      show:
+        assigned_permissions: Assigned permissions
+        back: Back to roles
+        code: Code
+        module_permissions: Available permissions (%{count})
+        permissions_subtitle: Enable or disable the permissions assigned to this role.
+        permissions_title: Role permissions
+        save_permissions: Save permissions
+        type: Role type
+      statuses:
+        active: Active
+        inactive: Inactive
+      types:
+        branch: Branch role
+        system: System role
+      roles:
+        super_admin:
+          name: Super Administrator
+          description: Full access to the system and all branches.
+        administrator:
+          name: Administrator
+          description: Manages the system's general configuration and operations.
+        manager:
+          name: Manager
+          description: Manages assigned operations and branches.
+        supervisor:
+          name: Supervisor
+          description: Supervises operations and production teams.
+        cashier:
+          name: Cashier
+          description: Operates the register, payments, and cash closing.
+        salesman:
+          name: Salesperson
+          description: Manages customer portfolios, quotes, and sales.
+        inventory:
+          name: Inventory Manager
+          description: Manages stock, products, and inventory movements.
+        purchases:
+          name: Purchasing
+          description: Manages purchase orders and suppliers.
+        finance:
+          name: Finance
+          description: Views and manages fiscal and financial information.
+        auditor:
+          name: Auditor
+          description: Audits records, movements, and reconciliations.
+        support:
+          name: Support
+          description: Provides technical support and resolves incidents.
+      permissions:
+        dashboard_access:
+          name: Dashboard access
+          description: Allows access to the main dashboard.
+        sales_access:
+          name: Sales access
+          description: Allows access to the sales module.
+        cash_register_access:
+          name: Cash register access
+          description: Allows access to the cash register module.
+        inventory_access:
+          name: Inventory access
+          description: Allows access to the inventory module.
+        customers_access:
+          name: Customer access
+          description: Allows access to the customer module.
+        suppliers_access:
+          name: Supplier access
+          description: Allows access to the supplier module.
+        employees_access:
+          name: Employee access
+          description: Allows access to the employee module.
+        reports_access:
+          name: Reports access
+          description: Allows access to the reports module.
+        products_access:
+          name: Product access
+          description: Allows access to the product catalog.
+        categories_access:
+          name: Category access
+          description: Allows access to the category catalog.
+        branches_access:
+          name: Branch access
+          description: Allows branch administration.
+        languages_access:
+          name: Language access
+          description: Allows administration of available languages.
+        roles_access:
+          name: Role access
+          description: Allows administration of roles and their permissions.
     breadcrumbs:
       branches: Branches
       categories: Categories
@@ -473,6 +817,18 @@ en:
       close: Close
       subtitle: Review the details of this client.
       title: Client details
+    show:
+      fields:
+        code: Code
+        name: Name
+        email: Email
+        phone: Phone
+        rfc: RFC
+        fiscal_regime: Fiscal regime
+        postal_code: Postal code
+        credit_limit: Credit limit
+        status: Status
+        notes: Notes
     statuses:
       active: Active
       inactive: Inactive
