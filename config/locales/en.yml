@@ -263,6 +263,10 @@ en:
           pending: Pending
           in_progress: In progress
           completed: Completed
+      terminal: Cash register %{number}
+      terminal_statuses:
+        active: Active
+        inactive: Inactive
       active: Active
       not_available: Not available
   app:
