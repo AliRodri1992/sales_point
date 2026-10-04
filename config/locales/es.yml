@@ -383,12 +383,12 @@ es:
       updated: Usuario actualizado correctamente.
       statuses:
         active: Activo
-        inactive: Inactivo
+        blocked: Bloqueado
         suspended: Suspendido
         deleted: Eliminado
       user_types:
         employee: Empleado
-        client: Cliente
+        customer: Cliente
         supplier: Proveedor
       themes:
         theme-material-red: Rojo material
