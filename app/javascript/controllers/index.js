@@ -15,6 +15,9 @@ application.register("dashboard-dropdown", DashboardDropdownController)
 
 import "./selector_coordinator"
 
+import NotificationsController from "./notifications_controller"
+application.register("notifications", NotificationsController)
+
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
 
