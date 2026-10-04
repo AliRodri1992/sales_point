@@ -27,7 +27,15 @@ module Admin
       @step = normalized_step
       load_onboarding
 
-      if Onboarding::StepUpdater.call(organization: @organization, step: @step, params:, user: current_user)
+      if Onboarding::StepUpdater.call(\
+        organization: @organization,\
+        step: @step,\
+        params:,\
+        user: current_user,\
+        branch: @branch,\
+        settings: @settings,\
+        terminals: @terminals\
+      )
         flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
         redirect_to success_path
       else
