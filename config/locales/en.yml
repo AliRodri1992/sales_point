@@ -382,12 +382,12 @@ en:
       updated: User updated successfully.
       statuses:
         active: Active
-        inactive: Inactive
+        blocked: Blocked
         suspended: Suspended
         deleted: Deleted
       user_types:
         employee: Employee
-        client: Client
+        customer: Customer
         supplier: Supplier
       themes:
         theme-material-red: Material red
