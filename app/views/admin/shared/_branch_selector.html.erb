@@ -4,7 +4,6 @@
 <div class="relative" data-dashboard-selector>
   <details class="group">
     <summary
-      data-action="click->dashboard-selectors#openBranch"
       class="group flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
       aria-label="<%= t('admin.shared.branch_selector.label') %>"
     >
@@ -18,6 +17,7 @@
     </summary>
 
     <div
+      data-dashboard-selector-menu
       class="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
     >
       <p class="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
