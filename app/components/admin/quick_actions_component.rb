@@ -9,7 +9,7 @@ module Admin
     end
 
     def sales_ready?
-      @sales_requirements.present? && @sales_requirements.values.all? { |requirement| requirement[:complete] }
+      @sales_requirements.empty? || @sales_requirements.values.all? { |requirement| requirement[:complete] }
     end
 
     def sales_missing_sections
