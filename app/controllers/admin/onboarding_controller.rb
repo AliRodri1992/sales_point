@@ -42,7 +42,7 @@ module Admin
     end
 
     def authorize_onboarding
-      authorize :onboarding, :show?
+      authorize :onboarding, \":#{action_name}?\"
     end
 
     def start_onboarding
