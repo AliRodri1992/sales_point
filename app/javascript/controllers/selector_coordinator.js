@@ -10,7 +10,7 @@ export function closeDashboardSelectors(except = null) {
             menu.classList.add("hidden")
         })
 
-        container.querySelector("[data-notifications-target=\"button\"]")?.setAttribute("aria-expanded", "false")
+        container.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", "false")
     })
 }
 
@@ -18,13 +18,4 @@ export function openDashboardSelector(container) {
     if (!container) return
 
     closeDashboardSelectors(container)
-}
-
-export function isDashboardSelectorOpen(container) {
-    if (!container) return false
-
-    return Array.from(container.querySelectorAll("details")).some((details) => details.open) ||
-        Array.from(container.querySelectorAll("[data-dashboard-selector-menu]")).some(
-            (menu) => !menu.classList.contains("hidden")
-        )
 }
