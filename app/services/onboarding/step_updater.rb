@@ -13,22 +13,32 @@ module Onboarding
     end
 
     def call
-      case @step
-      when 1 then update_company
-      when 2 then update_branch?
-      when 3 then update_terminals?
-      when 4 then update_payment?
-      when 5 then complete_onboarding?
-      else false
-      end
+      result = case @step
+               when 1 then update_company
+               when 2 then update_branch
+               when 3 then update_terminals
+               when 4 then update_payment
+               when 5 then complete_onboarding
+               else false
+               end
+
+      return false unless result
+
+      persist_progress
+      advance_step unless @step == 5
+      true
     rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
       false
     end
 
     private
 
-    def complete_onboarding?
-      Onboarding::ProgressCalculator.call(@organization)[:sections].all? { |section| section[:percentage] == 100 }
+    def complete_onboarding
+      progress = Onboarding::ProgressCalculator.call(@organization)
+      return false unless progress[:sections].all? { |section| section[:percentage] == 100 }
+
+      @organization.complete_onboarding!
+      true
     end
 
     def update_company
@@ -47,9 +57,8 @@ module Onboarding
       true
     end
 
-    def update_branch?
-      branch = @organization.branches.not_deleted.where(status: true).first ||
-               @organization.branches.not_deleted.first
+    def update_branch
+      branch = active_branch
       return false unless branch
 
       branch.update!(@params.expect(
@@ -63,9 +72,8 @@ module Onboarding
                      ))
     end
 
-    def update_terminals?
-      branch = @organization.branches.not_deleted.where(status: true).first ||
-               @organization.branches.not_deleted.first
+    def update_terminals
+      branch = active_branch
       return false unless branch
 
       terminals = branch.terminals.active_records.order(:id).to_a
@@ -80,7 +88,7 @@ module Onboarding
       true
     end
 
-    def update_payment?
+    def update_payment
       settings = @organization.organization_settings.first
       return false unless settings
 
@@ -91,8 +99,6 @@ module Onboarding
         settings.update!(payment_method: method)
         update_payment_integrations(method)
       end
-
-      true
     end
 
     def update_payment_integrations(method)
@@ -114,10 +120,22 @@ module Onboarding
       integration.update!(status: :pending, deleted_at: nil)
     end
 
+    def active_branch
+      @organization.branches.not_deleted.where(status: true).first ||
+        @organization.branches.not_deleted.first
+    end
+
     def terminal_name(index)
       @params.dig(:terminal_names, index.to_s).presence ||
         I18n.t('registration.initial_terminal_name', number: index + 1)
     end
 
+    def persist_progress
+      Onboarding::ProgressSynchronizer.call(organization: @organization)
+    end
+
+    def advance_step
+      @organization.update!(onboarding_current_step: [@step + 1, 5].min)
+    end
   end
 end
