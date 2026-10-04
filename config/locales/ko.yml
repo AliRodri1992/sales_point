@@ -144,7 +144,7 @@ ko:
         title: 지점
       statuses:
         active: 활성
-        blocked: 차단됨
+        inactive: 비활성
       updated: 지점이 성공적으로 업데이트되었습니다.
     shared:
 
