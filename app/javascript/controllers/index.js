@@ -10,12 +10,6 @@ application.register("terminal", Terminal_controller)
 import LanguageSelectorController from "./language_selector_controller"
 application.register("language-selector", LanguageSelectorController)
 
-import DashboardSelectorsController from "./dashboard_selectors_controller"
-application.register("dashboard-selectors", DashboardSelectorsController)
-
-import NotificationsController from "./notifications_controller"
-application.register("notifications", NotificationsController)
-
 import NavbarController from "./navbar_controller"
 application.register("navbar", NavbarController)
 
