@@ -1,3 +1,16 @@
+export function isDashboardSelectorOpen(container) {
+    if (!container) return false
+
+    const detailsOpen = Array.from(container.querySelectorAll("details")).some(
+        (details) => details.open
+    )
+    const menusOpen = Array.from(container.querySelectorAll("[data-dashboard-selector-menu]")).some(
+        (menu) => !menu.classList.contains("hidden")
+    )
+
+    return detailsOpen || menusOpen
+}
+
 export function closeDashboardSelectors(except = null) {
     document.querySelectorAll("[data-dashboard-selector]").forEach((container) => {
         if (container === except) return
