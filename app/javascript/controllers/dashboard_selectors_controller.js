@@ -18,6 +18,15 @@ export default class extends Controller {
         document.removeEventListener("keydown", this.boundEscape)
     }
 
+    openBranch(event) {
+        const selector = event.currentTarget.closest("[data-dashboard-selector]")
+
+        this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
+            bubbles: true,
+            detail: { source: selector }
+        }))
+    }
+
     handleSelectorOpen(event) {
         const source = event.detail?.source
 
