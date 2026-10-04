@@ -25,7 +25,7 @@ module Users
     end
 
     def store_sign_in_success_message
-      session[:swal_message] = t("devise.sessions.#{:signed_in}")
+      session[:swal_message] = t('devise.sessions.signed_in')
       session[:swal_icon] = 'success'
     end
 
