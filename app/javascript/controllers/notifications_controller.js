@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { openDashboardSelector } from "./selector_coordinator"
 
 export default class extends Controller {
     static targets = ["button", "menu"]
@@ -6,13 +7,8 @@ export default class extends Controller {
     toggle(event) {
         event.preventDefault()
 
-        const shouldOpen = this.menuTarget.classList.contains("hidden")
-
-        if (shouldOpen) {
-            this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
-                bubbles: true,
-                detail: { source: this.element }
-            }))
+        if (this.menuTarget.classList.contains("hidden")) {
+            openDashboardSelector(this.element)
             this.open()
             return
         }
