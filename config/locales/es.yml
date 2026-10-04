@@ -852,7 +852,6 @@ es:
       close: Cerrar
       subtitle: Revisa los detalles de este cliente.
       title: Detalles del cliente
-    show:
       fields:
         code: Código
         name: Nombre
