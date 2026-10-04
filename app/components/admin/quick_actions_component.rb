@@ -2,6 +2,23 @@
 
 module Admin
   class QuickActionsComponent < ViewComponent::Base
+    def initialize(onboarding_progress: nil, sales_requirements: nil)
+      @onboarding_progress = onboarding_progress
+      @sales_requirements = sales_requirements || {}
+    end
+
+    def sales_ready?
+      return true unless @onboarding_progress
+
+      @sales_requirements.values.all? { |requirement| requirement[:complete] }
+    end
+
+    def sales_missing_sections
+      return [] unless @onboarding_progress
+
+      @sales_requirements.filter_map { |section, requirement| section unless requirement[:complete] }
+    end
+
     Action = Data.define(
       :label,
       :description,

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get '/', to: 'dashboard#index', as: :root
     get '/onboarding', to: 'onboarding#show', as: :onboarding
     patch '/onboarding', to: 'onboarding#update'
+    patch '/onboarding/reset', to: 'onboarding#reset', as: :onboarding_reset
     patch 'sidebar', to: 'sidebar#update'
     get 'languages/content', to: 'languages#content'
     resources :languages

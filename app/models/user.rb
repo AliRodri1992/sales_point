@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
+  has_many :onboarding_audits, dependent: :restrict_with_exception
 
   ONLINE_USERS_KEY = 'online_users'.freeze
 

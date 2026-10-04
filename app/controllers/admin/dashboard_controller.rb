@@ -4,6 +4,16 @@ module Admin
     before_action :authenticate_user!
 
     def index
+      organization = current_user.organizations.active_records.first
+      @onboarding_progress = if organization && !organization.onboarding_completed?
+                               Onboarding::ProgressCalculator.call(organization)
+                             end
+      @sales_requirements = if organization
+                              %i[branches terminals payments].index_with do |section|
+                                Onboarding::Requirement.call(organization:, section:)
+                              end
+                            end
+
       @dashboard_preferences = current_user.dashboard_preferences.map do |preference|
         {
           grid_type: preference.grid_type,

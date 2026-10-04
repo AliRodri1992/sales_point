@@ -182,11 +182,21 @@ en:
         active: Active
         inactive: Inactive
       updated: Category updated successfully
+    dashboard:
+      onboarding:
+        title: Complete your initial setup
+        description: Your organization is %{percentage}% configured.
+        continue: Continue setup
+        action_required: Setup required
+        sales_dependency: Before starting sales, complete %{sections}.
     onboarding:
       eyebrow: Initial setup
       title: Set up your Delta POS
       description: Complete these steps to configure your business before entering the administration dashboard.
       overall: Overall progress
+      reset_button: Reset setup
+      reset_confirm: "Are you sure you want to reset onboarding? Saved onboarding progress will be cleared."
+      reset: Initial setup reset.
       step_number: "Step %{number}"
       steps:
         "1":
@@ -214,17 +224,47 @@ en:
           description: Review your configuration.
           heading: Ready to go
           help: Review the setup and finish onboarding when everything is complete.
-        payment_method: Initial payment method
+      fields:
+        company_name: Company name
+        tax_id: Tax ID
+        business_sector: Business sector
+        select_business_sector: Select business sector
         currency: Currency
         select_currency: Select currency
         timezone: Time zone
         select_timezone: Select time zone
-        select_business_sector: Select business sector
+        branch_name: Branch name
+        phone: Phone
+        street: Street
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        city: City
+        state: State
+        country: Country
+        postal_code: Postal code
+        terminal_name: Cash register name
+        terminal_code: Cash register code
+        terminal_status: Status
+        branch: Branch
+        payment_method: Initial payment method
         payment_integration: Payment integration
         migration_volume: Migration volume
         migration_priority: Migration priority
         migration_status: Migration status
         team_members: Team members
+      sections:
+        company: Business
+        fiscal: Fiscal information
+        branches: Main branch
+        terminals: Terminals
+        payments: Payments
+        migration: Migration
+        team: Team
+      statuses:
+        not_started: Not started
+        in_progress: In progress
+        completed: Completed
       migration:
         title: Migration setup
         description: Your migration request was created during registration and will remain available for processing.
@@ -233,9 +273,12 @@ en:
           pending: Pending
           in_progress: In progress
           completed: Completed
+      terminal: Cash register %{number}
+      terminal_statuses:
+        active: Active
+        inactive: Inactive
       active: Active
       not_available: Not available
-.
   app:
     description: 'Delta POS: intelligent point of sale system for sales, inventory
       and business operations.'

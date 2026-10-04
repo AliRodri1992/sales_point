@@ -8,13 +8,16 @@ module Admin
     before_action :authorize_onboarding
 
     def show
+      return redirect_to admin_dashboard_path if @organization.onboarding_completed?
+
+      start_onboarding
       load_onboarding
     end
 
     def update
       @step = normalized_step
 
-      if Onboarding::StepUpdater.call(organization: @organization, step: @step, params: params)
+      if Onboarding::StepUpdater.call(organization: @organization, step: @step, params:, user: current_user)
         flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
         redirect_to success_path
       else
@@ -33,8 +36,15 @@ module Admin
       authorize :onboarding, :show?
     end
 
+    def start_onboarding
+      @organization.start_onboarding!
+      Onboarding::ProgressSynchronizer.call(organization: @organization)
+    end
+
     def normalized_step
       value = params[:step].to_i
+      return @organization.onboarding_current_step if params[:step].blank?
+
       value.between?(1, 5) ? value : 1
     end
 
@@ -59,12 +69,32 @@ module Admin
         @organization.branches.not_deleted.first
     end
 
-    def success_path
-      if @step == 5
-        admin_dashboard_path
-      else
-        admin_onboarding_path(step: @step + 1)
+    def reset
+      authorize :onboarding, :reset?
+
+      ApplicationRecord.transaction do
+        @organization.update!(
+          onboarding_status: :pending,
+          onboarding_current_step: 1,
+          onboarding_sections: {},
+          onboarding_completed_at: nil
+        )
+        Onboarding::Auditor.call(
+          organization: @organization,
+          user: current_user,
+          action: 'reset',
+          metadata: { 'reason' => 'administrative_reset' }
+        )
       end
+
+      redirect_to admin_onboarding_path(step: 1),
+                  flash: { swal_message: t('admin.onboarding.reset') }
+    end
+
+    def success_path
+      return admin_dashboard_path if @step == 5
+
+      admin_onboarding_path(step: @step + 1)
     end
 
     def handle_update_failure

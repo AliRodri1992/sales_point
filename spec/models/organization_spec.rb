@@ -6,6 +6,7 @@ RSpec.describe Organization, type: :model do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:tax_id) }
   it { is_expected.to validate_presence_of(:business_sector) }
+  it { is_expected.to validate_presence_of(:onboarding_status) }
 
   it 'defines the supported statuses' do
     expect(described_class.statuses).to include(
@@ -13,6 +14,32 @@ RSpec.describe Organization, type: :model do
       'inactive' => 'inactive',
       'suspended' => 'suspended'
     )
+  end
+
+  it 'defines the onboarding lifecycle' do
+    expect(described_class.onboarding_statuses).to eq(
+      'pending' => 'pending',
+      'in_progress' => 'in_progress',
+      'completed' => 'completed'
+    )
+  end
+
+  it 'starts with pending onboarding state' do
+    expect(organization.onboarding_status).to eq('pending')
+    expect(organization.onboarding_current_step).to eq(1)
+  end
+
+  it 'starts onboarding without changing a completed organization' do
+    organization = create(:organization)
+    organization.start_onboarding!
+
+    expect(organization).to be_onboarding_status_in_progress
+
+    organization.complete_onboarding!
+    organization.start_onboarding!
+
+    expect(organization).to be_onboarding_status_completed
+    expect(organization.onboarding_completed_at).to be_present
   end
 
   it 'soft deletes and restores' do
