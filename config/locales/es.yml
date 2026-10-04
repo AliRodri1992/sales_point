@@ -148,6 +148,11 @@ es:
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
     shared:
+
+      branch_selector:
+        label: Sucursal
+        no_branch: Sin sucursal
+        empty: No hay sucursales activas disponibles.
       sidebar:
         onboarding:
           title: Configuración inicial
