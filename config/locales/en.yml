@@ -147,6 +147,11 @@ en:
         inactive: Inactive
       updated: Branch updated successfully.
     shared:
+
+      branch_selector:
+        label: Branch
+        no_branch: No branch
+        empty: No active branches available.
       sidebar:
         onboarding:
           title: Initial setup
