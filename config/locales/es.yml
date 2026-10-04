@@ -183,6 +183,13 @@ es:
         active: Activo
         inactive: Inactivo
       updated: Categoría actualizada correctamente
+    dashboard:
+      onboarding:
+        title: Completa la configuración inicial
+        description: Tu organización está al %{percentage}% de configuración.
+        continue: Continuar configuración
+        action_required: Configuración requerida
+        sales_dependency: Para iniciar ventas debes completar %{sections}.
     onboarding:
       eyebrow: Configuración inicial
       title: Configura tu Delta POS
