@@ -25,6 +25,7 @@ module Admin
 
     def update
       @step = normalized_step
+      load_onboarding
 
       if Onboarding::StepUpdater.call(organization: @organization, step: @step, params:, user: current_user)
         flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
@@ -114,7 +115,6 @@ module Admin
     end
 
     def handle_update_failure
-      load_onboarding
       flash.now[:swal_message] = t('admin.onboarding.incomplete')
       flash.now[:swal_icon] = 'error'
       render :show, status: :unprocessable_content
