@@ -5,24 +5,20 @@ export default class extends Controller {
     static targets = ["dropdown"]
 
     connect() {
-        this.boundToggle = this.toggle.bind(this)
         this.boundOutsideClick = this.closeOnClickOutside.bind(this)
         this.boundEscape = this.closeOnEscape.bind(this)
 
-        this.element.addEventListener("click", this.boundToggle)
         document.addEventListener("click", this.boundOutsideClick)
         document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        this.element.removeEventListener("click", this.boundToggle)
         document.removeEventListener("click", this.boundOutsideClick)
         document.removeEventListener("keydown", this.boundEscape)
     }
 
     toggle(event) {
-        if (!event.target.closest("#languageSelectorButton")) return
-
+        event.preventDefault()
         event.stopPropagation()
 
         const willOpen = this.dropdownTarget.classList.contains("hidden")
@@ -32,7 +28,9 @@ export default class extends Controller {
             return
         }
 
-        closeDashboardSelectors(this.element)
+        document.dispatchEvent(new CustomEvent("dashboard:selector:open", {
+            detail: { source: this.element }
+        }))
         this.dropdownTarget.classList.remove("hidden")
         this.refreshDropdownContent()
     }
@@ -42,9 +40,9 @@ export default class extends Controller {
     }
 
     closeOnClickOutside(event) {
-        if (this.element.contains(event.target)) return
-
-        closeDashboardSelectors()
+        if (!this.element.contains(event.target)) {
+            closeDashboardSelectors()
+        }
     }
 
     closeOnEscape(event) {
@@ -66,8 +64,8 @@ export default class extends Controller {
 
             const html = await response.text()
             const parser = new DOMParser()
-            const doc = parser.parseFromString(html, "text/html")
-            const newContent = doc.getElementById("language_selector_content")
+            const newContent = parser.parseFromString(html, "text/html")
+                .getElementById("language_selector_content")
             const currentContent = document.getElementById("language_selector_content")
 
             if (newContent && currentContent) {
