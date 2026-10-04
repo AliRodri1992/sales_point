@@ -9,10 +9,10 @@ export default class extends Controller {
         const shouldOpen = this.menuTarget.classList.contains("hidden")
 
         if (shouldOpen) {
-            this.dispatch("open", {
-                detail: { source: this.element },
-                bubbles: true
-            })
+            this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
+                bubbles: true,
+                detail: { source: this.element }
+            }))
             this.open()
             return
         }
