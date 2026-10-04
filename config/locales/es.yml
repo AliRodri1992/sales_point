@@ -251,8 +251,10 @@ es:
         title: Panel de control
         subtitle: Resumen de las operaciones de tu negocio.
         customize: Personalizar panel
-        new_sale:
-        save_changes: Guardar cambios Nueva venta
+        new_sale: Nueva venta
+        save_changes: Guardar cambios
+      saved:
+        text: Texto guardado correctamente.
       onboarding:
         title: Completa la configuración inicial
         description: Tu organización está al %{percentage}% de configuración.
