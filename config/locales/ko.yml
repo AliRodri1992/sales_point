@@ -214,17 +214,47 @@ ko:
           description: 설정을 검토합니다.
           heading: 시작할 준비가 되었습니다
           help: 설정을 검토하고 모든 항목이 완료되면 온보딩을 마치세요.
-        payment_method: 초기 결제 방법
+      fields:
+        company_name: 회사명
+        tax_id: 사업자 등록번호
+        business_sector: 사업 분야
+        select_business_sector: 사업 분야를 선택하세요
         currency: 통화
         select_currency: 통화를 선택하세요
         timezone: 시간대
         select_timezone: 시간대를 선택하세요
-        select_business_sector: 사업 분야를 선택하세요
+        branch_name: 지점명
+        phone: 전화번호
+        street: 도로명
+        exterior_number: 외부 번호
+        interior_number: 내부 번호
+        neighborhood: 지역
+        city: 도시
+        state: 주
+        country: 국가
+        postal_code: 우편번호
+        terminal_name: 계산대 이름
+        terminal_code: 계산대 코드
+        terminal_status: 상태
+        branch: 지점
+        payment_method: 초기 결제 방법
         payment_integration: 결제 연동
         migration_volume: 마이그레이션 규모
         migration_priority: 마이그레이션 우선순위
         migration_status: 마이그레이션 상태
         team_members: 팀 구성원
+      sections:
+        company: 비즈니스
+        fiscal: 세무 정보
+        branches: 기본 지점
+        terminals: 계산대
+        payments: 결제
+        migration: 마이그레이션
+        team: 팀
+      statuses:
+        not_started: 시작되지 않음
+        in_progress: 진행 중
+        completed: 완료
       migration:
         title: 마이그레이션 설정
         description: 가입 과정에서 마이그레이션 요청이 생성되었으며 처리할 수 있도록 유지됩니다.
@@ -235,7 +265,6 @@ ko:
           completed: 완료
       active: 활성
       not_available: 사용할 수 없음
-.
   app:
     description: '델타 포스: 판매, 재고 및 비즈니스 운영을 위한 지능형 포인트 오브 세일스 시스템입니다.'
     name: 델타
