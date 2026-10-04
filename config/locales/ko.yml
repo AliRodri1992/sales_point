@@ -148,6 +148,48 @@ ko:
       updated: 지점이 성공적으로 업데이트되었습니다.
     shared:
 
+      notifications:
+        title: 알림
+        subtitle: "읽지 않은 알림 %{count}개"
+        subtitle_none: 새로운 알림이 없습니다
+        empty: 알림이 없습니다
+        mark_all_read: 모두 읽음으로 표시
+        performed_by: "수행자: %{user}"
+        actor_unknown: 알 수 없는 사용자
+        new_message: 새 메시지
+        message_unavailable: 메시지를 사용할 수 없습니다
+        types:
+          language: 언어
+          category: 카테고리
+          product: 상품
+          branch: 지점
+          client: 고객
+          system_role: 시스템 역할
+        language:
+          created: "언어 %{name}이(가) 생성되었습니다"
+          updated: "언어 %{name}이(가) 업데이트되었습니다"
+          destroyed: "언어 %{name}이(가) 삭제되었습니다"
+        category:
+          created: "카테고리 %{name}이(가) 생성되었습니다"
+          updated: "카테고리 %{name}이(가) 업데이트되었습니다"
+          destroyed: "카테고리 %{name}이(가) 삭제되었습니다"
+        product:
+          created: "상품 %{name}이(가) 생성되었습니다"
+          updated: "상품 %{name}이(가) 업데이트되었습니다"
+          destroyed: "상품 %{name}이(가) 삭제되었습니다"
+        branch:
+          created: "지점 %{name}이(가) 생성되었습니다"
+          updated: "지점 %{name}이(가) 업데이트되었습니다"
+          destroyed: "지점 %{name}이(가) 삭제되었습니다"
+        client:
+          created: "고객 %{name}이(가) 생성되었습니다"
+          updated: "고객 %{name}이(가) 업데이트되었습니다"
+          destroyed: "고객 %{name}이(가) 삭제되었습니다"
+        system_role:
+          created: "시스템 역할 %{name}이(가) 생성되었습니다"
+          updated: "시스템 역할 %{name}이(가) 업데이트되었습니다"
+          destroyed: "시스템 역할 %{name}이(가) 삭제되었습니다"
+
       branch_selector:
         label: 지점
         no_branch: 지점 없음
