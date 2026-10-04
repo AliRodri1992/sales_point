@@ -232,7 +232,7 @@ ko:
         code_hint: 고유한 언어 코드입니다.
         code_placeholder: "예: ko"
         create: 언어 생성
-        flag_hint: ISO 국기 코드입니다(예: kr).
+        flag_hint: "ISO 국기 코드입니다(예: kr)."
         flag_iso: 국기 코드
         flag_placeholder: "예: kr"
         name: 이름
