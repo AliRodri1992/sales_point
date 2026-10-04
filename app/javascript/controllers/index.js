@@ -10,10 +10,8 @@ application.register("terminal", Terminal_controller)
 import LanguageSelectorController from "./language_selector_controller"
 application.register("language-selector", LanguageSelectorController)
 
-import DashboardDropdownController from "./dashboard_dropdown_controller"
-application.register("dashboard-dropdown", DashboardDropdownController)
-
-import "./selector_coordinator"
+import DashboardSelectorsController from "./dashboard_selectors_controller"
+application.register("dashboard-selectors", DashboardSelectorsController)
 
 import NotificationsController from "./notifications_controller"
 application.register("notifications", NotificationsController)
