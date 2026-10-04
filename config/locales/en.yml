@@ -847,7 +847,6 @@ en:
       close: Close
       subtitle: Review the details of this client.
       title: Client details
-    show:
       fields:
         code: Code
         name: Name
