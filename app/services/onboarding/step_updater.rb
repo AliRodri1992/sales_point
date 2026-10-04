@@ -27,7 +27,19 @@ module Onboarding
     private
 
     def update_company
-      @organization.update(@params.expect(organization: %i[name tax_id business_sector]))
+      organization_attributes = @params.expect(organization: %i[name tax_id business_sector currency timezone])
+      settings = @organization.organization_settings.first
+      return false unless settings
+
+      ActiveRecord::Base.transaction do
+        @organization.update!(organization_attributes.slice(:name, :tax_id, :business_sector))
+        settings.update!(
+          currency: organization_attributes[:currency],
+          timezone: organization_attributes[:timezone]
+        )
+      end
+
+      true
     end
 
     def update_branch?
