@@ -287,16 +287,24 @@ export default class extends Controller {
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
   }
 
-  setError(type, message) {
-    const error = this.errorTargets.find((element) => element.dataset.error === type)
-    if (!error) return false
-    error.textContent = message
-    error.classList.remove("hidden")
+  setError(_type, message) {
+    if (!message || !window.Swal) return false
+
+    window.Swal.fire({
+      toast: true,
+      icon: "warning",
+      position: "top-end",
+      timer: 3200,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      title: message
+    })
+
     return false
   }
 
-  clearError(type) {
-    this.errorTargets.find((element) => element.dataset.error === type)?.classList.add("hidden")
+  clearError(_type) {
+    return undefined
   }
 
   clearErrors() {
