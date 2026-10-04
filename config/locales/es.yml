@@ -189,6 +189,8 @@ es:
         inactive: Inactivo
       updated: Categoría actualizada correctamente
     dashboard:
+      index:
+        title: Panel de control
       page_header:
         title: Panel de control
         subtitle: Resumen de las operaciones de tu negocio.
