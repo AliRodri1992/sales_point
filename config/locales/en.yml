@@ -188,6 +188,11 @@ en:
         inactive: Inactive
       updated: Category updated successfully
     dashboard:
+      page_header:
+        title: Dashboard
+        subtitle: Overview of your business operations.
+        customize: Customize dashboard
+        new_sale: New sale
       onboarding:
         title: Complete your initial setup
         description: Your organization is %{percentage}% configured.
@@ -278,6 +283,10 @@ en:
           pending: Pending
           in_progress: In progress
           completed: Completed
+      no_terminals: No cash registers are available yet.
+      back: Back
+      continue: Continue
+      finish: Finish setup
       terminal: Cash register %{number}
       terminal_statuses:
         active: Active
