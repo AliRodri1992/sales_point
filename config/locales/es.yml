@@ -264,6 +264,10 @@ es:
           pending: Pendiente
           in_progress: En progreso
           completed: Completada
+      terminal: Caja %{number}
+      terminal_statuses:
+        active: Activa
+        inactive: Inactiva
       active: Activa
       not_available: No disponible
   app:
