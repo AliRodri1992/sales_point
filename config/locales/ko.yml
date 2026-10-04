@@ -36,6 +36,34 @@ ko:
         status: 상태
         stock: 재고
         view_count: 조회수
+      organization:
+        name: 조직명
+        tax_id: 세금 식별 번호
+        business_sector: 업종
+        status: 상태
+        onboarding_status: 온보딩 상태
+        onboarding_current_step: 현재 온보딩 단계
+      branch:
+        name: 지점명
+        phone: 전화번호
+        status: 상태
+      address:
+        street: 도로명
+        exterior_number: 외부 번호
+        interior_number: 내부 번호
+        neighborhood: 동네
+        city: 도시
+        state: 주/도
+        country: 국가
+        postal_code: 우편번호
+      terminal:
+        name: 계산대 이름
+        code: 계산대 코드
+        status: 상태
+      organization_setting:
+        currency: 통화
+        timezone: 시간대
+        payment_method: 결제 방법
       user:
         current_password: 현재 비밀번호
         email: 이메일
@@ -52,6 +80,9 @@ ko:
       product: 상품
       sat_currency: SAT 통화
       system_role: 시스템 역할
+      organization: 조직
+      organization_setting: 조직 설정
+      terminal: 계산대
       user: 사용자
   admin:
     branches:
