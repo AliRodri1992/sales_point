@@ -39,7 +39,7 @@
       <% if flash[:swal_message].present? %>
         <div data-controller="swal-flash"
              data-swal-flash-message-value="<%= flash[:swal_message] %>"
-             data-swal-flash-icon-value="success"
+             data-swal-flash-icon-value="<%= flash[:swal_icon].presence || "success" %>"
              class="hidden"></div>
       <% end %>
 
