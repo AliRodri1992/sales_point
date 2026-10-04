@@ -115,6 +115,11 @@ en:
         active: Active
         inactive: Inactive
       updated: Branch updated successfully.
+    shared:
+      sidebar:
+        onboarding:
+          title: Initial setup
+          progress: Initial setup at %{percentage}%
     breadcrumbs:
       branches: Branches
       categories: Categories
