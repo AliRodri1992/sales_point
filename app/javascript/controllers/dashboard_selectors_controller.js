@@ -1,19 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
-import { closeDashboardSelectors } from "./selector_coordinator"
+import { closeDashboardSelectors, openDashboardSelector } from "./selector_coordinator"
 
 export default class extends Controller {
     connect() {
-        this.boundSelectorOpen = this.handleSelectorOpen.bind(this)
         this.boundOutsideClick = this.handleOutsideClick.bind(this)
         this.boundEscape = this.handleEscape.bind(this)
 
-        this.element.addEventListener("dashboard:selector:open", this.boundSelectorOpen)
         document.addEventListener("click", this.boundOutsideClick)
         document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        this.element.removeEventListener("dashboard:selector:open", this.boundSelectorOpen)
         document.removeEventListener("click", this.boundOutsideClick)
         document.removeEventListener("keydown", this.boundEscape)
     }
@@ -21,20 +18,7 @@ export default class extends Controller {
     openBranch(event) {
         const selector = event.currentTarget.closest("[data-dashboard-selector]")
 
-        this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
-            bubbles: true,
-            detail: { source: selector }
-        }))
-    }
-
-    handleSelectorOpen(event) {
-        const source = event.detail?.source
-
-        if (source instanceof Element) {
-            closeDashboardSelectors(source)
-        } else {
-            closeDashboardSelectors()
-        }
+        openDashboardSelector(selector)
     }
 
     handleOutsideClick(event) {
