@@ -37,6 +37,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(OrganizationMembership.count).to eq(1)
     expect(Branch.count).to eq(1)
     expect(Terminal.count).to eq(1)
+    expect(User.find_by(email: 'owner@example.com').employee.organization.onboarding_status).to eq('pending')
   end
 
   it 'rolls back when terms are not accepted' do
