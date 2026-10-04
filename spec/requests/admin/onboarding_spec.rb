@@ -96,6 +96,26 @@ RSpec.describe 'Admin onboarding', type: :request do
     expect(organization.onboarding_audits.where(action: 'completed')).to exist
   end
 
+
+  it 'does not reopen onboarding after completion' do
+    organization.update!(
+      onboarding_status: :completed,
+      onboarding_current_step: 5,
+      onboarding_completed_at: Time.current
+    )
+
+    get admin_onboarding_path
+
+    expect(response).to redirect_to(admin_dashboard_path)
+  end
+
+  it 'denies onboarding access to a non-administrator' do
+    role.update!(code: 'employee')
+    get admin_onboarding_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'resets onboarding without deleting configured data' do
     organization.update!(
       onboarding_status: :completed,
