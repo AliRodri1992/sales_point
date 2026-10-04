@@ -78,29 +78,6 @@ module Onboarding
       true
     end
 
-    def update_existing_terminals(terminals, desired)
-      terminals.first(desired).each_with_index do |terminal, index|
-        terminal.update!(name: terminal_name(index), code: terminal_code(index))
-      end
-    end
-
-    def deactivate_extra_terminals(terminals, desired)
-      terminals.drop(desired).each do |terminal|
-        terminal.update!(deleted_at: Time.current, status: :inactive)
-      end
-    end
-
-    def create_new_terminals(branch, desired, existing_count)
-      (existing_count...desired).each do |index|
-        Terminal.create!(
-          branch:,
-          name: terminal_name(index),
-          code: terminal_code(index),
-          status: :active
-        )
-      end
-    end
-
     def update_payment_integrations(method)
       if method == 'cash'
         deactivate_all_payment_integrations
