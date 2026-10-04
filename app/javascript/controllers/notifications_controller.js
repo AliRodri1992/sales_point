@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import { closeDashboardSelectors } from "./selector_coordinator"
 
 export default class extends Controller {
     static targets = ["button", "menu"]
@@ -15,16 +14,19 @@ export default class extends Controller {
 
     toggle(event) {
         event.preventDefault()
+        event.stopPropagation()
 
-        const wasOpen = !this.menuTarget.classList.contains("hidden")
+        const shouldOpen = this.menuTarget.classList.contains("hidden")
 
-        if (wasOpen) {
-            this.close()
+        if (shouldOpen) {
+            document.dispatchEvent(new CustomEvent("dashboard:selector:open", {
+                detail: { source: this.element }
+            }))
+            this.open()
             return
         }
 
-        closeDashboardSelectors(this.element)
-        this.open()
+        this.close()
     }
 
     open() {
@@ -39,7 +41,7 @@ export default class extends Controller {
 
     closeOnEscape(event) {
         if (event.key === "Escape") {
-            closeDashboardSelectors()
+            this.close()
         }
     }
 }
