@@ -263,6 +263,10 @@ ko:
           pending: 대기 중
           in_progress: 진행 중
           completed: 완료
+      terminal: 계산대 %{number}
+      terminal_statuses:
+        active: 활성
+        inactive: 비활성
       active: 활성
       not_available: 사용할 수 없음
   app:
