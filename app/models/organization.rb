@@ -14,7 +14,7 @@ class Organization < ApplicationRecord
   enum :onboarding_status, { pending: 'pending', in_progress: 'in_progress', completed: 'completed' }
 
   ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
-  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
+  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}[A-Z0-9]{8,9}\z/i
 
   validates :name, presence: true, length: { in: 2..150 }
   validates :tax_id,
