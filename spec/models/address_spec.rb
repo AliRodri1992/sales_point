@@ -25,6 +25,8 @@ RSpec.describe Address, type: :model do
     it { is_expected.to allow_value('54800').for(:postal_code) }
     it { is_expected.not_to allow_value('5480').for(:postal_code) }
     it { is_expected.not_to allow_value('ABCDE').for(:postal_code) }
+    it { is_expected.to validate_presence_of(:geocoding_status) }
+    it { is_expected.to validate_inclusion_of(:geocoding_status).in_array(%w[pending success failed]) }
   end
 
   it 'is valid with valid attributes' do

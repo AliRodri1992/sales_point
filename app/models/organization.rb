@@ -13,14 +13,22 @@ class Organization < ApplicationRecord
   enum :status, { active: 'active', inactive: 'inactive', suspended: 'suspended' }
   enum :onboarding_status, { pending: 'pending', in_progress: 'in_progress', completed: 'completed' }
 
+  ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
+  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
+
   validates :name, presence: true, length: { in: 2..150 }
-  validates :tax_id, presence: true, length: { in: 12..13 },
-                     format: { with: /\A[A-Z0-9]+\z/i },
-                     uniqueness: { conditions: -> { where(deleted_at: nil) } }
-  validates :business_sector, presence: true, length: { maximum: 50 }
-  validates :status, presence: true
-  validates :onboarding_status, presence: true
+  validates :tax_id,
+            presence: true,
+            length: { in: 12..13 },
+            format: { with: TAX_ID_FORMAT },
+            uniqueness: { conditions: -> { where(deleted_at: nil) } }
+  validates :business_sector,
+            presence: true,
+            inclusion: { in: ONBOARDING_BUSINESS_SECTORS }
+  validates :status, presence: true, inclusion: { in: statuses.keys }
+  validates :onboarding_status, presence: true, inclusion: { in: onboarding_statuses.keys }
   validates :onboarding_current_step,
+            presence: true,
             numericality: { only_integer: true, in: 1..5 }
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }

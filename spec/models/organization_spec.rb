@@ -8,6 +8,18 @@ RSpec.describe Organization, type: :model do
   it { is_expected.to validate_presence_of(:business_sector) }
   it { is_expected.to validate_presence_of(:onboarding_status) }
 
+  it 'validates the onboarding business sectors' do
+    expect(organization).to allow_value(*Organization::ONBOARDING_BUSINESS_SECTORS).for(:business_sector)
+    expect(organization).not_to allow_value('other').for(:business_sector)
+  end
+
+  it 'validates the Mexican tax identifier format' do
+    expect(organization).to allow_value('ABC010203AB1').for(:tax_id)
+    expect(organization).to allow_value('ABCD010203AB1').for(:tax_id)
+    expect(organization).not_to allow_value('ABC123').for(:tax_id)
+    expect(organization).not_to allow_value('ABC010203').for(:tax_id)
+  end
+
   it 'defines the supported statuses' do
     expect(described_class.statuses).to include(
       'active' => 'active',

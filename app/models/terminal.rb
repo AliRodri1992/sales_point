@@ -17,7 +17,9 @@ class Terminal < ApplicationRecord
               scope: :branch_id,
               conditions: -> { where(deleted_at: nil) }
             }
-  validates :status, presence: true
+  validates :status,
+            presence: true,
+            inclusion: { in: statuses.keys }
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 end

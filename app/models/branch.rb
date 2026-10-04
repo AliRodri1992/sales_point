@@ -13,7 +13,12 @@ class Branch < ApplicationRecord
 
   validates :name,
             presence: true,
-            length: { in: 2..100 }
+            length: { in: 2..100 },
+            uniqueness: {
+              scope: :organization_id,
+              case_sensitive: false,
+              conditions: -> { where(deleted_at: nil) }
+            }
 
   validates :phone,
             format: { with: /\A[0-9+\-\s()]{7,20}\z/ },

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true
 
@@ -52,6 +54,10 @@ class Address < ApplicationRecord
               less_than_or_equal_to: 180
             },
             allow_nil: true
+
+  validates :geocoding_status,
+            presence: true,
+            inclusion: { in: geocoding_statuses.keys }
 
   scope :active, -> { where(deleted_at: nil) }
 

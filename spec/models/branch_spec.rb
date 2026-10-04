@@ -15,6 +15,16 @@ RSpec.describe Branch, type: :model do
     it { is_expected.not_to allow_value('abc123').for(:phone) }
     it { is_expected.to validate_length_of(:phone).is_at_least(7).is_at_most(20).allow_blank }
     it { is_expected.to validate_inclusion_of(:status).in_array([true, false]) }
+
+    it 'requires unique branch names within an organization' do
+      organization = create(:organization)
+      create(:branch, organization:, name: 'Centro')
+
+      branch = build(:branch, organization:, name: 'centro')
+
+      expect(branch).not_to be_valid
+      expect(branch.errors[:name]).to include('has already been taken')
+    end
   end
 
   describe 'nested address' do
