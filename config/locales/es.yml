@@ -225,6 +225,7 @@ es:
       reset_button: Reiniciar configuración
       reset_confirm: "¿Seguro que deseas reiniciar el onboarding? El progreso guardado se perderá."
       reset: Configuración inicial reiniciada.
+      incomplete: Completa la configuración inicial antes de continuar.
       step_number: "Paso %{number}"
       steps:
         "1":
