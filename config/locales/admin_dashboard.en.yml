@@ -7,6 +7,12 @@ en:
         subtitle: "Monitor your business performance at a glance."
         customize: "Customize dashboard"
         new_sale: "New sale"
+      saved:
+        title: "Dashboard saved"
+        text: "Your dashboard changes were saved successfully."
+      save_error:
+        title: "Save failed"
+        text: "Your dashboard changes could not be saved."
       kpi_grid:
         sales_today: "Sales today"
         transactions: "Transactions"
