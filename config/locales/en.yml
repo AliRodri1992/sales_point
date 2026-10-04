@@ -120,6 +120,21 @@ en:
         onboarding:
           title: Initial setup
           progress: Initial setup at %{percentage}%
+      chat:
+        assistant_name: Delta Assistant
+        online: Online
+        close: Close chat
+        greeting: "Hello, %{name}. How can I help you?"
+        input_placeholder: Type a message...
+        send: Send message
+        open: Open chat
+      online_users:
+        title: Online agents
+        subtitle: Connected users
+        close: Close online agents
+        open: View online agents
+      conversation:
+        select_user: Select an agent to start a conversation.
     breadcrumbs:
       branches: Branches
       categories: Categories
