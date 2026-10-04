@@ -116,6 +116,11 @@ es:
         active: Activa
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
+    shared:
+      sidebar:
+        onboarding:
+          title: Configuración inicial
+          progress: Configuración inicial al %{percentage}%
     breadcrumbs:
       branches: Sucursales
       categories: Categorías
