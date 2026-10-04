@@ -189,6 +189,11 @@ es:
         inactive: Inactivo
       updated: Categoría actualizada correctamente
     dashboard:
+      page_header:
+        title: Panel de control
+        subtitle: Resumen de las operaciones de tu negocio.
+        customize: Personalizar panel
+        new_sale: Nueva venta
       onboarding:
         title: Completa la configuración inicial
         description: Tu organización está al %{percentage}% de configuración.
@@ -279,6 +284,10 @@ es:
           pending: Pendiente
           in_progress: En progreso
           completed: Completada
+      no_terminals: Aún no hay cajas registradas.
+      back: Atrás
+      continue: Continuar
+      finish: Finalizar configuración
       terminal: Caja %{number}
       terminal_statuses:
         active: Activa
