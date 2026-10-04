@@ -250,7 +250,8 @@ en:
         title: Dashboard
         subtitle: Overview of your business operations.
         customize: Customize dashboard
-        new_sale: New sale
+        new_sale:
+        save_changes: Save changes New sale
       onboarding:
         title: Complete your initial setup
         description: Your organization is %{percentage}% configured.
