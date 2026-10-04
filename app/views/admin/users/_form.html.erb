@@ -87,7 +87,7 @@
         <div>
           <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
           <%= form.select :theme,
-                          @themes.map { |theme| [theme[:id].humanize, theme[:id]] },
+                          @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize), theme[:id]] },
                           { include_blank: true },
                           class: "input-field w-full rounded-xl #{form_state_classes(@user, :theme)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
           <%= error_message_for(@user, :theme) %>
