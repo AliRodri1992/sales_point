@@ -16,6 +16,11 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
   <body class="min-h-full bg-slate-50 font-inter text-slate-600 antialiased selection:bg-emerald-600 selection:text-white">
+    <div
+      data-controller="swal-flash"
+      data-swal-flash-message-value="<%= session.delete(:swal_message) %>"
+      data-swal-flash-icon-value="<%= session.delete(:swal_icon) || 'success' %>"
+    ></div>
     <%= yield %>
   </body>
 </html>
