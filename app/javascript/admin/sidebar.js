@@ -1,6 +1,8 @@
 const TOOLTIP_ID = "adminSidebarTooltip"
 const FLYOUT_ID = "adminSidebarFlyout"
 
+let activeFlyoutTarget = null
+
 const sidebarTooltip = () => document.getElementById(TOOLTIP_ID)
 const sidebarFlyout = () => document.getElementById(FLYOUT_ID)
 
@@ -13,6 +15,7 @@ const removeSidebarTooltip = () => {
 
 const removeSidebarFlyout = () => {
     sidebarFlyout()?.remove()
+    activeFlyoutTarget = null
 }
 
 const positionSidebarTooltip = (target) => {
@@ -92,6 +95,7 @@ const showSidebarFlyout = (target) => {
 
     removeSidebarTooltip()
     removeSidebarFlyout()
+    activeFlyoutTarget = target
 
     const flyout = document.createElement("div")
     flyout.id = FLYOUT_ID
@@ -126,9 +130,17 @@ const refreshSidebarFlyout = (target) => {
 }
 
 document.addEventListener("mouseover", (event) => {
+    const sidebar = document.getElementById("adminSidebar")
     const target = event.target.closest(".sidebar-catalog > summary")
-    if (target && document.getElementById("adminSidebar")?.contains(target)) {
-        showSidebarFlyout(target)
+
+    if (target && sidebar?.contains(target) && sidebar.classList.contains("sidebar-collapsed")) {
+        const cameFromInsideTarget = event.relatedTarget && target.contains(event.relatedTarget)
+
+        if (!cameFromInsideTarget && activeFlyoutTarget !== target) {
+            showSidebarFlyout(target)
+        }
+
+        return
     }
 
     showSidebarTooltip(event)
@@ -209,5 +221,9 @@ document.addEventListener("mousemove", (event) => {
     refreshSidebarTooltip(event)
 
     const target = event.target.closest(".sidebar-catalog > summary")
-    if (target && sidebarFlyout()) refreshSidebarFlyout(target)
+    if (!target || !isCollapsedSidebar()) return
+
+    if (sidebarFlyout() && activeFlyoutTarget === target) {
+        refreshSidebarFlyout(target)
+    }
 })
