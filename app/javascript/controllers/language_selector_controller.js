@@ -1,43 +1,39 @@
 import { Controller } from "@hotwired/stimulus"
+import { closeDashboardSelectors } from "./selector_coordinator"
 
 export default class extends Controller {
     static targets = ["dropdown"]
 
     connect() {
-        this.boundCloseOnClickOutside = this.closeOnClickOutside.bind(this)
-        this.boundCloseOnEscape = this.closeOnEscape.bind(this)
-        this.boundCloseOtherSelector = this.closeOtherSelector.bind(this)
+        this.boundToggle = this.toggle.bind(this)
+        this.boundOutsideClick = this.closeOnClickOutside.bind(this)
+        this.boundEscape = this.closeOnEscape.bind(this)
 
-        document.addEventListener("click", this.boundCloseOnClickOutside)
-        document.addEventListener("keydown", this.boundCloseOnEscape)
-        document.addEventListener("dashboard:selector-opened", this.boundCloseOtherSelector)
+        this.element.addEventListener("click", this.boundToggle)
+        document.addEventListener("click", this.boundOutsideClick)
+        document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        document.removeEventListener("click", this.boundCloseOnClickOutside)
-        document.removeEventListener("keydown", this.boundCloseOnEscape)
-        document.removeEventListener("dashboard:selector-opened", this.boundCloseOtherSelector)
+        this.element.removeEventListener("click", this.boundToggle)
+        document.removeEventListener("click", this.boundOutsideClick)
+        document.removeEventListener("keydown", this.boundEscape)
     }
 
     toggle(event) {
+        if (!event.target.closest("#languageSelectorButton")) return
+
         event.stopPropagation()
 
         const willOpen = this.dropdownTarget.classList.contains("hidden")
 
-        if (willOpen) {
-            this.open()
-        } else {
+        if (!willOpen) {
             this.close()
+            return
         }
-    }
 
-    open() {
-        this.closeOtherSelector()
-
+        closeDashboardSelectors(this.element)
         this.dropdownTarget.classList.remove("hidden")
-        document.dispatchEvent(new CustomEvent("dashboard:selector-opened", {
-            detail: { source: this.element }
-        }))
         this.refreshDropdownContent()
     }
 
@@ -46,25 +42,14 @@ export default class extends Controller {
     }
 
     closeOnClickOutside(event) {
-        if (this.dropdownTarget.classList.contains("hidden")) return
         if (this.element.contains(event.target)) return
 
-        this.close()
+        closeDashboardSelectors()
     }
 
     closeOnEscape(event) {
-        if (event.key !== "Escape") return
-
-        this.close()
-    }
-
-    closeOtherSelector(event) {
-        if (event?.detail?.source === this.element) return
-
-        const details = this.element.querySelector("details")
-
-        if (details?.open) {
-            details.open = false
+        if (event.key === "Escape") {
+            closeDashboardSelectors()
         }
     }
 
@@ -77,16 +62,16 @@ export default class extends Controller {
                 }
             })
 
-            if (response.ok) {
-                const html = await response.text()
-                const parser = new DOMParser()
-                const doc = parser.parseFromString(html, "text/html")
-                const newContent = doc.getElementById("language_selector_content")
-                const currentContent = document.getElementById("language_selector_content")
+            if (!response.ok) return
 
-                if (newContent && currentContent) {
-                    currentContent.innerHTML = newContent.innerHTML
-                }
+            const html = await response.text()
+            const parser = new DOMParser()
+            const doc = parser.parseFromString(html, "text/html")
+            const newContent = doc.getElementById("language_selector_content")
+            const currentContent = document.getElementById("language_selector_content")
+
+            if (newContent && currentContent) {
+                currentContent.innerHTML = newContent.innerHTML
             }
         } catch (error) {
             console.error("Error refreshing language dropdown:", error)
@@ -96,8 +81,7 @@ export default class extends Controller {
     select(event) {
         event.stopPropagation()
 
-        const button = event.currentTarget
-        const language = button.dataset.language
+        const language = event.currentTarget.dataset.language
 
         fetch("/language", {
             method: "PATCH",
@@ -105,10 +89,10 @@ export default class extends Controller {
                 "Content-Type": "application/json",
                 "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
             },
-            body: JSON.stringify({ language: language })
+            body: JSON.stringify({ language })
         })
             .then(() => {
-                this.close()
+                closeDashboardSelectors()
                 window.location.reload()
             })
             .catch((error) => {
