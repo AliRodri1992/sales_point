@@ -36,6 +36,34 @@ en:
         status: Status
         stock: Stock
         view_count: View count
+      organization:
+        name: Name
+        tax_id: Tax ID
+        business_sector: Business sector
+        status: Status
+        onboarding_status: Onboarding status
+        onboarding_current_step: Current onboarding step
+      branch:
+        name: Name
+        phone: Phone
+        status: Status
+      address:
+        street: Street
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        city: City
+        state: State
+        country: Country
+        postal_code: Postal code
+      terminal:
+        name: Name
+        code: Code
+        status: Status
+      organization_setting:
+        currency: Currency
+        timezone: Time zone
+        payment_method: Payment method
       user:
         current_password: Current password
         email: Email address
@@ -52,6 +80,9 @@ en:
       product: Product
       sat_currency: SAT currency
       system_role: System role
+      organization: Organization
+      organization_setting: Organization settings
+      terminal: Cash register
       user: User
   admin:
     branches:
