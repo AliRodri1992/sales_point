@@ -94,7 +94,6 @@
             <%= hidden_field_tag :payment_integration, "cash", data: { registration_wizard_target: "payments" } %>
 
             <%= render Authentication::ErrorBannerComponent.new(resource: resource) %>
-            <p data-registration-wizard-target="error" data-error="setup" class="hidden rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600"></p>
 
             <div class="relative mx-auto mb-4 flex max-w-xs select-none items-center justify-between">
               <div class="absolute left-0 top-1/2 z-0 h-0.5 w-full -translate-y-1/2 bg-slate-100">
