@@ -380,6 +380,36 @@ ko:
       created: 사용자가 성공적으로 생성되었습니다.
       destroyed: 사용자가 성공적으로 삭제되었습니다.
       updated: 사용자가 성공적으로 업데이트되었습니다.
+      statuses:
+        active: 활성
+        inactive: 비활성
+        suspended: 일시 중지
+        deleted: 삭제됨
+      user_types:
+        employee: 직원
+        client: 고객
+        supplier: 공급업체
+      themes:
+        theme-material-red: 머티리얼 레드
+        theme-material-navy: 머티리얼 네이비
+        theme-material-school-yellow: 머티리얼 스쿨 옐로
+        theme-saas-blue: SaaS 블루
+        theme-emerald-green: 에메랄드 그린
+        theme-commercial-orange: 커머셜 오렌지
+        theme-industrial-mono: 인더스트리얼 모노
+        theme-tech-purple: 테크 퍼플
+        theme-slate-charcoal: 슬레이트 차콜
+        theme-ocean-cyan: 오션 시안
+        theme-candy-pink: 캔디 핑크
+        theme-earth-brown: 어스 브라운
+        theme-wheat-yellow: 위트 옐로
+        theme-silver-grey: 실버 그레이
+        theme-supermarket-red: 슈퍼마켓 레드
+        theme-mint-turquoise: 민트 터쿼이즈
+        theme-orchid-violet: 오키드 바이올렛
+        theme-lime-green: 라임 그린
+        theme-denim-blue: 데님 블루
+        theme-delta-emerald: Delta 에메랄드
       form:
         buttons:
           back: 사용자 목록으로
