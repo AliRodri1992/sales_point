@@ -51,13 +51,13 @@ module Onboarding
                @organization.branches.not_deleted.first
       return false unless branch
 
-      desired = terminal_count
       terminals = branch.terminals.active_records.order(:id).to_a
+      return false if terminals.empty?
 
       ActiveRecord::Base.transaction do
-        update_existing_terminals(terminals, desired)
-        deactivate_extra_terminals(terminals, desired)
-        create_new_terminals(branch, desired, terminals.length)
+        terminals.each_with_index do |terminal, index|
+          terminal.update!(name: terminal_name(index))
+        end
       end
 
       true
@@ -120,22 +120,10 @@ module Onboarding
       integration.update!(status: :pending, deleted_at: nil)
     end
 
-    def terminal_count
-      {
-        '1' => 1,
-        '2' => 2,
-        '3_5' => 3,
-        'over_5' => 6
-      }.fetch(@params.expect(terminals: [:count]).fetch(:count))
-    end
-
     def terminal_name(index)
       @params.dig(:terminal_names, index.to_s).presence ||
         I18n.t('registration.initial_terminal_name', number: index + 1)
     end
 
-    def terminal_code(index)
-      format('POS-%03d', index + 1)
-    end
   end
 end

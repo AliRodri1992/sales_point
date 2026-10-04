@@ -201,9 +201,9 @@ ko:
           help: 첫 번째 지점의 주소와 연락처를 입력하세요.
         "3":
           title: 계산대
-          description: 활성 계산대를 설정합니다.
+          description: 가입 시 생성된 계산대를 확인합니다.
           heading: 계산대
-          help: 활성 계산대 수를 선택하고 이름을 지정하세요.
+          help: 지점에 이미 생성된 계산대 정보를 확인하세요.
         "4":
           title: 결제
           description: 초기 결제 방법을 선택합니다.
@@ -229,7 +229,14 @@ ko:
         country: 국가
         postal_code: 우편번호
         terminal_count: 활성 계산대
+        terminal_count: 활성 계산대
+        terminal_name: 계산대 이름
+        terminal_code: 계산대 코드
+        branch: 지점
         payment_method: 초기 결제 방법
+        payment_method: 초기 결제 방법
+      active: 활성
+      no_terminals: 이 지점에 활성 계산대가 구성되어 있지 않습니다.
       terminal: 계산대 %{number}
       migration:
         title: 마이그레이션 설정

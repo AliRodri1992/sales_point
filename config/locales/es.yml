@@ -202,9 +202,9 @@ es:
           help: Agrega la dirección y los datos de contacto de tu primera sucursal.
         "3":
           title: Cajas
-          description: Configura las cajas activas.
+          description: Revisa las cajas creadas durante el registro.
           heading: Cajas registradoras
-          help: Elige el número de cajas activas y asígnales un nombre.
+          help: Confirma los datos de las cajas que ya fueron creadas para tu sucursal.
         "4":
           title: Pagos
           description: Selecciona el método de pago inicial.
@@ -230,7 +230,14 @@ es:
         country: País
         postal_code: Código postal
         terminal_count: Cajas activas
+        terminal_count: Cajas activas
+        terminal_name: Nombre de la caja
+        terminal_code: Código de caja
+        branch: Sucursal
         payment_method: Método de pago inicial
+        payment_method: Método de pago inicial
+      active: Activa
+      no_terminals: No hay cajas activas configuradas para esta sucursal.
       terminal: Caja %{number}
       migration:
         title: Configuración de migración

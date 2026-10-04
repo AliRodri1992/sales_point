@@ -200,10 +200,10 @@ en:
           heading: Main branch
           help: Add the address and contact details for your first branch.
         "3":
-          title: Terminals
-          description: Configure active cash registers.
+          title: Cash registers
+          description: Review the cash registers created during registration.
           heading: Cash registers
-          help: Choose the number of active terminals and name them.
+          help: Confirm the details of the cash registers already created for your branch.
         "4":
           title: Payments
           description: Select the initial payment method.
@@ -229,7 +229,14 @@ en:
         country: Country
         postal_code: Postal code
         terminal_count: Active terminals
+        terminal_count: Active terminals
+        terminal_name: Cash register name
+        terminal_code: Register code
+        branch: Branch
         payment_method: Initial payment method
+        payment_method: Initial payment method
+      active: Active
+      no_terminals: No active cash registers are configured for this branch.
       terminal: Terminal %{number}
       migration:
         title: Migration setup
