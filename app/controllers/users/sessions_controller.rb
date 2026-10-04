@@ -14,9 +14,16 @@ module Users
       return render_with_model_errors unless login_credentials_present?
 
       super
+      store_sign_in_success_message if user_signed_in?
     end
 
     private
+
+    def store_sign_in_success_message
+      session[:swal_message] = t('devise.sessions.signed_in')
+      session[:swal_icon] = 'success'
+      flash.delete(:notice)
+    end
 
     def render_with_model_errors
       build_resource_with_params
