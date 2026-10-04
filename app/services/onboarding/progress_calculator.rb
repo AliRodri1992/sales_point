@@ -20,6 +20,7 @@ module Onboarding
         migration_section,
         team_section
       ]
+
       {
         sections:,
         percentage: sections.sum { |section| section[:percentage] } / sections.length
@@ -29,7 +30,7 @@ module Onboarding
     private
 
     def company_section
-      fields = [@organization.name, @organization.business_sector, settings&.currency]
+      fields = [@organization.name, @organization.business_sector, settings&.currency, settings&.timezone]
       section(:company, percentage_for(fields))
     end
 
