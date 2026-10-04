@@ -456,6 +456,44 @@ select {
     }
 }
 
+/* Collapsed sidebar tooltips */
+#adminSidebarTooltip {
+    position: fixed;
+    z-index: 100001;
+    max-width: 20rem;
+    padding: .375rem .625rem;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: .5rem;
+    background: #0f172a;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(-4px) scale(.96);
+    transform-origin: left center;
+    transition:
+        opacity 150ms ease,
+        transform 150ms ease,
+        visibility 150ms ease;
+}
+
+#adminSidebarTooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #adminSidebarTooltip {
+        transition: none;
+    }
+}
+
 /* Collapsed sidebar flyout menus */
 .admin-sidebar-flyout {
     position: fixed;
