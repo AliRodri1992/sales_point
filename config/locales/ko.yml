@@ -846,7 +846,6 @@ ko:
       close: 닫기
       subtitle: 고객의 세부 정보를 확인하세요.
       title: 고객 상세 정보
-    show:
       fields:
         code: 코드
         name: 이름
