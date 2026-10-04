@@ -144,7 +144,7 @@ en:
         title: Branches
       statuses:
         active: Active
-        blocked: Blocked
+        inactive: Inactive
       updated: Branch updated successfully.
     shared:
 
