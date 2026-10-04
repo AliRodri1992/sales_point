@@ -20,15 +20,19 @@ RSpec.describe Onboarding::StepUpdater do
     allow(Onboarding::StateCalculator).to receive(:new).and_return(
       instance_double(Onboarding::StateCalculator, call: {})
     )
-    allow(terminal_one).to receive(:update!)
-    allow(terminal_two).to receive(:update!)
+    allow(terminal_one).to receive(:assign_attributes)
+    allow(terminal_two).to receive(:assign_attributes)
+    allow(terminal_one).to receive(:save!)
+    allow(terminal_two).to receive(:save!)
     allow(organization).to receive(:update!)
   end
 
   it 'updates existing cash register names without creating new terminals' do
     expect(Terminal).not_to receive(:create!)
-    expect(terminal_one).to receive(:update!).with(name: 'Caja Principal')
-    expect(terminal_two).to receive(:update!).with(name: 'Caja Secundaria')
+    expect(terminal_one).to receive(:assign_attributes).with(name: 'Caja Principal')
+    expect(terminal_two).to receive(:assign_attributes).with(name: 'Caja Secundaria')
+    expect(terminal_one).to receive(:save!).with(context: :onboardingstep3)
+    expect(terminal_two).to receive(:save!).with(context: :onboardingstep3)
 
     expect(
       described_class.call(
