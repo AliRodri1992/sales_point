@@ -1,0 +1,73 @@
+---
+en:
+  admin:
+    dashboard:
+      page_header:
+        title: "Dashboard"
+        subtitle: "Monitor your business performance at a glance."
+        customize: "Customize dashboard"
+        new_sale: "New sale"
+      kpi_grid:
+        sales_today: "Sales today"
+        transactions: "Transactions"
+        average_ticket: "Average ticket"
+        current_cash: "Current cash"
+        session_open: "Session open"
+      widgets:
+        quick_actions:
+          title: "Quick actions"
+          subtitle: "Common tasks for your daily operation."
+          new_sale: "New sale"
+          open_pos: "Open POS"
+          product: "Product"
+          add_product: "Add product"
+          customer: "Customer"
+          new_customer: "New customer"
+          cash_cut: "Cash register"
+          check_cash: "Check cash"
+        sales:
+          title: "Sales overview"
+          subtitle: "Sales performance over time."
+          period_label: "Sales period"
+          periods:
+            7_days: "Last 7 days"
+            30_days: "Last 30 days"
+            year: "This year"
+          days:
+            mon: "Mon"
+            tue: "Tue"
+            wed: "Wed"
+            thu: "Thu"
+            fri: "Fri"
+            sat: "Sat"
+            today: "Today"
+        recent_sales:
+          title: "Recent sales"
+          subtitle: "Latest transactions recorded in the system."
+          view_all: "View all"
+          columns:
+            folio: "Folio"
+            customer: "Customer"
+            method: "Payment method"
+            total: "Total"
+            status: "Status"
+          payment_methods:
+            card: "Card"
+            cash: "Cash"
+            transfer: "Bank transfer"
+            qr: "QR payment"
+          statuses:
+            completed: "Completed"
+            pending: "Pending"
+            cancelled: "Cancelled"
+        low_stock:
+          title: "Low stock"
+          subtitle: "Products that need your attention."
+          alerts:
+            one: "%{count} alert"
+            other: "%{count} alerts"
+          sku: "SKU: %{sku}"
+          units:
+            one: "%{count} unit"
+            other: "%{count} units"
+          view_inventory: "View inventory"
