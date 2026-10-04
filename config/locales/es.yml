@@ -121,6 +121,21 @@ es:
         onboarding:
           title: Configuración inicial
           progress: Configuración inicial al %{percentage}%
+      chat:
+        assistant_name: Asistente Delta
+        online: En línea
+        close: Cerrar chat
+        greeting: "Hola, %{name}. ¿Cómo puedo ayudarte?"
+        input_placeholder: Escribe un mensaje...
+        send: Enviar mensaje
+        open: Abrir chat
+      online_users:
+        title: Agentes en línea
+        subtitle: Usuarios conectados
+        close: Cerrar agentes en línea
+        open: Ver agentes en línea
+      conversation:
+        select_user: Selecciona un agente para iniciar una conversación.
     breadcrumbs:
       branches: Sucursales
       categories: Categorías
