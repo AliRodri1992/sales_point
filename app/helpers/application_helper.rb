@@ -23,6 +23,25 @@ module ApplicationHelper
     user_avatar_theme(user)[:style]
   end
 
+  def onboarding_progress_for_current_user
+    organization = current_user&.organizations&.active_records&.first
+    return unless organization && !organization.onboarding_completed?
+
+    Onboarding::ProgressCalculator.call(organization)
+  end
+
+  def onboarding_pending?
+    progress = onboarding_progress_for_current_user
+    progress.present? && progress[:percentage] < 100
+  end
+
+  def onboarding_section_complete?(section)
+    progress = onboarding_progress_for_current_user
+    return true unless progress
+
+    progress[:sections].find { |item| item[:key].to_sym == section.to_sym }&.fetch(:percentage, 100) == 100
+  end
+
   def sidebar_item_active?(controller)
     controller_name == controller.to_s
   end
