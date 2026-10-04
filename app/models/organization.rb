@@ -37,17 +37,17 @@ class Organization < ApplicationRecord
             numericality: { only_integer: true, in: 1..5 },
             on: %i[create update]
 
-  validates :name, presence: true, length: { in: 2..150 }, on: :onboarding_step_1
+  validates :name, presence: true, length: { in: 2..150 }, on: :onboardingstep1
   validates :tax_id,
             presence: true,
             length: { in: 12..13 },
             format: { with: TAX_ID_FORMAT },
             uniqueness: { conditions: -> { where(deleted_at: nil) } },
-            on: :onboarding_step_1
+            on: :onboardingstep1
   validates :business_sector,
             presence: true,
             inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
-            on: :onboarding_step_1
+            on: :onboardingstep1
 
   before_validation :normalize_tax_id
 
@@ -64,11 +64,11 @@ class Organization < ApplicationRecord
   def start_onboarding!
     return if onboarding_status.in?(%w[in_progress completed])
 
-    update_columns(onboarding_status: 'in_progress', updated_at: Time.current)
+    update!(onboarding_status: 'in_progress', updated_at: Time.current)
   end
 
   def complete_onboarding!
-    update_columns(
+    update!(
       onboarding_status: 'completed',
       onboarding_completed_at: Time.current,
       onboarding_current_step: 5,

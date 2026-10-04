@@ -38,3 +38,7 @@ en:
         non_blocking:
           title: "Onboarding is not a global access gate."
           description: "Delta POS remains available while configuration is incomplete. Individual modules may require their own operational prerequisites."
+      completed:
+        icon: "success"
+      incomplete:
+        icon: "error"

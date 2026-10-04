@@ -11,7 +11,9 @@ class ApplicationController < ActionController::Base
   helper_method :current_language, :current_organization, :available_branches, :current_branch
 
   def current_organization
-    @current_organization ||= current_user&.organizations&.active_records&.first
+    return unless current_user
+
+    @current_organization ||= current_user.organizations.active_records.first
   end
 
   def available_branches

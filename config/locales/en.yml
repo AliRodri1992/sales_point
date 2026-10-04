@@ -2,6 +2,19 @@
 en:
   activerecord:
     attributes:
+      address:
+        city: City
+        country: Country
+        exterior_number: Exterior number
+        interior_number: Interior number
+        neighborhood: Neighborhood
+        postal_code: Postal code
+        state: State
+        street: Street
+      branch:
+        name: Name
+        phone: Phone
+        status: Status
       category:
         code: Code
         description: Description
@@ -18,6 +31,17 @@ en:
         flag_iso: Flag
         name: Name
         status: Status
+      organization:
+        business_sector: Business sector
+        name: Name
+        onboarding_current_step: Current onboarding step
+        onboarding_status: Onboarding status
+        status: Status
+        tax_id: Tax ID
+      organization_setting:
+        currency: Currency
+        payment_method: Payment method
+        timezone: Time zone
       product:
         barcode: Barcode
         code: Code
@@ -36,34 +60,10 @@ en:
         status: Status
         stock: Stock
         view_count: View count
-      organization:
-        name: Name
-        tax_id: Tax ID
-        business_sector: Business sector
-        status: Status
-        onboarding_status: Onboarding status
-        onboarding_current_step: Current onboarding step
-      branch:
-        name: Name
-        phone: Phone
-        status: Status
-      address:
-        street: Street
-        exterior_number: Exterior number
-        interior_number: Interior number
-        neighborhood: Neighborhood
-        city: City
-        state: State
-        country: Country
-        postal_code: Postal code
       terminal:
-        name: Name
         code: Code
+        name: Name
         status: Status
-      organization_setting:
-        currency: Currency
-        timezone: Time zone
-        payment_method: Payment method
       user:
         current_password: Current password
         email: Email address
@@ -77,11 +77,11 @@ en:
       client: Client
       demo_request: Demo request
       language: Language
+      organization: Organization
+      organization_setting: Organization settings
       product: Product
       sat_currency: SAT currency
       system_role: System role
-      organization: Organization
-      organization_setting: Organization settings
       terminal: Cash register
       user: User
   admin:
@@ -146,78 +146,88 @@ en:
         active: Active
         inactive: Inactive
       updated: Branch updated successfully.
-    shared:
-
-      notifications:
-        title: Notifications
-        subtitle: "%{count} unread notifications"
-        subtitle_none: No new notifications
-        empty: You have no notifications
-        mark_all_read: Mark all as read
-        performed_by: Performed by %{user}
-        actor_unknown: Unknown user
-        new_message: New message
-        message_unavailable: Message unavailable
-        types:
-          language: Language
-          category: Category
-          product: Product
-          branch: Branch
-          customer: Customer
-          system_role: System role
-        language:
-          created: "Language %{name} created"
-          updated: "Language %{name} updated"
-          destroyed: "Language %{name} deleted"
-        category:
-          created: "Category %{name} created"
-          updated: "Category %{name} updated"
-          destroyed: "Category %{name} deleted"
-        product:
-          created: "Product %{name} created"
-          updated: "Product %{name} updated"
-          destroyed: "Product %{name} deleted"
-        branch:
-          created: "Branch %{name} created"
-          updated: "Branch %{name} updated"
-          destroyed: "Branch %{name} deleted"
-        client:
-          created: "Client %{name} created"
-          updated: "Client %{name} updated"
-          destroyed: "Client %{name} deleted"
-        system_role:
-          created: "System role %{name} created"
-          updated: "System role %{name} updated"
-          destroyed: "System role %{name} deleted"
-
-      branch_selector:
-        label: Branch
-        no_branch: No branch
-        empty: No active branches available.
-      sidebar:
-        onboarding:
-          title: Initial setup
-          progress: Initial setup at %{percentage}%
-      chat:
-        assistant_name: Delta Assistant
-        online: Online
-        close: Close chat
-        greeting: "Hello, %{name}. How can I help you?"
-        input_placeholder: Type a message...
-        send: Send message
-        open: Open chat
-      online_users:
-        title: Online agents
-        subtitle: Connected users
-        close: Close online agents
-        open: View online agents
-      conversation:
-        select_user: Select an agent to start a conversation.
-        online: Online
-        offline: Offline
-        close: Close conversation
-        input_placeholder: Write a message...
-        send: Send message
+    breadcrumbs:
+      branches: Branches
+      categories: Categories
+      clients: Clients
+      dashboard: Dashboard
+      home: Home
+      label: Breadcrumbs
+      languages: Languages
+      products: Products
+      profile: Profile
+      roles: Roles
+    categories:
+      confirm:
+        cancel: Cancel
+      created: Category created successfully
+      destroyed: Category deleted successfully
+      edit:
+        subtitle: Update the category details.
+        title: Edit %{name}
+      form:
+        cancel: Cancel
+        code: Code
+        code_hint: Unique category code (lowercase, numbers and underscore).
+        code_placeholder: e.g. cashier
+        create: Create category
+        description: Description
+        description_placeholder: Category description.
+        name: Name
+        name_placeholder: e.g. Cash Register
+        status: Status
+        update: Update category
+      index:
+        card_title: Registered categories
+        columns:
+          actions: Actions
+          code: Code
+          name: Name
+          status: Status
+        confirm_delete: Are you sure you want to delete this category?
+        delete: Delete
+        edit: Edit
+        empty_subtitle: Create your first category to get started.
+        empty_title: No categories yet
+        filters:
+          all_statuses: All statuses
+          apply: Apply
+        new: New category
+        pagination:
+          next: Next
+          page: Page %{page} of %{total}
+          per_page_label: Show
+          prev: Previous
+        search_placeholder: Search by name or code...
+        subtitle: Manage the categories or departments of your business.
+        title: Categories
+        total_count: "%{count} categories registered"
+      new:
+        subtitle: Add a category to your catalog.
+        title: New category
+      show:
+        close: Close
+        subtitle: Review the details of this category.
+        title: Category details
+      statuses:
+        active: Active
+        inactive: Inactive
+      updated: Category updated successfully
+    dashboard:
+      index:
+        title: Dashboard
+      onboarding:
+        action_required: Setup required
+        continue: Continue setup
+        description: Your organization is %{percentage}% configured.
+        sales_dependency: Before starting sales, complete %{sections}.
+        title: Complete your initial setup
+      page_header:
+        customize: Customize dashboard
+        new_sale:
+        save_changes: Save changes New sale
+        subtitle: Overview of your business operations.
+        title: Dashboard
     languages:
       confirm:
         cancel: Cancel
@@ -274,6 +284,105 @@ en:
       statuses:
         active: Active
         inactive: Inactive
+    onboarding:
+      active: Active
+      back: Back
+      continue: Continue
+      description: Complete these steps to configure your business before entering
+        the administration dashboard.
+      eyebrow: Initial setup
+      fields:
+        branch: Branch
+        branch_name: Branch name
+        business_sector: Business sector
+        city: City
+        company_name: Company name
+        country: Country
+        currency: Currency
+        exterior_number: Exterior number
+        interior_number: Interior number
+        migration_priority: Migration priority
+        migration_status: Migration status
+        migration_volume: Migration volume
+        neighborhood: Neighborhood
+        payment_integration: Payment integration
+        payment_method: Initial payment method
+        phone: Phone
+        postal_code: Postal code
+        select_business_sector: Select business sector
+        select_currency: Select currency
+        select_timezone: Select time zone
+        state: State
+        street: Street
+        tax_id: Tax ID
+        team_members: Team members
+        terminal_code: Cash register code
+        terminal_name: Cash register name
+        terminal_status: Status
+        timezone: Time zone
+      finish: Finish setup
+      incomplete: Complete the initial setup before continuing.
+      migration:
+        description: Your migration request was created during registration and will
+          remain available for processing.
+        not_applicable: Not applicable
+        statuses:
+          completed: Completed
+          in_progress: In progress
+          pending: Pending
+        title: Migration setup
+      no_terminals: No cash registers are available yet.
+      not_available: Not available
+      overall: Overall progress
+      reset: Initial setup reset.
+      reset_button: Reset setup
+      reset_confirm: Are you sure you want to reset onboarding? Saved onboarding progress
+        will be cleared.
+      sections:
+        branches: Main branch
+        company: Business
+        fiscal: Fiscal information
+        migration: Migration
+        payments: Payments
+        team: Team
+        terminals: Terminals
+      statuses:
+        completed: Completed
+        in_progress: In progress
+        not_started: Not started
+      step_number: Step %{number}
+      steps:
+        '1':
+          description: Confirm company information.
+          heading: Your business
+          help: Review the information created during registration.
+          title: Business
+        '2':
+          description: Complete the main branch address.
+          heading: Main branch
+          help: Add the address and contact details for your first branch.
+          title: Branch
+        '3':
+          description: Review the cash registers created during registration.
+          heading: Cash registers
+          help: Confirm the details of the cash registers already created for your
+            branch.
+          title: Cash registers
+        '4':
+          description: Select the initial payment method.
+          heading: Payment setup
+          help: Confirm how your business will receive payments.
+          title: Payments
+        '5':
+          description: Review your configuration.
+          heading: Ready to go
+          help: Review the setup and finish onboarding when everything is complete.
+          title: Finish
+      terminal: Cash register %{number}
+      terminal_statuses:
+        active: Active
+        inactive: Inactive
+      title: Set up your Delta POS
     products:
       confirm:
         cancel: Cancel
@@ -368,6 +477,192 @@ en:
         active: Active
         inactive: Inactive
       updated: Product updated successfully
+    shared:
+      branch_selector:
+        empty: No active branches available.
+        label: Branch
+        no_branch: No branch
+      chat:
+        assistant_name: Delta Assistant
+        close: Close chat
+        greeting: Hello, %{name}. How can I help you?
+        input_placeholder: Type a message...
+        online: Online
+        open: Open chat
+        send: Send message
+      conversation:
+        close: Close conversation
+        input_placeholder: Write a message...
+        offline: Offline
+        online: Online
+        select_user: Select an agent to start a conversation.
+        send: Send message
+      notifications:
+        actor_unknown: Unknown user
+        branch:
+          created: Branch %{name} created
+          destroyed: Branch %{name} deleted
+          updated: Branch %{name} updated
+        category:
+          created: Category %{name} created
+          destroyed: Category %{name} deleted
+          updated: Category %{name} updated
+        client:
+          created: Client %{name} created
+          destroyed: Client %{name} deleted
+          updated: Client %{name} updated
+        empty: You have no notifications
+        language:
+          created: Language %{name} created
+          destroyed: Language %{name} deleted
+          updated: Language %{name} updated
+        mark_all_read: Mark all as read
+        message_unavailable: Message unavailable
+        new_message: New message
+        performed_by: Performed by %{user}
+        product:
+          created: Product %{name} created
+          destroyed: Product %{name} deleted
+          updated: Product %{name} updated
+        subtitle: "%{count} unread notifications"
+        subtitle_none: No new notifications
+        system_role:
+          created: System role %{name} created
+          destroyed: System role %{name} deleted
+          updated: System role %{name} updated
+        title: Notifications
+        types:
+          branch: Branch
+          category: Category
+          customer: Customer
+          language: Language
+          product: Product
+          system_role: System role
+      online_users:
+        close: Close online agents
+        open: View online agents
+        subtitle: Connected users
+        title: Online agents
+      sidebar:
+        onboarding:
+          progress: Initial setup at %{percentage}%
+          title: Initial setup
+    system_roles:
+      index:
+        empty_subtitle: Create a role to get started.
+        empty_title: No roles available
+        manage_permissions: Manage permissions
+        new: New role
+        no_description: No description
+        page_title: Roles & Permissions | Delta POS
+        subtitle: Configure roles and assign the permissions they can use in the system.
+        title: Roles & Permissions
+      new:
+        back: Back to roles
+        cancel: Cancel
+        details_subtitle: Define the role name, type, status, and description.
+        details_title: Role details
+        error_title: The role could not be saved
+        fields:
+          description: Description
+          description_placeholder: Describe this role's responsibilities.
+          name: Name
+          name_placeholder: e.g. Branch Supervisor
+          status: Status
+          type: Role type
+        page_title: New role | Delta POS
+        permissions_subtitle: Select the permissions this role will have.
+        permissions_title: Permissions
+        submit: Create role
+      permissions:
+        branches_access:
+          description: Allows branch administration.
+          name: Branch access
+        cash_register_access:
+          description: Allows access to the cash register module.
+          name: Cash register access
+        categories_access:
+          description: Allows access to the category catalog.
+          name: Category access
+        customers_access:
+          description: Allows access to the customer module.
+          name: Customer access
+        dashboard_access:
+          description: Allows access to the main dashboard.
+          name: Dashboard access
+        employees_access:
+          description: Allows access to the employee module.
+          name: Employee access
+        inventory_access:
+          description: Allows access to the inventory module.
+          name: Inventory access
+        languages_access:
+          description: Allows administration of available languages.
+          name: Language access
+        products_access:
+          description: Allows access to the product catalog.
+          name: Product access
+        reports_access:
+          description: Allows access to the reports module.
+          name: Reports access
+        roles_access:
+          description: Allows administration of roles and their permissions.
+          name: Role access
+        sales_access:
+          description: Allows access to the sales module.
+          name: Sales access
+        suppliers_access:
+          description: Allows access to the supplier module.
+          name: Supplier access
+      roles:
+        administrator:
+          description: Manages the system's general configuration and operations.
+          name: Administrator
+        auditor:
+          description: Audits records, movements, and reconciliations.
+          name: Auditor
+        cashier:
+          description: Operates the register, payments, and cash closing.
+          name: Cashier
+        finance:
+          description: Views and manages fiscal and financial information.
+          name: Finance
+        inventory:
+          description: Manages stock, products, and inventory movements.
+          name: Inventory Manager
+        manager:
+          description: Manages assigned operations and branches.
+          name: Manager
+        purchases:
+          description: Manages purchase orders and suppliers.
+          name: Purchasing
+        salesman:
+          description: Manages customer portfolios, quotes, and sales.
+          name: Salesperson
+        super_admin:
+          description: Full access to the system and all branches.
+          name: Super Administrator
+        supervisor:
+          description: Supervises operations and production teams.
+          name: Supervisor
+        support:
+          description: Provides technical support and resolves incidents.
+          name: Support
+      show:
+        assigned_permissions: Assigned permissions
+        back: Back to roles
+        code: Code
+        module_permissions: Available permissions (%{count})
+        permissions_subtitle: Enable or disable the permissions assigned to this role.
+        permissions_title: Role permissions
+        save_permissions: Save permissions
+        type: Role type
+      statuses:
+        active: Active
+        inactive: Inactive
+      types:
+        branch: Branch role
+        system: System role
     users:
       actions:
         delete: Delete user
@@ -379,37 +674,6 @@ en:
       confirm_delete: Are you sure you want to delete this user?
       created: User created successfully.
       destroyed: User deleted successfully.
-      updated: User updated successfully.
-      statuses:
-        active: Active
-        blocked: Blocked
-        suspended: Suspended
-        deleted: Deleted
-      user_types:
-        employee: Employee
-        customer: Customer
-        supplier: Supplier
-      themes:
-        theme-material-red: Material red
-        theme-material-navy: Material navy
-        theme-material-school-yellow: Material school yellow
-        theme-saas-blue: SaaS blue
-        theme-emerald-green: Emerald green
-        theme-commercial-orange: Commercial orange
-        theme-industrial-mono: Industrial monochrome
-        theme-tech-purple: Tech purple
-        theme-slate-charcoal: Slate charcoal
-        theme-ocean-cyan: Ocean cyan
-        theme-candy-pink: Candy pink
-        theme-earth-brown: Earth brown
-        theme-wheat-yellow: Wheat yellow
-        theme-silver-grey: Silver grey
-        theme-supermarket-red: Supermarket red
-        theme-mint-turquoise: Mint turquoise
-        theme-orchid-violet: Orchid violet
-        theme-lime-green: Lime green
-        theme-denim-blue: Denim blue
-        theme-delta-emerald: Delta emerald
       form:
         buttons:
           back: Back to users
@@ -465,6 +729,7 @@ en:
       show:
         access_title: Access
         email: Email
+        identity_title: Identity
         language: Language
         last_sign_in_at: Last sign-in
         never: Never
@@ -475,300 +740,37 @@ en:
         theme: Theme
         user_type: User type
         username: Username
-        identity_title: Identity
-    system_roles:
-      index:
-        empty_subtitle: Create a role to get started.
-        empty_title: No roles available
-        manage_permissions: Manage permissions
-        no_description: No description
-        new: New role
-        page_title: Roles & Permissions | Delta POS
-        subtitle: Configure roles and assign the permissions they can use in the system.
-        title: Roles & Permissions
-      new:
-        back: Back to roles
-        cancel: Cancel
-        details_subtitle: Define the role name, type, status, and description.
-        details_title: Role details
-        error_title: The role could not be saved
-        fields:
-          description: Description
-          description_placeholder: Describe this role's responsibilities.
-          name: Name
-          name_placeholder: e.g. Branch Supervisor
-          status: Status
-          type: Role type
-        page_title: New role | Delta POS
-        permissions_subtitle: Select the permissions this role will have.
-        permissions_title: Permissions
-        submit: Create role
-      show:
-        assigned_permissions: Assigned permissions
-        back: Back to roles
-        code: Code
-        module_permissions: Available permissions (%{count})
-        permissions_subtitle: Enable or disable the permissions assigned to this role.
-        permissions_title: Role permissions
-        save_permissions: Save permissions
-        type: Role type
       statuses:
         active: Active
-        inactive: Inactive
-      types:
-        branch: Branch role
-        system: System role
-      roles:
-        super_admin:
-          name: Super Administrator
-          description: Full access to the system and all branches.
-        administrator:
-          name: Administrator
-          description: Manages the system's general configuration and operations.
-        manager:
-          name: Manager
-          description: Manages assigned operations and branches.
-        supervisor:
-          name: Supervisor
-          description: Supervises operations and production teams.
-        cashier:
-          name: Cashier
-          description: Operates the register, payments, and cash closing.
-        salesman:
-          name: Salesperson
-          description: Manages customer portfolios, quotes, and sales.
-        inventory:
-          name: Inventory Manager
-          description: Manages stock, products, and inventory movements.
-        purchases:
-          name: Purchasing
-          description: Manages purchase orders and suppliers.
-        finance:
-          name: Finance
-          description: Views and manages fiscal and financial information.
-        auditor:
-          name: Auditor
-          description: Audits records, movements, and reconciliations.
-        support:
-          name: Support
-          description: Provides technical support and resolves incidents.
-      permissions:
-        dashboard_access:
-          name: Dashboard access
-          description: Allows access to the main dashboard.
-        sales_access:
-          name: Sales access
-          description: Allows access to the sales module.
-        cash_register_access:
-          name: Cash register access
-          description: Allows access to the cash register module.
-        inventory_access:
-          name: Inventory access
-          description: Allows access to the inventory module.
-        customers_access:
-          name: Customer access
-          description: Allows access to the customer module.
-        suppliers_access:
-          name: Supplier access
-          description: Allows access to the supplier module.
-        employees_access:
-          name: Employee access
-          description: Allows access to the employee module.
-        reports_access:
-          name: Reports access
-          description: Allows access to the reports module.
-        products_access:
-          name: Product access
-          description: Allows access to the product catalog.
-        categories_access:
-          name: Category access
-          description: Allows access to the category catalog.
-        branches_access:
-          name: Branch access
-          description: Allows branch administration.
-        languages_access:
-          name: Language access
-          description: Allows administration of available languages.
-        roles_access:
-          name: Role access
-          description: Allows administration of roles and their permissions.
-    breadcrumbs:
-      branches: Branches
-      categories: Categories
-      clients: Clients
-      dashboard: Dashboard
-      home: Home
-      label: Breadcrumbs
-      languages: Languages
-      products: Products
-      profile: Profile
-      roles: Roles
-    categories:
-      confirm:
-        cancel: Cancel
-      created: Category created successfully
-      destroyed: Category deleted successfully
-      edit:
-        subtitle: Update the category details.
-        title: Edit %{name}
-      form:
-        cancel: Cancel
-        code: Code
-        code_hint: Unique category code (lowercase, numbers and underscore).
-        code_placeholder: e.g. cashier
-        create: Create category
-        description: Description
-        description_placeholder: Category description.
-        name: Name
-        name_placeholder: e.g. Cash Register
-        status: Status
-        update: Update category
-      index:
-        card_title: Registered categories
-        columns:
-          actions: Actions
-          code: Code
-          name: Name
-          status: Status
-        confirm_delete: Are you sure you want to delete this category?
-        delete: Delete
-        edit: Edit
-        empty_subtitle: Create your first category to get started.
-        empty_title: No categories yet
-        filters:
-          all_statuses: All statuses
-          apply: Apply
-        new: New category
-        pagination:
-          next: Next
-          page: Page %{page} of %{total}
-          per_page_label: Show
-          prev: Previous
-        search_placeholder: Search by name or code...
-        subtitle: Manage the categories or departments of your business.
-        title: Categories
-        total_count: "%{count} categories registered"
-      new:
-        subtitle: Add a category to your catalog.
-        title: New category
-      show:
-        close: Close
-        subtitle: Review the details of this category.
-        title: Category details
-      statuses:
-        active: Active
-        inactive: Inactive
-      updated: Category updated successfully
-    dashboard:
-      index:
-        title: Dashboard
-      page_header:
-        title: Dashboard
-        subtitle: Overview of your business operations.
-        customize: Customize dashboard
-        new_sale:
-        save_changes: Save changes New sale
-      onboarding:
-        title: Complete your initial setup
-        description: Your organization is %{percentage}% configured.
-        continue: Continue setup
-        action_required: Setup required
-        sales_dependency: Before starting sales, complete %{sections}.
-    onboarding:
-      eyebrow: Initial setup
-      title: Set up your Delta POS
-      description: Complete these steps to configure your business before entering the administration dashboard.
-      overall: Overall progress
-      reset_button: Reset setup
-      reset_confirm: "Are you sure you want to reset onboarding? Saved onboarding progress will be cleared."
-      reset: Initial setup reset.
-      incomplete: Complete the initial setup before continuing.
-      step_number: "Step %{number}"
-      steps:
-        "1":
-          title: Business
-          description: Confirm company information.
-          heading: Your business
-          help: Review the information created during registration.
-        "2":
-          title: Branch
-          description: Complete the main branch address.
-          heading: Main branch
-          help: Add the address and contact details for your first branch.
-        "3":
-          title: Cash registers
-          description: Review the cash registers created during registration.
-          heading: Cash registers
-          help: Confirm the details of the cash registers already created for your branch.
-        "4":
-          title: Payments
-          description: Select the initial payment method.
-          heading: Payment setup
-          help: Confirm how your business will receive payments.
-        "5":
-          title: Finish
-          description: Review your configuration.
-          heading: Ready to go
-          help: Review the setup and finish onboarding when everything is complete.
-      fields:
-        company_name: Company name
-        tax_id: Tax ID
-        business_sector: Business sector
-        select_business_sector: Select business sector
-        currency: Currency
-        select_currency: Select currency
-        timezone: Time zone
-        select_timezone: Select time zone
-        branch_name: Branch name
-        phone: Phone
-        street: Street
-        exterior_number: Exterior number
-        interior_number: Interior number
-        neighborhood: Neighborhood
-        city: City
-        state: State
-        country: Country
-        postal_code: Postal code
-        terminal_name: Cash register name
-        terminal_code: Cash register code
-        terminal_status: Status
-        branch: Branch
-        payment_method: Initial payment method
-        payment_integration: Payment integration
-        migration_volume: Migration volume
-        migration_priority: Migration priority
-        migration_status: Migration status
-        team_members: Team members
-      sections:
-        company: Business
-        fiscal: Fiscal information
-        branches: Main branch
-        terminals: Terminals
-        payments: Payments
-        migration: Migration
-        team: Team
-      statuses:
-        not_started: Not started
-        in_progress: In progress
-        completed: Completed
-      migration:
-        title: Migration setup
-        description: Your migration request was created during registration and will remain available for processing.
-        not_applicable: Not applicable
-        statuses:
-          pending: Pending
-          in_progress: In progress
-          completed: Completed
-      no_terminals: No cash registers are available yet.
-      back: Back
-      continue: Continue
-      finish: Finish setup
-      terminal: Cash register %{number}
-      terminal_statuses:
-        active: Active
-        inactive: Inactive
-      active: Active
-      not_available: Not available
+        blocked: Blocked
+        deleted: Deleted
+        suspended: Suspended
+      themes:
+        theme-candy-pink: Candy pink
+        theme-commercial-orange: Commercial orange
+        theme-delta-emerald: Delta emerald
+        theme-denim-blue: Denim blue
+        theme-earth-brown: Earth brown
+        theme-emerald-green: Emerald green
+        theme-industrial-mono: Industrial monochrome
+        theme-lime-green: Lime green
+        theme-material-navy: Material navy
+        theme-material-red: Material red
+        theme-material-school-yellow: Material school yellow
+        theme-mint-turquoise: Mint turquoise
+        theme-ocean-cyan: Ocean cyan
+        theme-orchid-violet: Orchid violet
+        theme-saas-blue: SaaS blue
+        theme-silver-grey: Silver grey
+        theme-slate-charcoal: Slate charcoal
+        theme-supermarket-red: Supermarket red
+        theme-tech-purple: Tech purple
+        theme-wheat-yellow: Wheat yellow
+      updated: User updated successfully.
+      user_types:
+        customer: Customer
+        employee: Employee
+        supplier: Supplier
   app:
     description: 'Delta POS: intelligent point of sale system for sales, inventory
       and business operations.'
@@ -845,19 +847,19 @@ en:
     show:
       back: Back
       close: Close
-      subtitle: Review the details of this client.
-      title: Client details
       fields:
         code: Code
-        name: Name
-        email: Email
-        phone: Phone
-        rfc: RFC
-        fiscal_regime: Fiscal regime
-        postal_code: Postal code
         credit_limit: Credit limit
-        status: Status
+        email: Email
+        fiscal_regime: Fiscal regime
+        name: Name
         notes: Notes
+        phone: Phone
+        postal_code: Postal code
+        rfc: RFC
+        status: Status
+      subtitle: Review the details of this client.
+      title: Client details
     statuses:
       active: Active
       inactive: Inactive
@@ -902,13 +904,13 @@ en:
       phone: Phone
       submit: Request a demo
   devise:
-    failure:
-      invalid: invalid email or password.
-      not_found_in_database: invalid email or password.
     confirmations:
       new:
         submit: Resend confirmation instructions
         title: Resend confirmation instructions
+    failure:
+      invalid: invalid email or password.
+      not_found_in_database: invalid email or password.
     mailer:
       confirmation_instructions:
         action: Confirm my account
@@ -942,152 +944,162 @@ en:
         back: Back
         brand_alt: Delta POS logo mark
         cancel_account: Cancel my account
-        confirm: "Are you sure?"
+        confirm: Are you sure?
         current_password_hint: We need your current password to confirm your changes.
         email: Email address
         email_placeholder: email@example.com
         leave_blank: Leave blank if you don't want to change it.
-        minimum: "Minimum %{count} characters"
+        minimum: Minimum %{count} characters
         password: Password
         password_confirmation: Confirm password
         password_minimum: "%{count} characters minimum"
-        pending_confirmation: "Currently waiting confirmation for: %{email}"
+        pending_confirmation: 'Currently waiting confirmation for: %{email}'
         sign_in: Sign in
         submit: Update account
         subtitle: Update your Delta POS account
-        title: "Edit %{resource}"
+        title: Edit %{resource}
         unhappy: Are you unhappy?
       new:
+        already_have_account: Already have an operational account?
+        back: Back
+        benefit_one_description: Prevent discrepancies and control openings, cash
+          withdrawals, and cashier closings instantly.
+        benefit_one_title: Cash Register & Shift Monitoring
+        benefit_two_description: Connect natively with barcode scanners, scales, and
+          thermal receipt printers.
+        benefit_two_title: Universal POS Compatibility
         brand_alt: Delta POS logo symbol
+        brand_tagline: Point of Sale
+        client_validation_branches: The number of branches must be at least 1.
+        client_validation_password_match: The passwords do not match.
+        client_validation_required: Complete the required information before continuing.
+        client_validation_tax_id: The tax ID must contain 12 or 13 characters.
+        client_validation_terms: You must accept the terms to create your account.
+        cloud_badge: Delta POS Cloud
         email: Email address
         email_placeholder: email@example.com
+        next: Continue
+        page_title: Professional Registration | Delta POS
+        panel_badge: "⚡ Cloud Commercial Environment Setup"
+        panel_description: Complete the guided registration to securely activate Delta
+          POS transactional infrastructure.
+        panel_title: Initialize Your Point of Sale in the Cloud
         password: Password
         password_confirmation: Confirm password
         password_minimum: "%{count} characters minimum"
         sign_in: Sign in
+        step_five:
+          initialize: Initialize Environment
+          payment_options:
+            card: Enable Card Payments (Bluetooth/USB Terminal)
+            cash: Cash Only (For Now)
+            qr: Enable Digital Payments (QR Codes)
+          payments: Bank Terminal Integration
+          subtitle: Define how many touch-enabled registers will operate and your
+            integrated payment methods.
+          terminal_options:
+            one: 1 Main Register (Standard)
+            over_five: More than 5 Registers (Corporate)
+            three_five: 3 to 5 Registers (High Demand)
+            two: 2 Registers on Local Network
+          terminals: Active Touch Cash Registers
+          terms: I accept Delta POS Terms of Service and Privacy Policy.
+          title: Stations & Cash Registers
+        step_four:
+          branches: Number of Branches
+          business_sector: Business Sector
+          currencies:
+            jpy: Japanese yen (JPY)
+            krw: South Korean won (KRW)
+            mxn: Mexican peso (MXN)
+            usd: US dollar (USD)
+          currency: Operating Currency
+          migration_priority: Migration Priority
+          migration_volume: Catalog Volume
+          priorities:
+            all: All of the above
+            catalog: Product catalog and prices
+            customers: Customer history and credit
+            inventory: Current inventory and stock
+          sectors:
+            fashion: Clothing, footwear and accessories
+            grocery: Grocery and supermarkets
+            pharmacy: Pharmacies and health
+            restaurant: Restaurants and food
+          select_priority: Select migration priority...
+          select_sector: Select your sector...
+          select_volume: Select catalog volume...
+          subtitle: Configure the environment according to your operation.
+          title: Business Environment
+          volumes:
+            '5005000': 500 to 5,000 products
+            over_5000: More than 5,000 products
+            under_500: Fewer than 500 products
+        step_label: Registration progress
+        step_one:
+          migration_description: Safely migrate your current catalog and operational
+            information to Delta POS.
+          migration_title: It is a migration from an existing system
+          new_description: Start with a clean database. Ideal if you are opening your
+            first retail business.
+          new_title: It is a completely new system
+          subtitle: Tell us about your situation so we can adapt the environment to
+            your business.
+          title: Implementation Type
+        step_three:
+          company_name: Company Name
+          company_name_placeholder: Your company name
+          subtitle: Enter the basic information that identifies your business.
+          tax_id: Tax ID
+          tax_id_placeholder: RFC or local tax ID
+          title: Company Identity
+        step_two:
+          email: Business Email
+          email_placeholder: you@company.com
+          first_name: First Name
+          first_name_placeholder: Your first name
+          last_name: Last Name
+          last_name_placeholder: Your last name
+          name_placeholder: Your full name
+          password: Password
+          password_confirmation: Confirm Password
+          password_minimum: Minimum %{count} characters
+          subtitle: Create the administrator credentials for your Delta POS environment.
+          title: Administrator Identity
+          toggle_password: Show or hide password
         submit: Create account
         subtitle: Sign up to start using Delta POS
         title: Create account
-        page_title: "Professional Registration | Delta POS"
-        brand_tagline: "Point of Sale"
-        panel_badge: "⚡ Cloud Commercial Environment Setup"
-        panel_title: "Initialize Your Point of Sale in the Cloud"
-        panel_description: "Complete the guided registration to securely activate Delta POS transactional infrastructure."
-        benefit_one_title: "Cash Register & Shift Monitoring"
-        benefit_one_description: "Prevent discrepancies and control openings, cash withdrawals, and cashier closings instantly."
-        benefit_two_title: "Universal POS Compatibility"
-        benefit_two_description: "Connect natively with barcode scanners, scales, and thermal receipt printers."
-        cloud_badge: "Delta POS Cloud"
-        step_label: "Registration progress"
-        back: "Back"
-        next: "Continue"
-        already_have_account: "Already have an operational account?"
-        client_validation_required: "Complete the required information before continuing."
-        client_validation_password_match: "The passwords do not match."
-        client_validation_tax_id: "The tax ID must contain 12 or 13 characters."
-        client_validation_branches: "The number of branches must be at least 1."
-        client_validation_terms: "You must accept the terms to create your account."
-        step_one:
-          title: "Implementation Type"
-          subtitle: "Tell us about your situation so we can adapt the environment to your business."
-          new_title: "It is a completely new system"
-          new_description: "Start with a clean database. Ideal if you are opening your first retail business."
-          migration_title: "It is a migration from an existing system"
-          migration_description: "Safely migrate your current catalog and operational information to Delta POS."
-        step_two:
-          title: "Administrator Identity"
-          subtitle: "Create the administrator credentials for your Delta POS environment."
-          first_name: "First Name"
-          first_name_placeholder: "Your first name"
-          last_name: "Last Name"
-          last_name_placeholder: "Your last name"
-          name_placeholder: "Your full name"
-          email: "Business Email"
-          email_placeholder: "you@company.com"
-          password: "Password"
-          password_confirmation: "Confirm Password"
-          password_minimum: "Minimum %{count} characters"
-          toggle_password: "Show or hide password"
-        step_three:
-          title: "Company Identity"
-          subtitle: "Enter the basic information that identifies your business."
-          company_name: "Company Name"
-          company_name_placeholder: "Your company name"
-          tax_id: "Tax ID"
-          tax_id_placeholder: "RFC or local tax ID"
-        step_four:
-          title: "Business Environment"
-          subtitle: "Configure the environment according to your operation."
-          business_sector: "Business Sector"
-          select_sector: "Select your sector..."
-          migration_volume: "Catalog Volume"
-          select_volume: "Select catalog volume..."
-          migration_priority: "Migration Priority"
-          select_priority: "Select migration priority..."
-          branches: "Number of Branches"
-          currency: "Operating Currency"
-          sectors:
-            grocery: "Grocery and supermarkets"
-            fashion: "Clothing, footwear and accessories"
-            restaurant: "Restaurants and food"
-            pharmacy: "Pharmacies and health"
-          volumes:
-            under_500: "Fewer than 500 products"
-            500_5000: "500 to 5,000 products"
-            over_5000: "More than 5,000 products"
-          priorities:
-            catalog: "Product catalog and prices"
-            inventory: "Current inventory and stock"
-            customers: "Customer history and credit"
-            all: "All of the above"
-          currencies:
-            mxn: "Mexican peso (MXN)"
-            usd: "US dollar (USD)"
-            jpy: "Japanese yen (JPY)"
-            krw: "South Korean won (KRW)"
-        step_five:
-          title: "Stations & Cash Registers"
-          subtitle: "Define how many touch-enabled registers will operate and your integrated payment methods."
-          terminals: "Active Touch Cash Registers"
-          payments: "Bank Terminal Integration"
-          terminal_options:
-            one: "1 Main Register (Standard)"
-            two: "2 Registers on Local Network"
-            three_five: "3 to 5 Registers (High Demand)"
-            over_five: "More than 5 Registers (Corporate)"
-          payment_options:
-            cash: "Cash Only (For Now)"
-            card: "Enable Card Payments (Bluetooth/USB Terminal)"
-            qr: "Enable Digital Payments (QR Codes)"
-          terms: "I accept Delta POS Terms of Service and Privacy Policy."
-          initialize: "Initialize Environment"
     sessions:
       new:
-        page_title: Delta POS | Sign In
-        brand_tagline: Point of Sale
         brand_alt: Delta POS logo mark
+        brand_tagline: Point of Sale
+        copyright: "© 2026 Delta POS Inc. All rights reserved."
         email: Corporate email address
         email_placeholder: carlos@yourcompany.com
         error_banner:
           title: Authentication Failed
         forgot: Forgot your password?
+        multichannel_description: Start register shifts simultaneously from mobile
+          devices or fixed terminals.
+        multichannel_title: Multichannel Persistence Enabled
+        page_title: Delta POS | Sign In
+        panel_badge: Secure Access Terminal
+        panel_description: Sign in to instantly synchronize your registers, inventory
+          reports, and active Delta POS terminals.
+        panel_title: Return to your Cloud Point of Sale
         password: Secure access password
+        realtime_description: Monitor sales, inventory levels, and cash flow from
+          anywhere with millisecond-level updates.
+        realtime_title: Real-Time Synchronization
+        register: Register here
+        register_prompt: New to the platform?
         remember_me: Remember my session
         submit: Sign in to Terminal
         submitting: Signing in…
         subtitle: Enter your credentials to open your cloud point of sale.
         title: Cloud System Access
         toggle_password: Show or hide password
-        register_prompt: New to the platform?
-        register: Register here
-        panel_badge: Secure Access Terminal
-        panel_title: Return to your Cloud Point of Sale
-        panel_description: Sign in to instantly synchronize your registers, inventory reports, and active Delta POS terminals.
-        realtime_title: Real-Time Synchronization
-        realtime_description: Monitor sales, inventory levels, and cash flow from anywhere with millisecond-level updates.
-        multichannel_title: Multichannel Persistence Enabled
-        multichannel_description: Start register shifts simultaneously from mobile devices or fixed terminals.
-        copyright: "© 2026 Delta POS Inc. All rights reserved."
     shared:
       links:
         forgot_password: Forgot your password?
@@ -1102,10 +1114,6 @@ en:
         title: Resend unlock instructions
   errors:
     attributes:
-      branch:
-        name: Name
-        phone: Phone
-        status: Status
       address:
         city: City
         country: Country
@@ -1115,6 +1123,10 @@ en:
         postal_code: Postal code
         state: State
         street: Street
+      branch:
+        name: Name
+        phone: Phone
+        status: Status
       email: Email
       password: Password
     format: "%{attribute} %{message}"

@@ -39,17 +39,17 @@ class Address < ApplicationRecord
             inclusion: { in: geocoding_statuses.keys },
             on: %i[create update]
 
-  validates :street, presence: true, length: { in: 2..150 }, on: :onboarding_step_2
-  validates :exterior_number, presence: true, length: { in: 1..20 }, on: :onboarding_step_2
-  validates :interior_number, length: { maximum: 20 }, allow_blank: true, on: :onboarding_step_2
-  validates :neighborhood, presence: true, length: { in: 2..100 }, on: :onboarding_step_2
-  validates :city, presence: true, length: { in: 2..100 }, on: :onboarding_step_2
-  validates :state, presence: true, length: { in: 2..100 }, on: :onboarding_step_2
-  validates :country, presence: true, length: { in: 2..100 }, on: :onboarding_step_2
+  validates :street, presence: true, length: { in: 2..150 }, on: :onboardingstep2
+  validates :exterior_number, presence: true, length: { in: 1..20 }, on: :onboardingstep2
+  validates :interior_number, length: { maximum: 20 }, allow_blank: true, on: :onboardingstep2
+  validates :neighborhood, presence: true, length: { in: 2..100 }, on: :onboardingstep2
+  validates :city, presence: true, length: { in: 2..100 }, on: :onboardingstep2
+  validates :state, presence: true, length: { in: 2..100 }, on: :onboardingstep2
+  validates :country, presence: true, length: { in: 2..100 }, on: :onboardingstep2
   validates :postal_code,
             presence: true,
             format: { with: /\A[0-9]{5}\z/ },
-            on: :onboarding_step_2
+            on: :onboardingstep2
 
   scope :active, -> { where(deleted_at: nil) }
 

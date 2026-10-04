@@ -22,7 +22,7 @@ module Admin
       branch = available_branches.find(params[:id])
       session[:current_branch_id] = branch.id
 
-      redirect_back fallback_location: admin_dashboard_path
+      redirect_back_or_to(admin_dashboard_path)
     end
 
     def index

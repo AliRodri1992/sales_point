@@ -68,7 +68,9 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
 
     expect(progress[:sections]).to all(include(:key, :percentage, :status))
     expect(progress[:sections]).to include(include(key: :migration, status: 'not_applicable', percentage: 0))
-    expect(progress[:sections].reject { |section| section[:status] == 'not_applicable' }).to all(include(status: 'completed'))
+    expect(progress[:sections].reject do |section|
+      section[:status] == 'not_applicable'
+    end).to all(include(status: 'completed'))
     expect(progress[:percentage]).to eq(100)
   end
 end

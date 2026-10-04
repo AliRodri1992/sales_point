@@ -75,7 +75,8 @@ RSpec.describe 'Admin onboarding', type: :request do
 
     expect(response).to redirect_to(admin_onboarding_path(step: 4))
 
-    terminal_audit = organization.reload.onboarding_audits.where(action: 'step_updated', step: 3).order(:created_at).last
+    terminal_audit = organization.reload.onboarding_audits.where(action: 'step_updated',
+                                                                 step: 3).order(:created_at).last
     expect(terminal_audit.metadata.dig('changes', '0', 'name', 'to')).to eq('Caja Principal')
 
     patch admin_onboarding_path(step: 4), params: {
@@ -98,7 +99,6 @@ RSpec.describe 'Admin onboarding', type: :request do
     expect(terminal.name).to eq('Caja Principal')
     expect(organization.onboarding_audits.where(action: 'completed')).to exist
   end
-
 
   it 'does not reopen onboarding after completion' do
     organization.update!(

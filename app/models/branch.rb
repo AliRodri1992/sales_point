@@ -35,10 +35,10 @@ class Branch < ApplicationRecord
               case_sensitive: false,
               conditions: -> { where(deleted_at: nil) }
             },
-            on: :onboarding_step_2
+            on: :onboardingstep2
   validates :phone,
             format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
             length: { in: 7..20 },
             allow_blank: true,
-            on: :onboarding_step_2
+            on: :onboardingstep2
 end

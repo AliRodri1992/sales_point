@@ -20,7 +20,7 @@ module Onboarding
         }
       end
 
-      @organization.update_columns(
+      @organization.update!(
         onboarding_sections:,
         updated_at: Time.current
       )

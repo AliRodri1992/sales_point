@@ -40,15 +40,15 @@ class OrganizationSetting < ApplicationRecord
             presence: true,
             inclusion: { in: ONBOARDING_CURRENCIES },
             format: { with: /\A[A-Z]{3}\z/ },
-            on: :onboarding_step_1
+            on: :onboardingstep1
   validates :timezone,
             presence: true,
             inclusion: { in: ONBOARDING_TIMEZONES },
-            on: :onboarding_step_1
+            on: :onboardingstep1
   validates :payment_method,
             presence: true,
             inclusion: { in: payment_methods.keys },
-            on: :onboarding_step_4
+            on: :onboardingstep4
 
   scope :active_records, -> { where(deleted_at: nil) }
 end

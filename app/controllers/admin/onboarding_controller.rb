@@ -27,17 +27,16 @@ module Admin
       @step = normalized_step
       load_onboarding
 
-      if Onboarding::StepUpdater.call(\
-        organization: @organization,\
-        step: @step,\
-        params:,\
-        user: current_user,\
-        branch: @branch,\
-        settings: @settings,\
-        terminals: @terminals\
+      if Onboarding::StepUpdater.call(
+        organization: @organization,
+        step: @step,
+        params:,
+        user: current_user,
+        branch: @branch,
+        settings: @settings,
+        terminals: @terminals
       )
-        flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
-        redirect_to success_path
+        handle_update_success
       else
         handle_update_failure
       end
@@ -122,9 +121,14 @@ module Admin
       admin_onboarding_path(step: @step + 1)
     end
 
+    def handle_update_success
+      flash[:swal_message] = t('admin.onboarding.completed') if @step == 5
+      redirect_to success_path
+    end
+
     def handle_update_failure
       flash.now[:swal_message] = t('admin.onboarding.incomplete')
-      flash.now[:swal_icon] = 'error'
+      flash.now[:swal_icon] = t('admin.onboarding.incomplete.icon')
       render :show, status: :unprocessable_content
     end
   end

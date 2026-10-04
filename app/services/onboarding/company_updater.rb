@@ -27,12 +27,12 @@ module Onboarding
 
     def update_organization(attributes)
       @organization.assign_attributes(attributes.slice(:name, :tax_id, :business_sector))
-      @organization.save(context: :onboarding_step_1)
+      @organization.save!(context: :onboardingstep1)
     end
 
     def update_settings(settings, attributes)
       settings.assign_attributes(currency: attributes[:currency], timezone: attributes[:timezone])
-      settings.save(context: :onboarding_step_1)
+      settings.save!(context: :onboardingstep1)
     end
   end
 end

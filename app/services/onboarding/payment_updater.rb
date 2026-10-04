@@ -18,6 +18,7 @@ module Onboarding
 
       method = @params.expect(payment: [:method]).fetch(:method)
       return false unless assign_payment_method(settings, method)
+
       update_payment_integrations(method)
       true
     end
@@ -26,7 +27,7 @@ module Onboarding
 
     def assign_payment_method(settings, method)
       settings.payment_method = method
-      settings.save(context: :onboarding_step_4)
+      settings.save!(context: :onboardingstep4)
     end
 
     def update_payment_integrations(method)

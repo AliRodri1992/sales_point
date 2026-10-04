@@ -23,7 +23,7 @@ class Terminal < ApplicationRecord
             inclusion: { in: statuses.keys },
             on: %i[create update]
 
-  validates :name, presence: true, length: { in: 2..80 }, on: :onboarding_step_3
+  validates :name, presence: true, length: { in: 2..80 }, on: :onboardingstep3
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 end

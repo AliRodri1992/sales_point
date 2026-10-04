@@ -22,7 +22,7 @@ module Onboarding
 
       terminals.each_with_index do |terminal, index|
         terminal.assign_attributes(name: terminal_name(index))
-        return false unless terminal.save(context: :onboarding_step_3)
+        return false unless terminal.save!(context: :onboardingstep3)
       end
 
       true
