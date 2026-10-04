@@ -15,6 +15,10 @@ RSpec.describe Onboarding::StepUpdater do
     allow(ApplicationRecord).to receive(:transaction).and_yield
     allow(Onboarding::ProgressSynchronizer).to receive(:call)
     allow(Onboarding::Auditor).to receive(:call)
+    allow(Onboarding::ProgressCalculator).to receive(:call).with(organization).and_return(
+      sections: [],
+      percentage: 0
+    )
     allow(Onboarding::StateCalculator).to receive(:new).and_return(
       instance_double(Onboarding::StateCalculator, call: {})
     )
