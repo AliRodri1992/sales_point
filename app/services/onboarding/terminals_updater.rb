@@ -21,7 +21,8 @@ module Onboarding
       return false if terminals.empty?
 
       terminals.each_with_index do |terminal, index|
-        return false unless terminal.update(name: terminal_name(index))
+        terminal.assign_attributes(name: terminal_name(index))
+        return false unless terminal.save(context: :onboarding_step_3)
       end
 
       true
