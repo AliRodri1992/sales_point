@@ -144,7 +144,7 @@ ko:
         title: 지점
       statuses:
         active: 활성
-        inactive: 비활성
+        blocked: 차단됨
       updated: 지점이 성공적으로 업데이트되었습니다.
     shared:
 
@@ -163,7 +163,7 @@ ko:
           category: 카테고리
           product: 상품
           branch: 지점
-          client: 고객
+          customer: 고객
           system_role: 시스템 역할
         language:
           created: "언어 %{name}이(가) 생성되었습니다"
