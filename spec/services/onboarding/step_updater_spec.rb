@@ -22,8 +22,8 @@ RSpec.describe Onboarding::StepUpdater do
     )
     allow(terminal_one).to receive(:assign_attributes)
     allow(terminal_two).to receive(:assign_attributes)
-    allow(terminal_one).to receive(:save!)
-    allow(terminal_two).to receive(:save!)
+    allow(terminal_one).to receive(:save!).and_return(true)
+    allow(terminal_two).to receive(:save!).and_return(true)
     allow(organization).to receive(:update!)
   end
 
