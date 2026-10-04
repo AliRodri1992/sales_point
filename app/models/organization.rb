@@ -46,7 +46,7 @@ class Organization < ApplicationRecord
   def start_onboarding!
     return if onboarding_status.in?(%w[in_progress completed])
 
-    update!(onboarding_status: :in_progress)
+    update_columns(onboarding_status: 'in_progress', updated_at: Time.current)
   end
 
   def complete_onboarding!
