@@ -9,14 +9,10 @@ module Admin
     end
 
     def sales_ready?
-      return true unless @onboarding_progress
-
-      @sales_requirements.values.all? { |requirement| requirement[:complete] }
+      @sales_requirements.present? && @sales_requirements.values.all? { |requirement| requirement[:complete] }
     end
 
     def sales_missing_sections
-      return [] unless @onboarding_progress
-
       @sales_requirements.filter_map { |section, requirement| section unless requirement[:complete] }
     end
 
