@@ -1,37 +1,50 @@
 export function closeDashboardSelectors(except = null) {
-    document.querySelectorAll('[data-dashboard-selector] details').forEach((details) => {
-        const container = details.closest("[data-dashboard-selector]")
+    document.querySelectorAll("[data-dashboard-selector]").forEach((container) => {
+        if (container === except) return
 
-        if (container !== except) {
+        container.querySelectorAll("details").forEach((details) => {
             details.open = false
+        })
+
+        container.querySelectorAll("[data-dashboard-selector-menu]").forEach((menu) => {
+            menu.classList.add("hidden")
+        })
+
+        const notificationMenu = container.querySelector("#notificationsMenu")
+        if (notificationMenu) {
+            notificationMenu.classList.add("hidden")
+            container.querySelector("#notificationsButton")?.setAttribute("aria-expanded", "false")
         }
-    })
 
-    document.querySelectorAll('[data-language-selector-target="dropdown"]').forEach((dropdown) => {
-        const container = dropdown.closest("[data-dashboard-selector]")
-
-        if (container !== except) {
+        container.querySelectorAll('[data-language-selector-target="dropdown"]').forEach((dropdown) => {
             dropdown.classList.add("hidden")
-        }
+        })
     })
-
-    const notificationMenu = document.getElementById("notificationsMenu")
-    const notificationContainer = notificationMenu?.closest("[data-dashboard-selector]")
-
-    if (notificationMenu && notificationContainer !== except) {
-        notificationMenu.classList.add("hidden")
-        document.getElementById("notificationsButton")?.setAttribute("aria-expanded", "false")
-    }
 }
 
 export function isDashboardSelectorOpen(container) {
-    const details = container?.querySelector("details")
-    const dropdown = container?.querySelector('[data-language-selector-target="dropdown"]')
-    const notificationMenu = container?.querySelector("#notificationsMenu")
+    if (!container) return false
 
-    return Boolean(
-        details?.open ||
-        (dropdown && !dropdown.classList.contains("hidden")) ||
-        (notificationMenu && !notificationMenu.classList.contains("hidden"))
+    const detailsOpen = Array.from(container.querySelectorAll("details")).some(
+        (details) => details.open
     )
+    const menusOpen = Array.from(container.querySelectorAll("[data-dashboard-selector-menu]"))
+        .some((menu) => !menu.classList.contains("hidden"))
+
+    return detailsOpen || menusOpen
 }
+
+const dashboardSelectorClickHandler = (event) => {
+    const selector = event.target instanceof Element
+        ? event.target.closest("[data-dashboard-selector]")
+        : null
+
+    if (selector) {
+        closeDashboardSelectors(selector)
+        return
+    }
+
+    closeDashboardSelectors()
+}
+
+document.addEventListener("click", dashboardSelectorClickHandler, true)
