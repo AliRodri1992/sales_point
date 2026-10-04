@@ -110,7 +110,7 @@ RSpec.describe 'Admin onboarding', type: :request do
   end
 
   it 'denies onboarding access to a non-administrator' do
-    role.update!(code: 'staff_onboarding_test')
+    user_role.update!(system_role: create(:system_role, :system, name: 'Onboarding Staff', code: 'onboarding_staff'))
     get admin_onboarding_path
 
     expect(response).to have_http_status(:forbidden)
