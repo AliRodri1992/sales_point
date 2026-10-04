@@ -37,23 +37,14 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     )
   end
 
-  it 'reports partial address completion accurately' do
+  it 'reports a missing branch address as incomplete' do
     organization = create(:organization)
-    branch = create(:branch, organization:)
-    branch.address.assign_attributes(
-      street: '',
-      exterior_number: '',
-      neighborhood: 'Centro',
-      city: '',
-      state: 'Estado de México',
-      country: 'MX',
-      postal_code: ''
-    )
+    create(:branch, organization:, without_address: true)
 
     progress = described_class.call(organization)
     section = progress[:sections].find { |item| item[:key] == :branches }
 
-    expect(section[:percentage]).to eq(71)
+    expect(section[:percentage]).to eq(50)
     expect(section[:status]).to eq('in_progress')
   end
 

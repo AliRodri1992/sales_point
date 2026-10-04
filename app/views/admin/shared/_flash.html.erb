@@ -1,3 +1,12 @@
+<% if flash[:swal_message].present? %>
+  <div
+    data-controller="swal-flash"
+    data-swal-flash-message-value="<%= flash[:swal_message] %>"
+    data-swal-flash-icon-value="<%= flash[:swal_icon] || 'success' %>"
+    class="hidden"
+  ></div>
+<% end %>
+
 <% if flash[:notice].present? %>
   <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
     <%= icon('check-circle', class: 'size-5 shrink-0') %>

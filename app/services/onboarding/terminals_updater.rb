@@ -13,12 +13,8 @@ module Onboarding
     end
 
     def call
-      branch = @organization.branches.not_deleted.where(status: true).first ||
-               @organization.branches.not_deleted.first
-      return false unless branch
-
-      terminals = @terminals || branch.terminals.active_records.order(:id).to_a
-      return false if terminals.empty?
+      terminals = @terminals.presence || active_branch_terminals
+      return false if terminals.blank?
 
       terminals.each_with_index do |terminal, index|
         terminal.assign_attributes(name: terminal_name(index))
@@ -29,6 +25,14 @@ module Onboarding
     end
 
     private
+
+    def active_branch_terminals
+      branch = @organization.branches.not_deleted.where(status: true).first ||
+               @organization.branches.not_deleted.first
+      return [] unless branch
+
+      branch.terminals.active_records.order(:id).to_a
+    end
 
     def terminal_name(index)
       @params.dig(:terminal_names, index.to_s).presence ||
