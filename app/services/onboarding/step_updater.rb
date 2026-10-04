@@ -18,6 +18,7 @@ module Onboarding
       when 2 then update_branch?
       when 3 then update_terminals?
       when 4 then update_payment?
+      when 5 then complete_onboarding?
       else false
       end
     rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
@@ -25,6 +26,10 @@ module Onboarding
     end
 
     private
+
+    def complete_onboarding?
+      Onboarding::ProgressCalculator.call(@organization)[:sections].all? { |section| section[:percentage] == 100 }
+    end
 
     def update_company
       organization_attributes = @params.expect(organization: %i[name tax_id business_sector currency timezone])
