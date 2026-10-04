@@ -29,6 +29,14 @@ RSpec.describe Organization, type: :model do
     expect(organization.onboarding_current_step).to eq(1)
   end
 
+  it 'resumes an in-progress onboarding without resetting its step' do
+    organization = create(:organization, onboarding_status: :in_progress, onboarding_current_step: 3)
+    organization.start_onboarding!
+
+    expect(organization.reload).to be_onboarding_status_in_progress
+    expect(organization.onboarding_current_step).to eq(3)
+  end
+
   it 'starts onboarding without changing a completed organization' do
     organization = create(:organization)
     organization.start_onboarding!
