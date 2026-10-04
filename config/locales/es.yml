@@ -381,6 +381,36 @@ es:
       created: Usuario creado correctamente.
       destroyed: Usuario eliminado correctamente.
       updated: Usuario actualizado correctamente.
+      statuses:
+        active: Activo
+        inactive: Inactivo
+        suspended: Suspendido
+        deleted: Eliminado
+      user_types:
+        employee: Empleado
+        client: Cliente
+        supplier: Proveedor
+      themes:
+        theme-material-red: Rojo material
+        theme-material-navy: Azul marino material
+        theme-material-school-yellow: Amarillo escolar material
+        theme-saas-blue: Azul SaaS
+        theme-emerald-green: Verde esmeralda
+        theme-commercial-orange: Naranja comercial
+        theme-industrial-mono: Monocromo industrial
+        theme-tech-purple: Púrpura tecnológico
+        theme-slate-charcoal: Gris pizarra
+        theme-ocean-cyan: Cian océano
+        theme-candy-pink: Rosa dulce
+        theme-earth-brown: Marrón tierra
+        theme-wheat-yellow: Amarillo trigo
+        theme-silver-grey: Gris plata
+        theme-supermarket-red: Rojo supermercado
+        theme-mint-turquoise: Turquesa menta
+        theme-orchid-violet: Violeta orquídea
+        theme-lime-green: Verde lima
+        theme-denim-blue: Azul mezclilla
+        theme-delta-emerald: Delta esmeralda
       form:
         buttons:
           back: Volver a usuarios
