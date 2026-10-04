@@ -13,6 +13,8 @@ module Onboarding
     end
 
     def call
+      success = false
+
       ApplicationRecord.transaction do
         result = case @step
                  when 1 then update_company
@@ -27,9 +29,10 @@ module Onboarding
 
         persist_progress
         advance_step unless @step == 5
+        success = true
       end
 
-      true
+      success
     rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
       false
     end
