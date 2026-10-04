@@ -3,9 +3,7 @@
 RSpec.describe Onboarding::StepUpdater do
   let(:organization) { instance_double(Organization, onboarding_current_step: 3) }
   let(:user) { instance_double(User) }
-  let(:terminal_one) { instance_double(Terminal) }
-  let(:terminal_two) { instance_double(Terminal) }
-  let(:terminals) { [terminal_one, terminal_two] }
+  let(:terminals) { [instance_double(Terminal), instance_double(Terminal)] }
 
   let(:params) do
     ActionController::Parameters.new(
@@ -20,19 +18,14 @@ RSpec.describe Onboarding::StepUpdater do
     allow(Onboarding::StateCalculator).to receive(:new).and_return(
       instance_double(Onboarding::StateCalculator, call: {})
     )
-    allow(terminal_one).to receive(:assign_attributes)
-    allow(terminal_two).to receive(:assign_attributes)
-    allow(terminal_one).to receive(:save!).and_return(true)
-    allow(terminal_two).to receive(:save!).and_return(true)
     allow(organization).to receive(:update!)
   end
 
   it 'updates existing cash register names without creating new terminals' do
     expect(Terminal).not_to receive(:create!)
-    expect(terminal_one).to receive(:assign_attributes).with(name: 'Caja Principal')
-    expect(terminal_two).to receive(:assign_attributes).with(name: 'Caja Secundaria')
-    expect(terminal_one).to receive(:save!).with(context: :onboardingstep3).and_return(true)
-    expect(terminal_two).to receive(:save!).with(context: :onboardingstep3).and_return(true)
+    expect(Onboarding::TerminalsUpdater).to receive(:call)
+      .with(organization, params, terminals:)
+      .and_return(true)
 
     expect(
       described_class.call(
