@@ -2,13 +2,14 @@
 
 module Onboarding
   class TerminalsUpdater
-    def self.call(organization, params)
-      new(organization, params).call
+    def self.call(organization, params, terminals: nil)
+      new(organization, params, terminals).call
     end
 
-    def initialize(organization, params)
+    def initialize(organization, params, terminals)
       @organization = organization
       @params = params
+      @terminals = terminals
     end
 
     def call
@@ -16,7 +17,7 @@ module Onboarding
                @organization.branches.not_deleted.first
       return false unless branch
 
-      terminals = branch.terminals.active_records.order(:id).to_a
+      terminals = @terminals || branch.terminals.active_records.order(:id).to_a
       return false if terminals.empty?
 
       terminals.each_with_index do |terminal, index|
