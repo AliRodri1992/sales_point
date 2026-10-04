@@ -7,7 +7,12 @@ RSpec.describe Onboarding::StepUpdater do
   let(:terminal_two) { instance_double(Terminal) }
   let(:terminals) { [terminal_one, terminal_two] }
   let(:branch) { instance_double(Branch) }
-  let(:params) { ActionController::Parameters.new(terminal_names: { '0' => 'Caja Principal', '1' => 'Caja Secundaria' }) }
+
+  let(:params) do
+    ActionController::Parameters.new(
+      terminal_names: { '0' => 'Caja Principal', '1' => 'Caja Secundaria' }
+    )
+  end
 
   before do
     allow(ApplicationRecord).to receive(:transaction).and_yield
