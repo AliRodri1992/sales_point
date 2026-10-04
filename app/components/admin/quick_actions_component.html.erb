@@ -32,9 +32,11 @@
               <p class="mt-1 text-xs text-amber-700">
                 <%= t('admin.dashboard.onboarding.sales_dependency', sections: sales_missing_sections.map { |section| t("admin.onboarding.sections.#{section}") }.to_sentence) %>
               </p>
-              <%= link_to t('admin.dashboard.onboarding.continue'),
-                          admin_onboarding_path,
-                          class: "mt-2 inline-flex text-xs font-semibold text-amber-800 underline decoration-amber-300 underline-offset-2 hover:text-amber-900" %>
+              <% if @onboarding_progress.present? %>
+                <%= link_to t('admin.dashboard.onboarding.continue'),
+                            admin_onboarding_path,
+                            class: "mt-2 inline-flex text-xs font-semibold text-amber-800 underline decoration-amber-300 underline-offset-2 hover:text-amber-900" %>
+              <% end %>
             </div>
           </div>
         </div>
