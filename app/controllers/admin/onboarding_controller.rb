@@ -58,7 +58,7 @@ module Admin
         user: current_user,
         action: 'started',
         step: @organization.onboarding_current_step,
-        metadata: { 'percentage' => @progress_percentage }
+        metadata: { 'percentage' => Onboarding::ProgressCalculator.call(@organization)[:percentage] }
       )
     end
 
