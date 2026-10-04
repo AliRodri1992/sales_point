@@ -2,18 +2,18 @@
 
 module Onboarding
   class StepUpdater
-    def self.call(organization:, step:, params:, user:, branch: nil, settings: nil, terminals: nil)
-      new(organization, step, params, user, branch, settings, terminals).call
+    def self.call(organization:, step:, params:, user:, **)
+      new(organization, step, params, user, **).call
     end
 
-    def initialize(organization, step, params, user, branch, settings, terminals)
+    def initialize(organization, step, params, user, **kwargs)
       @organization = organization
       @step = step
       @params = params
       @user = user
-      @branch = branch
-      @settings = settings
-      @terminals = terminals
+      @branch = kwargs[:branch]
+      @settings = kwargs[:settings]
+      @terminals = kwargs[:terminals]
       @before_state = {}
       @after_state = {}
     end
@@ -77,70 +77,7 @@ module Onboarding
     end
 
     def configuration_state
-      case @step
-      when 1 then company_state
-      when 2 then branch_state
-      when 3 then terminals_state
-      when 4 then payment_state
-      else {}
-      end
-    end
-
-    def company_state
-      settings = @organization.organization_settings.first
-
-      {
-        'organization' => @organization.attributes.slice('name', 'tax_id', 'business_sector'),
-        'settings' => settings&.attributes&.slice('currency', 'timezone')
-      }
-    end
-
-    def branch_state
-      branch = active_branch
-      return {} unless branch
-
-      {
-        'branch' => branch.attributes.slice('name', 'phone'),
-        'address' => branch.address&.attributes&.slice(
-          'street',
-          'exterior_number',
-          'interior_number',
-          'neighborhood',
-          'city',
-          'state',
-          'country',
-          'postal_code'
-        )
-      }
-    end
-
-    def terminals_state
-      branch = active_branch
-      return {} unless branch
-
-      branch.terminals.active_records.order(:id).each_with_index.to_h do |terminal, index|
-        [
-          index.to_s,
-          terminal.attributes.slice('name', 'code', 'status', 'branch_id')
-        ]
-      end
-    end
-
-    def payment_state
-      settings = @organization.organization_settings.first
-
-      {
-        'settings' => settings&.attributes&.slice('payment_method'),
-        'integrations' => @organization.payment_integrations
-          .where(deleted_at: nil)
-          .order(:id)
-          .map { |integration| integration.attributes.slice('provider', 'status') }
-      }
-    end
-
-    def active_branch
-      @organization.branches.not_deleted.where(status: true).first ||
-        @organization.branches.not_deleted.first
+      StateCalculator.new(@organization, @step).call
     end
 
     def configuration_changes
