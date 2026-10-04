@@ -2,52 +2,39 @@ import { Controller } from "@hotwired/stimulus"
 import { closeDashboardSelectors } from "./selector_coordinator"
 
 export default class extends Controller {
-    connect() {
-        this.boundOutsideClick = this.closeOnOutsideClick.bind(this)
-        this.boundEscape = this.closeOnEscape.bind(this)
+    static targets = ["button", "menu"]
 
-        document.addEventListener("click", this.boundOutsideClick)
+    connect() {
+        this.boundEscape = this.closeOnEscape.bind(this)
         document.addEventListener("keydown", this.boundEscape)
     }
 
     disconnect() {
-        document.removeEventListener("click", this.boundOutsideClick)
         document.removeEventListener("keydown", this.boundEscape)
     }
 
     toggle(event) {
         event.preventDefault()
-        event.stopPropagation()
 
-        const willOpen = this.menu?.classList.contains("hidden")
+        const wasOpen = !this.menuTarget.classList.contains("hidden")
 
-        if (!willOpen) {
+        if (wasOpen) {
             this.close()
             return
         }
 
         closeDashboardSelectors(this.element)
-        this.menu?.classList.remove("hidden")
-        this.button?.setAttribute("aria-expanded", "true")
+        this.open()
     }
 
-    get button() {
-        return this.element.querySelector("#notificationsButton")
-    }
-
-    get menu() {
-        return this.element.querySelector("#notificationsMenu")
+    open() {
+        this.menuTarget.classList.remove("hidden")
+        this.buttonTarget.setAttribute("aria-expanded", "true")
     }
 
     close() {
-        this.menu?.classList.add("hidden")
-        this.button?.setAttribute("aria-expanded", "false")
-    }
-
-    closeOnOutsideClick(event) {
-        if (this.element.contains(event.target)) return
-
-        closeDashboardSelectors()
+        this.menuTarget.classList.add("hidden")
+        this.buttonTarget.setAttribute("aria-expanded", "false")
     }
 
     closeOnEscape(event) {
