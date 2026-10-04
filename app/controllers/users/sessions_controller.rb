@@ -14,17 +14,20 @@ module Users
       return render_with_model_errors unless login_credentials_present?
 
       super
+      store_sign_in_success_message if user_signed_in?
     end
 
     private
 
     def set_flash_message!(action, kind, options = {})
-      return store_sign_in_success_message if action == :signed_in
+      return if action.to_sym == :signed_in
 
       super
     end
 
     def store_sign_in_success_message
+      flash.delete(:notice)
+      flash.delete(:success)
       session[:swal_message] = t('devise.sessions.signed_in')
       session[:swal_icon] = 'success'
     end
