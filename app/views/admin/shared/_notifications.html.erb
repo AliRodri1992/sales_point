@@ -1,11 +1,9 @@
-<div class="relative" data-controller="notifications" data-dashboard-selector>
+<div class="relative" data-dashboard-selector>
   <%= turbo_stream_from "notifications_#{current_user.id}" %>
 
   <button
     id="notificationsButton"
     type="button"
-    data-notifications-target="button"
-    data-action="click->notifications#toggle"
     class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
     aria-label="<%= t('admin.shared.notifications.toggle') %>"
     aria-expanded="false"
@@ -16,7 +14,6 @@
 
   <div
     id="notificationsMenu"
-    data-notifications-target="menu"
     data-dashboard-selector-menu
     class="absolute right-0 top-full z-50 mt-2 hidden w-80 rounded-xl border border-slate-200 bg-white shadow-lg"
   >
