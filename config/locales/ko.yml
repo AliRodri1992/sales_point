@@ -229,13 +229,12 @@ ko:
         country: 국가
         postal_code: 우편번호
         terminal_count: 활성 계산대
-        terminal_count: 활성 계산대
         terminal_name: 계산대 이름
         terminal_code: 계산대 코드
         branch: 지점
         payment_method: 초기 결제 방법
-        payment_method: 초기 결제 방법
       active: 활성
+      not_available: 사용할 수 없음
       no_terminals: 이 지점에 활성 계산대가 구성되어 있지 않습니다.
       terminal: 계산대 %{number}
       migration:
