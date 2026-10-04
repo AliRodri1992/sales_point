@@ -14,10 +14,10 @@ export default class extends Controller {
             return
         }
 
-        this.dispatch("open", {
-            detail: { source: this.element },
-            bubbles: true
-        })
+        this.element.dispatchEvent(new CustomEvent("dashboard:selector:open", {
+            bubbles: true,
+            detail: { source: this.element }
+        }))
         this.dropdownTarget.classList.remove("hidden")
         this.refreshDropdownContent()
     }
@@ -55,12 +55,13 @@ export default class extends Controller {
         event.stopPropagation()
 
         const language = event.currentTarget.dataset.language
+        const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
 
         fetch("/language", {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+                "X-CSRF-Token": csrfToken
             },
             body: JSON.stringify({ language })
         })
