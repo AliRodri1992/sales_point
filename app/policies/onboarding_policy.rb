@@ -2,16 +2,24 @@
 
 class OnboardingPolicy < ApplicationPolicy
   def show?
-    admin? && user.organizations.active_records.exists?
+    admin? && active_organization?
+  end
+
+  def update?
+    admin? && active_organization?
   end
 
   def reset?
-    admin? && user.organizations.active_records.exists?
+    admin? && active_organization?
   end
 
   private
 
   def admin?
     user&.admin?
+  end
+
+  def active_organization?
+    user.organizations.active_records.exists?
   end
 end
