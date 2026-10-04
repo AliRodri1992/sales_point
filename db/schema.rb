@@ -299,6 +299,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_012000) do
   create_table "onboarding_audits", force: :cascade do |t|
     t.string "action", limit: 50, null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.jsonb "metadata", default: {}, null: false
     t.bigint "organization_id", null: false
     t.string "section", limit: 50
@@ -306,6 +307,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_012000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["action"], name: "index_onboarding_audits_on_action"
+    t.index ["deleted_at"], name: "index_onboarding_audits_on_deleted_at"
     t.index ["organization_id", "created_at"], name: "index_onboarding_audits_on_organization_id_and_created_at"
     t.index ["organization_id"], name: "index_onboarding_audits_on_organization_id"
     t.index ["user_id", "created_at"], name: "index_onboarding_audits_on_user_id_and_created_at"
