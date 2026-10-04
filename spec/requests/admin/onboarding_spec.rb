@@ -28,7 +28,7 @@ RSpec.describe 'Admin onboarding', type: :request do
     expect(response).to have_http_status(:ok)
 
     organization.reload
-    expect(organization).to be_onboarding_status_in_progress
+    expect(organization.onboarding_status).to eq('in_progress')
     expect(organization.onboarding_current_step).to eq(1)
     expect(organization.onboarding_sections).to be_present
     expect(organization.onboarding_audits.where(action: 'started')).to exist
@@ -92,7 +92,7 @@ RSpec.describe 'Admin onboarding', type: :request do
 
     organization.reload
     terminal.reload
-    expect(organization).to be_onboarding_status_completed
+    expect(organization.onboarding_status).to eq('completed')
     expect(organization.onboarding_completed_at).to be_present
     expect(organization.onboarding_current_step).to eq(5)
     expect(terminal.name).to eq('Caja Principal')
