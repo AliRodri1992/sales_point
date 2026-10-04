@@ -188,6 +188,8 @@ en:
         inactive: Inactive
       updated: Category updated successfully
     dashboard:
+      index:
+        title: Dashboard
       page_header:
         title: Dashboard
         subtitle: Overview of your business operations.
