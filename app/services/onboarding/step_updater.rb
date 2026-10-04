@@ -50,7 +50,8 @@ module Onboarding
 
     def complete_onboarding?
       progress = Onboarding::ProgressCalculator.call(@organization)
-      return false unless progress[:sections].all? { |section| section[:percentage] == 100 }
+      applicable_sections = progress[:sections].reject { |section| section[:status] == 'not_applicable' }
+      return false unless applicable_sections.all? { |section| section[:percentage] == 100 }
 
       @organization.complete_onboarding!
       true

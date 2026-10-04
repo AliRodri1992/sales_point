@@ -2,6 +2,16 @@
 
 module Onboarding
   class ProgressCalculator
+    REQUIRED_ADDRESS_FIELDS = %i[
+      street
+      exterior_number
+      neighborhood
+      city
+      state
+      country
+      postal_code
+    ].freeze
+
     def self.call(organization)
       new(organization).call
     end
@@ -21,9 +31,11 @@ module Onboarding
         team_section
       ]
 
+      applicable_sections = sections.reject { |section| section[:status] == 'not_applicable' }
+
       {
         sections:,
-        percentage: sections.sum { |section| section[:percentage] } / sections.length
+        percentage: overall_percentage(applicable_sections)
       }
     end
 
@@ -40,14 +52,14 @@ module Onboarding
 
     def branch_section
       branch = @organization.branches.not_deleted.where(status: true).first
-      percentage = if branch.nil?
-                     0
-                   elsif branch.address.present?
-                     100
-                   else
-                     50
-                   end
-      section(:branches, percentage)
+      return section(:branches, 0) unless branch
+
+      branch_percentage = percentage_for([branch.name])
+      address_percentage = percentage_for(
+        REQUIRED_ADDRESS_FIELDS.map { |field| branch.address&.public_send(field) }
+      )
+
+      section(:branches, (branch_percentage + address_percentage) / 2)
     end
 
     def terminal_section
@@ -61,8 +73,10 @@ module Onboarding
 
     def migration_section
       migration = @organization.organization_migrations.first
-      complete = migration.nil? || (migration.volume.present? && migration.priority.present?)
-      section(:migration, complete ? 100 : 0)
+      return section(:migration, 0, status: 'not_applicable') unless migration
+
+      percentage = percentage_for([migration.volume, migration.priority])
+      section(:migration, percentage)
     end
 
     def team_section
@@ -74,11 +88,23 @@ module Onboarding
     end
 
     def percentage_for(fields)
+      return 0 if fields.empty?
+
       (fields.count(&:present?) * 100) / fields.length
     end
 
-    def section(key, percentage)
-      { key:, percentage:, status: status_for(percentage) }
+    def overall_percentage(sections)
+      return 0 if sections.empty?
+
+      (sections.sum { |section| section[:percentage] } / sections.length.to_f).round
+    end
+
+    def section(key, percentage, status: nil)
+      {
+        key:,
+        percentage:,
+        status: status || status_for(percentage)
+      }
     end
 
     def status_for(percentage)

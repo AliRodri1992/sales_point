@@ -13,11 +13,11 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
       include(key: :branches, status: 'not_started'),
       include(key: :terminals, status: 'not_started'),
       include(key: :payments, status: 'completed'),
-      include(key: :migration, status: 'completed'),
+      include(key: :migration, status: 'not_applicable'),
       include(key: :team, status: 'completed')
     )
     expect(progress[:sections].size).to eq(7)
-    expect(progress[:percentage]).to eq(71)
+    expect(progress[:percentage]).to eq(83)
   end
 
   it 'reports partial configuration as in progress' do
@@ -29,12 +29,32 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     expect(progress[:sections]).to include(
       include(key: :company, status: 'not_started'),
       include(key: :fiscal, status: 'completed'),
-      include(key: :branches, status: 'in_progress'),
+      include(key: :branches, percentage: 50, status: 'in_progress'),
       include(key: :terminals, status: 'not_started'),
       include(key: :payments, status: 'not_started'),
-      include(key: :migration, status: 'completed'),
+      include(key: :migration, status: 'not_applicable'),
       include(key: :team, status: 'not_started')
     )
+  end
+
+  it 'reports partial address completion accurately' do
+    organization = create(:organization)
+    branch = create(:branch, organization:)
+    branch.address.update!(
+      street: '',
+      exterior_number: '',
+      neighborhood: 'Centro',
+      city: '',
+      state: 'Estado de México',
+      country: 'MX',
+      postal_code: ''
+    )
+
+    progress = described_class.call(organization)
+    section = progress[:sections].find { |item| item[:key] == :branches }
+
+    expect(section[:percentage]).to eq(42)
+    expect(section[:status]).to eq('in_progress')
   end
 
   it 'reports fully configured operational sections as completed' do
@@ -47,7 +67,8 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     progress = described_class.call(organization)
 
     expect(progress[:sections]).to all(include(:key, :percentage, :status))
-    expect(progress[:sections]).to all(include(status: 'completed'))
+    expect(progress[:sections]).to include(include(key: :migration, status: 'not_applicable', percentage: 0))
+    expect(progress[:sections].reject { |section| section[:status] == 'not_applicable' }).to all(include(status: 'completed'))
     expect(progress[:percentage]).to eq(100)
   end
 end

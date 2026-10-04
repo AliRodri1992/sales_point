@@ -176,13 +176,31 @@
             <details class="group rounded-2xl border border-slate-200 bg-white" <%= "open" if section[:percentage] < 100 || index == 0 %>>
               <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 [&::-webkit-details-marker]:hidden">
                 <div class="flex min-w-0 items-center gap-3">
-                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full <%= section[:percentage] == 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' %>">
-                    <%= section[:percentage] == 100 ? "✓" : "!" %>
+                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full <%= if section[:status] == 'completed'
+                      'bg-emerald-100 text-emerald-700'
+                    elsif section[:status] == 'not_applicable'
+                      'bg-slate-100 text-slate-500'
+                    else
+                      'bg-amber-100 text-amber-700'
+                    end %>">
+                    <%= if section[:status] == 'completed'
+                          "✓"
+                        elsif section[:status] == 'not_applicable'
+                          "—"
+                        else
+                          "!"
+                        end %>
                   </span>
                   <span class="truncate text-sm font-bold text-slate-800"><%= t("admin.onboarding.sections.#{section[:key]}") %></span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm font-bold <%= section[:percentage] == 100 ? 'text-emerald-600' : 'text-amber-600' %>"><%= section[:percentage] %>%</span>
+                  <span class="text-sm font-bold <%= if section[:status] == 'completed'
+                              'text-emerald-600'
+                            elsif section[:status] == 'not_applicable'
+                              'text-slate-500'
+                            else
+                              'text-amber-600'
+                            end %>"><%= section[:status] == 'not_applicable' ? t("admin.onboarding.migration.not_applicable") : "#{section[:percentage]}%" %></span>
                   <span class="text-slate-400 transition-transform group-open:rotate-180">⌄</span>
                 </div>
               </summary>
