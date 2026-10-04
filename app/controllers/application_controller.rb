@@ -8,7 +8,24 @@ class ApplicationController < ActionController::Base
   after_action :set_action_cable_user_id_cookie
 
   # Helper method for views to get the currently selected language
-  helper_method :current_language
+  helper_method :current_language, :current_organization, :available_branches, :current_branch
+
+  def current_organization
+    @current_organization ||= current_user&.organizations&.active_records&.first
+  end
+
+  def available_branches
+    return Branch.none unless current_organization
+
+    current_organization.branches.not_deleted.where(status: true).order(:name)
+  end
+
+  def current_branch
+    return unless current_organization
+
+    branch = available_branches.find_by(id: session[:current_branch_id])
+    branch || available_branches.first
+  end
 
   private
 
