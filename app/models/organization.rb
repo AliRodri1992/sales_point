@@ -14,7 +14,7 @@ class Organization < ApplicationRecord
   enum :onboarding_status, { pending: 'pending', in_progress: 'in_progress', completed: 'completed' }
 
   ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
-  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}[A-Z0-9]{8,9}\z/i
+  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
 
   validates :name, presence: true, length: { in: 2..150 }
   validates :tax_id,
@@ -31,7 +31,17 @@ class Organization < ApplicationRecord
             presence: true,
             numericality: { only_integer: true, in: 1..5 }
 
+  before_validation :normalize_tax_id
+
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
+
+  private
+
+  def normalize_tax_id
+    self.tax_id = tax_id.to_s.strip.upcase if tax_id.present?
+  end
+
+  public
 
   def start_onboarding!
     return if onboarding_status.in?(%w[in_progress completed])
