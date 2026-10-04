@@ -1,4 +1,4 @@
-// NEXO POS — Admin Dashboard
+// DELTA POS — Admin Dashboard
 // Sidebar + Dropdowns + Chat + Dashboard Customization
 
 import { GridStack } from "gridstack"
