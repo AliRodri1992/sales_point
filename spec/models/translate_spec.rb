@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Translate, type: :model do
-  def find_translation(key, locale)
-    described_class.find_translation(key, locale)
-  end
+  delegate :find_translation, to: :described_class
 
   let(:language) { create(:language, :english) }
 
