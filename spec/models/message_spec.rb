@@ -21,7 +21,8 @@ RSpec.describe Message, type: :model do
     it 'broadcasts a newly created message' do
       allow(message).to receive(:broadcast_append_to)
       message.send(:broadcast_message)
-      expect(message).to have_received(:broadcast_append_to).with(message.conversation,target:'conversation_messages',partial:'messages/message')
+      expect(message).to have_received(:broadcast_append_to).with(message.conversation, target: 'conversation_messages',
+                                                                                        partial: 'messages/message')
     end
 
     it 'does nothing when there is no recipient' do
@@ -30,12 +31,14 @@ RSpec.describe Message, type: :model do
     end
 
     it 'delivers a notification and refreshes the recipient' do
-      recipient=create(:user); notification=instance_double(ChatNotification)
+      recipient = create(:user)
+      notification = instance_double(ChatNotification)
       allow(message.conversation).to receive(:other_user).with(message.user).and_return(recipient)
-      allow(ChatNotification).to receive(:with).with(message:,record:message).and_return(notification)
-      allow(notification).to receive(:deliver); allow(recipient).to receive(:broadcast_notifications_refresh)
+      allow(ChatNotification).to receive(:with).with(message:, record: message).and_return(notification)
+      allow(notification).to receive(:deliver)
+      allow(recipient).to receive(:broadcast_notifications_refresh)
       message.send(:notify_recipient)
-      expect(notification).to have_received(:deliver).with(recipient,enqueue_job:false)
+      expect(notification).to have_received(:deliver).with(recipient, enqueue_job: false)
       expect(recipient).to have_received(:broadcast_notifications_refresh)
     end
   end
