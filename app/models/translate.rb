@@ -30,8 +30,6 @@ class Translate < ApplicationRecord
     end
   end
 
-  singleton_class.alias_method :find_by_key_and_locale, :find_translation
-
   def self.value_for(key, locale, default = nil)
     find_translation(key, locale)&.value || default
   end
