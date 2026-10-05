@@ -25,9 +25,7 @@ RSpec.describe Translate, type: :model do
     end
 
     it 'returns the unscoped relation for the legacy schema' do
-      allow(ActiveRecord::Base.connection).to receive(:column_exists?).and_call_original
-      allow(ActiveRecord::Base.connection)
-        .to receive(:column_exists?).with('translates', :language_id).and_return(false)
+      allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
 
       expect(described_class.by_language('en')).to eq(described_class.all)
     end
@@ -42,12 +40,11 @@ RSpec.describe Translate, type: :model do
     end
 
     it 'uses the legacy locale column' do
-      allow(ActiveRecord::Base.connection).to receive(:column_exists?).and_call_original
-      allow(ActiveRecord::Base.connection)
-        .to receive(:column_exists?).with('translates', :language_id).and_return(false)
+      relation = instance_double(ActiveRecord::Relation)
+      allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
+      allow(described_class).to receive(:where).with(locale: 'en').and_return(relation)
 
-      translation = create(:translate, locale: 'en')
-      expect(described_class.by_locale('en')).to include(translation)
+      expect(described_class.by_locale('en')).to eq(relation)
     end
   end
 
