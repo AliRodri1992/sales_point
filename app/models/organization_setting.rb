@@ -36,19 +36,5 @@ class OrganizationSetting < ApplicationRecord
             uniqueness: { conditions: -> { where(deleted_at: nil) } },
             on: %i[create update]
 
-  validates :currency,
-            presence: true,
-            inclusion: { in: ONBOARDING_CURRENCIES },
-            format: { with: /\A[A-Z]{3}\z/ },
-            on: :onboardingstep1
-  validates :timezone,
-            presence: true,
-            inclusion: { in: ONBOARDING_TIMEZONES },
-            on: :onboardingstep1
-  validates :payment_method,
-            presence: true,
-            inclusion: { in: payment_methods.keys },
-            on: :onboardingstep4
-
   scope :active_records, -> { where(deleted_at: nil) }
 end

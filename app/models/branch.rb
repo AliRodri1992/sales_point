@@ -26,19 +26,4 @@ class Branch < ApplicationRecord
             allow_blank: true,
             on: %i[create update]
   validates :status, inclusion: { in: [true, false] }, on: %i[create update]
-
-  validates :name,
-            presence: true,
-            length: { in: 2..100 },
-            uniqueness: {
-              scope: :organization_id,
-              case_sensitive: false,
-              conditions: -> { where(deleted_at: nil) }
-            },
-            on: :onboardingstep2
-  validates :phone,
-            format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
-            length: { in: 7..20 },
-            allow_blank: true,
-            on: :onboardingstep2
 end

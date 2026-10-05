@@ -37,18 +37,6 @@ class Organization < ApplicationRecord
             numericality: { only_integer: true, in: 1..5 },
             on: %i[create update]
 
-  validates :name, presence: true, length: { in: 2..150 }, on: :onboardingstep1
-  validates :tax_id,
-            presence: true,
-            length: { in: 12..13 },
-            format: { with: TAX_ID_FORMAT },
-            uniqueness: { conditions: -> { where(deleted_at: nil) } },
-            on: :onboardingstep1
-  validates :business_sector,
-            presence: true,
-            inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
-            on: :onboardingstep1
-
   before_validation :normalize_tax_id
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
