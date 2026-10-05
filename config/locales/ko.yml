@@ -898,6 +898,7 @@ ko:
       contact_title: 연락처 정보
       continue: 계속
       validation_title: 필수 입력 항목을 작성해 주세요.
+      invalid_email: 이메일 주소가 올바르지 않습니다.
       copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       email: 회사 이메일
       error_summary: 요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.
