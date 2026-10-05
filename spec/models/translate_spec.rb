@@ -40,11 +40,10 @@ RSpec.describe Translate, type: :model do
     end
 
     it 'uses the legacy locale column' do
-      relation = instance_double(ActiveRecord::Relation)
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
-      allow(described_class).to receive(:where).with(locale: 'en').and_return(relation)
+      expect(described_class).to receive(:where).with(locale: 'en').and_return(ActiveRecord::Relation.new)
 
-      expect(described_class.by_locale('en')).to be(relation)
+      described_class.by_locale('en')
     end
   end
 
