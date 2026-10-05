@@ -16,7 +16,7 @@
     <% end %>
   </div>
 
-  <%= form_with model: demo_request, class: 'space-y-3.5', data: { 'demo-request-wizard-target': 'form', action: 'submit->demo-request-wizard#submit' }, html: { novalidate: true } do |f| %>
+  <%= form_with model: demo_request, class: 'space-y-3.5', data: { 'demo-request-wizard-target': 'form', action: 'submit->demo-request-wizard#submit', validation_title: t('demo_requests.new.validation_title') }, html: { novalidate: true } do |f| %>
     <div data-demo-request-wizard-target="step" data-step="1" class="space-y-3.5">
       <div>
         <h3 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t('demo_requests.new.contact_title') %></h3>

@@ -31,7 +31,14 @@ export default class extends Controller {
 
   next(event) {
     event.preventDefault()
-    if (this.validateStepOne()) this.currentStep = 2
+    const valid = this.validateStepOne()
+
+    if (valid) {
+      this.currentStep = 2
+    } else {
+      this.showValidationAlert()
+    }
+
     this.renderStep()
   }
 
@@ -70,6 +77,30 @@ export default class extends Controller {
     })
 
     return valid
+  }
+
+  showValidationAlert() {
+    if (!window.Swal) return
+
+    const messages = [
+      this.nameErrorTarget,
+      this.emailErrorTarget,
+      this.phoneErrorTarget
+    ]
+      .filter((target) => !target.classList.contains("hidden"))
+      .map((target) => target.textContent.trim())
+      .filter(Boolean)
+
+    window.Swal.fire({
+      toast: true,
+      icon: "warning",
+      position: "top-end",
+      timer: 3200,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      title: this.formTarget.dataset.validationTitle,
+      text: messages.join(" ")
+    })
   }
 
   validateStepTwo() {
