@@ -6,37 +6,94 @@ RSpec.describe Permission, type: :model do
   subject(:permission) { build(:permission) }
 
   describe 'associations' do
-    it { is_expected.to have_many(:system_role_permissions).dependent(:destroy) }
-    it { is_expected.to have_many(:system_roles).through(:system_role_permissions) }
+    it 'has many system role permissions with dependent destroy' do
+      association = described_class.reflect_on_association(:system_role_permissions)
+
+      expect(association.macro).to eq(:has_many)
+      expect(association.options[:dependent]).to eq(:destroy)
+    end
+
+    it 'has many system roles through system role permissions' do
+      association = described_class.reflect_on_association(:system_roles)
+
+      expect(association.macro).to eq(:has_many)
+      expect(association.options[:through]).to eq(:system_role_permissions)
+    end
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:code) }
-    it { is_expected.to validate_length_of(:code).is_at_most(80) }
-    it { is_expected.to validate_format_of(:code).with_regex(/\A[a-z0-9_.]+\z/) }
-    it { is_expected.to validate_uniqueness_of(:code) }
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_length_of(:name).is_at_most(80) }
-    it { is_expected.to validate_presence_of(:module_name) }
-    it { is_expected.to validate_length_of(:module_name).is_at_most(50) }
-    it { is_expected.to validate_presence_of(:status) }
-
-    it 'accepts a valid permission' do
+    it 'is valid with valid attributes' do
       expect(permission).to be_valid
     end
 
-    it 'rejects an invalid code' do
+    it 'requires a code' do
+      permission.code = nil
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:code]).to be_present
+    end
+
+    it 'rejects codes longer than 80 characters' do
+      permission.code = 'a' * 81
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:code]).to be_present
+    end
+
+    it 'rejects codes with invalid characters' do
       permission.code = 'Invalid Permission'
 
       expect(permission).to be_invalid
       expect(permission.errors[:code]).to be_present
     end
+
+    it 'rejects duplicate codes' do
+      create(:permission, code: 'catalog.access')
+      duplicate = build(:permission, code: 'catalog.access')
+
+      expect(duplicate).to be_invalid
+      expect(duplicate.errors[:code]).to be_present
+    end
+
+    it 'requires a name' do
+      permission.name = nil
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:name]).to be_present
+    end
+
+    it 'rejects names longer than 80 characters' do
+      permission.name = 'a' * 81
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:name]).to be_present
+    end
+
+    it 'requires a module name' do
+      permission.module_name = nil
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:module_name]).to be_present
+    end
+
+    it 'rejects module names longer than 50 characters' do
+      permission.module_name = 'a' * 51
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:module_name]).to be_present
+    end
+
+    it 'requires a status' do
+      permission.status = nil
+
+      expect(permission).to be_invalid
+      expect(permission.errors[:status]).to be_present
+    end
   end
 
   describe 'enums' do
-    it do
-      expect(described_class).to define_enum_for(:status)
-        .with_values(active: 'active', inactive: 'inactive')
+    it 'defines the supported statuses' do
+      expect(described_class.statuses).to eq('active' => 'active', 'inactive' => 'inactive')
     end
   end
 
