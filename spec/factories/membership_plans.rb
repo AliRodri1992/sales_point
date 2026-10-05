@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :membership_plan do
-    sequence(:name) { |n| "#{Faker::Commerce.product_name} Plan #{n}" }
-    sequence(:slug) { |n| "#{Faker::Internet.slug(words: 2)}-#{n}" }
+    sequence(:name) { |n| "Plan #{Faker::Commerce.product_name} #{n}" }
+    sequence(:slug) { |n| "plan-#{n}" }
     description { Faker::Lorem.sentence(word_count: 10) }
     price { Faker::Number.decimal(l_digits: 3, r_digits: 2) }
     currency { 'MXN' }
