@@ -45,7 +45,7 @@ module Onboarding
     end
 
     def create_or_update_payment_integration(method)
-      integration = @organization.payment_integrations.find_or_initialize_by(provider: method)
+      integration = @organization.payment_integrations.with_deleted.find_or_initialize_by(provider: method)
       integration.update!(status: :pending, deleted_at: nil)
     end
   end
