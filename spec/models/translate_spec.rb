@@ -11,9 +11,7 @@ RSpec.describe Translate, type: :model do
   describe '.value_for' do
     let(:language) { create(:language, code: 'en') }
 
-    before do
-      described_class.create!(language:, key: 'welcome.title', value: 'Welcome')
-    end
+    before { create(:translate, language:, key: 'welcome.title', value: 'Welcome') }
 
     it 'returns the stored value for a locale' do
       expect(described_class.value_for('welcome.title', 'en')).to eq('Welcome')
@@ -27,7 +25,7 @@ RSpec.describe Translate, type: :model do
   describe '#locale' do
     it 'returns the associated language code' do
       language = create(:language, code: 'es')
-      translate = described_class.new(language:)
+      translate = build(:translate, language:)
 
       expect(translate.locale).to eq('es')
     end
@@ -36,10 +34,10 @@ RSpec.describe Translate, type: :model do
   describe 'uniqueness' do
     it 'rejects duplicate keys for the same language' do
       language = create(:language, code: 'en')
-      described_class.create!(language:, key: 'duplicate.key', value: 'Original')
+      create(:translate, language:, key: 'duplicate.key')
 
-      duplicate = described_class.new(language:, key: 'duplicate.key', value: 'Duplicate')
-      expect(duplicate.save).to be(false)
+      duplicate = build(:translate, language:, key: 'duplicate.key')
+      expect(duplicate).not_to be_valid
       expect(duplicate.errors[:key]).to include('already exists for this language')
     end
   end
