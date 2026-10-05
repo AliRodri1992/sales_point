@@ -124,8 +124,15 @@ export default class extends Controller {
 
   selectTheme(event) {
     event.stopPropagation()
-    document.documentElement.style.setProperty("--demo-primary-start", event.currentTarget.dataset.start)
-    document.documentElement.style.setProperty("--demo-primary-end", event.currentTarget.dataset.end)
+    const { start, end } = event.currentTarget.dataset
+    const root = document.documentElement
+
+    root.style.setProperty("--demo-primary-start", start)
+    root.style.setProperty("--demo-primary-end", end)
+    root.style.setProperty("--theme-hover-start", `color-mix(in srgb, ${start} 88%, black)`)
+    root.style.setProperty("--theme-hover-end", `color-mix(in srgb, ${end} 88%, black)`)
+    root.style.setProperty("--theme-active-start", `color-mix(in srgb, ${start} 76%, black)`)
+    root.style.setProperty("--theme-active-end", `color-mix(in srgb, ${end} 76%, black)`)
     this.themeDropdownTarget.classList.add("hidden")
   }
 
