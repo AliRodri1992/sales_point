@@ -6,7 +6,7 @@ FactoryBot.define do
     membership_feature
     enabled { true }
     limit { nil }
-    value { nil }
+    value { Faker::Lorem.word }
     position { 0 }
     deleted_at { nil }
   end
