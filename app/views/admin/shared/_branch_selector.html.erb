@@ -1,0 +1,46 @@
+<% branches = available_branches %>
+<% selected_branch = current_branch %>
+
+<div class="relative" data-dashboard-selector>
+  <details class="group">
+    <summary
+      class="group flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+      aria-label="<%= t('admin.shared.branch_selector.label') %>"
+    >
+      <%= icon("building-storefront", variant: :solid, class: "size-4 text-slate-500 transition-colors group-hover:text-slate-700") %>
+
+      <span class="hidden max-w-36 truncate sm:inline">
+        <%= selected_branch&.name || t('admin.shared.branch_selector.no_branch') %>
+      </span>
+
+      <%= icon("chevron-down", class: "size-3 text-slate-400 transition-colors group-hover:text-slate-700 group-open:rotate-180") %>
+    </summary>
+
+    <div
+      data-dashboard-selector-menu
+      class="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+    >
+      <p class="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <%= t('admin.shared.branch_selector.label') %>
+      </p>
+
+      <% if branches.any? %>
+        <% branches.each do |branch| %>
+          <%= button_to select_admin_branch_path(branch),
+                        method: :patch,
+                        class: "group/branch -mx-2 flex w-[calc(100%+1rem)] items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-medium transition #{branch.id == selected_branch&.id ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white' : 'text-slate-600 hover:bg-gradient-to-r hover:from-emerald-600 hover:to-teal-600 hover:text-white'}" do %>
+            <%= icon("building-storefront", class: "size-4 shrink-0 text-emerald-600 transition-colors group-hover/branch:text-white") %>
+            <span class="min-w-0 flex-1 truncate"><%= branch.name %></span>
+            <% if branch.id == selected_branch&.id %>
+              <%= icon("check", variant: :solid, class: "size-3 shrink-0") %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <p class="px-3 py-2 text-sm text-slate-500">
+          <%= t('admin.shared.branch_selector.empty') %>
+        </p>
+      <% end %>
+    </div>
+  </details>
+</div>

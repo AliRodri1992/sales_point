@@ -2,11 +2,14 @@
 
 module Authentication
   class LanguageSelectorComponent < ViewComponent::Base
+    delegate :icon, to: :view_context
+
     def initialize(
       languages:,
       current_language:,
       hover: :brand
     )
+      super()
       @languages = languages
       @current_language = current_language
       @hover = hover

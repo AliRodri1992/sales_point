@@ -1,0 +1,42 @@
+<turbo-frame id="conversation_panel">
+  <% other = @conversation.other_user(current_user) %>
+
+  <div class="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-4 py-3">
+    <div class="flex items-center gap-3">
+      <%= user_avatar(other, size: "h-9 w-9") %>
+      <div>
+        <p class="text-sm font-semibold text-white">
+          <%= other.initials %>
+        </p>
+        <span class="text-xs text-slate-300">
+          <%= other.online? ? t("admin.shared.conversation.online") : t("admin.shared.conversation.offline") %>
+        </span>
+      </div>
+    </div>
+    <button
+      type="button"
+      id="conversationCloseButton"
+      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
+      aria-label="<%= t('admin.shared.conversation.close') %>"
+    >
+      <%= icon("x-mark", class: "size-4") %>
+    </button>
+  </div>
+
+  <%= turbo_stream_from @conversation %>
+
+  <div
+    id="conversation_messages"
+    class="h-80 overflow-y-auto bg-slate-50 p-4 flex flex-col gap-2"
+    data-controller="conversation-messages"
+    data-conversation-messages-current-user-id-value="<%= current_user.id %>"
+  >
+    <% @messages.each do |message| %>
+      <%= render "messages/message", message: message %>
+    <% end %>
+  </div>
+
+  <div class="border-t border-slate-200 bg-white p-3">
+    <%= render "messages/form", conversation: @conversation, message: Message.new %>
+  </div>
+</turbo-frame>

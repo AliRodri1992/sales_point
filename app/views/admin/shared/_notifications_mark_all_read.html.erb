@@ -1,0 +1,9 @@
+<span id="notifications_mark_all_read">
+  <% if user.unread_notifications.any? %>
+    <%= button_to mark_all_read_notifications_path,
+          data: { turbo_stream: true },
+          class: "text-xs font-medium text-blue-600 transition hover:text-blue-700" do %>
+      <%= t('admin.shared.notifications.mark_all_read') %>
+    <% end %>
+  <% end %>
+</span>

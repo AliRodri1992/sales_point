@@ -1,0 +1,57 @@
+<% current = current_language %>
+
+<% if current %>
+  <div class="relative" data-controller="language-selector" data-dashboard-selector>
+    <button
+      id="languageSelectorButton"
+      type="button"
+      data-action="click->language-selector#toggle"
+      class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-700"
+      aria-label="<%= t('admin.shared.language_selector.toggle') %>"
+    >
+      <%= icon("language", class: "size-5 text-slate-500 transition-colors") %>
+      <span class="hidden sm:inline">
+        <%= current.code.upcase %>
+      </span>
+
+      <%= icon("chevron-down", class: "size-3 text-slate-400") %>
+    </button>
+
+    <div
+      id="languageSelectorMenu"
+      data-language-selector-target="dropdown"
+      data-dashboard-selector-menu
+      class="absolute right-0 top-full z-50 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
+    >
+      <%= turbo_frame_tag "language_selector_content" do %>
+        <div class="divide-y divide-slate-100">
+          <% Language.available.order(:code).each do |language| %>
+            <button
+              type="button"
+              data-action="click->language-selector#select"
+              data-language="<%= language.code %>"
+              data-flag="<%= language.flag_url %>"
+              data-flag-srcset="<%= language.flag_srcset %>"
+              class="language-option flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-emerald-500 text-white' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700' %>"
+            >
+              <img
+                src="<%= language.flag_url %>"
+                srcset="<%= language.flag_srcset %>"
+                class="size-7 rounded-full object-cover"
+                alt="<%= language.name %>"
+              >
+
+              <span class="flex-1">
+                <%= language.name %>
+              </span>
+
+              <% if language.id == current.id %>
+                <%= icon("check", variant: :solid, class: "size-3") %>
+              <% end %>
+            </button>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

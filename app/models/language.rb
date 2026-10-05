@@ -8,13 +8,15 @@ class Language < ApplicationRecord
 
   validates :code,
             presence: true,
-            uniqueness: true
+            uniqueness: true,
+            length: { maximum: 2 }
 
   validates :name,
             presence: true
 
   validates :flag_iso,
-            presence: true
+            presence: true,
+            length: { is: 2 }
 
   enum :status,
        {
@@ -23,8 +25,16 @@ class Language < ApplicationRecord
        },
        validate: true
 
+  # New languages always default to "active" so the status field doesn't
+  # need to be exposed on the create form.
+  after_initialize :set_default_status, if: :new_record?
+
   scope :available, lambda {
-    where(status: :active)
+    where(status: :active, deleted_at: nil)
+  }
+
+  scope :not_deleted, lambda {
+    where(deleted_at: nil)
   }
 
   def flag_url(size = '64x48')
@@ -36,5 +46,11 @@ class Language < ApplicationRecord
       "#{flag_url('80x60')} 2x",
       "#{flag_url('96x72')} 3x"
     ].join(', ')
+  end
+
+  private
+
+  def set_default_status
+    self.status ||= 'active'
   end
 end

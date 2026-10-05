@@ -1,7 +1,15 @@
 FactoryBot.define do
   factory :language do
-    code { "MyString" }
-    name { "MyString" }
-    deleted_at { "2026-07-27 00:56:27" }
+    sequence(:code) { |n| n.to_s(36).rjust(2, '0') }
+    sequence(:name) { |n| "Language #{n}" }
+    flag_iso { 'us' }
+    status { 'active' }
+    deleted_at { nil }
+
+    trait :english do
+      code { 'en' }
+      name { 'English' }
+      flag_iso { 'us' }
+    end
   end
 end

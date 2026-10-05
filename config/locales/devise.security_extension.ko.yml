@@ -1,0 +1,41 @@
+ko:
+  errors:
+    messages:
+      taken_in_past: "이 비밀번호는 이전에 사용되었습니다. 다른 비밀번호를 선택하세요."
+      equal_to_current_password: "현재 비밀번호와 달라야 합니다."
+      equal_to_email: "이메일과 달라야 합니다."
+      password_complexity:
+        digit:
+          one: 숫자를 하나 이상 포함해야 합니다
+          other: 숫자를 %{count}개 이상 포함해야 합니다
+        lower:
+          one: 소문자를 하나 이상 포함해야 합니다
+          other: 소문자를 %{count}개 이상 포함해야 합니다
+        symbol:
+          one: 특수 문자를 하나 이상 포함해야 합니다
+          other: 특수 문자를 %{count}개 이상 포함해야 합니다
+        upper:
+          one: 대문자를 하나 이상 포함해야 합니다
+          other: 대문자를 %{count}개 이상 포함해야 합니다
+  devise:
+    invalid_captcha: "입력한 CAPTCHA가 올바르지 않습니다."
+    invalid_security_question: "보안 질문에 대한 답변이 올바르지 않습니다."
+    paranoid_verify:
+      code_required: "지원팀에서 제공한 코드를 입력하세요."
+    paranoid_verification_code:
+      updated: "인증 코드가 확인되었습니다."
+      show:
+        submit_verification_code: "인증 코드를 입력하세요."
+        verification_code: "인증 코드"
+        submit: "제출"
+    password_expired:
+      updated: "새 비밀번호가 저장되었습니다."
+      change_required: "비밀번호가 만료되었습니다. 비밀번호를 변경하세요."
+      show:
+        renew_your_password: "비밀번호를 변경하세요"
+        current_password: "현재 비밀번호"
+        new_password: "새 비밀번호"
+        new_password_confirmation: "새 비밀번호 확인"
+        change_my_password: "비밀번호 변경"
+    failure:
+      expired: "계정이 비활성 상태로 만료되었습니다. 애플리케이션 관리자에게 문의하세요."

@@ -1,0 +1,131 @@
+---
+ko:
+  admin:
+    breadcrumbs:
+      users: 사용자
+      profile: 프로필
+    shared:
+      sidebar:
+        users: 사용자
+      notifications:
+        user:
+          created: "사용자 '%{name}'을(를) %{user}님이 생성했습니다"
+          destroyed: "사용자 '%{name}'을(를) %{user}님이 삭제했습니다"
+          updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
+    users:
+      created: "사용자가 성공적으로 생성되었습니다."
+      updated: "사용자가 성공적으로 수정되었습니다."
+      destroyed: "사용자가 성공적으로 삭제되었습니다."
+      cannot_delete_self: "자신의 계정은 삭제할 수 없습니다."
+      confirm_delete: "%{name} 사용자를 삭제하시겠습니까?"
+      confirm:
+        cancel: 취소
+      actions:
+        view: 보기
+        edit: 편집
+        delete: 삭제
+      user_types:
+        employee: 직원
+        customer: 고객
+        supplier: 공급업체
+      statuses:
+        active: 활성
+        suspended: 일시 중지
+        blocked: 차단됨
+        deleted: 삭제됨
+      index:
+        page_title: 사용자
+        title: 사용자
+        subtitle: 시스템 사용자를 관리합니다.
+        new: 새 사용자
+        columns:
+          email: 이메일
+          username: 사용자명
+          user_type: 유형
+          status: 상태
+          roles: 역할
+          created_at: 생성일
+          actions: 작업
+        no_data: —
+        no_roles: 역할 없음
+        empty:
+          title: 사용자 없음
+          subtitle: 아직 등록된 사용자가 없습니다.
+        pagination:
+          per_page_label: 표시
+          prev: 이전
+          next: 다음
+          navigation: 사용자 탐색
+        filters:
+          search_placeholder: 이메일 또는 사용자명으로 검색...
+          apply: 필터
+          reset: 지우기
+          all_types: 모든 유형
+          all_statuses: 모든 상태
+          all_roles: 모든 역할
+      form:
+        new_title: 새 사용자
+        edit_title: 사용자 편집
+        subtitle: 사용자 정보를 입력하세요.
+        fields:
+          email: 이메일 주소
+          username: 사용자명
+          password: 비밀번호
+          password_confirmation: 비밀번호 확인
+          user_type: 사용자 유형
+          status: 상태
+          language: 언어
+          theme: 테마
+          system_roles: 역할
+          user_type_placeholder: 유형을 선택하세요
+          status_placeholder: 상태를 선택하세요
+          language_placeholder: 언어를 선택하세요
+        password_hint: 현재 비밀번호를 유지하려면 비워 두세요.
+        buttons:
+          back: 돌아가기
+          create: 사용자 생성
+          update: 변경 사항 저장
+      show:
+        identity_title: 계정 정보
+        access_title: 접근 및 보안
+        email: 이메일 주소
+        username: 사용자명
+        user_type: 사용자 유형
+        theme: 테마
+        status: 상태
+        language: 언어
+        last_sign_in_at: 마지막 로그인
+        sign_in_count: 로그인 횟수
+        roles: 역할
+        never: 없음
+        no_roles: 할당된 역할 없음
+    profiles:
+      show:
+        page_title: 내 프로필
+        title: 내 프로필
+        subtitle: 계정 정보와 환경설정을 관리합니다.
+        status:
+          active: 활성
+          suspended: 일시 중지
+          blocked: 차단됨
+          deleted: 삭제됨
+        user_type:
+          employee: 직원
+          customer: 고객
+          supplier: 공급업체
+        personal_information:
+          title: 개인 정보
+          subtitle: 개인 정보를 업데이트하세요.
+        fields:
+          username: 사용자명
+          email: 이메일 주소
+          language: 언어
+          language_placeholder: 언어를 선택하세요
+          theme: 테마
+        save: 변경 사항 저장
+        success: 프로필이 성공적으로 업데이트되었습니다
+        never: 없음
+        roles:
+          title: 역할
+          subtitle: 계정에 할당된 역할입니다.
+          empty: 할당된 역할이 없습니다

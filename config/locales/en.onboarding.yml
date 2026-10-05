@@ -1,0 +1,44 @@
+---
+en:
+  registration:
+    initial_branch_name: "Main Branch"
+    initial_terminal_name: "Register %{number}"
+  admin:
+    onboarding:
+      link: "Initial setup"
+      show:
+        title: "Initial Setup"
+        eyebrow: "Configuration"
+        description: "Complete the sections that matter to your operation. You can leave this page and continue working at any time."
+        overall: "Overall progress"
+        statuses:
+          not_started: "Not started"
+          in_progress: "In progress"
+          completed: "Completed"
+          not_applicable: "Not applicable"
+        sections:
+          company:
+            title: "Company"
+            description: "Basic organization information and operating settings."
+          fiscal:
+            title: "Fiscal information"
+            description: "Tax identification and future fiscal configuration."
+          branches:
+            title: "Branches"
+            description: "At least one active branch and its address."
+          terminals:
+            title: "Terminals"
+            description: "Active point-of-sale terminals available for operation."
+          payments:
+            title: "Payments"
+            description: "Cash and configured payment integrations."
+          team:
+            title: "Team"
+            description: "Employees and access accounts in the organization."
+        non_blocking:
+          title: "Onboarding is not a global access gate."
+          description: "Delta POS remains available while configuration is incomplete. Individual modules may require their own operational prerequisites."
+      completed:
+        icon: "success"
+      incomplete:
+        icon: "error"

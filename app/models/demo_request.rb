@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class DemoRequest < ApplicationRecord
+  BUSINESS_TYPES = %w[grocery fashion restaurant pharmacy].freeze
+  MAX_BRANCHES = 10_000
+  PHONE_FORMAT = /\A\+[1-9]\d{7,14}\z/
+
   after_create_commit :notify_demo_request
 
   enum :status,
@@ -12,30 +16,35 @@ class DemoRequest < ApplicationRecord
        default: :pending,
        validate: true
 
-  validates :name,
-            presence: true,
-            length: { in: 2..100 }
+  before_validation :normalize_fields
+  before_validation :record_terms_acceptance
 
-  validates :email,
-            presence: true,
-            format: { with: URI::MailTo::EMAIL_REGEXP },
-            length: { maximum: 255 },
-            allow_blank: false
-
-  validates :company,
-            presence: true,
-            length: { in: 2..150 }
-
-  validates :phone,
-            presence: true,
-            format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
-            length: { in: 7..20 }
-
-  validates :message,
-            length: { maximum: 2_000 },
-            allow_blank: true
+  validates :name, presence: true, length: { in: 2..100 }
+  validates :email, presence: true, length: { maximum: 255 }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :phone, presence: true, format: { with: PHONE_FORMAT }, length: { in: 8..16 }
+  validates :company, presence: true, length: { in: 2..150 }
+  validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }
+  validates :branches, presence: true,
+            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: MAX_BRANCHES }
+  validates :message, length: { maximum: 2_000 }, allow_blank: true
+  validates :terms_accepted, acceptance: true
 
   private
+
+  def normalize_fields
+    self.name = normalize_text(name)
+    self.email = email.to_s.strip.downcase.presence
+    self.phone = phone.to_s.strip.presence
+    self.company = normalize_text(company)
+  end
+
+  def record_terms_acceptance
+    self.terms_accepted_at = terms_accepted ? (terms_accepted_at || Time.current) : nil
+  end
+
+  def normalize_text(value)
+    value.to_s.strip.gsub(/\s+/, ' ').presence
+  end
 
   def notify_demo_request
     notification = DemoRequestNotification.with(

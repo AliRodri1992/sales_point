@@ -2,7 +2,10 @@
 
 module Authentication
   class ErrorBannerComponent < ViewComponent::Base
+    delegate :icon, :class_names, to: :view_context
+
     def initialize(resource:)
+      super()
       @resource = resource
     end
 
@@ -11,11 +14,14 @@ module Authentication
     attr_reader :resource
 
     def visible?
-      resource.errors.any? || helpers.flash[:alert].present?
+      # Don't show banner if SweetAlert2 is handling the error
+      return false if view_context.flash[:swal_message].present?
+
+      resource.errors.any? || view_context.flash[:alert].present?
     end
 
     def message
-      helpers.flash[:alert].presence ||
+      view_context.flash[:alert].presence ||
         resource.errors.full_messages.to_sentence
     end
   end

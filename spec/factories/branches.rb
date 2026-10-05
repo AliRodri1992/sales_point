@@ -1,10 +1,33 @@
 FactoryBot.define do
   factory :branch do
-    name { "MyString" }
-    address { "MyString" }
-    phone { "MyString" }
-    address { "MyString" }
-    status { false }
-    deleted_at { "2026-04-18 20:55:20" }
+    association :organization
+    name { 'Sucursal Centro' }
+    phone { '5551234567' }
+    status { true }
+    deleted_at { nil }
+
+    transient do
+      without_address { false }
+    end
+
+    trait :without_address do
+      transient do
+        without_address { true }
+      end
+    end
+
+    after(:build) do |branch, evaluator|
+      unless evaluator.without_address || branch.address
+        branch.build_address(
+          street: 'Av. Reforma',
+          exterior_number: '100',
+          neighborhood: 'Centro',
+          city: 'Cuautitlán',
+          state: 'Estado de México',
+          country: 'MX',
+          postal_code: '54800'
+        )
+      end
+    end
   end
 end

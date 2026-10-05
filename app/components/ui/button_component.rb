@@ -19,24 +19,17 @@ module Ui
       xl
     ].freeze
 
-    def initialize(
-      text:,
-      href: nil,
-      variant: :primary,
-      size: :md,
-      full_width: false,
-      disabled: false,
-      icon: nil,
-      icon_position: :left
-    )
-      @text = text
-      @href = href
-      @variant = variant
-      @size = size
-      @full_width = full_width
-      @disabled = disabled
-      @icon = icon
-      @icon_position = icon_position
+    def initialize(attributes)
+      super()
+
+      @text = attributes.fetch(:text)
+      @href = attributes[:href]
+      @variant = attributes.fetch(:variant, :primary)
+      @size = attributes.fetch(:size, :md)
+      @full_width = attributes.fetch(:full_width, false)
+      @disabled = attributes.fetch(:disabled, false)
+      @icon = attributes[:icon]
+      @icon_position = attributes.fetch(:icon_position, :left)
 
       validate!
     end
@@ -63,7 +56,8 @@ module Ui
 
     def classes
       class_names(
-        'inline-flex items-center justify-center gap-2 font-semibold transition duration-300 focus:outline-none focus:ring-4',
+        'inline-flex items-center justify-center gap-2 font-semibold transition duration-300',
+        'focus:outline-none focus:ring-4',
         size_classes,
         variant_classes,
         full_width ? 'w-full' : nil,

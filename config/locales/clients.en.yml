@@ -1,0 +1,85 @@
+en:
+  admin:
+    breadcrumbs:
+      clients: "Customers"
+    clients:
+      created: "Customer created successfully"
+      updated: "Customer updated successfully"
+      destroyed: "Customer deleted successfully"
+      errors:
+        duplicate: "The customer code or tax ID is already registered."
+      confirm:
+        cancel: "Cancel"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+      index:
+        title: "Customers"
+        subtitle: "Manage your business customers."
+        new: "New customer"
+        show: "View customer"
+        edit: "Edit"
+        delete: "Delete"
+        confirm_delete: "Are you sure you want to delete this customer?"
+        card_title: "Registered customers"
+        total_count: "%{count} customers registered"
+        search_placeholder: "Search by code, name, email, phone or tax ID..."
+        filters:
+          all_statuses: "All statuses"
+          apply: "Apply"
+        pagination:
+          per_page_label: "Show"
+        empty_title: "No customers yet"
+        empty_subtitle: "Add your first customer to get started."
+        columns:
+          code: "Code"
+          name: "Name"
+          contact: "Contact"
+          rfc: "Tax ID"
+          status: "Status"
+          actions: "Actions"
+      form:
+        code: "Code"
+        code_placeholder: "e.g. CLI-0001"
+        name: "Name"
+        name_placeholder: "Full name or business name"
+        email: "Email address"
+        email_placeholder: "email@example.com"
+        phone: "Phone"
+        phone_placeholder: "55 1234 5678"
+        rfc: "Tax ID"
+        rfc_placeholder: "XAXX010101000"
+        fiscal_regime: "Tax regime"
+        fiscal_regime_blank: "Select a tax regime"
+        postal_code: "Postal code"
+        postal_code_placeholder: "00000"
+        credit_limit: "Credit limit"
+        credit_limit_placeholder: "0.00"
+        status: "Status"
+        notes: "Notes"
+        notes_placeholder: "Additional customer information..."
+        cancel: "Cancel"
+        create: "Create customer"
+        update: "Update customer"
+      show:
+        title: "Customer details"
+        subtitle: "Review the customer's registered information."
+        close: "Close"
+        back: "Back to customers"
+        fields:
+          code: "Code"
+          name: "Name"
+          email: "Email address"
+          phone: "Phone"
+          rfc: "Tax ID"
+          fiscal_regime: "Tax regime"
+          postal_code: "Postal code"
+          credit_limit: "Credit limit"
+          status: "Status"
+          notes: "Notes"
+      new:
+        title: "New customer"
+        subtitle: "Add a customer to your catalog."
+      edit:
+        title: "Edit %{name}"
+        subtitle: "Update the customer details."

@@ -1,6 +1,8 @@
 class SystemRole < ApplicationRecord
   has_many :user_roles, dependent: :restrict_with_exception
   has_many :users, through: :user_roles
+  has_many :system_role_permissions, dependent: :destroy
+  has_many :permissions, through: :system_role_permissions
 
   enum :role_type, {
     system: 'system',

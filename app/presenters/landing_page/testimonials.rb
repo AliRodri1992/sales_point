@@ -1,29 +1,17 @@
 module LandingPage
   module Testimonials
+    KEYS = %w[alejandro beatriz carlos diana eduardo sofia].freeze
+
     def self.all
-      [
+      KEYS.map do |key|
         Testimonial.new(
-          name: I18n.t('landing.testimonial_items.laura.name'),
-          company: I18n.t('landing.testimonial_items.laura.company'),
-          position: I18n.t('landing.testimonial_items.laura.position'),
-          quote: I18n.t('landing.testimonial_items.laura.quote'),
-          avatar: 'landing/avatar.svg'
-        ),
-        Testimonial.new(
-          name: I18n.t('landing.testimonial_items.carlos.name'),
-          company: I18n.t('landing.testimonial_items.carlos.company'),
-          position: I18n.t('landing.testimonial_items.carlos.position'),
-          quote: I18n.t('landing.testimonial_items.carlos.quote'),
-          avatar: 'landing/avatar.svg'
-        ),
-        Testimonial.new(
-          name: I18n.t('landing.testimonial_items.andrea.name'),
-          company: I18n.t('landing.testimonial_items.andrea.company'),
-          position: I18n.t('landing.testimonial_items.andrea.position'),
-          quote: I18n.t('landing.testimonial_items.andrea.quote'),
-          avatar: 'landing/avatar.svg'
+          name: I18n.t("landing.testimonial_items.#{key}.name"),
+          company: I18n.t("landing.testimonial_items.#{key}.company"),
+          position: I18n.t("landing.testimonial_items.#{key}.position"),
+          quote: I18n.t("landing.testimonial_items.#{key}.quote"),
+          avatar: nil
         )
-      ]
+      end
     end
   end
 end

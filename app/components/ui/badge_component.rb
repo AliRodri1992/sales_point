@@ -14,6 +14,7 @@ module Ui
       text:,
       color: :primary
     )
+      super()
       @text = text
       @color = color
 

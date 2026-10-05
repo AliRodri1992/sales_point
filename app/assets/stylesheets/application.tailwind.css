@@ -1,13 +1,22 @@
-@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
 
+@import "tailwindcss";
+@import "./fonts.css";
+@import "./gridstack.css";
 /* Components */
 @import "./components/themes.css";
+
+@theme {
+    --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-jakarta: "Plus Jakarta Sans", "Inter", sans-serif;
+}
 
 body,
 input,
 button,
 select {
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: -.01em;
 }
 
@@ -32,8 +41,34 @@ select {
     background: white;
 }
 
+.input-field-error:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.14);
+    background: #fff1f2;
+}
+
 .theme-text {
+    color: #059669;
+}
+
+.theme-selected .theme-text {
     color: var(--brand);
+}
+
+.theme-control {
+    color: #059669;
+}
+
+.theme-selected .theme-control {
+    color: var(--brand);
+}
+
+.theme-control:checked {
+    accent-color: #059669;
+}
+
+.theme-selected .theme-control:checked {
+    accent-color: var(--brand);
 }
 
 .theme-bg {
@@ -101,4 +136,1229 @@ select {
     opacity: 0;
     transform: scale(.95);
     transition: all .15s ease;
+}
+
+/* ============================================================
+   NEXO POS — Admin Dashboard
+   ============================================================ */
+
+.dashboard-grid {
+    min-height: 100px;
+}
+
+.grid-stack-item-content {
+    overflow: visible;
+}
+
+.dashboard-widget {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+
+/* ============================================================
+   Dashboard — GridStack
+   ============================================================ */
+
+.dashboard-grid:not(.dashboard-editing) .grid-stack-item {
+    cursor: default;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item {
+    cursor: move;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item-content {
+    outline: 2px dashed rgba(37, 99, 235, 0.18);
+    outline-offset: -2px;
+    border-radius: 1rem;
+}
+
+.dashboard-grid.dashboard-editing .grid-stack-item-content::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #2563EB;
+    opacity: 0.8;
+    z-index: 5;
+}
+
+.dashboard-editing .grid-stack-placeholder > .placeholder-content {
+    background: rgba(37, 99, 235, 0.06);
+    border: 2px dashed rgba(37, 99, 235, 0.25);
+    border-radius: 1rem;
+}
+
+
+/* ============================================================
+   Dashboard — Personalización
+   ============================================================ */
+
+#customizeDashboardButton.is-active {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+}
+
+
+/* ============================================================
+   Dashboard — Chat
+   ============================================================ */
+
+#chatPanel {
+    transform-origin: bottom right;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            visibility 180ms ease;
+}
+
+#chatPanel.chat-hidden {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#chatPanel.chat-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#chatFloatingButton {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+}
+
+#chatFloatingButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 12px 28px rgba(37, 99, 235, 0.28);
+}
+
+.chat-user {
+    transition:
+            background-color 150ms ease;
+}
+
+.chat-user:hover {
+    background-color: #f8fafc;
+}
+
+/* ============================================================
+   NEXO POS — Sidebar
+   ============================================================ */
+
+#adminSidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 30;
+    transition:
+            width 300ms cubic-bezier(.4, 0, .2, 1),
+            transform 300ms cubic-bezier(.4, 0, .2, 1);
+}
+
+#adminSidebar nav {
+    min-height: 0;
+}
+
+#adminSidebar > div:last-child {
+    position: relative;
+    z-index: 20;
+    background: #fff;
+}
+
+#adminSidebar .sidebar-brand,
+#adminSidebar .sidebar-label,
+#adminSidebar .sidebar-user {
+    transition:
+            opacity 180ms ease,
+            visibility 180ms ease;
+}
+
+
+/* ============================================================
+   NEXO POS — Topbar
+   ============================================================ */
+
+#adminTopbar {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+#adminTopbar button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
+   NEXO POS — Dropdowns
+   ============================================================ */
+
+#branchSelectorMenu,
+#notificationsMenu,
+#languageSelectorMenu,
+#userMenu {
+    transform-origin: top right;
+}
+
+
+/* ============================================================
+   NEXO POS — Responsive
+   ============================================================ */
+
+@media (max-width: 1023px) {
+    #adminSidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 50;
+        height: 100vh;
+        transform: translateX(-100%);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    #adminSidebar.sidebar-open {
+        transform: translateX(0);
+    }
+}
+
+#adminSidebar nav summary::-webkit-details-marker {
+    display: none;
+}
+
+#adminSidebar nav details .sidebar-chevron {
+    transition: transform 180ms ease;
+}
+
+#adminSidebar nav details[open] .sidebar-chevron {
+    transform: rotate(180deg);
+}
+
+@media (min-width: 1024px) {
+    #adminSidebar.sidebar-collapsed {
+        width: 5rem;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-label {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-brand,
+    #adminSidebar.sidebar-collapsed .sidebar-user {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-label {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav {
+        min-height: 0;
+        padding-left: .75rem;
+        padding-right: .75rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+
+    #adminSidebar.sidebar-collapsed nav > div > p {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a {
+        justify-content: center;
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    #adminSidebar.sidebar-collapsed nav summary {
+        justify-content: center;
+        padding-left: .75rem;
+        padding-right: .75rem;
+    }
+
+    #adminSidebar.sidebar-collapsed nav summary svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-chevron,
+    #adminSidebar.sidebar-collapsed .sidebar-submenu {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-badge {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child > div {
+        justify-content: center;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child {
+        padding-left: .25rem;
+        padding-right: .25rem;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user-row {
+        justify-content: center;
+    }
+
+    #adminSidebar.sidebar-collapsed > div:last-child button {
+        display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed nav a,
+    #adminSidebar.sidebar-collapsed > div:last-child > div,
+    #adminSidebar.sidebar-collapsed nav summary {
+        position: relative;
+        z-index: 999;
+    }
+
+    #adminSidebar.sidebar-collapsed [data-tooltip] {
+        cursor: pointer;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-catalog > summary {
+        cursor: pointer;
+    }
+}
+
+/* Collapsed sidebar tooltips */
+#adminSidebarTooltip {
+    position: fixed;
+    z-index: 100001;
+    max-width: 20rem;
+    padding: .375rem .625rem;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: .5rem;
+    background: #0f172a;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) translateX(-4px) scale(.96);
+    transform-origin: left center;
+    transition:
+        opacity 150ms ease,
+        transform 150ms ease,
+        visibility 150ms ease;
+}
+
+#adminSidebarTooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #adminSidebarTooltip {
+        transition: none;
+    }
+}
+
+/* Collapsed sidebar flyout menus */
+.admin-sidebar-flyout {
+    position: fixed;
+    z-index: 100000;
+    width: 15rem;
+    max-height: calc(100vh - 1.5rem);
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: .875rem;
+    background: #fff;
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, .14),
+        0 6px 16px rgba(15, 23, 42, .08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px) scale(.98);
+    transform-origin: left center;
+    transition:
+        opacity 150ms ease,
+        transform 150ms ease,
+        visibility 150ms ease;
+}
+
+.admin-sidebar-flyout.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1);
+}
+
+.admin-sidebar-flyout__title {
+    padding: .75rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #0f172a;
+    font-size: .8125rem;
+    font-weight: 700;
+}
+
+.admin-sidebar-flyout__items {
+    padding: .375rem;
+}
+
+.admin-sidebar-flyout a,
+.admin-sidebar-flyout summary {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: .75rem;
+    min-height: 2.375rem;
+    padding: .625rem .75rem;
+    border-radius: .625rem;
+    color: #475569;
+    font-size: .8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    list-style: none;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease;
+}
+
+.admin-sidebar-flyout a:hover,
+.admin-sidebar-flyout summary:hover {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.admin-sidebar-flyout svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.admin-sidebar-flyout .sidebar-label {
+    display: block;
+    min-width: 0;
+    flex: 1;
+}
+
+.admin-sidebar-flyout .sidebar-chevron {
+    display: block;
+    margin-left: auto;
+}
+
+.admin-sidebar-flyout .sidebar-submenu {
+    display: block;
+    margin: .125rem 0 .125rem .75rem;
+    padding: .125rem 0 .125rem .5rem;
+    border-left: 1px solid #e2e8f0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-sidebar-flyout {
+        transition: none;
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Mobile Overlay
+   ============================================================ */
+
+#sidebarOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+            opacity 200ms ease,
+            visibility 200ms ease;
+}
+
+#sidebarOverlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ============================================================
+   NEXO POS — KPI Cards
+   ============================================================ */
+
+#kpiGrid .dashboard-widget {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            border-color 180ms ease;
+}
+
+#kpiGrid .dashboard-widget:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+#kpiGrid .dashboard-widget > div {
+    min-width: 0;
+}
+
+#kpiGrid .dashboard-widget p {
+    line-height: 1.25;
+}
+
+
+/* ============================================================
+   KPI — Icon
+   ============================================================ */
+
+#kpiGrid .dashboard-widget .h-10.w-10 {
+    flex-shrink: 0;
+    transition:
+            transform 180ms ease,
+            background-color 180ms ease;
+}
+
+#kpiGrid .dashboard-widget:hover .h-10.w-10 {
+    transform: scale(1.05);
+}
+
+
+/* ============================================================
+   KPI — Positive Change / Status
+   ============================================================ */
+
+#kpiGrid .dashboard-widget .text-emerald-600 {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+
+/* ============================================================
+   KPI — GridStack
+   ============================================================ */
+
+#kpiGrid .grid-stack-item-content {
+    border-radius: 1rem;
+}
+
+#kpiGrid .grid-stack-item {
+    transition:
+            transform 180ms ease;
+}
+
+
+/* ============================================================
+   KPI — Responsive
+   ============================================================ */
+
+@media (max-width: 1023px) {
+    #kpiGrid .grid-stack-item {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 639px) {
+    #kpiGrid {
+        margin-bottom: 1rem;
+    }
+
+    #kpiGrid .dashboard-widget {
+        padding: 1rem;
+    }
+
+    #kpiGrid .dashboard-widget .h-10.w-10 {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+}
+
+/* ============================================================
+   NEXO POS — Dashboard Widgets
+   ============================================================ */
+
+.dashboard-widget {
+    transition:
+            border-color 180ms ease,
+            box-shadow 180ms ease;
+}
+
+.dashboard-widget:hover {
+    border-color: #e2e8f0;
+    box-shadow:
+            0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ============================================================
+   Dashboard — Widget Headers
+   ============================================================ */
+
+.dashboard-widget h2,
+.dashboard-widget h3 {
+    letter-spacing: -.015em;
+}
+
+.dashboard-widget > .flex.items-center.justify-between {
+    min-height: 2.5rem;
+}
+
+
+/* ============================================================
+   Dashboard — Sales Chart
+   ============================================================ */
+
+#mainDashboardGrid .sales-chart-bar {
+    transform-origin: bottom;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease;
+}
+
+#mainDashboardGrid .sales-chart-bar:hover {
+    opacity: .85;
+    transform: scaleY(1.03);
+}
+
+
+/* ============================================================
+   Dashboard — Quick Actions
+   ============================================================ */
+
+#mainDashboardGrid .quick-action {
+    transition:
+            transform 180ms ease,
+            border-color 180ms ease,
+            background-color 180ms ease,
+            box-shadow 180ms ease;
+}
+
+#mainDashboardGrid .quick-action:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ============================================================
+   Dashboard — Tables
+   ============================================================ */
+
+#mainDashboardGrid table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#mainDashboardGrid thead th {
+    white-space: nowrap;
+}
+
+#mainDashboardGrid tbody tr {
+    transition:
+            background-color 150ms ease;
+}
+
+#mainDashboardGrid tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+
+/* ============================================================
+   Dashboard — Status Badges
+   ============================================================ */
+
+#mainDashboardGrid .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: 9999px;
+    padding: .25rem .625rem;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1rem;
+}
+
+
+/* ============================================================
+   Dashboard — Low Stock
+   ============================================================ */
+
+#mainDashboardGrid .stock-progress {
+    overflow: hidden;
+    height: .375rem;
+    border-radius: 9999px;
+    background: #f1f5f9;
+}
+
+#mainDashboardGrid .stock-progress-bar {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 300ms ease;
+}
+
+
+/* ============================================================
+   Dashboard — GridStack Widget Spacing
+   ============================================================ */
+
+#mainDashboardGrid {
+    margin-bottom: 1.5rem;
+}
+
+#mainDashboardGrid:not(.dashboard-editing) {
+    /* Keep absolute widgets from painting over the footer */
+    overflow: hidden;
+}
+
+#mainDashboardGrid .grid-stack-item-content {
+    overflow: hidden;
+}
+
+#mainDashboardGrid .dashboard-widget {
+    min-width: 0;
+}
+
+/*
+ * Gap between chart/actions and recent-sales/low-stock.
+ * Inset only the bottom-row content from the top; extra gs-h on those
+ * widgets keeps their inner layout comfortable without covering the footer.
+ */
+#mainDashboardGrid .dashboard-widget--row-gap {
+    top: calc(var(--gs-item-margin-top, 8px) + 2rem) !important;
+}
+
+
+/* ============================================================
+   Dashboard — Responsive
+   ============================================================ */
+
+@media (max-width: 767px) {
+    #mainDashboardGrid .dashboard-widget {
+        border-radius: .875rem;
+    }
+
+    #mainDashboardGrid table {
+        min-width: 640px;
+    }
+}
+
+/* ============================================================
+   NEXO POS — Footer
+   ============================================================ */
+
+footer {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+footer a {
+    transition:
+            color 150ms ease;
+}
+
+
+/* ============================================================
+   NEXO POS — Dropdown Menus
+   ============================================================ */
+
+#branchSelectorMenu,
+#notificationsMenu,
+#languageSelectorMenu,
+#userMenu {
+    box-shadow:
+            0 12px 30px rgba(15, 23, 42, 0.10),
+            0 4px 10px rgba(15, 23, 42, 0.04);
+
+    animation: dropdown-open 150ms ease-out;
+}
+
+@keyframes dropdown-open {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Topbar Buttons
+   ============================================================ */
+
+#adminTopbar button {
+    outline: none;
+}
+
+#adminTopbar button:focus-visible {
+    box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.16);
+}
+
+
+/* ============================================================
+   NEXO POS — Sidebar
+   ============================================================ */
+
+#adminSidebar nav a {
+    transition:
+            background-color 150ms ease,
+            color 150ms ease,
+            transform 150ms ease;
+}
+
+#adminSidebar nav a:hover {
+    transform: translateX(1px);
+}
+
+#adminSidebar nav a i {
+    flex-shrink: 0;
+}
+
+
+/* ============================================================
+   NEXO POS — Chat
+   ============================================================ */
+
+#chatPanel {
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.16),
+            0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+#chatPanel input {
+    outline: none;
+}
+
+#chatPanel input:focus {
+    box-shadow: none;
+}
+
+#chatPanel button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+#chatFloatingButton {
+    box-shadow:
+            0 8px 20px rgba(37, 99, 235, 0.22);
+}
+
+#chatFloatingButton:focus-visible,
+#chatCloseButton:focus-visible,
+#chatSendButton:focus-visible {
+    outline: none;
+    box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+
+/* ============================================================
+   NEXO POS — Global Focus
+   ============================================================ */
+
+button,
+a,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+}
+
+
+/* ============================================================
+   NEXO POS — Scrollbars
+   ============================================================ */
+
+#adminSidebar nav::-webkit-scrollbar,
+#chatPanel .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+#adminSidebar nav::-webkit-scrollbar-track,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#adminSidebar nav::-webkit-scrollbar-thumb,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #cbd5e1;
+}
+
+#adminSidebar nav::-webkit-scrollbar-thumb:hover,
+#chatPanel .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* ============================================================
+   NEXO POS — Online Users & Conversation Panels
+   ============================================================ */
+
+#onlineUsersPanel,
+#conversationPanel {
+    transform-origin: bottom right;
+    transition:
+            opacity 180ms ease,
+            transform 180ms ease,
+            visibility 180ms ease;
+}
+
+#onlineUsersPanel.panel-hidden,
+#conversationPanel.panel-hidden {
+    opacity: 0;
+    transform: scale(.95) translateY(10px);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#onlineUsersPanel.panel-visible,
+#conversationPanel.panel-visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#onlineUsersPanel,
+#conversationPanel {
+    box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.16),
+            0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+#onlineUsersButton {
+    transition:
+            transform 180ms ease,
+            box-shadow 180ms ease;
+    box-shadow:
+            0 8px 20px rgba(5, 150, 105, 0.22);
+}
+
+#onlineUsersButton:hover {
+    transform: translateY(-2px);
+    box-shadow:
+            0 12px 28px rgba(5, 150, 105, 0.28);
+}
+
+#onlineUsersButton:focus-visible,
+#onlineUsersCloseButton:focus-visible,
+#conversationCloseButton:focus-visible {
+    outline: none;
+    box-shadow:
+            0 0 0 3px rgba(5, 150, 105, 0.18);
+}
+
+#conversationPanel input {
+    outline: none;
+}
+
+#conversationPanel input:focus {
+    box-shadow: none;
+}
+
+#conversationPanel button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ============================================================
+   NEXO POS — Mobile
+   ============================================================ */
+
+@media (max-width: 639px) {
+    #chatPanel {
+        right: 1rem;
+        bottom: 5.5rem;
+        width: calc(100vw - 2rem);
+    }
+
+    #chatFloatingButton {
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+    #onlineUsersPanel,
+    #conversationPanel {
+        right: 1rem;
+        bottom: 5.5rem;
+        width: calc(100vw - 2rem);
+    }
+
+    #onlineUsersButton {
+        right: 5rem;
+        bottom: 1rem;
+    }
+}
+
+
+/* ============================================================
+   NEXO POS — Scrollbars (Online Users / Conversation)
+   ============================================================ */
+
+#conversation_messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#conversation_messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: #cbd5e1;
+}
+
+#conversation_messages::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ============================================================
+   DELTA POS Login Page Styles (from login.html template)
+   ============================================================ */
+
+:root {
+    --theme-primary-start: #059669;
+    --theme-primary-end: #0d9488;
+    --theme-hover-start: rgb(4, 120, 87);
+    --theme-hover-end: rgb(15, 118, 110);
+    --theme-active-start: rgb(6, 95, 70);
+    --theme-active-end: rgb(19, 78, 74);
+}
+
+.font-jakarta {
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-inter {
+    font-family: 'Inter Variable', 'Inter', sans-serif;
+}
+
+.bg-delta-dark {
+    background-color: oklch(20.8% 0.042 265.755);
+}
+
+.btn-delta-gradient {
+    background: #059669;
+}
+
+.theme-selected .btn-delta-gradient {
+    background: var(--brand);
+}
+
+.btn-delta-gradient:hover {
+    background: color-mix(in srgb, #059669 88%, black);
+}
+
+.theme-selected .btn-delta-gradient:hover {
+    background: color-mix(in srgb, var(--brand) 88%, black);
+}
+
+.btn-delta-gradient:active {
+    background: color-mix(in srgb, #059669 76%, black);
+}
+
+.theme-selected .btn-delta-gradient:active {
+    background: color-mix(in srgb, var(--brand) 76%, black);
+}
+
+.dropdown-opt-hover:hover {
+    background: linear-gradient(135deg, var(--theme-hover-start), var(--theme-hover-end)) !important;
+    color: #ffffff !important;
+}
+
+.dropdown-opt-active {
+    background: linear-gradient(135deg, var(--theme-active-start), var(--theme-active-end)) !important;
+    color: #ffffff !important;
+}
+
+.bg-grid-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'%3E%3Cpath d='M24 0H0v24'/%3E%3C/svg%3E");
+}
+
+
+/* ============================================================
+   DELTA POS — Registration Wizard
+   Scoped enhancements from the registration template.
+   ============================================================ */
+
+.registration-page {
+    --registration-surface: #ffffff;
+    --registration-muted: #64748b;
+    --registration-border: #e2e8f0;
+    --registration-focus: rgba(5, 150, 105, 0.16);
+}
+
+.registration-page [data-registration-wizard-target="step"] {
+    animation: registration-step-enter 180ms ease-out;
+}
+
+.registration-page [data-registration-wizard-target="setupCard"] {
+    border: 2px solid var(--registration-border);
+    transition:
+            transform 150ms ease,
+            border-color 150ms ease,
+            background-color 150ms ease,
+            box-shadow 150ms ease;
+}
+
+.registration-page [data-registration-wizard-target="setupCard"]:hover,
+.registration-page [data-registration-wizard-target="setupCard"][data-selected="true"] {
+    transform: translateY(-1px);
+    border-color: #059669 !important;
+    box-shadow: inset 0 0 0 1px #059669, 0 8px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+.registration-page [data-registration-wizard-target="setupCard"][aria-pressed="true"] {
+    background-color: rgba(5, 150, 105, 0.05) !important;
+}
+
+.registration-page input:not([type="checkbox"]):not([type="radio"]),
+.registration-page select {
+    transition:
+            border-color 150ms ease,
+            box-shadow 150ms ease,
+            background-color 150ms ease;
+}
+
+.registration-page input:not([type="checkbox"]):not([type="radio"]):focus,
+.registration-page select:focus {
+    border-color: var(--brand, #059669);
+    box-shadow: 0 0 0 3px var(--registration-focus);
+    outline: none;
+}
+
+.registration-page input[aria-invalid="true"],
+.registration-page select[aria-invalid="true"] {
+    border-color: #f43f5e;
+}
+
+.registration-page [data-registration-wizard-target="node"] {
+    transition:
+            background-color 150ms ease,
+            color 150ms ease,
+            border-color 150ms ease,
+            transform 150ms ease;
+}
+
+.registration-page [data-registration-wizard-target="progress"] {
+    transform-origin: left center;
+    transition: width 220ms ease;
+}
+
+.registration-page [data-registration-wizard-target="back"]:focus-visible,
+.registration-page [data-registration-wizard-target="next"]:focus-visible {
+    outline: 2px solid var(--brand, #059669);
+    outline-offset: 3px;
+}
+
+@keyframes registration-step-enter {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 639px) {
+    .registration-page [data-registration-wizard-target="node"] {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: .65rem;
+    }
+
+    .registration-page [data-registration-wizard-target="stepCounter"] {
+        font-size: .65rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .registration-page [data-registration-wizard-target="step"],
+    .registration-page [data-registration-wizard-target="setupCard"],
+    .registration-page [data-registration-wizard-target="node"],
+    .registration-page [data-registration-wizard-target="progress"] {
+        animation: none;
+        transition: none;
+    }
+}
+
+
+/* ============================================================
+   DELTA POS — Demo Request
+   ============================================================ */
+.demo-request-page {
+  --demo-primary-start: #059669;
+  --demo-primary-end: #0d9488;
+}
+
+.demo-request-page .btn-delta-gradient {
+  background: linear-gradient(135deg, var(--demo-primary-start), var(--demo-primary-end));
+}
+
+.demo-request-page .btn-delta-gradient:hover {
+  filter: brightness(.94);
+}
+
+.demo-request-page .demo-request__input:focus {
+  box-shadow: 0 0 0 1px var(--demo-primary-start);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-request-page * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-# Custom I18n backend that loads translations from database
+# Custom I18n backend that loads translations from both files and database
+# This backend chains file translations with database translations
+
+require 'i18n/backend/chain'
+
 module I18n
   module Backend
     class DatabaseBackend < Simple
@@ -57,13 +61,21 @@ module I18n
   end
 end
 
-# Only set database backend if available and configured
+# Chain the file backend with the database backend
+# File backend first, then database backend as fallback
 begin
-  if defined?(ActiveRecord) && ActiveRecord::Base.connection.table_exists?('translates')
-    I18n.backend = I18n::Backend::DatabaseBackend.new
-  end
-rescue StandardError
-  # Database connection failed, use default backend
-  Rails.logger.debug("Using default I18n file backend")
-end
+  file_backend = I18n::Backend::Simple.new
+  file_backend.load_translations(Dir[Rails.root.join('config', 'locales', '**', '*.yml')])
 
+  if defined?(ActiveRecord) && ActiveRecord::Base.connection.table_exists?('translates')
+    db_backend = I18n::Backend::DatabaseBackend.new
+    I18n.backend = I18n::Backend::Chain.new(file_backend, db_backend)
+    Rails.logger.debug("Using chained I18n backend (file + database)")
+  else
+    I18n.backend = file_backend
+    Rails.logger.debug("Using I18n file backend")
+  end
+rescue StandardError => e
+  Rails.logger.warn("Failed to configure I18n backend: #{e.message}")
+  # Keep default backend if anything fails
+end

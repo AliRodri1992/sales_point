@@ -4,8 +4,8 @@ FactoryBot.define do
     description { Faker::Company.bs }
     person_type { %w[F M].sample }
 
-    valid_from { Date.today - rand(10).days }
-    valid_to   { Date.today + rand(10).days }
+    valid_from { Time.zone.today - rand(10).days }
+    valid_to   { Time.zone.today + rand(10).days }
 
     deleted_at { nil }
   end

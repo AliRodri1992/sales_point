@@ -1,0 +1,6 @@
+---
+en:
+  admin:
+    profiles:
+      update:
+        success: Profile updated successfully

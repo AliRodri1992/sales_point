@@ -1,0 +1,131 @@
+---
+en:
+  admin:
+    breadcrumbs:
+      users: Users
+      profile: Profile
+    shared:
+      sidebar:
+        users: Users
+      notifications:
+        user:
+          created: "User '%{name}' was created by %{user}"
+          destroyed: "User '%{name}' was deleted by %{user}"
+          updated: "User '%{name}' was updated by %{user}"
+    users:
+      created: "User created successfully."
+      updated: "User updated successfully."
+      destroyed: "User deleted successfully."
+      cannot_delete_self: "You cannot delete your own account."
+      confirm_delete: "Are you sure you want to delete the user %{name}?"
+      confirm:
+        cancel: Cancel
+      actions:
+        view: View
+        edit: Edit
+        delete: Delete
+      user_types:
+        employee: Employee
+        customer: Customer
+        supplier: Supplier
+      statuses:
+        active: Active
+        suspended: Suspended
+        blocked: Blocked
+        deleted: Deleted
+      index:
+        page_title: Users
+        title: Users
+        subtitle: Manage the users of the system.
+        new: New user
+        columns:
+          email: Email
+          username: Username
+          user_type: Type
+          status: Status
+          roles: Roles
+          created_at: Created
+          actions: Actions
+        no_data: —
+        no_roles: No roles
+        empty:
+          title: No users
+          subtitle: There are no users registered yet.
+        pagination:
+          per_page_label: Show
+          prev: Previous
+          next: Next
+          navigation: Users navigation
+        filters:
+          search_placeholder: Search by email or username...
+          apply: Filter
+          reset: Clear
+          all_types: All types
+          all_statuses: All statuses
+          all_roles: All roles
+      form:
+        new_title: New user
+        edit_title: Edit user
+        subtitle: Fill in the user information.
+        fields:
+          email: Email address
+          username: Username
+          password: Password
+          password_confirmation: Confirm password
+          user_type: User type
+          status: Status
+          language: Language
+          theme: Theme
+          system_roles: Roles
+          user_type_placeholder: Select a type
+          status_placeholder: Select a status
+          language_placeholder: Select a language
+        password_hint: Leave blank to keep the current password.
+        buttons:
+          back: Back
+          create: Create user
+          update: Save changes
+      show:
+        identity_title: Account information
+        access_title: Access and security
+        email: Email address
+        username: Username
+        user_type: User type
+        theme: Theme
+        status: Status
+        language: Language
+        last_sign_in_at: Last sign in
+        sign_in_count: Sign-ins
+        roles: Roles
+        never: Never
+        no_roles: No roles assigned
+    profiles:
+      show:
+        page_title: My profile
+        title: My profile
+        subtitle: Manage your account information and preferences.
+        status:
+          active: Active
+          suspended: Suspended
+          blocked: Blocked
+          deleted: Deleted
+        user_type:
+          employee: Employee
+          customer: Customer
+          supplier: Supplier
+        personal_information:
+          title: Personal information
+          subtitle: Update your personal information.
+        fields:
+          username: Username
+          email: Email address
+          language: Language
+          language_placeholder: Select a language
+          theme: Theme
+        save: Save changes
+        success: Profile updated successfully
+        never: Never
+        roles:
+          title: Roles
+          subtitle: Roles assigned to your account.
+          empty: No roles assigned

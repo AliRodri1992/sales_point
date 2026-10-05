@@ -1,0 +1,428 @@
+<aside
+  id="adminSidebar"
+  class="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300<%= current_user.sidebar_collapsed? ? " sidebar-collapsed" : "" %>"
+>
+  <div class="flex h-16 items-center border-b border-slate-200 px-5">
+    <a href="<%= admin_dashboard_path %>" class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-blue-600 text-white shadow-sm">
+        <%= icon("shopping-bag", variant: :solid, class: "size-5") %>
+      </div>
+
+      <div class="sidebar-brand">
+        <p class="font-jakarta text-lg font-bold tracking-tight text-slate-900">
+          Delta <span class="text-blue-600">POS</span>
+        </p>
+
+        <p class="-mt-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+          <%= t('admin.shared.sidebar.business_os') %>
+        </p>
+      </div>
+    </a>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto px-3 py-5">
+    <div class="mb-6">
+      <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <%= t('admin.shared.sidebar.section_main') %>
+      </p>
+
+      <div class="space-y-1">
+        <a
+          href="<%= admin_dashboard_path %>"
+          data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>"
+          class="<%= sidebar_link_classes('dashboard') %>"
+        >
+          <%= delta_sidebar_icon(:dashboard) %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.dashboard') %></span>
+        </a>
+
+        <% if onboarding_pending? %>
+          <% onboarding_progress = onboarding_progress_for_current_user %>
+          <a
+            href="<%= admin_onboarding_path %>"
+            data-tooltip="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>"
+            class="mt-2 flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 transition hover:border-emerald-200 hover:bg-emerald-100"
+            aria-label="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>"
+          >
+            <%= icon("sparkles", class: "size-5 shrink-0 text-emerald-600") %>
+            <div class="sidebar-label min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="min-w-0 flex-1 text-xs font-semibold text-emerald-800">
+                  <%= t('admin.shared.sidebar.onboarding.title') %>
+                </span>
+                <span class="text-xs font-bold text-emerald-700"><%= onboarding_progress[:percentage] %>%</span>
+              </div>
+              <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-emerald-100">
+                <div class="h-full rounded-full bg-emerald-500" style="width: <%= onboarding_progress[:percentage] %>%"></div>
+              </div>
+            </div>
+          </a>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <%= t('admin.shared.sidebar.section_operations') %>
+      </p>
+
+      <div class="space-y-1">
+        <details class="sidebar-catalog">
+          <summary
+            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+            data-tooltip="<%= t('admin.shared.sidebar.sales') %>"
+          >
+            <%= delta_sidebar_icon(:cash_register) %>
+            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.sales') %></span>
+            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+          </summary>
+
+          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("plus", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.new_sale') %></span>
+            </a>
+
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("arrow-path", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.sales_history') %></span>
+            </a>
+
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("arrow-uturn-left", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.returns') %></span>
+            </a>
+          </div>
+        </details>
+
+        <a
+          href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+        >
+          <%= delta_sidebar_icon(:payments) %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.cash_register') %></span>
+        </a>
+
+        <details class="sidebar-catalog">
+          <summary
+            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+            data-tooltip="<%= t('admin.shared.sidebar.inventory') %>"
+          >
+            <%= delta_sidebar_icon(:inventory) %>
+            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.inventory') %></span>
+            <span
+              class="sidebar-badge ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-100 px-1.5 text-xs font-semibold text-amber-700"
+              data-tooltip="<%= t('admin.shared.sidebar.low_stock') %>"
+            >
+              8
+            </span>
+            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+          </summary>
+
+          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("cube", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
+            </a>
+
+            <details class="sidebar-catalog">
+              <summary
+                class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              >
+                <%= icon("archive-box", class: "size-4") %>
+                <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.stock') %></span>
+                <%= icon("chevron-down", class: "sidebar-chevron size-3.5 text-slate-400") %>
+              </summary>
+
+              <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+                <a
+                  href="#"
+                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <%= icon("building-library", class: "size-4") %>
+                  <span class="sidebar-label"><%= t('admin.shared.sidebar.by_branch') %></span>
+                </a>
+
+                <a
+                  href="#"
+                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <%= icon("arrows-right-left", class: "size-4") %>
+                  <span class="sidebar-label"><%= t('admin.shared.sidebar.movements') %></span>
+                </a>
+
+                <a
+                  href="#"
+                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <%= icon("adjustments-horizontal", class: "size-4") %>
+                  <span class="sidebar-label"><%= t('admin.shared.sidebar.adjustments') %></span>
+                </a>
+              </div>
+            </details>
+
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("book-open", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.kardex') %></span>
+            </a>
+          </div>
+        </details>
+
+        <a
+          href="<%= admin_clients_path %>"
+          data-tooltip="<%= t('admin.shared.sidebar.customers') %>"
+          class="<%= sidebar_link_classes('clients') %>"
+        >
+          <%= delta_sidebar_icon(:clients) %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.customers') %></span>
+        </a>
+
+        <a
+          href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.suppliers') %>"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+        >
+          <%= icon("truck", class: "size-5") %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.suppliers') %></span>
+        </a>
+
+        <a
+          href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.employees') %>"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+        >
+          <%= icon("user", class: "size-5") %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.employees') %></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <%= t('admin.shared.sidebar.section_catalogs') %>
+      </p>
+
+      <div class="space-y-1">
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
+          <summary
+            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+            data-tooltip="<%= t('admin.shared.sidebar.catalogs') %>"
+          >
+            <%= icon("clipboard-document-list", class: "size-5") %>
+            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.catalogs') %></span>
+            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+          </summary>
+
+          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <a
+              href="<%= admin_languages_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.languages') %>"
+              class="<%= sidebar_link_classes('languages', variant: :submenu) %>"
+            >
+              <%= icon("language", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.languages') %></span>
+            </a>
+
+            <a
+              href="<%= admin_products_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.products') %>"
+              class="<%= sidebar_link_classes('products', variant: :submenu) %>"
+            >
+              <%= icon("cube", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
+            </a>
+
+            <% if current_user.permission?('categories.access') %>
+              <a
+                href="<%= admin_categories_path %>"
+                data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
+                class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
+              >
+                <%= icon("building-storefront", class: "size-4") %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.categories') %></span>
+              </a>
+            <% end %>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <%= t('admin.shared.sidebar.section_admin') %>
+      </p>
+
+      <div class="space-y-1">
+        <a
+          href="#"
+          data-tooltip="<%= t('admin.shared.sidebar.reports') %>"
+          class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+        >
+          <%= delta_sidebar_icon(:reports) %>
+          <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
+        </a>
+
+        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'users') %>>
+          <summary
+            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+            data-tooltip="<%= t('admin.shared.sidebar.settings') %>"
+          >
+            <%= delta_sidebar_icon(:settings) %>
+            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.settings') %></span>
+            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+          </summary>
+
+          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("squares-2x2", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.general') %></span>
+            </a>
+
+            <a
+              href="<%= system_roles_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.roles_permissions') %>"
+              class="<%= sidebar_link_classes('system_roles', variant: :submenu) %>"
+            >
+              <%= icon("shield-check", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.roles_permissions') %></span>
+            </a>
+
+            <a
+              href="<%= admin_branches_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.branches') %>"
+              class="<%= sidebar_link_classes('branches', variant: :submenu) %>"
+            >
+              <%= delta_sidebar_icon(:branches, class_name: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>
+            </a>
+
+            <a
+              href="<%= admin_users_path %>"
+              data-tooltip="<%= t('admin.shared.sidebar.users') %>"
+              class="<%= sidebar_link_classes('users', variant: :submenu) %>"
+            >
+              <%= icon("users", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.users') %></span>
+            </a>
+
+            <a
+              href="#"
+              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            >
+              <%= icon("calculator", class: "size-4") %>
+              <span class="sidebar-label"><%= t('admin.shared.sidebar.taxes') %></span>
+            </a>
+          </div>
+        </details>
+      </div>
+    </div>
+  </nav>
+
+  <div class="border-t border-slate-100 p-4">
+    <div class="relative" data-tooltip="<%= current_user.display_name %>">
+      <div class="sidebar-user-row flex items-center gap-3 p-2">
+        <div class="flex h-9 w-9 min-w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
+          <%= current_user.initials %>
+        </div>
+
+        <div class="sidebar-user min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+          <p class="truncate text-sm font-semibold">
+            <%= current_user.display_name %>
+          </p>
+
+          <p class="truncate text-xs text-slate-400">
+            <%= t('admin.shared.sidebar.role_admin') %>
+          </p>
+        </div>
+
+        <button
+          id="sidebarUserMenuButton"
+          type="button"
+          aria-expanded="false"
+          aria-controls="sidebarUserMenu"
+          aria-label="<%= t('admin.shared.user_menu.toggle') %>"
+          class="user-menu-button flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+        >
+          <%= icon("ellipsis-vertical", class: "size-5") %>
+        </button>
+      </div>
+
+      <div
+        id="sidebarUserMenu"
+        class="absolute bottom-14 left-0 z-50 hidden w-60 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl"
+      >
+        <div class="border-b border-slate-100 px-4 py-3">
+          <p class="truncate text-sm font-semibold text-slate-800">
+            <%= current_user.display_name %>
+          </p>
+
+          <p class="mt-0.5 truncate text-xs text-slate-400">
+            <%= t('admin.shared.sidebar.role_admin') %>
+          </p>
+        </div>
+
+        <div class="py-1">
+          <%= link_to admin_profile_path,
+                      class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue" do %>
+            <%= icon("user", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.my_profile') %></span>
+          <% end %>
+
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
+          >
+            <%= icon("cog-6-tooth", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.preferences') %></span>
+          </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
+          >
+            <%= icon("shield-check", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.security') %></span>
+          </button>
+
+          <button
+            type="button"
+            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
+          >
+            <%= icon("question-mark-circle", class: "size-4 text-slate-400") %>
+            <span><%= t('admin.shared.user_menu.help_center') %></span>
+          </button>
+        </div>
+
+        <div class="border-t border-slate-100 py-1">
+          <%= button_to destroy_user_session_path,
+                        method: :delete,
+                        class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition hover:bg-red-50" do %>
+            <%= icon("arrow-right-start-on-rectangle", class: "size-4") %>
+            <span><%= t('admin.shared.user_menu.sign_out') %></span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div id="sidebarOverlay" aria-hidden="true"></div>

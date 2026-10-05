@@ -29,6 +29,7 @@ module Ui
       color: :primary,
       rounded: :xl
     )
+      super()
       @icon = icon
       @size = size
       @color = color

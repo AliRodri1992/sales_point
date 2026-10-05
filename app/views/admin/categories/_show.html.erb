@@ -1,0 +1,67 @@
+<% category = @category %>
+<div
+  data-modal-target="panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="category-show-title"
+  class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl"
+>
+  <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+    <div>
+      <h2 id="category-show-title" class="font-jakarta text-lg font-bold text-slate-900">
+        <%= t('admin.categories.show.title') %>
+      </h2>
+      <p class="mt-0.5 text-sm text-slate-500">
+        <%= t('admin.categories.show.subtitle') %>
+      </p>
+    </div>
+    <button
+      type="button"
+      data-modal-dismiss
+      data-action="modal#close"
+      class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+      aria-label="<%= t('admin.categories.show.close') %>"
+    >
+      <%= icon('x-mark', class: 'size-5') %>
+    </button>
+  </div>
+
+  <dl class="divide-y divide-slate-100 px-6">
+    <div class="flex items-center justify-between gap-4 py-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.categories.form.name') %></dt>
+      <dd class="text-sm font-medium text-slate-900"><%= category.name %></dd>
+    </div>
+    <div class="flex items-center justify-between gap-4 py-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.categories.form.code') %></dt>
+      <dd>
+        <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= category.code %></code>
+      </dd>
+    </div>
+    <div class="flex items-center justify-between gap-4 py-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.categories.form.status') %></dt>
+      <dd>
+        <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold
+          <%= category.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+          <%= t("admin.categories.statuses.#{category.status}") %>
+        </span>
+      </dd>
+    </div>
+  </dl>
+
+  <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
+    <button
+      type="button"
+      data-modal-dismiss
+      data-action="modal#close"
+      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+    >
+      <%= t('admin.categories.show.close') %>
+    </button>
+    <%= link_to edit_admin_category_path(category),
+                data: { turbo_frame: 'category_modal' },
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+      <%= icon('pencil-square', class: 'size-4') %>
+      <%= t('admin.categories.index.edit') %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<nav aria-label="<%= t('admin.breadcrumbs.label') %>" class="border-b border-slate-200 bg-white">
+  <ol class="mx-auto flex h-10 items-center gap-1.5 px-4 text-sm lg:px-6">
+    <% breadcrumb_items.each_with_index do |item, index| %>
+      <li class="flex min-w-0 items-center gap-1.5">
+        <% if index > 0 %>
+          <span class="text-slate-300" aria-hidden="true">/</span>
+        <% end %>
+
+        <% if item[:path] %>
+          <%= link_to item[:label], item[:path], class: "truncate text-slate-500 transition hover:text-slate-800" %>
+        <% else %>
+          <span class="truncate font-medium text-slate-800" aria-current="page"><%= item[:label] %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>

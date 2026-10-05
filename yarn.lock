@@ -154,6 +154,16 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.28.0.tgz#04d90d5752b4ce65d2b6ac25eba08ff7624fe07c"
   integrity sha512-pEl1bO9mfAmIC+tW5btTmrKaujg3zGtUmWNdCw/xs70FBjwAL3o9OEKNHvNmnyylD6ubxUERiEhdsL0xBQ9efw==
 
+"@fontsource-variable/inter@^5.2.6":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/inter/-/inter-5.3.0.tgz#351dd1e02dab63a6cf66d57ec36dcfd10c07f07b"
+  integrity sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==
+
+"@fontsource-variable/plus-jakarta-sans@^5.2.6":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/plus-jakarta-sans/-/plus-jakarta-sans-5.3.0.tgz#2a34ff48a1d15cee9f48d088c3bf406cbaa2e3d6"
+  integrity sha512-/l/4r0yyWK9JzAlmA0LiYgGgmJe/Gswt4jTJEzr5QhJfwMbvJZDmYWyW0M4X7yCK69BajMVlV/Lx8g7WDc1+sw==
+
 "@hotwired/stimulus@^3.2.2":
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/@hotwired/stimulus/-/stimulus-3.2.2.tgz#071aab59c600fed95b97939e605ff261a4251608"
@@ -475,6 +485,11 @@ graceful-fs@^4.2.4:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
+gridstack@^13.3.0:
+  version "13.3.0"
+  resolved "https://registry.yarnpkg.com/gridstack/-/gridstack-13.3.0.tgz#057d35bfe22a4883df57cea7503ac35a86d6524d"
+  integrity sha512-1tqFd3/hb3CSOJWFG8aFleCGWT6Gqx/hnjRT78ocnixp0XPk5Aa6Uxkm0qn9VHFwLrEdOFb+ZXtQZT+a/IdS3g==
+
 is-extglob@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/is-extglob/-/is-extglob-2.1.1.tgz#a88c02535791f02ed37c76a1b9ea9773c833f8c2"
@@ -597,6 +612,11 @@ source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"
   integrity sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==
+
+sweetalert2@^11.26.25:
+  version "11.26.25"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.26.25.tgz#ba24ffb79c67648ac51f834620baa15866a56e35"
+  integrity sha512-+hunCOJdJ6FLj04T9YSLvvZXRjsvIkTeTKP2e4VF8CaBias961BTnWiSFAy7F/CM5eq3QK2Rraoc5Gzftslvkg==
 
 tailwindcss@4.2.2, tailwindcss@^4.2.2:
   version "4.2.2"

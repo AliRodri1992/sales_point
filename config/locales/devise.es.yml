@@ -23,12 +23,19 @@ es:
         subject: "Instrucciones de confirmación"
       reset_password_instructions:
         subject: "Instrucciones para restablecer contraseña"
+        greeting: "¡Hola %{email}!"
+        instruction: "Alguien solicitó un enlace para cambiar tu contraseña. Puedes hacerlo desde el siguiente enlace."
+        action: "Cambiar mi contraseña"
+        ignore: "Si no lo solicitaste, ignora este correo."
+        pending: "Tu contraseña no cambiará hasta que accedas al enlace y crees una nueva."
       unlock_instructions:
         subject: "Instrucciones de desbloqueo"
       email_changed:
         subject: "Correo electrónico cambiado"
       password_change:
         subject: "Contraseña cambiada"
+        greeting: "¡Hola %{email}!"
+        notification: "Te avisamos que tu contraseña ha sido cambiada."
     omniauth_callbacks:
       failure: "No pudimos autenticarte desde %{kind} porque \"%{reason}\"."
       success: "Autenticado exitosamente desde la cuenta %{kind}."

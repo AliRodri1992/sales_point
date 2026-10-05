@@ -13,10 +13,39 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
+    get '/', to: 'dashboard#index', as: :root
+    get '/onboarding', to: 'onboarding#show', as: :onboarding
+    patch '/onboarding', to: 'onboarding#update'
+    patch '/onboarding/reset', to: 'onboarding#reset', as: :onboarding_reset
+    patch 'sidebar', to: 'sidebar#update'
+    get 'languages/content', to: 'languages#content'
+    resources :languages
+    resources :categories
+    resources :products
+    resources :clients
+    resources :branches, only: %i[index show new create edit update destroy] do
+      member { patch :select }
+    end
+    resources :users
+    resources :clients
+    resource :profile, only: %i[show update]
   end
-  resources :system_roles
+  resources :system_roles do
+    member do
+      patch :permissions, action: :update_permissions
+    end
+  end
   resources :demo_requests, only: %i[new create]
+  resources :notifications, only: [] do
+    collection do
+      post :mark_all_read
+    end
+  end
+  resources :conversations, only: %i[show create] do
+    resources :messages, only: %i[create]
+  end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 

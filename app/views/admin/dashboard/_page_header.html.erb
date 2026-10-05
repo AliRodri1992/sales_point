@@ -1,0 +1,31 @@
+<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="font-jakarta text-2xl font-bold text-slate-900">
+      <%= t('admin.dashboard.page_header.title') %>
+    </h1>
+
+    <p class="mt-1 text-sm text-slate-500">
+      <%= t('admin.dashboard.page_header.subtitle') %>
+    </p>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <button
+      id="customizeDashboardButton"
+      type="button"
+      aria-pressed="false"
+      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      <%= icon("bars-3", class: "size-4") %>
+      <%= t('admin.dashboard.page_header.customize') %>
+    </button>
+
+    <button
+      type="button"
+      class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+    >
+      <%= icon("plus", class: "size-4") %>
+      <%= t('admin.dashboard.page_header.new_sale') %>
+    </button>
+  </div>
+</div>
