@@ -15,7 +15,7 @@ class Translate < ApplicationRecord
     if Translate.column_exists?(:language_id)
       joins(:language).where(languages: { code: locale })
     else
-      where(locale: locale)
+      Translate.where(locale: locale)
     end
   }
   scope :by_key, ->(key) { where(key: key) }
