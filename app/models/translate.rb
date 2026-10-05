@@ -10,9 +10,9 @@ class Translate < ApplicationRecord
 
   validate :validate_uniqueness, on: :create
 
-  scope :by_language, ->(language) { where(language: language) if column_exists?(:language_id) }
+  scope :by_language, ->(language) { where(language: language) if Translate.column_exists?(:language_id) }
   scope :by_locale, lambda { |locale|
-    if column_exists?(:language_id)
+    if Translate.column_exists?(:language_id)
       joins(:language).where(languages: { code: locale })
     else
       where(locale: locale)
