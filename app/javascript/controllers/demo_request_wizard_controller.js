@@ -52,9 +52,14 @@ export default class extends Controller {
     if (this.paletteOnlyValue) return
 
     this.clearBusinessErrors()
-    if (!this.validateStepTwo()) {
+    const stepOneValid = this.validateStepOne()
+    const stepTwoValid = this.validateStepTwo()
+
+    if (!stepOneValid || !stepTwoValid) {
       event.preventDefault()
+      this.currentStep = stepOneValid ? 2 : 1
       this.renderStep()
+      this.showValidationAlert()
     }
   }
 
