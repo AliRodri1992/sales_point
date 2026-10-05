@@ -288,7 +288,6 @@ ko:
       active: 활성
       back: 뒤로
       continue: 계속
-      validation_title: 필수 입력 항목을 작성해 주세요.
       description: 관리자 대시보드에 들어가기 전에 비즈니스 설정을 완료하세요.
       eyebrow: 초기 설정
       fields:
@@ -895,6 +894,7 @@ ko:
       contact_description: 전문 상담사가 연락드릴 수 있도록 연락처 정보를 입력하세요.
       contact_title: 연락처 정보
       continue: 계속
+      validation_title: 필수 입력 항목을 작성해 주세요.
       copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       email: 회사 이메일
       error_summary: 요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.

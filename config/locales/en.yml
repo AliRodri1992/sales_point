@@ -218,8 +218,7 @@ en:
         title: Dashboard
       onboarding:
         action_required: Setup required
-        continue: Continue
-      validation_title: Complete the required fields. setup
+        continue: Continue setup
         description: Your organization is %{percentage}% configured.
         sales_dependency: Before starting sales, complete %{sections}.
         title: Complete your initial setup
@@ -900,6 +899,7 @@ en:
       contact_description: Enter your contact details so a specialist can reach you.
       contact_title: Contact Details
       continue: Continue
+      validation_title: Complete the required fields.
       copyright: "© %{year} Delta POS Inc. All rights reserved."
       email: Corporate email
       error_summary: We could not send your request. Check the fields and try again.

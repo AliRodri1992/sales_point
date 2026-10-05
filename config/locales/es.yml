@@ -219,8 +219,7 @@ es:
         title: Panel de control
       onboarding:
         action_required: Configuración requerida
-        continue: Continuar
-      validation_title: Completa los campos requeridos. configuración
+        continue: Continuar configuración
         description: Tu organización está al %{percentage}% de configuración.
         sales_dependency: Para iniciar ventas debes completar %{sections}.
         title: Completa la configuración inicial
@@ -906,6 +905,7 @@ es:
       contact_description: Introduce tus datos personales para que un asesor especializado te contacte.
       contact_title: Datos de Contacto
       continue: Continuar
+      validation_title: Completa los campos requeridos.
       copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       email: Correo electrónico corporativo
       error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente.
