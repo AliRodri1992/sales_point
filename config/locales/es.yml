@@ -21,7 +21,10 @@ es:
         name: Nombre
         status: Estado
       demo_request:
-        company: Empresa
+        business_type: Giro empresarial
+        branches: Sucursales
+        terms_accepted: Aceptación de términos
+
         email: Correo electrónico
         message: Mensaje
         name: Nombre

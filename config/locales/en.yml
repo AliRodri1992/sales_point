@@ -21,7 +21,10 @@ en:
         name: Name
         status: Status
       demo_request:
-        company: Company
+        business_type: Business type
+        branches: Branches
+        terms_accepted: Terms accepted
+
         email: Email address
         message: Message
         name: Name

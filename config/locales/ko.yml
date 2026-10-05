@@ -21,7 +21,10 @@ ko:
         name: 이름
         status: 상태
       demo_request:
-        company: 회사
+        business_type: 사업 유형
+        branches: 지점 수
+        terms_accepted: 약관 동의
+
         email: 이메일
         message: 메시지
         name: 이름

@@ -18,6 +18,8 @@ class DemoRequestsController < ApplicationController
   private
 
   def demo_request_params
-    params.expect(demo_request: %i[name email phone company message])
+    params.expect(
+      demo_request: %i[name email phone company business_type branches message terms_accepted]
+    )
   end
 end

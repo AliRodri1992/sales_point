@@ -48,11 +48,14 @@
 
       <div class="relative w-full text-left">
         <label for="demo_business_type" class="mb-1 block font-jakarta text-xs font-medium text-slate-700"><%= t('demo_requests.new.business_type') %></label>
-        <select id="demo_business_type" name="demo_request[business_type]" data-demo-request-wizard-target="businessType" class="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
-          <option value=""><%= t('demo_requests.new.business_type_placeholder') %></option>
-          <% %w[grocery fashion restaurant pharmacy].each do |sector| %><option value="<%= sector %>"><%= t("demo_requests.new.business_types.#{sector}") %></option><% end %>
-        </select>
+        <%= f.select :business_type,
+          DemoRequest::BUSINESS_TYPES.map { |sector| [t("demo_requests.new.business_types.#{sector}"), sector] },
+          { prompt: t('demo_requests.new.business_type_placeholder') },
+          { id: 'demo_business_type',
+            data: { 'demo-request-wizard-target': 'businessType' },
+            class: 'w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' } %>
         <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :gray, css_class: 'pointer-events-none absolute right-3 top-8') %>
+        <%= error_for(:business_type) %>
         <p data-demo-request-wizard-target="businessError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.business_type') %></p>
       </div>
 
@@ -64,7 +67,10 @@
 
       <div>
         <%= f.label :branches, t('demo_requests.new.branches'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
-        <input id="demo_branches" name="demo_request[branches]" type="number" min="1" value="1" data-demo-request-wizard-target="branches" class="mt-1 block w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        <%= f.number_field :branches, min: 1, max: DemoRequest::MAX_BRANCHES,
+          data: { 'demo-request-wizard-target': 'branches' },
+          class: 'mt-1 block w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500' %>
+        <%= error_for(:branches) %>
         <p data-demo-request-wizard-target="branchesError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.branches') %></p>
       </div>
 
@@ -76,9 +82,12 @@
 
       <div class="flex flex-col pt-1">
         <div class="flex items-start">
-          <input id="demo_terms" type="checkbox" data-demo-request-wizard-target="terms" class="mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--demo-primary-start)] focus:ring-[var(--demo-primary-start)]">
-          <label for="demo_terms" class="ml-2 block text-[11px] leading-normal text-slate-500"><%= t('demo_requests.new.privacy') %> <%= link_to t('demo_requests.new.privacy_link'), root_path(anchor: 'privacy'), class: 'font-medium text-[var(--demo-primary-start)] transition-opacity hover:opacity-80' %>.</label>
+          <%= f.check_box :terms_accepted,
+          { data: { 'demo-request-wizard-target': 'terms' },
+            class: 'mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--demo-primary-start)] focus:ring-[var(--demo-primary-start)]' } %>
+          <label for="demo_request_terms_accepted" class="ml-2 block text-[11px] leading-normal text-slate-500"><%= t('demo_requests.new.privacy') %> <%= link_to t('demo_requests.new.privacy_link'), root_path(anchor: 'privacy'), class: 'font-medium text-[var(--demo-primary-start)] transition-opacity hover:opacity-80' %>.</label>
         </div>
+        <%= error_for(:terms_accepted) %>
         <p data-demo-request-wizard-target="termsError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.terms') %></p>
       </div>
 
