@@ -10,19 +10,23 @@ export default class extends Controller {
   static values = { paletteOnly: Boolean }
 
   connect() {
-    this.currentStep = 1
+    this.currentStep = this.initialStep()
     document.addEventListener("click", this.closeOnOutsideClick)
-    if (this.paletteOnlyValue) return
-
-    const stepOneHasErrors = this.stepTargets[0]?.querySelector(".text-rose-600")
-    const stepTwoHasErrors = this.stepTargets[1]?.querySelector(".text-rose-600")
-    if (stepTwoHasErrors && !stepOneHasErrors) this.currentStep = 2
-
     this.renderStep()
   }
 
   disconnect() {
     document.removeEventListener("click", this.closeOnOutsideClick)
+  }
+
+  initialStep() {
+    if (this.paletteOnlyValue) return 1
+
+    const [stepOne, stepTwo] = this.stepTargets
+    if (stepTwo?.querySelector(".text-rose-500:not(.hidden), .text-rose-600:not(.hidden)")) return 2
+    if (stepOne?.querySelector(".text-rose-500:not(.hidden), .text-rose-600:not(.hidden)")) return 1
+
+    return 1
   }
 
   next(event) {
