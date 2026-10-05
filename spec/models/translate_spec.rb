@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Translate, type: :model do
-  let(:language) { create(:language, code: 'en', name: 'English', flag_iso: 'us') }
+  let(:language) { create(:language, :english) }
 
   it 'flattens nested translation hashes' do
     expect(described_class.flatten_hash({ home: { title: 'Home', nested: { label: 'Label' } } })).to eq(
@@ -11,7 +11,7 @@ RSpec.describe Translate, type: :model do
   end
 
   it 'finds and returns values through locale-aware queries' do
-    create(:translate, language:, key: 'home.title', value: 'Home')
+    Translate.create!(language:, key: 'home.title', value: 'Home')
 
     expect(described_class.by_language(language)).to exist
     expect(described_class.by_locale('en')).to exist
@@ -35,7 +35,7 @@ RSpec.describe Translate, type: :model do
   end
 
   it 'returns the associated language locale code' do
-    translate = create(:translate, language:, key: 'home.title', value: 'Home')
+    translate = Translate.create!(language:, key: 'home.title', value: 'Home')
 
     expect(translate.locale).to eq('en')
   end
