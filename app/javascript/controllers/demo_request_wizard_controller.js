@@ -79,12 +79,22 @@ export default class extends Controller {
         errorTarget.textContent = errorTarget.dataset.requiredMessage
         input.setAttribute("aria-invalid", "true")
         valid = false
+      } else if (input && field === "email" && !this.validEmail(input.value)) {
+        errorTarget.classList.remove("hidden")
+        errorTarget.textContent = errorTarget.dataset.invalidMessage
+        input.setAttribute("aria-invalid", "true")
+        valid = false
       } else if (input) {
+        errorTarget.classList.add("hidden")
         input.removeAttribute("aria-invalid")
       }
     })
 
     return valid
+  }
+
+  validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
   }
 
   showValidationAlert() {
