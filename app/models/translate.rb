@@ -11,15 +11,17 @@ class Translate < ApplicationRecord
   validate :validate_uniqueness, on: :create
 
   scope :by_language, ->(language) { where(language: language) if Translate.column_exists?(:language_id) }
-  scope :by_locale, lambda { |locale|
-    if Translate.column_exists?(:language_id)
+  scope :by_locale, ->(locale) { by_locale_code(locale) }
+  scope :by_key, ->(key) { where(key: key) }
+  scope :by_locale_code, ->(code) { by_locale_code_query(code) }
+
+  def self.by_locale_code_query(locale)
+    if column_exists?(:language_id)
       joins(:language).where(languages: { code: locale })
     else
-      Translate.where(locale: locale)
+      where(locale: locale)
     end
-  }
-  scope :by_key, ->(key) { where(key: key) }
-  scope :by_locale_code, ->(code) { by_locale(code) }
+  end
 
   def self.find_translation(key, locale)
     if column_exists?(:language_id)
