@@ -2,10 +2,7 @@
 
 RSpec.describe Translate, type: :model do
   def find_translation(key, locale)
-    described_class.singleton_class
-      .instance_method(:find_by_key_and_locale)
-      .bind(described_class)
-      .call(key, locale)
+    described_class.public_send("find_by_key_and_locale", key, locale)
   end
 
   let(:language) { create(:language, :english) }
