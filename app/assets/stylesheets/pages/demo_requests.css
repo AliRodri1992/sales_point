@@ -1,0 +1,94 @@
+/* Delta POS demo request page - template-specific visual treatment. */
+.demo-request-page {
+  --demo-primary-start: #059669;
+  --demo-primary-end: #0d9488;
+  --demo-hover-start: #047857;
+  --demo-hover-end: #0f766e;
+  --demo-active-start: #065f46;
+  --demo-active-end: #115e59;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-jakarta {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.bg-delta-dark {
+  background-color: oklch(20.8% 0.042 265.755);
+}
+
+.bg-grid-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='1'%3E%3Cpath d='M24 0H0v24'/%3E%3C/svg%3E");
+}
+
+.btn-delta-gradient {
+  background: linear-gradient(135deg, var(--demo-primary-start), var(--demo-primary-end));
+}
+
+.btn-delta-gradient:hover {
+  background: linear-gradient(135deg, var(--demo-hover-start), var(--demo-hover-end));
+}
+
+.demo-request-page [data-demo-request-wizard-target='progress'] {
+  background-color: var(--demo-primary-start);
+}
+
+.demo-request-page [data-demo-request-wizard-target='node'].bg-\[var\(--demo-primary-start\)\] {
+  background: linear-gradient(135deg, var(--demo-primary-start), var(--demo-primary-end));
+}
+
+.demo-request-page select {
+  color-scheme: light;
+}
+
+.demo-request-page select:focus-visible,
+.demo-request-page input:focus-visible,
+.demo-request-page textarea:focus-visible,
+.demo-request-page button:focus-visible,
+.demo-request-page a:focus-visible {
+  outline: none;
+}
+
+.demo-request-page input[type='checkbox'] {
+  accent-color: var(--demo-primary-start);
+}
+
+.demo-request-page .text-theme-link {
+  color: var(--demo-primary-start);
+  transition: opacity 150ms ease;
+}
+
+.demo-request-page .text-theme-link:hover {
+  opacity: 0.85;
+}
+
+.demo-request-page .demo-request__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 1023px) {
+  .demo-request-page {
+    min-height: 100dvh;
+    height: auto;
+    overflow: auto;
+  }
+
+  .demo-request-page > div {
+    min-height: 100dvh;
+  }
+}
+
+@media (max-width: 639px) {
+  .demo-request-page section:last-child {
+    min-height: 100dvh;
+    padding-top: 5.5rem;
+  }
+
+  .demo-request-page [data-controller='language-selector'] > div {
+    max-width: calc(100vw - 2rem);
+  }
+}
