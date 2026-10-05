@@ -30,8 +30,8 @@ RSpec.describe Onboarding::TerminalsUpdater, type: :service do
 
   it 'uses the active branch before a non-active branch' do
     organization = create(:organization)
-    create(:branch, organization:, status: false)
-    active_branch = create(:branch, organization:, status: true)
+    create(:branch, organization:, name: 'Sucursal Norte', status: false)
+    active_branch = create(:branch, organization:, name: 'Sucursal Centro', status: true)
     terminal = create(:terminal, branch: active_branch)
 
     expect(described_class.call(organization, {}, terminals: nil)).to be(true)
