@@ -10,7 +10,12 @@ RSpec.describe MembershipPlan, type: :model do
   end
 
   describe 'enums' do
-    it { is_expected.to define_enum_for(:billing_interval).with_values(monthly: 'monthly', yearly: 'yearly') }
+    it 'defines billing intervals' do
+      expect(described_class.billing_intervals).to eq(
+        'monthly' => 'monthly',
+        'yearly' => 'yearly'
+      )
+    end
   end
 
   describe 'associations' do

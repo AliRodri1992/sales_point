@@ -49,10 +49,11 @@ class Translate < ApplicationRecord
       next if value.is_a?(Hash)
 
       translate = if column_exists?(:language_id)
-                    find_or_create_by!(key: key, language: language)
+                    find_or_initialize_by(key: key, language: language)
                   else
-                    find_or_create_by!(key: key, locale: locale_code)
+                    find_or_initialize_by(key: key, locale: locale_code)
                   end
+
       translate.update!(value: value.to_s)
     end
   end
