@@ -22,7 +22,9 @@ RSpec.describe Onboarding::TerminalsUpdater, type: :service do
     )
 
     expect(result).to be(true)
-    expect(terminals.map(&:reload).map(&:name)).to eq(['Caja Principal', 'POS Terminal 2'])
+    expect(terminals.map { |terminal| terminal.reload.name }).to eq(
+      ['Caja Principal', 'POS Terminal 2']
+    )
     expect(branch.terminals.count).to eq(2)
   end
 
