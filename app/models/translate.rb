@@ -21,7 +21,7 @@ class Translate < ApplicationRecord
   scope :by_key, ->(key) { where(key: key) }
   scope :by_locale_code, ->(code) { by_locale(code) }
 
-  def self.find_by_key_and_locale(key, locale)
+  def self.find_translation(key, locale)
     if column_exists?(:language_id)
       language = Language.find_by(code: locale)
       language && where(key: key, language: language).first
@@ -30,8 +30,10 @@ class Translate < ApplicationRecord
     end
   end
 
+  singleton_class.alias_method :find_by_key_and_locale, :find_translation
+
   def self.value_for(key, locale, default = nil)
-    find_by_key_and_locale(key, locale)&.value || default
+    find_translation(key, locale)&.value || default
   end
 
   def self.load_from_file(file_path, locale_code)
