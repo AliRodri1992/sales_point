@@ -31,7 +31,7 @@
             <%= f.public_send("#{attribute == 'email' ? 'email' : attribute == 'phone' ? 'telephone' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3") %>
           </div>
           <%= error_for(attribute) %>
-          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>"></p>
+          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
         </div>
       <% end %>
 

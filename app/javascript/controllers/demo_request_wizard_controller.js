@@ -71,8 +71,11 @@ export default class extends Controller {
       errorTarget.classList.add("hidden")
       if (input && !input.value.trim()) {
         errorTarget.classList.remove("hidden")
-        errorTarget.textContent = input.dataset.requiredMessage
+        errorTarget.textContent = errorTarget.dataset.requiredMessage
+        input.setAttribute("aria-invalid", "true")
         valid = false
+      } else if (input) {
+        input.removeAttribute("aria-invalid")
       }
     })
 

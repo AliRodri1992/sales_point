@@ -219,7 +219,8 @@ es:
         title: Panel de control
       onboarding:
         action_required: Configuración requerida
-        continue: Continuar configuración
+        continue: Continuar
+      validation_title: Completa los campos requeridos. configuración
         description: Tu organización está al %{percentage}% de configuración.
         sales_dependency: Para iniciar ventas debes completar %{sections}.
         title: Completa la configuración inicial

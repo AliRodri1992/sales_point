@@ -218,7 +218,8 @@ en:
         title: Dashboard
       onboarding:
         action_required: Setup required
-        continue: Continue setup
+        continue: Continue
+      validation_title: Complete the required fields. setup
         description: Your organization is %{percentage}% configured.
         sales_dependency: Before starting sales, complete %{sections}.
         title: Complete your initial setup

@@ -288,6 +288,7 @@ ko:
       active: 활성
       back: 뒤로
       continue: 계속
+      validation_title: 필수 입력 항목을 작성해 주세요.
       description: 관리자 대시보드에 들어가기 전에 비즈니스 설정을 완료하세요.
       eyebrow: 초기 설정
       fields:
