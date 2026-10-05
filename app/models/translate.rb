@@ -2,7 +2,6 @@
 
 class Translate < ApplicationRecord
   belongs_to :language, optional: true
-  delegate :code, to: :language, prefix: true, allow_nil: true
 
   validates :key, presence: true
   validates :value, presence: true
@@ -73,7 +72,7 @@ class Translate < ApplicationRecord
 
   def locale
     if self.class.column_exists?(:language_id)
-      language_code
+      language && language[:code]
     else
       self[:locale]
     end
