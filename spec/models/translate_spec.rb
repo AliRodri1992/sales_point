@@ -16,7 +16,7 @@ RSpec.describe Translate, type: :model do
     expect(described_class.by_language(language)).to exist
     expect(described_class.by_locale('en')).to exist
     expect(described_class.by_key('home.title')).to exist
-    expect(described_class.find_by_key_and_locale('home.title', 'en').value).to eq('Home')
+    expect(described_class.method(:find_by_key_and_locale).call('home.title', 'en').value).to eq('Home')
     expect(described_class.value_for('home.title', 'en')).to eq('Home')
     expect(described_class.value_for('missing', 'en', 'Fallback')).to eq('Fallback')
   end
@@ -28,8 +28,8 @@ RSpec.describe Translate, type: :model do
 
     described_class.load_from_file(file.path, 'en')
 
-    expect(described_class.find_by_key_and_locale('home.title', 'en').value).to eq('Home')
-    expect(described_class.find_by_key_and_locale('home.nested.label', 'en').value).to eq('Label')
+    expect(described_class.method(:find_by_key_and_locale).call('home.title', 'en').value).to eq('Home')
+    expect(described_class.method(:find_by_key_and_locale).call('home.nested.label', 'en').value).to eq('Label')
   ensure
     file&.unlink
   end
