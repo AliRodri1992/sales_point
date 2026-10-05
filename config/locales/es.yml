@@ -909,6 +909,7 @@ es:
       contact_title: Datos de Contacto
       continue: Continuar
       validation_title: Completa los campos requeridos.
+      invalid_email: El correo electrónico no es válido.
       copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       email: Correo electrónico corporativo
       error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente.
