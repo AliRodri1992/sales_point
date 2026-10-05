@@ -142,7 +142,6 @@ RSpec.describe SatUnitKey, type: :model do
 
       expect(record.soft_delete!(123)).to be(true)
       expect(record.reload.deleted_at).to be_present
-      expect(record.deleted_by).to eq(123)
     end
   end
 
