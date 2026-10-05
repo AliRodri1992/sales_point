@@ -8,7 +8,7 @@ class Translate < ApplicationRecord
 
   validates :language, presence: true, if: -> { ActiveRecord::Base.connection.column_exists?(:translates, :language_id) }
 
-  before_create :validate_uniqueness
+  validate :validate_uniqueness, on: :create
 
   scope :by_language, ->(language) { where(language: language) if column_exists?(:language_id) }
   scope :by_locale, lambda { |locale|
