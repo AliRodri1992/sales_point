@@ -1,4 +1,3 @@
-
 <div class="relative z-10 flex h-full max-w-sm select-none flex-col justify-between text-white">
   <div class="flex items-center gap-3">
     <%= image_tag 'delta-pos-logo.svg', class: 'h-20 w-20 shrink-0', alt: t('demo_requests.new.logo_alt') %>
@@ -15,10 +14,15 @@
     </div>
 
     <div class="space-y-2.5">
-      <% %w[inventory billing reports].each do |module_key| %>
+      <% module_styles = {
+        'inventory' => %w[cube emerald],
+        'billing' => %w[document-text teal],
+        'reports' => %w[chart-bar sky]
+      } %>
+      <% module_styles.each do |module_key, (icon_name, tone)| %>
         <div class="flex items-start space-x-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3 backdrop-blur-md">
-          <div class="shrink-0 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-1.5 text-emerald-400">
-            <%= render Ui::IconComponent.new(name: { 'inventory' => 'cube', 'billing' => 'document-text', 'reports' => 'chart-bar' }.fetch(module_key), size: :sm, color: :success) %>
+          <div class="shrink-0 rounded-lg border p-1.5 <%= tone == 'emerald' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : tone == 'teal' ? 'border-teal-500/20 bg-teal-500/10 text-teal-400' : 'border-sky-500/20 bg-sky-500/10 text-sky-400' %>">
+            <%= render Ui::IconComponent.new(name: icon_name, size: :sm, color: :current) %>
           </div>
           <div class="leading-none">
             <h2 class="font-jakarta text-xs font-bold text-white"><%= t("demo_requests.new.modules.#{module_key}.title") %></h2>
