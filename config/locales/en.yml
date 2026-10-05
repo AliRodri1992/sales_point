@@ -903,6 +903,7 @@ en:
       contact_title: Contact Details
       continue: Continue
       validation_title: Complete the required fields.
+      invalid_email: Email is invalid.
       copyright: "© %{year} Delta POS Inc. All rights reserved."
       email: Corporate email
       error_summary: We could not send your request. Check the fields and try again.
