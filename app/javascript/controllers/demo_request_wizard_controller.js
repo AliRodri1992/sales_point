@@ -85,15 +85,6 @@ export default class extends Controller {
   showValidationAlert() {
     if (!window.Swal) return
 
-    const messages = [
-      this.nameErrorTarget,
-      this.emailErrorTarget,
-      this.phoneErrorTarget
-    ]
-      .filter((target) => !target.classList.contains("hidden"))
-      .map((target) => target.textContent.trim())
-      .filter(Boolean)
-
     window.Swal.fire({
       toast: true,
       icon: "warning",
@@ -101,8 +92,7 @@ export default class extends Controller {
       timer: 3200,
       timerProgressBar: true,
       showConfirmButton: false,
-      title: this.formTarget.dataset.validationTitle,
-      text: messages.join(" ")
+      title: this.formTarget.dataset.validationTitle
     })
   }
 
