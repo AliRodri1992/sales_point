@@ -1,0 +1,48 @@
+---
+es:
+  admin:
+    shared:
+      sidebar:
+        business_os: Sistema Operativo Comercial
+        section_main: Principal
+        dashboard: Panel
+        section_operations: Operación
+        sales: Ventas
+        new_sale: Nueva venta
+        sales_history: Historial de ventas
+        returns: Devoluciones
+        cash_register: Caja
+        inventory: Inventario
+        low_stock: Existencias bajas
+        products: Productos
+        stock: Existencias
+        by_branch: Por sucursal
+        movements: Movimientos
+        adjustments: Ajustes
+        kardex: Kardex
+        customers: Clientes
+        suppliers: Proveedores
+        employees: Empleados
+        section_catalogs: Catálogos
+        catalogs: Catálogos
+        languages: Idiomas
+        categories: Categorías
+        section_admin: Administración
+        reports: Reportes
+        settings: Configuración
+        general: General
+        roles_permissions: Roles y permisos
+        branches: Sucursales
+        users: Usuarios
+        taxes: Impuestos
+        role_admin: Administrador
+        onboarding:
+          title: Configuración inicial
+          progress: Configuración inicial al %{percentage}%
+      user_menu:
+        toggle: Abrir menú de usuario
+        my_profile: Mi perfil
+        preferences: Preferencias
+        security: Seguridad
+        help_center: Centro de ayuda
+        sign_out: Cerrar sesión

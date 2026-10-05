@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :branch do
+    association :organization
     name { 'Sucursal Centro' }
     phone { '5551234567' }
     status { true }

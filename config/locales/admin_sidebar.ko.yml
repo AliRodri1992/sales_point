@@ -1,0 +1,48 @@
+---
+ko:
+  admin:
+    shared:
+      sidebar:
+        business_os: 비즈니스 운영 시스템
+        section_main: 주요 메뉴
+        dashboard: 대시보드
+        section_operations: 운영
+        sales: 판매
+        new_sale: 새 판매
+        sales_history: 판매 내역
+        returns: 반품
+        cash_register: 계산대
+        inventory: 재고
+        low_stock: 재고 부족
+        products: 상품
+        stock: 재고 현황
+        by_branch: 지점별
+        movements: 이동 내역
+        adjustments: 조정
+        kardex: 재고 원장
+        customers: 고객
+        suppliers: 공급업체
+        employees: 직원
+        section_catalogs: 카탈로그
+        catalogs: 카탈로그
+        languages: 언어
+        categories: 카테고리
+        section_admin: 관리
+        reports: 보고서
+        settings: 설정
+        general: 일반
+        roles_permissions: 역할 및 권한
+        branches: 지점
+        users: 사용자
+        taxes: 세금
+        role_admin: 관리자
+        onboarding:
+          title: 초기 설정
+          progress: 초기 설정 %{percentage}% 완료
+      user_menu:
+        toggle: 사용자 메뉴 열기
+        my_profile: 내 프로필
+        preferences: 환경설정
+        security: 보안
+        help_center: 도움말 센터
+        sign_out: 로그아웃

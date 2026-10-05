@@ -1,0 +1,79 @@
+---
+es:
+  admin:
+    dashboard:
+      page_header:
+        title: "Panel de control"
+        subtitle: "Consulta el rendimiento de tu negocio de un vistazo."
+        customize: "Personalizar panel"
+        new_sale: "Nueva venta"
+      saved:
+        title: "Panel guardado"
+        text: "Los cambios del panel se guardaron correctamente."
+      save_error:
+        title: "No se pudo guardar"
+        text: "No se pudieron guardar los cambios del panel."
+      kpi_grid:
+        sales_today: "Ventas de hoy"
+        transactions: "Transacciones"
+        average_ticket: "Ticket promedio"
+        current_cash: "Efectivo actual"
+        session_open: "Sesión abierta"
+      widgets:
+        quick_actions:
+          title: "Acciones rápidas"
+          subtitle: "Tareas frecuentes para tu operación diaria."
+          new_sale: "Nueva venta"
+          open_pos: "Abrir POS"
+          product: "Producto"
+          add_product: "Agregar producto"
+          customer: "Cliente"
+          new_customer: "Nuevo cliente"
+          cash_cut: "Caja"
+          check_cash: "Consultar caja"
+        sales:
+          title: "Resumen de ventas"
+          subtitle: "Rendimiento de las ventas a lo largo del tiempo."
+          period_label: "Periodo de ventas"
+          periods:
+            7_days: "Últimos 7 días"
+            30_days: "Últimos 30 días"
+            year: "Este año"
+          days:
+            mon: "Lun"
+            tue: "Mar"
+            wed: "Mié"
+            thu: "Jue"
+            fri: "Vie"
+            sat: "Sáb"
+            today: "Hoy"
+        recent_sales:
+          title: "Ventas recientes"
+          subtitle: "Últimas transacciones registradas en el sistema."
+          view_all: "Ver todas"
+          columns:
+            folio: "Folio"
+            customer: "Cliente"
+            method: "Método de pago"
+            total: "Total"
+            status: "Estado"
+          payment_methods:
+            card: "Tarjeta"
+            cash: "Efectivo"
+            transfer: "Transferencia bancaria"
+            qr: "Pago con QR"
+          statuses:
+            completed: "Completada"
+            pending: "Pendiente"
+            cancelled: "Cancelada"
+        low_stock:
+          title: "Inventario bajo"
+          subtitle: "Productos que requieren tu atención."
+          alerts:
+            one: "%{count} alerta"
+            other: "%{count} alertas"
+          sku: "SKU: %{sku}"
+          units:
+            one: "%{count} unidad"
+            other: "%{count} unidades"
+          view_inventory: "Ver inventario"

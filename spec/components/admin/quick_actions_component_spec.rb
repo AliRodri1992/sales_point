@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::QuickActionsComponent, type: :component do
+  around { |example| I18n.with_locale(:en, &example) }
+
   it 'renders the header' do
     render_inline(described_class.new)
 
     expect(page).to have_text('Quick actions')
-    expect(page).to have_text('Quickly access the main features')
+    expect(page).to have_text('Common tasks for your daily operation.')
   end
 
   it 'renders the four action cards' do
@@ -23,7 +25,7 @@ RSpec.describe Admin::QuickActionsComponent, type: :component do
     expect(page).to have_text('Open POS')
     expect(page).to have_text('Add product')
     expect(page).to have_text('New customer')
-    expect(page).to have_text('Cash close')
-    expect(page).to have_text('Check cash register')
+    expect(page).to have_text('Cash register')
+    expect(page).to have_text('Check cash')
   end
 end

@@ -1,4 +1,4 @@
-require 'rails_helper'
+# frozen_string_literal: true
 
 RSpec.describe Address, type: :model do
   subject { build(:address) }
@@ -25,6 +25,10 @@ RSpec.describe Address, type: :model do
     it { is_expected.to allow_value('54800').for(:postal_code) }
     it { is_expected.not_to allow_value('5480').for(:postal_code) }
     it { is_expected.not_to allow_value('ABCDE').for(:postal_code) }
+    it { is_expected.to validate_presence_of(:geocoding_status) }
+    it 'exposes the supported geocoding statuses' do
+      expect(Address.geocoding_statuses.keys).to contain_exactly('pending', 'success', 'failed')
+    end
   end
 
   it 'is valid with valid attributes' do
@@ -82,9 +86,7 @@ RSpec.describe Address, type: :model do
     it 'soft deletes record' do
       address = create(:address)
 
-      expect do
-        address.destroy
-      end.to change(Address, :count).by(-1)
+      expect { address.destroy }.to change(Address, :count).by(-1)
     end
 
     it 'sets deleted_at' do

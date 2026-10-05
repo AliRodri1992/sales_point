@@ -1,0 +1,6 @@
+---
+en:
+  admin:
+    system_roles:
+      update_permissions:
+        success: Role permissions were updated successfully.

@@ -1,0 +1,40 @@
+---
+es:
+  registration:
+    initial_branch_name: "Sucursal Principal"
+    initial_terminal_name: "Caja %{number}"
+  admin:
+    onboarding:
+      link: "Configuración inicial"
+      show:
+        title: "Configuración inicial"
+        eyebrow: "Configuración"
+        description: "Completa las secciones importantes para tu operación. Puedes salir de esta página y continuar trabajando en cualquier momento."
+        overall: "Progreso general"
+        statuses:
+          not_started: "No iniciada"
+          in_progress: "En progreso"
+          completed: "Completada"
+          not_applicable: "No aplica"
+        sections:
+          company:
+            title: "Empresa"
+            description: "Información básica de la organización y configuración operativa."
+          fiscal:
+            title: "Información fiscal"
+            description: "Identificación fiscal y configuración fiscal posterior."
+          branches:
+            title: "Sucursales"
+            description: "Al menos una sucursal activa y su domicilio."
+          terminals:
+            title: "Terminales"
+            description: "Terminales de punto de venta activas disponibles para operar."
+          payments:
+            title: "Pagos"
+            description: "Efectivo e integraciones de pago configuradas."
+          team:
+            title: "Equipo"
+            description: "Empleados y cuentas de acceso de la organización."
+        non_blocking:
+          title: "El onboarding no es una barrera global de acceso."
+          description: "Delta POS permanece disponible mientras la configuración esté incompleta. Cada módulo puede exigir sus propios prerrequisitos operativos."

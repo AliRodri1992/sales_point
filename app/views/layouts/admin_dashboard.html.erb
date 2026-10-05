@@ -28,19 +28,11 @@
 
   <div class="flex min-w-0 flex-1 flex-col">
     <%= render "admin/shared/topbar" %>
-
     <%= render "admin/shared/breadcrumbs" %>
 
     <main class="flex-1 px-4 py-6 lg:px-6">
       <%= turbo_frame_tag "flash" do %>
         <%= render "admin/shared/flash" %>
-      <% end %>
-
-      <% if flash[:swal_message].present? %>
-        <div data-controller="swal-flash"
-             data-swal-flash-message-value="<%= flash[:swal_message] %>"
-             data-swal-flash-icon-value="success"
-             class="hidden"></div>
       <% end %>
 
       <%= yield %>

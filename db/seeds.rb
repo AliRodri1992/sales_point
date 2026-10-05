@@ -205,17 +205,9 @@ def seed_permissions
 end
 
 def assign_default_role_permissions
-  role_codes = %w[super_admin administrator]
-  permissions = Permission.available
-
-  SystemRole.where(code: role_codes).find_each do |role|
-    assign_permissions_to_role(role, permissions)
-  end
-end
-
-def assign_permissions_to_role(role, permissions)
-  permissions.find_each do |permission|
-    SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
+  %w[super_admin administrator].each do |role_code|
+    role = SystemRole.available.find_by!(code: role_code)
+    AdministratorPermissionProvisioner.call(role:)
   end
 end
 

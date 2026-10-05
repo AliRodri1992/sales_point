@@ -6,12 +6,17 @@ class User < ApplicationRecord
 
   belongs_to :language,
              optional: true
+  belongs_to :employee, optional: true
+
+  has_many :organization_memberships, dependent: :destroy
+  has_many :organizations, through: :organization_memberships
   has_many :user_roles, dependent: :destroy
   has_many :system_roles, through: :user_roles
   has_many :dashboard_preferences, dependent: :destroy
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
+  has_many :onboarding_audits, dependent: :restrict_with_exception
 
   ONLINE_USERS_KEY = 'online_users'.freeze
 

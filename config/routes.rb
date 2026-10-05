@@ -15,13 +15,19 @@ Rails.application.routes.draw do
   namespace :admin do
     post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
+    get '/', to: 'dashboard#index', as: :root
+    get '/onboarding', to: 'onboarding#show', as: :onboarding
+    patch '/onboarding', to: 'onboarding#update'
+    patch '/onboarding/reset', to: 'onboarding#reset', as: :onboarding_reset
     patch 'sidebar', to: 'sidebar#update'
     get 'languages/content', to: 'languages#content'
     resources :languages
     resources :categories
     resources :products
     resources :clients
-    resources :branches, only: %i[index show new create edit update destroy]
+    resources :branches, only: %i[index show new create edit update destroy] do
+      member { patch :select }
+    end
     resources :users
     resources :clients
     resource :profile, only: %i[show update]

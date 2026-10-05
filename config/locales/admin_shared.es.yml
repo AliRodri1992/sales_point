@@ -1,0 +1,10 @@
+---
+es:
+  admin:
+    shared:
+      footer:
+        copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+        privacy: Privacidad
+        terms: Términos
+      online_users:
+        empty: Vacío

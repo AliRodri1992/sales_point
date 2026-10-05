@@ -1,0 +1,301 @@
+<% content_for :title, t("admin.onboarding.title") %>
+
+<div class="mx-auto max-w-6xl space-y-6">
+  <div class="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-600 p-6 text-white shadow-lg sm:p-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100"><%= t("admin.onboarding.eyebrow") %></p>
+    <div class="mt-2 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="font-jakarta text-2xl font-extrabold sm:text-3xl"><%= t("admin.onboarding.title") %></h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-emerald-50"><%= t("admin.onboarding.description") %></p>
+      </div>
+      <div class="rounded-2xl bg-white/10 px-5 py-4">
+        <p class="text-xs font-medium text-emerald-100"><%= t("admin.onboarding.overall") %></p>
+        <p class="mt-1 text-3xl font-extrabold"><%= @progress[:percentage] %>%</p>
+      </div>
+      <%= button_to admin_onboarding_reset_path,
+                    method: :patch,
+                    data: { turbo_confirm: t("admin.onboarding.reset_confirm") },
+                    class: "inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-white/20" do %>
+        <%= icon("arrow-path", class: "size-4") %>
+        <%= t("admin.onboarding.reset_button") %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="grid gap-3 md:grid-cols-5">
+    <% (1..5).each do |step| %>
+      <%= link_to admin_onboarding_path(step: step),
+                  class: "rounded-2xl border p-4 #{step == @step ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 bg-white'}" do %>
+        <span class="text-xs font-bold text-emerald-600"><%= t("admin.onboarding.step_number", number: step) %></span>
+        <p class="mt-1 text-sm font-bold text-slate-900"><%= t("admin.onboarding.steps.#{step}.title") %></p>
+        <p class="mt-1 text-xs text-slate-500"><%= t("admin.onboarding.steps.#{step}.description") %></p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <% if flash[:alert].present? %>
+      <div class="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"><%= flash[:alert] %></div>
+    <% end %>
+
+    <%= form_with url: admin_onboarding_path(step: @step), method: :patch, local: true, class: "space-y-6" do |form| %>
+      <% case @step %>
+      <% when 1 %>
+        <div>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.1.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.1.help") %></p>
+        </div>
+        <div class="grid gap-5 md:grid-cols-2">
+          <div>
+            <%= form.label "organization[name]", t("admin.onboarding.fields.company_name"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.text_field "organization[name]", value: @organization.name, class: "w-full rounded-xl border #{@organization.errors[:name].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @organization, attribute: :name %>
+          </div>
+          <div>
+            <%= form.label "organization[tax_id]", t("admin.onboarding.fields.tax_id"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.text_field "organization[tax_id]", value: @organization.tax_id, class: "w-full rounded-xl border #{@organization.errors[:tax_id].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm uppercase" %>
+            <%= render "admin/onboarding/field_errors", object: @organization, attribute: :tax_id %>
+          </div>
+          <div>
+            <%= form.label "organization[business_sector]", t("admin.onboarding.fields.business_sector"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.select "organization[business_sector]",
+              options_for_select(%w[grocery fashion restaurant pharmacy].map { |key| [t("registration.step_four.sectors.#{key}"), key] }, @organization.business_sector),
+              { include_blank: t("admin.onboarding.fields.select_business_sector") },
+              class: "w-full rounded-xl border #{@settings&.errors&.[]( :currency).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @organization, attribute: :business_sector %>
+          </div>
+          <div>
+            <%= form.label "organization[currency]", t("admin.onboarding.fields.currency"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.select "organization[currency]",
+              options_for_select(%w[MXN USD JPY KRW].map { |key| [t("registration.step_four.currencies.#{key.downcase}"), key] }, @settings&.currency),
+              { include_blank: t("admin.onboarding.fields.select_currency") },
+              class: "w-full rounded-xl border #{@settings&.errors&.[](:timezone).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @settings, attribute: :currency %>
+          </div>
+          <div>
+            <%= form.label "organization[timezone]", t("admin.onboarding.fields.timezone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.select "organization[timezone]",
+              options_for_select(
+                [["UTC", "UTC"], ["America/Mexico_City", "America/Mexico_City"], ["America/Monterrey", "America/Monterrey"], ["America/Tijuana", "America/Tijuana"]],
+                @settings&.timezone
+              ),
+              { include_blank: t("admin.onboarding.fields.select_timezone") },
+              class: "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @settings, attribute: :timezone %>
+          </div>
+        </div>
+      <% when 2 %>
+        <div>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.2.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.2.help") %></p>
+        </div>
+        <% if @branch %>
+          <%= fields_for :branch, @branch do |branch_fields| %>
+            <div class="grid gap-5 md:grid-cols-2">
+              <div>
+              <%= branch_fields.label :name, t("admin.onboarding.fields.branch_name"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+              <%= branch_fields.text_field :name, class: "w-full rounded-xl border #{@branch.errors[:name].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
+              <%= render "admin/onboarding/field_errors", object: @branch, attribute: :name %>
+            </div>
+              <div>
+              <%= branch_fields.label :phone, t("admin.onboarding.fields.phone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+              <%= branch_fields.telephone_field :phone, class: "w-full rounded-xl border #{@branch.errors[:phone].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
+              <%= render "admin/onboarding/field_errors", object: @branch, attribute: :phone %>
+            </div>
+            </div>
+            <%= branch_fields.fields_for :address do |address_fields| %>
+              <div class="grid gap-5 pt-2 md:grid-cols-2">
+                <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+                  <div>
+                    <%= address_fields.label field, t("admin.onboarding.fields.#{field}"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+                    <%= address_fields.text_field field, class: "w-full rounded-xl border #{address_fields.object.errors[field].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
+                    <%= render "admin/onboarding/field_errors", object: address_fields.object, attribute: field %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% when 3 %>
+        <div>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.3.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.3.help") %></p>
+        </div>
+        <% if @terminals.any? %>
+          <div class="grid gap-4 md:grid-cols-2">
+            <% @terminals.each_with_index do |terminal, index| %>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t("admin.onboarding.terminal", number: index + 1) %></p>
+                  <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700"><%= t("admin.onboarding.terminal_statuses.#{terminal.status}", default: terminal.status) %></span>
+                </div>
+                <label class="mt-3 block text-xs font-semibold text-slate-500" for="terminal_names_<%= index %>"><%= t("admin.onboarding.fields.terminal_name") %></label>
+                <%= form.text_field "terminal_names[#{index}]",
+                  id: "terminal_names_#{index}",
+                  value: terminal.name,
+                  class: "mt-1 w-full rounded-xl border #{terminal.errors[:name].any? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+                <%= render "admin/onboarding/field_errors", object: terminal, attribute: :name %>
+                <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p class="text-xs font-semibold text-slate-400"><%= t("admin.onboarding.fields.terminal_code") %></p>
+                    <p class="mt-1 text-sm font-semibold text-slate-700"><%= terminal.code %></p>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold text-slate-400"><%= t("admin.onboarding.fields.branch") %></p>
+                    <p class="mt-1 text-sm font-semibold text-slate-700"><%= @branch&.name %></p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+            <p class="font-bold"><%= t("admin.onboarding.no_terminals") %></p>
+          </div>
+        <% end %>
+      <% when 4 %>
+        <div>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.4.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.4.help") %></p>
+        </div>
+        <div>
+          <%= form.label "payment[method]", t("admin.onboarding.fields.payment_method"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+          <%= form.select "payment[method]",
+            options_for_select(%w[cash card qr].map { |key| [t("registration.step_five.payment_options.#{key}"), key] }, @settings&.payment_method),
+            {}, class: "w-full rounded-xl border #{@settings&.errors&.[](:payment_method).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+          <%= render "admin/onboarding/field_errors", object: @settings, attribute: :payment_method %>
+        </div>
+      <% else %>
+        <div>
+          <h2 class="font-jakarta text-xl font-extrabold text-slate-900"><%= t("admin.onboarding.steps.5.heading") %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t("admin.onboarding.steps.5.help") %></p>
+        </div>
+
+        <div class="space-y-3">
+          <% @progress[:sections].each_with_index do |section, index| %>
+            <details class="group rounded-2xl border border-slate-200 bg-white" <%= "open" if section[:percentage] < 100 || index == 0 %>>
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 [&::-webkit-details-marker]:hidden">
+                <div class="flex min-w-0 items-center gap-3">
+                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full <%= if section[:status] == 'completed'
+                      'bg-emerald-100 text-emerald-700'
+                    elsif section[:status] == 'not_applicable'
+                      'bg-slate-100 text-slate-500'
+                    else
+                      'bg-amber-100 text-amber-700'
+                    end %>">
+                    <%= if section[:status] == 'completed'
+                          "✓"
+                        elsif section[:status] == 'not_applicable'
+                          "—"
+                        else
+                          "!"
+                        end %>
+                  </span>
+                  <span class="truncate text-sm font-bold text-slate-800"><%= t("admin.onboarding.sections.#{section[:key]}") %></span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm font-bold <%= if section[:status] == 'completed'
+                              'text-emerald-600'
+                            elsif section[:status] == 'not_applicable'
+                              'text-slate-500'
+                            else
+                              'text-amber-600'
+                            end %>"><%= section[:status] == 'not_applicable' ? t("admin.onboarding.migration.not_applicable") : "#{section[:percentage]}%" %></span>
+                  <span class="text-slate-400 transition-transform group-open:rotate-180">⌄</span>
+                </div>
+              </summary>
+
+              <div class="border-t border-slate-100 bg-slate-50/60 p-4">
+                <% case section[:key] %>
+                <% when :company %>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.company_name"), value: @organization.name %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.business_sector"), value: t("registration.step_four.sectors.#{@organization.business_sector}", default: @organization.business_sector) %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.currency"), value: @settings&.currency %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.timezone"), value: @settings&.timezone %>
+                  </div>
+                <% when :fiscal %>
+                  <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.tax_id"), value: @organization.tax_id %>
+                <% when :branches %>
+                  <% if @branch %>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.branch_name"), value: @branch.name %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.phone"), value: @branch.phone %>
+                      <% if @branch.address %>
+                        <% address = @branch.address %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.street"), value: [address.street, address.exterior_number, address.interior_number].compact_blank.join(" ") %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.neighborhood"), value: address.neighborhood %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.city"), value: address.city %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.state"), value: address.state %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.country"), value: address.country %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.postal_code"), value: address.postal_code %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                <% when :terminals %>
+                  <div class="space-y-3">
+                    <% @terminals.each_with_index do |terminal, index| %>
+                      <div class="rounded-xl border border-slate-200 bg-white p-4">
+                        <div class="grid gap-4 sm:grid-cols-3">
+                          <%= render "admin/onboarding/detail", label: t("admin.onboarding.terminal", number: index + 1), value: terminal.name %>
+                          <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.terminal_code"), value: terminal.code %>
+                          <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.branch"), value: @branch&.name %>
+                          <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.terminal_status"), value: t("admin.onboarding.terminal_statuses.#{terminal.status}", default: terminal.status) %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% when :payments %>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.payment_method"), value: t("registration.step_five.payment_options.#{@settings&.payment_method}", default: @settings&.payment_method) %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.payment_integration"), value: @organization.payment_integrations.where(deleted_at: nil).pluck(:provider).join(", ").presence || t("admin.onboarding.not_available") %>
+                  </div>
+                <% when :migration %>
+                  <% if @migration %>
+                    <div class="grid gap-4 sm:grid-cols-3">
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_volume"), value: t("registration.step_four.volumes.#{@migration.volume}", default: @migration.volume) %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_priority"), value: t("registration.step_four.priorities.#{@migration.priority}", default: @migration.priority) %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.migration_status"), value: t("admin.onboarding.migration.statuses.#{@migration.status}", default: @migration.status) %>
+                    </div>
+                  <% else %>
+                    <p class="text-sm text-slate-500"><%= t("admin.onboarding.migration.not_applicable") %></p>
+                  <% end %>
+                <% when :team %>
+                  <% employees = @organization.employees.active.order(:id) %>
+                  <% if employees.any? %>
+                    <div class="space-y-3">
+                      <% employees.each do |employee| %>
+                        <%= render "admin/onboarding/detail",
+                          label: [employee.first_name, employee.last_name].compact.join(" "),
+                          value: employee.email %>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <%= render "admin/onboarding/detail",
+                      label: t("admin.onboarding.fields.team_members"),
+                      value: 0 %>
+                  <% end %>
+                <% end %>
+              </div>
+            </details>
+          <% end %>
+        </div>
+        <% if @migration %>
+          <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+            <p class="font-bold"><%= t("admin.onboarding.migration.title") %></p>
+            <p class="mt-1"><%= t("admin.onboarding.migration.description") %></p>
+          </div>
+        <% end %>
+      <% end %>
+
+      <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <%= link_to @step == 1 ? admin_dashboard_path : admin_onboarding_path(step: @step - 1),
+                    class: "rounded-xl border border-slate-200 px-5 py-3 text-center text-sm font-semibold text-slate-700" do %>
+          <%= t("admin.onboarding.back") %>
+        <% end %>
+        <%= form.submit @step == 5 ? t("admin.onboarding.finish") : t("admin.onboarding.continue"),
+                         class: "rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-3 text-sm font-bold text-white" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+---
+es:
+  admin:
+    system_roles:
+      update_permissions:
+        success: Los permisos del rol se actualizaron correctamente.

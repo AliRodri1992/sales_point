@@ -1,0 +1,5 @@
+---
+ko:
+  registration:
+    initial_branch_name: "기본 지점"
+    initial_terminal_name: "POS 단말기 %{number}"

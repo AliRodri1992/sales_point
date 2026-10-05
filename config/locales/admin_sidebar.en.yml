@@ -1,0 +1,48 @@
+---
+en:
+  admin:
+    shared:
+      sidebar:
+        business_os: Business Operating System
+        section_main: Main
+        dashboard: Dashboard
+        section_operations: Operations
+        sales: Sales
+        new_sale: New sale
+        sales_history: Sales history
+        returns: Returns
+        cash_register: Cash register
+        inventory: Inventory
+        low_stock: Low stock
+        products: Products
+        stock: Stock
+        by_branch: By branch
+        movements: Movements
+        adjustments: Adjustments
+        kardex: Kardex
+        customers: Customers
+        suppliers: Suppliers
+        employees: Employees
+        section_catalogs: Catalogs
+        catalogs: Catalogs
+        languages: Languages
+        categories: Categories
+        section_admin: Administration
+        reports: Reports
+        settings: Settings
+        general: General
+        roles_permissions: Roles & permissions
+        branches: Branches
+        users: Users
+        taxes: Taxes
+        role_admin: Administrator
+        onboarding:
+          title: Initial setup
+          progress: Initial setup at %{percentage}%
+      user_menu:
+        toggle: Open user menu
+        my_profile: My profile
+        preferences: Preferences
+        security: Security
+        help_center: Help center
+        sign_out: Sign out

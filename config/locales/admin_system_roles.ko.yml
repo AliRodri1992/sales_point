@@ -1,0 +1,6 @@
+---
+ko:
+  admin:
+    system_roles:
+      update_permissions:
+        success: 역할 권한이 성공적으로 업데이트되었습니다.

@@ -72,7 +72,7 @@ This will:
 
 ```ruby
 # Find a specific translation
-translate = Translate.find_by_key_and_locale('devise.sessions.new.title', 'es')
+translate = Translate.find_translation('devise.sessions.new.title', 'es')
 # => "Punto de Venta"
 
 # Get value with fallback
@@ -180,7 +180,7 @@ Translate.create!(
 ### Option 3: Update Existing
 
 ```ruby
-translate = Translate.find_by_key_and_locale('custom.message', 'en')
+translate = Translate.find_translation('custom.message', 'en')
 translate.update(value: 'Hello Universe')
 ```
 
@@ -279,7 +279,7 @@ Backend automatically falls back to YAML in case of issues.
 
 4. **Update directly in database** (if needed)
    ```ruby
-   Translate.find_by_key_and_locale('custom.message', 'en').update(value: 'Hi')
+   Translate.find_translation('custom.message', 'en').update(value: 'Hi')
    ```
 
 ## Production Considerations

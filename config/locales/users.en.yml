@@ -3,6 +3,7 @@ en:
   admin:
     breadcrumbs:
       users: Users
+      profile: Profile
     shared:
       sidebar:
         users: Users
@@ -98,3 +99,33 @@ en:
         roles: Roles
         never: Never
         no_roles: No roles assigned
+    profiles:
+      show:
+        page_title: My profile
+        title: My profile
+        subtitle: Manage your account information and preferences.
+        status:
+          active: Active
+          suspended: Suspended
+          blocked: Blocked
+          deleted: Deleted
+        user_type:
+          employee: Employee
+          customer: Customer
+          supplier: Supplier
+        personal_information:
+          title: Personal information
+          subtitle: Update your personal information.
+        fields:
+          username: Username
+          email: Email address
+          language: Language
+          language_placeholder: Select a language
+          theme: Theme
+        save: Save changes
+        success: Profile updated successfully
+        never: Never
+        roles:
+          title: Roles
+          subtitle: Roles assigned to your account.
+          empty: No roles assigned

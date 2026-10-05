@@ -18,6 +18,13 @@ module Admin
     ].freeze
     SORT_DIRECTIONS = %w[asc desc].freeze
 
+    def select
+      branch = available_branches.find(params[:id])
+      session[:current_branch_id] = branch.id
+
+      redirect_back_or_to(admin_dashboard_path)
+    end
+
     def index
       authorize Branch
       load_branches
