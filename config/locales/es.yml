@@ -884,32 +884,67 @@ es:
     create:
       success: Recibimos tu solicitud. Nos pondremos en contacto contigo pronto.
     new:
+      back_step: Atrás
       back: Volver al inicio
       badge: Demostración personalizada
-      benefits:
-        no_commitment:
-          description: Solicita tu demostración y conoce la plataforma antes de decidir.
-          title: Sin compromiso
-        personalized:
-          description: Conoce las funciones que realmente necesita tu negocio.
-          title: Demostración personalizada
-        resolve_questions:
-          description: Un especialista podrá explicarte el funcionamiento de la plataforma.
-          title: Resuelve tus dudas
       brand: Delta POS
+      brand_color: Color de Marca
+      brand_tagline: Point of Sale
+      branches: Número de Sucursales Actuales
+      business_description: Dinos más sobre tu comercio para personalizar la presentación técnica.
+      business_title: Información Comercial
+      business_type: Giro o Sector del Negocio
+      business_type_placeholder: Selecciona tu sector...
+      business_types:
+        grocery: Abarrotes y Supermercados
+        fashion: Ropa, Calzado y Accesorios
+        restaurant: Restaurantes y Alimentos
+        pharmacy: Farmacias y Salud
       company: Empresa
-      email: Correo electrónico
-      error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo
-        nuevamente.
-      hero_description: Descubre cómo puedes administrar ventas, inventario, clientes,
-        sucursales y mucho más desde un solo lugar.
+      company_placeholder: Nombre de tu empresa
+      contact_description: Introduce tus datos personales para que un asesor especializado te contacte.
+      contact_title: Datos de Contacto
+      continue: Continuar
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+      email: Correo electrónico corporativo
+      error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente.
+      hero_description: Descubre cómo puedes administrar ventas, inventario, clientes, sucursales y mucho más desde un solo lugar.
       hero_title: Conoce todo lo que
       hero_title_suffix: puede hacer por tu negocio
+      logo_alt: Isotipo de Delta POS
       message: "¿Cómo podemos ayudarte?"
-      name: Nombre
+      message_placeholder: Cuéntanos qué te gustaría conocer en la demostración...
+      modules:
+        inventory:
+          title: Inventario Inteligente Multitienda
+          description: Auditorías automáticas, alertas de stock mínimo y transferencias entre sucursales en tiempo real.
+        billing:
+          title: Facturación Global Electrónica
+          description: Timbrado fiscal instantáneo en el punto de venta y envío programado de comprobantes al cliente.
+        reports:
+          title: Reportes Avanzados de Venta
+          description: Analítica en la nube con indicadores financieros diarios, márgenes de utilidad y balances operativos.
+      name: Nombre completo
       page_title: Solicitar demostración | Delta POS
-      phone: Teléfono
-      submit: Solicitar demostración
+      panel_description: Controla, automatiza y escala las transacciones de tus sucursales con herramientas diseñadas para la máxima velocidad operativa.
+      panel_title: La plataforma omnicanal para el comercio moderno
+      phone: Teléfono celular / WhatsApp
+      privacy: Acepto recibir contacto comercial y autorizo el procesamiento de mis datos según la
+      privacy_link: Política de Privacidad
+      progress_label: Progreso de la solicitud
+      required:
+        name: El nombre completo es obligatorio.
+        email: El correo electrónico corporativo es obligatorio.
+        phone: El teléfono celular es obligatorio.
+        business_type: Selecciona el giro o sector del negocio.
+        branches: El número de sucursales debe ser mayor a 0.
+        terms: Debes aceptar la Política de Privacidad.
+      return_home: Regresar al Inicio
+      return_prompt: ¿Prefieres explorar la plataforma tú mismo?
+      submit: Agendar Demo
+      theme: Tema
+      theme_option: Color de tema %{number}
+
   devise:
     confirmations:
       new:

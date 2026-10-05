@@ -58,3 +58,6 @@ application.register("users-pagination", UsersPaginationController)
 
 import RegistrationWizardController from "./registration_wizard_controller"
 application.register("registration-wizard", RegistrationWizardController)
+
+import DemoRequestWizardController from "./demo_request_wizard_controller"
+application.register("demo-request-wizard", DemoRequestWizardController)

@@ -873,30 +873,67 @@ ko:
     create:
       success: 요청이 접수되었습니다. 곧 연락드리겠습니다.
     new:
+      back_step: 뒤로
       back: 홈으로 돌아가기
       badge: 맞춤 데모
-      benefits:
-        no_commitment:
-          description: 결정하기 전에 데모를 신청하고 플랫폼을 확인해 보세요.
-          title: 부담 없는 상담
-        personalized:
-          description: 비즈니스에 꼭 필요한 기능을 확인해 보세요.
-          title: 맞춤 데모
-        resolve_questions:
-          description: 전문가가 플랫폼 사용 방법을 자세히 설명해 드립니다.
-          title: 궁금한 점 해결
-      brand: 모든 기능을
+      brand: Delta POS
+      brand_color: 브랜드 색상
+      brand_tagline: 판매 시점 관리
+      branches: 현재 지점 수
+      business_description: 맞춤형 기술 데모를 위해 비즈니스에 대해 알려주세요.
+      business_title: 비즈니스 정보
+      business_type: 비즈니스 업종
+      business_type_placeholder: 업종을 선택하세요...
+      business_types:
+        grocery: 식료품점 및 슈퍼마켓
+        fashion: 의류, 신발 및 액세서리
+        restaurant: 레스토랑 및 식음료
+        pharmacy: 약국 및 헬스케어
       company: 회사
-      email: 이메일
+      company_placeholder: 회사명을 입력하세요
+      contact_description: 전문 상담사가 연락드릴 수 있도록 연락처 정보를 입력하세요.
+      contact_title: 연락처 정보
+      continue: 계속
+      copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
+      email: 회사 이메일
       error_summary: 요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.
       hero_description: 한 곳에서 판매, 재고, 고객, 지점 등을 편리하게 관리하는 방법을 알아보세요.
       hero_title: Delta POS가 비즈니스에 제공하는
-      hero_title_suffix: 확인해 보세요
+      hero_title_suffix: 모든 기능을 확인해 보세요
+      logo_alt: Delta POS 로고
       message: 어떻게 도와드릴까요?
+      message_placeholder: 데모에서 확인하고 싶은 내용을 알려주세요...
+      modules:
+        inventory:
+          title: 스마트 다지점 재고 관리
+          description: 자동 감사, 최소 재고 알림, 지점 간 실시간 재고 이동을 제공합니다.
+        billing:
+          title: 글로벌 전자 청구
+          description: 판매 시점에서 즉시 세금계산서를 발행하고 고객에게 예약 전송할 수 있습니다.
+        reports:
+          title: 고급 판매 보고서
+          description: 일일 재무 지표, 수익률, 운영 잔액을 제공하는 클라우드 분석을 지원합니다.
       name: 이름
       page_title: 데모 신청 | Delta POS
-      phone: 전화번호
-      submit: 데모 신청
+      panel_description: 최대한 빠르게 운영할 수 있도록 설계된 도구로 지점 거래를 관리하고 자동화하고 확장하세요.
+      panel_title: 현대 상거래를 위한 옴니채널 플랫폼
+      phone: 휴대전화 / WhatsApp
+      privacy: 상업적 연락을 받고 다음에 따른 개인정보 처리에 동의합니다:
+      privacy_link: 개인정보 보호정책
+      progress_label: 데모 신청 진행률
+      required:
+        name: 이름을 입력하세요.
+        email: 회사 이메일을 입력하세요.
+        phone: 휴대전화 번호를 입력하세요.
+        business_type: 비즈니스 업종을 선택하세요.
+        branches: 지점 수는 0보다 커야 합니다.
+        terms: 개인정보 보호정책에 동의해야 합니다.
+      return_home: 홈으로 돌아가기
+      return_prompt: 직접 플랫폼을 살펴보시겠어요?
+      submit: 데모 예약
+      theme: 테마
+      theme_option: 테마 색상 %{number}
+
   devise:
     confirmations:
       new:

@@ -1333,3 +1333,32 @@ select:focus-visible {
         transition: none;
     }
 }
+
+
+/* ============================================================
+   DELTA POS — Demo Request
+   ============================================================ */
+.demo-request-page {
+  --demo-primary-start: #059669;
+  --demo-primary-end: #0d9488;
+}
+
+.demo-request-page .btn-delta-gradient {
+  background: linear-gradient(135deg, var(--demo-primary-start), var(--demo-primary-end));
+}
+
+.demo-request-page .btn-delta-gradient:hover {
+  filter: brightness(.94);
+}
+
+.demo-request-page .demo-request__input:focus {
+  box-shadow: 0 0 0 1px var(--demo-primary-start);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-request-page * {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

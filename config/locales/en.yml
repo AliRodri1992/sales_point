@@ -876,33 +876,69 @@ en:
       title: New demo request
   demo_requests:
     create:
-      success: Your request was received. We will contact you soon.
+      success: We received your request. We will contact you soon.
     new:
+      back_step: Back
       back: Back to home
       badge: Personalized demo
-      benefits:
-        no_commitment:
-          description: Request your demo and explore the platform before deciding.
-          title: No commitment
-        personalized:
-          description: Discover the features your business really needs.
-          title: Personalized demo
-        resolve_questions:
-          description: A specialist can explain how the platform works.
-          title: Get your questions answered
       brand: Delta POS
+      brand_color: Brand Color
+      brand_tagline: Point of Sale
+      branches: Current Number of Branches
+      business_description: Tell us more about your business so we can personalize the technical presentation.
+      business_title: Business Information
+      business_type: Business Sector
+      business_type_placeholder: Select your sector...
+      business_types:
+        grocery: Grocery Stores and Supermarkets
+        fashion: Clothing, Footwear and Accessories
+        restaurant: Restaurants and Food
+        pharmacy: Pharmacies and Healthcare
       company: Company
-      email: Email address
-      error_summary: The request could not be sent. Check the fields and try again.
-      hero_description: Manage sales, inventory, customers, branches, and much more
-        from one place.
+      company_placeholder: Your company name
+      contact_description: Enter your contact details so a specialist can reach you.
+      contact_title: Contact Details
+      continue: Continue
+      copyright: "© %{year} Delta POS Inc. All rights reserved."
+      email: Corporate email
+      error_summary: We could not send your request. Check the fields and try again.
+      hero_description: Manage sales, inventory, customers, branches, and much more from one place.
       hero_title: Discover everything
-      hero_title_suffix: can do for your business
+      hero_title_suffix: Delta POS can do for your business
+      logo_alt: Delta POS logo mark
       message: How can we help?
-      name: Name
+      message_placeholder: Tell us what you would like to see in the demo...
+      modules:
+        inventory:
+          title: Smart Multi-Store Inventory
+          description: Automatic audits, low-stock alerts, and real-time transfers between branches.
+        billing:
+          title: Global Electronic Billing
+          description: Instant fiscal stamping at the point of sale and scheduled receipt delivery.
+        reports:
+          title: Advanced Sales Reports
+          description: Cloud analytics with daily financial indicators, profit margins, and operating balances.
+      name: Full name
       page_title: Request a demo | Delta POS
-      phone: Phone
-      submit: Request a demo
+      panel_description: Control, automate, and scale branch transactions with tools designed for maximum operational speed.
+      panel_title: The omnichannel platform for modern commerce
+      phone: Mobile / WhatsApp
+      privacy: I agree to receive commercial contact and authorize the processing of my data under the
+      privacy_link: Privacy Policy
+      progress_label: Request progress
+      required:
+        name: Full name is required.
+        email: Corporate email is required.
+        phone: Mobile phone is required.
+        business_type: Select a business sector.
+        branches: Branch count must be greater than 0.
+        terms: You must accept the Privacy Policy.
+      return_home: Return to Home
+      return_prompt: Prefer to explore the platform yourself?
+      submit: Schedule Demo
+      theme: Theme
+      theme_option: Theme color %{number}
+
   devise:
     confirmations:
       new:
