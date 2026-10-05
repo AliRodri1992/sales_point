@@ -6,23 +6,42 @@ RSpec.describe OrganizationMigration, type: :model do
   subject(:migration) { build(:organization_migration) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:organization) }
+    it 'belongs to an organization' do
+      association = described_class.reflect_on_association(:organization)
+
+      expect(association.macro).to eq(:belongs_to)
+    end
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:volume) }
-    it { is_expected.to validate_presence_of(:priority) }
-    it { is_expected.to validate_presence_of(:status) }
-    it { is_expected.to validate_uniqueness_of(:organization_id) }
-
-    it 'accepts a valid migration' do
+    it 'is valid with valid attributes' do
       expect(migration).to be_valid
     end
 
-    it 'rejects a second migration for the same organization' do
+    it 'requires volume' do
+      migration.volume = nil
+
+      expect(migration).to be_invalid
+      expect(migration.errors[:volume]).to be_present
+    end
+
+    it 'requires priority' do
+      migration.priority = nil
+
+      expect(migration).to be_invalid
+      expect(migration.errors[:priority]).to be_present
+    end
+
+    it 'requires status' do
+      migration.status = nil
+
+      expect(migration).to be_invalid
+      expect(migration.errors[:status]).to be_present
+    end
+
+    it 'allows only one migration per organization' do
       organization = create(:organization)
       create(:organization_migration, organization:)
-
       duplicate = build(:organization_migration, organization:)
 
       expect(duplicate).to be_invalid
@@ -31,19 +50,29 @@ RSpec.describe OrganizationMigration, type: :model do
   end
 
   describe 'enums' do
-    it do
-      expect(described_class).to define_enum_for(:volume)
-        .with_values(small: 'under_500', medium: '500_5000', large: 'over_5000')
+    it 'defines the supported volumes' do
+      expect(described_class.volumes).to eq(
+        'small' => 'under_500',
+        'medium' => '500_5000',
+        'large' => 'over_5000'
+      )
     end
 
-    it do
-      expect(described_class).to define_enum_for(:priority)
-        .with_values(catalog: 'catalog', inventory: 'inventory', customers: 'customers', everything: 'all')
+    it 'defines the supported priorities' do
+      expect(described_class.priorities).to eq(
+        'catalog' => 'catalog',
+        'inventory' => 'inventory',
+        'customers' => 'customers',
+        'everything' => 'all'
+      )
     end
 
-    it do
-      expect(described_class).to define_enum_for(:status)
-        .with_values(pending: 'pending', in_progress: 'in_progress', completed: 'completed')
+    it 'defines the supported statuses' do
+      expect(described_class.statuses).to eq(
+        'pending' => 'pending',
+        'in_progress' => 'in_progress',
+        'completed' => 'completed'
+      )
     end
   end
 end
