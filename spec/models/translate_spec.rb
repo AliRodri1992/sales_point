@@ -44,7 +44,7 @@ RSpec.describe Translate, type: :model do
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
       allow(described_class).to receive(:where).with(locale: 'en').and_return(relation)
 
-      expect(described_class.by_locale('en')).to eq(relation)
+      expect(described_class.by_locale('en')).to be(relation)
     end
   end
 
