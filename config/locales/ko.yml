@@ -918,7 +918,7 @@ ko:
       panel_description: 최대한 빠르게 운영할 수 있도록 설계된 도구로 지점 거래를 관리하고 자동화하고 확장하세요.
       panel_title: 현대 상거래를 위한 옴니채널 플랫폼
       phone: 휴대전화 / WhatsApp
-      privacy: 상업적 연락을 받고 다음에 따른 개인정보 처리에 동의합니다:
+      privacy: "상업적 연락을 받고 다음에 따른 개인정보 처리에 동의합니다:"
       privacy_link: 개인정보 보호정책
       progress_label: 데모 신청 진행률
       required:
