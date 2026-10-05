@@ -6,21 +6,35 @@ RSpec.describe PaymentIntegration, type: :model do
   subject(:integration) { build(:payment_integration) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:organization) }
+    it 'belongs to an organization' do
+      association = described_class.reflect_on_association(:organization)
+
+      expect(association.macro).to eq(:belongs_to)
+    end
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:provider) }
-    it { is_expected.to validate_presence_of(:status) }
-
-    it 'accepts a valid integration' do
+    it 'is valid with valid attributes' do
       expect(integration).to be_valid
+    end
+
+    it 'requires a provider' do
+      integration.provider = nil
+
+      expect(integration).to be_invalid
+      expect(integration.errors[:provider]).to be_present
+    end
+
+    it 'requires a status' do
+      integration.status = nil
+
+      expect(integration).to be_invalid
+      expect(integration.errors[:status]).to be_present
     end
 
     it 'rejects duplicate active integrations for the same organization and provider' do
       organization = create(:organization)
       create(:payment_integration, organization:, provider: :card)
-
       duplicate = build(:payment_integration, organization:, provider: :card)
 
       expect(duplicate).to be_invalid
@@ -39,13 +53,16 @@ RSpec.describe PaymentIntegration, type: :model do
   end
 
   describe 'enums' do
-    it do
-      expect(described_class).to define_enum_for(:provider).with_values(card: 'card', qr: 'qr')
+    it 'defines the supported providers' do
+      expect(described_class.providers).to eq('card' => 'card', 'qr' => 'qr')
     end
 
-    it do
-      expect(described_class).to define_enum_for(:status)
-        .with_values(pending: 'pending', active: 'active', inactive: 'inactive')
+    it 'defines the supported statuses' do
+      expect(described_class.statuses).to eq(
+        'pending' => 'pending',
+        'active' => 'active',
+        'inactive' => 'inactive'
+      )
     end
   end
 end
