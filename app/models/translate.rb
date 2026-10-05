@@ -6,10 +6,8 @@ class Translate < ApplicationRecord
   validates :key, presence: true
   validates :value, presence: true
 
-  # Only validate language presence if language_id column exists
   validates :language, presence: true, if: -> { ActiveRecord::Base.connection.column_exists?(:translates, :language_id) }
 
-  # Conditional validation based on whether language_id exists
   before_create :validate_uniqueness
 
   scope :by_language, ->(language) { where(language: language) if column_exists?(:language_id) }
@@ -21,26 +19,21 @@ class Translate < ApplicationRecord
     end
   }
   scope :by_key, ->(key) { where(key: key) }
-
-  # Backward compatibility with locale string
   scope :by_locale_code, ->(code) { by_locale(code) }
 
   def self.find_by_key_and_locale(key, locale)
     if column_exists?(:language_id)
-      joins(:language)
-        .where(key: key, languages: { code: locale })
-        .first
+      language = Language.find_by(code: locale)
+      language && where(key: key, language: language).first
     else
       where(key: key, locale: locale).first
     end
   end
 
   def self.value_for(key, locale, default = nil)
-    translation = find_by(key: key, locale: locale)
-    translation&.value || default
+    find_by_key_and_locale(key, locale)&.value || default
   end
 
-  # Load translations from a YAML file for a specific locale
   def self.load_from_file(file_path, locale_code)
     return unless File.exist?(file_path)
 
@@ -64,7 +57,6 @@ class Translate < ApplicationRecord
     end
   end
 
-  # Flatten nested hash into dot-notation keys
   def self.flatten_hash(hash, prefix = '')
     result = {}
     hash.each do |key, value|
@@ -78,7 +70,6 @@ class Translate < ApplicationRecord
     result
   end
 
-  # Return locale code from associated language or locale column
   def locale
     if self.class.column_exists?(:language_id)
       language&.code
@@ -94,7 +85,6 @@ class Translate < ApplicationRecord
   private
 
   def validate_uniqueness
-    # Custom validation for uniqueness based on whether language_id exists
     if self.class.column_exists?(:language_id)
       if Translate.where(key: key, language_id: language_id).exists?(deleted_at: nil)
         errors.add(:key, 'already exists for this language')
