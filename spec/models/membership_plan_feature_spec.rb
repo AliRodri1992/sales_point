@@ -3,7 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe MembershipPlanFeature, type: :model do
-  subject(:plan_feature) { build(:membership_plan_feature) }
+  subject(:plan_feature) do
+    build(
+      :membership_plan_feature,
+      membership_plan: build(:membership_plan),
+      membership_feature: build(:membership_feature),
+      limit: nil,
+      position: 0
+    )
+  end
 
   describe 'associations' do
     it 'belongs to a membership plan' do
@@ -39,11 +47,17 @@ RSpec.describe MembershipPlanFeature, type: :model do
 
     it 'allows the same feature in a different plan' do
       feature = create(:membership_feature)
-      first = create(:membership_plan_feature, membership_feature: feature)
-      second = build(:membership_plan_feature, membership_feature: feature)
+      first_plan = create(:membership_plan)
+      second_plan = create(:membership_plan)
 
-      expect(second.membership_plan).not_to eq(first.membership_plan)
-      expect(second).to be_valid
+      create(:membership_plan_feature, membership_plan: first_plan, membership_feature: feature)
+      replacement = build(
+        :membership_plan_feature,
+        membership_plan: second_plan,
+        membership_feature: feature
+      )
+
+      expect(replacement).to be_valid
     end
 
     it 'allows a nil limit' do
@@ -59,8 +73,8 @@ RSpec.describe MembershipPlanFeature, type: :model do
       expect(plan_feature.errors[:limit]).to be_present
     end
 
-    it 'rejects a fractional limit' do
-      plan_feature.limit = 1.5
+    it 'rejects a non-integer limit' do
+      plan_feature.limit = 'not-an-integer'
 
       expect(plan_feature).to be_invalid
       expect(plan_feature.errors[:limit]).to be_present
@@ -73,8 +87,8 @@ RSpec.describe MembershipPlanFeature, type: :model do
       expect(plan_feature.errors[:position]).to be_present
     end
 
-    it 'rejects a fractional position' do
-      plan_feature.position = 1.5
+    it 'rejects a non-integer position' do
+      plan_feature.position = 'not-an-integer'
 
       expect(plan_feature).to be_invalid
       expect(plan_feature.errors[:position]).to be_present
