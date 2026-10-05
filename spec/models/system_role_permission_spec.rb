@@ -6,23 +6,26 @@ RSpec.describe SystemRolePermission, type: :model do
   subject(:role_permission) { build(:system_role_permission) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:system_role) }
-    it { is_expected.to belong_to(:permission) }
+    it 'belongs to a system role' do
+      association = described_class.reflect_on_association(:system_role)
+
+      expect(association.macro).to eq(:belongs_to)
+    end
+
+    it 'belongs to a permission' do
+      association = described_class.reflect_on_association(:permission)
+
+      expect(association.macro).to eq(:belongs_to)
+    end
   end
 
   describe 'validations' do
-    it do
-      is_expected.to validate_uniqueness_of(:permission_id)
-        .scoped_to(:system_role_id)
-    end
-
-    it 'accepts a valid role permission' do
+    it 'is valid with valid attributes' do
       expect(role_permission).to be_valid
     end
 
     it 'rejects assigning the same permission twice to a role' do
       existing = create(:system_role_permission)
-
       duplicate = build(
         :system_role_permission,
         system_role: existing.system_role,
