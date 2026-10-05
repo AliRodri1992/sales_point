@@ -9,7 +9,12 @@ RSpec.describe Onboarding::PaymentUpdater, type: :service do
 
   it 'deactivates existing integrations for cash payments' do
     organization = create(:organization, :with_settings)
-    integration = create(:payment_integration, organization:, provider: 'card', status: :pending)
+    integration = create(
+      :payment_integration,
+      organization:,
+      provider: 'card',
+      status: :pending
+    )
 
     expect(described_class.call(organization, { payment: { method: 'cash' } })).to be(true)
 
@@ -31,7 +36,13 @@ RSpec.describe Onboarding::PaymentUpdater, type: :service do
 
   it 'reactivates an existing integration when its provider is selected' do
     organization = create(:organization, :with_settings)
-    integration = create(:payment_integration, organization:, provider: 'card', status: :inactive, deleted_at: Time.current)
+    integration = create(
+      :payment_integration,
+      organization:,
+      provider: 'card',
+      status: :inactive,
+      deleted_at: Time.current
+    )
 
     expect(described_class.call(organization, { payment: { method: 'card' } })).to be(true)
 
