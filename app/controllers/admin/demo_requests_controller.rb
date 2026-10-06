@@ -34,6 +34,7 @@ module Admin
         reset_demo_reminders_if_rescheduled
         schedule_demo_reminders(previous_status)
         send_scheduled_confirmation(previous_status)
+        notify_assignee_of_workflow_change(previous_status, previous_assignee)
         redirect_to admin_demo_request_path(@demo_request),
                     flash: { swal_message: t('admin.demo_requests.updated') }
       else
@@ -134,6 +135,21 @@ module Admin
           I18n.t('demo_request_mailer.scheduled.activity')
         end
       )
+    end
+
+
+    def notify_assignee_of_workflow_change(previous_status, previous_assignee)
+      return if @demo_request.assigned_to.blank?
+      return if previous_status == @demo_request.status && previous_assignee == @demo_request.assigned_to_id
+
+      action = previous_assignee != @demo_request.assigned_to_id ? 'assigned' : 'status_changed'
+      DemoRequestMailer.with(
+        demo_request: @demo_request,
+        assignee: @demo_request.assigned_to,
+        actor: current_user,
+        action:,
+        locale: I18n.locale.to_s
+      ).workflow_update.deliver_later
     end
 
     def record_workflow_activity(previous_status, previous_assignee)
