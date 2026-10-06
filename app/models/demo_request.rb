@@ -4,13 +4,21 @@ class DemoRequest < ApplicationRecord
   BUSINESS_TYPES = %w[grocery fashion restaurant pharmacy].freeze
   MAX_BRANCHES = 10_000
 
+  belongs_to :assigned_to, class_name: 'User', optional: true
+
+  has_many :activities, class_name: 'DemoRequestActivity', dependent: :destroy
+
   after_create_commit :notify_demo_request
+  after_create_commit :record_creation_activity
 
   enum :status,
        {
          pending: 'pending',
          contacted: 'contacted',
-         completed: 'completed'
+         scheduled: 'scheduled',
+         completed: 'completed',
+         converted: 'converted',
+         cancelled: 'cancelled'
        },
        default: :pending,
        validate: true
@@ -60,6 +68,10 @@ class DemoRequest < ApplicationRecord
 
   def normalize_text(value)
     value.to_s.strip.gsub(/\s+/, ' ').presence
+  end
+
+  def record_creation_activity
+    activities.create!(action: 'created')
   end
 
   def notify_demo_request
