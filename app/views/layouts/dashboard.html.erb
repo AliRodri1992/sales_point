@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" class="h-full bg-slate-50">
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : t('dashboard.index.title') %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="<%= t('app.name') %> <%= t('app.short_name') %>">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+
+    <%= favicon_link_tag 'delta-pos-favicon.svg', rel: 'icon', type: 'image/svg+xml' %>
+    <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
+    <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="min-h-full bg-slate-50 font-inter text-slate-700 antialiased">
+    <div class="min-h-screen">
+      <header class="border-b border-slate-200 bg-white">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+          <%= link_to dashboard_path, class: "flex items-center gap-3" do %>
+            <%= image_tag "isotipo.png", class: "h-10 w-10 rounded-xl object-cover", alt: t('dashboard.brand_alt') %>
+            <div>
+              <p class="font-jakarta text-sm font-bold text-slate-900">Delta POS</p>
+              <p class="text-xs text-slate-500"><%= t('dashboard.internal_portal') %></p>
+            </div>
+          <% end %>
+
+          <div class="flex items-center gap-4">
+            <span class="hidden text-sm text-slate-500 sm:inline"><%= current_user.email %></span>
+            <%= button_to destroy_user_session_path, method: :delete,
+                  class: "rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50" do %>
+              <%= t('dashboard.sign_out') %>
+            <% end %>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <%= turbo_frame_tag "flash" do %>
+          <%= render "shared/flash" %>
+        <% end %>
+
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
