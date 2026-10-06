@@ -117,6 +117,7 @@ ko:
         view: 신청 보기
         assigned: 담당자
         unassigned: 미배정
+        scheduled: 데모 일정
         total: "%{count}건의 신청"
         empty_title: 데모 신청이 없습니다
         empty_subtitle: 새로운 데모 신청이 이곳에 표시됩니다.
@@ -154,6 +155,7 @@ ko:
           company: 회사
           business_type: 업종
           branches: 지점 수
+          scheduled_at: 데모 날짜 및 시간
           message: 메시지
     branches:
       actions:
