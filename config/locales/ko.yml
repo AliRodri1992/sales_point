@@ -105,6 +105,7 @@ ko:
         system: 시스템
         note_added: 내부 메모가 추가되었습니다
         reminder_sent: "신청자에게 알림을 보냈습니다(%{window})."
+        confirmation_sent: 신청자에게 데모 확인 이메일을 보냈습니다.
       filters:
         all: 모든 상태
         apply: 필터
