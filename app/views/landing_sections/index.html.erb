@@ -52,6 +52,19 @@
         </div>
 
         <div class="flex shrink-0 items-center gap-2">
+          <%= button_to landing_section_move_up_path(section),
+              method: :patch,
+              aria: { label: t('dashboard.landing.actions.move_up') },
+              class: "rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
+            ↑
+          <% end %>
+          <%= button_to landing_section_move_down_path(section),
+              method: :patch,
+              aria: { label: t('dashboard.landing.actions.move_down') },
+              class: "rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
+            ↓
+          <% end %>
+
           <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= section.enabled? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>">
             <%= t("dashboard.landing.status.#{section.enabled? ? 'published' : 'hidden'}") %>
           </span>
