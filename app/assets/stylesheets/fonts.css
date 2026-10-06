@@ -1,26 +1,10 @@
 
 @import "intl-tel-input/styles";
 
-/* Delta POS keeps phone assets local and avoids CDN dependencies. */
+/* Delta POS serves intl-tel-input flag sprites from the local Rails asset pipeline. */
 .iti {
-  --iti-path-flags-1x: none;
-  --iti-path-flags-2x: none;
-}
-
-.iti__flag {
-  background-image: none !important;
-  background: none !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.25rem;
-  height: 1rem;
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.iti__flag::before {
-  content: attr(data-flag-emoji);
+  --iti-path-flags-1x: url("/assets/intl-tel-input/flags.webp");
+  --iti-path-flags-2x: url("/assets/intl-tel-input/flags@2x.webp");
 }
 
 
