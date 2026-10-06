@@ -49,6 +49,7 @@ class DemoRequest < ApplicationRecord
   validates :message, length: { maximum: 2_000 }, allow_blank: true
   validates :terms_accepted, acceptance: true
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
+  validates :note, length: { maximum: 2_000 }, allow_blank: true
   validate :scheduled_at_required_for_scheduled_status
   validate :scheduled_at_must_be_future_when_scheduled
 
