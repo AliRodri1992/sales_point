@@ -956,6 +956,11 @@ es:
         branches: El número de sucursales debe ser mayor a 0.
         terms: Debes aceptar la Política de Privacidad.
       return_home: Regresar al Inicio
+      success_state:
+        badge: Solicitud recibida
+        title: ¡Gracias por solicitar tu demostración!
+        next_steps: Nuestro equipo revisará tus datos y se pondrá en contacto contigo para coordinar la demostración.
+        back_home: Volver al inicio
       return_prompt: ¿Prefieres explorar la plataforma tú mismo?
       submit: Agendar Demo
       theme: Tema
