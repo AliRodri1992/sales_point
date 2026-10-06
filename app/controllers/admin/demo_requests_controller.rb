@@ -142,9 +142,8 @@ module Admin
         )
       end
 
-      if @demo_request.saved_change_to_next_follow_up_at? || @demo_request.saved_change_to_next_action?
-        return if @demo_request.next_follow_up_at.blank?
-
+      if (@demo_request.saved_change_to_next_follow_up_at? || @demo_request.saved_change_to_next_action?) &&
+         @demo_request.next_follow_up_at.present?
         @demo_request.activities.create!(
           user: current_user,
           action: 'follow_up_scheduled',
