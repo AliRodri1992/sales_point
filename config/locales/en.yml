@@ -971,6 +971,26 @@ en:
       next_step_2: "A Delta POS specialist will contact you."
       next_step_3: "We will coordinate a personalized demo."
       footer: "If you have any questions, reply to this email and we will be happy to help."
+    scheduled:
+      subject: "Your Delta POS demo is scheduled"
+      title: "Your demo is scheduled!"
+      greeting: "Hi %{name},"
+      message: "Your Delta POS demo is scheduled for %{date}."
+      company: "Company"
+      contact: "If you need to change the time, reply to this email and we will help you."
+      activity: "The demo was scheduled and a confirmation was sent to the prospect."
+    reminder:
+      twenty_four_hours:
+        subject: "Reminder: your Delta POS demo is tomorrow"
+        title: "Your demo is tomorrow"
+        message: "This is a reminder that your Delta POS demo is scheduled for %{date}."
+        activity: "24 hours"
+      one_hour:
+        subject: "Reminder: your Delta POS demo starts soon"
+        title: "Your demo starts soon"
+        message: "This is a reminder that your Delta POS demo is scheduled for %{date}."
+        activity: "1 hour"
+
 
   demo_requests:
     create:
