@@ -95,8 +95,8 @@ class DemoRequest < ApplicationRecord
   end
 
   def set_commercial_timestamps
-    self.contacted_at ||= Time.current if contacted? && status_changed?
-    self.converted_at ||= Time.current if converted? && status_changed?
+    self.contacted_at ||= Time.current if contacted? && will_save_change_to_status?
+    self.converted_at ||= Time.current if converted? && will_save_change_to_status?
   end
 
   def validate_commercial_follow_up
