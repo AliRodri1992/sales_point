@@ -140,6 +140,16 @@ ko:
         save: 변경 사항 저장
         fields:
           name: 이름
+
+      show:
+        scheduled_at: 데모 날짜 및 시간
+        scheduled_hint: 데모를 진행할 미래 날짜와 시간을 선택하세요.
+        note: 내부 메모
+        note_placeholder: 팀을 위한 메모를 입력하세요...
+        note_hint: 이 메모는 Delta POS 팀에게만 표시됩니다.
+      activity:
+        note_added: 내부 메모가 추가되었습니다
+        reminder_sent: 신청자에게 알림을 보냈습니다(%{window}).
           email: 이메일
           phone: 전화번호
           company: 회사
