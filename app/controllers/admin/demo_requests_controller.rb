@@ -113,7 +113,9 @@ module Admin
       run_at = @demo_request.scheduled_at - interval
       return if run_at <= Time.current
 
-      DemoRequestReminderJob.set(wait_until: run_at).perform_later(@demo_request.id, window.to_s, @demo_request.scheduled_at.to_i)
+      DemoRequestReminderJob
+        .set(wait_until: run_at)
+        .perform_later(@demo_request.id, window.to_s, @demo_request.scheduled_at.to_i)
     end
 
     def send_scheduled_confirmation(previous_status)
