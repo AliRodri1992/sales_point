@@ -110,7 +110,7 @@ es:
         page_title: Solicitudes de demo | Delta POS
         title: Solicitudes de demostración
         subtitle: Administra y da seguimiento a las solicitudes de demo.
-        search_placeholder: Buscar por nombre, empresa o correo...
+        search_placeholder: Buscar por nombre, empresa, correo o teléfono...
         view: Ver solicitud
         assigned: Responsable
         unassigned: Sin asignar
