@@ -1352,6 +1352,16 @@ select:focus-visible {
   box-shadow: 0 0 0 1px var(--demo-primary-start);
 }
 
+.demo-request-page .iti {
+  display: block;
+  width: 100%;
+}
+
+.demo-request-page .iti input.iti__tel-input {
+  width: 100%;
+  min-width: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .demo-request-page * {
     scroll-behavior: auto !important;
