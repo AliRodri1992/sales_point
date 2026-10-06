@@ -56,10 +56,9 @@ es:
         hidden: "Oculta"
       actions:
         hide: "Ocultar"
-        show:
+        show: "Mostrar"
         move_up: "Mover hacia arriba"
         move_down: "Mover hacia abajo"
- "Mostrar"
       cards:
         content:
           title: "Contenido"
