@@ -75,8 +75,12 @@ module Users
         'theme-material-red'
     end
 
-    def after_sign_in_path_for(_resource)
-      admin_dashboard_path
+    def after_sign_in_path_for(resource)
+      PortalResolver.new(resource).path
+    rescue PortalAccessDeniedError
+      sign_out(resource)
+      flash[:alert] = t('devise.failure.portal_access_denied')
+      new_user_session_path
     end
   end
 end
