@@ -9,8 +9,6 @@ class DemoRequestsController < ApplicationController
     @demo_request = DemoRequest.new(demo_request_params)
 
     if @demo_request.save
-      @demo_request.activities.create!(action: 'created')
-
       DemoRequestMailer
         .with(demo_request: @demo_request, locale: I18n.locale.to_s)
         .confirmation
