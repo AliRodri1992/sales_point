@@ -30,6 +30,9 @@ module Admin
 
       if @demo_request.update(demo_request_params)
         record_workflow_activity(previous_status, previous_assignee)
+        record_note
+        schedule_demo_reminders(previous_status)
+        send_scheduled_confirmation(previous_status)
         redirect_to admin_demo_request_path(@demo_request),
                     flash: { swal_message: t('admin.demo_requests.updated') }
       else
@@ -75,7 +78,53 @@ module Admin
     end
 
     def demo_request_params
-      params.expect(demo_request: %i[status assigned_to_id])
+      params.expect(demo_request: %i[status assigned_to_id scheduled_at note])
+    end
+
+    def record_note
+      note = @demo_request.note.to_s.strip
+      return if note.blank?
+
+      @demo_request.activities.create!(
+        user: current_user,
+        action: 'note_added',
+        details: note
+      )
+      @demo_request.note = nil
+    end
+
+    def schedule_demo_reminders(previous_status)
+      return unless @demo_request.scheduled?
+      return if @demo_request.scheduled_at.blank?
+      return if previous_status == 'scheduled' && !@demo_request.saved_change_to_scheduled_at?
+
+      schedule_reminder(:'24h', 24.hours)
+      schedule_reminder(:'1h', 1.hour)
+    end
+
+    def schedule_reminder(window, interval)
+      run_at = @demo_request.scheduled_at - interval
+      return if run_at <= Time.current
+
+      DemoRequestReminderJob.set(wait_until: run_at).perform_later(@demo_request.id, window.to_s)
+    end
+
+    def send_scheduled_confirmation(previous_status)
+      return unless @demo_request.scheduled?
+      return if previous_status == 'scheduled' && !@demo_request.saved_change_to_scheduled_at?
+
+      DemoRequestMailer.with(
+        demo_request: @demo_request,
+        locale: @demo_request.locale
+      ).scheduled.deliver_later
+
+      @demo_request.activities.create!(
+        user: current_user,
+        action: 'status_changed',
+        details: I18n.with_locale(@demo_request.locale) do
+          I18n.t('demo_request_mailer.scheduled.activity')
+        end
+      )
     end
 
     def record_workflow_activity(previous_status, previous_assignee)
