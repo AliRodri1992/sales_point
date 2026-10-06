@@ -6,6 +6,11 @@ RSpec.describe 'Demo requests', type: :request do
   before do
     notification = instance_double(DemoRequestNotification, deliver: true)
     allow(DemoRequestNotification).to receive(:with).and_return(notification)
+
+    mailer = instance_double(DemoRequestMailer)
+    allow(DemoRequestMailer).to receive(:with).and_return(mailer)
+    allow(mailer).to receive(:confirmation).and_return(mailer)
+    allow(mailer).to receive(:deliver_later)
   end
 
   describe 'GET /demo_requests/new' do
