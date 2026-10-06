@@ -58,6 +58,7 @@ module Admin
 
       if params[:follow_up].present?
         scope = scope.where.not(next_follow_up_at: nil)
+                      .where.not(status: %w[converted cancelled])
         scope = scope.where('next_follow_up_at <= ?', Time.current) if params[:follow_up] == 'overdue'
         scope = scope.where('next_follow_up_at > ?', Time.current) if params[:follow_up] == 'upcoming'
       end
