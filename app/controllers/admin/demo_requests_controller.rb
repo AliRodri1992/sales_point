@@ -31,6 +31,7 @@ module Admin
       if @demo_request.update(demo_request_params)
         record_workflow_activity(previous_status, previous_assignee)
         record_note
+        reset_demo_reminders_if_rescheduled
         schedule_demo_reminders(previous_status)
         send_scheduled_confirmation(previous_status)
         redirect_to admin_demo_request_path(@demo_request),
@@ -93,6 +94,12 @@ module Admin
       @demo_request.note = nil
     end
 
+    def reset_demo_reminders_if_rescheduled
+      return unless @demo_request.saved_change_to_scheduled_at?
+
+      @demo_request.update_columns(reminder_24h_sent_at: nil, reminder_1h_sent_at: nil)
+    end
+
     def schedule_demo_reminders(previous_status)
       return unless @demo_request.scheduled?
       return if @demo_request.scheduled_at.blank?
@@ -106,7 +113,7 @@ module Admin
       run_at = @demo_request.scheduled_at - interval
       return if run_at <= Time.current
 
-      DemoRequestReminderJob.set(wait_until: run_at).perform_later(@demo_request.id, window.to_s)
+      DemoRequestReminderJob.set(wait_until: run_at).perform_later(@demo_request.id, window.to_s, @demo_request.scheduled_at.to_i)
     end
 
     def send_scheduled_confirmation(previous_status)
