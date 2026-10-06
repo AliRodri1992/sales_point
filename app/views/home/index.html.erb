@@ -1,6 +1,7 @@
 <%= render Landing::NavbarComponent.new %>
 
 <main class="overflow-x-hidden">
+  <% if @landing_section_keys.include?('hero') %>
   <%= render Landing::HeroComponent.new(
     badge: t('landing.hero.badge'),
     title: t('landing.hero.title'),
@@ -11,7 +12,9 @@
     secondary_button_text: t('landing.buttons.request_demo'),
     secondary_button_href: "#contacto"
   ) %>
+  <% end %>
 
+  <% if @landing_section_keys.include?('benefits') %>
   <section id="solucion" class="border-y border-slate-200/50 bg-slate-100/60 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto mb-12 max-w-3xl text-center">
@@ -38,9 +41,14 @@
       </div>
     </div>
   </section>
+  <% end %>
 
+  <% if @landing_section_keys.include?('modules') %>
   <%= render Landing::FeaturesComponent.new(title: t('landing.features.title'), subtitle: t('landing.features.subtitle'), features: @features) %>
 
+  <% end %>
+
+  <% if @landing_section_keys.include?('testimonials') %>
   <section class="relative min-h-[460px] overflow-hidden border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 py-12 lg:py-16" data-controller="testimonials-carousel">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto mb-8 max-w-2xl text-center">
@@ -60,16 +68,24 @@
       </div>
     </div>
   </section>
+  <% end %>
 
+  <% if @landing_section_keys.include?('pricing') %>
   <section id="precios" class="border-t border-slate-200/60 bg-slate-100/50 py-12 lg:py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= t('landing.hero.prices_title') %></h2></div>
       <div class="mx-auto grid max-w-4xl items-stretch gap-8 md:grid-cols-2"><% @plans.first(2).each do |plan| %><%= render Landing::PricingCardComponent.new(**plan.to_h) %><% end %></div>
     </div>
   </section>
+  <% end %>
 
+  <% if @landing_section_keys.include?('faq') %>
   <%= render Landing::FaqComponent.new(title: t('landing.faq.title'), subtitle: t('landing.faq.subtitle'), questions: @questions) %>
+  <% end %>
+
+  <% if @landing_section_keys.include?('cta') %>
   <%= render Landing::CtaComponent.new(title: t('landing.hero.cta_title'), description: t('landing.hero.cta_description'), button_text: t('landing.buttons.start'), button_href: new_user_registration_path) %>
+  <% end %>
 </main>
 
 <%= render Landing::FooterComponent.new %>
