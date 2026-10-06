@@ -11,7 +11,7 @@ export default class extends Controller {
     this.iti = intlTelInput(this.inputTarget, {
       initialCountry: "mx",
       separateDialCode: true,
-      showFlags: false,
+      showFlags: true,
       countrySelectorMode: "AUTO",
       countrySearch: true,
       strictMode: true,
