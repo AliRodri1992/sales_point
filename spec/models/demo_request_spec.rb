@@ -123,8 +123,14 @@ RSpec.describe DemoRequest, type: :model do
 
   describe 'status' do
     it 'defines statuses' do
-      expect(described_class.statuses).to eq('pending' => 'pending', 'contacted' => 'contacted',
-                                             'completed' => 'completed')
+      expect(described_class.statuses).to eq(
+        'pending' => 'pending',
+        'contacted' => 'contacted',
+        'scheduled' => 'scheduled',
+        'completed' => 'completed',
+        'converted' => 'converted',
+        'cancelled' => 'cancelled'
+      )
     end
 
     it 'defaults to pending' do
@@ -132,7 +138,24 @@ RSpec.describe DemoRequest, type: :model do
     end
   end
 
+  describe 'associations' do
+    it 'supports an optional assigned user' do
+      expect(described_class.new).to belong_to(:assigned_to).class_name('User').optional
+    end
+
+    it 'tracks activities' do
+      expect(described_class.new).to have_many(:activities).class_name('DemoRequestActivity').dependent(:destroy)
+    end
+  end
+
   describe 'callbacks' do
+    it 'records the creation activity' do
+      expect { demo_request.send(:record_creation_activity) }
+        .to change(DemoRequestActivity, :count).by(1)
+
+      expect(demo_request.activities.last.action).to eq('created')
+    end
+
     it 'delivers notification' do
       notification = instance_double(DemoRequestNotification)
       allow(DemoRequestNotification).to receive(:with).with(demo_request:,
