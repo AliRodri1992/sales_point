@@ -42,6 +42,12 @@ ko:
       updated: "섹션 표시 상태가 업데이트되었습니다."
       reordered: "섹션 순서가 업데이트되었습니다."
       reorder_error: "섹션 순서를 업데이트할 수 없습니다."
+      summary:
+        title: "게시 상태 요약"
+        total: "구성된 섹션"
+        published: "표시됨"
+        hidden: "숨김"
+        order_hint: "현재 순서"
       manage: "랜딩 관리"
       card_title: "랜딩 페이지"
       card_subtitle: "공개 페이지에 표시되는 섹션을 관리합니다."
@@ -50,7 +56,10 @@ ko:
         hidden: "숨김"
       actions:
         hide: "숨기기"
-        show: "표시하기"
+        show:
+        move_up: "위로 이동"
+        move_down: "아래로 이동"
+ "표시하기"
       cards:
         content:
           title: "콘텐츠"
@@ -86,6 +95,9 @@ ko:
         faq:
           title: "자주 묻는 질문"
           description: "자주 묻는 질문에 대한 답변입니다."
+        pricing:
+          title: "요금제"
+          description: "랜딩 페이지에 표시할 요금제 및 가격 옵션입니다."
         cta:
           title: "행동 유도"
           description: "랜딩 페이지 하단의 데모 신청 영역입니다."
