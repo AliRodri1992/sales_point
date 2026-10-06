@@ -96,6 +96,7 @@ es:
         scheduled: Agendada
         completed: Realizada
         converted: Convertida
+      conversion_rate: "Tasa de conversión"
         cancelled: Cancelada
       activity:
         created: Solicitud creada
