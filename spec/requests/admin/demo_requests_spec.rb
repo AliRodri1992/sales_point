@@ -66,6 +66,46 @@ RSpec.describe 'Admin demo requests', type: :request do
       expect(demo_request.reload.activities.where(action: 'note_added', details: 'Call the prospect tomorrow morning.')).to exist
     end
 
+    it 'records a contact and follow-up' do
+      follow_up_at = 2.days.from_now.change(sec: 0)
+
+      patch admin_demo_request_path(demo_request), params: {
+        demo_request: {
+          contacted_at: Time.current,
+          contact_channel: 'whatsapp',
+          contact_outcome: 'interested',
+          next_follow_up_at: follow_up_at,
+          next_action: 'Enviar cotización'
+        }
+      }
+
+      expect(response).to redirect_to(admin_demo_request_path(demo_request))
+      demo_request.reload
+      expect(demo_request.contact_channel).to eq('whatsapp')
+      expect(demo_request.contact_outcome).to eq('interested')
+      expect(demo_request.activities.where(action: 'contact_registered')).to exist
+      expect(demo_request.activities.where(action: 'follow_up_scheduled')).to exist
+    end
+
+    it 'records the demo outcome' do
+      patch admin_demo_request_path(demo_request), params: {
+        demo_request: { demo_outcome: 'very_interested' }
+      }
+
+      expect(response).to redirect_to(admin_demo_request_path(demo_request))
+      expect(demo_request.reload.activities.where(action: 'demo_outcome_recorded')).to exist
+    end
+
+    it 'records conversion activity' do
+      patch admin_demo_request_path(demo_request), params: {
+        demo_request: { status: 'converted' }
+      }
+
+      expect(response).to redirect_to(admin_demo_request_path(demo_request))
+      expect(demo_request.reload.converted_at).to be_present
+      expect(demo_request.activities.where(action: 'converted')).to exist
+    end
+
     it 'rejects scheduling without a date' do
       patch admin_demo_request_path(demo_request), params: {
         demo_request: { status: 'scheduled' }
