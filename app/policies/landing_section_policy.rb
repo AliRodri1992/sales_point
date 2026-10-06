@@ -9,6 +9,18 @@ class LandingSectionPolicy < ApplicationPolicy
     delta_owner?
   end
 
+  def toggle?
+    delta_owner?
+  end
+
+  def move_up?
+    delta_owner?
+  end
+
+  def move_down?
+    delta_owner?
+  end
+
   def reorder?
     delta_owner?
   end
