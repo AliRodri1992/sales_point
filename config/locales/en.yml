@@ -942,6 +942,7 @@ en:
     failure:
       invalid: invalid email or password.
       not_found_in_database: invalid email or password.
+      portal_access_denied: You are not authorized to access this portal.
     mailer:
       confirmation_instructions:
         action: Confirm my account
