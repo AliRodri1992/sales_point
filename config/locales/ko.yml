@@ -602,6 +602,7 @@ ko:
         subtitle: 연결된 사용자
         title: 온라인 에이전트
       sidebar:
+        demo_requests: 데모 신청
         onboarding:
           progress: 초기 설정 %{percentage}%
           title: 초기 설정
