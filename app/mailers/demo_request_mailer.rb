@@ -14,6 +14,21 @@ class DemoRequestMailer < ApplicationMailer
     end
   end
 
+  def workflow_update
+    @demo_request = params[:demo_request]
+    @assignee = params[:assignee]
+    @actor = params[:actor]
+    @action = params[:action]
+    @locale = params[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale.to_s
+
+    I18n.with_locale(@locale) do
+      mail(
+        to: @assignee.email,
+        subject: I18n.t("demo_request_mailer.workflow_update.#{@action}.subject")
+      )
+    end
+  end
+
   def scheduled
     @demo_request = params[:demo_request]
     @locale = params[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale.to_s
