@@ -2,6 +2,9 @@
 
 class DemoRequest < ApplicationRecord
   BUSINESS_TYPES = %w[grocery fashion restaurant pharmacy].freeze
+  CONTACT_CHANNELS = %w[call whatsapp email other].freeze
+  CONTACT_OUTCOMES = %w[interested needs_information wants_demo no_answer not_interested].freeze
+  DEMO_OUTCOMES = %w[very_interested interested needs_follow_up not_interested no_show].freeze
   MAX_BRANCHES = 10_000
 
   belongs_to :assigned_to, class_name: 'User', optional: true
@@ -27,7 +30,11 @@ class DemoRequest < ApplicationRecord
 
   before_validation :normalize_fields
   before_validation :record_terms_acceptance
+  before_validation :set_commercial_timestamps
   validate :validate_assigned_to
+  validate :validate_commercial_follow_up
+  validate :scheduled_at_required_for_scheduled_status
+  validate :scheduled_at_must_be_future_when_scheduled
 
   validates :name, presence: true, length: { in: 2..100 }
   validates :email, presence: true, length: { maximum: 255 }, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -50,8 +57,14 @@ class DemoRequest < ApplicationRecord
   validates :terms_accepted, acceptance: true
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
   validates :note, length: { maximum: 2_000 }, allow_blank: true
-  validate :scheduled_at_required_for_scheduled_status
-  validate :scheduled_at_must_be_future_when_scheduled
+  validates :contact_channel, inclusion: { in: CONTACT_CHANNELS }, allow_blank: true
+  validates :contact_outcome, inclusion: { in: CONTACT_OUTCOMES }, allow_blank: true
+  validates :demo_outcome, inclusion: { in: DEMO_OUTCOMES }, allow_blank: true
+  validates :next_action, length: { maximum: 120 }, allow_blank: true
+
+  def follow_up_due?
+    next_follow_up_at.present? && next_follow_up_at <= Time.current
+  end
 
   private
 
@@ -59,6 +72,7 @@ class DemoRequest < ApplicationRecord
     self.name = normalize_text(name)
     self.company = normalize_text(company)
     self.email = email.to_s.strip.downcase.presence
+    self.next_action = normalize_text(next_action)
     normalize_phone
   end
 
@@ -80,8 +94,31 @@ class DemoRequest < ApplicationRecord
     self.terms_accepted_at = terms_accepted ? (terms_accepted_at || Time.current) : nil
   end
 
+  def set_commercial_timestamps
+    self.contacted_at ||= Time.current if contacted? && status_changed?
+    self.converted_at ||= Time.current if converted? && status_changed?
+  end
+
+  def validate_commercial_follow_up
+    if next_action.present? && next_follow_up_at.blank?
+      errors.add(:next_follow_up_at, :blank)
+    end
+
+    if next_follow_up_at.present? && next_action.blank?
+      errors.add(:next_action, :blank)
+    end
+
+    if contacted? && contacted_at.blank?
+      errors.add(:contacted_at, :blank)
+    end
+
+    if converted? && converted_at.blank?
+      errors.add(:converted_at, :blank)
+    end
+  end
+
   def normalize_text(value)
-    value.to_s.strip.gsub(/\s+/, ' ').presence
+    value.to_s.strip.gsub(/s+/, ' ').presence
   end
 
   def scheduled_at_required_for_scheduled_status
