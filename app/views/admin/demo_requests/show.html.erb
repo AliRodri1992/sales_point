@@ -65,6 +65,60 @@
       </div>
 
       <div>
+        <%= f.label :contacted_at, t('admin.demo_requests.show.contacted_at'), class: 'block text-sm font-semibold text-slate-700' %>
+        <%= f.datetime_local_field :contacted_at,
+                                   value: @demo_request.contacted_at&.strftime('%Y-%m-%dT%H:%M'),
+                                   class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <%= f.label :contact_channel, t('admin.demo_requests.show.contact_channel'), class: 'block text-sm font-semibold text-slate-700' %>
+          <%= f.select :contact_channel,
+                       [[t('admin.demo_requests.filters.select_option'), '']] +
+                       DemoRequest::CONTACT_CHANNELS.map { |value| [t("admin.demo_requests.contact_channels.#{value}"), value] },
+                       {},
+                       class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+        </div>
+        <div>
+          <%= f.label :contact_outcome, t('admin.demo_requests.show.contact_outcome'), class: 'block text-sm font-semibold text-slate-700' %>
+          <%= f.select :contact_outcome,
+                       [[t('admin.demo_requests.filters.select_option'), '']] +
+                       DemoRequest::CONTACT_OUTCOMES.map { |value| [t("admin.demo_requests.contact_outcomes.#{value}"), value] },
+                       {},
+                       class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-5">
+        <p class="text-sm font-semibold text-slate-700"><%= t('admin.demo_requests.show.follow_up_title') %></p>
+        <div class="mt-3 space-y-4">
+          <div>
+            <%= f.label :next_follow_up_at, t('admin.demo_requests.show.next_follow_up_at'), class: 'block text-sm font-semibold text-slate-700' %>
+            <%= f.datetime_local_field :next_follow_up_at,
+                                       value: @demo_request.next_follow_up_at&.strftime('%Y-%m-%dT%H:%M'),
+                                       class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+          </div>
+          <div>
+            <%= f.label :next_action, t('admin.demo_requests.show.next_action'), class: 'block text-sm font-semibold text-slate-700' %>
+            <%= f.text_field :next_action,
+                             maxlength: 120,
+                             placeholder: t('admin.demo_requests.show.next_action_placeholder'),
+                             class: 'mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :demo_outcome, t('admin.demo_requests.show.demo_outcome'), class: 'block text-sm font-semibold text-slate-700' %>
+        <%= f.select :demo_outcome,
+                     [[t('admin.demo_requests.filters.select_option'), '']] +
+                     DemoRequest::DEMO_OUTCOMES.map { |value| [t("admin.demo_requests.demo_outcomes.#{value}"), value] },
+                     {},
+                     class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+      </div>
+
+      <div>
         <%= f.label :note, t('admin.demo_requests.show.note'), class: 'block text-sm font-semibold text-slate-700' %>
         <%= f.text_area :note,
                         rows: 4,
