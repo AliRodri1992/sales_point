@@ -31,6 +31,64 @@ ko:
       pending: 대기 중
       contacted: 연락 완료
       completed: 완료
+    landing:
+      title: "랜딩 페이지 관리"
+      subtitle: "Delta POS 공개 페이지에 표시할 섹션을 관리합니다."
+      preview: "미리보기"
+      sections_title: "랜딩 섹션"
+      sections_subtitle: "코드를 변경하지 않고 섹션을 표시하거나 숨길 수 있습니다."
+      position: "위치 %{position}"
+      reorder_note: "이 화면에서 섹션 순서를 관리합니다. 각 섹션의 콘텐츠는 다음 CMS 단계에서 편집할 수 있습니다."
+      updated: "섹션 표시 상태가 업데이트되었습니다."
+      reordered: "섹션 순서가 업데이트되었습니다."
+      reorder_error: "섹션 순서를 업데이트할 수 없습니다."
+      manage: "랜딩 관리"
+      card_title: "랜딩 페이지"
+      card_subtitle: "공개 페이지에 표시되는 섹션을 관리합니다."
+      status:
+        published: "표시"
+        hidden: "숨김"
+      actions:
+        hide: "숨기기"
+        show: "표시하기"
+      cards:
+        content:
+          title: "콘텐츠"
+          description: "랜딩 구조를 관리하고 각 섹션의 콘텐츠를 준비합니다."
+        languages:
+          title: "언어"
+          description: "콘텐츠 관리는 Delta POS에 설정된 언어를 따릅니다."
+        preview:
+          title: "미리보기"
+          description: "새 콘텐츠 변경 사항을 적용하기 전에 공개 페이지를 확인합니다."
+      sections:
+        hero:
+          title: "히어로"
+          description: "메인 소개와 행동 유도 영역입니다."
+        benefits:
+          title: "혜택"
+          description: "Delta POS를 선택해야 하는 주요 이유입니다."
+        modules:
+          title: "모듈"
+          description: "시스템의 주요 영역과 기능입니다."
+        how_it_works:
+          title: "사용 방법"
+          description: "Delta POS를 시작하는 단계입니다."
+        screenshots:
+          title: "시스템 화면"
+          description: "플랫폼 이미지와 시각적 정보를 관리합니다."
+        security:
+          title: "보안 및 관리"
+          description: "보안, 관리 및 신뢰에 대한 정보입니다."
+        testimonials:
+          title: "성공 사례"
+          description: "실제 Delta POS 고객의 후기입니다."
+        faq:
+          title: "자주 묻는 질문"
+          description: "자주 묻는 질문에 대한 답변입니다."
+        cta:
+          title: "행동 유도"
+          description: "랜딩 페이지 하단의 데모 신청 영역입니다."
   activerecord:
     attributes:
       address:
