@@ -1369,3 +1369,18 @@ select:focus-visible {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   DELTA POS — Demo Request Validation & Success State
+   ============================================================ */
+.demo-request-page [aria-invalid="true"] { border-color: #f43f5e !important; background-color: #fff1f2; }
+.demo-request-page [aria-invalid="true"]:focus { border-color: #f43f5e !important; box-shadow: 0 0 0 1px #f43f5e; }
+.demo-request-page input[type="checkbox"][aria-invalid="true"] { outline: 2px solid #f43f5e; outline-offset: 2px; }
+.demo-request-page .success-state { animation: demo-success-enter 180ms ease-out; }
+@keyframes demo-success-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 639px) {
+  .demo-request-page { min-height: 100dvh; }
+  .demo-request-page > div { min-height: 100dvh; }
+  .demo-request-page .demo-request__input, .demo-request-page .iti input.iti__tel-input, .demo-request-page select { min-height: 2.75rem; }
+}
+@media (prefers-reduced-motion: reduce) { .demo-request-page .success-state { animation: none; } }
