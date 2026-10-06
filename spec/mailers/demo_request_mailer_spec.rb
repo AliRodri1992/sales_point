@@ -45,3 +45,29 @@ RSpec.describe DemoRequestMailer, type: :mailer do
     end
   end
 end
+
+
+RSpec.describe 'DemoRequestMailer scheduling', type: :mailer do
+  let(:demo_request) { create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now) }
+
+  it 'confirms the scheduled demo in the request locale' do
+    mail = DemoRequestMailer.with(
+      demo_request: demo_request,
+      locale: 'en'
+    ).scheduled
+
+    expect(mail.to).to eq([demo_request.email])
+    expect(mail.subject).to eq('Your Delta POS demo is scheduled')
+    expect(mail.html_part.body.to_s).to include(demo_request.name)
+  end
+
+  it 'builds a one-hour reminder' do
+    mail = DemoRequestMailer.with(
+      demo_request: demo_request,
+      locale: 'en'
+    ).reminder('one_hour')
+
+    expect(mail.to).to eq([demo_request.email])
+    expect(mail.subject).to eq('Reminder: your Delta POS demo starts soon')
+  end
+end
