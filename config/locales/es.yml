@@ -88,6 +88,66 @@ es:
       terminal: Caja registradora
       user: Usuario
   admin:
+    demo_requests:
+      updated: Solicitud actualizada correctamente.
+      statuses:
+        pending: Nueva
+        contacted: Contactada
+        scheduled: Agendada
+        completed: Realizada
+        converted: Convertida
+        cancelled: Cancelada
+      activity:
+        created: Solicitud creada
+        status_changed: "Estado cambiado de %{from} a %{to}."
+        assigned_to: "Solicitud asignada a %{user}."
+        unassigned: "Solicitud sin responsable."
+        system: Sistema
+      filters:
+        all: Todos los estados
+        apply: Filtrar
+      index:
+        page_title: Solicitudes de demo | Delta POS
+        title: Solicitudes de demostración
+        subtitle: Administra y da seguimiento a las solicitudes de demo.
+        search_placeholder: Buscar por nombre, empresa o correo...
+        view: Ver solicitud
+        assigned: Responsable
+        unassigned: Sin asignar
+        total: "%{count} solicitudes"
+        empty_title: No hay solicitudes
+        empty_subtitle: Las nuevas solicitudes de demostración aparecerán aquí.
+        columns:
+          prospect: Prospecto
+          company: Empresa
+          status: Estado
+          assigned: Responsable
+          created_at: Recibida
+          actions: Acciones
+        pagination:
+          navigation: Paginación de solicitudes
+          prev: Anterior
+          next: Siguiente
+      show:
+        page_title: Solicitud de demo | Delta POS
+        back: Volver a solicitudes
+        request_title: Información de la solicitud
+        workflow_title: Seguimiento
+        activity_title: Historial
+        no_activity: No hay actividad registrada.
+        status: Estado
+        assigned_to: Responsable
+        save: Guardar cambios
+        fields:
+          name: Nombre
+          email: Correo electrónico
+          phone: Teléfono
+          company: Empresa
+          business_type: Giro empresarial
+          branches: Sucursales
+          message: Mensaje
+    breadcrumbs:
+      demo_requests: Solicitudes de demo
     branches:
       actions:
         delete: Eliminar sucursal
@@ -876,6 +936,21 @@ es:
   demo_request_mailer:
     new_request:
       badge: Nueva solicitud
+    confirmation:
+      subject: "Recibimos tu solicitud de demostración - Delta POS"
+      title: "¡Recibimos tu solicitud de demostración!"
+      greeting: "Hola %{name},"
+      intro: "Gracias por tu interés en Delta POS. Recibimos correctamente tu solicitud y un especialista revisará la información de tu negocio."
+      details_title: "Resumen de tu solicitud"
+      company: "Empresa: %{company}"
+      business_type: "Giro empresarial: %{business_type}"
+      branches: "Sucursales: %{branches}"
+      next_steps_title: "¿Qué sigue?"
+      next_step_1: "Revisaremos tus necesidades y la información que compartiste."
+      next_step_2: "Un especialista de Delta POS se pondrá en contacto contigo."
+      next_step_3: "Coordinaremos una demostración personalizada."
+      footer: "Si tienes alguna pregunta, responde a este correo y estaremos encantados de ayudarte."
+
       business_section: Información del negocio
       contact_section: Datos del solicitante
       footer: Notificación generada por Delta POS para el equipo de atención.
