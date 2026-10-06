@@ -56,10 +56,9 @@ en:
         hidden: "Hidden"
       actions:
         hide: "Hide"
-        show:
+        show: "Show"
         move_up: "Move up"
         move_down: "Move down"
- "Show"
       cards:
         content:
           title: "Content"
