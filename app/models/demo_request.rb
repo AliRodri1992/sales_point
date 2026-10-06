@@ -3,7 +3,6 @@
 class DemoRequest < ApplicationRecord
   BUSINESS_TYPES = %w[grocery fashion restaurant pharmacy].freeze
   MAX_BRANCHES = 10_000
-  PHONE_FORMAT = /\A[0-9]{10}\z/
 
   after_create_commit :notify_demo_request
 
@@ -21,7 +20,13 @@ class DemoRequest < ApplicationRecord
 
   validates :name, presence: true, length: { in: 2..100 }
   validates :email, presence: true, length: { maximum: 255 }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :phone, presence: true, format: { with: PHONE_FORMAT }, length: { is: 10 }
+  validates :phone,
+            presence: true,
+            phone: {
+              format: :e164,
+              extensions: false,
+              detailed_errors: true
+            }
   validates :company, presence: true, length: { in: 2..150 }
   validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }
   validates :branches, presence: true,
@@ -39,6 +44,14 @@ class DemoRequest < ApplicationRecord
     self.name = normalize_text(name)
     self.company = normalize_text(company)
     self.email = email.to_s.strip.downcase.presence
+    normalize_phone
+  end
+
+  def normalize_phone
+    return if phone.blank?
+
+    parsed_phone = Phonelib.parse(phone)
+    self.phone = parsed_phone.e164 if parsed_phone.valid?
   end
 
   def record_terms_acceptance

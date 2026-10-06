@@ -50,11 +50,43 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request).to be_valid
     end
 
+    it 'accepts valid international phone numbers' do
+      {
+        '+14155552671' => 'US',
+        '+442071838750' => 'GB',
+        '+82212345678' => 'KR'
+      }.each do |phone, country|
+        demo_request.phone = phone
+        expect(demo_request).to be_valid
+        expect(Phonelib.parse(phone).country).to eq(country)
+      end
+    end
+
+    it 'normalizes valid phone numbers to E.164' do
+      demo_request.phone = '+52 55 1234 5678'
+      expect { demo_request.valid? }.to change(demo_request, :phone).to('+525512345678')
+    end
+
     it 'rejects phone values that are not E.164' do
       %w[5512345678 123456789 +025512345678 +525512345678901234].each do |phone|
         demo_request.phone = phone
         expect(demo_request).to be_invalid
       end
+    end
+
+    it 'rejects phone extensions' do
+      demo_request.phone = '+525512345678;123'
+      expect(demo_request).to be_invalid
+    end
+
+    it 'rejects blank phone numbers' do
+      demo_request.phone = '   '
+      expect(demo_request).to be_invalid
+    end
+
+    it 'rejects phone numbers with invalid country codes' do
+      demo_request.phone = '+999123456789'
+      expect(demo_request).to be_invalid
     end
 
     it 'rejects invalid business type' do

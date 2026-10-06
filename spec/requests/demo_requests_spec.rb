@@ -42,7 +42,7 @@ RSpec.describe 'Demo requests', type: :request do
       }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include(I18n.t('demo_requests.new.error_summary', count: 4))
+      expect(response.body).to include(I18n.t('demo_requests.new.error_summary', count: 5))
     end
   end
 end
