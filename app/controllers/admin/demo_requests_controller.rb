@@ -148,7 +148,7 @@ module Admin
         assignee: @demo_request.assigned_to,
         actor: current_user,
         action:,
-        locale: I18n.locale.to_s
+        locale: @demo_request.assigned_to.language&.code || I18n.locale.to_s
       ).workflow_update.deliver_later
     end
 
