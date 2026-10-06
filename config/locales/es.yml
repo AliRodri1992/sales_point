@@ -949,6 +949,7 @@ es:
     failure:
       invalid: correo electrónico o contraseña no válidos.
       not_found_in_database: correo electrónico o contraseña no válidos.
+      portal_access_denied: No tienes permisos para acceder a este portal.
     mailer:
       confirmation_instructions:
         action: Confirmar mi cuenta
