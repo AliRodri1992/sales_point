@@ -75,9 +75,12 @@ class LandingSectionsController < ApplicationController
 
     LandingSection.transaction do
       current_position = @landing_section.position
-      @landing_section.update!(position: 0)
-      @landing_section.update!(position: neighbor.position)
-      neighbor.update!(position: current_position)
+      neighbor_position = neighbor.position
+
+      @landing_section.update_columns(position: -current_position, updated_at: Time.current)
+      neighbor.update_columns(position: -neighbor_position, updated_at: Time.current)
+      @landing_section.update_columns(position: neighbor_position, updated_at: Time.current)
+      neighbor.update_columns(position: current_position, updated_at: Time.current)
     end
 
     redirect_to landing_sections_path, notice: t('dashboard.landing.reordered')
