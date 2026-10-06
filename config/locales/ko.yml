@@ -110,7 +110,7 @@ ko:
         page_title: 데모 신청 | Delta POS
         title: 데모 신청
         subtitle: 데모 신청을 관리하고 후속 조치를 진행하세요.
-        search_placeholder: 이름, 회사 또는 이메일로 검색...
+        search_placeholder: 이름, 회사, 이메일 또는 전화번호로 검색...
         view: 신청 보기
         assigned: 담당자
         unassigned: 미배정
