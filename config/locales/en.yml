@@ -157,6 +157,50 @@ en:
           branches: Branches
           scheduled_at: Demo date and time
           message: Message
+      metrics:
+        total: "Total requests"
+        contacted: "Contacted"
+        scheduled: "Demos scheduled"
+        converted: "Converted"
+        overdue_title: "Overdue follow-ups"
+        overdue_subtitle: "You have %{count} follow-ups that require attention."
+        view_overdue: "View overdue"
+      filters:
+        follow_up_all: "All follow-ups"
+        follow_up_overdue: "Overdue follow-ups"
+        follow_up_upcoming: "Upcoming follow-ups"
+        select_option: "Select an option"
+      contact_channels:
+        call: "Call"
+        whatsapp: "WhatsApp"
+        email: "Email"
+        other: "Other"
+      contact_outcomes:
+        interested: "Interested"
+        needs_information: "Needs information"
+        wants_demo: "Wants a demo"
+        no_answer: "No answer"
+        not_interested: "Not interested"
+      demo_outcomes:
+        very_interested: "Very interested"
+        interested: "Interested"
+        needs_follow_up: "Needs follow-up"
+        not_interested: "Not interested"
+        no_show: "No show"
+      activity:
+        contact_registered: "Contact recorded via %{channel}; outcome: %{outcome}."
+        follow_up_scheduled: "Follow-up scheduled for %{date}: %{action}."
+        demo_outcome_recorded: "Demo outcome: %{outcome}."
+        converted: "Prospect converted."
+      show:
+        contacted_at: "Contact date and time"
+        contact_channel: "Contact method"
+        contact_outcome: "Contact outcome"
+        follow_up_title: "Next follow-up"
+        next_follow_up_at: "Follow-up date and time"
+        next_action: "Next action"
+        next_action_placeholder: "e.g. Send quote and call to confirm"
+        demo_outcome: "Demo outcome"
     branches:
       actions:
         delete: Delete branch
