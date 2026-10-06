@@ -13,7 +13,7 @@ RSpec.describe DemoRequestReminderJob, type: :job do
     allow(mailer).to receive(:reminder).with('one_hour').and_return(mailer)
 
     expect do
-      described_class.perform_now(demo_request.id, 'one_hour')
+      described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
     end.to change { demo_request.reload.reminder_1h_sent_at }.from(nil)
 
     expect(DemoRequestMailer).to have_received(:with).with(
