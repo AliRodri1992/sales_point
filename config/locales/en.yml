@@ -31,6 +31,64 @@ en:
       pending: Pending
       contacted: Contacted
       completed: Completed
+    landing:
+      title: "Manage landing page"
+      subtitle: "Control which sections of the public Delta POS page are visible."
+      preview: "Preview"
+      sections_title: "Landing sections"
+      sections_subtitle: "Show or hide sections without changing code."
+      position: "Position %{position}"
+      reorder_note: "Section ordering will be managed from this screen. Section content can be edited in the following CMS stages."
+      updated: "Section visibility was updated successfully."
+      reordered: "Section order was updated successfully."
+      reorder_error: "The section order could not be updated."
+      manage: "Manage landing"
+      card_title: "Landing page"
+      card_subtitle: "Manage the sections visible on the public page."
+      status:
+        published: "Visible"
+        hidden: "Hidden"
+      actions:
+        hide: "Hide"
+        show: "Show"
+      cards:
+        content:
+          title: "Content"
+          description: "Manage the landing structure and prepare content for each section."
+        languages:
+          title: "Languages"
+          description: "Content management will respect the languages configured in Delta POS."
+        preview:
+          title: "Preview"
+          description: "Review the public page before applying new content changes."
+      sections:
+        hero:
+          title: "Hero"
+          description: "Main presentation and call to action."
+        benefits:
+          title: "Benefits"
+          description: "Main reasons to choose Delta POS."
+        modules:
+          title: "Modules"
+          description: "Main system areas and capabilities."
+        how_it_works:
+          title: "How it works"
+          description: "Steps to start using Delta POS."
+        screenshots:
+          title: "System screenshots"
+          description: "Platform images and visual context."
+        security:
+          title: "Security and control"
+          description: "Security, control, and trust information."
+        testimonials:
+          title: "Success stories"
+          description: "Real Delta POS customer testimonials."
+        faq:
+          title: "Frequently asked questions"
+          description: "Answers to common questions."
+        cta:
+          title: "Call to action"
+          description: "Landing close and demo request."
   activerecord:
     attributes:
       address:
