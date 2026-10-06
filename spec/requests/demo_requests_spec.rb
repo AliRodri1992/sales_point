@@ -31,7 +31,7 @@ RSpec.describe 'Demo requests', type: :request do
         }
       end.to change(DemoRequest, :count).by(1)
 
-      expect(DemoRequestActivity.where(demo_request: DemoRequest.last, action: 'created')).to exist
+      expect(DemoRequest.last.activities.where(action: 'created')).to exist
       expect(response).to redirect_to(new_demo_request_path)
       follow_redirect!
       expect(response.body).to include(I18n.t('demo_requests.create.success'))
