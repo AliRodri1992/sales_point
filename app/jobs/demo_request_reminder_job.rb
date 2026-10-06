@@ -15,7 +15,10 @@ class DemoRequestReminderJob < ApplicationJob
   private
 
   def send_reminder(demo_request, reminder_window)
-    timestamp_attribute = { 'twenty_four_hours' => 'reminder_24h_sent_at', 'one_hour' => 'reminder_1h_sent_at' }.fetch(reminder_window)
+    timestamp_attribute = {
+      'twenty_four_hours' => 'reminder_24h_sent_at',
+      'one_hour' => 'reminder_1h_sent_at'
+    }.fetch(reminder_window)
     return if demo_request.public_send(timestamp_attribute).present?
 
     DemoRequestMailer.with(
