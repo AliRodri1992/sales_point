@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   def index
     @landing_sections = LandingSection.enabled.order(:position)
-    @landing_section_keys = @landing_sections.pluck(:key).to_set
+    @landing_section_keys = @landing_sections.pluck(:key)
 
     @features = ::LandingPage.features
     @modules = ::LandingPage.modules
