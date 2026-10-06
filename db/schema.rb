@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_04_013000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_05_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -162,6 +162,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_013000) do
   end
 
   create_table "demo_requests", force: :cascade do |t|
+    t.integer "branches", default: 1, null: false
+    t.string "business_type", limit: 30
     t.string "company", null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
@@ -170,10 +172,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_013000) do
     t.string "name", null: false
     t.string "phone"
     t.string "status", default: "pending", null: false
+    t.boolean "terms_accepted", default: false, null: false
+    t.datetime "terms_accepted_at"
     t.datetime "updated_at", null: false
+    t.index ["branches"], name: "index_demo_requests_on_branches"
+    t.index ["business_type"], name: "index_demo_requests_on_business_type"
     t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
     t.index ["email"], name: "index_demo_requests_on_email"
     t.index ["status"], name: "index_demo_requests_on_status"
+    t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
   end
 
   create_table "employees", force: :cascade do |t|
