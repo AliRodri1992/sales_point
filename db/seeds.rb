@@ -225,7 +225,7 @@ def assign_admin_user_attributes(user, language)
     username: 'administrador',
     password: 'administrador',
     password_confirmation: 'administrador',
-    user_type: :employee,
+    user_type: :delta,
     status: :active,
     theme: Theme::DEFAULT,
     language:
