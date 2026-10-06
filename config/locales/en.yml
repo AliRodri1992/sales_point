@@ -949,6 +949,7 @@ en:
         business_type: Select a business sector.
         branches: Branch count must be greater than 0.
         terms: You must accept the Privacy Policy.
+        company: Company is required.
       return_home: Return to Home
       success_state:
         badge: Request received
@@ -957,6 +958,7 @@ en:
         back_home: Back to home
       return_prompt: Prefer to explore the platform yourself?
       submit: Schedule Demo
+      invalid_message: The message cannot exceed 2,000 characters.
       theme: Theme
       theme_option: Theme color %{number}
 
