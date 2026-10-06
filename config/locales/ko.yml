@@ -925,21 +925,6 @@ ko:
   demo_request_mailer:
     new_request:
       badge: 새 신청
-    confirmation:
-      subject: "데모 신청을 접수했습니다 - Delta POS"
-      title: "데모 신청이 접수되었습니다!"
-      greeting: "%{name}님, 안녕하세요."
-      intro: "Delta POS에 관심을 가져주셔서 감사합니다. 신청이 정상적으로 접수되었으며 담당자가 비즈니스 정보를 검토합니다."
-      details_title: "신청 요약"
-      company: "회사: %{company}"
-      business_type: "업종: %{business_type}"
-      branches: "지점 수: %{branches}"
-      next_steps_title: "다음 단계"
-      next_step_1: "공유해 주신 정보와 필요한 사항을 검토합니다."
-      next_step_2: "Delta POS 담당자가 연락드립니다."
-      next_step_3: "맞춤형 데모 일정을 조율합니다."
-      footer: "궁금한 점이 있으면 이 이메일에 답장해 주세요. 기꺼이 도와드리겠습니다."
-
       business_section: 비즈니스 정보
       contact_section: 신청자 정보
       footer: 고객 성공 팀을 위해 Delta POS에서 생성한 알림입니다.
@@ -958,6 +943,22 @@ ko:
       subject: 새 데모 신청 - Delta POS
       copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       title: 새 데모 신청
+
+    confirmation:
+      subject: "데모 신청을 접수했습니다 - Delta POS"
+      title: "데모 신청이 접수되었습니다!"
+      greeting: "%{name}님, 안녕하세요."
+      intro: "Delta POS에 관심을 가져주셔서 감사합니다. 신청이 정상적으로 접수되었으며 담당자가 비즈니스 정보를 검토합니다."
+      details_title: "신청 요약"
+      company: "회사: %{company}"
+      business_type: "업종: %{business_type}"
+      branches: "지점 수: %{branches}"
+      next_steps_title: "다음 단계"
+      next_step_1: "공유해 주신 정보와 필요한 사항을 검토합니다."
+      next_step_2: "Delta POS 담당자가 연락드립니다."
+      next_step_3: "맞춤형 데모 일정을 조율합니다."
+      footer: "궁금한 점이 있으면 이 이메일에 답장해 주세요. 기꺼이 도와드리겠습니다."
+
   demo_requests:
     create:
       success: 요청이 접수되었습니다. 곧 연락드리겠습니다.
