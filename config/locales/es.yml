@@ -955,6 +955,7 @@ es:
         business_type: Selecciona el giro o sector del negocio.
         branches: El número de sucursales debe ser mayor a 0.
         terms: Debes aceptar la Política de Privacidad.
+        company: La empresa es obligatoria.
       return_home: Regresar al Inicio
       success_state:
         badge: Solicitud recibida
@@ -963,6 +964,7 @@ es:
         back_home: Volver al inicio
       return_prompt: ¿Prefieres explorar la plataforma tú mismo?
       submit: Agendar Demo
+      invalid_message: El mensaje no puede superar los 2,000 caracteres.
       theme: Tema
       theme_option: Color de tema %{number}
 
