@@ -12,6 +12,10 @@ Rails.application.routes.draw do
   root 'home#index'
   get '/home/index', to: 'home#index'
   get '/dashboard', to: 'dashboard#index', as: :dashboard
+  resources :landing_sections, only: %i[index update] do
+    member { patch :toggle }
+    collection { patch :reorder }
+  end
   namespace :admin do
     post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
