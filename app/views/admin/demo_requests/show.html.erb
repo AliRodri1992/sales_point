@@ -23,7 +23,7 @@
         ['email', @demo_request.email],
         ['phone', @demo_request.phone],
         ['company', @demo_request.company],
-        ['business_type', @demo_request.business_type],
+        ['business_type', t("demo_requests.new.business_types.#{@demo_request.business_type}")],
         ['branches', @demo_request.branches],
         ['message', @demo_request.message.presence || '—']
       ].each do |key, value| %>
