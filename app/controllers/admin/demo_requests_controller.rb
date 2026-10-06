@@ -120,7 +120,7 @@ module Admin
 
       @demo_request.activities.create!(
         user: current_user,
-        action: 'status_changed',
+        action: 'confirmation_sent',
         details: I18n.with_locale(@demo_request.locale) do
           I18n.t('demo_request_mailer.scheduled.activity')
         end
