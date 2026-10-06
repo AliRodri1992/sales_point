@@ -71,3 +71,24 @@ RSpec.describe 'DemoRequestMailer scheduling', type: :mailer do
     expect(mail.subject).to eq('Reminder: your Delta POS demo starts soon')
   end
 end
+
+
+RSpec.describe 'DemoRequestMailer workflow updates', type: :mailer do
+  let(:demo_request) { create(:demo_request) }
+  let(:assignee) { create(:user) }
+  let(:actor) { create(:user) }
+
+  it 'notifies the assignee about a new assignment' do
+    mail = DemoRequestMailer.with(
+      demo_request: demo_request,
+      assignee: assignee,
+      actor: actor,
+      action: 'assigned',
+      locale: 'en'
+    ).workflow_update
+
+    expect(mail.to).to eq([assignee.email])
+    expect(mail.subject).to eq('New demo request assigned - Delta POS')
+    expect(mail.html_part.body.to_s).to include(demo_request.name)
+  end
+end
