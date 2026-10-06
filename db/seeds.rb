@@ -264,6 +264,28 @@ def assign_user_attributes(user, language, index)
   )
 end
 
+LANDING_SECTION_SEEDS = [
+  'hero',
+  'benefits',
+  'modules',
+  'how_it_works',
+  'screenshots',
+  'security',
+  'testimonials',
+  'pricing',
+  'faq',
+  'cta'
+].freeze
+
+def seed_landing_sections
+  LANDING_SECTION_SEEDS.each_with_index do |key, index|
+    LandingSection.find_or_create_by!(key:) do |section|
+      section.position = index + 1
+      section.enabled = !%w[how_it_works screenshots security testimonials].include?(key)
+    end
+  end
+end
+
 def seed_system_roles
   SYSTEM_ROLES.each do |role_attributes|
     SystemRole.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
@@ -302,6 +324,7 @@ end
 end
 
 seed_system_roles
+seed_landing_sections
 seed_permissions
 assign_default_role_permissions
 seed_admin_user
