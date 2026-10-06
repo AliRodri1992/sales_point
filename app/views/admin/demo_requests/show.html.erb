@@ -25,6 +25,7 @@
         ['company', @demo_request.company],
         ['business_type', t("demo_requests.new.business_types.#{@demo_request.business_type}")],
         ['branches', @demo_request.branches],
+        ['scheduled_at', @demo_request.scheduled_at ? l(@demo_request.scheduled_at, format: :long) : '—'],
         ['message', @demo_request.message.presence || '—']
       ].each do |key, value| %>
         <div class="border-b border-slate-100 py-4 <%= key == 'message' ? 'sm:col-span-2' : '' %>">
