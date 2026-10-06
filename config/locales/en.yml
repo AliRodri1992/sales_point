@@ -1305,6 +1305,7 @@ en:
       greater_than_min: must be greater than or equal to min_stock
       greater_than_or_equal_to: must be greater than or equal to %{count}
       inclusion: is not included in the list
+      in_future: must be a future date and time
       invalid: is invalid
       invalid_format: is invalid
       invalid_url: must be a valid URL
