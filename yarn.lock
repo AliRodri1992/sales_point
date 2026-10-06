@@ -490,6 +490,11 @@ gridstack@^13.3.0:
   resolved "https://registry.yarnpkg.com/gridstack/-/gridstack-13.3.0.tgz#057d35bfe22a4883df57cea7503ac35a86d6524d"
   integrity sha512-1tqFd3/hb3CSOJWFG8aFleCGWT6Gqx/hnjRT78ocnixp0XPk5Aa6Uxkm0qn9VHFwLrEdOFb+ZXtQZT+a/IdS3g==
 
+intl-tel-input@^29.5.3:
+  version "29.5.3"
+  resolved "https://registry.yarnpkg.com/intl-tel-input/-/intl-tel-input-29.5.3.tgz#9f62ad6ff14a660e2d80ee67cbf7cefb0c966af5"
+  integrity sha512-aVqUyjALMavXrdpniEv5+9CjTdVcHRDLiHKi6fBKxb+iNVriwqnWcsGvWmKwHjjDdBoYe2lf3pta0sIJL5ytYA==
+
 is-extglob@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/is-extglob/-/is-extglob-2.1.1.tgz#a88c02535791f02ed37c76a1b9ea9773c833f8c2"

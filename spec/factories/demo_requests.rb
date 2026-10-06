@@ -5,7 +5,7 @@ FactoryBot.define do
     name { 'Test User' }
     email { 'test@example.com' }
     company { 'Test Company' }
-    phone { '5512345678' }
+    phone { '+525512345678' }
     business_type { 'grocery' }
     branches { 1 }
     message { 'Please show me a demo' }

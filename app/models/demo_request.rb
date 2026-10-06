@@ -25,7 +25,11 @@ class DemoRequest < ApplicationRecord
   validates :company, presence: true, length: { in: 2..150 }
   validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }
   validates :branches, presence: true,
-            numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: MAX_BRANCHES }
+                       numericality: {
+                         only_integer: true,
+                         greater_than_or_equal_to: 1,
+                         less_than_or_equal_to: MAX_BRANCHES
+                       }
   validates :message, length: { maximum: 2_000 }, allow_blank: true
   validates :terms_accepted, acceptance: true
 

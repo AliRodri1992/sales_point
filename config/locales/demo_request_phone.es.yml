@@ -1,0 +1,4 @@
+es:
+  demo_requests:
+    new:
+      invalid_phone: "Ingresa un número de teléfono válido para el país seleccionado."

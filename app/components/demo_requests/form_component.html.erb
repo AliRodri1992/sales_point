@@ -26,12 +26,22 @@
       <% [['name', 'user'], ['email', 'envelope'], ['phone', 'phone']].each do |attribute, icon_name| %>
         <div>
           <%= f.label attribute, t("demo_requests.new.#{attribute}"), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
-          <div class="relative mt-1 rounded-xl shadow-sm">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><%= render Ui::IconComponent.new(name: icon_name, size: :sm, color: :gray) %></div>
-            <%= f.public_send("#{attribute == 'email' ? 'email' : attribute == 'phone' ? 'telephone' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3") %>
-          </div>
+          <% if attribute == 'phone' %>
+            <div class="relative mt-1 w-full rounded-xl shadow-sm" data-controller="international-phone">
+              <%= f.telephone_field :phone,
+                class: "#{field_classes(:phone)} pl-3 pr-3",
+                autocomplete: 'tel',
+                inputmode: 'tel',
+                data: { 'international-phone-target': 'input' } %>
+            </div>
+          <% else %>
+            <div class="relative mt-1 rounded-xl shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><%= render Ui::IconComponent.new(name: icon_name, size: :sm, color: :gray) %></div>
+              <%= f.public_send("#{attribute == 'email' ? 'email' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3") %>
+            </div>
+          <% end %>
           <%= error_for(attribute) %>
-          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= t('demo_requests.new.invalid_email') %>"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
+          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
         </div>
       <% end %>
 

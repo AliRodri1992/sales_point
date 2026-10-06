@@ -1,3 +1,5 @@
+@import "intl-tel-input/styles";
+
 /* Inter (400, 500, 600, 700) - self-hosted variable subsets from Google Fonts */
 @font-face {
   font-family: 'Inter';

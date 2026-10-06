@@ -45,13 +45,13 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request).to be_invalid
     end
 
-    it 'accepts exactly ten digits for phone' do
-      demo_request.phone = '5512345678'
+    it 'accepts E.164 phone numbers' do
+      demo_request.phone = '+525512345678'
       expect(demo_request).to be_valid
     end
 
-    it 'rejects phone values that are not exactly ten digits' do
-      %w[123456789 12345678901 55-1234-5678 +525512345678].each do |phone|
+    it 'rejects phone values that are not E.164' do
+      %w[5512345678 123456789 +025512345678 +525512345678901234].each do |phone|
         demo_request.phone = phone
         expect(demo_request).to be_invalid
       end

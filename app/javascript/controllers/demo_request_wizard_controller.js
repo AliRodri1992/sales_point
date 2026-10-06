@@ -84,6 +84,11 @@ export default class extends Controller {
         errorTarget.textContent = errorTarget.dataset.invalidMessage
         input.setAttribute("aria-invalid", "true")
         valid = false
+      } else if (input && field === "phone" && input.dataset.valid !== "true") {
+        errorTarget.classList.remove("hidden")
+        errorTarget.textContent = errorTarget.dataset.invalidMessage
+        input.setAttribute("aria-invalid", "true")
+        valid = false
       } else if (input) {
         errorTarget.classList.add("hidden")
         input.removeAttribute("aria-invalid")

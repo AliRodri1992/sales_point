@@ -18,8 +18,10 @@ class DemoRequestsController < ApplicationController
   private
 
   def demo_request_params
-    params.expect(
-      demo_request: %i[name email phone company business_type branches message terms_accepted]
+    permitted = params.expect(
+      demo_request: %i[name email phone phone_full company business_type branches message terms_accepted]
     )
+    permitted[:phone] = permitted.delete(:phone_full).presence || permitted[:phone]
+    permitted
   end
 end
