@@ -966,6 +966,19 @@ es:
       copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       title: Nueva solicitud de demostración
 
+    workflow_update:
+      greeting: "Hola %{name},"
+      request: "Solicitud"
+      performed_by: "Realizado por"
+      assigned:
+        subject: "Nueva solicitud de demo asignada - Delta POS"
+        title: "Solicitud de demo asignada"
+        message: "La solicitud de demo de %{prospect} (%{company}) fue asignada a ti."
+      status_changed:
+        subject: "Actualización de solicitud de demo - Delta POS"
+        title: "Solicitud de demo actualizada"
+        message: "La solicitud de demo de %{prospect} (%{company}) cambió de estado."
+
     confirmation:
       subject: "Recibimos tu solicitud de demostración - Delta POS"
       title: "¡Recibimos tu solicitud de demostración!"
