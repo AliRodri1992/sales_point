@@ -157,6 +157,50 @@ es:
           branches: Sucursales
           scheduled_at: Fecha y hora de la demostración
           message: Mensaje
+      metrics:
+        total: "Total de solicitudes"
+        contacted: "Contactadas"
+        scheduled: "Demos agendadas"
+        converted: "Convertidas"
+        overdue_title: "Seguimientos vencidos"
+        overdue_subtitle: "Tienes %{count} seguimientos que requieren atención."
+        view_overdue: "Ver vencidos"
+      filters:
+        follow_up_all: "Todos los seguimientos"
+        follow_up_overdue: "Seguimientos vencidos"
+        follow_up_upcoming: "Próximos seguimientos"
+        select_option: "Selecciona una opción"
+      contact_channels:
+        call: "Llamada"
+        whatsapp: "WhatsApp"
+        email: "Correo electrónico"
+        other: "Otro"
+      contact_outcomes:
+        interested: "Interesado"
+        needs_information: "Requiere información"
+        wants_demo: "Quiere demostración"
+        no_answer: "No contestó"
+        not_interested: "No interesado"
+      demo_outcomes:
+        very_interested: "Muy interesado"
+        interested: "Interesado"
+        needs_follow_up: "Requiere seguimiento"
+        not_interested: "No interesado"
+        no_show: "No se presentó"
+      activity:
+        contact_registered: "Contacto registrado por %{channel}; resultado: %{outcome}."
+        follow_up_scheduled: "Seguimiento programado para %{date}: %{action}."
+        demo_outcome_recorded: "Resultado de la demostración: %{outcome}."
+        converted: "Prospecto convertido."
+      show:
+        contacted_at: "Fecha y hora del contacto"
+        contact_channel: "Medio de contacto"
+        contact_outcome: "Resultado del contacto"
+        follow_up_title: "Próximo seguimiento"
+        next_follow_up_at: "Fecha y hora del seguimiento"
+        next_action: "Próxima acción"
+        next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
+        demo_outcome: "Resultado de la demostración"
     branches:
       actions:
         delete: Eliminar sucursal
