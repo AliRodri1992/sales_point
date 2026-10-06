@@ -56,10 +56,9 @@ ko:
         hidden: "숨김"
       actions:
         hide: "숨기기"
-        show:
+        show: "표시하기"
         move_up: "위로 이동"
         move_down: "아래로 이동"
- "표시하기"
       cards:
         content:
           title: "콘텐츠"
