@@ -936,6 +936,7 @@ ko:
     failure:
       invalid: 이메일 또는 비밀번호가 올바르지 않습니다.
       not_found_in_database: 이메일 또는 비밀번호가 올바르지 않습니다.
+      portal_access_denied: 이 포털에 접근할 권한이 없습니다.
     mailer:
       confirmation_instructions:
         action: 내 계정 확인하기
