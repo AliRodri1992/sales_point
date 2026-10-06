@@ -875,13 +875,24 @@ es:
     updated: Cliente actualizado correctamente
   demo_request_mailer:
     new_request:
+      badge: Nueva solicitud
+      business_section: Información del negocio
+      contact_section: Datos del solicitante
+      footer: Notificación generada por Delta POS para el equipo de atención.
+      intro: Se ha recibido una nueva solicitud de demostración desde el sitio de Delta POS.
+      logo_alt: Logotipo de Delta POS
+      brand_tagline: Punto de Venta
       fields:
         company: Empresa
         email: Correo
         message: Mensaje
         name: Nombre
         phone: Teléfono
+        business_type: Giro o sector
+        branches: Sucursales
+        created_at: Fecha de solicitud
       subject: Nueva solicitud de demostración - Delta POS
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       title: Nueva solicitud de demostración
   demo_requests:
     create:

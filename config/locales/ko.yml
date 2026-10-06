@@ -864,13 +864,24 @@ ko:
     updated: 고객이 성공적으로 업데이트되었습니다
   demo_request_mailer:
     new_request:
+      badge: 새 신청
+      business_section: 비즈니스 정보
+      contact_section: 신청자 정보
+      footer: 고객 성공 팀을 위해 Delta POS에서 생성한 알림입니다.
+      intro: Delta POS 웹사이트에서 새로운 데모 신청이 접수되었습니다.
+      logo_alt: Delta POS 로고
+      brand_tagline: 판매 시점 관리
       fields:
         company: 회사
         email: 이메일
         message: 메시지
         name: 이름
         phone: 전화번호
+        business_type: 비즈니스 업종
+        branches: 지점 수
+        created_at: 신청 일시
       subject: 새 데모 신청 - Delta POS
+      copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       title: 새 데모 신청
   demo_requests:
     create:
