@@ -140,6 +140,16 @@ en:
         save: Save changes
         fields:
           name: Name
+
+      show:
+        scheduled_at: Demo date and time
+        scheduled_hint: Select a future date and time for the demo.
+        note: Internal note
+        note_placeholder: Write a note for the team...
+        note_hint: This note is only visible to the Delta POS team.
+      activity:
+        note_added: Internal note added
+        reminder_sent: Reminder sent to the prospect (%{window}).
           email: Email
           phone: Phone
           company: Company
