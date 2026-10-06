@@ -1,4 +1,3 @@
-<sub>
 <div class="mx-auto w-full max-w-sm space-y-4 my-auto" data-controller="demo-request-wizard">
   <% if notice.present? %>
     <section class="success-state space-y-5 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm" role="status" aria-live="polite" tabindex="-1" data-demo-request-wizard-target="success">
@@ -53,8 +52,7 @@
               <%= f.public_send("#{attribute == 'email' ? 'email' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3") %>
             </div>
           <% end %>
-          <%= error_for(attribute) %>
-          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>" role="alert"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
+          <p id="demo_request_<%= attribute %>_error" data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 <%= 'hidden' unless demo_request.errors[attribute].any? %> text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>" role="alert"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
         </div>
       <% end %>
 
@@ -76,42 +74,37 @@
           { prompt: t('demo_requests.new.business_type_placeholder') },
           { id: 'demo_business_type',
             data: { 'demo-request-wizard-target': 'businessType' },
-            class: 'w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' } %>
+            class: field_classes(:business_type), aria: { describedby: 'demo_request_business_type_error', invalid: demo_request.errors[:business_type].any? } } %>
         <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :gray, css_class: 'pointer-events-none absolute right-3 top-8') %>
-        <%= error_for(:business_type) %>
-        <p data-demo-request-wizard-target="businessError" data-required-message="<%= t('demo_requests.new.required.business_type') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:business_type) if demo_request.errors[:business_type].any? %></p>
+        <p id="demo_request_business_type_error" data-demo-request-wizard-target="businessError" data-required-message="<%= t('demo_requests.new.required.business_type') %>" class="mt-1 <%= 'hidden' unless demo_request.errors[:business_type].any? %> text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:business_type) if demo_request.errors[:business_type].any? %></p>
       </div>
 
       <div>
         <%= f.label :company, t('demo_requests.new.company'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
-        <%= f.text_field :company, class: field_classes(:company), placeholder: t('demo_requests.new.company_placeholder') %>
-        <%= error_for(:company) %>
+        <%= f.text_field :company, class: field_classes(:company), placeholder: t('demo_requests.new.company_placeholder'), aria: { describedby: 'demo_request_company_error', invalid: demo_request.errors[:company].any? }, data: { 'demo-request-wizard-target': 'company' } %>
       </div>
 
       <div>
         <%= f.label :branches, t('demo_requests.new.branches'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
         <%= f.number_field :branches, min: 1, max: DemoRequest::MAX_BRANCHES,
           data: { 'demo-request-wizard-target': 'branches' },
-          class: 'mt-1 block w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500' %>
-        <%= error_for(:branches) %>
-        <p data-demo-request-wizard-target="branchesError" data-required-message="<%= t('demo_requests.new.required.branches') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:branches) if demo_request.errors[:branches].any? %></p>
+          class: field_classes(:branches), aria: { describedby: 'demo_request_branches_error', invalid: demo_request.errors[:branches].any? } %>
+        <p id="demo_request_branches_error" data-demo-request-wizard-target="branchesError" data-required-message="<%= t('demo_requests.new.required.branches') %>" class="mt-1 <%= 'hidden' unless demo_request.errors[:branches].any? %> text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:branches) if demo_request.errors[:branches].any? %></p>
       </div>
 
       <div>
         <%= f.label :message, t('demo_requests.new.message'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
-        <%= f.text_area :message, rows: 2, class: field_classes(:message), placeholder: t('demo_requests.new.message_placeholder') %>
-        <%= error_for(:message) %>
+        <%= f.text_area :message, rows: 2, class: field_classes(:message), placeholder: t('demo_requests.new.message_placeholder'), aria: { describedby: 'demo_request_message_error', invalid: demo_request.errors[:message].any? }, data: { 'demo-request-wizard-target': 'message' } %>
       </div>
 
       <div class="flex flex-col pt-1">
         <div class="flex items-start">
           <%= f.check_box :terms_accepted,
           { data: { 'demo-request-wizard-target': 'terms' },
-            class: 'mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--demo-primary-start)] focus:ring-[var(--demo-primary-start)]' } %>
+            class: 'mt-0.5 h-4 w-4 rounded-md border-slate-300 text-[var(--demo-primary-start)] focus:ring-[var(--demo-primary-start)]', aria: { describedby: 'demo_request_terms_error', invalid: demo_request.errors[:terms_accepted].any? } } %>
           <label for="demo_request_terms_accepted" class="ml-2 block text-[11px] leading-normal text-slate-500"><%= t('demo_requests.new.privacy') %> <%= link_to t('demo_requests.new.privacy_link'), root_path(anchor: 'privacy'), class: 'font-medium text-[var(--demo-primary-start)] transition-opacity hover:opacity-80' %>.</label>
         </div>
-        <%= error_for(:terms_accepted) %>
-        <p data-demo-request-wizard-target="termsError" data-required-message="<%= t('demo_requests.new.required.terms') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:terms_accepted) if demo_request.errors[:terms_accepted].any? %></p>
+        <p id="demo_request_terms_error" data-demo-request-wizard-target="termsError" data-required-message="<%= t('demo_requests.new.required.terms') %>" class="mt-1 <%= 'hidden' unless demo_request.errors[:terms_accepted].any? %> text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:terms_accepted) if demo_request.errors[:terms_accepted].any? %></p>
       </div>
 
       <div class="grid grid-cols-2 gap-3 pt-1.5">
