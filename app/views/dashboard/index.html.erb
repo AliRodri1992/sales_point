@@ -66,3 +66,16 @@
     </div>
   <% end %>
 </section>
+
+<section class="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50 p-5">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('dashboard.landing.card_title') %></h2>
+      <p class="mt-1 text-sm text-slate-600"><%= t('dashboard.landing.card_subtitle') %></p>
+    </div>
+    <%= link_to landing_sections_path,
+        class: "inline-flex items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700" do %>
+      <%= t('dashboard.landing.manage') %>
+    <% end %>
+  </div>
+</section>
