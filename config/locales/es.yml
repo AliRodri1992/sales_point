@@ -1,5 +1,36 @@
 ---
 es:
+  dashboard:
+    brand_alt: Isotipo de Delta POS
+    internal_portal: Portal interno de Delta POS
+    sign_out: Cerrar sesión
+    eyebrow: Operaciones internas
+    index:
+      title: Dashboard | Delta POS
+      heading: Dashboard
+      subtitle: Resumen de la operación interna de Delta POS.
+    kpis:
+      title: Indicadores principales
+      total: Solicitudes de demo
+      pending: Pendientes
+      contacted: Contactadas
+      completed: Completadas
+      users: Usuarios Delta
+    recent:
+      title: Solicitudes de demo recientes
+      subtitle: Últimas solicitudes recibidas por Delta POS.
+      columns:
+        name: Nombre
+        company: Empresa
+        email: Correo electrónico
+        status: Estado
+      empty:
+        title: No hay solicitudes de demo
+        subtitle: Las nuevas solicitudes aparecerán aquí.
+    statuses:
+      pending: Pendiente
+      contacted: Contactada
+      completed: Completada
   activerecord:
     attributes:
       address:
