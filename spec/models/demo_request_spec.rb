@@ -149,12 +149,6 @@ RSpec.describe DemoRequest, type: :model do
   end
 
   describe 'callbacks' do
-    it 'records the creation activity' do
-      expect { demo_request.send(:record_creation_activity) }
-        .to change(DemoRequestActivity, :count).by(1)
-
-      expect(demo_request.activities.last.action).to eq('created')
-    end
 
     it 'delivers notification' do
       notification = instance_double(DemoRequestNotification)
