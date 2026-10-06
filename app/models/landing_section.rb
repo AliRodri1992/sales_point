@@ -11,6 +11,7 @@ class LandingSection < ApplicationRecord
     testimonials
     faq
     cta
+    pricing
   ].freeze
 
   validates :key, presence: true, uniqueness: true, inclusion: { in: KEYS }
