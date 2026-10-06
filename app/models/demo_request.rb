@@ -8,6 +8,7 @@ class DemoRequest < ApplicationRecord
 
   has_many :activities, class_name: 'DemoRequestActivity', dependent: :destroy
 
+  after_create :record_creation_activity
   after_create_commit :notify_demo_request
 
   enum :status,
@@ -24,6 +25,7 @@ class DemoRequest < ApplicationRecord
 
   before_validation :normalize_fields
   before_validation :record_terms_acceptance
+  validate :validate_assigned_to
 
   validates :name, presence: true, length: { in: 2..100 }
   validates :email, presence: true, length: { maximum: 255 }, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -61,12 +63,23 @@ class DemoRequest < ApplicationRecord
     self.phone = parsed_phone.e164 if parsed_phone.valid?
   end
 
+  def validate_assigned_to
+    return if assigned_to.blank?
+    return if assigned_to.employee? && assigned_to.active?
+
+    errors.add(:assigned_to, :invalid)
+  end
+
   def record_terms_acceptance
     self.terms_accepted_at = terms_accepted ? (terms_accepted_at || Time.current) : nil
   end
 
   def normalize_text(value)
     value.to_s.strip.gsub(/\s+/, ' ').presence
+  end
+
+  def record_creation_activity
+    activities.create!(action: 'created')
   end
 
   def notify_demo_request
