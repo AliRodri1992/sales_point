@@ -96,6 +96,7 @@ ko:
         scheduled: 일정 확정
         completed: 데모 완료
         converted: 전환
+      conversion_rate: "전환율"
         cancelled: 취소
       activity:
         created: 신청 생성
