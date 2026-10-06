@@ -135,6 +135,13 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request).to be_valid
     end
 
+    it 'rejects an internal note longer than 2,000 characters' do
+      demo_request.note = 'a' * 2_001
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:note]).to be_present
+    end
+
     it 'defaults the locale to Spanish' do
       expect(demo_request.locale).to eq('es')
     end
