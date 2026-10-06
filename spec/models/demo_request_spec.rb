@@ -146,6 +146,34 @@ RSpec.describe DemoRequest, type: :model do
     it 'tracks activities' do
       expect(described_class.new).to have_many(:activities).class_name('DemoRequestActivity').dependent(:destroy)
     end
+
+    it 'assigns only active employees' do
+      expect(described_class.new).to belong_to(:assigned_to).class_name('User').optional
+    end
+  end
+
+  describe 'workflow' do
+    it 'records the creation activity automatically' do
+      request = create(:demo_request)
+
+      expect(request.activities.where(action: 'created')).to exist
+    end
+
+    it 'rejects non-employee assignees' do
+      customer = create(:user, user_type: :customer)
+      demo_request.assigned_to = customer
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:assigned_to]).to include(I18n.t('errors.messages.invalid'))
+    end
+
+    it 'rejects inactive employees as assignees' do
+      employee = create(:user, user_type: :employee, status: :suspended)
+      demo_request.assigned_to = employee
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:assigned_to]).to include(I18n.t('errors.messages.invalid'))
+    end
   end
 
   describe 'callbacks' do
