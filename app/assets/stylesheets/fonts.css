@@ -1,4 +1,29 @@
+
 @import "intl-tel-input/styles";
+
+/* Delta POS renders country flags as native Unicode flag glyphs.
+ * This keeps the selector fully local and avoids CDN or missing sprite assets. */
+.iti {
+  --iti-path-flags-1x: none;
+  --iti-path-flags-2x: none;
+}
+
+.iti__flag {
+  background-image: none !important;
+  background: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.iti__flag::before {
+  content: attr(data-flag-emoji);
+}
+
 
 /* Inter (400, 500, 600, 700) - self-hosted variable subsets from Google Fonts */
 @font-face {
