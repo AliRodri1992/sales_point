@@ -1314,6 +1314,7 @@ es:
       greater_than_min: debe ser mayor o igual que el stock mínimo
       greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
+      in_future: debe ser una fecha y hora futura
       invalid: no es válido
       invalid_format: no es válido
       invalid_url: debe ser una URL válida
