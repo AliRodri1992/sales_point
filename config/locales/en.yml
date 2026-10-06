@@ -105,6 +105,7 @@ en:
         system: System
         note_added: Internal note added
         reminder_sent: "Reminder sent to the prospect (%{window})."
+        confirmation_sent: "The demo confirmation was sent to the prospect."
       filters:
         all: All statuses
         apply: Filter
@@ -112,7 +113,7 @@ en:
         page_title: Demo requests | Delta POS
         title: Demo requests
         subtitle: Manage and follow up on demo requests.
-        search_placeholder: Search by name, company, or email...
+        search_placeholder: Search by name, company, email or phone...
         view: View request
         assigned: Owner
         unassigned: Unassigned
