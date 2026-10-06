@@ -96,6 +96,7 @@ en:
         scheduled: Scheduled
         completed: Completed
         converted: Converted
+      conversion_rate: "Conversion rate"
         cancelled: Cancelled
       activity:
         created: Request created
