@@ -146,8 +146,6 @@ ko:
           business_type: 업종
           branches: 지점 수
           message: 메시지
-    breadcrumbs:
-      demo_requests: 데모 신청
     branches:
       actions:
         delete: 지점 삭제
@@ -210,6 +208,7 @@ ko:
         inactive: 비활성
       updated: 지점이 성공적으로 업데이트되었습니다.
     breadcrumbs:
+      demo_requests: 데모 신청
       branches: 지점
       categories: 카테고리
       clients: 고객
