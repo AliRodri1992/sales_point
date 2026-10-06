@@ -4,13 +4,14 @@ export default class extends Controller {
   static targets = [
     "step", "node", "progress", "form", "businessType", "businessError",
     "branches", "branchesError", "terms", "termsError", "themeDropdown",
-    "nameError", "emailError", "phoneError"
+    "nameError", "emailError", "phoneError", "success"
   ]
 
   static values = { paletteOnly: Boolean }
 
   connect() {
     this.currentStep = this.initialStep()
+    if (this.hasSuccessTarget) requestAnimationFrame(() => this.successTarget.focus())
     document.addEventListener("click", this.closeOnOutsideClick)
     this.renderStep()
   }
@@ -20,11 +21,11 @@ export default class extends Controller {
   }
 
   initialStep() {
-    if (this.paletteOnlyValue) return 1
+    if (this.paletteOnlyValue || !this.hasFormTarget) return 1
 
     const [stepOne, stepTwo] = this.stepTargets
-    if (stepTwo?.querySelector(".text-rose-500:not(.hidden), .text-rose-600:not(.hidden)")) return 2
-    if (stepOne?.querySelector(".text-rose-500:not(.hidden), .text-rose-600:not(.hidden)")) return 1
+    if (stepTwo?.querySelector('[aria-invalid="true"]')) return 2
+    if (stepOne?.querySelector('[aria-invalid="true"]')) return 1
 
     return 1
   }
@@ -40,16 +41,18 @@ export default class extends Controller {
     }
 
     this.renderStep()
+    this.focusFirstInvalid()
   }
 
   back(event) {
     event.preventDefault()
     this.currentStep = 1
     this.renderStep()
+    this.focusFirstInvalid()
   }
 
   submit(event) {
-    if (this.paletteOnlyValue) return
+    if (this.paletteOnlyValue || !this.hasFormTarget) return
 
     this.clearBusinessErrors()
     const stepOneValid = this.validateStepOne()
@@ -119,28 +122,37 @@ export default class extends Controller {
   validateStepTwo() {
     let valid = true
     if (!this.businessTypeTarget.value) {
-      this.showError(this.businessErrorTarget)
+      this.showError(this.businessTypeTarget, this.businessErrorTarget, this.businessErrorTarget.dataset.requiredMessage)
       valid = false
     }
-    if (!this.branchesTarget.value || Number(this.branchesTarget.value) < 1) {
-      this.showError(this.branchesErrorTarget)
+    const branchesValue = Number(this.branchesTarget.value)
+    if (!this.branchesTarget.value || !Number.isInteger(branchesValue) || branchesValue < 1 || branchesValue > Number(this.branchesTarget.max)) {
+      this.showError(this.branchesTarget, this.branchesErrorTarget, this.branchesErrorTarget.dataset.requiredMessage)
       valid = false
     }
     if (!this.termsTarget.checked) {
-      this.showError(this.termsErrorTarget)
+      this.showError(this.termsTarget, this.termsErrorTarget, this.termsErrorTarget.dataset.requiredMessage)
       valid = false
     }
     return valid
   }
 
-  showError(target) {
+  showError(input, target, message) {
+    target.textContent = message
     target.classList.remove("hidden")
+    input.setAttribute("aria-invalid", "true")
+  }
+
+  clearFieldError(input, target) {
+    target.textContent = ""
+    target.classList.add("hidden")
+    input.setAttribute("aria-invalid", "false")
   }
 
   clearBusinessErrors() {
-    [this.businessErrorTarget, this.branchesErrorTarget, this.termsErrorTarget].forEach((target) => {
-      target.classList.add("hidden")
-    })
+    this.clearFieldError(this.businessTypeTarget, this.businessErrorTarget)
+    this.clearFieldError(this.branchesTarget, this.branchesErrorTarget)
+    this.clearFieldError(this.termsTarget, this.termsErrorTarget)
   }
 
   renderStep() {
