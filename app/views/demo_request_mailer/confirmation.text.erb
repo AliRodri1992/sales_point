@@ -1,0 +1,17 @@
+<%= t('demo_request_mailer.confirmation.title') %>
+
+<%= t('demo_request_mailer.confirmation.greeting', name: @demo_request.name) %>
+
+<%= t('demo_request_mailer.confirmation.intro') %>
+
+<%= t('demo_request_mailer.confirmation.details_title') %>
+<%= t('demo_request_mailer.confirmation.company', company: @demo_request.company) %>
+<%= t('demo_request_mailer.confirmation.business_type', business_type: @demo_request.business_type) %>
+<%= t('demo_request_mailer.confirmation.branches', branches: @demo_request.branches) %>
+
+<%= t('demo_request_mailer.confirmation.next_steps_title') %>
+1. <%= t('demo_request_mailer.confirmation.next_step_1') %>
+2. <%= t('demo_request_mailer.confirmation.next_step_2') %>
+3. <%= t('demo_request_mailer.confirmation.next_step_3') %>
+
+<%= t('demo_request_mailer.confirmation.footer') %>
