@@ -108,6 +108,14 @@ class DemoRequest < ApplicationRecord
       errors.add(:next_action, :blank)
     end
 
+    if contacted_at.present? && contact_channel.blank?
+      errors.add(:contact_channel, :blank)
+    end
+
+    if contacted_at.present? && contact_outcome.blank?
+      errors.add(:contact_outcome, :blank)
+    end
+
     if contacted? && contacted_at.blank?
       errors.add(:contacted_at, :blank)
     end
