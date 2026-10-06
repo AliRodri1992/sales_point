@@ -31,6 +31,64 @@ es:
       pending: Pendiente
       contacted: Contactada
       completed: Completada
+    landing:
+      title: "Administrar landing page"
+      subtitle: "Controla qué secciones de la página pública de Delta POS están visibles."
+      preview: "Vista previa"
+      sections_title: "Secciones de la landing"
+      sections_subtitle: "Activa u oculta secciones sin modificar código."
+      position: "Posición %{position}"
+      reorder_note: "El orden de las secciones se administrará desde esta pantalla. El contenido de cada sección se podrá editar en las siguientes etapas del CMS."
+      updated: "La visibilidad de la sección se actualizó correctamente."
+      reordered: "El orden de las secciones se actualizó correctamente."
+      reorder_error: "No fue posible actualizar el orden de las secciones."
+      manage: "Administrar landing"
+      card_title: "Landing page"
+      card_subtitle: "Administra las secciones visibles de la página pública."
+      status:
+        published: "Visible"
+        hidden: "Oculta"
+      actions:
+        hide: "Ocultar"
+        show: "Mostrar"
+      cards:
+        content:
+          title: "Contenido"
+          description: "Gestiona la estructura de la landing y prepara el contenido para cada sección."
+        languages:
+          title: "Idiomas"
+          description: "La administración de contenido respetará los idiomas configurados en Delta POS."
+        preview:
+          title: "Vista previa"
+          description: "Consulta la página pública antes de aplicar nuevos cambios de contenido."
+      sections:
+        hero:
+          title: "Hero"
+          description: "Presentación principal y llamada a la acción."
+        benefits:
+          title: "Beneficios"
+          description: "Razones principales para elegir Delta POS."
+        modules:
+          title: "Módulos"
+          description: "Áreas y funcionalidades principales del sistema."
+        how_it_works:
+          title: "Cómo funciona"
+          description: "Pasos para comenzar a utilizar Delta POS."
+        screenshots:
+          title: "Capturas del sistema"
+          description: "Imágenes y contexto visual de la plataforma."
+        security:
+          title: "Seguridad y control"
+          description: "Información sobre seguridad, control y confianza."
+        testimonials:
+          title: "Casos de éxito"
+          description: "Testimonios reales de clientes de Delta POS."
+        faq:
+          title: "Preguntas frecuentes"
+          description: "Respuestas a las preguntas más comunes."
+        cta:
+          title: "Llamada a la acción"
+          description: "Cierre de la landing y solicitud de demostración."
   activerecord:
     attributes:
       address:
