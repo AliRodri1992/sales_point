@@ -4,7 +4,7 @@ class LandingSectionsController < ApplicationController
   layout 'dashboard'
 
   before_action :authenticate_user!
-  before_action :set_landing_section, only: %i[toggle update]
+  before_action :set_landing_section, only: %i[toggle update move_up move_down]
   before_action :authorize_landing_sections
 
   def index
@@ -26,6 +26,15 @@ class LandingSectionsController < ApplicationController
       redirect_to landing_sections_path,
                   alert: @landing_section.errors.full_messages.to_sentence
     end
+  end
+
+
+  def move_up
+    move_section(-1)
+  end
+
+  def move_down
+    move_section(1)
   end
 
   def reorder
@@ -51,6 +60,25 @@ class LandingSectionsController < ApplicationController
 
   def set_landing_section
     @landing_section = LandingSection.find(params[:id])
+  end
+
+  def move_section(direction)
+    neighbor = if direction.negative?
+                 LandingSection.where('position < ?', @landing_section.position).order(position: :desc).first
+               else
+                 LandingSection.where('position > ?', @landing_section.position).order(:position).first
+               end
+
+    return redirect_to landing_sections_path if neighbor.nil?
+
+    LandingSection.transaction do
+      current_position = @landing_section.position
+      @landing_section.update!(position: 0)
+      @landing_section.update!(position: neighbor.position)
+      neighbor.update!(position: current_position)
+    end
+
+    redirect_to landing_sections_path, notice: t('dashboard.landing.reordered')
   end
 
   def landing_section_params
