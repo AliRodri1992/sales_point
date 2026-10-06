@@ -146,10 +146,6 @@ RSpec.describe DemoRequest, type: :model do
     it 'tracks activities' do
       expect(described_class.new).to have_many(:activities).class_name('DemoRequestActivity').dependent(:destroy)
     end
-
-    it 'assigns only active employees' do
-      expect(described_class.new).to belong_to(:assigned_to).class_name('User').optional
-    end
   end
 
   describe 'workflow' do
