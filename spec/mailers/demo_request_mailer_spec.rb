@@ -5,6 +5,17 @@ require 'rails_helper'
 RSpec.describe DemoRequestMailer, type: :mailer do
   let(:demo_request) { build(:demo_request) }
 
+  describe '#confirmation' do
+    it 'sends a confirmation to the prospect' do
+      mail = described_class.with(demo_request:, locale: 'en').confirmation
+
+      expect(mail.to).to eq([demo_request.email])
+      expect(mail.subject).to eq(I18n.t('demo_request_mailer.confirmation.subject'))
+      expect(mail.html_part.body.to_s).to include(demo_request.name, demo_request.company, 'Delta POS')
+      expect(mail.text_part.body.to_s).to include(demo_request.name, demo_request.company)
+    end
+  end
+
   describe '#new_request' do
     it 'builds the notification email with the request data' do
       mail = described_class.with(demo_request:, locale: 'en').new_request
