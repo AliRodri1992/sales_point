@@ -42,6 +42,12 @@ en:
       updated: "Section visibility was updated successfully."
       reordered: "Section order was updated successfully."
       reorder_error: "The section order could not be updated."
+      summary:
+        title: "Publication summary"
+        total: "Configured sections"
+        published: "Visible"
+        hidden: "Hidden"
+        order_hint: "Current order"
       manage: "Manage landing"
       card_title: "Landing page"
       card_subtitle: "Manage the sections visible on the public page."
@@ -50,7 +56,10 @@ en:
         hidden: "Hidden"
       actions:
         hide: "Hide"
-        show: "Show"
+        show:
+        move_up: "Move up"
+        move_down: "Move down"
+ "Show"
       cards:
         content:
           title: "Content"
@@ -86,6 +95,9 @@ en:
         faq:
           title: "Frequently asked questions"
           description: "Answers to common questions."
+        pricing:
+          title: "Pricing"
+          description: "Plans and pricing options available on the landing page."
         cta:
           title: "Call to action"
           description: "Landing close and demo request."
