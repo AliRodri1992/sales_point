@@ -86,7 +86,7 @@ class LandingSectionsController < ApplicationController
   end
 
   def authorize_landing_sections
-    if %w[toggle update].include?(action_name)
+    if %w[toggle update move_up move_down].include?(action_name)
       authorize(@landing_section)
     elsif action_name == 'reorder'
       authorize(LandingSection, :reorder?)
