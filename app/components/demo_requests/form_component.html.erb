@@ -82,6 +82,7 @@
       <div>
         <%= f.label :company, t('demo_requests.new.company'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
         <%= f.text_field :company, class: field_classes(:company), placeholder: t('demo_requests.new.company_placeholder'), aria: { describedby: 'demo_request_company_error', invalid: demo_request.errors[:company].any? }, data: { 'demo-request-wizard-target': 'company' } %>
+        <p id="demo_request_company_error" data-demo-request-wizard-target="companyError" data-required-message="<%= t('demo_requests.new.required.company') %>" class="mt-1 text-[10px] font-medium text-rose-500 <%= 'hidden' unless demo_request.errors[:company].any? %>" role="alert"><%= error_for(:company) if demo_request.errors[:company].any? %></p>
       </div>
 
       <div>
@@ -95,6 +96,7 @@
       <div>
         <%= f.label :message, t('demo_requests.new.message'), class: 'block font-jakarta text-xs font-medium text-slate-700' %>
         <%= f.text_area :message, rows: 2, class: field_classes(:message), placeholder: t('demo_requests.new.message_placeholder'), aria: { describedby: 'demo_request_message_error', invalid: demo_request.errors[:message].any? }, data: { 'demo-request-wizard-target': 'message' } %>
+        <p id="demo_request_message_error" data-demo-request-wizard-target="messageError" data-invalid-message="<%= t('demo_requests.new.invalid_message') %>" class="mt-1 text-[10px] font-medium text-rose-500 <%= 'hidden' unless demo_request.errors[:message].any? %>" role="alert"><%= error_for(:message) if demo_request.errors[:message].any? %></p>
       </div>
 
       <div class="flex flex-col pt-1">
@@ -116,4 +118,3 @@
 
   <div class="mt-5 border-t border-slate-100 pt-4 text-center"><p class="text-xs text-slate-500"><%= t('demo_requests.new.return_prompt') %> <%= link_to t('demo_requests.new.return_home'), root_path, class: 'font-semibold text-[var(--demo-primary-start)]' %></p></div>
 </div>
-</sub>
