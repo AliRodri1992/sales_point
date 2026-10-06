@@ -9,7 +9,7 @@
     "build:js:watch": "node_modules/.bin/esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --watch",
     "build:css": "npm run prepare:phone-flags && npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
     "build:css:watch": "npm run prepare:phone-flags && npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch",
-    "prepare:phone-flags": "mkdir -p app/assets/images/intl-tel-input && cp node_modules/intl-tel-input/build/img/flags.webp app/assets/images/intl-tel-input/flags.webp && cp node_modules/intl-tel-input/build/img/flags@2x.webp app/assets/images/intl-tel-input/flags@2x.webp"
+    "prepare:phone-flags": "mkdir -p app/assets/images/intl-tel-input && cp node_modules/intl-tel-input/dist/img/flags.webp app/assets/images/intl-tel-input/flags.webp && cp node_modules/intl-tel-input/dist/img/flags@2x.webp app/assets/images/intl-tel-input/flags@2x.webp"
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
