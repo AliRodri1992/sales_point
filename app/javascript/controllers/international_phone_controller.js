@@ -26,8 +26,6 @@ export default class extends Controller {
 
     this.iti.promise.then(() => {
       this.ready = true
-      this.updateFlagEmojis()
-      this.observeFlagElements()
       this.updateValidity()
     })
 
@@ -40,46 +38,11 @@ export default class extends Controller {
     this.inputTarget.removeEventListener("input", this.updateValidity)
     this.inputTarget.removeEventListener("blur", this.updateValidity)
     this.inputTarget.removeEventListener("countrychange", this.handleCountryChange)
-    this.flagObserver?.disconnect()
     this.iti?.destroy()
   }
 
-  observeFlagElements = () => {
-    const container = this.inputTarget.closest(".iti")
-    if (!container) return
-
-    this.flagObserver = new MutationObserver(() => this.updateFlagEmojis())
-    this.flagObserver.observe(container, { childList: true, subtree: true })
-  }
-
   handleCountryChange = () => {
-    this.updateFlagEmojis()
     this.updateValidity()
-  }
-
-  updateFlagEmojis = () => {
-    const container = this.inputTarget.closest(".iti")
-    if (!container) return
-
-    container.querySelectorAll(".iti__flag").forEach((flag) => {
-      const countryElement = flag.closest("[data-country-code]")
-      const countryCode = countryElement?.dataset.countryCode
-
-      if (!countryCode) return
-
-      const emoji = this.countryCodeToEmoji(countryCode)
-      if (flag.dataset.flagEmoji !== emoji) {
-        flag.dataset.flagEmoji = emoji
-      }
-    })
-  }
-
-  countryCodeToEmoji = (countryCode) => {
-    return countryCode
-      .toUpperCase()
-      .split("")
-      .map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0)))
-      .join("")
   }
 
   updateValidity = () => {
