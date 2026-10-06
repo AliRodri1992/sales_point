@@ -49,11 +49,27 @@
       </div>
 
       <div>
+        <%= f.label :scheduled_at, t('admin.demo_requests.show.scheduled_at'), class: 'block text-sm font-semibold text-slate-700' %>
+        <%= f.datetime_local_field :scheduled_at,
+                                   class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.demo_requests.show.scheduled_hint') %></p>
+      </div>
+
+      <div>
         <%= f.label :assigned_to_id, t('admin.demo_requests.show.assigned_to'), class: 'block text-sm font-semibold text-slate-700' %>
         <%= f.select :assigned_to_id,
                      [[t('admin.demo_requests.index.unassigned'), '']] + @users.map { |user| [user.display_name, user.id] },
                      {},
                      class: 'mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+      </div>
+
+      <div>
+        <%= f.label :note, t('admin.demo_requests.show.note'), class: 'block text-sm font-semibold text-slate-700' %>
+        <%= f.text_area :note,
+                        rows: 4,
+                        placeholder: t('admin.demo_requests.show.note_placeholder'),
+                        class: 'mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.demo_requests.show.note_hint') %></p>
       </div>
 
       <% if @demo_request.errors.any? %>
