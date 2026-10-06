@@ -157,6 +157,50 @@ ko:
           branches: 지점 수
           scheduled_at: 데모 날짜 및 시간
           message: 메시지
+      metrics:
+        total: "전체 요청"
+        contacted: "연락 완료"
+        scheduled: "예약된 데모"
+        converted: "전환 완료"
+        overdue_title: "기한이 지난 후속 조치"
+        overdue_subtitle: "확인이 필요한 후속 조치가 %{count}건 있습니다."
+        view_overdue: "기한 초과 보기"
+      filters:
+        follow_up_all: "모든 후속 조치"
+        follow_up_overdue: "기한이 지난 후속 조치"
+        follow_up_upcoming: "예정된 후속 조치"
+        select_option: "선택하세요"
+      contact_channels:
+        call: "전화"
+        whatsapp: "WhatsApp"
+        email: "이메일"
+        other: "기타"
+      contact_outcomes:
+        interested: "관심 있음"
+        needs_information: "정보 필요"
+        wants_demo: "데모 희망"
+        no_answer: "응답 없음"
+        not_interested: "관심 없음"
+      demo_outcomes:
+        very_interested: "매우 관심 있음"
+        interested: "관심 있음"
+        needs_follow_up: "추가 후속 조치 필요"
+        not_interested: "관심 없음"
+        no_show: "불참"
+      activity:
+        contact_registered: "%{channel}로 연락을 기록했습니다. 결과: %{outcome}."
+        follow_up_scheduled: "%{date} 후속 조치 예약: %{action}."
+        demo_outcome_recorded: "데모 결과: %{outcome}."
+        converted: "잠재 고객이 전환되었습니다."
+      show:
+        contacted_at: "연락 날짜 및 시간"
+        contact_channel: "연락 방법"
+        contact_outcome: "연락 결과"
+        follow_up_title: "다음 후속 조치"
+        next_follow_up_at: "후속 조치 날짜 및 시간"
+        next_action: "다음 작업"
+        next_action_placeholder: "예: 견적서를 보내고 확인 전화"
+        demo_outcome: "데모 결과"
     branches:
       actions:
         delete: 지점 삭제
