@@ -146,8 +146,6 @@ es:
           business_type: Giro empresarial
           branches: Sucursales
           message: Mensaje
-    breadcrumbs:
-      demo_requests: Solicitudes de demo
     branches:
       actions:
         delete: Eliminar sucursal
@@ -211,6 +209,7 @@ es:
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
     breadcrumbs:
+      demo_requests: Solicitudes de demo
       branches: Sucursales
       categories: Categorías
       clients: Clientes
