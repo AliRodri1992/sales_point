@@ -1,5 +1,36 @@
 ---
 ko:
+  dashboard:
+    brand_alt: Delta POS 로고
+    internal_portal: Delta POS 내부 포털
+    sign_out: 로그아웃
+    eyebrow: 내부 운영
+    index:
+      title: 대시보드 | Delta POS
+      heading: 대시보드
+      subtitle: Delta POS 내부 운영 현황입니다.
+    kpis:
+      title: 주요 지표
+      total: 데모 신청
+      pending: 대기 중
+      contacted: 연락 완료
+      completed: 완료
+      users: Delta 사용자
+    recent:
+      title: 최근 데모 신청
+      subtitle: Delta POS에 접수된 최근 신청입니다.
+      columns:
+        name: 이름
+        company: 회사
+        email: 이메일
+        status: 상태
+      empty:
+        title: 데모 신청이 없습니다
+        subtitle: 새로운 신청이 이곳에 표시됩니다.
+    statuses:
+      pending: 대기 중
+      contacted: 연락 완료
+      completed: 완료
   activerecord:
     attributes:
       address:
