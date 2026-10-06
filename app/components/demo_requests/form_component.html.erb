@@ -49,7 +49,7 @@
           <% else %>
             <div class="relative mt-1 rounded-xl shadow-sm">
               <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400"><%= render Ui::IconComponent.new(name: icon_name, size: :sm, color: :gray) %></div>
-              <%= f.public_send("#{attribute == 'email' ? 'email' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3") %>
+              <%= f.public_send("#{attribute == 'email' ? 'email' : 'text'}_field", attribute, class: "#{field_classes(attribute)} pl-9 pr-3", aria: { describedby: "demo_request_#{attribute}_error", invalid: demo_request.errors[attribute].any? }) %>
             </div>
           <% end %>
           <p id="demo_request_<%= attribute %>_error" data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 <%= 'hidden' unless demo_request.errors[attribute].any? %> text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>" role="alert"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
@@ -117,4 +117,5 @@
   <% end %>
 
   <div class="mt-5 border-t border-slate-100 pt-4 text-center"><p class="text-xs text-slate-500"><%= t('demo_requests.new.return_prompt') %> <%= link_to t('demo_requests.new.return_home'), root_path, class: 'font-semibold text-[var(--demo-primary-start)]' %></p></div>
+  <% end %>
 </div>
