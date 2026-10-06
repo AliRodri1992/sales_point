@@ -9,6 +9,11 @@ class DemoRequestsController < ApplicationController
     @demo_request = DemoRequest.new(demo_request_params)
 
     if @demo_request.save
+      DemoRequestMailer
+        .with(demo_request: @demo_request, locale: I18n.locale.to_s)
+        .confirmation
+        .deliver_later
+
       redirect_to new_demo_request_path, notice: t('.success')
     else
       render :new, status: :unprocessable_content
