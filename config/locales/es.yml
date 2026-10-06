@@ -105,6 +105,7 @@ es:
         system: Sistema
         note_added: Nota interna agregada
         reminder_sent: "Recordatorio enviado al prospecto (%{window})."
+        confirmation_sent: "Se envió la confirmación de la demostración al prospecto."
       filters:
         all: Todos los estados
         apply: Filtrar
