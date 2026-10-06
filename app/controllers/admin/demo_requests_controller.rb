@@ -98,8 +98,8 @@ module Admin
       return if @demo_request.scheduled_at.blank?
       return if previous_status == 'scheduled' && !@demo_request.saved_change_to_scheduled_at?
 
-      schedule_reminder(:'24h', 24.hours)
-      schedule_reminder(:'1h', 1.hour)
+      schedule_reminder('twenty_four_hours', 24.hours)
+      schedule_reminder('one_hour', 1.hour)
     end
 
     def schedule_reminder(window, interval)
