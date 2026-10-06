@@ -9,6 +9,8 @@ class LandingSectionsController < ApplicationController
 
   def index
     @landing_sections = LandingSection.ordered
+    @published_sections = @landing_sections.count(&:enabled?)
+    @hidden_sections = @landing_sections.size - @published_sections
   end
 
   def toggle
