@@ -146,8 +146,6 @@ en:
           business_type: Business type
           branches: Branches
           message: Message
-    breadcrumbs:
-      demo_requests: Demo requests
     branches:
       actions:
         delete: Delete branch
@@ -210,6 +208,7 @@ en:
         inactive: Inactive
       updated: Branch updated successfully.
     breadcrumbs:
+      demo_requests: Demo requests
       branches: Branches
       categories: Categories
       clients: Clients
