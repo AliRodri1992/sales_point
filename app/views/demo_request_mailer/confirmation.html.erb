@@ -1,0 +1,21 @@
+<div style="font-family: Arial, sans-serif; color: #0f172a; line-height: 1.6;">
+  <h1 style="margin: 0 0 16px;"><%= t('demo_request_mailer.confirmation.title') %></h1>
+  <p><%= t('demo_request_mailer.confirmation.greeting', name: @demo_request.name) %></p>
+  <p><%= t('demo_request_mailer.confirmation.intro') %></p>
+
+  <div style="margin: 24px 0; padding: 18px; border: 1px solid #e2e8f0; border-radius: 12px;">
+    <strong><%= t('demo_request_mailer.confirmation.details_title') %></strong>
+    <p style="margin: 10px 0 0;"><%= t('demo_request_mailer.confirmation.company', company: @demo_request.company) %></p>
+    <p style="margin: 4px 0 0;"><%= t('demo_request_mailer.confirmation.business_type', business_type: @demo_request.business_type) %></p>
+    <p style="margin: 4px 0 0;"><%= t('demo_request_mailer.confirmation.branches', branches: @demo_request.branches) %></p>
+  </div>
+
+  <h2 style="font-size: 18px;"><%= t('demo_request_mailer.confirmation.next_steps_title') %></h2>
+  <ol>
+    <li><%= t('demo_request_mailer.confirmation.next_step_1') %></li>
+    <li><%= t('demo_request_mailer.confirmation.next_step_2') %></li>
+    <li><%= t('demo_request_mailer.confirmation.next_step_3') %></li>
+  </ol>
+
+  <p><%= t('demo_request_mailer.confirmation.footer') %></p>
+</div>
