@@ -6,7 +6,7 @@ class DemoRequestsController < ApplicationController
   end
 
   def create
-    @demo_request = DemoRequest.new(demo_request_params)
+    @demo_request = DemoRequest.new(demo_request_params.merge(locale: I18n.locale.to_s))
 
     if @demo_request.save
       DemoRequestMailer
