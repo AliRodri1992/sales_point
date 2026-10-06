@@ -99,7 +99,8 @@ module Admin
         converted: counts.fetch('converted', 0),
         overdue_follow_ups: scope.where.not(next_follow_up_at: nil)
                                 .where('next_follow_up_at <= ?', Time.current)
-                                .where.not(status: %w[converted cancelled]).count
+                                .where.not(status: %w[converted cancelled]).count,
+        conversion_rate: scope.count.zero? ? 0 : ((counts.fetch('converted', 0).to_f / scope.count) * 100).round(1)
       }
     end
 
