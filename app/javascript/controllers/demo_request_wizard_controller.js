@@ -63,6 +63,7 @@ export default class extends Controller {
       this.currentStep = stepOneValid ? 2 : 1
       this.renderStep()
       this.showValidationAlert()
+      this.focusFirstInvalid()
     }
   }
 
