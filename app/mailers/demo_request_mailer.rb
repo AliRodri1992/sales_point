@@ -28,6 +28,7 @@ class DemoRequestMailer < ApplicationMailer
 
   def reminder(reminder_window)
     @demo_request = params[:demo_request]
+    @reminder_window = reminder_window
     @locale = params[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale.to_s
 
     I18n.with_locale(@locale) do
