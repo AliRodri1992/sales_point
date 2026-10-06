@@ -27,6 +27,7 @@ export default class extends Controller {
     this.iti.promise.then(() => {
       this.ready = true
       this.updateFlagEmojis()
+      this.observeFlagElements()
       this.updateValidity()
     })
 
@@ -39,7 +40,16 @@ export default class extends Controller {
     this.inputTarget.removeEventListener("input", this.updateValidity)
     this.inputTarget.removeEventListener("blur", this.updateValidity)
     this.inputTarget.removeEventListener("countrychange", this.handleCountryChange)
+    this.flagObserver?.disconnect()
     this.iti?.destroy()
+  }
+
+  observeFlagElements = () => {
+    const container = this.inputTarget.closest(".iti")
+    if (!container) return
+
+    this.flagObserver = new MutationObserver(() => this.updateFlagEmojis())
+    this.flagObserver.observe(container, { childList: true, subtree: true })
   }
 
   handleCountryChange = () => {
@@ -57,7 +67,10 @@ export default class extends Controller {
 
       if (!countryCode) return
 
-      flag.dataset.flagEmoji = this.countryCodeToEmoji(countryCode)
+      const emoji = this.countryCodeToEmoji(countryCode)
+      if (flag.dataset.flagEmoji !== emoji) {
+        flag.dataset.flagEmoji = emoji
+      }
     })
   }
 
