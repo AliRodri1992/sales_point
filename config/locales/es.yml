@@ -42,6 +42,12 @@ es:
       updated: "La visibilidad de la sección se actualizó correctamente."
       reordered: "El orden de las secciones se actualizó correctamente."
       reorder_error: "No fue posible actualizar el orden de las secciones."
+      summary:
+        title: "Resumen de publicación"
+        total: "Secciones configuradas"
+        published: "Visibles"
+        hidden: "Ocultas"
+        order_hint: "Orden actual"
       manage: "Administrar landing"
       card_title: "Landing page"
       card_subtitle: "Administra las secciones visibles de la página pública."
@@ -50,7 +56,10 @@ es:
         hidden: "Oculta"
       actions:
         hide: "Ocultar"
-        show: "Mostrar"
+        show:
+        move_up: "Mover hacia arriba"
+        move_down: "Mover hacia abajo"
+ "Mostrar"
       cards:
         content:
           title: "Contenido"
@@ -86,6 +95,9 @@ es:
         faq:
           title: "Preguntas frecuentes"
           description: "Respuestas a las preguntas más comunes."
+        pricing:
+          title: "Precios"
+          description: "Planes y opciones de precios disponibles en la landing."
         cta:
           title: "Llamada a la acción"
           description: "Cierre de la landing y solicitud de demostración."
