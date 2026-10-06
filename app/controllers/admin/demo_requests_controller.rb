@@ -63,7 +63,7 @@ module Admin
     end
 
     def active_users
-      User.active.order(Arel.sql("COALESCE(username, email) ASC"))
+      User.active.where(user_type: :employee).order(Arel.sql("COALESCE(username, email) ASC"))
     end
 
     def per_page_param
