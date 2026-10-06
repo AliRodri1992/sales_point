@@ -935,21 +935,6 @@ es:
   demo_request_mailer:
     new_request:
       badge: Nueva solicitud
-    confirmation:
-      subject: "Recibimos tu solicitud de demostración - Delta POS"
-      title: "¡Recibimos tu solicitud de demostración!"
-      greeting: "Hola %{name},"
-      intro: "Gracias por tu interés en Delta POS. Recibimos correctamente tu solicitud y un especialista revisará la información de tu negocio."
-      details_title: "Resumen de tu solicitud"
-      company: "Empresa: %{company}"
-      business_type: "Giro empresarial: %{business_type}"
-      branches: "Sucursales: %{branches}"
-      next_steps_title: "¿Qué sigue?"
-      next_step_1: "Revisaremos tus necesidades y la información que compartiste."
-      next_step_2: "Un especialista de Delta POS se pondrá en contacto contigo."
-      next_step_3: "Coordinaremos una demostración personalizada."
-      footer: "Si tienes alguna pregunta, responde a este correo y estaremos encantados de ayudarte."
-
       business_section: Información del negocio
       contact_section: Datos del solicitante
       footer: Notificación generada por Delta POS para el equipo de atención.
@@ -968,6 +953,22 @@ es:
       subject: Nueva solicitud de demostración - Delta POS
       copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       title: Nueva solicitud de demostración
+
+    confirmation:
+      subject: "Recibimos tu solicitud de demostración - Delta POS"
+      title: "¡Recibimos tu solicitud de demostración!"
+      greeting: "Hola %{name},"
+      intro: "Gracias por tu interés en Delta POS. Recibimos correctamente tu solicitud y un especialista revisará la información de tu negocio."
+      details_title: "Resumen de tu solicitud"
+      company: "Empresa: %{company}"
+      business_type: "Giro empresarial: %{business_type}"
+      branches: "Sucursales: %{branches}"
+      next_steps_title: "¿Qué sigue?"
+      next_step_1: "Revisaremos tus necesidades y la información que compartiste."
+      next_step_2: "Un especialista de Delta POS se pondrá en contacto contigo."
+      next_step_3: "Coordinaremos una demostración personalizada."
+      footer: "Si tienes alguna pregunta, responde a este correo y estaremos encantados de ayudarte."
+
   demo_requests:
     create:
       success: Recibimos tu solicitud. Nos pondremos en contacto contigo pronto.
