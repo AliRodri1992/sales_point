@@ -1,5 +1,36 @@
 ---
 en:
+  dashboard:
+    brand_alt: Delta POS logo mark
+    internal_portal: Delta POS internal portal
+    sign_out: Sign out
+    eyebrow: Internal operations
+    index:
+      title: Dashboard | Delta POS
+      heading: Dashboard
+      subtitle: Overview of Delta POS internal operations.
+    kpis:
+      title: Key metrics
+      total: Demo requests
+      pending: Pending
+      contacted: Contacted
+      completed: Completed
+      users: Delta users
+    recent:
+      title: Recent demo requests
+      subtitle: Latest requests received by Delta POS.
+      columns:
+        name: Name
+        company: Company
+        email: Email
+        status: Status
+      empty:
+        title: No demo requests
+        subtitle: New requests will appear here.
+    statuses:
+      pending: Pending
+      contacted: Contacted
+      completed: Completed
   activerecord:
     attributes:
       address:
