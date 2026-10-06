@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :landing_section do
-    key { 'hero' }
+    sequence(:key) { |n| "section_#{n}" }
+    sequence(:position)
     enabled { true }
-    position { 1 }
   end
 end
