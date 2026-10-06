@@ -956,6 +956,19 @@ ko:
       copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       title: 새 데모 신청
 
+    workflow_update:
+      greeting: "%{name}님, 안녕하세요."
+      request: "신청"
+      performed_by: "처리자"
+      assigned:
+        subject: "새 데모 신청이 배정되었습니다 - Delta POS"
+        title: "데모 신청 배정"
+        message: "%{prospect}(%{company})의 데모 신청이 담당자로 배정되었습니다."
+      status_changed:
+        subject: "데모 신청 업데이트 - Delta POS"
+        title: "데모 신청 업데이트"
+        message: "%{prospect}(%{company})의 데모 신청 상태가 변경되었습니다."
+
     confirmation:
       subject: "데모 신청을 접수했습니다 - Delta POS"
       title: "데모 신청이 접수되었습니다!"
