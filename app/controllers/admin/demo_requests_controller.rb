@@ -14,6 +14,7 @@ module Admin
       load_demo_requests
       @total_count = @demo_requests.except(:limit, :offset).count
       @users = active_users
+      @metrics = commercial_metrics
     end
 
     def show
@@ -30,6 +31,7 @@ module Admin
 
       if @demo_request.update(demo_request_params)
         record_workflow_activity(previous_status, previous_assignee)
+        record_commercial_activity
         record_note
         reset_demo_reminders_if_rescheduled
         schedule_demo_reminders(previous_status)
@@ -53,6 +55,21 @@ module Admin
     def load_demo_requests
       scope = policy_scope(DemoRequest).includes(:assigned_to)
       scope = scope.where(status: params[:status]) if DemoRequest.statuses.key?(params[:status])
+
+      if params[:follow_up].present?
+        scope = scope.where.not(next_follow_up_at: nil)
+        scope = scope.where('next_follow_up_at <= ?', Time.current) if params[:follow_up] == 'overdue'
+        scope = scope.where('next_follow_up_at > ?', Time.current) if params[:follow_up] == 'upcoming'
+      end
+
+      if params[:contact_outcome].present? && DemoRequest::CONTACT_OUTCOMES.include?(params[:contact_outcome])
+        scope = scope.where(contact_outcome: params[:contact_outcome])
+      end
+
+      if params[:demo_outcome].present? && DemoRequest::DEMO_OUTCOMES.include?(params[:demo_outcome])
+        scope = scope.where(demo_outcome: params[:demo_outcome])
+      end
+
       if params[:search].present?
         term = "%#{DemoRequest.sanitize_sql_like(params[:search].strip)}%"
         scope = scope.where(
@@ -65,9 +82,25 @@ module Admin
       @per_page = per_page_param
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
       @current_page = params[:page].to_i.clamp(1, @total_pages)
-      @demo_requests = scope.order(created_at: :desc)
+      @demo_requests = scope.order(Arel.sql('CASE WHEN next_follow_up_at IS NOT NULL AND next_follow_up_at <= NOW() THEN 0 ELSE 1 END, created_at DESC'))
                             .limit(@per_page)
                             .offset((@current_page - 1) * @per_page)
+    end
+
+    def commercial_metrics
+      scope = policy_scope(DemoRequest)
+      counts = scope.group(:status).count
+      {
+        total: scope.count,
+        pending: counts.fetch('pending', 0),
+        contacted: counts.fetch('contacted', 0),
+        scheduled: counts.fetch('scheduled', 0),
+        completed: counts.fetch('completed', 0),
+        converted: counts.fetch('converted', 0),
+        overdue_follow_ups: scope.where.not(next_follow_up_at: nil)
+                                .where('next_follow_up_at <= ?', Time.current)
+                                .where.not(status: %w[converted cancelled]).count
+      }
     end
 
     def active_users
@@ -80,7 +113,79 @@ module Admin
     end
 
     def demo_request_params
-      params.expect(demo_request: %i[status assigned_to_id scheduled_at note])
+      params.expect(
+        demo_request: %i[
+          status
+          assigned_to_id
+          scheduled_at
+          note
+          contacted_at
+          contact_channel
+          contact_outcome
+          next_follow_up_at
+          next_action
+          demo_outcome
+        ]
+      )
+    end
+
+    def record_commercial_activity
+      if @demo_request.saved_change_to_contacted_at?
+        @demo_request.activities.create!(
+          user: current_user,
+          action: 'contact_registered',
+          details: t(
+            'admin.demo_requests.activity.contact_registered',
+            channel: contact_channel_label,
+            outcome: contact_outcome_label
+          )
+        )
+      end
+
+      if @demo_request.saved_change_to_next_follow_up_at? || @demo_request.saved_change_to_next_action?
+        return if @demo_request.next_follow_up_at.blank?
+
+        @demo_request.activities.create!(
+          user: current_user,
+          action: 'follow_up_scheduled',
+          details: t(
+            'admin.demo_requests.activity.follow_up_scheduled',
+            date: l(@demo_request.next_follow_up_at, format: :long),
+            action: @demo_request.next_action
+          )
+        )
+      end
+
+      if @demo_request.saved_change_to_demo_outcome?
+        @demo_request.activities.create!(
+          user: current_user,
+          action: 'demo_outcome_recorded',
+          details: t(
+            'admin.demo_requests.activity.demo_outcome_recorded',
+            outcome: demo_outcome_label
+          )
+        )
+      end
+
+      return unless @demo_request.saved_change_to_status? && @demo_request.converted?
+
+      @demo_request.activities.create!(
+        user: current_user,
+        action: 'converted',
+        details: t('admin.demo_requests.activity.converted')
+      )
+    end
+
+    def contact_channel_label
+      t("admin.demo_requests.contact_channels.#{@demo_request.contact_channel}")
+    end
+
+    def contact_outcome_label
+      t("admin.demo_requests.contact_outcomes.#{@demo_request.contact_outcome}")
+    end
+
+    def demo_outcome_label
+      t("admin.demo_requests.demo_outcomes.#{@demo_request.demo_outcome}")
     end
 
     def record_note
@@ -136,7 +241,6 @@ module Admin
         end
       )
     end
-
 
     def notify_assignee_of_workflow_change(previous_status, previous_assignee)
       return if @demo_request.assigned_to.blank?
