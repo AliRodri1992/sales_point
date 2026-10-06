@@ -945,6 +945,11 @@ ko:
         branches: 지점 수는 0보다 커야 합니다.
         terms: 개인정보 보호정책에 동의해야 합니다.
       return_home: 홈으로 돌아가기
+      success_state:
+        badge: 신청 접수 완료
+        title: 데모를 신청해 주셔서 감사합니다!
+        next_steps: 담당 팀이 입력하신 정보를 확인한 후 데모 일정을 조율하기 위해 곧 연락드리겠습니다.
+        back_home: 홈으로 돌아가기
       return_prompt: 직접 플랫폼을 살펴보시겠어요?
       submit: 데모 예약
       theme: 테마
