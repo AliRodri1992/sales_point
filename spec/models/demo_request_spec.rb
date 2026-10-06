@@ -146,6 +146,43 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request.locale).to eq('es')
     end
 
+    it 'accepts commercial contact data' do
+      demo_request.contacted_at = Time.current
+      demo_request.contact_channel = 'whatsapp'
+      demo_request.contact_outcome = 'interested'
+
+      expect(demo_request).to be_valid
+    end
+
+    it 'requires a date when a next action is provided' do
+      demo_request.next_action = 'Enviar cotización'
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:next_follow_up_at]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it 'requires an action when a follow-up date is provided' do
+      demo_request.next_follow_up_at = 2.days.from_now
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:next_action]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it 'rejects invalid commercial outcomes' do
+      demo_request.contact_channel = 'sms'
+      demo_request.contact_outcome = 'unknown'
+      demo_request.demo_outcome = 'unknown'
+
+      expect(demo_request).to be_invalid
+    end
+
+    it 'detects overdue follow-ups' do
+      demo_request.next_follow_up_at = 1.hour.ago
+      demo_request.next_action = 'Llamar al prospecto'
+
+      expect(demo_request).to be_follow_up_due
+    end
+
     it 'rejects unaccepted terms' do
       demo_request.terms_accepted = false
       expect(demo_request).to be_invalid
