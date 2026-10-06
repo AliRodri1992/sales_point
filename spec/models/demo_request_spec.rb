@@ -111,6 +111,34 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request).to be_invalid
     end
 
+
+    it 'requires a scheduled time when scheduled' do
+      demo_request.status = :scheduled
+      demo_request.scheduled_at = nil
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:scheduled_at]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it 'requires a future scheduled time' do
+      demo_request.status = :scheduled
+      demo_request.scheduled_at = 1.hour.ago
+
+      expect(demo_request).to be_invalid
+      expect(demo_request.errors[:scheduled_at]).to include(I18n.t('errors.messages.in_future'))
+    end
+
+    it 'accepts a future scheduled time' do
+      demo_request.status = :scheduled
+      demo_request.scheduled_at = 2.hours.from_now
+
+      expect(demo_request).to be_valid
+    end
+
+    it 'defaults the locale to Spanish' do
+      expect(demo_request.locale).to eq('es')
+    end
+
     it 'rejects unaccepted terms' do
       demo_request.terms_accepted = false
       expect(demo_request).to be_invalid
