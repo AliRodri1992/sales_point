@@ -140,6 +140,16 @@ es:
         save: Guardar cambios
         fields:
           name: Nombre
+
+      show:
+        scheduled_at: Fecha y hora de la demostración
+        scheduled_hint: Selecciona una fecha y hora futura para la demo.
+        note: Nota interna
+        note_placeholder: Escribe una nota para el equipo...
+        note_hint: Esta nota solo será visible para el equipo de Delta POS.
+      activity:
+        note_added: Nota interna agregada
+        reminder_sent: Recordatorio enviado al prospecto (%{window}).
           email: Correo electrónico
           phone: Teléfono
           company: Empresa
