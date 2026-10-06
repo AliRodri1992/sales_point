@@ -6,6 +6,8 @@ class DemoRequest < ApplicationRecord
 
   belongs_to :assigned_to, class_name: 'User', optional: true
 
+  attr_accessor :note
+
   has_many :activities, class_name: 'DemoRequestActivity', dependent: :destroy
 
   after_create :record_creation_activity
@@ -46,6 +48,9 @@ class DemoRequest < ApplicationRecord
                        }
   validates :message, length: { maximum: 2_000 }, allow_blank: true
   validates :terms_accepted, acceptance: true
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
+  validate :scheduled_at_required_for_scheduled_status
+  validate :scheduled_at_must_be_future_when_scheduled
 
   private
 
@@ -76,6 +81,20 @@ class DemoRequest < ApplicationRecord
 
   def normalize_text(value)
     value.to_s.strip.gsub(/\s+/, ' ').presence
+  end
+
+  def scheduled_at_required_for_scheduled_status
+    return unless scheduled?
+    return if scheduled_at.present?
+
+    errors.add(:scheduled_at, :blank)
+  end
+
+  def scheduled_at_must_be_future_when_scheduled
+    return unless scheduled? && scheduled_at.present?
+    return if scheduled_at > Time.current
+
+    errors.add(:scheduled_at, :in_future)
   end
 
   def record_creation_activity
