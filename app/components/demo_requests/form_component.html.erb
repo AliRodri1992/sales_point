@@ -1,9 +1,21 @@
-
+<sub>
 <div class="mx-auto w-full max-w-sm space-y-4 my-auto" data-controller="demo-request-wizard">
   <% if notice.present? %>
-    <div class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700" role="status"><%= notice %></div>
-  <% end %>
-
+    <section class="success-state space-y-5 rounded-2xl border border-emerald-100 bg-white p-6 text-center shadow-sm" role="status" aria-live="polite" tabindex="-1" data-demo-request-wizard-target="success">
+      <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600" aria-hidden="true">
+        <%= render Ui::IconComponent.new(name: 'check', size: :lg, color: :inherit) %>
+      </div>
+      <div class="space-y-1.5">
+        <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-600"><%= t('demo_requests.new.success_state.badge') %></p>
+        <h2 class="font-jakarta text-xl font-extrabold leading-tight text-slate-900"><%= t('demo_requests.new.success_state.title') %></h2>
+        <p class="text-xs font-medium leading-relaxed text-slate-500"><%= notice %></p>
+      </div>
+      <div class="rounded-xl bg-slate-50 px-4 py-3 text-left">
+        <p class="text-[11px] font-semibold leading-relaxed text-slate-600"><%= t('demo_requests.new.success_state.next_steps') %></p>
+      </div>
+      <%= link_to t('demo_requests.new.success_state.back_home'), root_path, class: 'btn-delta-gradient inline-flex w-full justify-center rounded-xl px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:brightness-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--demo-primary-start)] focus-visible:ring-offset-2' %>
+    </section>
+  <% else %>
   <% if demo_request.errors.any? %>
     <div class="rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-xs text-rose-700" role="alert"><%= t('demo_requests.new.error_summary', count: demo_request.errors.count) %></div>
   <% end %>
@@ -32,6 +44,7 @@
                 class: "#{field_classes(:phone)} pl-3 pr-3",
                 autocomplete: 'tel',
                 inputmode: 'tel',
+                aria: { describedby: 'demo_request_phone_error', invalid: demo_request.errors[:phone].any? },
                 data: { 'international-phone-target': 'input' } %>
             </div>
           <% else %>
@@ -41,7 +54,7 @@
             </div>
           <% end %>
           <%= error_for(attribute) %>
-          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
+          <p data-demo-request-wizard-target="<%= attribute %>Error" class="mt-1 hidden text-[10px] font-medium text-rose-500" data-required-message="<%= t("demo_requests.new.required.#{attribute}") %>" data-invalid-message="<%= attribute == 'phone' ? t('demo_requests.new.invalid_phone') : t('demo_requests.new.invalid_email') %>" role="alert"><%= demo_request.errors[attribute].first if demo_request.errors[attribute].any? %></p>
         </div>
       <% end %>
 
@@ -66,7 +79,7 @@
             class: 'w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' } %>
         <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :gray, css_class: 'pointer-events-none absolute right-3 top-8') %>
         <%= error_for(:business_type) %>
-        <p data-demo-request-wizard-target="businessError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.business_type') %></p>
+        <p data-demo-request-wizard-target="businessError" data-required-message="<%= t('demo_requests.new.required.business_type') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:business_type) if demo_request.errors[:business_type].any? %></p>
       </div>
 
       <div>
@@ -81,7 +94,7 @@
           data: { 'demo-request-wizard-target': 'branches' },
           class: 'mt-1 block w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500' %>
         <%= error_for(:branches) %>
-        <p data-demo-request-wizard-target="branchesError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.branches') %></p>
+        <p data-demo-request-wizard-target="branchesError" data-required-message="<%= t('demo_requests.new.required.branches') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:branches) if demo_request.errors[:branches].any? %></p>
       </div>
 
       <div>
@@ -98,7 +111,7 @@
           <label for="demo_request_terms_accepted" class="ml-2 block text-[11px] leading-normal text-slate-500"><%= t('demo_requests.new.privacy') %> <%= link_to t('demo_requests.new.privacy_link'), root_path(anchor: 'privacy'), class: 'font-medium text-[var(--demo-primary-start)] transition-opacity hover:opacity-80' %>.</label>
         </div>
         <%= error_for(:terms_accepted) %>
-        <p data-demo-request-wizard-target="termsError" class="mt-1 hidden text-[10px] font-medium text-rose-500"><%= t('demo_requests.new.required.terms') %></p>
+        <p data-demo-request-wizard-target="termsError" data-required-message="<%= t('demo_requests.new.required.terms') %>" class="mt-1 hidden text-[10px] font-medium text-rose-500" role="alert"><%= error_for(:terms_accepted) if demo_request.errors[:terms_accepted].any? %></p>
       </div>
 
       <div class="grid grid-cols-2 gap-3 pt-1.5">
@@ -110,3 +123,4 @@
 
   <div class="mt-5 border-t border-slate-100 pt-4 text-center"><p class="text-xs text-slate-500"><%= t('demo_requests.new.return_prompt') %> <%= link_to t('demo_requests.new.return_home'), root_path, class: 'font-semibold text-[var(--demo-primary-start)]' %></p></div>
 </div>
+</sub>
