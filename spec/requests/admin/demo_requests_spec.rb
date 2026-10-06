@@ -48,12 +48,31 @@ RSpec.describe 'Admin demo requests', type: :request do
   describe 'PATCH /admin/demo_requests/:id' do
     it 'updates status and records the change' do
       patch admin_demo_request_path(demo_request), params: {
-        demo_request: { status: 'scheduled' }
+        demo_request: { status: 'scheduled', scheduled_at: 2.hours.from_now }
       }
 
       expect(response).to redirect_to(admin_demo_request_path(demo_request))
       expect(demo_request.reload.status).to eq('scheduled')
       expect(demo_request.activities.where(action: 'status_changed')).to exist
+      expect(demo_request.activities.where(action: 'confirmation_sent')).to exist
+    end
+
+    it 'adds an internal note' do
+      patch admin_demo_request_path(demo_request), params: {
+        demo_request: { note: 'Call the prospect tomorrow morning.' }
+      }
+
+      expect(response).to redirect_to(admin_demo_request_path(demo_request))
+      expect(demo_request.reload.activities.where(action: 'note_added', details: 'Call the prospect tomorrow morning.')).to exist
+    end
+
+    it 'rejects scheduling without a date' do
+      patch admin_demo_request_path(demo_request), params: {
+        demo_request: { status: 'scheduled' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(demo_request.reload.status).to eq('pending')
     end
 
     it 'assigns a responsible user and records the change' do
