@@ -50,7 +50,10 @@ module Admin
       scope = scope.where(status: params[:status]) if DemoRequest.statuses.key?(params[:status])
       if params[:search].present?
         term = "%#{DemoRequest.sanitize_sql_like(params[:search].strip)}%"
-        scope = scope.where('name ILIKE :term OR email ILIKE :term OR company ILIKE :term', term:)
+        scope = scope.where(
+          'name ILIKE :term OR email ILIKE :term OR company ILIKE :term OR phone ILIKE :term',
+          term:
+        )
       end
 
       @total_count = scope.count
