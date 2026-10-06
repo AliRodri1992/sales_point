@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard', to: 'dashboard#index', as: :dashboard
   resources :landing_sections, only: %i[index update] do
-    member { patch :toggle }
+    member { patch :toggle; patch :move_up; patch :move_down }
     collection { patch :reorder }
   end
   namespace :admin do
