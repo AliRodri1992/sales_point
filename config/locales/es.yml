@@ -610,6 +610,7 @@ es:
         subtitle: Usuarios conectados
         title: Agentes en línea
       sidebar:
+        demo_requests: Solicitudes de demo
         onboarding:
           progress: Configuración inicial al %{percentage}%
           title: Configuración inicial
