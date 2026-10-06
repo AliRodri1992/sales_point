@@ -7,6 +7,7 @@ export default class extends Controller {
   connect() {
     this.ready = false
     this.inputTarget.dataset.valid = "false"
+    this.inputTarget.setAttribute("aria-invalid", "false")
 
     this.iti = intlTelInput(this.inputTarget, {
       initialCountry: "mx",
