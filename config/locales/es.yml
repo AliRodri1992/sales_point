@@ -117,6 +117,7 @@ es:
         view: Ver solicitud
         assigned: Responsable
         unassigned: Sin asignar
+        scheduled: Fecha de demo
         total: "%{count} solicitudes"
         empty_title: No hay solicitudes
         empty_subtitle: Las nuevas solicitudes de demostración aparecerán aquí.
@@ -154,6 +155,7 @@ es:
           company: Empresa
           business_type: Giro empresarial
           branches: Sucursales
+          scheduled_at: Fecha y hora de la demostración
           message: Mensaje
     branches:
       actions:
