@@ -5,7 +5,6 @@ class AddDemoRequestWorkflow < ActiveRecord::Migration[8.1]
 
     add_foreign_key :demo_requests, :users, column: :assigned_to_id
 
-    change_column_default :demo_requests, :status, from: 'pending', to: 'pending'
 
     create_table :demo_request_activities do |t|
       t.references :demo_request, null: false, foreign_key: true
