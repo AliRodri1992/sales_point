@@ -606,6 +606,7 @@ en:
         subtitle: Connected users
         title: Online agents
       sidebar:
+        demo_requests: Demo requests
         onboarding:
           progress: Initial setup at %{percentage}%
           title: Initial setup
