@@ -23,6 +23,7 @@ class User < ApplicationRecord
   enum :user_type,
        {
          employee: 'employee',
+         delta: 'delta',
          customer: 'customer',
          supplier: 'supplier'
        },
