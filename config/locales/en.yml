@@ -950,6 +950,11 @@ en:
         branches: Branch count must be greater than 0.
         terms: You must accept the Privacy Policy.
       return_home: Return to Home
+      success_state:
+        badge: Request received
+        title: Thanks for requesting your demo!
+        next_steps: Our team will review your details and contact you shortly to coordinate your demonstration.
+        back_home: Back to home
       return_prompt: Prefer to explore the platform yourself?
       submit: Schedule Demo
       theme: Theme
