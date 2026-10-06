@@ -960,6 +960,19 @@ en:
       copyright: "© %{year} Delta POS Inc. All rights reserved."
       title: New demo request
 
+    workflow_update:
+      greeting: "Hi %{name},"
+      request: "Request"
+      performed_by: "Performed by"
+      assigned:
+        subject: "New demo request assigned - Delta POS"
+        title: "Demo request assigned"
+        message: "The demo request from %{prospect} (%{company}) was assigned to you."
+      status_changed:
+        subject: "Demo request update - Delta POS"
+        title: "Demo request updated"
+        message: "The demo request from %{prospect} (%{company}) changed status."
+
     confirmation:
       subject: "We received your demo request - Delta POS"
       title: "We received your demo request!"
