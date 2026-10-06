@@ -3,10 +3,11 @@
 class DemoRequestReminderJob < ApplicationJob
   queue_as :default
 
-  def perform(demo_request_id, reminder_window)
+  def perform(demo_request_id, reminder_window, scheduled_at_timestamp)
     demo_request = DemoRequest.find_by(id: demo_request_id)
     return unless demo_request&.scheduled?
     return if demo_request.scheduled_at.blank?
+    return unless demo_request.scheduled_at.to_i == scheduled_at_timestamp.to_i
 
     send_reminder(demo_request, reminder_window)
   end
