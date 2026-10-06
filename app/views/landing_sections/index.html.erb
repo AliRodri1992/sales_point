@@ -1,6 +1,6 @@
 <% content_for :title, t('dashboard.landing.title') %>
 
-<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+<div class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
   <div>
     <p class="text-sm font-semibold uppercase tracking-[0.12em] text-emerald-600">
       <%= t('dashboard.eyebrow') %>
@@ -8,70 +8,96 @@
     <h1 class="mt-2 font-jakarta text-3xl font-bold tracking-tight text-slate-900">
       <%= t('dashboard.landing.title') %>
     </h1>
-    <p class="mt-2 max-w-2xl text-sm text-slate-500">
+    <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
       <%= t('dashboard.landing.subtitle') %>
     </p>
   </div>
 
   <%= link_to root_path,
-      class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700",
       target: "_blank",
-      rel: "noopener" do %>
+      rel: "noopener",
+      class: "inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
     <%= t('dashboard.landing.preview') %>
   <% end %>
 </div>
 
-<section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-  <div class="border-b border-slate-100 px-5 py-4">
-    <h2 class="font-jakarta text-lg font-bold text-slate-900">
-      <%= t('dashboard.landing.sections_title') %>
-    </h2>
-    <p class="mt-1 text-sm text-slate-500">
-      <%= t('dashboard.landing.sections_subtitle') %>
-    </p>
+<section aria-labelledby="landing-summary" class="grid gap-4 sm:grid-cols-3">
+  <h2 id="landing-summary" class="sr-only"><%= t('dashboard.landing.summary.title') %></h2>
+
+  <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <p class="text-sm font-medium text-slate-500"><%= t('dashboard.landing.summary.total') %></p>
+    <p class="mt-2 font-jakarta text-3xl font-bold text-slate-900"><%= @landing_sections.size %></p>
+  </article>
+
+  <article class="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 shadow-sm">
+    <p class="text-sm font-medium text-emerald-700"><%= t('dashboard.landing.summary.published') %></p>
+    <p class="mt-2 font-jakarta text-3xl font-bold text-emerald-700"><%= @published_sections %></p>
+  </article>
+
+  <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <p class="text-sm font-medium text-slate-500"><%= t('dashboard.landing.summary.hidden') %></p>
+    <p class="mt-2 font-jakarta text-3xl font-bold text-slate-700"><%= @hidden_sections %></p>
+  </article>
+</section>
+
+<section class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="flex flex-col gap-3 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="font-jakarta text-lg font-bold text-slate-900">
+        <%= t('dashboard.landing.sections_title') %>
+      </h2>
+      <p class="mt-1 text-sm text-slate-500">
+        <%= t('dashboard.landing.sections_subtitle') %>
+      </p>
+    </div>
+    <span class="inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+      <%= t('dashboard.landing.summary.order_hint') %>
+    </span>
   </div>
 
   <div id="landing-sections" class="divide-y divide-slate-100">
     <% @landing_sections.each do |section| %>
-      <article class="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+      <article class="flex flex-col gap-4 px-5 py-5 transition hover:bg-slate-50/70 sm:flex-row sm:items-center sm:justify-between"
                data-landing-section-id="<%= section.id %>">
-        <div class="flex min-w-0 items-center gap-4">
-          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-bold text-slate-500"
+        <div class="flex min-w-0 items-start gap-4">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-sm font-bold text-slate-500"
                 aria-label="<%= t('dashboard.landing.position', position: section.position) %>">
             <%= section.position %>
           </span>
 
           <div class="min-w-0">
-            <h3 class="font-semibold text-slate-900">
-              <%= t("dashboard.landing.sections.#{section.key}.title") %>
-            </h3>
-            <p class="mt-1 text-sm text-slate-500">
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="font-semibold text-slate-900">
+                <%= t("dashboard.landing.sections.#{section.key}.title") %>
+              </h3>
+              <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= section.enabled? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>">
+                <%= t("dashboard.landing.status.#{section.enabled? ? 'published' : 'hidden'}") %>
+              </span>
+            </div>
+            <p class="mt-1 max-w-2xl text-sm leading-6 text-slate-500">
               <%= t("dashboard.landing.sections.#{section.key}.description") %>
             </p>
           </div>
         </div>
 
-        <div class="flex shrink-0 items-center gap-2">
+        <div class="flex shrink-0 flex-wrap items-center gap-2">
           <%= button_to landing_section_move_up_path(section),
               method: :patch,
               aria: { label: t('dashboard.landing.actions.move_up') },
-              class: "rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
+              class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
             ↑
           <% end %>
+
           <%= button_to landing_section_move_down_path(section),
               method: :patch,
               aria: { label: t('dashboard.landing.actions.move_down') },
-              class: "rounded-lg border border-slate-200 px-2.5 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
+              class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-bold text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
             ↓
           <% end %>
 
-          <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= section.enabled? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>">
-            <%= t("dashboard.landing.status.#{section.enabled? ? 'published' : 'hidden'}") %>
-          </span>
-
           <%= button_to landing_section_toggle_path(section),
               method: :patch,
-              class: "rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
+              class: "rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" do %>
             <%= t("dashboard.landing.actions.#{section.enabled? ? 'hide' : 'show'}") %>
           <% end %>
         </div>
