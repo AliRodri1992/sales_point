@@ -1287,6 +1287,7 @@ ko:
       greater_than_min: 최소 재고보다 크거나 같아야 합니다
       greater_than_or_equal_to: "%{count}보다 크거나 같아야 합니다"
       inclusion: 목록에 포함되어 있지 않습니다
+      in_future: 미래 날짜와 시간이어야 합니다
       invalid: 이(가) 올바르지 않습니다
       invalid_format: 이(가) 올바르지 않습니다
       invalid_url: 유효한 URL이 아닙니다
