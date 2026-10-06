@@ -172,6 +172,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_143000) do
     t.string "name", null: false
     t.string "phone"
     t.string "status", default: "pending", null: false
+    t.bigint "assigned_to_id"
     t.boolean "terms_accepted", default: false, null: false
     t.datetime "terms_accepted_at"
     t.datetime "updated_at", null: false
@@ -180,7 +181,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_143000) do
     t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
     t.index ["email"], name: "index_demo_requests_on_email"
     t.index ["status"], name: "index_demo_requests_on_status"
+    t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
+  end
+
+  create_table "demo_request_activities", force: :cascade do |t|
+    t.string "action", null: false
+    t.text "details"
+    t.bigint "demo_request_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_demo_request_activities_on_action"
+    t.index ["demo_request_id"], name: "index_demo_request_activities_on_demo_request_id"
+    t.index ["user_id"], name: "index_demo_request_activities_on_user_id"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -736,6 +750,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_05_143000) do
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
   add_foreign_key "dashboard_preferences", "users"
+  add_foreign_key "demo_request_activities", "demo_requests"
+  add_foreign_key "demo_request_activities", "users"
+  add_foreign_key "demo_requests", "users", column: "assigned_to_id"
   add_foreign_key "employees", "organizations"
   add_foreign_key "membership_plan_features", "membership_features"
   add_foreign_key "membership_plan_features", "membership_plans"
