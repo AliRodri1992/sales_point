@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "step", "node", "progress", "form", "businessType", "businessError",
     "branches", "branchesError", "terms", "termsError", "themeDropdown",
-    "nameError", "emailError", "phoneError", "success"
+    "nameError", "emailError", "phoneError", "company", "companyError", "message", "messageError", "success"
   ]
 
   static values = { paletteOnly: Boolean }
@@ -124,16 +124,39 @@ export default class extends Controller {
     if (!this.businessTypeTarget.value) {
       this.showError(this.businessTypeTarget, this.businessErrorTarget, this.businessErrorTarget.dataset.requiredMessage)
       valid = false
+    } else {
+      this.clearFieldError(this.businessTypeTarget, this.businessErrorTarget)
     }
+
+    if (!this.companyTarget.value.trim()) {
+      this.showError(this.companyTarget, this.companyErrorTarget, this.companyErrorTarget.dataset.requiredMessage)
+      valid = false
+    } else {
+      this.clearFieldError(this.companyTarget, this.companyErrorTarget)
+    }
+
     const branchesValue = Number(this.branchesTarget.value)
     if (!this.branchesTarget.value || !Number.isInteger(branchesValue) || branchesValue < 1 || branchesValue > Number(this.branchesTarget.max)) {
       this.showError(this.branchesTarget, this.branchesErrorTarget, this.branchesErrorTarget.dataset.requiredMessage)
       valid = false
+    } else {
+      this.clearFieldError(this.branchesTarget, this.branchesErrorTarget)
     }
+
+    if (this.messageTarget.value.length > 2000) {
+      this.showError(this.messageTarget, this.messageErrorTarget, this.messageErrorTarget.dataset.invalidMessage)
+      valid = false
+    } else {
+      this.clearFieldError(this.messageTarget, this.messageErrorTarget)
+    }
+
     if (!this.termsTarget.checked) {
       this.showError(this.termsTarget, this.termsErrorTarget, this.termsErrorTarget.dataset.requiredMessage)
       valid = false
+    } else {
+      this.clearFieldError(this.termsTarget, this.termsErrorTarget)
     }
+
     return valid
   }
 
