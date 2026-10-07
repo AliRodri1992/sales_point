@@ -157,16 +157,15 @@ ko:
         note_placeholder: 팀을 위한 메모를 입력하세요...
         note_hint: 이 메모는 Delta POS 팀에게만 표시됩니다.
         fields:
-        contacted_at: "연락 날짜 및 시간"
-        contact_channel: "연락 방법"
-        contact_outcome: "연락 결과"
-        follow_up_title: "다음 후속 조치"
-        next_follow_up_at: "후속 조치 날짜 및 시간"
-        next_action: "다음 작업"
-        next_action_placeholder: "예: 견적서를 보내고 확인 전화"
-        demo_outcome: "데모 결과"
+          contacted_at: "연락 날짜 및 시간"
+          contact_channel: "연락 방법"
+          contact_outcome: "연락 결과"
+          follow_up_title: "다음 후속 조치"
+          next_follow_up_at: "후속 조치 날짜 및 시간"
+          next_action: "다음 작업"
+          next_action_placeholder: "예: 견적서를 보내고 확인 전화"
+          demo_outcome: "데모 결과"
           name: 이름
-
           email: 이메일
           phone: 전화번호
           company: 회사
