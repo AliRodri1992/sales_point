@@ -19,6 +19,9 @@ SecureHeaders::Configuration.default do |config|
   config.hsts = "max-age=63072000; includeSubDomains; preload"
 
   config.csp = {
+    # Keep the HTTPS scheme in host sources so SecureHeaders does not normalize
+    # FlagCDN into an ambiguous source expression.
+    preserve_schemes: true,
     default_src: %w['self'],
     script_src: %w['self' 'unsafe-inline' https:],
     style_src: %w['self' 'unsafe-inline'],
