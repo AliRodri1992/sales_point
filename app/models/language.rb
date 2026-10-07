@@ -16,7 +16,7 @@ class Language < ApplicationRecord
 
   validates :flag_iso,
             presence: true,
-            length: { is: 2 }
+            length: { is 2 }
 
   enum :status,
        {
@@ -36,17 +36,6 @@ class Language < ApplicationRecord
   scope :not_deleted, lambda {
     where(deleted_at: nil)
   }
-
-  def flag_url(size = '64x48')
-    "https://flagcdn.com/#{size}/#{flag_iso}.png"
-  end
-
-  def flag_srcset
-    [
-      "#{flag_url('80x60')} 2x",
-      "#{flag_url('96x72')} 3x"
-    ].join(', ')
-  end
 
   private
 
