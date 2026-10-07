@@ -105,6 +105,14 @@ es:
         unassigned: "Solicitud sin responsable."
         system: Sistema
         note_added: Nota interna agregada
+        follow_up_all: "Todos los seguimientos"
+        contact_registered: "Contacto registrado por %{channel}; resultado: %{outcome}."
+        follow_up_scheduled: "Seguimiento programado para %{date}: %{action}."
+        demo_outcome_recorded: "Resultado de la demostración: %{outcome}."
+        converted: "Prospecto convertido."
+        follow_up_overdue: "Seguimientos vencidos"
+        follow_up_upcoming: "Próximos seguimientos"
+        select_option: "Selecciona una opción"
         reminder_sent: "Recordatorio enviado al prospecto (%{window})."
         confirmation_sent: "Se envió la confirmación de la demostración al prospecto."
       filters:
@@ -149,6 +157,14 @@ es:
         note_placeholder: Escribe una nota para el equipo...
         note_hint: Esta nota solo será visible para el equipo de Delta POS.
         fields:
+        contacted_at: "Fecha y hora del contacto"
+        contact_channel: "Medio de contacto"
+        contact_outcome: "Resultado del contacto"
+        follow_up_title: "Próximo seguimiento"
+        next_follow_up_at: "Fecha y hora del seguimiento"
+        next_action: "Próxima acción"
+        next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
+        demo_outcome: "Resultado de la demostración"
           name: Nombre
 
           email: Correo electrónico
@@ -166,11 +182,6 @@ es:
         overdue_title: "Seguimientos vencidos"
         overdue_subtitle: "Tienes %{count} seguimientos que requieren atención."
         view_overdue: "Ver vencidos"
-      filters:
-        follow_up_all: "Todos los seguimientos"
-        follow_up_overdue: "Seguimientos vencidos"
-        follow_up_upcoming: "Próximos seguimientos"
-        select_option: "Selecciona una opción"
       contact_channels:
         call: "Llamada"
         whatsapp: "WhatsApp"
@@ -188,20 +199,6 @@ es:
         needs_follow_up: "Requiere seguimiento"
         not_interested: "No interesado"
         no_show: "No se presentó"
-      activity:
-        contact_registered: "Contacto registrado por %{channel}; resultado: %{outcome}."
-        follow_up_scheduled: "Seguimiento programado para %{date}: %{action}."
-        demo_outcome_recorded: "Resultado de la demostración: %{outcome}."
-        converted: "Prospecto convertido."
-      show:
-        contacted_at: "Fecha y hora del contacto"
-        contact_channel: "Medio de contacto"
-        contact_outcome: "Resultado del contacto"
-        follow_up_title: "Próximo seguimiento"
-        next_follow_up_at: "Fecha y hora del seguimiento"
-        next_action: "Próxima acción"
-        next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
-        demo_outcome: "Resultado de la demostración"
     branches:
       actions:
         delete: Eliminar sucursal
