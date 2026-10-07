@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.config.content_security_policy do |policy|
-
   policy.default_src :self
 
   policy.font_src(
@@ -11,7 +10,6 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.img_src(
     :self,
-    :https,
     :data,
     "https://flagcdn.com"
   )
