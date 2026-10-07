@@ -7,8 +7,6 @@
 .iti {
   --iti-path-flags-1x: url("/intl-tel-input/flags.webp");
   --iti-path-flags-2x: url("/intl-tel-input/flags@2x.webp");
-  --iti-path-globe-1x: url("/intl-tel-input/globe.webp");
-  --iti-path-globe-2x: url("/intl-tel-input/globe@2x.webp");
 }
 
 /* Delta POS typography: only the variable weights used by the UI are loaded. */
