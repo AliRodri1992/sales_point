@@ -46,7 +46,6 @@ RSpec.describe DemoRequestMailer, type: :mailer do
   end
 end
 
-
 RSpec.describe 'DemoRequestMailer scheduling', type: :mailer do
   let(:demo_request) { create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now) }
 
@@ -71,7 +70,6 @@ RSpec.describe 'DemoRequestMailer scheduling', type: :mailer do
     expect(mail.subject).to eq('Reminder: your Delta POS demo starts soon')
   end
 end
-
 
 RSpec.describe 'DemoRequestMailer workflow updates', type: :mailer do
   let(:demo_request) { create(:demo_request) }

@@ -111,7 +111,6 @@ RSpec.describe DemoRequest, type: :model do
       expect(demo_request).to be_invalid
     end
 
-
     it 'requires a scheduled time when scheduled' do
       demo_request.status = :scheduled
       demo_request.scheduled_at = nil
@@ -245,7 +244,6 @@ RSpec.describe DemoRequest, type: :model do
   end
 
   describe 'callbacks' do
-
     it 'delivers notification' do
       notification = instance_double(DemoRequestNotification)
       allow(DemoRequestNotification).to receive(:with).with(demo_request:,

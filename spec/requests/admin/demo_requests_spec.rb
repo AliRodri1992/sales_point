@@ -63,7 +63,8 @@ RSpec.describe 'Admin demo requests', type: :request do
       }
 
       expect(response).to redirect_to(admin_demo_request_path(demo_request))
-      expect(demo_request.reload.activities.where(action: 'note_added', details: 'Call the prospect tomorrow morning.')).to exist
+      expect(demo_request.reload.activities.where(action: 'note_added',
+                                                  details: 'Call the prospect tomorrow morning.')).to exist
     end
 
     it 'records a contact and follow-up' do
