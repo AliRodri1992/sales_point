@@ -78,5 +78,4 @@ RSpec.describe Language, type: :model do
     end
   end
 
-  end
 end
