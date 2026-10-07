@@ -105,6 +105,14 @@ en:
         unassigned: "Request unassigned."
         system: System
         note_added: Internal note added
+        follow_up_all: "All follow-ups"
+        contact_registered: "Contact recorded via %{channel}; outcome: %{outcome}."
+        follow_up_scheduled: "Follow-up scheduled for %{date}: %{action}."
+        demo_outcome_recorded: "Demo outcome: %{outcome}."
+        converted: "Prospect converted."
+        follow_up_overdue: "Overdue follow-ups"
+        follow_up_upcoming: "Upcoming follow-ups"
+        select_option: "Select an option"
         reminder_sent: "Reminder sent to the prospect (%{window})."
         confirmation_sent: "The demo confirmation was sent to the prospect."
       filters:
@@ -149,6 +157,14 @@ en:
         note_placeholder: Write a note for the team...
         note_hint: This note is only visible to the Delta POS team.
         fields:
+        contacted_at: "Contact date and time"
+        contact_channel: "Contact method"
+        contact_outcome: "Contact outcome"
+        follow_up_title: "Next follow-up"
+        next_follow_up_at: "Follow-up date and time"
+        next_action: "Next action"
+        next_action_placeholder: "e.g. Send quote and call to confirm"
+        demo_outcome: "Demo outcome"
           name: Name
 
           email: Email
@@ -166,11 +182,6 @@ en:
         overdue_title: "Overdue follow-ups"
         overdue_subtitle: "You have %{count} follow-ups that require attention."
         view_overdue: "View overdue"
-      filters:
-        follow_up_all: "All follow-ups"
-        follow_up_overdue: "Overdue follow-ups"
-        follow_up_upcoming: "Upcoming follow-ups"
-        select_option: "Select an option"
       contact_channels:
         call: "Call"
         whatsapp: "WhatsApp"
@@ -188,20 +199,6 @@ en:
         needs_follow_up: "Needs follow-up"
         not_interested: "Not interested"
         no_show: "No show"
-      activity:
-        contact_registered: "Contact recorded via %{channel}; outcome: %{outcome}."
-        follow_up_scheduled: "Follow-up scheduled for %{date}: %{action}."
-        demo_outcome_recorded: "Demo outcome: %{outcome}."
-        converted: "Prospect converted."
-      show:
-        contacted_at: "Contact date and time"
-        contact_channel: "Contact method"
-        contact_outcome: "Contact outcome"
-        follow_up_title: "Next follow-up"
-        next_follow_up_at: "Follow-up date and time"
-        next_action: "Next action"
-        next_action_placeholder: "e.g. Send quote and call to confirm"
-        demo_outcome: "Demo outcome"
     branches:
       actions:
         delete: Delete branch
