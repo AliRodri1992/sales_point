@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -164,11 +164,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_180000) do
   create_table "demo_request_activities", force: :cascade do |t|
     t.string "action", null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.bigint "demo_request_id", null: false
     t.text "details"
     t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["action"], name: "index_demo_request_activities_on_action"
+    t.index ["deleted_at"], name: "index_demo_request_activities_on_deleted_at"
     t.index ["demo_request_id"], name: "index_demo_request_activities_on_demo_request_id"
     t.index ["user_id"], name: "index_demo_request_activities_on_user_id"
   end
