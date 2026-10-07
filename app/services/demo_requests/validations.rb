@@ -12,9 +12,9 @@ module DemoRequests
       if demo_request.next_action.present? && demo_request.next_follow_up_at.blank?
         demo_request.errors.add(:next_follow_up_at, :blank)
       end
-      if demo_request.next_follow_up_at.present? && demo_request.next_action.blank?
-        demo_request.errors.add(:next_action, :blank)
-      end
+      return unless demo_request.next_follow_up_at.present? && demo_request.next_action.blank?
+
+      demo_request.errors.add(:next_action, :blank)
     end
 
     def self.validate_contact_required(demo_request)
