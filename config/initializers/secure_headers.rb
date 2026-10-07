@@ -18,17 +18,8 @@ SecureHeaders::Configuration.default do |config|
 
   config.hsts = "max-age=63072000; includeSubDomains; preload"
 
-  config.csp = {
-    # Keep the HTTPS scheme in host sources so SecureHeaders does not normalize
-    # FlagCDN into an ambiguous source expression.
-    preserve_schemes: true,
-    default_src: %w['self'],
-    script_src: %w['self' 'unsafe-inline' https:],
-    style_src: %w['self' 'unsafe-inline'],
-    img_src: %w['self' data: https://flagcdn.com'],
-    connect_src: %w['self'],
-    font_src: %w['self' data:],
-    object_src: %w['none'],
-    frame_ancestors: Rails.env.development? ? %w['self'] : %w['none']
-  }
+  # Rails' built-in Content Security Policy is configured in
+  # config/initializers/content_security_policy.rb. Keep a single CSP header
+  # to avoid conflicting policies from SecureHeaders.
+  config.csp = nil
 end
