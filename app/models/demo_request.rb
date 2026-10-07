@@ -13,6 +13,9 @@ class DemoRequest < ApplicationRecord
 
   has_many :activities, class_name: 'DemoRequestActivity', dependent: :destroy
 
+  before_validation :normalize_fields
+  before_validation :record_terms_acceptance
+  before_validation :set_commercial_timestamps
   after_create :record_creation_activity
   after_create_commit :notify_demo_request
 
@@ -28,31 +31,22 @@ class DemoRequest < ApplicationRecord
        default: :pending,
        validate: true
 
-  before_validation :normalize_fields
-  before_validation :record_terms_acceptance
-  before_validation :set_commercial_timestamps
   validate :validate_assigned_to
   validate :validate_commercial_follow_up
   validate :scheduled_at_required_for_scheduled_status
   validate :scheduled_at_must_be_future_when_scheduled
 
   validates :name, presence: true, length: { in: 2..100 }
-  validates :email, presence: true, length: { maximum: 255 }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :phone,
-            presence: true,
-            phone: {
-              format: :e164,
-              extensions: false,
-              detailed_errors: true
-            }
+  validates :email, presence: true, length: { maximum: 255 },
+                    format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :phone, presence: true,
+                    phone: { format: :e164, extensions: false, detailed_errors: true }
   validates :company, presence: true, length: { in: 2..150 }
   validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }
   validates :branches, presence: true,
-                       numericality: {
-                         only_integer: true,
-                         greater_than_or_equal_to: 1,
-                         less_than_or_equal_to: MAX_BRANCHES
-                       }
+                       numericality: { only_integer: true,
+                                       greater_than_or_equal_to: 1,
+                                       less_than_or_equal_to: MAX_BRANCHES }
   validates :message, length: { maximum: 2_000 }, allow_blank: true
   validates :terms_accepted, acceptance: true
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
@@ -64,6 +58,10 @@ class DemoRequest < ApplicationRecord
 
   def follow_up_due?
     next_follow_up_at.present? && next_follow_up_at <= Time.current
+  end
+
+  def self.workflow_handler(demo_request:, current_user:, previous_status:, previous_assignee:)
+    DemoRequests::Workflow.new(demo_request, current_user, previous_status, previous_assignee).call
   end
 
   private
@@ -100,33 +98,11 @@ class DemoRequest < ApplicationRecord
   end
 
   def validate_commercial_follow_up
-    if next_action.present? && next_follow_up_at.blank?
-      errors.add(:next_follow_up_at, :blank)
-    end
-
-    if next_follow_up_at.present? && next_action.blank?
-      errors.add(:next_action, :blank)
-    end
-
-    if contacted_at.present? && contact_channel.blank?
-      errors.add(:contact_channel, :blank)
-    end
-
-    if contacted_at.present? && contact_outcome.blank?
-      errors.add(:contact_outcome, :blank)
-    end
-
-    if contacted? && contacted_at.blank?
-      errors.add(:contacted_at, :blank)
-    end
-
-    if converted? && converted_at.blank?
-      errors.add(:converted_at, :blank)
-    end
+    DemoRequests::Validations.validate_commercial_follow_up(self)
   end
 
   def normalize_text(value)
-    value.to_s.strip.gsub(/s+/, ' ').presence
+    value.to_s.strip.gsub(/\s+/, ' ').presence
   end
 
   def scheduled_at_required_for_scheduled_status
@@ -148,10 +124,6 @@ class DemoRequest < ApplicationRecord
   end
 
   def notify_demo_request
-    notification = DemoRequestNotification.with(
-      demo_request: self,
-      locale: locale
-    )
-    notification.deliver(self)
+    DemoRequestNotification.with(demo_request: self, locale: locale).deliver(self)
   end
 end
