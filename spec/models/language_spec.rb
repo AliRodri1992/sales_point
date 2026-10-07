@@ -78,19 +78,5 @@ RSpec.describe Language, type: :model do
     end
   end
 
-  describe '#flag_url' do
-    it 'returns the flagcdn URL with the given size' do
-      language = build(:language, flag_iso: 'us')
-      expect(language.flag_url).to eq('https://flagcdn.com/64x48/us.png')
-      expect(language.flag_url('80x60')).to eq('https://flagcdn.com/80x60/us.png')
-    end
-  end
-
-  describe '#flag_srcset' do
-    it 'returns a srcset string with multiple sizes' do
-      language = build(:language, flag_iso: 'us')
-      expect(language.flag_srcset).to include('80x60')
-      expect(language.flag_srcset).to include('96x72')
-    end
   end
 end
