@@ -5,13 +5,13 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.font_src(
     :self,
-    :data,
-    "https://flagcdn.com"
+    :data
   )
 
   policy.img_src(
     :self,
-    :data
+    :data,
+    "https://flagcdn.com"
   )
 
   policy.script_src(
