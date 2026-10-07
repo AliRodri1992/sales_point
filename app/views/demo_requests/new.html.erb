@@ -34,7 +34,7 @@
           <div data-language-selector-target="dropdown" class="absolute right-0 mt-1 hidden w-24 overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl">
             <% Language.available.order(:code).each do |language| %>
               <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-semibold transition <%= language.code == current_language.code ? 'bg-emerald-700 text-white' : 'text-slate-600 hover:bg-emerald-700 hover:text-white' %>">
-                <img src="<%= language.flag_url %>" srcset="<%= language.flag_srcset %>" class="h-3 w-4 shrink-0 rounded-sm object-cover" alt="<%= language.name %>">
+                <img src="<%= language_flag_path(language) %>" width="16" height="12" class="h-3 w-4 shrink-0 rounded-sm object-cover" alt="<%= language.name %>">
                 <span><%= language.code.upcase %></span>
               </button>
             <% end %>
