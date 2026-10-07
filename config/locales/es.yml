@@ -157,16 +157,15 @@ es:
         note_placeholder: Escribe una nota para el equipo...
         note_hint: Esta nota solo será visible para el equipo de Delta POS.
         fields:
-        contacted_at: "Fecha y hora del contacto"
-        contact_channel: "Medio de contacto"
-        contact_outcome: "Resultado del contacto"
-        follow_up_title: "Próximo seguimiento"
-        next_follow_up_at: "Fecha y hora del seguimiento"
-        next_action: "Próxima acción"
-        next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
-        demo_outcome: "Resultado de la demostración"
+          contacted_at: "Fecha y hora del contacto"
+          contact_channel: "Medio de contacto"
+          contact_outcome: "Resultado del contacto"
+          follow_up_title: "Próximo seguimiento"
+          next_follow_up_at: "Fecha y hora del seguimiento"
+          next_action: "Próxima acción"
+          next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
+          demo_outcome: "Resultado de la demostración"
           name: Nombre
-
           email: Correo electrónico
           phone: Teléfono
           company: Empresa
