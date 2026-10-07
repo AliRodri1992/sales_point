@@ -18,8 +18,7 @@ SecureHeaders::Configuration.default do |config|
 
   config.hsts = "max-age=63072000; includeSubDomains; preload"
 
-  # Rails' built-in Content Security Policy is configured in
-  # config/initializers/content_security_policy.rb. Keep a single CSP header
-  # to avoid conflicting policies from SecureHeaders.
-  config.csp = nil
+  # Rails' built-in Content Security Policy is the single source of truth.
+  # OPT_OUT is required here; nil would restore SecureHeaders' default CSP.
+  config.csp = SecureHeaders::OPT_OUT
 end
