@@ -96,8 +96,8 @@ en:
         scheduled: Scheduled
         completed: Completed
         converted: Converted
-      conversion_rate: "Conversion rate"
         cancelled: Cancelled
+      conversion_rate: "Conversion rate"
       activity:
         created: Request created
         status_changed: "Status changed from %{from} to %{to}."
@@ -105,19 +105,19 @@ en:
         unassigned: "Request unassigned."
         system: System
         note_added: Internal note added
-        follow_up_all: "All follow-ups"
         contact_registered: "Contact recorded via %{channel}; outcome: %{outcome}."
         follow_up_scheduled: "Follow-up scheduled for %{date}: %{action}."
         demo_outcome_recorded: "Demo outcome: %{outcome}."
         converted: "Prospect converted."
-        follow_up_overdue: "Overdue follow-ups"
-        follow_up_upcoming: "Upcoming follow-ups"
-        select_option: "Select an option"
         reminder_sent: "Reminder sent to the prospect (%{window})."
         confirmation_sent: "The demo confirmation was sent to the prospect."
       filters:
         all: All statuses
         apply: Filter
+        follow_up_all: "All follow-ups"
+        follow_up_overdue: "Overdue follow-ups"
+        follow_up_upcoming: "Upcoming follow-ups"
+        select_option: "Select an option"
       index:
         page_title: Demo requests | Delta POS
         title: Demo requests
