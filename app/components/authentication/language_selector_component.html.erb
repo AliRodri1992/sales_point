@@ -8,8 +8,7 @@
       <span class="flex items-center gap-1.5">
         <img
           data-language-selector-target="flag"
-          src="<%= current_language.flag_url %>"
-          srcset="<%= current_language.flag_srcset %>"
+          src="<%= language_flag_path(current_language) %>"
           width="16"
           height="12"
           alt="<%= current_language.name %>"
@@ -28,11 +27,9 @@
             type="button"
             data-action="click->language-selector#select"
             data-language="<%= language.code %>"
-            data-flag="<%= language.flag_url %>"
             class="<%= language.code == current_language.code ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700' %> flex w-full items-center gap-2 px-3 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none">
             <img
-              src="<%= language.flag_url %>"
-              srcset="<%= language.flag_srcset %>"
+              src="<%= language_flag_path(language) %>"
               width="16"
               height="12"
               alt="<%= language.name %>"
