@@ -10,8 +10,7 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.img_src(
     :self,
-    :data,
-    "https://flagcdn.com"
+    :data
   )
 
   policy.script_src(
