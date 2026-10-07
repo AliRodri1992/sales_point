@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_06_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -161,40 +161,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_150000) do
     t.index ["user_id"], name: "index_dashboard_preferences_on_user_id"
   end
 
-  create_table "demo_requests", force: :cascade do |t|
-    t.integer "branches", default: 1, null: false
-    t.string "business_type", limit: 30
-    t.string "company", null: false
-    t.datetime "created_at", null: false
-    t.datetime "deleted_at"
-    t.string "email", null: false
-    t.text "message"
-    t.string "name", null: false
-    t.string "phone"
-    t.string "status", default: "pending", null: false
-    t.bigint "assigned_to_id"
-    t.boolean "terms_accepted", default: false, null: false
-    t.datetime "terms_accepted_at"
-    t.datetime "updated_at", null: false
-    t.index ["branches"], name: "index_demo_requests_on_branches"
-    t.index ["business_type"], name: "index_demo_requests_on_business_type"
-    t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
-    t.index ["email"], name: "index_demo_requests_on_email"
-    t.index ["status"], name: "index_demo_requests_on_status"
-    t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
-    t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
-  end
-
   create_table "demo_request_activities", force: :cascade do |t|
     t.string "action", null: false
-    t.text "details"
-    t.bigint "demo_request_id", null: false
-    t.bigint "user_id"
     t.datetime "created_at", null: false
+    t.bigint "demo_request_id", null: false
+    t.text "details"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["action"], name: "index_demo_request_activities_on_action"
     t.index ["demo_request_id"], name: "index_demo_request_activities_on_demo_request_id"
     t.index ["user_id"], name: "index_demo_request_activities_on_user_id"
+  end
+
+  create_table "demo_requests", force: :cascade do |t|
+    t.bigint "assigned_to_id"
+    t.integer "branches", default: 1, null: false
+    t.string "business_type", limit: 30
+    t.string "company", null: false
+    t.string "contact_channel", limit: 30
+    t.string "contact_outcome", limit: 40
+    t.datetime "contacted_at"
+    t.datetime "converted_at"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "demo_outcome", limit: 40
+    t.string "email", null: false
+    t.string "locale", default: "es", null: false
+    t.text "message"
+    t.string "name", null: false
+    t.string "next_action", limit: 120
+    t.datetime "next_follow_up_at"
+    t.string "phone"
+    t.datetime "reminder_1h_sent_at"
+    t.datetime "reminder_24h_sent_at"
+    t.datetime "scheduled_at"
+    t.string "status", default: "pending", null: false
+    t.boolean "terms_accepted", default: false, null: false
+    t.datetime "terms_accepted_at"
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
+    t.index ["branches"], name: "index_demo_requests_on_branches"
+    t.index ["business_type"], name: "index_demo_requests_on_business_type"
+    t.index ["contact_outcome"], name: "index_demo_requests_on_contact_outcome"
+    t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
+    t.index ["demo_outcome"], name: "index_demo_requests_on_demo_outcome"
+    t.index ["email"], name: "index_demo_requests_on_email"
+    t.index ["next_follow_up_at"], name: "index_demo_requests_on_next_follow_up_at"
+    t.index ["status"], name: "index_demo_requests_on_status"
+    t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
   end
 
   create_table "employees", force: :cascade do |t|
