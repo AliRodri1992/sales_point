@@ -16,7 +16,7 @@ class Language < ApplicationRecord
 
   validates :flag_iso,
             presence: true,
-            length: { is 2 }
+            length: { is: 2 }
 
   enum :status,
        {
