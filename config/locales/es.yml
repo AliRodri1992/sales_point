@@ -96,8 +96,8 @@ es:
         scheduled: Agendada
         completed: Realizada
         converted: Convertida
-      conversion_rate: "Tasa de conversión"
         cancelled: Cancelada
+      conversion_rate: "Tasa de conversión"
       activity:
         created: Solicitud creada
         status_changed: "Estado cambiado de %{from} a %{to}."
@@ -105,19 +105,19 @@ es:
         unassigned: "Solicitud sin responsable."
         system: Sistema
         note_added: Nota interna agregada
-        follow_up_all: "Todos los seguimientos"
         contact_registered: "Contacto registrado por %{channel}; resultado: %{outcome}."
         follow_up_scheduled: "Seguimiento programado para %{date}: %{action}."
         demo_outcome_recorded: "Resultado de la demostración: %{outcome}."
         converted: "Prospecto convertido."
-        follow_up_overdue: "Seguimientos vencidos"
-        follow_up_upcoming: "Próximos seguimientos"
-        select_option: "Selecciona una opción"
         reminder_sent: "Recordatorio enviado al prospecto (%{window})."
         confirmation_sent: "Se envió la confirmación de la demostración al prospecto."
       filters:
         all: Todos los estados
         apply: Filtrar
+        follow_up_all: "Todos los seguimientos"
+        follow_up_overdue: "Seguimientos vencidos"
+        follow_up_upcoming: "Próximos seguimientos"
+        select_option: "Selecciona una opción"
       index:
         page_title: Solicitudes de demo | Delta POS
         title: Solicitudes de demostración
