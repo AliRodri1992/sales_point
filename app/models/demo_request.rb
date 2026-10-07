@@ -41,7 +41,7 @@ class DemoRequest < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :phone, presence: true,
-                    format: { with: /\A\+/, message: 'must be in E.164 format (start with +)' },
+                    format: { with: /\A\+/, message: :phone_e164_format },
                     phone: { format: :e164, extensions: false, detailed_errors: true }
   validates :company, presence: true, length: { in: 2..150 }
   validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }

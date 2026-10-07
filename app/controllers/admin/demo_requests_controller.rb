@@ -11,18 +11,8 @@ module Admin
 
     def index
       authorize DemoRequest
-      @filters = DemoRequests::Filters.new(params, current_user)
-      @demo_requests = @filters.call
-      @total_count = @demo_requests.except(:limit, :offset).count
-      @users = User.active.where(user_type: :employee)
-                   .order(Arel.sql('COALESCE(username, email) ASC'))
-      @metrics = @filters.metrics
-
-      # Extract pagination info from filtered scope
-      @per_page = [params[:per_page].to_i, 5, 10, 15].max
-      total = @demo_requests.except(:limit, :offset).count
-      @total_pages = [total / @per_page.to_f, 1].max.ceil
-      @current_page = params[:page].to_i.clamp(1, [@total_pages, 1].max)
+      setup_filters_and_queries
+      setup_pagination
     end
 
     def show
@@ -45,6 +35,38 @@ module Admin
       end
     end
 
+    private
+
+    def setup_filters_and_queries
+      @filters = DemoRequests::Filters.new(params, current_user)
+      @demo_requests = @filters.call
+      @users = User.active
+                   .where(user_type: :employee)
+                   .order(Arel.sql('COALESCE(username, email) ASC'))
+      @metrics = @filters.metrics
+    end
+
+    def setup_pagination
+      @per_page = per_page_option
+      @total_pages = total_pages_for(@per_page)
+      @current_page = current_page_for(@total_pages)
+      @total_count = @demo_requests.except(:limit, :offset).count
+    end
+
+    def per_page_option
+      [params[:per_page].to_i, *PER_PAGE_OPTIONS].max
+    end
+
+    def total_pages_for(per_page)
+      total = @demo_requests.except(:limit, :offset).count
+
+      [total / per_page.to_f, 1].max.ceil
+    end
+
+    def current_page_for(total_pages)
+      params[:page].to_i.clamp(1, [total_pages, 1].max)
+    end
+
     def handle_successful_update(previous_status, previous_assignee)
       DemoRequests::Workflow.new(
         @demo_request,
@@ -63,8 +85,6 @@ module Admin
       @activities = @demo_request.activities.includes(:user).order(created_at: :desc)
       render :show, status: :unprocessable_content
     end
-
-    private
 
     def set_demo_request
       @demo_request = DemoRequest.find(params[:id])
