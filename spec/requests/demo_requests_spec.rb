@@ -4,13 +4,13 @@ require 'rails_helper'
 
 RSpec.describe 'Demo requests', type: :request do
   before do
+    create(:language, :english) if Language.where(code: 'en').empty?
     notification = instance_double(DemoRequestNotification, deliver: true)
     allow(DemoRequestNotification).to receive(:with).and_return(notification)
 
-    mailer = instance_double(DemoRequestMailer)
-    allow(DemoRequestMailer).to receive(:with).and_return(mailer)
-    allow(mailer).to receive(:confirmation).and_return(mailer)
-    allow(mailer).to receive(:deliver_later)
+    message_delivery = instance_double(ActionMailer::MessageDelivery, deliver_later: true)
+    mailer_double = double('mailer_double', confirmation: message_delivery)
+    allow(DemoRequestMailer).to receive(:with).and_return(mailer_double)
   end
 
   describe 'GET /demo_requests/new' do

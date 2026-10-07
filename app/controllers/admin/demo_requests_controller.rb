@@ -17,6 +17,12 @@ module Admin
       @users = User.active.where(user_type: :employee)
                    .order(Arel.sql('COALESCE(username, email) ASC'))
       @metrics = @filters.metrics
+
+      # Extract pagination info from filtered scope
+      @per_page = [params[:per_page].to_i, 5, 10, 15].max
+      total = @demo_requests.except(:limit, :offset).count
+      @total_pages = [total / @per_page.to_f, 1].max.ceil
+      @current_page = params[:page].to_i.clamp(1, [@total_pages, 1].max)
     end
 
     def show
@@ -40,12 +46,12 @@ module Admin
     end
 
     def handle_successful_update(previous_status, previous_assignee)
-      DemoRequest.workflow_handler.call(
-        demo_request: @demo_request,
-        current_user: current_user,
-        previous_status: previous_status,
-        previous_assignee: previous_assignee
-      )
+      DemoRequests::Workflow.new(
+        @demo_request,
+        current_user,
+        previous_status,
+        previous_assignee
+      ).call
 
       redirect_to admin_demo_request_path(@demo_request),
                   notice: t('admin.demo_requests.updated')
@@ -62,29 +68,6 @@ module Admin
 
     def set_demo_request
       @demo_request = DemoRequest.find(params[:id])
-    end
-
-    def record_workflow_activity(previous_status, previous_assignee)
-      DemoRequest.workflow_activity_recorder.call(
-        demo_request: @demo_request,
-        current_user: current_user,
-        previous_status: previous_status,
-        previous_assignee: previous_assignee
-      )
-    end
-
-    def notify_assignee_of_workflow_change(previous_status, previous_assignee)
-      return if @demo_request.assigned_to.blank?
-      return if previous_status == @demo_request.status && previous_assignee == @demo_request.assigned_to_id
-
-      action = previous_assignee == @demo_request.assigned_to_id ? 'status_changed' : 'assigned'
-      DemoRequestMailer.with(
-        demo_request: @demo_request,
-        assignee: @demo_request.assigned_to,
-        actor: current_user,
-        action:,
-        locale: @demo_request.assigned_to.language&.code || I18n.locale.to_s
-      ).workflow_update.deliver_later
     end
 
     def demo_request_params

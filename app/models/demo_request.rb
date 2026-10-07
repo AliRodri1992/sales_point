@@ -17,6 +17,7 @@ class DemoRequest < ApplicationRecord
   before_validation :record_terms_acceptance
   before_validation :set_commercial_timestamps
   after_create :record_creation_activity
+  after_update :record_note_activity
   after_create_commit :notify_demo_request
 
   enum :status,
@@ -40,6 +41,7 @@ class DemoRequest < ApplicationRecord
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :phone, presence: true,
+                    format: { with: /\A\+/, message: 'must be in E.164 format (start with +)' },
                     phone: { format: :e164, extensions: false, detailed_errors: true }
   validates :company, presence: true, length: { in: 2..150 }
   validates :business_type, presence: true, inclusion: { in: BUSINESS_TYPES }
@@ -77,8 +79,17 @@ class DemoRequest < ApplicationRecord
   def normalize_phone
     return if phone.blank?
 
-    parsed_phone = Phonelib.parse(phone)
-    self.phone = parsed_phone.e164 if parsed_phone.valid?
+    # Don't normalize if there's an extension (semicolon)
+    return if phone.to_s.include?(';')
+
+    # Extract just the digits and optional + prefix
+    cleaned = phone.to_s.strip.gsub(/\s+/, '')
+
+    # If it starts with +, normalize to E.164 format
+    return unless cleaned.start_with?('+')
+
+    parsed_phone = Phonelib.parse(cleaned)
+    self.phone = parsed_phone.e164 if parsed_phone.possible?
   end
 
   def validate_assigned_to
@@ -121,6 +132,10 @@ class DemoRequest < ApplicationRecord
 
   def record_creation_activity
     activities.create!(action: 'created')
+  end
+
+  def record_note_activity
+    activities.create!(action: 'note_added', details: note) if note.present?
   end
 
   def notify_demo_request

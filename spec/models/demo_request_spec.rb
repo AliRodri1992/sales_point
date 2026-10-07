@@ -247,7 +247,7 @@ RSpec.describe DemoRequest, type: :model do
     it 'delivers notification' do
       notification = instance_double(DemoRequestNotification)
       allow(DemoRequestNotification).to receive(:with).with(demo_request:,
-                                                            locale: I18n.locale.to_s).and_return(notification)
+                                                            locale: demo_request.locale).and_return(notification)
       allow(notification).to receive(:deliver)
       demo_request.send(:notify_demo_request)
       expect(notification).to have_received(:deliver).with(demo_request)

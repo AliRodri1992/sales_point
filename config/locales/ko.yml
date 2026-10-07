@@ -800,7 +800,7 @@ ko:
           status: 상태
           status_placeholder: 상태를 선택하세요
           system_roles: 시스템 역할
-          invalid_message: 메시지는 2,000자를 초과할 수 없습니다.
+          invalid_message: 메시지는 2,000자를 초과할2 수 없습니다.
           theme: 테마
           user_type: 사용자 유형
           user_type_placeholder: 사용자 유형을 선택하세요
@@ -1115,6 +1115,7 @@ ko:
         back_home: 홈으로 돌아가기
       return_prompt: 직접 플랫폼을 살펴보시겠어요?
       submit: 데모 예약
+      invalid_message: 메시지는 2,000자를 초과할 수 없습니다.
       theme: 테마
       theme_option: 테마 색상 %{number}
 

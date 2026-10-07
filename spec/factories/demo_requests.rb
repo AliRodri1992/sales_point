@@ -10,6 +10,5 @@ FactoryBot.define do
     branches { 1 }
     message { 'Please show me a demo' }
     terms_accepted { true }
-    terms_accepted_at { Time.current }
   end
 end

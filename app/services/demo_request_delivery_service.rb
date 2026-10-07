@@ -6,5 +6,7 @@ class DemoRequestDeliveryService
       demo_request: demo_request,
       locale: demo_request.locale
     ).reminder(reminder_window).deliver_now
+
+    demo_request.activities.create!(action: 'reminder_sent')
   end
 end

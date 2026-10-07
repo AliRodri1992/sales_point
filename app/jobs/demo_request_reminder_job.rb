@@ -28,6 +28,7 @@ class DemoRequestReminderJob < ApplicationJob
     return if demo_request.public_send(timestamp_attr).present?
 
     DemoRequestDeliveryService.call(demo_request, reminder_window)
-    demo_request.update({ timestamp_attr => Time.current }, validate: false)
+    demo_request.assign_attributes(timestamp_attr => Time.current)
+    demo_request.save!(validate: false)
   end
 end

@@ -41,7 +41,7 @@ module DemoRequests
     end
 
     def record_commercial_activity
-      CommercialActivities.new(@demo_request, @current_user).record_all
+      DemoRequests::Activities.new(@demo_request, @current_user).record_all
     end
 
     def notify_assignee

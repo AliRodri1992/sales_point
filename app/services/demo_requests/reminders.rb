@@ -12,8 +12,7 @@ module DemoRequests
 
       @demo_request.update!(
         reminder_24h_sent_at: nil,
-        reminder_1h_sent_at: nil,
-        validate: false
+        reminder_1h_sent_at: nil
       )
     end
 

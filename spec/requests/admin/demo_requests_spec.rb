@@ -23,14 +23,19 @@ RSpec.describe 'Admin demo requests', type: :request do
     end
 
     it 'filters by status' do
-      demo_request.update!(status: :contacted)
-      create(:demo_request, status: :pending)
+      demo_request.update!(
+        status: :contacted,
+        contact_channel: 'whatsapp',
+        contact_outcome: 'interested',
+        contacted_at: Time.current
+      )
+      create(:demo_request, name: 'Pending Request', status: :pending)
 
       get admin_demo_requests_path, params: { status: 'contacted' }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(demo_request.name)
-      expect(response.body).not_to include('Test User')
+      expect(response.body).not_to include('Pending Request')
     end
   end
 
