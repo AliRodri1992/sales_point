@@ -37,6 +37,17 @@ class Language < ApplicationRecord
     where(deleted_at: nil)
   }
 
+  def flag_url(size = '64x48')
+    "https://flagcdn.com/#{size}/#{flag_iso}.png"
+  end
+
+  def flag_srcset
+    [
+      "#{flag_url('80x60')} 2x",
+      "#{flag_url('96x72')} 3x"
+    ].join(', ')
+  end
+
   private
 
   def set_default_status
