@@ -87,9 +87,6 @@ en:
       system_role: System role
       terminal: Cash register
       user: User
-  errors:
-    messages:
-      phone_e164_format: must be in E.164 format (start with +)
   admin:
     demo_requests:
       updated: Demo request updated successfully.
