@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Content Security Policy', type: :request do
   describe 'GET /up' do
-    it 'serves a single Rails CSP without external image hosts' do
+    it 'serves a single Rails CSP with the configured FlagCDN image host' do
       get rails_health_check_path
 
       expect(response).to have_http_status(:ok)
@@ -11,7 +11,7 @@ RSpec.describe 'Content Security Policy', type: :request do
       expected_csp = [
         "default-src 'self';",
         "font-src 'self' data:;",
-        "img-src 'self' data:;",
+        "img-src 'self' data: https://flagcdn.com;",
         "script-src 'self' https:;",
         "style-src 'self' 'unsafe-inline';",
         "object-src 'none'"
