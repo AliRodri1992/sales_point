@@ -63,9 +63,9 @@ module Admin
 
     def activity_detail_values(details)
       return details.to_h.stringify_keys if details.respond_to?(:to_h)
-      return unless details.is_a?(String) && details.match?(/\\A\\s*\\{.*=>.*\\}\\s*\\z/m)
+      return unless details.is_a?(String) && details.match?(/\A\s*\{.*=>.*\}\s*\z/m)
 
-      details.scan(/:(\\w+)=>(\"(?:\\\\.|[^\"])*\"|[^,}]+)/).to_h do |key, raw_value|
+      details.scan(/:(\w+)=>("(?:\\.|[^"])*"|[^,}]+)/).to_h do |key, raw_value|
         [key, normalized_activity_value(raw_value)]
       end
     end
@@ -74,7 +74,7 @@ module Admin
       value = raw_value.strip
       return value unless value.start_with?('"') && value.end_with?('"')
 
-      value[1...-1].gsub('\\\"', '"').gsub('\\\\', '\\')
+      value[1...-1].gsub('\\"', '"').gsub('\\\\', '\\')
     end
 
     def activity_translation(key, **)
