@@ -21,7 +21,10 @@ en:
         name: Name
         status: Status
       demo_request:
-        company: Company
+        business_type: Business type
+        branches: Branches
+        terms_accepted: Terms accepted
+
         email: Email address
         message: Message
         name: Name
@@ -85,6 +88,116 @@ en:
       terminal: Cash register
       user: User
   admin:
+    demo_requests:
+      updated: Demo request updated successfully.
+      statuses:
+        pending: New
+        contacted: Contacted
+        scheduled: Scheduled
+        completed: Completed
+        converted: Converted
+        cancelled: Cancelled
+      conversion_rate: "Conversion rate"
+      activity:
+        created: Request created
+        status_changed: "Status changed from %{from} to %{to}."
+        assigned_to: "Request assigned to %{user}."
+        unassigned: "Request unassigned."
+        system: System
+        note_added: Internal note added
+        contact_registered: "Contact recorded via %{channel}; outcome: %{outcome}."
+        follow_up_scheduled: "Follow-up scheduled for %{date}: %{action}."
+        demo_outcome_recorded: "Demo outcome: %{outcome}."
+        converted: "Prospect converted."
+        reminder_sent: "Reminder sent to the prospect (%{window})."
+        confirmation_sent: "The demo confirmation was sent to the prospect."
+      filters:
+        all: All statuses
+        apply: Filter
+        follow_up_all: "All follow-ups"
+        follow_up_overdue: "Overdue follow-ups"
+        follow_up_upcoming: "Upcoming follow-ups"
+        select_option: "Select an option"
+      index:
+        page_title: Demo requests | Delta POS
+        title: Demo requests
+        subtitle: Manage and follow up on demo requests.
+        search_placeholder: Search by name, company, email or phone...
+        view: View request
+        assigned: Owner
+        unassigned: Unassigned
+        scheduled: Demo date and time
+        total: "%{count} requests"
+        empty_title: No demo requests
+        empty_subtitle: New demo requests will appear here.
+        columns:
+          prospect: Prospect
+          company: Company
+          status: Status
+          assigned: Owner
+          created_at: Received
+          actions: Actions
+        pagination:
+          navigation: Demo request pagination
+          prev: Previous
+          next: Next
+      show:
+        page_title: Demo request | Delta POS
+        back: Back to requests
+        request_title: Request information
+        workflow_title: Workflow
+        activity_title: Activity history
+        no_activity: No activity recorded.
+        status: Status
+        assigned_to: Owner
+        save: Save changes
+        scheduled_at: Demo date and time
+        scheduled_hint: Select a future date and time for the demo.
+        note: Internal note
+        note_placeholder: Write a note for the team...
+        note_hint: This note is only visible to the Delta POS team.
+        fields:
+          contacted_at: "Contact date and time"
+          contact_channel: "Contact method"
+          contact_outcome: "Contact outcome"
+          follow_up_title: "Next follow-up"
+          next_follow_up_at: "Follow-up date and time"
+          next_action: "Next action"
+          next_action_placeholder: "e.g. Send quote and call to confirm"
+          demo_outcome: "Demo outcome"
+          name: Name
+          email: Email
+          phone: Phone
+          company: Company
+          business_type: Business type
+          branches: Branches
+          scheduled_at: Demo date and time
+          message: Message
+      metrics:
+        total: "Total requests"
+        contacted: "Contacted"
+        scheduled: "Demos scheduled"
+        converted: "Converted"
+        overdue_title: "Overdue follow-ups"
+        overdue_subtitle: "You have %{count} follow-ups that require attention."
+        view_overdue: "View overdue"
+      contact_channels:
+        call: "Call"
+        whatsapp: "WhatsApp"
+        email: "Email"
+        other: "Other"
+      contact_outcomes:
+        interested: "Interested"
+        needs_information: "Needs information"
+        wants_demo: "Wants a demo"
+        no_answer: "No answer"
+        not_interested: "Not interested"
+      demo_outcomes:
+        very_interested: "Very interested"
+        interested: "Interested"
+        needs_follow_up: "Needs follow-up"
+        not_interested: "Not interested"
+        no_show: "No show"
     branches:
       actions:
         delete: Delete branch
@@ -147,6 +260,7 @@ en:
         inactive: Inactive
       updated: Branch updated successfully.
     breadcrumbs:
+      demo_requests: Demo requests
       branches: Branches
       categories: Categories
       clients: Clients
@@ -544,6 +658,7 @@ en:
         subtitle: Connected users
         title: Online agents
       sidebar:
+        demo_requests: Demo requests
         onboarding:
           progress: Initial setup at %{percentage}%
           title: Initial setup
@@ -866,43 +981,148 @@ en:
     updated: Client updated successfully
   demo_request_mailer:
     new_request:
+      badge: New request
+      business_section: Business information
+      contact_section: Requester details
+      footer: Notification generated by Delta POS for the customer success team.
+      intro: A new demo request has been received from the Delta POS website.
+      logo_alt: Delta POS logo
+      brand_tagline: Point of Sale
       fields:
         company: Company
         email: Email
         message: Message
         name: Name
         phone: Phone
+        business_type: Business sector
+        branches: Branches
+        created_at: Request date
       subject: New demo request - Delta POS
+      copyright: "© %{year} Delta POS Inc. All rights reserved."
       title: New demo request
+
+    workflow_update:
+      greeting: "Hi %{name},"
+      request: "Request"
+      performed_by: "Performed by"
+      assigned:
+        subject: "New demo request assigned - Delta POS"
+        title: "Demo request assigned"
+        message: "The demo request from %{prospect} (%{company}) was assigned to you."
+      status_changed:
+        subject: "Demo request update - Delta POS"
+        title: "Demo request updated"
+        message: "The demo request from %{prospect} (%{company}) changed status."
+
+    confirmation:
+      subject: "We received your demo request - Delta POS"
+      title: "We received your demo request!"
+      greeting: "Hi %{name},"
+      intro: "Thanks for your interest in Delta POS. We received your request successfully, and a specialist will review your business information."
+      details_title: "Request summary"
+      company: "Company: %{company}"
+      business_type: "Business type: %{business_type}"
+      branches: "Branches: %{branches}"
+      next_steps_title: "What happens next?"
+      next_step_1: "We will review your needs and the information you shared."
+      next_step_2: "A Delta POS specialist will contact you."
+      next_step_3: "We will coordinate a personalized demo."
+      footer: "If you have any questions, reply to this email and we will be happy to help."
+    scheduled:
+      subject: "Your Delta POS demo is scheduled"
+      title: "Your demo is scheduled!"
+      greeting: "Hi %{name},"
+      message: "Your Delta POS demo is scheduled for %{date}."
+      company: "Company"
+      contact: "If you need to change the time, reply to this email and we will help you."
+      activity: "The demo was scheduled and a confirmation was sent to the prospect."
+    reminder:
+      twenty_four_hours:
+        subject: "Reminder: your Delta POS demo is tomorrow"
+        title: "Your demo is tomorrow"
+        message: "This is a reminder that your Delta POS demo is scheduled for %{date}."
+        activity: "24 hours"
+      one_hour:
+        subject: "Reminder: your Delta POS demo starts soon"
+        title: "Your demo starts soon"
+        message: "This is a reminder that your Delta POS demo is scheduled for %{date}."
+        activity: "1 hour"
+
+
   demo_requests:
     create:
-      success: Your request was received. We will contact you soon.
+      success: We received your request. We will contact you soon.
     new:
+      back_step: Back
       back: Back to home
       badge: Personalized demo
-      benefits:
-        no_commitment:
-          description: Request your demo and explore the platform before deciding.
-          title: No commitment
-        personalized:
-          description: Discover the features your business really needs.
-          title: Personalized demo
-        resolve_questions:
-          description: A specialist can explain how the platform works.
-          title: Get your questions answered
       brand: Delta POS
+      brand_color: Brand Color
+      brand_tagline: Point of Sale
+      branches: Current Number of Branches
+      business_description: Tell us more about your business so we can personalize the technical presentation.
+      business_title: Business Information
+      business_type: Business Sector
+      business_type_placeholder: Select your sector...
+      business_types:
+        grocery: Grocery Stores and Supermarkets
+        fashion: Clothing, Footwear and Accessories
+        restaurant: Restaurants and Food
+        pharmacy: Pharmacies and Healthcare
       company: Company
-      email: Email address
-      error_summary: The request could not be sent. Check the fields and try again.
-      hero_description: Manage sales, inventory, customers, branches, and much more
-        from one place.
+      company_placeholder: Your company name
+      contact_description: Enter your contact details so a specialist can reach you.
+      contact_title: Contact Details
+      continue: Continue
+      validation_title: Complete the required fields.
+      invalid_email: Email is invalid.
+      copyright: "© %{year} Delta POS Inc. All rights reserved."
+      email: Corporate email
+      error_summary: We could not send your request. Check the fields and try again.
+      hero_description: Manage sales, inventory, customers, branches, and much more from one place.
       hero_title: Discover everything
-      hero_title_suffix: can do for your business
+      hero_title_suffix: Delta POS can do for your business
+      logo_alt: Delta POS logo mark
       message: How can we help?
-      name: Name
+      message_placeholder: Tell us what you would like to see in the demo...
+      modules:
+        inventory:
+          title: Smart Multi-Store Inventory
+          description: Automatic audits, low-stock alerts, and real-time transfers between branches.
+        billing:
+          title: Global Electronic Billing
+          description: Instant fiscal stamping at the point of sale and scheduled receipt delivery.
+        reports:
+          title: Advanced Sales Reports
+          description: Cloud analytics with daily financial indicators, profit margins, and operating balances.
+      name: Full name
       page_title: Request a demo | Delta POS
-      phone: Phone
-      submit: Request a demo
+      panel_description: Control, automate, and scale branch transactions with tools designed for maximum operational speed.
+      panel_title: The omnichannel platform for modern commerce
+      phone: Mobile / WhatsApp
+      privacy: I agree to receive commercial contact and authorize the processing of my data under the
+      privacy_link: Privacy Policy
+      progress_label: Request progress
+      required:
+        name: Full name is required.
+        email: Corporate email is required.
+        phone: Mobile phone is required.
+        business_type: Select a business sector.
+        branches: Branch count must be greater than 0.
+        terms: You must accept the Privacy Policy.
+        company: Company is required.
+      return_home: Return to Home
+      success_state:
+        badge: Request received
+        title: Thanks for requesting your demo!
+        next_steps: Our team will review your details and contact you shortly to coordinate your demonstration.
+        back_home: Back to home
+      return_prompt: Prefer to explore the platform yourself?
+      submit: Schedule Demo
+      invalid_message: The message cannot exceed 2,000 characters.
+      theme: Theme
+      theme_option: Theme color %{number}
+
   devise:
     confirmations:
       new:
@@ -1142,6 +1362,7 @@ en:
       greater_than_min: must be greater than or equal to min_stock
       greater_than_or_equal_to: must be greater than or equal to %{count}
       inclusion: is not included in the list
+      in_future: must be a future date and time
       invalid: is invalid
       invalid_format: is invalid
       invalid_url: must be a valid URL

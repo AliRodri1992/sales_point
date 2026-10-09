@@ -7,7 +7,6 @@
       <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
       <meta name="mobile-web-app-capable" content="yes">
       <%= csrf_meta_tags %>
-      <%= csp_meta_tag %>
       <%= yield :head %>
 
       <%= favicon_link_tag 'delta-pos-favicon.svg', rel: 'icon', type: 'image/svg+xml' %>

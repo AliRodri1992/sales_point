@@ -26,8 +26,9 @@
             <% Language.available.order(:code).each do |language| %>
               <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center gap-3 px-3 py-2 text-sm font-medium <%= language.code == helpers.current_language.code ? 'bg-emerald-50 text-emerald-700' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900' %>">
                 <img
-                  src="<%= language.flag_url %>"
-                  srcset="<%= language.flag_srcset %>"
+                  src="<%= helpers.language_flag_path(language) %>"
+                  width="24"
+                  height="24"
                   class="h-6 w-6 shrink-0 rounded-full object-cover"
                   alt="<%= language.name %>">
                 <span class="flex-1 text-left"><%= language.code.upcase %></span>

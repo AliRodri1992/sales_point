@@ -1,9 +1,18 @@
 <%= t('demo_request_mailer.new_request.title') %>
 
+<%= t('demo_request_mailer.new_request.intro') %>
+
+<%= t('demo_request_mailer.new_request.contact_section') %>
 <%= t('demo_request_mailer.new_request.fields.name') %>: <%= @demo_request.name %>
 <%= t('demo_request_mailer.new_request.fields.email') %>: <%= @demo_request.email %>
 <%= t('demo_request_mailer.new_request.fields.phone') %>: <%= @demo_request.phone %>
 <%= t('demo_request_mailer.new_request.fields.company') %>: <%= @demo_request.company %>
+
+<%= t('demo_request_mailer.new_request.business_section') %>
+<%= t('demo_request_mailer.new_request.fields.business_type') %>: <%= t("demo_requests.new.business_types.#{@demo_request.business_type}") %>
+<%= t('demo_request_mailer.new_request.fields.branches') %>: <%= @demo_request.branches %>
+<%= t('demo_request_mailer.new_request.fields.created_at') %>: <%= l(@demo_request.created_at || Time.current, format: :long) %>
+
 <% if @demo_request.message.present? %>
 <%= t('demo_request_mailer.new_request.fields.message') %>:
 <%= @demo_request.message %>

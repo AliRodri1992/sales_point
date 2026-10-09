@@ -7,14 +7,16 @@
   "scripts": {
     "build:js": "node_modules/.bin/esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
     "build:js:watch": "node_modules/.bin/esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --watch",
-    "build:css": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
-    "build:css:watch": "npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch"
+    "build:css": "npm run prepare:phone-flags && npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "build:css:watch": "npm run prepare:phone-flags && npx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch",
+    "prepare:phone-flags": "mkdir -p app/assets/images/intl-tel-input && cp node_modules/intl-tel-input/dist/img/flags.webp app/assets/images/intl-tel-input/flags.webp && cp node_modules/intl-tel-input/dist/img/flags@2x.webp app/assets/images/intl-tel-input/flags@2x.webp"
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.23",
     "@tailwindcss/cli": "^4.2.2",
     "gridstack": "^13.3.0",
+    "intl-tel-input": "^29.5.3",
     "sweetalert2": "^11.26.25",
     "tailwindcss": "^4.2.2",
     "@fontsource-variable/inter": "^5.2.6",

@@ -21,7 +21,10 @@ es:
         name: Nombre
         status: Estado
       demo_request:
-        company: Empresa
+        business_type: Giro empresarial
+        branches: Sucursales
+        terms_accepted: Aceptación de términos
+
         email: Correo electrónico
         message: Mensaje
         name: Nombre
@@ -85,6 +88,116 @@ es:
       terminal: Caja registradora
       user: Usuario
   admin:
+    demo_requests:
+      updated: Solicitud actualizada correctamente.
+      statuses:
+        pending: Nueva
+        contacted: Contactada
+        scheduled: Agendada
+        completed: Realizada
+        converted: Convertida
+        cancelled: Cancelada
+      conversion_rate: "Tasa de conversión"
+      activity:
+        created: Solicitud creada
+        status_changed: "Estado cambiado de %{from} a %{to}."
+        assigned_to: "Solicitud asignada a %{user}."
+        unassigned: "Solicitud sin responsable."
+        system: Sistema
+        note_added: Nota interna agregada
+        contact_registered: "Contacto registrado por %{channel}; resultado: %{outcome}."
+        follow_up_scheduled: "Seguimiento programado para %{date}: %{action}."
+        demo_outcome_recorded: "Resultado de la demostración: %{outcome}."
+        converted: "Prospecto convertido."
+        reminder_sent: "Recordatorio enviado al prospecto (%{window})."
+        confirmation_sent: "Se envió la confirmación de la demostración al prospecto."
+      filters:
+        all: Todos los estados
+        apply: Filtrar
+        follow_up_all: "Todos los seguimientos"
+        follow_up_overdue: "Seguimientos vencidos"
+        follow_up_upcoming: "Próximos seguimientos"
+        select_option: "Selecciona una opción"
+      index:
+        page_title: Solicitudes de demo | Delta POS
+        title: Solicitudes de demostración
+        subtitle: Administra y da seguimiento a las solicitudes de demo.
+        search_placeholder: Buscar por nombre, empresa, correo o teléfono...
+        view: Ver solicitud
+        assigned: Responsable
+        unassigned: Sin asignar
+        scheduled: Fecha de demo
+        total: "%{count} solicitudes"
+        empty_title: No hay solicitudes
+        empty_subtitle: Las nuevas solicitudes de demostración aparecerán aquí.
+        columns:
+          prospect: Prospecto
+          company: Empresa
+          status: Estado
+          assigned: Responsable
+          created_at: Recibida
+          actions: Acciones
+        pagination:
+          navigation: Paginación de solicitudes
+          prev: Anterior
+          next: Siguiente
+      show:
+        page_title: Solicitud de demo | Delta POS
+        back: Volver a solicitudes
+        request_title: Información de la solicitud
+        workflow_title: Seguimiento
+        activity_title: Historial
+        no_activity: No hay actividad registrada.
+        status: Estado
+        assigned_to: Responsable
+        save: Guardar cambios
+        scheduled_at: Fecha y hora de la demostración
+        scheduled_hint: Selecciona una fecha y hora futura para la demo.
+        note: Nota interna
+        note_placeholder: Escribe una nota para el equipo...
+        note_hint: Esta nota solo será visible para el equipo de Delta POS.
+        fields:
+          contacted_at: "Fecha y hora del contacto"
+          contact_channel: "Medio de contacto"
+          contact_outcome: "Resultado del contacto"
+          follow_up_title: "Próximo seguimiento"
+          next_follow_up_at: "Fecha y hora del seguimiento"
+          next_action: "Próxima acción"
+          next_action_placeholder: "Ej. Enviar cotización y llamar para confirmar"
+          demo_outcome: "Resultado de la demostración"
+          name: Nombre
+          email: Correo electrónico
+          phone: Teléfono
+          company: Empresa
+          business_type: Giro empresarial
+          branches: Sucursales
+          scheduled_at: Fecha y hora de la demostración
+          message: Mensaje
+      metrics:
+        total: "Total de solicitudes"
+        contacted: "Contactadas"
+        scheduled: "Demos agendadas"
+        converted: "Convertidas"
+        overdue_title: "Seguimientos vencidos"
+        overdue_subtitle: "Tienes %{count} seguimientos que requieren atención."
+        view_overdue: "Ver vencidos"
+      contact_channels:
+        call: "Llamada"
+        whatsapp: "WhatsApp"
+        email: "Correo electrónico"
+        other: "Otro"
+      contact_outcomes:
+        interested: "Interesado"
+        needs_information: "Requiere información"
+        wants_demo: "Quiere demostración"
+        no_answer: "No contestó"
+        not_interested: "No interesado"
+      demo_outcomes:
+        very_interested: "Muy interesado"
+        interested: "Interesado"
+        needs_follow_up: "Requiere seguimiento"
+        not_interested: "No interesado"
+        no_show: "No se presentó"
     branches:
       actions:
         delete: Eliminar sucursal
@@ -148,6 +261,7 @@ es:
         inactive: Inactiva
       updated: Sucursal actualizada correctamente.
     breadcrumbs:
+      demo_requests: Solicitudes de demo
       branches: Sucursales
       categories: Categorías
       clients: Clientes
@@ -287,7 +401,6 @@ es:
         title: Detalles del idioma
       statuses:
         active: Activo
-        blocked: Bloqueado
     onboarding:
       active: Activa
       back: Atrás
@@ -548,6 +661,7 @@ es:
         subtitle: Usuarios conectados
         title: Agentes en línea
       sidebar:
+        demo_requests: Solicitudes de demo
         onboarding:
           progress: Configuración inicial al %{percentage}%
           title: Configuración inicial
@@ -872,44 +986,148 @@ es:
     updated: Cliente actualizado correctamente
   demo_request_mailer:
     new_request:
+      badge: Nueva solicitud
+      business_section: Información del negocio
+      contact_section: Datos del solicitante
+      footer: Notificación generada por Delta POS para el equipo de atención.
+      intro: Se ha recibido una nueva solicitud de demostración desde el sitio de Delta POS.
+      logo_alt: Logotipo de Delta POS
+      brand_tagline: Punto de Venta
       fields:
         company: Empresa
         email: Correo
         message: Mensaje
         name: Nombre
         phone: Teléfono
+        business_type: Giro o sector
+        branches: Sucursales
+        created_at: Fecha de solicitud
       subject: Nueva solicitud de demostración - Delta POS
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
       title: Nueva solicitud de demostración
+
+    workflow_update:
+      greeting: "Hola %{name},"
+      request: "Solicitud"
+      performed_by: "Realizado por"
+      assigned:
+        subject: "Nueva solicitud de demo asignada - Delta POS"
+        title: "Solicitud de demo asignada"
+        message: "La solicitud de demo de %{prospect} (%{company}) fue asignada a ti."
+      status_changed:
+        subject: "Actualización de solicitud de demo - Delta POS"
+        title: "Solicitud de demo actualizada"
+        message: "La solicitud de demo de %{prospect} (%{company}) cambió de estado."
+
+    confirmation:
+      subject: "Recibimos tu solicitud de demostración - Delta POS"
+      title: "¡Recibimos tu solicitud de demostración!"
+      greeting: "Hola %{name},"
+      intro: "Gracias por tu interés en Delta POS. Recibimos correctamente tu solicitud y un especialista revisará la información de tu negocio."
+      details_title: "Resumen de tu solicitud"
+      company: "Empresa: %{company}"
+      business_type: "Giro empresarial: %{business_type}"
+      branches: "Sucursales: %{branches}"
+      next_steps_title: "¿Qué sigue?"
+      next_step_1: "Revisaremos tus necesidades y la información que compartiste."
+      next_step_2: "Un especialista de Delta POS se pondrá en contacto contigo."
+      next_step_3: "Coordinaremos una demostración personalizada."
+      footer: "Si tienes alguna pregunta, responde a este correo y estaremos encantados de ayudarte."
+    scheduled:
+      subject: "Tu demostración de Delta POS está agendada"
+      title: "¡Tu demostración está agendada!"
+      greeting: "Hola %{name},"
+      message: "Tu demostración de Delta POS quedó programada para el %{date}."
+      company: "Empresa"
+      contact: "Si necesitas cambiar el horario, responde a este correo para que podamos ayudarte."
+      activity: "La demostración fue agendada y se envió la confirmación al prospecto."
+    reminder:
+      twenty_four_hours:
+        subject: "Recordatorio: tu demostración de Delta POS es mañana"
+        title: "Tu demostración es mañana"
+        message: "Te recordamos que tu demostración de Delta POS está programada para el %{date}."
+        activity: "24 horas"
+      one_hour:
+        subject: "Recordatorio: tu demostración de Delta POS comienza pronto"
+        title: "Tu demostración comienza pronto"
+        message: "Te recordamos que tu demostración de Delta POS está programada para el %{date}."
+        activity: "1 hora"
+
+
   demo_requests:
     create:
       success: Recibimos tu solicitud. Nos pondremos en contacto contigo pronto.
     new:
+      back_step: Atrás
       back: Volver al inicio
       badge: Demostración personalizada
-      benefits:
-        no_commitment:
-          description: Solicita tu demostración y conoce la plataforma antes de decidir.
-          title: Sin compromiso
-        personalized:
-          description: Conoce las funciones que realmente necesita tu negocio.
-          title: Demostración personalizada
-        resolve_questions:
-          description: Un especialista podrá explicarte el funcionamiento de la plataforma.
-          title: Resuelve tus dudas
       brand: Delta POS
+      brand_color: Color de Marca
+      brand_tagline: Point of Sale
+      branches: Número de Sucursales Actuales
+      business_description: Dinos más sobre tu comercio para personalizar la presentación técnica.
+      business_title: Información Comercial
+      business_type: Giro o Sector del Negocio
+      business_type_placeholder: Selecciona tu sector...
+      business_types:
+        grocery: Abarrotes y Supermercados
+        fashion: Ropa, Calzado y Accesorios
+        restaurant: Restaurantes y Alimentos
+        pharmacy: Farmacias y Salud
       company: Empresa
-      email: Correo electrónico
-      error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo
-        nuevamente.
-      hero_description: Descubre cómo puedes administrar ventas, inventario, clientes,
-        sucursales y mucho más desde un solo lugar.
+      company_placeholder: Nombre de tu empresa
+      contact_description: Introduce tus datos personales para que un asesor especializado te contacte.
+      contact_title: Datos de Contacto
+      continue: Continuar
+      validation_title: Completa los campos requeridos.
+      invalid_email: El correo electrónico no es válido.
+      copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
+      email: Correo electrónico corporativo
+      error_summary: No se pudo enviar la solicitud. Revisa los campos e inténtalo nuevamente.
+      hero_description: Descubre cómo puedes administrar ventas, inventario, clientes, sucursales y mucho más desde un solo lugar.
       hero_title: Conoce todo lo que
       hero_title_suffix: puede hacer por tu negocio
+      logo_alt: Isotipo de Delta POS
       message: "¿Cómo podemos ayudarte?"
-      name: Nombre
+      message_placeholder: Cuéntanos qué te gustaría conocer en la demostración...
+      modules:
+        inventory:
+          title: Inventario Inteligente Multitienda
+          description: Auditorías automáticas, alertas de stock mínimo y transferencias entre sucursales en tiempo real.
+        billing:
+          title: Facturación Global Electrónica
+          description: Timbrado fiscal instantáneo en el punto de venta y envío programado de comprobantes al cliente.
+        reports:
+          title: Reportes Avanzados de Venta
+          description: Analítica en la nube con indicadores financieros diarios, márgenes de utilidad y balances operativos.
+      name: Nombre completo
       page_title: Solicitar demostración | Delta POS
-      phone: Teléfono
-      submit: Solicitar demostración
+      panel_description: Controla, automatiza y escala las transacciones de tus sucursales con herramientas diseñadas para la máxima velocidad operativa.
+      panel_title: La plataforma omnicanal para el comercio moderno
+      phone: Teléfono celular / WhatsApp
+      privacy: Acepto recibir contacto comercial y autorizo el procesamiento de mis datos según la
+      privacy_link: Política de Privacidad
+      progress_label: Progreso de la solicitud
+      required:
+        name: El nombre completo es obligatorio.
+        email: El correo electrónico corporativo es obligatorio.
+        phone: El teléfono celular es obligatorio.
+        business_type: Selecciona el giro o sector del negocio.
+        branches: El número de sucursales debe ser mayor a 0.
+        terms: Debes aceptar la Política de Privacidad.
+        company: La empresa es obligatoria.
+      return_home: Regresar al Inicio
+      success_state:
+        badge: Solicitud recibida
+        title: ¡Gracias por solicitar tu demostración!
+        next_steps: Nuestro equipo revisará tus datos y se pondrá en contacto contigo para coordinar la demostración.
+        back_home: Volver al inicio
+      return_prompt: ¿Prefieres explorar la plataforma tú mismo?
+      submit: Agendar Demo
+      invalid_message: El mensaje no puede superar los 2,000 caracteres.
+      theme: Tema
+      theme_option: Color de tema %{number}
+
   devise:
     confirmations:
       new:
@@ -1152,6 +1370,7 @@ es:
       greater_than_min: debe ser mayor o igual que el stock mínimo
       greater_than_or_equal_to: debe ser mayor o igual que %{count}
       inclusion: no está incluido en la lista
+      in_future: debe ser una fecha y hora futura
       invalid: no es válido
       invalid_format: no es válido
       invalid_url: debe ser una URL válida

@@ -21,7 +21,10 @@ ko:
         name: 이름
         status: 상태
       demo_request:
-        company: 회사
+        business_type: 사업 유형
+        branches: 지점 수
+        terms_accepted: 약관 동의
+
         email: 이메일
         message: 메시지
         name: 이름
@@ -85,6 +88,116 @@ ko:
       terminal: 계산대
       user: 사용자
   admin:
+    demo_requests:
+      updated: 데모 신청이 성공적으로 업데이트되었습니다.
+      statuses:
+        pending: 신규
+        contacted: 연락 완료
+        scheduled: 일정 확정
+        completed: 데모 완료
+        converted: 전환
+        cancelled: 취소
+      conversion_rate: "전환율"
+      activity:
+        created: 신청 생성
+        status_changed: "%{from}에서 %{to}(으)로 상태가 변경되었습니다."
+        assigned_to: "%{user}님에게 신청이 배정되었습니다."
+        unassigned: 담당자가 해제되었습니다.
+        system: 시스템
+        note_added: 내부 메모가 추가되었습니다
+        contact_registered: "%{channel}로 연락을 기록했습니다. 결과: %{outcome}."
+        follow_up_scheduled: "%{date} 후속 조치 예약: %{action}."
+        demo_outcome_recorded: "데모 결과: %{outcome}."
+        converted: "잠재 고객이 전환되었습니다."
+        reminder_sent: "신청자에게 알림을 보냈습니다(%{window})."
+        confirmation_sent: 신청자에게 데모 확인 이메일을 보냈습니다.
+      filters:
+        all: 모든 상태
+        apply: 필터
+        follow_up_all: "모든 후속 조치"
+        follow_up_overdue: "기한이 지난 후속 조치"
+        follow_up_upcoming: "예정된 후속 조치"
+        select_option: "선택하세요"
+      index:
+        page_title: 데모 신청 | Delta POS
+        title: 데모 신청
+        subtitle: 데모 신청을 관리하고 후속 조치를 진행하세요.
+        search_placeholder: 이름, 회사, 이메일 또는 전화번호로 검색...
+        view: 신청 보기
+        assigned: 담당자
+        unassigned: 미배정
+        scheduled: 데모 일정
+        total: "%{count}건의 신청"
+        empty_title: 데모 신청이 없습니다
+        empty_subtitle: 새로운 데모 신청이 이곳에 표시됩니다.
+        columns:
+          prospect: 신청자
+          company: 회사
+          status: 상태
+          assigned: 담당자
+          created_at: 접수일
+          actions: 작업
+        pagination:
+          navigation: 데모 신청 페이지 이동
+          prev: 이전
+          next: 다음
+      show:
+        page_title: 데모 신청 | Delta POS
+        back: 신청 목록으로
+        request_title: 신청 정보
+        workflow_title: 진행 관리
+        activity_title: 활동 기록
+        no_activity: 기록된 활동이 없습니다.
+        status: 상태
+        assigned_to: 담당자
+        save: 변경 사항 저장
+        scheduled_at: 데모 날짜 및 시간
+        scheduled_hint: 데모를 진행할 미래 날짜와 시간을 선택하세요.
+        note: 내부 메모
+        note_placeholder: 팀을 위한 메모를 입력하세요...
+        note_hint: 이 메모는 Delta POS 팀에게만 표시됩니다.
+        fields:
+          contacted_at: "연락 날짜 및 시간"
+          contact_channel: "연락 방법"
+          contact_outcome: "연락 결과"
+          follow_up_title: "다음 후속 조치"
+          next_follow_up_at: "후속 조치 날짜 및 시간"
+          next_action: "다음 작업"
+          next_action_placeholder: "예: 견적서를 보내고 확인 전화"
+          demo_outcome: "데모 결과"
+          name: 이름
+          email: 이메일
+          phone: 전화번호
+          company: 회사
+          business_type: 업종
+          branches: 지점 수
+          scheduled_at: 데모 날짜 및 시간
+          message: 메시지
+      metrics:
+        total: "전체 요청"
+        contacted: "연락 완료"
+        scheduled: "예약된 데모"
+        converted: "전환 완료"
+        overdue_title: "기한이 지난 후속 조치"
+        overdue_subtitle: "확인이 필요한 후속 조치가 %{count}건 있습니다."
+        view_overdue: "기한 초과 보기"
+      contact_channels:
+        call: "전화"
+        whatsapp: "WhatsApp"
+        email: "이메일"
+        other: "기타"
+      contact_outcomes:
+        interested: "관심 있음"
+        needs_information: "정보 필요"
+        wants_demo: "데모 희망"
+        no_answer: "응답 없음"
+        not_interested: "관심 없음"
+      demo_outcomes:
+        very_interested: "매우 관심 있음"
+        interested: "관심 있음"
+        needs_follow_up: "추가 후속 조치 필요"
+        not_interested: "관심 없음"
+        no_show: "불참"
     branches:
       actions:
         delete: 지점 삭제
@@ -147,6 +260,7 @@ ko:
         inactive: 비활성
       updated: 지점이 성공적으로 업데이트되었습니다.
     breadcrumbs:
+      demo_requests: 데모 신청
       branches: 지점
       categories: 카테고리
       clients: 고객
@@ -224,8 +338,8 @@ ko:
         title: 초기 설정 완료
       page_header:
         customize: 대시보드 사용자 지정
-        new_sale:
-        save_changes: 변경 사항 저장 새 판매
+        new_sale: 새 판매
+        save_changes: 변경 사항 저장
         subtitle: 비즈니스 운영 현황을 한눈에 확인하세요.
         title: 대시보드
     languages:
@@ -540,6 +654,7 @@ ko:
         subtitle: 연결된 사용자
         title: 온라인 에이전트
       sidebar:
+        demo_requests: 데모 신청
         onboarding:
           progress: 초기 설정 %{percentage}%
           title: 초기 설정
@@ -685,6 +800,7 @@ ko:
           status: 상태
           status_placeholder: 상태를 선택하세요
           system_roles: 시스템 역할
+          invalid_message: 메시지는 2,000자를 초과할2 수 없습니다.
           theme: 테마
           user_type: 사용자 유형
           user_type_placeholder: 사용자 유형을 선택하세요
@@ -861,42 +977,148 @@ ko:
     updated: 고객이 성공적으로 업데이트되었습니다
   demo_request_mailer:
     new_request:
+      badge: 새 신청
+      business_section: 비즈니스 정보
+      contact_section: 신청자 정보
+      footer: 고객 성공 팀을 위해 Delta POS에서 생성한 알림입니다.
+      intro: Delta POS 웹사이트에서 새로운 데모 신청이 접수되었습니다.
+      logo_alt: Delta POS 로고
+      brand_tagline: 판매 시점 관리
       fields:
         company: 회사
         email: 이메일
         message: 메시지
         name: 이름
         phone: 전화번호
+        business_type: 비즈니스 업종
+        branches: 지점 수
+        created_at: 신청 일시
       subject: 새 데모 신청 - Delta POS
+      copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
       title: 새 데모 신청
+
+    workflow_update:
+      greeting: "%{name}님, 안녕하세요."
+      request: "신청"
+      performed_by: "처리자"
+      assigned:
+        subject: "새 데모 신청이 배정되었습니다 - Delta POS"
+        title: "데모 신청 배정"
+        message: "%{prospect}(%{company})의 데모 신청이 담당자로 배정되었습니다."
+      status_changed:
+        subject: "데모 신청 업데이트 - Delta POS"
+        title: "데모 신청 업데이트"
+        message: "%{prospect}(%{company})의 데모 신청 상태가 변경되었습니다."
+
+    confirmation:
+      subject: "데모 신청을 접수했습니다 - Delta POS"
+      title: "데모 신청이 접수되었습니다!"
+      greeting: "%{name}님, 안녕하세요."
+      intro: "Delta POS에 관심을 가져주셔서 감사합니다. 신청이 정상적으로 접수되었으며 담당자가 비즈니스 정보를 검토합니다."
+      details_title: "신청 요약"
+      company: "회사: %{company}"
+      business_type: "업종: %{business_type}"
+      branches: "지점 수: %{branches}"
+      next_steps_title: "다음 단계"
+      next_step_1: "공유해 주신 정보와 필요한 사항을 검토합니다."
+      next_step_2: "Delta POS 담당자가 연락드립니다."
+      next_step_3: "맞춤형 데모 일정을 조율합니다."
+      footer: "궁금한 점이 있으면 이 이메일에 답장해 주세요. 기꺼이 도와드리겠습니다."
+    scheduled:
+      subject: "Delta POS 데모 일정이 확정되었습니다"
+      title: "데모 일정이 확정되었습니다!"
+      greeting: "%{name}님, 안녕하세요."
+      message: "Delta POS 데모가 %{date}에 예약되었습니다."
+      company: "회사"
+      contact: "시간을 변경해야 하는 경우 이 이메일에 답장해 주세요. 도와드리겠습니다."
+      activity: "데모 일정이 확정되었으며 신청자에게 확인 이메일을 보냈습니다."
+    reminder:
+      twenty_four_hours:
+        subject: "알림: 내일 Delta POS 데모가 진행됩니다"
+        title: "내일 데모가 진행됩니다"
+        message: "Delta POS 데모가 %{date}에 예정되어 있음을 알려드립니다."
+        activity: "24시간"
+      one_hour:
+        subject: "알림: Delta POS 데모가 곧 시작됩니다"
+        title: "데모가 곧 시작됩니다"
+        message: "Delta POS 데모가 %{date}에 예정되어 있음을 알려드립니다."
+        activity: "1시간"
+
+
   demo_requests:
     create:
       success: 요청이 접수되었습니다. 곧 연락드리겠습니다.
     new:
+      back_step: 뒤로
       back: 홈으로 돌아가기
       badge: 맞춤 데모
-      benefits:
-        no_commitment:
-          description: 결정하기 전에 데모를 신청하고 플랫폼을 확인해 보세요.
-          title: 부담 없는 상담
-        personalized:
-          description: 비즈니스에 꼭 필요한 기능을 확인해 보세요.
-          title: 맞춤 데모
-        resolve_questions:
-          description: 전문가가 플랫폼 사용 방법을 자세히 설명해 드립니다.
-          title: 궁금한 점 해결
-      brand: 모든 기능을
+      brand: Delta POS
+      brand_color: 브랜드 색상
+      brand_tagline: 판매 시점 관리
+      branches: 현재 지점 수
+      business_description: 맞춤형 기술 데모를 위해 비즈니스에 대해 알려주세요.
+      business_title: 비즈니스 정보
+      business_type: 비즈니스 업종
+      business_type_placeholder: 업종을 선택하세요...
+      business_types:
+        grocery: 식료품점 및 슈퍼마켓
+        fashion: 의류, 신발 및 액세서리
+        restaurant: 레스토랑 및 식음료
+        pharmacy: 약국 및 헬스케어
       company: 회사
-      email: 이메일
+      company_placeholder: 회사명을 입력하세요
+      contact_description: 전문 상담사가 연락드릴 수 있도록 연락처 정보를 입력하세요.
+      contact_title: 연락처 정보
+      continue: 계속
+      validation_title: 필수 입력 항목을 작성해 주세요.
+      invalid_email: 이메일 주소가 올바르지 않습니다.
+      copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
+      email: 회사 이메일
       error_summary: 요청을 전송하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.
       hero_description: 한 곳에서 판매, 재고, 고객, 지점 등을 편리하게 관리하는 방법을 알아보세요.
       hero_title: Delta POS가 비즈니스에 제공하는
-      hero_title_suffix: 확인해 보세요
+      hero_title_suffix: 모든 기능을 확인해 보세요
+      logo_alt: Delta POS 로고
       message: 어떻게 도와드릴까요?
+      message_placeholder: 데모에서 확인하고 싶은 내용을 알려주세요...
+      modules:
+        inventory:
+          title: 스마트 다지점 재고 관리
+          description: 자동 감사, 최소 재고 알림, 지점 간 실시간 재고 이동을 제공합니다.
+        billing:
+          title: 글로벌 전자 청구
+          description: 판매 시점에서 즉시 세금계산서를 발행하고 고객에게 예약 전송할 수 있습니다.
+        reports:
+          title: 고급 판매 보고서
+          description: 일일 재무 지표, 수익률, 운영 잔액을 제공하는 클라우드 분석을 지원합니다.
       name: 이름
       page_title: 데모 신청 | Delta POS
-      phone: 전화번호
-      submit: 데모 신청
+      panel_description: 최대한 빠르게 운영할 수 있도록 설계된 도구로 지점 거래를 관리하고 자동화하고 확장하세요.
+      panel_title: 현대 상거래를 위한 옴니채널 플랫폼
+      phone: 휴대전화 / WhatsApp
+      privacy: "상업적 연락을 받고 다음에 따른 개인정보 처리에 동의합니다:"
+      privacy_link: 개인정보 보호정책
+      progress_label: 데모 신청 진행률
+      required:
+        name: 이름을 입력하세요.
+        email: 회사 이메일을 입력하세요.
+        phone: 휴대전화 번호를 입력하세요.
+        business_type: 비즈니스 업종을 선택하세요.
+        branches: 지점 수는 0보다 커야 합니다.
+        terms: 개인정보 보호정책에 동의해야 합니다.
+        company: 회사명을 입력해 주세요.
+      return_home: 홈으로 돌아가기
+      success_state:
+        badge: 신청 접수 완료
+        title: 데모를 신청해 주셔서 감사합니다!
+        next_steps: 담당 팀이 입력하신 정보를 확인한 후 데모 일정을 조율하기 위해 곧 연락드리겠습니다.
+        back_home: 홈으로 돌아가기
+      return_prompt: 직접 플랫폼을 살펴보시겠어요?
+      submit: 데모 예약
+      invalid_message: 메시지는 2,000자를 초과할 수 없습니다.
+      theme: 테마
+      theme_option: 테마 색상 %{number}
+
   devise:
     confirmations:
       new:
@@ -1123,6 +1345,7 @@ ko:
       greater_than_min: 최소 재고보다 크거나 같아야 합니다
       greater_than_or_equal_to: "%{count}보다 크거나 같아야 합니다"
       inclusion: 목록에 포함되어 있지 않습니다
+      in_future: 미래 날짜와 시간이어야 합니다
       invalid: 이(가) 올바르지 않습니다
       invalid_format: 이(가) 올바르지 않습니다
       invalid_url: 유효한 URL이 아닙니다
