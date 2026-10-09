@@ -75,7 +75,13 @@ RSpec.describe SatMonth, type: :model do
     end
 
     it 'filters by date' do
-      current = create(:sat_month, valid_from: Date.yesterday, valid_to: Date.tomorrow)
+      current = create(
+        :sat_month,
+        month_number: 3,
+        code: '03',
+        valid_from: Date.yesterday,
+        valid_to: Date.tomorrow
+      )
 
       expect(described_class.valid_on(Date.current)).to include(current)
     end
