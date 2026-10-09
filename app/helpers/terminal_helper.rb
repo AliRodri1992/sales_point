@@ -35,5 +35,7 @@ module TerminalHelper
 
   def language_flag_path(language)
     image_path("flags/#{language.flag_iso}.svg")
+  rescue Propshaft::MissingAssetError
+    language.flag_url
   end
 end
