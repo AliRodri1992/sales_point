@@ -4,10 +4,9 @@ module Admin
   module DemoRequestsHelper
     def demo_request_activity_description(activity)
       details = activity.details
-      return details if details.is_a?(String) && details.present?
-      return activity_translation(activity.action) unless details.respond_to?(:to_h)
-
-      values = details.to_h.stringify_keys
+      values = activity_detail_values(details)
+      return details if values.nil? && details.is_a?(String) && details.present?
+      return activity_translation(activity.action) if values.nil?
 
       case activity.action
       when 'status_changed'
@@ -44,6 +43,21 @@ module Admin
     end
 
     private
+
+    def activity_detail_values(details)
+      return details.to_h.stringify_keys if details.respond_to?(:to_h)
+      return unless details.is_a?(String) && details.match?(/\A\s*\{.*=>.*\}\s*\z/m)
+
+      details.scan(/:(\w+)=>("(?:\\.|[^"])*"|[^,}]+)/).to_h do |key, raw_value|
+        value = raw_value.strip
+        value = if value.start_with?('"') && value.end_with?('"')
+                  value[1...-1].gsub('\\\"', '"').gsub('\\\\', '\\')
+                else
+                  value
+                end
+        [key, value]
+      end
+    end
 
     def activity_translation(key, **options)
       t("admin.demo_requests.activity.#{key}", **options)
