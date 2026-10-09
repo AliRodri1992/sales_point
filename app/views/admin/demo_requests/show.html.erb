@@ -151,7 +151,7 @@
             </div>
             <div class="min-w-0">
               <p class="text-sm font-medium text-slate-800">
-                <%= activity.details.presence || t("admin.demo_requests.activity.#{activity.action}") %>
+                <%= demo_request_activity_description(activity) %>
               </p>
               <p class="mt-1 text-xs text-slate-400">
                 <%= activity.user&.display_name || t('admin.demo_requests.activity.system') %>
