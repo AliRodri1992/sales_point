@@ -1,0 +1,6 @@
+---
+es:
+  admin:
+    languages:
+      statuses:
+        blocked: Bloqueado
