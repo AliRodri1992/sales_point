@@ -1,0 +1,41 @@
+<% if @onboarding_progress.present? && @onboarding_progress[:percentage] < 100 %>
+  <section class="mb-7 rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm" aria-labelledby="onboarding-card-title">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex min-w-0 items-start gap-3">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+          <%= icon("sparkles", class: "size-5") %>
+        </div>
+        <div class="min-w-0">
+          <h2 id="onboarding-card-title" class="font-jakarta text-base font-bold text-slate-900">
+            <%= t('admin.dashboard.onboarding.title') %>
+          </h2>
+          <p class="mt-1 text-sm text-slate-500">
+            <%= t('admin.dashboard.onboarding.description', percentage: @onboarding_progress[:percentage]) %>
+          </p>
+        </div>
+      </div>
+
+      <%= link_to admin_onboarding_path,
+                  class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700" do %>
+        <%= t('admin.dashboard.onboarding.continue') %>
+        <%= icon("arrow-right", class: "size-4") %>
+      <% end %>
+    </div>
+
+    <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+      <div class="h-full rounded-full bg-emerald-500 transition-all" style="width: <%= @onboarding_progress[:percentage] %>%"></div>
+    </div>
+
+    <div class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <% @onboarding_progress[:sections].each do |section| %>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="<%= section[:status] == 'completed' ? 'text-emerald-600' : 'text-slate-400' %>">
+            <%= section[:status] == 'completed' ? '✓' : '○' %>
+          </span>
+          <span class="truncate text-slate-600"><%= t("admin.onboarding.sections.#{section[:key]}") %></span>
+          <span class="ml-auto font-semibold text-slate-500"><%= section[:percentage] %>%</span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

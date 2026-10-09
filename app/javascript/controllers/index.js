@@ -40,9 +40,27 @@ application.register("languages", LanguagesController)
 import LanguagesSearchController from "./languages_search_controller"
 application.register("languages-search", LanguagesSearchController)
 
+import TestimonialsCarouselController from "./testimonials_carousel_controller"
+application.register("testimonials-carousel", TestimonialsCarouselController)
+
 import CategoriesController from "./categories_controller"
 application.register("categories", CategoriesController)
 
 import CategoriesSearchController from "./categories_search_controller"
 application.register("categories-search", CategoriesSearchController)
 
+
+import BranchesPaginationController from "./branches_pagination_controller"
+application.register("branches-pagination", BranchesPaginationController)
+
+import UsersPaginationController from "./users_pagination_controller"
+application.register("users-pagination", UsersPaginationController)
+
+import RegistrationWizardController from "./registration_wizard_controller"
+application.register("registration-wizard", RegistrationWizardController)
+
+import DemoRequestWizardController from "./demo_request_wizard_controller"
+application.register("demo-request-wizard", DemoRequestWizardController)
+
+import InternationalPhoneController from "./international_phone_controller"
+application.register("international-phone", InternationalPhoneController)

@@ -50,7 +50,7 @@
           <% if product.image.attached? %>
             <%= image_tag product.image.variant(resize_to_limit: [200, 200]), class: 'h-20 w-20 rounded-lg object-cover' %>
           <% else %>
-            <span class="text-slate-400 text-sm">No image available</span>
+            <span class="text-slate-400 text-sm"><%= t('admin.products.show.no_image') %></span>
           <% end %>
         </dd>
       </div>

@@ -130,7 +130,7 @@
               <%= image_tag product.image.variant(resize_to_limit: [80, 80]), class: 'h-20 w-20 rounded-lg object-cover border border-slate-200 bg-slate-50' %>
             <% else %>
               <div class="h-20 w-20 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center">
-                <span class="text-slate-400 text-xs">No image</span>
+                <span class="text-slate-400 text-xs"><%= t('admin.shared.no_image') %></span>
               </div>
             <% end %>
           </div>

@@ -1,0 +1,5 @@
+<h1><%= t("demo_request_mailer.workflow_update.#{@action}.title") %></h1>
+<p><%= t('demo_request_mailer.workflow_update.greeting', name: @assignee.display_name) %></p>
+<p><%= t("demo_request_mailer.workflow_update.#{@action}.message", prospect: @demo_request.name, company: @demo_request.company) %></p>
+<p><strong><%= t('demo_request_mailer.workflow_update.request') %>:</strong> <%= @demo_request.id %></p>
+<p><strong><%= t('demo_request_mailer.workflow_update.performed_by') %>:</strong> <%= @actor.display_name %></p>

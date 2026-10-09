@@ -2,15 +2,8 @@
 
 module Landing
   class TestimonialComponent < ViewComponent::Base
-    def initialize(
-      name:,
-      company:,
-      position:,
-      quote:,
-      avatar:
-    )
+    def initialize(name:, company:, quote:, position: nil, avatar: nil)
       super()
-
       @name = name
       @company = company
       @position = position
@@ -21,5 +14,9 @@ module Landing
     private
 
     attr_reader :name, :company, :position, :quote, :avatar
+
+    def initials
+      name.split.pluck(0).first(2).join.upcase
+    end
   end
 end

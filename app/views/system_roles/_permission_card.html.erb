@@ -1,0 +1,21 @@
+<label for="permission_<%= permission.id %>"
+       class="flex cursor-pointer items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 py-5 transition hover:border-slate-300">
+  <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500">
+    <%= icon(permission_icon(permission), class: 'size-5') %>
+  </span>
+
+  <span class="min-w-0 flex-1">
+    <span class="block text-sm font-semibold text-slate-900"><%= permission_name(permission) %></span>
+    <span class="mt-1 block text-sm text-slate-500"><%= permission_description(permission) %></span>
+  </span>
+
+  <span class="relative inline-flex shrink-0 items-center">
+    <%= check_box_tag 'permission_ids[]',
+                      permission.id,
+                      assigned_ids.include?(permission.id),
+                      id: "permission_#{permission.id}",
+                      class: 'peer sr-only' %>
+    <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"></span>
+    <span class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5"></span>
+  </span>
+</label>

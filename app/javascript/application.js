@@ -3,5 +3,6 @@ import "@hotwired/turbo-rails"
 import Swal from "sweetalert2"
 import "./controllers"
 import "./admin/dashboard"
+import "./admin/sidebar"
 
 window.Swal = Swal

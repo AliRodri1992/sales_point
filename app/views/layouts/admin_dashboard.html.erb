@@ -4,11 +4,10 @@
   <title><%= content_for?(:title) ? yield(:title) : t('admin.dashboard.index.title') %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Nexo POS">
+  <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
   <meta name="mobile-web-app-capable" content="yes">
 
   <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
   <%= yield :head %>
 
   <%= favicon_link_tag 'favicon.ico', rel: 'icon', sizes: 'any' %>
@@ -28,19 +27,11 @@
 
   <div class="flex min-w-0 flex-1 flex-col">
     <%= render "admin/shared/topbar" %>
-
     <%= render "admin/shared/breadcrumbs" %>
 
     <main class="flex-1 px-4 py-6 lg:px-6">
       <%= turbo_frame_tag "flash" do %>
         <%= render "admin/shared/flash" %>
-      <% end %>
-
-      <% if flash[:swal_message].present? %>
-        <div data-controller="swal-flash"
-             data-swal-flash-message-value="<%= flash[:swal_message] %>"
-             data-swal-flash-icon-value="success"
-             class="hidden"></div>
       <% end %>
 
       <%= yield %>
@@ -68,5 +59,6 @@
       },
       class: "category-modal fixed inset-0 z-[60] hidden items-center justify-center overflow-y-auto bg-slate-900/40 p-4 backdrop-blur-[2px] sm:p-6",
       aria: { hidden: "true" } %>
+
 </body>
 </html>

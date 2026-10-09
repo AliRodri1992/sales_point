@@ -4,7 +4,28 @@ module Admin
     before_action :authenticate_user!
 
     def index
-      @dashboard_preferences = current_user.dashboard_preferences.map do |preference|
+      organization = current_user.organizations.active_records.first
+      @onboarding_progress = onboarding_progress_data(organization)
+      @sales_requirements = sales_requirements_data(organization)
+      @dashboard_preferences = dashboard_preferences_data
+    end
+
+    def onboarding_progress_data(organization)
+      return unless organization && !organization.onboarding_completed?
+
+      Onboarding::ProgressCalculator.call(organization)
+    end
+
+    def sales_requirements_data(organization)
+      return {} unless organization
+
+      %i[branches terminals payments].index_with do |section|
+        Onboarding::Requirement.call(organization:, section:)
+      end
+    end
+
+    def dashboard_preferences_data
+      current_user.dashboard_preferences.map do |preference|
         {
           grid_type: preference.grid_type,
           widget_id: preference.widget_id,

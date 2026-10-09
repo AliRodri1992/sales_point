@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::SalesChartComponent, type: :component do
+  around { |example| I18n.with_locale(:en, &example) }
+
   it 'renders the widget title and subtitle' do
     render_inline(described_class.new)
 
-    expect(page).to have_text('Sales')
-    expect(page).to have_text('Behavior over the last 7 days')
+    expect(page).to have_text('Sales overview')
+    expect(page).to have_text('Sales performance over time.')
   end
 
   it 'renders the period selector with translated options' do

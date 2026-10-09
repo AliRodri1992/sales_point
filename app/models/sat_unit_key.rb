@@ -50,8 +50,8 @@ class SatUnitKey < ApplicationRecord
     end
   end
 
-  def soft_delete!(user_id = nil)
-    update(deleted_at: Time.current, deleted_by: user_id)
+  def soft_delete!(_user_id = nil)
+    update(deleted_at: Time.current)
   end
 
   def self.for_code(code, date = Date.current)
@@ -68,7 +68,6 @@ class SatUnitKey < ApplicationRecord
 
   def valid_date_range
     return if valid_from.blank? || valid_to.blank?
-
     return unless valid_to < valid_from
 
     errors.add(:valid_to, 'must be greater than or equal to valid_from')

@@ -62,6 +62,20 @@ RSpec.describe Language, type: :model do
     end
   end
 
+  describe 'flag URLs' do
+    let(:language) { build(:language, flag_iso: 'mx') }
+
+    it 'generates the default FlagCDN URL' do
+      expect(language.flag_url).to eq('https://flagcdn.com/64x48/mx.png')
+    end
+
+    it 'generates a FlagCDN srcset' do
+      expect(language.flag_srcset).to eq(
+        'https://flagcdn.com/80x60/mx.png 2x, https://flagcdn.com/96x72/mx.png 3x'
+      )
+    end
+  end
+
   describe 'scopes' do
     before do
       create_list(:language, 2, status: 'active')
@@ -75,22 +89,6 @@ RSpec.describe Language, type: :model do
 
     it 'not_deleted excludes soft-deleted languages' do
       expect(Language.not_deleted.count).to eq(3)
-    end
-  end
-
-  describe '#flag_url' do
-    it 'returns the flagcdn URL with the given size' do
-      language = build(:language, flag_iso: 'us')
-      expect(language.flag_url).to eq('https://flagcdn.com/64x48/us.png')
-      expect(language.flag_url('80x60')).to eq('https://flagcdn.com/80x60/us.png')
-    end
-  end
-
-  describe '#flag_srcset' do
-    it 'returns a srcset string with multiple sizes' do
-      language = build(:language, flag_iso: 'us')
-      expect(language.flag_srcset).to include('80x60')
-      expect(language.flag_srcset).to include('96x72')
     end
   end
 end

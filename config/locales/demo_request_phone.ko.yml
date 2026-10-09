@@ -1,0 +1,4 @@
+ko:
+  demo_requests:
+    new:
+      invalid_phone: "선택한 국가에 맞는 유효한 전화번호를 입력하세요."

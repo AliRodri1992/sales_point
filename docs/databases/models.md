@@ -141,7 +141,6 @@ def low_stock?
 end
 
 def increment_view_count!
-  # rubocop:disable-next Rails/SkipsModelValidations
   increment!(:view_count)
 end
 
