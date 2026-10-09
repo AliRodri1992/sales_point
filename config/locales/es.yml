@@ -401,7 +401,6 @@ es:
         title: Detalles del idioma
       statuses:
         active: Activo
-        blocked: Bloqueado
     onboarding:
       active: Activa
       back: Atrás
