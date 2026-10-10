@@ -93,7 +93,7 @@ module Admin
 
     def supplier_params
       params.expect(
-        supplier: %i[code name email phone rfc sat_fiscal_regime_id postal_code status notes]
+        supplier: %i[code name legal_name trade_name alias_name classification person_type email phone rfc sat_fiscal_regime_id postal_code status notes currency credit_days credit_limit discount_percent minimum_order_amount]
       )
     end
 

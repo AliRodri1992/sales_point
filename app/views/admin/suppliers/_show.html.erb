@@ -6,6 +6,16 @@
   <dl class="grid gap-x-8 px-6 py-2 sm:grid-cols-2">
     <% fields = [
       ['code', supplier.code], ['name', supplier.name],
+      ['legal_name', supplier.legal_name],
+      ['trade_name', supplier.trade_name],
+      ['alias_name', supplier.alias_name],
+      ['classification', supplier.classification],
+      ['person_type', supplier.person_type],
+      ['currency', supplier.currency],
+      ['credit_days', supplier.credit_days],
+      ['credit_limit', supplier.credit_limit],
+      ['discount_percent', supplier.discount_percent],
+      ['minimum_order_amount', supplier.minimum_order_amount],
       ['email', supplier.email.presence || '—'], ['phone', supplier.phone.presence || '—'],
       ['rfc', supplier.rfc.presence || '—'],
       ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : '—'],
@@ -15,7 +25,7 @@
     ] %>
     <% fields.each do |key, value| %>
       <div class="border-b border-slate-100 py-4 <%= key == 'notes' ? 'sm:col-span-2' : '' %>">
-        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t("admin.suppliers.show.fields.#{key}") %></dt>
+        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t("admin.suppliers.show.fields.#{key}", default: key.humanize) %></dt>
         <dd class="mt-1 break-words text-sm font-medium text-slate-900"><%= value %></dd>
       </div>
     <% end %>

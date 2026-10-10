@@ -13,6 +13,14 @@ class Supplier < ApplicationRecord
             format: { with: /\A[A-Za-z0-9\-_]+\z/, message: :invalid_format }
 
   validates :name, presence: true, length: { maximum: 150 }
+  validates :legal_name, :trade_name, length: { maximum: 150 }, allow_blank: true
+  validates :alias_name, length: { maximum: 100 }, allow_blank: true
+  validates :classification, inclusion: { in: %w[manufacturer distributor wholesaler service other] }, allow_blank: true
+  validates :person_type, inclusion: { in: %w[individual company] }, allow_blank: true
+  validates :currency, inclusion: { in: %w[MXN USD EUR] }
+  validates :credit_days, numericality: { only_integer: true, in: 0..365 }
+  validates :credit_limit, :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
+  validates :discount_percent, numericality: { in: 0..100 }
 
   validates :email,
             length: { maximum: 150 },
@@ -50,6 +58,7 @@ class Supplier < ApplicationRecord
   def normalize_fields
     normalize_text_field(:code, &:strip)
     normalize_text_field(:name, &:strip)
+    %i[legal_name trade_name alias_name].each { |field| normalize_text_field(field, &:strip) }
     normalize_email
     normalize_text_field(:phone, &:strip)
     normalize_rfc

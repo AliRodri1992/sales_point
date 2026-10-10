@@ -41,6 +41,22 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
+  describe 'commercial profile' do
+    it 'accepts valid commercial terms' do
+      supplier.assign_attributes(legal_name: 'Empresa SA', trade_name: 'Marca', alias_name: 'Distribuidor',
+                                 classification: 'distributor', person_type: 'company', currency: 'MXN',
+                                 credit_days: 30, credit_limit: 1000, discount_percent: 10,
+                                 minimum_order_amount: 100)
+      expect(supplier).to be_valid
+    end
+
+    it 'rejects invalid credit and discounts' do
+      supplier.assign_attributes(credit_days: -1, credit_limit: -10, discount_percent: 101,
+                                 minimum_order_amount: -1)
+      expect(supplier).not_to be_valid
+    end
+  end
+
   describe 'organization ownership' do
     it 'allows the same supplier code in different organizations' do
       first = create(:organization)
