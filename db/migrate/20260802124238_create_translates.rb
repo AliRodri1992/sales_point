@@ -6,7 +6,7 @@ class CreateTranslates < ActiveRecord::Migration[8.1]
       t.string :key, null: false, limit: 255
       t.text :value, null: false
       t.string :locale, null: false, limit: 10, default: 'en'
-      t.datetime :deleted_at, index: true
+      t.timestamp :deleted_at, index: true
 
       t.timestamps
     end
