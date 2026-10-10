@@ -21,12 +21,17 @@ RSpec.describe GeocodeAddressJob, type: :job do
       expect { described_class.perform_now(999_999) }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'logs and marks fatal errors through the configured discard handler' do
+    it 'logs fatal errors through the configured discard handler' do
       error = StandardError.new('fatal geocoding error')
-      logger = instance_double(ActiveSupport::Logger, error: nil)
+      service = instance_double(AddressGeocodingService)
+      logger = double('logger', error: nil)
+
+      allow(AddressGeocodingService).to receive(:new).with(1).and_return(service)
+      allow(service).to receive(:call).and_raise(error)
       allow(Rails).to receive(:logger).and_return(logger)
 
-      expect { described_class.perform_now(1) }.not_to raise_error
+      described_class.perform_now(1)
+
       expect(logger).to have_received(:error).with('[GeocodeAddressJob] Fatal: fatal geocoding error')
     end
   end
