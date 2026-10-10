@@ -246,5 +246,4 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.user_status_badge('unknown')).to include('bg-slate-100', 'text-slate-600')
     end
   end
-
 end
