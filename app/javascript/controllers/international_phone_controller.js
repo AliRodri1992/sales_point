@@ -55,6 +55,11 @@ export default class extends Controller {
   updateValidity = () => {
     if (!this.ready) return
 
-    this.inputTarget.dataset.valid = this.iti.isValidNumber() ? "true" : "false"
+    const hasValue = this.inputTarget.value.trim().length > 0
+    const valid = this.iti.isValidNumber()
+    this.inputTarget.dataset.valid = valid ? "true" : "false"
+    this.inputTarget.setAttribute("aria-invalid", String(hasValue && !valid))
+    this.inputTarget.classList.toggle("border-rose-500", hasValue && !valid)
+    this.inputTarget.classList.toggle("bg-rose-50", hasValue && !valid)
   }
 }
