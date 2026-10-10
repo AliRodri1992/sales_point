@@ -34,6 +34,15 @@ module Admin
       end
     end
 
+    def restore
+      record = @supplier.addresses.with_deleted.where.not(deleted_at: nil).find(params[:id])
+      if record.restore_safely
+        redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.restored')
+      else
+        redirect_to admin_supplier_addresses_path(@supplier), alert: record.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       @address.update!(deleted_at: Time.current)
       redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.deleted')
@@ -53,7 +62,7 @@ module Admin
     end
 
     def address_params
-      params.expect(address: %i[street exterior_number interior_number neighborhood city state country postal_code])
+      params.expect(address: %i[street exterior_number interior_number neighborhood city state country postal_code primary purpose])
     end
   end
 end
