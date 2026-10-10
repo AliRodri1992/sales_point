@@ -14,6 +14,6 @@ RSpec.describe Landing::ScreenshotComponent, type: :component do
 
     expect(page).to have_text('See Delta POS in action')
     expect(page).to have_text('A clearer view of your operation')
-    expect(page).to have_link(href: new_demo_request_path)
+    expect(page).to have_link(href: '/demo_requests/new')
   end
 end
