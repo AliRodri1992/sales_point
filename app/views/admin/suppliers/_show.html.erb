@@ -31,6 +31,9 @@
     <% end %>
   </dl>
   <div class="flex flex-wrap gap-3 border-t border-slate-100 px-6 py-4">
+    <%= link_to t('admin.supplier_dossier.schedules'), admin_supplier_schedules_path(supplier), class: 'text-emerald-700' %>
+  </div>
+  <div class="flex flex-wrap gap-3 border-t border-slate-100 px-6 py-4">
     <%= link_to t('admin.supplier_details.contacts'), admin_supplier_contacts_path(supplier),
                 class: 'rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700' %>
     <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier),
