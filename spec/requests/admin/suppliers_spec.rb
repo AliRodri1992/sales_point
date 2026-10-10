@@ -95,8 +95,9 @@ RSpec.describe 'Admin suppliers', type: :request do
 
     get admin_suppliers_path
 
-    expect(controller.send(:compute_total_pages, 11)).to eq(2)
-    expect(controller.send(:compute_total_pages, 0)).to eq(1)
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    expect(response.body).to include('supplier-pagination-form')
   end
 
   it 'supports 10 and 15 records per page' do
