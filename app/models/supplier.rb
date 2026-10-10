@@ -16,7 +16,7 @@ class Supplier < ApplicationRecord
   end
 
   def tags_text=(value)
-    self.tags = value.to_s.split(',').map(&:strip).reject(&:blank?).uniq.first(20)
+    self.tags = value.to_s.split(',').map(&:strip).compact_blank.uniq.first(20)
   end
 
   validates :code,
