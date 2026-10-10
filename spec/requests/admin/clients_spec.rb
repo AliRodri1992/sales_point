@@ -217,7 +217,7 @@ RSpec.describe 'Admin clients', type: :request do
       post admin_clients_path, params: { client: attributes_for(:client) }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response).to render_template(:new)
+      expect(response.body).to include(I18n.t('admin.clients.new.title'))
       expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
     end
 
@@ -228,7 +228,7 @@ RSpec.describe 'Admin clients', type: :request do
       patch admin_client_path(client), params: { client: { name: 'Conflicting Client' } }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response).to render_template(:edit)
+      expect(response.body).to include(I18n.t('admin.clients.edit.title', name: client.name))
       expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
     end
   end
