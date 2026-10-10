@@ -18,20 +18,39 @@ class Contact < ApplicationRecord
   private
 
   def normalize_fields
-    self.name = name.to_s.strip
-    self.position = position.to_s.strip.presence
-    self.email = email.to_s.strip.downcase.presence
-    self.phone = phone.to_s.strip.presence
-    self.mobile_phone = mobile_phone.to_s.strip.presence
-    self.notes = notes.to_s.strip.presence
+    self.name = normalize_string(name)
+    self.position = normalize_optional(position)
+    self.email = normalize_string(email, downcase: true)
+    self.phone = normalize_optional(phone)
+    self.mobile_phone = normalize_optional(mobile_phone)
+    self.notes = normalize_optional(notes)
+  end
+
+  def normalize_string(value, downcase: false)
+    result = value.to_s.strip
+    result = result.downcase if downcase
+    result.presence
+  end
+
+  def normalize_optional(value)
+    value.to_s.strip.presence
   end
 
   def single_active_primary
     return unless primary? && active? && deleted_at.nil? && contactable.present?
+    return unless contactable.persisted?
 
-    duplicates = Contact.available.where(contactable_type: contactable.class.base_class.name,
-                                         contactable_id: contactable.id, primary: true)
-    duplicates = duplicates.where.not(id: id) if persisted?
-    errors.add(:primary, :taken) if contactable.persisted? && duplicates.exists?
+    has_primary = available_contacts
+                  .where.not(id: id)
+                  .exists?
+    errors.add(:primary, :taken) if has_primary
+  end
+
+  def available_contacts
+    Contact.available.where(
+      contactable_type: contactable.class.base_class.name,
+      contactable_id: contactable.id,
+      primary: true
+    )
   end
 end

@@ -60,16 +60,36 @@ module SupplierExamples
     end
 
     def create_contact(supplier, number)
-      contact = supplier.contacts.find_or_initialize_by(email: "contacto#{number}@example.com")
-      contact.assign_attributes(
+      email = "contacto#{number}@example.com"
+      contact = supplier.contacts.find_by(email:)
+
+      if contact
+        update_existing_contact(contact, supplier, number)
+      else
+        create_new_contact(supplier, number, email)
+      end
+    end
+
+    def update_existing_contact(contact, supplier, number)
+      contact.update!(
         name: "Contacto #{number}",
+        position: 'Ventas',
+        phone: supplier.phone,
+        active: true,
+        deleted_at: nil
+      )
+    end
+
+    def create_new_contact(supplier, number, email)
+      supplier.contacts.create!(
+        name: "Contacto #{number}",
+        email: email,
         position: 'Ventas',
         phone: supplier.phone,
         primary: true,
         active: true,
         deleted_at: nil
       )
-      contact.save!
     end
   end
 end
