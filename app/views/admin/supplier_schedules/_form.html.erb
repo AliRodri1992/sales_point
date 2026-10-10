@@ -1,0 +1,30 @@
+<%= form_with model: [:admin, @supplier, @schedule], class: 'space-y-4' do |form| %>
+  <div>
+    <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
+    <%= form.collection_select :branch_id, @branches, :id, :name, { include_blank: true }, class: 'w-full rounded-lg border p-2' %>
+    <%= error_message_for(@schedule, :branch) %>
+  </div>
+  <div>
+    <%= form.label :kind, t('admin.supplier_dossier.kind') %>
+    <%= form.select :kind, SupplierSchedule::KINDS.map { |kind| [t("admin.supplier_dossier.kinds.#{kind}"), kind] }, {}, class: 'w-full rounded-lg border p-2' %>
+    <%= error_message_for(@schedule, :kind) %>
+  </div>
+  <div>
+    <%= form.label :weekday, t('admin.supplier_dossier.weekday') %>
+    <%= form.select :weekday, (0..6).map { |day| [t('date.day_names')[day], day] }, {}, class: 'w-full rounded-lg border p-2' %>
+    <%= error_message_for(@schedule, :weekday) %>
+  </div>
+  <% %i[starts_at ends_at].each do |field| %>
+    <div>
+      <%= form.label field, t("admin.supplier_dossier.#{field}") %>
+      <%= form.time_field field, class: 'w-full rounded-lg border p-2' %>
+      <%= error_message_for(@schedule, field) %>
+    </div>
+  <% end %>
+  <div>
+    <%= form.label :notes, t('admin.supplier_dossier.notes') %>
+    <%= form.text_area :notes, class: 'w-full rounded-lg border p-2' %>
+    <%= error_message_for(@schedule, :notes) %>
+  </div>
+  <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
+<% end %>
