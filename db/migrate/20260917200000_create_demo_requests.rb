@@ -12,6 +12,9 @@ class CreateDemoRequests < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
+    add_index :demo_requests, %i[status created_at],
+              where: 'deleted_at IS NULL',
+              name: 'idx_demo_requests_status_created_active'
     add_index :demo_requests, :email
     add_index :demo_requests, :status
     add_index :demo_requests, :deleted_at
