@@ -120,7 +120,6 @@ RSpec.describe SatCurrency, type: :model do
     end
   end
 
-
   describe 'nil amount formatting' do
     it 'returns nil when formatting a missing amount' do
       expect(build(:sat_currency).format_amount(nil)).to be_nil
