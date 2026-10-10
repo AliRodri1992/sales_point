@@ -145,8 +145,9 @@ RSpec.describe 'Admin::Branches', type: :request do
       create(:organization_membership, organization:, user: admin_user)
       branch = create(:branch, organization: create(:organization), status: true)
 
-      expect { patch select_admin_branch_path(branch) }
-        .to raise_error(ActiveRecord::RecordNotFound)
+      patch select_admin_branch_path(branch)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
