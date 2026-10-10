@@ -20,6 +20,14 @@ RSpec.describe DemoRequestPolicy, type: :policy do
     it { expect(policy.update?).to be true }
   end
 
+  context 'when the user is nil' do
+    let(:user) { nil }
+
+    it { expect(policy.index?).to be_nil }
+    it { expect(policy.show?).to be_nil }
+    it { expect(policy.update?).to be_nil }
+  end
+
   context 'when the user is not an administrator' do
     it { expect(policy.index?).to be false }
     it { expect(policy.show?).to be false }
