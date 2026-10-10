@@ -129,6 +129,27 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
   end
 
+  describe 'PATCH /admin/branches/:id/select' do
+    it 'selects an active branch belonging to the current organization' do
+      organization = create(:organization)
+      create(:organization_membership, organization:, user: admin_user)
+      branch = create(:branch, organization:, status: true)
+
+      patch select_admin_branch_path(branch)
+
+      expect(response).to redirect_to(admin_dashboard_path)
+    end
+
+    it 'does not select a branch outside the current organization' do
+      organization = create(:organization)
+      create(:organization_membership, organization:, user: admin_user)
+      branch = create(:branch, organization: create(:organization), status: true)
+
+      expect { patch select_admin_branch_path(branch) }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
   describe 'GET /admin/branches/new' do
     it 'renders the new branch screen without a modal for system administrators' do
       get new_admin_branch_path
