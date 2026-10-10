@@ -34,7 +34,6 @@ RSpec.describe CategoryPolicy do
       expect(policy.destroy?).to be(false)
     end
   end
-
 end
 
 RSpec.describe CategoryPolicy::Scope do
