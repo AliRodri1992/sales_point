@@ -36,7 +36,7 @@ RSpec.describe Admin::ProductsLookup do
     end
 
     it 'does not find a soft-deleted product' do
-      product = create(:product, :deleted, slug: 'retired-item')
+      product = create(:product, slug: 'retired-item', deleted_at: Time.current)
 
       expect(host.send(:find_product_by_id_or_slug, product.id.to_s)).to be_nil
       expect(host.send(:find_product_by_id_or_slug, 'retired-item')).to be_nil
