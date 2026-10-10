@@ -20,6 +20,12 @@
       </div>
     <% end %>
   </dl>
+  <div class="flex flex-wrap gap-3 border-t border-slate-100 px-6 py-4">
+    <%= link_to t('admin.supplier_details.contacts'), admin_supplier_contacts_path(supplier),
+                class: 'rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700' %>
+    <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier),
+                class: 'rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700' %>
+  </div>
   <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
     <%= link_to t('admin.suppliers.show.back'), admin_suppliers_path,
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
