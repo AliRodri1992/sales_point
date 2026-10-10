@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       end
     end
     resources :suppliers do
+      resources :schedules, controller: 'supplier_schedules', except: %i[show]
       resources :contacts, controller: 'supplier_contacts', except: %i[show] do
         member { patch :restore }
       end
