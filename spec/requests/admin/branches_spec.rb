@@ -374,7 +374,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response).to render_template(:edit)
+      expect(response.body).to include('Editar sucursal')
+      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
       expect(branch.reload.name).to eq('Unchanged Branch')
     end
 
@@ -384,8 +385,9 @@ RSpec.describe 'Admin::Branches', type: :request do
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response).to render_template(:edit)
+      expect(response.body).to include('Editar sucursal')
       expect(response.body).to include('address_attributes')
+      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
     end
   end
 
