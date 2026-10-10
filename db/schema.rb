@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,6 +122,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
     t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_clients_postal_code_format"
     t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_clients_rfc_format"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_clients_status"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.bigint "contactable_id", null: false
+    t.string "contactable_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "email", limit: 150
+    t.string "mobile_phone", limit: 30
+    t.string "name", limit: 150, null: false
+    t.text "notes"
+    t.string "phone", limit: 30
+    t.string "position", limit: 100
+    t.boolean "primary", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["contactable_type", "contactable_id"], name: "idx_contacts_one_active_primary", unique: true, where: "deleted_at IS NULL AND active = true AND \"primary\" = true"
+    t.index ["contactable_type", "contactable_id"], name: "index_contacts_on_contactable"
+    t.index ["deleted_at"], name: "index_contacts_on_deleted_at"
+    t.check_constraint "btrim(name::text) <> ''::text", name: "chk_contacts_name_present"
   end
 
   create_table "conversation_participants", force: :cascade do |t|
@@ -643,17 +663,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
     t.string "email", limit: 150
     t.string "name", limit: 150, null: false
     t.text "notes"
+    t.bigint "organization_id"
     t.string "phone", limit: 30
     t.string "postal_code", limit: 5
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_suppliers_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "code"], name: "idx_suppliers_organization_code_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_suppliers_on_organization_id"
     t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
     t.index ["email"], name: "index_suppliers_on_email"
     t.index ["phone"], name: "index_suppliers_on_phone"
-    t.index ["rfc"], name: "index_suppliers_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
+    t.index ["organization_id", "rfc"], name: "idx_suppliers_organization_rfc_active", unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL"
     t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_suppliers_on_status"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
@@ -821,4 +843,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
   add_foreign_key "user_roles", "users"
   add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
+  add_foreign_key "suppliers", "organizations"
 end
