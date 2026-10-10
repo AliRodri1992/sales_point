@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       end
     end
     resources :suppliers do
+      delete 'documents/:document_id', to: 'supplier_documents#destroy', as: :document
       resources :schedules, controller: 'supplier_schedules', except: %i[show]
       resources :contacts, controller: 'supplier_contacts', except: %i[show] do
         member { patch :restore }
