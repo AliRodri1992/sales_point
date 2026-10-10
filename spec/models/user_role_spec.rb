@@ -91,4 +91,13 @@ RSpec.describe UserRole, type: :model do
       expect(described_class.active).to contain_exactly(active_assignment)
     end
   end
+
+
+  describe 'optional role association in conditional validations' do
+    it 'handles a missing system role without raising from conditional validations' do
+      assignment = build(:user_role, system_role: nil, branch: nil)
+
+      expect { assignment.valid? }.not_to raise_error
+    end
+  end
 end
