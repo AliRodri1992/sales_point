@@ -2,33 +2,7 @@
 
 class AddOrganizationToSuppliers < ActiveRecord::Migration[8.1]
   def up
-    add_reference :suppliers, :organization, null: true, foreign_key: true, index: true
-
-    # This project uses disposable development data. Assign legacy sample suppliers
-    # to an explicit demo tenant before enforcing the new required relationship.
-    if select_value('SELECT EXISTS (SELECT 1 FROM suppliers WHERE organization_id IS NULL)')
-      demo_id = select_value(<<~SQL)
-        SELECT id FROM organizations
-        WHERE tax_id = 'DPO260101AB1' AND deleted_at IS NULL
-        LIMIT 1
-      SQL
-
-      unless demo_id
-        demo_id = select_value(<<~SQL)
-          INSERT INTO organizations
-            (name, tax_id, business_sector, status, onboarding_status,
-             onboarding_current_step, created_at, updated_at)
-          VALUES
-            ('Delta POS Demo', 'DPO260101AB1', 'grocery', 'active',
-             'pending', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-          RETURNING id
-        SQL
-      end
-
-      execute "UPDATE suppliers SET organization_id = #{Integer(demo_id)} WHERE organization_id IS NULL"
-    end
-
-    change_column_null :suppliers, :organization_id, false
+    add_reference :suppliers, :organization, null: false, foreign_key: true, index: true
 
     remove_index :suppliers, name: 'index_suppliers_on_code'
     remove_index :suppliers, name: 'index_suppliers_on_rfc'
