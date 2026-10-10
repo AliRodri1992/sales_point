@@ -10,6 +10,7 @@ RSpec.describe 'admin/suppliers/index', type: :view do
     organization = create(:organization)
     create(:organization_membership, user:, organization:)
     allow(view).to receive(:current_organization).and_return(organization)
+    allow(view).to receive(:turbo_stream_from).and_return('')
     params = ActionController::Parameters.new(controller: 'admin/suppliers', action: 'index')
     allow(view).to receive(:params).and_return(params)
 
