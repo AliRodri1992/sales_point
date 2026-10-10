@@ -69,6 +69,15 @@ RSpec.describe 'Admin::Products', type: :request do
     end
   end
 
+  describe 'GET /admin/products/new' do
+    it 'renders the new product form with default values' do
+      get new_admin_product_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('name="product[name]"')
+    end
+  end
+
   describe 'POST /admin/products' do
     it 'sends a "created" notification to the current user' do
       expect do
@@ -87,6 +96,25 @@ RSpec.describe 'Admin::Products', type: :request do
 
       post admin_products_path(format: :turbo_stream),
            params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+    end
+
+    it 'renders the real-time catalog broadcast partial after a successful create' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+
+      post admin_products_path,
+           params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10, stock: 5 } }
+
+      expect(response).to redirect_to(admin_products_path)
+    end
+
+    it 'renders the form when a unique index rejects the create' do
+      allow_any_instance_of(Product).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      post admin_products_path,
+           params: { product: { code: 'PROD-DUPLICATE', name: 'Duplicate Product', price: 10, stock: 5 } }
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'defaults the status to active when not provided' do
@@ -170,6 +198,15 @@ RSpec.describe 'Admin::Products', type: :request do
 
       expect(product.reload.name).to eq('Old Name')
     end
+
+    it 'renders the edit form when a unique index rejects the update' do
+      allow_any_instance_of(Product).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+
+      patch admin_product_path(product),
+            params: { product: { name: 'Conflicting Name', code: 'old_code' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'DELETE /admin/products/:id' do
@@ -212,6 +249,23 @@ RSpec.describe 'Admin::Products', type: :request do
         delete admin_product_path(product, format: :turbo_stream)
       end.to change { Product.not_deleted.count }.by(-1)
       expect(Product.with_deleted.find(product.id).deleted_at).not_to be_nil
+    end
+
+    it 'redirects safely when the delete operation raises RecordNotFound' do
+      allow_any_instance_of(Product).to receive(:update!).and_raise(ActiveRecord::RecordNotFound)
+
+      delete admin_product_path(product)
+
+      expect(response).to redirect_to(admin_products_path)
+    end
+
+    it 'redirects with an alert when the delete operation raises another error' do
+      allow_any_instance_of(Product).to receive(:update!).and_raise(StandardError, 'delete failed')
+
+      delete admin_product_path(product)
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(flash[:alert]).to eq(I18n.t('admin.products.destroy_failed'))
     end
 
     it 'appears in user.notifications even when the product is soft-deleted' do
