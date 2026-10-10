@@ -22,6 +22,22 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it 'renders the new supplier form' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.suppliers.new.title', locale: :en))
+  end
+
+  it 'renders the edit form for an existing supplier' do
+    supplier = create(:supplier, name: 'Supplier to Edit')
+
+    get edit_admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Supplier to Edit')
+  end
+
   it 'lists, filters and excludes deleted suppliers' do
     create(:supplier, name: 'Visible Supplier')
     create(:supplier, :deleted, name: 'Deleted Supplier')
@@ -102,8 +118,20 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(supplier.reload.deleted_at).to be_present
   end
 
-  it 'renders validation errors' do
+  it 'renders validation errors when creating an invalid supplier' do
     post admin_suppliers_path, params: { supplier: { code: '', name: '' } }
+
     expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('name')
+  end
+
+  it 're-renders the edit form when an update fails validation' do
+    supplier = create(:supplier, name: 'Unchanged Supplier')
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: '' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('Unchanged Supplier')
+    expect(supplier.reload.name).to eq('Unchanged Supplier')
   end
 end
