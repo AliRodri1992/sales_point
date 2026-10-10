@@ -7,6 +7,7 @@ module Admin
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action :require_supplier_organization!
     before_action :set_supplier, only: %i[show edit update destroy]
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
@@ -20,7 +21,7 @@ module Admin
     end
 
     def new
-      @supplier = Supplier.new
+      @supplier = current_organization.suppliers.new
       authorize @supplier
       load_fiscal_regimes
     end
@@ -76,8 +77,12 @@ module Admin
 
     private
 
+    def require_supplier_organization!
+      head :forbidden unless current_organization
+    end
+
     def set_supplier
-      @supplier = Supplier.not_deleted.includes(:sat_fiscal_regime).find(params[:id])
+      @supplier = policy_scope(current_organization.suppliers.not_deleted).includes(:sat_fiscal_regime).find(params[:id])
     end
 
     def load_fiscal_regimes
