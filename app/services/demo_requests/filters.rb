@@ -67,6 +67,7 @@ module DemoRequests
 
     def apply_follow_up_filters(scope)
       return scope if @params[:follow_up].blank?
+      return scope unless %w[overdue upcoming].include?(@params[:follow_up])
 
       scope = scope.where.not(next_follow_up_at: nil)
                    .where.not(status: %w[converted cancelled])
