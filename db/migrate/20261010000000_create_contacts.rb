@@ -12,7 +12,7 @@ class CreateContacts < ActiveRecord::Migration[8.1]
       t.boolean :primary, default: false, null: false
       t.boolean :active, default: true, null: false
       t.text :notes
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
