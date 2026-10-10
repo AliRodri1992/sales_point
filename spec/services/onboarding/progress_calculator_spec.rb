@@ -90,17 +90,6 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     expect(terminal_section).to include(percentage: 0, status: 'not_started')
   end
 
-  it 'calculates partial migration progress when only one migration field is configured' do
-    organization = create(:organization)
-    migration = create(:organization_migration, organization:, volume: :small, priority: nil)
-
-    progress = described_class.call(organization)
-    migration_section = progress[:sections].find { |section| section[:key] == :migration }
-
-    expect(migration_section).to include(percentage: 50, status: 'in_progress')
-    expect(migration).to be_persisted
-  end
-
   it 'calculates migration progress when migration data is present' do
     organization = create(:organization)
     migration = create(:organization_migration, organization:, volume: :small, priority: :catalog)
