@@ -1,0 +1,11 @@
+<%= form_with model: [:admin, @supplier, @address], class: 'space-y-4' do |form| %>
+  <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+    <div>
+      <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'block text-sm font-semibold' %>
+      <%= form.text_field field, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+      <%= error_message_for(@address, field) %>
+    </div>
+  <% end %>
+  <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
+  <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier) %>
+<% end %>
