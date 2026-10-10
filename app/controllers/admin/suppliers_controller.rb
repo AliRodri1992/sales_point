@@ -93,11 +93,11 @@ module Admin
 
     def supplier_params
       params.expect(supplier: [
-        %i[code name legal_name trade_name alias_name classification person_type email phone rfc],
-        %i[sat_fiscal_regime_id postal_code status notes currency credit_days credit_limit],
-        %i[discount_percent minimum_order_amount responsible_user_id tags_text],
-        { documents: [] }
-      ].flatten(1))
+        :code, :name, :legal_name, :trade_name, :alias_name, :classification, :person_type,
+        :email, :phone, :rfc, :sat_fiscal_regime_id, :postal_code, :status, :notes,
+        :currency, :credit_days, :credit_limit, :discount_percent, :minimum_order_amount,
+        :responsible_user_id, :tags_text, { documents: [] }
+      ])
     end
 
     def supplier_update_attributes
