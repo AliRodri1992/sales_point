@@ -87,11 +87,14 @@ class Address < ApplicationRecord
   def single_primary_address
     return unless primary? && deleted_at.nil? && addressable&.persisted?
 
-    scope = Address.with_deleted.where(
+    errors.add(:primary, :taken) if other_primary_address_exists?
+  end
+
+  def other_primary_address_exists?
+    Address.with_deleted.where(
       addressable_type: addressable.class.base_class.name,
       addressable_id: addressable.id, purpose: purpose, primary: true, deleted_at: nil
-    )
-    errors.add(:primary, :taken) if scope.where.not(id: id).exists?
+    ).where.not(id: id).exists?
   end
 
   def geocoded?
