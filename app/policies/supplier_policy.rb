@@ -8,13 +8,24 @@ class SupplierPolicy
     @supplier = supplier
   end
 
-  def index? = user&.admin?
-  def show? = user&.admin?
-  def new? = user&.admin?
-  def create? = user&.admin?
-  def edit? = user&.admin?
-  def update? = user&.admin?
-  def destroy? = user&.admin?
+  def index? = authorized_organization?
+  def show? = authorized_record?
+  def new? = authorized_record?
+  def create? = authorized_record?
+  def edit? = authorized_record?
+  def update? = authorized_record?
+  def destroy? = authorized_record?
+
+  private
+
+  def authorized_organization?
+    user&.admin? && user.organizations.active_records.exists?
+  end
+
+  def authorized_record?
+    user&.admin? && supplier.organization_id.present? &&
+      user.organizations.active_records.exists?(id: supplier.organization_id)
+  end
 
   class Scope
     def initialize(user, scope)
@@ -23,7 +34,9 @@ class SupplierPolicy
     end
 
     def resolve
-      @user&.admin? ? @scope : @scope.none
+      return @scope.none unless @user&.admin?
+
+      @scope.where(organization_id: @user.organizations.active_records.select(:id))
     end
   end
 end
