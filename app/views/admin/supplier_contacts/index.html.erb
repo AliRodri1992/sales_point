@@ -4,6 +4,12 @@
     <%= link_to t('admin.supplier_details.add'), new_admin_supplier_contact_path(@supplier), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
     <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier), class: 'rounded-lg border px-4 py-2' %>
   </div>
+  <% if policy(@supplier).update? %>
+    <details class="mb-5 rounded-xl border border-slate-200 p-4">
+      <summary class="cursor-pointer font-semibold text-emerald-700"><%= t('admin.supplier_details.add_contact') %></summary>
+      <div class="mt-4"><%= render 'form' %></div>
+    </details>
+  <% end %>
   <ul class="divide-y">
     <% @contacts.each do |contact| %>
       <li class="flex flex-wrap items-center justify-between gap-3 py-3">
