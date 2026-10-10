@@ -7,8 +7,7 @@ RSpec.describe NotificationsHelper, type: :helper do
     it 'uses the empty subtitle when there are no unread notifications' do
       user = instance_double(User, unread_notifications: double(count: 0))
 
-      expect(helper).to receive(:t).with('admin.shared.notifications.subtitle_none')
-        .and_return('No unread notifications')
+      expect(helper).to receive(:t).with('admin.shared.notifications.subtitle_none').and_return('No unread notifications')
 
       expect(helper.notifications_subtitle(user)).to eq('No unread notifications')
     end
@@ -16,8 +15,7 @@ RSpec.describe NotificationsHelper, type: :helper do
     it 'includes the unread notification count' do
       user = instance_double(User, unread_notifications: double(count: 3))
 
-      expect(helper).to receive(:t).with('admin.shared.notifications.subtitle', count: 3)
-        .and_return('3 unread notifications')
+      expect(helper).to receive(:t).with('admin.shared.notifications.subtitle', count: 3).and_return('3 unread notifications')
 
       expect(helper.notifications_subtitle(user)).to eq('3 unread notifications')
     end
