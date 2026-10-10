@@ -16,6 +16,8 @@ es:
       edit_contact: "Editar contacto"
       add_address: "Agregar dirección"
       edit_address: "Editar dirección"
+      deleted_records: "Registros eliminados"
+      restore: "Restaurar"
       restored: "Registro restaurado"
       address_purposes:
         general: "General"
