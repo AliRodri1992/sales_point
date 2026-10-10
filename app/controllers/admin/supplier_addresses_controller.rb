@@ -14,6 +14,7 @@ module Admin
     before_action :set_address, only: %i[edit update destroy]
 
     def index
+      @address = @supplier.addresses.new
       @addresses = @supplier.addresses.not_deleted.order(created_at: :desc)
     end
 
