@@ -53,7 +53,8 @@ module Admin
 
     def broadcast_suppliers_update
       total_count = policy_scope(current_organization.suppliers.not_deleted).count
-      suppliers = Supplier.not_deleted.includes(:sat_fiscal_regime).order(:name).limit(PER_PAGE)
+      suppliers = policy_scope(current_organization.suppliers.not_deleted)
+                  .includes(:sat_fiscal_regime).order(:name).limit(PER_PAGE)
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
 
       Turbo::StreamsChannel.broadcast_update_to(
