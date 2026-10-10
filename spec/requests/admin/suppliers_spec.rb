@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin suppliers', type: :request do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :english) }
   let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
 
   before do
@@ -78,7 +78,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect do
       post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
     end.to change(Supplier, :count).by(1)
-      .and change { user.notifications.count }.by(1)
+                                   .and change { user.notifications.count }.by(1)
 
     expect(response).to redirect_to(admin_suppliers_path)
     expect(flash[:swal_message]).to eq('Supplier created successfully')

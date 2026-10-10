@@ -34,18 +34,41 @@ class Supplier < ApplicationRecord
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { not_deleted.where(status: :active) }
+  scope :search, lambda { |term|
+    where('code ILIKE :q OR name ILIKE :q OR email ILIKE :q OR phone ILIKE :q OR rfc ILIKE :q', q: "%#{term}%")
+  }
+  scope :with_status, ->(status) { where(status: status) }
+  scope :sorted, ->(column, direction) { order(column => direction) }
 
   before_validation :normalize_fields
 
   private
 
   def normalize_fields
-    self.code = code.to_s.strip
-    self.name = name.to_s.strip
-    self.email = email.to_s.strip.downcase.presence
-    self.phone = phone.to_s.strip.presence
-    self.rfc = rfc.to_s.strip.upcase.presence
-    self.postal_code = postal_code.to_s.strip.presence
-    self.notes = notes.to_s.strip.presence
+    normalize_text_field(:code, &:strip)
+    normalize_text_field(:name, &:strip)
+    normalize_email
+    normalize_text_field(:phone, &:strip)
+    normalize_rfc
+    normalize_text_field(:postal_code, &:strip)
+    normalize_text_field(:notes, &:strip)
+  end
+
+  def normalize_text_field(field, &normalization)
+    value = send(field)
+    return if value.blank?
+
+    value = value.strip if normalization
+    send("#{field}=", value)
+  end
+
+  def normalize_email
+    email_value = email.to_s.strip.downcase
+    self.email = email_value.presence
+  end
+
+  def normalize_rfc
+    rfc_value = rfc.to_s.strip.upcase
+    self.rfc = rfc_value.presence
   end
 end

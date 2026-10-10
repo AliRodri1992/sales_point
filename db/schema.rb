@@ -636,6 +636,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_unit_keys_valid_range"
   end
 
+  create_table "suppliers", force: :cascade do |t|
+    t.string "code", limit: 30, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "email", limit: 150
+    t.string "name", limit: 150, null: false
+    t.text "notes"
+    t.string "phone", limit: 30
+    t.string "postal_code", limit: 5
+    t.string "rfc", limit: 13
+    t.bigint "sat_fiscal_regime_id"
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_suppliers_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
+    t.index ["email"], name: "index_suppliers_on_email"
+    t.index ["phone"], name: "index_suppliers_on_phone"
+    t.index ["rfc"], name: "index_suppliers_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
+    t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
+    t.index ["status"], name: "index_suppliers_on_status"
+    t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
+    t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
+    t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_suppliers_postal_code_format"
+    t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_suppliers_rfc_format"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_suppliers_status"
+  end
+
   create_table "system_role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -784,6 +811,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_000000) do
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "suppliers", "sat_fiscal_regimes"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
   add_foreign_key "terminals", "branches"

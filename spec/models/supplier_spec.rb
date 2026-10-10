@@ -24,13 +24,19 @@ RSpec.describe Supplier, type: :model do
     it 'validates code uniqueness among non-deleted suppliers' do
       create(:supplier, code: 'SUP-0001')
       expect(build(:supplier, code: 'SUP-0001')).not_to be_valid
-      expect(build(:supplier, code: 'SUP-0001', deleted_at: Time.current)).to be_valid
+
+      # A deleted supplier's code can be reused
+      create(:supplier, code: 'SUP-0002', deleted_at: Time.current)
+      expect(build(:supplier, code: 'SUP-0002')).to be_valid
     end
 
     it 'validates RFC uniqueness among non-deleted suppliers' do
       create(:supplier, rfc: 'XAXX010101001')
       expect(build(:supplier, rfc: 'XAXX010101001')).not_to be_valid
-      expect(build(:supplier, rfc: 'XAXX010101001', deleted_at: Time.current)).to be_valid
+
+      # A deleted supplier's RFC can be reused
+      create(:supplier, rfc: 'XAXX010101002', deleted_at: Time.current)
+      expect(build(:supplier, rfc: 'XAXX010101002')).to be_valid
     end
   end
 
@@ -43,7 +49,7 @@ RSpec.describe Supplier, type: :model do
       )
       supplier.valid?
       expect(supplier.attributes.values_at('code', 'name', 'email', 'phone', 'rfc', 'postal_code', 'notes'))
-        .to eq(%w[SUP-0001 Proveedor Demo proveedor@example.com 5555555555 XAXX010101001 06000 Nota])
+        .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com', '5555555555', 'XAXX010101001', '06000', 'Nota'])
     end
   end
 
