@@ -181,4 +181,15 @@ RSpec.describe SatBank, type: :model do
       expect(sat_bank.name).to eq('BBVA')
     end
   end
+
+
+  describe 'optional validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_bank, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
+    end
+  end
 end
