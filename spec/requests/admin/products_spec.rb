@@ -278,4 +278,91 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(notification.params[:action]).to eq('destroyed')
     end
   end
+
+  describe 'GET /admin/products filter and pagination edge cases' do
+    it 'filters to featured products' do
+      featured = create(:product, name: 'Featured Item', featured: true)
+      create(:product, name: 'Regular Item', featured: false)
+
+      get admin_products_path, params: { featured: 'true' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(featured.name)
+      expect(response.body).not_to include('Regular Item')
+    end
+
+    it 'filters out featured products when featured=false' do
+      create(:product, name: 'Featured Item', featured: true)
+      regular = create(:product, name: 'Regular Item', featured: false)
+
+      get admin_products_path, params: { featured: 'false' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(regular.name)
+      expect(response.body).not_to include('Featured Item')
+    end
+
+    it 'does not filter status when status=all' do
+      create(:product, name: 'Active Item', status: :active)
+      create(:product, name: 'Inactive Item', status: :inactive)
+
+      get admin_products_path, params: { status: 'all' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Active Item')
+      expect(response.body).to include('Inactive Item')
+    end
+
+    it 'falls back to the default sort column and direction for invalid values' do
+      create(:product, name: 'Alpha Item')
+      create(:product, name: 'Zulu Item')
+
+      get admin_products_path, params: { sort: 'products.unsafe_column', direction: 'sideways' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.index('Alpha Item')).to be < response.body.index('Zulu Item')
+    end
+
+    it 'normalizes a page below one to the first page' do
+      create_list(:product, 12)
+
+      get admin_products_path, params: { page: 0 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    end
+
+    it 'clamps a page beyond the last page to the last page' do
+      create_list(:product, 12)
+
+      get admin_products_path, params: { page: 999 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(2)
+    end
+
+    it 'uses the default page size for an unsupported per_page value' do
+      create_list(:product, 12)
+
+      get admin_products_path, params: { per_page: 7 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    end
+
+    it 'searches by SKU and barcode' do
+      sku_product = create(:product, name: 'SKU Match', sku: 'SKU-COVERAGE-01')
+      barcode_product = create(:product, name: 'Barcode Match', barcode: 'BAR-COVERAGE-01')
+      create(:product, name: 'No Match')
+
+      get admin_products_path, params: { search: 'SKU-COVERAGE-01' }
+      expect(response.body).to include(sku_product.name)
+      expect(response.body).not_to include('No Match')
+
+      get admin_products_path, params: { search: 'BAR-COVERAGE-01' }
+      expect(response.body).to include(barcode_product.name)
+      expect(response.body).not_to include('No Match')
+    end
+  end
+
 end
