@@ -32,9 +32,10 @@ RSpec.describe 'Language switch', type: :request do
     it 'rejects a language that is not available' do
       language = create(:language, code: 'zz', name: 'Inactive Language', flag_iso: 'zz', status: :inactive)
 
-      expect do
-        patch '/language', params: { language: language.code }
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      patch '/language', params: { language: language.code }
+
+      expect(response).to have_http_status(:not_found)
+      expect(response.cookies['terminal_language']).to be_nil
     end
   end
 end
