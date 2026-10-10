@@ -69,6 +69,42 @@ RSpec.describe 'Admin::Products', type: :request do
     end
   end
 
+  describe 'GET /admin/products/:id' do
+    it 'finds a product by numeric database id' do
+      product = create(:product, name: 'Product By Id')
+
+      get admin_product_path(product.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Id')
+    end
+
+    it 'finds a product by slug' do
+      product = create(:product, name: 'Product By Slug', slug: 'product-by-slug')
+
+      get admin_product_path(product.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Slug')
+    end
+
+    it 'finds a product by code when the slug does not match' do
+      product = create(:product, name: 'Product By Code', code: 'LOOKUP-CODE')
+
+      get admin_product_path(product.code)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Code')
+    end
+
+    it 'redirects to the catalog with an alert for an unknown product' do
+      get admin_product_path('missing-product')
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(flash[:alert]).to eq(I18n.t('admin.products.index.not_found'))
+    end
+  end
+
   describe 'GET /admin/products/new' do
     it 'renders the new product form with default values' do
       get new_admin_product_path
