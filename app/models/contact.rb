@@ -7,10 +7,13 @@ class Contact < ApplicationRecord
   scope :available, -> { not_deleted.where(active: true) }
 
   def restore_safely
-    return false unless deleted_at
+    return false if deleted_at.nil?
 
     self.deleted_at = nil
-    save
+    return true if save
+
+    self.deleted_at = deleted_at_in_database
+    false
   end
 
   validates :name, presence: true, length: { maximum: 150 }
