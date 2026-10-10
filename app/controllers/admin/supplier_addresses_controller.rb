@@ -30,6 +30,9 @@ module Admin
       else
         render :new, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @address.errors.add(:primary, :taken)
+      render :new, status: :unprocessable_content
     end
 
     def update
@@ -38,6 +41,9 @@ module Admin
       else
         render :edit, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @address.errors.add(:primary, :taken)
+      render :edit, status: :unprocessable_content
     end
 
     def restore

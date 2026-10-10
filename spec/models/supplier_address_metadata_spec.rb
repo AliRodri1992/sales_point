@@ -35,4 +35,18 @@ RSpec.describe 'Polymorphic address metadata', type: :model do
     expect(build(:address, purpose: 'fiscal')).to be_valid
     expect(build(:address, purpose: 'unknown')).not_to be_valid
   end
+  it 'preserves the deleted timestamp after a restoration conflict' do
+    supplier = create(:supplier)
+    original = create(:address, addressable: supplier, primary: true)
+    original.update!(deleted_at: Time.current)
+    deleted_at = original.deleted_at
+    create(:address, addressable: supplier, primary: true)
+
+    expect(original.restore_safely).to be false
+    expect(original.deleted_at).to eq(deleted_at)
+  end
+
+  it 'does not restore an address that is not deleted' do
+    expect(create(:address).restore_safely).to be false
+  end
 end

@@ -30,6 +30,9 @@ module Admin
       else
         render :new, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @contact.errors.add(:primary, :taken)
+      render :new, status: :unprocessable_content
     end
 
     def update
@@ -38,10 +41,13 @@ module Admin
       else
         render :edit, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @contact.errors.add(:primary, :taken)
+      render :edit, status: :unprocessable_content
     end
 
     def restore
-      record = @supplier.contacts.where.not(deleted_at: nil).find(params[:id])
+      record = @supplier.contacts.with_deleted.where.not(deleted_at: nil).find(params[:id])
       if record.restore_safely
         redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.restored')
       else

@@ -14,10 +14,15 @@ class Address < ApplicationRecord
   def restore_safely
     return false if deleted_at.nil?
 
+    original_deleted_at = deleted_at
     self.deleted_at = nil
     return true if save
 
-    self.deleted_at = deleted_at_in_database
+    self.deleted_at = original_deleted_at
+    false
+  rescue ActiveRecord::RecordNotUnique
+    self.deleted_at = original_deleted_at
+    errors.add(:primary, :taken)
     false
   end
 

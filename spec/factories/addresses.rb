@@ -15,6 +15,22 @@ FactoryBot.define do
 
     geocoding_status { :pending }
 
+    trait :primary do
+      primary { true }
+    end
+
+    trait :deleted do
+      deleted_at { Time.current }
+    end
+
+    trait :fiscal do
+      purpose { 'fiscal' }
+    end
+
+    trait :delivery do
+      purpose { 'delivery' }
+    end
+
     trait :success do
       geocoding_status { :success }
     end

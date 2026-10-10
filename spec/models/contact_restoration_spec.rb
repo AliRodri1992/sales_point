@@ -20,4 +20,19 @@ RSpec.describe 'Polymorphic contact restoration', type: :model do
     expect(contact.restore_safely).to be false
     expect(contact.reload.deleted_at).to be_present
   end
+  it 'keeps the original deleted timestamp when restoration fails' do
+    organization = create(:organization)
+    contact = create(:contact, contactable: organization, primary: true)
+    contact.update!(deleted_at: Time.current)
+    original_timestamp = contact.deleted_at
+    create(:contact, contactable: organization, primary: true)
+
+    expect(contact.restore_safely).to be false
+    expect(contact.deleted_at).to eq(original_timestamp)
+  end
+
+  it 'does not restore an already active contact' do
+    contact = create(:contact)
+    expect(contact.restore_safely).to be false
+  end
 end
