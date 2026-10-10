@@ -52,37 +52,9 @@ module Admin
     end
 
     def broadcast_suppliers_update
-      total_count = compute_supplier_count
-      total_pages = compute_total_pages(total_count)
-
-      Turbo::StreamsChannel.broadcast_update_to(
-        "suppliers_catalog_#{current_organization.id}",
-        target: 'suppliers_list',
-        html: render_supplier_list(total_count, total_pages)
+      Turbo::StreamsChannel.broadcast_refresh_to(
+        "suppliers_catalog_#{current_organization.id}"
       )
-    end
-
-    def compute_supplier_count
-      policy_scope(current_organization.suppliers.not_deleted).count
-    end
-
-    def compute_total_pages(count)
-      [(count / PER_PAGE.to_f).ceil, 1].max
-    end
-
-    def render_supplier_list(count, pages)
-      render_to_string(
-        partial: 'admin/suppliers/list',
-        formats: [:html],
-        locals: { suppliers: limited_suppliers, total_count: count, total_pages: pages }
-      )
-    end
-
-    def limited_suppliers
-      policy_scope(current_organization.suppliers.not_deleted)
-        .includes(:sat_fiscal_regime)
-        .order(:name)
-        .limit(PER_PAGE)
     end
   end
 end
