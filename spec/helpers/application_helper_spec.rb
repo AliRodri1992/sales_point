@@ -170,7 +170,6 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.error_message_for(nil, :name)).to eq('')
     end
 
-
     context 'when the attribute has no errors' do
       it 'returns an empty string' do
         expect(helper.error_message_for(language, :name)).to eq('')
