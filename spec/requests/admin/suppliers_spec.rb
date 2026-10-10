@@ -50,6 +50,25 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('turbo-cable-stream-source')
   end
 
+  it 'keeps sort and page-size parameters in the supplier filter form' do
+    get admin_suppliers_path, params: { sort: 'name', direction: 'desc', per_page: 5 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('name="sort"')
+    expect(response.body).to include('name="direction"')
+    expect(response.body).to include('name="per_page"')
+    expect(response.body).to include('data-turbo-action="advance"')
+  end
+
+  it 'broadcasts a refresh after a supplier is created' do
+    expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+      .with("suppliers_catalog_#{organization.id}")
+
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+  end
+
   it 'requires authentication' do
     sign_out user
     get admin_suppliers_path
