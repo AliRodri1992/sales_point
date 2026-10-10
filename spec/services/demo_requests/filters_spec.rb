@@ -51,6 +51,15 @@ RSpec.describe DemoRequests::Filters do
       expect(result.count).to eq(1)
     end
 
+    it 'ignores an unsupported follow-up filter value' do
+      matching = create(:demo_request, status: :pending)
+      create(:demo_request, status: :contacted)
+
+      result = described_class.new(params.merge(follow_up: 'unsupported'), create(:user)).call
+
+      expect(result).to contain_exactly(matching, DemoRequest.last)
+    end
+
     it 'filters by an upcoming follow-up' do
       upcoming = create(
         :demo_request,
