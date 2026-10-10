@@ -84,6 +84,19 @@ RSpec.describe DemoRequests::Filters do
       expect(invalid_result.count).to eq(2)
     end
 
+    it 'filters by a valid demo outcome and ignores an invalid one' do
+      matching = create(:demo_request, demo_outcome: 'very_interested')
+      create(:demo_request, demo_outcome: 'no_show')
+
+      result = described_class.new(params.merge(demo_outcome: 'very_interested'), create(:user)).call
+
+      expect(result).to include(matching)
+      expect(result.count).to eq(1)
+
+      invalid_result = described_class.new(params.merge(demo_outcome: 'invalid'), create(:user)).call
+      expect(invalid_result.count).to eq(2)
+    end
+
     it 'searches across request contact fields' do
       matching = create(:demo_request, name: 'Searchable prospect', company: 'Northwind')
       create(:demo_request, name: 'Different prospect', company: 'Contoso')
