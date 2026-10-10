@@ -29,6 +29,15 @@ RSpec.describe Geocoding::GeocodePostalCodeService do
     Rails.cache.delete(service.send(:cache_key))
   end
 
+  describe '#connection' do
+    it 'configures bounded request and connection timeouts' do
+      connection = described_class.new(postal_code, country).send(:connection)
+
+      expect(connection.options.timeout).to eq(5)
+      expect(connection.options.open_timeout).to eq(2)
+    end
+  end
+
   describe '#call' do
     it 'returns normalized coordinates and address data from Mapbox' do
       expect(service.call).to eq(
