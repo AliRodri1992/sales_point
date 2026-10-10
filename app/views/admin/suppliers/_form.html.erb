@@ -125,6 +125,23 @@
     </div>
   </div>
 
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :responsible_user_id, t('admin.supplier_dossier.responsible') %>
+      <%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: true }, class: 'w-full rounded-lg border p-2' %>
+      <%= error_message_for(supplier, :responsible_user) %>
+    </div>
+    <div>
+      <%= form.label :tags_text, t('admin.supplier_dossier.tags') %>
+      <%= form.text_field :tags_text, class: 'w-full rounded-lg border p-2' %>
+      <%= error_message_for(supplier, :tags) %>
+    </div>
+    <div class="sm:col-span-2">
+      <%= form.label :documents, t('admin.supplier_dossier.documents') %>
+      <%= form.file_field :documents, multiple: true, accept: '.pdf,.png,.jpg,.jpeg', class: 'w-full rounded-lg border p-2' %>
+      <%= error_message_for(supplier, :documents) %>
+    </div>
+  </div>
   <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
     <%= link_to t('admin.suppliers.form.cancel'), admin_suppliers_path,
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' %>
