@@ -32,6 +32,9 @@ Rails.application.routes.draw do
     resources :users
     resources :clients
     resource :profile, only: %i[show update]
+    resource :organization, only: [] do
+      resources :contacts, controller: 'organization_contacts', except: %i[show]
+    end
     resources :suppliers do
       resources :contacts, controller: 'supplier_contacts', except: %i[show]
       resources :addresses, controller: 'supplier_addresses', except: %i[show]
