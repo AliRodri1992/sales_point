@@ -97,6 +97,8 @@ module Admin
       return '—' if value.blank?
 
       date = value.respond_to?(:in_time_zone) ? value.in_time_zone : Time.zone.parse(value.to_s)
+      return value.to_s if date.nil?
+
       l(date, format: :short)
     rescue ArgumentError, TypeError
       value.to_s
