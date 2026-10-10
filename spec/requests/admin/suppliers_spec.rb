@@ -125,6 +125,26 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('name')
   end
 
+  it 'renders the duplicate error when the database rejects a create' do
+    allow_any_instance_of(Supplier).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.suppliers.errors.duplicate', locale: :en))
+  end
+
+  it 'renders the duplicate error when the database rejects an update' do
+    supplier = create(:supplier)
+    allow_any_instance_of(Supplier).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: 'Conflicting Supplier' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.suppliers.errors.duplicate', locale: :en))
+    expect(supplier.reload.name).not_to eq('Conflicting Supplier')
+  end
+
   it 're-renders the edit form when an update fails validation' do
     supplier = create(:supplier, name: 'Unchanged Supplier')
 
