@@ -1,0 +1,17 @@
+ko:
+  admin:
+    supplier_dossier:
+      schedules: "일정"
+      branch: "지점"
+      kind: "유형"
+      weekday: "요일"
+      starts_at: "시작"
+      ends_at: "종료"
+      notes: "메모"
+      responsible: "담당자"
+      tags: "태그"
+      documents: "문서"
+      kinds:
+        visit: "방문"
+        order: "주문 접수"
+        delivery: "배송"
