@@ -243,4 +243,31 @@ RSpec.describe Product, type: :model do
       expect(product.slug).to eq('my-product-name')
     end
   end
+
+
+  describe 'conditional callbacks and validations' do
+    it 'sets featured to false when the value is nil' do
+      product = build(:product, featured: nil)
+
+      product.send(:set_defaults)
+
+      expect(product.featured).to be(false)
+    end
+
+    it 'preserves an existing slug' do
+      product = build(:product, name: 'Product Name', slug: 'custom-slug')
+
+      product.send(:set_slug)
+
+      expect(product.slug).to eq('custom-slug')
+    end
+
+    it 'skips the stock range check when a stock boundary is missing' do
+      product = build(:product, min_stock: 1, max_stock: nil)
+
+      product.send(:max_stock_greater_than_min_stock)
+
+      expect(product.errors[:max_stock]).to be_empty
+    end
+  end
 end
