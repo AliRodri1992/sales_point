@@ -45,6 +45,28 @@ RSpec.describe 'SystemRoles', type: :request do
     end
   end
 
+  describe 'DELETE /system_roles/:id' do
+    it 'soft-deletes the role and marks it deprecated' do
+      role = create(:system_role, name: 'Temporary Role', code: 'temporary_role', role_type: :branch)
+
+      delete system_role_path(role)
+
+      expect(response).to redirect_to(system_roles_path)
+      expect(role.reload).to have_attributes(status: 'deprecated')
+      expect(role.deleted_at).to be_present
+    end
+  end
+
+  describe 'authorization' do
+    it 'forbids a non-administrator from listing system roles' do
+      sign_in create(:user)
+
+      get system_roles_path
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   describe 'breadcrumb' do
     def breadcrumb_trail
       Nokogiri::HTML4(response.body).at_css('nav ol').css('a').map { |node| node.text.strip }
