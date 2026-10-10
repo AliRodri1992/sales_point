@@ -21,6 +21,18 @@ RSpec.describe SupplierPolicy do
     expect(policy.show?).to be(false)
     expect(policy.new?).to be(false)
   end
+
+  it 'denies access when no user is authenticated' do
+    policy = described_class.new(nil, supplier)
+
+    expect(policy.index?).to be_nil
+    expect(policy.show?).to be_nil
+    expect(policy.new?).to be_nil
+    expect(policy.create?).to be_nil
+    expect(policy.edit?).to be_nil
+    expect(policy.update?).to be_nil
+    expect(policy.destroy?).to be_nil
+  end
 end
 RSpec.describe SupplierPolicy::Scope do
   let(:scope) { Supplier.all }
