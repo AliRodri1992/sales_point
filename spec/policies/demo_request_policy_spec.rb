@@ -26,3 +26,23 @@ RSpec.describe DemoRequestPolicy, type: :policy do
     it { expect(policy.update?).to be false }
   end
 end
+  describe DemoRequestPolicy::Scope do
+    let(:scope) { DemoRequest.all }
+
+    it 'returns no records for a non-administrator' do
+      expect(described_class.new(create(:user), scope).resolve).to be_empty
+    end
+
+    it 'returns the complete scope for an administrator' do
+      admin = create(:user)
+      role = create(:system_role, :system, code: 'administrator', status: 'active')
+      admin.system_roles << role
+
+      expect(described_class.new(admin, scope).resolve).to equal(scope)
+    end
+
+    it 'returns no records when the user is nil' do
+      expect(described_class.new(nil, scope).resolve).to be_empty
+    end
+  end
+
