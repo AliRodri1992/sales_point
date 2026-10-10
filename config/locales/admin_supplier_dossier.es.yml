@@ -1,0 +1,17 @@
+es:
+  admin:
+    supplier_dossier:
+      schedules: "Calendarios"
+      branch: "Sucursal"
+      kind: "Tipo"
+      weekday: "Día"
+      starts_at: "Inicio"
+      ends_at: "Fin"
+      notes: "Notas"
+      responsible: "Responsable"
+      tags: "Etiquetas"
+      documents: "Documentos"
+      kinds:
+        visit: "Visita"
+        order: "Toma de pedidos"
+        delivery: "Reparto"
