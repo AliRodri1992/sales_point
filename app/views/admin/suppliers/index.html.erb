@@ -44,6 +44,6 @@
   </div>
 </div>
 
-<%= turbo_frame_tag "suppliers_list" do %>
+<%= turbo_frame_tag "suppliers_list", data: { turbo_action: "advance" } do %>
   <%= render "list", suppliers: @suppliers %>
 <% end %>
