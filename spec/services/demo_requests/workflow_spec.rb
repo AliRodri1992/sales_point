@@ -17,7 +17,14 @@ RSpec.describe DemoRequests::Workflow, type: :service do
   let(:current_status) { 'pending' }
   let(:current_assignee_id) { nil }
   let(:assignee) { nil }
-  let(:reminders) { instance_double(DemoRequests::Reminders, reset_if_rescheduled: nil, schedule: nil, send_confirmation: nil) }
+  let(:reminders) do
+    instance_double(
+      DemoRequests::Reminders,
+      reset_if_rescheduled: nil,
+      schedule: nil,
+      send_confirmation: nil
+    )
+  end
   let(:commercial_activities) { instance_double(DemoRequests::Activities, record_all: nil) }
 
   before do
