@@ -65,4 +65,36 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(foreign_address.reload.deleted_at).to be_nil
   end
+  it 'restores a deleted primary contact without losing its designation' do
+    contact = create(:contact, contactable: supplier, primary: true)
+    delete admin_supplier_contact_path(supplier, contact)
+    expect(contact.reload).to be_primary
+    expect(contact.deleted_at).to be_present
+
+    sign_in user
+    patch restore_admin_supplier_contact_path(supplier, contact)
+    expect(response).to have_http_status(:redirect)
+    expect(contact.reload.deleted_at).to be_nil
+    expect(contact).to be_primary
+  end
+
+  it 'rejects restoring a primary address when another is already primary' do
+    address = create(:address, addressable: supplier, primary: true)
+    delete admin_supplier_address_path(supplier, address)
+    create(:address, addressable: supplier, primary: true)
+
+    sign_in user
+    patch restore_admin_supplier_address_path(supplier, address)
+    expect(response).to have_http_status(:redirect)
+    expect(address.reload.deleted_at).to be_present
+  end
+
+  it 'does not restore a contact belonging to another organization' do
+    foreign_supplier = create(:supplier, organization: create(:organization))
+    contact = create(:contact, contactable: foreign_supplier, deleted_at: Time.current)
+    patch restore_admin_supplier_contact_path(foreign_supplier, contact)
+    expect(response).to have_http_status(:not_found)
+    expect(contact.reload.deleted_at).to be_present
+  end
+
 end
