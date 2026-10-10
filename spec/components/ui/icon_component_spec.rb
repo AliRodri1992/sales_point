@@ -26,12 +26,8 @@ RSpec.describe Ui::IconComponent, type: :component do
 
   describe 'rendering' do
     it 'renders a valid icon with the requested classes' do
-      rendered = render_inline(described_class.new(
-            name: :home,
-            size: :lg,
-            color: :success,
-            css_class: 'custom-icon'
-      ))
+      component = described_class.new(name: :home, size: :lg, color: :success, css_class: 'custom-icon')
+      rendered = render_inline(component)
 
       expect(rendered.css('svg')).to be_present
       expect(rendered.css('svg').first['class']).to include(
