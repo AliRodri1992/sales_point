@@ -39,6 +39,9 @@ end
 RSpec.describe CategoryPolicy::Scope do
   it 'returns the supplied scope' do
     records = Category.all
-    expect(described_class.new(build(:user), records).resolve).to equal(records)
+    resolved_scope = described_class.new(build(:user), records).resolve
+
+    expect(resolved_scope).to be_a(ActiveRecord::Relation)
+    expect(resolved_scope.to_sql).to eq(records.to_sql)
   end
 end
