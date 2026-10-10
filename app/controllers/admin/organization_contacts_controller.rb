@@ -44,7 +44,7 @@ module Admin
     end
 
     def destroy
-      @contact.update!(deleted_at: Time.current, primary: false)
+      @contact.update!(deleted_at: Time.current)
       redirect_to admin_organization_contacts_path, notice: t('admin.supplier_details.deleted')
     end
 
@@ -54,7 +54,7 @@ module Admin
       return head :forbidden unless current_user&.admin?
 
       @organization = current_organization
-      head :forbidden unless @organization
+      return head :forbidden unless @organization
     end
 
     def set_contact
