@@ -101,4 +101,39 @@ RSpec.describe DemoRequests::Workflow, type: :service do
     )
     expect(delivery).to have_received(:deliver_later)
   end
+
+  it 'notifies the existing assignee of a status change using their language' do
+    existing_assignee = instance_double(
+      User,
+      display_name: 'Ada',
+      language: instance_double(Language, code: 'ko')
+    )
+    request = instance_double(
+      DemoRequest,
+      status: 'scheduled',
+      assigned_to_id: 42,
+      assigned_to: existing_assignee,
+      activities:
+    )
+    delivery = double('mail delivery', deliver_later: true)
+    mailer = double('demo request mailer', workflow_update: delivery)
+    allow(activities).to receive(:create!)
+    allow(DemoRequestMailer).to receive(:with).and_return(mailer)
+
+    described_class.new(request, actor, 'pending', 42).call
+
+    expect(activities).to have_received(:create!).with(
+      user: actor,
+      action: 'status_changed',
+      details: { from: 'pending', to: 'scheduled' }
+    )
+    expect(DemoRequestMailer).to have_received(:with).with(
+      demo_request: request,
+      assignee: existing_assignee,
+      actor: actor,
+      action: 'status_changed',
+      locale: 'ko'
+    )
+    expect(delivery).to have_received(:deliver_later)
+  end
 end
