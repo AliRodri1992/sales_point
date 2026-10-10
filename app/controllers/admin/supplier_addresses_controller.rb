@@ -42,7 +42,7 @@ module Admin
     private
 
     def set_supplier
-      head :forbidden and return unless current_organization
+      return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
       authorize @supplier, :show?
