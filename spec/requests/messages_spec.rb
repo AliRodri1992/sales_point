@@ -32,7 +32,7 @@ RSpec.describe 'Messages', type: :request do
       end.not_to change(Message, :count)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('can&#39;t be blank').or include("can't be blank")
+      expect(response.body).to include(I18n.t('errors.messages.blank'))
     end
   end
 end
