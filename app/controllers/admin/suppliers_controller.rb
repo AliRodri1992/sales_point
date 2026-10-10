@@ -82,7 +82,9 @@ module Admin
     end
 
     def set_supplier
-      @supplier = policy_scope(current_organization.suppliers.not_deleted).includes(:sat_fiscal_regime).find(params[:id])
+      @supplier = policy_scope(
+        current_organization.suppliers.not_deleted.includes(:sat_fiscal_regime)
+      ).find(params[:id])
     end
 
     def load_fiscal_regimes

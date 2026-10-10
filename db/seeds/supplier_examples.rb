@@ -8,21 +8,40 @@ module SupplierExamples
   ORGANIZATION_NAME = 'Delta POS Demo'
 
   def self.seed!
-    organization = Organization.find_or_initialize_by(tax_id: ORGANIZATION_TAX_ID)
-    organization.assign_attributes(
-      name: ORGANIZATION_NAME,
-      business_sector: 'grocery',
-      status: :active
-    )
-    organization.save!
+    organization = create_organization
+    create_membership(organization)
+    create_suppliers_for(organization)
+    Rails.logger.info "Seeded #{COUNT} suppliers for organization #{organization.id}"
+  end
 
-    admin = User.find_by!(email: 'administrador@delta.com')
-    membership = OrganizationMembership.find_or_initialize_by(organization:, user: admin)
-    membership.assign_attributes(status: :active, deleted_at: nil)
-    membership.save!
+  class << self
+    private
 
-    COUNT.times do |index|
-      number = index + 1
+    def create_organization
+      organization = Organization.find_or_initialize_by(tax_id: ORGANIZATION_TAX_ID)
+      organization.assign_attributes(
+        name: ORGANIZATION_NAME,
+        business_sector: 'grocery',
+        status: :active
+      )
+      organization.save!
+    end
+
+    def create_membership(organization)
+      admin = User.find_by!(email: 'administrador@delta.com')
+      membership = OrganizationMembership.find_or_initialize_by(organization:, user: admin)
+      membership.assign_attributes(status: :active, deleted_at: nil)
+      membership.save!
+    end
+
+    def create_suppliers_for(organization)
+      COUNT.times do |index|
+        number = index + 1
+        create_supplier(organization, number)
+      end
+    end
+
+    def create_supplier(organization, number)
       code = format('SUP-%04d', number)
       supplier = Supplier.find_or_initialize_by(organization:, code:)
       supplier.assign_attributes(
@@ -31,12 +50,15 @@ module SupplierExamples
         phone: format('55%08d', number),
         rfc: format('DPE260101%03d', number),
         postal_code: format('%05d', 60_000 + number),
-        status: number % 5 == 0 ? :inactive : :active,
+        status: (number % 5).zero? ? :inactive : :active,
         notes: "Proveedor de demostración #{number} para Delta POS.",
         deleted_at: nil
       )
       supplier.save!
+      create_contact(supplier, number)
+    end
 
+    def create_contact(supplier, number)
       contact = supplier.contacts.find_or_initialize_by(email: "contacto#{number}@example.com")
       contact.assign_attributes(
         name: "Contacto #{number}",
@@ -48,7 +70,5 @@ module SupplierExamples
       )
       contact.save!
     end
-
-    Rails.logger.info "Seeded #{COUNT} suppliers for organization #{organization.id}"
   end
 end

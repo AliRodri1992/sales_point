@@ -53,7 +53,7 @@ class Address < ApplicationRecord
             format: { with: /\A[0-9]{5}\z/ },
             on: :onboardingstep2
 
-  scope :active, -> { where(deleted_at: nil) }
+  scope :active, -> { not_deleted }
 
   scope :geocoded, -> { where(geocoding_status: 'success') }
   scope :pending_geocoding, -> { where(geocoding_status: 'pending') }
