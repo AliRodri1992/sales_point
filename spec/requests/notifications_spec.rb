@@ -9,7 +9,7 @@ RSpec.describe 'Notifications', type: :request do
 
   describe 'POST /notifications/mark_all_read' do
     it 'marks unread notifications as read and refreshes notification streams' do
-      unread_notifications = double('unread notifications', mark_as_read: true)
+      unread_notifications = double('unread notifications', count: 0, mark_as_read: true)
       allow(user).to receive(:unread_notifications).and_return(unread_notifications)
       allow(user).to receive(:broadcast_notifications_refresh)
 
