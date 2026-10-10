@@ -11,8 +11,6 @@ module Admin
 
     rescue_from ActiveRecord::RecordNotFound, with: :product_not_found
 
-    SORT_DIRECTIONS = %w[asc desc].freeze
-
     def index
       load_products
     end
