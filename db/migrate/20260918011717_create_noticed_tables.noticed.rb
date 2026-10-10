@@ -23,6 +23,14 @@ class CreateNoticedTables < ActiveRecord::Migration[6.1]
 
       t.timestamps
     end
+
+    add_index :noticed_notifications, %i[recipient_type recipient_id created_at],
+              order: { created_at: :desc },
+              name: 'idx_noticed_notifications_recipient_recent'
+    add_index :noticed_notifications, %i[recipient_type recipient_id created_at],
+              where: 'read_at IS NULL',
+              order: { created_at: :desc },
+              name: 'idx_noticed_notifications_unread_recent'
   end
 
   private
