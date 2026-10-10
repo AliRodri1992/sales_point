@@ -4,5 +4,6 @@
   <div class="border-b p-4">
     <%= schedule.branch.name %> — <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %> — <%= schedule.weekday %> — <%= schedule.starts_at.strftime('%H:%M') %>
     <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule) %>
+    <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } } %>
   </div>
 <% end %>
