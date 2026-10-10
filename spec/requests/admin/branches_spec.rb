@@ -412,5 +412,4 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
     end
   end
-
 end
