@@ -25,6 +25,14 @@ RSpec.describe RegistrationService, type: :service do
     allow(SystemRole).to receive(:available).and_return(SystemRole.where(id: role.id))
   end
 
+  describe RegistrationService::Result do
+    it 'is unsuccessful when the user is nil' do
+      result = described_class.new(user: nil, organization: nil, errors: nil)
+
+      expect(result).not_to be_success
+    end
+  end
+
   it 'creates the initial organization atomically' do
     result = described_class.call(resource: user, params:)
 
