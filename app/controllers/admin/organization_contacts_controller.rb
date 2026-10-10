@@ -42,7 +42,7 @@ module Admin
     private
 
     def set_organization
-      head :forbidden and return unless current_user&.admin?
+      return head :forbidden unless current_user&.admin?
 
       @organization = current_organization
       head :forbidden unless @organization
