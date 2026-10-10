@@ -1,0 +1,14 @@
+<%= form_with model: @contact, url: @contact.persisted? ? admin_organization_contact_path(@contact) : admin_organization_contacts_path, class: 'space-y-4' do |form| %>
+  <% %i[name position email phone mobile_phone notes].each do |field| %>
+    <div>
+      <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'block text-sm font-semibold' %>
+      <%= form.text_field field, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+      <%= error_message_for(@contact, field) %>
+    </div>
+  <% end %>
+  <% %i[primary active].each do |field| %>
+    <div><%= form.check_box field %><%= form.label field, t("admin.supplier_details.contact_fields.#{field}") %><%= error_message_for(@contact, field) %></div>
+  <% end %>
+  <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
+  <%= link_to t('admin.supplier_details.back'), admin_organization_contacts_path %>
+<% end %>
