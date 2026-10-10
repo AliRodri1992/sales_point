@@ -6,6 +6,16 @@
       <%= error_message_for(@address, field) %>
     </div>
   <% end %>
+  <div>
+    <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'block text-sm font-semibold' %>
+    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+    <%= error_message_for(@address, :purpose) %>
+  </div>
+  <div>
+    <%= form.check_box :primary %>
+    <%= form.label :primary, t('admin.supplier_details.primary') %>
+    <%= error_message_for(@address, :primary) %>
+  </div>
   <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
   <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier) %>
 <% end %>
