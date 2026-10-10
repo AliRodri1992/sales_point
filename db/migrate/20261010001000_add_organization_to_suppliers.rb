@@ -2,7 +2,7 @@
 
 class AddOrganizationToSuppliers < ActiveRecord::Migration[8.1]
   def up
-    add_reference :suppliers, :organization, null: true, foreign_key: true, index: true
+    add_reference :suppliers, :organization, null: false, foreign_key: true, index: true
 
     remove_index :suppliers, name: 'index_suppliers_on_code'
     remove_index :suppliers, name: 'index_suppliers_on_rfc'
@@ -13,8 +13,6 @@ class AddOrganizationToSuppliers < ActiveRecord::Migration[8.1]
     add_index :suppliers, %i[organization_id rfc],
               unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL",
               name: 'idx_suppliers_organization_rfc_active'
-
-    # Existing suppliers remain unassigned until ownership is reconciled.
   end
 
   def down
