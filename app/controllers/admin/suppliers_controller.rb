@@ -53,7 +53,11 @@ module Admin
     def update
       authorize @supplier
 
-      if @supplier.update(supplier_params)
+      attributes = supplier_params
+      uploads = attributes.delete(:documents)
+      @supplier.documents.attach(uploads) if uploads.present?
+
+      if @supplier.update(attributes)
         notify_supplier('updated')
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }
