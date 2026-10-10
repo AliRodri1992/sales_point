@@ -1,0 +1,18 @@
+<div class="rounded-2xl border border-slate-200 bg-white p-6">
+  <h1 class="text-xl font-bold"><%= t('admin.supplier_details.addresses') %> — <%= @supplier.name %></h1>
+  <div class="my-4 flex gap-3">
+    <%= link_to t('admin.supplier_details.add'), new_admin_supplier_address_path(@supplier), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
+    <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier), class: 'rounded-lg border px-4 py-2' %>
+  </div>
+  <ul class="divide-y">
+    <% @addresses.each do |address| %>
+      <li class="flex flex-wrap items-center justify-between gap-3 py-3">
+        <span><%= address.full_address %></span>
+        <div class="flex gap-3">
+          <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_address_path(@supplier, address) %>
+          <%= button_to t('admin.supplier_details.delete'), admin_supplier_address_path(@supplier, address), method: :delete, data: { turbo_confirm: t('admin.supplier_details.confirm') }, class: 'text-rose-600' %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>
