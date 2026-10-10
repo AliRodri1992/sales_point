@@ -117,7 +117,6 @@ RSpec.describe Admin::DemoRequestsHelper, type: :helper do
     it 'returns the original value when an activity date cannot be parsed' do
       expect(helper.send(:translated_activity_date, 'not-a-date')).to eq('not-a-date')
     end
-  end
 
     it 'uses the translation fallback for an unknown structured activity action' do
       allow(activity).to receive(:action).and_return('custom_action')
@@ -140,7 +139,7 @@ RSpec.describe Admin::DemoRequestsHelper, type: :helper do
 
     it 'normalizes escaped quotes and backslashes in legacy serialized details' do
       allow(activity).to receive(:action).and_return('assigned')
-      allow(activity).to receive(:details).and_return('{:assigned_to=>"Ada \\"A\\" \\\\ Team"}')
+      allow(activity).to receive(:details).and_return('{:assigned_to=>"Ada \"A\" \\\\ Team"}')
 
       expect(helper.demo_request_activity_description(activity)).to include('Ada "A" \\ Team')
     end
