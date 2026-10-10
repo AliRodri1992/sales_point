@@ -1,0 +1,17 @@
+en:
+  admin:
+    supplier_dossier:
+      schedules: Schedules
+      branch: Branch
+      kind: Type
+      weekday: Day
+      starts_at: Start
+      ends_at: End
+      notes: Notes
+      responsible: Responsible user
+      tags: Tags
+      documents: Documents
+      kinds:
+        visit: Visit
+        order: Order taking
+        delivery: Delivery
