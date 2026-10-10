@@ -26,7 +26,7 @@ RSpec.describe DemoRequestPolicy, type: :policy do
     it { expect(policy.update?).to be false }
   end
 end
-  describe DemoRequestPolicy::Scope do
+RSpec.describe DemoRequestPolicy::Scope do
     let(:scope) { DemoRequest.all }
 
     it 'returns no records for a non-administrator' do
