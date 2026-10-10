@@ -209,4 +209,28 @@ RSpec.describe 'Admin clients', type: :request do
       expect(response.body).to include('Clientes')
     end
   end
+
+  describe 'duplicate database constraints' do
+    it 'renders the new form when the create hits a unique index' do
+      allow_any_instance_of(Client).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      post admin_clients_path, params: { client: attributes_for(:client) }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to render_template(:new)
+      expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
+    end
+
+    it 'renders the edit form when the update hits a unique index' do
+      client = create(:client)
+      allow_any_instance_of(Client).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+
+      patch admin_client_path(client), params: { client: { name: 'Conflicting Client' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to render_template(:edit)
+      expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
+    end
+  end
+
 end
