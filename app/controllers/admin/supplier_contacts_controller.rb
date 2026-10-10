@@ -34,6 +34,15 @@ module Admin
       end
     end
 
+    def restore
+      record = @supplier.contacts.where.not(deleted_at: nil).find(params[:id])
+      if record.restore_safely
+        redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.restored')
+      else
+        redirect_to admin_supplier_contacts_path(@supplier), alert: record.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       @contact.update!(deleted_at: Time.current, primary: false)
       redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.deleted')
