@@ -2,13 +2,13 @@
   <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
     <div>
       <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'block text-sm font-semibold' %>
-      <%= form.text_field field, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+      <%= form.text_field field, class: "w-full rounded-lg border p-2 #{form_state_classes(@address, field)}" %>
       <%= error_message_for(@address, field) %>
     </div>
   <% end %>
   <div>
     <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'block text-sm font-semibold' %>
-    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "w-full rounded-lg border p-2 #{form_state_classes(@address, field)}" %>
     <%= error_message_for(@address, :purpose) %>
   </div>
   <div>
