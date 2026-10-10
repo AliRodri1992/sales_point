@@ -53,11 +53,7 @@ module Admin
     def update
       authorize @supplier
 
-      attributes = supplier_params
-      uploads = attributes.delete(:documents)
-      attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
-
-      if @supplier.update(attributes)
+      if @supplier.update(supplier_update_attributes)
         notify_supplier('updated')
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }
@@ -96,7 +92,19 @@ module Admin
     end
 
     def supplier_params
-      params.expect(supplier: [%i[code name legal_name trade_name alias_name classification person_type email phone rfc sat_fiscal_regime_id postal_code status notes currency credit_days credit_limit discount_percent minimum_order_amount responsible_user_id tags_text], { documents: [] }])
+      params.expect(supplier: [
+        %i[code name legal_name trade_name alias_name classification person_type email phone rfc],
+        %i[sat_fiscal_regime_id postal_code status notes currency credit_days credit_limit],
+        %i[discount_percent minimum_order_amount responsible_user_id tags_text],
+        { documents: [] }
+      ].flatten(1))
+    end
+
+    def supplier_update_attributes
+      attributes = supplier_params
+      uploads = attributes.delete(:documents)
+      attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
+      attributes
     end
 
     def notify_supplier(action)
