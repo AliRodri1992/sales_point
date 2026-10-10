@@ -105,7 +105,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Supplier Details')
 
-    deleted = create(:supplier, organization:, :deleted)
+    deleted = create(:supplier, :deleted, organization:)
     get admin_supplier_path(deleted)
     expect(response).to have_http_status(:not_found)
   end
