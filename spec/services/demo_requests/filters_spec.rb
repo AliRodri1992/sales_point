@@ -53,7 +53,13 @@ RSpec.describe DemoRequests::Filters do
 
     it 'ignores an unsupported follow-up filter value' do
       matching = create(:demo_request, status: :pending)
-      create(:demo_request, status: :contacted)
+      create(
+        :demo_request,
+        status: :contacted,
+        contacted_at: Time.current,
+        contact_channel: 'call',
+        contact_outcome: 'interested'
+      )
 
       result = described_class.new(params.merge(follow_up: 'unsupported'), create(:user)).call
 
