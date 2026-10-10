@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe OnboardingPolicy, type: :policy do
   subject(:policy) { described_class.new(user, :onboarding) }
 
@@ -23,6 +25,16 @@ RSpec.describe OnboardingPolicy, type: :policy do
       expect(policy.show?).to be(false)
       expect(policy.update?).to be(false)
       expect(policy.reset?).to be(false)
+    end
+  end
+
+  context 'when no user is authenticated' do
+    let(:user) { nil }
+
+    it 'denies all onboarding actions without calling user methods' do
+      expect(policy.show?).to be_falsey
+      expect(policy.update?).to be_falsey
+      expect(policy.reset?).to be_falsey
     end
   end
 
