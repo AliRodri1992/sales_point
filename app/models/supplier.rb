@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
-  belongs_to :organization, optional: true
+  belongs_to :organization
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   belongs_to :sat_fiscal_regime, optional: true
@@ -23,7 +23,7 @@ class Supplier < ApplicationRecord
 
   validates :rfc,
             length: { in: 12..13 },
-            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            uniqueness: { scope: :organization_id, conditions: -> { where(deleted_at: nil) } },
             format: { with: /\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/i, message: :invalid_format },
             allow_blank: true
 
