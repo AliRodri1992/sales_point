@@ -131,7 +131,8 @@ RSpec.describe 'Admin suppliers', type: :request do
     patch admin_supplier_path(supplier), params: { supplier: { name: '' } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include('Unchanged Supplier')
+    assert_select 'input[name="supplier[name]"]'
+    expect(response.body).to include('rose-500')
     expect(supplier.reload.name).to eq('Unchanged Supplier')
   end
 end
