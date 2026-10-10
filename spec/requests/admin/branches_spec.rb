@@ -366,4 +366,27 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(branch.reload.deleted_at).to be_nil
     end
   end
+
+  describe 'PATCH /admin/branches/:id validation failures' do
+    it 're-renders the edit form and preserves the branch when validation fails' do
+      branch = create(:branch, name: 'Unchanged Branch')
+
+      patch admin_branch_path(branch), params: { branch: { name: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to render_template(:edit)
+      expect(branch.reload.name).to eq('Unchanged Branch')
+    end
+
+    it 'builds an address when an invalid update targets a branch without one' do
+      branch = create(:branch, :without_address)
+
+      patch admin_branch_path(branch), params: { branch: { name: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to render_template(:edit)
+      expect(response.body).to include('address_attributes')
+    end
+  end
+
 end
