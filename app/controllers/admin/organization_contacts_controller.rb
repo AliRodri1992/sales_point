@@ -60,7 +60,7 @@ module Admin
       return head :forbidden unless current_user&.admin?
 
       @organization = current_organization
-      return head :forbidden unless @organization
+      head :forbidden unless @organization
     end
 
     def set_contact

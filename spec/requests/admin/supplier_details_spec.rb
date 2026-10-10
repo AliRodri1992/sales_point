@@ -96,5 +96,4 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(contact.reload.deleted_at).to be_present
   end
-
 end

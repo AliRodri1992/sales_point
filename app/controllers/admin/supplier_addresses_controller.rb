@@ -74,7 +74,9 @@ module Admin
     end
 
     def address_params
-      params.expect(address: %i[street exterior_number interior_number neighborhood city state country postal_code primary purpose])
+      params.expect(address: %i[
+        street exterior_number interior_number neighborhood city state country postal_code primary purpose
+      ])
     end
   end
 end
