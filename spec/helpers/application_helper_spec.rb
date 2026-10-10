@@ -181,4 +181,70 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+  describe '#user_avatar_colors and #user_avatar_style' do
+    let(:user) { create(:user) }
+
+    it 'returns the selected avatar color classes and inline style' do
+      expect(helper.user_avatar_colors(user)).to eq(helper.user_avatar_theme(user)[:classes])
+      expect(helper.user_avatar_style(user)).to eq(helper.user_avatar_theme(user)[:style])
+    end
+  end
+
+  describe '#onboarding_pending?' do
+    it 'returns false when no progress is available' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(nil)
+
+      expect(helper.onboarding_pending?).to be(false)
+    end
+
+    it 'returns true while onboarding progress is below completion' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(percentage: 75)
+
+      expect(helper.onboarding_pending?).to be(true)
+    end
+
+    it 'returns false when onboarding is complete' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(percentage: 100)
+
+      expect(helper.onboarding_pending?).to be(false)
+    end
+  end
+
+  describe '#onboarding_section_complete?' do
+    it 'treats a missing progress object as complete' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(nil)
+
+      expect(helper.onboarding_section_complete?(:profile)).to be(true)
+    end
+
+    it 'checks the requested section percentage' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(
+        sections: [{ key: 'profile', percentage: 100 }, { key: 'billing', percentage: 50 }]
+      )
+
+      expect(helper.onboarding_section_complete?(:profile)).to be(true)
+      expect(helper.onboarding_section_complete?(:billing)).to be(false)
+      expect(helper.onboarding_section_complete?(:unknown)).to be(false)
+    end
+
+    it 'uses the default percentage for a section without one' do
+      allow(helper).to receive(:onboarding_progress_for_current_user).and_return(
+        sections: [{ key: 'profile' }]
+      )
+
+      expect(helper.onboarding_section_complete?(:profile)).to be(true)
+    end
+  end
+
+  describe '#user_status_badge' do
+    it 'uses distinct classes for suspended and blocked users' do
+      expect(helper.user_status_badge('suspended')).to include('bg-amber-50', 'text-amber-700')
+      expect(helper.user_status_badge('blocked')).to include('bg-rose-50', 'text-rose-700')
+    end
+
+    it 'uses neutral classes for an unknown status' do
+      expect(helper.user_status_badge('unknown')).to include('bg-slate-100', 'text-slate-600')
+    end
+  end
+
 end
