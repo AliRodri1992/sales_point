@@ -16,6 +16,8 @@ en:
       edit_contact: "Edit contact"
       add_address: "Add address"
       edit_address: "Edit address"
+      deleted_records: "Deleted records"
+      restore: "Restore"
       restored: "Record restored"
       address_purposes:
         general: "General"
