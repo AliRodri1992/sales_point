@@ -51,7 +51,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     stream = document.at_css('turbo-cable-stream-source[signed-stream-name]')
     expected_stream = Turbo::StreamsChannel.signed_stream_name("suppliers_catalog_#{organization.id}")
 
-    expect(document.css('turbo-cable-stream-source').map { |node| node['signed-stream-name'] })
+    expect(document.css('turbo-cable-stream-source').pluck('signed-stream-name'))
       .to include(expected_stream)
     expect(stream).to be_present
   end
