@@ -83,7 +83,7 @@ RSpec.describe Supplier, type: :model do
       )
       supplier.valid?
       expect(supplier.attributes.values_at('code', 'name', 'email', 'phone', 'rfc', 'postal_code', 'notes'))
-        .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com', '5555555555', 'XAXX010101001', '06000', 'Nota'])
+        .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com', '+525555555555', 'XAXX010101001', '06000', 'Nota'])
     end
   end
 
