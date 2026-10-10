@@ -35,11 +35,11 @@ RSpec.describe PaginationHelper, type: :helper do
 
   describe '#prev_link and #next_link' do
     it 'disables the previous link on the first page' do
-      expect(helper.pagination_link('Previous', 0, true, frame: nil)).to include('aria-disabled="true"')
+      expect(helper.prev_link(1)).to include('aria-disabled="true"')
     end
 
     it 'disables the next link on the last page' do
-      expect(helper.pagination_link('Next', 4, true, frame: nil)).to include('aria-disabled="true"')
+      expect(helper.next_link(3, 3)).to include('aria-disabled="true"')
     end
   end
 
