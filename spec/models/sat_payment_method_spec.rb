@@ -196,4 +196,15 @@ RSpec.describe SatPaymentMethod, type: :model do
       expect(record.description).to eq('Test')
     end
   end
+
+
+  describe 'optional validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_payment_method, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
+    end
+  end
 end
