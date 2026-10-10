@@ -50,7 +50,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'renders the edit form for an existing supplier' do
-    supplier = create(:supplier, name: 'Supplier to Edit')
+    supplier = create(:supplier, organization:, name: 'Supplier to Edit')
 
     get edit_admin_supplier_path(supplier)
 
@@ -59,8 +59,8 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'lists, filters and excludes deleted suppliers' do
-    create(:supplier, name: 'Visible Supplier')
-    create(:supplier, :deleted, name: 'Deleted Supplier')
+    create(:supplier, organization:, name: 'Visible Supplier')
+    create(:supplier, :deleted, organization:, name: 'Deleted Supplier')
 
     get admin_suppliers_path, params: { search: 'Visible' }
 
@@ -70,8 +70,8 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'filters by status and sorts by name' do
-    create(:supplier, name: 'Zulu Supplier', status: :inactive)
-    create(:supplier, name: 'Alpha Supplier', status: :active)
+    create(:supplier, organization:, name: 'Zulu Supplier', status: :inactive)
+    create(:supplier, organization:, name: 'Alpha Supplier', status: :active)
 
     get admin_suppliers_path, params: { status: 'active', sort: 'name', direction: 'asc' }
 
@@ -80,18 +80,18 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'does not paginate 10 or fewer and paginates 11+' do
-    create_list(:supplier, 10)
+    create_list(:supplier, 10, organization:)
     get admin_suppliers_path
     expect(response.body).not_to include('supplier-pagination-form')
 
-    create(:supplier)
+    create(:supplier, organization:)
     get admin_suppliers_path, params: { per_page: 5 }
     expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(5)
     expect(response.body).to include('supplier-pagination-form')
   end
 
   it 'supports 10 and 15 records per page' do
-    create_list(:supplier, 16)
+    create_list(:supplier, 16, organization:)
     get admin_suppliers_path, params: { per_page: 10 }
     expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
 
@@ -100,12 +100,12 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'shows a supplier and rejects deleted records' do
-    supplier = create(:supplier, name: 'Supplier Details')
+    supplier = create(:supplier, organization:, name: 'Supplier Details')
     get admin_supplier_path(supplier)
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Supplier Details')
 
-    deleted = create(:supplier, :deleted)
+    deleted = create(:supplier, organization:, :deleted)
     get admin_supplier_path(deleted)
     expect(response).to have_http_status(:not_found)
   end
@@ -155,7 +155,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'renders the duplicate error when the database rejects an update' do
-    supplier = create(:supplier)
+    supplier = create(:supplier, organization:)
     allow_any_instance_of(Supplier).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
 
     patch admin_supplier_path(supplier), params: { supplier: { name: 'Conflicting Supplier' } }
@@ -166,7 +166,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 're-renders the edit form when an update fails validation' do
-    supplier = create(:supplier, name: 'Unchanged Supplier')
+    supplier = create(:supplier, organization:, name: 'Unchanged Supplier')
 
     patch admin_supplier_path(supplier), params: { supplier: { name: '' } }
 
