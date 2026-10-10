@@ -79,10 +79,12 @@
     </div>
     <div>
       <%= form.label :phone, t('admin.suppliers.form.phone'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.telephone_field :phone,
+      <div data-controller="international-phone">
+      <%= form.telephone_field :phone, data: { international_phone_target: 'input' },
                                class: "input-field w-full rounded-xl #{form_state_classes(supplier, :phone)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
                                placeholder: t('admin.suppliers.form.phone_placeholder') %>
       <%= error_message_for(supplier, :phone) %>
+      </div>
     </div>
     <div>
       <%= form.label :rfc, t('admin.suppliers.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
