@@ -244,7 +244,6 @@ RSpec.describe Product, type: :model do
     end
   end
 
-
   describe 'conditional callbacks and validations' do
     it 'sets featured to false when the value is nil' do
       product = build(:product, featured: nil)
