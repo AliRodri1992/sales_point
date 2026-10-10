@@ -4,6 +4,19 @@ class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true
 
   scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :primary_addresses, -> { not_deleted.where(primary: true) }
+
+  PURPOSES = %w[general fiscal commercial delivery].freeze
+
+  validates :purpose, inclusion: { in: PURPOSES }
+  validate :single_primary_address
+
+  def restore_safely
+    return false unless deleted_at
+
+    self.deleted_at = nil
+    save
+  end
 
   enum :geocoding_status, {
     pending: 'pending',
@@ -62,6 +75,14 @@ class Address < ApplicationRecord
   scope :by_postal_code, ->(cp) { where(postal_code: cp) }
 
   scope :with_coordinates, -> { where.not(latitude: nil).where.not(longitude: nil) }
+
+  def single_primary_address
+    return unless primary? && deleted_at.nil? && addressable&.persisted?
+
+    scope = Address.with_deleted.where(addressable_type: addressable.class.base_class.name,
+                                       addressable_id: addressable.id, primary: true, deleted_at: nil)
+    errors.add(:primary, :taken) if scope.where.not(id: id).exists?
+  end
 
   def geocoded?
     geocoding_status == 'success'
