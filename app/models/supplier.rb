@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
+  belongs_to :organization, optional: true
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   belongs_to :sat_fiscal_regime, optional: true
 
   validates :code,
             presence: true,
-            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            uniqueness: { scope: :organization_id, conditions: -> { where(deleted_at: nil) } },
             length: { maximum: 30 },
             format: { with: /\A[A-Za-z0-9\-_]+\z/, message: :invalid_format }
 
