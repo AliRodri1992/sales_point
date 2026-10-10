@@ -12,10 +12,13 @@ class Address < ApplicationRecord
   validate :single_primary_address
 
   def restore_safely
-    return false unless deleted_at
+    return false if deleted_at.nil?
 
     self.deleted_at = nil
-    save
+    return true if save
+
+    self.deleted_at = deleted_at_in_database
+    false
   end
 
   enum :geocoding_status, {
@@ -79,8 +82,10 @@ class Address < ApplicationRecord
   def single_primary_address
     return unless primary? && deleted_at.nil? && addressable&.persisted?
 
-    scope = Address.with_deleted.where(addressable_type: addressable.class.base_class.name,
-                                       addressable_id: addressable.id, primary: true, deleted_at: nil)
+    scope = Address.with_deleted.where(
+      addressable_type: addressable.class.base_class.name,
+      addressable_id: addressable.id, primary: true, deleted_at: nil
+    )
     errors.add(:primary, :taken) if scope.where.not(id: id).exists?
   end
 
