@@ -232,5 +232,4 @@ RSpec.describe 'Admin clients', type: :request do
       expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
     end
   end
-
 end
