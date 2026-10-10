@@ -307,6 +307,9 @@ assign_default_role_permissions
 seed_admin_user
 seed_users
 
+require_relative 'seeds/supplier_examples'
+SupplierExamples.seed!
+
 require 'faker'
 
 # Create client examples
