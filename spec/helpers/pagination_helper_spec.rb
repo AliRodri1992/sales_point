@@ -56,6 +56,16 @@ RSpec.describe PaginationHelper, type: :helper do
   end
 
   describe '#pagination_link' do
+    it 'renders enabled links without a Turbo Frame when none is requested' do
+      allow(helper).to receive(:url_for).and_return('/admin/products?page=2')
+      allow(helper).to receive(:request).and_return(instance_double(ActionDispatch::Request, query_parameters: {}))
+
+      result = helper.pagination_link('2', 2, false)
+
+      expect(result).to include('href="/admin/products?page=2"')
+      expect(result).not_to include('data-turbo-frame')
+    end
+
     it 'renders enabled links with a Turbo Frame when requested' do
       allow(helper).to receive(:url_for).and_return('/admin/products?page=2')
       allow(helper).to receive(:request).and_return(instance_double(ActionDispatch::Request, query_parameters: {}))
