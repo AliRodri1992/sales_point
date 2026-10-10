@@ -19,7 +19,7 @@ module Admin
     private
 
     def load_suppliers
-      @suppliers = apply_filters(Supplier.not_deleted.includes(:sat_fiscal_regime))
+      @suppliers = apply_filters(policy_scope(current_organization.suppliers.not_deleted).includes(:sat_fiscal_regime))
       @total_count = @suppliers.count
       @suppliers = apply_sorting(@suppliers)
       @suppliers = paginate(@suppliers)
@@ -52,12 +52,12 @@ module Admin
     end
 
     def broadcast_suppliers_update
-      total_count = Supplier.not_deleted.count
+      total_count = policy_scope(current_organization.suppliers.not_deleted).count
       suppliers = Supplier.not_deleted.includes(:sat_fiscal_regime).order(:name).limit(PER_PAGE)
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
 
       Turbo::StreamsChannel.broadcast_update_to(
-        'suppliers_catalog',
+        "suppliers_catalog_#{current_organization.id}",
         target: 'suppliers_list',
         html: render_to_string(
           partial: 'admin/suppliers/list',
