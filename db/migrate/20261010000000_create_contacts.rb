@@ -16,6 +16,9 @@ class CreateContacts < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
+    add_index :contacts, %i[contactable_type contactable_id name],
+              where: 'deleted_at IS NULL AND active = TRUE',
+              name: 'idx_contacts_owner_active_name'
     add_index :contacts, :deleted_at
     add_index :contacts, %i[contactable_type contactable_id],
               unique: true,
