@@ -82,6 +82,23 @@ RSpec.describe Geocoding::GeocodePostalCodeService do
     end
   end
 
+    context 'when the response contains malformed JSON' do
+      let(:body) { '{not valid json' }
+
+      it 'raises a JSON parsing error rather than caching an invalid result' do
+        expect { service.call }.to raise_error(JSON::ParserError)
+      end
+    end
+
+    context 'when the features key is null' do
+      let(:body) { { features: nil }.to_json }
+
+      it 'returns nil' do
+        expect(service.call).to be_nil
+      end
+    end
+
+
   describe 'cache key' do
     it 'is based on the postal code and country query' do
       expect(service.send(:cache_key)).to eq(
