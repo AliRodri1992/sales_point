@@ -37,6 +37,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(foreign_supplier.reload.name).to eq(original_name)
 
+    sign_in user
     delete admin_supplier_path(foreign_supplier)
     expect(response).to have_http_status(:not_found)
     expect(foreign_supplier.reload.deleted_at).to be_nil
