@@ -400,5 +400,4 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(response.body).not_to include('No Match')
     end
   end
-
 end
