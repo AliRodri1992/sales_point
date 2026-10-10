@@ -44,7 +44,7 @@ module Admin
     end
 
     def destroy
-      @contact.update!(deleted_at: Time.current, primary: false)
+      @contact.update!(deleted_at: Time.current)
       redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.deleted')
     end
 
@@ -54,7 +54,20 @@ module Admin
       return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize @supplier, :show?
+      authorize @supplier, authorization_action
+    end
+
+    def authorization_action
+      case action_name
+      when 'index' then :index?
+      when 'new' then :new?
+      when 'create' then :create?
+      when 'edit' then :edit?
+      when 'update' then :update?
+      when 'destroy' then :destroy?
+      when 'restore' then :update?
+      else :show?
+      end
     end
 
     def set_contact
