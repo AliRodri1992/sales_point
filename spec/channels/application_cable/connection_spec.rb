@@ -7,7 +7,7 @@ RSpec.describe ApplicationCable::Connection do
 
   describe '#connect' do
     let(:user) { build_stubbed(:user, id: 27) }
-    let(:online_users) { instance_double(Kredis::Types::Set, add: true) }
+    let(:online_users) { double('online users', add: true, members: []) }
 
     before do
       allow(connection).to receive(:cookies).and_return(double(signed: { user_id: user.id }))
