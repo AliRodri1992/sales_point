@@ -8,7 +8,7 @@ class CreateOrganizations < ActiveRecord::Migration[8.1]
       t.string :business_sector, null: false, limit: 50
       t.string :status, null: false, default: 'active', limit: 20
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :organizations, :deleted_at
