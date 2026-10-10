@@ -7,6 +7,9 @@ RSpec.describe 'admin/suppliers/index', type: :view do
   before do
     create(:user_role, user:, system_role: admin_role)
     allow(view).to receive(:current_user).and_return(user)
+    organization = create(:organization)
+    create(:organization_membership, user:, organization:)
+    allow(view).to receive(:current_organization).and_return(organization)
     params = ActionController::Parameters.new(controller: 'admin/suppliers', action: 'index')
     allow(view).to receive(:params).and_return(params)
 
