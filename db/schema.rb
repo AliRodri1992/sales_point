@@ -663,7 +663,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.string "email", limit: 150
     t.string "name", limit: 150, null: false
     t.text "notes"
-    t.bigint "organization_id"
+    t.bigint "organization_id", null: false
     t.string "phone", limit: 30
     t.string "postal_code", limit: 5
     t.string "rfc", limit: 13
