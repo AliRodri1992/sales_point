@@ -25,7 +25,7 @@ RSpec.describe NotificationsHelper, type: :helper do
 
   describe '#notification_type_label' do
     it 'translates a notification type derived from its class name' do
-      notification = instance_double(ActiveRecord::Base, type: 'ChatNotification::Notification')
+      notification = double(type: 'ChatNotification::Notification')
 
       expect(helper).to receive(:t).with(
         'admin.shared.notifications.types.chat',
@@ -36,7 +36,7 @@ RSpec.describe NotificationsHelper, type: :helper do
     end
 
     it 'returns nil when the notification type is blank' do
-      notification = instance_double(ActiveRecord::Base, type: nil)
+      notification = double(type: nil)
 
       expect(helper.notification_type_label(notification)).to be_nil
     end
