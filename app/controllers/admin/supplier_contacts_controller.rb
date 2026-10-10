@@ -14,6 +14,7 @@ module Admin
     before_action :set_contact, only: %i[edit update destroy]
 
     def index
+      @contact = @supplier.contacts.new
       @contacts = @supplier.contacts.not_deleted.order(primary: :desc, name: :asc)
     end
 
