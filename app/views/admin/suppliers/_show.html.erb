@@ -33,7 +33,11 @@
   <div class="border-t border-slate-100 px-6 py-4">
     <h2 class="font-semibold"><%= t('admin.supplier_dossier.documents') %></h2>
     <% supplier.documents.each do |document| %>
-      <div class="py-1"><%= link_to document.filename.to_s, rails_blob_path(document, disposition: 'attachment'), class: 'text-emerald-700' %></div>
+      <div class="py-1"><%= link_to document.filename.to_s, rails_blob_path(document, disposition: 'attachment'), class: 'text-emerald-700' %>
+        <% if policy(supplier).update? %>
+          <%= button_to t('admin.supplier_details.delete'), admin_supplier_document_path(supplier, document_id: document.id), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } } %>
+        <% end %>
+      </div>
     <% end %>
     <p class="mt-2 text-sm"><%= t('admin.supplier_dossier.tags') %>: <%= supplier.tags.join(', ') %></p>
     <p class="mt-2 text-sm"><%= t('admin.supplier_dossier.responsible') %>: <%= supplier.responsible_user&.email || '—' %></p>
