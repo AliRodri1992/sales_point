@@ -22,3 +22,23 @@ RSpec.describe SupplierPolicy do
     expect(policy.new?).to be(false)
   end
 end
+  describe SupplierPolicy::Scope do
+    let(:scope) { Supplier.all }
+
+    it 'returns no records for a non-administrator' do
+      expect(described_class.new(create(:user), scope).resolve).to be_empty
+    end
+
+    it 'returns the complete scope for an administrator' do
+      admin = create(:user)
+      role = create(:system_role, code: 'administrator', role_type: :system)
+      create(:user_role, user: admin, system_role: role)
+
+      expect(described_class.new(admin, scope).resolve).to equal(scope)
+    end
+
+    it 'returns no records when the user is nil' do
+      expect(described_class.new(nil, scope).resolve).to be_empty
+    end
+  end
+
