@@ -142,5 +142,6 @@ RSpec.describe Admin::DemoRequestsHelper, type: :helper do
       allow(activity).to receive(:details).and_return('{:assigned_to=>"Ada \\\\ Team"}')
 
       expect(helper.demo_request_activity_description(activity)).to include('Ada \\ Team')
-    end  end
+    end
+  end
 end
