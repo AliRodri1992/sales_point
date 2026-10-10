@@ -24,6 +24,12 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
     add_index :suppliers, %i[organization_id rfc],
               unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL",
               name: 'idx_suppliers_organization_rfc_active'
+    add_index :suppliers, %i[organization_id name],
+              where: 'deleted_at IS NULL',
+              name: 'idx_suppliers_org_name_active'
+    add_index :suppliers, %i[organization_id status name],
+              where: 'deleted_at IS NULL',
+              name: 'idx_suppliers_org_status_name_active'
     add_index :suppliers, :email
     add_index :suppliers, :phone
     add_index :suppliers, :status
