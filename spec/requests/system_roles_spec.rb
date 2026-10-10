@@ -36,6 +36,16 @@ RSpec.describe 'SystemRoles', type: :request do
     end
   end
 
+    it 're-renders the role form when role validation fails' do
+      post system_roles_path,
+           params: { system_role: { name: '', code: 'invalid-role', role_type: 'branch', status: 'active' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('name="system_role[name]"')
+      expect(SystemRole.find_by(code: 'invalid-role')).to be_nil
+    end
+  end
+
   describe 'breadcrumb' do
     def breadcrumb_trail
       Nokogiri::HTML4(response.body).at_css('nav ol').css('a').map { |node| node.text.strip }
@@ -73,6 +83,26 @@ RSpec.describe 'SystemRoles', type: :request do
       expect(notification.type).to eq('SystemRoleNotification::Notification')
       expect(notification.event.record).to eq(role)
       expect(notification.event.params[:action]).to eq('updated')
+    end
+
+    it 'removes all permissions when the selection is empty' do
+      role.system_role_permissions.create!(permission:)
+      expect(role.permissions).to include(permission)
+
+      patch permissions_system_role_path(role), params: { permission_ids: [] }
+
+      expect(response).to redirect_to(system_role_path(role))
+      expect(role.permissions.reload).not_to include(permission)
+    end
+
+    it 'ignores blank permission identifiers in the submitted selection' do
+      second_permission = create(:permission)
+
+      patch permissions_system_role_path(role),
+            params: { permission_ids: ['', nil, permission.id.to_s, second_permission.id.to_s] }
+
+      expect(response).to redirect_to(system_role_path(role))
+      expect(role.permissions.reload).to contain_exactly(permission, second_permission)
     end
 
     it 'shows the notification in the panel' do
