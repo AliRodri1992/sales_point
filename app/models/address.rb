@@ -89,7 +89,7 @@ class Address < ApplicationRecord
 
     scope = Address.with_deleted.where(
       addressable_type: addressable.class.base_class.name,
-      addressable_id: addressable.id, primary: true, deleted_at: nil
+      addressable_id: addressable.id, purpose: purpose, primary: true, deleted_at: nil
     )
     errors.add(:primary, :taken) if scope.where.not(id: id).exists?
   end
