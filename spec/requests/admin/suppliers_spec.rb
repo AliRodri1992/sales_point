@@ -90,6 +90,15 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('supplier-pagination-form')
   end
 
+  it 'rounds up the page count for supplier broadcasts' do
+    create_list(:supplier, 11, organization:)
+
+    get admin_suppliers_path
+
+    expect(controller.send(:compute_total_pages, 11)).to eq(2)
+    expect(controller.send(:compute_total_pages, 0)).to eq(1)
+  end
+
   it 'supports 10 and 15 records per page' do
     create_list(:supplier, 16, organization:)
     get admin_suppliers_path, params: { per_page: 10 }
