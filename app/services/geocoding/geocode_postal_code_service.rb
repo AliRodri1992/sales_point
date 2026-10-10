@@ -62,7 +62,7 @@ module Geocoding
     end
 
     def cache_key
-      "address:geocode:#{Digest::MD5.hexdigest(full_address)}"
+      "address:geocode:#{Digest::MD5.hexdigest(postal_code_query)}"
     end
   end
 end
