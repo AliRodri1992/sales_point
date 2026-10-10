@@ -28,6 +28,7 @@ class Supplier < ApplicationRecord
             allow_blank: true
 
   validates :phone, length: { maximum: 30 }, allow_blank: true
+  validate :phone_must_be_valid
 
   validates :rfc,
             length: { in: 12..13 },
@@ -60,7 +61,7 @@ class Supplier < ApplicationRecord
     normalize_text_field(:name, &:strip)
     %i[legal_name trade_name alias_name].each { |field| normalize_text_field(field, &:strip) }
     normalize_email
-    normalize_text_field(:phone, &:strip)
+    normalize_phone
     normalize_rfc
     normalize_text_field(:postal_code, &:strip)
     normalize_text_field(:notes, &:strip)
@@ -77,6 +78,19 @@ class Supplier < ApplicationRecord
   def normalize_email
     email_value = email.to_s.strip.downcase
     self.email = email_value.presence
+  end
+
+  def normalize_phone
+    return if phone.blank?
+
+    parsed = Phonelib.parse(phone.to_s.strip, 'MX')
+    self.phone = parsed.e164 if parsed.valid?
+  end
+
+  def phone_must_be_valid
+    return if phone.blank?
+
+    errors.add(:phone, :invalid) unless Phonelib.parse(phone, 'MX').valid?
   end
 
   def normalize_rfc
