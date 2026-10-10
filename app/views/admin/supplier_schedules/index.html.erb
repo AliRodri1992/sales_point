@@ -1,0 +1,8 @@
+<h1><%= t('admin.supplier_dossier.schedules') %></h1>
+<%= link_to t('admin.supplier_details.add'), new_admin_supplier_schedule_path(@supplier) %>
+<% @schedules.each do |schedule| %>
+  <div class="border-b p-4">
+    <%= schedule.branch.name %> — <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %> — <%= schedule.weekday %> — <%= schedule.starts_at.strftime('%H:%M') %>
+    <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule) %>
+  </div>
+<% end %>
