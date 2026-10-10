@@ -11,6 +11,17 @@ RSpec.describe Contact, type: :model do
     expect(contact.contactable).to be_a(Supplier)
   end
 
+  it 'exposes contacts and addresses through parent associations' do
+    organization = create(:organization)
+    supplier = create(:supplier)
+    organization_contact = create(:contact, contactable: organization)
+    supplier_contact = create(:contact, contactable: supplier)
+
+    expect(organization.contacts).to include(organization_contact)
+    expect(supplier.contacts).to include(supplier_contact)
+    expect(organization.contacts).not_to include(supplier_contact)
+  end
+
   it 'normalizes contact fields' do
     contact = build(:contact, name: '  Alice  ', email: '  ALICE@EXAMPLE.COM  ')
     contact.valid?
