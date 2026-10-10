@@ -46,7 +46,7 @@ RSpec.describe ApplicationCable::Connection do
 
   describe '#disconnect' do
     let(:user) { build_stubbed(:user, id: 27) }
-    let(:online_users) { instance_double(Kredis::Types::Set, remove: true) }
+    let(:online_users) { double('online users', remove: true, members: []) }
 
     it 'removes an identified user from presence and broadcasts the change' do
       connection.current_user = user
