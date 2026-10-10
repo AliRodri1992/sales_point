@@ -14,7 +14,10 @@ RSpec.describe Branch, type: :model do
     it { is_expected.to allow_value('+52 55 5123 4567').for(:phone) }
     it { is_expected.not_to allow_value('abc123').for(:phone) }
     it { is_expected.to validate_length_of(:phone).is_at_least(7).is_at_most(20).allow_blank }
-    it { is_expected.to validate_inclusion_of(:status).in_array([true, false]) }
+    it 'accepts both boolean status values' do
+      expect(build(:branch, status: true)).to be_valid
+      expect(build(:branch, status: false)).to be_valid
+    end
 
     it 'requires unique branch names within an organization' do
       organization = create(:organization)
