@@ -16,6 +16,12 @@ en:
       edit_contact: "Edit contact"
       add_address: "Add address"
       edit_address: "Edit address"
+      restored: "Record restored"
+      address_purposes:
+        general: "General"
+        fiscal: "Tax"
+        commercial: "Commercial"
+        delivery: "Delivery"
       contact_fields:
         name: "Name"
         position: "Position"
@@ -26,6 +32,7 @@ en:
         primary: "Primary"
         active: "Active"
       address_fields:
+        purpose: "Purpose"
         street: "Street"
         exterior_number: "Exterior number"
         interior_number: "Interior number"
