@@ -3,6 +3,8 @@
 class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true
 
+  scope :not_deleted, -> { where(deleted_at: nil) }
+
   enum :geocoding_status, {
     pending: 'pending',
     success: 'success',
