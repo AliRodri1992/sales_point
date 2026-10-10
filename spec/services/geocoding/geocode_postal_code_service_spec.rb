@@ -72,6 +72,8 @@ RSpec.describe Geocoding::GeocodePostalCodeService do
     end
 
     it 'caches a successful result for the same postal code and country' do
+      allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new)
+
       first_result = service.call
       second_result = described_class.new(postal_code, country).call
 
