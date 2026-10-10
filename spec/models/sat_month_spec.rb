@@ -205,7 +205,6 @@ RSpec.describe SatMonth, type: :model do
     end
   end
 
-
   describe 'optional validity boundaries' do
     it 'accepts an open validity range when dates are missing' do
       record = build(:sat_month, valid_from: nil, valid_to: nil)
