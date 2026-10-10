@@ -190,6 +190,33 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe '#onboarding_progress_for_current_user' do
+    it 'returns nil when there is no current user' do
+      allow(helper).to receive(:current_user).and_return(nil)
+
+      expect(helper.onboarding_progress_for_current_user).to be_nil
+    end
+
+    it 'returns nil when the current user has no active organization' do
+      organizations = double(active_records: double(first: nil))
+      user = double(organizations:)
+
+      allow(helper).to receive(:current_user).and_return(user)
+
+      expect(helper.onboarding_progress_for_current_user).to be_nil
+    end
+
+    it 'returns nil when onboarding is already complete' do
+      organization = double(onboarding_completed?: true)
+      organizations = double(active_records: double(first: organization))
+      user = double(organizations:)
+
+      allow(helper).to receive(:current_user).and_return(user)
+
+      expect(helper.onboarding_progress_for_current_user).to be_nil
+    end
+  end
+
   describe '#onboarding_pending?' do
     it 'returns false when no progress is available' do
       allow(helper).to receive(:onboarding_progress_for_current_user).and_return(nil)
