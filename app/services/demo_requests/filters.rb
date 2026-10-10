@@ -56,6 +56,7 @@ module DemoRequests
       scope = scope.where(status: @params[:status]) if valid_status?
       scope = apply_follow_up_filters(scope)
       scope = apply_outcome_filters(scope)
+      scope = apply_demo_outcome_filters(scope)
       scope = apply_search_filter(scope)
       apply_pagination(scope)
     end
@@ -111,8 +112,6 @@ module DemoRequests
     def apply_pagination(scope)
       pagination = pagination_info
 
-      scope = scope.where(contact_outcome: @params[:contact_outcome]) if @params[:contact_outcome].present?
-      scope = scope.where(demo_outcome: @params[:demo_outcome]) if @params[:demo_outcome].present?
       scope = apply_ordering(scope)
       scope.limit(pagination[:per_page]).offset((pagination[:current_page] - 1) * pagination[:per_page])
     end
