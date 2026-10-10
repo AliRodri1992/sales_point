@@ -8,8 +8,10 @@ RSpec.describe OnboardingPolicy, type: :policy do
   let(:user) { instance_double(User) }
 
   before do
-    allow(user).to receive(:admin?).and_return(true)
-    allow(user).to receive_message_chain(:organizations, :active_records, :exists?).and_return(true)
+    if user
+      allow(user).to receive(:admin?).and_return(true)
+      allow(user).to receive_message_chain(:organizations, :active_records, :exists?).and_return(true)
+    end
   end
 
   it 'permits administrators with an active organization' do
