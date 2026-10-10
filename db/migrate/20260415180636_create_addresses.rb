@@ -20,6 +20,9 @@ class CreateAddresses < ActiveRecord::Migration[8.1]
       t.timestamp :deleted_at
     end
 
+    add_index :addresses, %i[addressable_type addressable_id],
+              where: 'deleted_at IS NULL',
+              name: 'idx_addresses_owner_active'
     add_index :addresses, :deleted_at, where: "deleted_at IS NULL"
     add_index :addresses, :postal_code
     add_index :addresses, :geocoding_status
