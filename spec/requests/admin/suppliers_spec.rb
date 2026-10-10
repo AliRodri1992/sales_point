@@ -46,8 +46,13 @@ RSpec.describe 'Admin suppliers', type: :request do
     get admin_suppliers_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('suppliers_catalog_')
-    expect(response.body).to include('turbo-cable-stream-source')
+    document = Nokogiri::HTML(response.body)
+    stream = document.at_css('turbo-cable-stream-source[signed-stream-name]')
+    expected_stream = Turbo::StreamsChannel.signed_stream_name("suppliers_catalog_#{organization.id}")
+
+    expect(document.css('turbo-cable-stream-source').map { |node| node['signed-stream-name'] })
+      .to include(expected_stream)
+    expect(stream).to be_present
   end
 
   it 'keeps sort and page-size parameters in the supplier filter form' do
