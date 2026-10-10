@@ -10,7 +10,14 @@ RSpec.describe DemoRequests::Filters do
   describe '#call' do
     it 'returns requests matching a valid status' do
       matching = create(:demo_request, name: 'Pending prospect', status: :pending)
-      create(:demo_request, name: 'Contacted prospect', status: :contacted, contacted_at: Time.current, contact_channel: 'call', contact_outcome: 'interested')
+      create(
+        :demo_request,
+        name: 'Contacted prospect',
+        status: :contacted,
+        contacted_at: Time.current,
+        contact_channel: 'call',
+        contact_outcome: 'interested'
+      )
 
       result = described_class.new(params.merge(status: 'pending'), create(:user)).call
 
