@@ -79,7 +79,7 @@ RSpec.describe TerminalHelper, type: :helper do
 
   describe '#terminal_themes and #terminal_languages' do
     it 'returns all themes and available languages' do
-      themes = [build(:theme)]
+      themes = [instance_double(Theme)]
       languages = [build(:language)]
       allow(Theme).to receive(:all).and_return(themes)
       allow(Language).to receive(:available).and_return(languages)
