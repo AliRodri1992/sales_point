@@ -32,7 +32,10 @@ Rails.application.routes.draw do
     resources :users
     resources :clients
     resource :profile, only: %i[show update]
-    resources :suppliers
+    resources :suppliers do
+      resources :contacts, controller: 'supplier_contacts', except: %i[show]
+      resources :addresses, controller: 'supplier_addresses', except: %i[show]
+    end
   end
   resources :system_roles do
     member do
