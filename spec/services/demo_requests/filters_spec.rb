@@ -41,6 +41,7 @@ RSpec.describe DemoRequests::Filters do
         contacted_at: Time.current,
         contact_channel: 'call',
         contact_outcome: 'interested',
+        next_action: 'Call prospect',
         next_follow_up_at: 1.day.from_now
       )
 
@@ -57,6 +58,7 @@ RSpec.describe DemoRequests::Filters do
         contacted_at: Time.current,
         contact_channel: 'call',
         contact_outcome: 'interested',
+        next_action: 'Call prospect',
         next_follow_up_at: 1.day.from_now
       )
 
