@@ -5,6 +5,19 @@ class Supplier < ApplicationRecord
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   belongs_to :sat_fiscal_regime, optional: true
+  belongs_to :responsible_user, class_name: 'User', optional: true
+  has_many :supplier_schedules, dependent: :destroy
+  has_many_attached :documents
+  validate :responsible_user_in_organization
+  validate :documents_are_safe
+
+  def tags_text
+    tags.join(', ')
+  end
+
+  def tags_text=(value)
+    self.tags = value.to_s.split(',').map(&:strip).reject(&:blank?).uniq.first(20)
+  end
 
   validates :code,
             presence: true,
@@ -55,6 +68,21 @@ class Supplier < ApplicationRecord
   before_validation :normalize_fields
 
   private
+
+  def responsible_user_in_organization
+    return if responsible_user.blank?
+
+    errors.add(:responsible_user, :invalid) unless organization&.users&.exists?(id: responsible_user_id)
+  end
+
+  def documents_are_safe
+    documents.each do |document|
+      next unless document.blob
+
+      errors.add(:documents, :invalid) unless document.blob.content_type.in?(%w[application/pdf image/png image/jpeg])
+      errors.add(:documents, :too_long) if document.blob.byte_size > 10.megabytes
+    end
+  end
 
   def normalize_fields
     normalize_text_field(:code, &:strip)
