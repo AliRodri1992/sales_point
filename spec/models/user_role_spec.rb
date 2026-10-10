@@ -92,7 +92,6 @@ RSpec.describe UserRole, type: :model do
     end
   end
 
-
   describe 'optional role association in conditional validations' do
     it 'handles a missing system role without raising from conditional validations' do
       assignment = build(:user_role, system_role: nil, branch: nil)
