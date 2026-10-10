@@ -17,7 +17,7 @@ RSpec.describe PaginationHelper, type: :helper do
     it 'omits the previous link on the first page and includes the next link' do
       allow(helper).to receive(:params).and_return(ActionController::Parameters.new(page: 1))
       allow(helper).to receive(:page_links).with(1, 3, frame: nil).and_return(['pages'])
-      allow(helper).to receive(:next_link).with(1, 3, frame: nil).and_return('next'.html_safe)
+      allow(helper).to receive(:next_link).with(1, 3, frame: nil).and_return('next')
 
       expect(helper).not_to receive(:prev_link)
       expect(helper.pagination_links(3)).to include('pages', 'next')
@@ -26,7 +26,7 @@ RSpec.describe PaginationHelper, type: :helper do
     it 'omits the next link on the last page and includes the previous link' do
       allow(helper).to receive(:params).and_return(ActionController::Parameters.new(page: 3))
       allow(helper).to receive(:page_links).with(3, 3, frame: nil).and_return(['pages'])
-      allow(helper).to receive(:prev_link).with(3, frame: nil).and_return('previous'.html_safe)
+      allow(helper).to receive(:prev_link).with(3, frame: nil).and_return('previous')
 
       expect(helper).not_to receive(:next_link)
       expect(helper.pagination_links(3)).to include('pages', 'previous')
@@ -45,7 +45,7 @@ RSpec.describe PaginationHelper, type: :helper do
 
   describe '#page_links' do
     it 'renders the current page as an active span and other pages as links' do
-      allow(helper).to receive(:pagination_link).and_return('page-link'.html_safe)
+      allow(helper).to receive(:pagination_link).and_return('page-link')
 
       links = helper.page_links(2, 3)
 
