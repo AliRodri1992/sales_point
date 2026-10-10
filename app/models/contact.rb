@@ -6,6 +6,13 @@ class Contact < ApplicationRecord
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { not_deleted.where(active: true) }
 
+  def restore_safely
+    return false unless deleted_at
+
+    self.deleted_at = nil
+    save
+  end
+
   validates :name, presence: true, length: { maximum: 150 }
   validates :position, length: { maximum: 100 }, allow_blank: true
   validates :email, length: { maximum: 150 },
