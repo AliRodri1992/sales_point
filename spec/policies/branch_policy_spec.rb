@@ -102,6 +102,27 @@ RSpec.describe BranchPolicy, type: :policy do
     end
   end
 
+  describe 'unauthenticated access' do
+    let(:user) { nil }
+
+    it 'denies index and show access and leaves administrative permissions falsey' do
+      expect(policy.index?).to be(false)
+      expect(policy.show?).to be(false)
+      expect(policy.create?).to be_nil
+      expect(policy.update?).to be_nil
+      expect(policy.destroy?).to be_nil
+    end
+  end
+
+  describe '#show? with a non-branch record' do
+    let(:user) { create(:user) }
+    let(:branch) { :branch }
+
+    it 'denies access when the record is not a Branch instance' do
+      expect(policy.show?).to be(false)
+    end
+  end
+
   describe 'Scope' do
     let(:scope) { described_class::Scope.new(user, Branch).resolve }
 
