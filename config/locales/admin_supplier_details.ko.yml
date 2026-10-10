@@ -16,6 +16,8 @@ ko:
       edit_contact: "연락처 수정"
       add_address: "주소 추가"
       edit_address: "주소 수정"
+      deleted_records: "삭제된 항목"
+      restore: "복원"
       restored: "항목이 복원되었습니다"
       address_purposes:
         general: "일반"
