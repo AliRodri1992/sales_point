@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :supplier do
+    association :organization
     sequence(:code) { |n| format('SUP-%04d', n) }
     sequence(:name) { |n| "Proveedor #{n}" }
     sequence(:email) { |n| "proveedor#{n}@example.com" }
