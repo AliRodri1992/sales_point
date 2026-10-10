@@ -34,7 +34,6 @@ RSpec.describe 'SystemRoles', type: :request do
       expect(notification.event.record.name).to eq('Auditor')
       expect(notification.event.params[:action]).to eq('created')
     end
-  end
 
     it 're-renders the role form when role validation fails' do
       post system_roles_path,
