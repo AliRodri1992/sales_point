@@ -97,5 +97,4 @@ RSpec.describe TerminalHelper, type: :helper do
       expect(helper.current_language_flag).to eq(language)
     end
   end
-
 end
