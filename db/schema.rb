@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_002000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.string "state", limit: 100
     t.string "street", limit: 150
     t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "idx_addresses_owner_active", where: "(deleted_at IS NULL)"
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
     t.index ["deleted_at"], name: "index_addresses_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["geocoding_status"], name: "index_addresses_on_geocoding_status"
@@ -138,7 +139,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.string "position", limit: 100
     t.boolean "primary", default: false, null: false
     t.datetime "updated_at", null: false
-    t.index ["contactable_type", "contactable_id"], name: "idx_contacts_one_active_primary", unique: true, where: "deleted_at IS NULL AND active = true AND \"primary\" = true"
+    t.index ["contactable_type", "contactable_id", "name"], name: "idx_contacts_owner_active_name", where: "((deleted_at IS NULL) AND (active = true))"
+    t.index ["contactable_type", "contactable_id"], name: "idx_contacts_one_active_primary", unique: true, where: "((deleted_at IS NULL) AND (active = true) AND (\"primary\" = true))"
     t.index ["contactable_type", "contactable_id"], name: "index_contacts_on_contactable"
     t.index ["deleted_at"], name: "index_contacts_on_deleted_at"
     t.check_constraint "btrim(name::text) <> ''::text", name: "chk_contacts_name_present"
@@ -205,7 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.datetime "contacted_at"
     t.datetime "converted_at"
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "demo_outcome", limit: 40
     t.string "email", null: false
     t.string "locale", default: "es", null: false
@@ -221,6 +223,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.boolean "terms_accepted", default: false, null: false
     t.datetime "terms_accepted_at"
     t.datetime "updated_at", null: false
+    t.index ["assigned_to_id", "next_follow_up_at"], name: "idx_demo_requests_assignee_follow_up_active", where: "((deleted_at IS NULL) AND (next_follow_up_at IS NOT NULL))"
     t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
     t.index ["branches"], name: "index_demo_requests_on_branches"
     t.index ["business_type"], name: "index_demo_requests_on_business_type"
@@ -229,6 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.index ["demo_outcome"], name: "index_demo_requests_on_demo_outcome"
     t.index ["email"], name: "index_demo_requests_on_email"
     t.index ["next_follow_up_at"], name: "index_demo_requests_on_next_follow_up_at"
+    t.index ["status", "created_at"], name: "idx_demo_requests_status_created_active", where: "(deleted_at IS NULL)"
     t.index ["status"], name: "index_demo_requests_on_status"
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
   end
@@ -350,6 +354,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.string "type"
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
+    t.index ["recipient_type", "recipient_id", "created_at"], name: "idx_noticed_notifications_recipient_recent", order: { created_at: :desc }
+    t.index ["recipient_type", "recipient_id", "created_at"], name: "idx_noticed_notifications_unread_recent", order: { created_at: :desc }, where: "(read_at IS NULL)"
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
@@ -670,12 +676,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
     t.bigint "sat_fiscal_regime_id"
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
-    t.index ["organization_id", "code"], name: "idx_suppliers_organization_code_active", unique: true, where: "(deleted_at IS NULL)"
-    t.index ["organization_id"], name: "index_suppliers_on_organization_id"
     t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
     t.index ["email"], name: "index_suppliers_on_email"
+    t.index ["organization_id", "code"], name: "idx_suppliers_organization_code_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "name"], name: "idx_suppliers_org_name_active", where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "rfc"], name: "idx_suppliers_organization_rfc_active", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
+    t.index ["organization_id", "status", "name"], name: "idx_suppliers_org_status_name_active", where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_suppliers_on_organization_id"
     t.index ["phone"], name: "index_suppliers_on_phone"
-    t.index ["organization_id", "rfc"], name: "idx_suppliers_organization_rfc_active", unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL"
     t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_suppliers_on_status"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
@@ -732,7 +740,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
 
   create_table "translates", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "key", limit: 255, null: false
     t.bigint "language_id"
     t.string "locale", limit: 10
@@ -833,6 +841,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "suppliers", "organizations"
   add_foreign_key "suppliers", "sat_fiscal_regimes"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
@@ -843,5 +852,4 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_001000) do
   add_foreign_key "user_roles", "users"
   add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
-  add_foreign_key "suppliers", "organizations"
 end
