@@ -67,7 +67,7 @@ module Admin
     end
 
     def compute_total_pages(count)
-      [count / PER_PAGE.to_f, 1].max
+      [(count / PER_PAGE.to_f).ceil, 1].max
     end
 
     def render_supplier_list(count, pages)
