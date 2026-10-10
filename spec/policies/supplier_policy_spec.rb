@@ -22,7 +22,7 @@ RSpec.describe SupplierPolicy do
     expect(policy.new?).to be(false)
   end
 end
-  describe SupplierPolicy::Scope do
+RSpec.describe SupplierPolicy::Scope do
     let(:scope) { Supplier.all }
 
     it 'returns no records for a non-administrator' do
