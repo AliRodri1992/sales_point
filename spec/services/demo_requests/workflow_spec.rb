@@ -27,11 +27,11 @@ RSpec.describe DemoRequests::Workflow, type: :service do
 
   it 'skips workflow activity and assignee notification when nothing changed' do
     allow(activities).to receive(:create!)
+    expect(DemoRequestMailer).not_to receive(:with)
 
     described_class.new(demo_request, actor, 'pending', nil).call
 
     expect(activities).not_to have_received(:create!)
-    expect(DemoRequestMailer).not_to receive(:with)
     expect(reminders).to have_received(:reset_if_rescheduled)
     expect(reminders).to have_received(:schedule).with('pending')
     expect(reminders).to have_received(:send_confirmation).with('pending')
@@ -77,7 +77,6 @@ RSpec.describe DemoRequests::Workflow, type: :service do
     mailer = double('demo request mailer', workflow_update: delivery)
     allow(activities).to receive(:create!)
     allow(DemoRequestMailer).to receive(:with).and_return(mailer)
-    allow(activities).to receive(:create!)
 
     described_class.new(request, actor, 'pending', nil).call
 
