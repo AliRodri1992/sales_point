@@ -139,7 +139,7 @@ RSpec.describe Admin::DemoRequestsHelper, type: :helper do
 
     it 'normalizes escaped quotes and backslashes in legacy serialized details' do
       allow(activity).to receive(:action).and_return('assigned')
-      allow(activity).to receive(:details).and_return('{:assigned_to=>"Ada \"A\" \\\\ Team"}')
+      allow(activity).to receive(:details).and_return('{:assigned_to=>"Ada \\"A\\" \\\\ Team"}')
 
       expect(helper.demo_request_activity_description(activity)).to include('Ada "A" \\ Team')
     end
