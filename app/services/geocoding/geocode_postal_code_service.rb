@@ -57,10 +57,6 @@ module Geocoding
       ENV.fetch('MAPBOX_TOKEN')
     end
 
-    def log_error(type, error)
-      Rails.logger.error("[GeocodePostalCodeService] #{type}: #{error.message}")
-    end
-
     def cache_key
       "address:geocode:#{Digest::MD5.hexdigest(postal_code_query)}"
     end
