@@ -52,8 +52,10 @@ module Admin
     end
 
     def broadcast_suppliers_update
-      total_count = current_supplier_scope.count
-      total_pages = [total_count / PER_PAGE.to_f, 1].max
+      total_count = policy_scope(current_organization.suppliers.not_deleted).count
+      suppliers = policy_scope(current_organization.suppliers.not_deleted)
+                  .includes(:sat_fiscal_regime).order(:name).limit(PER_PAGE)
+      total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
 
       Turbo::StreamsChannel.broadcast_update_to(
         "suppliers_catalog_#{current_organization.id}",
@@ -61,16 +63,9 @@ module Admin
         html: render_to_string(
           partial: 'admin/suppliers/list',
           formats: [:html],
-          locals: { suppliers: current_supplier_scope, total_count:, total_pages: }
+          locals: { suppliers:, total_count:, total_pages: }
         )
       )
-    end
-
-    def current_supplier_scope
-      policy_scope(current_organization.suppliers.not_deleted)
-        .includes(:sat_fiscal_regime)
-        .order(:name)
-        .limit(PER_PAGE)
     end
   end
 end

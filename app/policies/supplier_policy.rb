@@ -10,8 +10,8 @@ class SupplierPolicy
 
   def index? = authorized_organization?
   def show? = authorized_record?
-  def new? = authorized_record?
-  def create? = authorized_record?
+  def new? = authorized_organization?
+  def create? = authorized_organization?
   def edit? = authorized_record?
   def update? = authorized_record?
   def destroy? = authorized_record?

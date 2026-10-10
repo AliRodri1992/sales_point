@@ -25,6 +25,7 @@ module SupplierExamples
         status: :active
       )
       organization.save!
+      organization
     end
 
     def create_membership(organization)

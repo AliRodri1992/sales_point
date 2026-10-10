@@ -5,7 +5,7 @@
   </div>
 
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-    <% if policy(Supplier).new? %>
+    <% if policy(Supplier.new).new? %>
       <%= link_to new_admin_supplier_path,
                   data: { tooltip: t('admin.suppliers.index.new') },
                   class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>

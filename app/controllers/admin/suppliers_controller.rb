@@ -33,7 +33,7 @@ module Admin
     end
 
     def create
-      @supplier = Supplier.new(supplier_params)
+      @supplier = current_organization.suppliers.new(supplier_params)
       authorize @supplier
 
       if @supplier.save
