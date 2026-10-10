@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
+  has_many :contacts, as: :contactable, dependent: :restrict_with_exception
+  has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   belongs_to :sat_fiscal_regime, optional: true
 
   validates :code,
