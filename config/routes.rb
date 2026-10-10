@@ -33,11 +33,17 @@ Rails.application.routes.draw do
     resources :clients
     resource :profile, only: %i[show update]
     resource :organization, only: [] do
-      resources :contacts, controller: 'organization_contacts', except: %i[show]
+      resources :contacts, controller: 'organization_contacts', except: %i[show] do
+        member { patch :restore }
+      end
     end
     resources :suppliers do
-      resources :contacts, controller: 'supplier_contacts', except: %i[show]
-      resources :addresses, controller: 'supplier_addresses', except: %i[show]
+      resources :contacts, controller: 'supplier_contacts', except: %i[show] do
+        member { patch :restore }
+      end
+      resources :addresses, controller: 'supplier_addresses', except: %i[show] do
+        member { patch :restore }
+      end
     end
   end
   resources :system_roles do
