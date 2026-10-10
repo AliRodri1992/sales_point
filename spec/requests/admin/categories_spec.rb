@@ -81,6 +81,15 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
   end
 
+  describe 'GET /admin/categories/new' do
+    it 'renders the new category form' do
+      get new_admin_category_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('name="category[name]"')
+    end
+  end
+
   describe 'POST /admin/categories' do
     it 'sends a "created" notification to the current user' do
       expect do
@@ -99,6 +108,14 @@ RSpec.describe 'Admin::Categories', type: :request do
 
       post admin_categories_path(format: :turbo_stream),
            params: { category: { name: 'Test Category', code: 'test_category' } }
+    end
+
+    it 'redirects after creating a category through HTML' do
+      post admin_categories_path,
+           params: { category: { name: 'HTML Category', code: 'html_category' } }
+
+      expect(response).to redirect_to(admin_categories_path)
+      expect(Category.find_by!(code: 'html_category')).to be_present
     end
 
     it 'defaults the status to active when not provided' do
@@ -155,6 +172,14 @@ RSpec.describe 'Admin::Categories', type: :request do
             params: { category: { name: 'New Name', code: 'old_code' } }
     end
 
+    it 'redirects after updating a category through HTML' do
+      patch admin_category_path(category),
+            params: { category: { name: 'HTML Updated', code: 'old_code' } }
+
+      expect(response).to redirect_to(admin_categories_path)
+      expect(category.reload.name).to eq('HTML Updated')
+    end
+
     it 'updates the category name' do
       patch admin_category_path(category, format: :turbo_stream),
             params: { category: { name: 'New Name', code: 'old_code' } }
@@ -203,6 +228,13 @@ RSpec.describe 'Admin::Categories', type: :request do
         .with('categories_catalog', target: 'categories_list', html: kind_of(String))
 
       delete admin_category_path(category, format: :turbo_stream)
+    end
+
+    it 'redirects after deleting a category through HTML' do
+      delete admin_category_path(category)
+
+      expect(response).to redirect_to(admin_categories_path)
+      expect(Category.with_deleted.find(category.id).deleted_at).to be_present
     end
 
     it 'soft-deletes the category' do
