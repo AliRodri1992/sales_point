@@ -40,6 +40,23 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
+  describe 'organization ownership' do
+    it 'allows the same supplier code in different organizations' do
+      first = create(:organization)
+      second = create(:organization)
+      create(:supplier, organization: first, code: 'SHARED', rfc: 'XAXX010101111')
+
+      other = build(:supplier, organization: second, code: 'SHARED', rfc: 'XAXX010101111')
+      expect(other).to be_valid
+    end
+
+    it 'rejects duplicate codes within one organization' do
+      organization = create(:organization)
+      create(:supplier, organization:, code: 'SHARED')
+      expect(build(:supplier, organization:, code: 'SHARED')).not_to be_valid
+    end
+  end
+
   describe 'normalization' do
     it 'normalizes fields and blanks' do
       supplier.assign_attributes(
