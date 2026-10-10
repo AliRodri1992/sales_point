@@ -47,7 +47,7 @@ module Admin
         render :edit, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
-      render_duplicate_error
+      render_duplicate_error(:edit)
     end
 
     def destroy
@@ -104,10 +104,10 @@ module Admin
       PER_PAGE_OPTIONS.include?(value) ? value : PER_PAGE
     end
 
-    def render_duplicate_error
+    def render_duplicate_error(template = :new)
       @client.errors.add(:base, t('admin.clients.errors.duplicate'))
       load_fiscal_regimes
-      render :new, status: :unprocessable_content
+      render template, status: :unprocessable_content
     end
 
     def notify_client(user, client, action)
