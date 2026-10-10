@@ -30,6 +30,12 @@
       </div>
     <% end %>
   </dl>
+  <% fiscal_address = supplier.addresses.not_deleted.find_by(purpose: 'fiscal', primary: true) %>
+  <div class="border-t border-slate-100 px-6 py-4">
+    <h2 class="font-semibold"><%= t('admin.supplier_details.address_purposes.fiscal') %></h2>
+    <p class="text-sm"><%= fiscal_address&.full_address || '—' %></p>
+    <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier), class: 'text-emerald-700' %>
+  </div>
   <div class="border-t border-slate-100 px-6 py-4">
     <h2 class="font-semibold"><%= t('admin.supplier_dossier.documents') %></h2>
     <% supplier.documents.each do |document| %>
