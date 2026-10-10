@@ -4,9 +4,29 @@ RSpec.describe 'Admin suppliers', type: :request do
   let(:user) { create(:user, :english) }
   let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
 
+  let(:organization) { create(:organization) }
+
   before do
+    create(:organization_membership, user:, organization:)
     create(:user_role, user:, system_role: admin_role)
     sign_in user
+  end
+
+  it 'does not expose another organization suppliers' do
+    foreign_supplier = create(:supplier, organization: create(:organization), name: 'Foreign Supplier')
+    get admin_suppliers_path
+    expect(response.body).not_to include('Foreign Supplier')
+
+    get admin_supplier_path(foreign_supplier)
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'assigns the organization on creation regardless of submitted ownership' do
+    foreign_organization = create(:organization)
+    post admin_suppliers_path,
+         params: { supplier: attributes_for(:supplier).merge(organization_id: foreign_organization.id) }
+
+    expect(Supplier.order(:id).last.organization).to eq(organization)
   end
 
   it 'requires authentication' do
