@@ -30,6 +30,24 @@ RSpec.describe AddressGeocodingService do
       expect(address.reload.geocoding_status).to eq('pending')
     end
 
+    it 'does not update the address when the geocoding result is nil' do
+      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
+        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: nil))
+
+      service.call
+
+      expect(address.reload.geocoding_status).to eq('pending')
+    end
+
+    it 'does not update the address when the result has no longitude' do
+      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
+        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: { lat: 19.4 }))
+
+      service.call
+
+      expect(address.reload.geocoding_status).to eq('pending')
+    end
+
     it 'marks the address as failed when geocoding raises' do
       allow(Geocoding::GeocodePostalCodeService).to receive(:new)
         .and_raise(StandardError, 'provider unavailable')
