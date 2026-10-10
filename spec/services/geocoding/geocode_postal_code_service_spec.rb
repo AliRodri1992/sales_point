@@ -22,6 +22,7 @@ RSpec.describe Geocoding::GeocodePostalCodeService do
   let(:response) { instance_double(Faraday::Response, success?: true, body:) }
 
   before do
+    allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with('MAPBOX_TOKEN').and_return('test-token')
     allow(service).to receive(:connection).and_return(connection)
     allow(connection).to receive(:get).and_return(response)
