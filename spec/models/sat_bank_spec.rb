@@ -182,7 +182,6 @@ RSpec.describe SatBank, type: :model do
     end
   end
 
-
   describe 'optional validity boundaries' do
     it 'accepts an open validity range when dates are missing' do
       record = build(:sat_bank, valid_from: nil, valid_to: nil)
