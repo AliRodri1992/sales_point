@@ -29,6 +29,27 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(Supplier.order(:id).last.organization).to eq(organization)
   end
 
+  it 'rejects changes to suppliers owned by another organization' do
+    foreign_supplier = create(:supplier, organization: create(:organization))
+    original_name = foreign_supplier.name
+
+    patch admin_supplier_path(foreign_supplier), params: { supplier: { name: 'Unauthorized' } }
+    expect(response).to have_http_status(:not_found)
+    expect(foreign_supplier.reload.name).to eq(original_name)
+
+    delete admin_supplier_path(foreign_supplier)
+    expect(response).to have_http_status(:not_found)
+    expect(foreign_supplier.reload.deleted_at).to be_nil
+  end
+
+  it 'subscribes the supplier list to organization-specific Turbo updates' do
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('suppliers_catalog_')
+    expect(response.body).to include('turbo-cable-stream-source')
+  end
+
   it 'requires authentication' do
     sign_out user
     get admin_suppliers_path
