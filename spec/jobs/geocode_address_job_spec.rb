@@ -15,10 +15,10 @@ RSpec.describe GeocodeAddressJob, type: :job do
       expect(service).to have_received(:call)
     end
 
-    it 'propagates record-not-found errors for the configured discard handler' do
-      allow(AddressGeocodingService).to receive(:new).and_raise(ActiveRecord::RecordNotFound)
+    it 'discards jobs when the address no longer exists' do
+      allow(AddressGeocodingService).to receive(:new).with(999_999).and_raise(ActiveRecord::RecordNotFound)
 
-      expect { described_class.perform_now(999_999) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { described_class.perform_now(999_999) }.not_to raise_error
     end
 
     it 'logs fatal errors through the configured discard handler' do
