@@ -12,4 +12,13 @@
       </li>
     <% end %>
   </ul>
+  <h2 class="mt-6 text-lg font-semibold"><%= t('admin.supplier_details.deleted_records') %></h2>
+  <ul class="divide-y">
+    <% @organization.contacts.where.not(deleted_at: nil).order(updated_at: :desc).each do |contact| %>
+      <li class="flex items-center justify-between gap-3 py-3">
+        <span><%= contact.name %></span>
+        <%= button_to t('admin.supplier_details.restore'), restore_admin_organization_contact_path(contact), method: :patch, class: 'text-emerald-700' %>
+      </li>
+    <% end %>
+  </ul>
 </div>
