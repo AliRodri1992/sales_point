@@ -2,6 +2,7 @@ module Admin
   module ProductsListing
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    SORT_DIRECTIONS = %w[asc desc].freeze
 
     SORTABLE_COLUMNS = %w[
       products.name products.code products.price products.stock
@@ -62,7 +63,7 @@ module Admin
 
     def apply_sorting(scope)
       sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'products.name'
-      sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+      sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
       scope.order(sort_column => sort_direction)
     end
