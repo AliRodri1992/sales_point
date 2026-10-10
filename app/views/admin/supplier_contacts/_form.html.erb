@@ -2,7 +2,13 @@
   <% %i[name position email phone mobile_phone notes].each do |field| %>
     <div>
       <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'block text-sm font-semibold' %>
-      <%= form.text_field field, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+      <% if %i[phone mobile_phone].include?(field) %>
+        <div data-controller="international-phone">
+          <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+        </div>
+      <% else %>
+        <%= form.text_field field, class: 'w-full rounded-lg border border-slate-300 p-2' %>
+      <% end %>
       <%= error_message_for(@contact, field) %>
     </div>
   <% end %>
