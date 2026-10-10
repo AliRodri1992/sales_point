@@ -7,7 +7,7 @@ class CreateDemoRequests < ActiveRecord::Migration[8.1]
       t.string :company, null: false
       t.text :message
       t.string :status, null: false, default: 'pending'
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
 
       t.timestamps
     end
