@@ -193,7 +193,6 @@ RSpec.describe SatFiscalRegime, type: :model do
     end
   end
 
-
   describe 'optional validity boundaries' do
     it 'accepts an open validity range when dates are missing' do
       record = build(:sat_fiscal_regime, valid_from: nil, valid_to: nil)
