@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Supplier, type: :model do
-  subject(:supplier) { build(:supplier) }
+  let(:organization) { create(:organization) }
+  subject(:supplier) { build(:supplier, organization:) }
 
   describe 'validations' do
     it 'is valid with valid attributes' do
@@ -22,21 +23,21 @@ RSpec.describe Supplier, type: :model do
     end
 
     it 'validates code uniqueness among non-deleted suppliers' do
-      create(:supplier, code: 'SUP-0001')
-      expect(build(:supplier, code: 'SUP-0001')).not_to be_valid
+      create(:supplier, organization:, code: 'SUP-0001')
+      expect(build(:supplier, organization:, code: 'SUP-0001')).not_to be_valid
 
       # A deleted supplier's code can be reused
-      create(:supplier, code: 'SUP-0002', deleted_at: Time.current)
-      expect(build(:supplier, code: 'SUP-0002')).to be_valid
+      create(:supplier, organization:, code: 'SUP-0002', deleted_at: Time.current)
+      expect(build(:supplier, organization:, code: 'SUP-0002')).to be_valid
     end
 
     it 'validates RFC uniqueness among non-deleted suppliers' do
-      create(:supplier, rfc: 'XAXX010101001')
-      expect(build(:supplier, rfc: 'XAXX010101001')).not_to be_valid
+      create(:supplier, organization:, rfc: 'XAXX010101001')
+      expect(build(:supplier, organization:, rfc: 'XAXX010101001')).not_to be_valid
 
       # A deleted supplier's RFC can be reused
-      create(:supplier, rfc: 'XAXX010101002', deleted_at: Time.current)
-      expect(build(:supplier, rfc: 'XAXX010101002')).to be_valid
+      create(:supplier, organization:, rfc: 'XAXX010101002', deleted_at: Time.current)
+      expect(build(:supplier, organization:, rfc: 'XAXX010101002')).to be_valid
     end
   end
 
