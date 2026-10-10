@@ -15,6 +15,26 @@ RSpec.describe 'Admin::Languages', type: :request do
     sign_out user
   end
 
+  describe 'GET /admin/languages/new' do
+    it 'renders the new language form' do
+      get new_admin_language_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('name="language[name]"')
+    end
+  end
+
+  describe 'GET /admin/languages/:id' do
+    it 'renders an existing language' do
+      language = create(:language, name: 'Language details', code: 'ld', flag_iso: 'ld')
+
+      get admin_language_path(language)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Language details')
+    end
+  end
+
   describe 'POST /admin/languages' do
     it 'sends a "created" notification to the current user' do
       expect do
@@ -44,6 +64,21 @@ RSpec.describe 'Admin::Languages', type: :request do
 
       expect(Language.find_by(code: 'tl').status).to eq('active')
     end
+
+    it 're-renders the form when the language is invalid' do
+      post admin_languages_path,
+           params: { language: { name: '', code: '', flag_iso: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'redirects after an HTML create and sets a notice' do
+      post admin_languages_path,
+           params: { language: { name: 'HTML Language', code: 'hl', flag_iso: 'hl', status: 'active' } }
+
+      expect(response).to redirect_to(admin_languages_path)
+      expect(flash[:notice]).to eq(I18n.t('admin.languages.created'))
+    end
   end
 
   describe 'PATCH /admin/languages/:id' do
@@ -67,6 +102,21 @@ RSpec.describe 'Admin::Languages', type: :request do
 
       patch admin_language_path(language, format: :turbo_stream),
             params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'active' } }
+    end
+
+    it 're-renders the edit form when the update is invalid' do
+      patch admin_language_path(language),
+            params: { language: { name: '', code: 'ol', flag_iso: 'ol' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'redirects after an HTML update and sets a notice' do
+      patch admin_language_path(language),
+            params: { language: { name: 'Updated HTML Language', code: 'ol', flag_iso: 'ol', status: 'active' } }
+
+      expect(response).to redirect_to(admin_languages_path)
+      expect(flash[:notice]).to eq(I18n.t('admin.languages.updated'))
     end
   end
 
