@@ -35,11 +35,11 @@ RSpec.describe CategoryPolicy do
     end
   end
 
-  describe CategoryPolicy::Scope do
-    it 'returns the supplied scope' do
-      records = Category.all
+end
 
-      expect(described_class.new(user, records).resolve).to equal(records)
-    end
+RSpec.describe CategoryPolicy::Scope do
+  it 'returns the supplied scope' do
+    records = Category.all
+    expect(described_class.new(build(:user), records).resolve).to equal(records)
   end
 end
