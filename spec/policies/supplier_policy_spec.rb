@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe SupplierPolicy do
-  let(:supplier) { build(:supplier) }
+  let(:organization) { create(:organization) }
+  let(:supplier) { build(:supplier, organization:) }
   let(:user) { create(:user) }
 
   it 'allows administrators' do
     role = create(:system_role, code: 'administrator', role_type: :system)
     create(:user_role, user:, system_role: role)
+    create(:organization_membership, user:, organization:)
 
     policy = described_class.new(user, supplier)
     expect(policy.index?).to be(true)
@@ -45,8 +47,9 @@ RSpec.describe SupplierPolicy::Scope do
     admin = create(:user)
     role = create(:system_role, code: 'administrator', role_type: :system)
     create(:user_role, user: admin, system_role: role)
+    create(:organization_membership, user: admin, organization: create(:organization))
 
-    expect(described_class.new(admin, scope).resolve).to equal(scope)
+    expect(described_class.new(admin, scope).resolve).to be_empty
   end
 
   it 'returns no records when the user is nil' do
