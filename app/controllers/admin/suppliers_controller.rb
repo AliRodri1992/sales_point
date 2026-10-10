@@ -55,7 +55,7 @@ module Admin
 
       attributes = supplier_params
       uploads = attributes.delete(:documents)
-      @supplier.documents.attach(uploads) if uploads.present?
+      attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
 
       if @supplier.update(attributes)
         notify_supplier('updated')
