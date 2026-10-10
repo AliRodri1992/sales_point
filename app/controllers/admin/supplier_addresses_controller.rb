@@ -2,6 +2,12 @@
 
 module Admin
   class SupplierAddressesController < ApplicationController
+    ACTION_POLICY = {
+      'index' => :index?, 'new' => :new?, 'create' => :create?,
+      'edit' => :edit?, 'update' => :update?,
+      'destroy' => :destroy?, 'restore' => :update?
+    }.freeze
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
@@ -54,20 +60,7 @@ module Admin
       return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize @supplier, authorization_action
-    end
-
-    def authorization_action
-      case action_name
-      when 'index' then :index?
-      when 'new' then :new?
-      when 'create' then :create?
-      when 'edit' then :edit?
-      when 'update' then :update?
-      when 'destroy' then :destroy?
-      when 'restore' then :update?
-      else :show?
-      end
+      authorize @supplier, ACTION_POLICY.fetch(action_name)
     end
 
     def set_address
