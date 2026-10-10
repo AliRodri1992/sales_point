@@ -30,7 +30,7 @@ RSpec.describe 'Language switch', type: :request do
     end
 
     it 'rejects a language that is not available' do
-      language = create(:language, code: 'ko', name: 'Korean', flag_iso: 'kr', status: :inactive)
+      language = create(:language, code: 'zz', name: 'Inactive Language', flag_iso: 'zz', status: :inactive)
 
       expect do
         patch '/language', params: { language: language.code }
