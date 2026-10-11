@@ -11,6 +11,7 @@ class Supplier < ApplicationRecord
   has_many_attached :documents
   validate :responsible_user_in_organization
   validate :documents_are_safe
+  validate :rfc_must_match_person_type_and_date
 
   def tags_text
     tags.join(', ')
@@ -48,7 +49,7 @@ class Supplier < ApplicationRecord
             length: { in: 12..13 },
             uniqueness: { scope: :organization_id, conditions: -> { where(deleted_at: nil) } },
             format: { with: /\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/i, message: :invalid_format },
-            allow_blank: true
+            presence: true
 
   validates :postal_code,
             format: { with: /\A\d{5}\z/, message: :invalid_format },
@@ -69,6 +70,25 @@ class Supplier < ApplicationRecord
   before_validation :normalize_fields
 
   private
+
+  def rfc_must_match_person_type_and_date
+    return if rfc.blank? || !rfc.match?(/\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/)
+
+    prefix_length = rfc.length == 13 ? 4 : 3
+    if (person_type == 'individual' && prefix_length != 4) ||
+       (person_type == 'company' && prefix_length != 3)
+      errors.add(:rfc, :person_type_mismatch)
+    end
+
+    date_digits = rfc[prefix_length, 6]
+    month = date_digits[2, 2].to_i
+    day = date_digits[4, 2].to_i
+    year = date_digits[0, 2].to_i
+    valid_date = [2000 + year, 1900 + year].any? do |full_year|
+      Date.valid_date?(full_year, month, day)
+    end
+    errors.add(:rfc, :invalid_date) unless valid_date
+  end
 
   def responsible_user_in_organization
     return if responsible_user.blank?
