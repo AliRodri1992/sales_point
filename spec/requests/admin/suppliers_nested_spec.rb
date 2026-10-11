@@ -6,6 +6,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
   let(:user) { create(:user, :english) }
   let(:organization) { create(:organization) }
   let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
+  let(:currency) { create(:currency) }
 
   before do
     create(:organization_membership, user:, organization:)
@@ -20,7 +21,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
   end
 
   it 'creates supplier with multiple contacts and a fiscal address' do
-    attributes = attributes_for(:supplier).merge(
+    attributes = attributes_for(:supplier).merge(currency_id: currency.id,
       contacts_attributes: {
         '0' => { name: 'Primary', email: 'PRIMARY@EXAMPLE.COM', phone: '5512345678', primary: true },
         '1' => { name: 'Secondary', mobile_phone: '5512345679', primary: false }
@@ -42,7 +43,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
 
   it 'retains invalid nested address and contact values in the response' do
     post admin_suppliers_path, params: {
-      supplier: attributes_for(:supplier).merge(
+      supplier: attributes_for(:supplier).merge(currency_id: currency.id,
         contacts_attributes: { '0' => { name: 'Invalid contact', email: 'not-an-email' } },
         addresses_attributes: { '0' => address_attributes.merge(postal_code: 'INVALID') }
       )
