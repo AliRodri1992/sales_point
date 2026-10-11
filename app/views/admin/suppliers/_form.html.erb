@@ -19,7 +19,7 @@
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
       <%= form.label :code, class: 'mb-2 flex items-center gap-1 text-sm font-semibold text-slate-700' do %><%= t('admin.suppliers.form.code') %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
-      <%= form.text_field :code, required: true, pattern: '[A-Za-z0-9_-]+', data: { autofocus: true },
+      <%= form.text_field :code, required: true, pattern: '[A-Za-z0-9_\\-]+', data: { autofocus: true },
                           class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
                           placeholder: t('admin.suppliers.form.code_placeholder') %>
       <%= error_message_for(supplier, :code) %>
