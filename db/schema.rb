@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.bigint "addressable_id", null: false
     t.string "addressable_type", null: false
     t.string "city", limit: 100
-    t.string "country", limit: 100, null: false
+    t.bigint "country_id", null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "exterior_number", limit: 20
@@ -64,9 +64,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.index ["addressable_type", "addressable_id", "purpose"], name: "idx_addresses_one_primary_per_purpose", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["addressable_type", "addressable_id"], name: "idx_addresses_owner_active", where: "(deleted_at IS NULL)"
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+    t.index ["country_id"], name: "index_addresses_on_country_id"
     t.index ["deleted_at"], name: "index_addresses_on_deleted_at", where: "(deleted_at IS NULL)"
     t.index ["geocoding_status"], name: "index_addresses_on_geocoding_status"
-    t.index ["postal_code", "country", "geocoding_status"], name: "idx_on_postal_code_country_geocoding_status_2c6ededc92"
+    t.index ["postal_code", "country_id", "geocoding_status"], name: "idx_on_postal_code_country_id_geocoding_status_73eb116dd6"
     t.index ["postal_code"], name: "index_addresses_on_postal_code"
     t.check_constraint "latitude >= '-90'::integer::numeric AND latitude <= 90::numeric OR latitude IS NULL", name: "check_latitude_range"
     t.check_constraint "longitude >= '-180'::integer::numeric AND longitude <= 180::numeric OR longitude IS NULL", name: "check_longitude_range"
@@ -174,7 +175,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "countries", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "iso_alpha2", limit: 2, null: false
     t.string "iso_alpha3", limit: 3, null: false
     t.string "iso_numeric", limit: 3, null: false
@@ -198,7 +199,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.bigint "country_id", null: false
     t.datetime "created_at", null: false
     t.bigint "currency_id", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.boolean "is_primary", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["country_id", "currency_id"], name: "idx_country_currencies_unique", unique: true
@@ -214,7 +215,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "code", limit: 3, null: false
     t.datetime "created_at", null: false
     t.integer "decimal_places", default: 2, null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "name", limit: 150, null: false
     t.string "numeric_code", limit: 3
     t.string "symbol", limit: 12
@@ -247,7 +248,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "demo_request_activities", force: :cascade do |t|
     t.string "action", null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "demo_request_id", null: false
     t.text "details"
     t.datetime "updated_at", null: false
@@ -300,7 +301,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
 
   create_table "employees", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "email", null: false
     t.string "first_name", limit: 80, null: false
     t.string "last_name", limit: 120, null: false
@@ -330,7 +331,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "membership_features", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.text "description"
     t.string "key", null: false
     t.string "name", null: false
@@ -345,7 +346,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
 
   create_table "membership_plan_features", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.boolean "enabled", default: true, null: false
     t.integer "limit"
     t.bigint "membership_feature_id", null: false
@@ -365,7 +366,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "billing_interval", default: "monthly", null: false
     t.datetime "created_at", null: false
     t.string "currency", limit: 3, default: "MXN", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.text "description"
     t.string "name", null: false
     t.integer "position", default: 0, null: false
@@ -423,7 +424,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "onboarding_audits", force: :cascade do |t|
     t.string "action", limit: 50, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.jsonb "metadata", default: {}, null: false
     t.bigint "organization_id", null: false
     t.string "section", limit: 50
@@ -440,7 +441,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
 
   create_table "organization_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "organization_id", null: false
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
@@ -454,7 +455,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
 
   create_table "organization_migrations", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "organization_id", null: false
     t.string "priority", limit: 20, null: false
     t.string "status", limit: 20, default: "pending", null: false
@@ -469,13 +470,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   end
 
   create_table "organization_settings", force: :cascade do |t|
+    t.bigint "base_currency_id", null: false
     t.datetime "created_at", null: false
-    t.string "currency", limit: 3, null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "organization_id", null: false
     t.string "payment_method", limit: 20, default: "cash", null: false
     t.string "timezone", default: "UTC", null: false
     t.datetime "updated_at", null: false
+    t.index ["base_currency_id"], name: "index_organization_settings_on_base_currency_id"
     t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
@@ -483,7 +485,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.bigint "base_currency_id", null: false
     t.string "business_sector", limit: 50, null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -496,7 +497,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "tax_id", limit: 13, null: false
     t.datetime "updated_at", null: false
     t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
-    t.index ["base_currency_id"], name: "index_organizations_on_base_currency_id"
     t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
     t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
     t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
@@ -507,7 +507,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "payment_integrations", force: :cascade do |t|
     t.jsonb "configuration", default: {}, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "organization_id", null: false
     t.string "provider", limit: 30, null: false
     t.string "status", limit: 20, default: "pending", null: false
@@ -542,7 +542,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "code", null: false
     t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.text "description"
     t.boolean "featured", default: false
     t.string "image_url"
@@ -728,7 +728,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   create_table "supplier_schedules", force: :cascade do |t|
     t.bigint "branch_id", null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.time "ends_at"
     t.string "kind", null: false
     t.text "notes"
@@ -751,7 +751,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.datetime "created_at", null: false
     t.integer "credit_days", default: 0, null: false
     t.decimal "credit_limit", precision: 15, scale: 2, default: "0.0", null: false
-    t.string "currency", limit: 3, default: "MXN", null: false
+    t.bigint "currency_id", null: false
     t.datetime "deleted_at", precision: nil
     t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.string "email", limit: 150
@@ -770,6 +770,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.text "tags", default: [], null: false, array: true
     t.string "trade_name", limit: 150
     t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_suppliers_on_currency_id"
     t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
     t.index ["email"], name: "index_suppliers_on_email"
     t.index ["organization_id", "code"], name: "idx_suppliers_organization_code_active", unique: true, where: "(deleted_at IS NULL)"
@@ -784,7 +785,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
     t.check_constraint "credit_days >= 0 AND credit_days <= 365", name: "chk_supplier_credit_days"
     t.check_constraint "credit_limit >= 0::numeric AND minimum_order_amount >= 0::numeric", name: "chk_supplier_amounts"
-    t.check_constraint "currency::text = ANY (ARRAY['MXN'::character varying, 'USD'::character varying, 'EUR'::character varying]::text[])", name: "chk_supplier_currency"
     t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_discount"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
     t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_suppliers_postal_code_format"
@@ -827,7 +827,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.bigint "branch_id", null: false
     t.string "code", limit: 40, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "name", limit: 80, null: false
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
@@ -917,6 +917,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "countries"
   add_foreign_key "branches", "organizations"
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
@@ -937,14 +938,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   add_foreign_key "organization_memberships", "organizations"
   add_foreign_key "organization_memberships", "users"
   add_foreign_key "organization_migrations", "organizations"
+  add_foreign_key "organization_settings", "currencies", column: "base_currency_id"
   add_foreign_key "organization_settings", "organizations"
-  add_foreign_key "organizations", "currencies", column: "base_currency_id"
   add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "supplier_schedules", "branches"
   add_foreign_key "supplier_schedules", "suppliers"
+  add_foreign_key "suppliers", "currencies"
   add_foreign_key "suppliers", "organizations"
   add_foreign_key "suppliers", "sat_fiscal_regimes"
   add_foreign_key "suppliers", "users", column: "responsible_user_id"
