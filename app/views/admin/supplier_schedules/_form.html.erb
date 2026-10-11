@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, @supplier, @schedule], class: 'space-y-4' do |form| %>
+<%= form_with model: @schedule, url: @schedule.persisted? ? admin_supplier_schedule_path(@supplier, @schedule) : admin_supplier_schedules_path(@supplier), class: 'space-y-4' do |form| %>
   <div>
     <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
     <%= form.collection_select :branch_id, @branches, :id, :name, { include_blank: true }, class: "w-full rounded-lg border p-2 #{form_state_classes(@schedule, :branch)}" %>
@@ -17,7 +17,7 @@
   <% %i[starts_at ends_at].each do |field| %>
     <div>
       <%= form.label field, t("admin.supplier_dossier.#{field}") %>
-      <%= form.time_field field, class: "w-full rounded-lg border p-2 #{form_state_classes(@schedule, :branch)}" %>
+      <%= form.time_field field, class: "w-full rounded-lg border p-2 #{form_state_classes(@schedule, field)}" %>
       <%= error_message_for(@schedule, field) %>
     </div>
   <% end %>
