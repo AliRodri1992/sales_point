@@ -86,6 +86,45 @@ en:
           rfc: "Tax ID"
           status: "Status"
           actions: "Actions"
+      onboarding:
+        steps:
+          step_1: "General information"
+          step_2: "Tax information"
+          step_3: "Contacts"
+          step_4: "Addresses"
+          step_5: "Commercial terms"
+          step_6: "Branch operations"
+          step_7: "Documents"
+        subtitles:
+          step_1: "Main details"
+          step_2: "Tax ID and tax regime"
+          step_3: "Contact people"
+          step_4: "Supplier addresses"
+          step_5: "Credit and discounts"
+          step_6: "Visits and orders"
+          step_7: "Files and notes"
+        panel:
+          eyebrow: "DELTA POS"
+          title: "Work with the best suppliers"
+          description: "Keep your supplier catalog current and optimize your supply chain."
+          next: "Next"
+          previous: "Previous"
+          required: "Fields marked with * are required."
+          benefit_1:
+            title: "Full control"
+            description: "Organize and classify your suppliers easily."
+          benefit_2:
+            title: "Commercial terms"
+            description: "Manage credit, discounts and minimum orders."
+          benefit_3:
+            title: "Multiple addresses"
+            description: "Track warehouses, branches and delivery addresses."
+          benefit_4:
+            title: "Contacts"
+            description: "Keep contact information readily available."
+        next: "Next"
+        previous: "Previous"
+        required: "Fields marked with * are required."
       form:
         code: "Code"
         code_placeholder: "e.g. SUP-0001"
