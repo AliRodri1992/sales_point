@@ -5,6 +5,11 @@ es:
     initial_terminal_name: "Caja %{number}"
   admin:
     onboarding:
+      business_sectors:
+        grocery: "Abarrotes"
+        fashion: "Moda y ropa"
+        restaurant: "Restaurantes"
+        pharmacy: "Farmacias"
       link: "Configuración inicial"
       show:
         title: "Configuración inicial"
