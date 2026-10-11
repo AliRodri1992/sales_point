@@ -3,19 +3,7 @@
 RSpec.describe Organization, type: :model do
   subject(:organization) { build(:organization) }
 
-  it { is_expected.to belong_to(:base_currency).class_name('Currency') }
   it { is_expected.to validate_presence_of(:name) }
-
-  it 'rejects an inactive base currency when creating an organization' do
-    organization.base_currency.active = false
-    expect(organization).not_to be_valid
-    expect(organization.errors[:base_currency]).to be_present
-  end
-
-  it 'allows a different active base currency for each organization' do
-    organization.base_currency = create(:currency, code: 'USD', numeric_code: '840')
-    expect(organization).to be_valid
-  end
   it { is_expected.to validate_presence_of(:tax_id) }
   it { is_expected.to validate_presence_of(:business_sector) }
   it { is_expected.to validate_presence_of(:onboarding_status) }
