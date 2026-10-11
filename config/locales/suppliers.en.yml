@@ -88,6 +88,7 @@ en:
           actions: "Actions"
       onboarding:
         required_field: "%{field} is required."
+        invalid_format: "%{field} has an invalid format."
         contact_general: "Supplier contact details"
         summary:
           title: "Review"
