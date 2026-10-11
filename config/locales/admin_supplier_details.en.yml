@@ -19,6 +19,10 @@ en:
       deleted_records: "Deleted records"
       restore: "Restore"
       restored: "Record restored"
+      address_created: "Supplier address saved successfully"
+      address_updated: "Supplier address updated successfully"
+      address_deleted: "Supplier address deleted successfully"
+      address_restored: "Supplier address restored successfully"
       address_purposes:
         general: "General"
         fiscal: "Tax"

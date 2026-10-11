@@ -27,7 +27,8 @@ module Admin
     def create
       @address = @supplier.addresses.new(address_params)
       if @address.save
-        redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.saved')
+        notify_address('address_created')
+        redirect_success('address_created')
       else
         render :new, status: :unprocessable_content
       end
@@ -38,7 +39,8 @@ module Admin
 
     def update
       if @address.update(address_params)
-        redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.saved')
+        notify_address('address_updated')
+        redirect_success('address_updated')
       else
         render :edit, status: :unprocessable_content
       end
@@ -50,7 +52,8 @@ module Admin
     def restore
       record = @supplier.addresses.with_deleted.where.not(deleted_at: nil).find(params[:id])
       if record.restore_safely
-        redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.restored')
+        notify_address('address_restored')
+        redirect_success('address_restored')
       else
         redirect_to admin_supplier_addresses_path(@supplier), alert: record.errors.full_messages.to_sentence
       end
@@ -58,7 +61,8 @@ module Admin
 
     def destroy
       @address.update!(deleted_at: Time.current)
-      redirect_to admin_supplier_addresses_path(@supplier), notice: t('admin.supplier_details.deleted')
+      notify_address('address_deleted')
+      redirect_success('address_deleted')
     end
 
     private
@@ -72,6 +76,15 @@ module Admin
 
     def set_address
       @address = @supplier.addresses.not_deleted.find(params[:id])
+    end
+
+    def notify_address(action)
+      Suppliers::NotifyService.call(action: action, supplier: @supplier, user: current_user)
+    end
+
+    def redirect_success(action)
+      redirect_to admin_supplier_addresses_path(@supplier),
+                  flash: { swal_message: t("admin.supplier_details.#{action}") }
     end
 
     def address_params

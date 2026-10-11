@@ -19,6 +19,10 @@ es:
       deleted_records: "Registros eliminados"
       restore: "Restaurar"
       restored: "Registro restaurado"
+      address_created: "Dirección del proveedor guardada correctamente"
+      address_updated: "Dirección del proveedor modificada correctamente"
+      address_deleted: "Dirección del proveedor eliminada exitosamente"
+      address_restored: "Dirección del proveedor recuperada exitosamente"
       address_purposes:
         general: "General"
         fiscal: "Fiscal"

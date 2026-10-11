@@ -19,6 +19,10 @@ ko:
       deleted_records: "삭제된 항목"
       restore: "복원"
       restored: "항목이 복원되었습니다"
+      address_created: "공급업체 주소가 저장되었습니다"
+      address_updated: "공급업체 주소가 수정되었습니다"
+      address_deleted: "공급업체 주소가 삭제되었습니다"
+      address_restored: "공급업체 주소가 복원되었습니다"
       address_purposes:
         general: "일반"
         fiscal: "세무"
