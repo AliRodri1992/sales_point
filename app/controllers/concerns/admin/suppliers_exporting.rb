@@ -4,9 +4,11 @@ module Admin
   module SuppliersExporting
     def export
       authorize Supplier, :index?
-      @supplier_regimes = SatFiscalRegime.current.order(:code)
-      scope = policy_scope(current_organization.suppliers.not_deleted)
-      scope = apply_sorting(apply_filters(scope))
+      return head :bad_request unless params[:supplier_id].to_s.match?(/\\A[1-9]\\d*\\z/)
+
+      supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
+      authorize supplier, :show?
+      scope = current_organization.suppliers.where(id: supplier.id)
       format = params[:file_format].to_s
       return head :bad_request unless %w[pdf xlsx].include?(format)
 
