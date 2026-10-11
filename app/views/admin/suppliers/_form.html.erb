@@ -73,7 +73,7 @@
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
       <%= form.label :person_type, t('admin.supplier_dossier.fields.person_type'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <div class="relative" data-controller="delta-select"><%= form.select :person_type, %w[individual company].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: true }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :person_type)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
+      <div class="relative" data-controller="delta-select"><%= form.select :person_type, %w[individual company].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: t('admin.supplier_dossier.placeholders.person_type') }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :person_type)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :person_type) %>
     </div>
     <div>
@@ -151,7 +151,7 @@
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
       <%= form.label :responsible_user_id, t('admin.supplier_dossier.responsible'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <div class="relative" data-controller="delta-select"><%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: true }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :responsible_user)} appearance-none pr-11 cursor-pointer" %></div>
+      <div class="relative" data-controller="delta-select"><%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: t('admin.supplier_dossier.placeholders.responsible') }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :responsible_user)} appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :responsible_user) %>
     </div>
     <div>
