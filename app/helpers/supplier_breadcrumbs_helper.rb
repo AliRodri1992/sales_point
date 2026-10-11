@@ -55,6 +55,7 @@ module SupplierBreadcrumbsHelper
       [base, supplier_item, { label: t('admin.supplier_details.contacts') }]
     end
   end
+
   def supplier_schedule_breadcrumb_items
     supplier = controller.view_assigns['supplier']
     base = { label: t('admin.shared.sidebar.suppliers'), path: admin_suppliers_path }
