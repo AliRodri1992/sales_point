@@ -5,10 +5,12 @@ class CreateCountryCurrencies < ActiveRecord::Migration[8.1]
       t.references :currency, null: false, foreign_key: true
       t.boolean :is_primary, null: false, default: false
       t.boolean :active, null: false, default: true
+      t.datetime :deleted_at
 
       t.timestamps
     end
 
+    add_index :country_currencies, :deleted_at
     add_index :country_currencies, %i[country_id currency_id],
               unique: true, name: 'idx_country_currencies_unique'
     add_index :country_currencies, :country_id,
