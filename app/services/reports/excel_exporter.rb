@@ -11,7 +11,7 @@ module Reports
     end
 
     def self.populate_sheet(sheet, report)
-      columns = report.columns
+      columns = report.columns(format: :xlsx)
       header = sheet.styles.add_style(bg_color: '047857', fg_color: 'FFFFFF', b: true)
       sheet.add_row(columns.map { |column| column.fetch(:label) }, style: header)
       report.each_row { |record| append_record(sheet, columns, record) }
