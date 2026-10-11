@@ -5,7 +5,7 @@ export default class extends Controller {
     "wrapper", "step", "node", "progress", "stepCounter", "setupType",
     "setupCard", "input", "dropdown", "dropdownMenu", "dropdownLabel",
     "businessSector", "migrationVolume", "migrationPriority",
-    "branchesHidden", "currency", "terminals", "payments", "migrationFields",
+    "branchesHidden", "terminals", "payments", "migrationFields",
     "terms", "back", "next", "error", "companyName", "taxId", "firstName", "lastName",
     "password", "confirmation"
   ]
@@ -94,7 +94,6 @@ export default class extends Controller {
   dropdownInputTarget(name) {
     return {
       "business-sector": "businessSector",
-      currency: "currency",
       terminals: "terminals",
       "payment-integration": "payments"
     }[name]
@@ -110,7 +109,6 @@ export default class extends Controller {
   updateDropdownSelections() {
     [
       ["business-sector", this.businessSectorTarget.value],
-      ["currency", this.currencyTarget.value],
       ["terminals", this.terminalsTarget.value],
       ["payment-integration", this.paymentsTarget.value]
     ].forEach(([name, value]) => this.updateDropdownOptions(name, value))
