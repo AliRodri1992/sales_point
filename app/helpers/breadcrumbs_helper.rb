@@ -134,5 +134,4 @@ module BreadcrumbsHelper
   def editable_record_breadcrumb(record, fallback, path_builder)
     record_breadcrumb(record, fallback).merge(path: record&.then { |value| path_builder.call(value) })
   end
-
 end
