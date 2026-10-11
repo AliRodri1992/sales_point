@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Currency < ApplicationRecord
-  acts_as_paranoid
-
   has_many :country_currencies, dependent: :restrict_with_error
   has_many :countries, through: :country_currencies
   has_many :organizations, foreign_key: :base_currency_id, inverse_of: :base_currency,
