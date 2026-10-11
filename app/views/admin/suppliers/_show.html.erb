@@ -89,6 +89,11 @@
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true">
                     <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
                   </svg>
+                <% elsif symbol == 'file-text' %>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true">
+                    <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
+                    <path d="M14 2v6h5M8 12h8M8 16h8M8 19h5"/>
+                  </svg>
                 <% else %>
                   <%= icon(symbol, class: 'size-5') %>
                 <% end %></div>
