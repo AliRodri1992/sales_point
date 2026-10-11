@@ -17,14 +17,14 @@
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_1') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_1') %></p></div>
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
-      <%= form.label :code, t('admin.suppliers.form.code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %> <span class="text-rose-600" aria-hidden="true">*</span>
+      <%= form.label :code, class: 'mb-2 flex items-center gap-1 text-sm font-semibold text-slate-700' do %><%= t('admin.suppliers.form.code') %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
       <%= form.text_field :code, required: true, pattern: '[A-Za-z0-9_-]+', data: { autofocus: true },
                           class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
                           placeholder: t('admin.suppliers.form.code_placeholder') %>
       <%= error_message_for(supplier, :code) %>
     </div>
     <div>
-      <%= form.label :name, t('admin.suppliers.form.name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %> <span class="text-rose-600" aria-hidden="true">*</span>
+      <%= form.label :name, class: 'mb-2 flex items-center gap-1 text-sm font-semibold text-slate-700' do %><%= t('admin.suppliers.form.name') %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
       <%= form.text_field :name, required: true,
                           class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :name)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
                           placeholder: t('admin.suppliers.form.name_placeholder') %>
@@ -62,7 +62,7 @@
       <%= error_message_for(supplier, :person_type) %>
     </div>
     <div>
-      <%= form.label :rfc, t('admin.suppliers.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %> <span class="text-rose-600" aria-hidden="true">*</span>
+      <%= form.label :rfc, class: 'mb-2 flex items-center gap-1 text-sm font-semibold text-slate-700' do %><%= t('admin.suppliers.form.rfc') %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
       <%= form.text_field :rfc, required: true, maxlength: 13, pattern: '[A-Za-z&Ññ]{3,4}[0-9]{6}[A-Za-z0-9]{3}',
                           class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :rfc)} px-4 py-3 text-sm uppercase text-slate-800 placeholder:text-slate-400",
                           placeholder: t('admin.suppliers.form.rfc_placeholder') %>
