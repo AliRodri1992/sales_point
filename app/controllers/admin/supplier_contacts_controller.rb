@@ -27,7 +27,8 @@ module Admin
     def create
       @contact = @supplier.contacts.new(contact_params)
       if @contact.save
-        redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.saved')
+        notify_contact('contact_created')
+        redirect_success('contact_created')
       else
         render :new, status: :unprocessable_content
       end
@@ -38,7 +39,8 @@ module Admin
 
     def update
       if @contact.update(contact_params)
-        redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.saved')
+        notify_contact('contact_updated')
+        redirect_success('contact_updated')
       else
         render :edit, status: :unprocessable_content
       end
@@ -50,7 +52,8 @@ module Admin
     def restore
       record = @supplier.contacts.with_deleted.where.not(deleted_at: nil).find(params[:id])
       if record.restore_safely
-        redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.restored')
+        notify_contact('contact_restored')
+        redirect_success('contact_restored')
       else
         redirect_to admin_supplier_contacts_path(@supplier), alert: record.errors.full_messages.to_sentence
       end
@@ -58,7 +61,8 @@ module Admin
 
     def destroy
       @contact.update!(deleted_at: Time.current)
-      redirect_to admin_supplier_contacts_path(@supplier), notice: t('admin.supplier_details.deleted')
+      notify_contact('contact_deleted')
+      redirect_success('contact_deleted')
     end
 
     private
@@ -72,6 +76,15 @@ module Admin
 
     def set_contact
       @contact = @supplier.contacts.not_deleted.find(params[:id])
+    end
+
+    def notify_contact(action)
+      Suppliers::NotifyService.call(action: action, supplier: @supplier, user: current_user)
+    end
+
+    def redirect_success(action)
+      redirect_to admin_supplier_contacts_path(@supplier),
+                  flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 
     def contact_params
