@@ -5,6 +5,11 @@ ko:
     initial_terminal_name: "금전함 %{number}"
   admin:
     onboarding:
+      business_sectors:
+        grocery: "식료품"
+        fashion: "패션 및 의류"
+        restaurant: "음식점"
+        pharmacy: "약국"
       link: "초기 설정"
       show:
         title: "초기 설정"
