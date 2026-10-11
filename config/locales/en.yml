@@ -1,7 +1,25 @@
 ---
 en:
   activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            rfc:
+              person_type_mismatch: "does not match the selected person type"
+              invalid_date: "contains an invalid date"
     attributes:
+      supplier:
+        code: "Code"
+        name: "Supplier name"
+        rfc: "Tax ID (RFC)"
+        email: "Email address"
+        phone: "Phone"
+        postal_code: "Postal code"
+        person_type: "Person type"
+      contact:
+        name: "Full name"
+        mobile_phone: "Mobile phone"
       address:
         city: City
         country: Country
