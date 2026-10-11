@@ -21,6 +21,8 @@ RSpec.describe 'admin/suppliers/index', type: :view do
     assign(:suppliers, Supplier.none)
     assign(:total_count, 0)
     assign(:total_pages, 1)
+    assign(:supplier_stats, { total: 0, active: 0, inactive: 0, credit: 0 })
+    assign(:supplier_regimes, SatFiscalRegime.none)
   end
 
   it 'renders an accessible empty state' do
