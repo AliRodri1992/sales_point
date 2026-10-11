@@ -2,6 +2,8 @@
 
 module Users
   class RegistrationsController < Devise::RegistrationsController
+    before_action :load_currencies, only: %i[new create]
+
     def create
       build_resource(sign_up_params)
       result = RegistrationService.call(resource:, params: registration_params)
@@ -13,6 +15,10 @@ module Users
 
     private
 
+    def load_currencies
+      @currencies = Currency.active.order(:code).to_a
+    end
+
     protected
 
     def sign_up_params
@@ -23,7 +29,7 @@ module Users
       params.permit(
         :setup_type, :first_name, :last_name, :company_name, :tax_id,
         :business_sector, :migration_volume, :migration_priority,
-        :branches, :terminals, :payment_integration, :terms
+        :branches, :currency, :terminals, :payment_integration, :terms
       )
     end
 
