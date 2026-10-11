@@ -1,6 +1,12 @@
 en:
   admin:
     supplier_details:
+      manage_contacts: "Manage contacts"
+      actions: "Actions"
+      contacts_count: "%{count} contacts"
+      contact_statuses:
+        active: "Active"
+        inactive: "Inactive"
       contacts: "Contacts"
       addresses: "Addresses"
       add: "Add"
