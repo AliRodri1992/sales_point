@@ -87,6 +87,10 @@ en:
           status: "Status"
           actions: "Actions"
       onboarding:
+        summary:
+          title: "Review"
+          subtitle: "Check before saving"
+          description: "Review the supplier details before confirming."
         steps:
           step_1: "General information"
           step_2: "Tax information"
