@@ -86,6 +86,45 @@ es:
           rfc: "RFC"
           status: "Estado"
           actions: "Acciones"
+      onboarding:
+        steps:
+          step_1: "Información general"
+          step_2: "Información fiscal"
+          step_3: "Contactos"
+          step_4: "Direcciones"
+          step_5: "Condiciones comerciales"
+          step_6: "Operación por sucursal"
+          step_7: "Documentos"
+        subtitles:
+          step_1: "Datos principales"
+          step_2: "RFC y régimen fiscal"
+          step_3: "Personas de contacto"
+          step_4: "Domicilios del proveedor"
+          step_5: "Crédito y descuentos"
+          step_6: "Visitas y pedidos"
+          step_7: "Archivos y notas"
+        panel:
+          eyebrow: "DELTA POS"
+          title: "Trabaja con los mejores proveedores"
+          description: "Mantén tu catálogo actualizado con proveedores confiables y optimiza tu cadena de suministro."
+          next: "Siguiente"
+          previous: "Anterior"
+          required: "Los campos marcados con * son obligatorios."
+          benefit_1:
+            title: "Control total"
+            description: "Organiza y clasifica tus proveedores de forma sencilla."
+          benefit_2:
+            title: "Condiciones comerciales"
+            description: "Gestiona crédito, descuentos y pedidos mínimos."
+          benefit_3:
+            title: "Múltiples direcciones"
+            description: "Registra almacenes, sucursales y domicilios de entrega."
+          benefit_4:
+            title: "Contactos"
+            description: "Mantén la información de contacto siempre disponible."
+        next: "Siguiente"
+        previous: "Anterior"
+        required: "Los campos marcados con * son obligatorios."
       form:
         code: "Código"
         code_placeholder: "ej. SUP-0001"
