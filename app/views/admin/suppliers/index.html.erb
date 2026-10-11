@@ -11,7 +11,7 @@
       <%= link_to new_admin_supplier_path,
                   data: { tooltip: t('admin.suppliers.index.new') },
                   class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700' do %>
-        <%= icon('plus', class: 'size-4') %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         <%= t('admin.suppliers.index.new') %>
       <% end %>
     <% end %>
@@ -21,17 +21,41 @@
 </div>
 
 <div class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
-  <% { total: 'truck', active: 'circle-check', inactive: 'circle-pause', credit: 'credit-card' }.each do |metric, icon_name| %>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
     <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div class="flex items-center justify-between"><span class="text-xs text-slate-500"><%= t("admin.suppliers.index.metrics.#{metric}") %></span><%= icon(icon_name, class: 'size-5 text-emerald-600') %></div>
-      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(metric) %></p>
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics.total') %></span>
+        <span class="flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M5 7V4h8v3"/></svg></span>
+      </div>
+      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:total) %></p>
     </div>
-  <% end %>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics.active') %></span>
+        <span class="flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span>
+      </div>
+      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:active) %></p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics.inactive') %></span>
+        <span class="flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8v8M14 8v8"/></svg></span>
+      </div>
+      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:inactive) %></p>
+    </div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex items-center justify-between gap-3">
+        <span class="text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics.credit') %></span>
+        <span class="flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>
+      </div>
+      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:credit) %></p>
+    </div>
+  </div>
 </div>
 
 <%= form_with url: admin_suppliers_path, method: :get, data: { turbo_frame: 'suppliers_list' }, class: 'mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' do %>
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><%= icon('adjustments-horizontal', class: 'size-5') %><%= t('admin.suppliers.index.advanced.title') %></h2>
+    <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><%= t('admin.suppliers.index.advanced.title') %></h2>
     <div class="flex flex-wrap gap-2">
       <%= link_to t('admin.suppliers.index.advanced.clear'), admin_suppliers_path, class: 'rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50' %>
       <%= button_tag t('admin.suppliers.index.filters.apply'), type: 'submit', class: 'rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700' %>
