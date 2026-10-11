@@ -8,7 +8,13 @@
     <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
       <div>
         <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field field, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+        <%= form.text_field field, required: %i[street exterior_number neighborhood city state country postal_code].include?(field),
+                            minlength: (%i[street neighborhood city state country].include?(field) ? 2 : nil),
+                            maxlength: ({ street: 150, exterior_number: 20, interior_number: 20,
+                                          neighborhood: 100, city: 100, state: 100, country: 100,
+                                          postal_code: 5 }[field]),
+                            pattern: (field == :postal_code ? '[0-9]{5}' : nil),
+                            inputmode: (field == :postal_code ? 'numeric' : nil), class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
         <%= error_message_for(form.object, field) %>
       </div>
     <% end %>
