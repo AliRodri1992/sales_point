@@ -49,7 +49,13 @@ module SupplierExamples
     def create_supplier(organization, number)
       code = format('SUP-%04d', number)
       supplier = Supplier.find_or_initialize_by(organization:, code:)
-      supplier.assign_attributes(
+      supplier.assign_attributes(supplier_attributes(number))
+      supplier.save!
+      create_contact(supplier, number)
+    end
+
+    def supplier_attributes(number)
+      {
         name: "Proveedor de ejemplo #{number}",
         person_type: :company,
         email: "proveedor#{number}@example.com",
@@ -60,9 +66,7 @@ module SupplierExamples
         currency: Currency.active.find_by!(code: 'MXN'),
         notes: "Proveedor de demostración #{number} para Delta POS.",
         deleted_at: nil
-      )
-      supplier.save!
-      create_contact(supplier, number)
+      }
     end
 
     def create_contact(supplier, number)

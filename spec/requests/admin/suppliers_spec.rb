@@ -121,8 +121,13 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'accepts currency and country references for a supplier and its fiscal address' do
     currency = create(:currency)
     country = create(:country)
-    attributes = attributes_for(:supplier).merge(currency_id: currency.id,
-      addresses_attributes: { '0' => attributes_for(:address).except(:country).merge(country_id: country.id, purpose: 'fiscal') })
+    address_attributes = attributes_for(:address).except(:country).merge(
+      country_id: country.id, purpose: 'fiscal'
+    )
+    attributes = attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      addresses_attributes: { '0' => address_attributes }
+    )
 
     post admin_suppliers_path, params: { supplier: attributes }
 

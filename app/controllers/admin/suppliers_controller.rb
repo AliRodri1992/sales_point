@@ -48,9 +48,7 @@ module Admin
     end
 
     def create
-      @supplier = current_organization.suppliers.new(supplier_params.except(:status))
-      @supplier.status = :active
-      @supplier.contacts.each { |contact| contact.active = true }
+      @supplier = build_new_supplier
       authorize @supplier
 
       if @supplier.save
@@ -58,15 +56,10 @@ module Admin
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.created') }
       else
-        load_fiscal_regimes
-        load_reference_catalogs
-        render :new, status: :unprocessable_content
+        render_supplier_form_error
       end
     rescue ActiveRecord::RecordNotUnique
-      @supplier.errors.add(:base, t('admin.suppliers.errors.duplicate'))
-      load_fiscal_regimes
-      load_reference_catalogs
-      render :new, status: :unprocessable_content
+      render_supplier_duplicate_error
     end
 
     def update
@@ -77,15 +70,10 @@ module Admin
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }
       else
-        load_fiscal_regimes
-      load_reference_catalogs
-        render :new, status: :unprocessable_content
+        render_supplier_form_error
       end
     rescue ActiveRecord::RecordNotUnique
-      @supplier.errors.add(:base, t('admin.suppliers.errors.duplicate'))
-      load_fiscal_regimes
-      load_reference_catalogs
-      render :new, status: :unprocessable_content
+      render_supplier_duplicate_error
     end
 
     def destroy
@@ -106,11 +94,6 @@ module Admin
       @supplier = policy_scope(
         current_organization.suppliers.not_deleted.includes(:sat_fiscal_regime)
       ).find(params[:id])
-    end
-
-    def load_reference_catalogs
-      @currencies = Currency.active.order(:code)
-      @countries = Country.active.ordered
     end
 
     def supplier_params
