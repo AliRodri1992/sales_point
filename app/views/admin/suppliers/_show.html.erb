@@ -11,7 +11,7 @@
         <div class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= icon('building-office-2', class: 'size-7') %></div>
         <div>
           <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= supplier.name %></h1>
-          <p class="mt-1 text-sm text-slate-500"><%= supplier.code %> · <%= t("admin.supplier_dossier.options.#{supplier.classification}", default: supplier.classification.to_s.humanize) %></p>
+          <p class="mt-1 text-sm text-slate-500"><%= supplier.code %> · <%= supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : "—" %></p>
           <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
         </div>
       </div>
