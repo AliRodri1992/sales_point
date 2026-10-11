@@ -22,6 +22,30 @@ RSpec.describe Supplier, type: :model do
       expect(supplier).not_to be_valid
     end
 
+    it 'requires RFC and supplier name' do
+      supplier.assign_attributes(rfc: ' ', name: ' ')
+      expect(supplier).not_to be_valid
+      expect(supplier.errors.attribute_names).to include(:rfc, :name)
+    end
+
+    it 'rejects RFCs with impossible calendar dates' do
+      supplier.rfc = 'ABCD990230AAA'
+      expect(supplier).not_to be_valid
+      expect(supplier.errors.details[:rfc]).to include(hash_including(error: :invalid_date))
+    end
+
+    it 'checks RFC length against the selected person type' do
+      supplier.assign_attributes(person_type: 'company', rfc: 'ABCD900101AAA')
+      expect(supplier).not_to be_valid
+      expect(supplier.errors.details[:rfc]).to include(hash_including(error: :person_type_mismatch))
+    end
+
+    it 'normalizes RFC case before validating' do
+      supplier.rfc = ' abcd900101aaa '
+      supplier.valid?
+      expect(supplier.rfc).to eq('ABCD900101AAA')
+    end
+
     it 'validates code uniqueness among non-deleted suppliers' do
       create(:supplier, organization:, code: 'SUP-0001')
       expect(build(:supplier, organization:, code: 'SUP-0001')).not_to be_valid
