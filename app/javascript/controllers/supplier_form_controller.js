@@ -104,42 +104,77 @@ export default class extends Controller {
     return false
   }
 
+  summaryLabel(field) {
+    const explicit = field.labels?.[0]?.textContent?.replace(/\\*/g, "").trim()
+    if (explicit) return explicit
+    const id = field.id
+    const matching = id ? this.element.querySelector(`label[for="${CSS.escape(id)}"]`) : null
+    if (matching) return matching.textContent.replace(/\\*/g, "").trim()
+    return field.name.split("[").pop().replace("]", "").replace(/_/g, " ")
+  }
+
+  summaryValue(field) {
+    if (field.type === "file") return [...field.files].map((file) => file.name).join(", ")
+    if (field.type === "checkbox") return field.checked ? "✓" : "—"
+    if (field.type === "radio") return field.checked ? field.value : null
+    if (field.tagName === "SELECT") {
+      return [...field.selectedOptions].map((option) => option.textContent.trim()).filter(Boolean).join(", ")
+    }
+    return field.value.trim()
+  }
+
+  appendSummaryGroup(title, fields) {
+    const entries = fields.filter((field) =>
+      field.name && !field.disabled && !["hidden", "submit", "button"].includes(field.type) &&
+      !field.name.endsWith("[_destroy]") && !field.closest("template") &&
+      !field.closest("[data-supplier-nested-item]")?.querySelector("[data-supplier-nested-destroy]:checked")
+    ).map((field) => ({
+      label: this.summaryLabel(field),
+      value: this.summaryValue(field),
+      type: field.type
+    })).filter(({ value }) => value !== null && value !== "")
+
+    if (!entries.length) return
+
+    const group = document.createElement("section")
+    group.className = "rounded-xl border border-slate-200 bg-slate-50/50 p-4"
+    const heading = document.createElement("h3")
+    heading.className = "mb-3 text-sm font-bold text-slate-900"
+    heading.textContent = title
+    group.append(heading)
+
+    const list = document.createElement("dl")
+    list.className = "grid gap-3 sm:grid-cols-2"
+    entries.forEach(({ label, value }) => {
+      const item = document.createElement("div")
+      const term = document.createElement("dt")
+      term.className = "text-xs font-semibold text-slate-500"
+      term.textContent = label
+      const description = document.createElement("dd")
+      description.className = "mt-1 break-words whitespace-pre-wrap text-sm text-slate-900"
+      description.textContent = value
+      item.append(term, description)
+      list.append(item)
+    })
+    group.append(list)
+    this.summaryTarget.append(group)
+  }
+
   updateSummary() {
     if (!this.hasSummaryTarget) return
     this.summaryTarget.replaceChildren()
+
     this.stepTargets.slice(0, -1).forEach((step) => {
-      const entries = [...step.querySelectorAll("input, select, textarea")].filter((field) =>
-        field.name && !["hidden", "submit", "button"].includes(field.type) && !field.disabled
-      ).map((field) => {
-        const label = field.labels?.[0]?.textContent?.trim() || field.name.split("[").pop().replace("]", "")
-        let value = field.value
-        if (field.type === "file") value = [...field.files].map((file) => file.name).join(", ")
-        else if (field.tagName === "SELECT") value = field.selectedOptions[0]?.textContent?.trim() || ""
-        else if (field.type === "checkbox" || field.type === "radio") value = field.checked ? field.value : ""
-        return { label, value: value.trim() }
-      }).filter(({ value }) => value)
-      if (!entries.length) return
-      const group = document.createElement("section")
-      group.className = "rounded-xl border border-slate-200 bg-slate-50/50 p-4"
-      const heading = document.createElement("h3")
-      heading.className = "mb-3 text-sm font-bold text-slate-900"
-      heading.textContent = step.querySelector("h2")?.textContent?.trim() || ""
-      group.append(heading)
-      const list = document.createElement("dl")
-      list.className = "grid gap-3 sm:grid-cols-2"
-      entries.forEach(({ label, value }) => {
-        const item = document.createElement("div")
-        const term = document.createElement("dt")
-        term.className = "text-xs font-semibold text-slate-500"
-        term.textContent = label
-        const description = document.createElement("dd")
-        description.className = "mt-1 break-words text-sm text-slate-900"
-        description.textContent = value
-        item.append(term, description)
-        list.append(item)
+      const title = step.querySelector("h2")?.textContent?.trim() || ""
+      const fields = [...step.querySelectorAll("input, select, textarea")]
+        .filter((field) => !field.closest("[data-supplier-nested-item]"))
+      this.appendSummaryGroup(title, fields)
+
+      const nestedItems = [...step.querySelectorAll("[data-supplier-nested-item]")]
+        .filter((item) => item.querySelector("[data-supplier-nested-destroy]")?.value !== "1")
+      nestedItems.forEach((item, index) => {
+        this.appendSummaryGroup(`${title} · ${index + 1}`, [...item.querySelectorAll("input, select, textarea")])
       })
-      group.append(list)
-      this.summaryTarget.append(group)
     })
   }
 
