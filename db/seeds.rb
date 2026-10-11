@@ -412,7 +412,7 @@ SeedConsole.track('Sucursales', Branch) do
         neighborhood: 'Centro',
         city: 'Ciudad de México',
         state: 'Ciudad de México',
-        country: 'México',
+        country: Country.find_by!(iso_alpha2: 'MX'),
         postal_code: '06000'
       }
     )
