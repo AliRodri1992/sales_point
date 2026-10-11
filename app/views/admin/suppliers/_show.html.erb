@@ -61,18 +61,66 @@
       <% end %>
     </nav>
 
-    <section data-supplier-dossier-target="panel" data-section="general" class="p-6">
-      <h2 class="mb-4 text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.general') %></h2>
-      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <% [['legal_name', supplier.legal_name], ['trade_name', supplier.trade_name], ['alias_name', supplier.alias_name], ['classification', supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil], ['person_type', supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil], ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil], ['postal_code', supplier.postal_code]].each do |key, value| %>
-          <div><dt class="text-xs font-semibold uppercase text-slate-400"><%= t("admin.suppliers.show.fields.#{key}", default: t("admin.supplier_dossier.fields.#{key}", default: key.humanize)) %></dt><dd class="mt-1 break-words text-sm font-medium text-slate-800"><%= value.presence || '—' %></dd></div>
+    <section data-supplier-dossier-target="panel" data-section="general" class="p-4 sm:p-6">
+      <div class="grid gap-5 lg:grid-cols-2">
+        <% general_fields = [
+          [t('admin.supplier_dossier.general.code'), supplier.code],
+          [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
+          [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
+          [t('admin.supplier_dossier.fields.alias_name'), supplier.alias_name],
+          [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil],
+          [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
+          [t('admin.supplier_dossier.notes'), supplier.notes]
+        ] %>
+        <% fiscal_fields = [
+          [t('admin.supplier_dossier.general.rfc'), supplier.rfc],
+          [t('admin.supplier_dossier.fields.person_type'), supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil],
+          [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil],
+          [t('admin.supplier_dossier.general.postal_code'), supplier.postal_code]
+        ] %>
+        <% [[t('admin.supplier_dossier.general.information'), t('admin.supplier_dossier.general.information_description'), 'building-2', general_fields],
+            [t('admin.supplier_dossier.general.tax_information'), t('admin.supplier_dossier.general.tax_description'), 'file-text', fiscal_fields]].each do |heading, description, symbol, fields| %>
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <div class="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-5">
+              <div class="flex items-start gap-3">
+                <div class="rounded-xl bg-emerald-50 p-2.5 text-emerald-700"><%= icon(symbol, class: 'size-5') %></div>
+                <div>
+                  <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= heading %></h2>
+                  <p class="mt-1 text-sm text-slate-500"><%= description %></p>
+                </div>
+              </div>
+              <% if can_edit %>
+                <%= link_to edit_admin_supplier_path(supplier), class: 'inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+                  <%= icon('pencil', class: 'size-4') %>
+                  <%= t('admin.supplier_details.edit') %>
+                <% end %>
+              <% end %>
+            </div>
+            <dl class="divide-y divide-slate-100 px-5 py-2">
+              <% fields.each do |label, value| %>
+                <div class="grid gap-1 py-3 sm:grid-cols-[minmax(0,40%)_minmax(0,60%)] sm:gap-3">
+                  <dt class="text-sm text-slate-500"><%= label %></dt>
+                  <dd class="break-words whitespace-pre-wrap text-sm font-medium text-slate-900"><%= value.presence || '—' %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </div>
         <% end %>
-      </dl>
-      <div class="mt-6 rounded-xl bg-slate-50 p-4">
-        <h3 class="font-semibold text-slate-800"><%= t('admin.supplier_details.address_purposes.fiscal') %></h3>
-        <p class="mt-2 text-sm text-slate-600"><%= fiscal_address&.full_address || '—' %></p>
       </div>
-      <div class="mt-5"><h3 class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_dossier.notes') %></h3><p class="mt-1 whitespace-pre-wrap text-sm text-slate-600"><%= supplier.notes.presence || '—' %></p></div>
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/40 px-5 py-5">
+        <div class="flex items-start gap-3">
+          <div class="rounded-full bg-emerald-100 p-2.5 text-emerald-700"><%= icon('map-pin', class: 'size-5') %></div>
+          <div>
+            <h3 class="font-jakarta font-bold text-slate-900"><%= t('admin.supplier_dossier.general.fiscal_address') %></h3>
+            <p class="mt-1 max-w-2xl text-sm text-slate-600"><%= t('admin.supplier_dossier.general.address_hint') %></p>
+          </div>
+        </div>
+        <button type="button" data-action="supplier-dossier#select" data-section="addresses" class="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
+          <%= icon('map-pin', class: 'size-4') %>
+          <%= t('admin.supplier_dossier.general.view_addresses') %>
+          <%= icon('arrow-right', class: 'size-4') %>
+        </button>
+      </div>
     </section>
 
     <section data-supplier-dossier-target="panel" data-section="commercial" class="hidden p-6">
