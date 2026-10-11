@@ -114,7 +114,17 @@
                 <% end %>
                 <div>
                   <%= address_fields.label :country_id, t('admin.onboarding.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-                  <%= address_fields.collection_select :country_id, Country.active.ordered, :id, :localized_name, { include_blank: true }, class: 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+                  <div class="relative" data-controller="delta-select" data-country-flags="true">
+                    <%= address_fields.select :country_id,
+                      options_for_select(
+                        Country.active.ordered.map do |country|
+                          [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }]
+                        end,
+                        address_fields.object.country_id
+                      ),
+                      { include_blank: t('admin.supplier_placeholders.country') },
+                      class: "block min-h-11 w-full rounded-xl border #{address_fields.object.errors[:country].any? ? 'border-red-400' : 'border-slate-200'} bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" %>
+                  </div>
                   <%= render 'admin/onboarding/field_errors', object: address_fields.object, attribute: :country %>
                 </div>
               </div>
