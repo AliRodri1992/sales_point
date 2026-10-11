@@ -182,7 +182,7 @@
           <%= link_to t('admin.suppliers.form.cancel'), admin_suppliers_path, data: { turbo_frame: '_top' }, class: 'rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
           <button type="button" data-supplier-form-target="previous" data-action="supplier-form#previous" class="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"><%= t('admin.suppliers.onboarding.previous') %></button>
           <button type="button" data-supplier-form-target="next" data-action="supplier-form#next" class="rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"><%= t('admin.suppliers.onboarding.next') %> →</button>
-          <%= form.submit supplier.persisted? ? t('admin.suppliers.form.update') : t('admin.suppliers.form.create'), data: { supplier_form_target: 'submit' }, class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+          <%= form.submit t('admin.suppliers.form.save'), data: { supplier_form_target: 'submit' }, class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
         </div>
       </div>
     </div>
