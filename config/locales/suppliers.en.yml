@@ -87,6 +87,7 @@ en:
           status: "Status"
           actions: "Actions"
       onboarding:
+        contact_general: "Supplier contact details"
         summary:
           title: "Review"
           subtitle: "Check before saving"
