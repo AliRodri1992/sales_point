@@ -118,7 +118,7 @@ RSpec.describe SatPaymentMethod, type: :model do
       end
 
       it 'returns all records when the search term is blank' do
-        another_record = create(:sat_payment_method, code: '02', description: 'Efectivo')
+        another_record = create(:sat_payment_method, code: '99', description: 'Efectivo')
 
         expect(described_class.search('')).to contain_exactly(record, another_record)
       end
