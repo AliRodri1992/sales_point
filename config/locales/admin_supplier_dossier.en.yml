@@ -6,6 +6,7 @@ en:
         description: "Overview of this supplier's purchasing terms."
         payment: "Payment terms"
         purchase: "Discounts and orders"
+      back: "Back"
       more_actions: "More actions"
       general:
         contact_summary: "Contact details"
