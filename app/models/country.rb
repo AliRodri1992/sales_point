@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Country < ApplicationRecord
-  acts_as_paranoid
-
   has_many :country_currencies, dependent: :restrict_with_error
   has_many :currencies, through: :country_currencies
 
