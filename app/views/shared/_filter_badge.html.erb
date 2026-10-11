@@ -1,0 +1,10 @@
+<% styles = {
+  neutral: 'border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200',
+  active: 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100',
+  inactive: 'border-rose-200 bg-rose-50 text-rose-800 hover:bg-rose-100',
+  credit: 'border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100'
+} %>
+<%= link_to url, data: { action: 'click->supplier-search#removeFilter', filter_key: filter_key }, class: "inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition #{styles.fetch(tone.to_sym, styles[:neutral])}", aria: { label: aria_label } do %>
+  <span class="truncate"><%= label %></span>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-3.5 shrink-0" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+<% end %>
