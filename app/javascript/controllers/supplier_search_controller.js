@@ -26,6 +26,39 @@ export default class extends Controller {
     this.refresh()
   }
 
+  removeFilter(event) {
+    event.preventDefault()
+    const key = event.currentTarget.dataset.filterKey
+    const fields = this.element.querySelectorAll(`[name="${key}"]`)
+    fields.forEach((field) => {
+      if (field.type === "radio") {
+        field.checked = field.value === "all" || field.value === ""
+      } else {
+        field.value = ""
+      }
+    })
+    const dropdown = fields[0]?.closest('[data-controller~="supplier-dropdown"]')
+    if (dropdown) {
+      const selected = dropdown.querySelector("input:checked")
+      const label = selected?.closest("label")?.querySelector("[data-option-label]")
+      if (label) dropdown.querySelector('[data-supplier-dropdown-target="label"]').textContent = label.textContent.trim()
+    }
+    this.refresh()
+  }
+
+  clearFilters(event) {
+    event.preventDefault()
+    this.element.reset()
+    this.element.querySelectorAll('input[type="number"], input[type="date"], input[type="search"]').forEach((field) => { field.value = "" })
+    this.element.querySelectorAll('input[type="radio"]').forEach((field) => { field.checked = field.value === "all" || field.value === "" })
+    this.element.querySelectorAll('[data-controller~="supplier-dropdown"]').forEach((dropdown) => {
+      const selected = dropdown.querySelector("input:checked")
+      const label = selected?.closest("label")?.querySelector("[data-option-label]")
+      if (label) dropdown.querySelector('[data-supplier-dropdown-target="label"]').textContent = label.textContent.trim()
+    })
+    this.refresh()
+  }
+
   async refresh() {
     this.request?.abort()
     this.request = new AbortController()
