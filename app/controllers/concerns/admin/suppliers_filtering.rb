@@ -72,6 +72,8 @@ module Admin
     end
 
     def apply_numeric_bound(scope, field, bound)
+      return scope unless NUMERIC_FIELDS.include?(field)
+
       key = "#{field}_#{bound}"
       return scope unless valid_nonnegative_number?(key)
 
@@ -89,6 +91,8 @@ module Admin
     end
 
     def apply_date_bound(scope, field, bound)
+      return scope unless DATE_FIELDS.include?(field)
+
       key = "#{field}_#{bound}"
       return scope if params[key].blank?
 
