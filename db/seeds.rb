@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'seeds/seed_console'
+
+SeedConsole.start_run!
+
 SYSTEM_ROLES = [
   {
     code: 'super_admin',
@@ -274,6 +278,7 @@ def seed_system_roles
   end
 end
 
+SeedConsole.track('Idiomas', Language) do
 # Create default languages
 [
   { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
@@ -284,7 +289,9 @@ end
     language.assign_attributes(lang_attrs)
   end
 end
+end
 
+SeedConsole.track('Traducciones', Translate) do
 # Load all locale files
 Rails.root.glob('config/locales/*.yml').each do |file|
   next if file.to_s.include?('devise.security_extension')
@@ -296,28 +303,38 @@ Rails.root.glob('config/locales/*.yml').each do |file|
   when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
   end
 end
+end
 
+SeedConsole.track('Meses SAT', SatMonth) do
 (1..12).each do |i|
   create_sat_month(i)
+end
 end
 
 require_relative 'seeds/currencies'
 require_relative 'seeds/countries'
-CurrencySeeds.seed!
-CountrySeeds.seed!
+SeedConsole.track('Monedas', Currency) { CurrencySeeds.seed! }
+SeedConsole.track('Países', Country) { CountrySeeds.seed! }
+SeedConsole.report('Monedas por país', CountryCurrency)
 
-seed_system_roles
-seed_permissions
-assign_default_role_permissions
-seed_admin_user
-seed_users
+SeedConsole.track('Roles', SystemRole) { seed_system_roles }
+SeedConsole.track('Permisos', Permission) { seed_permissions }
+SeedConsole.track('Asignación de permisos') { assign_default_role_permissions }
+SeedConsole.track('Usuario administrador', User) { seed_admin_user }
+SeedConsole.track('Usuarios de ejemplo', User) { seed_users }
 
 require_relative 'seeds/supplier_examples'
-SupplierExamples.seed!
+SeedConsole.track('Organización Delta POS', Organization) do
+  SupplierExamples.seed!
+end
+SeedConsole.report('Proveedores', Supplier)
+SeedConsole.report('Contactos', Contact)
+SeedConsole.report('Membresías', OrganizationMembership)
 
 require 'faker'
 
 # Create client examples
+SeedConsole.track('Clientes', Client) do
 20.times do |index|
   code = "CLI#{format('%04d', index + 1)}"
 
@@ -351,8 +368,10 @@ require 'faker'
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping client seed due to error: #{e.message}"
 end
+end
 
 # Create category examples
+SeedConsole.track('Categorías', Category) do
 15.times do |index|
   name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
   name = "Categoria#{index + 1}" if name.blank?
@@ -370,10 +389,12 @@ end
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping category seed due to error: #{e.message}"
 end
+end
 
 categories = Category.not_deleted.to_a
 
 # Create product examples
+SeedConsole.track('Productos', Product) do
 15.times do |index|
   code = "PROD#{format('%04d', index + 1)}"
 
@@ -402,8 +423,10 @@ categories = Category.not_deleted.to_a
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping product seed due to error: #{e.message}"
 end
+end
 
 # Create branch examples
+SeedConsole.track('Sucursales', Branch) do
 15.times do |index|
   street = Faker::Address.street_name
   neighborhood = Faker::Address.city
@@ -435,3 +458,7 @@ end
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping branch seed due to error: #{e.message}"
 end
+end
+
+SeedConsole.report('Direcciones', Address)
+SeedConsole.finish_run!
