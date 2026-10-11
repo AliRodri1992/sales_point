@@ -23,6 +23,9 @@ es:
       address_updated: "Dirección del proveedor modificada correctamente"
       address_deleted: "Dirección del proveedor eliminada exitosamente"
       address_restored: "Dirección del proveedor recuperada exitosamente"
+      secondary_option: "No, secundaria"
+      primary_option: "Sí, principal"
+      primary_hint: "Solo puede existir una dirección principal por tipo para cada proveedor."
       address_purposes:
         general: "General"
         fiscal: "Fiscal"

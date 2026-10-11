@@ -23,6 +23,9 @@ en:
       address_updated: "Supplier address updated successfully"
       address_deleted: "Supplier address deleted successfully"
       address_restored: "Supplier address restored successfully"
+      secondary_option: "No, secondary"
+      primary_option: "Yes, primary"
+      primary_hint: "Only one primary address is allowed per type for each supplier."
       address_purposes:
         general: "General"
         fiscal: "Tax"

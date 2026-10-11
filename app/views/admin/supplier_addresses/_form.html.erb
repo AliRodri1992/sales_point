@@ -9,7 +9,7 @@
     </div>
     <div class="grid gap-5 sm:grid-cols-2">
       <% %i[street exterior_number interior_number neighborhood].each do |field| %>
-        <div class="<%= 'sm:col-span-2' if %i[street neighborhood].include?(field) %>">
+        <div class="<%= 'sm:col-span-2' if field == :street %>">
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
           <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400", autocomplete: (field == :street ? 'street-address' : 'off') %>
           <%= error_message_for(@address, field) %>
@@ -37,21 +37,27 @@
       <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('cog-6-tooth', class: 'size-4') %></span>
       <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.purpose') %></h3>
     </div>
-    <div class="grid gap-5 sm:grid-cols-2">
-      <div>
+    <div class="space-y-6">
+      <div class="max-w-xl">
         <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)} px-4 py-3 text-sm text-slate-800" %>
         <%= error_message_for(@address, :purpose) %>
       </div>
-      <div class="flex items-center">
-        <div class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
-          <div class="flex items-center gap-3">
-            <%= form.check_box :primary, class: 'size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500' %>
-            <%= form.label :primary, t('admin.supplier_details.primary'), class: 'cursor-pointer text-sm font-semibold text-slate-700' %>
-          </div>
-          <%= error_message_for(@address, :primary) %>
+      <fieldset class="space-y-3">
+        <legend class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_details.primary') %></legend>
+        <div class="flex flex-wrap gap-3">
+          <% [[false, 'secondary_option'], [true, 'primary_option']].each do |value, key| %>
+            <label class="relative inline-flex cursor-pointer items-center">
+              <%= form.radio_button :primary, value.to_s, class: 'peer sr-only' %>
+              <span class="inline-flex min-h-11 items-center rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-emerald-300 hover:bg-emerald-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-800 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-600">
+                <%= t("admin.supplier_details.#{key}") %>
+              </span>
+            </label>
+          <% end %>
         </div>
-      </div>
+        <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.primary_hint') %></p>
+        <%= error_message_for(@address, :primary) %>
+      </fieldset>
     </div>
   </section>
   <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-6">

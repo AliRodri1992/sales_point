@@ -23,6 +23,9 @@ ko:
       address_updated: "공급업체 주소가 수정되었습니다"
       address_deleted: "공급업체 주소가 삭제되었습니다"
       address_restored: "공급업체 주소가 복원되었습니다"
+      secondary_option: "아니요, 보조 주소"
+      primary_option: "예, 대표 주소"
+      primary_hint: "공급업체별 주소 유형마다 대표 주소는 하나만 지정할 수 있습니다."
       address_purposes:
         general: "일반"
         fiscal: "세무"
