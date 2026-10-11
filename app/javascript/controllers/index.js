@@ -79,3 +79,6 @@ application.register("supplier-form", SupplierFormController)
 
 import DeltaSelectController from "./delta_select_controller"
 application.register("delta-select", DeltaSelectController)
+
+import SupplierNestedController from "./supplier_nested_controller"
+application.register("supplier-nested", SupplierNestedController)
