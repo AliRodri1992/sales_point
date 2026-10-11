@@ -87,6 +87,10 @@ es:
           status: "Estado"
           actions: "Acciones"
       onboarding:
+        summary:
+          title: "Resumen"
+          subtitle: "Revisa antes de guardar"
+          description: "Comprueba los datos del proveedor antes de confirmar el registro."
         steps:
           step_1: "Información general"
           step_2: "Información fiscal"
