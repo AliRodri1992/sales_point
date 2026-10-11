@@ -11,7 +11,6 @@ class OrganizationSetting < ApplicationRecord
     qr: 'qr'
   }
 
-  ONBOARDING_CURRENCIES = %w[MXN USD JPY KRW].freeze
   ONBOARDING_TIMEZONES = %w[
     UTC
     America/Mexico_City
@@ -21,7 +20,7 @@ class OrganizationSetting < ApplicationRecord
 
   validates :currency,
             presence: true,
-            inclusion: { in: ONBOARDING_CURRENCIES },
+            inclusion: { in: ->(_setting) { Currency.active.pluck(:code) } },
             format: { with: /\A[A-Z]{3}\z/ },
             on: %i[create update]
   validates :timezone,
@@ -38,7 +37,7 @@ class OrganizationSetting < ApplicationRecord
 
   validates :currency,
             presence: true,
-            inclusion: { in: ONBOARDING_CURRENCIES },
+            inclusion: { in: ->(_setting) { Currency.active.pluck(:code) } },
             format: { with: /\A[A-Z]{3}\z/ },
             on: :onboardingstep1
   validates :timezone,
