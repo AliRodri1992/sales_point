@@ -8,13 +8,13 @@ en:
         terms: Terms
       notifications:
         supplier_activity:
-          contact_created: "%{user} created a new contact."
-          contact_updated: "%{user} edited a contact."
-          contact_deleted: "%{user} deleted a contact."
-          contact_restored: "%{user} restored a contact."
-          address_created: "%{user} created a new address."
-          address_updated: "%{user} edited an address."
-          address_deleted: "%{user} deleted an address."
-          address_restored: "%{user} restored an address."
+          contact_created: "A contact was created."
+          contact_updated: "A contact was edited."
+          contact_deleted: "A contact was deleted."
+          contact_restored: "A contact was restored."
+          address_created: "An address was created."
+          address_updated: "An address was edited."
+          address_deleted: "An address was deleted."
+          address_restored: "An address was restored."
       online_users:
         empty: Empty
