@@ -19,8 +19,8 @@ module Reports
       raise NotImplementedError
     end
 
-    def each_row(&block)
-      scope.each(&block)
+    def each_row(&)
+      scope.each(&)
     end
 
     def filename
