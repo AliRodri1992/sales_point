@@ -4,6 +4,7 @@ module Admin
   class SuppliersController < ApplicationController
     include Pundit::Authorization
     include SuppliersListing
+    include SuppliersExporting
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -23,18 +24,6 @@ module Admin
           ]
         end
       end
-    end
-
-    def export
-      authorize Supplier, :index?
-      @supplier_regimes = SatFiscalRegime.current.order(:code)
-      scope = policy_scope(current_organization.suppliers.not_deleted)
-      scope = apply_sorting(apply_filters(scope))
-      format = params[:file_format].to_s
-      return head :bad_request unless %w[pdf xlsx].include?(format)
-
-      report = supplier_export_report(scope)
-      send_supplier_export(report, format)
     end
 
     def show
