@@ -76,9 +76,12 @@ en:
           per_page_label: "Show"
         empty_title: "No suppliers yet"
         empty_subtitle: "Add your first supplier to get started."
+        actions: "More actions"
         columns:
           code: "Code"
           name: "Name"
+          phone: "Phone"
+          email: "Email"
           contact: "Contact"
           rfc: "Tax ID"
           status: "Status"
