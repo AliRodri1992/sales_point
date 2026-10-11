@@ -1,21 +1,40 @@
-<%= form_with model: [:admin, @supplier, @address], class: 'space-y-4' do |form| %>
-  <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
-    <div>
-      <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'block text-sm font-semibold' %>
-      <%= form.text_field field, class: "w-full rounded-lg border p-2 #{form_state_classes(@address, field)}" %>
-      <%= error_message_for(@address, field) %>
+<%= form_with model: [:admin, @supplier, @address], class: 'space-y-7' do |form| %>
+  <div>
+    <h2 class="mb-4 text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h2>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <% %i[street exterior_number interior_number neighborhood].each do |field| %>
+        <div class="<%= 'sm:col-span-2' if %i[street neighborhood].include?(field) %>">
+          <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)}" %>
+          <%= error_message_for(@address, field) %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-  <div>
-    <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'block text-sm font-semibold' %>
-    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "w-full rounded-lg border p-2 #{form_state_classes(@address, :purpose)}" %>
-    <%= error_message_for(@address, :purpose) %>
   </div>
-  <div>
-    <%= form.check_box :primary %>
-    <%= form.label :primary, t('admin.supplier_details.primary') %>
+  <div class="border-t border-slate-100 pt-6">
+    <h2 class="mb-4 text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.postal_code') %> / <%= t('admin.supplier_details.address_fields.city') %></h2>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <% %i[postal_code city state country].each do |field| %>
+        <div>
+          <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)}" %>
+          <%= error_message_for(@address, field) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="border-t border-slate-100 pt-6">
+    <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)}" %>
+    <%= error_message_for(@address, :purpose) %>
+    <div class="mt-5 flex items-center gap-3">
+      <%= form.check_box :primary, class: 'size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500' %>
+      <%= form.label :primary, t('admin.supplier_details.primary'), class: 'text-sm font-medium text-slate-700' %>
+    </div>
     <%= error_message_for(@address, :primary) %>
   </div>
-  <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
-  <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier) %>
+  <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-6">
+    <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier), class: 'rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700' %>
+    <%= form.submit t('admin.supplier_details.save'), class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+  </div>
 <% end %>
