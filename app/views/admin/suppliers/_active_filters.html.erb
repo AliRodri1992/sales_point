@@ -1,0 +1,28 @@
+<% filter_keys = %w[status classification person_type currency credit sat_fiscal_regime_id responsible_user_id credit_days_min credit_days_max credit_limit_min credit_limit_max minimum_order_amount_min minimum_order_amount_max discount_percent_min discount_percent_max created_at_from created_at_to updated_at_from updated_at_to] %>
+<% active_filters = filter_keys.filter_map do |key|
+     value = params[key].to_s
+     next if value.blank? || value == 'all'
+     label = t("admin.suppliers.index.advanced.#{key}", default: key.humanize)
+     display = case key
+               when 'status', 'classification', 'person_type', 'credit'
+                 t("admin.suppliers.index.advanced.options.#{value}", default: value)
+               when 'sat_fiscal_regime_id'
+                 @supplier_regimes.find { |regime| regime.id.to_s == value }&.code || value
+               when 'responsible_user_id'
+                 current_organization.users.find_by(id: value)&.email || value
+               else
+                 value
+               end
+     [key, "#{label}: #{display}"]
+   end %>
+<% if active_filters.any? %>
+  <div class="mt-4 flex flex-wrap items-center gap-2" aria-label="<%= t('admin.suppliers.index.advanced.title') %>">
+    <% active_filters.each do |key, label| %>
+      <% remaining = params.permit(:search, :status, :classification, :person_type, :currency, :credit, :sat_fiscal_regime_id, :responsible_user_id, :credit_days_min, :credit_days_max, :credit_limit_min, :credit_limit_max, :minimum_order_amount_min, :minimum_order_amount_max, :discount_percent_min, :discount_percent_max, :created_at_from, :created_at_to, :updated_at_from, :updated_at_to, :per_page, :sort, :direction).to_h.except(key, 'page') %>
+      <%= link_to admin_suppliers_path(remaining), class: 'inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100', aria: { label: "#{t('admin.suppliers.index.advanced.clear')}: #{label}" } do %>
+        <span><%= label %></span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-3.5" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
