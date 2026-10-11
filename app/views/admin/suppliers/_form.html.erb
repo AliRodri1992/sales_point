@@ -107,7 +107,7 @@
         <div data-controller="supplier-nested" class="space-y-4">
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :contacts do |contact_form| %>
-              <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: supplier.persisted? %>
+              <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: supplier.persisted?, embedded: true %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
