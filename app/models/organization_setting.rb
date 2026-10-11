@@ -2,9 +2,8 @@
 
 class OrganizationSetting < ApplicationRecord
   belongs_to :organization
-  belongs_to :base_currency, class_name: 'Currency', optional: true
+  belongs_to :base_currency, class_name: 'Currency'
 
-  validates :base_currency, presence: true, on: :onboardingstep1
   validate :base_currency_must_be_active, on: %i[create update onboardingstep1]
 
   attribute :payment_method, :string
