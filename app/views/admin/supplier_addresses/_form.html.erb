@@ -17,7 +17,7 @@
       <% end %>
       <div>
         <%= form.label :country_id, t('admin.supplier_details.address_fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.collection_select :country_id, @countries, :id, :name, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(@address, :country)} px-4 py-3 text-sm text-slate-800" %>
+        <%= form.collection_select :country_id, @countries, :id, :localized_name, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(@address, :country)} px-4 py-3 text-sm text-slate-800" %>
         <%= error_message_for(@address, :country) %>
       </div>
     </div>

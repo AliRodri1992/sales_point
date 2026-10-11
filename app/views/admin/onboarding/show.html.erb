@@ -114,7 +114,7 @@
                 <% end %>
                 <div>
                   <%= address_fields.label :country_id, t('admin.onboarding.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-                  <%= address_fields.collection_select :country_id, Country.active.ordered, :id, :name, { include_blank: true }, class: 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+                  <%= address_fields.collection_select :country_id, Country.active.ordered, :id, :localized_name, { include_blank: true }, class: 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
                   <%= render 'admin/onboarding/field_errors', object: address_fields.object, attribute: :country %>
                 </div>
               </div>

@@ -62,7 +62,7 @@
             <% end %>
             <div>
               <%= address_form.label :country_id, t('admin.branches.form.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-              <%= address_form.collection_select :country_id, Country.active.ordered, :id, :name, { include_blank: true }, class: 'input-field w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+              <%= address_form.collection_select :country_id, Country.active.ordered, :id, :localized_name, { include_blank: true }, class: 'input-field w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
               <%= error_message_for(address_form.object, :country) %>
             </div>
           </div>

@@ -15,6 +15,10 @@ class Country < ApplicationRecord
   validates :iso_numeric, presence: true, uniqueness: { conditions: -> { with_deleted } },
                           format: { with: /\A\d{3}\z/ }
 
+  def localized_name(locale = I18n.locale)
+    I18n.t("countries.#{iso_alpha2}", locale: locale, default: name)
+  end
+
   scope :active, -> { where(active: true) }
   scope :ordered, -> { order(:position, :name) }
 
