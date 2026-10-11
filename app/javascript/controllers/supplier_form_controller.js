@@ -12,7 +12,7 @@ export default class extends Controller {
     this.element.addEventListener("change", (event) => {
       if (event.target.matches("input[required], select[required], textarea[required]")) this.validateField(event.target)
     })
-    const invalid = this.stepTargets.findIndex((step) => step.querySelector(".text-red-600, .text-rose-600, [aria-invalid='true'], .field_with_errors"))
+    const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
     this.alignStepHeights()
