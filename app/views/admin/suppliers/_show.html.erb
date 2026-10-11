@@ -77,12 +77,6 @@
           </div>
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.contacts_description') %></p>
         </div>
-        <% if can_edit %>
-          <%= link_to new_admin_supplier_contact_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700' do %>
-            <%= icon('plus', class: 'size-4') %>
-            <%= t('admin.supplier_details.add_contact') %>
-          <% end %>
-        <% end %>
       </div>
 
       <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -109,7 +103,6 @@
                 <th scope="col" class="px-4 py-3"><%= t('admin.supplier_details.contact_fields.email') %></th>
                 <th scope="col" class="px-4 py-3"><%= t('admin.supplier_details.contact_fields.primary') %></th>
                 <th scope="col" class="px-4 py-3"><%= t('admin.supplier_details.contact_fields.active') %></th>
-                <% if can_edit %><th scope="col" class="px-4 py-3 text-right"><%= t('admin.supplier_details.actions') %></th><% end %>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 bg-white">
@@ -143,15 +136,6 @@
                       <%= t("admin.supplier_details.contact_statuses.#{contact.active? ? 'active' : 'inactive'}") %>
                     </span>
                   </td>
-                  <% if can_edit %>
-                    <td class="px-4 py-4 text-right">
-                      <div class="flex items-center justify-end gap-2">
-                        <%= link_to edit_admin_supplier_contact_path(supplier, contact), class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700', title: t('admin.supplier_details.edit'), aria: { label: t('admin.supplier_details.edit') } do %>
-                          <%= icon('pencil-square', class: 'size-4') %>
-                        <% end %>
-                      </div>
-                    </td>
-                  <% end %>
                 </tr>
               <% end %>
             </tbody>
