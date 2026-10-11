@@ -1,0 +1,14 @@
+ko:
+  reports:
+    suppliers:
+      title: "공급업체 목록"
+      columns:
+        code: "코드"
+        name: "공급업체"
+        rfc: "세금 식별번호"
+        email: "이메일"
+        status: "상태"
+    export:
+      button: "내보내기"
+      excel: "Excel 내보내기"
+      pdf: "PDF 내보내기"
