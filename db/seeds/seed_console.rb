@@ -10,7 +10,8 @@ module SeedConsole
     def track(label, model = nil)
       before = model&.count
       started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-      say('INICIO', "Procesando #{label}#{before.nil? ? '' : " (existentes: #{before})"}")
+      existing = " (existentes: #{before})" unless before.nil?
+      say('INICIO', "Procesando #{label}#{existing}")
 
       yield
 
