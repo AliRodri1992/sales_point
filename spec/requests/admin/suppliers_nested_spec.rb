@@ -15,7 +15,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
 
   def address_attributes
     { street: 'Main Street', exterior_number: '12', neighborhood: 'Centro',
-      city: 'Mexico City', state: 'CDMX', country: 'Mexico',
+      city: 'Mexico City', state: 'CDMX', country_id: create(:country).id,
       postal_code: '06000', purpose: 'fiscal', primary: true }
   end
 

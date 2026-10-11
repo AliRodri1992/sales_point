@@ -73,7 +73,7 @@ RSpec.describe Onboarding::BranchUpdater, type: :service do
             neighborhood: 'Centro',
             city: 'Cuautitlán',
             state: 'Estado de México',
-            country: 'MX',
+            country_id: create(:country).id,
             postal_code: '54800'
           }
         }

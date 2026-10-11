@@ -5,6 +5,8 @@ RSpec.describe 'Admin::Branches', type: :request do
   let(:branch_role) { create(:system_role, :branch) }
   let(:admin_user) { create(:user, system_roles: [system_admin_role]) }
 
+  let(:country) { create(:country) }
+
   before { sign_in admin_user }
 
   describe 'GET /admin/branches' do
@@ -215,7 +217,7 @@ RSpec.describe 'Admin::Branches', type: :request do
             exterior_number: '100',
             city: 'Cuautitlán',
             state: 'Estado de México',
-            country: 'MX',
+            country_id: country.id,
             postal_code: ''
           }
         }
@@ -239,7 +241,7 @@ RSpec.describe 'Admin::Branches', type: :request do
               neighborhood: 'Centro',
               city: 'Cuautitlán',
               state: 'Estado de México',
-              country: 'MX',
+              country_id: country.id,
               postal_code: '54800'
             }
           }

@@ -15,7 +15,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
   def address_attributes(overrides = {})
     { street: 'Main Street', exterior_number: '12', neighborhood: 'Centro',
-      city: 'Mexico City', state: 'CDMX', country: 'Mexico', postal_code: '06000',
+      city: 'Mexico City', state: 'CDMX', country_id: create(:country).id, postal_code: '06000',
       purpose: 'fiscal', primary: true }.merge(overrides)
   end
 

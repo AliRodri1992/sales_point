@@ -5,6 +5,11 @@ RSpec.describe 'Admin suppliers', type: :request do
   let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
 
   let(:organization) { create(:organization) }
+  let(:currency) { create(:currency) }
+
+  def supplier_attributes
+    attributes_for(:supplier).merge(currency_id: currency.id)
+  end
 
   before do
     create(:organization_membership, user:, organization:)
@@ -24,7 +29,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'assigns the organization on creation regardless of submitted ownership' do
     foreign_organization = create(:organization)
     post admin_suppliers_path,
-         params: { supplier: attributes_for(:supplier).merge(organization_id: foreign_organization.id) }
+         params: { supplier: supplier_attributes.merge(organization_id: foreign_organization.id) }
 
     expect(Supplier.order(:id).last.organization).to eq(organization)
   end
@@ -70,7 +75,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
       .with("suppliers_catalog_#{organization.id}")
 
-    post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+    post admin_suppliers_path, params: { supplier: supplier_attributes }
 
     expect(response).to redirect_to(admin_suppliers_path)
   end
@@ -101,14 +106,14 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).not_to include('name="supplier[status]"')
 
-    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(status: 'inactive') }
+    post admin_suppliers_path, params: { supplier: supplier_attributes.merge(status: 'inactive') }
 
     expect(response).to redirect_to(admin_suppliers_path)
     expect(Supplier.order(:id).last).to be_active
   end
 
   it 'creates nested supplier contacts as active regardless of submitted status' do
-    attributes = attributes_for(:supplier).merge(
+    attributes = supplier_attributes.merge(
       contacts_attributes: { '0' => { name: 'Operations', active: '0' } }
     )
 
@@ -119,12 +124,11 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'accepts currency and country references for a supplier and its fiscal address' do
-    currency = create(:currency)
     country = create(:country)
     address_attributes = attributes_for(:address).except(:country).merge(
       country_id: country.id, purpose: 'fiscal'
     )
-    attributes = attributes_for(:supplier).merge(
+    attributes = supplier_attributes.merge(
       currency_id: currency.id,
       addresses_attributes: { '0' => address_attributes }
     )
@@ -210,7 +214,7 @@ RSpec.describe 'Admin suppliers', type: :request do
 
   it 'creates, updates and soft deletes with SweetAlert feedback and Noticed' do
     expect do
-      post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+      post admin_suppliers_path, params: { supplier: supplier_attributes }
     end.to change(Supplier, :count).by(1)
                                    .and change { user.notifications.count }.by(1)
 
@@ -246,7 +250,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'renders the duplicate error when the database rejects a create' do
     allow_any_instance_of(Supplier).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
 
-    post admin_suppliers_path, params: { supplier: attributes_for(:supplier) }
+    post admin_suppliers_path, params: { supplier: supplier_attributes }
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include(I18n.t('admin.suppliers.errors.duplicate', locale: :en))

@@ -13,7 +13,7 @@ RSpec.describe Geocoding::MapboxValidateAddressService do
       neighborhood: 'Centro',
       city: 'Ciudad de México',
       state: 'CDMX',
-      country: 'México',
+      country: instance_double(Country, name: 'México'),
       postal_code: '06000'
     )
   end

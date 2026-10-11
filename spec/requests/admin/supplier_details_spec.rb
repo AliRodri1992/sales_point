@@ -35,8 +35,8 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
   it 'creates and soft deletes supplier addresses' do
     post admin_supplier_addresses_path(supplier), params: {
       address: attributes_for(:address).slice(
-        :street, :exterior_number, :interior_number, :neighborhood, :city, :state, :country, :postal_code
-      )
+        :street, :exterior_number, :interior_number, :neighborhood, :city, :state, :postal_code
+      ).merge(country_id: create(:country).id)
     }
     expect(response).to have_http_status(:redirect)
     address = supplier.addresses.last

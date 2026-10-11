@@ -11,7 +11,7 @@ RSpec.describe AddressGeocodingService do
       result = { lat: 19.4, lng: -99.1 }
 
       allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .with(address.postal_code, address.country)
+        .with(address.postal_code, address.country.iso_alpha2)
         .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: result))
 
       service.call
