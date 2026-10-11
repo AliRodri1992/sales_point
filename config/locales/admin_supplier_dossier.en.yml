@@ -32,6 +32,9 @@ en:
       responsible: Responsible user
       tags: Tags
       documents: Documents
+      placeholders:
+        person_type: "Select a person type"
+        responsible: "Select a responsible user"
       fields:
         legal_name: "Legal name"
         trade_name: "Trade name"
