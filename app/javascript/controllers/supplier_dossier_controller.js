@@ -2,6 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["tab", "panel", "contactSearch", "contactRow", "contactCount", "contactEmpty"]
+  static values = { initialTab: { type: String, default: "general" } }
+
+  connect() {
+    this.activateTab(this.initialTabValue)
+  }
 
   filterContacts(event) {
     event?.preventDefault()
@@ -19,8 +24,10 @@ export default class extends Controller {
   }
 
   select(event) {
-    const section = event.currentTarget.dataset.section
+    this.activateTab(event.currentTarget.dataset.section)
+  }
 
+  activateTab(section) {
     this.tabTargets.forEach((tab) => {
       const active = tab.dataset.section === section
       tab.setAttribute("aria-selected", String(active))
