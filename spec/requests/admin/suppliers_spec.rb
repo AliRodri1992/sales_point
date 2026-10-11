@@ -122,7 +122,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     get admin_suppliers_path, params: { status: 'active', sort: 'name', direction: 'asc' }
 
     rows = Nokogiri::HTML(response.body).css('tbody tr')
-    expect(rows.map { |row| row.css('td').first.text.lines.first.strip }).to eq(['Alpha Supplier'])
+    expect(rows.map { |row| row.at_css('td:first-child p.font-semibold')&.text&.strip }).to eq(['Alpha Supplier'])
   end
 
   it 'does not paginate 10 or fewer and paginates 11+' do
