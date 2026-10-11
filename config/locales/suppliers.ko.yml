@@ -86,6 +86,45 @@ ko:
           rfc: "세금 ID"
           status: "상태"
           actions: "작업"
+      onboarding:
+        steps:
+          step_1: "일반 정보"
+          step_2: "세금 정보"
+          step_3: "연락처"
+          step_4: "주소"
+          step_5: "거래 조건"
+          step_6: "지점 운영"
+          step_7: "문서"
+        subtitles:
+          step_1: "기본 정보"
+          step_2: "사업자번호 및 세금 체계"
+          step_3: "담당자"
+          step_4: "공급업체 주소"
+          step_5: "신용 및 할인"
+          step_6: "방문 및 주문"
+          step_7: "파일 및 메모"
+        panel:
+          eyebrow: "DELTA POS"
+          title: "최고의 공급업체와 함께하세요"
+          description: "공급업체 정보를 최신으로 유지하고 공급망을 최적화하세요."
+          next: "다음"
+          previous: "이전"
+          required: "* 표시된 항목은 필수입니다."
+          benefit_1:
+            title: "통합 관리"
+            description: "공급업체를 쉽게 정리하고 분류하세요."
+          benefit_2:
+            title: "거래 조건"
+            description: "신용, 할인 및 최소 주문을 관리하세요."
+          benefit_3:
+            title: "여러 주소"
+            description: "창고, 지점 및 배송 주소를 기록하세요."
+          benefit_4:
+            title: "연락처"
+            description: "담당자 정보를 언제든 확인하세요."
+        next: "다음"
+        previous: "이전"
+        required: "* 표시된 항목은 필수입니다."
       form:
         code: "코드"
         code_placeholder: "예. SUP-0001"
