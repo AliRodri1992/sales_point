@@ -118,6 +118,20 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(Supplier.order(:id).last.contacts.first).to be_active
   end
 
+  it 'accepts currency and country references for a supplier and its fiscal address' do
+    currency = create(:currency)
+    country = create(:country)
+    attributes = attributes_for(:supplier).merge(currency_id: currency.id,
+      addresses_attributes: { '0' => attributes_for(:address).except(:country).merge(country_id: country.id, purpose: 'fiscal') })
+
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    created = Supplier.order(:id).last
+    expect(created.currency).to eq(currency)
+    expect(created.addresses.first.country).to eq(country)
+  end
+
   it 'renders the edit form for an existing supplier' do
     supplier = create(:supplier, organization:, name: 'Supplier to Edit')
 

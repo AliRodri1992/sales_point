@@ -49,8 +49,7 @@
               neighborhood: 'neighborhood',
               postal_code: 'postal_code',
               city: 'city',
-              state: 'state',
-              country: 'country'
+              state: 'state'
             }.each do |attribute, translation_key| %>
               <div class="<%= attribute == :street ? 'sm:col-span-2' : '' %>">
                 <%= address_form.label attribute,
@@ -61,6 +60,11 @@
                 <%= error_message_for(address_form.object, attribute) %>
               </div>
             <% end %>
+            <div>
+              <%= address_form.label :country_id, t('admin.branches.form.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+              <%= address_form.collection_select :country_id, Country.active.ordered, :id, :name, { include_blank: true }, class: 'input-field w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+              <%= error_message_for(address_form.object, :country) %>
+            </div>
           </div>
         </div>
       <% end %>

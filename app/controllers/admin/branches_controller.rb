@@ -126,7 +126,7 @@ module Admin
           :phone,
           :status,
           { address_attributes: %i[
-            id street exterior_number interior_number neighborhood city state country postal_code
+            id street exterior_number interior_number neighborhood city state country_id postal_code
           ] }
         ]
       )

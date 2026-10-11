@@ -40,7 +40,7 @@
           <p class="font-medium text-slate-800"><%= [address.street, address.exterior_number, address.interior_number.presence].compact.join(' ') %></p>
           <p><%= address.neighborhood %></p>
           <p><%= [address.city, address.state].reject(&:blank?).join(', ') %><% if address.postal_code.present? %> · <%= t('admin.supplier_details.address_fields.postal_code') %> <%= address.postal_code %><% end %></p>
-          <% if address.country.present? %><p class="text-slate-500"><%= address.country %></p><% end %>
+          <% if address.country.present? %><p class="text-slate-500"><%= address.country.name %></p><% end %>
         </div></div>
         <% if policy(@supplier).update? %>
           <div class="flex min-h-16 items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
@@ -68,7 +68,7 @@
           <p class="font-medium text-slate-800"><%= [address.street, address.exterior_number, address.interior_number.presence].compact.join(' ') %></p>
           <p><%= address.neighborhood %></p>
           <p><%= [address.city, address.state].reject(&:blank?).join(', ') %><% if address.postal_code.present? %> · <%= t('admin.supplier_details.address_fields.postal_code') %> <%= address.postal_code %><% end %></p>
-          <% if address.country.present? %><p class="text-slate-500"><%= address.country %></p><% end %>
+          <% if address.country.present? %><p class="text-slate-500"><%= address.country.name %></p><% end %>
         </div>
             <p class="mt-3 flex items-center gap-2 text-xs text-slate-500"><%= icon('clock', class: 'size-4') %><%= t('admin.supplier_details.deleted_on', date: l(address.deleted_at.to_date, format: :long)) %></p>
           </div>

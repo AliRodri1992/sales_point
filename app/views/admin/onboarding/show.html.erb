@@ -105,13 +105,18 @@
             </div>
             <%= branch_fields.fields_for :address do |address_fields| %>
               <div class="grid gap-5 pt-2 md:grid-cols-2">
-                <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+                <% %i[street exterior_number interior_number neighborhood city state postal_code].each do |field| %>
                   <div>
                     <%= address_fields.label field, t("admin.onboarding.fields.#{field}"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
                     <%= address_fields.text_field field, class: "w-full rounded-xl border #{address_fields.object.errors[field].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
                     <%= render "admin/onboarding/field_errors", object: address_fields.object, attribute: field %>
                   </div>
                 <% end %>
+                <div>
+                  <%= address_fields.label :country_id, t('admin.onboarding.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+                  <%= address_fields.collection_select :country_id, Country.active.ordered, :id, :name, { include_blank: true }, class: 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+                  <%= render 'admin/onboarding/field_errors', object: address_fields.object, attribute: :country %>
+                </div>
               </div>
             <% end %>
           <% end %>
@@ -227,7 +232,7 @@
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.neighborhood"), value: address.neighborhood %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.city"), value: address.city %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.state"), value: address.state %>
-                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.country"), value: address.country %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.country"), value: address.country&.name %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.postal_code"), value: address.postal_code %>
                       <% end %>
                     </div>
