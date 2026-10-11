@@ -102,15 +102,17 @@ module Admin
     end
 
     def supplier_params
-      params.require(:supplier).permit(
+      params.expect(supplier: [
         *supplier_scalar_attributes,
-        contacts_attributes: %i[id name position email phone mobile_phone primary active notes _destroy],
-        addresses_attributes: %i[
-          id street exterior_number interior_number neighborhood city state country postal_code
-          purpose primary _destroy
-        ],
-        documents: []
-      )
+        {
+          contacts_attributes: [%i[id name position email phone mobile_phone primary active notes _destroy]],
+          addresses_attributes: [%i[
+            id street exterior_number interior_number neighborhood city state country postal_code
+            purpose primary _destroy
+          ]],
+          documents: []
+        }
+      ])
     end
 
     def supplier_scalar_attributes
