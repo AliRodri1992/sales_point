@@ -55,4 +55,21 @@ module SupplierBreadcrumbsHelper
       [base, supplier_item, { label: t('admin.supplier_details.contacts') }]
     end
   end
+  def supplier_schedule_breadcrumb_items
+    supplier = controller.view_assigns['supplier']
+    base = { label: t('admin.shared.sidebar.suppliers'), path: admin_suppliers_path }
+    return [base] unless supplier
+
+    supplier_item = { label: supplier.name, path: admin_supplier_path(supplier, tab: 'schedules') }
+    schedules = { label: t('admin.supplier_dossier.schedules'), path: admin_supplier_schedules_path(supplier) }
+
+    case params[:action]
+    when 'new', 'create'
+      [base, supplier_item, schedules, { label: t('admin.supplier_details.add') }]
+    when 'edit', 'update'
+      [base, supplier_item, schedules, { label: t('admin.supplier_details.edit') }]
+    else
+      [base, supplier_item, { label: t('admin.supplier_dossier.schedules') }]
+    end
+  end
 end
