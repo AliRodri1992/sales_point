@@ -22,6 +22,7 @@ module SupplierExamples
       organization.assign_attributes(
         name: ORGANIZATION_NAME,
         business_sector: 'grocery',
+        base_currency: Currency.find_by!(code: 'MXN'),
         status: :active
       )
       organization.save!
