@@ -6,6 +6,7 @@ es:
         description: "Información general de las condiciones de compra con este proveedor."
         payment: "Condiciones de pago"
         purchase: "Descuentos y pedidos"
+      back: "Volver"
       more_actions: "Más acciones"
       general:
         contact_summary: "Datos de contacto"
