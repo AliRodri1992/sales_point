@@ -1,40 +1,61 @@
-<%= form_with model: [:admin, @supplier, @address], class: 'space-y-7 p-6 lg:p-8' do |form| %>
-  <div>
-    <h2 class="mb-4 text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h2>
+<%= form_with model: [:admin, @supplier, @address], class: 'space-y-8 p-6 lg:p-8' do |form| %>
+  <% if @address.errors[:base].any? %>
+    <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"><%= @address.errors.full_messages_for(:base).to_sentence %></div>
+  <% end %>
+  <section>
+    <div class="mb-5 flex items-center gap-3">
+      <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('home', class: 'size-4') %></span>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.street') %> / <%= t('admin.supplier_details.address_fields.neighborhood') %></h3>
+    </div>
     <div class="grid gap-5 sm:grid-cols-2">
       <% %i[street exterior_number interior_number neighborhood].each do |field| %>
         <div class="<%= 'sm:col-span-2' if %i[street neighborhood].include?(field) %>">
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400", autocomplete: (field == :street ? 'street-address' : 'off') %>
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>
     </div>
-  </div>
-  <div class="border-t border-slate-100 pt-6">
-    <h2 class="mb-4 text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.postal_code') %> / <%= t('admin.supplier_details.address_fields.city') %></h2>
+  </section>
+  <section class="border-t border-slate-100 pt-7">
+    <div class="mb-5 flex items-center gap-3">
+      <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('map', class: 'size-4') %></span>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.city') %> / <%= t('admin.supplier_details.address_fields.state') %></h3>
+    </div>
     <div class="grid gap-5 sm:grid-cols-2">
       <% %i[postal_code city state country].each do |field| %>
         <div>
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400", maxlength: (5 if field == :postal_code), inputmode: (field == :postal_code ? 'numeric' : 'text'), autocomplete: ({ postal_code: 'postal-code', city: 'address-level2', state: 'address-level1', country: 'country-name' }[field]) %>
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>
     </div>
-  </div>
-  <div class="border-t border-slate-100 pt-6">
-    <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)} px-4 py-3 text-sm text-slate-800" %>
-    <%= error_message_for(@address, :purpose) %>
-    <div class="mt-5 flex items-center gap-3">
-      <%= form.check_box :primary, class: 'size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500' %>
-      <%= form.label :primary, t('admin.supplier_details.primary'), class: 'text-sm font-medium text-slate-700' %>
+  </section>
+  <section class="border-t border-slate-100 pt-7">
+    <div class="mb-5 flex items-center gap-3">
+      <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('settings-2', class: 'size-4') %></span>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.purpose') %></h3>
     </div>
-    <%= error_message_for(@address, :primary) %>
-  </div>
-  <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-6">
-    <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier), class: 'rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700' %>
-    <%= form.submit t('admin.supplier_details.save'), class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)} px-4 py-3 text-sm text-slate-800" %>
+        <%= error_message_for(@address, :purpose) %>
+      </div>
+      <div class="flex items-center">
+        <div class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-4">
+          <div class="flex items-center gap-3">
+            <%= form.check_box :primary, class: 'size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500' %>
+            <%= form.label :primary, t('admin.supplier_details.primary'), class: 'cursor-pointer text-sm font-semibold text-slate-700' %>
+          </div>
+          <%= error_message_for(@address, :primary) %>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-6">
+    <%= link_to t('admin.supplier_details.back'), admin_supplier_addresses_path(@supplier), class: 'inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
+    <%= form.submit t('admin.supplier_details.save'), class: 'inline-flex cursor-pointer items-center justify-center rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-100' %>
   </div>
 <% end %>
