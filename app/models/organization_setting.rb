@@ -2,6 +2,9 @@
 
 class OrganizationSetting < ApplicationRecord
   belongs_to :organization
+  belongs_to :base_currency, class_name: 'Currency'
+
+  validate :base_currency_must_be_active, on: %i[create update onboardingstep1]
 
   attribute :payment_method, :string
 
@@ -18,11 +21,6 @@ class OrganizationSetting < ApplicationRecord
     America/Tijuana
   ].freeze
 
-  validates :currency,
-            presence: true,
-            inclusion: { in: ->(_setting) { Currency.active.pluck(:code) } },
-            format: { with: /\A[A-Z]{3}\z/ },
-            on: %i[create update]
   validates :timezone,
             presence: true,
             inclusion: { in: ONBOARDING_TIMEZONES },
@@ -35,11 +33,6 @@ class OrganizationSetting < ApplicationRecord
             uniqueness: { conditions: -> { where(deleted_at: nil) } },
             on: %i[create update]
 
-  validates :currency,
-            presence: true,
-            inclusion: { in: ->(_setting) { Currency.active.pluck(:code) } },
-            format: { with: /\A[A-Z]{3}\z/ },
-            on: :onboardingstep1
   validates :timezone,
             presence: true,
             inclusion: { in: ONBOARDING_TIMEZONES },
@@ -50,4 +43,12 @@ class OrganizationSetting < ApplicationRecord
             on: :onboardingstep4
 
   scope :active_records, -> { where(deleted_at: nil) }
+
+  private
+
+  def base_currency_must_be_active
+    return if base_currency.blank? || base_currency.active?
+
+    errors.add(:base_currency, :invalid)
+  end
 end
