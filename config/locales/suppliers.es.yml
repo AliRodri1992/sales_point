@@ -152,6 +152,7 @@ es:
         notes_placeholder: "Información adicional del proveedor."
         cancel: "Cancelar"
         create: "Crear proveedor"
+        save: "Guardar"
         update: "Actualizar proveedor"
       show:
         title: "Detalles del proveedor"
