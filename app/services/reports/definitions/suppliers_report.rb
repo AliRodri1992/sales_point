@@ -9,7 +9,10 @@ module Reports
 
       def columns
         %i[code name rfc email status].map do |key|
-          { label: I18n.t("reports.suppliers.columns.#{key}", locale:), value: ->(supplier) { supplier.public_send(key).to_s } }
+          {
+            label: I18n.t("reports.suppliers.columns.#{key}", locale:),
+            value: ->(supplier) { supplier.public_send(key).to_s }
+          }
         end
       end
     end
