@@ -7,6 +7,10 @@ ko:
         name: "공급업체"
         rfc: "세금 식별번호"
         email: "이메일"
+        phone: "전화번호"
+        classification: "분류"
+        credit_days: "신용 기간(일)"
+        credit_limit: "신용 한도"
         status: "상태"
     export:
       button: "내보내기"
