@@ -11,6 +11,7 @@ module BreadcrumbsHelper
     'admin/suppliers' => :supplier_breadcrumb_items,
     'admin/supplier_addresses' => :supplier_address_breadcrumb_items,
     'admin/supplier_contacts' => :supplier_contact_breadcrumb_items,
+    'admin/supplier_schedules' => :supplier_schedule_breadcrumb_items,
     'admin/users' => :user_breadcrumb_items
   }.freeze
 
