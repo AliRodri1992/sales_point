@@ -2,6 +2,7 @@ es:
   admin:
     supplier_dossier:
       general:
+        contact_summary: "Datos de contacto"
         information: "Información general"
         information_description: "Datos básicos de identificación del proveedor."
         tax_information: "Información fiscal"
