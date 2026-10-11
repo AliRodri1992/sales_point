@@ -55,5 +55,4 @@ module SupplierBreadcrumbsHelper
       [base, supplier_item, { label: t('admin.supplier_details.contacts') }]
     end
   end
-
 end
