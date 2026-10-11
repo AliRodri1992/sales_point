@@ -1,6 +1,7 @@
 ko:
   admin:
     supplier_dossier:
+      more_actions: "추가 작업"
       general:
         contact_summary: "연락처 정보"
         information: "일반 정보"
