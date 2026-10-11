@@ -20,7 +20,7 @@ module Reports
     end
 
     def each_row(&block)
-      scope.find_each(&block)
+      scope.each(&block)
     end
 
     def filename
