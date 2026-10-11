@@ -14,6 +14,15 @@ module Admin
     def index
       authorize Supplier, :index?
       load_suppliers
+      respond_to do |format|
+        format.html
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace('supplier_active_filters', partial: 'admin/suppliers/active_filters_frame'),
+            turbo_stream.replace('suppliers_list', partial: 'admin/suppliers/list_frame')
+          ]
+        end
+      end
     end
 
     def show
