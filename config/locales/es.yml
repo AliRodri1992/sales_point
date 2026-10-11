@@ -1,7 +1,25 @@
 ---
 es:
   activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            rfc:
+              person_type_mismatch: "El RFC no corresponde al tipo de persona seleccionado"
+              invalid_date: "El RFC contiene una fecha inexistente"
     attributes:
+      supplier:
+        code: "Código"
+        name: "Nombre del proveedor"
+        rfc: "RFC"
+        email: "Correo electrónico"
+        phone: "Teléfono"
+        postal_code: "Código postal"
+        person_type: "Tipo de persona"
+      contact:
+        name: "Nombre completo"
+        mobile_phone: "Celular"
       address:
         city: Ciudad
         country: País
