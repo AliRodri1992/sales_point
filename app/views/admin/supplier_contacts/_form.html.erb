@@ -1,24 +1,93 @@
-<%= form_with model: [:admin, @supplier, @contact], class: 'space-y-4' do |form| %>
-  <% %i[name position email phone mobile_phone notes].each do |field| %>
-    <div>
-      <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'block text-sm font-semibold' %>
-      <% if %i[phone mobile_phone].include?(field) %>
-        <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
-          <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "w-full rounded-lg border p-2 #{form_state_classes(@contact, field)}" %>
+<%= form_with model: [:admin, @supplier, @contact], class: 'space-y-5' do |form| %>
+  <% field_classes = 'block w-full min-h-11 rounded-xl border px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex items-center gap-3">
+      <span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"><%= icon('user', class: 'size-5') %></span>
+      <div><h2 class="font-semibold text-slate-900"><%= t('admin.supplier_details.contact_form.personal_title') %></h2><p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.personal_description') %></p></div>
+    </div>
+    <div class="mt-5 space-y-4 border-t border-slate-100 pt-5">
+      <% %i[name position].each do |field| %>
+        <div>
+          <%= form.label field, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+            <%= t("admin.supplier_details.contact_fields.#{field}") %><%= ' *' if field == :name %>
+          <% end %>
+          <%= form.text_field field, class: "#{field_classes} #{form_state_classes(@contact, field)}", placeholder: t("admin.supplier_details.contact_form.#{field}_placeholder"), required: field == :name %>
+          <%= error_message_for(@contact, field) %>
+          <% if field == :position %><p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.position_hint') %></p><% end %>
         </div>
-      <% else %>
-        <%= form.text_field field, class: "w-full rounded-lg border p-2 #{form_state_classes(@contact, field)}" %>
       <% end %>
-      <%= error_message_for(@contact, field) %>
     </div>
-  <% end %>
-  <% %i[primary active].each do |field| %>
-    <div>
-      <%= form.check_box field %>
-      <%= form.label field, t("admin.supplier_details.contact_fields.#{field}") %>
-      <%= error_message_for(@contact, field) %>
+  </section>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex items-center gap-3">
+      <span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"><%= icon('chat-bubble-left-right', class: 'size-5') %></span>
+      <div><h2 class="font-semibold text-slate-900"><%= t('admin.supplier_details.contact_form.communication_title') %></h2><p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.communication_description') %></p></div>
     </div>
-  <% end %>
-  <%= form.submit t('admin.supplier_details.save'), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
-  <%= link_to t('admin.supplier_details.back'), admin_supplier_contacts_path(@supplier) %>
+    <div class="mt-5 space-y-4 border-t border-slate-100 pt-5">
+      <div>
+        <%= form.label :email, t('admin.supplier_details.contact_fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.email_field :email, class: "#{field_classes} #{form_state_classes(@contact, :email)}", placeholder: 'contacto@proveedor.com' %>
+        <%= error_message_for(@contact, :email) %>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        <% %i[phone mobile_phone].each do |field| %>
+          <div class="min-w-0">
+            <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
+              <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "#{field_classes} #{form_state_classes(@contact, field)}", placeholder: '55 1234 5678' %>
+            </div>
+            <%= error_message_for(@contact, field) %>
+          </div>
+        <% end %>
+      </div>
+      <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.phone_hint') %></p>
+    </div>
+  </section>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex items-center gap-3">
+      <span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"><%= icon('adjustments-horizontal', class: 'size-5') %></span>
+      <div><h2 class="font-semibold text-slate-900"><%= t('admin.supplier_details.contact_form.settings_title') %></h2><p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.settings_description') %></p></div>
+    </div>
+    <div class="mt-5 space-y-5 border-t border-slate-100 pt-5">
+      <fieldset>
+        <legend class="mb-3 text-sm font-semibold text-slate-700"><%= t('admin.supplier_details.contact_form.primary_question') %></legend>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <% [[true, 'primary_option', 'star'], [false, 'secondary_option', 'users']].each do |value, key, symbol| %>
+            <label class="relative cursor-pointer">
+              <%= form.radio_button :primary, value, class: 'peer sr-only' %>
+              <span class="flex min-h-28 flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-300 peer-checked:border-2 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/50 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500">
+                <span class="flex items-center justify-between"><%= icon(symbol, class: 'size-5 text-slate-500') %><span class="size-4 rounded-full border-2 border-slate-300 peer-checked:border-emerald-600"></span></span>
+                <span class="mt-3 text-sm font-semibold text-slate-800"><%= t("admin.supplier_details.#{key}") %></span>
+              </span>
+            </label>
+          <% end %>
+        </div>
+        <p class="mt-2 text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.primary_hint') %></p>
+        <%= error_message_for(@contact, :primary) %>
+      </fieldset>
+      <div class="flex items-center justify-between gap-4 border-t border-slate-100 pt-5">
+        <div><%= form.label :active, t('admin.supplier_details.contact_form.active_title'), class: 'block text-sm font-semibold text-slate-800' %><p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.active_description') %></p></div>
+        <%= form.check_box :active, class: 'size-5 shrink-0 rounded border-slate-300 accent-emerald-600 focus:ring-emerald-500' %>
+      </div>
+      <%= error_message_for(@contact, :active) %>
+    </div>
+  </section>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex items-center gap-3">
+      <span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600"><%= icon('document-text', class: 'size-5') %></span>
+      <div><h2 class="font-semibold text-slate-900"><%= t('admin.supplier_details.contact_form.notes_title') %></h2><p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.notes_description') %></p></div>
+    </div>
+    <div class="mt-5 border-t border-slate-100 pt-5">
+      <%= form.text_area :notes, rows: 3, class: "#{field_classes} #{form_state_classes(@contact, :notes)}", placeholder: t('admin.supplier_details.contact_form.notes_placeholder') %>
+      <%= error_message_for(@contact, :notes) %>
+      <p class="mt-2 text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.notes_hint') %></p>
+    </div>
+  </section>
+  <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.required_hint') %></p>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to t('admin.supplier_details.contact_form.cancel'), admin_supplier_contacts_path(@supplier), class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+      <%= form.submit t(@contact.persisted? ? 'admin.supplier_details.contact_form.update' : 'admin.supplier_details.contact_form.create'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    </div>
+  </div>
 <% end %>
