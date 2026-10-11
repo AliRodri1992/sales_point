@@ -11,7 +11,7 @@
         <div class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= icon('building-office-2', class: 'size-7') %></div>
         <div>
           <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= supplier.name %></h1>
-          <p class="mt-1 text-sm text-slate-500"><%= supplier.code %> · <%= t(supplier.classification, scope: "admin.supplier_dossier.options", default: supplier.classification.to_s.humanize) %></p>
+          <p class="mt-1 text-sm text-slate-500"><%= supplier.code %> · <%= t("admin.supplier_dossier.options.#{supplier.classification}", default: supplier.classification.to_s.humanize) %></p>
           <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
         </div>
       </div>
@@ -48,7 +48,7 @@
     <section data-supplier-dossier-target="panel" data-section="general" class="p-6">
       <h2 class="mb-4 text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.general') %></h2>
       <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <% [['legal_name', supplier.legal_name], ['trade_name', supplier.trade_name], ['alias_name', supplier.alias_name], ['classification', supplier.classification.present? ? t(supplier.classification, scope: "admin.supplier_dossier.options") : nil], ['person_type', supplier.person_type.present? ? t(supplier.person_type, scope: "admin.supplier_dossier.options") : nil], ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil], ['postal_code', supplier.postal_code]].each do |key, value| %>
+        <% [['legal_name', supplier.legal_name], ['trade_name', supplier.trade_name], ['alias_name', supplier.alias_name], ['classification', supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil], ['person_type', supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil], ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil], ['postal_code', supplier.postal_code]].each do |key, value| %>
           <div><dt class="text-xs font-semibold uppercase text-slate-400"><%= t("admin.suppliers.show.fields.#{key}", default: t("admin.supplier_dossier.fields.#{key}", default: key.humanize)) %></dt><dd class="mt-1 break-words text-sm font-medium text-slate-800"><%= value.presence || '—' %></dd></div>
         <% end %>
       </dl>
