@@ -62,7 +62,9 @@ module Admin
       %w[created_at updated_at].each do |field|
         %w[from to].each do |bound|
           key = "#{field}_#{bound}"
-          date = Date.iso8601(params[key]) rescue nil
+          next if params[key].blank?
+
+          date = parse_filter_date(params[key])
           next unless date
 
           scope = scope.where("suppliers.#{field} #{bound == 'from' ? '>=' : '<='} ?",
@@ -70,6 +72,12 @@ module Admin
         end
       end
       scope
+    end
+
+    def parse_filter_date(value)
+      Date.iso8601(value)
+    rescue Date::Error
+      nil
     end
 
     def valid_id?(key)
