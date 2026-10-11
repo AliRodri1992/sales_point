@@ -66,7 +66,7 @@ export default class extends Controller {
   }
 
   refresh() {
-    this.label.textContent = this.select.selectedOptions[0]?.textContent?.trim() || ""
+    this.label.replaceChildren(this.optionContent(this.select.selectedOptions[0]))
     this.menu.replaceChildren()
     const options = [...this.select.options]
     options.forEach((option, index) => {
@@ -76,7 +76,7 @@ export default class extends Controller {
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
       item.className = `flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none ${option.selected ? "bg-emerald-50 font-semibold text-emerald-800" : "text-slate-700"}`
-      item.textContent = option.textContent
+      item.append(this.optionContent(option))
       if (option.selected) {
         const check = document.createElement("span")
         check.className = "ml-2 text-emerald-600"
@@ -97,6 +97,30 @@ export default class extends Controller {
       })
       this.menu.append(item)
     })
+  }
+
+  optionContent(option) {
+    const content = document.createElement("span")
+    content.className = "flex min-w-0 items-center gap-2.5"
+
+    const countryCode = this.element.dataset.countryFlags === "true" ? option?.dataset.countryCode : null
+    if (countryCode && /^[A-Z]{2}$/.test(countryCode)) {
+      const flag = document.createElement("img")
+      flag.src = `https://flagcdn.com/${countryCode.toLowerCase()}.svg`
+      flag.alt = ""
+      flag.setAttribute("aria-hidden", "true")
+      flag.loading = "lazy"
+      flag.width = 22
+      flag.height = 16
+      flag.className = "h-4 w-[22px] shrink-0 rounded-sm object-cover"
+      content.append(flag)
+    }
+
+    const name = document.createElement("span")
+    name.className = "truncate"
+    name.textContent = option?.textContent?.trim() || ""
+    content.append(name)
+    return content
   }
 
   choose(index) {
