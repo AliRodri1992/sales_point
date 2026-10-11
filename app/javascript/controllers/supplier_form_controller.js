@@ -168,10 +168,19 @@ export default class extends Controller {
       const title = step.querySelector("h2")?.textContent?.trim() || ""
       const fields = [...step.querySelectorAll("input, select, textarea")]
         .filter((field) => !field.closest("[data-supplier-nested-item]"))
-      this.appendSummaryGroup(title, fields)
-
       const nestedItems = [...step.querySelectorAll("[data-supplier-nested-item]")]
         .filter((item) => item.querySelector("[data-supplier-nested-destroy]")?.value !== "1")
+
+      // Fiscal information and its single fiscal address belong in one summary card.
+      if (step === this.stepTargets[1] && nestedItems.length === 1) {
+        this.appendSummaryGroup(title, [
+          ...fields,
+          ...nestedItems[0].querySelectorAll("input, select, textarea")
+        ])
+        return
+      }
+
+      this.appendSummaryGroup(title, fields)
       nestedItems.forEach((item, index) => {
         this.appendSummaryGroup(`${title} · ${index + 1}`, [...item.querySelectorAll("input, select, textarea")])
       })
