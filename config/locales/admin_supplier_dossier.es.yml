@@ -1,6 +1,7 @@
 es:
   admin:
     supplier_dossier:
+      more_actions: "Más acciones"
       general:
         contact_summary: "Datos de contacto"
         information: "Información general"
