@@ -1,6 +1,18 @@
 en:
   admin:
     supplier_details:
+      manage_addresses: "Manage addresses"
+      addresses_description: "All addresses registered for this supplier."
+      search_addresses: "Search addresses..."
+      no_addresses: "No addresses found."
+      address_columns:
+        type: "Type"
+        address: "Address"
+        city: "City"
+        state: "State / Province"
+        postal_code: "Postal code"
+        country: "Country"
+        primary: "Primary"
       manage_contacts: "Manage contacts"
       actions: "Actions"
       contacts_count: "%{count} contacts"
