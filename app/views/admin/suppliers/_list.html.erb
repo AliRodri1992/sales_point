@@ -43,7 +43,7 @@
                 <div class="flex items-center justify-center gap-1">
                   <% if policy(supplier).show? %>
                     <%= link_to admin_supplier_path(supplier),
-                                data: { tooltip: t('admin.suppliers.index.show') },
+                                data: { tooltip: t('admin.suppliers.index.show'), turbo_frame: '_top' },
                                 class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                                 aria: { label: t('admin.suppliers.index.show') } do %>
                       <%= icon('eye', class: 'size-4') %>
@@ -51,7 +51,7 @@
                   <% end %>
                   <% if policy(supplier).edit? %>
                     <%= link_to edit_admin_supplier_path(supplier),
-                                data: { tooltip: t('admin.suppliers.index.edit') },
+                                data: { tooltip: t('admin.suppliers.index.edit'), turbo_frame: '_top' },
                                 class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                                 aria: { label: t('admin.suppliers.index.edit') } do %>
                       <%= icon('pencil-square', class: 'size-4') %>
