@@ -23,8 +23,8 @@ module Onboarding
       settings = @organization.organization_settings.first
 
       {
-        'organization' => @organization.attributes.slice('name', 'tax_id', 'business_sector', 'base_currency_id'),
-        'settings' => settings&.attributes&.slice('currency', 'timezone')
+        'organization' => @organization.attributes.slice('name', 'tax_id', 'business_sector'),
+        'settings' => settings&.attributes&.slice('base_currency_id', 'timezone')
       }
     end
 
