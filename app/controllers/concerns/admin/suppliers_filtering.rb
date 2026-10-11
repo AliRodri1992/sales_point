@@ -12,6 +12,8 @@ module Admin
     NUMERIC_BOUNDS = %w[min max].freeze
     DATE_BOUNDS = %w[from to].freeze
 
+    private
+
     def apply_filters(scope)
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
