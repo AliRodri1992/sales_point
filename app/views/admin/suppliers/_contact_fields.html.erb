@@ -1,0 +1,30 @@
+<div data-supplier-nested-item class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <%= form.hidden_field :id if form.object.persisted? %>
+  <%= form.hidden_field :_destroy, value: '0', data: { supplier_nested_destroy: true } %>
+  <div class="mb-4 flex justify-end"><button type="button" data-action="supplier-nested#remove" class="text-sm font-semibold text-rose-600"><%= t('admin.supplier_details.delete') %></button></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <% %i[name position email phone mobile_phone].each do |field| %>
+      <div>
+        <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <% if %i[phone mobile_phone].include?(field) %>
+          <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
+            <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+          </div>
+        <% else %>
+          <%= form.text_field field, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+        <% end %>
+        <%= error_message_for(form.object, field) %>
+      </div>
+    <% end %>
+    <div>
+      <%= form.label :primary, t('admin.supplier_details.primary'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.check_box :primary, class: 'size-5 accent-emerald-600' %>
+      <%= error_message_for(form.object, :primary) %>
+    </div>
+    <div>
+      <%= form.label :active, t('admin.supplier_details.contact_fields.active'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.check_box :active, class: 'size-5 accent-emerald-600' %>
+      <%= error_message_for(form.object, :active) %>
+    </div>
+  </div>
+</div>
