@@ -248,7 +248,7 @@
                   <input id="branches-input" type="number" min="1" value="1" class="mt-1 block w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-500 shadow-sm" disabled>
                 </div>
                 <div class="relative">
-                  <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.currency") %></label>
+                  <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= { es: "Moneda base", en: "Base currency", ko: "기준 통화" }.fetch(I18n.locale.to_sym, t(".step_four.currency")) %></label>
                   <button type="button" id="currency" data-registration-wizard-target="dropdown" data-dropdown-name="currency" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                     <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.currencies.mxn") %></span>
                     <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
