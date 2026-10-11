@@ -23,6 +23,8 @@ RUN apt-get update -qq && \
     pkg-config \
     python-is-python3 \
     postgresql-client \
+    wkhtmltopdf \
+    fonts-dejavu-core \
     ca-certificates \
     gnupg \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
