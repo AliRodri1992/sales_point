@@ -87,6 +87,7 @@ es:
           status: "Estado"
           actions: "Acciones"
       onboarding:
+        contact_general: "Datos de contacto del proveedor"
         summary:
           title: "Resumen"
           subtitle: "Revisa antes de guardar"
