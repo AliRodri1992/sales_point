@@ -331,133 +331,92 @@ SeedConsole.report('Proveedores', Supplier)
 SeedConsole.report('Contactos', Contact)
 SeedConsole.report('Membresías', OrganizationMembership)
 
-require 'faker'
-
-# Create client examples
+# Deterministic examples avoid Faker collisions and invalid phone/address data.
 SeedConsole.track('Clientes', Client) do
-20.times do |index|
-  code = "CLI#{format('%04d', index + 1)}"
+  20.times do |index|
+    number = index + 1
+    code = format('CLI%04d', number)
+    next if Client.exists?(code:)
 
-  name = Faker::Company.name
-                       .gsub(/[^A-Za-z0-9ÁÉÍÓÚáéíóúÑñ&.-]/, '')
-                       .strip
-
-  rfc_prefix = index.even? ? 3 : 4
-
-  rfc = "#{Faker::Alphanumeric.alpha(number: rfc_prefix).upcase}" \
-        "#{Faker::Number.number(digits: 6)}" \
-        "#{Faker::Alphanumeric.alphanumeric(number: 3).upcase}"
-
-  postal_code = format('%05d', Faker::Number.between(from: 1, to: 99_999))
-
-  client = Client.find_or_initialize_by(code: code)
-  next unless client.new_record?
-
-  client.assign_attributes(
-    code: code,
-    email: Faker::Internet.unique.email,
-    name: name,
-    notes: Faker::Lorem.sentence(word_count: 8),
-    phone: Faker::PhoneNumber.cell_phone,
-    postal_code: postal_code,
-    credit_limit: Faker::Number.between(from: 0, to: 100_000),
-    rfc: rfc,
-    status: %w[active inactive].sample
-  )
-  client.save!
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping client seed due to error: #{e.message}"
-end
+    Client.create!(
+      code:,
+      name: "Cliente de ejemplo #{number}",
+      email: "cliente#{number}@example.com",
+      phone: format('551234%04d', number),
+      rfc: format('CDE260101%03d', number),
+      postal_code: '06000',
+      credit_limit: number * 1000,
+      notes: "Cliente de demostración #{number}.",
+      status: number % 5 == 0 ? :inactive : :active
+    )
+  end
 end
 
-# Create category examples
 SeedConsole.track('Categorías', Category) do
-15.times do |index|
-  name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
-  name = "Categoria#{index + 1}" if name.blank?
+  15.times do |index|
+    number = index + 1
+    code = format('cat%04d', number)
+    next if Category.exists?(code:)
 
-  category = Category.find_or_initialize_by(code: "cat#{format('%04d', index + 1)}")
-  next unless category.new_record?
-
-  category.assign_attributes(
-    code: "cat#{format('%04d', index + 1)}",
-    name: name[0, 50],
-    description: Faker::Lorem.sentence(word_count: 8),
-    status: %w[active active active inactive].sample
-  )
-  category.save!
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping category seed due to error: #{e.message}"
-end
+    Category.create!(
+      code:,
+      name: "Categoría #{number}",
+      description: "Categoría de ejemplo #{number} para Delta POS.",
+      status: number % 5 == 0 ? :inactive : :active
+    )
+  end
 end
 
-categories = Category.not_deleted.to_a
-
-# Create product examples
 SeedConsole.track('Productos', Product) do
-15.times do |index|
-  code = "PROD#{format('%04d', index + 1)}"
+  categories = Category.not_deleted.order(:id).to_a
+  raise 'No hay categorías disponibles para crear productos' if categories.empty?
 
-  name = Faker::Commerce.product_name
-  price = Faker::Commerce.price(range: 50.0..5000.0)
-  stock = Faker::Number.between(from: 10, to: 500)
+  15.times do |index|
+    number = index + 1
+    code = format('PROD%04d', number)
+    next if Product.exists?(code:)
 
-  product = Product.find_or_initialize_by(code: code)
-  next unless product.new_record?
-
-  product.assign_attributes(
-    code: code,
-    name: name,
-    description: Faker::Lorem.sentence(word_count: 12),
-    price: price,
-    cost: (price * 0.6).round(2),
-    stock: stock,
-    min_stock: 5,
-    max_stock: stock + 100,
-    sku: "SKU-#{Faker::Alphanumeric.alphanumeric(number: 8).upcase}",
-    barcode: "75#{Faker::Number.number(digits: 10)}",
-    category: categories.sample,
-    status: %w[active active active inactive].sample
-  )
-  product.save!
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping product seed due to error: #{e.message}"
-end
+    Product.create!(
+      code:,
+      name: "Producto de ejemplo #{number}",
+      description: "Producto de demostración #{number} para Delta POS.",
+      price: number * 100,
+      cost: number * 60,
+      stock: 100 + number,
+      min_stock: 5,
+      max_stock: 300,
+      sku: format('SKU-DELTA-%04d', number),
+      barcode: format('75000000%05d', number),
+      category: categories[index % categories.length],
+      status: number % 5 == 0 ? :inactive : :active
+    )
+  end
 end
 
-# Create branch examples
 SeedConsole.track('Sucursales', Branch) do
-15.times do |index|
-  street = Faker::Address.street_name
-  neighborhood = Faker::Address.city
-  city = Faker::Address.city
-  state = Faker::Address.state
-  exterior_number = Faker::Address.building_number.to_s.strip
-  exterior_number = Faker::Number.between(from: 1, to: 999).to_s if exterior_number.blank?
-  postal_code = format('%05d', Faker::Address.zip_code.to_s.gsub(/\D/, '')[0, 5].to_i)
-  phone = Faker::PhoneNumber.cell_phone.gsub(/[^0-9+\-()\s]/, '')[0, 20]
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
 
-  branch_name = "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100]
-  next if Branch.where('name LIKE ?', "Sucursal #{format('%02d', index + 1)} - %").exists?
+  15.times do |index|
+    number = index + 1
+    name = format('Sucursal Delta %02d', number)
+    next if Branch.exists?(organization:, name:)
 
-  Branch.create!(
-    organization: Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID),
-    name: branch_name,
-    phone: phone,
-    status: [true, true, true, false].sample,
-    address_attributes: {
-      street: street[0, 150],
-      exterior_number: exterior_number,
-      neighborhood: neighborhood[0, 100],
-      city: city[0, 100],
-      state: state[0, 100],
-      country: 'España',
-      postal_code: postal_code
-    }
-  )
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping branch seed due to error: #{e.message}"
-end
+    Branch.create!(
+      organization:,
+      name:,
+      phone: format('551234%04d', 100 + number),
+      status: number % 5 != 0,
+      address_attributes: {
+        street: 'Avenida Insurgentes',
+        exterior_number: number.to_s,
+        neighborhood: 'Centro',
+        city: 'Ciudad de México',
+        state: 'Ciudad de México',
+        country: 'México',
+        postal_code: '06000'
+      }
+    )
+  end
 end
 
 SeedConsole.report('Direcciones', Address)
