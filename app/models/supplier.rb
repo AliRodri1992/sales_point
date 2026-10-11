@@ -76,19 +76,22 @@ class Supplier < ApplicationRecord
     return if rfc.blank? || !rfc.match?(/\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/)
 
     prefix_length = rfc.length == 13 ? 4 : 3
-    if (person_type == 'individual' && prefix_length != 4) ||
-       (person_type == 'company' && prefix_length != 3)
-      errors.add(:rfc, :person_type_mismatch)
-    end
+    errors.add(:rfc, :person_type_mismatch) if rfc_person_type_mismatch?(prefix_length)
+    errors.add(:rfc, :invalid_date) unless rfc_date_valid?(prefix_length)
+  end
 
+  def rfc_person_type_mismatch?(prefix_length)
+    (person_type == 'individual' && prefix_length != 4) ||
+      (person_type == 'company' && prefix_length != 3)
+  end
+
+  def rfc_date_valid?(prefix_length)
     date_digits = rfc[prefix_length, 6]
     month = date_digits[2, 2].to_i
     day = date_digits[4, 2].to_i
     year = date_digits[0, 2].to_i
-    valid_date = [2000 + year, 1900 + year].any? do |full_year|
-      Date.valid_date?(full_year, month, day)
-    end
-    errors.add(:rfc, :invalid_date) unless valid_date
+
+    [2000 + year, 1900 + year].any? { |full_year| Date.valid_date?(full_year, month, day) }
   end
 
   def responsible_user_in_organization
