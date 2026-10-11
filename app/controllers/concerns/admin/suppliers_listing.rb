@@ -19,7 +19,15 @@ module Admin
     private
 
     def load_suppliers
-      @suppliers = apply_filters(policy_scope(current_organization.suppliers.not_deleted).includes(:sat_fiscal_regime))
+      base_scope = policy_scope(current_organization.suppliers.not_deleted)
+      @supplier_stats = {
+        total: base_scope.count,
+        active: base_scope.where(status: 'active').count,
+        inactive: base_scope.where(status: 'inactive').count,
+        credit: base_scope.where('credit_limit > 0').count
+      }
+      @supplier_regimes = SatFiscalRegime.current.order(:code)
+      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime))
       @total_count = @suppliers.count
       @suppliers = apply_sorting(@suppliers)
       @suppliers = paginate(@suppliers)
@@ -27,8 +35,49 @@ module Admin
 
     def apply_filters(scope)
       scope = scope.search(params[:search]) if params[:search].present?
-      scope = scope.with_status(params[:status]) if params[:status].present? && params[:status] != 'all'
+      scope = scope.with_status(params[:status]) if %w[active inactive].include?(params[:status])
+      allowed_filters = {
+        classification: %w[manufacturer distributor wholesaler service other],
+        person_type: %w[individual company],
+        currency: %w[MXN USD EUR]
+      }
+      allowed_filters.each do |field, values|
+        scope = scope.where(field => params[field]) if values.include?(params[field])
+      end
+      scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id]) if valid_id?(:sat_fiscal_regime_id)
+      scope = scope.where(responsible_user_id: params[:responsible_user_id]) if valid_id?(:responsible_user_id)
+      scope = scope.where('credit_limit > 0') if params[:credit] == 'yes'
+      scope = scope.where(credit_limit: 0) if params[:credit] == 'no'
+
+      %w[credit_days credit_limit minimum_order_amount discount_percent].each do |field|
+        %w[min max].each do |bound|
+          key = "#{field}_#{bound}"
+          next unless valid_nonnegative_number?(key)
+
+          operator = bound == 'min' ? '>=' : '<='
+          scope = scope.where("suppliers.#{field} #{operator} ?", BigDecimal(params[key].to_s))
+        end
+      end
+
+      %w[created_at updated_at].each do |field|
+        %w[from to].each do |bound|
+          key = "#{field}_#{bound}"
+          date = Date.iso8601(params[key]) rescue nil
+          next unless date
+
+          scope = scope.where("suppliers.#{field} #{bound == 'from' ? '>=' : '<='} ?",
+                              bound == 'from' ? date.beginning_of_day : date.end_of_day)
+        end
+      end
       scope
+    end
+
+    def valid_id?(key)
+      params[key].to_s.match?(/\A[1-9]\d*\z/)
+    end
+
+    def valid_nonnegative_number?(key)
+      params[key].to_s.match?(/\A\d{1,12}(?:\.\d{1,2})?\z/)
     end
 
     def apply_sorting(scope)
