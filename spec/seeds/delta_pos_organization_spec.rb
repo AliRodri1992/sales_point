@@ -15,7 +15,7 @@ RSpec.describe SupplierExamples, type: :model do
 
     organization = Organization.find_by!(tax_id: described_class::ORGANIZATION_TAX_ID)
     expect(organization.name).to eq('Delta POS')
-    expect(organization.base_currency.code).to eq('MXN')
+    expect(organization.organization_settings.first.base_currency.code).to eq('MXN')
   end
 
   it 'does not duplicate Delta POS or its administrator membership' do

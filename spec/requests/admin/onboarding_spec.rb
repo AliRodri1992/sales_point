@@ -42,7 +42,7 @@ RSpec.describe 'Admin onboarding', type: :request do
         name: organization.name,
         tax_id: organization.tax_id,
         business_sector: organization.business_sector,
-        currency: 'MXN',
+        base_currency_id: organization.organization_settings.first.base_currency_id,
         timezone: 'America/Mexico_City'
       }
     }

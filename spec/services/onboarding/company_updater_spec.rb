@@ -63,7 +63,11 @@ RSpec.describe Onboarding::CompanyUpdater, type: :service do
     it 'raises a validation error rather than silently accepting invalid company data' do
       organization = create(:organization, :with_settings)
       params = ActionController::Parameters.new(
-        organization: { name: '', timezone: 'America/Mexico_City' }
+        organization: {
+          name: '',
+          base_currency_id: organization.organization_settings.first.base_currency_id,
+          timezone: 'America/Mexico_City'
+        }
       )
 
       expect { described_class.call(organization, params) }

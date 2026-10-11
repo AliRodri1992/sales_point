@@ -18,6 +18,9 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 
 require 'rspec/rails'
+
+# Suppress Sidekiq connection INFO messages in test output while retaining warnings.
+Sidekiq.logger.level = Logger::WARN if defined?(Sidekiq)
 require 'capybara/rspec'
 require 'shoulda/matchers'
 # ─────────────────────────────

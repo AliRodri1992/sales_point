@@ -7,7 +7,7 @@ RSpec.describe Currency, type: :model do
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to have_many(:country_currencies).dependent(:restrict_with_error) }
-  it { is_expected.to have_many(:organizations).dependent(:restrict_with_error) }
+  it { is_expected.to have_many(:organization_settings).dependent(:restrict_with_error) }
 
   it 'normalizes currency codes' do
     currency.code = 'mxn'
@@ -39,7 +39,7 @@ RSpec.describe Currency, type: :model do
 
   it 'prevents removal of a currency used by an organization' do
     persisted = create(:currency)
-    create(:organization, base_currency: persisted)
+    create(:organization_setting, base_currency: persisted)
     expect(persisted.destroy).to be_falsey
   end
 end
