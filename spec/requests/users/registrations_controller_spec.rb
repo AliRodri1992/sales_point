@@ -3,6 +3,7 @@
 RSpec.describe Users::RegistrationsController, type: :request do
   let!(:administrator) { create(:system_role, :system, code: 'administrator') }
   let!(:permission) { create(:permission, status: :active) }
+  let!(:base_currency) { create(:currency, code: 'MXN') }
 
   before do
     create(:system_role_permission, system_role: administrator, permission:)
