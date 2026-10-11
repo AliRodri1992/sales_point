@@ -26,19 +26,18 @@ module Onboarding
     private
 
     def update_organization(attributes)
-      currency = Currency.active.find_by(id: attributes[:base_currency_id])
-      unless currency
-        @organization.errors.add(:base_currency, :invalid)
-        return false
-      end
-
       @organization.assign_attributes(attributes.slice(:name, :tax_id, :business_sector))
-      @organization.base_currency = currency
       @organization.save!(context: :onboardingstep1)
     end
 
     def update_settings(settings, attributes)
-      settings.assign_attributes(currency: @organization.base_currency.code, timezone: attributes[:timezone])
+      currency = Currency.active.find_by(id: attributes[:base_currency_id])
+      unless currency
+        settings.errors.add(:base_currency, :invalid)
+        return false
+      end
+
+      settings.assign_attributes(base_currency: currency, timezone: attributes[:timezone])
       settings.save!(context: :onboardingstep1)
     end
   end
