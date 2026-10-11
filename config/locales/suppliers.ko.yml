@@ -87,6 +87,7 @@ ko:
           status: "상태"
           actions: "작업"
       onboarding:
+        contact_general: "공급업체 연락처 정보"
         summary:
           title: "요약"
           subtitle: "저장 전 확인"
