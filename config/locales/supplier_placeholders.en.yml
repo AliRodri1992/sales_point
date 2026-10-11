@@ -1,0 +1,30 @@
+en:
+  admin:
+    supplier_placeholders:
+      legal_name: "Enter the legal name"
+      trade_name: "Enter the trade name"
+      alias_name: "Enter an alias"
+      credit_days: "Enter credit days"
+      credit_limit: "Enter the credit limit"
+      discount_percent: "Enter the discount percentage"
+      minimum_order_amount: "Enter the minimum order"
+      tags_text: "Enter comma-separated tags"
+      documents: "Choose documents to attach"
+      classification: "Select a classification"
+      currency: "Select a currency"
+      country: "Select a country"
+      purpose: "Select a purpose"
+      contact:
+        name: "Enter the name"
+        position: "Enter the position"
+        email: "example@company.com"
+        phone: "Enter the phone number"
+        mobile_phone: "Enter the mobile number"
+      address:
+        street: "Enter the street"
+        exterior_number: "Enter the exterior number"
+        interior_number: "Enter the interior number (optional)"
+        neighborhood: "Enter the neighborhood"
+        city: "Enter the city"
+        state: "Enter the state"
+        postal_code: "Enter the postal code"

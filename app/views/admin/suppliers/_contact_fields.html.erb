@@ -10,10 +10,10 @@
         <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <% if %i[phone mobile_phone].include?(field) %>
           <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
-            <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+            <%= form.telephone_field field, placeholder: t("admin.supplier_placeholders.contact.#{field}"), data: { international_phone_target: 'input' }, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
           </div>
         <% else %>
-          <%= form.text_field field, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+          <%= form.text_field field, placeholder: t("admin.supplier_placeholders.contact.#{field}"), class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
         <% end %>
         <%= error_message_for(form.object, field) %>
       </div>

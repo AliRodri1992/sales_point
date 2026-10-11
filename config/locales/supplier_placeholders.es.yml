@@ -1,0 +1,30 @@
+es:
+  admin:
+    supplier_placeholders:
+      legal_name: "Ingrese la razón social"
+      trade_name: "Ingrese el nombre comercial"
+      alias_name: "Ingrese el alias"
+      credit_days: "Ingrese los días de crédito"
+      credit_limit: "Ingrese el límite de crédito"
+      discount_percent: "Ingrese el porcentaje de descuento"
+      minimum_order_amount: "Ingrese el pedido mínimo"
+      tags_text: "Ingrese etiquetas separadas por comas"
+      documents: "Seleccione documentos para adjuntar"
+      classification: "Seleccione una clasificación"
+      currency: "Seleccione una moneda"
+      country: "Seleccione un país"
+      purpose: "Seleccione un propósito"
+      contact:
+        name: "Ingrese el nombre"
+        position: "Ingrese el puesto"
+        email: "ejemplo@empresa.com"
+        phone: "Ingrese el teléfono"
+        mobile_phone: "Ingrese el celular"
+      address:
+        street: "Ingrese la calle"
+        exterior_number: "Ingrese el número exterior"
+        interior_number: "Ingrese el número interior (opcional)"
+        neighborhood: "Ingrese la colonia"
+        city: "Ingrese la ciudad"
+        state: "Ingrese el estado"
+        postal_code: "Ingrese el código postal"
