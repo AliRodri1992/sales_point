@@ -84,7 +84,7 @@ module Admin
 
     def redirect_success(action)
       redirect_to admin_supplier_addresses_path(@supplier),
-                  flash: { swal_message: t("admin.supplier_details.#{action}") }
+                  flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 
     def address_params
