@@ -13,6 +13,7 @@
       <button type="button" data-supplier-form-target="tab" data-step-index="6" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span data-supplier-form-target="circle" class="flex size-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg></span><span class="flex min-w-0 flex-col"><span><%= t('admin.suppliers.onboarding.summary.title') %></span><span class="mt-0.5 text-xs font-normal text-slate-500"><%= t('admin.suppliers.onboarding.summary.subtitle') %></span></span></button>
     </nav>
     <div class="flex min-w-0 flex-col">
+      <div class="min-w-0 min-h-0">
       <section data-supplier-form-target="step"  class="" aria-label="<%= t('admin.suppliers.onboarding.steps.step_1') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_1') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_1') %></p></div>
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
@@ -174,6 +175,7 @@
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.summary.title') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.summary.description') %></p></div>
         <div data-supplier-form-target="summary" class="space-y-4 pr-1" aria-live="polite"></div>
       </section>
+      </div>
       <div class="mt-6 flex min-w-0 flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-5">
         <p class="flex items-center gap-2 text-xs text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="size-4 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v5M12 7h.01"/></svg><%= t('admin.suppliers.onboarding.required') %></p>
         <div class="flex flex-wrap items-center gap-2">
