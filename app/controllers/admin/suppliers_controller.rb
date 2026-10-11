@@ -5,6 +5,7 @@ module Admin
     include Pundit::Authorization
     include SuppliersListing
     include SuppliersExporting
+    include SuppliersFormHelpers
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -129,14 +130,6 @@ module Admin
       uploads = attributes.delete(:documents)
       attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
       attributes
-    end
-
-    def load_fiscal_regimes
-      @fiscal_regimes = SatFiscalRegime.current.order(:code)
-    end
-
-    def notify_supplier(action)
-      Suppliers::NotifyService.call(action:, supplier: @supplier, user: current_user)
     end
 
     def user_not_authorized
