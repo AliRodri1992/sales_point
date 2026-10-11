@@ -3,8 +3,8 @@
 class Currency < ApplicationRecord
   has_many :country_currencies, dependent: :restrict_with_error
   has_many :countries, through: :country_currencies
-  has_many :organizations, foreign_key: :base_currency_id, inverse_of: :base_currency,
-                           dependent: :restrict_with_error
+  has_many :organization_settings, foreign_key: :base_currency_id, inverse_of: :base_currency,
+                                   dependent: :restrict_with_error
 
   before_validation :normalize_code
 
