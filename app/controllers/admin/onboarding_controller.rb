@@ -76,6 +76,7 @@ module Admin
     end
 
     def load_onboarding
+      @currencies = Currency.active.order(:code)
       @progress_percentage = Onboarding::ProgressCalculator.call(@organization)[:percentage]
       @step = normalized_step
       @branch = active_branch
