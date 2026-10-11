@@ -1,6 +1,11 @@
 es:
   admin:
     supplier_dossier:
+      commercial:
+        summary: "Resumen de condiciones comerciales"
+        description: "Información general de las condiciones de compra con este proveedor."
+        payment: "Condiciones de pago"
+        purchase: "Descuentos y pedidos"
       more_actions: "Más acciones"
       general:
         contact_summary: "Datos de contacto"
