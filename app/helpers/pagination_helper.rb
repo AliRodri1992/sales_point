@@ -34,7 +34,7 @@ module PaginationHelper
 
   def active_link(label)
     tag.span(label,
-             class: 'px-3 py-1 text-sm rounded-lg border border-blue-600 bg-blue-600 ' \
+             class: 'px-3 py-1 text-sm rounded-lg border border-emerald-600 bg-emerald-600 ' \
                     'font-semibold text-white cursor-default',
              aria: { current: 'page' })
   end
@@ -47,7 +47,7 @@ module PaginationHelper
                       aria: { disabled: true })
     else
       link_to(url_for(request.query_parameters.merge(page: page)),
-              class: "#{base}border-slate-300 text-slate-700 hover:bg-slate-100",
+              class: "#{base}border-slate-300 text-slate-700 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600",
               data: frame ? { turbo_frame: frame } : nil) do
         label
       end
