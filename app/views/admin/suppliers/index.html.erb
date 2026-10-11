@@ -16,33 +16,56 @@
       <% end %>
     <% end %>
 
-    <%= form_with url: admin_suppliers_path, method: :get,
-                  data: { turbo_frame: 'suppliers_list' },
-                  class: 'flex items-center gap-2' do %>
-      <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>
-      <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
-      <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
-      <%= text_field_tag :search, params[:search],
-            placeholder: t('admin.suppliers.index.search_placeholder'),
-            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
-      <%= select_tag :status,
-            options_for_select(
-              [
-                [t('admin.suppliers.index.filters.all_statuses'), 'all'],
-                [t('admin.suppliers.statuses.active'), 'active'],
-                [t('admin.suppliers.statuses.inactive'), 'inactive']
-              ],
-              params[:status] || 'all'
-            ),
-            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
-      <%= button_tag type: 'submit',
-            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
-        <%= icon('funnel', class: 'size-4') %>
-        <%= t('admin.suppliers.index.filters.apply') %>
-      <% end %>
-    <% end %>
+
   </div>
 </div>
+
+<div class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
+  <% { total: 'truck', active: 'circle-check', inactive: 'circle-pause', credit: 'credit-card' }.each do |metric, icon_name| %>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div class="flex items-center justify-between"><span class="text-xs text-slate-500"><%= t("admin.suppliers.index.metrics.#{metric}") %></span><%= icon(icon_name, class: 'size-5 text-emerald-600') %></div>
+      <p class="mt-2 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(metric) %></p>
+    </div>
+  <% end %>
+</div>
+
+<%= form_with url: admin_suppliers_path, method: :get, data: { turbo_frame: 'suppliers_list' }, class: 'mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' do %>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><%= icon('adjustments-horizontal', class: 'size-5') %><%= t('admin.suppliers.index.advanced.title') %></h2>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to t('admin.suppliers.index.advanced.clear'), admin_suppliers_path, class: 'rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50' %>
+      <%= button_tag t('admin.suppliers.index.filters.apply'), type: 'submit', class: 'rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    </div>
+  </div>
+  <div class="mt-4"><%= text_field_tag :search, params[:search], placeholder: t('admin.suppliers.index.search_placeholder'), class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+  <details class="mt-4" <%= 'open' if params.to_unsafe_h.keys.intersect?(%w[classification person_type currency credit sat_fiscal_regime_id responsible_user_id credit_days_min credit_days_max credit_limit_min credit_limit_max created_at_from created_at_to updated_at_from updated_at_to]) %>>
+    <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+<div><label for="supplier_status" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.status') %></label><%= select_tag :status, options_for_select(['all','active','inactive'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, params[:status] || 'all'), id: 'supplier_status', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+<div><label for="supplier_classification" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.classification') %></label><%= select_tag :classification, options_for_select(['all','manufacturer','distributor','wholesaler','service','other'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, params[:classification] || 'all'), id: 'supplier_classification', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+<div><label for="supplier_person_type" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.person_type') %></label><%= select_tag :person_type, options_for_select(['all','individual','company'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, params[:person_type] || 'all'), id: 'supplier_person_type', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+<div><label for="supplier_currency" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.currency') %></label><%= select_tag :currency, options_for_select(['all','MXN','USD','EUR'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, params[:currency] || 'all'), id: 'supplier_currency', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+<div><label for="supplier_credit" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit') %></label><%= select_tag :credit, options_for_select(['all','yes','no'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, params[:credit] || 'all'), id: 'supplier_credit', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500' %></div>
+<div><label for="supplier_sat_fiscal_regime_id" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.fiscal_regime') %></label><%= select_tag :sat_fiscal_regime_id, options_for_select([[t('admin.suppliers.index.advanced.options.all'), '']] + @supplier_regimes.map { |regime| ["#{regime.code}", regime.id] }, params[:sat_fiscal_regime_id]), id: 'supplier_sat_fiscal_regime_id', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_responsible_user_id" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.responsible') %></label><%= select_tag :responsible_user_id, options_for_select([[t('admin.suppliers.index.advanced.options.all'), '']] + current_organization.users.order(:id).map { |user| [user.email, user.id] }, params[:responsible_user_id]), id: 'supplier_responsible_user_id', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_credit_days_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_min') %></label><%= number_field_tag :credit_days_min, params[:credit_days_min], id: 'supplier_credit_days_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_credit_days_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_max') %></label><%= number_field_tag :credit_days_max, params[:credit_days_max], id: 'supplier_credit_days_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_credit_limit_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_min') %></label><%= number_field_tag :credit_limit_min, params[:credit_limit_min], id: 'supplier_credit_limit_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_credit_limit_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_max') %></label><%= number_field_tag :credit_limit_max, params[:credit_limit_max], id: 'supplier_credit_limit_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_minimum_order_amount_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.minimum_order_amount_min') %></label><%= number_field_tag :minimum_order_amount_min, params[:minimum_order_amount_min], id: 'supplier_minimum_order_amount_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_minimum_order_amount_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.minimum_order_amount_max') %></label><%= number_field_tag :minimum_order_amount_max, params[:minimum_order_amount_max], id: 'supplier_minimum_order_amount_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_discount_percent_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.discount_percent_min') %></label><%= number_field_tag :discount_percent_min, params[:discount_percent_min], id: 'supplier_discount_percent_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_discount_percent_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.discount_percent_max') %></label><%= number_field_tag :discount_percent_max, params[:discount_percent_max], id: 'supplier_discount_percent_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_created_at_from" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.created_at_from') %></label><%= date_field_tag :created_at_from, params[:created_at_from], id: 'supplier_created_at_from', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_created_at_to" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.created_at_to') %></label><%= date_field_tag :created_at_to, params[:created_at_to], id: 'supplier_created_at_to', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_updated_at_from" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.updated_at_from') %></label><%= date_field_tag :updated_at_from, params[:updated_at_from], id: 'supplier_updated_at_from', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+<div><label for="supplier_updated_at_to" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.updated_at_to') %></label><%= date_field_tag :updated_at_to, params[:updated_at_to], id: 'supplier_updated_at_to', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+    </div>
+  </details>
+  <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>
+  <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+  <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+<% end %>
 
 <%= turbo_frame_tag "suppliers_list", data: { turbo_action: "advance" } do %>
   <%= render "list", suppliers: @suppliers %>
