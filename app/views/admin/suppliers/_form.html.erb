@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, supplier], class: 'flex flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form', action: 'submit->supplier-form#submit', required_message: t('admin.suppliers.onboarding.required_field') } do |form| %>
+<%= form_with model: [:admin, supplier], class: 'flex flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form', action: 'submit->supplier-form#submit', required_message: t('admin.suppliers.onboarding.required_field'), invalid_format_message: t('admin.suppliers.onboarding.invalid_format') } do |form| %>
   <% if supplier.errors[:base].any? %>
     <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"><%= supplier.errors.full_messages_for(:base).first %></div>
   <% end %>
