@@ -6,6 +6,7 @@ class CreateOrganizations < ActiveRecord::Migration[8.1]
       t.string :name, null: false, limit: 150
       t.string :tax_id, null: false, limit: 13
       t.string :business_sector, null: false, limit: 50
+      t.references :base_currency, null: false, foreign_key: { to_table: :currencies }
       t.string :status, null: false, default: 'active', limit: 20
       t.timestamps
       t.timestamp :deleted_at
