@@ -1,4 +1,4 @@
-<div data-supplier-nested-item class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+<div data-supplier-nested-item class="<%= local_assigns.fetch(:embedded, false) ? '' : 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' %>">
   <%= form.hidden_field :id if form.object.persisted? %>
   <%= form.hidden_field :_destroy, value: '0', data: { supplier_nested_destroy: true } %>
   <% if local_assigns.fetch(:allow_remove, true) %>
