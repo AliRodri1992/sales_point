@@ -87,7 +87,7 @@ ko:
           status: "상태"
           actions: "작업"
       onboarding:
-        required_field: "필수 입력 항목입니다."
+        required_field: "%{field}은(는) 필수 입력 항목입니다."
         contact_general: "공급업체 연락처 정보"
         summary:
           title: "요약"
