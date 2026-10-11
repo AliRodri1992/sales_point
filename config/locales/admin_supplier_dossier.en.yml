@@ -1,6 +1,11 @@
 en:
   admin:
     supplier_dossier:
+      commercial:
+        summary: "Commercial terms summary"
+        description: "Overview of this supplier's purchasing terms."
+        payment: "Payment terms"
+        purchase: "Discounts and orders"
       more_actions: "More actions"
       general:
         contact_summary: "Contact details"
