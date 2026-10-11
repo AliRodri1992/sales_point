@@ -333,7 +333,10 @@ require 'faker'
 
   postal_code = format('%05d', Faker::Number.between(from: 1, to: 99_999))
 
-  Client.create!(
+  client = Client.find_or_initialize_by(code: code)
+  next unless client.new_record?
+
+  client.assign_attributes(
     code: code,
     email: Faker::Internet.unique.email,
     name: name,
@@ -344,6 +347,7 @@ require 'faker'
     rfc: rfc,
     status: %w[active inactive].sample
   )
+  client.save!
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping client seed due to error: #{e.message}"
 end
@@ -353,12 +357,16 @@ end
   name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
   name = "Categoria#{index + 1}" if name.blank?
 
-  Category.create!(
+  category = Category.find_or_initialize_by(code: "cat#{format('%04d', index + 1)}")
+  next unless category.new_record?
+
+  category.assign_attributes(
     code: "cat#{format('%04d', index + 1)}",
     name: name[0, 50],
     description: Faker::Lorem.sentence(word_count: 8),
     status: %w[active active active inactive].sample
   )
+  category.save!
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping category seed due to error: #{e.message}"
 end
@@ -373,7 +381,10 @@ categories = Category.not_deleted.to_a
   price = Faker::Commerce.price(range: 50.0..5000.0)
   stock = Faker::Number.between(from: 10, to: 500)
 
-  Product.create!(
+  product = Product.find_or_initialize_by(code: code)
+  next unless product.new_record?
+
+  product.assign_attributes(
     code: code,
     name: name,
     description: Faker::Lorem.sentence(word_count: 12),
@@ -387,6 +398,7 @@ categories = Category.not_deleted.to_a
     category: categories.sample,
     status: %w[active active active inactive].sample
   )
+  product.save!
 rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
   Rails.logger.warn "Skipping product seed due to error: #{e.message}"
 end
@@ -402,8 +414,11 @@ end
   postal_code = format('%05d', Faker::Address.zip_code.to_s.gsub(/\D/, '')[0, 5].to_i)
   phone = Faker::PhoneNumber.cell_phone.gsub(/[^0-9+\-()\s]/, '')[0, 20]
 
+  branch_name = "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100]
+  next if Branch.where('name LIKE ?', "Sucursal #{format('%02d', index + 1)} - %").exists?
+
   Branch.create!(
-    name: "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100],
+    name: branch_name,
     phone: phone,
     status: [true, true, true, false].sample,
     address_attributes: {
