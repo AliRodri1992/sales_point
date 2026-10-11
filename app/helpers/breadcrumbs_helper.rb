@@ -9,6 +9,7 @@ module BreadcrumbsHelper
     'admin/branches' => :branch_breadcrumb_items,
     'admin/clients' => :client_breadcrumb_items,
     'admin/suppliers' => :supplier_breadcrumb_items,
+    'admin/supplier_addresses' => :supplier_address_breadcrumb_items,
     'admin/users' => :user_breadcrumb_items
   }.freeze
 
@@ -125,6 +126,24 @@ module BreadcrumbsHelper
        { label: t('admin.suppliers.edit.title', name: name) }]
     else
       [base]
+    end
+  end
+
+  def supplier_address_breadcrumb_items
+    supplier = controller.view_assigns['supplier']
+    base = { label: t('admin.shared.sidebar.suppliers'), path: admin_suppliers_path }
+    return [base] unless supplier
+
+    supplier_item = { label: supplier.name, path: admin_supplier_path(supplier) }
+    addresses = { label: t('admin.supplier_details.addresses'), path: admin_supplier_addresses_path(supplier) }
+
+    case params[:action]
+    when 'new', 'create'
+      [base, supplier_item, addresses, { label: t('admin.supplier_details.add_address') }]
+    when 'edit', 'update'
+      [base, supplier_item, addresses, { label: t('admin.supplier_details.edit_address') }]
+    else
+      [base, supplier_item, { label: t('admin.supplier_details.addresses') }]
     end
   end
 
