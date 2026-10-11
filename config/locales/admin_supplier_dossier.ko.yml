@@ -30,6 +30,13 @@ ko:
         other: "기타"
         individual: "개인"
         company: "법인"
+      sections:
+        general: "일반 및 세금 정보"
+        commercial: "거래 조건"
+        contacts: "연락처"
+        addresses: "주소"
+        schedules: "일정"
+        documents: "문서"
       kinds:
         visit: "방문"
         order: "주문 접수"

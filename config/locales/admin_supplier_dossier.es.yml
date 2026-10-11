@@ -30,6 +30,13 @@ es:
         other: "Otro"
         individual: "Persona física"
         company: "Persona moral"
+      sections:
+        general: "General y fiscal"
+        commercial: "Condiciones comerciales"
+        contacts: "Contactos"
+        addresses: "Direcciones"
+        schedules: "Calendarios"
+        documents: "Documentos"
       kinds:
         visit: "Visita"
         order: "Toma de pedidos"

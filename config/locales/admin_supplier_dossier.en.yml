@@ -30,6 +30,13 @@ en:
         other: "Other"
         individual: "Individual"
         company: "Company"
+      sections:
+        general: "General and tax"
+        commercial: "Commercial terms"
+        contacts: "Contacts"
+        addresses: "Addresses"
+        schedules: "Schedules"
+        documents: "Documents"
       kinds:
         visit: Visit
         order: Order taking

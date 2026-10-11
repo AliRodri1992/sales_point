@@ -1,80 +1,110 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="border-b border-slate-100 px-6 py-5">
-    <div class="flex items-start justify-between gap-4">
-      <div>
-        <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.suppliers.show.title') %></h1>
-        <p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.show.subtitle') %></p>
+<% fiscal_address = supplier.addresses.not_deleted.find_by(purpose: 'fiscal', primary: true) %>
+<% contacts = supplier.contacts.not_deleted.order(primary: :desc, :name) %>
+<% addresses = supplier.addresses.not_deleted.order(primary: :desc, :id) %>
+<% schedules = supplier.supplier_schedules.includes(:branch).order(:weekday, :starts_at) %>
+<% can_edit = policy(supplier).update? %>
+
+<div class="space-y-6" data-controller="supplier-dossier">
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="flex items-start gap-4">
+        <div class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= icon('building-office-2', class: 'size-7') %></div>
+        <div>
+          <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= supplier.name %></h1>
+          <p class="mt-1 text-sm text-slate-500"><%= supplier.code %> · <%= t("admin.supplier_dossier.options.#{supplier.classification}", default: supplier.classification.to_s.humanize) %></p>
+          <span class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
+        </div>
       </div>
-      <%= link_to admin_suppliers_path,
-                  data: { turbo_frame: '_top' },
-                  class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
-        <%= icon('arrow-left', class: 'size-4') %>
-        <%= t('admin.suppliers.show.back') %>
-      <% end %>
-    </div>
-  </div>
-  <dl class="grid gap-x-8 px-6 py-2 sm:grid-cols-2">
-    <% fields = [
-      ['code', supplier.code], ['name', supplier.name],
-      ['legal_name', supplier.legal_name],
-      ['trade_name', supplier.trade_name],
-      ['alias_name', supplier.alias_name],
-      ['classification', supplier.classification],
-      ['person_type', supplier.person_type],
-      ['currency', supplier.currency],
-      ['credit_days', supplier.credit_days],
-      ['credit_limit', supplier.credit_limit],
-      ['discount_percent', supplier.discount_percent],
-      ['minimum_order_amount', supplier.minimum_order_amount],
-      ['email', supplier.email.presence || '—'], ['phone', supplier.phone.presence || '—'],
-      ['rfc', supplier.rfc.presence || '—'],
-      ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : '—'],
-      ['postal_code', supplier.postal_code.presence || '—'],
-      ['status', t("admin.suppliers.statuses.#{supplier.status}")],
-      ['notes', supplier.notes.presence || '—']
-    ] %>
-    <% fields.each do |key, value| %>
-      <div class="border-b border-slate-100 py-4 <%= key == 'notes' ? 'sm:col-span-2' : '' %>">
-        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= t("admin.suppliers.show.fields.#{key}", default: key.humanize) %></dt>
-        <dd class="mt-1 break-words text-sm font-medium text-slate-900"><%= value %></dd>
-      </div>
-    <% end %>
-  </dl>
-  <% fiscal_address = supplier.addresses.not_deleted.find_by(purpose: 'fiscal', primary: true) %>
-  <div class="border-t border-slate-100 px-6 py-4">
-    <h2 class="font-semibold"><%= t('admin.supplier_details.address_purposes.fiscal') %></h2>
-    <p class="text-sm"><%= fiscal_address&.full_address || '—' %></p>
-    <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier), class: 'text-emerald-700' %>
-  </div>
-  <div class="border-t border-slate-100 px-6 py-4">
-    <h2 class="font-semibold"><%= t('admin.supplier_dossier.documents') %></h2>
-    <% supplier.documents.each do |document| %>
-      <div class="py-1"><%= link_to document.filename.to_s, rails_blob_path(document, disposition: 'attachment'), class: 'text-emerald-700' %>
-        <% if policy(supplier).update? %>
-          <%= button_to t('admin.supplier_details.delete'), admin_supplier_document_path(supplier, document_id: document.id), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } } %>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+          <%= icon('arrow-left', class: 'size-4') %><%= t('admin.suppliers.show.back') %>
+        <% end %>
+        <% if can_edit %>
+          <%= link_to edit_admin_supplier_path(supplier), data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' do %>
+            <%= icon('pencil-square', class: 'size-4') %><%= t('admin.suppliers.index.edit') %>
+          <% end %>
         <% end %>
       </div>
-    <% end %>
-    <p class="mt-2 text-sm"><%= t('admin.supplier_dossier.tags') %>: <%= supplier.tags.join(', ') %></p>
-    <p class="mt-2 text-sm"><%= t('admin.supplier_dossier.responsible') %>: <%= supplier.responsible_user&.email || '—' %></p>
-  </div>
-  <div class="flex flex-wrap gap-3 border-t border-slate-100 px-6 py-4">
-    <%= link_to t('admin.supplier_dossier.schedules'), admin_supplier_schedules_path(supplier), class: 'text-emerald-700' %>
-  </div>
-  <div class="flex flex-wrap gap-3 border-t border-slate-100 px-6 py-4">
-    <%= link_to t('admin.supplier_details.contacts'), admin_supplier_contacts_path(supplier),
-                class: 'rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700' %>
-    <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier),
-                class: 'rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700' %>
-  </div>
-  <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
-    <% if policy(supplier).edit? %>
-      <%= link_to edit_admin_supplier_path(supplier),
-                  data: { turbo_frame: '_top' },
-                  class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700' do %>
-        <%= icon('pencil-square', class: 'size-4') %>
-        <%= t('admin.suppliers.index.edit') %>
+    </div>
+    <dl class="mt-6 grid gap-5 border-t border-slate-100 pt-5 sm:grid-cols-2 lg:grid-cols-4">
+      <% [['rfc', supplier.rfc], ['phone', supplier.phone], ['email', supplier.email], ['responsible', supplier.responsible_user&.email]].each do |key, value| %>
+        <div class="min-w-0">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= key == 'responsible' ? t('admin.supplier_dossier.responsible') : t("admin.suppliers.show.fields.#{key}") %></dt>
+          <dd class="mt-1 break-words text-sm font-medium text-slate-800"><%= value.presence || '—' %></dd>
+        </div>
       <% end %>
-    <% end %>
+    </dl>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <nav class="flex flex-wrap gap-2 border-b border-slate-100 p-4" aria-label="<%= t('admin.suppliers.show.title') %>">
+      <% %w[general commercial contacts addresses schedules documents].each_with_index do |section, index| %>
+        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="rounded-lg px-4 py-2 text-sm font-semibold transition <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
+          <%= t("admin.supplier_dossier.sections.#{section}") %>
+        </button>
+      <% end %>
+    </nav>
+
+    <section data-supplier-dossier-target="panel" data-section="general" class="p-6">
+      <h2 class="mb-4 text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.general') %></h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <% [['legal_name', supplier.legal_name], ['trade_name', supplier.trade_name], ['alias_name', supplier.alias_name], ['classification', supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil], ['person_type', supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil], ['fiscal_regime', supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil], ['postal_code', supplier.postal_code]].each do |key, value| %>
+          <div><dt class="text-xs font-semibold uppercase text-slate-400"><%= t("admin.suppliers.show.fields.#{key}", default: t("admin.supplier_dossier.fields.#{key}", default: key.humanize)) %></dt><dd class="mt-1 break-words text-sm font-medium text-slate-800"><%= value.presence || '—' %></dd></div>
+        <% end %>
+      </dl>
+      <div class="mt-6 rounded-xl bg-slate-50 p-4">
+        <h3 class="font-semibold text-slate-800"><%= t('admin.supplier_details.address_purposes.fiscal') %></h3>
+        <p class="mt-2 text-sm text-slate-600"><%= fiscal_address&.full_address || '—' %></p>
+      </div>
+      <div class="mt-5"><h3 class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_dossier.notes') %></h3><p class="mt-1 whitespace-pre-wrap text-sm text-slate-600"><%= supplier.notes.presence || '—' %></p></div>
+    </section>
+
+    <section data-supplier-dossier-target="panel" data-section="commercial" class="hidden p-6">
+      <h2 class="mb-4 text-lg font-bold"><%= t('admin.supplier_dossier.sections.commercial') %></h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <% [['currency', supplier.currency], ['credit_days', supplier.credit_days], ['credit_limit', number_to_currency(supplier.credit_limit)], ['discount_percent', "#{supplier.discount_percent}%"], ['minimum_order_amount', number_to_currency(supplier.minimum_order_amount)]].each do |key, value| %>
+          <div class="rounded-xl border border-slate-100 p-4"><dt class="text-xs font-semibold uppercase text-slate-400"><%= t("admin.supplier_dossier.fields.#{key}") %></dt><dd class="mt-2 text-lg font-bold text-slate-900"><%= value %></dd></div>
+        <% end %>
+      </dl>
+    </section>
+
+    <section data-supplier-dossier-target="panel" data-section="contacts" class="hidden p-6">
+      <div class="mb-4 flex items-center justify-between gap-3"><h2 class="text-lg font-bold"><%= t('admin.supplier_details.contacts') %></h2><%= link_to t('admin.supplier_details.contacts'), admin_supplier_contacts_path(supplier), class: 'text-sm font-semibold text-emerald-700' %></div>
+      <% contacts.each do |contact| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-4">
+          <div><p class="font-semibold text-slate-900"><%= contact.name %> <% if contact.primary? %><span class="text-xs text-emerald-700"><%= t('admin.supplier_details.primary') %></span><% end %></p><p class="mt-1 text-sm text-slate-500"><%= [contact.position, contact.email, contact.phone, contact.mobile_phone].reject(&:blank?).join(' · ') %></p></div>
+          <% if can_edit %><%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_contact_path(supplier, contact), class: 'text-sm font-semibold text-emerald-700' %><% end %>
+        </div>
+      <% end %>
+      <% if contacts.empty? %><p class="text-sm text-slate-500">—</p><% end %>
+    </section>
+
+    <section data-supplier-dossier-target="panel" data-section="addresses" class="hidden p-6">
+      <div class="mb-4 flex items-center justify-between gap-3"><h2 class="text-lg font-bold"><%= t('admin.supplier_details.addresses') %></h2><%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier), class: 'text-sm font-semibold text-emerald-700' %></div>
+      <% addresses.each do |address| %>
+        <div class="border-b border-slate-100 py-4"><p class="font-semibold text-slate-800"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %> <% if address.primary? %><span class="text-xs text-emerald-700"><%= t('admin.supplier_details.primary') %></span><% end %></p><p class="mt-1 text-sm text-slate-600"><%= address.full_address %></p></div>
+      <% end %>
+      <% if addresses.empty? %><p class="text-sm text-slate-500">—</p><% end %>
+    </section>
+
+    <section data-supplier-dossier-target="panel" data-section="schedules" class="hidden p-6">
+      <div class="mb-4 flex items-center justify-between gap-3"><h2 class="text-lg font-bold"><%= t('admin.supplier_dossier.schedules') %></h2><%= link_to t('admin.supplier_dossier.schedules'), admin_supplier_schedules_path(supplier), class: 'text-sm font-semibold text-emerald-700' %></div>
+      <% schedules.each do |schedule| %>
+        <div class="border-b border-slate-100 py-4"><p class="font-semibold text-slate-800"><%= t('date.day_names')[schedule.weekday] %> · <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %></p><p class="mt-1 text-sm text-slate-600"><%= schedule.branch.name %> · <%= schedule.starts_at.strftime('%H:%M') %>–<%= schedule.ends_at.strftime('%H:%M') %></p></div>
+      <% end %>
+      <% if schedules.empty? %><p class="text-sm text-slate-500">—</p><% end %>
+    </section>
+
+    <section data-supplier-dossier-target="panel" data-section="documents" class="hidden p-6">
+      <h2 class="mb-4 text-lg font-bold"><%= t('admin.supplier_dossier.documents') %></h2>
+      <% supplier.documents.each do |document| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3">
+          <%= link_to document.filename.to_s, rails_blob_path(document, disposition: 'attachment'), class: 'break-all text-sm font-semibold text-emerald-700' %>
+          <% if can_edit %><%= button_to t('admin.supplier_details.delete'), admin_supplier_document_path(supplier, document_id: document.id), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'text-sm font-semibold text-rose-600' %><% end %>
+        </div>
+      <% end %>
+      <% if supplier.documents.empty? %><p class="text-sm text-slate-500">—</p><% end %>
+      <div class="mt-5"><h3 class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_dossier.tags') %></h3><p class="mt-2 text-sm text-slate-600"><%= supplier.tags.join(', ').presence || '—' %></p></div>
+    </section>
   </div>
 </div>
