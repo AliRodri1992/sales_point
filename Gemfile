@@ -6,6 +6,7 @@ gem 'apexcharts'
 gem 'aws-sdk-s3'
 gem 'bootsnap', require: false
 gem 'chartkick'
+gem 'caxlsx', '~> 4.0'
 gem 'cocoon'
 gem 'cssbundling-rails'
 gem 'devise'
