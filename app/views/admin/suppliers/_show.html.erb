@@ -38,9 +38,11 @@
 
   <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
     <nav class="grid grid-cols-2 border-b border-slate-200 bg-slate-50 sm:grid-cols-3 lg:grid-cols-6" aria-label="<%= t('admin.suppliers.show.title') %>">
+      <% tab_icons = { general: 'building-2', commercial: 'handshake', contacts: 'users-round', addresses: 'map-pin', schedules: 'calendar-days', documents: 'file-text' } %>
       <% %w[general commercial contacts addresses schedules documents].each_with_index do |section, index| %>
-        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center px-3 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
-          <%= t("admin.supplier_dossier.sections.#{section}") %>
+        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center gap-2 px-3 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
+          <%= icon(tab_icons.fetch(section.to_sym), class: 'size-[18px] shrink-0', 'aria-hidden': true) %>
+          <span><%= t("admin.supplier_dossier.sections.#{section}") %></span>
         </button>
       <% end %>
     </nav>
