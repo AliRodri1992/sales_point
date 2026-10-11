@@ -15,28 +15,6 @@ export default class extends Controller {
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
-    this.alignStepHeights()
-    this.resizeHandler = () => this.alignStepHeights()
-    window.addEventListener("resize", this.resizeHandler)
-  }
-
-  disconnect() {
-    window.removeEventListener("resize", this.resizeHandler)
-  }
-
-  alignStepHeights() {
-    const firstStep = this.stepTargets[0]
-    const wasHidden = firstStep.hidden
-    firstStep.hidden = false
-    firstStep.classList.remove("hidden")
-    firstStep.style.height = "auto"
-    const height = firstStep.scrollHeight
-    this.stepTargets.forEach((step) => {
-      step.style.height = `${height}px`
-      step.style.overflowY = "auto"
-    })
-    firstStep.hidden = wasHidden
-    firstStep.classList.toggle("hidden", wasHidden)
   }
 
   fieldWrapper(field) {
@@ -122,7 +100,6 @@ export default class extends Controller {
 
     this.indexValue = index
     this.render()
-    this.alignStepHeights()
     invalid[0].focus()
     return false
   }
