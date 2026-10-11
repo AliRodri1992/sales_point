@@ -49,7 +49,7 @@ export default class extends Controller {
     this.fieldWrapper(field)?.querySelector("[data-required-error]")?.remove()
   }
 
-  showFieldError(field) {
+  showFieldError(field, reason) {
     const wrapper = this.fieldWrapper(field)
     if (!wrapper) return
     field.setAttribute("aria-invalid", "true")
@@ -62,14 +62,15 @@ export default class extends Controller {
       wrapper.append(message)
     }
     const label = field.labels?.[0]?.textContent?.replace(/\*/g, "").trim() || field.name
-    const template = this.element.dataset.requiredMessage || "%{field} is required"
+    const template = reason === "format" ? this.element.dataset.invalidFormatMessage : this.element.dataset.requiredMessage
     message.textContent = template.replace("%{field}", label)
   }
 
   validateField(field) {
-    const valid = field.value.trim().length > 0 && field.validity.valid
+    const value = field.value.trim()
+    const valid = value.length > 0 && field.validity.valid
     if (valid) this.clearFieldError(field)
-    else this.showFieldError(field)
+    else this.showFieldError(field, value.length === 0 ? "required" : "format")
     return valid
   }
 
