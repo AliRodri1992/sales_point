@@ -1,6 +1,12 @@
 ko:
   admin:
     supplier_details:
+      manage_contacts: "연락처 관리"
+      actions: "작업"
+      contacts_count: "연락처 %{count}개"
+      contact_statuses:
+        active: "활성"
+        inactive: "비활성"
       contacts: "연락처"
       addresses: "주소"
       add: "추가"
