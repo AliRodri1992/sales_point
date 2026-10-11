@@ -22,10 +22,13 @@ module SupplierExamples
       organization.assign_attributes(
         name: ORGANIZATION_NAME,
         business_sector: 'grocery',
-        base_currency: Currency.find_by!(code: 'MXN'),
         status: :active
       )
       organization.save!
+      settings = OrganizationSetting.find_or_initialize_by(organization: organization)
+      settings.assign_attributes(base_currency: Currency.active.find_by!(code: 'MXN'),
+                                 timezone: 'UTC', payment_method: :cash)
+      settings.save!
       organization
     end
 
