@@ -47,8 +47,8 @@ module PaginationHelper
                       aria: { disabled: true })
     else
       styles = "#{base}border-slate-300 text-slate-700 hover:border-emerald-500 " \
-               "hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline " \
-               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+               "'hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline '" \
+               'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600'
       link_to(url_for(request.query_parameters.merge(page: page)),
               class: styles,
               data: frame ? { turbo_frame: frame } : nil) do
