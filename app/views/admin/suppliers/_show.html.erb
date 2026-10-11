@@ -37,9 +37,9 @@
   </div>
 
   <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <nav class="grid grid-cols-2 gap-2 border-b border-slate-100 p-4 sm:grid-cols-3 lg:grid-cols-6" aria-label="<%= t('admin.suppliers.show.title') %>">
+    <nav class="grid grid-cols-2 border-b border-slate-200 bg-slate-50 sm:grid-cols-3 lg:grid-cols-6" aria-label="<%= t('admin.suppliers.show.title') %>">
       <% %w[general commercial contacts addresses schedules documents].each_with_index do |section, index| %>
-        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-11 w-full items-center justify-center rounded-lg px-3 py-2.5 text-center text-sm font-semibold transition <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
+        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center px-3 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
           <%= t("admin.supplier_dossier.sections.#{section}") %>
         </button>
       <% end %>
