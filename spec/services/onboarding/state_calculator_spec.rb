@@ -22,11 +22,11 @@ RSpec.describe Onboarding::StateCalculator, type: :service do
     end
 
     it 'returns selected organization settings for the company step' do
-      create(:organization_setting, organization:, currency: 'USD', timezone: 'UTC')
+      settings = create(:organization_setting, organization:, base_currency: create(:currency, code: 'USD'), timezone: 'UTC')
 
       state = described_class.new(organization, 1).call
 
-      expect(state['settings']).to include('currency' => 'USD', 'timezone' => 'UTC')
+      expect(state['settings']).to include('base_currency_id' => settings.base_currency_id, 'timezone' => 'UTC')
     end
 
     it 'returns an empty branch state when the organization has no branches' do
