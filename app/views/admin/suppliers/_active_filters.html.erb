@@ -2,6 +2,13 @@
 <% active_filters = filter_keys.filter_map do |key|
      value = params[key].to_s
      next if value.blank? || value == 'all'
+     allowed = { 'status' => %w[active inactive], 'classification' => %w[manufacturer distributor wholesaler service other], 'person_type' => %w[individual company], 'currency' => %w[MXN USD EUR], 'credit' => %w[yes no] }
+     next if allowed.key?(key) && !allowed.fetch(key).include?(value)
+     next if key == 'sat_fiscal_regime_id' && @supplier_regimes.none? { |regime| regime.id.to_s == value }
+     next if key == 'responsible_user_id' && !current_organization.users.exists?(id: value)
+     next if key.match?(/_(min|max)\\z/) && !value.match?(/\\A\\d{1,12}(?:\\.\\d{1,2})?\\z/)
+     next if key.match?(/_at_(from|to)\\z/) && !value.match?(/\\A\\d{4}-\\d{2}-\\d{2}\\z/)
+
      label = t("admin.suppliers.index.advanced.#{key}", default: key.humanize)
      display = case key
                when 'status', 'classification', 'person_type', 'credit'
