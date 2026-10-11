@@ -41,7 +41,7 @@ module Geocoding
         @address.neighborhood,
         @address.city,
         @address.state,
-        @address.country,
+        @address.country&.name,
         @address.postal_code
       ].compact.join(', ')
     end

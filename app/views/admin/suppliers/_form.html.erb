@@ -120,7 +120,7 @@
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
       <%= form.label :currency_id, t('admin.supplier_dossier.fields.currency'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <div class="relative" data-controller="delta-select"><%= form.collection_select :currency_id, @currencies, :id, ->(currency) { "#{currency.code} — #{currency.name}" }, { include_blank: true }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :currency_id)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
+      <div class="relative" data-controller="delta-select"><%= form.collection_select :currency_id, @currencies, :id, ->(currency) { "#{currency.code} — #{currency.name}" }, { include_blank: true }, required: true, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :currency_id)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :currency) %>
     </div>
     <div>

@@ -59,7 +59,7 @@ module Admin
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.created') }
       else
         load_fiscal_regimes
-      load_reference_catalogs
+        load_reference_catalogs
         render :new, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique

@@ -21,7 +21,7 @@ class AddressGeocodingService
 
   def geocode_address
     Geocoding::GeocodePostalCodeService
-      .new(address.postal_code, address.country)
+      .new(address.postal_code, address.country&.iso_alpha2)
       .call
   end
 

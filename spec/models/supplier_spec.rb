@@ -71,6 +71,10 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
+  describe 'catalog associations' do
+    it { is_expected.to belong_to(:currency) }
+  end
+
   describe 'commercial profile' do
     it 'accepts valid commercial terms' do
       supplier.assign_attributes(legal_name: 'Empresa SA', trade_name: 'Marca', alias_name: 'Distribuidor',
