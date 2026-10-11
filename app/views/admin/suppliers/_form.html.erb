@@ -53,6 +53,20 @@
     </div>
           <div class="sm:col-span-2"><%= form.label :status, t('admin.suppliers.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %><div class="relative" data-controller="delta-select"><%= form.select :status, options_for_select(Supplier.statuses.keys.map { |status| [t("admin.suppliers.statuses.#{status}"), status] }, supplier.status || 'active'), {}, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :status)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div><%= error_message_for(supplier, :status) %></div>
         </div>
+        <div data-controller="supplier-nested" class="mt-6 space-y-4 border-t border-slate-100 pt-6">
+          <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h3>
+          <div data-supplier-nested-target="items" class="space-y-4">
+            <%= form.fields_for :addresses do |address_form| %>
+              <%= render 'admin/suppliers/address_fields', form: address_form %>
+            <% end %>
+          </div>
+          <template data-supplier-nested-target="template">
+            <%= form.fields_for :addresses, Address.new, child_index: 'NEW_RECORD' do |address_form| %>
+              <%= render 'admin/suppliers/address_fields', form: address_form %>
+            <% end %>
+          </template>
+          <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+        </div>
       </section>
       <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_2') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_2') %></p></div>
@@ -88,25 +102,18 @@
       </section>
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_3') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_3') %></p></div>
-        <div class="rounded-xl border border-slate-100 p-4">
-          <h3 class="mb-4 text-sm font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.personal_title') %></h3>
-          <%= form.fields_for :contacts, supplier.contacts.first || supplier.contacts.build do |contact_form| %>
-            <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
-              <% %i[name position email mobile_phone].each do |field| %>
-                <div>
-                  <%= contact_form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-                  <% if field == :mobile_phone %>
-                    <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
-                      <%= contact_form.telephone_field field, data: { international_phone_target: 'input' }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(contact_form.object, field)}" %>
-                    </div>
-                  <% else %>
-                    <%= contact_form.text_field field, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(contact_form.object, field)}" %>
-                  <% end %>
-                  <%= error_message_for(contact_form.object, field) %>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
+        <div data-controller="supplier-nested" class="space-y-4">
+          <div data-supplier-nested-target="items" class="space-y-4">
+            <%= form.fields_for :contacts do |contact_form| %>
+              <%= render 'admin/suppliers/contact_fields', form: contact_form %>
+            <% end %>
+          </div>
+          <template data-supplier-nested-target="template">
+            <%= form.fields_for :contacts, Contact.new, child_index: 'NEW_RECORD' do |contact_form| %>
+              <%= render 'admin/suppliers/contact_fields', form: contact_form %>
+            <% end %>
+          </template>
+          <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
         </div>
       </section>
       <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_5') %>">
