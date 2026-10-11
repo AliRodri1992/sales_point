@@ -73,7 +73,8 @@ module ApplicationHelper
     model_attribute = "errors.attributes.#{model}.#{attribute}"
     general_attribute = "errors.attributes.#{attribute}"
 
-    attribute_name = I18n.t(model_attribute, default: I18n.t(general_attribute, default: object.class.human_attribute_name(attribute)))
+    fallback_name = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
+    attribute_name = I18n.t(model_attribute, default: fallback_name)
     error_message = object.errors[attribute].first
     formatted_message = "#{attribute_name} #{error_message}"
 
