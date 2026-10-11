@@ -11,7 +11,8 @@ export default class extends Controller {
   }
 
   schedule(event) {
-    if (event.target.matches("input[type=radio]") && event.type === "input") return
+    if (event.type === "input" && !event.target.matches("input[type=search], input[type=number]")) return
+    if (event.type === "change" && event.target.matches("input[type=search], input[type=number]")) return
     window.clearTimeout(this.pending)
     const delay = event.target.matches("input[type=search], input[type=number]") ? 400 : 100
     this.pending = window.setTimeout(() => this.element.requestSubmit(), delay)
