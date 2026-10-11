@@ -1,7 +1,25 @@
 ---
 ko:
   activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            rfc:
+              person_type_mismatch: "선택한 사업자 유형과 일치하지 않습니다"
+              invalid_date: "유효하지 않은 날짜가 포함되어 있습니다"
     attributes:
+      supplier:
+        code: "코드"
+        name: "공급업체 이름"
+        rfc: "RFC"
+        email: "이메일"
+        phone: "전화번호"
+        postal_code: "우편번호"
+        person_type: "사업자 유형"
+      contact:
+        name: "성명"
+        mobile_phone: "휴대전화"
       address:
         city: 도시
         country: 국가
