@@ -42,7 +42,7 @@ module Onboarding
     private
 
     def company_section
-      fields = [@organization.name, @organization.business_sector, @organization.base_currency_id, settings&.timezone]
+      fields = [@organization.name, @organization.business_sector, settings&.base_currency_id, settings&.timezone]
       section(:company, percentage_for(fields))
     end
 
