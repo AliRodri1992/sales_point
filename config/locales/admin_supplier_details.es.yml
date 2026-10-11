@@ -26,6 +26,11 @@ es:
       secondary_option: "No, secundaria"
       primary_option: "Sí, principal"
       primary_hint: "Solo puede existir una dirección principal por tipo para cada proveedor."
+      active_addresses: "Direcciones activas"
+      deleted_addresses: "Direcciones eliminadas"
+      deleted_addresses_description: "Puedes recuperar los domicilios eliminados cuando lo necesites."
+      deleted_on: "Eliminada el %{date}"
+      restore_address: "Recuperar dirección"
       address_purposes:
         general: "General"
         fiscal: "Fiscal"
