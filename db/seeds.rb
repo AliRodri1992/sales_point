@@ -418,6 +418,7 @@ end
   next if Branch.where('name LIKE ?', "Sucursal #{format('%02d', index + 1)} - %").exists?
 
   Branch.create!(
+    organization: Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID),
     name: branch_name,
     phone: phone,
     status: [true, true, true, false].sample,
