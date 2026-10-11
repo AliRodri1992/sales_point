@@ -57,15 +57,17 @@
           <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h3>
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :addresses do |address_form| %>
-              <%= render 'admin/suppliers/address_fields', form: address_form %>
+              <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: supplier.persisted? %>
             <% end %>
           </div>
-          <template data-supplier-nested-target="template">
-            <%= form.fields_for :addresses, Address.new, child_index: 'NEW_RECORD' do |address_form| %>
-              <%= render 'admin/suppliers/address_fields', form: address_form %>
-            <% end %>
-          </template>
-          <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+          <% if supplier.persisted? %>
+            <template data-supplier-nested-target="template">
+              <%= form.fields_for :addresses, Address.new, child_index: 'NEW_RECORD' do |address_form| %>
+                <%= render 'admin/suppliers/address_fields', form: address_form %>
+              <% end %>
+            </template>
+            <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+          <% end %>
         </div>
       </section>
       <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
@@ -105,15 +107,17 @@
         <div data-controller="supplier-nested" class="space-y-4">
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :contacts do |contact_form| %>
-              <%= render 'admin/suppliers/contact_fields', form: contact_form %>
+              <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: supplier.persisted? %>
             <% end %>
           </div>
-          <template data-supplier-nested-target="template">
-            <%= form.fields_for :contacts, Contact.new, child_index: 'NEW_RECORD' do |contact_form| %>
-              <%= render 'admin/suppliers/contact_fields', form: contact_form %>
-            <% end %>
-          </template>
-          <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+          <% if supplier.persisted? %>
+            <template data-supplier-nested-target="template">
+              <%= form.fields_for :contacts, Contact.new, child_index: 'NEW_RECORD' do |contact_form| %>
+                <%= render 'admin/suppliers/contact_fields', form: contact_form %>
+              <% end %>
+            </template>
+            <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+          <% end %>
         </div>
       </section>
       <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_5') %>">
