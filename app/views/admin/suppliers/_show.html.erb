@@ -80,8 +80,8 @@
       </div>
 
       <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <%= form_with url: admin_supplier_contacts_path(supplier), method: :get, class: 'flex w-full max-w-md items-center gap-2' do |form| %>
-          <%= form.search_field :q, placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:ring-emerald-500' %>
+        <%= form_with url: admin_supplier_contacts_path(supplier), method: :get, data: { action: 'submit->supplier-dossier#filterContacts' }, class: 'flex w-full max-w-md items-center gap-2' do |form| %>
+          <%= form.search_field :q, data: { supplier_dossier_target: 'contactSearch', action: 'input->supplier-dossier#filterContacts search->supplier-dossier#filterContacts' }, placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:ring-emerald-500' %>
           <%= form.button class: 'inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-200 px-3 text-slate-600 hover:bg-slate-50', aria: { label: t('admin.supplier_details.search_contacts') } do %>
             <%= icon('magnifying-glass', class: 'size-5') %>
           <% end %>
@@ -107,7 +107,7 @@
             </thead>
             <tbody class="divide-y divide-slate-100 bg-white">
               <% contacts.each do |contact| %>
-                <tr class="transition hover:bg-slate-50/80">
+                <tr data-supplier-dossier-target="contactRow" data-search-text="<%= [contact.name, contact.position, contact.email, contact.phone, contact.mobile_phone].compact.join(' ') %>" class="transition hover:bg-slate-50/80">
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-3">
                       <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-xs font-bold text-emerald-700"><%= contact.name.to_s.split.first(2).map { |part| part.first.upcase }.join %></span>
@@ -141,11 +141,9 @@
             </tbody>
           </table>
         </div>
-        <% if contacts.empty? %>
-          <div class="border-t border-slate-100 px-6 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_details.no_contacts') %></div>
-        <% end %>
+        <div data-supplier-dossier-target="contactEmpty" class="<%= 'hidden' if contacts.any? %> border-t border-slate-100 px-6 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_details.no_contacts') %></div>
         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/50 px-4 py-3">
-          <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contacts_count', count: contacts.size) %></p>
+          <p class="text-xs text-slate-500"><span data-supplier-dossier-target="contactCount"><%= contacts.size %></span> <%= t('admin.supplier_details.contacts') %></p>
         </div>
       </div>
     </section>
