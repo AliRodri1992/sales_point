@@ -48,6 +48,7 @@ module SupplierExamples
       supplier = Supplier.find_or_initialize_by(organization:, code:)
       supplier.assign_attributes(
         name: "Proveedor de ejemplo #{number}",
+        person_type: :company,
         email: "proveedor#{number}@example.com",
         phone: format('55%08d', number),
         rfc: format('DPE260101%03d', number),
