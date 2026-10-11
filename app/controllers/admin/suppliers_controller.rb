@@ -131,6 +131,14 @@ module Admin
       attributes
     end
 
+    def load_fiscal_regimes
+      @fiscal_regimes = SatFiscalRegime.current.order(:code)
+    end
+
+    def notify_supplier(action)
+      Suppliers::NotifyService.call(action:, supplier: @supplier, user: current_user)
+    end
+
     def user_not_authorized
       redirect_to admin_suppliers_path, status: :forbidden,
                                         alert: t('admin.suppliers.errors.unauthorized')
