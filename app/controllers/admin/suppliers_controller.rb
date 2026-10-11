@@ -107,9 +107,15 @@ module Admin
           :code, :name, :legal_name, :trade_name, :alias_name, :classification, :person_type,
           :email, :phone, :rfc, :sat_fiscal_regime_id, :postal_code, :status, :notes,
           :currency, :credit_days, :credit_limit, :discount_percent, :minimum_order_amount,
-          :responsible_user_id, :tags_text, { contacts_attributes: %i[id name position email phone mobile_phone primary active notes _destroy],
-            addresses_attributes: %i[id street exterior_number interior_number neighborhood city state country postal_code purpose primary _destroy],
-            documents: [] }
+          :responsible_user_id, :tags_text,
+          {
+            contacts_attributes: %i[id name position email phone mobile_phone primary active notes _destroy],
+            addresses_attributes: %i[
+              id street exterior_number interior_number neighborhood city state country postal_code
+              purpose primary _destroy
+            ],
+            documents: []
+          }
         ]
       )
     end
