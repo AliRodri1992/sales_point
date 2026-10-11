@@ -23,7 +23,9 @@ export default class extends Controller {
     const input = event.target.closest("label")?.querySelector("input")
     if (!input) return
 
+    event.preventDefault()
     input.checked = true
+    input.dispatchEvent(new Event("change", { bubbles: true }))
     this.labelTarget.textContent = event.target.closest("label").querySelector("[data-option-label]").textContent.trim()
     this.close()
   }
