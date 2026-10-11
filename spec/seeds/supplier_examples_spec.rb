@@ -5,6 +5,7 @@ require Rails.root.join('db/seeds/supplier_examples')
 
 RSpec.describe SupplierExamples do
   let!(:administrator) { create(:user, email: 'administrador@delta.com') }
+  let!(:currency) { create(:currency, code: 'MXN') }
 
   it 'creates twenty organization-owned suppliers and their primary contacts' do
     described_class.seed!
