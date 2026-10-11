@@ -152,6 +152,7 @@ ko:
         notes_placeholder: "공급업체 추가 정보."
         cancel: "취소"
         create: "공급업체 생성"
+        save: "저장"
         update: "공급업체 수정"
       show:
         title: "공급업체 상세"
