@@ -1,21 +1,46 @@
-<div class="max-w-6xl rounded-xl border border-slate-200 bg-white shadow-sm">
-  <div class="mb-7 flex items-start justify-between gap-4 px-6 pt-6">
+<div class="mx-auto max-w-7xl">
+  <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-sm text-slate-500">
+    <%= link_to t('admin.suppliers.index.title'), admin_suppliers_path, class: 'transition hover:text-emerald-700' %>
+    <span aria-hidden="true">/</span>
+    <span class="font-semibold text-slate-800"><%= supplier.persisted? ? t('admin.suppliers.edit.title', name: supplier.name) : t('admin.suppliers.new.title') %></span>
+  </nav>
+
+  <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
     <div>
-      <h1 class="font-jakarta text-2xl font-bold text-slate-900">
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
         <%= supplier.persisted? ? t('admin.suppliers.edit.title', name: supplier.name) : t('admin.suppliers.new.title') %>
       </h1>
       <p class="mt-1 text-sm text-slate-500">
         <%= supplier.persisted? ? t('admin.suppliers.edit.subtitle') : t('admin.suppliers.new.subtitle') %>
       </p>
     </div>
-    <%= link_to admin_suppliers_path,
-                data: { turbo_frame: '_top' },
-                class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
+    <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' },
+                class: 'inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700' do %>
       <%= icon('arrow-left', class: 'size-4') %>
       <%= t('admin.suppliers.show.back') %>
     <% end %>
   </div>
-  <div class="px-6 pb-6">
-    <%= render 'form', supplier: supplier %>
+
+  <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_310px]">
+    <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-label="<%= t('admin.suppliers.form.name') %>">
+      <%= render 'form', supplier: supplier %>
+    </section>
+
+    <aside class="overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-b from-emerald-50 via-white to-teal-50 p-6 shadow-sm xl:sticky xl:top-24">
+      <%= image_tag 'supplier-delivery.svg', class: 'mx-auto w-full max-w-72', alt: t('admin.suppliers.form.name'), loading: 'lazy' %>
+      <div class="mt-5 flex items-center gap-2 text-emerald-800">
+        <%= icon('truck', class: 'size-5 shrink-0') %>
+        <h2 class="font-jakarta text-lg font-bold"><%= t('admin.suppliers.form.name') %></h2>
+      </div>
+      <p class="mt-3 text-sm leading-6 text-slate-600"><%= supplier.persisted? ? t('admin.suppliers.edit.subtitle') : t('admin.suppliers.new.subtitle') %></p>
+      <div class="mt-5 space-y-3 border-t border-emerald-100 pt-5">
+        <% [t('admin.supplier_dossier.fields.classification'), t('admin.supplier_dossier.fields.currency'), t('admin.supplier_dossier.documents')].each do |label| %>
+          <div class="flex items-center gap-2 text-sm text-slate-700">
+            <%= icon('check-circle', class: 'size-4 shrink-0 text-emerald-600') %>
+            <span><%= label %></span>
+          </div>
+        <% end %>
+      </div>
+    </aside>
   </div>
 </div>
