@@ -63,7 +63,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('name="sort"')
     expect(response.body).to include('name="direction"')
     expect(response.body).to include('name="per_page"')
-    expect(response.body).to include('data-turbo-action="advance"')
+    expect(response.body).to include('data-controller="supplier-search"')
   end
 
   it 'broadcasts a refresh after a supplier is created' do
@@ -122,13 +122,13 @@ RSpec.describe 'Admin suppliers', type: :request do
     get admin_suppliers_path, params: { status: 'active', sort: 'name', direction: 'asc' }
 
     rows = Nokogiri::HTML(response.body).css('tbody tr')
-    expect(rows.map { |row| row.css('td')[1].text.strip }).to eq(['Alpha Supplier'])
+    expect(rows.map { |row| row.css('td').first.text.lines.first.strip }).to eq(['Alpha Supplier'])
   end
 
   it 'does not paginate 10 or fewer and paginates 11+' do
     create_list(:supplier, 10, organization:)
     get admin_suppliers_path
-    expect(response.body).not_to include('supplier-pagination-form')
+    expect(response.body).not_to include('aria-label="Pagination"')
 
     create(:supplier, organization:)
     get admin_suppliers_path, params: { per_page: 5 }
