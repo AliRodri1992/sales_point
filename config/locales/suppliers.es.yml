@@ -76,9 +76,12 @@ es:
           per_page_label: "Mostrar"
         empty_title: "Aún no hay proveedores"
         empty_subtitle: "Agrega tu primer proveedor para empezar."
+        actions: "Más acciones"
         columns:
           code: "Código"
           name: "Nombre"
+          phone: "Teléfono"
+          email: "Correo"
           contact: "Contacto"
           rfc: "RFC"
           status: "Estado"
