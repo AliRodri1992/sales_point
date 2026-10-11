@@ -87,6 +87,10 @@ ko:
           status: "상태"
           actions: "작업"
       onboarding:
+        summary:
+          title: "요약"
+          subtitle: "저장 전 확인"
+          description: "등록하기 전에 공급업체 정보를 확인하세요."
         steps:
           step_1: "일반 정보"
           step_2: "세금 정보"
