@@ -88,6 +88,7 @@ es:
           actions: "Acciones"
       onboarding:
         required_field: "%{field} es obligatorio."
+        invalid_format: "El formato de %{field} no es válido."
         contact_general: "Datos de contacto del proveedor"
         summary:
           title: "Resumen"
