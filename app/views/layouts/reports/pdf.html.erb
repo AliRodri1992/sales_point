@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #334155; }
-    header { border-bottom: 3px solid #059669; padding-bottom: 12px; margin-bottom: 18px; }
-    h1 { color: #0f172a; font-size: 21px; margin: 0 0 8px; }
-    .brand { color: #047857; font-size: 13px; font-weight: bold; }
-    .meta { color: #64748b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #334155; }
+    .report-header { display: table; width: 100%; padding: 0 0 16px; margin-bottom: 20px; border-bottom: 3px solid #059669; }
+    .report-brand, .report-meta { display: table-cell; vertical-align: middle; }
+    .report-brand { width: 58%; }
+    .brand { font-size: 21px; font-weight: bold; letter-spacing: 1px; color: #0f172a; }
+    .brand span { color: #059669; }
+    .report-type { margin-top: 5px; font-size: 13px; font-weight: bold; color: #334155; }
+    .report-meta { text-align: right; font-size: 9px; color: #64748b; line-height: 1.7; }
+    .report-meta strong { font-size: 11px; color: #0f172a; }
     table { border-collapse: collapse; width: 100%; table-layout: fixed; }
     thead { display: table-header-group; }
     tr { page-break-inside: avoid; }
-    th { background: #047857; color: white; text-align: left; padding: 9px; }
-    td { border-bottom: 1px solid #e2e8f0; padding: 8px; word-wrap: break-word; }
-    tr:nth-child(even) td { background: #f8fafc; }
+    th { background: #047857; color: #fff; text-align: left; padding: 11px 9px; font-size: 9px; }
+    td { border-bottom: 1px solid #e2e8f0; padding: 10px 9px; word-wrap: break-word; overflow-wrap: break-word; }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
   </style>
 </head>
 <body><%= yield %></body>
