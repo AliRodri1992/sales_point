@@ -1,6 +1,19 @@
 ko:
   admin:
     supplier_dossier:
+      general:
+        information: "일반 정보"
+        information_description: "공급업체 기본 식별 정보"
+        tax_information: "세금 정보"
+        tax_description: "청구서 발행용 세금 정보"
+        code: "코드"
+        status: "상태"
+        rfc: "RFC"
+        fiscal_regime: "세금 제도"
+        postal_code: "세금 우편번호"
+        fiscal_address: "세금 주소"
+        address_hint: "주소 탭에서 세금 주소를 관리하고 기본 주소를 선택할 수 있습니다."
+        view_addresses: "주소 보기"
       schedules: "일정"
       branch: "지점"
       kind: "유형"
