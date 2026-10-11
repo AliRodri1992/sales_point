@@ -4,9 +4,6 @@
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
     <p class="text-xs text-slate-600"><%= t('admin.suppliers.index.total_count', count: total_count) %></p>
-    <div class="flex items-center gap-2 text-xs text-slate-600">
-      <%= t('admin.suppliers.index.pagination.per_page_label') %>:
-    </div>
   </div>
 
   <% if suppliers.any? %>
@@ -51,7 +48,7 @@
                     <%= link_to edit_admin_supplier_path(supplier), data: { tooltip: t('admin.suppliers.index.edit'), turbo_frame: '_top' }, class: 'rounded-lg p-2 text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700', aria: { label: t('admin.suppliers.index.edit') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.12 2.12 0 0 0-3-3l-11 11L4 20Z"/></svg><% end %>
                   <% end %>
                   <% if policy(supplier).destroy? %>
-                    <details class="relative">
+                    <details class="relative" data-controller="supplier-dropdown">
                       <summary class="cursor-pointer list-none rounded-lg p-2 text-slate-500 hover:bg-slate-100 [&::-webkit-details-marker]:hidden" aria-label="<%= t('admin.suppliers.index.actions') %>"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></summary>
                       <div class="absolute right-0 z-20 mt-1 min-w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
                         <%= button_to admin_supplier_path(supplier), method: :delete, class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-rose-700 hover:bg-rose-50', data: { controller: 'swal-confirm', turbo_frame: 'suppliers_list', turbo_confirm: t('admin.suppliers.index.confirm_delete'), swal_cancel_text: t('admin.suppliers.confirm.cancel') }, aria: { label: t('admin.suppliers.index.delete') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M4 7h16M10 11v7M14 11v7M6 7l1 14h10l1-14M9 7V4h6v3"/></svg><%= t('admin.suppliers.index.delete') %><% end %>
