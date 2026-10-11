@@ -68,7 +68,7 @@ RSpec.describe Supplier, type: :model do
   describe 'commercial profile' do
     it 'accepts valid commercial terms' do
       supplier.assign_attributes(legal_name: 'Empresa SA', trade_name: 'Marca', alias_name: 'Distribuidor',
-                                 classification: 'distributor', person_type: 'company', currency: 'MXN',
+                                 classification: 'distributor', person_type: 'company', rfc: 'ABC010101023', currency: 'MXN',
                                  credit_days: 30, credit_limit: 1000, discount_percent: 10,
                                  minimum_order_amount: 100)
       expect(supplier).to be_valid
