@@ -40,25 +40,17 @@
 </div>
 
 <div class="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-<%= form_with url: admin_suppliers_path, method: :get, data: { controller: 'supplier-search', turbo_frame: 'suppliers_list', action: 'submit->supplier-search#submit' }, class: 'mt-4' do %>
+<%= form_with url: admin_suppliers_path, method: :get, data: { controller: 'supplier-search', turbo_frame: '_top', action: 'change->supplier-search#schedule input->supplier-search#schedule submit->supplier-search#submit' }, class: '' do %>
   <div class="relative">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
     <%= search_field_tag :search, params[:search], placeholder: t('admin.suppliers.index.search_placeholder'), autocomplete: 'off', data: { action: 'input->supplier-search#schedule', supplier_search_target: 'input' }, class: 'w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %>
   </div>
-  <% params.permit(:status, :classification, :person_type, :currency, :credit, :sat_fiscal_regime_id, :responsible_user_id, :credit_days_min, :credit_days_max, :credit_limit_min, :credit_limit_max, :minimum_order_amount_min, :minimum_order_amount_max, :discount_percent_min, :discount_percent_max, :created_at_from, :created_at_to, :updated_at_from, :updated_at_to, :per_page, :sort, :direction).to_h.each do |key, value| %>
-    <%= hidden_field_tag key, value if value.present? %>
-  <% end %>
-<% end %>
-
-<%= form_with url: admin_suppliers_path, method: :get, data: { turbo_frame: '_top' }, class: 'mt-5 border-t border-slate-100 pt-5' do %>
-  <div class="flex flex-wrap items-center justify-between gap-3">
+  <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
     <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><%= t('admin.suppliers.index.advanced.title') %></h2>
     <div class="flex flex-wrap gap-2">
       <%= link_to t('admin.suppliers.index.advanced.clear'), admin_suppliers_path, class: 'rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50' %>
-      <%= button_tag t('admin.suppliers.index.filters.apply'), type: 'submit', class: 'rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700' %>
     </div>
   </div>
-  <%= hidden_field_tag :search, params[:search] if params[:search].present? %>
   <%= render "active_filters" %>
   <details class="mt-4">
     <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
