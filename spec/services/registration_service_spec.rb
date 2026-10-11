@@ -41,6 +41,7 @@ RSpec.describe RegistrationService, type: :service do
     expect(user.reload.employee.organization.name).to eq('Delta Retail')
     expect(user.organizations).to contain_exactly(user.employee.organization)
     expect(user.system_roles).to contain_exactly(role)
+    expect(user.employee.organization.organization_settings.first.base_currency).to eq(base_currency)
     expect(user.employee.organization.branches.count).to eq(1)
     expect(user.employee.organization.branches.first.terminals.count).to eq(2)
   end
