@@ -9,7 +9,7 @@ class CreateCurrencies < ActiveRecord::Migration[8.1]
       t.boolean :active, null: false, default: true
 
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :currencies, :code, unique: true

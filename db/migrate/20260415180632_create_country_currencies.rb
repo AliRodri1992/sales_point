@@ -5,7 +5,7 @@ class CreateCountryCurrencies < ActiveRecord::Migration[8.1]
       t.references :currency, null: false, foreign_key: true
       t.boolean :is_primary, null: false, default: false
       t.boolean :active, null: false, default: true
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
 
       t.timestamps
     end

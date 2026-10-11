@@ -10,7 +10,7 @@ class CreateCountries < ActiveRecord::Migration[8.1]
       t.integer :position, null: false, default: 0
 
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :countries, :iso_alpha2, unique: true
