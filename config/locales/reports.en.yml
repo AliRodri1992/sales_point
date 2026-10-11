@@ -7,6 +7,10 @@ en:
         name: "Supplier"
         rfc: "Tax ID"
         email: "Email"
+        phone: "Phone"
+        classification: "Classification"
+        credit_days: "Credit days"
+        credit_limit: "Credit limit"
         status: "Status"
     export:
       button: "Export"
