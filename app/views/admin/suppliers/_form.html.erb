@@ -82,7 +82,7 @@
           <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h3>
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :addresses do |address_form| %>
-              <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: supplier.persisted?, embedded: true %>
+              <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: supplier.persisted?, embedded: true, fiscal_locked: !supplier.persisted? %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
