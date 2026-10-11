@@ -1,0 +1,24 @@
+<div data-supplier-nested-item class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <%= form.hidden_field :id if form.object.persisted? %>
+  <%= form.hidden_field :_destroy, value: '0', data: { supplier_nested_destroy: true } %>
+  <div class="mb-4 flex justify-end"><button type="button" data-action="supplier-nested#remove" class="text-sm font-semibold text-rose-600"><%= t('admin.supplier_details.delete') %></button></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+      <div>
+        <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field field, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+        <%= error_message_for(form.object, field) %>
+      </div>
+    <% end %>
+    <div data-controller="delta-select" class="relative">
+      <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, :purpose)}" %>
+      <%= error_message_for(form.object, :purpose) %>
+    </div>
+    <div>
+      <%= form.label :primary, t('admin.supplier_details.primary'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.check_box :primary, class: 'size-5 accent-emerald-600' %>
+      <%= error_message_for(form.object, :primary) %>
+    </div>
+  </div>
+</div>
