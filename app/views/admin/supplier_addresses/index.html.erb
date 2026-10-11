@@ -44,7 +44,7 @@
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
   <% end %>
   <% else %>
-    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="font-semibold text-slate-800"><%= t('admin.supplier_details.deleted_addresses') %></p><p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.deleted_addresses_description') %></p></div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="font-semibold text-slate-800"><%= t('admin.supplier_details.deleted_addresses') %></p><p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.deleted_addresses_description') %></p></div>
     <div class="grid items-stretch gap-4 md:grid-cols-2">
       <% deleted_addresses.each do |address| %>
         <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
