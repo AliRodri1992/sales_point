@@ -21,7 +21,8 @@
         <% end %>
       </div>
     </div>
-    <div class="mt-6 grid gap-3 sm:grid-cols-2">
+  </header>
+  <div class="grid gap-3 sm:grid-cols-2">
       <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.active_contacts') %></p>
         <div class="mt-2 flex items-center gap-2"><%= icon('users', class: 'size-5 text-emerald-700') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @contacts.size %></p></div>
@@ -30,8 +31,7 @@
         <p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_contacts') %></p>
         <div class="mt-2 flex items-center gap-2"><%= icon('archive-box', class: 'size-5 text-slate-500') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= deleted_contacts.size %></p></div>
       </div>
-    </div>
-  </header>
+  </div>
   <div class="flex flex-wrap items-center justify-between gap-3">
     <nav class="inline-flex w-full flex-wrap gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 sm:w-auto" aria-label="<%= t('admin.supplier_details.contacts') %>">
       <%= link_to admin_supplier_contacts_path(@supplier), class: "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{showing_deleted ? 'text-slate-600 hover:bg-white/70' : 'bg-white text-emerald-700 shadow-sm'}", aria: { current: ('page' unless showing_deleted) } do %>
@@ -41,9 +41,9 @@
         <%= t('admin.supplier_details.deleted_contacts') %><span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700"><%= deleted_contacts.size %></span>
       <% end %>
     </nav>
-    <%= form_with url: admin_supplier_contacts_path(@supplier), method: :get, class: 'flex w-full gap-2 sm:w-auto' do |form| %>
+    <%= form_with url: admin_supplier_contacts_path(@supplier), method: :get, class: 'flex w-full items-center gap-2 sm:w-auto' do |form| %>
       <%= form.hidden_field :status, value: 'deleted' if showing_deleted %>
-      <%= form.search_field :q, value: params[:q], placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 sm:w-56' %>
+      <%= form.search_field :q, value: params[:q], placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 sm:w-60' %>
       <%= form.button class: 'inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-slate-600 hover:bg-slate-50', aria: { label: t('admin.supplier_details.search_contacts') } do %>
         <%= icon('magnifying-glass', class: 'size-5') %>
       <% end %>
