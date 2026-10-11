@@ -4,13 +4,6 @@ module Users
   class RegistrationsController < Devise::RegistrationsController
     before_action :load_currencies, only: %i[new create]
 
-    private
-
-    def load_currencies
-      @currencies = Currency.active.order(:code).to_a
-    end
-
-    protected
     def create
       build_resource(sign_up_params)
       result = RegistrationService.call(resource:, params: registration_params)
@@ -18,6 +11,12 @@ module Users
       return complete_sign_up if result.success?
 
       render_registration_error
+    end
+
+    private
+
+    def load_currencies
+      @currencies = Currency.active.order(:code).to_a
     end
 
     protected
