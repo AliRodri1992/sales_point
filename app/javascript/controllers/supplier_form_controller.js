@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
-  static targets = ["step", "tab", "previous", "next"]
+  static targets = ["step", "tab", "circle", "previous", "next"]
   static values = { index: { type: Number, default: 0 } }
 
   connect() {
@@ -39,6 +39,16 @@ export default class extends Controller {
       tab.classList.toggle("text-emerald-800", active)
       tab.classList.toggle("border-emerald-500", active)
       tab.classList.toggle("border-transparent", !active)
+      tab.classList.toggle("bg-white", !active)
+    })
+    this.circleTargets.forEach((circle, index) => {
+      const active = index === this.indexValue
+      circle.classList.toggle("bg-emerald-600", active)
+      circle.classList.toggle("border-emerald-600", active)
+      circle.classList.toggle("text-white", active)
+      circle.classList.toggle("bg-white", !active)
+      circle.classList.toggle("border-slate-200", !active)
+      circle.classList.toggle("text-slate-500", !active)
     })
     if (this.hasPreviousTarget) this.previousTarget.hidden = this.indexValue === 0
     if (this.hasNextTarget) this.nextTarget.hidden = this.indexValue === this.stepTargets.length - 1
