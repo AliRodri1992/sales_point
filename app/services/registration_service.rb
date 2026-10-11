@@ -41,7 +41,6 @@ class RegistrationService
       name: parameter(:company_name),
       tax_id: parameter(:tax_id).upcase,
       business_sector: @params[:business_sector],
-      base_currency: Currency.find_by!(code: parameter(:currency).upcase),
       status: :active
     )
   end
