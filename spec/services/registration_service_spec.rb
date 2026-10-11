@@ -3,6 +3,7 @@
 RSpec.describe RegistrationService, type: :service do
   let(:role) { create(:system_role, :system, code: 'administrator') }
   let!(:permissions) { create_list(:permission, 3, status: :active) }
+  let!(:base_currency) { create(:currency, code: 'MXN') }
   let(:user) do
     build(:user, email: 'owner@example.com', password: 'password123', password_confirmation: 'password123')
   end
