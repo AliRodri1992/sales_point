@@ -39,7 +39,9 @@ export default class extends Controller {
       message.className = "mt-1 text-xs text-rose-600"
       wrapper.append(message)
     }
-    message.textContent = this.element.dataset.requiredMessage || "Required field"
+    const label = field.labels?.[0]?.textContent?.replace(/\*/g, "").trim() || field.name
+    const template = this.element.dataset.requiredMessage || "%{field} is required"
+    message.textContent = template.replace("%{field}", label)
   }
 
   validateField(field) {
