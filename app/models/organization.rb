@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Organization < ApplicationRecord
-  belongs_to :base_currency, class_name: 'Currency'
   has_one_attached :logo
   has_many :suppliers, dependent: :restrict_with_exception
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
@@ -20,8 +19,6 @@ class Organization < ApplicationRecord
 
   ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
   TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
-
-  validate :base_currency_must_be_active, on: :create
 
   validates :name, presence: true, length: { in: 2..150 }, on: %i[create update]
   validates :tax_id,
@@ -61,12 +58,6 @@ class Organization < ApplicationRecord
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 
   private
-
-  def base_currency_must_be_active
-    return if base_currency.blank? || base_currency.active?
-
-    errors.add(:base_currency, :invalid)
-  end
 
   def normalize_tax_id
     self.tax_id = tax_id.to_s.strip.upcase if tax_id.present?
