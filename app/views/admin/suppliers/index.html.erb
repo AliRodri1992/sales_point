@@ -51,7 +51,7 @@
       <%= link_to t('admin.suppliers.index.advanced.clear'), admin_suppliers_path, class: 'rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50' %>
     </div>
   </div>
-  <%= render "active_filters" %>
+  <%= render "active_filters_frame" %>
   <details class="mt-4" data-advanced-filters>
     <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -82,6 +82,4 @@
 <% end %>
 </div>
 
-<%= turbo_frame_tag "suppliers_list", data: { turbo_action: "advance" } do %>
-  <%= render "list", suppliers: @suppliers %>
-<% end %>
+<%= render "list_frame" %>
