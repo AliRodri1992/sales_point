@@ -1,11 +1,11 @@
-<%= form_with model: [:admin, @supplier, @address], class: 'space-y-7' do |form| %>
+<%= form_with model: [:admin, @supplier, @address], class: 'space-y-7 p-6 lg:p-8' do |form| %>
   <div>
     <h2 class="mb-4 text-base font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h2>
     <div class="grid gap-5 sm:grid-cols-2">
       <% %i[street exterior_number interior_number neighborhood].each do |field| %>
         <div class="<%= 'sm:col-span-2' if %i[street neighborhood].include?(field) %>">
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)}" %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>
@@ -17,7 +17,7 @@
       <% %i[postal_code city state country].each do |field| %>
         <div>
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)}" %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>
@@ -25,7 +25,7 @@
   </div>
   <div class="border-t border-slate-100 pt-6">
     <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)}" %>
+    <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "input-field w-full rounded-xl #{form_state_classes(@address, :purpose)} px-4 py-3 text-sm text-slate-800" %>
     <%= error_message_for(@address, :purpose) %>
     <div class="mt-5 flex items-center gap-3">
       <%= form.check_box :primary, class: 'size-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500' %>
