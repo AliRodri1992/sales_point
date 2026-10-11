@@ -57,8 +57,9 @@
   <div>
     <nav class="grid grid-cols-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 sm:grid-cols-3 lg:grid-cols-6" aria-label="<%= t('admin.suppliers.show.title') %>">
       <% %w[general commercial contacts addresses schedules documents].each_with_index do |section, index| %>
-        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center gap-2 px-3 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0" aria-hidden="true">
+        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center px-2 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
+          <span class="inline-flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0" aria-hidden="true">
   <% case section %>
   <% when 'general' %>
     <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
@@ -74,7 +75,8 @@
     <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h5M8 12h8M8 16h8M8 19h5"/>
   <% end %>
 </svg>
-          <span><%= t("admin.supplier_dossier.sections.#{section}") %></span>
+            <span><%= t("admin.supplier_dossier.sections.#{section}") %></span>
+          </span>
         </button>
       <% end %>
     </nav>
