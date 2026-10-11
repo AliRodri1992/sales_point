@@ -3,8 +3,9 @@
 class Supplier < ApplicationRecord
   belongs_to :organization
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
-  accepts_nested_attributes_for :contacts, reject_if: :all_blank
+  accepts_nested_attributes_for :contacts, allow_destroy: true, reject_if: :all_blank
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
+  accepts_nested_attributes_for :addresses, allow_destroy: true, reject_if: :all_blank
   belongs_to :sat_fiscal_regime, optional: true
   belongs_to :responsible_user, class_name: 'User', optional: true
   has_many :supplier_schedules, dependent: :destroy
