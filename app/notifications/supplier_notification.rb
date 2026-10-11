@@ -15,7 +15,7 @@ class SupplierNotification < Noticed::Event
   end
 
   def message
-    return t("admin.supplier_details.#{action}", name: record.name) if action.start_with?('address_')
+    return t("admin.supplier_details.#{action}", name: record.name) if action.start_with?('address_', 'contact_')
 
     t("admin.shared.notifications.supplier.#{action}",
       name: record.name,
