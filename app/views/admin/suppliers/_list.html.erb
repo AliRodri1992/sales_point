@@ -11,14 +11,11 @@
 
   <% if suppliers.any? %>
     <div class="overflow-x-auto">
-      <table class="w-full min-w-[1120px] text-sm">
+      <table class="w-full min-w-[760px] text-sm">
         <thead class="bg-slate-50">
           <tr class="border-y border-slate-200 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
             <th scope="col" class="px-4 py-3 text-left"><%= sort_link('name', t('admin.suppliers.index.columns.name'), frame: 'suppliers_list') %></th>
-            <th scope="col" class="px-4 py-3 text-left"><%= sort_link('code', t('admin.suppliers.index.columns.code'), frame: 'suppliers_list') %></th>
             <th scope="col" class="px-4 py-3 text-left"><%= sort_link('rfc', t('admin.suppliers.index.columns.rfc'), frame: 'suppliers_list') %></th>
-            <th scope="col" class="px-4 py-3 text-left"><%= t('admin.suppliers.index.columns.contact') %></th>
-            <th scope="col" class="px-4 py-3 text-left"><%= sort_link('phone', t('admin.suppliers.index.columns.phone'), frame: 'suppliers_list') %></th>
             <th scope="col" class="px-4 py-3 text-left"><%= sort_link('email', t('admin.suppliers.index.columns.email'), frame: 'suppliers_list') %></th>
             <th scope="col" class="px-4 py-3 text-center"><%= sort_link('status', t('admin.suppliers.index.columns.status'), frame: 'suppliers_list') %></th>
             <th scope="col" class="px-4 py-3 text-center"><%= t('admin.suppliers.index.columns.actions') %></th>
@@ -26,13 +23,12 @@
         </thead>
         <tbody class="divide-y divide-slate-100">
           <% suppliers.each do |supplier| %>
-            <% primary_contact = supplier.contacts.select { |contact| contact.deleted_at.nil? && contact.active? }.find(&:primary?) %>
             <tr class="transition hover:bg-emerald-50/40">
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                   <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3"/></svg></span>
                   <div class="min-w-0">
-                    <p class="font-semibold text-slate-900"><%= supplier.name %></p>
+                    <p class="font-semibold text-slate-900"><%= supplier.name %></p><p class="text-xs text-slate-400"><%= supplier.code %></p>
                     <% if supplier.trade_name.present? && supplier.trade_name != supplier.name %>
                       <p class="text-xs text-slate-500"><%= supplier.trade_name %></p>
                     <% elsif supplier.classification.present? %>
@@ -41,11 +37,8 @@
                   </div>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-700"><%= supplier.code %></td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= supplier.rfc.presence || '—' %></td>
-              <td class="px-4 py-3 text-slate-700"><%= primary_contact&.name.presence || '—' %></td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= supplier.phone.presence || primary_contact&.phone.presence || '—' %></td>
-              <td class="px-4 py-3 text-slate-600"><%= supplier.email.presence || primary_contact&.email.presence || '—' %></td>
+              <td class="px-4 py-3 text-slate-600"><%= supplier.email.presence || '—' %></td>
               <td class="px-4 py-3 text-center">
                 <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
               </td>
@@ -98,7 +91,7 @@
     <% end %>
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= icon('truck', class: 'size-8 text-slate-300') %>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-8 text-slate-300" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
       <p class="text-sm font-semibold text-slate-500"><%= t('admin.suppliers.index.empty_title') %></p>
       <p class="text-xs text-slate-400"><%= t('admin.suppliers.index.empty_subtitle') %></p>
     </div>
