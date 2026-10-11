@@ -288,27 +288,27 @@ SeedConsole.track('Idiomas', Language) do
     Language.find_or_create_by(code: lang_attrs[:code]) do |language|
       language.assign_attributes(lang_attrs)
     end
-end
+  end
 end
 
 SeedConsole.track('Traducciones', Translate) do
   # Load all locale files
   Rails.root.glob('config/locales/*.yml').each do |file|
     next if file.to_s.include?('devise.security_extension')
-  
+
     filename = File.basename(file)
     case filename
     when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
     when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
     when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
     end
-end
+  end
 end
 
 SeedConsole.track('Meses SAT', SatMonth) do
   (1..12).each do |i|
     create_sat_month(i)
-end
+  end
 end
 
 require_relative 'seeds/currencies'
