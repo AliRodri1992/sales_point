@@ -32,6 +32,9 @@ es:
       responsible: "Responsable"
       tags: "Etiquetas"
       documents: "Documentos"
+      placeholders:
+        person_type: "Seleccione un tipo de persona"
+        responsible: "Seleccione un responsable"
       fields:
         legal_name: "Razón social"
         trade_name: "Nombre comercial"
