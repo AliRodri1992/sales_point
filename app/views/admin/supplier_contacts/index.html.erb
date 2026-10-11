@@ -44,7 +44,7 @@
     <%= form_with url: admin_supplier_contacts_path(@supplier), method: :get, class: 'flex w-full items-center gap-2 sm:w-auto' do |form| %>
       <%= form.hidden_field :status, value: 'deleted' if showing_deleted %>
       <%= form.search_field :q, value: params[:q], placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 sm:w-60' %>
-      <%= form.button class: 'inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-slate-600 hover:bg-slate-50', aria: { label: t('admin.supplier_details.search_contacts') } do %>
+      <%= form.button class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-600 hover:bg-slate-50', aria: { label: t('admin.supplier_details.search_contacts') } do %>
         <%= icon('magnifying-glass', class: 'size-5') %>
       <% end %>
     <% end %>
