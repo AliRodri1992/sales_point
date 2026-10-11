@@ -21,7 +21,6 @@ class Organization < ApplicationRecord
   ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
   TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
 
-  validates :base_currency, presence: true
   validate :base_currency_must_be_active, on: :create
 
   validates :name, presence: true, length: { in: 2..150 }, on: %i[create update]
