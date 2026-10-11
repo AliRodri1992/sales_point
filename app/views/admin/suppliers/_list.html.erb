@@ -89,9 +89,9 @@
           <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
           <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
           <%= select_tag :per_page, options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
-                         class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700' %>
+                         class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
           <%= button_tag t('admin.pagination.apply'), type: 'submit',
-                         class: 'rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-50' %>
+                         class: 'rounded-lg border border-emerald-600 bg-emerald-600 px-3 py-1 text-sm font-medium text-white transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
         <% end %>
         <div class="flex items-center gap-1">
           <%= pagination_links(total_pages, frame: 'suppliers_list') %>
