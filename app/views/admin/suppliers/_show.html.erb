@@ -145,12 +145,59 @@
       </div>
     </section>
 
-    <section data-supplier-dossier-target="panel" data-section="addresses" class="hidden p-6">
-      <div class="mb-4 flex items-center justify-between gap-3"><h2 class="text-lg font-bold"><%= t('admin.supplier_details.addresses') %></h2><%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(supplier), class: 'text-sm font-semibold text-emerald-700' %></div>
-      <% addresses.each do |address| %>
-        <div class="border-b border-slate-100 py-4"><p class="font-semibold text-slate-800"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %> <% if address.primary? %><span class="text-xs text-emerald-700"><%= t('admin.supplier_details.primary') %></span><% end %></p><p class="mt-1 text-sm text-slate-600"><%= address.full_address %></p></div>
-      <% end %>
-      <% if addresses.empty? %><p class="text-sm text-slate-500">—</p><% end %>
+    <section data-supplier-dossier-target="panel" data-section="addresses" class="hidden p-4 sm:p-6">
+      <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h2>
+            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600"><%= addresses.size %></span>
+          </div>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.addresses_description') %></p>
+        </div>
+      </div>
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <input type="search" data-supplier-dossier-target="addressSearch" data-action="input->supplier-dossier#filterAddresses search->supplier-dossier#filterAddresses" placeholder="<%= t('admin.supplier_details.search_addresses') %>" aria-label="<%= t('admin.supplier_details.search_addresses') %>" class="min-h-10 w-full max-w-md rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:ring-emerald-500">
+        <%= link_to admin_supplier_addresses_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>
+          <%= icon('map-pin', class: 'size-4') %>
+          <%= t('admin.supplier_details.manage_addresses') %>
+        <% end %>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[950px] text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-semibold text-slate-600">
+              <tr>
+                <% %w[type address city state postal_code country primary].each do |field| %>
+                  <th scope="col" class="px-4 py-3"><%= t("admin.supplier_details.address_columns.#{field}") %></th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 bg-white">
+              <% addresses.each do |address| %>
+                <tr data-supplier-dossier-target="addressRow" data-search-text="<%= [t("admin.supplier_details.address_purposes.#{address.purpose}"), address.full_address].compact.join(' ') %>" class="transition hover:bg-slate-50/80">
+                  <td class="px-4 py-4"><span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %></span></td>
+                  <td class="px-4 py-4 font-medium text-slate-800"><%= [address.street, address.exterior_number, address.interior_number].compact_blank.join(' ') %><span class="block text-xs font-normal text-slate-500"><%= address.neighborhood.presence || '—' %></span></td>
+                  <td class="px-4 py-4 text-slate-600"><%= address.city.presence || '—' %></td>
+                  <td class="px-4 py-4 text-slate-600"><%= address.state.presence || '—' %></td>
+                  <td class="px-4 py-4 text-slate-600"><%= address.postal_code.presence || '—' %></td>
+                  <td class="px-4 py-4 text-slate-600"><%= address.country.presence || '—' %></td>
+                  <td class="px-4 py-4">
+                    <% if address.primary? %>
+                      <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700"><%= icon('star', class: 'size-3.5') %><%= t('admin.supplier_details.primary') %></span>
+                    <% else %>
+                      <span class="text-slate-400">—</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div data-supplier-dossier-target="addressEmpty" class="<%= 'hidden' if addresses.any? %> border-t border-slate-100 px-6 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_details.no_addresses') %></div>
+        <div class="border-t border-slate-100 bg-slate-50/50 px-4 py-3 text-xs text-slate-500">
+          <span data-supplier-dossier-target="addressCount"><%= addresses.size %></span> <%= t('admin.supplier_details.addresses') %>
+        </div>
+      </div>
     </section>
 
     <section data-supplier-dossier-target="panel" data-section="schedules" class="hidden p-6">
