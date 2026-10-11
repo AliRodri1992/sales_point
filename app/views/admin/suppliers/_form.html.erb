@@ -6,6 +6,7 @@
   <% end %>
 
   <div class="grid gap-5 sm:grid-cols-2">
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('building-2', class: 'size-4') %></span><%= t('admin.suppliers.form.name') %></h2></div>
     <div>
       <%= form.label :code, t('admin.suppliers.form.code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :code, data: { autofocus: true },
@@ -20,6 +21,7 @@
                           placeholder: t('admin.suppliers.form.name_placeholder') %>
       <%= error_message_for(supplier, :name) %>
     </div>
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('file-text', class: 'size-4') %></span><%= t('admin.supplier_dossier.fields.legal_name') %></h2></div>
     <div>
       <%= form.label :legal_name, t('admin.supplier_dossier.fields.legal_name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :legal_name, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :legal_name)} px-4 py-3 text-sm" %>
@@ -50,6 +52,7 @@
       <%= form.select :currency, %w[MXN USD EUR].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: false }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :currency)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :currency) %>
     </div>
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('credit-card', class: 'size-4') %></span><%= t('admin.supplier_dossier.fields.credit_days') %></h2></div>
     <div>
       <%= form.label :credit_days, t('admin.supplier_dossier.fields.credit_days'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.number_field :credit_days, min: 0, step: 1, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :credit_days)} px-4 py-3 text-sm" %>
@@ -70,6 +73,7 @@
       <%= form.number_field :minimum_order_amount, min: 0, step: 0.01, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :minimum_order_amount)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :minimum_order_amount) %>
     </div>
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('contact', class: 'size-4') %></span><%= t('admin.suppliers.form.email') %></h2></div>
     <div>
       <%= form.label :email, t('admin.suppliers.form.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.email_field :email,
@@ -86,6 +90,7 @@
         <%= error_message_for(supplier, :phone) %>
       </div>
     </div>
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('receipt-text', class: 'size-4') %></span><%= t('admin.suppliers.form.rfc') %></h2></div>
     <div>
       <%= form.label :rfc, t('admin.suppliers.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :rfc, maxlength: 13,
@@ -118,6 +123,7 @@
         <%= error_message_for(supplier, :status) %>
       </div>
     <% end %>
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('notebook-pen', class: 'size-4') %></span><%= t('admin.suppliers.form.notes') %></h2></div>
     <div class="sm:col-span-2">
       <%= form.label :notes, t('admin.suppliers.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_area :notes, rows: 3,
@@ -128,6 +134,8 @@
   </div>
 
   <div class="grid gap-5 border-t border-slate-100 pt-5 sm:grid-cols-2">
+    <div class="sm:col-span-2 border-b border-slate-100 pb-3 pt-3 first:pt-0"><h2 class="flex items-center gap-2 font-jakarta text-base font-bold text-slate-900"><span class="inline-flex size-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= icon('user-round', class: 'size-4') %></span><%= t('admin.supplier_dossier.responsible') %></h2></div>
+
     <div>
       <%= form.label :responsible_user_id, t('admin.supplier_dossier.responsible'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: true }, class: "input-field w-full rounded-xl px-4 py-3 text-sm #{form_state_classes(supplier, :responsible_user)}" %>
