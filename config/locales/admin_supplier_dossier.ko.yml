@@ -2,6 +2,7 @@ ko:
   admin:
     supplier_dossier:
       general:
+        contact_summary: "연락처 정보"
         information: "일반 정보"
         information_description: "공급업체 기본 식별 정보"
         tax_information: "세금 정보"
