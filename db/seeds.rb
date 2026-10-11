@@ -301,6 +301,11 @@ end
   create_sat_month(i)
 end
 
+require_relative 'seeds/currencies'
+require_relative 'seeds/countries'
+CurrencySeeds.seed!
+CountrySeeds.seed!
+
 seed_system_roles
 seed_permissions
 assign_default_role_permissions
