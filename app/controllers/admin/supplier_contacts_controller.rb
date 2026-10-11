@@ -25,7 +25,8 @@ module Admin
     def edit; end
 
     def create
-      @contact = @supplier.contacts.new(contact_params)
+      @contact = @supplier.contacts.new(contact_params.except(:active))
+      @contact.active = true
       if @contact.save
         notify_contact('contact_created')
         redirect_success('contact_created')

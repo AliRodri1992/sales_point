@@ -26,6 +26,7 @@
       </label>
       <%= error_message_for(form.object, :primary) %>
     </div>
+    <% if form.object.persisted? %>
     <div>
       <label class="inline-flex cursor-pointer items-center gap-3">
         <%= form.check_box :active, class: 'peer sr-only' %>
@@ -34,5 +35,6 @@
       </label>
       <%= error_message_for(form.object, :active) %>
     </div>
+    <% end %>
   </div>
 </div>

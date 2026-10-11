@@ -107,6 +107,17 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(Supplier.order(:id).last).to be_active
   end
 
+  it 'creates nested supplier contacts as active regardless of submitted status' do
+    attributes = attributes_for(:supplier).merge(
+      contacts_attributes: { '0' => { name: 'Operations', active: '0' } }
+    )
+
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(Supplier.order(:id).last.contacts.first).to be_active
+  end
+
   it 'renders the edit form for an existing supplier' do
     supplier = create(:supplier, organization:, name: 'Supplier to Edit')
 

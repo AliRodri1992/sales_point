@@ -26,6 +26,18 @@ RSpec.describe 'Supplier contact integration', type: :request do
     expect(response.body).to include('Operations')
   end
 
+  it 'hides active status on new contact and forces active on creation' do
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('name="contact[active]"')
+
+    post admin_supplier_contacts_path(supplier), params: { contact: { name: 'Operations', active: '0' } }
+
+    expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
+    expect(supplier.contacts.last).to be_active
+  end
+
   it 'preserves entered values and displays field errors for invalid email' do
     post admin_supplier_contacts_path(supplier),
          params: { contact: { name: 'Operations', email: 'invalid-email' } }

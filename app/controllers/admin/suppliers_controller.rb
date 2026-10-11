@@ -48,6 +48,7 @@ module Admin
     def create
       @supplier = current_organization.suppliers.new(supplier_params.except(:status))
       @supplier.status = :active
+      @supplier.contacts.each { |contact| contact.active = true }
       authorize @supplier
 
       if @supplier.save
