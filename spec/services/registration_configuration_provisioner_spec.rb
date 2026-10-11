@@ -2,9 +2,11 @@
 
 RSpec.describe RegistrationConfigurationProvisioner, type: :service do
   let(:organization) { create(:organization) }
+  let!(:currency) { create(:currency, code: 'MXN') }
 
   let(:params) do
     {
+      currency: 'MXN',
       terminals: '3_5',
       payment_integration: 'card',
       setup_type: 'new'
@@ -20,7 +22,8 @@ RSpec.describe RegistrationConfigurationProvisioner, type: :service do
     expect(organization.payment_integrations.count).to eq(1)
 
     expect(organization.organization_settings.first).to have_attributes(
-      payment_method: 'card'
+      payment_method: 'card',
+      base_currency_id: currency.id
     )
   end
 
