@@ -2,6 +2,7 @@
 
 class Supplier < ApplicationRecord
   belongs_to :organization
+  belongs_to :currency
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :contacts, allow_destroy: true, reject_if: :all_blank
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
@@ -33,7 +34,6 @@ class Supplier < ApplicationRecord
   validates :alias_name, length: { maximum: 100 }, allow_blank: true
   validates :classification, inclusion: { in: %w[manufacturer distributor wholesaler service other] }, allow_blank: true
   validates :person_type, presence: true, inclusion: { in: %w[individual company] }
-  validates :currency, inclusion: { in: %w[MXN USD EUR] }
   validates :credit_days, numericality: { only_integer: true, in: 0..365 }
   validates :credit_limit, :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :discount_percent, numericality: { in: 0..100 }

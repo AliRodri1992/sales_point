@@ -57,6 +57,7 @@ module SupplierExamples
         rfc: format('DPE260101%03d', number),
         postal_code: format('%05d', 60_000 + number),
         status: (number % 5).zero? ? :inactive : :active,
+        currency: Currency.active.find_by!(code: 'MXN'),
         notes: "Proveedor de demostración #{number} para Delta POS.",
         deleted_at: nil
       )

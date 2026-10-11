@@ -7,7 +7,7 @@ FactoryBot.define do
     neighborhood { 'Centro' }
     city { 'Cuautitlán' }
     state { 'Estado de México' }
-    country { 'MX' }
+    association :country
     postal_code { '54800' }
 
     latitude { 19.4326 }

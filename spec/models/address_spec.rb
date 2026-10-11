@@ -19,8 +19,7 @@ RSpec.describe Address, type: :model do
     it { is_expected.to validate_length_of(:city).is_at_least(2).is_at_most(100) }
     it { is_expected.to validate_presence_of(:state) }
     it { is_expected.to validate_length_of(:state).is_at_least(2).is_at_most(100) }
-    it { is_expected.to validate_presence_of(:country) }
-    it { is_expected.to validate_length_of(:country).is_at_least(2).is_at_most(100) }
+    it { is_expected.to belong_to(:country) }
     it { is_expected.to validate_presence_of(:postal_code) }
     it { is_expected.to allow_value('54800').for(:postal_code) }
     it { is_expected.not_to allow_value('5480').for(:postal_code) }
@@ -132,7 +131,7 @@ RSpec.describe Address, type: :model do
           :address,
           street: 'Av. Reforma',
           city: 'CDMX',
-          country: 'MX',
+          country: build(:country),
           postal_code: '06000'
         )
 

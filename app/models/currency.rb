@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Currency < ApplicationRecord
+  has_many :suppliers, dependent: :restrict_with_error
   has_many :country_currencies, dependent: :restrict_with_error
   has_many :countries, through: :country_currencies
   has_many :organization_settings, foreign_key: :base_currency_id, inverse_of: :base_currency,

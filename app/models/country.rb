@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Country < ApplicationRecord
+  has_many :addresses, dependent: :restrict_with_error
   has_many :country_currencies, dependent: :restrict_with_error
   has_many :currencies, through: :country_currencies
 

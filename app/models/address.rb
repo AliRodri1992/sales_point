@@ -2,6 +2,7 @@
 
 class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true
+  belongs_to :country
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :primary_addresses, -> { not_deleted.where(primary: true) }
@@ -38,7 +39,6 @@ class Address < ApplicationRecord
   validates :neighborhood, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, presence: true, length: { in: 2..100 }, on: %i[create update]
-  validates :country, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :postal_code,
             presence: true,
             format: { with: /\A[0-9]{5}\z/ },
@@ -68,7 +68,6 @@ class Address < ApplicationRecord
   validates :neighborhood, presence: true, length: { in: 2..100 }, on: :onboardingstep2
   validates :city, presence: true, length: { in: 2..100 }, on: :onboardingstep2
   validates :state, presence: true, length: { in: 2..100 }, on: :onboardingstep2
-  validates :country, presence: true, length: { in: 2..100 }, on: :onboardingstep2
   validates :postal_code,
             presence: true,
             format: { with: /\A[0-9]{5}\z/ },
@@ -106,7 +105,7 @@ class Address < ApplicationRecord
   end
 
   def full_address
-    [street, exterior_number, interior_number, neighborhood, city, state, country, postal_code].compact.join(', ')
+    [street, exterior_number, interior_number, neighborhood, city, state, country&.name, postal_code].compact.join(', ')
   end
 
   def coordinates
