@@ -7,6 +7,10 @@ es:
         name: "Proveedor"
         rfc: "RFC"
         email: "Correo electrónico"
+        phone: "Teléfono"
+        classification: "Clasificación"
+        credit_days: "Días de crédito"
+        credit_limit: "Límite de crédito"
         status: "Estado"
     export:
       button: "Exportar"
