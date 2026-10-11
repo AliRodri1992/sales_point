@@ -23,7 +23,6 @@ class RegistrationConfigurationProvisioner
   def create_settings
     OrganizationSetting.create!(
       organization: @organization,
-      base_currency: Currency.active.find_by!(code: parameter(:currency).upcase),
       timezone: 'UTC',
       payment_method: parameter(:payment_integration)
     )
