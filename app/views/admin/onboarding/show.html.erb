@@ -59,18 +59,18 @@
           <div>
             <%= form.label "organization[business_sector]", t("admin.onboarding.fields.business_sector"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
             <%= form.select "organization[business_sector]",
-              options_for_select(%w[grocery fashion restaurant pharmacy].map { |key| [t("registration.step_four.sectors.#{key}"), key] }, @organization.business_sector),
+              options_for_select(Organization::ONBOARDING_BUSINESS_SECTORS.map { |key| [t("admin.onboarding.business_sectors.#{key}"), key] }, @organization.business_sector),
               { include_blank: t("admin.onboarding.fields.select_business_sector") },
-              class: "w-full rounded-xl border #{@settings&.errors&.[]( :currency).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+              class: "w-full rounded-xl border #{@organization.errors[:business_sector].any? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
             <%= render "admin/onboarding/field_errors", object: @organization, attribute: :business_sector %>
           </div>
           <div>
-            <%= form.label "organization[currency]", t("admin.onboarding.fields.currency"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-            <%= form.select "organization[currency]",
-              options_for_select(%w[MXN USD JPY KRW].map { |key| [t("registration.step_four.currencies.#{key.downcase}"), key] }, @settings&.currency),
+            <%= form.label "organization[base_currency_id]", t("admin.onboarding.fields.currency"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.select "organization[base_currency_id]",
+              options_from_collection_for_select(@currencies, :id, :code, @organization.base_currency_id),
               { include_blank: t("admin.onboarding.fields.select_currency") },
-              class: "w-full rounded-xl border #{@settings&.errors&.[](:timezone).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
-            <%= render "admin/onboarding/field_errors", object: @settings, attribute: :currency %>
+              class: "w-full rounded-xl border #{@organization.errors[:base_currency].any? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @organization, attribute: :base_currency %>
           </div>
           <div>
             <%= form.label "organization[timezone]", t("admin.onboarding.fields.timezone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
@@ -210,8 +210,8 @@
                 <% when :company %>
                   <div class="grid gap-4 sm:grid-cols-2">
                     <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.company_name"), value: @organization.name %>
-                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.business_sector"), value: t("registration.step_four.sectors.#{@organization.business_sector}", default: @organization.business_sector) %>
-                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.currency"), value: @settings&.currency %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.business_sector"), value: t("admin.onboarding.business_sectors.#{@organization.business_sector}", default: @organization.business_sector) %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.currency"), value: @organization.base_currency&.code %>
                     <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.timezone"), value: @settings&.timezone %>
                   </div>
                 <% when :fiscal %>
