@@ -1,9 +1,16 @@
-<h1><%= t('admin.supplier_dossier.schedules') %></h1>
-<%= link_to t('admin.supplier_details.add'), new_admin_supplier_schedule_path(@supplier) %>
+<div class="rounded-2xl border border-slate-200 bg-white p-6">
+<h1 class="text-xl font-bold"><%= t('admin.supplier_dossier.schedules') %> — <%= @supplier.name %></h1>
+<div class="my-4 flex gap-3">
+<% if policy(@supplier).update? %><%= link_to t('admin.supplier_details.add'), new_admin_supplier_schedule_path(@supplier), class: 'rounded-lg bg-emerald-600 px-4 py-2 text-white' %><% end %>
+<%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier), class: 'rounded-lg border px-4 py-2' %>
+</div>
 <% @schedules.each do |schedule| %>
   <div class="border-b p-4">
-    <%= schedule.branch.name %> — <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %> — <%= schedule.weekday %> — <%= schedule.starts_at.strftime('%H:%M') %>
+    <%= schedule.branch.name %> — <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %> — <%= t('date.day_names')[schedule.weekday] %> — <%= schedule.starts_at.strftime('%H:%M') %><% if schedule.ends_at.present? %>–<%= schedule.ends_at.strftime('%H:%M') %><% end %>
+    <% if policy(@supplier).update? %>
     <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule) %>
     <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } } %>
+    <% end %>
   </div>
 <% end %>
+</div>

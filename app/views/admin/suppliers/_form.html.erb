@@ -21,52 +21,52 @@
       <%= error_message_for(supplier, :name) %>
     </div>
     <div>
-      <%= form.label :legal_name, 'Razón social', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :legal_name, t('admin.supplier_dossier.fields.legal_name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :legal_name, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :legal_name)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :legal_name) %>
     </div>
     <div>
-      <%= form.label :trade_name, 'Nombre comercial', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :trade_name, t('admin.supplier_dossier.fields.trade_name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :trade_name, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :trade_name)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :trade_name) %>
     </div>
     <div>
-      <%= form.label :alias_name, 'Alias', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :alias_name, t('admin.supplier_dossier.fields.alias_name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :alias_name, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :alias_name)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :alias_name) %>
     </div>
     <div>
-      <%= form.label :classification, 'Clasificación', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.select :classification, %w[manufacturer distributor wholesaler service other].map { |v| [v.humanize, v] }, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :classification)} px-4 py-3 text-sm" %>
+      <%= form.label :classification, t('admin.supplier_dossier.fields.classification'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :classification, %w[manufacturer distributor wholesaler service other].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :classification)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :classification) %>
     </div>
     <div>
-      <%= form.label :person_type, 'Tipo de persona', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.select :person_type, %w[individual company].map { |v| [v.humanize, v] }, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :person_type)} px-4 py-3 text-sm" %>
+      <%= form.label :person_type, t('admin.supplier_dossier.fields.person_type'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :person_type, %w[individual company].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :person_type)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :person_type) %>
     </div>
     <div>
-      <%= form.label :currency, 'Moneda', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.select :currency, %w[MXN USD EUR].map { |v| [v.humanize, v] }, { include_blank: false }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :currency)} px-4 py-3 text-sm" %>
+      <%= form.label :currency, t('admin.supplier_dossier.fields.currency'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :currency, %w[MXN USD EUR].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: false }, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :currency)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :currency) %>
     </div>
     <div>
-      <%= form.label :credit_days, 'Días de crédito', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :credit_days, t('admin.supplier_dossier.fields.credit_days'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.number_field :credit_days, min: 0, step: 1, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :credit_days)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :credit_days) %>
     </div>
     <div>
-      <%= form.label :credit_limit, 'Límite de crédito', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :credit_limit, t('admin.supplier_dossier.fields.credit_limit'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.number_field :credit_limit, min: 0, step: 0.01, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :credit_limit)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :credit_limit) %>
     </div>
     <div>
-      <%= form.label :discount_percent, 'Descuento (%)', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :discount_percent, t('admin.supplier_dossier.fields.discount_percent'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.number_field :discount_percent, min: 0, step: 0.01, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :discount_percent)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :discount_percent) %>
     </div>
     <div>
-      <%= form.label :minimum_order_amount, 'Pedido mínimo', class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.label :minimum_order_amount, t('admin.supplier_dossier.fields.minimum_order_amount'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.number_field :minimum_order_amount, min: 0, step: 0.01, class: "input-field w-full rounded-xl #{form_state_classes(supplier, :minimum_order_amount)} px-4 py-3 text-sm" %>
       <%= error_message_for(supplier, :minimum_order_amount) %>
     </div>
@@ -130,17 +130,17 @@
   <div class="grid gap-4 sm:grid-cols-2">
     <div>
       <%= form.label :responsible_user_id, t('admin.supplier_dossier.responsible') %>
-      <%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: true }, class: 'w-full rounded-lg border p-2' %>
+      <%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: true }, class: "w-full rounded-lg border p-2 #{form_state_classes(supplier, :responsible_user)}" %>
       <%= error_message_for(supplier, :responsible_user) %>
     </div>
     <div>
       <%= form.label :tags_text, t('admin.supplier_dossier.tags') %>
-      <%= form.text_field :tags_text, class: 'w-full rounded-lg border p-2' %>
+      <%= form.text_field :tags_text, class: "w-full rounded-lg border p-2 #{form_state_classes(supplier, :tags)}" %>
       <%= error_message_for(supplier, :tags) %>
     </div>
     <div class="sm:col-span-2">
       <%= form.label :documents, t('admin.supplier_dossier.documents') %>
-      <%= form.file_field :documents, multiple: true, accept: '.pdf,.png,.jpg,.jpeg', class: 'w-full rounded-lg border p-2' %>
+      <%= form.file_field :documents, multiple: true, accept: '.pdf,.png,.jpg,.jpeg', class: "w-full rounded-lg border p-2 #{form_state_classes(supplier, :documents)}" %>
       <%= error_message_for(supplier, :documents) %>
     </div>
   </div>

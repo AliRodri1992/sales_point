@@ -11,6 +11,25 @@ en:
       responsible: Responsible user
       tags: Tags
       documents: Documents
+      fields:
+        legal_name: "Legal name"
+        trade_name: "Trade name"
+        alias_name: "Alias"
+        classification: "Classification"
+        person_type: "Person type"
+        currency: "Currency"
+        credit_days: "Credit days"
+        credit_limit: "Credit limit"
+        discount_percent: "Discount (%)"
+        minimum_order_amount: "Minimum order"
+      options:
+        manufacturer: "Manufacturer"
+        distributor: "Distributor"
+        wholesaler: "Wholesaler"
+        service: "Service"
+        other: "Other"
+        individual: "Individual"
+        company: "Company"
       kinds:
         visit: Visit
         order: Order taking
