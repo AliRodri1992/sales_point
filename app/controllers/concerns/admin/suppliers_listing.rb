@@ -3,6 +3,7 @@
 module Admin
   module SuppliersListing
     include SuppliersFiltering
+
     PER_PAGE = 10
     PER_PAGE_OPTIONS = [5, 10, 15].freeze
 
