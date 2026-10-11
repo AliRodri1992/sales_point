@@ -6,17 +6,47 @@ export default class extends Controller {
   static values = { index: { type: Number, default: 0 } }
 
   connect() {
+    this.element.addEventListener("input", (event) => {
+      if (event.target.matches("input[required], select[required], textarea[required]")) this.validateField(event.target)
+    })
+    this.element.addEventListener("change", (event) => {
+      if (event.target.matches("input[required], select[required], textarea[required]")) this.validateField(event.target)
+    })
     const invalid = this.stepTargets.findIndex((step) => step.querySelector(".text-red-600, .text-rose-600, [aria-invalid='true'], .field_with_errors"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
-    this.element.addEventListener("input", (event) => {
-      const field = event.target
-      if (!field.matches("input, select, textarea") || !field.validity.valid) return
-      field.removeAttribute("aria-invalid")
-      field.classList.remove("border-rose-500", "bg-rose-50")
-      const wrapper = field.closest("[data-controller='international-phone']")?.parentElement || field.closest("div")
-      wrapper?.querySelector("[data-required-error]")?.remove()
-    })
+  }
+
+  fieldWrapper(field) {
+    return field.closest("[data-controller='international-phone']")?.parentElement || field.closest(".grid > div") || field.parentElement
+  }
+
+  clearFieldError(field) {
+    field.removeAttribute("aria-invalid")
+    field.classList.remove("border-rose-500", "bg-rose-50")
+    this.fieldWrapper(field)?.querySelector("[data-required-error]")?.remove()
+  }
+
+  showFieldError(field) {
+    const wrapper = this.fieldWrapper(field)
+    if (!wrapper) return
+    field.setAttribute("aria-invalid", "true")
+    field.classList.add("border-rose-500", "bg-rose-50")
+    let message = wrapper.querySelector("[data-required-error]")
+    if (!message) {
+      message = document.createElement("p")
+      message.dataset.requiredError = "true"
+      message.className = "mt-1 text-xs text-rose-600"
+      wrapper.append(message)
+    }
+    message.textContent = this.element.dataset.requiredMessage || "Required field"
+  }
+
+  validateField(field) {
+    const valid = field.value.trim().length > 0 && field.validity.valid
+    if (valid) this.clearFieldError(field)
+    else this.showFieldError(field)
+    return valid
   }
 
   select(event) {
@@ -62,22 +92,12 @@ export default class extends Controller {
   validateStep(index) {
     const step = this.stepTargets[index]
     const fields = [...step.querySelectorAll("input[required], select[required], textarea[required]")]
-    const invalid = fields.find((field) => !field.value.trim() || !field.validity.valid)
-    if (!invalid) return true
+    const invalid = fields.filter((field) => !this.validateField(field))
+    if (!invalid.length) return true
 
     this.indexValue = index
-    invalid.setAttribute("aria-invalid", "true")
-    invalid.classList.add("border-rose-500", "bg-rose-50")
-    const wrapper = invalid.closest("[data-controller='international-phone']")?.parentElement || invalid.closest("div")
-    let message = wrapper?.querySelector("[data-required-error]")
-    if (!message) {
-      message = document.createElement("p")
-      message.dataset.requiredError = "true"
-      message.className = "mt-1 text-xs text-rose-600"
-      wrapper?.append(message)
-    }
-    message.textContent = this.element.dataset.requiredMessage || "Required field"
-    invalid.focus()
+    this.render()
+    invalid[0].focus()
     return false
   }
 
