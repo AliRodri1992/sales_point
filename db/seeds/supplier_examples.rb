@@ -5,7 +5,7 @@
 module SupplierExamples
   COUNT = 20
   ORGANIZATION_TAX_ID = 'DPO260101AB1'
-  ORGANIZATION_NAME = 'Delta POS Demo'
+  ORGANIZATION_NAME = 'Delta POS'
 
   def self.seed!
     organization = create_organization
