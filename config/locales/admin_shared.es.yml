@@ -6,5 +6,15 @@ es:
         copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
         privacy: Privacidad
         terms: Términos
+      notifications:
+        supplier_activity:
+          contact_created: "%{user} creó un nuevo contacto."
+          contact_updated: "%{user} editó un contacto."
+          contact_deleted: "%{user} eliminó un contacto."
+          contact_restored: "%{user} recuperó un contacto."
+          address_created: "%{user} creó una nueva dirección."
+          address_updated: "%{user} editó una dirección."
+          address_deleted: "%{user} eliminó una dirección."
+          address_restored: "%{user} recuperó una dirección."
       online_users:
         empty: Vacío
