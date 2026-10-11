@@ -4,7 +4,7 @@ module Admin
   module SuppliersExporting
     def export
       authorize Supplier, :index?
-      return head :bad_request unless params[:supplier_id].to_s.match?(/\\A[1-9]\\d*\\z/)
+      return head :bad_request unless params[:supplier_id].to_s.match?(/\A[1-9]\d*\z/)
 
       supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
       authorize supplier, :show?
