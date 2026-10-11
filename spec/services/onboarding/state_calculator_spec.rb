@@ -22,7 +22,12 @@ RSpec.describe Onboarding::StateCalculator, type: :service do
     end
 
     it 'returns selected organization settings for the company step' do
-      settings = create(:organization_setting, organization:, base_currency: create(:currency, code: 'USD'), timezone: 'UTC')
+      settings = create(
+        :organization_setting,
+        organization:,
+        base_currency: create(:currency, code: 'USD'),
+        timezone: 'UTC'
+      )
 
       state = described_class.new(organization, 1).call
 
