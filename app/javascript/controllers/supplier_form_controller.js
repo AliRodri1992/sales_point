@@ -9,6 +9,14 @@ export default class extends Controller {
     const invalid = this.stepTargets.findIndex((step) => step.querySelector(".text-red-600, .text-rose-600, [aria-invalid='true'], .field_with_errors"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
+    this.element.addEventListener("input", (event) => {
+      const field = event.target
+      if (!field.matches("input, select, textarea") || !field.validity.valid) return
+      field.removeAttribute("aria-invalid")
+      field.classList.remove("border-rose-500", "bg-rose-50")
+      const wrapper = field.closest("[data-controller='international-phone']")?.parentElement || field.closest("div")
+      wrapper?.querySelector("[data-required-error]")?.remove()
+    })
   }
 
   select(event) {
@@ -60,12 +68,13 @@ export default class extends Controller {
     this.indexValue = index
     invalid.setAttribute("aria-invalid", "true")
     invalid.classList.add("border-rose-500", "bg-rose-50")
-    let message = invalid.closest("div")?.parentElement?.querySelector("[data-required-error]")
+    const wrapper = invalid.closest("[data-controller='international-phone']")?.parentElement || invalid.closest("div")
+    let message = wrapper?.querySelector("[data-required-error]")
     if (!message) {
       message = document.createElement("p")
       message.dataset.requiredError = "true"
       message.className = "mt-1 text-xs text-rose-600"
-      invalid.closest("div")?.parentElement?.append(message)
+      wrapper?.append(message)
     }
     message.textContent = this.element.dataset.requiredMessage || "Required field"
     invalid.focus()
