@@ -1,6 +1,11 @@
 ko:
   admin:
     supplier_dossier:
+      commercial:
+        summary: "거래 조건 요약"
+        description: "이 공급업체의 구매 조건 개요"
+        payment: "결제 조건"
+        purchase: "할인 및 주문"
       more_actions: "추가 작업"
       general:
         contact_summary: "연락처 정보"
