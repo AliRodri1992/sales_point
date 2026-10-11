@@ -76,9 +76,12 @@ ko:
           per_page_label: "표시"
         empty_title: "아직 공급업체가 없습니다"
         empty_subtitle: "첫 번째 공급업체를 추가하여 시작하세요."
+        actions: "추가 작업"
         columns:
           code: "코드"
           name: "이름"
+          phone: "전화번호"
+          email: "이메일"
           contact: "연락처"
           rfc: "세금 ID"
           status: "상태"
