@@ -8,13 +8,13 @@ es:
         terms: Términos
       notifications:
         supplier_activity:
-          contact_created: "%{user} creó un nuevo contacto."
-          contact_updated: "%{user} editó un contacto."
-          contact_deleted: "%{user} eliminó un contacto."
-          contact_restored: "%{user} recuperó un contacto."
-          address_created: "%{user} creó una nueva dirección."
-          address_updated: "%{user} editó una dirección."
-          address_deleted: "%{user} eliminó una dirección."
-          address_restored: "%{user} recuperó una dirección."
+          contact_created: "Se creó un contacto."
+          contact_updated: "Se editó un contacto."
+          contact_deleted: "Se eliminó un contacto."
+          contact_restored: "Se recuperó un contacto."
+          address_created: "Se creó una dirección."
+          address_updated: "Se editó una dirección."
+          address_deleted: "Se eliminó una dirección."
+          address_restored: "Se recuperó una dirección."
       online_users:
         empty: Vacío
