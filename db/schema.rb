@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_193742) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,7 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_193742) do
     t.string "state", limit: 100
     t.string "street", limit: 150
     t.datetime "updated_at", null: false
-    t.index ["addressable_type", "addressable_id"], name: "idx_addresses_one_active_primary", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
+    t.index ["addressable_type", "addressable_id", "purpose"], name: "idx_addresses_one_primary_per_purpose", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["addressable_type", "addressable_id"], name: "idx_addresses_owner_active", where: "(deleted_at IS NULL)"
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
     t.index ["deleted_at"], name: "index_addresses_on_deleted_at", where: "(deleted_at IS NULL)"
@@ -666,19 +666,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_193742) do
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_unit_keys_valid_range"
   end
 
+  create_table "supplier_schedules", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.time "ends_at"
+    t.string "kind", null: false
+    t.text "notes"
+    t.time "starts_at", null: false
+    t.bigint "supplier_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "weekday", null: false
+    t.index ["branch_id"], name: "index_supplier_schedules_on_branch_id"
+    t.index ["deleted_at"], name: "index_supplier_schedules_on_deleted_at"
+    t.index ["supplier_id", "branch_id", "kind", "weekday", "starts_at"], name: "idx_supplier_schedules_unique_slot", unique: true
+    t.index ["supplier_id"], name: "index_supplier_schedules_on_supplier_id"
+    t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying, 'order'::character varying, 'delivery'::character varying]::text[])", name: "chk_supplier_schedules_kind"
+    t.check_constraint "weekday >= 0 AND weekday <= 6", name: "chk_supplier_schedules_weekday"
+  end
+
   create_table "suppliers", force: :cascade do |t|
+    t.string "alias_name", limit: 100
+    t.string "classification", limit: 30
     t.string "code", limit: 30, null: false
     t.datetime "created_at", null: false
+    t.integer "credit_days", default: 0, null: false
+    t.decimal "credit_limit", precision: 15, scale: 2, default: "0.0", null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
     t.datetime "deleted_at", precision: nil
+    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.string "email", limit: 150
+    t.string "legal_name", limit: 150
+    t.decimal "minimum_order_amount", precision: 15, scale: 2, default: "0.0", null: false
     t.string "name", limit: 150, null: false
     t.text "notes"
     t.bigint "organization_id", null: false
+    t.string "person_type", limit: 20
     t.string "phone", limit: 30
     t.string "postal_code", limit: 5
+    t.bigint "responsible_user_id"
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
     t.string "status", limit: 20, default: "active", null: false
+    t.text "tags", default: [], null: false, array: true
+    t.string "trade_name", limit: 150
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
     t.index ["email"], name: "index_suppliers_on_email"
@@ -688,9 +719,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_193742) do
     t.index ["organization_id", "status", "name"], name: "idx_suppliers_org_status_name_active", where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_suppliers_on_organization_id"
     t.index ["phone"], name: "index_suppliers_on_phone"
+    t.index ["responsible_user_id"], name: "index_suppliers_on_responsible_user_id"
     t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_suppliers_on_status"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
+    t.check_constraint "credit_days >= 0 AND credit_days <= 365", name: "chk_supplier_credit_days"
+    t.check_constraint "credit_limit >= 0::numeric AND minimum_order_amount >= 0::numeric", name: "chk_supplier_amounts"
+    t.check_constraint "currency::text = ANY (ARRAY['MXN'::character varying, 'USD'::character varying, 'EUR'::character varying]::text[])", name: "chk_supplier_currency"
+    t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_discount"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
     t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_suppliers_postal_code_format"
     t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_suppliers_rfc_format"
@@ -845,8 +881,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_193742) do
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "supplier_schedules", "branches"
+  add_foreign_key "supplier_schedules", "suppliers"
   add_foreign_key "suppliers", "organizations"
   add_foreign_key "suppliers", "sat_fiscal_regimes"
+  add_foreign_key "suppliers", "users", column: "responsible_user_id"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
   add_foreign_key "terminals", "branches"
