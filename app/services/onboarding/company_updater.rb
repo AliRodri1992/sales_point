@@ -17,8 +17,14 @@ module Onboarding
       return false unless settings
 
       attributes = @params.expect(organization: %i[name tax_id business_sector base_currency_id timezone])
+      currency = Currency.active.find_by(id: attributes[:base_currency_id])
+      unless currency
+        settings.errors.add(:base_currency, :invalid)
+        return false
+      end
+
       return false unless update_organization(attributes)
-      return false unless update_settings(settings, attributes)
+      return false unless update_settings(settings, attributes, currency)
 
       true
     end
@@ -30,13 +36,7 @@ module Onboarding
       @organization.save!(context: :onboardingstep1)
     end
 
-    def update_settings(settings, attributes)
-      currency = Currency.active.find_by(id: attributes[:base_currency_id])
-      unless currency
-        settings.errors.add(:base_currency, :invalid)
-        return false
-      end
-
+    def update_settings(settings, attributes, currency)
       settings.assign_attributes(base_currency: currency, timezone: attributes[:timezone])
       settings.save!(context: :onboardingstep1)
     end
