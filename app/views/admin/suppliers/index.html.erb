@@ -59,6 +59,7 @@
     </div>
   </div>
   <%= hidden_field_tag :search, params[:search] if params[:search].present? %>
+  <%= render "active_filters" %>
   <details class="mt-4">
     <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
