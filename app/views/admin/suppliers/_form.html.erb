@@ -7,10 +7,9 @@
       <button type="button" data-supplier-form-target="tab" data-step-index="0" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">1</span><%= t('admin.suppliers.form.name') %></button>
       <button type="button" data-supplier-form-target="tab" data-step-index="1" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">2</span><%= t('admin.suppliers.form.rfc') %></button>
       <button type="button" data-supplier-form-target="tab" data-step-index="2" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">3</span><%= t('admin.suppliers.form.email') %></button>
-      <button type="button" data-supplier-form-target="tab" data-step-index="3" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">4</span><%= t('admin.suppliers.form.postal_code') %></button>
-      <button type="button" data-supplier-form-target="tab" data-step-index="4" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">5</span><%= t('admin.supplier_dossier.fields.credit_days') %></button>
-      <button type="button" data-supplier-form-target="tab" data-step-index="5" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">6</span><%= t('admin.supplier_dossier.responsible') %></button>
-      <button type="button" data-supplier-form-target="tab" data-step-index="6" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">7</span><%= t('admin.supplier_dossier.documents') %></button>
+      <button type="button" data-supplier-form-target="tab" data-step-index="3" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">5</span><%= t('admin.supplier_dossier.fields.credit_days') %></button>
+      <button type="button" data-supplier-form-target="tab" data-step-index="4" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">6</span><%= t('admin.supplier_dossier.responsible') %></button>
+      <button type="button" data-supplier-form-target="tab" data-step-index="5" data-action="supplier-form#select" class="flex w-full items-center gap-3 rounded-xl border-l-2 border-transparent px-3 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800"><span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-xs">7</span><%= t('admin.supplier_dossier.documents') %></button>
     </nav>
     <div class="min-w-0">
       <section data-supplier-form-target="step" class="" aria-label="<%= t('admin.suppliers.form.name') %>">
@@ -106,12 +105,6 @@
     </div>
         </div>
       </section>
-      <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.form.postal_code') %>">
-        <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.form.postal_code') %></h2></div>
-        <div class="grid gap-5 sm:grid-cols-2">
-          <p class="sm:col-span-2 rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm leading-6 text-slate-600"><%= t('admin.suppliers.form.postal_code') %>: <%= t('admin.suppliers.new.subtitle') %></p>
-        </div>
-      </section>
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.supplier_dossier.fields.credit_days') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.fields.credit_days') %></h2></div>
         <div class="grid gap-5 sm:grid-cols-2">
@@ -155,7 +148,6 @@
       <%= form.text_field :tags_text, class: "input-field w-full rounded-xl px-4 py-3 text-sm #{form_state_classes(supplier, :tags)}" %>
       <%= error_message_for(supplier, :tags) %>
     </div>
-          <p class="sm:col-span-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.responsible') %></p>
         </div>
       </section>
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.supplier_dossier.documents') %>">
