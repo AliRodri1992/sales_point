@@ -11,7 +11,7 @@ RSpec.describe Onboarding::CompanyUpdater, type: :service do
         described_class.call(
           organization,
           ActionController::Parameters.new(
-            organization: { name: 'Updated Company', currency: 'MXN', timezone: 'America/Mexico_City' }
+            organization: { name: 'Updated Company', timezone: 'America/Mexico_City' }
           )
         )
       ).to be(false)
@@ -25,7 +25,7 @@ RSpec.describe Onboarding::CompanyUpdater, type: :service do
           name: 'Updated Company',
           tax_id: 'ABC123456AB1',
           business_sector: 'fashion',
-          currency: 'MXN',
+          base_currency_id: settings.base_currency_id,
           timezone: 'America/Mexico_City'
         }
       )
@@ -37,7 +37,7 @@ RSpec.describe Onboarding::CompanyUpdater, type: :service do
         business_sector: 'fashion'
       )
       expect(settings.reload).to have_attributes(
-        currency: 'MXN',
+        base_currency_id: settings.base_currency_id,
         timezone: 'America/Mexico_City'
       )
     end
@@ -50,19 +50,20 @@ RSpec.describe Onboarding::CompanyUpdater, type: :service do
           name: organization.name,
           tax_id: organization.tax_id,
           business_sector: organization.business_sector,
-          currency: 'USD',
+          base_currency_id: create(:currency, code: 'USD').id,
           timezone: 'UTC'
         }
       )
 
       expect(described_class.call(organization, params, settings:)).to be(true)
-      expect(settings.reload).to have_attributes(currency: 'USD', timezone: 'UTC')
+      expect(settings.reload.base_currency.code).to eq('USD')
+      expect(settings.timezone).to eq('UTC')
     end
 
     it 'raises a validation error rather than silently accepting invalid company data' do
       organization = create(:organization, :with_settings)
       params = ActionController::Parameters.new(
-        organization: { name: '', currency: 'MXN', timezone: 'America/Mexico_City' }
+        organization: { name: '', timezone: 'America/Mexico_City' }
       )
 
       expect { described_class.call(organization, params) }
