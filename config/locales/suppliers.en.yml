@@ -152,6 +152,7 @@ en:
         notes_placeholder: "Additional supplier information."
         cancel: "Cancel"
         create: "Create supplier"
+        save: "Save"
         update: "Update supplier"
       show:
         title: "Supplier details"
