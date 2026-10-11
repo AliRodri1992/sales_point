@@ -18,11 +18,20 @@
         <%= error_message_for(form.object, field) %>
       </div>
     <% end %>
+    <% if local_assigns.fetch(:fiscal_locked, false) %>
+      <% form.object.purpose = "fiscal" %>
+      <%= form.hidden_field :purpose, value: "fiscal" %>
+      <div>
+        <%= form.label :purpose, t("admin.supplier_details.address_fields.purpose"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+        <%= form.text_field :purpose_display, value: t("admin.supplier_details.address_purposes.fiscal"), disabled: true, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm text-slate-500" %>
+      </div>
+    <% else %>
     <div data-controller="delta-select" class="relative">
       <%= form.label :purpose, t('admin.supplier_details.address_fields.purpose'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.select :purpose, Address::PURPOSES.map { |purpose| [t("admin.supplier_details.address_purposes.#{purpose}"), purpose] }, {}, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, :purpose)}" %>
       <%= error_message_for(form.object, :purpose) %>
     </div>
+    <% end %>
     <div>
       <%= form.label :primary, t('admin.supplier_details.primary'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.check_box :primary, class: 'size-5 accent-emerald-600' %>
