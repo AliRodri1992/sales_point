@@ -7,6 +7,8 @@ class SupplierSchedule < ApplicationRecord
   validates :kind, inclusion: { in: KINDS }
   validates :weekday, numericality: { only_integer: true, in: 0..6 }
   validates :starts_at, presence: true
+  validates :notes, length: { maximum: 1000 }, allow_blank: true
+  validates :branch, presence: true
   validate :same_organization
   validate :valid_time_range
 
