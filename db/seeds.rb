@@ -279,35 +279,35 @@ def seed_system_roles
 end
 
 SeedConsole.track('Idiomas', Language) do
-# Create default languages
-[
-  { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
-  { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
-  { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
-].each do |lang_attrs|
-  Language.find_or_create_by(code: lang_attrs[:code]) do |language|
-    language.assign_attributes(lang_attrs)
-  end
+  # Create default languages
+  [
+    { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
+    { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
+    { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
+  ].each do |lang_attrs|
+    Language.find_or_create_by(code: lang_attrs[:code]) do |language|
+      language.assign_attributes(lang_attrs)
+    end
 end
 end
 
 SeedConsole.track('Traducciones', Translate) do
-# Load all locale files
-Rails.root.glob('config/locales/*.yml').each do |file|
-  next if file.to_s.include?('devise.security_extension')
-
-  filename = File.basename(file)
-  case filename
-  when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
-  when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
-  when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
-  end
+  # Load all locale files
+  Rails.root.glob('config/locales/*.yml').each do |file|
+    next if file.to_s.include?('devise.security_extension')
+  
+    filename = File.basename(file)
+    case filename
+    when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
+    when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
+    when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
+    end
 end
 end
 
 SeedConsole.track('Meses SAT', SatMonth) do
-(1..12).each do |i|
-  create_sat_month(i)
+  (1..12).each do |i|
+    create_sat_month(i)
 end
 end
 
@@ -347,7 +347,7 @@ SeedConsole.track('Clientes', Client) do
       postal_code: '06000',
       credit_limit: number * 1000,
       notes: "Cliente de demostración #{number}.",
-      status: number % 5 == 0 ? :inactive : :active
+      status: (number % 5).zero? ? :inactive : :active
     )
   end
 end
@@ -362,7 +362,7 @@ SeedConsole.track('Categorías', Category) do
       code:,
       name: "Categoría #{number}",
       description: "Categoría de ejemplo #{number} para Delta POS.",
-      status: number % 5 == 0 ? :inactive : :active
+      status: (number % 5).zero? ? :inactive : :active
     )
   end
 end
@@ -388,7 +388,7 @@ SeedConsole.track('Productos', Product) do
       sku: format('SKU-DELTA-%04d', number),
       barcode: format('75000000%05d', number),
       category: categories[index % categories.length],
-      status: number % 5 == 0 ? :inactive : :active
+      status: (number % 5).zero? ? :inactive : :active
     )
   end
 end
