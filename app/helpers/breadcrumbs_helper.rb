@@ -8,6 +8,7 @@ module BreadcrumbsHelper
     'admin/profiles' => :profile_breadcrumb_items,
     'admin/branches' => :branch_breadcrumb_items,
     'admin/clients' => :client_breadcrumb_items,
+    'admin/suppliers' => :supplier_breadcrumb_items,
     'admin/users' => :user_breadcrumb_items
   }.freeze
 
@@ -105,6 +106,25 @@ module BreadcrumbsHelper
        { label: t('admin.clients.edit.title', name: client_name) }]
     else
       [clients_path]
+    end
+  end
+
+  def supplier_breadcrumb_items
+    base = { label: t('admin.shared.sidebar.suppliers'), path: admin_suppliers_path }
+    supplier = controller.view_assigns['supplier']
+
+    case params[:action]
+    when 'new', 'create'
+      [base, { label: t('admin.suppliers.new.title') }]
+    when 'show'
+      [base, record_breadcrumb(supplier, t('admin.suppliers.show.title'))]
+    when 'edit', 'update'
+      name = supplier&.name || t('admin.suppliers.show.title')
+      [base,
+       editable_record_breadcrumb(supplier, name, method(:admin_supplier_path)),
+       { label: t('admin.suppliers.edit.title', name: name) }]
+    else
+      [base]
     end
   end
 
