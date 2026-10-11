@@ -52,7 +52,7 @@
     </div>
   </div>
   <%= render "active_filters" %>
-  <details class="mt-4">
+  <details class="mt-4" data-advanced-filters>
     <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
 <div><label for="supplier_status" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.status') %></label><%= render 'filter_dropdown', name: :status, options: ['all','active','inactive'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:status] || 'all' %></div>
