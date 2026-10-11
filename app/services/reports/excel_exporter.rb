@@ -11,7 +11,7 @@ module Reports
           values = report.columns.map { |column| column.fetch(:value).call(record).to_s }
           sheet.add_row(values.map { |value| safe_cell(value) }, types: Array.new(values.length, :string))
         end
-        sheet.auto_filter.range = "A1:#{Axlsx::cell_r(0, report.columns.length - 1)}" if sheet.rows.length > 1
+        sheet.auto_filter.range = "A1:#{Axlsx::col_ref(report.columns.length - 1)}#{sheet.rows.length}" if sheet.rows.length > 1
       end
       package.to_stream.read
     end
