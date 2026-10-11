@@ -6,5 +6,15 @@ ko:
         copyright: "© %{year} Delta POS Inc. 모든 권리 보유."
         privacy: 개인정보 보호정책
         terms: 서비스 이용약관
+      notifications:
+        supplier_activity:
+          contact_created: "%{user}님이 새 연락처를 생성했습니다."
+          contact_updated: "%{user}님이 연락처를 수정했습니다."
+          contact_deleted: "%{user}님이 연락처를 삭제했습니다."
+          contact_restored: "%{user}님이 연락처를 복원했습니다."
+          address_created: "%{user}님이 새 주소를 생성했습니다."
+          address_updated: "%{user}님이 주소를 수정했습니다."
+          address_deleted: "%{user}님이 주소를 삭제했습니다."
+          address_restored: "%{user}님이 주소를 복원했습니다."
       online_users:
         empty: 비어 있음
