@@ -4,8 +4,13 @@ RSpec.describe OrganizationSetting, type: :model do
   subject { build(:organization_setting) }
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:currency) }
-    it { is_expected.to validate_inclusion_of(:currency).in_array(%w[MXN USD JPY KRW]) }
+    it { is_expected.to belong_to(:base_currency).class_name('Currency') }
+
+    it 'rejects an inactive base currency' do
+      subject.base_currency.active = false
+      expect(subject).not_to be_valid
+      expect(subject.errors[:base_currency]).to be_present
+    end
     it { is_expected.to validate_presence_of(:timezone) }
 
     it do
