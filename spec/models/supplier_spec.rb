@@ -9,6 +9,12 @@ RSpec.describe Supplier, type: :model do
       expect(supplier).to be_valid
     end
 
+    it 'requires a valid person type' do
+      supplier.person_type = nil
+      expect(supplier).not_to be_valid
+      expect(supplier.errors.attribute_names).to include(:person_type)
+    end
+
     it 'requires code and name' do
       supplier.code = nil
       supplier.name = nil
