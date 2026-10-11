@@ -28,7 +28,7 @@ RSpec.describe 'Catalog pagination links', type: :request do
   end
 
   def active_page(body)
-    body[%r{<span class="[^"]*bg-blue-600[^"]*"[^>]*aria-current="page"[^>]*>([^<]*)</span>}, 1]
+    body[%r{<span class="[^"]*bg-emerald-600[^"]*"[^>]*aria-current="page"[^>]*>([^<]*)</span>}, 1]
   end
 
   it 'labels every categories page link' do
