@@ -1,0 +1,14 @@
+es:
+  reports:
+    suppliers:
+      title: "Listado de proveedores"
+      columns:
+        code: "Código"
+        name: "Proveedor"
+        rfc: "RFC"
+        email: "Correo electrónico"
+        status: "Estado"
+    export:
+      button: "Exportar"
+      excel: "Exportar Excel"
+      pdf: "Exportar PDF"
