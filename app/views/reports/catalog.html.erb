@@ -1,0 +1,13 @@
+<header>
+  <div class="brand">DELTA POS</div>
+  <h1><%= report.title %></h1>
+  <div class="meta"><%= report.organization.name %> · <%= I18n.l(Time.current, format: :long) %></div>
+</header>
+<table>
+  <thead><tr><% report.columns.each do |column| %><th><%= column.fetch(:label) %></th><% end %></tr></thead>
+  <tbody>
+    <% report.each_row do |record| %>
+      <tr><% report.columns.each do |column| %><td><%= column.fetch(:value).call(record) %></td><% end %></tr>
+    <% end %>
+  </tbody>
+</table>
