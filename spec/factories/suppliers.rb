@@ -5,6 +5,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Proveedor #{n}" }
     sequence(:email) { |n| "proveedor#{n}@example.com" }
     sequence(:rfc) { |n| "XAXX010101#{format('%03d', n)}" }
+    person_type { 'individual' }
     phone { '5555555555' }
     postal_code { '06000' }
     status { :active }
