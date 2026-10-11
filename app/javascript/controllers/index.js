@@ -73,3 +73,6 @@ application.register("supplier-search", SupplierSearchController)
 
 import SupplierDropdownController from "./supplier_dropdown_controller"
 application.register("supplier-dropdown", SupplierDropdownController)
+
+import SupplierFormController from "./supplier_form_controller"
+application.register("supplier-form", SupplierFormController)
