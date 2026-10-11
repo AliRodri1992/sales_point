@@ -32,6 +32,8 @@ module Admin
 
     def new
       @supplier = current_organization.suppliers.new
+      @supplier.contacts.build
+      @supplier.addresses.build
       authorize @supplier
       load_fiscal_regimes
     end
