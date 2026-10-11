@@ -5,16 +5,17 @@
 <% can_edit = policy(supplier).update? %>
 
 <div class="space-y-6" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= %w[general commercial contacts addresses schedules documents].include?(params[:tab]) ? params[:tab] : 'general' %>">
-  <header class="flex flex-wrap items-center justify-between gap-5 px-1 py-2">
-    <div class="flex min-w-0 items-center gap-4">
-      <div class="flex size-20 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-emerald-800">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-10" aria-hidden="true">
+  <header class="rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-sm sm:px-7">
+    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex min-w-0 items-center gap-4">
+      <div class="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 sm:size-20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-9" aria-hidden="true">
           <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
         </svg>
       </div>
       <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-3">
-          <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= supplier.name %></h1>
+          <h1 class="font-jakarta text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"><%= supplier.name %></h1>
           <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>">
             <span class="size-2 rounded-full <%= supplier.active? ? 'bg-emerald-600' : 'bg-slate-400' %>"></span>
             <%= t("admin.suppliers.statuses.#{supplier.status}") %>
@@ -29,17 +30,18 @@
         </p>
       </div>
     </div>
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2 lg:justify-end">
       <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
         <%= icon('arrow-left', class: 'size-4') %>
         <%= t('admin.suppliers.show.back') %>
       <% end %>
       <% if can_edit %>
-        <%= link_to edit_admin_supplier_path(supplier), data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+        <%= link_to edit_admin_supplier_path(supplier), data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700' do %>
           <%= icon('pencil', class: 'size-4') %>
           <%= t('admin.suppliers.index.edit') %>
         <% end %>
       <% end %>
+    </div>
     </div>
   </header>
 
