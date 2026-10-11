@@ -89,8 +89,6 @@
             <%= hidden_field_tag :migration_volume, "", data: { registration_wizard_target: "migrationVolume" } %>
             <%= hidden_field_tag :migration_priority, "", data: { registration_wizard_target: "migrationPriority" } %>
             <%= hidden_field_tag :branches, "1", data: { registration_wizard_target: "branchesHidden" } %>
-            <% selected_currency = @currencies.find { |currency| currency.code == params[:currency] } || @currencies.find { |currency| currency.code == "MXN" } || @currencies.first %>
-            <%= hidden_field_tag :currency, selected_currency&.code, data: { registration_wizard_target: "currency" } %>
             <%= hidden_field_tag :terminals, "1", data: { registration_wizard_target: "terminals" } %>
             <%= hidden_field_tag :payment_integration, "cash", data: { registration_wizard_target: "payments" } %>
 
@@ -247,20 +245,6 @@
                 <div>
                   <label for="branches-input" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.branches") %></label>
                   <input id="branches-input" type="number" min="1" value="1" class="mt-1 block w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-500 shadow-sm" disabled>
-                </div>
-                <div class="relative">
-                  <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= { es: "Moneda base", en: "Base currency", ko: "기준 통화" }.fetch(I18n.locale.to_sym, t(".step_four.currency")) %></label>
-                  <button type="button" id="currency" data-registration-wizard-target="dropdown" data-dropdown-name="currency" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
-                    <span data-registration-wizard-target="dropdownLabel"><%= selected_currency && "#{selected_currency.code}" %></span>
-                    <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
-                  </button>
-                  <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="currency" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
-                    <% @currencies.each do |currency| %>
-                      <button type="button" data-dropdown-name="currency" data-dropdown-value="<%= currency.code %>" data-dropdown-label="<%= currency.code %>" data-action="click->registration-wizard#selectDropdown" class="w-full text-left px-4 py-2 text-xs font-semibold text-slate-600 transition-all duration-150 hover:bg-gradient-to-br hover:from-emerald-600 hover:to-teal-600 hover:text-white focus:outline-none focus:ring-0" data-dropdown-option="true">
-                        <%= currency.code %>
-                      </button>
-                    <% end %>
-                  </div>
                 </div>
               </div>
             </section>
