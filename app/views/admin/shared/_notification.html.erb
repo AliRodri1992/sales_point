@@ -25,7 +25,11 @@
   <% action = notification.params[:action] || 'updated' %>
   <% actor = notification.params[:user] %>
   <% avatar_text = record.name.to_s[0, 2].upcase %>
-  <% title_text = t("admin.shared.notifications.supplier.#{action}", name: record.name, default: record.name) %>
+  <% if action.start_with?('contact_', 'address_') %>
+    <% title_text = t("admin.shared.notifications.supplier_activity.#{action}", user: actor&.display_name || t('admin.shared.notifications.actor_unknown')) %>
+  <% else %>
+    <% title_text = t("admin.shared.notifications.supplier.#{action}", name: record.name, default: record.name) %>
+  <% end %>
   <% if actor %>
     <% subtitle_text = t('admin.shared.notifications.performed_by', user: actor.display_name) %>
   <% else %>
