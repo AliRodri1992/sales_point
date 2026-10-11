@@ -27,7 +27,7 @@ module Admin
         credit: base_scope.where('credit_limit > 0').count
       }
       @supplier_regimes = SatFiscalRegime.current.order(:code)
-      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime))
+      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime, :contacts))
       @total_count = @suppliers.count
       @suppliers = apply_sorting(@suppliers)
       @suppliers = paginate(@suppliers)
