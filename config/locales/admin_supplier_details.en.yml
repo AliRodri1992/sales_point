@@ -26,6 +26,11 @@ en:
       secondary_option: "No, secondary"
       primary_option: "Yes, primary"
       primary_hint: "Only one primary address is allowed per type for each supplier."
+      active_addresses: "Active addresses"
+      deleted_addresses: "Deleted addresses"
+      deleted_addresses_description: "You can restore deleted addresses when needed."
+      deleted_on: "Deleted on %{date}"
+      restore_address: "Restore address"
       address_purposes:
         general: "General"
         fiscal: "Tax"
