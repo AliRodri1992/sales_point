@@ -27,7 +27,7 @@ module Admin
         credit: base_scope.where('credit_limit > 0').count
       }
       @supplier_regimes = SatFiscalRegime.current.order(:code)
-      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime, :contacts))
+      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime))
       @total_count = @suppliers.count
       @suppliers = apply_sorting(@suppliers)
       @suppliers = paginate(@suppliers)
@@ -44,10 +44,10 @@ module Admin
       allowed_filters.each do |field, values|
         scope = scope.where(field => params[field]) if values.include?(params[field])
       end
-      scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id]) if valid_id?(:sat_fiscal_regime_id)
-      scope = scope.where(responsible_user_id: params[:responsible_user_id]) if valid_id?(:responsible_user_id)
+      scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id]) if valid_id?(:sat_fiscal_regime_id) && @supplier_regimes.any? { |regime| regime.id.to_s == params[:sat_fiscal_regime_id].to_s }
+      scope = scope.where(responsible_user_id: params[:responsible_user_id]) if valid_id?(:responsible_user_id) && current_organization.users.exists?(id: params[:responsible_user_id])
       scope = scope.where('credit_limit > 0') if params[:credit] == 'yes'
-      scope = scope.where(credit_limit: 0) if params[:credit] == 'no'
+      scope = scope.where(credit_limit: [0, nil]) if params[:credit] == 'no'
 
       %w[credit_days credit_limit minimum_order_amount discount_percent].each do |field|
         %w[min max].each do |bound|
