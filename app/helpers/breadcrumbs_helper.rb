@@ -112,6 +112,7 @@ module BreadcrumbsHelper
   end
 
   include SupplierBreadcrumbsHelper
+  include SystemRoleBreadcrumbsHelper
 
   def user_breadcrumb_items
     base = { label: t('admin.breadcrumbs.users'), path: admin_users_path }
