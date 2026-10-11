@@ -4,6 +4,10 @@ module Users
   class RegistrationsController < Devise::RegistrationsController
     before_action :load_currencies, only: %i[new create]
 
+    def new
+      super
+    end
+
     def create
       build_resource(sign_up_params)
       result = RegistrationService.call(resource:, params: registration_params)
