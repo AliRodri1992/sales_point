@@ -87,6 +87,7 @@ en:
           status: "Status"
           actions: "Actions"
       onboarding:
+        required_field: "This field is required."
         contact_general: "Supplier contact details"
         summary:
           title: "Review"
