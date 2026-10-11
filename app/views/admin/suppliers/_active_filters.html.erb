@@ -28,14 +28,13 @@
     <% active_filters.each do |key, label| %>
       <% remaining = params.permit(:search, :status, :classification, :person_type, :currency, :credit, :sat_fiscal_regime_id, :responsible_user_id, :credit_days_min, :credit_days_max, :credit_limit_min, :credit_limit_max, :minimum_order_amount_min, :minimum_order_amount_max, :discount_percent_min, :discount_percent_max, :created_at_from, :created_at_to, :updated_at_from, :updated_at_to, :per_page, :sort, :direction).to_h.except(key, 'page') %>
       <% tone = if key == 'status'
-                  value == 'active' ? :active : :inactive
-                elsif key == 'credit' && value == 'yes'
+                  params[key] == 'active' ? :active : :inactive
+                elsif key == 'credit' && params[key] == 'yes'
                   :credit
                 else
                   :neutral
                 end %>
       <%= render 'shared/filter_badge', url: admin_suppliers_path(remaining), filter_key: key, label: label, tone: tone, aria_label: "#{t('admin.suppliers.index.advanced.clear')}: #{label}" %>
-    <% end %>
     <% end %>
     <%= link_to t('admin.suppliers.index.advanced.clear'), admin_suppliers_path, data: { action: 'click->supplier-search#clearFilters' }, class: 'ml-1 text-xs font-semibold text-emerald-700 hover:underline' %>
   </div>
