@@ -4,9 +4,6 @@ export default class extends Controller {
   connect() {
     this.pending = null
     this.advancedPanel = this.element.querySelector("details[data-advanced-filters]")
-    if (window.sessionStorage.getItem("supplier-filters-open") === "true" && this.advancedPanel) {
-      this.advancedPanel.open = true
-    }
   }
 
   disconnect() {
@@ -22,6 +19,6 @@ export default class extends Controller {
 
   submit() {
     window.clearTimeout(this.pending)
-    window.sessionStorage.setItem("supplier-filters-open", String(Boolean(this.advancedPanel?.open)))
+    if (this.advancedPanel) this.advancedPanel.open = false
   }
 }
