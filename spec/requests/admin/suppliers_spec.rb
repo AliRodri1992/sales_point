@@ -95,6 +95,18 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include(I18n.t('admin.suppliers.new.title', locale: :en))
   end
 
+  it 'hides status on creation and always creates an active supplier' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('name="supplier[status]"')
+
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(status: 'inactive') }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(Supplier.order(:id).last).to be_active
+  end
+
   it 'renders the edit form for an existing supplier' do
     supplier = create(:supplier, organization:, name: 'Supplier to Edit')
 

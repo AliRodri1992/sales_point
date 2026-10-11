@@ -51,7 +51,9 @@
       <div class="relative" data-controller="delta-select"><%= form.select :classification, %w[manufacturer distributor wholesaler service other].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: true }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :classification)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :classification) %>
     </div>
+          <% unless supplier.new_record? %>
           <div class="sm:col-span-2"><%= form.label :status, t('admin.suppliers.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %><div class="relative" data-controller="delta-select"><%= form.select :status, options_for_select(Supplier.statuses.keys.map { |status| [t("admin.suppliers.statuses.#{status}"), status] }, supplier.status || 'active'), {}, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :status)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div><%= error_message_for(supplier, :status) %></div>
+          <% end %>
         </div>
       </section>
       <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
