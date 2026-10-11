@@ -37,11 +37,13 @@ module Admin
       @supplier.addresses.build
       authorize @supplier
       load_fiscal_regimes
+      load_reference_catalogs
     end
 
     def edit
       authorize @supplier
       load_fiscal_regimes
+      load_reference_catalogs
       render :new
     end
 
@@ -57,11 +59,13 @@ module Admin
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.created') }
       else
         load_fiscal_regimes
+      load_reference_catalogs
         render :new, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
       @supplier.errors.add(:base, t('admin.suppliers.errors.duplicate'))
       load_fiscal_regimes
+      load_reference_catalogs
       render :new, status: :unprocessable_content
     end
 
@@ -74,11 +78,13 @@ module Admin
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }
       else
         load_fiscal_regimes
+      load_reference_catalogs
         render :new, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
       @supplier.errors.add(:base, t('admin.suppliers.errors.duplicate'))
       load_fiscal_regimes
+      load_reference_catalogs
       render :new, status: :unprocessable_content
     end
 
@@ -102,6 +108,11 @@ module Admin
       ).find(params[:id])
     end
 
+    def load_reference_catalogs
+      @currencies = Currency.active.order(:code)
+      @countries = Country.active.ordered
+    end
+
     def supplier_params
       params.expect(
         supplier: [
@@ -109,7 +120,7 @@ module Admin
           {
             contacts_attributes: [%i[id name position email phone mobile_phone primary active notes _destroy]],
             addresses_attributes: [%i[
-              id street exterior_number interior_number neighborhood city state country postal_code
+              id street exterior_number interior_number neighborhood city state country_id postal_code
               purpose primary _destroy
             ]],
             documents: []
@@ -122,7 +133,7 @@ module Admin
       %i[
         code name legal_name trade_name alias_name classification person_type
         email phone rfc sat_fiscal_regime_id postal_code status notes
-        currency credit_days credit_limit discount_percent minimum_order_amount
+        currency_id credit_days credit_limit discount_percent minimum_order_amount
         responsible_user_id tags_text
       ]
     end

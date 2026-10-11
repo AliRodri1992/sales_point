@@ -5,7 +5,7 @@
   <div class="mb-4 flex justify-end"><button type="button" data-action="supplier-nested#remove" class="text-sm font-semibold text-rose-600"><%= t('admin.supplier_details.delete') %></button></div>
 <% end %>
   <div class="grid gap-4 sm:grid-cols-2">
-    <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+    <% %i[street exterior_number interior_number neighborhood city state postal_code].each do |field| %>
       <div>
         <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <%= form.text_field field, required: %i[street exterior_number neighborhood city state country postal_code].include?(field),
@@ -18,6 +18,13 @@
         <%= error_message_for(form.object, field) %>
       </div>
     <% end %>
+    <div>
+      <%= form.label :country_id, t('admin.supplier_details.address_fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <div class="relative" data-controller="delta-select">
+        <%= form.collection_select :country_id, @countries || Country.active.ordered, :id, :name, { include_blank: true }, required: true, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, :country)}" %>
+      </div>
+      <%= error_message_for(form.object, :country) %>
+    </div>
     <% if local_assigns.fetch(:fiscal_locked, false) %>
       <% form.object.purpose = "fiscal" %>
       <%= form.hidden_field :purpose, value: "fiscal" %>

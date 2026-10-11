@@ -15,6 +15,11 @@
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>
+      <div>
+        <%= form.label :country_id, t('admin.supplier_details.address_fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.collection_select :country_id, @countries, :id, :name, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(@address, :country)} px-4 py-3 text-sm text-slate-800" %>
+        <%= error_message_for(@address, :country) %>
+      </div>
     </div>
   </section>
   <section class="border-t border-slate-100 pt-7">
@@ -23,10 +28,10 @@
       <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_fields.city') %> / <%= t('admin.supplier_details.address_fields.state') %></h3>
     </div>
     <div class="grid gap-5 sm:grid-cols-2">
-      <% %i[postal_code city state country].each do |field| %>
+      <% %i[postal_code city state].each do |field| %>
         <div>
           <%= form.label field, t("admin.supplier_details.address_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400", maxlength: (5 if field == :postal_code), inputmode: (field == :postal_code ? 'numeric' : 'text'), autocomplete: ({ postal_code: 'postal-code', city: 'address-level2', state: 'address-level1', country: 'country-name' }[field]) %>
+          <%= form.text_field field, class: "input-field w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400", maxlength: (5 if field == :postal_code), inputmode: (field == :postal_code ? 'numeric' : 'text'), autocomplete: ({ postal_code: 'postal-code', city: 'address-level2', state: 'address-level1' }[field]) %>
           <%= error_message_for(@address, field) %>
         </div>
       <% end %>

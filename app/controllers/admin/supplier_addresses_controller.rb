@@ -20,11 +20,15 @@ module Admin
 
     def new
       @address = @supplier.addresses.new
+      load_countries
     end
 
-    def edit; end
+    def edit
+      load_countries
+    end
 
     def create
+      load_countries
       @address = @supplier.addresses.new(address_params)
       if @address.save
         notify_address('address_created')
@@ -38,6 +42,7 @@ module Admin
     end
 
     def update
+      load_countries
       if @address.update(address_params)
         notify_address('address_updated')
         redirect_success('address_updated')
@@ -87,8 +92,12 @@ module Admin
                   flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 
+    def load_countries
+      @countries = Country.active.ordered
+    end
+
     def address_params
-      fields = %i[street exterior_number interior_number neighborhood city state country postal_code primary purpose]
+      fields = %i[street exterior_number interior_number neighborhood city state country_id postal_code primary purpose]
       params.expect(address: fields)
     end
   end
