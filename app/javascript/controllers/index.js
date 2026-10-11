@@ -70,3 +70,6 @@ application.register("supplier-dossier", SupplierDossierController)
 
 import SupplierSearchController from "./supplier_search_controller"
 application.register("supplier-search", SupplierSearchController)
+
+import SupplierDropdownController from "./supplier_dropdown_controller"
+application.register("supplier-dropdown", SupplierDropdownController)
