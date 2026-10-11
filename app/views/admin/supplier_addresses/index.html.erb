@@ -11,16 +11,27 @@
       <% end %>
     </div>
   </div>
-  <div class="grid gap-4 md:grid-cols-2">
+  <% deleted_addresses = @supplier.addresses.with_deleted.where.not(deleted_at: nil).order(deleted_at: :desc) %>
+  <% showing_deleted = params[:status] == 'deleted' %>
+  <div class="grid gap-3 sm:grid-cols-2">
+    <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4"><p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.addresses') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= @addresses.size %></p></div>
+    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_records') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= deleted_addresses.size %></p></div>
+  </div>
+  <nav class="flex gap-5 border-b border-slate-200" aria-label="<%= t('admin.supplier_details.addresses') %>">
+    <%= link_to t('admin.supplier_details.addresses'), admin_supplier_addresses_path(@supplier), class: "border-b-2 px-2 py-3 text-sm font-semibold #{showing_deleted ? 'border-transparent text-slate-500' : 'border-emerald-600 text-emerald-700'}" %>
+    <%= link_to "#{t('admin.supplier_details.deleted_records')} (#{deleted_addresses.size})", admin_supplier_addresses_path(@supplier, status: 'deleted'), class: "border-b-2 px-2 py-3 text-sm font-semibold #{showing_deleted ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500'}" %>
+  </nav>
+  <% unless showing_deleted %>
+  <div class="grid items-stretch gap-4 md:grid-cols-2">
     <% @addresses.each do |address| %>
-      <article class="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-200 hover:shadow-md">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h2 class="font-semibold text-slate-900"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %></h2>
           <% if address.primary? %><span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700"><%= t('admin.supplier_details.primary') %></span><% end %>
         </div>
         <p class="mb-5 mt-4 text-sm leading-6 text-slate-600"><%= address.full_address %></p>
         <% if policy(@supplier).update? %>
-          <div class="mt-auto flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
+          <div class="mt-auto flex min-h-14 items-center justify-end gap-2 border-t border-slate-100 pt-4">
             <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_address_path(@supplier, address), class: 'inline-flex min-h-10 items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 hover:text-emerald-800' %>
             <%= button_to t('admin.supplier_details.delete'), admin_supplier_address_path(@supplier, address), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center justify-center rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700' %>
           </div>
@@ -31,20 +42,31 @@
   <% if @addresses.empty? %>
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
   <% end %>
-  <% deleted_addresses = @supplier.addresses.with_deleted.where.not(deleted_at: nil).order(updated_at: :desc) %>
-  <% if deleted_addresses.exists? %>
-    <details class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <summary class="cursor-pointer font-semibold text-slate-800"><%= t('admin.supplier_details.deleted_records') %> (<%= deleted_addresses.count %>)</summary>
-      <div class="mt-4 divide-y divide-slate-100">
-        <% deleted_addresses.each do |address| %>
-          <div class="flex flex-wrap items-center justify-between gap-3 py-3">
-            <span class="text-sm text-slate-600"><%= address.full_address %></span>
-            <% if policy(@supplier).update? %>
-              <%= button_to t('admin.supplier_details.restore'), restore_admin_supplier_address_path(@supplier, address), method: :patch, class: 'text-sm font-semibold text-emerald-700' %>
-            <% end %>
+  <% else %>
+    <div class="grid items-stretch gap-4 md:grid-cols-2">
+      <% deleted_addresses.each do |address| %>
+        <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="flex-1 p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h2 class="font-semibold text-slate-800"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %></h2>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_records') %></span>
+            </div>
+            <p class="mt-4 text-sm leading-6 text-slate-600"><%= address.full_address %></p>
+            <p class="mt-3 text-xs text-slate-500"><%= l(address.deleted_at.to_date, format: :long) %></p>
           </div>
-        <% end %>
-      </div>
-    </details>
+          <% if policy(@supplier).update? %>
+            <div class="flex min-h-14 items-center justify-end border-t border-slate-100 bg-slate-50 px-5 py-3">
+              <%= button_to restore_admin_supplier_address_path(@supplier, address), method: :patch, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>
+                <%= icon('arrow-path', class: 'size-4') %>
+                <%= t('admin.supplier_details.restore') %>
+              <% end %>
+            </div>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+    <% if deleted_addresses.empty? %>
+      <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500"><%= t('admin.supplier_details.deleted_records') %>: 0</div>
+    <% end %>
   <% end %>
 </div>
