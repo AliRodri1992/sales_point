@@ -32,7 +32,7 @@ class Supplier < ApplicationRecord
   validates :legal_name, :trade_name, length: { maximum: 150 }, allow_blank: true
   validates :alias_name, length: { maximum: 100 }, allow_blank: true
   validates :classification, inclusion: { in: %w[manufacturer distributor wholesaler service other] }, allow_blank: true
-  validates :person_type, inclusion: { in: %w[individual company] }, allow_blank: true
+  validates :person_type, presence: true, inclusion: { in: %w[individual company] }
   validates :currency, inclusion: { in: %w[MXN USD EUR] }
   validates :credit_days, numericality: { only_integer: true, in: 0..365 }
   validates :credit_limit, :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
