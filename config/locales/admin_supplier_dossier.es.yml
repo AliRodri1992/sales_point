@@ -1,6 +1,19 @@
 es:
   admin:
     supplier_dossier:
+      general:
+        information: "Información general"
+        information_description: "Datos básicos de identificación del proveedor."
+        tax_information: "Información fiscal"
+        tax_description: "Datos fiscales del proveedor para facturación."
+        code: "Código"
+        status: "Estado"
+        rfc: "RFC"
+        fiscal_regime: "Régimen fiscal"
+        postal_code: "Código postal fiscal"
+        fiscal_address: "Domicilio fiscal"
+        address_hint: "El domicilio fiscal se administra en Direcciones, donde puedes registrar varias direcciones y definir la principal."
+        view_addresses: "Ver direcciones"
       schedules: "Calendarios"
       branch: "Sucursal"
       kind: "Tipo"
