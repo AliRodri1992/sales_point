@@ -113,6 +113,5 @@ module Admin
     def valid_nonnegative_number?(key)
       params[key].to_s.match?(/\A\d{1,12}(?:\.\d{1,2})?\z/)
     end
-
   end
 end
