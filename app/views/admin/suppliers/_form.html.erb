@@ -87,31 +87,14 @@
       </section>
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_3') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_3') %></p></div>
-        <div class="mb-5 rounded-xl border border-slate-100 bg-slate-50/50 p-4">
-          <h3 class="mb-4 text-sm font-bold text-slate-900"><%= t('admin.suppliers.onboarding.contact_general') %></h3>
-          <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
-          <div>
-            <%= form.label :email, t('admin.suppliers.form.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= form.email_field :email, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :email)}", placeholder: t('admin.suppliers.form.email_placeholder') %>
-            <%= error_message_for(supplier, :email) %>
-          </div>
-          <div>
-            <%= form.label :phone, t('admin.suppliers.form.phone'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
-              <%= form.telephone_field :phone, data: { international_phone_target: 'input' }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :phone)}", placeholder: t('admin.suppliers.form.phone_placeholder') %>
-            </div>
-            <%= error_message_for(supplier, :phone) %>
-          </div>
-          </div>
-        </div>
         <div class="rounded-xl border border-slate-100 p-4">
           <h3 class="mb-4 text-sm font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.personal_title') %></h3>
           <%= form.fields_for :contacts, supplier.contacts.first || supplier.contacts.build do |contact_form| %>
             <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
-              <% %i[name position email phone mobile_phone].each do |field| %>
-                <div class="<%= '' %>">
+              <% %i[name position email mobile_phone].each do |field| %>
+                <div>
                   <%= contact_form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-                  <% if %i[phone mobile_phone].include?(field) %>
+                  <% if field == :mobile_phone %>
                     <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
                       <%= contact_form.telephone_field field, data: { international_phone_target: 'input' }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(contact_form.object, field)}" %>
                     </div>
