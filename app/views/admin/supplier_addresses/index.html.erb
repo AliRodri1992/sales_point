@@ -15,8 +15,8 @@
   <% deleted_addresses = @supplier.addresses.with_deleted.where.not(deleted_at: nil).order(deleted_at: :desc) %>
   <% showing_deleted = params[:status] == 'deleted' %>
   <div class="grid gap-3 sm:grid-cols-2">
-    <div class="rounded-xl border border-emerald-100 bg-emerald-50/60 p-4"><p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.active_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('map-pin', class: 'size-5 text-emerald-700') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @addresses.size %></p></div></div>
-    <div class="rounded-xl border border-slate-200 bg-slate-50 p-4"><p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('archive-box', class: 'size-5 text-slate-500') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= deleted_addresses.size %></p></div></div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.active_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('map-pin', class: 'size-5 text-emerald-700') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @addresses.size %></p></div></div>
+    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('archive-box', class: 'size-5 text-slate-500') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= deleted_addresses.size %></p></div></div>
   </div>
   <nav class="flex gap-5 border-b border-slate-200" aria-label="<%= t('admin.supplier_details.addresses') %>">
     <%= link_to t('admin.supplier_details.active_addresses'), admin_supplier_addresses_path(@supplier), class: "border-b-2 px-2 py-3 text-sm font-semibold #{showing_deleted ? 'border-transparent text-slate-500' : 'border-emerald-600 text-emerald-700'}" %>
