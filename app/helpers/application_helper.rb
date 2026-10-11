@@ -78,7 +78,7 @@ module ApplicationHelper
     formatted_message = "#{attribute_name} #{error_message}"
 
     content_tag(:p, formatted_message,
-                class: 'mt-1 text-xs text-rose-600')
+                class: 'mt-1 text-xs text-rose-600', data: { server_field_error: true })
   end
 
   def sort_link(column, title = nil, frame: nil)
