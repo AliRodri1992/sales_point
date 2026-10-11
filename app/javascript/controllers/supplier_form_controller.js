@@ -12,14 +12,21 @@ export default class extends Controller {
   }
 
   select(event) {
-    this.indexValue = Number(event.currentTarget.dataset.stepIndex)
+    const destination = Number(event.currentTarget.dataset.stepIndex)
+    if (destination > this.indexValue && !this.validateThrough(destination)) return
+    this.indexValue = destination
   }
 
   next() {
+    if (!this.validateStep(this.indexValue)) return
     this.indexValue = Math.min(this.indexValue + 1, this.stepTargets.length - 1)
   }
 
   submit(event) {
+    if (!this.validateThrough(this.stepTargets.length - 1)) {
+      event.preventDefault()
+      return
+    }
     if (this.indexValue !== this.stepTargets.length - 1) {
       event.preventDefault()
       this.indexValue = this.stepTargets.length - 1
@@ -32,6 +39,37 @@ export default class extends Controller {
 
   indexValueChanged() {
     if (this.hasStepTarget) this.render()
+  }
+
+  validateThrough(destination) {
+    for (let index = 0; index < destination; index += 1) {
+      if (!this.validateStep(index)) {
+        this.indexValue = index
+        return false
+      }
+    }
+    return true
+  }
+
+  validateStep(index) {
+    const step = this.stepTargets[index]
+    const fields = [...step.querySelectorAll("input[required], select[required], textarea[required]")]
+    const invalid = fields.find((field) => !field.value.trim() || !field.validity.valid)
+    if (!invalid) return true
+
+    this.indexValue = index
+    invalid.setAttribute("aria-invalid", "true")
+    invalid.classList.add("border-rose-500", "bg-rose-50")
+    let message = invalid.closest("div")?.parentElement?.querySelector("[data-required-error]")
+    if (!message) {
+      message = document.createElement("p")
+      message.dataset.requiredError = "true"
+      message.className = "mt-1 text-xs text-rose-600"
+      invalid.closest("div")?.parentElement?.append(message)
+    }
+    message.textContent = this.element.dataset.requiredMessage || "Required field"
+    invalid.focus()
+    return false
   }
 
   updateSummary() {
