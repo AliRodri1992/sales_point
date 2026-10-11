@@ -2,7 +2,7 @@ class CreateConversations < ActiveRecord::Migration[8.1]
   def change
     create_table :conversations do |t|
       t.string :conversation_type, default: 'direct', null: false
-      t.datetime :deleted_at, precision: nil
+      t.timestamp :deleted_at, precision: nil
       t.timestamps
     end
 
@@ -12,7 +12,7 @@ class CreateConversations < ActiveRecord::Migration[8.1]
     create_table :conversation_participants do |t|
       t.references :conversation, null: false, foreign_key: true
       t.references :user, null: false, foreign_key: true
-      t.datetime :deleted_at, precision: nil
+      t.timestamp :deleted_at, precision: nil
       t.timestamps
     end
 
@@ -27,7 +27,7 @@ class CreateConversations < ActiveRecord::Migration[8.1]
       t.references :conversation, null: false, foreign_key: true
       t.references :user, null: false, foreign_key: true
       t.text :body, null: false
-      t.datetime :deleted_at, precision: nil
+      t.timestamp :deleted_at, precision: nil
       t.timestamps
     end
 

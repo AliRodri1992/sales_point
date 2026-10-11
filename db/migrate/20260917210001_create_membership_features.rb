@@ -9,7 +9,7 @@ class CreateMembershipFeatures < ActiveRecord::Migration[8.1]
       t.string :value_type, null: false, default: 'boolean'
       t.integer :position, null: false, default: 0
       t.boolean :active, null: false, default: true
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
 
       t.timestamps
     end

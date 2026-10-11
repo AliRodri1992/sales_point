@@ -8,7 +8,7 @@ class CreateOrganizationSettings < ActiveRecord::Migration[8.1]
       t.string :timezone, null: false, default: 'UTC'
       t.string :payment_method, null: false, default: 'cash', limit: 20
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :organization_settings, :deleted_at

@@ -10,7 +10,7 @@ class CreateEmployees < ActiveRecord::Migration[8.1]
       t.string :phone, limit: 30
       t.string :status, null: false, default: 'active', limit: 20
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :employees, :deleted_at

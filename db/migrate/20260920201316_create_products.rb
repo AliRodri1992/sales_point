@@ -17,7 +17,7 @@ class CreateProducts < ActiveRecord::Migration[8.1]
       t.references :sat_unit_key, null: true, foreign_key: true
       t.references :sat_tax, null: true, foreign_key: true
       t.string :status, default: 'active', null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
 
       t.timestamps
     end
