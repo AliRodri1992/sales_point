@@ -15,7 +15,6 @@ RSpec.describe RegistrationService, type: :service do
       company_name: 'Delta Retail',
       tax_id: 'ABC123456789',
       business_sector: 'grocery',
-      currency: 'MXN',
       terminals: '2',
       payment_integration: 'cash',
       terms: '1'
@@ -41,7 +40,7 @@ RSpec.describe RegistrationService, type: :service do
     expect(user.reload.employee.organization.name).to eq('Delta Retail')
     expect(user.organizations).to contain_exactly(user.employee.organization)
     expect(user.system_roles).to contain_exactly(role)
-    expect(user.employee.organization.organization_settings.first.base_currency).to eq(base_currency)
+    expect(user.employee.organization.organization_settings.first.base_currency).to be_nil
     expect(user.employee.organization.branches.count).to eq(1)
     expect(user.employee.organization.branches.first.terminals.count).to eq(2)
   end
