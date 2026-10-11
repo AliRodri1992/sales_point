@@ -134,7 +134,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.bigint "contactable_id", null: false
     t.string "contactable_type", null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "email", limit: 150
     t.string "mobile_phone", limit: 30
     t.string "name", limit: 150, null: false
@@ -169,6 +169,63 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.datetime "updated_at", null: false
     t.index ["conversation_type", "deleted_at"], name: "index_conversations_on_conversation_type_and_deleted_at"
     t.index ["deleted_at"], name: "index_conversations_on_deleted_at"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "iso_alpha2", limit: 2, null: false
+    t.string "iso_alpha3", limit: 3, null: false
+    t.string "iso_numeric", limit: 3, null: false
+    t.string "name", limit: 150, null: false
+    t.string "phone_code", limit: 10
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "position"], name: "index_countries_on_active_and_position"
+    t.index ["deleted_at"], name: "index_countries_on_deleted_at"
+    t.index ["iso_alpha2"], name: "index_countries_on_iso_alpha2", unique: true
+    t.index ["iso_alpha3"], name: "index_countries_on_iso_alpha3", unique: true
+    t.index ["iso_numeric"], name: "index_countries_on_iso_numeric", unique: true
+    t.check_constraint "\"position\" >= 0", name: "chk_countries_position"
+    t.check_constraint "iso_alpha2::text ~ '^[A-Z]{2}$'::text", name: "chk_countries_iso_alpha2"
+    t.check_constraint "iso_alpha3::text ~ '^[A-Z]{3}$'::text", name: "chk_countries_iso_alpha3"
+    t.check_constraint "iso_numeric::text ~ '^[0-9]{3}$'::text", name: "chk_countries_iso_numeric"
+  end
+
+  create_table "country_currencies", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.bigint "country_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "currency_id", null: false
+    t.datetime "deleted_at"
+    t.boolean "is_primary", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id", "currency_id"], name: "idx_country_currencies_unique", unique: true
+    t.index ["country_id"], name: "idx_country_currencies_one_primary", unique: true, where: "(is_primary = true)"
+    t.index ["country_id"], name: "index_country_currencies_on_country_id"
+    t.index ["currency_id"], name: "index_country_currencies_on_currency_id"
+    t.index ["deleted_at"], name: "index_country_currencies_on_deleted_at"
+    t.check_constraint "NOT is_primary OR active", name: "chk_country_currencies_primary_active"
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.integer "decimal_places", default: 2, null: false
+    t.datetime "deleted_at"
+    t.string "name", limit: 150, null: false
+    t.string "numeric_code", limit: 3
+    t.string "symbol", limit: 12
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_currencies_on_active"
+    t.index ["code"], name: "index_currencies_on_code", unique: true
+    t.index ["deleted_at"], name: "index_currencies_on_deleted_at"
+    t.index ["numeric_code"], name: "index_currencies_on_numeric_code", unique: true
+    t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_currencies_code"
+    t.check_constraint "decimal_places >= 0 AND decimal_places <= 8", name: "chk_currencies_decimal_places"
+    t.check_constraint "numeric_code IS NULL OR numeric_code::text ~ '^[0-9]{3}$'::text", name: "chk_currencies_numeric_code"
   end
 
   create_table "dashboard_preferences", force: :cascade do |t|
@@ -426,9 +483,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   end
 
   create_table "organizations", force: :cascade do |t|
+    t.bigint "base_currency_id", null: false
     t.string "business_sector", limit: 50, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "name", limit: 150, null: false
     t.datetime "onboarding_completed_at"
     t.integer "onboarding_current_step", default: 1, null: false
@@ -438,6 +496,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
     t.string "tax_id", limit: 13, null: false
     t.datetime "updated_at", null: false
     t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["base_currency_id"], name: "index_organizations_on_base_currency_id"
     t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
     t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
     t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
@@ -862,6 +921,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
+  add_foreign_key "country_currencies", "countries"
+  add_foreign_key "country_currencies", "currencies"
   add_foreign_key "dashboard_preferences", "users"
   add_foreign_key "demo_request_activities", "demo_requests"
   add_foreign_key "demo_request_activities", "users"
@@ -877,6 +938,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_000000) do
   add_foreign_key "organization_memberships", "users"
   add_foreign_key "organization_migrations", "organizations"
   add_foreign_key "organization_settings", "organizations"
+  add_foreign_key "organizations", "currencies", column: "base_currency_id"
   add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "sat_taxes"
