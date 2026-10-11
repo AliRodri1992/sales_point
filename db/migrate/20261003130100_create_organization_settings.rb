@@ -4,7 +4,7 @@ class CreateOrganizationSettings < ActiveRecord::Migration[8.1]
   def change
     create_table :organization_settings do |t|
       t.references :organization, null: false, foreign_key: true
-      t.references :base_currency, null: true, foreign_key: { to_table: :currencies }
+      t.references :base_currency, null: false, foreign_key: { to_table: :currencies }
       t.string :timezone, null: false, default: 'UTC'
       t.string :payment_method, null: false, default: 'cash', limit: 20
       t.timestamps
