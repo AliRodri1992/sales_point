@@ -1,0 +1,14 @@
+en:
+  reports:
+    suppliers:
+      title: "Supplier list"
+      columns:
+        code: "Code"
+        name: "Supplier"
+        rfc: "Tax ID"
+        email: "Email"
+        status: "Status"
+    export:
+      button: "Export"
+      excel: "Export Excel"
+      pdf: "Export PDF"
