@@ -1,6 +1,19 @@
 en:
   admin:
     supplier_dossier:
+      general:
+        information: "General information"
+        information_description: "Basic supplier identification details."
+        tax_information: "Tax information"
+        tax_description: "Supplier tax details for invoicing."
+        code: "Code"
+        status: "Status"
+        rfc: "RFC"
+        fiscal_regime: "Tax regime"
+        postal_code: "Tax postal code"
+        fiscal_address: "Tax address"
+        address_hint: "Manage tax addresses in Addresses, where you can register multiple addresses and choose the primary one."
+        view_addresses: "View addresses"
       schedules: Schedules
       branch: Branch
       kind: Type
