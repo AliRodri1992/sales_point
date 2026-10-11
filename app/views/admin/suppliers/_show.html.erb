@@ -82,9 +82,6 @@
       <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
         <%= form_with url: admin_supplier_contacts_path(supplier), method: :get, data: { action: 'submit->supplier-dossier#filterContacts' }, class: 'flex w-full max-w-md items-center gap-2' do |form| %>
           <%= form.search_field :q, data: { supplier_dossier_target: 'contactSearch', action: 'input->supplier-dossier#filterContacts search->supplier-dossier#filterContacts' }, placeholder: t('admin.supplier_details.search_contacts'), aria: { label: t('admin.supplier_details.search_contacts') }, class: 'min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 focus:border-emerald-500 focus:ring-emerald-500' %>
-          <%= form.button class: 'inline-flex min-h-10 items-center justify-center rounded-xl border border-slate-200 px-3 text-slate-600 hover:bg-slate-50', aria: { label: t('admin.supplier_details.search_contacts') } do %>
-            <%= icon('magnifying-glass', class: 'size-5') %>
-          <% end %>
         <% end %>
         <%= link_to admin_supplier_contacts_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>
           <%= icon('users', class: 'size-4') %>
