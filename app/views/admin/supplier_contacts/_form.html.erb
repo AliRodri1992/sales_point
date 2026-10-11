@@ -3,7 +3,7 @@
     <div>
       <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'block text-sm font-semibold' %>
       <% if %i[phone mobile_phone].include?(field) %>
-        <div data-controller="international-phone">
+        <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
           <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "w-full rounded-lg border p-2 #{form_state_classes(@contact, field)}" %>
         </div>
       <% else %>
