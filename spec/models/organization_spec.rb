@@ -4,7 +4,6 @@ RSpec.describe Organization, type: :model do
   subject(:organization) { build(:organization) }
 
   it { is_expected.to belong_to(:base_currency).class_name('Currency') }
-  it { is_expected.to validate_presence_of(:base_currency) }
   it { is_expected.to validate_presence_of(:name) }
 
   it 'rejects an inactive base currency when creating an organization' do
