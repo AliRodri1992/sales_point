@@ -216,7 +216,5 @@ RSpec.describe Product, type: :model do
 
       expect(product.slug).to eq('custom-slug')
     end
-
-
   end
 end

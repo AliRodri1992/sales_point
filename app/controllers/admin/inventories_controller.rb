@@ -13,14 +13,18 @@ module Admin
     end
 
     def create
-      product = current_organization.products.not_deleted.find(inventory_params[:product_id])
-      inventory = @branch.inventories.new(inventory_params.except(:product_id))
-      inventory.organization = current_organization
-      inventory.product = product
-      inventory.save!
+      build_inventory.save!
       redirect_to admin_branch_inventories_path(@branch)
     rescue ActiveRecord::RecordInvalid => e
       redirect_to admin_branch_inventories_path(@branch), alert: e.record.errors.full_messages.to_sentence
+    end
+
+    def build_inventory
+      product = current_organization.products.not_deleted.find(inventory_params[:product_id])
+      @branch.inventories.new(inventory_params.except(:product_id)).tap do |inventory|
+        inventory.organization = current_organization
+        inventory.product = product
+      end
     end
 
     def update
