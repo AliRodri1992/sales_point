@@ -12,7 +12,7 @@ class SupplierPolicy
   def show? = authorized_record? && allowed?('suppliers.view') && full_dossier_access?
   def new? = authorized_organization? && allowed?('suppliers.create')
   def create? = new?
-  def edit? = authorized_record? && allowed?('suppliers.update')
+  def edit? = authorized_record? && allowed?('suppliers.update') && full_dossier_access?
   def update? = edit?
   def destroy? = authorized_record? && allowed?('suppliers.destroy')
 

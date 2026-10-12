@@ -1,7 +1,7 @@
 <% fiscal_address = supplier.addresses.not_deleted.find_by(purpose: 'fiscal', primary: true) %>
 <% contacts = supplier.contacts.not_deleted.order(primary: :desc, name: :asc) %>
 <% addresses = supplier.addresses.not_deleted.order(primary: :desc, id: :asc) %>
-<% schedules = supplier.supplier_schedules.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
+<% schedules = supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
 <% can_edit = policy(supplier).update? %>
 
 <div class="space-y-6" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= %w[general commercial contacts addresses schedules documents].include?(params[:tab]) ? params[:tab] : 'general' %>">

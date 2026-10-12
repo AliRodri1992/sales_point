@@ -24,6 +24,7 @@ module Admin
     def create
       @schedule = @supplier.supplier_schedules.new(schedule_params)
       if @schedule.save
+        notify_schedule('schedule_created')
         redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
       else
         load_branches
@@ -33,6 +34,7 @@ module Admin
 
     def update
       if @schedule.update(schedule_params)
+        notify_schedule('schedule_updated')
         redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
       else
         load_branches
@@ -42,6 +44,7 @@ module Admin
 
     def destroy
       @schedule.update!(deleted_at: Time.current)
+      notify_schedule('schedule_deleted')
       redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.deleted')
     end
 
@@ -60,6 +63,10 @@ module Admin
 
     def load_branches
       @branches = current_organization.branches.not_deleted.order(:name)
+    end
+
+    def notify_schedule(action)
+      Suppliers::NotifyService.call(action:, supplier: @supplier, user: current_user, subject: @schedule)
     end
 
     def schedule_params

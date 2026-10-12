@@ -81,7 +81,7 @@ module Admin
     end
 
     def notify_contact(action)
-      Suppliers::NotifyService.call(action: action, supplier: @supplier, user: current_user)
+      Suppliers::NotifyService.call(action: action, supplier: @supplier, user: current_user, subject: @contact)
     end
 
     def redirect_success(action)
