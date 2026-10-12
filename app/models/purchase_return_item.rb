@@ -12,7 +12,7 @@ class PurchaseReturnItem < ApplicationRecord
   def same_receipt
     return unless purchase_return && goods_receipt_item
 
-    errors.add(:goods_receipt_item, :invalid) unless goods_receipt_item.goods_receipt_id ==
-                                                     purchase_return.goods_receipt_id
+    valid = goods_receipt_item.goods_receipt_id == purchase_return.goods_receipt_id
+    errors.add(:goods_receipt_item, :invalid) unless valid
   end
 end

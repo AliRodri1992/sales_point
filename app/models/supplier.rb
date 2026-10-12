@@ -133,10 +133,7 @@ class Supplier < ApplicationRecord
     send("#{field}=", value)
   end
 
-  def normalize_email
-    email_value = email.to_s.strip.downcase
-    self.email = email_value.presence
-  end
+  def normalize_email = (self.email = email.to_s.strip.downcase.presence)
 
   def normalize_phone
     return if phone.blank?

@@ -14,7 +14,7 @@ class PurchaseCostAllocation < ApplicationRecord
   def consistent_organization
     return unless goods_receipt_item
 
-    errors.add(:goods_receipt_item, :invalid) unless goods_receipt_item.goods_receipt.organization_id ==
-                                                     organization_id
+    valid = goods_receipt_item.goods_receipt.organization_id == organization_id
+    errors.add(:goods_receipt_item, :invalid) unless valid
   end
 end

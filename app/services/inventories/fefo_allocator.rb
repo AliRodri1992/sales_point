@@ -37,11 +37,13 @@ module Inventories
       remaining
     end
 
-    def self.consume_lot!(inventory:, lot:, quantity:, user:, kind:, **options)
+    def self.consume_lot!(inventory:, lot:, quantity:, user:, **options)
+      kind = options.fetch(:kind, 'sale')
       lot.update!(quantity: lot.quantity - quantity)
       consume_serials!(lot, quantity, kind) if inventory.product.tracking_mode == 'serial'
+      movement_options = options.except(:kind)
       Inventories::ApplyMovement.call(
-        inventory:, quantity: -quantity, kind:, user:, inventory_lot: lot, **options
+        inventory:, quantity: -quantity, kind:, user:, inventory_lot: lot, **movement_options
       )
     end
 

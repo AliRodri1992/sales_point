@@ -67,13 +67,15 @@ module Admin
     end
 
     def order_params
-      params.expect(purchase_order: [:branch_id, :supplier_id, :currency_id, :expected_on, :notes,
-                                     :freight_amount, :insurance_amount, :exchange_rate,
-                                     :purchase_request_id, :purchase_quotation_id,
-                                     { purchase_order_items_attributes: %i[
-                                       id product_id supplier_product_id quantity units_per_package
-                                       unit_price discount_percent nonrecoverable_tax
-                                     ] }])
+      params.expect(purchase_order: [
+                      :branch_id, :supplier_id, :currency_id, :expected_on, :notes,
+                      :freight_amount, :insurance_amount, :exchange_rate,
+                      :purchase_request_id, :purchase_quotation_id,
+                      { purchase_order_items_attributes: %i[
+                        id product_id supplier_product_id quantity units_per_package
+                        unit_price discount_percent nonrecoverable_tax
+                      ] }
+                    ])
     end
 
     def transition(action)

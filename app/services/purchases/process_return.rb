@@ -29,10 +29,9 @@ module Purchases
     end
 
     def self.validate_available_return!(entry)
-      past_returns = PurchaseReturnItem.joins(:purchase_return)
-                                      .where(goods_receipt_item: entry.goods_receipt_item,
-                                             purchase_returns: { status: 'processed' })
-                                      .sum(:quantity)
+      records = PurchaseReturnItem.joins(:purchase_return)
+      past_returns = records.where(goods_receipt_item: entry.goods_receipt_item,
+                                   purchase_returns: { status: 'processed' }).sum(:quantity)
       return unless entry.quantity + past_returns > entry.goods_receipt_item.accepted_quantity
 
       raise ArgumentError, 'Return exceeds accepted merchandise'

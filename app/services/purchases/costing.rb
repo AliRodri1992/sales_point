@@ -3,7 +3,7 @@
 module Purchases
   class Costing
     def self.apply!(receipt)
-      receipt.goods_receipt_items.includes(:purchase_order_item).each do |entry|
+      receipt.goods_receipt_items.includes(:purchase_order_item).find_each do |entry|
         allocate!(entry)
       end
     end

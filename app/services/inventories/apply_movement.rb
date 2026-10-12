@@ -2,7 +2,7 @@
 
 module Inventories
   class ApplyMovement
-    def self.call(inventory:, quantity:, kind:, user: nil, reference: nil, source: nil, inventory_lot: nil)
+    def self.call(inventory:, quantity:, kind:, **options)
       inventory.with_lock do
         amount = BigDecimal(quantity.to_s)
         raise ArgumentError, 'Quantity must not be zero' if amount.zero?
@@ -14,8 +14,10 @@ module Inventories
 
         inventory.update!(stock: after)
         inventory.inventory_movements.create!(
-          organization: inventory.organization, user:, kind:, reference:,
-          quantity: amount, stock_before: before, stock_after: after, source:, inventory_lot:
+          organization: inventory.organization, user: options[:user], kind:,
+          reference: options[:reference], source: options[:source],
+          inventory_lot: options[:inventory_lot],
+          quantity: amount, stock_before: before, stock_after: after
         )
       end
     end
