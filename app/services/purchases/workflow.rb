@@ -10,26 +10,25 @@ module Purchases
     }.freeze
 
     def self.call(order:, action:, user:, notes: nil)
-      order.with_lock do
-        next_status = TRANSITIONS.fetch(order.status, {})[action.to_sym]
-        raise ArgumentError, 'Invalid order status transition' unless next_status
-        raise ArgumentError, 'Purchase order needs items' if action.to_sym == :submit && order.purchase_order_items.empty?
-        if action.to_sym.in?(%i[approve reject]) && order.requested_by_id == user.id
-          raise ArgumentError, 'Requester cannot approve or reject own order'
-        end
-        raise ArgumentError, 'Already received stock cannot be cancelled' if action.to_sym == :cancel &&
-                                                                           order.goods_receipts.exists?
+      new(order:, action:, user:, notes:).call
+    end
 
-        attributes = { status: next_status }
-        attributes.merge!(approved_by: user, approved_at: Time.current) if action.to_sym == :approve
-        attributes[:cancelled_at] = Time.current if action.to_sym == :cancel
-        order.update!(attributes)
-        if action.to_sym.in?(%i[approve reject])
-          order.purchase_approvals.create!(
-            organization: order.organization, decided_by: user, decision: next_status, notes:
-          )
-        end
-        order
+    def initialize(order:, action:, user:, notes:)
+      @order = order
+      @action = action.to_sym
+      @user = user
+      @notes = notes
+    end
+
+    def call
+      @order.with_lock do
+        state = TRANSITIONS.fetch(@order.status, {})[@action]
+        raise ArgumentError, 'Invalid order status transition' unless state
+
+        validate_transition!
+        update_status!(state)
+        record_decision!(state) if @action.in?(%i[approve reject])
+        @order
       end
     end
 
@@ -49,6 +48,34 @@ module Purchases
 
         request.update!(status:)
       end
+    end
+
+    private
+
+    def validate_transition!
+      if @action == :submit && @order.purchase_order_items.empty?
+        raise ArgumentError, 'Purchase order needs items'
+      end
+      if @action.in?(%i[approve reject]) && @order.requested_by_id == @user.id
+        raise ArgumentError, 'Requester cannot approve or reject own order'
+      end
+      return unless @action == :cancel && @order.goods_receipts.exists?
+
+      raise ArgumentError, 'An order with receipts cannot be cancelled'
+    end
+
+    def update_status!(state)
+      values = { status: state }
+      values[:approved_by] = @user if @action == :approve
+      values[:approved_at] = Time.current if @action == :approve
+      values[:cancelled_at] = Time.current if @action == :cancel
+      @order.update!(values)
+    end
+
+    def record_decision!(state)
+      @order.purchase_approvals.create!(
+        organization: @order.organization, decided_by: @user, decision: state, notes: @notes
+      )
     end
   end
 end
