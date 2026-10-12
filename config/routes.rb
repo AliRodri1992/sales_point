@@ -27,6 +27,9 @@ Rails.application.routes.draw do
     resources :clients
     resources :demo_requests, only: %i[index show update]
     resources :branches, only: %i[index show new create edit update destroy] do
+      resources :inventories, only: %i[index create update] do
+        member { post :adjust }
+      end
       member { patch :select }
     end
     resources :users

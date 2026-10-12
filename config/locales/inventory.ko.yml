@@ -1,0 +1,13 @@
+ko:
+  admin:
+    inventory:
+      title: "지점 재고"
+      description: "지점별 재고를 독립적으로 관리합니다."
+      product: "상품"
+      stock: "재고"
+      min_stock: "최소"
+      max_stock: "최대"
+      movements: "이동 내역"
+      add: "추가"
+      quantity: "수량 (+ 입고 / - 출고)"
+      adjust: "조정"

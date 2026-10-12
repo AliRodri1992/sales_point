@@ -1,0 +1,13 @@
+en:
+  admin:
+    inventory:
+      title: "Branch inventory"
+      description: "Stock tracked independently at this branch."
+      product: "Product"
+      stock: "Stock"
+      min_stock: "Minimum"
+      max_stock: "Maximum"
+      movements: "Movements"
+      add: "Add"
+      quantity: "Quantity (+ in / - out)"
+      adjust: "Adjust"
