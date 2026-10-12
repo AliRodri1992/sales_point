@@ -1,0 +1,22 @@
+<%= render 'admin/purchases/navigation' %>
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.quotations') %></h1>
+  <% if policy(PurchaseQuotation.new(organization: current_organization)).create? %>
+    <%= link_to t('admin.purchases.new_quotation'), new_admin_purchase_quotation_path, class: 'rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white' %>
+  <% end %>
+</div>
+<div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+  <table class="min-w-full divide-y divide-slate-100 text-sm">
+    <thead><tr><% %w[code supplier status valid_until].each do |key| %>
+      <th class="p-4 text-left"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead>
+    <tbody><% @quotations.each do |quotation| %>
+      <tr class="border-t border-slate-100">
+        <td class="p-4"><%= link_to quotation.code, admin_purchase_quotation_path(quotation), class: 'font-semibold text-emerald-700' %></td>
+        <td class="p-4"><%= quotation.supplier.name %></td>
+        <td class="p-4"><%= t("admin.purchases.statuses.#{quotation.status}") %></td>
+        <td class="p-4"><%= quotation.valid_until %></td>
+      </tr>
+    <% end %></tbody>
+  </table>
+  <% if @quotations.empty? %><p class="p-6 text-sm text-slate-500"><%= t('admin.purchases.empty') %></p><% end %>
+</div>

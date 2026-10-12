@@ -1,0 +1,10 @@
+<nav class="mb-6 flex flex-wrap gap-2">
+  <% [
+    [t('admin.purchases.orders'), admin_purchase_orders_path],
+    [t('admin.purchases.requests'), admin_purchase_requests_path],
+    [t('admin.purchases.quotations'), admin_purchase_quotations_path],
+    [t('admin.purchases.returns'), admin_purchase_returns_path]
+  ].each do |label, path| %>
+    <%= link_to label, path, class: 'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700' %>
+  <% end %>
+</nav>

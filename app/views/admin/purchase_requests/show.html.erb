@@ -1,0 +1,28 @@
+<%= render 'admin/purchases/navigation' %>
+<section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <h1 class="font-jakarta text-2xl font-bold"><%= @request.code %></h1>
+    <span class="rounded-xl bg-slate-100 px-3 py-2 text-sm"><%= t("admin.purchases.statuses.#{@request.status}") %></span>
+  </div>
+  <p><strong><%= t('admin.purchases.branch') %>:</strong> <%= @request.branch.name %></p>
+  <p><strong><%= t('admin.purchases.needed_on') %>:</strong> <%= @request.needed_on %></p>
+  <p><%= @request.notes %></p>
+  <table class="min-w-full text-left text-sm"><thead><tr>
+    <th class="p-3"><%= t('admin.purchases.product') %></th>
+    <th class="p-3"><%= t('admin.purchases.quantity') %></th></tr></thead><tbody>
+    <% @request.purchase_request_items.includes(:product).each do |item| %>
+      <tr class="border-t"><td class="p-3"><%= item.product.name %></td><td class="p-3"><%= item.quantity %></td></tr>
+    <% end %></tbody></table>
+  <div class="flex flex-wrap gap-3">
+    <% if @request.draft? && policy(@request).edit? %>
+      <%= link_to t('admin.purchases.edit'), edit_admin_purchase_request_path(@request), class: 'rounded-xl border p-3' %>
+      <%= button_to t('admin.purchases.submit'), submit_admin_purchase_request_path(@request),
+                    class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
+      <%= button_to t('admin.purchases.cancel'), cancel_admin_purchase_request_path(@request), class: 'rounded-xl border border-rose-300 p-3 text-rose-700' %>
+    <% end %>
+    <% if @request.submitted? && policy(@request).approve? %>
+      <%= button_to t('admin.purchases.approve'), approve_admin_purchase_request_path(@request), class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
+      <%= button_to t('admin.purchases.reject'), reject_admin_purchase_request_path(@request), class: 'rounded-xl border border-rose-300 p-3 text-rose-700' %>
+    <% end %>
+  </div>
+</section>

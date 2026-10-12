@@ -1,0 +1,24 @@
+<%= render 'admin/purchases/navigation' %>
+<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.requests') %></h1>
+  <% if policy(PurchaseRequest.new(organization: current_organization)).create? %>
+    <%= link_to t('admin.purchases.new_request'), new_admin_purchase_request_path, class: 'rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white' %>
+  <% end %>
+</div>
+<div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+  <table class="min-w-full divide-y divide-slate-100 text-sm">
+    <thead><tr><% %w[code branch status needed_on].each do |key| %>
+      <th class="p-4 text-left"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead>
+    <tbody>
+      <% @requests.each do |request| %>
+        <tr class="border-t border-slate-100">
+          <td class="p-4"><%= link_to request.code, admin_purchase_request_path(request), class: 'font-semibold text-emerald-700' %></td>
+          <td class="p-4"><%= request.branch.name %></td>
+          <td class="p-4"><%= t("admin.purchases.statuses.#{request.status}") %></td>
+          <td class="p-4"><%= request.needed_on %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% if @requests.empty? %><p class="p-6 text-sm text-slate-500"><%= t('admin.purchases.empty') %></p><% end %>
+</div>
