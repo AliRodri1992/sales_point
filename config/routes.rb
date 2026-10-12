@@ -40,6 +40,38 @@ Rails.application.routes.draw do
         member { patch :restore }
       end
     end
+    resources :purchase_requests, except: %i[destroy] do
+      member do
+        post :submit
+        post :approve
+        post :reject
+        post :cancel
+      end
+    end
+    resources :purchase_quotations, except: %i[destroy] do
+      member do
+        post :submit
+        post :accept
+        post :reject
+      end
+    end
+    resources :purchase_orders, except: %i[destroy] do
+      resources :goods_receipts, only: %i[index new create]
+      member do
+        post :submit
+        post :approve
+        post :reject
+        post :dispatch
+        post :cancel
+      end
+    end
+    resources :goods_receipts, only: %i[show] do
+      resources :purchase_returns, only: %i[new create]
+    end
+    resources :purchase_returns, only: %i[index show] do
+      member { post :process_return }
+    end
+
     resources :suppliers do
       resources :supplier_products, path: 'products', except: %i[show] do
         member { get :history }

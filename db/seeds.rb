@@ -217,6 +217,36 @@ DEFAULT_PERMISSIONS = [
   { code: 'suppliers.products.manage', name: 'Administrar productos de proveedores',
     module_name: 'Proveedores', description: 'Edita ofertas de compra y presentaciones.' },
   {
+    code: 'purchases.view',
+    name: 'View purchases',
+    module_name: 'Compras',
+    description: 'View purchases within the current organization.'
+  },
+  {
+    code: 'purchases.create',
+    name: 'Create purchase documents',
+    module_name: 'Compras',
+    description: 'Create purchase documents within the current organization.'
+  },
+  {
+    code: 'purchases.approve',
+    name: 'Approve purchases',
+    module_name: 'Compras',
+    description: 'Approve purchases within the current organization.'
+  },
+  {
+    code: 'purchases.receive',
+    name: 'Receive purchased merchandise',
+    module_name: 'Compras',
+    description: 'Receive purchased merchandise within the current organization.'
+  },
+  {
+    code: 'purchases.returns',
+    name: 'Process supplier returns',
+    module_name: 'Compras',
+    description: 'Process supplier returns within the current organization.'
+  },
+  {
     code: 'employees.access',
     name: 'Acceso a empleados',
     module_name: 'Empleados',

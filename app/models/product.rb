@@ -4,6 +4,8 @@ class Product < ApplicationRecord
   belongs_to :organization
   has_many :supplier_products, dependent: :restrict_with_exception
   has_many :inventories, dependent: :restrict_with_exception
+  has_many :purchase_order_items, dependent: :restrict_with_exception
+  has_many :purchase_request_items, dependent: :restrict_with_exception
   enum :tracking_mode, { none: 'none', lot: 'lot', serial: 'serial' }, validate: true, default: :none
 
   belongs_to :category, optional: true

@@ -5,6 +5,8 @@ class Supplier < ApplicationRecord
 
   belongs_to :organization
   has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :purchase_quotations, dependent: :restrict_with_exception
+  has_many :purchase_orders, dependent: :restrict_with_exception
   has_many :products, through: :supplier_products
 
   belongs_to :currency

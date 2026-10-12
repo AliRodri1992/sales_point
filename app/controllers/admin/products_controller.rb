@@ -66,7 +66,7 @@ module Admin
       params.expect(
         product: %i[
           code name description price cost
-          barcode sku category_id sat_unit_key_id sat_tax_id status
+          barcode sku category_id sat_unit_key_id sat_tax_id tracking_mode status
           image_url position featured slug view_count
         ]
       ).tap do |p|

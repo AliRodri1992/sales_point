@@ -104,6 +104,14 @@
           </div>
         </details>
 
+        <% if current_organization && (current_user.admin? || current_user.permission?('purchases.view')) %>
+          <a href="<%= admin_purchase_orders_path %>" data-tooltip="<%= t('admin.purchases.orders') %>"
+             class="<%= sidebar_link_classes('purchase_orders') %>">
+            <%= icon('shopping-cart', class: 'size-5') %>
+            <span class="sidebar-label"><%= t('admin.purchases.orders') %></span>
+          </a>
+        <% end %>
+
         <a
           href="#"
           data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
