@@ -1,0 +1,38 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe SupplierPolicy do
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:user) { create(:user) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+  end
+
+  it 'denies contacts management without its explicit permission' do
+    expect(described_class.new(user, supplier).manage_contacts?).to be(false)
+  end
+
+  it 'allows scoped contacts management without granting fiscal data access' do
+    role = create(:system_role, role_type: :system, status: :active)
+    permission = Permission.create!(
+      code: 'suppliers.contacts.manage', name: 'Manage contacts',
+      module_name: 'Proveedores', status: :active
+    )
+    role.permissions << permission
+    create(:user_role, user:, system_role: role)
+
+    policy = described_class.new(user, supplier)
+    expect(policy.manage_contacts?).to be(true)
+    expect(policy.manage_fiscal?).to be(false)
+  end
+
+  it 'rejects an unrelated organization even with the permission' do
+    foreign_supplier = create(:supplier, organization: create(:organization))
+    allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)
+
+    expect(described_class.new(user, foreign_supplier).manage_contacts?).to be(false)
+  end
+end
