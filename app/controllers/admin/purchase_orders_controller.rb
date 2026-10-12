@@ -1,0 +1,86 @@
+# frozen_string_literal: true
+
+module Admin
+  class PurchaseOrdersController < ApplicationController
+    include PurchasesAccess
+    before_action :set_order, only: %i[show edit update submit approve reject dispatch cancel]
+
+    def index
+      authorize new_record, :index?
+      @orders = policy_scope(current_organization.purchase_orders)
+                .includes(:branch, :supplier).order(created_at: :desc)
+    end
+
+    def show
+      authorize @order
+    end
+
+    def new
+      @order = new_record
+      authorize @order
+      3.times { @order.purchase_order_items.build }
+      load_purchase_catalogs
+    end
+
+    def edit
+      authorize @order
+      load_purchase_catalogs
+    end
+
+    def create
+      @order = new_record
+      authorize @order
+      @order.assign_attributes(order_params)
+      if @order.save
+        redirect_to admin_purchase_order_path(@order)
+      else
+        load_purchase_catalogs
+        render :new, status: :unprocessable_content
+      end
+    end
+
+    def update
+      authorize @order
+      if @order.update(order_params)
+        redirect_to admin_purchase_order_path(@order)
+      else
+        load_purchase_catalogs
+        render :edit, status: :unprocessable_content
+      end
+    end
+
+    def submit = transition(:submit)
+    def approve = transition(:approve)
+    def reject = transition(:reject)
+    def dispatch = transition(:dispatch)
+    def cancel = transition(:cancel)
+
+    private
+
+    def new_record
+      current_organization.purchase_orders.new(requested_by: current_user)
+    end
+
+    def set_order
+      @order = policy_scope(current_organization.purchase_orders).find(params[:id])
+    end
+
+    def order_params
+      params.expect(purchase_order: [:branch_id, :supplier_id, :currency_id, :expected_on, :notes,
+                                     :freight_amount, :insurance_amount, :exchange_rate,
+                                     :purchase_request_id, :purchase_quotation_id,
+                                     { purchase_order_items_attributes: %i[
+                                       id product_id supplier_product_id quantity units_per_package
+                                       unit_price discount_percent nonrecoverable_tax
+                                     ] }])
+    end
+
+    def transition(action)
+      authorize @order, "#{action}?".to_sym
+      Purchases::Workflow.call(order: @order, action:, user: current_user, notes: params[:notes])
+      redirect_to admin_purchase_order_path(@order)
+    rescue ArgumentError => e
+      reject_purchase(e, admin_purchase_order_path(@order))
+    end
+  end
+end
