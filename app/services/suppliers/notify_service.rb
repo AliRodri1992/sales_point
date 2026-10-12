@@ -2,12 +2,12 @@
 
 module Suppliers
   class NotifyService
-    def self.call(action:, supplier:, user:, subject: supplier)
-      new.call(action:, supplier:, user:, subject:)
+    def self.call(action:, supplier:, user:, subject: supplier, event_token: nil)
+      new.call(action:, supplier:, user:, subject:, event_token:)
     end
 
-    def call(action:, supplier:, user:, subject:)
-      key = event_key(action:, supplier:, user:, subject:)
+    def call(action:, supplier:, user:, subject:, event_token:)
+      key = event_key(action:, supplier:, user:, subject:, event_token:)
       delivered = false
 
       ActiveRecord::Base.transaction do
@@ -29,10 +29,10 @@ module Suppliers
 
     private
 
-    def event_key(action:, supplier:, user:, subject:)
-      version = [subject.updated_at&.iso8601(6), subject.try(:deleted_at)&.iso8601(6)]
+    def event_key(action:, supplier:, user:, subject:, event_token:)
+      version = [subject.try(:updated_at)&.iso8601(6), subject.try(:deleted_at)&.iso8601(6)]
       Digest::SHA256.hexdigest(
-        [supplier.id, user.id, subject.class.name, subject.id, action, *version].join(':')
+        [supplier.id, user.id, subject.class.name, subject.id, action, event_token, *version].join(':')
       )
     end
   end
