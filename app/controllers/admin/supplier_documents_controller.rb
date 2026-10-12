@@ -11,8 +11,10 @@ module Admin
       supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
       authorize supplier, :manage_documents?
       attachment = supplier.documents.attachments.find(params[:document_id])
+      document_id = attachment.id
       attachment.purge
-      Suppliers::NotifyService.call(action: 'document_deleted', supplier:, user: current_user, subject: supplier)
+      Suppliers::NotifyService.call(action: 'document_deleted', supplier:, user: current_user,
+                                    subject: supplier, event_token: document_id)
       redirect_to admin_supplier_path(supplier), notice: t('admin.supplier_details.deleted')
     end
   end
