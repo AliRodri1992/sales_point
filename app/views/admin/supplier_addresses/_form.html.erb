@@ -17,7 +17,7 @@
       <% end %>
       <div>
         <%= form.label :country_id, t('admin.supplier_details.address_fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <div class="relative" data-controller="delta-select" data-country-flags="true">
+        <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
           <%= form.select :country_id,
                           options_for_select(
                             @countries.map do |country|
