@@ -32,6 +32,7 @@ es:
       responsible: "Responsable"
       tags: "Etiquetas"
       documents: "Documentos"
+      products: "Productos"
       placeholders:
         person_type: "Seleccione un tipo de persona"
         responsible: "Seleccione un responsable"

@@ -32,6 +32,7 @@ ko:
       responsible: "담당자"
       tags: "태그"
       documents: "문서"
+      products: "상품"
       placeholders:
         person_type: "사업자 유형을 선택하세요"
         responsible: "담당자를 선택하세요"

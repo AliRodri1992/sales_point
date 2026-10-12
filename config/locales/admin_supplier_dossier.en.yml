@@ -32,6 +32,7 @@ en:
       responsible: Responsible user
       tags: Tags
       documents: Documents
+      products: "Products"
       placeholders:
         person_type: "Select a person type"
         responsible: "Select a responsible user"
