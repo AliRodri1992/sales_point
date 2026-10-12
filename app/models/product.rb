@@ -6,7 +6,8 @@ class Product < ApplicationRecord
   has_many :inventories, dependent: :restrict_with_exception
   has_many :purchase_order_items, dependent: :restrict_with_exception
   has_many :purchase_request_items, dependent: :restrict_with_exception
-  enum :tracking_mode, { none: 'none', lot: 'lot', serial: 'serial' }, validate: true, default: :none
+  enum :tracking_mode, { none: 'none', lot: 'lot', serial: 'serial' },
+       prefix: :tracking, validate: true, default: :none
 
   belongs_to :category, optional: true
   belongs_to :sat_unit_key, optional: true
