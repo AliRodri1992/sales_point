@@ -41,6 +41,7 @@ class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
       t.decimal :freight_amount, precision: 14, scale: 4, null: false, default: 0
       t.decimal :nonrecoverable_tax, precision: 14, scale: 4, null: false, default: 0
       t.date :effective_on, null: false
+      t.datetime :deleted_at
       t.datetime :created_at, null: false
     end
     add_index :supplier_product_prices, %i[supplier_product_id effective_on created_at],
