@@ -25,9 +25,9 @@ module Admin
     def find_product_by_code(id_param)
       search_term = CGI.unescape(id_param)
       accessible_products
-             .where('lower(slug) = lower(?)', search_term)
-             .or(accessible_products.where(code: search_term.upcase))
-             .first
+        .where('lower(slug) = lower(?)', search_term)
+        .or(accessible_products.where(code: search_term.upcase))
+        .first
     end
 
     def product_not_found(exception = nil)
