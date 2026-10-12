@@ -37,10 +37,14 @@ class SupplierPolicy
   end
 
   def authorized_organization?
-    user.present? && user.organizations.active_records.exists?
+    return unless user
+
+    user.organizations.active_records.exists?
   end
 
   def authorized_record?
+    return unless user
+
     authorized_organization? && supplier.respond_to?(:organization_id) &&
       supplier.organization_id.present? &&
       user.organizations.active_records.exists?(id: supplier.organization_id)
