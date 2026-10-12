@@ -3,6 +3,7 @@
 module Admin
   class PurchaseQuotationsController < ApplicationController
     include PurchasesAccess
+
     before_action :set_quotation, only: %i[show edit update submit accept reject]
 
     def index

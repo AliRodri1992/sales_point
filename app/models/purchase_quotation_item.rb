@@ -12,7 +12,7 @@ class PurchaseQuotationItem < ApplicationRecord
   validate :consistent_links
 
   def quoted_amount
-    (quantity / units_per_package) * unit_price * (1 - discount_percent / 100)
+    (quantity / units_per_package) * unit_price * (1 - (discount_percent / 100))
   end
 
   private
@@ -22,10 +22,13 @@ class PurchaseQuotationItem < ApplicationRecord
 
     organization = purchase_quotation.organization_id
     errors.add(:product, :invalid) if product && product.organization_id != organization
-    return unless supplier_product
+    validate_supplier_product(organization) if supplier_product
+  end
 
-    errors.add(:supplier_product, :invalid) unless supplier_product.organization_id == organization &&
-                                                  supplier_product.supplier_id == purchase_quotation.supplier_id &&
-                                                  supplier_product.product_id == product_id
+  def validate_supplier_product(organization)
+    valid = supplier_product.organization_id == organization &&
+            supplier_product.supplier_id == purchase_quotation.supplier_id &&
+            supplier_product.product_id == product_id
+    errors.add(:supplier_product, :invalid) unless valid
   end
 end

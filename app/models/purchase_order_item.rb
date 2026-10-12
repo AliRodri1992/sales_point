@@ -12,7 +12,7 @@ class PurchaseOrderItem < ApplicationRecord
   validate :supplier_product_consistent
 
   def line_total
-    (quantity / units_per_package) * unit_price * (1 - discount_percent / 100) + nonrecoverable_tax
+    (quantity / units_per_package) * unit_price * (1 - (discount_percent / 100)) + nonrecoverable_tax
   end
 
   def received_quantity

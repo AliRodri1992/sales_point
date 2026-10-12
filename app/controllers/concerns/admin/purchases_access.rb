@@ -15,9 +15,9 @@ module Admin
 
     def require_purchase_organization!
       head :forbidden unless current_organization &&
-                             current_user.organization_memberships.where(
+                             current_user.organization_memberships.exists?(
                                organization_id: current_organization.id, status: :active
-                             ).exists?
+                             )
     end
 
     def load_purchase_catalogs

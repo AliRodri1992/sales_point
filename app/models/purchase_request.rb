@@ -31,8 +31,7 @@ class PurchaseRequest < ApplicationRecord
   end
 
   def products_belong_to_organization
-    purchase_request_items.each do |item|
-      errors.add(:purchase_request_items, :invalid) if item.product && item.product.organization_id != organization_id
-    end
+    invalid = purchase_request_items.any? { |item| item.product && item.product.organization_id != organization_id }
+    errors.add(:purchase_request_items, :invalid) if invalid
   end
 end

@@ -55,14 +55,40 @@ class PurchaseOrder < ApplicationRecord
   end
 
   def consistent_organization
+    validate_purchase_branch
+    validate_purchase_supplier
+    validate_purchase_request
+    validate_purchase_quotation
+    validate_purchase_items
+  end
+
+  def validate_purchase_branch
     errors.add(:branch, :invalid) if branch && branch.organization_id != organization_id
+  end
+
+  def validate_purchase_supplier
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
-    errors.add(:purchase_request, :invalid) if purchase_request && purchase_request.organization_id != organization_id
-    errors.add(:purchase_quotation, :invalid) if purchase_quotation && (
-      purchase_quotation.organization_id != organization_id || purchase_quotation.supplier_id != supplier_id
-    )
+  end
+
+  def validate_purchase_request
+    return unless purchase_request
+
+    errors.add(:purchase_request, :invalid) unless purchase_request.organization_id == organization_id
+  end
+
+  def validate_purchase_quotation
+    return unless purchase_quotation
+
+    valid = purchase_quotation.organization_id == organization_id &&
+            purchase_quotation.supplier_id == supplier_id
+    errors.add(:purchase_quotation, :invalid) unless valid
+  end
+
+  def validate_purchase_items
     purchase_order_items.each do |item|
-      errors.add(:purchase_order_items, :invalid) if item.product && item.product.organization_id != organization_id
+      next unless item.product
+
+      errors.add(:purchase_order_items, :invalid) unless item.product.organization_id == organization_id
     end
   end
 end

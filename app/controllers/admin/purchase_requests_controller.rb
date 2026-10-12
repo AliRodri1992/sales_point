@@ -81,7 +81,7 @@ module Admin
     end
 
     def transition(action)
-      authorize @request, action == :submit ? :submit? : "#{action}?".to_sym
+      authorize @request, action == :submit ? :submit? : :"#{action}?"
       if action == :submit
         Purchases::Workflow.submit_request!(@request)
       elsif action == :cancel

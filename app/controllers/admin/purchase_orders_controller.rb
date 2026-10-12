@@ -3,6 +3,7 @@
 module Admin
   class PurchaseOrdersController < ApplicationController
     include PurchasesAccess
+
     before_action :set_order, only: %i[show edit update submit approve reject dispatch cancel]
 
     def index
@@ -76,7 +77,7 @@ module Admin
     end
 
     def transition(action)
-      authorize @order, "#{action}?".to_sym
+      authorize @order, :"#{action}?"
       Purchases::Workflow.call(order: @order, action:, user: current_user, notes: params[:notes])
       redirect_to admin_purchase_order_path(@order)
     rescue ArgumentError => e

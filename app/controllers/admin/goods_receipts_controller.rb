@@ -3,6 +3,7 @@
 module Admin
   class GoodsReceiptsController < ApplicationController
     include PurchasesAccess
+
     before_action :set_order, only: %i[index new create]
 
     def index
