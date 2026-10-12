@@ -14,8 +14,8 @@ RSpec.describe Product, type: :model do
     end
 
     it 'requires a unique code' do
-      create(:product, code: 'duplicate')
-      product = build(:product, code: 'duplicate')
+      existing = create(:product, code: 'duplicate')
+      product = build(:product, organization: existing.organization, code: 'duplicate')
       expect(product).not_to be_valid
       expect(product.errors[:code]).to include('has already been taken')
     end
@@ -55,26 +55,9 @@ RSpec.describe Product, type: :model do
       expect(product).not_to be_valid
     end
 
-    it 'requires a stock' do
-      product = build(:product, stock: nil)
-      expect(product).not_to be_valid
-      expect(product.errors[:stock]).to include("can't be blank")
-    end
-
-    it 'requires stock to be non-negative' do
-      product = build(:product, stock: -1)
-      expect(product).not_to be_valid
-    end
-
-    it 'requires max_stock to be greater than or equal to min_stock' do
-      product = build(:product, min_stock: 100, max_stock: 50)
-      expect(product).not_to be_valid
-      expect(product.errors[:max_stock]).to include('must be greater than or equal to min_stock')
-    end
-
-    it 'accepts max_stock equal to min_stock' do
-      product = build(:product, min_stock: 50, max_stock: 50)
-      expect(product).to be_valid
+    it 'does not store branch inventory in product attributes' do
+      product = build(:product)
+      expect(product).not_to respond_to(:stock, :min_stock, :max_stock)
     end
 
     it 'allows sku to be nil' do
@@ -83,8 +66,8 @@ RSpec.describe Product, type: :model do
     end
 
     it 'requires sku to be unique when present' do
-      create(:product, sku: 'SKU-001')
-      product = build(:product, sku: 'SKU-001')
+      existing = create(:product, sku: 'SKU-001')
+      product = build(:product, organization: existing.organization, sku: 'SKU-001')
       expect(product).not_to be_valid
       expect(product.errors[:sku]).to include('has already been taken')
     end
@@ -95,8 +78,8 @@ RSpec.describe Product, type: :model do
     end
 
     it 'requires barcode to be unique when present' do
-      create(:product, barcode: '123456789012')
-      product = build(:product, barcode: '123456789012')
+      existing = create(:product, barcode: '123456789012')
+      product = build(:product, organization: existing.organization, barcode: '123456789012')
       expect(product).not_to be_valid
       expect(product.errors[:barcode]).to include('has already been taken')
     end
@@ -139,27 +122,27 @@ RSpec.describe Product, type: :model do
 
   describe 'defaults' do
     it 'defaults new records to active status' do
-      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      product = Product.new(code: 'TEST', name: 'Test', price: 10)
       expect(product.status).to eq('active')
     end
 
     it 'does not override an explicitly set status' do
-      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1, status: 'inactive')
+      product = Product.new(code: 'TEST', name: 'Test', price: 10, status: 'inactive')
       expect(product.status).to eq('inactive')
     end
 
     it 'defaults position to 0' do
-      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      product = Product.new(code: 'TEST', name: 'Test', price: 10)
       expect(product.position).to eq(0)
     end
 
     it 'defaults view_count to 0' do
-      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      product = Product.new(code: 'TEST', name: 'Test', price: 10)
       expect(product.view_count).to eq(0)
     end
 
     it 'defaults featured to false' do
-      product = Product.new(code: 'TEST', name: 'Test', price: 10, stock: 1)
+      product = Product.new(code: 'TEST', name: 'Test', price: 10)
       expect(product.featured).to eq(false)
     end
   end
@@ -201,33 +184,6 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe '#low_stock?' do
-    it 'returns true when stock is below min_stock' do
-      product = build(:product, stock: 5, min_stock: 10)
-      expect(product.low_stock?).to be true
-    end
-
-    it 'returns true when stock equals min_stock' do
-      product = build(:product, stock: 10, min_stock: 10)
-      expect(product.low_stock?).to be true
-    end
-
-    it 'returns false when stock is above min_stock' do
-      product = build(:product, stock: 50, min_stock: 10)
-      expect(product.low_stock?).to be false
-    end
-
-    it 'returns false when min_stock is nil' do
-      product = build(:product, stock: 0, min_stock: nil)
-      expect(product.low_stock?).to be false
-    end
-
-    it 'returns false when min_stock is zero' do
-      product = build(:product, stock: 0, min_stock: 0)
-      expect(product.low_stock?).to be false
-    end
-  end
-
   describe '#increment_view_count!' do
     it 'increments the view_count by 1' do
       product = create(:product, view_count: 5)
@@ -238,7 +194,7 @@ RSpec.describe Product, type: :model do
 
   describe '#set_slug' do
     it 'generates slug from name before validation' do
-      product = Product.new(code: 'TEST', name: 'My Product Name', price: 10, stock: 1)
+      product = Product.new(code: 'TEST', name: 'My Product Name', price: 10)
       product.valid?
       expect(product.slug).to eq('my-product-name')
     end
@@ -261,12 +217,6 @@ RSpec.describe Product, type: :model do
       expect(product.slug).to eq('custom-slug')
     end
 
-    it 'skips the stock range check when a stock boundary is missing' do
-      product = build(:product, min_stock: 1, max_stock: nil)
 
-      product.send(:max_stock_greater_than_min_stock)
-
-      expect(product.errors[:max_stock]).to be_empty
-    end
   end
 end

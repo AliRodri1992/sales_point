@@ -118,7 +118,7 @@ RSpec.describe 'Admin::Products', type: :request do
     it 'sends a "created" notification to the current user' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -131,7 +131,7 @@ RSpec.describe 'Admin::Products', type: :request do
         .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path(format: :turbo_stream),
-           params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+           params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
     end
 
     it 'renders the real-time catalog broadcast partial after a successful create' do
@@ -139,7 +139,7 @@ RSpec.describe 'Admin::Products', type: :request do
         .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path,
-           params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10, stock: 5 } }
+           params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10 } }
 
       expect(response).to redirect_to(admin_products_path)
     end
@@ -148,7 +148,7 @@ RSpec.describe 'Admin::Products', type: :request do
       allow_any_instance_of(Product).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
 
       post admin_products_path,
-           params: { product: { code: 'PROD-DUPLICATE', name: 'Duplicate Product', price: 10, stock: 5 } }
+           params: { product: { code: 'PROD-DUPLICATE', name: 'Duplicate Product', price: 10 } }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -156,7 +156,7 @@ RSpec.describe 'Admin::Products', type: :request do
     it 'defaults the status to active when not provided' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
       end.to change(Product, :count).by(1)
 
       expect(Product.find_by(code: 'PROD-NEW').status).to eq('active')
@@ -165,14 +165,14 @@ RSpec.describe 'Admin::Products', type: :request do
     it 'does not persist the product when name is blank' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: '', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: '', price: 10 } }
       end.not_to change(Product, :count)
     end
 
     it 'does not persist the product when code is blank' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: '', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: '', name: 'New Product', price: 10 } }
       end.not_to change(Product, :count)
     end
 
@@ -180,32 +180,32 @@ RSpec.describe 'Admin::Products', type: :request do
       create(:product, code: 'duplicate')
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'duplicate', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'duplicate', name: 'New Product', price: 10 } }
       end.not_to change(Product, :count)
     end
 
     it 'does not persist the product when price is negative' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEG', name: 'Negative Price', price: -5, stock: 5 } }
+             params: { product: { code: 'PROD-NEG', name: 'Negative Price', price: -5 } }
       end.not_to change(Product, :count)
     end
 
     it 'renders the create status with validation errors on invalid data' do
       post admin_products_path(format: :turbo_stream),
-           params: { product: { code: '', name: '', price: 10, stock: 5 } }
+           params: { product: { code: '', name: '', price: 10 } }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'PATCH /admin/products/:id' do
-    let!(:product) { create(:product, name: 'Old Name', code: 'old_code', price: 10, stock: 5) }
+    let!(:product) { create(:product, name: 'Old Name', code: 'old_code', price: 10) }
 
     it 'sends an "updated" notification to the current user' do
       expect do
         patch admin_product_path(product, format: :turbo_stream),
-              params: { product: { name: 'New Name', code: 'old_code', price: 10, stock: 5 } }
+              params: { product: { name: 'New Name', code: 'old_code', price: 10 } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -246,7 +246,7 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'DELETE /admin/products/:id' do
-    let!(:product) { create(:product, name: 'ToDelete', code: 'del_prod', price: 10, stock: 5) }
+    let!(:product) { create(:product, name: 'ToDelete', code: 'del_prod', price: 10) }
 
     it 'sends a "destroyed" notification to the current user' do
       expect do

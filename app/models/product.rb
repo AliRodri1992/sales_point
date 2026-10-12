@@ -77,7 +77,6 @@ class Product < ApplicationRecord
   scope :by_slug, ->(slug) { where(slug: slug) }
   scope :sorted_by_position, -> { order(position: :asc, name: :asc) }
 
-
   def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
   def to_param = slug.presence
@@ -96,5 +95,4 @@ class Product < ApplicationRecord
 
     self.slug = name.to_s.parameterize(separator: '-')
   end
-
 end
