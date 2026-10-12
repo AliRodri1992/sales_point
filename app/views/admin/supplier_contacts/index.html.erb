@@ -13,7 +13,7 @@
       </div>
       <div class="flex flex-wrap gap-2">
         <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'contacts'), class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
-        <% if policy(@supplier).update? %>
+        <% if policy(@supplier).manage_contacts? %>
           <%= link_to new_admin_supplier_contact_path(@supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' do %>
             <%= icon('plus', class: 'size-4') %>
             <%= t('admin.supplier_details.add_contact') %>
@@ -78,7 +78,7 @@
             <% if showing_deleted %><p class="text-xs text-slate-500"><%= t('admin.supplier_details.deleted_on', date: l(contact.deleted_at.to_date, format: :long)) %></p><% end %>
           </div>
         </div>
-        <% if policy(@supplier).update? %>
+        <% if policy(@supplier).manage_contacts? %>
           <div class="flex min-h-16 items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
             <% if showing_deleted %>
               <%= button_to restore_admin_supplier_contact_path(@supplier, contact), method: :patch, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>

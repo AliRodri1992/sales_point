@@ -46,7 +46,7 @@ class SupplierPolicy
   def authorized_organization?
     return unless user
 
-    user.organizations.active_records.exists?
+    active_memberships.exists?
   end
 
   def authorized_record?
@@ -54,7 +54,12 @@ class SupplierPolicy
 
     authorized_organization? && supplier.respond_to?(:organization_id) &&
       supplier.organization_id.present? &&
-      user.organizations.active_records.exists?(id: supplier.organization_id)
+      active_memberships.exists?(organization_id: supplier.organization_id)
+  end
+
+  def active_memberships
+    user.organization_memberships.where(status: :active)
+        .joins(:organization).merge(Organization.active_records)
   end
 
   class Scope
@@ -66,7 +71,9 @@ class SupplierPolicy
     def resolve
       return @scope.none unless @user && (@user.admin? || @user.permission?('suppliers.view'))
 
-      @scope.where(organization_id: @user.organizations.active_records.select(:id))
+      memberships = @user.organization_memberships.where(status: :active)
+                         .joins(:organization).merge(Organization.active_records)
+      @scope.where(organization_id: memberships.select(:organization_id))
     end
   end
 end

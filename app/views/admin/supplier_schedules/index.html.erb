@@ -6,7 +6,7 @@
     </div>
     <div class="flex flex-wrap gap-3">
       <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'schedules'), class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
-      <% if policy(@supplier).update? %>
+      <% if policy(@supplier).manage_schedules? %>
         <%= link_to t('admin.supplier_details.add'), new_admin_supplier_schedule_path(@supplier), class: 'inline-flex min-h-11 items-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
       <% end %>
     </div>
@@ -21,7 +21,7 @@
         <p class="mt-3 text-sm font-medium text-slate-700"><%= t('date.day_names')[schedule.weekday] %></p>
         <p class="mt-1 text-sm text-slate-600"><%= schedule.starts_at.strftime('%H:%M') %><% if schedule.ends_at.present? %>–<%= schedule.ends_at.strftime('%H:%M') %><% end %></p>
         <% if schedule.notes.present? %><p class="mt-3 text-sm text-slate-500"><%= schedule.notes %></p><% end %>
-        <% if policy(@supplier).update? %>
+        <% if policy(@supplier).manage_schedules? %>
           <div class="mt-5 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4">
             <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule), class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
             <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'text-sm font-semibold text-rose-600 hover:underline' %>
