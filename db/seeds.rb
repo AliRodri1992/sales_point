@@ -474,23 +474,22 @@ SeedConsole.track('Categorías', Category) do
 end
 
 SeedConsole.track('Productos', Product) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
   categories = Category.not_deleted.order(:id).to_a
   raise 'No hay categorías disponibles para crear productos' if categories.empty?
 
   15.times do |index|
     number = index + 1
     code = format('PROD%04d', number)
-    next if Product.exists?(code:)
+    next if Product.exists?(organization:, code:)
 
     Product.create!(
+      organization:,
       code:,
       name: "Producto de ejemplo #{number}",
       description: "Producto de demostración #{number} para Delta POS.",
       price: number * 100,
       cost: number * 60,
-      stock: 100 + number,
-      min_stock: 5,
-      max_stock: 300,
       sku: format('SKU-DELTA-%04d', number),
       barcode: format('75000000%05d', number),
       category: categories[index % categories.length],
@@ -522,6 +521,18 @@ SeedConsole.track('Sucursales', Branch) do
         postal_code: '06000'
       }
     )
+  end
+end
+
+SeedConsole.track('Inventarios', Inventory) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  branch = organization.branches.not_deleted.order(:id).first
+  organization.products.not_deleted.find_each do |product|
+    Inventory.find_or_create_by!(organization:, branch:, product:) do |record|
+      record.stock = 0
+      record.min_stock = 5
+      record.max_stock = 300
+    end
   end
 end
 
