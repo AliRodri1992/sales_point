@@ -42,6 +42,16 @@ module Admin
       end
     end
 
+    def restore
+      @schedule = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).find(params[:id])
+      if @schedule.restore_safely
+        notify_schedule('schedule_restored')
+        redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
+      else
+        redirect_to admin_supplier_schedules_path(@supplier), alert: @schedule.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       @schedule.update!(deleted_at: Time.current)
       notify_schedule('schedule_deleted')

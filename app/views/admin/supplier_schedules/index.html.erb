@@ -34,3 +34,18 @@
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
   <% end %>
 </div>
+  <% deleted_schedules = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).includes(:branch) %>
+  <% if deleted_schedules.any? %>
+    <section class="space-y-3">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.deleted_records') %></h2>
+      <% deleted_schedules.each do |schedule| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-sm text-slate-600"><%= schedule.branch.name %> · <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %></p>
+          <% if policy(@supplier).manage_schedules? %>
+            <%= button_to t('admin.supplier_details.restore'), restore_admin_supplier_schedule_path(@supplier, schedule),
+                          method: :patch, class: 'rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700' %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>

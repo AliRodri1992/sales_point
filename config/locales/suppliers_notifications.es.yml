@@ -12,3 +12,4 @@ es:
           schedule_updated: "Se actualizó un calendario del proveedor '%{name}'"
           schedule_deleted: "Se eliminó un calendario del proveedor '%{name}'"
           document_deleted: "Se eliminó un documento del proveedor '%{name}'"
+          schedule_restored: "Se restauró un calendario del proveedor '%{name}'"

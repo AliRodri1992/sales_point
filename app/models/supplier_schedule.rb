@@ -15,6 +15,20 @@ class SupplierSchedule < ApplicationRecord
   validate :same_organization
   validate :valid_time_range
 
+  def restore_safely
+    return false if deleted_at.nil?
+
+    self.deleted_at = nil
+    return true if save
+
+    self.deleted_at = deleted_at_in_database
+    false
+  rescue ActiveRecord::RecordNotUnique
+    self.deleted_at = deleted_at_in_database
+    errors.add(:base, :taken)
+    false
+  end
+
   private
 
   def valid_time_range

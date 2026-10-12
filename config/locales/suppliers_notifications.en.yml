@@ -12,3 +12,4 @@ en:
           schedule_updated: "A schedule was updated for supplier '%{name}'"
           schedule_deleted: "A schedule was deleted for supplier '%{name}'"
           document_deleted: "A document was deleted from supplier '%{name}'"
+          schedule_restored: "A schedule was restored for supplier '%{name}'"
