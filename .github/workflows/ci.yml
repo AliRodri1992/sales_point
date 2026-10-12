@@ -136,7 +136,14 @@ jobs:
           yarn build:css
 
       - name: Prepare test database
-        run: bin/rails db:prepare
+        run: |
+          bin/rails db:migrate
+          bin/rails db:seed
+          bin/rails db:schema:dump
+          echo "__SCHEMA_START__"
+          base64 -w0 db/schema.rb
+          echo
+          echo "__SCHEMA_END__"
 
       - name: Run RSpec
         env:

@@ -3,8 +3,7 @@
 class CreateProducts < ActiveRecord::Migration[8.1]
   def change
     create_table :products do |t|
-      # Organizations are created in a later migration; add the foreign key there.
-      t.references :organization, null: false, index: true
+      t.references :organization, null: false, foreign_key: true
       t.string :code, null: false
       t.string :name, null: false
       t.text :description
