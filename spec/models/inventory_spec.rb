@@ -7,7 +7,8 @@ RSpec.describe Inventory, type: :model do
     organization = create(:organization)
     product = create(:product, organization:)
     first = create(:inventory, organization:, product:, branch: create(:branch, organization:), stock: 12)
-    second = create(:inventory, organization:, product:, branch: create(:branch, organization:, name: 'Sucursal Norte'), stock: 3)
+    other_branch = create(:branch, organization:, name: 'Sucursal Norte')
+    second = create(:inventory, organization:, product:, branch: other_branch, stock: 3)
 
     expect(first.stock).to eq(12)
     expect(second.stock).to eq(3)
