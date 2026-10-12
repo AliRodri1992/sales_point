@@ -27,3 +27,6 @@ ko:
       active: "활성"
       saved: "상품 정보가 저장되었습니다"
       deleted: "상품이 삭제되었습니다"
+      compare: "원가 비교"
+      currency_warning: "비용은 동일한 통화 안에서만 비교되며 환율 변환은 적용되지 않습니다."
+      supplier: "공급업체"

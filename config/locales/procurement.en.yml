@@ -27,3 +27,6 @@ en:
       active: "Active"
       saved: "Offer saved"
       deleted: "Offer removed"
+      compare: "Compare costs"
+      currency_warning: "Costs are compared only within the same currency; no foreign exchange conversion is applied."
+      supplier: "Supplier"

@@ -26,6 +26,9 @@
             <td class="px-4 py-3 font-semibold"><%= offer.unit_cost %> <%= offer.currency.code %></td>
             <td class="px-4 py-3"><%= offer.preferred? ? t('admin.procurement.yes') : '—' %></td>
             <td class="px-4 py-3">
+              <%= link_to t('admin.procurement.compare'),
+                          admin_supplier_product_comparison_path(@supplier, product_id: offer.product_id),
+                          class: 'mr-3 text-emerald-700 hover:underline' %>
               <% if policy(@supplier).manage_products? %>
                 <%= link_to t('admin.procurement.edit'), edit_admin_supplier_supplier_product_path(@supplier, offer), class: 'text-emerald-700 hover:underline' %>
                 <%= button_to t('admin.procurement.delete'), admin_supplier_supplier_product_path(@supplier, offer),

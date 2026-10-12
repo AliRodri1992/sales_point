@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     end
     resources :suppliers do
       resources :supplier_products, path: 'products', except: %i[show]
+      get 'products/:product_id/comparison', to: 'supplier_product_comparisons#show', as: :product_comparison
       collection { get :export }
 
       get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download
