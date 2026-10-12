@@ -4,8 +4,8 @@ module Admin
   module SuppliersFiltering
     FILTER_VALUES = {
       classification: %w[manufacturer distributor wholesaler service other],
-      person_type: %w[individual company],
-      currency: %w[MXN USD EUR]
+      person_type: %w[individual company]
+
     }.freeze
     NUMERIC_FIELDS = %w[credit_days credit_limit minimum_order_amount discount_percent].freeze
     DATE_FIELDS = %w[created_at updated_at].freeze
@@ -17,6 +17,7 @@ module Admin
     def apply_filters(scope)
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
+      scope = apply_currency_filter(scope)
       scope = apply_reference_filters(scope)
       scope = apply_credit_filter(scope)
       scope = apply_numeric_filters(scope)
@@ -35,6 +36,13 @@ module Admin
         scope = scope.where(field => params[field]) if values.include?(params[field])
       end
       scope
+    end
+
+    def apply_currency_filter(scope)
+      return scope if params[:currency].blank?
+
+      currency = Currency.active.find_by(code: params[:currency].to_s.upcase)
+      currency ? scope.where(currency_id: currency.id) : scope.none
     end
 
     def apply_reference_filters(scope)

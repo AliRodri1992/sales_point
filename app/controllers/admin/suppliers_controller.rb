@@ -51,6 +51,7 @@ module Admin
     def create
       @supplier = build_new_supplier
       authorize @supplier
+      authorize_supplier_attributes!(supplier_params)
 
       if @supplier.save
         notify_supplier('created')
@@ -66,7 +67,10 @@ module Admin
     def update
       authorize @supplier
 
-      if @supplier.update(supplier_update_attributes)
+      attributes = supplier_update_attributes
+      authorize_supplier_attributes!(attributes)
+
+      if @supplier.update(attributes)
         notify_supplier('updated')
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }

@@ -9,7 +9,7 @@ class SupplierPolicy
   end
 
   def index? = authorized_organization? && allowed?('suppliers.view')
-  def show? = authorized_record? && allowed?('suppliers.view')
+  def show? = authorized_record? && allowed?('suppliers.view') && full_dossier_access?
   def new? = authorized_organization? && allowed?('suppliers.create')
   def create? = new?
   def edit? = authorized_record? && allowed?('suppliers.update')
@@ -31,6 +31,13 @@ class SupplierPolicy
   def export? = authorized_organization? && allowed?('suppliers.export')
 
   private
+
+  def full_dossier_access?
+    user.admin? || %w[
+      suppliers.contacts.view suppliers.addresses.view suppliers.schedules.view
+      suppliers.documents.view suppliers.fiscal.view suppliers.commercial.view
+    ].all? { |permission| user.permission?(permission) }
+  end
 
   def allowed?(permission)
     user.admin? || user.permission?(permission)
