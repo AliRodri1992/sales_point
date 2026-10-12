@@ -30,3 +30,6 @@ es:
       compare: "Comparar costos"
       currency_warning: "Los precios se comparan solo dentro de la misma moneda; no se aplica conversión de divisas."
       supplier: "Proveedor"
+      history: "Historial de precios"
+      effective_on: "Vigente desde"
+      recorded_by: "Registrado por"

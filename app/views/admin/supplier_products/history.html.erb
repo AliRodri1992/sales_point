@@ -1,0 +1,29 @@
+<div class="space-y-5">
+  <%= link_to t('admin.procurement.back'), admin_supplier_supplier_products_path(@supplier),
+              class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.procurement.history') %></h1>
+    <p class="mt-1 text-slate-500"><%= @offer.product.name %> · <%= @supplier.name %></p>
+  </div>
+  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
+      <thead><tr>
+        <% %w[effective_on purchase_price presentation units_per_package currency recorded_by].each do |key| %>
+          <th class="p-4 font-semibold"><%= t("admin.procurement.#{key}") %></th>
+        <% end %>
+      </tr></thead>
+      <tbody>
+        <% @price_history.each do |price| %>
+          <tr class="border-t border-slate-100">
+            <td class="p-4"><%= l(price.effective_on) %></td>
+            <td class="p-4"><%= price.purchase_price %></td>
+            <td class="p-4"><%= @offer.presentation_name %></td>
+            <td class="p-4"><%= price.units_per_package %></td>
+            <td class="p-4"><%= price.currency.code %></td>
+            <td class="p-4"><%= price.recorded_by&.display_name || '—' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

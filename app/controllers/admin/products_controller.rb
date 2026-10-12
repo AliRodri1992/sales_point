@@ -25,6 +25,7 @@ module Admin
 
     def create
       @product = Product.new(product_params)
+      @product.organization = current_organization if current_organization
 
       if @product.save
         refresh_product_catalog('created')

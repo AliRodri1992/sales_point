@@ -30,3 +30,6 @@ en:
       compare: "Compare costs"
       currency_warning: "Costs are compared only within the same currency; no foreign exchange conversion is applied."
       supplier: "Supplier"
+      history: "Price history"
+      effective_on: "Effective date"
+      recorded_by: "Recorded by"

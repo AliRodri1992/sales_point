@@ -7,12 +7,17 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :set_offer, only: %i[edit update destroy]
+    before_action :set_offer, only: %i[edit update destroy history]
 
     def index
       authorize @supplier, :view_products?
       @offers = @supplier.supplier_products.available.includes(:product, :currency)
       @offers = @offers.order(:product_id)
+    end
+
+    def history
+      authorize @supplier, :view_products?
+      @price_history = @offer.price_history.includes(:currency, :recorded_by).order(created_at: :desc)
     end
 
     def new
