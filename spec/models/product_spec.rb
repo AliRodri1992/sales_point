@@ -7,6 +7,23 @@ RSpec.describe Product, type: :model do
       expect(product).to be_valid
     end
 
+    it 'requires an organization' do
+      product = build(:product, organization: nil)
+      expect(product).not_to be_valid
+      expect(product.errors[:organization]).to be_present
+    end
+
+    it 'allows the same code in different organizations' do
+      create(:product, code: 'SHARED-CODE')
+      expect(build(:product, code: 'SHARED-CODE')).to be_valid
+    end
+
+    it 'stores organization ownership with a database foreign key' do
+      expect(Product.columns_hash.fetch('organization_id').null).to be(false)
+      keys = ActiveRecord::Base.connection.foreign_keys(:products)
+      expect(keys.map(&:to_table)).to include('organizations')
+    end
+
     it 'requires a code' do
       product = build(:product, code: nil)
       expect(product).not_to be_valid

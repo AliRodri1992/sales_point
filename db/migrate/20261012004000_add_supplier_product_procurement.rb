@@ -2,8 +2,6 @@
 
 class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
   def change
-    add_reference :products, :organization, foreign_key: true, null: true, index: true
-
     create_table :supplier_products do |t|
       t.references :organization, null: false, foreign_key: true
       t.references :supplier, null: false, foreign_key: true

@@ -481,10 +481,9 @@ SeedConsole.track('Productos', Product) do
   15.times do |index|
     number = index + 1
     code = format('PROD%04d', number)
-    next if Product.exists?(organization:, code:)
+    next if organization.products.exists?(code:)
 
-    Product.create!(
-      organization:,
+    organization.products.create!(
       code:,
       name: "Producto de ejemplo #{number}",
       description: "Producto de demostración #{number} para Delta POS.",

@@ -34,8 +34,5 @@ class CreateBranchInventories < ActiveRecord::Migration[8.1]
 
     add_check_constraint :inventory_movements, 'quantity <> 0', name: 'chk_movement_nonzero'
     add_index :inventory_movements, %i[inventory_id created_at]
-    remove_column :products, :stock, :decimal
-    remove_column :products, :min_stock, :decimal
-    remove_column :products, :max_stock, :decimal
   end
 end

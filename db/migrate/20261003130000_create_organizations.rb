@@ -11,6 +11,7 @@ class CreateOrganizations < ActiveRecord::Migration[8.1]
       t.timestamp :deleted_at
     end
 
+    add_foreign_key :products, :organizations
     add_index :organizations, :deleted_at
 
     reversible do |dir|

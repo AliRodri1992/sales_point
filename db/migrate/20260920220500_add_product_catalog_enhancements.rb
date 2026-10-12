@@ -10,6 +10,7 @@ class AddProductCatalogEnhancements < ActiveRecord::Migration[8.1]
 
     add_index :products, :position
     add_index :products, :featured
-    add_index :products, :slug, unique: true, where: '(deleted_at IS NULL)'
+    add_index :products, %i[organization_id slug], unique: true,
+              where: 'deleted_at IS NULL AND slug IS NOT NULL', name: 'idx_products_org_slug'
   end
 end
