@@ -42,6 +42,22 @@ RSpec.describe SupplierProduct, type: :model do
     expect(offer.errors[:supplier]).to be_present
   end
 
+  it 'supports multiple purchasing presentations from the same supplier' do
+    described_class.create!(offer_attributes)
+    second = described_class.new(offer_attributes.merge(presentation_name: 'Pack of 6',
+                                                        units_per_package: 6, purchase_price: 75))
+
+    expect(second).to be_valid
+    expect { second.save! }.to change(described_class, :count).by(1)
+  end
+
+  it 'preserves historical presentation names when an offer changes' do
+    offer = described_class.create!(offer_attributes)
+    offer.update!(presentation_name: 'Pack of 24')
+
+    expect(offer.price_history.order(:id).pluck(:presentation_name)).to eq(['Box', 'Pack of 24'])
+  end
+
   it 'allows a single preferred provider per organization and product' do
     described_class.create!(offer_attributes.merge(preferred: true))
     second_supplier = create(:supplier, organization:)
