@@ -6,8 +6,10 @@ RSpec.describe 'Admin::Products', type: :request do
   include Devise::Test::IntegrationHelpers
 
   let!(:user) { create(:user, status: 'active') }
+  let!(:organization) { create(:organization) }
 
   before do
+    create(:organization_membership, user:, organization:)
     sign_in user
   end
 
@@ -16,10 +18,10 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'GET /admin/products' do
-    let!(:product) { create(:product, name: 'Coca-Cola', code: 'PROD-COLA') }
+    let!(:product) { create(:product, organization:, name: 'Coca-Cola', code: 'PROD-COLA') }
 
     before do
-      create_list(:product, 15)
+      create_list(:product, 15, organization:)
     end
 
     it 'returns a paginated list with at least 10 items per page' do
@@ -71,7 +73,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
   describe 'GET /admin/products/:id' do
     it 'finds a product by numeric database id' do
-      product = create(:product, name: 'Product By Id')
+      product = create(:product, organization:, name: 'Product By Id')
 
       get admin_product_path(product.id)
 
@@ -80,7 +82,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'finds a product by slug' do
-      product = create(:product, name: 'Product By Slug', slug: 'product-by-slug')
+      product = create(:product, organization:, name: 'Product By Slug', slug: 'product-by-slug')
 
       get admin_product_path(product.slug)
 
@@ -89,7 +91,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'finds a product by code when the slug does not match' do
-      product = create(:product, name: 'Product By Code', code: 'LOOKUP-CODE')
+      product = create(:product, organization:, name: 'Product By Code', code: 'LOOKUP-CODE')
 
       get admin_product_path(product.code)
 
@@ -128,7 +130,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path(format: :turbo_stream),
            params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
@@ -136,7 +138,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'renders the real-time catalog broadcast partial after a successful create' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path,
            params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10 } }
@@ -177,7 +179,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'does not persist the product when code is already taken' do
-      create(:product, code: 'duplicate')
+      create(:product, organization:, code: 'duplicate')
       expect do
         post admin_products_path(format: :turbo_stream),
              params: { product: { code: 'duplicate', name: 'New Product', price: 10 } }
@@ -200,7 +202,7 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'PATCH /admin/products/:id' do
-    let!(:product) { create(:product, name: 'Old Name', code: 'old_code', price: 10) }
+    let!(:product) { create(:product, organization:, name: 'Old Name', code: 'old_code', price: 10) }
 
     it 'sends an "updated" notification to the current user' do
       expect do
@@ -215,7 +217,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       patch admin_product_path(product, format: :turbo_stream),
             params: { product: { name: 'New Name', code: 'old_code' } }
@@ -246,7 +248,7 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'DELETE /admin/products/:id' do
-    let!(:product) { create(:product, name: 'ToDelete', code: 'del_prod', price: 10) }
+    let!(:product) { create(:product, organization:, name: 'ToDelete', code: 'del_prod', price: 10) }
 
     it 'sends a "destroyed" notification to the current user' do
       expect do
@@ -275,7 +277,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       delete admin_product_path(product, format: :turbo_stream)
     end
@@ -317,8 +319,8 @@ RSpec.describe 'Admin::Products', type: :request do
 
   describe 'GET /admin/products filter and pagination edge cases' do
     it 'filters to featured products' do
-      featured = create(:product, name: 'Featured Item', featured: true)
-      create(:product, name: 'Regular Item', featured: false)
+      featured = create(:product, organization:, name: 'Featured Item', featured: true)
+      create(:product, organization:, name: 'Regular Item', featured: false)
 
       get admin_products_path, params: { featured: 'true' }
 
@@ -328,8 +330,8 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'filters out featured products when featured=false' do
-      create(:product, name: 'Featured Item', featured: true)
-      regular = create(:product, name: 'Regular Item', featured: false)
+      create(:product, organization:, name: 'Featured Item', featured: true)
+      regular = create(:product, organization:, name: 'Regular Item', featured: false)
 
       get admin_products_path, params: { featured: 'false' }
 
@@ -339,8 +341,8 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'does not filter status when status=all' do
-      create(:product, name: 'Active Item', status: :active)
-      create(:product, name: 'Inactive Item', status: :inactive)
+      create(:product, organization:, name: 'Active Item', status: :active)
+      create(:product, organization:, name: 'Inactive Item', status: :inactive)
 
       get admin_products_path, params: { status: 'all' }
 
@@ -350,8 +352,8 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'falls back to the default sort column and direction for invalid values' do
-      create(:product, name: 'Alpha Item')
-      create(:product, name: 'Zulu Item')
+      create(:product, organization:, name: 'Alpha Item')
+      create(:product, organization:, name: 'Zulu Item')
 
       get admin_products_path, params: { sort: 'products.unsafe_column', direction: 'sideways' }
 
@@ -360,7 +362,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'normalizes a page below one to the first page' do
-      create_list(:product, 12)
+      create_list(:product, 12, organization:)
 
       get admin_products_path, params: { page: 0 }
 
@@ -369,7 +371,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'clamps a page beyond the last page to the last page' do
-      create_list(:product, 12)
+      create_list(:product, 12, organization:)
 
       get admin_products_path, params: { page: 999 }
 
@@ -378,7 +380,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'uses the default page size for an unsupported per_page value' do
-      create_list(:product, 12)
+      create_list(:product, 12, organization:)
 
       get admin_products_path, params: { per_page: 7 }
 
@@ -387,9 +389,9 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'searches by SKU and barcode' do
-      sku_product = create(:product, name: 'SKU Match', sku: 'SKU-COVERAGE-01')
-      barcode_product = create(:product, name: 'Barcode Match', barcode: 'BAR-COVERAGE-01')
-      create(:product, name: 'No Match')
+      sku_product = create(:product, organization:, name: 'SKU Match', sku: 'SKU-COVERAGE-01')
+      barcode_product = create(:product, organization:, name: 'Barcode Match', barcode: 'BAR-COVERAGE-01')
+      create(:product, organization:, name: 'No Match')
 
       get admin_products_path, params: { search: 'SKU-COVERAGE-01' }
       expect(response.body).to include(sku_product.name)
