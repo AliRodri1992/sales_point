@@ -96,9 +96,7 @@ class Product < ApplicationRecord
     stock <= min_stock
   end
 
-  def increment_view_count!
-    update!(view_count: view_count.to_i + 1)
-  end
+  def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
   def to_param = slug.presence
 

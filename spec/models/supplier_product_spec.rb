@@ -36,7 +36,8 @@ RSpec.describe SupplierProduct, type: :model do
   end
 
   it 'rejects another organization supplier' do
-    offer = described_class.new(offer_attributes.merge(supplier: create(:supplier, organization: create(:organization))))
+    foreign_supplier = create(:supplier, organization: create(:organization))
+    offer = described_class.new(offer_attributes.merge(supplier: foreign_supplier))
     expect(offer).not_to be_valid
     expect(offer.errors[:supplier]).to be_present
   end
