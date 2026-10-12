@@ -20,9 +20,7 @@ class Supplier < ApplicationRecord
   validate :documents_are_safe
   validate :rfc_must_match_person_type_and_date
 
-  def tags_text
-    tags.join(', ')
-  end
+  def tags_text = tags.join(', ')
 
   def tags_text=(value)
     self.tags = value.to_s.split(',').map(&:strip).compact_blank.uniq.first(20)
