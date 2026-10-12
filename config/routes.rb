@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       end
     end
     resources :suppliers do
+      resources :supplier_products, path: 'products', except: %i[show]
       collection { get :export }
 
       get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download

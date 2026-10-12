@@ -212,6 +212,10 @@ DEFAULT_PERMISSIONS = [
     module_name: 'Proveedores',
     description: 'Manage supplier commercial data.'
   },
+  { code: 'suppliers.products.view', name: 'Ver productos de proveedores',
+    module_name: 'Proveedores', description: 'Consulta ofertas y precios por proveedor.' },
+  { code: 'suppliers.products.manage', name: 'Administrar productos de proveedores',
+    module_name: 'Proveedores', description: 'Edita ofertas de compra y presentaciones.' },
   {
     code: 'employees.access',
     name: 'Acceso a empleados',

@@ -28,6 +28,8 @@ class SupplierPolicy
   def manage_fiscal? = authorized_record? && allowed?('suppliers.fiscal.manage')
   def view_commercial? = authorized_record? && allowed?('suppliers.commercial.view')
   def manage_commercial? = authorized_record? && allowed?('suppliers.commercial.manage')
+  def view_products? = authorized_record? && allowed?('suppliers.products.view')
+  def manage_products? = authorized_record? && allowed?('suppliers.products.manage')
   def export? = authorized_organization? && allowed?('suppliers.export')
 
   private

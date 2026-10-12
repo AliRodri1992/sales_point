@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Product < ApplicationRecord
+  belongs_to :organization, optional: true
+  has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :suppliers, through: :supplier_products
+
   belongs_to :category, optional: true
   belongs_to :sat_unit_key, optional: true
   belongs_to :sat_tax, optional: true

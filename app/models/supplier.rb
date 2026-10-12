@@ -4,6 +4,9 @@ class Supplier < ApplicationRecord
   has_paper_trail
 
   belongs_to :organization
+  has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :products, through: :supplier_products
+
   belongs_to :currency
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :contacts, allow_destroy: true, reject_if: :all_blank
