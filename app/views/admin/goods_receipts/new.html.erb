@@ -1,0 +1,36 @@
+<%= render 'admin/purchases/navigation' %>
+<h1 class="mb-4 font-jakarta text-2xl font-bold"><%= t('admin.purchases.new_receipt') %> · <%= @order.code %></h1>
+<p class="mb-6 text-sm text-slate-600"><%= @order.supplier.name %> → <%= @order.branch.name %></p>
+<%= form_with url: admin_purchase_order_goods_receipts_path(@order), class: 'space-y-5' do |form| %>
+  <%= hidden_field_tag :idempotency_key, SecureRandom.uuid %>
+  <% @order.purchase_order_items.includes(:product).each_with_index do |item, index| %>
+    <% pending_quantity = @order.outstanding_quantity_for(item) %>
+    <% next if pending_quantity <= 0 %>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5">
+      <h2 class="mb-3 font-semibold"><%= item.product.name %> — <%= t('admin.purchases.outstanding') %>: <%= pending_quantity %></h2>
+      <%= hidden_field_tag "entries[#{index}][purchase_order_item_id]", item.id %>
+      <div class="grid gap-3 md:grid-cols-3">
+        <% %w[delivered_quantity accepted_quantity damaged_quantity].each do |field| %>
+          <div><%= label_tag "entries_#{index}_#{field}", t("admin.purchases.#{field}"), class: 'mb-1 block text-sm' %>
+            <%= number_field_tag "entries[#{index}][#{field}]",
+                                 field == 'damaged_quantity' ? 0 : pending_quantity,
+                                 min: 0, step: 0.001, required: true,
+                                 class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+        <% end %>
+        <div><%= label_tag "entries_#{index}_lot_code", t('admin.purchases.lot_code'), class: 'mb-1 block text-sm' %>
+          <%= text_field_tag "entries[#{index}][lot_code]", nil,
+                             class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+        <div><%= label_tag "entries_#{index}_expires_on", t('admin.purchases.expires_on'), class: 'mb-1 block text-sm' %>
+          <%= date_field_tag "entries[#{index}][expires_on]", nil,
+                             class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+        <div><%= label_tag "entries_#{index}_serial_numbers", t('admin.purchases.serial_numbers'), class: 'mb-1 block text-sm' %>
+          <%= text_area_tag "entries[#{index}][serial_numbers]", nil, rows: 2,
+                            class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+      </div>
+    </section>
+  <% end %>
+  <div><%= form.label :notes, t('admin.purchases.notes'), class: 'mb-1 block font-medium' %>
+    <%= form.text_area :notes, class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+  <%= form.submit t('admin.purchases.receive'),
+                  class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+<% end %>

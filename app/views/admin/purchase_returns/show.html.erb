@@ -1,0 +1,17 @@
+<%= render 'admin/purchases/navigation' %>
+<section class="space-y-4 rounded-2xl border border-slate-200 bg-white p-6">
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.returns') %> #<%= @return.id %></h1>
+  <p><%= t("admin.purchases.statuses.#{@return.status}") %> ·
+    <%= t("admin.purchases.reasons.#{@return.reason}") %></p>
+  <p><%= link_to @return.goods_receipt.purchase_order.code,
+                 admin_purchase_order_path(@return.goods_receipt.purchase_order),
+                 class: 'text-emerald-700' %></p>
+  <% @return.purchase_return_items.includes(goods_receipt_item: { purchase_order_item: :product }).each do |item| %>
+    <p><%= item.goods_receipt_item.purchase_order_item.product.name %>: <%= item.quantity %></p>
+  <% end %>
+  <% if @return.draft? && policy(@return).process? %>
+    <%= button_to t('admin.purchases.process_return'), process_return_admin_purchase_return_path(@return),
+                  class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white',
+                  form: { data: { turbo_confirm: t('admin.purchases.process_return') } } %>
+  <% end %>
+</section>

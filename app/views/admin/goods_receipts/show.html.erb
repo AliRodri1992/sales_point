@@ -1,0 +1,26 @@
+<%= render 'admin/purchases/navigation' %>
+<section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6">
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.receipts') %> #<%= @receipt.id %></h1>
+  <p><%= link_to @receipt.purchase_order.code, admin_purchase_order_path(@receipt.purchase_order),
+                class: 'text-emerald-700 hover:underline' %>
+    · <%= @receipt.branch.name %> · <%= l(@receipt.received_at, format: :short) %></p>
+  <table class="min-w-full text-left text-sm">
+    <thead><tr><% %w[product delivered_quantity accepted_quantity damaged_quantity landed_unit_cost lot_code expires_on].each do |key| %>
+      <th class="p-3"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead><tbody>
+    <% @receipt.goods_receipt_items.includes(purchase_order_item: :product).each do |item| %>
+      <tr class="border-t border-slate-100">
+        <td class="p-3"><%= item.purchase_order_item.product.name %></td>
+        <td class="p-3"><%= item.delivered_quantity %></td>
+        <td class="p-3"><%= item.accepted_quantity %></td>
+        <td class="p-3"><%= item.damaged_quantity %></td>
+        <td class="p-3"><%= item.landed_unit_cost %></td>
+        <td class="p-3"><%= item.lot_code %></td>
+        <td class="p-3"><%= item.expires_on %></td>
+      </tr>
+    <% end %></tbody>
+  </table>
+  <% if policy(PurchaseReturn.new(organization: current_organization, goods_receipt: @receipt)).create? %>
+    <%= link_to t('admin.purchases.new_return'), new_admin_goods_receipt_purchase_return_path(@receipt),
+                class: 'inline-flex rounded-xl border border-emerald-200 px-5 py-3 font-semibold text-emerald-700' %>
+  <% end %>
+</section>

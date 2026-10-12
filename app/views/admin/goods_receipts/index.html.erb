@@ -1,0 +1,11 @@
+<%= render 'admin/purchases/navigation' %>
+<h1 class="mb-6 font-jakarta text-2xl font-bold"><%= t('admin.purchases.receipts') %> · <%= @order.code %></h1>
+<div class="space-y-3">
+  <% @receipts.each do |receipt| %>
+    <%= link_to admin_goods_receipt_path(receipt), class: 'block rounded-xl border border-slate-200 bg-white p-4 hover:border-emerald-300' do %>
+      <strong><%= receipt.idempotency_key %></strong>
+      <span class="ml-3 text-sm text-slate-500"><%= l(receipt.received_at, format: :short) %></span>
+    <% end %>
+  <% end %>
+  <% if @receipts.empty? %><p><%= t('admin.purchases.empty') %></p><% end %>
+</div>
