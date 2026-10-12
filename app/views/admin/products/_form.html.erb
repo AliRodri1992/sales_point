@@ -65,39 +65,7 @@
     </div>
 
     <div class="grid gap-5 sm:grid-cols-3">
-      <div>
-        <%= form.label :stock, t('admin.products.form.stock'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.number_field :stock,
-                            class: "input-field w-full rounded-xl #{form_state_classes(product, :stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.products.form.stock_placeholder'),
-                            min: 0,
-                            step: 1 %>
-        <%= error_message_for(product, :stock) %>
-      </div>
 
-      <div>
-        <%= form.label :min_stock, t('admin.products.form.min_stock'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.number_field :min_stock,
-                            class: "input-field w-full rounded-xl #{form_state_classes(product, :min_stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.products.form.min_stock_placeholder'),
-                            min: 0,
-                            step: 1 %>
-        <%= error_message_for(product, :min_stock) %>
-      </div>
-
-      <div>
-        <%= form.label :max_stock, t('admin.products.form.max_stock'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.number_field :max_stock,
-                            class: "input-field w-full rounded-xl #{form_state_classes(product, :max_stock)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.products.form.max_stock_placeholder'),
-                            min: 0,
-                            step: 1 %>
-        <%= error_message_for(product, :max_stock) %>
-        <p class="mt-1 text-xs text-slate-400"><%= t('admin.products.form.hints.max_stock') %></p>
-      </div>
     </div>
 
     <div class="grid gap-5 sm:grid-cols-2">
@@ -247,11 +215,7 @@
           <div class="bg-white rounded-lg p-3">
             <span class="text-xs text-slate-500"><%= t('admin.products.form.total_value') %></span>
             <p class="text-lg font-semibold text-purple-600">
-              <% if product.stock && product.price %>
-                <%= number_to_currency(product.stock * product.price, precision: 2) %>
-              <% else %>
-                --
-              <% end %>
+              <%= number_to_currency(product.inventories.sum(:stock) * product.price, precision: 2) %>
             </p>
           </div>
         </div>

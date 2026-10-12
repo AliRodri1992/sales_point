@@ -5,7 +5,7 @@ module Admin
     SORT_DIRECTIONS = %w[asc desc].freeze
 
     SORTABLE_COLUMNS = %w[
-      products.name products.code products.price products.stock
+      products.name products.code products.price
       products.cost products.created_at products.updated_at products.position
     ].freeze
 

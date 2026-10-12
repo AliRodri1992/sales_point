@@ -3,6 +3,7 @@
 class Organization < ApplicationRecord
   has_one_attached :logo
   has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :inventories, dependent: :restrict_with_exception
   has_many :products, dependent: :restrict_with_exception
   has_many :suppliers, dependent: :restrict_with_exception
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception

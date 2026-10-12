@@ -29,7 +29,7 @@
               <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'admin_products_list') %>
+              <%= t('admin.products.index.columns.stock') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
               <%= t('admin.products.index.columns.category') %>
@@ -58,7 +58,7 @@
                 <%= number_to_currency(product.price) %>
               </td>
               <td class="px-6 py-4 text-right">
-                <%= number_with_precision(product.stock, strip_insignificant_zeros: true, precision: 3) %>
+                <%= number_with_precision(product.inventories.sum(:stock), strip_insignificant_zeros: true, precision: 3) %>
               </td>
               <td class="px-6 py-4">
                 <%= product.category&.name || '-' %>

@@ -25,7 +25,7 @@ module Admin
 
     def create
       @product = Product.new(product_params)
-      @product.organization = current_organization if current_organization
+      @product.organization = current_organization
 
       if @product.save
         refresh_product_catalog('created')
@@ -65,7 +65,7 @@ module Admin
     def product_params
       params.expect(
         product: %i[
-          code name description price cost stock min_stock max_stock
+          code name description price cost
           barcode sku category_id sat_unit_key_id sat_tax_id status
           image_url position featured slug view_count
         ]

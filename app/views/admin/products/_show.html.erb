@@ -40,10 +40,7 @@
         <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.cost') %></dt>
         <dd class="text-sm font-medium text-slate-900"><%= number_to_currency(product.cost) %></dd>
       </div>
-      <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.stock') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.stock %></dd>
-      </div>
+
       <div class="flex items-center justify-between gap-4 py-4">
         <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.image') %></dt>
         <dd class="text-sm font-medium text-slate-900">
@@ -54,14 +51,8 @@
           <% end %>
         </dd>
       </div>
-      <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.min_stock') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.min_stock %></dd>
-      </div>
-      <div class="flex items-center justify-between gap-4 py-4">
-        <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.max_stock') %></dt>
-        <dd class="text-sm font-medium text-slate-900"><%= product.max_stock %></dd>
-      </div>
+
+
       <% if product.barcode.present? %>
         <div class="flex items-center justify-between gap-4 py-4">
           <dt class="text-sm font-semibold text-slate-500"><%= t('admin.products.form.barcode') %></dt>
