@@ -1,0 +1,50 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe SupplierProduct, type: :model do
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:product) { create(:product, organization:) }
+  let(:currency) { supplier.currency }
+
+  def offer_attributes
+    {
+      organization:, supplier:, product:, currency:,
+      presentation_name: 'Box', units_per_package: 24,
+      purchase_price: 240, discount_percent: 5, freight_amount: 12,
+      nonrecoverable_tax: 0
+    }
+  end
+
+  it 'normalizes discounted landed cost by the package conversion factor' do
+    offer = described_class.create!(offer_attributes)
+    expect(offer.unit_cost).to eq(BigDecimal('10'))
+  end
+
+  it 'records immutable price snapshots on creation and subsequent changes' do
+    offer = described_class.create!(offer_attributes)
+    expect(offer.price_history.count).to eq(1)
+    offer.update!(purchase_price: 300)
+    expect(offer.price_history.order(:id).pluck(:purchase_price)).to eq([240, 300])
+  end
+
+  it 'rejects another organization product' do
+    offer = described_class.new(offer_attributes.merge(product: create(:product, organization: create(:organization))))
+    expect(offer).not_to be_valid
+    expect(offer.errors[:product]).to be_present
+  end
+
+  it 'rejects another organization supplier' do
+    offer = described_class.new(offer_attributes.merge(supplier: create(:supplier, organization: create(:organization))))
+    expect(offer).not_to be_valid
+    expect(offer.errors[:supplier]).to be_present
+  end
+
+  it 'allows a single preferred provider per organization and product' do
+    described_class.create!(offer_attributes.merge(preferred: true))
+    second_supplier = create(:supplier, organization:)
+    other = described_class.new(offer_attributes.merge(supplier: second_supplier, preferred: true))
+    expect(other).not_to be_valid
+  end
+end
