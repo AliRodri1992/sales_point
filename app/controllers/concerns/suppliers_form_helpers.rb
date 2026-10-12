@@ -11,8 +11,8 @@ module SuppliersFormHelpers
 
     fiscal_fields = %w[rfc sat_fiscal_regime_id postal_code person_type]
     commercial_fields = %w[currency_id credit_days credit_limit discount_percent minimum_order_amount]
-    authorize policy_record, :manage_fiscal? if (attributes.keys.map(&:to_s) & fiscal_fields).any?
-    authorize policy_record, :manage_commercial? if (attributes.keys.map(&:to_s) & commercial_fields).any?
+    authorize policy_record, :manage_fiscal? if attributes.keys.map(&:to_s).intersect?(fiscal_fields)
+    authorize policy_record, :manage_commercial? if attributes.keys.map(&:to_s).intersect?(commercial_fields)
   end
 
   def load_fiscal_regimes

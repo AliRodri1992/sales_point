@@ -9,7 +9,7 @@ module SupplierAuditTrail
 
   private
 
-  def with_supplier_audit_actor(&action)
-    PaperTrail.request(whodunnit: current_user&.id&.to_s, &action)
+  def with_supplier_audit_actor(&)
+    PaperTrail.request(whodunnit: current_user&.id&.to_s, &))
   end
 end

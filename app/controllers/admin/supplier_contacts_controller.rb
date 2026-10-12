@@ -3,6 +3,7 @@
 module Admin
   class SupplierContactsController < ApplicationController
     include SupplierAuditTrail
+
     ACTION_POLICY = {
       'index' => :view_contacts?, 'new' => :manage_contacts?, 'create' => :manage_contacts?,
       'edit' => :manage_contacts?, 'update' => :manage_contacts?,

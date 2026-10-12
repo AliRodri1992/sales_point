@@ -3,6 +3,7 @@
 module Admin
   class SuppliersController < ApplicationController
     include SupplierAuditTrail
+
     include Pundit::Authorization
     include SuppliersListing
     include SuppliersExporting

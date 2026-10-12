@@ -3,6 +3,7 @@
 module Admin
   class SupplierSchedulesController < ApplicationController
     include SupplierAuditTrail
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
