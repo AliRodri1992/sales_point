@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Contact < ApplicationRecord
-  has_paper_trail if: -> { contactable_type == 'Supplier' }
+  has_paper_trail if: ->(record) { record.contactable_type == 'Supplier' }
 
   belongs_to :contactable, polymorphic: true
 

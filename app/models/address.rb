@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Address < ApplicationRecord
-  has_paper_trail if: -> { addressable_type == 'Supplier' }
+  has_paper_trail if: ->(record) { record.addressable_type == 'Supplier' }
 
   belongs_to :addressable, polymorphic: true
   belongs_to :country
