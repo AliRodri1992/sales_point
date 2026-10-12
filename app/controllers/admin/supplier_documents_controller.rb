@@ -6,10 +6,17 @@ module Admin
 
     before_action :authenticate_user!
 
+    def download
+      supplier = authorized_supplier(:view_documents?)
+      attachment = supplier.documents.attachments.find(params[:document_id])
+      send_data attachment.blob.download, filename: attachment.blob.filename.to_s,
+                                         type: attachment.blob.content_type, disposition: 'attachment'
+    end
+
     def destroy
       return head :forbidden unless current_organization
 
-      supplier = authorized_supplier
+      supplier = authorized_supplier(:manage_documents?)
       attachment = supplier.documents.attachments.find(params[:document_id])
       attachment.purge
       notify_document_deleted(supplier, attachment.id)
@@ -18,9 +25,9 @@ module Admin
 
     private
 
-    def authorized_supplier
+    def authorized_supplier(permission)
       supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize supplier, :manage_documents?
+      authorize supplier, permission
       supplier
     end
 

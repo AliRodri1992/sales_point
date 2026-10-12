@@ -332,8 +332,8 @@
       <h2 class="mb-4 text-lg font-bold"><%= t('admin.supplier_dossier.documents') %></h2>
       <% supplier.documents.each do |document| %>
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3">
-          <%= link_to document.filename.to_s, rails_blob_path(document, disposition: 'attachment'), class: 'break-all text-sm font-semibold text-emerald-700' %>
-          <% if can_edit %><%= button_to t('admin.supplier_details.delete'), admin_supplier_document_path(supplier, document_id: document.id), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'text-sm font-semibold text-rose-600' %><% end %>
+          <%= link_to document.filename.to_s, admin_supplier_document_download_path(supplier, document_id: document.id), class: 'break-all text-sm font-semibold text-emerald-700' %>
+          <% if policy(supplier).manage_documents? %><%= button_to t('admin.supplier_details.delete'), admin_supplier_document_path(supplier, document_id: document.id), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'text-sm font-semibold text-rose-600' %><% end %>
         </div>
       <% end %>
       <% if supplier.documents.empty? %><p class="text-sm text-slate-500">—</p><% end %>

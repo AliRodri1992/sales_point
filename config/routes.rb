@@ -40,6 +40,7 @@ Rails.application.routes.draw do
     resources :suppliers do
       collection { get :export }
 
+      get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download
       delete 'documents/:document_id', to: 'supplier_documents#destroy', as: :document
       resources :schedules, controller: 'supplier_schedules', except: %i[show] do
         member { patch :restore }
