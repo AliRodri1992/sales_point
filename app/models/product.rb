@@ -100,9 +100,7 @@ class Product < ApplicationRecord
     update!(view_count: view_count.to_i + 1)
   end
 
-  def to_param
-    slug.presence
-  end
+  def to_param = slug.presence
 
   private
 
