@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+class GoodsReceipt < ApplicationRecord
+  has_paper_trail
+
+  belongs_to :organization
+  belongs_to :branch
+  belongs_to :purchase_order
+  belongs_to :received_by, class_name: 'User'
+  has_many :goods_receipt_items, dependent: :restrict_with_exception
+  has_many :purchase_returns, dependent: :restrict_with_exception
+
+  enum :status, { posted: 'posted', reversed: 'reversed' }, validate: true
+  validates :idempotency_key, presence: true, uniqueness: { scope: :organization_id }
+  validates :received_at, presence: true
+  validate :consistent_organization
+
+  private
+
+  def consistent_organization
+    errors.add(:purchase_order, :invalid) if purchase_order && purchase_order.organization_id != organization_id
+    errors.add(:branch, :invalid) if branch && branch.organization_id != organization_id
+    return unless purchase_order && branch
+
+    errors.add(:branch, :invalid) unless purchase_order.branch_id == branch.id
+  end
+end
