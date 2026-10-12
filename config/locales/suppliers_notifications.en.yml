@@ -8,3 +8,7 @@ en:
           created: "Supplier '%{name}' was created"
           updated: "Supplier '%{name}' was updated"
           destroyed: "Supplier '%{name}' was deleted"
+          schedule_created: "A schedule was created for supplier '%{name}'"
+          schedule_updated: "A schedule was updated for supplier '%{name}'"
+          schedule_deleted: "A schedule was deleted for supplier '%{name}'"
+          document_deleted: "A document was deleted from supplier '%{name}'"

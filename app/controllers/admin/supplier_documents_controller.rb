@@ -12,6 +12,7 @@ module Admin
       authorize supplier, :manage_documents?
       attachment = supplier.documents.attachments.find(params[:document_id])
       attachment.purge
+      Suppliers::NotifyService.call(action: 'document_deleted', supplier:, user: current_user, subject: supplier)
       redirect_to admin_supplier_path(supplier), notice: t('admin.supplier_details.deleted')
     end
   end

@@ -8,3 +8,7 @@ ko:
           created: "'%{name}' 공급업체가 생성되었습니다"
           updated: "'%{name}' 공급업체가 수정되었습니다"
           destroyed: "'%{name}' 공급업체가 삭제되었습니다"
+          schedule_created: "'%{name}' 공급업체의 일정이 생성되었습니다"
+          schedule_updated: "'%{name}' 공급업체의 일정이 변경되었습니다"
+          schedule_deleted: "'%{name}' 공급업체의 일정이 삭제되었습니다"
+          document_deleted: "'%{name}' 공급업체의 문서가 삭제되었습니다"

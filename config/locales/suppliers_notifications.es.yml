@@ -8,3 +8,7 @@ es:
           created: "Se creó el proveedor '%{name}'"
           updated: "Se actualizó el proveedor '%{name}'"
           destroyed: "Se eliminó el proveedor '%{name}'"
+          schedule_created: "Se creó un calendario para el proveedor '%{name}'"
+          schedule_updated: "Se actualizó un calendario del proveedor '%{name}'"
+          schedule_deleted: "Se eliminó un calendario del proveedor '%{name}'"
+          document_deleted: "Se eliminó un documento del proveedor '%{name}'"

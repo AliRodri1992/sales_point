@@ -6,6 +6,7 @@ class CreateSupplierEventDeliveries < ActiveRecord::Migration[8.1]
       t.references :supplier, null: false, foreign_key: true
       t.references :recipient, null: false, foreign_key: { to_table: :users }
       t.string :event_key, null: false, limit: 64
+      t.timestamp :deleted_at
       t.timestamps
     end
 
