@@ -26,7 +26,7 @@ class SupplierProduct < ApplicationRecord
   after_save :record_price_change, if: :price_snapshot_changed?
 
   def unit_cost
-    amount = purchase_price * (1 - discount_percent / 100)
+    amount = purchase_price * (1 - (discount_percent / 100))
     ((amount + freight_amount + nonrecoverable_tax) / units_per_package).round(4)
   end
 
@@ -45,8 +45,9 @@ class SupplierProduct < ApplicationRecord
   end
 
   def price_snapshot_changed?
-    (saved_changes.keys & %w[purchase_price units_per_package discount_percent freight_amount
-                              nonrecoverable_tax currency_id]).any?
+    changed_fields = %w[purchase_price units_per_package discount_percent freight_amount
+                        nonrecoverable_tax currency_id]
+    saved_changes.keys.intersect?(changed_fields)
   end
 
   def record_price_change

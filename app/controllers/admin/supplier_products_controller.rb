@@ -81,11 +81,10 @@ module Admin
     end
 
     def offer_params
-      params.expect(supplier_product: %i[
-        product_id supplier_sku supplier_barcode presentation_name units_per_package
-        purchase_price currency_id discount_percent freight_amount nonrecoverable_tax
-        minimum_quantity lead_time_days preferred active
-      ])
+      params.expect(supplier_product: %i[product_id supplier_sku supplier_barcode presentation_name
+                                         units_per_package purchase_price currency_id discount_percent
+                                         freight_amount nonrecoverable_tax minimum_quantity lead_time_days
+                                         preferred active])
     end
 
     def render_duplicate

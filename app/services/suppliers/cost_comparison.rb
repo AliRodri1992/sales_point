@@ -5,9 +5,8 @@ module Suppliers
     def self.call(organization:, product:)
       return [] unless product.organization_id == organization.id
 
-      SupplierProduct.available.includes(:supplier, :currency)
-                     .where(organization:, product:)
-                     .order(:id).map do |offer|
+      offers = SupplierProduct.available.includes(:supplier, :currency).where(organization:, product:)
+      comparison = offers.map do |offer|
         {
           offer:,
           currency: offer.currency.code,
@@ -15,7 +14,8 @@ module Suppliers
           lead_time_days: offer.lead_time_days,
           preferred: offer.preferred?
         }
-      end.sort_by { |result| [result[:currency], result[:cost_per_unit], result[:lead_time_days]] }
+      end
+      comparison.sort_by { |result| [result[:currency], result[:cost_per_unit], result[:lead_time_days]] }
     end
   end
 end
