@@ -23,7 +23,7 @@ module Admin
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
       html = render_to_string(partial: 'admin/products/list', formats: [:html],
                               locals: { products:, total_count:, total_pages: })
-      Turbo::StreamsChannel.broadcast_update_to("products_catalog_#{current_organization&.id || 'legacy'}",
+      Turbo::StreamsChannel.broadcast_update_to(current_organization ? "products_catalog_#{current_organization.id}" : 'products_catalog',
                                                 target: 'admin_products_list', html: html)
     end
 

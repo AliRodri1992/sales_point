@@ -6,6 +6,7 @@ module Admin
 
     def accessible_products
       scope = Product.not_deleted
+      return scope unless respond_to?(:current_organization, true)
       return scope.where(organization_id: nil) unless current_organization
 
       scope.where(organization_id: [nil, current_organization.id])
