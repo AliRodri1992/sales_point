@@ -19,6 +19,10 @@ abort('The Rails environment is running in production mode!') if Rails.env.produ
 
 require 'rspec/rails'
 
+# Keep the test database synchronized with the current migrations before examples run.
+# RAILS_ENV and DATABASE_URL are set above to avoid touching development data.
+ActiveRecord::Migration.maintain_test_schema!
+
 # Suppress Sidekiq connection INFO messages in test output while retaining warnings.
 Sidekiq.logger.level = Logger::WARN if defined?(Sidekiq)
 require 'capybara/rspec'
