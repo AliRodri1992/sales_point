@@ -59,6 +59,7 @@ module Admin
     def restore
       record = @supplier.addresses.with_deleted.where.not(deleted_at: nil).find(params[:id])
       if record.restore_safely
+        @address = record
         notify_address('address_restored')
         redirect_success('address_restored')
       else

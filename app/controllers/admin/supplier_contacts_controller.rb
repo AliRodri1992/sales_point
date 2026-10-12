@@ -55,6 +55,7 @@ module Admin
     def restore
       record = @supplier.contacts.with_deleted.where.not(deleted_at: nil).find(params[:id])
       if record.restore_safely
+        @contact = record
         notify_contact('contact_restored')
         redirect_success('contact_restored')
       else
