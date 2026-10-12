@@ -15,6 +15,11 @@
         <%= t('admin.branches.form.buttons.back') %>
       <% end %>
 
+      <% if current_user.admin? && @branch.organization_id == current_organization&.id %>
+        <%= link_to t('admin.inventory.title'), admin_branch_inventories_path(@branch),
+                    class: 'inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' %>
+      <% end %>
+
       <% if @can_manage_branches %>
         <%= link_to edit_admin_branch_path(@branch),
                     class: 'inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
