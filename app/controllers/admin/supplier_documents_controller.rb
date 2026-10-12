@@ -9,8 +9,10 @@ module Admin
     def download
       supplier = authorized_supplier(:view_documents?)
       attachment = supplier.documents.attachments.find(params[:document_id])
-      send_data attachment.blob.download, filename: attachment.blob.filename.to_s,
-                                         type: attachment.blob.content_type, disposition: 'attachment'
+      send_data attachment.blob.download,
+                filename: attachment.blob.filename.to_s,
+                type: attachment.blob.content_type,
+                disposition: 'attachment'
     end
 
     def destroy
