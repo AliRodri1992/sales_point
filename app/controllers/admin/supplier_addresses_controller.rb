@@ -2,6 +2,7 @@
 
 module Admin
   class SupplierAddressesController < ApplicationController
+    include SupplierAuditTrail
     ACTION_POLICY = {
       'index' => :view_addresses?, 'new' => :manage_addresses?, 'create' => :manage_addresses?,
       'edit' => :manage_addresses?, 'update' => :manage_addresses?,

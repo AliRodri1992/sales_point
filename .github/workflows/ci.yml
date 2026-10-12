@@ -9,6 +9,7 @@ on:
       - staging
       - test
       - feature/register
+      - feature/suppliers
 
 permissions:
   contents: read

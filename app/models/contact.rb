@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Contact < ApplicationRecord
+  has_paper_trail
+
   belongs_to :contactable, polymorphic: true
 
   scope :not_deleted, -> { where(deleted_at: nil) }

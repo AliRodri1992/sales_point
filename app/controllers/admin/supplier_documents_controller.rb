@@ -2,6 +2,7 @@
 
 module Admin
   class SupplierDocumentsController < ApplicationController
+    include SupplierAuditTrail
     before_action :authenticate_user!
 
     def destroy

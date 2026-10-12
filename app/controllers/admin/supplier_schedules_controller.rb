@@ -2,13 +2,14 @@
 
 module Admin
   class SupplierSchedulesController < ApplicationController
+    include SupplierAuditTrail
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
     before_action :set_schedule, only: %i[edit update destroy]
 
     def index
-      @schedules = @supplier.supplier_schedules.includes(:branch).order(:weekday, :starts_at)
+      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
     end
 
     def new
@@ -40,7 +41,7 @@ module Admin
     end
 
     def destroy
-      @schedule.destroy!
+      @schedule.update!(deleted_at: Time.current)
       redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.deleted')
     end
 
@@ -54,7 +55,7 @@ module Admin
     end
 
     def set_schedule
-      @schedule = @supplier.supplier_schedules.find(params[:id])
+      @schedule = @supplier.supplier_schedules.not_deleted.find(params[:id])
     end
 
     def load_branches

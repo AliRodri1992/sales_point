@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
+  has_paper_trail
+
   belongs_to :organization
   belongs_to :currency
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception

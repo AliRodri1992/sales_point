@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Address < ApplicationRecord
+  has_paper_trail
+
   belongs_to :addressable, polymorphic: true
   belongs_to :country
 

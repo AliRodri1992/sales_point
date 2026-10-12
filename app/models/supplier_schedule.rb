@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class SupplierSchedule < ApplicationRecord
+  has_paper_trail
+
+  scope :not_deleted, -> { where(deleted_at: nil) }
+
   KINDS = %w[visit order delivery].freeze
   belongs_to :supplier
   belongs_to :branch
