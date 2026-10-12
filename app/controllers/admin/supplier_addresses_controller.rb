@@ -3,9 +3,9 @@
 module Admin
   class SupplierAddressesController < ApplicationController
     ACTION_POLICY = {
-      'index' => :index?, 'new' => :new?, 'create' => :create?,
-      'edit' => :edit?, 'update' => :update?,
-      'destroy' => :destroy?, 'restore' => :update?
+      'index' => :view_addresses?, 'new' => :manage_addresses?, 'create' => :manage_addresses?,
+      'edit' => :manage_addresses?, 'update' => :manage_addresses?,
+      'destroy' => :manage_addresses?, 'restore' => :manage_addresses?
     }.freeze
 
     layout 'admin_dashboard'

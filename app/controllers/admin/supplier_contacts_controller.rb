@@ -3,9 +3,9 @@
 module Admin
   class SupplierContactsController < ApplicationController
     ACTION_POLICY = {
-      'index' => :index?, 'new' => :new?, 'create' => :create?,
-      'edit' => :edit?, 'update' => :update?,
-      'destroy' => :destroy?, 'restore' => :update?
+      'index' => :view_contacts?, 'new' => :manage_contacts?, 'create' => :manage_contacts?,
+      'edit' => :manage_contacts?, 'update' => :manage_contacts?,
+      'destroy' => :manage_contacts?, 'restore' => :manage_contacts?
     }.freeze
 
     layout 'admin_dashboard'

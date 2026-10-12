@@ -50,7 +50,7 @@ module Admin
       return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize @supplier, action_name.in?(%w[index]) ? :show? : :update?
+      authorize @supplier, action_name.in?(%w[index]) ? :view_schedules? : :manage_schedules?
     end
 
     def set_schedule

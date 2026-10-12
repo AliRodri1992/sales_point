@@ -3,7 +3,7 @@
 module Admin
   module SuppliersExporting
     def export
-      authorize Supplier, :index?
+      authorize Supplier, :export?
       scope = policy_scope(current_organization.suppliers.not_deleted).order(:name, :id)
       format = params[:file_format].to_s
       return head :bad_request unless %w[pdf xlsx].include?(format)

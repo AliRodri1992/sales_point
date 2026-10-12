@@ -8,7 +8,7 @@ module Admin
       return head :forbidden unless current_organization
 
       supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize supplier, :update?
+      authorize supplier, :manage_documents?
       attachment = supplier.documents.attachments.find(params[:document_id])
       attachment.purge
       redirect_to admin_supplier_path(supplier), notice: t('admin.supplier_details.deleted')
