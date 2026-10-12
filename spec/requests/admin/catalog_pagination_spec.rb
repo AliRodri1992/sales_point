@@ -4,6 +4,7 @@ RSpec.describe 'Catalog pagination links', type: :request do
   include Devise::Test::IntegrationHelpers
 
   let!(:user) { create(:user, :english, status: 'active') }
+  let!(:organization) { create(:organization) }
   let!(:role) { create(:system_role, :system) }
   let!(:categories_permission) { create(:permission, code: 'categories.access') }
   let!(:products_permission) { create(:permission, code: 'products.access') }
@@ -13,7 +14,8 @@ RSpec.describe 'Catalog pagination links', type: :request do
     create(:system_role_permission, system_role: role, permission: categories_permission)
     create(:system_role_permission, system_role: role, permission: products_permission)
     create_list(:category, 12)
-    create_list(:product, 12)
+    create(:organization_membership, user:, organization:)
+    create_list(:product, 12, organization:)
     sign_in user
   end
 
