@@ -90,11 +90,7 @@ class Product < ApplicationRecord
   scope :by_slug, ->(slug) { where(slug: slug) }
   scope :sorted_by_position, -> { order(position: :asc, name: :asc) }
 
-  def low_stock?
-    return false if min_stock.nil? || min_stock.zero?
-
-    stock <= min_stock
-  end
+  def low_stock? = min_stock.present? && !min_stock.zero? && stock <= min_stock
 
   def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
