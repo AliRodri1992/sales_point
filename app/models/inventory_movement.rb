@@ -3,6 +3,8 @@
 class InventoryMovement < ApplicationRecord
   belongs_to :organization
   belongs_to :inventory
+  belongs_to :source, polymorphic: true, optional: true
+  belongs_to :inventory_lot, optional: true
   belongs_to :user, optional: true
 
   KINDS = %w[receipt sale adjustment transfer_in transfer_out return].freeze

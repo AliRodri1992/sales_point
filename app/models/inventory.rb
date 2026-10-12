@@ -5,6 +5,7 @@ class Inventory < ApplicationRecord
   belongs_to :branch
   belongs_to :product
   has_many :inventory_movements, dependent: :restrict_with_exception
+  has_many :inventory_lots, dependent: :restrict_with_exception
 
   validates :product_id, uniqueness: { scope: :branch_id }
   validates :stock, :min_stock, numericality: { greater_than_or_equal_to: 0 }
