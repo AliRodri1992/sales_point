@@ -9,8 +9,7 @@ module Admin
     def destroy
       return head :forbidden unless current_organization
 
-      supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize supplier, :manage_documents?
+      supplier = authorized_supplier
       attachment = supplier.documents.attachments.find(params[:document_id])
       attachment.purge
       notify_document_deleted(supplier, attachment.id)
@@ -18,6 +17,12 @@ module Admin
     end
 
     private
+
+    def authorized_supplier
+      supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
+      authorize supplier, :manage_documents?
+      supplier
+    end
 
     def notify_document_deleted(supplier, document_id)
       Suppliers::NotifyService.call(action: 'document_deleted', supplier:, user: current_user,
