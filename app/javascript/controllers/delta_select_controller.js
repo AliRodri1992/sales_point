@@ -26,6 +26,25 @@ export default class extends Controller {
     this.menu = document.createElement("div")
     this.menu.className = "absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
     this.menu.hidden = true
+    this.searchable = this.element.dataset.countryFlags === "true"
+    if (this.searchable) {
+      const searchWrapper = document.createElement("div")
+      searchWrapper.className = "sticky top-0 z-10 bg-white p-1.5"
+      this.searchInput = document.createElement("input")
+      this.searchInput.type = "search"
+      this.searchInput.autocomplete = "off"
+      this.searchInput.placeholder = this.element.dataset.searchPlaceholder || "Buscar..."
+      this.searchInput.setAttribute("aria-label", this.searchInput.placeholder)
+      this.searchInput.className = "block min-h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+      searchWrapper.append(this.searchInput)
+      this.menu.append(searchWrapper)
+      this.optionsContainer = document.createElement("div")
+      this.menu.append(this.optionsContainer)
+      this.onSearchInput = () => this.filterOptions()
+      this.searchInput.addEventListener("input", this.onSearchInput)
+    } else {
+      this.optionsContainer = this.menu
+    }
     this.menu.setAttribute("role", "listbox")
     this.menu.id = `delta-options-${this.select.id}`
     this.button.setAttribute("aria-controls", this.menu.id)
@@ -42,7 +61,7 @@ export default class extends Controller {
       } else if (event.key === "ArrowDown" && event.target === this.button) {
         event.preventDefault()
         this.open()
-        this.menu.querySelector("[role='option']:not([disabled])")?.focus()
+        this.optionsContainer.querySelector("[role='option']:not([disabled]):not([hidden])")?.focus()
       }
     }
     this.onChange = () => this.refresh()
@@ -58,6 +77,7 @@ export default class extends Controller {
     this.button?.removeEventListener("click", this.onButtonClick)
     this.element.removeEventListener("keydown", this.onKeyDown)
     this.select?.removeEventListener("change", this.onChange)
+    this.searchInput?.removeEventListener("input", this.onSearchInput)
     this.button?.remove()
     this.menu?.remove()
     this.select?.classList.remove("sr-only")
@@ -67,7 +87,7 @@ export default class extends Controller {
 
   refresh() {
     this.label.replaceChildren(this.optionContent(this.select.selectedOptions[0]))
-    this.menu.replaceChildren()
+    this.optionsContainer.replaceChildren()
     const options = [...this.select.options]
     options.forEach((option, index) => {
       const item = document.createElement("button")
@@ -75,6 +95,7 @@ export default class extends Controller {
       item.setAttribute("role", "option")
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
+      item.dataset.searchText = `${option.textContent} ${option.dataset.countryCode || ""}`
       item.className = `flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none ${option.selected ? "bg-emerald-50 font-semibold text-emerald-800" : "text-slate-700"}`
       item.append(this.optionContent(option))
       if (option.selected) {
@@ -85,7 +106,7 @@ export default class extends Controller {
       }
       item.addEventListener("click", () => this.choose(index))
       item.addEventListener("keydown", (event) => {
-        const items = [...this.menu.querySelectorAll("[role='option']:not([disabled])")]
+        const items = [...this.optionsContainer.querySelectorAll("[role='option']:not([disabled]):not([hidden])")]
         const current = items.indexOf(item)
         if (event.key === "ArrowDown" || event.key === "ArrowUp") {
           event.preventDefault()
@@ -95,7 +116,19 @@ export default class extends Controller {
           items[event.key === "Home" ? 0 : items.length - 1]?.focus()
         }
       })
-      this.menu.append(item)
+      this.optionsContainer.append(item)
+    })
+    if (this.searchable) this.filterOptions()
+  }
+
+  normalizeSearch(value) {
+    return value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().trim()
+  }
+
+  filterOptions() {
+    const query = this.normalizeSearch(this.searchInput.value)
+    this.optionsContainer.querySelectorAll("[role='option']").forEach((item) => {
+      item.hidden = query.length > 0 && !this.normalizeSearch(item.dataset.searchText).includes(query)
     })
   }
 
@@ -136,8 +169,13 @@ export default class extends Controller {
   }
 
   open() {
+    if (this.searchable) {
+      this.searchInput.value = ""
+      this.filterOptions()
+    }
     this.menu.hidden = false
     this.button.setAttribute("aria-expanded", "true")
+    this.searchInput?.focus()
   }
 
   close() {
