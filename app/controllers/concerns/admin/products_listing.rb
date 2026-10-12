@@ -18,17 +18,17 @@ module Admin
     end
 
     def broadcast_products_update
-      total_count = Product.not_deleted.count
-      products = Product.not_deleted.with_category.order(:name).limit(PER_PAGE)
+      total_count = accessible_products.count
+      products = accessible_products.with_category.order(:name).limit(PER_PAGE)
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
       html = render_to_string(partial: 'admin/products/list', formats: [:html],
                               locals: { products:, total_count:, total_pages: })
-      Turbo::StreamsChannel.broadcast_update_to('products_catalog',
+      Turbo::StreamsChannel.broadcast_update_to("products_catalog_#{current_organization&.id || 'legacy'}",
                                                 target: 'admin_products_list', html: html)
     end
 
     def load_products
-      @products = filter_scope(Product.not_deleted)
+      @products = filter_scope(accessible_products)
       @total_count = @products.count
       @products = apply_sorting(@products)
       @products = paginate(@products)

@@ -4,22 +4,29 @@ module Admin
   module ProductsLookup
     private
 
+    def accessible_products
+      scope = Product.not_deleted
+      return scope.where(organization_id: nil) unless current_organization
+
+      scope.where(organization_id: [nil, current_organization.id])
+    end
+
     def set_product
       @product = find_product_by_id_or_slug(params[:id])
       raise ActiveRecord::RecordNotFound, 'Product not found' unless @product
     end
 
     def find_product_by_id_or_slug(id_param)
-      return Product.not_deleted.find_by(id: id_param) if id_param.to_s.match?(/\A\d+\z/)
+      return accessible_products.find_by(id: id_param) if id_param.to_s.match?(/\A\d+\z/)
 
-      Product.not_deleted.find_by(slug: id_param) || find_product_by_code(id_param)
+      accessible_products.find_by(slug: id_param) || find_product_by_code(id_param)
     end
 
     def find_product_by_code(id_param)
       search_term = CGI.unescape(id_param)
-      Product.not_deleted
+      accessible_products
              .where('lower(slug) = lower(?)', search_term)
-             .or(Product.not_deleted.where(code: search_term.upcase))
+             .or(accessible_products.where(code: search_term.upcase))
              .first
     end
 
