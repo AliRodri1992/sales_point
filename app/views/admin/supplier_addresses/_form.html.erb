@@ -17,7 +17,18 @@
       <% end %>
       <div>
         <%= form.label :country_id, t('admin.supplier_details.address_fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.collection_select :country_id, @countries, :id, :localized_name, { include_blank: true }, class: "input-field w-full rounded-xl #{form_state_classes(@address, :country)} px-4 py-3 text-sm text-slate-800" %>
+        <div class="relative" data-controller="delta-select" data-country-flags="true">
+          <%= form.select :country_id,
+                          options_for_select(
+                            @countries.map do |country|
+                              [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }]
+                            end,
+                            form.object.country_id
+                          ),
+                          { include_blank: t('admin.supplier_placeholders.country') },
+                          required: true,
+                          class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(@address, :country)}" %>
+        </div>
         <%= error_message_for(@address, :country) %>
       </div>
     </div>
