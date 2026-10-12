@@ -3,8 +3,8 @@
 FactoryBot.define do
   factory :inventory do
     association :organization
-    association :branch, organization: organization
-    association :product, organization: organization
+    branch { association(:branch, organization:) }
+    product { association(:product, organization:) }
     stock { 0 }
     min_stock { 10 }
     max_stock { 500 }
