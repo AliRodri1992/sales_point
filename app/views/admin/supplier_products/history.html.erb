@@ -17,7 +17,7 @@
           <tr class="border-t border-slate-100">
             <td class="p-4"><%= l(price.effective_on) %></td>
             <td class="p-4"><%= price.purchase_price %></td>
-            <td class="p-4"><%= @offer.presentation_name %></td>
+            <td class="p-4"><%= price.presentation_name %></td>
             <td class="p-4"><%= price.units_per_package %></td>
             <td class="p-4"><%= price.currency.code %></td>
             <td class="p-4"><%= price.recorded_by&.display_name || '—' %></td>

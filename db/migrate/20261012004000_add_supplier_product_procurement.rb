@@ -25,7 +25,7 @@ class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :supplier_products, %i[organization_id supplier_id product_id],
+    add_index :supplier_products, %i[organization_id supplier_id product_id presentation_name],
               unique: true, where: 'deleted_at IS NULL', name: 'idx_supplier_products_active_pair'
     add_index :supplier_products, %i[organization_id product_id],
               unique: true, where: 'preferred = TRUE AND deleted_at IS NULL',
@@ -36,6 +36,7 @@ class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
       t.references :currency, null: false, foreign_key: true
       t.references :recorded_by, foreign_key: { to_table: :users }
       t.decimal :purchase_price, precision: 14, scale: 4, null: false
+      t.string :presentation_name, null: false, limit: 80
       t.decimal :units_per_package, precision: 14, scale: 4, null: false
       t.decimal :discount_percent, precision: 6, scale: 3, null: false, default: 0
       t.decimal :freight_amount, precision: 14, scale: 4, null: false, default: 0

@@ -9,7 +9,7 @@ class SupplierProduct < ApplicationRecord
   belongs_to :currency
   has_many :price_history, class_name: 'SupplierProductPrice', dependent: :restrict_with_exception
 
-  validates :product_id, uniqueness: { scope: %i[organization_id supplier_id],
+  validates :product_id, uniqueness: { scope: %i[organization_id supplier_id presentation_name],
                                        conditions: -> { where(deleted_at: nil) } }
   validates :presentation_name, presence: true, length: { maximum: 80 }
   validates :units_per_package, numericality: { greater_than: 0 }
@@ -46,13 +46,13 @@ class SupplierProduct < ApplicationRecord
 
   def price_snapshot_changed?
     changed_fields = %w[purchase_price units_per_package discount_percent freight_amount
-                        nonrecoverable_tax currency_id]
+                        nonrecoverable_tax currency_id presentation_name]
     saved_changes.keys.intersect?(changed_fields)
   end
 
   def record_price_change
     price_history.create!(
-      currency:, purchase_price:, units_per_package:, discount_percent:,
+      currency:, purchase_price:, units_per_package:, presentation_name:, discount_percent:,
       freight_amount:, nonrecoverable_tax:, effective_on: Date.current,
       recorded_by_id: PaperTrail.request.whodunnit.presence
     )
