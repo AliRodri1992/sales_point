@@ -35,8 +35,11 @@ jobs:
       - name: Install native dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
 
-      - name: Verify htmlentities gem SHA256
-        run: curl --fail --location --silent --show-error https://rubygems.org/downloads/htmlentities-4.4.2.gem | sha256sum
+      - name: Verify missing gem checksums
+        run: |
+          for package in htmlentities-4.4.2 caxlsx-4.5.0; do
+            curl --fail --location --silent --show-error "https://rubygems.org/downloads/${package}.gem" | sha256sum
+          done
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
