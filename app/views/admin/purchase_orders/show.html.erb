@@ -51,6 +51,12 @@
     <% end %>
     <%= link_to t('admin.purchases.receipts'), admin_purchase_order_goods_receipts_path(@order),
                 class: 'rounded-xl border border-slate-200 px-5 py-3' %>
+    <% if @order.status.in?(%w[ordered partially_received received]) &&
+          @order.goods_receipts.exists? && policy(@order).close? %>
+      <%= button_to t('admin.purchases.close_with_differences'), close_admin_purchase_order_path(@order),
+                    class: 'rounded-xl border border-amber-300 px-5 py-3 font-semibold text-amber-800',
+                    form: { data: { turbo_confirm: t('admin.purchases.close_with_differences') } } %>
+    <% end %>
     <% if @order.status.in?(%w[draft pending_approval approved ordered]) && policy(@order).cancel? %>
       <%= button_to t('admin.purchases.cancel'), cancel_admin_purchase_order_path(@order),
                     class: 'rounded-xl border border-rose-300 px-5 py-3 text-rose-700',

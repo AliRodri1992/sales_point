@@ -12,6 +12,7 @@ class PurchaseOrderPolicy < ApplicationPolicy
   def reject? = approve?
   def dispatch? = approve?
   def cancel? = approve?
+  def close? = approve?
   def receive? = organization_access? && permitted?('purchases.receive')
   def return? = organization_access? && permitted?('purchases.returns')
 

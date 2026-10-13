@@ -97,6 +97,27 @@ RSpec.describe Purchases::Workflow do
     end.to raise_error(ArgumentError, /submitted/)
   end
 
+  it 'closes a partly received purchase order without changing outstanding stock' do
+    described_class.call(order:, action: :submit, user: requester)
+    described_class.call(order:, action: :approve, user: approver)
+    described_class.call(order:, action: :dispatch, user: approver)
+    Purchases::Receive.call(
+      order:, user: requester, idempotency_key: 'partial-close',
+      entries: [{ purchase_order_item_id: order.purchase_order_items.first.id,
+                  delivered_quantity: 3, accepted_quantity: 3, damaged_quantity: 0 }]
+    )
+    described_class.call(order:, action: :close, user: approver)
+    expect(order.reload).to be_closed
+    expect(order.outstanding_quantity_for(order.purchase_order_items.first)).to eq(7)
+    expect do
+      Purchases::Receive.call(
+        order:, user: requester, idempotency_key: 'after-close',
+        entries: [{ purchase_order_item_id: order.purchase_order_items.first.id,
+                    delivered_quantity: 7, accepted_quantity: 7, damaged_quantity: 0 }]
+      )
+    end.to raise_error(ArgumentError, /sent before receiving/)
+  end
+
   it 'does not allow cancellation of an order after its reception' do
     described_class.call(order:, action: :submit, user: requester)
     described_class.call(order:, action: :approve, user: approver)

@@ -64,6 +64,7 @@ Rails.application.routes.draw do
         post :reject
         post :send_order
         post :cancel
+        post :close
       end
     end
     resources :goods_receipts, only: %i[show] do

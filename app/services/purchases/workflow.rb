@@ -6,7 +6,9 @@ module Purchases
       'draft' => { submit: 'pending_approval', cancel: 'cancelled' },
       'pending_approval' => { approve: 'approved', reject: 'rejected', cancel: 'cancelled' },
       'approved' => { dispatch: 'ordered', cancel: 'cancelled' },
-      'ordered' => { cancel: 'cancelled' }
+      'ordered' => { cancel: 'cancelled', close: 'closed' },
+      'partially_received' => { close: 'closed' },
+      'received' => { close: 'closed' }
     }.freeze
 
     def self.call(order:, action:, user:, notes: nil)
@@ -58,6 +60,7 @@ module Purchases
 
     def validate_transition!
       raise ArgumentError, 'Purchase order needs items' if @action == :submit && @order.purchase_order_items.empty?
+      raise ArgumentError, 'Cannot close before receiving merchandise' if @action == :close && !@order.goods_receipts.exists?
       raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
     end
 
