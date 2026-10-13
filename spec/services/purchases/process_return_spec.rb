@@ -146,6 +146,30 @@ RSpec.describe Purchases::ProcessReturn do
     expect(line.inventory_lots.first.inventory.reload.stock).to eq(1)
   end
 
+  it 'marks quarantined serial numbers returned without changing available stock' do
+    product.update!(tracking_mode: :serial)
+    source = Purchases::Receive.call(
+      order: another_order, user:, idempotency_key: 'serialized-quarantine-return',
+      entries: [{ purchase_order_item_id: another_line.id, delivered_quantity: 3,
+                  accepted_quantity: 1, damaged_quantity: 2,
+                  serial_numbers: ['OK-123'], damaged_serial_numbers: %w[BAD-1 BAD-2] }]
+    )
+    line = source.goods_receipt_items.first
+    purchase_return = PurchaseReturn.create!(
+      organization:, goods_receipt: source, requested_by: user, reason: :damaged
+    )
+    purchase_return.purchase_return_items.create!(
+      goods_receipt_item: line, quantity: 1, stock_disposition: :quarantined
+    )
+
+    described_class.call(purchase_return:, user:)
+
+    damaged_serials = line.inventory_lots.flat_map(&:inventory_serials)
+                         .select { |serial| serial.serial_number.start_with?('BAD-') }
+    expect(damaged_serials.map(&:status)).to contain_exactly('returned', 'quarantined')
+    expect(Inventory.find_by!(branch:, product:).stock).to eq(1)
+  end
+
   it 'ignores unselected return lines but retains selected items' do
     purchase_return = PurchaseReturn.create!(
       organization:, goods_receipt: receipt, requested_by: user,
