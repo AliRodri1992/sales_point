@@ -79,6 +79,7 @@ Rails.application.routes.draw do
       member do
         post :post_invoice
         post :cancel
+        post :match_receipts
         get :download_xml
       end
     end

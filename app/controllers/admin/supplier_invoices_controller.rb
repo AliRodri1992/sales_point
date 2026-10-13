@@ -4,7 +4,7 @@ module Admin
   class SupplierInvoicesController < ApplicationController
     include FinancialAccess
 
-    before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml]
+    before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml match_receipts]
 
     def index
       authorize current_organization.supplier_invoices.new, :index?
@@ -68,22 +68,21 @@ module Admin
       financial_error(e, admin_supplier_invoice_path(@invoice))
     end
 
+
     def cancel
       authorize @invoice, :cancel?
-      @invoice.with_lock do
-        raise ArgumentError, 'Invoice already cancelled' if @invoice.cancelled?
-        if @invoice.account_payable &&
-           (@invoice.account_payable.supplier_payment_allocations.exists? ||
-            @invoice.account_payable.supplier_credit_allocations.exists?)
-          raise ArgumentError, 'Cannot cancel an invoice with financial movements'
-        end
-
-        @invoice.update!(status: :cancelled, cancelled_at: Time.current)
-        FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
-                                    event: 'invoice.cancelled', subject: @invoice)
-      end
+      AccountsPayable::CancelInvoice.call(invoice: @invoice, actor: current_user)
       redirect_to admin_supplier_invoice_path(@invoice)
     rescue ArgumentError => e
+      financial_error(e, admin_supplier_invoice_path(@invoice))
+    end
+
+    def match_receipts
+      authorize @invoice, :update?
+      receipt_ids = params.fetch(:receipt_ids, []).map(&:to_i)
+      AccountsPayable::MatchReceipts.call(invoice: @invoice, receipt_ids:, actor: current_user)
+      redirect_to admin_supplier_invoice_path(@invoice)
+    rescue ArgumentError, ActiveRecord::RecordInvalid => e
       financial_error(e, admin_supplier_invoice_path(@invoice))
     end
 
@@ -114,23 +113,43 @@ module Admin
                     ])
     end
 
+
     def apply_attributes
       attrs = invoice_params.except(:xml_document, :pdf_document)
-      supplier = current_organization.suppliers.not_deleted.find_by(id: attrs[:supplier_id] || @invoice.supplier_id)
-      raise ArgumentError, 'Invalid supplier' unless supplier
-
+      supplier = invoice_supplier(attrs)
       @invoice.assign_attributes(attrs.merge(supplier:))
-      uploaded = invoice_params[:xml_document]
-      if uploaded.present?
-        raw = uploaded.read
-        AccountsPayable::ImportCfdi.call(invoice: @invoice, xml: raw)
-        @invoice.xml_document.attach(io: StringIO.new(raw), filename: uploaded.original_filename,
-                                     content_type: 'application/xml')
+      attach_invoice_xml!
+      assign_missing_dates!(supplier)
+      attach_invoice_pdf!
+    end
+
+    def invoice_supplier(attrs)
+      id = attrs[:supplier_id] || @invoice.supplier_id
+      current_organization.suppliers.not_deleted.find_by(id:).tap do |supplier|
+        raise ArgumentError, 'Invalid supplier' unless supplier
       end
+    end
+
+    def attach_invoice_xml!
+      upload = invoice_params[:xml_document]
+      return unless upload.present?
+
+      raw = upload.read
+      AccountsPayable::ImportCfdi.call(invoice: @invoice, xml: raw)
+      @invoice.xml_document.attach(
+        io: StringIO.new(raw), filename: upload.original_filename, content_type: 'application/xml'
+      )
+    end
+
+    def assign_missing_dates!(supplier)
       @invoice.issued_on ||= Date.current
       @invoice.received_on ||= Date.current
       @invoice.due_on ||= @invoice.issued_on + supplier.credit_days.days
-      @invoice.pdf_document.attach(invoice_params[:pdf_document]) if invoice_params[:pdf_document].present?
+    end
+
+    def attach_invoice_pdf!
+      uploaded = invoice_params[:pdf_document]
+      @invoice.pdf_document.attach(uploaded) if uploaded.present?
     end
 
     def load_catalogs

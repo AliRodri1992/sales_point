@@ -25,29 +25,13 @@ module Admin
       load_catalogs
     end
 
+
     def create
       @credit = new_credit
       authorize @credit
-      attrs = credit_params.except(:xml_document)
-      @credit.assign_attributes(attrs)
-      if credit_params[:xml_document].present?
-        uploaded = credit_params[:xml_document]
-        raw = uploaded.read
-        data = AccountsPayable::CfdiParser.call(xml: raw, expected_type: 'E')
-        validate_cfdi_supplier!(data)
-        @credit.assign_attributes(uuid: data.fetch(:uuid), total: data.fetch(:total),
-                                  issued_on: data.fetch(:issued_on))
-        @credit.xml_document.attach(io: StringIO.new(raw), filename: uploaded.original_filename,
-                                    content_type: 'application/xml')
-      end
-      if @credit.save
-        FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
-                                    event: 'credit.created', subject: @credit)
-        redirect_to admin_supplier_credit_note_path(@credit)
-      else
-        load_catalogs
-        render :new, status: :unprocessable_content
-      end
+      @credit.assign_attributes(credit_params.except(:xml_document))
+      attach_credit_xml!
+      save_credit
     rescue ArgumentError => e
       @credit.errors.add(:base, e.message)
       load_catalogs
@@ -110,6 +94,31 @@ module Admin
                       supplier_id currency_id supplier_invoice_id purchase_return_id
                       uuid folio issued_on total notes xml_document
                     ])
+    end
+
+def attach_credit_xml!
+      upload = credit_params[:xml_document]
+      return unless upload.present?
+
+      raw = upload.read
+      data = AccountsPayable::CfdiParser.call(xml: raw, expected_type: 'E')
+      validate_cfdi_supplier!(data)
+      @credit.assign_attributes(uuid: data.fetch(:uuid), total: data.fetch(:total),
+                                issued_on: data.fetch(:issued_on))
+      @credit.xml_document.attach(
+        io: StringIO.new(raw), filename: upload.original_filename, content_type: 'application/xml'
+      )
+    end
+
+    def save_credit
+      if @credit.save
+        FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
+                                    event: 'credit.created', subject: @credit)
+        redirect_to admin_supplier_credit_note_path(@credit)
+      else
+        load_catalogs
+        render :new, status: :unprocessable_content
+      end
     end
 
     def validate_cfdi_supplier!(data)

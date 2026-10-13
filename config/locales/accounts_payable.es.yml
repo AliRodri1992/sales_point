@@ -88,3 +88,5 @@ es:
         days_1: "Pago de %{supplier} vence mañana: %{amount}"
         days_3: "Pago de %{supplier} vence en 3 días: %{amount}"
         days_7: "Pago de %{supplier} vence en 7 días: %{amount}"
+      match_receipts: "Conciliar recepciones"
+      match: "Guardar conciliación"

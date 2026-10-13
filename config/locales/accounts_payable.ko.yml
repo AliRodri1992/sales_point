@@ -88,3 +88,5 @@ ko:
         days_1: "%{supplier} 지급까지 1일: %{amount}"
         days_3: "%{supplier} 지급까지 3일: %{amount}"
         days_7: "%{supplier} 지급까지 7일: %{amount}"
+      match_receipts: "입고 내역 대조"
+      match: "대조 저장"

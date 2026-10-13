@@ -25,6 +25,22 @@
       <div class="flex justify-between border-b border-slate-100 py-2 text-sm"><span><%= line.description %> (<%= line.quantity %>)</span><span><%= number_to_currency(line.amount, unit: '') %></span></div>
     <% end %>
   <% end %>
+  <% if @invoice.draft? && @invoice.purchase_order_id && policy(@invoice).update? %>
+    <%= form_with url: match_receipts_admin_supplier_invoice_path(@invoice),
+                  class: 'space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4' do %>
+      <h2 class="text-sm font-semibold"><%= t('admin.accounts_payable.match_receipts') %></h2>
+      <div class="grid gap-2 sm:grid-cols-2">
+        <% @invoice.purchase_order.goods_receipts.order(received_at: :asc).each do |receipt| %>
+          <label class="flex items-center gap-2 text-sm text-slate-700">
+            <%= check_box_tag 'receipt_ids[]', receipt.id,
+                              @invoice.supplier_invoice_receipts.any? { |match| match.goods_receipt_id == receipt.id } %>
+            <%= l(receipt.received_at.to_date) %> #<%= receipt.id %>
+          </label>
+        <% end %>
+      </div>
+      <%= submit_tag t('admin.accounts_payable.match'), class: 'rounded-xl border border-emerald-300 px-4 py-2 text-sm font-semibold text-emerald-700' %>
+    <% end %>
+  <% end %>
   <div class="flex flex-wrap gap-3">
     <% if @invoice.draft? && policy(@invoice).edit? %>
       <%= link_to t('admin.accounts_payable.edit'), edit_admin_supplier_invoice_path(@invoice), class: 'rounded-xl border border-slate-300 px-5 py-3 font-semibold' %>
