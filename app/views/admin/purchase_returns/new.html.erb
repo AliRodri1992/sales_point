@@ -16,7 +16,14 @@
       <div class="mb-4 grid gap-3 md:grid-cols-2">
         <%= hidden_field_tag "purchase_return[purchase_return_items_attributes][#{index}][goods_receipt_item_id]", entry.id %>
         <div><strong><%= entry.purchase_order_item.product.name %></strong>
-          <p class="text-sm text-slate-500"><%= t('admin.purchases.received') %>: <%= entry.accepted_quantity %></p></div>
+          <p class="text-sm text-slate-500"><%= t('admin.purchases.received') %>: <%= entry.accepted_quantity %> · <%= t('admin.purchases.quarantined_merchandise') %>: <%= entry.damaged_quantity %></p></div>
+        <div>
+          <%= label_tag "return_disposition_#{index}", t('admin.purchases.return_stock_disposition'), class: 'mb-1 block text-sm' %>
+          <%= select_tag "purchase_return[purchase_return_items_attributes][#{index}][stock_disposition]",
+                         options_for_select([[t('admin.purchases.accepted_merchandise'), 'accepted'],
+                                             [t('admin.purchases.quarantined_merchandise'), 'quarantined']]),
+                         class: 'w-full rounded-xl border border-slate-200 p-2' %>
+        </div>
         <div><%= label_tag "return_quantity_#{index}", t('admin.purchases.quantity'), class: 'mb-1 block text-sm' %>
           <%= number_field_tag "purchase_return[purchase_return_items_attributes][#{index}][quantity]", nil,
                                min: 0.001, max: entry.accepted_quantity, step: 0.001,

@@ -1,6 +1,9 @@
 ko:
   admin:
     purchases:
+      return_stock_disposition: "상품 상태"
+      accepted_merchandise: "정상 입고 상품"
+      quarantined_merchandise: "격리된 손상 상품"
       title: "구매 및 조달"
       orders: "구매 주문"
       requests: "구매 요청"
@@ -127,3 +130,4 @@ ko:
         wrong_product: "잘못된 상품"
         expired: "만료"
         surplus: "초과"
+

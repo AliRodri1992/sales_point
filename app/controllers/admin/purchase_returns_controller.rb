@@ -52,7 +52,7 @@ module Admin
       # rubocop:disable-next Rails/StrongParametersExpect
       params.require(:purchase_return).permit(
         :reason, :notes,
-        purchase_return_items_attributes: %i[goods_receipt_item_id quantity notes]
+        purchase_return_items_attributes: %i[goods_receipt_item_id quantity stock_disposition notes]
       )
     end
   end

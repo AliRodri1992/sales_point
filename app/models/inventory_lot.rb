@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class InventoryLot < ApplicationRecord
+  has_paper_trail
   belongs_to :organization
   belongs_to :inventory
   belongs_to :goods_receipt_item, optional: true

@@ -1,6 +1,9 @@
 en:
   admin:
     purchases:
+      return_stock_disposition: "Merchandise condition"
+      accepted_merchandise: "Accepted merchandise"
+      quarantined_merchandise: "Damaged merchandise in quarantine"
       title: "Purchasing and procurement"
       orders: "Purchase orders"
       requests: "Purchase requests"
@@ -127,3 +130,4 @@ en:
         wrong_product: "Wrong product"
         expired: "Expired"
         surplus: "Surplus"
+

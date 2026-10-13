@@ -1,6 +1,9 @@
 es:
   admin:
     purchases:
+      return_stock_disposition: "Condición de las mercancías"
+      accepted_merchandise: "Mercancía aceptada"
+      quarantined_merchandise: "Mercancía dañada en cuarentena"
       title: "Compras y abastecimiento"
       orders: "Órdenes de compra"
       requests: "Solicitudes de compra"
@@ -127,3 +130,4 @@ es:
         wrong_product: "Producto equivocado"
         expired: "Caducada"
         surplus: "Sobrante"
+
