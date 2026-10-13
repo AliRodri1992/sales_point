@@ -3,7 +3,8 @@
 class SupplierBankAccount < ApplicationRecord
   belongs_to :organization
   belongs_to :supplier
-  belongs_to :sat_bank, foreign_key: :sat_bank_code, primary_key: :code, optional: true
+  belongs_to :sat_bank, foreign_key: :sat_bank_code, primary_key: :code,
+                        optional: true, inverse_of: :supplier_bank_accounts
   has_many :supplier_payments, dependent: :restrict_with_exception
 
   encrypts :account_number, :clabe
@@ -35,21 +36,29 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   def normalize_bank_values
-    self.clabe = clabe.to_s.gsub(/\s/, '').presence
-    self.account_number = account_number.to_s.gsub(/\s/, '').presence
+    self.clabe = compact_number(clabe)
+    self.account_number = compact_number(account_number)
     self.last_four = (clabe.presence || account_number).to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
+  end
+
+  def compact_number(value)
+    value.to_s.delete(" \t\n").presence
   end
 
   def valid_clabe
     return if clabe.blank?
 
-    unless clabe.match?(/\A\d{18}\z/)
-      errors.add(:clabe, :invalid)
-      return
-    end
+    errors.add(:clabe, :invalid) unless valid_clabe_format? && valid_clabe_checksum?
+  end
+
+  def valid_clabe_format?
+    clabe.match?(/\A\d{18}\z/)
+  end
+
+  def valid_clabe_checksum?
     weights = [3, 7, 1]
     sum = clabe[0, 17].chars.each_with_index.sum { |digit, index| (digit.to_i * weights[index % 3]) % 10 }
-    errors.add(:clabe, :invalid) unless (10 - (sum % 10)) % 10 == clabe[-1].to_i
+    (10 - (sum % 10)) % 10 == clabe[-1].to_i
   end
 end

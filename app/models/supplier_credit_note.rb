@@ -25,12 +25,16 @@ class SupplierCreditNote < ApplicationRecord
 
   def matching_organization
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
-    if supplier_invoice && (supplier_invoice.supplier_id != supplier_id ||
-                            supplier_invoice.organization_id != organization_id)
-      errors.add(:supplier_invoice, :invalid)
-    end
-    return unless purchase_return && purchase_return.organization_id != organization_id
+    errors.add(:supplier_invoice, :invalid) if supplier_invoice && !same_invoice_supplier?
+    errors.add(:purchase_return, :invalid) if purchase_return && !same_return_supplier?
+  end
 
-    errors.add(:purchase_return, :invalid)
+  def same_invoice_supplier?
+    supplier_invoice.supplier_id == supplier_id && supplier_invoice.organization_id == organization_id
+  end
+
+  def same_return_supplier?
+    purchase_return.organization_id == organization_id &&
+      purchase_return.goods_receipt.purchase_order.supplier_id == supplier_id
   end
 end

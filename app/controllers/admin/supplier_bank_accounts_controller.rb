@@ -36,9 +36,7 @@ module Admin
 
     def update
       authorize @account
-      @account.assign_attributes(bank_params.except(:account_number, :clabe))
-      @account.account_number = bank_params[:account_number] if bank_params[:account_number].present?
-      @account.clabe = bank_params[:clabe] if bank_params[:clabe].present?
+      assign_bank_details
       if save_account
         redirect_to admin_supplier_bank_accounts_path(@supplier)
       else
@@ -80,6 +78,13 @@ module Admin
                       sat_bank_code bank_name holder_name
                       account_number clabe currency_code primary
                     ])
+    end
+
+    def assign_bank_details
+      attributes = bank_params
+      @account.assign_attributes(attributes.except(:account_number, :clabe))
+      @account.account_number = attributes[:account_number] if attributes[:account_number].present?
+      @account.clabe = attributes[:clabe] if attributes[:clabe].present?
     end
 
     def save_account

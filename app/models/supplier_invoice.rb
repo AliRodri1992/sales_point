@@ -30,9 +30,10 @@ class SupplierInvoice < ApplicationRecord
 
   def consistent_relations
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
-    if purchase_order && (purchase_order.organization_id != organization_id || purchase_order.supplier_id != supplier_id)
-      errors.add(:purchase_order, :invalid)
-    end
+    return unless purchase_order
+
+    valid = purchase_order.organization_id == organization_id && purchase_order.supplier_id == supplier_id
+    errors.add(:purchase_order, :invalid) unless valid
   end
 
   def valid_documents

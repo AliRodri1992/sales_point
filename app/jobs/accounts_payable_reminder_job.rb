@@ -4,21 +4,30 @@ class AccountsPayableReminderJob < ApplicationJob
   queue_as :default
 
   def perform(today = Date.current)
-    AccountPayable.outstanding.where(due_on: ..(today + 7.days)).includes(:organization,
-                                                                          :supplier).find_each do |payable|
-      next unless payable.balance.positive?
+    candidates(today).find_each { |payable| process_payable(payable, today) }
+  end
 
-      stage = reminder_stage(payable.due_on, today)
-      next unless stage
+  def candidates(today)
+    AccountPayable.outstanding.where(due_on: ..(today + 7.days)).includes(:organization, :supplier)
+  end
 
-      payable.organization.users.joins(:organization_memberships)
-             .where(organization_memberships: { organization_id: payable.organization_id, status: 'active' })
-             .distinct.find_each do |recipient|
-        next unless recipient.admin? || recipient.permission?('accounts_payable.view')
+  def process_payable(payable, today)
+    return unless payable.balance.positive?
 
-        deliver_once(payable:, recipient:, stage:, today:)
-      end
+    stage = reminder_stage(payable.due_on, today)
+    return unless stage
+
+    recipients(payable).find_each do |recipient|
+      next unless recipient.admin? || recipient.permission?('accounts_payable.view')
+
+      deliver_once(payable:, recipient:, stage:, today:)
     end
+  end
+
+  def recipients(payable)
+    payable.organization.users.joins(:organization_memberships)
+           .where(organization_memberships: { organization_id: payable.organization_id, status: 'active' })
+           .distinct
   end
 
   private
