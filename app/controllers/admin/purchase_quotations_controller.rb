@@ -80,11 +80,13 @@ module Admin
     end
 
     def quotation_params
-      params.expect(purchase_quotation: [:supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
-                                         { purchase_quotation_items_attributes: %i[
-                                           id product_id supplier_product_id quantity units_per_package
-                                           unit_price discount_percent lead_time_days
-                                         ] }])
+      params.require(:purchase_quotation).permit(
+        :supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
+        purchase_quotation_items_attributes: %i[
+          id product_id supplier_product_id quantity units_per_package
+          unit_price discount_percent lead_time_days
+        ]
+      )
     end
 
     def change_status!(status, from:, permission:)
