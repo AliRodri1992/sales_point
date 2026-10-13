@@ -8,6 +8,7 @@ es:
       receipts: "Recepciones"
       returns: "Devoluciones al proveedor"
       new_request: "Nueva solicitud"
+      quote_request: "Solicitar cotización"
       new_quotation: "Nueva cotización"
       new_order: "Nueva orden"
       new_return: "Nueva devolución"

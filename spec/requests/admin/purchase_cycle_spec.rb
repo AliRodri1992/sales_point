@@ -36,6 +36,17 @@ RSpec.describe 'Purchasing document and receiving lifecycle', type: :request do
     end
   end
 
+  it 'prefills a quotation from an approved request' do
+    request_record = PurchaseRequest.create!(organization:, branch:, requested_by: user, status: :approved)
+    request_record.purchase_request_items.create!(product:, quantity: 9)
+
+    get new_admin_purchase_quotation_path(purchase_request_id: request_record.id)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(request_record.code)
+    expect(response.body).to include('9')
+  end
+
   it 'persists quotation lines submitted by the form' do
     post admin_purchase_quotations_path, params: {
       purchase_quotation: {

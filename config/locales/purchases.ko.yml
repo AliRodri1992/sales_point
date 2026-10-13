@@ -8,6 +8,7 @@ ko:
       receipts: "입고"
       returns: "공급업체 반품"
       new_request: "새 요청"
+      quote_request: "견적 요청"
       new_quotation: "새 견적"
       new_order: "새 주문"
       new_return: "새 반품"

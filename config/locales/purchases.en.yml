@@ -8,6 +8,7 @@ en:
       receipts: "Goods receipts"
       returns: "Supplier returns"
       new_request: "New request"
+      quote_request: "Request quotation"
       new_quotation: "New quotation"
       new_order: "New order"
       new_return: "New return"

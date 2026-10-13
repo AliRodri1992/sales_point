@@ -31,6 +31,7 @@ class PurchaseQuotation < ApplicationRecord
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
     return unless purchase_request
 
-    errors.add(:purchase_request, :invalid) unless purchase_request.organization_id == organization_id
+    valid = purchase_request.organization_id == organization_id && purchase_request.approved?
+    errors.add(:purchase_request, :invalid) unless valid
   end
 end

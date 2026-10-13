@@ -20,6 +20,11 @@
                     class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
       <%= button_to t('admin.purchases.cancel'), cancel_admin_purchase_request_path(@request), class: 'rounded-xl border border-rose-300 p-3 text-rose-700' %>
     <% end %>
+    <% if @request.approved? && policy(PurchaseQuotation.new(organization: current_organization)).create? %>
+      <%= link_to t('admin.purchases.quote_request'),
+                  new_admin_purchase_quotation_path(purchase_request_id: @request.id),
+                  class: 'rounded-xl border border-emerald-300 p-3 text-emerald-700' %>
+    <% end %>
     <% if @request.submitted? && policy(@request).approve? %>
       <%= button_to t('admin.purchases.approve'), approve_admin_purchase_request_path(@request), class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
       <%= button_to t('admin.purchases.reject'), reject_admin_purchase_request_path(@request), class: 'rounded-xl border border-rose-300 p-3 text-rose-700' %>
