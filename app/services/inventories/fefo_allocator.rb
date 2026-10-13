@@ -51,10 +51,18 @@ module Inventories
     end
 
     def self.validate_lot!(inventory:, lot:, quantity:, kind:)
-      expired = lot.expires_on.present? && lot.expires_on < Date.current
-      valid = quantity.positive? && lot.inventory_id == inventory.id && lot.available? &&
-              (kind == 'return' || !expired) && lot.quantity >= quantity && inventory.stock >= quantity
-      raise ArgumentError, 'Lot is not available or has insufficient stock' unless valid
+      return if lot_eligible?(inventory:, lot:, quantity:, kind:)
+
+      raise ArgumentError, 'Lot is not available or has insufficient stock'
+    end
+
+    def self.lot_eligible?(inventory:, lot:, quantity:, kind:)
+      quantity.positive? && lot.inventory_id == inventory.id && lot.available? &&
+        expiration_allowed?(lot, kind) && lot.quantity >= quantity && inventory.stock >= quantity
+    end
+
+    def self.expiration_allowed?(lot, kind)
+      kind == 'return' || lot.expires_on.nil? || lot.expires_on >= Date.current
     end
 
     def self.consume_serials!(lot, quantity, kind)
