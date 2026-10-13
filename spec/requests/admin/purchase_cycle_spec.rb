@@ -65,6 +65,31 @@ RSpec.describe 'Purchasing document and receiving lifecycle', type: :request do
     expect(order.total).to eq(48)
   end
 
+  it 'prefills a draft order from an approved quotation while keeping its negotiated prices' do
+    quotation = PurchaseQuotation.create!(
+      organization:, supplier:, currency: supplier.currency, status: :accepted, valid_until: Date.tomorrow
+    )
+    quotation.purchase_quotation_items.create!(
+      product:, quantity: 6, units_per_package: 3, unit_price: 42, discount_percent: 8
+    )
+
+    get new_admin_purchase_order_path(quotation_id: quotation.id)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('42')
+    expect(response.body).to include(quotation.code)
+  end
+
+  it 'rejects purchase orders referencing a draft quotation' do
+    quotation = PurchaseQuotation.create!(organization:, supplier:, currency: supplier.currency)
+    post admin_purchase_orders_path, params: {
+      purchase_order: order_attributes.merge(purchase_quotation_id: quotation.id)
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(organization.purchase_orders.count).to eq(0)
+  end
+
   it 'rejects products from another organization in the purchase order' do
     foreign = create(:product, organization: create(:organization))
     attributes = order_attributes

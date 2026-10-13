@@ -17,9 +17,9 @@ module Admin
     end
 
     def new
-      @order = new_record
+      @order = order_from_quotation || new_record
       authorize @order
-      3.times { @order.purchase_order_items.build }
+      3.times { @order.purchase_order_items.build } if @order.purchase_order_items.empty?
       load_purchase_catalogs
     end
 
@@ -60,6 +60,13 @@ module Admin
 
     def new_record
       current_organization.purchase_orders.new(requested_by: current_user)
+    end
+
+    def order_from_quotation
+      return if params[:quotation_id].blank?
+
+      quotation = current_organization.purchase_quotations.find(params[:quotation_id])
+      Purchases::BuildOrderFromQuotation.call(quotation:, requested_by: current_user)
     end
 
     def set_order

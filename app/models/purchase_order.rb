@@ -73,14 +73,20 @@ class PurchaseOrder < ApplicationRecord
   def validate_purchase_request
     return unless purchase_request
 
-    errors.add(:purchase_request, :invalid) unless purchase_request.organization_id == organization_id
+    valid = purchase_request.organization_id == organization_id &&
+            purchase_request.branch_id == branch_id && purchase_request.approved?
+    errors.add(:purchase_request, :invalid) unless valid
   end
 
   def validate_purchase_quotation
     return unless purchase_quotation
 
     valid = purchase_quotation.organization_id == organization_id &&
-            purchase_quotation.supplier_id == supplier_id
+            purchase_quotation.supplier_id == supplier_id &&
+            purchase_quotation.accepted? &&
+            (purchase_quotation.valid_until.nil? || purchase_quotation.valid_until >= Date.current) &&
+            (purchase_quotation.purchase_request_id.nil? ||
+             purchase_quotation.purchase_request_id == purchase_request_id)
     errors.add(:purchase_quotation, :invalid) unless valid
   end
 
