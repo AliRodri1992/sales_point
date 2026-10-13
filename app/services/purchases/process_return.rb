@@ -3,12 +3,14 @@
 module Purchases
   class ProcessReturn
     def self.call(purchase_return:, user:)
-      purchase_return.with_lock do
-        raise ArgumentError, 'Return already finalized' unless purchase_return.draft?
-        raise ArgumentError, 'Return requires items' if purchase_return.purchase_return_items.empty?
+      purchase_return.goods_receipt.with_lock do
+        purchase_return.with_lock do
+          raise ArgumentError, 'Return already finalized' unless purchase_return.draft?
+          raise ArgumentError, 'Return requires items' if purchase_return.purchase_return_items.empty?
 
-        purchase_return.purchase_return_items.each { |line| return_line!(line, user:) }
-        purchase_return.update!(status: :processed, processed_at: Time.current)
+          purchase_return.purchase_return_items.each { |line| return_line!(line, user:) }
+          purchase_return.update!(status: :processed, processed_at: Time.current)
+        end
       end
     end
 

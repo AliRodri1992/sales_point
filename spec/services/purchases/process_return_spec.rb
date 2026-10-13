@@ -70,6 +70,18 @@ RSpec.describe Purchases::ProcessReturn do
     expect(purchase_return.reload).to be_draft
   end
 
+  it 'does not permit returning merchandise that has already been sold' do
+    purchase_return = return_document(quantity: 5)
+    inventory = receipt_item.inventory_lots.first.inventory
+    Inventories::FefoAllocator.call(inventory:, quantity: 3, user:)
+
+    expect do
+      described_class.call(purchase_return:, user:)
+    end.to raise_error(ArgumentError, /Not enough stock|insufficient/)
+    expect(inventory.reload.stock).to eq(2)
+    expect(purchase_return.reload).to be_draft
+  end
+
   it 'prevents separate return documents exceeding the original receipt' do
     first = return_document(quantity: 3)
     described_class.call(purchase_return: first, user:)
