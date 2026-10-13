@@ -39,8 +39,8 @@ module Inventories
 
     def self.consume_lot!(inventory:, lot:, quantity:, user:, **options)
       inventory.with_lock do
-        validate_lot!(inventory:, lot:, quantity:)
         kind = options.fetch(:kind, 'sale')
+        validate_lot!(inventory:, lot:, quantity:, kind:)
         lot.update!(quantity: lot.quantity - quantity)
         consume_serials!(lot, quantity, kind) if inventory.product.tracking_mode == 'serial'
         Inventories::ApplyMovement.call(
@@ -50,10 +50,10 @@ module Inventories
       end
     end
 
-    def self.validate_lot!(inventory:, lot:, quantity:)
+    def self.validate_lot!(inventory:, lot:, quantity:, kind:)
+      expired = lot.expires_on.present? && lot.expires_on < Date.current
       valid = quantity.positive? && lot.inventory_id == inventory.id && lot.available? &&
-              (lot.expires_on.nil? || lot.expires_on >= Date.current) &&
-              lot.quantity >= quantity && inventory.stock >= quantity
+              (kind == 'return' || !expired) && lot.quantity >= quantity && inventory.stock >= quantity
       raise ArgumentError, 'Lot is not available or has insufficient stock' unless valid
     end
 

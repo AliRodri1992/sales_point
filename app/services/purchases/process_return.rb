@@ -17,7 +17,7 @@ module Purchases
     def self.return_line!(entry, user:)
       validate_available_return!(entry)
       remaining = entry.quantity
-      entry.goods_receipt_item.inventory_lots.available.order(:id).each do |lot|
+      entry.goods_receipt_item.inventory_lots.available.order(Arel.sql('expires_on ASC NULLS LAST'), :id).each do |lot|
         next if remaining.zero?
 
         quantity = [remaining, lot.quantity].min

@@ -82,6 +82,16 @@ RSpec.describe Purchases::ProcessReturn do
     expect(purchase_return.reload).to be_draft
   end
 
+  it 'permits returning an originally accepted lot that expired after receipt' do
+    purchase_return = return_document(quantity: 1)
+    receipt_item.inventory_lots.first.update!(expires_on: Date.yesterday)
+
+    described_class.call(purchase_return:, user:)
+
+    expect(purchase_return.reload).to be_processed
+    expect(receipt_item.inventory_lots.first.inventory.reload.stock).to eq(4)
+  end
+
   it 'prevents separate return documents exceeding the original receipt' do
     first = return_document(quantity: 3)
     described_class.call(purchase_return: first, user:)
