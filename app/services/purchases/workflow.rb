@@ -60,7 +60,9 @@ module Purchases
 
     def validate_transition!
       raise ArgumentError, 'Purchase order needs items' if @action == :submit && @order.purchase_order_items.empty?
-      raise ArgumentError, 'Cannot close before receiving merchandise' if @action == :close && !@order.goods_receipts.exists?
+      if @action == :close && !@order.goods_receipts.exists?
+        raise ArgumentError, 'Cannot close before receiving merchandise'
+      end
       raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
     end
 
