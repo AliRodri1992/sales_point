@@ -3,4 +3,3 @@
 class SupplierCreditNotePolicy < FinancialPolicy
   def post? = super
 end
-

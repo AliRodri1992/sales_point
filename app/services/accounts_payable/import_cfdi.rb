@@ -5,7 +5,10 @@ module AccountsPayable
     def self.call(invoice:, xml:)
       data = CfdiParser.call(xml:)
       raise ArgumentError, 'Issuer RFC differs from supplier' unless data[:issuer_rfc] == invoice.supplier.rfc
-      raise ArgumentError, 'Receiver RFC differs from organization' unless data[:receiver_rfc] == invoice.organization.tax_id
+      unless data[:receiver_rfc] == invoice.organization.tax_id
+        raise ArgumentError,
+              'Receiver RFC differs from organization'
+      end
 
       currency = Currency.find_by(code: data.fetch(:currency_code))
       raise ArgumentError, 'Unknown CFDI currency' unless currency
@@ -19,4 +22,3 @@ module AccountsPayable
     end
   end
 end
-

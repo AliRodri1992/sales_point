@@ -35,4 +35,3 @@ class FinancialPolicy < ApplicationPolicy
     end
   end
 end
-

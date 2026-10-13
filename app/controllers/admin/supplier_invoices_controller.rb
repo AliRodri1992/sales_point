@@ -93,7 +93,7 @@ module Admin
 
       response.headers['Cache-Control'] = 'no-store'
       send_data @invoice.xml_document.download, filename: "cfdi-#{@invoice.id}.xml",
-               type: 'application/xml', disposition: 'attachment'
+                                                type: 'application/xml', disposition: 'attachment'
     end
 
     private
@@ -107,11 +107,11 @@ module Admin
     end
 
     def invoice_params
-      params.expect(supplier_invoice: [
-        :supplier_id, :purchase_order_id, :currency_id, :series, :folio, :issued_on, :received_on,
-        :due_on, :subtotal, :discount, :tax_amount, :total, :exchange_rate, :notes,
-        :xml_document, :pdf_document
-      ])
+      params.expect(supplier_invoice: %i[
+                      supplier_id purchase_order_id currency_id series folio issued_on received_on
+                      due_on subtotal discount tax_amount total exchange_rate notes
+                      xml_document pdf_document
+                    ])
     end
 
     def apply_attributes

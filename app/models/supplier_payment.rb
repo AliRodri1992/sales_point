@@ -28,4 +28,3 @@ class SupplierPayment < ApplicationRecord
     end
   end
 end
-

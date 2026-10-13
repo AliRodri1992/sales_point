@@ -51,4 +51,3 @@ class SupplierInvoice < ApplicationRecord
     self.receiver_rfc = receiver_rfc.to_s.strip.upcase.presence
   end
 end
-

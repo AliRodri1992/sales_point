@@ -3,4 +3,3 @@
 class AccountPayablePolicy < FinancialPolicy
   def create? = false
 end
-

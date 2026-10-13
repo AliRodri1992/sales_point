@@ -42,9 +42,8 @@ class AccountPayable < ApplicationRecord
   def consistent_invoice
     return unless supplier_invoice
 
-    unless supplier_invoice.organization_id == organization_id && supplier_invoice.supplier_id == supplier_id
-      errors.add(:supplier_invoice, :invalid)
-    end
+    return if supplier_invoice.organization_id == organization_id && supplier_invoice.supplier_id == supplier_id
+
+    errors.add(:supplier_invoice, :invalid)
   end
 end
-

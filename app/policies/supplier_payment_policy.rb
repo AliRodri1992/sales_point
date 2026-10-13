@@ -3,4 +3,3 @@
 class SupplierPaymentPolicy < FinancialPolicy
   def post? = apply?
 end
-

@@ -53,4 +53,3 @@ class SupplierBankAccount < ApplicationRecord
     errors.add(:clabe, :invalid) unless (10 - (sum % 10)) % 10 == clabe[-1].to_i
   end
 end
-

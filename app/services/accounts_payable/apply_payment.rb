@@ -21,7 +21,7 @@ module AccountsPayable
           payable = payables.fetch(id)
           raise ArgumentError, 'Invalid payment amount' unless amount.positive?
           raise ArgumentError, 'Different supplier or currency' unless payable.supplier_id == payment.supplier_id &&
-                payable.supplier_invoice.currency_id == payment.currency_id
+                                                                       payable.supplier_invoice.currency_id == payment.currency_id
           raise ArgumentError, 'Invoice not posted' unless payable.supplier_invoice.posted?
           raise ArgumentError, 'Payment exceeds open balance' if amount > payable.balance
 
@@ -38,4 +38,3 @@ module AccountsPayable
     end
   end
 end
-

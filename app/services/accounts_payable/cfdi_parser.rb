@@ -9,7 +9,7 @@ module AccountsPayable
       document = Nokogiri::XML(xml) { |options| options.strict.nonet }
       root = document.root
       raise ArgumentError, 'Not a CFDI 4.0 document' unless root&.name == 'Comprobante' &&
-        root.namespace&.href == 'http://www.sat.gob.mx/cfd/4' && root['Version'] == '4.0'
+                                                            root.namespace&.href == 'http://www.sat.gob.mx/cfd/4' && root['Version'] == '4.0'
       raise ArgumentError, 'Incorrect CFDI type' unless root['TipoDeComprobante'] == expected_type
 
       issuer = root.at_xpath('./*[local-name()="Emisor"]')
@@ -45,4 +45,3 @@ module AccountsPayable
     end
   end
 end
-

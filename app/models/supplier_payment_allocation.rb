@@ -18,4 +18,3 @@ class SupplierPaymentAllocation < ApplicationRecord
     errors.add(:account_payable, :invalid) unless ids.uniq.one? && suppliers.uniq.one?
   end
 end
-

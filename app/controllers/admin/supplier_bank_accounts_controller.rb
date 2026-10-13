@@ -76,10 +76,10 @@ module Admin
     end
 
     def bank_params
-      params.expect(supplier_bank_account: [
-        :sat_bank_code, :bank_name, :holder_name,
-                                                     :account_number, :clabe, :currency_code, :primary
-      ])
+      params.expect(supplier_bank_account: %i[
+                      sat_bank_code bank_name holder_name
+                      account_number clabe currency_code primary
+                    ])
     end
 
     def save_account

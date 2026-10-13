@@ -19,4 +19,3 @@ class SupplierBankAccountPolicy < FinancialPolicy
     end
   end
 end
-

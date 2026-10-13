@@ -29,9 +29,8 @@ class SupplierCreditNote < ApplicationRecord
                             supplier_invoice.organization_id != organization_id)
       errors.add(:supplier_invoice, :invalid)
     end
-    if purchase_return && purchase_return.organization_id != organization_id
-      errors.add(:purchase_return, :invalid)
-    end
+    return unless purchase_return && purchase_return.organization_id != organization_id
+
+    errors.add(:purchase_return, :invalid)
   end
 end
-

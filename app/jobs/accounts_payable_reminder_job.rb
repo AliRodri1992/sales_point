@@ -4,7 +4,8 @@ class AccountsPayableReminderJob < ApplicationJob
   queue_as :default
 
   def perform(today = Date.current)
-    AccountPayable.outstanding.where(due_on: ..(today + 7.days)).includes(:organization, :supplier).find_each do |payable|
+    AccountPayable.outstanding.where(due_on: ..(today + 7.days)).includes(:organization,
+                                                                          :supplier).find_each do |payable|
       next unless payable.balance.positive?
 
       stage = reminder_stage(payable.due_on, today)
@@ -26,7 +27,8 @@ class AccountsPayableReminderJob < ApplicationJob
     days = (due_on - today).to_i
     return 'overdue' if days.negative?
     return 'today' if days.zero?
-    return "days_#{days}" if [1, 3, 7].include?(days)
+
+    "days_#{days}" if [1, 3, 7].include?(days)
   end
 
   def deliver_once(payable:, recipient:, stage:, today:)
@@ -46,4 +48,3 @@ class AccountsPayableReminderJob < ApplicationJob
     recipient.broadcast_notifications_refresh if sent
   end
 end
-

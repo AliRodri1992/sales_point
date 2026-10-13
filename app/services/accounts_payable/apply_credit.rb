@@ -9,9 +9,15 @@ module AccountsPayable
         amount = BigDecimal(amount.to_s)
         raise ArgumentError, 'Credit must be posted' unless credit_note.posted?
         raise ArgumentError, 'Invoice must be posted' unless account_payable.supplier_invoice.posted?
-        raise ArgumentError, 'Different organization or supplier' unless credit_note.organization_id == account_payable.organization_id &&
-              credit_note.supplier_id == account_payable.supplier_id
-        raise ArgumentError, 'Different currency' unless credit_note.currency_id == account_payable.supplier_invoice.currency_id
+        unless credit_note.organization_id == account_payable.organization_id &&
+               credit_note.supplier_id == account_payable.supplier_id
+          raise ArgumentError,
+                'Different organization or supplier'
+        end
+        unless credit_note.currency_id == account_payable.supplier_invoice.currency_id
+          raise ArgumentError,
+                'Different currency'
+        end
         raise ArgumentError, 'Invalid credit amount' unless amount.positive?
         raise ArgumentError, 'Insufficient available credit' if amount > credit_note.available_amount
         raise ArgumentError, 'Credit exceeds open balance' if amount > account_payable.balance
@@ -27,4 +33,3 @@ module AccountsPayable
     end
   end
 end
-

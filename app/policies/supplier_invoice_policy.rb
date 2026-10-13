@@ -3,4 +3,3 @@
 class SupplierInvoicePolicy < FinancialPolicy
   def download? = show?
 end
-

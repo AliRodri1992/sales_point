@@ -15,8 +15,8 @@ module Admin
     def show
       authorize @payment
       @payables = current_organization.account_payables
-                  .where(supplier_id: @payment.supplier_id)
-                  .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
+                                      .where(supplier_id: @payment.supplier_id)
+                                      .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
     end
 
     def new
@@ -74,9 +74,9 @@ module Admin
     end
 
     def payment_params
-      params.expect(supplier_payment: [
-        :supplier_id, :currency_id, :supplier_bank_account_id, :paid_on, :amount, :reference, :notes
-      ])
+      params.expect(supplier_payment: %i[
+                      supplier_id currency_id supplier_bank_account_id paid_on amount reference notes
+                    ])
     end
   end
 end

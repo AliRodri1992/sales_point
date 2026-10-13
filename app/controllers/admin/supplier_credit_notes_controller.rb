@@ -15,8 +15,8 @@ module Admin
     def show
       authorize @credit
       @payables = current_organization.account_payables
-                  .where(supplier_id: @credit.supplier_id)
-                  .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
+                                      .where(supplier_id: @credit.supplier_id)
+                                      .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
     end
 
     def new
@@ -72,7 +72,7 @@ module Admin
       authorize @credit, :apply?
       payable = current_organization.account_payables.find(params[:account_payable_id])
       AccountsPayable::ApplyCredit.call(credit_note: @credit, account_payable: payable,
-                                       amount: params[:amount], actor: current_user)
+                                        amount: params[:amount], actor: current_user)
       redirect_to admin_supplier_credit_note_path(@credit)
     rescue ArgumentError, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique => e
       financial_error(e, admin_supplier_credit_note_path(@credit))
@@ -81,7 +81,10 @@ module Admin
     def cancel
       authorize @credit, :cancel?
       @credit.with_lock do
-        raise ArgumentError, 'Credit cannot be cancelled after allocation' if @credit.supplier_credit_allocations.exists?
+        if @credit.supplier_credit_allocations.exists?
+          raise ArgumentError,
+                'Credit cannot be cancelled after allocation'
+        end
 
         @credit.update!(status: :cancelled)
         FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
@@ -103,20 +106,23 @@ module Admin
     end
 
     def credit_params
-      params.expect(supplier_credit_note: [
-        :supplier_id, :currency_id, :supplier_invoice_id, :purchase_return_id,
-        :uuid, :folio, :issued_on, :total, :notes, :xml_document
-      ])
+      params.expect(supplier_credit_note: %i[
+                      supplier_id currency_id supplier_invoice_id purchase_return_id
+                      uuid folio issued_on total notes xml_document
+                    ])
     end
 
     def validate_cfdi_supplier!(data)
       supplier = current_organization.suppliers.find_by(id: @credit.supplier_id)
       raise ArgumentError, 'Invalid supplier' unless supplier
       raise ArgumentError, 'Issuer RFC does not match supplier' unless data[:issuer_rfc] == supplier.rfc
-      raise ArgumentError, 'Receiver RFC does not match organization' unless data[:receiver_rfc] == current_organization.tax_id
-      unless @credit.currency_id == Currency.find_by(code: data[:currency_code])&.id
-        raise ArgumentError, 'Currency does not match XML'
+      unless data[:receiver_rfc] == current_organization.tax_id
+        raise ArgumentError,
+              'Receiver RFC does not match organization'
       end
+      return if @credit.currency_id == Currency.find_by(code: data[:currency_code])&.id
+
+      raise ArgumentError, 'Currency does not match XML'
     end
 
     def load_catalogs

@@ -6,4 +6,3 @@ class FinancialReminderDelivery < ApplicationRecord
   belongs_to :recipient, class_name: 'User'
   validates :event_key, presence: true, uniqueness: true
 end
-

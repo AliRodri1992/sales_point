@@ -16,4 +16,3 @@ class SupplierInvoiceReceipt < ApplicationRecord
     errors.add(:goods_receipt, :invalid) unless valid
   end
 end
-

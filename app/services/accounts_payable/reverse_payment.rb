@@ -18,4 +18,3 @@ module AccountsPayable
     end
   end
 end
-

@@ -8,4 +8,3 @@ class AccountsPayableNotification < Noticed::Event
       supplier: record.supplier.name, amount: record.balance.to_s, due_on: I18n.l(record.due_on))
   end
 end
-

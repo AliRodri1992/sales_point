@@ -18,4 +18,3 @@ class FinancialAuditEvent < ApplicationRecord
 
   before_destroy { throw(:abort) }
 end
-

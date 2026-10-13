@@ -6,4 +6,3 @@ namespace :accounts_payable do
     AccountsPayableReminderJob.perform_later
   end
 end
-
