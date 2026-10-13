@@ -47,8 +47,10 @@ module Admin
     private
 
     def return_params
-      params.expect(purchase_return: [:reason, :notes,
-                                      { purchase_return_items_attributes: %i[goods_receipt_item_id quantity notes] }])
+      params.require(:purchase_return).permit(
+        :reason, :notes,
+        purchase_return_items_attributes: %i[goods_receipt_item_id quantity notes]
+      )
     end
   end
 end
