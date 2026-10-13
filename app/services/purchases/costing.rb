@@ -3,7 +3,7 @@
 module Purchases
   class Costing
     def self.apply!(receipt)
-      receipt.goods_receipt_items.includes(:purchase_order_item).each do |entry|
+      receipt.goods_receipt_items.includes(:purchase_order_item).find_each do |entry|
         allocate!(entry)
       end
     end
@@ -59,12 +59,12 @@ module Purchases
       ((actual.nil? ? estimate * order_weight : actual * receipt_weight)).round(6)
     end
 
-    def self.landed_cost(entry:, goods:, freight:, insurance:, exchange_rate:,
-                         extra_expenses: 0, additional_discount: 0)
+    def self.landed_cost(entry:, goods:, exchange_rate:, **costs)
       return 0 unless entry.accepted_quantity.positive?
 
-      amount = goods + freight + insurance + extra_expenses - additional_discount
-      raise ArgumentError, 'Receipt discounts exceed the accepted merchandise value' if amount.negative?
+      amount = goods + costs.fetch(:freight) + costs.fetch(:insurance) +
+               costs.fetch(:extra_expenses, 0) - costs.fetch(:additional_discount, 0)
+      raise ArgumentError, 'Receipt discount exceeds accepted value' if amount.negative?
 
       (amount * exchange_rate / entry.accepted_quantity).round(6)
     end

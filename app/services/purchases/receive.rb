@@ -2,17 +2,17 @@
 
 module Purchases
   class Receive
-    def self.call(order:, user:, idempotency_key:, entries:, notes: nil, actual_costs: {})
-      new(order:, user:, idempotency_key:, entries:, notes:, actual_costs:).call
+    def self.call(order:, user:, idempotency_key:, entries:, **options)
+      new(order:, user:, idempotency_key:, entries:, options:).call
     end
 
-    def initialize(order:, user:, idempotency_key:, entries:, notes:, actual_costs:)
+    def initialize(order:, user:, idempotency_key:, entries:, options:)
       @order = order
       @user = user
       @idempotency_key = idempotency_key
       @entries = entries
-      @notes = notes
-      @actual_costs = actual_costs
+      @notes = options[:notes]
+      @actual_costs = options.fetch(:actual_costs, {})
     end
 
     def call
@@ -52,13 +52,13 @@ module Purchases
 
     def payload_digest
       @payload_digest ||= Digest::SHA256.hexdigest(
-        JSON.generate({
-          lines: @entries.map { |entry| entry.to_h.deep_stringify_keys.sort.to_h }
-                         .sort_by { |line| line['purchase_order_item_id'].to_s },
-          notes: @notes,
-          actual_costs: @actual_costs
-        })
+        JSON.generate(lines: canonical_entries, notes: @notes, actual_costs: @actual_costs)
       )
+    end
+
+    def canonical_entries
+      @entries.map { |entry| entry.to_h.deep_stringify_keys.sort.to_h }
+              .sort_by { |line| line['purchase_order_item_id'].to_s }
     end
 
     def validate_order!

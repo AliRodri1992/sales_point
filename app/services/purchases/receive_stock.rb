@@ -61,12 +61,19 @@ module Purchases
     end
 
     def validate_serial_tracking!
-      accepted = @item.accepted_quantity
-      damaged = @item.damaged_quantity
       numbers = accepted_serials + damaged_serials
-      counts_match = accepted.frac.zero? && accepted_serials.size == accepted.to_i &&
-                     damaged.frac.zero? && damaged_serials.size == damaged.to_i
-      raise ArgumentError, 'Serial count must match accepted and damaged units' unless counts_match && numbers.uniq.size == numbers.size
+      return if serial_quantities_match? && numbers.uniq.size == numbers.size
+
+      raise ArgumentError, 'Serial count must match accepted and damaged units'
+    end
+
+    def serial_quantities_match?
+      valid_serial_quantity?(@item.accepted_quantity, accepted_serials) &&
+        valid_serial_quantity?(@item.damaged_quantity, damaged_serials)
+    end
+
+    def valid_serial_quantity?(quantity, serials)
+      quantity.frac.zero? && serials.size == quantity.to_i
     end
 
     def create_lot(inventory, quantity:, status:)

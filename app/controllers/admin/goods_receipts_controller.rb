@@ -4,6 +4,8 @@ module Admin
   class GoodsReceiptsController < ApplicationController
     include PurchasesAccess
 
+    QUANTITY_FIELDS = %w[delivered_quantity accepted_quantity damaged_quantity].freeze
+
     before_action :set_order, only: %i[index new create]
 
     def index
@@ -42,7 +44,7 @@ module Admin
 
     def receiving_entries
       params.fetch(:entries, {}).values.map(&:to_unsafe_h).reject do |entry|
-        %w[delivered_quantity accepted_quantity damaged_quantity].all? do |field|
+        QUANTITY_FIELDS.all? do |field|
           zero_quantity?(entry[field])
         end
       end
