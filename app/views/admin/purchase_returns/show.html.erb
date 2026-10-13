@@ -7,7 +7,8 @@
                  admin_purchase_order_path(@return.goods_receipt.purchase_order),
                  class: 'text-emerald-700' %></p>
   <% @return.purchase_return_items.includes(goods_receipt_item: { purchase_order_item: :product }).each do |item| %>
-    <p><%= item.goods_receipt_item.purchase_order_item.product.name %>: <%= item.quantity %></p>
+    <p><%= item.goods_receipt_item.purchase_order_item.product.name %>: <%= item.quantity %>
+      (<%= t(item.stock_quarantined? ? 'admin.purchases.quarantined_merchandise' : 'admin.purchases.accepted_merchandise') %>)</p>
   <% end %>
   <% if @return.draft? && policy(@return).process? %>
     <%= button_to t('admin.purchases.process_return'), process_return_admin_purchase_return_path(@return),

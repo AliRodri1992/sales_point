@@ -8,7 +8,7 @@ class PurchaseReturn < ApplicationRecord
   belongs_to :requested_by, class_name: 'User'
   has_many :purchase_return_items, dependent: :restrict_with_exception
 
-  accepts_nested_attributes_for :purchase_return_items, reject_if: :all_blank
+  accepts_nested_attributes_for :purchase_return_items, reject_if: ->(attrs) { attrs['quantity'].blank? }
   enum :status, { draft: 'draft', processed: 'processed', cancelled: 'cancelled' }, validate: true
   enum :reason, { damaged: 'damaged', wrong_product: 'wrong_product',
                   expired: 'expired', surplus: 'surplus' }, validate: true

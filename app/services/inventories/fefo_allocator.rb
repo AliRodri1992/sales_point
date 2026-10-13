@@ -41,7 +41,8 @@ module Inventories
       inventory.with_lock do
         kind = options.fetch(:kind, 'sale')
         validate_lot!(inventory:, lot:, quantity:, kind:)
-        lot.update!(quantity: lot.quantity - quantity)
+        remaining = lot.quantity - quantity
+        lot.update!(quantity: remaining, status: remaining.zero? ? :depleted : :available)
         consume_serials!(lot, quantity, kind) if inventory.product.tracking_mode == 'serial'
         Inventories::ApplyMovement.call(
           inventory:, quantity: -quantity, kind:, user:,

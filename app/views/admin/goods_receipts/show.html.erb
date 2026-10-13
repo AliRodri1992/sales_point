@@ -13,7 +13,7 @@
     <% end %>
   </div>
   <table class="min-w-full text-left text-sm">
-    <thead><tr><% %w[product delivered_quantity accepted_quantity damaged_quantity landed_unit_cost lot_code expires_on].each do |key| %>
+    <thead><tr><% %w[product delivered_quantity accepted_quantity damaged_quantity unclassified_quantity landed_unit_cost lot_code expires_on].each do |key| %>
       <th class="p-3"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead><tbody>
     <% @receipt.goods_receipt_items.includes(purchase_order_item: :product).each do |item| %>
       <tr class="border-t border-slate-100">
@@ -21,6 +21,7 @@
         <td class="p-3"><%= item.delivered_quantity %></td>
         <td class="p-3"><%= item.accepted_quantity %></td>
         <td class="p-3"><%= item.damaged_quantity %></td>
+        <td class="p-3"><%= item.delivered_quantity - item.accepted_quantity - item.damaged_quantity %></td>
         <td class="p-3"><%= item.landed_unit_cost %></td>
         <td class="p-3"><%= item.lot_code %></td>
         <td class="p-3"><%= item.expires_on %></td>

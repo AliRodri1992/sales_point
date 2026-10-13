@@ -26,7 +26,7 @@
         </div>
         <div><%= label_tag "return_quantity_#{index}", t('admin.purchases.quantity'), class: 'mb-1 block text-sm' %>
           <%= number_field_tag "purchase_return[purchase_return_items_attributes][#{index}][quantity]", nil,
-                               min: 0.001, max: entry.accepted_quantity, step: 0.001,
+                               min: 0.001, max: entry.accepted_quantity + entry.damaged_quantity, step: 0.001,
                                class: 'w-full rounded-xl border border-slate-200 p-2' %></div>
       </div>
     <% end %>

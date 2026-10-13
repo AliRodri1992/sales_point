@@ -125,6 +125,40 @@ RSpec.describe Purchases::ProcessReturn do
     expect(Inventory.find_by!(branch:, product:).stock).to eq(1)
   end
 
+  it 'rejects quarantined returns in excess of damaged received units' do
+    source = Purchases::Receive.call(
+      order: another_order, user:, idempotency_key: 'quarantine-overreturn',
+      entries: [{ purchase_order_item_id: another_line.id, delivered_quantity: 3,
+                  accepted_quantity: 1, damaged_quantity: 2 }]
+    )
+    line = source.goods_receipt_items.first
+    purchase_return = PurchaseReturn.create!(
+      organization:, goods_receipt: source, requested_by: user, reason: :damaged
+    )
+    purchase_return.purchase_return_items.create!(
+      goods_receipt_item: line, quantity: 3, stock_disposition: :quarantined
+    )
+
+    expect do
+      described_class.call(purchase_return:, user:)
+    end.to raise_error(ArgumentError, /exceeds received/)
+    expect(line.inventory_lots.quarantined.sum(:quantity)).to eq(2)
+    expect(line.inventory_lots.first.inventory.reload.stock).to eq(1)
+  end
+
+  it 'ignores unselected return lines but retains selected items' do
+    purchase_return = PurchaseReturn.create!(
+      organization:, goods_receipt: receipt, requested_by: user,
+      purchase_return_items_attributes: [
+        { goods_receipt_item_id: receipt_item.id, quantity: '' },
+        { goods_receipt_item_id: receipt_item.id, quantity: 1 }
+      ]
+    )
+    expect(purchase_return.purchase_return_items.size).to eq(1)
+    described_class.call(purchase_return:, user:)
+    expect(purchase_return.reload).to be_processed
+  end
+
   def another_order
     @another_order ||= PurchaseOrder.create!(
       organization:, branch:, supplier:, currency: supplier.currency,

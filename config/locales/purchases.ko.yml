@@ -1,6 +1,7 @@
 ko:
   admin:
     purchases:
+      unclassified_quantity: "미승인·미분류 수량"
       return_stock_disposition: "상품 상태"
       accepted_merchandise: "정상 입고 상품"
       quarantined_merchandise: "격리된 손상 상품"

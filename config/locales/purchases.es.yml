@@ -1,6 +1,7 @@
 es:
   admin:
     purchases:
+      unclassified_quantity: "No aceptada ni clasificada"
       return_stock_disposition: "Condición de las mercancías"
       accepted_merchandise: "Mercancía aceptada"
       quarantined_merchandise: "Mercancía dañada en cuarentena"
