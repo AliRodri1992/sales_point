@@ -34,9 +34,10 @@ RSpec.describe Purchases::Costing do
   end
 
   it 'returns zero cost when no merchandise is accepted' do
-    expect(described_class.landed_cost(
+    cost = described_class.landed_cost(
       entry: GoodsReceiptItem.new(accepted_quantity: 0),
       goods: 0, freight: 10, insurance: 0, exchange_rate: 1
-    )).to eq(0)
+    )
+    expect(cost).to eq(0)
   end
 end

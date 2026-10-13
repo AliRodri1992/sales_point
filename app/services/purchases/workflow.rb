@@ -53,9 +53,7 @@ module Purchases
     private
 
     def validate_transition!
-      if @action == :submit && @order.purchase_order_items.empty?
-        raise ArgumentError, 'Purchase order needs items'
-      end
+      raise ArgumentError, 'Purchase order needs items' if @action == :submit && @order.purchase_order_items.empty?
       raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
       return unless @action == :cancel && @order.goods_receipts.exists?
 
