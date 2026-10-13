@@ -90,6 +90,7 @@ module Admin
     def transition(action)
       authorize @order, :"#{action}?"
       Purchases::Workflow.call(order: @order, action:, user: current_user, notes: params[:notes])
+      Purchases::Notify.call(record: @order, action: "order_#{action}", user: current_user)
       redirect_to admin_purchase_order_path(@order)
     rescue ArgumentError => e
       reject_purchase(e, admin_purchase_order_path(@order))

@@ -30,6 +30,7 @@ module Admin
         order: @order, user: current_user, idempotency_key: params.require(:idempotency_key),
         entries:, notes: params[:notes], actual_costs: actual_cost_params
       )
+      Purchases::Notify.call(record: @receipt, action: 'receipt_posted', user: current_user)
       redirect_to admin_goods_receipt_path(@receipt)
     rescue ActiveRecord::RecordInvalid, ArgumentError, ActiveRecord::RecordNotUnique => e
       reject_purchase(e, new_admin_purchase_order_goods_receipt_path(@order))

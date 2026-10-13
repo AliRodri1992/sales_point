@@ -39,6 +39,7 @@ module Admin
       @return = policy_scope(current_organization.purchase_returns).find(params[:id])
       authorize @return, :process?
       Purchases::ProcessReturn.call(purchase_return: @return, user: current_user)
+      Purchases::Notify.call(record: @return, action: 'return_processed', user: current_user)
       redirect_to admin_purchase_return_path(@return)
     rescue ArgumentError, ActiveRecord::RecordInvalid => e
       reject_purchase(e, admin_purchase_return_path(@return))

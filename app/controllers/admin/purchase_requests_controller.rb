@@ -96,6 +96,7 @@ module Admin
         decision = action == :approve ? 'approved' : 'rejected'
         Purchases::Workflow.decide_request!(@request, status: decision, user: current_user)
       end
+      Purchases::Notify.call(record: @request, action: "request_#{action}", user: current_user)
       redirect_to admin_purchase_request_path(@request)
     rescue ArgumentError => e
       reject_purchase(e, admin_purchase_request_path(@request))

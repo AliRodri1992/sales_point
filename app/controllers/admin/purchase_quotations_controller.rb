@@ -98,6 +98,7 @@ module Admin
 
         @quotation.update!(status:)
       end
+      Purchases::Notify.call(record: @quotation, action: "quotation_#{status}", user: current_user)
       redirect_to admin_purchase_quotation_path(@quotation)
     rescue ArgumentError => e
       reject_purchase(e, admin_purchase_quotation_path(@quotation))
