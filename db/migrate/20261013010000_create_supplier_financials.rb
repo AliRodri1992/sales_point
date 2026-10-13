@@ -17,7 +17,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
       t.timestamps
       t.index %i[organization_id supplier_id primary], name: 'idx_supplier_bank_accounts_org_supplier'
       t.index :deleted_at
-      t.index %i[supplier_id primary], unique: true, where: 'primary = true AND deleted_at IS NULL',
+      t.index %i[supplier_id primary], unique: true, where: '"primary" = true AND deleted_at IS NULL',
               name: 'idx_supplier_one_primary_bank_account'
       t.foreign_key :sat_banks, column: :sat_bank_code, primary_key: :code
     end
