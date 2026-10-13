@@ -91,7 +91,8 @@ module Admin
 
         @request.update!(status: :cancelled)
       else
-        Purchases::Workflow.decide_request!(@request, status: action == :approve ? 'approved' : 'rejected', user: current_user)
+        decision = action == :approve ? 'approved' : 'rejected'
+        Purchases::Workflow.decide_request!(@request, status: decision, user: current_user)
       end
       redirect_to admin_purchase_request_path(@request)
     rescue ArgumentError => e

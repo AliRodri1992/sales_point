@@ -39,7 +39,9 @@ module Purchases
       receipt = GoodsReceipt.find_by(organization: @order.organization, idempotency_key: @idempotency_key)
       return unless receipt
 
-      raise ArgumentError, 'Operation key belongs to a different purchase order' if receipt.purchase_order_id != @order.id
+      unless receipt.purchase_order_id == @order.id
+        raise ArgumentError, 'Operation key belongs to a different purchase order'
+      end
 
       receipt
     end
