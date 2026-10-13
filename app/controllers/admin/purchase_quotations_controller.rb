@@ -79,6 +79,8 @@ module Admin
       @quotation = policy_scope(current_organization.purchase_quotations).find(params[:id])
     end
 
+    # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
+    # rubocop:disable Rails/StrongParametersExpect
     def quotation_params
       params.require(:purchase_quotation).permit(
         :supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
@@ -88,6 +90,7 @@ module Admin
         ]
       )
     end
+    # rubocop:enable Rails/StrongParametersExpect
 
     def change_status!(status, from:, permission:)
       authorize @quotation, permission

@@ -75,12 +75,15 @@ module Admin
       @request = policy_scope(current_organization.purchase_requests).find(params[:id])
     end
 
+    # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
+    # rubocop:disable Rails/StrongParametersExpect
     def request_params
       params.require(:purchase_request).permit(
         :branch_id, :needed_on, :notes,
         purchase_request_items_attributes: %i[id product_id quantity notes]
       )
     end
+    # rubocop:enable Rails/StrongParametersExpect
 
     def transition(action)
       authorize @request, action == :submit ? :submit? : :"#{action}?"

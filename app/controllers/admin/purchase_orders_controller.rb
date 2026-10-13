@@ -66,6 +66,8 @@ module Admin
       @order = policy_scope(current_organization.purchase_orders).find(params[:id])
     end
 
+    # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
+    # rubocop:disable Rails/StrongParametersExpect
     def order_params
       params.require(:purchase_order).permit(
         :branch_id, :supplier_id, :currency_id, :expected_on, :notes,
@@ -77,6 +79,7 @@ module Admin
         ]
       )
     end
+    # rubocop:enable Rails/StrongParametersExpect
 
     def transition(action)
       authorize @order, :"#{action}?"

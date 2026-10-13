@@ -46,11 +46,14 @@ module Admin
 
     private
 
+    # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
+    # rubocop:disable Rails/StrongParametersExpect
     def return_params
       params.require(:purchase_return).permit(
         :reason, :notes,
         purchase_return_items_attributes: %i[goods_receipt_item_id quantity notes]
       )
     end
+    # rubocop:enable Rails/StrongParametersExpect
   end
 end
