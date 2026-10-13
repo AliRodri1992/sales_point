@@ -23,6 +23,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_invoices do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier, null: false, foreign_key: true
       t.references :purchase_order, foreign_key: true
@@ -57,6 +58,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_invoice_lines do |t|
+      t.datetime :deleted_at
       t.references :supplier_invoice, null: false, foreign_key: true
       t.string :description, null: false, limit: 500
       t.decimal :quantity, precision: 18, scale: 6, null: false
@@ -67,6 +69,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_invoice_receipts do |t|
+      t.datetime :deleted_at
       t.references :supplier_invoice, null: false, foreign_key: true
       t.references :goods_receipt, null: false, foreign_key: true
       t.timestamps
@@ -75,6 +78,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :account_payables do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier, null: false, foreign_key: true
       t.references :supplier_invoice, null: false, foreign_key: true, index: { unique: true }
@@ -86,6 +90,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_payments do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier, null: false, foreign_key: true
       t.references :currency, null: false, foreign_key: true
@@ -104,6 +109,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_payment_allocations do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier_payment, null: false, foreign_key: true
       t.references :account_payable, null: false, foreign_key: true
@@ -115,6 +121,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_credit_notes do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier, null: false, foreign_key: true
       t.references :currency, null: false, foreign_key: true
@@ -134,6 +141,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :supplier_credit_allocations do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :supplier_credit_note, null: false, foreign_key: true
       t.references :account_payable, null: false, foreign_key: true
@@ -145,6 +153,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :financial_audit_events do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :actor, foreign_key: { to_table: :users }
       t.string :event, null: false, limit: 80
@@ -157,6 +166,7 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
     end
 
     create_table :financial_reminder_deliveries do |t|
+      t.datetime :deleted_at
       t.references :organization, null: false, foreign_key: true
       t.references :account_payable, null: false, foreign_key: true
       t.references :recipient, null: false, foreign_key: { to_table: :users }
