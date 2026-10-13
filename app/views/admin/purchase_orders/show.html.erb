@@ -42,7 +42,7 @@
                     class: 'rounded-xl border border-rose-300 px-5 py-3 text-rose-700' %>
     <% end %>
     <% if @order.approved? && policy(@order).dispatch? %>
-      <%= button_to t('admin.purchases.dispatch'), dispatch_admin_purchase_order_path(@order),
+      <%= button_to t('admin.purchases.dispatch'), send_order_admin_purchase_order_path(@order),
                     class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
     <% end %>
     <% if @order.receivable? && policy(@order).receive? %>

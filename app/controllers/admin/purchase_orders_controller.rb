@@ -4,7 +4,7 @@ module Admin
   class PurchaseOrdersController < ApplicationController
     include PurchasesAccess
 
-    before_action :set_order, only: %i[show edit update submit approve reject dispatch cancel]
+    before_action :set_order, only: %i[show edit update submit approve reject send_order cancel]
 
     def index
       authorize new_record, :index?
@@ -53,7 +53,7 @@ module Admin
     def submit = transition(:submit)
     def approve = transition(:approve)
     def reject = transition(:reject)
-    def dispatch = transition(:dispatch)
+    def send_order = transition(:dispatch)
     def cancel = transition(:cancel)
 
     private

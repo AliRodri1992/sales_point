@@ -61,7 +61,7 @@ Rails.application.routes.draw do
         post :submit
         post :approve
         post :reject
-        post :dispatch
+        post :send_order
         post :cancel
       end
     end
