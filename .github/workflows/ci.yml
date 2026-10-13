@@ -138,6 +138,13 @@ jobs:
       - name: Prepare test database
         run: bin/rails db:prepare
 
+      - name: Export generated schema for synchronization
+        run: |
+          echo "__SCHEMA_START__"
+          base64 -w0 db/schema.rb
+          echo
+          echo "__SCHEMA_END__"
+
       - name: Run RSpec
         env:
           COVERAGE: true
