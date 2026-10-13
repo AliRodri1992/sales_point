@@ -7,7 +7,7 @@ module Purchases
       quantities = parsed_quantities(data)
       validate_quantities!(order: receipt.purchase_order, line:, **quantities)
       item = save_item(receipt:, line:, data:, quantities:)
-      Purchases::ReceiveStock.call(item:, data:) if quantities[:accepted].positive?
+      Purchases::ReceiveStock.call(item:, data:) if quantities[:accepted].positive? || quantities[:damaged].positive?
       item
     end
 

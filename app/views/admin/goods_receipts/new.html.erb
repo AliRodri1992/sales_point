@@ -26,6 +26,14 @@
         <div><%= label_tag "entries_#{index}_serial_numbers", t('admin.purchases.serial_numbers'), class: 'mb-1 block text-sm' %>
           <%= text_area_tag "entries[#{index}][serial_numbers]", nil, rows: 2,
                             class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+        <% if item.product.tracking_serial? %>
+          <div class="md:col-span-3">
+            <%= label_tag "entries_#{index}_damaged_serial_numbers", t('admin.purchases.damaged_serial_numbers'),
+                          class: 'mb-1 block text-sm' %>
+            <%= text_area_tag "entries[#{index}][damaged_serial_numbers]", nil, rows: 2,
+                              class: 'w-full rounded-xl border border-slate-200 p-3' %>
+          </div>
+        <% end %>
       </div>
     </section>
   <% end %>

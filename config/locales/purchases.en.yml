@@ -58,6 +58,7 @@ en:
       outstanding: "Outstanding"
       lot_code: "Lot number"
       expires_on: "Expiry date"
+      damaged_serial_numbers: "Damaged merchandise serial numbers"
       serial_numbers: "Serial numbers (one per line)"
       tracking: "Inventory tracking"
       process_return: "Process return"

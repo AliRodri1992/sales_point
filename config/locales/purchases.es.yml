@@ -58,6 +58,7 @@ es:
       outstanding: "Pendiente"
       lot_code: "Número de lote"
       expires_on: "Fecha de caducidad"
+      damaged_serial_numbers: "Series de mercancía dañada"
       serial_numbers: "Números de serie (uno por línea)"
       tracking: "Seguimiento de inventario"
       process_return: "Procesar devolución"

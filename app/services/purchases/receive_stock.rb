@@ -14,11 +14,16 @@ module Purchases
     def call
       validate_tracking!
       inventory = find_inventory
-      lot = create_lot(inventory)
-      create_serials(lot)
+      accepted_lot = create_lot(inventory, quantity: @item.accepted_quantity, status: :available)
+      damaged_lot = create_lot(inventory, quantity: @item.damaged_quantity, status: :quarantined)
+      create_serials(accepted_lot, accepted_serials)
+      create_serials(damaged_lot, damaged_serials)
+
+      return unless accepted_lot
+
       Inventories::ApplyMovement.call(
         inventory:, quantity: @item.accepted_quantity, kind: 'receipt',
-        user: @item.goods_receipt.received_by, source: @item, inventory_lot: lot
+        user: @item.goods_receipt.received_by, source: @item, inventory_lot: accepted_lot
       )
     end
 
@@ -33,42 +38,60 @@ module Purchases
       Inventory.find_or_create_by!(organization: receipt.organization, branch: receipt.branch, product:)
     end
 
-    def serial_numbers
-      @serial_numbers ||= Array(@data[:serial_numbers])
-                          .flat_map { |value| value.to_s.split(/[\s,;]+/) }.compact_blank
+    def accepted_serials
+      @accepted_serials ||= split_serials(@data[:serial_numbers])
+    end
+
+    def damaged_serials
+      @damaged_serials ||= split_serials(@data[:damaged_serial_numbers])
+    end
+
+    def split_serials(value)
+      Array(value).flat_map { |entry| entry.to_s.split(/[\s,;]+/) }.compact_blank
     end
 
     def validate_tracking!
       tracking = product.tracking_mode
-      raise ArgumentError, 'Lot number required' if tracking == 'lot' && @item.lot_code.blank?
+      if tracking == 'lot' && @item.lot_code.blank?
+        raise ArgumentError, 'Lot number required'
+      end
 
       validate_serial_tracking! if tracking == 'serial'
-      return unless @item.expires_on && @item.expires_on < Date.current
+      return unless @item.accepted_quantity.positive? && @item.expires_on && @item.expires_on < Date.current
 
       raise ArgumentError, 'Expired merchandise cannot be received into available stock'
     end
 
     def validate_serial_tracking!
-      expected = @item.accepted_quantity
-      valid = expected.frac.zero? && serial_numbers.size == expected.to_i &&
-              serial_numbers.uniq.size == serial_numbers.size
-
-      raise ArgumentError, 'Serial count must match accepted units' unless valid
+      accepted = @item.accepted_quantity
+      damaged = @item.damaged_quantity
+      numbers = accepted_serials + damaged_serials
+      valid = accepted.frac.zero? && damaged.frac.zero? &&
+              accepted_serials.size == accepted.to_i && damaged_serials.size == damaged.to_i &&
+              numbers.uniq.size == numbers.size
+      raise ArgumentError, 'Serial count must match accepted and damaged units' unless valid
     end
 
-    def create_lot(inventory)
+    def create_lot(inventory, quantity:, status:)
+      return unless quantity.positive?
+
+      base = @item.lot_code.presence || 'RCV'
+      suffix = status == :quarantined ? '-DMG' : ''
       inventory.inventory_lots.create!(
         organization: inventory.organization, goods_receipt_item: @item,
-        code: "#{@item.lot_code.presence || 'RCV'}-#{@item.id}", expires_on: @item.expires_on,
-        status: :available, quantity: @item.accepted_quantity
+        code: "#{base}-#{@item.id}#{suffix}", expires_on: @item.expires_on,
+        status:, quantity:
       )
     end
 
-    def create_serials(lot)
-      return if serial_numbers.empty?
+    def create_serials(lot, serial_numbers)
+      return unless lot
 
       serial_numbers.each do |number|
-        lot.inventory_serials.create!(organization: lot.organization, serial_number: number)
+        lot.inventory_serials.create!(
+          organization: lot.organization, serial_number: number,
+          status: lot.quarantined? ? :quarantined : :available
+        )
       end
     end
   end

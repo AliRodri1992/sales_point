@@ -58,6 +58,7 @@ ko:
       outstanding: "미입고"
       lot_code: "로트 번호"
       expires_on: "유효 기간"
+      damaged_serial_numbers: "손상된 상품 일련번호"
       serial_numbers: "일련번호 (줄마다 하나)"
       tracking: "재고 추적"
       process_return: "반품 처리"
