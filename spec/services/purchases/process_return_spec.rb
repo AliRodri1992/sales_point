@@ -102,6 +102,7 @@ RSpec.describe Purchases::ProcessReturn do
     end.to raise_error(ArgumentError, /exceeds accepted/)
     expect(receipt_item.inventory_lots.first.inventory.reload.stock).to eq(2)
   end
+
   it 'returns quarantined damaged merchandise without subtracting available inventory' do
     receipt = Purchases::Receive.call(
       order: another_order, user:, idempotency_key: 'damaged-return-source',
@@ -136,5 +137,4 @@ RSpec.describe Purchases::ProcessReturn do
       product:, quantity: 5, units_per_package: 5, unit_price: 50
     )
   end
-
 end
