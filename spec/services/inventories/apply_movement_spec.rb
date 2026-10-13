@@ -19,6 +19,7 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.reload.stock).to eq(1)
     expect(InventoryMovement.count).to eq(0)
   end
+
   it 'requires a lot for changes to lot-tracked merchandise' do
     inventory = create(:inventory, stock: 3)
     inventory.product.update!(tracking_mode: :lot)
@@ -43,5 +44,4 @@ RSpec.describe Inventories::ApplyMovement do
     end.to raise_error(ArgumentError, /another inventory/)
     expect(inventory.reload.stock).to eq(0)
   end
-
 end

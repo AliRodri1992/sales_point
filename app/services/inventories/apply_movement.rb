@@ -5,10 +5,7 @@ module Inventories
     def self.call(inventory:, quantity:, kind:, **options)
       inventory.with_lock do
         amount = BigDecimal(quantity.to_s)
-        raise ArgumentError, 'Quantity must not be zero' if amount.zero?
-        raise ArgumentError, 'Invalid movement kind' unless InventoryMovement::KINDS.include?(kind)
-        validate_tracking!(inventory:, lot: options[:inventory_lot])
-
+        validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
         before = inventory.stock
         after = before + amount
         raise ActiveRecord::RecordInvalid, inventory if after.negative?
@@ -23,10 +20,16 @@ module Inventories
       end
     end
 
+    def self.validate_movement!(inventory:, amount:, kind:, lot:)
+      raise ArgumentError, 'Quantity must not be zero' if amount.zero?
+      raise ArgumentError, 'Invalid movement kind' unless InventoryMovement::KINDS.include?(kind)
+
+      validate_tracking!(inventory:, lot:)
+    end
+
     def self.validate_tracking!(inventory:, lot:)
-      if lot && lot.inventory_id != inventory.id
-        raise ArgumentError, 'Inventory lot belongs to another inventory'
-      end
+      raise ArgumentError, 'Inventory lot belongs to another inventory' if lot && lot.inventory_id != inventory.id
+
       return if inventory.product.tracking_none? || lot
 
       raise ArgumentError, 'Tracked inventory requires a lot-specific stock movement'
