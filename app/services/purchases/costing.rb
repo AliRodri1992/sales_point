@@ -20,7 +20,9 @@ module Purchases
       entry.update!(landed_unit_cost: landed)
       entry.create_purchase_cost_allocation!(
         organization: order.organization, goods_amount: goods.round(6),
-        landed_unit_cost: landed, **costs
+        landed_unit_cost: landed, freight_amount: costs[:freight], insurance_amount: costs[:insurance],
+        extra_expenses_amount: costs[:extra_expenses],
+        additional_discount_amount: costs[:additional_discount]
       )
     end
 
