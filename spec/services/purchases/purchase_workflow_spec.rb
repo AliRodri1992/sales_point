@@ -93,7 +93,7 @@ RSpec.describe Purchases::Workflow do
     request = PurchaseRequest.create!(organization:, branch:, requested_by: requester)
 
     expect do
-      described_class.decide_request!(request, status: 'approved')
+      described_class.decide_request!(request, status: 'approved', user: approver)
     end.to raise_error(ArgumentError, /submitted/)
   end
 
