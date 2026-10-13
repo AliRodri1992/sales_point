@@ -165,7 +165,7 @@ RSpec.describe Purchases::ProcessReturn do
     described_class.call(purchase_return:, user:)
 
     damaged_serials = line.inventory_lots.flat_map(&:inventory_serials)
-                         .select { |serial| serial.serial_number.start_with?('BAD-') }
+                          .select { |serial| serial.serial_number.start_with?('BAD-') }
     expect(damaged_serials.map(&:status)).to contain_exactly('returned', 'quarantined')
     expect(Inventory.find_by!(branch:, product:).stock).to eq(1)
   end
