@@ -14,6 +14,7 @@ class PurchaseOrder < ApplicationRecord
   has_many :purchase_order_items, dependent: :restrict_with_exception
   has_many :purchase_approvals, dependent: :restrict_with_exception
   has_many :goods_receipts, dependent: :restrict_with_exception
+  has_many :supplier_invoices, dependent: :restrict_with_exception
 
   accepts_nested_attributes_for :purchase_order_items, reject_if: :all_blank
   enum :status, { draft: 'draft', pending_approval: 'pending_approval',

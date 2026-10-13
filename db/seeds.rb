@@ -284,6 +284,21 @@ DEFAULT_PERMISSIONS = [
   },
   { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
     description: 'Permite administrar roles y sus permisos.' }
+,
+  { code: 'accounts_payable.view', name: 'View accounts payable', module_name: 'Cuentas por pagar',
+    description: 'View vendor invoices, outstanding balances and reconciliations.' },
+  { code: 'accounts_payable.manage', name: 'Manage invoices', module_name: 'Cuentas por pagar',
+    description: 'Create and edit vendor invoices, payments and credit notes.' },
+  { code: 'accounts_payable.approve', name: 'Approve invoices and credits', module_name: 'Cuentas por pagar',
+    description: 'Post and cancel vendor invoices and credit notes.' },
+  { code: 'accounts_payable.pay', name: 'Apply and reverse payments', module_name: 'Cuentas por pagar',
+    description: 'Post, allocate and reverse financial settlements.' },
+  { code: 'accounts_payable.banks.view', name: 'View vendor bank accounts', module_name: 'Cuentas por pagar',
+    description: 'View masked bank account information.' },
+  { code: 'accounts_payable.banks.manage', name: 'Manage vendor bank accounts', module_name: 'Cuentas por pagar',
+    description: 'Add, update and archive vendor bank accounts.' },
+  { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
+    description: 'Access full encrypted banking details with audit logging.' }
 ].freeze
 
 def load_translations_from_file(file_path, locale_code)

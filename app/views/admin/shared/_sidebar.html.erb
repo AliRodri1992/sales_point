@@ -112,6 +112,15 @@
           </a>
         <% end %>
 
+<% if current_organization && (current_user.admin? || current_user.permission?('accounts_payable.view')) %>
+          <a href="<%= admin_account_payables_path %>"
+             data-tooltip="<%= t('admin.accounts_payable.payables') %>"
+             class="<%= sidebar_link_classes('account_payables') %>">
+            <%= icon('wallet', class: 'size-5') %>
+            <span class="sidebar-label"><%= t('admin.accounts_payable.payables') %></span>
+          </a>
+        <% end %>
+
         <a
           href="#"
           data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"

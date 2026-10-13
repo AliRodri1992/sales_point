@@ -24,6 +24,8 @@ class AccountPayable < ApplicationRecord
   end
 
   def balance
+    return 0.to_d unless supplier_invoice.posted?
+
     amount - paid_amount - credited_amount
   end
 

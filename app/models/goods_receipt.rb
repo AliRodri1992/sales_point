@@ -9,6 +9,8 @@ class GoodsReceipt < ApplicationRecord
   belongs_to :received_by, class_name: 'User'
   has_many :goods_receipt_items, dependent: :restrict_with_exception
   has_many :purchase_returns, dependent: :restrict_with_exception
+  has_many :supplier_invoice_receipts, dependent: :restrict_with_exception
+  has_many :supplier_invoices, through: :supplier_invoice_receipts
 
   enum :status, { posted: 'posted', reversed: 'reversed' }, validate: true
   validates :idempotency_key, presence: true, uniqueness: { scope: :organization_id }

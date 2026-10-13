@@ -27,7 +27,7 @@ module AccountsPayable
           unit_price: BigDecimal(node['ValorUnitario'].to_s), amount: BigDecimal(node['Importe'].to_s) }
       end
       { uuid:, issuer_rfc: issuer['Rfc'].to_s.upcase, receiver_rfc: receiver['Rfc'].to_s.upcase,
-        series: root['Serie'], folio: root['Folio'], issued_on: Date.parse(root.fetch('Fecha')),
+        series: root['Serie'], folio: root['Folio'], issued_on: Date.parse(root['Fecha'].to_s),
         subtotal: BigDecimal(root['SubTotal'].to_s), discount: BigDecimal(root['Descuento'].to_s.presence || '0'),
         total: BigDecimal(root['Total'].to_s), tax_amount: tax_total(root),
         currency_code: root['Moneda'], exchange_rate: BigDecimal(root['TipoCambio'].to_s.presence || '1'),

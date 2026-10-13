@@ -74,7 +74,33 @@ Rails.application.routes.draw do
       member { post :process_return }
     end
 
+resources :account_payables, only: %i[index show]
+    resources :supplier_invoices, except: %i[destroy] do
+      member do
+        post :post_invoice
+        post :cancel
+        get :download_xml
+      end
+    end
+    resources :supplier_payments, only: %i[index show new create] do
+      member do
+        post :post_payment
+        post :reverse
+      end
+    end
+    resources :supplier_credit_notes, only: %i[index show new create] do
+      member do
+        post :post_credit
+        post :apply
+        post :cancel
+      end
+    end
+
     resources :suppliers do
+      resources :bank_accounts, controller: 'supplier_bank_accounts', except: %i[show] do
+        member { post :reveal }
+      end
+
       resources :supplier_products, path: 'products', except: %i[show] do
         member { get :history }
       end

@@ -9,6 +9,12 @@ class Organization < ApplicationRecord
   has_many :purchase_orders, dependent: :restrict_with_exception
   has_many :goods_receipts, dependent: :restrict_with_exception
   has_many :purchase_returns, dependent: :restrict_with_exception
+  has_many :supplier_bank_accounts, dependent: :restrict_with_exception
+  has_many :supplier_invoices, dependent: :restrict_with_exception
+  has_many :account_payables, dependent: :restrict_with_exception
+  has_many :supplier_payments, dependent: :restrict_with_exception
+  has_many :supplier_credit_notes, dependent: :restrict_with_exception
+  has_many :financial_audit_events, dependent: :restrict_with_exception
   has_many :products, dependent: :restrict_with_exception
   has_many :suppliers, dependent: :restrict_with_exception
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
