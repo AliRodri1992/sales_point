@@ -37,6 +37,7 @@ en:
       exchange_rate: "Exchange rate into base currency"
       goods_amount: "Goods value"
       landed_unit_cost: "Final landed unit cost"
+      partial_receipt_hint: "To skip an item on this delivery, enter zero for all three quantities. Only received lines are posted."
       received_at: "Received at"
       expected_on: "Expected delivery"
       needed_on: "Needed by"

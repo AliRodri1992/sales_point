@@ -85,6 +85,15 @@ RSpec.describe Purchases::Receive do
     expect(Inventory.find_by!(branch:, product:).stock).to eq(4)
   end
 
+  it 'rejects a repeated idempotency key when the quantities have changed' do
+    receive(quantity: 4)
+    expect do
+      receive(quantity: 3)
+    end.to raise_error(ArgumentError, /different receiving details/)
+    expect(order.goods_receipts.count).to eq(1)
+    expect(Inventory.find_by!(branch:, product:).stock).to eq(4)
+  end
+
   it 'rolls back the receipt and stock when quantities exceed the order' do
     expect { receive(quantity: 11) }.to raise_error(ArgumentError, /over-receive/)
     expect(GoodsReceipt.count).to eq(0)

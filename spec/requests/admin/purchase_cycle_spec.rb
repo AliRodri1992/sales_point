@@ -117,6 +117,27 @@ RSpec.describe 'Purchasing document and receiving lifecycle', type: :request do
     expect(Inventory.find_by!(branch:, product:).stock).to eq(2)
   end
 
+  it 'allows skipping an unreceived order line without rejecting the partial delivery' do
+    order = submitted_order
+    second_product = create(:product, organization:)
+    second_line = order.purchase_order_items.create!(
+      product: second_product, quantity: 3, units_per_package: 1, unit_price: 5
+    )
+    post admin_purchase_order_goods_receipts_path(order), params: {
+      idempotency_key: 'partial-skip-1',
+      entries: {
+        '0' => { purchase_order_item_id: order.purchase_order_items.first.id,
+                 delivered_quantity: 2, accepted_quantity: 2, damaged_quantity: 0 },
+        '1' => { purchase_order_item_id: second_line.id,
+                 delivered_quantity: 0, accepted_quantity: 0, damaged_quantity: 0 }
+      }
+    }
+
+    expect(response).to redirect_to(admin_goods_receipt_path(order.goods_receipts.last))
+    expect(order.goods_receipts.last.goods_receipt_items.count).to eq(1)
+    expect(Inventory.where(product: second_product).count).to eq(0)
+  end
+
   it 'persists return lines and processes the supplier return' do
     order = submitted_order
     receipt = Purchases::Receive.call(

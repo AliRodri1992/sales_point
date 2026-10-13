@@ -37,6 +37,7 @@ es:
       exchange_rate: "Tipo de cambio a moneda base"
       goods_amount: "Valor de mercancía"
       landed_unit_cost: "Costo final por unidad"
+      partial_receipt_hint: "Para omitir un producto en esta entrega, captura cero en las tres cantidades. Solo se registrarán los renglones recibidos."
       received_at: "Fecha de recepción"
       expected_on: "Fecha comprometida"
       needed_on: "Fecha requerida"

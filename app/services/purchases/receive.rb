@@ -42,7 +42,21 @@ module Purchases
       different_order = receipt.purchase_order_id != @order.id
       raise ArgumentError, 'Operation key belongs to a different purchase order' if different_order
 
+      if receipt.payload_digest.present? && receipt.payload_digest != payload_digest
+        raise ArgumentError, 'Operation key cannot be reused with different receiving details'
+      end
+
       receipt
+    end
+
+    def payload_digest
+      @payload_digest ||= Digest::SHA256.hexdigest(
+        JSON.generate({
+          lines: @entries.map { |entry| entry.to_h.deep_stringify_keys.sort.to_h }
+                         .sort_by { |line| line['purchase_order_item_id'].to_s },
+          notes: @notes
+        })
+      )
     end
 
     def validate_order!
@@ -55,7 +69,7 @@ module Purchases
       GoodsReceipt.create!(
         organization: @order.organization, branch: @order.branch,
         purchase_order: @order, received_by: @user, idempotency_key: @idempotency_key,
-        received_at: Time.current, notes: @notes
+        received_at: Time.current, notes: @notes, payload_digest: payload_digest
       )
     end
 

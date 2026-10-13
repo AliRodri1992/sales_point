@@ -23,7 +23,7 @@ module Admin
 
     def create
       authorize GoodsReceipt.new(organization: current_organization), :create?
-      entries = params.fetch(:entries, {}).values.map(&:to_unsafe_h)
+      entries = receiving_entries
       @receipt = Purchases::Receive.call(
         order: @order, user: current_user, idempotency_key: params.require(:idempotency_key),
         entries:, notes: params[:notes]
@@ -34,6 +34,20 @@ module Admin
     end
 
     private
+
+    def receiving_entries
+      params.fetch(:entries, {}).values.map(&:to_unsafe_h).reject do |entry|
+        %w[delivered_quantity accepted_quantity damaged_quantity].all? do |field|
+          zero_quantity?(entry[field])
+        end
+      end
+    end
+
+    def zero_quantity?(value)
+      BigDecimal(value.to_s).zero?
+    rescue ArgumentError
+      false
+    end
 
     def set_order
       @order = policy_scope(current_organization.purchase_orders).find(params[:purchase_order_id])

@@ -1,6 +1,7 @@
 <%= render 'admin/purchases/navigation' %>
 <h1 class="mb-4 font-jakarta text-2xl font-bold"><%= t('admin.purchases.new_receipt') %> · <%= @order.code %></h1>
 <p class="mb-6 text-sm text-slate-600"><%= @order.supplier.name %> → <%= @order.branch.name %></p>
+<p class="mb-4 text-sm text-slate-500"><%= t('admin.purchases.partial_receipt_hint') %></p>
 <%= form_with url: admin_purchase_order_goods_receipts_path(@order), class: 'space-y-5' do |form| %>
   <%= hidden_field_tag :idempotency_key, SecureRandom.uuid %>
   <% @order.purchase_order_items.includes(:product).each_with_index do |item, index| %>

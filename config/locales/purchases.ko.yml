@@ -37,6 +37,7 @@ ko:
       exchange_rate: "기준 통화 환율"
       goods_amount: "상품 가치"
       landed_unit_cost: "최종 단위원가"
+      partial_receipt_hint: "이번 배송에서 상품을 제외하려면 세 수량을 모두 0으로 입력하세요. 수령한 항목만 처리됩니다."
       received_at: "입고 일시"
       expected_on: "예상 납기일"
       needed_on: "필요일"
