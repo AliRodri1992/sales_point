@@ -141,7 +141,7 @@ RSpec.describe Purchases::ProcessReturn do
 
     expect do
       described_class.call(purchase_return:, user:)
-    end.to raise_error(ArgumentError, /exceeds received/)
+    end.to raise_error(ArgumentError, /exceeds damaged/)
     expect(line.inventory_lots.quarantined.sum(:quantity)).to eq(2)
     expect(line.inventory_lots.first.inventory.reload.stock).to eq(1)
   end

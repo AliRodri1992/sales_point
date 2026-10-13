@@ -81,7 +81,8 @@ module Purchases
               end
       return unless entry.quantity + past_returns > limit
 
-      raise ArgumentError, 'Return exceeds received merchandise in selected condition'
+      merchandise = entry.stock_quarantined? ? 'damaged' : 'accepted'
+      raise ArgumentError, "Return exceeds #{merchandise} merchandise"
     end
   end
 end
