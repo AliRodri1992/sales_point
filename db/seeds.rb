@@ -283,8 +283,7 @@ DEFAULT_PERMISSIONS = [
     description: 'Permite administrar los idiomas disponibles.'
   },
   { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
-    description: 'Permite administrar roles y sus permisos.' }
-,
+    description: 'Permite administrar roles y sus permisos.' },
   { code: 'accounts_payable.view', name: 'View accounts payable', module_name: 'Cuentas por pagar',
     description: 'View vendor invoices, outstanding balances and reconciliations.' },
   { code: 'accounts_payable.manage', name: 'Manage invoices', module_name: 'Cuentas por pagar',
