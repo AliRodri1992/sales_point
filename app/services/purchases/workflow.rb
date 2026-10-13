@@ -22,6 +22,10 @@ module Purchases
 
     def call
       @order.with_lock do
+        if @action == :cancel && @order.goods_receipts.exists?
+          raise ArgumentError, 'An order with receipts cannot be cancelled'
+        end
+
         state = TRANSITIONS.fetch(@order.status, {})[@action]
         raise ArgumentError, 'Invalid order status transition' unless state
 
@@ -55,9 +59,7 @@ module Purchases
     def validate_transition!
       raise ArgumentError, 'Purchase order needs items' if @action == :submit && @order.purchase_order_items.empty?
       raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
-      return unless @action == :cancel && @order.goods_receipts.exists?
 
-      raise ArgumentError, 'An order with receipts cannot be cancelled'
     end
 
     def self_decision?
