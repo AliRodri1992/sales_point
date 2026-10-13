@@ -1,0 +1,11 @@
+<nav class="mb-6 flex flex-wrap gap-2" aria-label="<%= t('admin.accounts_payable.title') %>">
+  <% [
+    [t('admin.accounts_payable.payables'), admin_account_payables_path],
+    [t('admin.accounts_payable.invoices'), admin_supplier_invoices_path],
+    [t('admin.accounts_payable.payments'), admin_supplier_payments_path],
+    [t('admin.accounts_payable.credits'), admin_supplier_credit_notes_path]
+  ].each do |label, path| %>
+    <%= link_to label, path, class: 'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700' %>
+  <% end %>
+</nav>
+

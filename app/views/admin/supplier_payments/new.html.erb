@@ -1,0 +1,24 @@
+<%= render 'admin/financials/navigation' %>
+<section class="max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <h1 class="mb-5 font-jakarta text-2xl font-bold"><%= t('admin.accounts_payable.new_payment') %></h1>
+  <%= render 'admin/financials/errors', record: @payment %>
+  <%= form_with model: [:admin, @payment], class: 'grid gap-4 md:grid-cols-2' do |f| %>
+    <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'block text-sm font-medium' %>
+      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %></div>
+    <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'block text-sm font-medium' %>
+      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %></div>
+    <% %i[amount paid_on reference].each do |field| %>
+      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'block text-sm font-medium' %>
+        <% if field == :paid_on %><%= f.date_field field, required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %>
+        <% elsif field == :amount %><%= f.number_field field, min: '0.01', step: '0.01', required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %>
+        <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %><% end %></div>
+    <% end %>
+    <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'block text-sm font-medium' %>
+      <%= f.text_area :notes, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+    <div class="flex gap-3 md:col-span-2">
+      <%= f.submit t('admin.accounts_payable.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+      <%= link_to t('admin.accounts_payable.back'), admin_supplier_payments_path, class: 'rounded-xl border border-slate-300 px-5 py-3' %>
+    </div>
+  <% end %>
+</section>
+

@@ -1,0 +1,24 @@
+<section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <div class="flex flex-wrap justify-between gap-4">
+    <div><h1 class="font-jakarta text-2xl font-bold"><%= t('admin.accounts_payable.bank_accounts') %></h1><p class="text-sm text-slate-500"><%= @supplier.name %></p></div>
+    <% if policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
+      <%= link_to t('admin.accounts_payable.new_bank'), new_admin_supplier_bank_account_path(@supplier), class: 'rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white' %>
+    <% end %>
+  </div>
+  <% @accounts.each do |account| %>
+    <div class="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200 p-4">
+      <div><p class="font-bold"><%= account.sat_bank&.name || account.bank_name %> <% if account.primary? %><span class="text-xs text-emerald-700"><%= t('admin.accounts_payable.primary') %></span><% end %></p>
+        <p class="mt-1 text-sm text-slate-500"><%= account.holder_name %> · <%= account.masked_number %> · <%= account.currency_code %></p></div>
+      <% if policy(account).update? %>
+        <div class="flex gap-3">
+          <%= link_to t('admin.accounts_payable.edit'), edit_admin_supplier_bank_account_path(@supplier, account), class: 'text-sm font-semibold text-emerald-700' %>
+          <%= button_to t('admin.accounts_payable.archive'), admin_supplier_bank_account_path(@supplier, account), method: :delete,
+                        class: 'text-sm font-semibold text-rose-600', form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } } %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <% if @accounts.empty? %><p class="text-sm text-slate-500"><%= t('admin.accounts_payable.empty') %></p><% end %>
+  <%= link_to t('admin.accounts_payable.back'), admin_supplier_path(@supplier, tab: 'finances'), class: 'text-sm font-semibold text-emerald-700' %>
+</section>
+

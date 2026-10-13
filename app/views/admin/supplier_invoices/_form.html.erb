@@ -1,0 +1,35 @@
+<%= render 'admin/financials/errors', record: @invoice %>
+<%= form_with model: [:admin, @invoice], class: 'space-y-5' do |f| %>
+  <div class="grid gap-4 md:grid-cols-2">
+    <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1 block text-sm font-medium' %>
+      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
+    <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1 block text-sm font-medium' %>
+      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
+    <div><%= f.label :purchase_order_id, t('admin.accounts_payable.order'), class: 'mb-1 block text-sm font-medium' %>
+      <%= f.collection_select :purchase_order_id, @orders, :id, :code, { include_blank: true }, { class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
+    <% %i[series folio].each do |field| %>
+      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1 block text-sm font-medium' %>
+        <%= f.text_field field, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+    <% end %>
+    <% %i[issued_on received_on due_on].each do |field| %>
+      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1 block text-sm font-medium' %>
+        <%= f.date_field field, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+    <% end %>
+    <% %i[subtotal discount tax_amount total exchange_rate].each do |field| %>
+      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1 block text-sm font-medium' %>
+        <%= f.number_field field, step: 'any', min: 0, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+    <% end %>
+    <div><%= f.label :xml_document, t('admin.accounts_payable.cfdi_xml'), class: 'mb-1 block text-sm font-medium' %>
+      <%= f.file_field :xml_document, accept: '.xml,application/xml,text/xml', class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+    <div><%= f.label :pdf_document, t('admin.accounts_payable.pdf'), class: 'mb-1 block text-sm font-medium' %>
+      <%= f.file_field :pdf_document, accept: '.pdf,application/pdf', class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+  </div>
+  <p class="text-xs text-slate-500"><%= t('admin.accounts_payable.cfdi_hint') %></p>
+  <div><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1 block text-sm font-medium' %>
+    <%= f.text_area :notes, rows: 3, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div class="flex flex-wrap gap-3">
+    <%= f.submit t('admin.accounts_payable.save'), class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+    <%= link_to t('admin.accounts_payable.back'), admin_supplier_invoices_path, class: 'rounded-xl border border-slate-300 px-5 py-3' %>
+  </div>
+<% end %>
+

@@ -1,0 +1,26 @@
+<%= render 'admin/financials/errors', record: @account %>
+<%= form_with model: [:admin, @supplier, @account], class: 'grid gap-4 sm:grid-cols-2' do |f| %>
+  <div><%= f.label :sat_bank_code, t('admin.accounts_payable.bank'), class: 'block text-sm font-semibold' %>
+    <%= f.collection_select :sat_bank_code, @banks, :code, :display_name, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %></div>
+  <div><%= f.label :bank_name, t('admin.accounts_payable.bank_name'), class: 'block text-sm font-semibold' %>
+    <%= f.text_field :bank_name, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div><%= f.label :holder_name, t('admin.accounts_payable.holder_name'), class: 'block text-sm font-semibold' %>
+    <%= f.text_field :holder_name, required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div><%= f.label :currency_code, t('admin.accounts_payable.currency'), class: 'block text-sm font-semibold' %>
+    <%= f.text_field :currency_code, maxlength: 3, required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div><%= f.label :account_number, t('admin.accounts_payable.account_number'), class: 'block text-sm font-semibold' %>
+    <%= f.password_field :account_number, autocomplete: 'off', placeholder: (@account.persisted? ? @account.masked_number : nil),
+                         class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div><%= f.label :clabe, t('admin.accounts_payable.clabe'), class: 'block text-sm font-semibold' %>
+    <%= f.password_field :clabe, autocomplete: 'off', placeholder: (@account.persisted? ? @account.masked_number : nil),
+                         class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+  <div class="flex items-center gap-2 sm:col-span-2">
+    <%= f.check_box :primary, class: 'size-4 accent-emerald-600' %>
+    <%= f.label :primary, t('admin.accounts_payable.primary'), class: 'text-sm font-semibold' %>
+  </div>
+  <div class="flex gap-3 sm:col-span-2">
+    <%= f.submit t('admin.accounts_payable.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+    <%= link_to t('admin.accounts_payable.back'), admin_supplier_bank_accounts_path(@supplier), class: 'rounded-xl border border-slate-300 px-5 py-3' %>
+  </div>
+<% end %>
+

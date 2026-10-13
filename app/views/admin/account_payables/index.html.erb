@@ -1,0 +1,56 @@
+<%= render 'admin/financials/navigation' %>
+<section class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.accounts_payable.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.accounts_payable.description') %></p>
+    </div>
+    <% if policy(SupplierInvoice.new(organization: current_organization)).create? %>
+      <%= link_to t('admin.accounts_payable.new_invoice'), new_admin_supplier_invoice_path, class: 'rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    <% end %>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <% [
+      [t('admin.accounts_payable.open_amount'), @open.sum(&:balance)],
+      [t('admin.accounts_payable.overdue_amount'), @overdue.sum(&:balance)],
+      [t('admin.accounts_payable.open_count'), @open.size]
+    ].each_with_index do |(label, value), i| %>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= label %></p>
+        <p class="mt-2 font-jakarta text-2xl font-bold text-slate-900"><%= i == 2 ? value : number_with_delimiter(value.round(2)) %></p>
+        <% if i != 2 %><p class="text-xs text-slate-400"><%= t('admin.accounts_payable.original_currencies') %></p><% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="min-w-full text-left text-sm">
+      <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <tr>
+          <% %w[supplier invoice due_on original_amount paid credit balance status].each do |key| %>
+            <th class="px-4 py-3"><%= t("admin.accounts_payable.#{key}") %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payables.each do |payable| %>
+          <tr class="border-t border-slate-100 hover:bg-slate-50">
+            <td class="px-4 py-3 font-medium text-slate-900"><%= payable.supplier.name %></td>
+            <td class="px-4 py-3"><%= link_to payable.supplier_invoice.folio.presence || "##{payable.supplier_invoice.id}", admin_account_payable_path(payable), class: 'font-semibold text-emerald-700 hover:underline' %></td>
+            <td class="px-4 py-3"><%= l(payable.due_on) %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.amount, unit: '') %> <%= payable.supplier_invoice.currency.code %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.paid_amount, unit: '') %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.credited_amount, unit: '') %></td>
+            <td class="px-4 py-3 font-semibold"><%= number_to_currency(payable.balance, unit: '') %></td>
+            <td class="px-4 py-3">
+              <span class="rounded-full px-3 py-1 text-xs font-semibold <%= payable.overdue? ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700' %>">
+                <%= t("admin.accounts_payable.states.#{payable.settled? ? 'settled' : payable.overdue? ? 'overdue' : 'open'}") %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @payables.empty? %><p class="p-8 text-center text-sm text-slate-500"><%= t('admin.accounts_payable.empty') %></p><% end %>
+  </div>
+</section>
+
