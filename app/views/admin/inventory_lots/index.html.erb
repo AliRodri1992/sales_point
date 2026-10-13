@@ -1,0 +1,32 @@
+<div class="space-y-5">
+  <%= link_to t('admin.purchases.back'), admin_branch_inventories_path(@branch),
+              class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.lot_traceability') %></h1>
+    <p class="mt-2 text-sm text-slate-600"><%= @inventory.product.name %> · <%= @branch.name %></p>
+    <p class="mt-1 text-xs text-slate-500"><%= t('admin.purchases.fefo_description') %></p>
+  </section>
+  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
+      <thead><tr>
+        <% %w[lot_code expires_on status quantity serial_numbers].each do |key| %>
+          <th class="p-4 font-semibold"><%= t("admin.purchases.#{key}") %></th>
+        <% end %>
+      </tr></thead><tbody>
+        <% @lots.each do |lot| %>
+          <tr class="border-t border-slate-100">
+            <td class="p-4 font-semibold"><%= lot.code %></td>
+            <td class="p-4"><%= lot.expires_on || '—' %></td>
+            <td class="p-4">
+              <%= lot.expires_on && lot.expires_on < Date.current ? t('admin.purchases.statuses.expired') :
+                  t("admin.purchases.lot_statuses.#{lot.status}") %>
+            </td>
+            <td class="p-4"><%= lot.quantity %></td>
+            <td class="p-4 text-slate-500"><%= lot.inventory_serials.map(&:serial_number).join(', ') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @lots.empty? %><p class="p-5 text-sm text-slate-500"><%= t('admin.purchases.empty') %></p><% end %>
+  </div>
+</div>

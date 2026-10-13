@@ -94,6 +94,13 @@ en:
         quotation_rejected: "Quotation %{name} rejected"
         receipt_posted: "Goods receipt %{name} posted"
         return_processed: "Supplier return %{name} processed"
+      lot_traceability: "Lots, serials and expiration"
+      fefo_description: "Sorted by expiration date (FEFO). Damaged lots remain quarantined."
+      lot_statuses:
+        available: "Available"
+        quarantined: "Quarantined"
+        expired: "Expired"
+        depleted: "Depleted"
       tracking_modes:
         none: "No batch/serial tracking"
         lot: "Lot and expiry"

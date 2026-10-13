@@ -94,6 +94,13 @@ es:
         quotation_rejected: "Cotización %{name} rechazada"
         receipt_posted: "Recepción %{name} registrada"
         return_processed: "Devolución %{name} procesada"
+      lot_traceability: "Lotes, series y caducidades"
+      fefo_description: "Ordenados por fecha de vencimiento (FEFO). Los lotes dañados se mantienen en cuarentena."
+      lot_statuses:
+        available: "Disponible"
+        quarantined: "Cuarentena"
+        expired: "Caducado"
+        depleted: "Agotado"
       tracking_modes:
         none: "Sin lotes ni series"
         lot: "Por lote y caducidad"

@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     resources :branches, only: %i[index show new create edit update destroy] do
       resources :inventories, only: %i[index create update] do
         member { post :adjust }
+        resources :inventory_lots, only: :index
       end
       member { patch :select }
     end

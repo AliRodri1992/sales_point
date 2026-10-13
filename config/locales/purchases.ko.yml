@@ -94,6 +94,13 @@ ko:
         quotation_rejected: "견적 %{name} 거절됨"
         receipt_posted: "입고 %{name} 기록됨"
         return_processed: "공급업체 반품 %{name} 처리됨"
+      lot_traceability: "로트, 일련번호 및 유통기한"
+      fefo_description: "유통기한 순서(FEFO). 손상된 로트는 격리됩니다."
+      lot_statuses:
+        available: "사용 가능"
+        quarantined: "격리"
+        expired: "만료"
+        depleted: "소진"
       tracking_modes:
         none: "로트/일련번호 없음"
         lot: "로트/유효기간"

@@ -32,6 +32,9 @@
             <td class="p-4"><%= inventory.min_stock %></td>
             <td class="p-4"><%= inventory.max_stock || '—' %></td>
             <td class="p-4">
+              <%= link_to t('admin.purchases.lot_traceability'),
+                          admin_branch_inventory_inventory_lots_path(@branch, inventory),
+                          class: 'mb-2 inline-block font-semibold text-emerald-700 hover:underline' %>
               <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory), class: 'flex gap-2' do |form| %>
                 <%= form.number_field :quantity, required: true, step: 0.001,
                                       placeholder: t('admin.inventory.quantity'),

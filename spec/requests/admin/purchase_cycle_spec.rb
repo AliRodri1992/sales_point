@@ -149,6 +149,22 @@ RSpec.describe 'Purchasing document and receiving lifecycle', type: :request do
     expect(Inventory.where(product: second_product).count).to eq(0)
   end
 
+  it 'shows receipt lots only for inventories of the current organization' do
+    order = submitted_order
+    receipt = Purchases::Receive.call(
+      order:, user:, idempotency_key: 'lot-view-1',
+      entries: [{ purchase_order_item_id: order.purchase_order_items.first.id,
+                  delivered_quantity: 1, accepted_quantity: 1, damaged_quantity: 0 }]
+    )
+    inventory = receipt.goods_receipt_items.first.inventory_lots.first.inventory
+    get admin_branch_inventory_inventory_lots_path(branch, inventory)
+    expect(response).to have_http_status(:ok)
+
+    foreign_branch = create(:branch, organization: create(:organization))
+    get admin_branch_inventory_inventory_lots_path(foreign_branch, inventory)
+    expect(response).to have_http_status(:not_found)
+  end
+
   it 'persists return lines and processes the supplier return' do
     order = submitted_order
     receipt = Purchases::Receive.call(
