@@ -51,6 +51,7 @@ module Purchases
       expected = @item.accepted_quantity
       valid = expected.frac.zero? && serial_numbers.size == expected.to_i &&
               serial_numbers.uniq.size == serial_numbers.size
+
       raise ArgumentError, 'Serial count must match accepted units' unless valid
     end
 

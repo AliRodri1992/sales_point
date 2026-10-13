@@ -26,7 +26,7 @@ class GoodsReceiptItem < ApplicationRecord
   def order_item_consistent
     return unless goods_receipt && purchase_order_item
 
-    errors.add(:purchase_order_item, :invalid) unless purchase_order_item.purchase_order_id ==
-                                                       goods_receipt.purchase_order_id
+    belongs_to_order = purchase_order_item.purchase_order_id == goods_receipt.purchase_order_id
+    errors.add(:purchase_order_item, :invalid) unless belongs_to_order
   end
 end

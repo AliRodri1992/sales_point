@@ -76,8 +76,10 @@ module Admin
     end
 
     def request_params
-      params.expect(purchase_request: [:branch_id, :needed_on, :notes,
-                                      { purchase_request_items_attributes: %i[id product_id quantity notes] }])
+      params.expect(purchase_request: [
+                      :branch_id, :needed_on, :notes,
+                      { purchase_request_items_attributes: %i[id product_id quantity notes] }
+                    ])
     end
 
     def transition(action)

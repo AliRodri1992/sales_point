@@ -56,12 +56,14 @@ module Purchases
       if @action == :submit && @order.purchase_order_items.empty?
         raise ArgumentError, 'Purchase order needs items'
       end
-      if @action.in?(%i[approve reject]) && @order.requested_by_id == @user.id
-        raise ArgumentError, 'Requester cannot approve or reject own order'
-      end
+      raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
       return unless @action == :cancel && @order.goods_receipts.exists?
 
       raise ArgumentError, 'An order with receipts cannot be cancelled'
+    end
+
+    def self_decision?
+      @action.in?(%i[approve reject]) && @order.requested_by_id == @user.id
     end
 
     def update_status!(state)

@@ -18,8 +18,20 @@ class GoodsReceipt < ApplicationRecord
   private
 
   def consistent_organization
+    validate_order_organization
+    validate_branch_organization
+    validate_order_branch
+  end
+
+  def validate_order_organization
     errors.add(:purchase_order, :invalid) if purchase_order && purchase_order.organization_id != organization_id
+  end
+
+  def validate_branch_organization
     errors.add(:branch, :invalid) if branch && branch.organization_id != organization_id
+  end
+
+  def validate_order_branch
     return unless purchase_order && branch
 
     errors.add(:branch, :invalid) unless purchase_order.branch_id == branch.id
