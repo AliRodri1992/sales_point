@@ -41,6 +41,7 @@ module Purchases
     def validate_tracking!
       tracking = product.tracking_mode
       raise ArgumentError, 'Lot number required' if tracking == 'lot' && @item.lot_code.blank?
+
       validate_serial_tracking! if tracking == 'serial'
       return unless @item.expires_on && @item.expires_on < Date.current
 
