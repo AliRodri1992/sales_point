@@ -4,6 +4,14 @@
   <p><%= link_to @receipt.purchase_order.code, admin_purchase_order_path(@receipt.purchase_order),
                 class: 'text-emerald-700 hover:underline' %>
     · <%= @receipt.branch.name %> · <%= l(@receipt.received_at, format: :short) %></p>
+  <div class="grid gap-3 text-sm md:grid-cols-4">
+    <% %w[actual_freight_amount actual_insurance_amount extra_expenses_amount additional_discount_amount].each do |field| %>
+      <div class="rounded-xl bg-slate-50 p-3">
+        <p class="text-slate-500"><%= t("admin.purchases.#{field}") %></p>
+        <strong><%= @receipt.public_send(field) || '—' %></strong>
+      </div>
+    <% end %>
+  </div>
   <table class="min-w-full text-left text-sm">
     <thead><tr><% %w[product delivered_quantity accepted_quantity damaged_quantity landed_unit_cost lot_code expires_on].each do |key| %>
       <th class="p-3"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead><tbody>

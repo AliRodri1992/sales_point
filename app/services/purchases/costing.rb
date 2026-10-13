@@ -3,22 +3,24 @@
 module Purchases
   class Costing
     def self.apply!(receipt)
-      receipt.goods_receipt_items.includes(:purchase_order_item).find_each do |entry|
+      receipt.goods_receipt_items.includes(:purchase_order_item).each do |entry|
         allocate!(entry)
       end
     end
 
     def self.allocate!(entry)
-      order = entry.goods_receipt.purchase_order
+      receipt = entry.goods_receipt
+      order = receipt.purchase_order
       goods = goods_cost(entry)
-      weight = cost_weight(order:, entry:, goods:)
-      freight = (order.freight_amount * weight).round(6)
-      insurance = (order.insurance_amount * weight).round(6)
-      landed = landed_cost(entry:, goods:, freight:, insurance:, exchange_rate: order.exchange_rate)
+      receipt_weight = weight_in_receipt(entry, goods)
+      order_weight = weight_in_order(order, entry, goods)
+
+      costs = expenses(receipt, order, receipt_weight, order_weight)
+      landed = landed_cost(entry:, goods:, exchange_rate: order.exchange_rate, **costs)
       entry.update!(landed_unit_cost: landed)
       entry.create_purchase_cost_allocation!(
         organization: order.organization, goods_amount: goods.round(6),
-        freight_amount: freight, insurance_amount: insurance, landed_unit_cost: landed
+        landed_unit_cost: landed, **costs
       )
     end
 
@@ -27,18 +29,44 @@ module Purchases
       line.line_total * (entry.accepted_quantity / line.quantity)
     end
 
-    def self.cost_weight(order:, entry:, goods:)
-      goods_total = order.goods_total
-      return goods / goods_total if goods_total.positive?
+    def self.weight_in_order(order, entry, goods)
+      total = order.goods_total
+      return goods / total if total.positive?
 
-      total_quantity = order.purchase_order_items.sum(:quantity)
-      total_quantity.positive? ? entry.accepted_quantity / total_quantity : 0
+      quantity = order.purchase_order_items.sum(:quantity)
+      quantity.positive? ? entry.accepted_quantity / quantity : 0
     end
 
-    def self.landed_cost(entry:, goods:, freight:, insurance:, exchange_rate:)
+    def self.weight_in_receipt(entry, goods)
+      receipt_items = entry.goods_receipt.goods_receipt_items.includes(:purchase_order_item)
+      total = receipt_items.sum { |item| goods_cost(item) }
+      return goods / total if total.positive?
+
+      quantity = receipt_items.sum(&:accepted_quantity)
+      quantity.positive? ? entry.accepted_quantity / quantity : 0
+    end
+
+    def self.expenses(receipt, order, receipt_weight, order_weight)
+      {
+        freight: cost_share(receipt.actual_freight_amount, order.freight_amount, receipt_weight, order_weight),
+        insurance: cost_share(receipt.actual_insurance_amount, order.insurance_amount, receipt_weight, order_weight),
+        extra_expenses: (receipt.extra_expenses_amount * receipt_weight).round(6),
+        additional_discount: (receipt.additional_discount_amount * receipt_weight).round(6)
+      }
+    end
+
+    def self.cost_share(actual, estimate, receipt_weight, order_weight)
+      ((actual.nil? ? estimate * order_weight : actual * receipt_weight)).round(6)
+    end
+
+    def self.landed_cost(entry:, goods:, freight:, insurance:, exchange_rate:,
+                         extra_expenses: 0, additional_discount: 0)
       return 0 unless entry.accepted_quantity.positive?
 
-      ((goods + freight + insurance) * exchange_rate / entry.accepted_quantity).round(6)
+      amount = goods + freight + insurance + extra_expenses - additional_discount
+      raise ArgumentError, 'Receipt discounts exceed the accepted merchandise value' if amount.negative?
+
+      (amount * exchange_rate / entry.accepted_quantity).round(6)
     end
   end
 end

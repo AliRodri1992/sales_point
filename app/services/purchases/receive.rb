@@ -2,16 +2,17 @@
 
 module Purchases
   class Receive
-    def self.call(order:, user:, idempotency_key:, entries:, notes: nil)
-      new(order:, user:, idempotency_key:, entries:, notes:).call
+    def self.call(order:, user:, idempotency_key:, entries:, notes: nil, actual_costs: {})
+      new(order:, user:, idempotency_key:, entries:, notes:, actual_costs:).call
     end
 
-    def initialize(order:, user:, idempotency_key:, entries:, notes:)
+    def initialize(order:, user:, idempotency_key:, entries:, notes:, actual_costs:)
       @order = order
       @user = user
       @idempotency_key = idempotency_key
       @entries = entries
       @notes = notes
+      @actual_costs = actual_costs
     end
 
     def call
@@ -54,7 +55,8 @@ module Purchases
         JSON.generate({
           lines: @entries.map { |entry| entry.to_h.deep_stringify_keys.sort.to_h }
                          .sort_by { |line| line['purchase_order_item_id'].to_s },
-          notes: @notes
+          notes: @notes,
+          actual_costs: @actual_costs
         })
       )
     end
@@ -69,7 +71,7 @@ module Purchases
       GoodsReceipt.create!(
         organization: @order.organization, branch: @order.branch,
         purchase_order: @order, received_by: @user, idempotency_key: @idempotency_key,
-        received_at: Time.current, notes: @notes, payload_digest: payload_digest
+        received_at: Time.current, notes: @notes, payload_digest: payload_digest, **@actual_costs
       )
     end
 

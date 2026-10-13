@@ -26,7 +26,7 @@ module Admin
       entries = receiving_entries
       @receipt = Purchases::Receive.call(
         order: @order, user: current_user, idempotency_key: params.require(:idempotency_key),
-        entries:, notes: params[:notes]
+        entries:, notes: params[:notes], actual_costs: actual_cost_params
       )
       redirect_to admin_goods_receipt_path(@receipt)
     rescue ActiveRecord::RecordInvalid, ArgumentError, ActiveRecord::RecordNotUnique => e
@@ -34,6 +34,11 @@ module Admin
     end
 
     private
+
+    def actual_cost_params
+      names = %i[actual_freight_amount actual_insurance_amount extra_expenses_amount additional_discount_amount]
+      params.permit(*names).to_h.symbolize_keys.compact_blank
+    end
 
     def receiving_entries
       params.fetch(:entries, {}).values.map(&:to_unsafe_h).reject do |entry|

@@ -13,6 +13,8 @@ class GoodsReceipt < ApplicationRecord
   enum :status, { posted: 'posted', reversed: 'reversed' }, validate: true
   validates :idempotency_key, presence: true, uniqueness: { scope: :organization_id }
   validates :received_at, presence: true
+  validates :actual_freight_amount, :actual_insurance_amount, :extra_expenses_amount,
+            :additional_discount_amount, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :consistent_organization
 
   private

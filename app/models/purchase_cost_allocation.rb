@@ -5,7 +5,8 @@ class PurchaseCostAllocation < ApplicationRecord
   belongs_to :goods_receipt_item
 
   validates :goods_receipt_item_id, uniqueness: true
-  validates :goods_amount, :freight_amount, :insurance_amount, :landed_unit_cost,
+  validates :goods_amount, :freight_amount, :insurance_amount, :extra_expenses_amount,
+            :additional_discount_amount, :landed_unit_cost,
             numericality: { greater_than_or_equal_to: 0 }
   validate :consistent_organization
 
