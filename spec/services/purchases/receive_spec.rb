@@ -142,6 +142,7 @@ RSpec.describe Purchases::Receive do
     expect(receipt.goods_receipt_items.first.inventory_lots.first.inventory_serials.pluck(:serial_number))
       .to match_array(%w[S-1 S-2])
   end
+
   it 'records damaged-only deliveries in quarantine without increasing available stock' do
     product.update!(tracking_mode: 'lot')
     receipt = receive(quantity: 3, accepted: 0, damaged: 3, extras: { lot_code: 'DAM-01' })
@@ -165,6 +166,4 @@ RSpec.describe Purchases::Receive do
     expect(lots.flat_map(&:inventory_serials).map(&:serial_number)).to match_array(%w[OK1 OK2 BAD1])
     expect(Inventory.find_by!(branch:, product:).stock).to eq(2)
   end
-
-
 end

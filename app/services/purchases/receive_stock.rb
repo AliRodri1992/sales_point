@@ -52,9 +52,7 @@ module Purchases
 
     def validate_tracking!
       tracking = product.tracking_mode
-      if tracking == 'lot' && @item.lot_code.blank?
-        raise ArgumentError, 'Lot number required'
-      end
+      raise ArgumentError, 'Lot number required' if tracking == 'lot' && @item.lot_code.blank?
 
       validate_serial_tracking! if tracking == 'serial'
       return unless @item.accepted_quantity.positive? && @item.expires_on && @item.expires_on < Date.current
@@ -66,10 +64,9 @@ module Purchases
       accepted = @item.accepted_quantity
       damaged = @item.damaged_quantity
       numbers = accepted_serials + damaged_serials
-      valid = accepted.frac.zero? && damaged.frac.zero? &&
-              accepted_serials.size == accepted.to_i && damaged_serials.size == damaged.to_i &&
-              numbers.uniq.size == numbers.size
-      raise ArgumentError, 'Serial count must match accepted and damaged units' unless valid
+      counts_match = accepted.frac.zero? && accepted_serials.size == accepted.to_i &&
+                     damaged.frac.zero? && damaged_serials.size == damaged.to_i
+      raise ArgumentError, 'Serial count must match accepted and damaged units' unless counts_match && numbers.uniq.size == numbers.size
     end
 
     def create_lot(inventory, quantity:, status:)

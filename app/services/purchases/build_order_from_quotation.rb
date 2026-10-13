@@ -30,6 +30,5 @@ module Purchases
         unit_price: line.unit_price, discount_percent: line.discount_percent
       )
     end
-
   end
 end
