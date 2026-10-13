@@ -3,6 +3,7 @@
 module Admin
   class SupplierBankAccountsController < ApplicationController
     include FinancialAccess
+
     before_action :set_supplier
     before_action :set_account, only: %i[edit update destroy reveal]
 
@@ -75,15 +76,17 @@ module Admin
     end
 
     def bank_params
-      params.require(:supplier_bank_account).permit(:sat_bank_code, :bank_name, :holder_name,
-                                                     :account_number, :clabe, :currency_code, :primary)
+      params.expect(supplier_bank_account: [
+        :sat_bank_code, :bank_name, :holder_name,
+                                                     :account_number, :clabe, :currency_code, :primary
+      ])
     end
 
     def save_account
       SupplierBankAccount.transaction do
         if @account.primary?
           @supplier.supplier_bank_accounts.active.where.not(id: @account.id).where(primary: true)
-                   .update_all(primary: false, updated_at: Time.current)
+                   .find_each { |previous| previous.update!(primary: false) }
         end
         @account.save!
         FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
@@ -95,4 +98,3 @@ module Admin
     end
   end
 end
-

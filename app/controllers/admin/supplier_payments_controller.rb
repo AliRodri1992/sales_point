@@ -3,6 +3,7 @@
 module Admin
   class SupplierPaymentsController < ApplicationController
     include FinancialAccess
+
     before_action :set_payment, only: %i[show post_payment reverse]
 
     def index
@@ -13,7 +14,8 @@ module Admin
 
     def show
       authorize @payment
-      @payables = current_organization.account_payables.where(supplier_id: @payment.supplier_id)
+      @payables = current_organization.account_payables
+                  .where(supplier_id: @payment.supplier_id)
                   .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
     end
 
@@ -72,10 +74,9 @@ module Admin
     end
 
     def payment_params
-      params.require(:supplier_payment).permit(
+      params.expect(supplier_payment: [
         :supplier_id, :currency_id, :supplier_bank_account_id, :paid_on, :amount, :reference, :notes
-      )
+      ])
     end
   end
 end
-

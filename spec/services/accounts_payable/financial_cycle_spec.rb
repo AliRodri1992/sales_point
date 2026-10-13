@@ -39,9 +39,8 @@ RSpec.describe 'Supplier financial lifecycle' do
     payable = AccountsPayable::PostInvoice.call(invoice:, actor: user)
     payment = payment_for(70)
 
-    AccountsPayable::ApplyPayment.call(payment:, allocations: [
-                                        { account_payable_id: payable.id, amount: '70' }
-                                      ], actor: user)
+    AccountsPayable::ApplyPayment.call(payment:, allocations: [{ account_payable_id: payable.id, amount: '70' }],
+                                       actor: user)
     expect(payable.reload.balance).to eq(130)
 
     credit = SupplierCreditNote.create!(

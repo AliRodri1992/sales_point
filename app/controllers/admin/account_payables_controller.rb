@@ -14,10 +14,10 @@ module Admin
 
     def show
       @payable = policy_scope(current_organization.account_payables)
-                 .includes(:supplier, :supplier_invoice, supplier_payment_allocations: :supplier_payment,
-                           supplier_credit_allocations: :supplier_credit_note).find(params[:id])
+                 .includes(:supplier, :supplier_invoice)
+                 .includes(supplier_payment_allocations: :supplier_payment)
+                 .includes(supplier_credit_allocations: :supplier_credit_note).find(params[:id])
       authorize @payable
     end
   end
 end
-

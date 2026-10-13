@@ -74,7 +74,7 @@ Rails.application.routes.draw do
       member { post :process_return }
     end
 
-resources :account_payables, only: %i[index show]
+    resources :account_payables, only: %i[index show]
     resources :supplier_invoices, except: %i[destroy] do
       member do
         post :post_invoice

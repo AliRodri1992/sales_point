@@ -3,6 +3,7 @@
 module Admin
   class SupplierCreditNotesController < ApplicationController
     include FinancialAccess
+
     before_action :set_credit, only: %i[show post_credit apply cancel]
 
     def index
@@ -13,7 +14,8 @@ module Admin
 
     def show
       authorize @credit
-      @payables = current_organization.account_payables.where(supplier_id: @credit.supplier_id)
+      @payables = current_organization.account_payables
+                  .where(supplier_id: @credit.supplier_id)
                   .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
     end
 
@@ -101,10 +103,10 @@ module Admin
     end
 
     def credit_params
-      params.require(:supplier_credit_note).permit(
+      params.expect(supplier_credit_note: [
         :supplier_id, :currency_id, :supplier_invoice_id, :purchase_return_id,
         :uuid, :folio, :issued_on, :total, :notes, :xml_document
-      )
+      ])
     end
 
     def validate_cfdi_supplier!(data)
@@ -125,4 +127,3 @@ module Admin
     end
   end
 end
-

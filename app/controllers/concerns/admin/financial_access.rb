@@ -6,6 +6,7 @@ module Admin
 
     included do
       include SupplierAuditTrail
+
       layout 'admin_dashboard'
       before_action :authenticate_user!
       before_action :require_financial_organization!
@@ -25,4 +26,3 @@ module Admin
     end
   end
 end
-

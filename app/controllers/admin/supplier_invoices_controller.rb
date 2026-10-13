@@ -3,6 +3,7 @@
 module Admin
   class SupplierInvoicesController < ApplicationController
     include FinancialAccess
+
     before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml]
 
     def index
@@ -106,11 +107,11 @@ module Admin
     end
 
     def invoice_params
-      params.require(:supplier_invoice).permit(
+      params.expect(supplier_invoice: [
         :supplier_id, :purchase_order_id, :currency_id, :series, :folio, :issued_on, :received_on,
         :due_on, :subtotal, :discount, :tax_amount, :total, :exchange_rate, :notes,
         :xml_document, :pdf_document
-      )
+      ])
     end
 
     def apply_attributes
@@ -139,4 +140,3 @@ module Admin
     end
   end
 end
-
