@@ -80,8 +80,8 @@ module Admin
     end
 
     # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
-    # rubocop:disable Rails/StrongParametersExpect
     def quotation_params
+      # rubocop:disable-next-line Rails/StrongParametersExpect
       params.require(:purchase_quotation).permit(
         :supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
         purchase_quotation_items_attributes: %i[
@@ -90,7 +90,6 @@ module Admin
         ]
       )
     end
-    # rubocop:enable Rails/StrongParametersExpect
 
     def change_status!(status, from:, permission:)
       authorize @quotation, permission
