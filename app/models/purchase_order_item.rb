@@ -10,6 +10,7 @@ class PurchaseOrderItem < ApplicationRecord
   validates :unit_price, :nonrecoverable_tax, numericality: { greater_than_or_equal_to: 0 }
   validates :discount_percent, numericality: { in: 0..100 }
   validate :supplier_product_consistent
+  validate :product_organization_consistent
 
   def line_total
     ((quantity / units_per_package) * unit_price * (1 - (discount_percent / 100))) + nonrecoverable_tax
@@ -20,6 +21,12 @@ class PurchaseOrderItem < ApplicationRecord
   end
 
   private
+
+  def product_organization_consistent
+    return unless purchase_order && product
+
+    errors.add(:product, :invalid) unless product.organization_id == purchase_order.organization_id
+  end
 
   def supplier_product_consistent
     return unless supplier_product && purchase_order

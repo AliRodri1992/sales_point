@@ -43,10 +43,11 @@ module Purchases
       end
     end
 
-    def self.decide_request!(request, status:)
+    def self.decide_request!(request, status:, user:)
       request.with_lock do
         raise ArgumentError, 'Request must be submitted' unless request.submitted?
         raise ArgumentError, 'Unsupported request decision' unless status.in?(%w[approved rejected])
+        raise ArgumentError, 'Requester cannot approve or reject own request' if request.requested_by_id == user.id
 
         request.update!(status:)
       end

@@ -74,8 +74,19 @@ RSpec.describe Purchases::Workflow do
     described_class.submit_request!(request)
     expect(request.reload).to be_submitted
 
-    described_class.decide_request!(request, status: 'approved')
+    described_class.decide_request!(request, status: 'approved', user: approver)
     expect(request.reload).to be_approved
+  end
+
+  it 'prevents a requester from approving their own purchase request' do
+    request = PurchaseRequest.create!(organization:, branch:, requested_by: requester)
+    request.purchase_request_items.create!(product:, quantity: 2)
+    described_class.submit_request!(request)
+
+    expect do
+      described_class.decide_request!(request, status: 'approved', user: requester)
+    end.to raise_error(ArgumentError, /own request/)
+    expect(request.reload).to be_submitted
   end
 
   it 'rejects approval of an unsubmitted purchase request' do

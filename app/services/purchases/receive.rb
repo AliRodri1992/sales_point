@@ -34,7 +34,14 @@ module Purchases
     private
 
     def existing
-      GoodsReceipt.find_by(organization: @order.organization, idempotency_key: @idempotency_key)
+      return if @idempotency_key.blank?
+
+      receipt = GoodsReceipt.find_by(organization: @order.organization, idempotency_key: @idempotency_key)
+      return unless receipt
+
+      raise ArgumentError, 'Operation key belongs to a different purchase order' if receipt.purchase_order_id != @order.id
+
+      receipt
     end
 
     def validate_order!

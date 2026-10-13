@@ -48,6 +48,25 @@ RSpec.describe Purchases::Receive do
     expect(receipt.goods_receipt_items.first.purchase_cost_allocation).to be_present
   end
 
+  it 'rejects an idempotency key already used by another order' do
+    first = receive(quantity: 2)
+    other_order = PurchaseOrder.create!(
+      organization:, branch:, supplier:, currency: supplier.currency, requested_by: user, status: :ordered
+    )
+    other_order.purchase_order_items.create!(
+      product:, quantity: 10, units_per_package: 1, unit_price: 10
+    )
+
+    expect do
+      described_class.call(
+        order: other_order, user:, idempotency_key: first.idempotency_key,
+        entries: [{ purchase_order_item_id: other_order.purchase_order_items.first.id,
+                    delivered_quantity: 1, accepted_quantity: 1, damaged_quantity: 0 }]
+      )
+    end.to raise_error(ArgumentError, /different purchase order/)
+    expect(other_order.goods_receipts.count).to eq(0)
+  end
+
   it 'marks the purchase order received when the accepted quantity completes the order' do
     receive(quantity: 6, token: 'delivery-1')
     receive(quantity: 4, token: 'delivery-2')
