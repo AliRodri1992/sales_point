@@ -77,7 +77,7 @@ module Admin
 
     # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
     def request_params
-      # rubocop:disable-next-line Rails/StrongParametersExpect
+      # rubocop:disable-next Rails/StrongParametersExpect
       params.require(:purchase_request).permit(
         :branch_id, :needed_on, :notes,
         purchase_request_items_attributes: %i[id product_id quantity notes]

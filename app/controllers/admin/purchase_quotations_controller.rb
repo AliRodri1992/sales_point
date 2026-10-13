@@ -81,7 +81,7 @@ module Admin
 
     # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
     def quotation_params
-      # rubocop:disable-next-line Rails/StrongParametersExpect
+      # rubocop:disable-next Rails/StrongParametersExpect
       params.require(:purchase_quotation).permit(
         :supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
         purchase_quotation_items_attributes: %i[
