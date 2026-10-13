@@ -9,6 +9,7 @@ Documentación de los módulos funcionales de NEXO POS.
 | Módulo | Archivo | Estado | Descripción |
 |--------|---------|--------|-------------|
 | [Productos](./products.md) | products.md | ✅ Implementado | Gestión del catálogo de productos |
+| [Compras, recepciones y trazabilidad](./purchases.md) | purchases.md | ✅ Implementado | Solicitudes, cotizaciones, órdenes, inventario por sucursal, lotes y costos |
 | [Categorías](./categories.md) | categories.md | ✅ Implementado | Organización de productos |
 | [Idiomas](./languages.md) | languages.md | ✅ Implementado | Configuración multi-idioma |
 | [Dashboard](./dashboard.md) | dashboard.md | ✅ Implementado | Panel de administración |
