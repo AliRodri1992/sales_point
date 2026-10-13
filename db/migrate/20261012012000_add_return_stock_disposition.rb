@@ -8,3 +8,4 @@ class AddReturnStockDisposition < ActiveRecord::Migration[8.1]
                          "stock_disposition IN ('accepted', 'quarantined')",
                          name: 'chk_purchase_return_stock_disposition'
   end
+end
