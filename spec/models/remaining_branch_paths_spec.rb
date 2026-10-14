@@ -43,8 +43,9 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
     end
 
     it 'accepts a supported PDF without exceeding the size limit' do
-      supplier.documents.attach(io: StringIO.new('%PDF-1.4'), filename: 'small.pdf',
-                                content_type: 'application/pdf')
+      supplier.documents.attach(
+        io: StringIO.new('%PDF-1.4'), filename: 'small.pdf', content_type: 'application/pdf'
+      )
       expect(supplier).to be_valid
     end
 
@@ -86,8 +87,10 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
     let(:saved_supplier) { create(:supplier, organization:) }
     let(:actor) { create(:user) }
     let(:order) do
-      PurchaseOrder.new(organization:, branch:, supplier: saved_supplier,
-                        currency: saved_supplier.currency, requested_by: actor)
+      PurchaseOrder.new(
+        organization:, branch:, supplier: saved_supplier,
+        currency: saved_supplier.currency, requested_by: actor
+      )
     end
 
     it 'accepts a purchase order without linked request or quotation' do
@@ -191,14 +194,18 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
     end
 
     it 'rejects order items owned by another tenant' do
-      order.purchase_order_items.build(product: create(:product, organization: create(:organization)),
-                                      quantity: 2, units_per_package: 1, unit_price: 10)
+      order.purchase_order_items.build(
+        product: create(:product, organization: create(:organization)),
+        quantity: 2, units_per_package: 1, unit_price: 10
+      )
       expect(order).not_to be_valid
     end
 
     it 'accepts own organization product entries' do
-      order.purchase_order_items.build(product: create(:product, organization:),
-                                      quantity: 2, units_per_package: 1, unit_price: 10)
+      order.purchase_order_items.build(
+        product: create(:product, organization:),
+        quantity: 2, units_per_package: 1, unit_price: 10
+      )
       expect(order).to be_valid
     end
   end
