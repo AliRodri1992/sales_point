@@ -184,5 +184,4 @@ RSpec.describe 'Financial model edge decisions' do
     expect(invoice).not_to be_valid
     expect(invoice.errors[:xml_document]).to be_present
   end
-
 end
