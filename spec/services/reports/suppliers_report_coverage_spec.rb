@@ -39,9 +39,7 @@ RSpec.describe 'Supplier report definitions' do
   end
 
   it 'uses the requested report locale for exports' do
-    exporter = class_double(Reports::PdfExporter)
-    allow(Reports::ExportService::FORMATS).to receive(:fetch).with(:pdf).and_return(exporter)
-    allow(exporter).to receive(:call) { I18n.locale.to_s }
+    allow(Reports::PdfExporter).to receive(:call) { I18n.locale.to_s }
     expect(Reports::ExportService.call(report:, format: :pdf)).to eq('es')
   end
 end
