@@ -41,7 +41,10 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
 
     sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
     expect(sidebar['class']).to include('sidebar-collapsed')
-    expect(sidebar.at_css("a[href='#{admin_purchase_orders_path}'] svg[data-sidebar-icon='purchase-orders']")).to be_present
-    expect(sidebar.at_css("a[href='#{admin_account_payables_path}'] svg[data-sidebar-icon='accounts-payable']")).to be_present
+    purchase_orders = sidebar.at_css("a[href='#{admin_purchase_orders_path}']")
+    accounts_payable = sidebar.at_css("a[href='#{admin_account_payables_path}']")
+
+    expect(purchase_orders.at_css("svg[data-sidebar-icon='purchase-orders']")).to be_present
+    expect(accounts_payable.at_css("svg[data-sidebar-icon='accounts-payable']")).to be_present
   end
 end
