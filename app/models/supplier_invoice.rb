@@ -25,8 +25,26 @@ class SupplierInvoice < ApplicationRecord
   validate :consistent_relations
   validate :valid_documents
   before_validation :normalize_fiscal_data
+  validate :immutable_after_posting, on: :update
+  before_destroy :prevent_posted_destruction
 
   private
+
+  def immutable_after_posting
+    return if status_in_database == 'draft'
+    return if (changes_to_save.keys - %w[status cancelled_at]).empty? &&
+              status_in_database == 'posted' && status == 'cancelled'
+
+    errors.add(:base, 'Posted or cancelled invoices cannot be edited')
+  end
+
+  def prevent_posted_destruction
+    return if draft?
+
+    errors.add(:base, 'Posted or cancelled invoices cannot be deleted')
+    throw(:abort)
+  end
+
 
   def consistent_relations
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
