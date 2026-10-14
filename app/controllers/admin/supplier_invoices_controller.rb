@@ -68,7 +68,6 @@ module Admin
       financial_error(e, admin_supplier_invoice_path(@invoice))
     end
 
-
     def cancel
       authorize @invoice, :cancel?
       AccountsPayable::CancelInvoice.call(invoice: @invoice, actor: current_user)
@@ -112,7 +111,6 @@ module Admin
                       xml_document pdf_document
                     ])
     end
-
 
     def apply_attributes
       AccountsPayable::PrepareInvoice.call(

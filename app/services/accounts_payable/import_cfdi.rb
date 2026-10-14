@@ -24,9 +24,7 @@ module AccountsPayable
     private
 
     def validate_supplier!
-      unless @data[:issuer_rfc] == @invoice.supplier.rfc
-        raise ArgumentError, 'Issuer RFC differs from supplier'
-      end
+      raise ArgumentError, 'Issuer RFC differs from supplier' unless @data[:issuer_rfc] == @invoice.supplier.rfc
       return if @data[:receiver_rfc] == @invoice.organization.tax_id
 
       raise ArgumentError, 'Receiver RFC differs from organization'

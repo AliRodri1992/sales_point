@@ -8,6 +8,7 @@ class Supplier < ApplicationRecord
   has_many :purchase_quotations, dependent: :restrict_with_exception
   has_many :purchase_orders, dependent: :restrict_with_exception
   include SupplierFinancialAssociations
+
   has_many :products, through: :supplier_products
 
   belongs_to :currency

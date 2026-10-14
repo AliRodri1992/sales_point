@@ -49,7 +49,7 @@ module AccountsPayable
     def self.fiscal_data(root, nodes)
       {
         issuer_rfc: nodes.fetch(:issuer)['Rfc'].to_s.upcase,
-        receiver_rfc: nodes.fetch(:receiver)['Rfc'].to_s.upcase,
+        receiver_rfc: nodes.fetch(:receiver)['Rfc'].to_s.upcase
       }.merge(invoice_totals(root), invoice_metadata(root))
     end
 

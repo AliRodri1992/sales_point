@@ -25,7 +25,6 @@ module Admin
       load_catalogs
     end
 
-
     def create
       @credit = new_credit
       authorize @credit
@@ -96,9 +95,9 @@ module Admin
                     ])
     end
 
-def attach_credit_xml!
+    def attach_credit_xml!
       upload = credit_params[:xml_document]
-      return unless upload.present?
+      return if upload.blank?
 
       raw = upload.read
       data = AccountsPayable::CfdiParser.call(xml: raw, expected_type: 'E')
