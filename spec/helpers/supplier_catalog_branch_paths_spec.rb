@@ -7,7 +7,14 @@ RSpec.describe 'Supplier catalog breadcrumb decisions' do
   let(:helper_object) do
     Object.new.tap do |instance|
       instance.extend(SupplierCatalogBreadcrumbsHelper)
-      instance.extend(Rails.application.routes.url_helpers)
+      instance.define_singleton_method(:admin_suppliers_path) { '/admin/suppliers' }
+      instance.define_singleton_method(:admin_supplier_path) { |_supplier| '/admin/suppliers/1' }
+      instance.define_singleton_method(:admin_supplier_supplier_products_path) do |_supplier|
+        '/admin/suppliers/1/products'
+      end
+      instance.define_singleton_method(:admin_supplier_bank_accounts_path) do |_supplier|
+        '/admin/suppliers/1/bank_accounts'
+      end
       instance.define_singleton_method(:t) { |key| key }
       instance.define_singleton_method(:controller) { nil }
       instance.define_singleton_method(:params) { nil }
