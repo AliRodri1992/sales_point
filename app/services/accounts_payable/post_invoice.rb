@@ -6,6 +6,7 @@ module AccountsPayable
       validation = SatStatusVerifier.call(invoice:) if invoice.draft? && invoice.cfdi?
       invoice.with_lock do
         validate_invoice!(invoice)
+        validate_cfdi_identity!(invoice) if invoice.cfdi?
         validate_amounts!(invoice)
         payable = invoice.create_account_payable!(payable_attributes(invoice))
         invoice.update!({ status: :posted, posted_at: Time.current }.merge(sat_attributes(validation)))
@@ -25,6 +26,16 @@ module AccountsPayable
       raise ArgumentError, 'Invoice already processed' unless invoice.draft?
       raise ArgumentError, 'Invoice total must be positive' unless invoice.total.positive?
       raise ArgumentError, 'CFDI XML is required' if invoice.cfdi? && !invoice.xml_document.attached?
+    end
+
+    def self.validate_cfdi_identity!(invoice)
+      data = CfdiParser.call(xml: invoice.xml_document.download)
+      expected = { uuid: invoice.uuid, issuer_rfc: invoice.supplier.rfc,
+                   receiver_rfc: invoice.organization.tax_id, total: invoice.total }
+      expected.each do |attribute, value|
+        raise ArgumentError, "CFDI #{attribute} does not match invoice" unless data.fetch(attribute) == value
+      end
+      raise ArgumentError, 'CFDI currency differs from invoice' unless data.fetch(:currency_code) == invoice.currency.code
     end
 
     def self.validate_amounts!(invoice)
