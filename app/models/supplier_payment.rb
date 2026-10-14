@@ -22,13 +22,18 @@ class SupplierPayment < ApplicationRecord
 
   def matching_organization
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
-    if supplier_bank_account && (supplier_bank_account.organization_id != organization_id ||
-                                 supplier_bank_account.supplier_id != supplier_id)
-      errors.add(:supplier_bank_account, :invalid)
-    end
-    return unless supplier_bank_account
+    validate_bank_account if supplier_bank_account
+  end
 
+  def validate_bank_account
+    errors.add(:supplier_bank_account, :invalid) unless matching_bank_supplier?
     errors.add(:supplier_bank_account, :invalid) unless supplier_bank_account.deleted_at.nil?
-    errors.add(:supplier_bank_account, :invalid) if currency && supplier_bank_account.currency_code != currency.code
+    return unless currency
+
+    errors.add(:supplier_bank_account, :invalid) if supplier_bank_account.currency_code != currency.code
+  end
+
+  def matching_bank_supplier?
+    supplier_bank_account.organization_id == organization_id && supplier_bank_account.supplier_id == supplier_id
   end
 end

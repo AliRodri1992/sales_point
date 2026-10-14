@@ -8,9 +8,17 @@ module Admin
       authorize current_organization.account_payables.new, :index?
       @payables = policy_scope(current_organization.account_payables)
                   .includes(:supplier, supplier_invoice: :currency).order(due_on: :asc, id: :asc)
-      @open = @payables.select { |payable| payable.supplier_invoice.posted? && payable.balance.positive? }
-      @currency_balances = @open.group_by { |payable| payable.supplier_invoice.currency.code }
-                                .transform_values do |entries|
+      @open = open_payables(@payables)
+      @currency_balances = summarize_by_currency(@open)
+    end
+
+    def open_payables(payables)
+      payables.select { |payable| payable.supplier_invoice.posted? && payable.balance.positive? }
+    end
+
+    def summarize_by_currency(payables)
+      payables.group_by { |payable| payable.supplier_invoice.currency.code }
+              .transform_values do |entries|
         { open: entries.sum(&:balance), overdue: entries.select(&:overdue?).sum(&:balance) }
       end
     end

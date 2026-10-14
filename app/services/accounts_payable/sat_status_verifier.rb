@@ -41,19 +41,23 @@ module AccountsPayable
     def build_expression
       raise ArgumentError, 'Missing CFDI XML' unless @invoice.xml_document.attached?
 
-      document = Nokogiri::XML(@invoice.xml_document.download) { |options| options.strict.nonet }
-      seal = document.root&.[]('Sello').to_s
-      raise ArgumentError, 'Missing CFDI digital seal' if seal.length < 8
-
       {
         re: @invoice.issuer_rfc,
         rr: @invoice.receiver_rfc,
         tt: format('%.6f', @invoice.total),
         id: @invoice.uuid,
-        fe: seal.last(8)
+        fe: digital_seal_suffix
       }.map { |key, value| "#{key}=#{value}" }.join('&').prepend('?')
     rescue Nokogiri::XML::SyntaxError
       raise ArgumentError, 'Invalid CFDI XML'
+    end
+
+    def digital_seal_suffix
+      document = Nokogiri::XML(@invoice.xml_document.download) { |options| options.strict.nonet }
+      seal = document.root&.[]('Sello').to_s
+      raise ArgumentError, 'Missing CFDI digital seal' if seal.length < 8
+
+      seal.last(8)
     end
 
     def soap_request(expression)
@@ -70,19 +74,28 @@ module AccountsPayable
     end
 
     def parse_response(xml)
-      raise ArgumentError, 'Invalid SAT response' if xml.blank? || xml.bytesize > 64.kilobytes
-
-      document = Nokogiri::XML(xml) { |options| options.strict.nonet }
-      raise ArgumentError, 'Invalid SAT response' if document.at_xpath('//*[local-name()="Fault"]')
-
-      status = document.at_xpath('//*[local-name()="Estado"]')&.text&.strip
-      code = document.at_xpath('//*[local-name()="CodigoEstatus"]')&.text&.strip
+      document = valid_sat_document(xml)
+      status = sat_value(document, 'Estado')
+      code = sat_value(document, 'CodigoEstatus')
       raise ArgumentError, 'Invalid SAT response' if status.blank? || code.blank?
       raise ArgumentError, "CFDI not valid according to SAT: #{status}" unless status == 'Vigente'
 
       { status:, code:, verified_at: Time.current }
     rescue Nokogiri::XML::SyntaxError
       raise ArgumentError, 'Invalid SAT response'
+    end
+
+    def valid_sat_document(xml)
+      raise ArgumentError, 'Invalid SAT response' if xml.blank? || xml.bytesize > 64.kilobytes
+
+      document = Nokogiri::XML(xml) { |options| options.strict.nonet }
+      raise ArgumentError, 'Invalid SAT response' if document.at_xpath('//*[local-name()="Fault"]')
+
+      document
+    end
+
+    def sat_value(document, name)
+      document.at_xpath("//*[local-name()='#{name}']")&.text&.strip
     end
   end
 end
