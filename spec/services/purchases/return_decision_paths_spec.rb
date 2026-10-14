@@ -8,8 +8,10 @@ RSpec.describe 'Purchase return service decision paths' do
   let(:receipt_lots) { double('receipt lots') }
   let(:receipt_item) { double('receipt item', inventory_lots: receipt_lots) }
   let(:entry) do
-    double('return entry', quantity: 3.to_d, goods_receipt_item: receipt_item,
-           purchase_return_id: 7, stock_quarantined?: false)
+    double(
+      'return entry', quantity: 3.to_d, goods_receipt_item: receipt_item,
+      purchase_return_id: 7, stock_quarantined?: false
+    )
   end
   let(:lot_inventory) { double('inventory') }
   let(:lot) { double('lot', inventory: lot_inventory, quantity: 5.to_d) }
