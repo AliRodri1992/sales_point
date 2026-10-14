@@ -41,8 +41,9 @@ module Admin
 
     def post_payment
       authorize @payment, :post?
-      allocations = params.require(:allocations).map do |row|
-        row.permit(:account_payable_id, :amount).to_h.symbolize_keys
+      allocations = params.fetch(:allocations, []).filter_map do |row|
+        permitted = row.permit(:account_payable_id, :amount)
+        permitted.to_h.symbolize_keys if permitted[:amount].present?
       end
       AccountsPayable::ApplyPayment.call(payment: @payment, allocations:, actor: current_user)
       redirect_to admin_supplier_payment_path(@payment)

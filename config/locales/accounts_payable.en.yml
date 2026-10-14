@@ -51,7 +51,7 @@ en:
       line_items: "Line items"
       applications: "Allocations"
       apply_payment: "Apply payment"
-      payment_hint: "Allocate the full payment amount to an outstanding payable before posting."
+      payment_hint: "Allocate the full payment amount among one or more outstanding invoices in the same currency."
       select_payable: "Select payable"
       apply_credit: "Apply credit note"
       apply: "Apply"

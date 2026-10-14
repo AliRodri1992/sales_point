@@ -51,7 +51,7 @@ es:
       line_items: "Conceptos"
       applications: "Aplicaciones"
       apply_payment: "Aplicar pago a deuda"
-      payment_hint: "Para confirmar el pago, asigne exactamente su importe a una deuda pendiente."
+      payment_hint: "Distribuya el importe total del pago entre una o varias facturas pendientes de la misma moneda."
       select_payable: "Seleccione una cuenta por pagar"
       apply_credit: "Aplicar nota de crédito"
       apply: "Aplicar"

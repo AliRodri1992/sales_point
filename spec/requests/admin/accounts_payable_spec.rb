@@ -107,6 +107,35 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     expect(payable.reload.balance).to eq(100)
   end
 
+  it 'splits one payment across two invoices without exceeding either balance' do
+    first_invoice = posted_invoice
+    second_invoice = SupplierInvoice.create!(
+      organization:, supplier:, currency:, created_by: user,
+      issued_on: Date.current, received_on: Date.current, due_on: Date.current + 20.days,
+      folio: 'FACT-SECOND', subtotal: 90, total: 90
+    )
+    second_payable = AccountsPayable::PostInvoice.call(invoice: second_invoice, actor: user)
+
+    payment = SupplierPayment.create!(
+      organization:, supplier:, currency:, created_by: user,
+      paid_on: Date.current, amount: 110
+    )
+
+    post post_payment_admin_supplier_payment_path(payment), params: {
+      allocations: [
+        { account_payable_id: first_invoice.account_payable.id, amount: '40.00' },
+        { account_payable_id: second_payable.id, amount: '70.00' },
+        { account_payable_id: first_invoice.account_payable.id, amount: '' }
+      ]
+    }
+
+    expect(response).to redirect_to(admin_supplier_payment_path(payment))
+    expect(payment.reload).to be_posted
+    expect(payment.supplier_payment_allocations.count).to eq(2)
+    expect(first_invoice.account_payable.reload.balance).to eq(60)
+    expect(second_payable.reload.balance).to eq(20)
+  end
+
   it 'creates and allocates a credit note against a payable' do
     payable = posted_invoice.account_payable
     post admin_supplier_credit_notes_path, params: {

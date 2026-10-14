@@ -51,7 +51,7 @@ ko:
       line_items: "항목"
       applications: "배분"
       apply_payment: "지급 적용"
-      payment_hint: "확정 전에 지급액 전액을 미지급 채무에 배분하세요."
+      payment_hint: "확정 전에 동일한 통화의 미지급 송장 한 건 이상에 지급액 전액을 배분하세요."
       select_payable: "채무 선택"
       apply_credit: "대변 메모 적용"
       apply: "적용"
