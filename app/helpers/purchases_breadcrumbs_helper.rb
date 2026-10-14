@@ -17,28 +17,40 @@ module PurchasesBreadcrumbsHelper
     purchase_breadcrumb_items('returns', admin_purchase_returns_path, 'return', 'new_return')
   end
 
+
   def goods_receipt_breadcrumb_items
-    order = controller.view_assigns['order']
     receipt = controller.view_assigns['receipt']
-    base = { label: t('admin.purchases.orders'), path: admin_purchase_orders_path }
-    order_item = { label: order&.code || t('admin.purchases.orders') }
-    order_item[:path] = admin_purchase_order_path(order) if order&.persisted?
+    return goods_receipt_detail_breadcrumbs(receipt) if receipt&.persisted?
 
-    receipt_list = { label: t('admin.purchases.receipts') }
-    receipt_list[:path] = admin_purchase_order_goods_receipts_path(order) if order&.persisted?
-    return [base, order_item, receipt_list.except(:path)] if params[:action] == 'index'
-    return [base, order_item, receipt_list, { label: t('admin.purchases.new_receipt') }] if params[:action] == 'new'
-
-    if receipt&.persisted?
-      order_item = { label: receipt.purchase_order.code, path: admin_purchase_order_path(receipt.purchase_order) }
-      return [base, order_item, { label: t('admin.purchases.receipts') },
-              { label: "##{receipt.id}" }]
-    end
-
-    [base, order_item, receipt_list]
+    goods_receipt_order_breadcrumbs(controller.view_assigns['order'])
   end
 
   private
+
+
+  def goods_receipt_detail_breadcrumbs(receipt)
+    order = receipt.purchase_order
+    [
+      { label: t('admin.purchases.orders'), path: admin_purchase_orders_path },
+      { label: order.code, path: admin_purchase_order_path(order) },
+      { label: t('admin.purchases.receipts') },
+      { label: "##{receipt.id}" }
+    ]
+  end
+
+  def goods_receipt_order_breadcrumbs(order)
+    base = { label: t('admin.purchases.orders'), path: admin_purchase_orders_path }
+    order_item = { label: order&.code || t('admin.purchases.orders') }
+    order_item[:path] = admin_purchase_order_path(order) if order&.persisted?
+    receipts = { label: t('admin.purchases.receipts') }
+    receipts[:path] = admin_purchase_order_goods_receipts_path(order) if order&.persisted?
+
+    trail = [base, order_item, receipts]
+    return [*trail, { label: t('admin.purchases.new_receipt') }] if params[:action] == 'new'
+
+    trail.last.delete(:path) if params[:action] == 'index'
+    trail
+  end
 
   def purchase_breadcrumb_items(section, path, record_name, new_key)
     base = { label: t("admin.purchases.#{section}"), path: }

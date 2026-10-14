@@ -1,21 +1,15 @@
 # frozen_string_literal: true
 
 module SupplierCatalogBreadcrumbsHelper
+
   def supplier_product_breadcrumb_items
     supplier = controller.view_assigns['supplier']
-    offer = controller.view_assigns['offer']
-    supplier_items = supplier_catalog_items(supplier)
+    items = supplier_catalog_items(supplier)
     section = { label: t('admin.procurement.title') }
     section[:path] = admin_supplier_supplier_products_path(supplier) if supplier
-    return [*supplier_items, section.except(:path)] if params[:action] == 'index'
+    return [*items, section.except(:path)] if params[:action] == 'index'
 
-    label = case params[:action]
-            when 'new', 'create' then t('admin.procurement.add')
-            when 'edit', 'update' then t('admin.procurement.edit')
-            when 'history' then t('admin.procurement.history')
-            else offer&.product&.name || t('admin.procurement.title')
-            end
-    [*supplier_items, section, { label: }]
+    [*items, section, { label: supplier_product_action_label }]
   end
 
   def supplier_product_comparison_breadcrumb_items
@@ -41,6 +35,15 @@ module SupplierCatalogBreadcrumbsHelper
   end
 
   private
+
+def supplier_product_action_label
+    case params[:action]
+    when 'new', 'create' then t('admin.procurement.add')
+    when 'edit', 'update' then t('admin.procurement.edit')
+    when 'history' then t('admin.procurement.history')
+    else controller.view_assigns['offer']&.product&.name || t('admin.procurement.title')
+    end
+  end
 
   def supplier_catalog_items(supplier)
     base = { label: t('admin.breadcrumbs.suppliers'), path: admin_suppliers_path }
