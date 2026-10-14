@@ -89,7 +89,8 @@ RSpec.describe 'Financial integrity regression', type: :request do
       }
     }
 
-    expect(response.status).to eq(422), "Redirect: #{response.location}; payment IDs: #{SupplierPayment.pluck(:id).inspect}"
+    diagnostic = "Redirect: #{response.location}; payment IDs: #{SupplierPayment.pluck(:id).inspect}"
+    expect(response.status).to eq(422), diagnostic
   end
 
   it 'rejects supplier bank account in another currency' do
