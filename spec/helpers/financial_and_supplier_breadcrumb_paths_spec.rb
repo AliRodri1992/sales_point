@@ -103,20 +103,18 @@ RSpec.describe 'Purchase, supplier and finance breadcrumb branches' do
 
   BreadcrumbCoverageCases::SUPPLIER_ACTIONS.each do |action|
     it "renders the supplier product breadcrumb in #{action}" do
-      check(:supplier_product_breadcrumb_items, action:, count: action == 'index' ? 3 : 4,
-            assigns: supplier_assignment)
+      check(:supplier_product_breadcrumb_items, action:, count: action == 'index' ? 3 : 4, assigns: supplier_assignment)
     end
 
     it "renders the bank account breadcrumb in #{action}" do
-      check(:supplier_bank_account_breadcrumb_items, action:, count: action == 'index' ? 3 : 4,
-            assigns: supplier_assignment)
+      count = action == 'index' ? 3 : 4
+      check(:supplier_bank_account_breadcrumb_items, action:, count:, assigns: supplier_assignment)
     end
   end
 
   it 'renders supplier product history and comparison' do
     check(:supplier_product_breadcrumb_items, action: 'history', count: 4, assigns: supplier_assignment)
-    check(:supplier_product_comparison_breadcrumb_items, action: 'show', count: 4,
-          assigns: supplier_assignment)
+    check(:supplier_product_comparison_breadcrumb_items, action: 'show', count: 4, assigns: supplier_assignment)
   end
 
   it 'renders supplier product and bank breadcrumbs without supplier context' do
