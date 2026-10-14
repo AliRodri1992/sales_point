@@ -49,6 +49,8 @@ module Admin
       authorize @invoice
       apply_attributes
       if @invoice.save
+        FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
+                                    event: 'invoice.updated', subject: @invoice)
         redirect_to admin_supplier_invoice_path(@invoice)
       else
         load_catalogs

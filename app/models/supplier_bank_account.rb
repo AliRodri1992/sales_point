@@ -14,6 +14,8 @@ class SupplierBankAccount < ApplicationRecord
   validates :currency_code, presence: true, length: { is: 3 }
   validate :same_organization
   validate :valid_clabe
+  validate :valid_account_number
+  validate :consistent_bank_code
   before_validation :normalize_bank_values
 
   scope :active, -> { where(deleted_at: nil) }
@@ -50,6 +52,18 @@ class SupplierBankAccount < ApplicationRecord
     return if clabe.blank?
 
     errors.add(:clabe, :invalid) unless valid_clabe_format? && valid_clabe_checksum?
+  end
+
+  def valid_account_number
+    return if account_number.blank?
+
+    errors.add(:account_number, :invalid) unless account_number.match?(/\A\d{4,20}\z/)
+  end
+
+  def consistent_bank_code
+    return if clabe.blank? || sat_bank_code.blank?
+
+    errors.add(:sat_bank_code, :invalid) unless clabe.start_with?(sat_bank_code)
   end
 
   def valid_clabe_format?

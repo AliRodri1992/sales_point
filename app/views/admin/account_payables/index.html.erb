@@ -44,7 +44,7 @@
             <td class="px-4 py-3 font-semibold"><%= number_to_currency(payable.balance, unit: '') %></td>
             <td class="px-4 py-3">
               <span class="rounded-full px-3 py-1 text-xs font-semibold <%= payable.overdue? ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700' %>">
-                <%= t("admin.accounts_payable.states.#{payable.settled? ? 'settled' : payable.overdue? ? 'overdue' : 'open'}") %>
+                <%= t("admin.accounts_payable.states.#{!payable.supplier_invoice.posted? ? 'cancelled' : payable.settled? ? 'settled' : payable.overdue? ? 'overdue' : 'open'}") %>
               </span>
             </td>
           </tr>

@@ -26,5 +26,9 @@ class SupplierPayment < ApplicationRecord
                                  supplier_bank_account.supplier_id != supplier_id)
       errors.add(:supplier_bank_account, :invalid)
     end
+    return unless supplier_bank_account
+
+    errors.add(:supplier_bank_account, :invalid) unless supplier_bank_account.deleted_at.nil?
+    errors.add(:supplier_bank_account, :invalid) if currency && supplier_bank_account.currency_code != currency.code
   end
 end

@@ -34,7 +34,7 @@ class AccountPayable < ApplicationRecord
   end
 
   def settled?
-    balance.zero?
+    supplier_invoice.posted? && balance.zero?
   end
 
   private

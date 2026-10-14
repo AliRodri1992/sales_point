@@ -72,6 +72,7 @@ module Admin
     def load_catalogs
       @suppliers = current_organization.suppliers.available.order(:name)
       @currencies = Currency.active.order(:code)
+      @bank_accounts = SupplierBankAccount.where(organization: current_organization).active.order(:bank_name, :id)
     end
 
     def payment_params

@@ -82,3 +82,6 @@ application.register("delta-select", DeltaSelectController)
 
 import SupplierNestedController from "./supplier_nested_controller"
 application.register("supplier-nested", SupplierNestedController)
+
+import SupplierPaymentBankController from "./supplier_payment_bank_controller"
+application.register("supplier-payment-bank", SupplierPaymentBankController)

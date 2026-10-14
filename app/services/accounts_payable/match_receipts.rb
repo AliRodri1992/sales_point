@@ -33,9 +33,16 @@ module AccountsPayable
     def valid_receipts
       receipts = @invoice.organization.goods_receipts.where(id: @receipt_ids).order(:id).to_a
       raise ArgumentError, 'Receipt not found' unless receipts.size == @receipt_ids.size
-      return receipts if receipts.all? { |receipt| receipt.purchase_order_id == @invoice.purchase_order_id }
+      raise ArgumentError, 'Receipts must belong to the same purchase order' unless
+        receipts.all? { |receipt| receipt.purchase_order_id == @invoice.purchase_order_id && receipt.posted? }
 
-      raise ArgumentError, 'Receipts must belong to the same purchase order'
+      other_invoices = SupplierInvoiceReceipt.joins(:supplier_invoice)
+                       .where(goods_receipt_id: @receipt_ids)
+                       .where.not(supplier_invoice_id: @invoice.id)
+                       .where(supplier_invoices: { organization_id: @invoice.organization_id, status: %w[draft posted] })
+      raise ArgumentError, 'Receipt already linked to another active invoice' if other_invoices.exists?
+
+      receipts
     end
 
     def audit_matching!(receipts)
