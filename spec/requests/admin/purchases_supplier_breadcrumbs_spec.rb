@@ -6,6 +6,7 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, :english) }
   let(:supplier) { create(:supplier, organization:) }
+  let(:dossier_sections) { %w[general commercial contacts addresses schedules documents products finances] }
 
   before do
     create(:organization_membership, user:, organization:)
@@ -63,6 +64,21 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
     expect(response).to have_http_status(:ok)
     expect(current_crumb).to eq(I18n.t('admin.accounts_payable.bank_accounts', locale: :en))
+  end
+
+  %i[es en ko].each do |locale|
+    it "renders every supplier dossier tab in #{locale} without missing translations" do
+      language = Language.find_by(code: locale) || create(:language, code: locale, name: locale, flag_iso: 'mx')
+      user.update!(language:)
+
+      get admin_supplier_path(supplier)
+
+      expect(response).to have_http_status(:ok)
+      dossier_sections.each do |section|
+        expect(response.body).to include(I18n.t("admin.supplier_dossier.sections.#{section}", locale:))
+      end
+      expect(response.body).not_to include('Translation missing')
+    end
   end
 
   it 'keeps translated supplier contact and address breadcrumb labels' do

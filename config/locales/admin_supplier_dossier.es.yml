@@ -62,6 +62,8 @@ es:
         addresses: "Direcciones"
         schedules: "Calendarios"
         documents: "Documentos"
+        products: "Productos"
+        finances: "Finanzas"
       kinds:
         visit: "Visita"
         order: "Toma de pedidos"

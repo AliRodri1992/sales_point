@@ -62,6 +62,8 @@ en:
         addresses: "Addresses"
         schedules: "Schedules"
         documents: "Documents"
+        products: "Products"
+        finances: "Finances"
       kinds:
         visit: Visit
         order: Order taking
