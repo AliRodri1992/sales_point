@@ -18,7 +18,7 @@ RSpec.describe 'Purchase landed cost allocation decision paths' do
     records = double
     allow(records).to receive(:includes).with(:purchase_order_item).and_return(items)
     receipt = double(goods_receipt_items: records)
-    double(goods_receipt: receipt)
+    double(goods_receipt: receipt, accepted_quantity: items.sum(&:accepted_quantity))
   end
 
   it 'weights an order by goods value when known' do
