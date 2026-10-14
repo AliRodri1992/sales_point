@@ -73,6 +73,14 @@ RSpec.describe 'Financial integrity regression', type: :request do
       holder_name: 'Vendor', account_number: '12345678', currency_code: currency.code
     )
     bank.update!(deleted_at: Time.current)
+    expect(bank.reload.deleted_at).to be_present
+    expect(SupplierBankAccount.active.where(id: bank.id)).to be_empty
+
+    payment = SupplierPayment.new(
+      organization:, supplier:, currency:, created_by: user, supplier_bank_account_id: bank.id,
+      paid_on: Date.current, amount: 25
+    )
+    expect(payment).not_to be_valid
 
     post admin_supplier_payments_path, params: {
       supplier_payment: {
@@ -81,7 +89,7 @@ RSpec.describe 'Financial integrity regression', type: :request do
       }
     }
 
-    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.status).to eq(422), "Redirect: #{response.location}; payment IDs: #{SupplierPayment.pluck(:id).inspect}"
   end
 
   it 'rejects supplier bank account in another currency' do
