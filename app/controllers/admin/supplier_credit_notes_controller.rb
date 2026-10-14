@@ -129,6 +129,7 @@ module Admin
       supplier = current_organization.suppliers.find_by(id: @credit.supplier_id)
       raise ArgumentError, 'Invalid supplier' unless supplier
       raise ArgumentError, 'Issuer RFC does not match supplier' unless data[:issuer_rfc] == supplier.rfc
+
       valid_receiver = data[:receiver_rfc] == current_organization.tax_id
       raise ArgumentError, 'Receiver RFC does not match organization' unless valid_receiver
 
