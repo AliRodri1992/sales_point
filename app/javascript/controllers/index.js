@@ -85,3 +85,6 @@ application.register("supplier-nested", SupplierNestedController)
 
 import SupplierPaymentBankController from "./supplier_payment_bank_controller"
 application.register("supplier-payment-bank", SupplierPaymentBankController)
+
+import CfdiPreviewController from "./cfdi_preview_controller"
+application.register("cfdi-preview", CfdiPreviewController)

@@ -1,8 +1,9 @@
 <%= render 'admin/financials/errors', record: @invoice %>
-<%= form_with model: [:admin, @invoice], class: 'space-y-5' do |f| %>
+<%= form_with model: [:admin, @invoice], class: 'space-y-5',
+              data: { controller: 'cfdi-preview', 'cfdi-preview-url-value': preview_cfdi_admin_supplier_invoices_path } do |f| %>
   <div class="grid gap-4 md:grid-cols-2">
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1 block text-sm font-medium' %>
-      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
+      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'cfdi-preview-target': 'supplier' }, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
     <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1 block text-sm font-medium' %>
       <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>
     <div><%= f.label :purchase_order_id, t('admin.accounts_payable.order'), class: 'mb-1 block text-sm font-medium' %>
@@ -20,11 +21,14 @@
         <%= f.number_field field, step: 'any', min: 0, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
     <% end %>
     <div><%= f.label :xml_document, t('admin.accounts_payable.cfdi_xml'), class: 'mb-1 block text-sm font-medium' %>
-      <%= f.file_field :xml_document, accept: '.xml,application/xml,text/xml', class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+      <%= f.file_field :xml_document, accept: '.xml,application/xml,text/xml',
+                        data: { 'cfdi-preview-target': 'file', action: 'change->cfdi-preview#load' },
+                        class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
     <div><%= f.label :pdf_document, t('admin.accounts_payable.pdf'), class: 'mb-1 block text-sm font-medium' %>
       <%= f.file_field :pdf_document, accept: '.pdf,application/pdf', class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
   </div>
   <p class="text-xs text-slate-500"><%= t('admin.accounts_payable.cfdi_hint') %></p>
+  <div data-cfdi-preview-target="result" role="status" aria-live="polite" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"></div>
   <div><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1 block text-sm font-medium' %>
     <%= f.text_area :notes, rows: 3, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
   <div class="flex flex-wrap gap-3">

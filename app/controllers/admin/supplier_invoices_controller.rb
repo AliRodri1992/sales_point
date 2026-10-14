@@ -16,6 +16,19 @@ module Admin
       authorize @invoice
     end
 
+    def preview_cfdi
+      @invoice = new_invoice
+      authorize @invoice, :create?
+      supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id])
+      @invoice.supplier = supplier
+      upload = params.require(:xml_document)
+      AccountsPayable::ImportCfdi.call(invoice: @invoice, xml: upload.read)
+      response.headers['Cache-Control'] = 'no-store'
+      render json: preview_payload
+    rescue ArgumentError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound => e
+      render json: { error: e.message }, status: :unprocessable_content
+    end
+
     def new
       @invoice = new_invoice
       authorize @invoice
@@ -105,6 +118,16 @@ module Admin
 
     def set_invoice
       @invoice = policy_scope(current_organization.supplier_invoices).find(params[:id])
+    end
+
+    def preview_payload
+      fields = %i[uuid series folio issuer_rfc receiver_rfc subtotal discount tax_amount total
+                  exchange_rate issued_on received_on due_on]
+      { fields: @invoice.attributes.symbolize_keys.slice(*fields),
+        currency: @invoice.currency.code,
+        concepts: @invoice.supplier_invoice_lines.map do |line|
+          { description: line.description, quantity: line.quantity, amount: line.amount }
+        end }
     end
 
     def invoice_params

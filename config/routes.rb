@@ -76,6 +76,7 @@ Rails.application.routes.draw do
 
     resources :account_payables, only: %i[index show]
     resources :supplier_invoices, except: %i[destroy] do
+      collection { post :preview_cfdi }
       member do
         post :post_invoice
         post :cancel

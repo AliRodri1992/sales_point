@@ -3,14 +3,22 @@
 module AccountsPayable
   class PostInvoice
     def self.call(invoice:, actor:)
+      validation = SatStatusVerifier.call(invoice:) if invoice.draft? && invoice.cfdi?
       invoice.with_lock do
         validate_invoice!(invoice)
         validate_amounts!(invoice)
         payable = invoice.create_account_payable!(payable_attributes(invoice))
-        invoice.update!(status: :posted, posted_at: Time.current)
+        invoice.update!({ status: :posted, posted_at: Time.current }.merge(sat_attributes(validation)))
         audit_posting!(invoice, actor)
         payable
       end
+    end
+
+    def self.sat_attributes(validation)
+      return {} unless validation
+
+      { sat_status: validation.fetch(:status), sat_response_code: validation.fetch(:code),
+        sat_verified_at: validation.fetch(:verified_at) }
     end
 
     def self.validate_invoice!(invoice)
