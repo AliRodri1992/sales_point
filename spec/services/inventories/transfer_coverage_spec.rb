@@ -6,10 +6,10 @@ RSpec.describe Inventories::Transfer do
   let(:organization) { create(:organization) }
   let(:product) { create(:product, organization:) }
   let(:origin) do
-    Inventory.create!(organization:, branch: create(:branch, organization:), product:, stock: 12, min_stock: 0)
+    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Origin'), product:, stock: 12, min_stock: 0)
   end
   let(:destination) do
-    Inventory.create!(organization:, branch: create(:branch, organization:), product:, stock: 0, min_stock: 0)
+    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Destination'), product:, stock: 0, min_stock: 0)
   end
 
   it 'transfers stock between organization branches with immutable movement records' do
@@ -23,9 +23,10 @@ RSpec.describe Inventories::Transfer do
   end
 
   it 'blocks transfers across organizations' do
+    foreign_organization = create(:organization)
     foreign = Inventory.create!(
-      organization: create(:organization), product: create(:product),
-      branch: create(:branch), stock: 0
+      organization: foreign_organization, product: create(:product, organization: foreign_organization),
+      branch: create(:branch, organization: foreign_organization), stock: 0
     )
     expect { described_class.call(from: origin, to: foreign, quantity: 1) }
       .to raise_error(ArgumentError, /organizations/)
@@ -33,7 +34,7 @@ RSpec.describe Inventories::Transfer do
 
   it 'blocks transfers between different products' do
     another = Inventory.create!(
-      organization:, branch: create(:branch, organization:),
+      organization:, branch: create(:branch, organization:, name: 'Other Product Branch'),
       product: create(:product, organization:), stock: 0
     )
     expect { described_class.call(from: origin, to: another, quantity: 1) }
