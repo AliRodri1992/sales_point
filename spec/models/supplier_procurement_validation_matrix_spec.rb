@@ -7,7 +7,7 @@ RSpec.describe 'Supplier financial and purchasing relationship validation' do
   let(:foreign_organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:foreign_supplier) { create(:supplier, organization: foreign_organization) }
-  let(:branch) { create(:branch, organization:) }
+  let(:branch) { create(:branch, organization:, name: 'Valid Procurement Branch') }
   let(:user) { create(:user) }
   let(:product) { create(:product, organization:) }
   let(:currency) { supplier.currency }
