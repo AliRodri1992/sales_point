@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            documents:
+              file_too_large: "Each document must be 10 MB or smaller"

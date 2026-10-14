@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :sat_fiscal_regime do
-    code { Faker::Number.number(digits: 3).to_s }
+    sequence(:code) { |n| format('%03d', 100 + n) }
     description { Faker::Company.bs }
     person_type { %w[F M].sample }
 

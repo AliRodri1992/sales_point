@@ -1,0 +1,8 @@
+es:
+  activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            documents:
+              file_too_large: "Cada documento debe tener un tamaño máximo de 10 MB"

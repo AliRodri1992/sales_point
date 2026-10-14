@@ -112,7 +112,7 @@ class Supplier < ApplicationRecord
       next unless document.blob
 
       errors.add(:documents, :invalid) unless document.blob.content_type.in?(%w[application/pdf image/png image/jpeg])
-      errors.add(:documents, :too_long) if document.blob.byte_size > 10.megabytes
+      errors.add(:documents, :file_too_large) if document.blob.byte_size > 10.megabytes
     end
   end
 

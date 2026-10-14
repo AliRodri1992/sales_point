@@ -39,7 +39,7 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
                                              content_type: 'application/pdf').first
       allow(attachment.blob).to receive(:byte_size).and_return(11.megabytes)
       expect(supplier).not_to be_valid
-      expect(supplier.errors[:documents]).to be_present
+      expect(supplier.errors.details[:documents]).to include(hash_including(error: :file_too_large))
     end
 
     it 'accepts a supported PDF without exceeding the size limit' do
