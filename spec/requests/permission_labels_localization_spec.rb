@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Supplier, purchasing and finance permission localization', type: :request do
-  ATTRIBUTES = %w[name description].freeze
+  let(:attributes) { %w[name description] }
+  let(:permission_codes) { %w[suppliers_fiscal_view purchases_view accounts_payable_banks_reveal] }
 
   let(:user) { create(:user, :english) }
 
@@ -25,8 +26,8 @@ RSpec.describe 'Supplier, purchasing and finance permission localization', type:
       get new_system_role_path
 
       expect(response).to have_http_status(:ok)
-      %w[suppliers_fiscal_view purchases_view accounts_payable_banks_reveal].each do |key|
-        ATTRIBUTES.each do |field|
+      permission_codes.each do |key|
+        attributes.each do |field|
           expect(response.body).to include(I18n.t("admin.system_roles.permissions.#{key}.#{field}", locale:))
         end
       end

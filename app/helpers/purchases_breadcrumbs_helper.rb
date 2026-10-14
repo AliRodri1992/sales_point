@@ -17,7 +17,6 @@ module PurchasesBreadcrumbsHelper
     purchase_breadcrumb_items('returns', admin_purchase_returns_path, 'return', 'new_return')
   end
 
-
   def goods_receipt_breadcrumb_items
     receipt = controller.view_assigns['receipt']
     return goods_receipt_detail_breadcrumbs(receipt) if receipt&.persisted?
@@ -26,7 +25,6 @@ module PurchasesBreadcrumbsHelper
   end
 
   private
-
 
   def goods_receipt_detail_breadcrumbs(receipt)
     order = receipt.purchase_order
@@ -39,17 +37,27 @@ module PurchasesBreadcrumbsHelper
   end
 
   def goods_receipt_order_breadcrumbs(order)
-    base = { label: t('admin.purchases.orders'), path: admin_purchase_orders_path }
-    order_item = { label: order&.code || t('admin.purchases.orders') }
-    order_item[:path] = admin_purchase_order_path(order) if order&.persisted?
-    receipts = { label: t('admin.purchases.receipts') }
-    receipts[:path] = admin_purchase_order_goods_receipts_path(order) if order&.persisted?
-
-    trail = [base, order_item, receipts]
+    trail = [
+      { label: t('admin.purchases.orders'), path: admin_purchase_orders_path },
+      goods_receipt_purchase_order_item(order),
+      goods_receipt_list_item(order)
+    ]
     return [*trail, { label: t('admin.purchases.new_receipt') }] if params[:action] == 'new'
 
     trail.last.delete(:path) if params[:action] == 'index'
     trail
+  end
+
+  def goods_receipt_purchase_order_item(order)
+    item = { label: order&.code || t('admin.purchases.orders') }
+    item[:path] = admin_purchase_order_path(order) if order&.persisted?
+    item
+  end
+
+  def goods_receipt_list_item(order)
+    item = { label: t('admin.purchases.receipts') }
+    item[:path] = admin_purchase_order_goods_receipts_path(order) if order&.persisted?
+    item
   end
 
   def purchase_breadcrumb_items(section, path, record_name, new_key)

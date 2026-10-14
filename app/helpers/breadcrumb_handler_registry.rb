@@ -28,5 +28,4 @@ module BreadcrumbHandlerRegistry
     'admin/supplier_credit_notes' => :supplier_credit_note_breadcrumb_items,
     'admin/users' => :user_breadcrumb_items
   }.freeze
-
 end

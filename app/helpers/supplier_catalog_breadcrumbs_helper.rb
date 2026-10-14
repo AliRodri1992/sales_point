@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module SupplierCatalogBreadcrumbsHelper
-
   def supplier_product_breadcrumb_items
     supplier = controller.view_assigns['supplier']
     items = supplier_catalog_items(supplier)
@@ -36,7 +35,7 @@ module SupplierCatalogBreadcrumbsHelper
 
   private
 
-def supplier_product_action_label
+  def supplier_product_action_label
     case params[:action]
     when 'new', 'create' then t('admin.procurement.add')
     when 'edit', 'update' then t('admin.procurement.edit')
