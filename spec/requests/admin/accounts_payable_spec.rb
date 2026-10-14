@@ -185,9 +185,12 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
 
     get admin_supplier_invoice_path(invoice)
     expect(response).to have_http_status(:not_found)
+
+    # The integration test's 404 request clears the Warden session; reauthenticate
+    # before checking the second independently protected endpoint.
+    sign_in user
     get admin_account_payable_path(invoice.account_payable)
-    expect(response).to have_http_status(:not_found),
-                        "Unexpected cross-organization redirect: #{response.headers['Location']}"
+    expect(response).to have_http_status(:not_found)
   end
 
   it 'prevents a malformed XML document from creating invoices' do
