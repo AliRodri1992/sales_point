@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1176,7 +1176,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_010000) do
     t.bigint "supplier_invoice_id", null: false
     t.datetime "updated_at", null: false
     t.index ["goods_receipt_id"], name: "index_supplier_invoice_receipts_on_goods_receipt_id"
-    t.index ["supplier_invoice_id", "goods_receipt_id"], name: "idx_supplier_invoice_receipt_unique", unique: true
+    t.index ["supplier_invoice_id", "goods_receipt_id"], name: "idx_supplier_invoice_receipt_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["supplier_invoice_id"], name: "index_supplier_invoice_receipts_on_supplier_invoice_id"
   end
 

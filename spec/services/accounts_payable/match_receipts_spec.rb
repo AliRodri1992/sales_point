@@ -38,6 +38,18 @@ RSpec.describe AccountsPayable::MatchReceipts do
     expect(FinancialAuditEvent.where(event: 'invoice.receipts_matched', organization:)).to exist
   end
 
+  it 'allows matching an existing receipt again after an earlier match was replaced' do
+    record = receipt
+    described_class.call(invoice:, receipt_ids: [record.id], actor: user)
+    described_class.call(invoice:, receipt_ids: [], actor: user)
+
+    expect do
+      described_class.call(invoice:, receipt_ids: [record.id], actor: user)
+    end.to change(SupplierInvoiceReceipt, :count).by(1)
+
+    expect(invoice.reload.goods_receipts).to contain_exactly(record)
+  end
+
   it 'rejects receipts from another purchase order' do
     other_order = PurchaseOrder.create!(
       organization:, branch:, supplier:, currency: supplier.currency,
