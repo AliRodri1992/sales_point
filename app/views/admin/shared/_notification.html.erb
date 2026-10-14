@@ -71,6 +71,16 @@
   <% else %>
     <% subtitle_text = record.code %>
   <% end %>
+<% elsif record.is_a?(AccountPayable) %>
+  <% stage = notification.params[:stage].to_s %>
+  <% allowed_stages = %w[overdue today days_1 days_3 days_7] %>
+  <% stage = 'today' unless allowed_stages.include?(stage) %>
+  <% avatar_text = record.supplier.name.to_s.first(2).upcase %>
+  <% title_text = t("admin.accounts_payable.notifications.#{stage}",
+                    supplier: record.supplier.name,
+                    amount: number_to_currency(record.balance, unit: ''),
+                    due_on: l(record.due_on)) %>
+  <% subtitle_text = "#{record.supplier_invoice.folio.presence || "##{record.supplier_invoice_id}"} · #{record.supplier_invoice.currency.code}" %>
 <% else %>
   <% sender = record&.user %>
   <% avatar_text = sender ? sender.initials : "?" %>
