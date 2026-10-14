@@ -115,41 +115,9 @@ module Admin
 
 
     def apply_attributes
-      attrs = invoice_params.except(:xml_document, :pdf_document)
-      supplier = invoice_supplier(attrs)
-      @invoice.assign_attributes(attrs.merge(supplier:))
-      attach_invoice_xml!
-      assign_missing_dates!(supplier)
-      attach_invoice_pdf!
-    end
-
-    def invoice_supplier(attrs)
-      id = attrs[:supplier_id] || @invoice.supplier_id
-      current_organization.suppliers.not_deleted.find_by(id:).tap do |supplier|
-        raise ArgumentError, 'Invalid supplier' unless supplier
-      end
-    end
-
-    def attach_invoice_xml!
-      upload = invoice_params[:xml_document]
-      return unless upload.present?
-
-      raw = upload.read
-      AccountsPayable::ImportCfdi.call(invoice: @invoice, xml: raw)
-      @invoice.xml_document.attach(
-        io: StringIO.new(raw), filename: upload.original_filename, content_type: 'application/xml'
+      AccountsPayable::PrepareInvoice.call(
+        invoice: @invoice, attributes: invoice_params, organization: current_organization
       )
-    end
-
-    def assign_missing_dates!(supplier)
-      @invoice.issued_on ||= Date.current
-      @invoice.received_on ||= Date.current
-      @invoice.due_on ||= @invoice.issued_on + supplier.credit_days.days
-    end
-
-    def attach_invoice_pdf!
-      uploaded = invoice_params[:pdf_document]
-      @invoice.pdf_document.attach(uploaded) if uploaded.present?
     end
 
     def load_catalogs

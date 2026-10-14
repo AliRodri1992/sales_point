@@ -186,7 +186,8 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     get admin_supplier_invoice_path(invoice)
     expect(response).to have_http_status(:not_found)
     get admin_account_payable_path(invoice.account_payable)
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:not_found),
+                        "Unexpected cross-organization redirect: #{response.headers['Location']}"
   end
 
   it 'prevents a malformed XML document from creating invoices' do

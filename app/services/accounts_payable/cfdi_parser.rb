@@ -50,11 +50,21 @@ module AccountsPayable
       {
         issuer_rfc: nodes.fetch(:issuer)['Rfc'].to_s.upcase,
         receiver_rfc: nodes.fetch(:receiver)['Rfc'].to_s.upcase,
-        series: root['Serie'], folio: root['Folio'],
-        issued_on: Date.parse(root['Fecha'].to_s),
+      }.merge(invoice_totals(root), invoice_metadata(root))
+    end
+
+    def self.invoice_totals(root)
+      {
         subtotal: BigDecimal(root['SubTotal'].to_s),
         discount: BigDecimal(root['Descuento'].to_s.presence || '0'),
-        total: BigDecimal(root['Total'].to_s), tax_amount: tax_total(root),
+        total: BigDecimal(root['Total'].to_s), tax_amount: tax_total(root)
+      }
+    end
+
+    def self.invoice_metadata(root)
+      {
+        series: root['Serie'], folio: root['Folio'],
+        issued_on: Date.parse(root['Fecha'].to_s),
         currency_code: root['Moneda'],
         exchange_rate: BigDecimal(root['TipoCambio'].to_s.presence || '1'),
         payment_method: root['MetodoPago']

@@ -75,16 +75,7 @@ jobs:
             rubocop-${{ runner.os }}-
 
       - name: Lint Ruby code
-        run: |
-          bin/rubocop -a -f simple || true
-          echo '__RUBOCOP_FILES_START__'
-          git diff --name-only -- '*.rb' '*.rake' | while IFS= read -r path; do
-            echo "__RUBOCOP_FILE__ $path"
-            base64 -w0 "$path"
-            echo
-          done
-          echo '__RUBOCOP_FILES_END__'
-          bin/rubocop -f simple
+        run: bin/rubocop -f github
 
   test:
     name: RSpec
