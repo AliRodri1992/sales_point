@@ -9,7 +9,10 @@ module Admin
       @payables = policy_scope(current_organization.account_payables)
                   .includes(:supplier, supplier_invoice: :currency).order(due_on: :asc, id: :asc)
       @open = @payables.reject(&:settled?)
-      @overdue = @open.select(&:overdue?)
+      @currency_balances = @open.group_by { |payable| payable.supplier_invoice.currency.code }
+                                .transform_values do |entries|
+        { open: entries.sum(&:balance), overdue: entries.select(&:overdue?).sum(&:balance) }
+      end
     end
 
     def show

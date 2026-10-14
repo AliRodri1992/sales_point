@@ -23,7 +23,7 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   def reveal!(actor:)
-    raise Pundit::NotAuthorizedError unless actor&.admin? || actor&.permission?('accounts_payable.banks.reveal')
+    raise Pundit::NotAuthorizedError unless Pundit.policy(actor, self)&.reveal?
 
     FinancialAuditEvent.record!(organization:, actor:, event: 'bank_account.revealed', subject: self)
     { account_number: account_number, clabe: clabe }

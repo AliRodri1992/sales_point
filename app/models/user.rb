@@ -86,6 +86,7 @@ class User < ApplicationRecord
       .or(notification_relation_for(Client))
       .or(notification_relation_for(SystemRole))
       .or(notification_relation_for(Supplier))
+      .or(notification_relation_for(AccountPayable))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 

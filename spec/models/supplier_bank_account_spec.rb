@@ -27,6 +27,18 @@ RSpec.describe SupplierBankAccount do
     expect(account.errors[:clabe]).to be_present
   end
 
+  it 'denies disclosure to an administrator outside the supplier organization' do
+    account = described_class.create!(
+      organization: supplier.organization, supplier:, holder_name: 'Vendor Holdings',
+      bank_name: 'Example Bank', account_number: '999988887777'
+    )
+    actor = create(:user)
+    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
+
+    expect { account.reveal!(actor:) }.to raise_error(Pundit::NotAuthorizedError)
+    expect(FinancialAuditEvent.where(event: 'bank_account.revealed')).not_to exist
+  end
+
   it 'refuses banking details from another organization' do
     other = create(:supplier)
 
