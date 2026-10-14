@@ -85,8 +85,13 @@ module Admin
       key = "#{field}_#{bound}"
       return scope unless valid_nonnegative_number?(key)
 
+      if field == 'credit_days' && !params[key].to_s.match?(/\A\d{1,12}\z/)
+        return scope
+      end
+
       operator = bound == 'min' ? '>=' : '<='
-      scope.where("suppliers.#{field} #{operator} ?", BigDecimal(params[key].to_s))
+      value = field == 'credit_days' ? params[key].to_i : BigDecimal(params[key].to_s)
+      scope.where("suppliers.#{field} #{operator} ?", value)
     end
 
     def apply_date_filters(scope)

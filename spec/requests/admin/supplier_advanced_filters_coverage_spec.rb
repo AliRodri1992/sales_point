@@ -43,6 +43,7 @@ RSpec.describe 'Supplier advanced catalog filters', type: :request do
     'numeric maximum discount' => { discount_percent_max: '20' },
     'negative numeric bound' => { credit_days_min: '-3' },
     'invalid numeric bound' => { discount_percent_max: 'invalid' },
+    'fractional integer days' => { credit_days_min: '12.5' },
     'numeric oversized bound' => { credit_limit_min: '100000000000000' },
     'created date from' => { created_at_from: '2025-01-01' },
     'created date to' => { created_at_to: '2027-01-01' },
