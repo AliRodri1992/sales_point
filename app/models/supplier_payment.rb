@@ -26,14 +26,9 @@ class SupplierPayment < ApplicationRecord
   end
 
   def validate_bank_account
-    errors.add(:supplier_bank_account, :invalid) unless matching_bank_supplier?
-    errors.add(:supplier_bank_account, :invalid) unless supplier_bank_account.deleted_at.nil?
-    return unless currency
-
-    errors.add(:supplier_bank_account, :invalid) if supplier_bank_account.currency_code != currency.code
-  end
-
-  def matching_bank_supplier?
-    supplier_bank_account.organization_id == organization_id && supplier_bank_account.supplier_id == supplier_id
+    allowed = SupplierBankAccount.active.where(
+      id: supplier_bank_account_id, organization_id:, supplier_id:, currency_code: currency&.code
+    ).exists?
+    errors.add(:supplier_bank_account, :invalid) unless allowed
   end
 end
