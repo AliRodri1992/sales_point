@@ -1,0 +1,97 @@
+es:
+  admin:
+    system_roles:
+      permissions:
+        suppliers_view:
+          name: "Consultar proveedores"
+          description: "Permite consultar el catálogo de proveedores."
+        suppliers_create:
+          name: "Crear proveedores"
+          description: "Permite registrar nuevos proveedores."
+        suppliers_update:
+          name: "Editar proveedores"
+          description: "Permite actualizar la información de proveedores."
+        suppliers_destroy:
+          name: "Eliminar proveedores"
+          description: "Permite dar de baja proveedores."
+        suppliers_export:
+          name: "Exportar proveedores"
+          description: "Permite exportar el catálogo de proveedores."
+        suppliers_contacts_view:
+          name: "Consultar contactos de proveedores"
+          description: "Permite visualizar los contactos registrados de proveedores."
+        suppliers_contacts_manage:
+          name: "Administrar contactos de proveedores"
+          description: "Permite registrar, editar y eliminar contactos de proveedores."
+        suppliers_addresses_view:
+          name: "Consultar direcciones de proveedores"
+          description: "Permite visualizar domicilios de proveedores."
+        suppliers_addresses_manage:
+          name: "Administrar direcciones de proveedores"
+          description: "Permite registrar, editar y eliminar domicilios de proveedores."
+        suppliers_schedules_view:
+          name: "Consultar calendarios de proveedores"
+          description: "Permite visualizar los calendarios de visitas, pedidos y repartos."
+        suppliers_schedules_manage:
+          name: "Administrar calendarios de proveedores"
+          description: "Permite registrar, editar y eliminar calendarios de proveedores."
+        suppliers_documents_view:
+          name: "Consultar documentos de proveedores"
+          description: "Permite acceder a los documentos adjuntos del proveedor."
+        suppliers_documents_manage:
+          name: "Administrar documentos de proveedores"
+          description: "Permite adjuntar y eliminar documentos del proveedor."
+        suppliers_fiscal_view:
+          name: "Consultar información fiscal de proveedores"
+          description: "Permite visualizar RFC, régimen fiscal y domicilio fiscal del proveedor."
+        suppliers_fiscal_manage:
+          name: "Administrar información fiscal de proveedores"
+          description: "Permite modificar los datos fiscales del proveedor."
+        suppliers_commercial_view:
+          name: "Consultar condiciones comerciales de proveedores"
+          description: "Permite visualizar monedas, crédito, descuentos y pedidos mínimos."
+        suppliers_commercial_manage:
+          name: "Administrar condiciones comerciales de proveedores"
+          description: "Permite modificar las condiciones comerciales del proveedor."
+        suppliers_products_view:
+          name: "Consultar productos de proveedores"
+          description: "Permite consultar ofertas y precios de productos por proveedor."
+        suppliers_products_manage:
+          name: "Administrar productos de proveedores"
+          description: "Permite modificar ofertas, precios y presentaciones de productos."
+        purchases_view:
+          name: "Consultar compras"
+          description: "Permite consultar documentos de compra de la organización."
+        purchases_create:
+          name: "Crear documentos de compra"
+          description: "Permite registrar solicitudes, cotizaciones y órdenes de compra."
+        purchases_approve:
+          name: "Autorizar compras"
+          description: "Permite aprobar o rechazar solicitudes y órdenes de compra."
+        purchases_receive:
+          name: "Recibir mercancía comprada"
+          description: "Permite registrar recepciones de mercancía."
+        purchases_returns:
+          name: "Procesar devoluciones a proveedores"
+          description: "Permite gestionar devoluciones de mercancía a proveedores."
+        accounts_payable_view:
+          name: "Consultar cuentas por pagar"
+          description: "Permite consultar facturas, saldos y conciliaciones de proveedores."
+        accounts_payable_manage:
+          name: "Administrar facturas y notas de crédito"
+          description: "Permite registrar y editar facturas, pagos y notas de crédito."
+        accounts_payable_approve:
+          name: "Confirmar facturas y notas de crédito"
+          description: "Permite confirmar y cancelar facturas y notas de crédito de proveedores."
+        accounts_payable_pay:
+          name: "Aplicar y revertir pagos"
+          description: "Permite registrar aplicaciones y reversiones de pagos a proveedores."
+        accounts_payable_banks_view:
+          name: "Consultar cuentas bancarias de proveedores"
+          description: "Permite consultar información bancaria enmascarada."
+        accounts_payable_banks_manage:
+          name: "Administrar cuentas bancarias de proveedores"
+          description: "Permite registrar, editar y archivar cuentas bancarias de proveedores."
+        accounts_payable_banks_reveal:
+          name: "Revelar datos bancarios de proveedores"
+          description: "Permite consultar los números de cuenta completos con auditoría."

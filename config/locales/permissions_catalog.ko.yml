@@ -1,0 +1,97 @@
+ko:
+  admin:
+    system_roles:
+      permissions:
+        suppliers_view:
+          name: "공급업체 조회"
+          description: "공급업체 목록을 조회할 수 있습니다."
+        suppliers_create:
+          name: "공급업체 등록"
+          description: "새 공급업체를 등록할 수 있습니다."
+        suppliers_update:
+          name: "공급업체 수정"
+          description: "공급업체 정보를 수정할 수 있습니다."
+        suppliers_destroy:
+          name: "공급업체 삭제"
+          description: "공급업체 기록을 비활성화할 수 있습니다."
+        suppliers_export:
+          name: "공급업체 내보내기"
+          description: "공급업체 목록을 내보낼 수 있습니다."
+        suppliers_contacts_view:
+          name: "공급업체 연락처 조회"
+          description: "등록된 공급업체 연락처를 조회할 수 있습니다."
+        suppliers_contacts_manage:
+          name: "공급업체 연락처 관리"
+          description: "공급업체 연락처를 추가, 수정 및 삭제할 수 있습니다."
+        suppliers_addresses_view:
+          name: "공급업체 주소 조회"
+          description: "공급업체 주소를 조회할 수 있습니다."
+        suppliers_addresses_manage:
+          name: "공급업체 주소 관리"
+          description: "공급업체 주소를 추가, 수정 및 삭제할 수 있습니다."
+        suppliers_schedules_view:
+          name: "공급업체 일정 조회"
+          description: "공급업체 방문, 주문 및 배송 일정을 조회할 수 있습니다."
+        suppliers_schedules_manage:
+          name: "공급업체 일정 관리"
+          description: "공급업체 일정을 추가, 수정 및 삭제할 수 있습니다."
+        suppliers_documents_view:
+          name: "공급업체 문서 조회"
+          description: "첨부된 공급업체 문서를 조회할 수 있습니다."
+        suppliers_documents_manage:
+          name: "공급업체 문서 관리"
+          description: "공급업체 문서를 첨부 및 삭제할 수 있습니다."
+        suppliers_fiscal_view:
+          name: "공급업체 세무 정보 조회"
+          description: "공급업체의 납세자 등록번호, 세제 및 세무 주소를 조회할 수 있습니다."
+        suppliers_fiscal_manage:
+          name: "공급업체 세무 정보 관리"
+          description: "공급업체 세무 정보를 수정할 수 있습니다."
+        suppliers_commercial_view:
+          name: "공급업체 거래 조건 조회"
+          description: "공급업체 통화, 신용 조건, 할인 및 최소 주문 금액을 조회할 수 있습니다."
+        suppliers_commercial_manage:
+          name: "공급업체 거래 조건 관리"
+          description: "공급업체 거래 조건을 수정할 수 있습니다."
+        suppliers_products_view:
+          name: "공급업체 상품 조회"
+          description: "공급업체의 상품 제안과 가격을 조회할 수 있습니다."
+        suppliers_products_manage:
+          name: "공급업체 상품 관리"
+          description: "공급업체 제안, 가격 및 포장을 관리할 수 있습니다."
+        purchases_view:
+          name: "구매 조회"
+          description: "조직의 구매 문서를 조회할 수 있습니다."
+        purchases_create:
+          name: "구매 문서 생성"
+          description: "구매 요청, 견적 및 주문을 생성할 수 있습니다."
+        purchases_approve:
+          name: "구매 승인"
+          description: "구매 요청 및 주문을 승인하거나 거절할 수 있습니다."
+        purchases_receive:
+          name: "구매 상품 입고"
+          description: "공급업체의 상품 입고를 기록할 수 있습니다."
+        purchases_returns:
+          name: "공급업체 반품 처리"
+          description: "공급업체로 상품을 반품할 수 있습니다."
+        accounts_payable_view:
+          name: "매입채무 조회"
+          description: "공급업체 송장, 잔액 및 대사 내역을 조회할 수 있습니다."
+        accounts_payable_manage:
+          name: "공급업체 송장 관리"
+          description: "공급업체 송장, 지급 및 대변 메모를 생성하고 수정할 수 있습니다."
+        accounts_payable_approve:
+          name: "송장 및 대변 메모 승인"
+          description: "공급업체 송장과 대변 메모를 확정하거나 취소할 수 있습니다."
+        accounts_payable_pay:
+          name: "지급 적용 및 취소"
+          description: "공급업체 지급을 배분, 확정 및 취소할 수 있습니다."
+        accounts_payable_banks_view:
+          name: "공급업체 은행 계좌 조회"
+          description: "마스킹된 공급업체 은행 계좌 정보를 조회할 수 있습니다."
+        accounts_payable_banks_manage:
+          name: "공급업체 은행 계좌 관리"
+          description: "공급업체 은행 계좌를 추가, 수정 및 보관할 수 있습니다."
+        accounts_payable_banks_reveal:
+          name: "은행 계좌 전체 번호 조회"
+          description: "감사 기록을 남기고 암호화된 계좌 정보를 확인할 수 있습니다."

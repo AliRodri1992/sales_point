@@ -1,0 +1,97 @@
+en:
+  admin:
+    system_roles:
+      permissions:
+        suppliers_view:
+          name: "View suppliers"
+          description: "View the supplier directory."
+        suppliers_create:
+          name: "Create suppliers"
+          description: "Add new suppliers."
+        suppliers_update:
+          name: "Update suppliers"
+          description: "Edit supplier information."
+        suppliers_destroy:
+          name: "Delete suppliers"
+          description: "Deactivate supplier records."
+        suppliers_export:
+          name: "Export suppliers"
+          description: "Export the supplier directory."
+        suppliers_contacts_view:
+          name: "View supplier contacts"
+          description: "View supplier contact information."
+        suppliers_contacts_manage:
+          name: "Manage supplier contacts"
+          description: "Add, edit, and remove supplier contacts."
+        suppliers_addresses_view:
+          name: "View supplier addresses"
+          description: "View supplier addresses."
+        suppliers_addresses_manage:
+          name: "Manage supplier addresses"
+          description: "Add, edit, and remove supplier addresses."
+        suppliers_schedules_view:
+          name: "View supplier schedules"
+          description: "View supplier visit, order, and delivery schedules."
+        suppliers_schedules_manage:
+          name: "Manage supplier schedules"
+          description: "Add, edit, and remove supplier schedules."
+        suppliers_documents_view:
+          name: "View supplier documents"
+          description: "View attached supplier documents."
+        suppliers_documents_manage:
+          name: "Manage supplier documents"
+          description: "Attach and remove supplier documents."
+        suppliers_fiscal_view:
+          name: "View supplier fiscal information"
+          description: "View supplier RFC, tax regime, and fiscal address."
+        suppliers_fiscal_manage:
+          name: "Manage supplier fiscal information"
+          description: "Edit supplier tax information."
+        suppliers_commercial_view:
+          name: "View supplier commercial data"
+          description: "View supplier currencies, credit terms, discounts, and minimum orders."
+        suppliers_commercial_manage:
+          name: "Manage supplier commercial data"
+          description: "Edit supplier commercial terms."
+        suppliers_products_view:
+          name: "View supplier products"
+          description: "View supplier product offers and prices."
+        suppliers_products_manage:
+          name: "Manage supplier products"
+          description: "Edit supplier offers, prices, and packaging."
+        purchases_view:
+          name: "View purchases"
+          description: "View purchase documents belonging to the organization."
+        purchases_create:
+          name: "Create purchase documents"
+          description: "Create purchase requests, quotations, and orders."
+        purchases_approve:
+          name: "Approve purchases"
+          description: "Approve or reject purchase requests and orders."
+        purchases_receive:
+          name: "Receive purchased merchandise"
+          description: "Record goods received from suppliers."
+        purchases_returns:
+          name: "Process supplier returns"
+          description: "Process merchandise returns to suppliers."
+        accounts_payable_view:
+          name: "View accounts payable"
+          description: "View vendor invoices, balances, and reconciliations."
+        accounts_payable_manage:
+          name: "Manage vendor invoices"
+          description: "Create and edit vendor invoices, payments, and credit notes."
+        accounts_payable_approve:
+          name: "Approve invoices and credits"
+          description: "Post and cancel vendor invoices and credit notes."
+        accounts_payable_pay:
+          name: "Apply and reverse payments"
+          description: "Allocate, post, and reverse supplier payments."
+        accounts_payable_banks_view:
+          name: "View vendor bank accounts"
+          description: "View masked vendor bank account information."
+        accounts_payable_banks_manage:
+          name: "Manage vendor bank accounts"
+          description: "Add, update, and archive vendor bank accounts."
+        accounts_payable_banks_reveal:
+          name: "Reveal bank account numbers"
+          description: "View complete encrypted bank details with auditing."
