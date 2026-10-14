@@ -32,13 +32,15 @@ docker compose -f docker-compose.dev.yml exec web bin/rails db:migrate
 docker compose -f docker-compose.dev.yml exec web bin/rails db:seed
 \`\`\`
 
-Programar diariamente el comando siguiente con el programador de tareas del despliegue (debe disponer del entorno Rails y Sidekiq):
+En producción, Solid Queue programa automáticamente `AccountsPayableReminderJob` a las **14:00 UTC (08:00 Ciudad de México)** mediante `config/recurring.yml`. Requiere que el supervisor de Solid Queue esté activo en el despliegue.
+
+Para desarrollo con Sidekiq, o ejecuciones manuales, usar:
 
 \`\`\`bash
 bin/rails accounts_payable:reminders
 \`\`\`
 
-La programación no está ligada a una hora específica del sistema; la aplicación realiza la revisión cuando el comando es ejecutado.
+No programar adicionalmente el mismo job con cron en producción cuando Solid Queue recurring esté activo; la tabla de entregas evita duplicados, pero es preferible una sola programación.
 
 ## Reglas de operación
 
