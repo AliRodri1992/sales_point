@@ -22,7 +22,7 @@ class SupplierPayment < ApplicationRecord
 
   def matching_organization
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
-    validate_bank_account if supplier_bank_account
+    validate_bank_account if supplier_bank_account_id.present?
   end
 
   def validate_bank_account
