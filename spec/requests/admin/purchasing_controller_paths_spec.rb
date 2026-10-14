@@ -129,13 +129,13 @@ RSpec.describe 'Purchasing controller workflows and validation', type: :request 
   it 'rejects editing a submitted quotation' do
     record = quotation_record(status: :submitted)
     get edit_admin_purchase_quotation_path(record)
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'rejects updating a submitted quotation' do
     record = quotation_record(status: :submitted)
     patch admin_purchase_quotation_path(record), params: { purchase_quotation: { notes: 'Changed' } }
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'submits a draft quotation' do
@@ -148,7 +148,7 @@ RSpec.describe 'Purchasing controller workflows and validation', type: :request 
     record = quotation_record(status: :submitted)
     post submit_admin_purchase_quotation_path(record)
     expect(record.reload).to be_submitted
-    expect(response).to redirect_to(admin_purchase_quotation_path(record))
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'accepts a submitted valid quotation' do
