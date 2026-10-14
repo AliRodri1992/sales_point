@@ -5,6 +5,7 @@ module AccountsPayable
     def self.call(invoice:, actor:)
       invoice.with_lock do
         raise ArgumentError, 'Invoice already cancelled' if invoice.cancelled?
+        invoice.account_payable&.lock!
         raise ArgumentError, 'Cannot cancel an invoice with financial movements' if financial_movements?(invoice)
 
         invoice.update!(status: :cancelled, cancelled_at: Time.current)
