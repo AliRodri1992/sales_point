@@ -85,9 +85,7 @@ module Admin
       key = "#{field}_#{bound}"
       return scope unless valid_nonnegative_number?(key)
 
-      if field == 'credit_days' && !params[key].to_s.match?(/\A\d{1,12}\z/)
-        return scope
-      end
+      return scope if field == 'credit_days' && !params[key].to_s.match?(/\A\d{1,12}\z/)
 
       operator = bound == 'min' ? '>=' : '<='
       value = field == 'credit_days' ? params[key].to_i : BigDecimal(params[key].to_s)
