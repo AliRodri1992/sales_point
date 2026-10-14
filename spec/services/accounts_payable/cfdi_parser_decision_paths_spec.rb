@@ -54,8 +54,11 @@ RSpec.describe 'CFDI parser malformed fiscal XML branches' do
 
   it 'defaults absent taxes, discounts and exchange rates to zero or one' do
     data = parser.call(xml: valid_xml)
-    expect(data).to include(total: 10.to_d, subtotal: 10.to_d, discount: 0.to_d,
-                            tax_amount: 0.to_d, exchange_rate: 1.to_d)
+    expected = {
+      total: 10.to_d, subtotal: 10.to_d, discount: 0.to_d,
+      tax_amount: 0.to_d, exchange_rate: 1.to_d
+    }
+    expect(data).to include(expected)
     expect(data.fetch(:lines)).to be_empty
   end
 

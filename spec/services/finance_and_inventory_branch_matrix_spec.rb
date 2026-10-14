@@ -210,7 +210,7 @@ RSpec.describe 'Finance, inventory and costing service decision branches' do
   end
 
   it 'accepts an eligible unexpired FEFO lot' do
-    expect(check_lot).to be(true)
+    expect(eligible_lot?).to be(true)
   end
 
   it 'rejects FEFO lot with a zero requested quantity' do
