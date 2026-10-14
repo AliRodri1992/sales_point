@@ -26,9 +26,9 @@ class SupplierPayment < ApplicationRecord
   end
 
   def validate_bank_account
-    allowed = SupplierBankAccount.active.where(
+    allowed = SupplierBankAccount.active.exists?(
       id: supplier_bank_account_id, organization_id:, supplier_id:, currency_code: currency&.code
-    ).exists?
+    )
     errors.add(:supplier_bank_account, :invalid) unless allowed
   end
 end

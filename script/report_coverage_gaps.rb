@@ -15,10 +15,10 @@ rows = report.filter_map do |path, data|
   relevant = values.compact
   next if relevant.empty?
 
-  missing_lines = values.each_index.select { |index| values[index] == 0 }.map { |index| index + 1 }
+  missing_lines = values.each_index.select { |index| values[index].zero? }.map { |index| index + 1 }
   branch_values = data.fetch('branches', {}).values.flat_map { |value| value.is_a?(Hash) ? value.values : [] }
   missing_branches = branch_values.count { |value| value.to_i.zero? }
-  { path: path.delete_prefix(Dir.pwd + '/'), total: relevant.size, misses: missing_lines,
+  { path: path.delete_prefix("#{Dir.pwd}/"), total: relevant.size, misses: missing_lines,
     branch_total: branch_values.size, branch_misses: missing_branches }
 end
 
