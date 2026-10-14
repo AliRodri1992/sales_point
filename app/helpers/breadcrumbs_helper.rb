@@ -12,6 +12,10 @@ module BreadcrumbsHelper
     'admin/supplier_addresses' => :supplier_address_breadcrumb_items,
     'admin/supplier_contacts' => :supplier_contact_breadcrumb_items,
     'admin/supplier_schedules' => :supplier_schedule_breadcrumb_items,
+    'admin/account_payables' => :account_payable_breadcrumb_items,
+    'admin/supplier_invoices' => :supplier_invoice_breadcrumb_items,
+    'admin/supplier_payments' => :supplier_payment_breadcrumb_items,
+    'admin/supplier_credit_notes' => :supplier_credit_note_breadcrumb_items,
     'admin/users' => :user_breadcrumb_items
   }.freeze
 
@@ -113,6 +117,7 @@ module BreadcrumbsHelper
   end
 
   include SupplierBreadcrumbsHelper
+  include FinancialBreadcrumbsHelper
   include SystemRoleBreadcrumbsHelper
 
   def user_breadcrumb_items

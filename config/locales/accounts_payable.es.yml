@@ -91,3 +91,8 @@ es:
       match_receipts: "Conciliar recepciones"
       match: "Guardar conciliación"
       download_pdf: "Descargar PDF"
+      breadcrumbs:
+        payables: "Cuentas por pagar"
+        invoices: "Facturas de proveedores"
+        payments: "Pagos a proveedores"
+        credits: "Notas de crédito de proveedores"

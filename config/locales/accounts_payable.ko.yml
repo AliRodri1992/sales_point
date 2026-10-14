@@ -91,3 +91,8 @@ ko:
       match_receipts: "입고 내역 대조"
       match: "대조 저장"
       download_pdf: "PDF 다운로드"
+      breadcrumbs:
+        payables: "매입채무"
+        invoices: "공급업체 송장"
+        payments: "공급업체 지급"
+        credits: "공급업체 대변 메모"

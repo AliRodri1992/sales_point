@@ -91,3 +91,8 @@ en:
       match_receipts: "Match goods receipts"
       match: "Save matching"
       download_pdf: "Download PDF"
+      breadcrumbs:
+        payables: "Accounts payable"
+        invoices: "Supplier invoices"
+        payments: "Supplier payments"
+        credits: "Supplier credit notes"
