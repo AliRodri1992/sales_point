@@ -44,12 +44,10 @@ module AccountsPayable
     end
 
     def duplicated_receipts?
+      conditions = { organization_id: @invoice.organization_id, status: %w[draft posted] }
       SupplierInvoiceReceipt.joins(:supplier_invoice).where(goods_receipt_id: @receipt_ids)
                             .where.not(supplier_invoice_id: @invoice.id)
-                            .exists?(supplier_invoices: {
-                              organization_id: @invoice.organization_id,
-                              status: %w[draft posted]
-                            })
+                            .exists?(supplier_invoices: conditions)
     end
 
     def audit_matching!(receipts)

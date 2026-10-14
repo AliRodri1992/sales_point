@@ -19,7 +19,9 @@ RSpec.describe AccountsPayable::SatStatusVerifier do
   end
   let(:http) { instance_double(Net::HTTP) }
   let(:response) { Net::HTTPOK.new('1.1', '200', 'OK') }
-  let(:sat_xml) { '<ConsultaResponse><CodigoEstatus>S - Correcto</CodigoEstatus><Estado>Vigente</Estado></ConsultaResponse>' }
+  let(:sat_xml) do
+    '<ConsultaResponse><CodigoEstatus>S - Correcto</CodigoEstatus><Estado>Vigente</Estado></ConsultaResponse>'
+  end
 
   before do
     allow(Net::HTTP).to receive(:start).and_yield(http)
