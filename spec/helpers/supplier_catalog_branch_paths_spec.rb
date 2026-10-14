@@ -8,7 +8,9 @@ RSpec.describe 'Supplier catalog breadcrumb decisions' do
     Object.new.tap do |instance|
       instance.extend(SupplierCatalogBreadcrumbsHelper)
       instance.extend(Rails.application.routes.url_helpers)
-      allow(instance).to receive(:t) { |key| key }
+      instance.define_singleton_method(:t) { |key| key }
+      instance.define_singleton_method(:controller) { nil }
+      instance.define_singleton_method(:params) { nil }
       allow(instance).to receive(:controller).and_return(
         double(view_assigns: { 'supplier' => supplier, 'offer' => nil })
       )
