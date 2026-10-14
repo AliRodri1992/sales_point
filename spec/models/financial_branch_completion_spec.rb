@@ -132,4 +132,57 @@ RSpec.describe 'Financial model edge decisions' do
   it 'returns no supplier accounts to an anonymous bank-account scope' do
     expect(SupplierBankAccountPolicy::Scope.new(nil, SupplierBankAccount.all).resolve).to be_empty
   end
+
+  it 'recognizes an unpaid supplier invoice after its due date as overdue' do
+    invoice = draft_invoice
+    invoice.due_on = Date.yesterday
+    invoice.save!
+    payable = AccountsPayable::PostInvoice.call(invoice:, actor:)
+
+    expect(payable).to be_overdue
+    expect(payable).not_to be_settled
+  end
+
+  it 'does not classify a fully paid overdue invoice as overdue' do
+    invoice = draft_invoice
+    invoice.due_on = Date.yesterday
+    invoice.save!
+    payable = AccountsPayable::PostInvoice.call(invoice:, actor:)
+    payment = SupplierPayment.create!(
+      organization:, supplier:, currency:, created_by: actor, amount: 100, paid_on: Date.current
+    )
+    AccountsPayable::ApplyPayment.call(
+      payment:, allocations: [{ account_payable_id: payable.id, amount: '100' }], actor:
+    )
+
+    expect(payable.reload).not_to be_overdue
+    expect(payable).to be_settled
+  end
+
+  it 'does not permit payments without a supplier' do
+    payment = SupplierPayment.new(
+      organization:, currency:, created_by: actor, amount: 10, paid_on: Date.current
+    )
+
+    expect(payment).not_to be_valid
+    expect(payment.errors[:supplier]).to be_present
+  end
+
+  it 'rejects a payable without its supplier invoice' do
+    payable = AccountPayable.new(organization:, supplier:, amount: 20, due_on: Date.yesterday)
+
+    expect(payable).not_to be_valid
+    expect(payable.errors[:supplier_invoice]).to be_present
+  end
+
+  it 'rejects an invoice whose XML attachment has an unsupported content type' do
+    invoice = draft_invoice
+    invoice.xml_document.attach(
+      io: StringIO.new('not an XML'), filename: 'not-xml.txt', content_type: 'text/plain'
+    )
+
+    expect(invoice).not_to be_valid
+    expect(invoice.errors[:xml_document]).to be_present
+  end
+
 end
