@@ -90,3 +90,4 @@ en:
         days_7: "Payment to %{supplier} is due in 7 days: %{amount}"
       match_receipts: "Match goods receipts"
       match: "Save matching"
+      download_pdf: "Download PDF"

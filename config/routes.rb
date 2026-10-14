@@ -81,6 +81,7 @@ Rails.application.routes.draw do
         post :cancel
         post :match_receipts
         get :download_xml
+        get :download_pdf
       end
     end
     resources :supplier_payments, only: %i[index show new create] do
@@ -92,6 +93,7 @@ Rails.application.routes.draw do
     resources :supplier_credit_notes, only: %i[index show new create] do
       member do
         post :post_credit
+        get :download_xml
         post :apply
         post :cancel
       end

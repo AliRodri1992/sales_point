@@ -90,3 +90,4 @@ es:
         days_7: "Pago de %{supplier} vence en 7 días: %{amount}"
       match_receipts: "Conciliar recepciones"
       match: "Guardar conciliación"
+      download_pdf: "Descargar PDF"

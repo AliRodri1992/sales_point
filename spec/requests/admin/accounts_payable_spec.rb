@@ -235,6 +235,18 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     expect(organization.supplier_invoices.count).to eq(0)
   end
 
+  it 'does not allow downloading another organization invoice documents' do
+    other = create(:supplier, organization: create(:organization))
+    foreign = SupplierInvoice.create!(
+      organization: other.organization, supplier: other, currency: other.currency,
+      created_by: user, issued_on: Date.current, received_on: Date.current,
+      due_on: Date.tomorrow, total: 150
+    )
+
+    get download_pdf_admin_supplier_invoice_path(foreign)
+    expect(response).to have_http_status(:not_found)
+  end
+
   it 'blocks an unauthenticated finance dashboard' do
     sign_out user
     get admin_account_payables_path

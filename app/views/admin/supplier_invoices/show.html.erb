@@ -3,9 +3,14 @@
   <div class="flex flex-wrap justify-between gap-3">
     <div><h1 class="font-jakarta text-2xl font-bold"><%= t('admin.accounts_payable.invoice') %> <%= @invoice.folio.presence || "##{@invoice.id}" %></h1>
       <p class="mt-1 text-sm text-slate-500"><%= @invoice.supplier.name %> · <%= t("admin.accounts_payable.states.#{@invoice.status}") %></p></div>
-    <% if @invoice.xml_document.attached? %>
-      <%= link_to t('admin.accounts_payable.download_xml'), download_xml_admin_supplier_invoice_path(@invoice), class: 'rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-emerald-700' %>
-    <% end %>
+    <div class="flex flex-wrap gap-3">
+      <% if @invoice.xml_document.attached? %>
+        <%= link_to t('admin.accounts_payable.download_xml'), download_xml_admin_supplier_invoice_path(@invoice), class: 'rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-emerald-700' %>
+      <% end %>
+      <% if @invoice.pdf_document.attached? %>
+        <%= link_to t('admin.accounts_payable.download_pdf'), download_pdf_admin_supplier_invoice_path(@invoice), class: 'rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-emerald-700' %>
+      <% end %>
+    </div>
   </div>
   <dl class="grid gap-4 sm:grid-cols-3">
     <% [

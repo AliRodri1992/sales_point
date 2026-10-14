@@ -90,3 +90,4 @@ ko:
         days_7: "%{supplier} 지급까지 7일: %{amount}"
       match_receipts: "입고 내역 대조"
       match: "대조 저장"
+      download_pdf: "PDF 다운로드"

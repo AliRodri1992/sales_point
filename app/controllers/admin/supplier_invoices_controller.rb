@@ -4,7 +4,7 @@ module Admin
   class SupplierInvoicesController < ApplicationController
     include FinancialAccess
 
-    before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml match_receipts]
+    before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml download_pdf match_receipts]
 
     def index
       authorize current_organization.supplier_invoices.new, :index?
@@ -83,6 +83,15 @@ module Admin
       redirect_to admin_supplier_invoice_path(@invoice)
     rescue ArgumentError, ActiveRecord::RecordInvalid => e
       financial_error(e, admin_supplier_invoice_path(@invoice))
+    end
+
+    def download_pdf
+      authorize @invoice, :download?
+      return head :not_found unless @invoice.pdf_document.attached?
+
+      response.headers['Cache-Control'] = 'no-store'
+      send_data @invoice.pdf_document.download, filename: "invoice-#{@invoice.id}.pdf",
+               type: 'application/pdf', disposition: 'attachment'
     end
 
     def download_xml

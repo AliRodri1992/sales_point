@@ -4,7 +4,7 @@ module Admin
   class SupplierCreditNotesController < ApplicationController
     include FinancialAccess
 
-    before_action :set_credit, only: %i[show post_credit apply cancel]
+    before_action :set_credit, only: %i[show post_credit apply cancel download_xml]
 
     def index
       authorize current_organization.supplier_credit_notes.new, :index?
@@ -35,6 +35,15 @@ module Admin
       @credit.errors.add(:base, e.message)
       load_catalogs
       render :new, status: :unprocessable_content
+    end
+
+    def download_xml
+      authorize @credit, :show?
+      return head :not_found unless @credit.xml_document.attached?
+
+      response.headers['Cache-Control'] = 'no-store'
+      send_data @credit.xml_document.download, filename: "credit-#{@credit.id}.xml",
+               type: 'application/xml', disposition: 'attachment'
     end
 
     def post_credit
