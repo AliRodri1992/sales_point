@@ -87,20 +87,12 @@ module Admin
 
     def download_pdf
       authorize @invoice, :download?
-      return head :not_found unless @invoice.pdf_document.attached?
-
-      response.headers['Cache-Control'] = 'no-store'
-      send_data @invoice.pdf_document.download, filename: "invoice-#{@invoice.id}.pdf",
-               type: 'application/pdf', disposition: 'attachment'
+      send_financial_attachment(@invoice.pdf_document, "invoice-#{@invoice.id}.pdf", 'application/pdf')
     end
 
     def download_xml
       authorize @invoice, :download?
-      return head :not_found unless @invoice.xml_document.attached?
-
-      response.headers['Cache-Control'] = 'no-store'
-      send_data @invoice.xml_document.download, filename: "cfdi-#{@invoice.id}.xml",
-                                                type: 'application/xml', disposition: 'attachment'
+      send_financial_attachment(@invoice.xml_document, "cfdi-#{@invoice.id}.xml", 'application/xml')
     end
 
     private

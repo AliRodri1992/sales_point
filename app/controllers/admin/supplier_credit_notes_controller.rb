@@ -39,11 +39,7 @@ module Admin
 
     def download_xml
       authorize @credit, :show?
-      return head :not_found unless @credit.xml_document.attached?
-
-      response.headers['Cache-Control'] = 'no-store'
-      send_data @credit.xml_document.download, filename: "credit-#{@credit.id}.xml",
-               type: 'application/xml', disposition: 'attachment'
+      send_financial_attachment(@credit.xml_document, "credit-#{@credit.id}.xml", 'application/xml')
     end
 
     def post_credit
