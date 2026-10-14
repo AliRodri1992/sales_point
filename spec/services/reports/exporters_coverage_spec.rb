@@ -65,7 +65,8 @@ RSpec.describe 'Supplier report exporters' do
 
   it 'renders supplier classification and localized state for reports' do
     supplier.update!(classification: 'manufacturer')
-    col = report.columns.find { |item| item.fetch(:label) == I18n.t('reports.suppliers.columns.classification', locale: :es) }
+    label = I18n.t('reports.suppliers.columns.classification', locale: :es)
+    col = report.columns.find { |item| item.fetch(:label) == label }
     expect(col.fetch(:value).call(supplier)).to eq(
       I18n.t('admin.suppliers.index.advanced.options.manufacturer', locale: :es)
     )
