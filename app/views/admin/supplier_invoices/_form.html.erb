@@ -1,6 +1,10 @@
 <%= render 'admin/financials/errors', record: @invoice %>
 <%= form_with model: [:admin, @invoice], class: 'space-y-5',
-              data: { controller: 'cfdi-preview', 'cfdi-preview-url-value': preview_cfdi_admin_supplier_invoices_path } do |f| %>
+              data: { controller: 'cfdi-preview', 'cfdi-preview-url-value': preview_cfdi_admin_supplier_invoices_path,
+                      'cfdi-preview-select-supplier-value': t('admin.accounts_payable.cfdi_preview_select_supplier'),
+                      'cfdi-preview-loading-value': t('admin.accounts_payable.cfdi_preview_loading'),
+                      'cfdi-preview-success-value': t('admin.accounts_payable.cfdi_preview_success'),
+                      'cfdi-preview-error-value': t('admin.accounts_payable.cfdi_preview_error') } do |f| %>
   <div class="grid gap-4 md:grid-cols-2">
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1 block text-sm font-medium' %>
       <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'cfdi-preview-target': 'supplier' }, class: 'w-full rounded-xl border border-slate-300 p-3' } %></div>

@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Review parsed invoice fields before saving. The final create/update reparses XML server-side.
 export default class extends Controller {
   static targets = ["file", "supplier", "result"]
-  static values = { url: String }
+  static values = { url: String, selectSupplier: String, loading: String, success: String, error: String }
 
   async load() {
     const file = this.fileTarget.files[0]
@@ -11,14 +11,14 @@ export default class extends Controller {
 
     const supplierId = this.supplierTarget.value
     if (!supplierId) {
-      this.message("Selecciona un proveedor antes de cargar el XML.", true)
+      this.message(this.selectSupplierValue, true)
       return
     }
 
     const body = new FormData()
     body.append("xml_document", file)
     body.append("supplier_id", supplierId)
-    this.message("Analizando CFDI...")
+    this.message(this.loadingValue)
 
     try {
       const response = await fetch(this.urlValue, {
@@ -28,7 +28,7 @@ export default class extends Controller {
         body
       })
       const data = await response.json()
-      if (!response.ok) throw new Error(data.error || "El CFDI no se pudo analizar.")
+      if (!response.ok) throw new Error(data.error || this.errorValue)
 
       for (const [key, value] of Object.entries(data.fields)) {
         if (value == null) continue
@@ -40,8 +40,7 @@ export default class extends Controller {
         const option = Array.from(currency.options).find((item) => item.textContent.trim() === data.currency)
         if (option) currency.value = option.value
       }
-      this.message("CFDI leído: " + data.concepts.length +
-        " conceptos. Revisa los importes y fechas antes de guardar; el estado SAT se consulta al confirmar.")
+      this.message(this.successValue.replace("%{count}", data.concepts.length))
     } catch (error) {
       this.message(error.message, true)
     }
