@@ -80,7 +80,7 @@ RSpec.describe 'Tenant-scoped primary and preferred record rules' do
     it 'rejects a second preferred supplier offer for the same product' do
       described_class.create!(**attributes, preferred: true)
       other_supplier = create(:supplier, organization:)
-      duplicate = described_class.new(**attributes.merge(supplier: other_supplier), preferred: true)
+      duplicate = described_class.new(**attributes, supplier: other_supplier, preferred: true)
       expect(duplicate).not_to be_valid
       expect(duplicate.errors.details[:preferred]).to include(hash_including(error: :taken))
     end
@@ -88,13 +88,13 @@ RSpec.describe 'Tenant-scoped primary and preferred record rules' do
     it 'allows an unpreferred offer when another supplier is preferred' do
       described_class.create!(**attributes, preferred: true)
       other_supplier = create(:supplier, organization:)
-      alternative = described_class.new(**attributes.merge(supplier: other_supplier), preferred: false)
+      alternative = described_class.new(**attributes, supplier: other_supplier, preferred: false)
       expect(alternative).to be_valid
     end
 
     it 'rejects product offers belonging to a separate organization' do
       foreign_product = create(:product, organization: create(:organization))
-      record = described_class.new(**attributes.merge(product: foreign_product))
+      record = described_class.new(**attributes, product: foreign_product)
       expect(record).not_to be_valid
       expect(record.errors.details[:product]).to include(hash_including(error: :invalid))
     end
