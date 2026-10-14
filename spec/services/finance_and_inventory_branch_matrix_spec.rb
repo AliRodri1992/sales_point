@@ -196,13 +196,16 @@ RSpec.describe 'Finance, inventory and costing service decision branches' do
     expect(Inventories::FefoAllocator.expiration_allowed?(lot, 'sale')).to be(true)
   end
 
-  def check_lot(quantity: 2, lot_quantity: 5, inventory_stock: 10, inventory_id: 3,
-                lot_inventory_id: 3, active: true, expires_on: nil)
-    inventory = double(id: inventory_id, stock: inventory_stock)
-    lot = double(inventory_id: lot_inventory_id, available?: active,
-                 quantity: lot_quantity, expires_on:)
+  def eligible_lot?(**overrides)
+    options = {
+      quantity: 2, lot_quantity: 5, inventory_stock: 10,
+      inventory_id: 3, lot_inventory_id: 3, active: true, expires_on: nil
+    }.merge(overrides)
+    inventory = double(id: options[:inventory_id], stock: options[:inventory_stock])
+    lot = double(inventory_id: options[:lot_inventory_id], available?: options[:active],
+                 quantity: options[:lot_quantity], expires_on: options[:expires_on])
     Inventories::FefoAllocator.lot_eligible?(
-      inventory:, lot:, quantity: quantity.to_d, kind: 'sale'
+      inventory:, lot:, quantity: options[:quantity].to_d, kind: 'sale'
     )
   end
 
@@ -211,26 +214,26 @@ RSpec.describe 'Finance, inventory and costing service decision branches' do
   end
 
   it 'rejects FEFO lot with a zero requested quantity' do
-    expect(check_lot(quantity: 0)).to be(false)
+    expect(eligible_lot?(quantity: 0)).to be(false)
   end
 
   it 'rejects a FEFO lot belonging to another inventory' do
-    expect(check_lot(lot_inventory_id: 9)).to be(false)
+    expect(eligible_lot?(lot_inventory_id: 9)).to be(false)
   end
 
   it 'rejects a FEFO lot that is unavailable' do
-    expect(check_lot(active: false)).to be(false)
+    expect(eligible_lot?(active: false)).to be(false)
   end
 
   it 'rejects a FEFO lot with insufficient quantity' do
-    expect(check_lot(lot_quantity: 1)).to be(false)
+    expect(eligible_lot?(lot_quantity: 1)).to be(false)
   end
 
   it 'rejects a FEFO lot when total inventory stock is insufficient' do
-    expect(check_lot(inventory_stock: 1)).to be(false)
+    expect(eligible_lot?(inventory_stock: 1)).to be(false)
   end
 
   it 'rejects a FEFO lot that expired before today' do
-    expect(check_lot(expires_on: Date.yesterday)).to be(false)
+    expect(eligible_lot?(expires_on: Date.yesterday)).to be(false)
   end
 end
