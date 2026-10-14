@@ -6,7 +6,7 @@ RSpec.describe 'Supplier advanced catalog filters', type: :request do
   let(:organization) { create(:organization) }
   let(:actor) { create(:user, :english) }
   let(:supplier) do
-    create(:supplier, organization:, classification: 'manufacturer', person_type: 'company',
+    create(:supplier, organization:, classification: 'manufacturer', person_type: 'individual',
                       credit_days: 15, credit_limit: 1000, minimum_order_amount: 50,
                       discount_percent: 10, status: :active)
   end

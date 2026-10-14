@@ -6,10 +6,12 @@ RSpec.describe Inventories::Transfer do
   let(:organization) { create(:organization) }
   let(:product) { create(:product, organization:) }
   let(:origin) do
-    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Origin'), product:, stock: 12, min_stock: 0)
+    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Origin'),
+                      product:, stock: 12, min_stock: 0)
   end
   let(:destination) do
-    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Destination'), product:, stock: 0, min_stock: 0)
+    Inventory.create!(organization:, branch: create(:branch, organization:, name: 'Transfer Destination'),
+                      product:, stock: 0, min_stock: 0)
   end
 
   it 'transfers stock between organization branches with immutable movement records' do
