@@ -1,0 +1,12 @@
+en:
+  admin:
+    breadcrumbs:
+      controllers:
+        inventories: "Inventories"
+        inventory_lots: "Inventory lots"
+        organization_contacts: "Organization contacts"
+        supplier_documents: "Supplier documents"
+        supplier_products: "Supplier products"
+        supplier_product_comparisons: "Cost comparison"
+        supplier_bank_accounts: "Bank accounts"
+        demo_requests: "Demo requests"

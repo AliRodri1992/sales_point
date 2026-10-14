@@ -12,6 +12,14 @@ module BreadcrumbsHelper
     'admin/supplier_addresses' => :supplier_address_breadcrumb_items,
     'admin/supplier_contacts' => :supplier_contact_breadcrumb_items,
     'admin/supplier_schedules' => :supplier_schedule_breadcrumb_items,
+    'admin/purchase_orders' => :purchase_order_breadcrumb_items,
+    'admin/purchase_requests' => :purchase_request_breadcrumb_items,
+    'admin/purchase_quotations' => :purchase_quotation_breadcrumb_items,
+    'admin/purchase_returns' => :purchase_return_breadcrumb_items,
+    'admin/goods_receipts' => :goods_receipt_breadcrumb_items,
+    'admin/supplier_products' => :supplier_product_breadcrumb_items,
+    'admin/supplier_product_comparisons' => :supplier_product_comparison_breadcrumb_items,
+    'admin/supplier_bank_accounts' => :supplier_bank_account_breadcrumb_items,
     'admin/account_payables' => :account_payable_breadcrumb_items,
     'admin/supplier_invoices' => :supplier_invoice_breadcrumb_items,
     'admin/supplier_payments' => :supplier_payment_breadcrumb_items,
@@ -34,7 +42,9 @@ module BreadcrumbsHelper
   end
 
   def default_breadcrumb_items
-    [{ label: params[:controller].to_s.remove('admin/').humanize }]
+    controller_name = params[:controller].to_s.delete_prefix('admin/')
+    label = t("admin.breadcrumbs.controllers.#{controller_name}", default: controller_name.humanize)
+    [{ label: }]
   end
 
   def current_product
@@ -117,6 +127,8 @@ module BreadcrumbsHelper
   end
 
   include SupplierBreadcrumbsHelper
+  include SupplierCatalogBreadcrumbsHelper
+  include PurchasesBreadcrumbsHelper
   include FinancialBreadcrumbsHelper
   include SystemRoleBreadcrumbsHelper
 
