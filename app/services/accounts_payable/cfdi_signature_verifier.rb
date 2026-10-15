@@ -79,7 +79,7 @@ module AccountsPayable
 
     def self.verify_seal!(document, certificate)
       stylesheet = Nokogiri::XSLT(File.read(STYLESHEET))
-      chain = stylesheet.transform(document).to_s
+      chain = stylesheet.transform(document).to_s.strip
       seal = Base64.strict_decode64(document.root['Sello'].to_s)
       return if certificate.public_key.verify(OpenSSL::Digest.new('SHA256'), seal, chain)
 
