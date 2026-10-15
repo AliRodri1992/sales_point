@@ -6,7 +6,10 @@ module AccountsPayable
       validation = SatStatusVerifier.call(invoice:) if invoice.draft? && invoice.cfdi?
       invoice.with_lock do
         validate_invoice!(invoice)
-        validate_cfdi_identity!(invoice) if invoice.cfdi?
+        if invoice.cfdi?
+          validate_cfdi_identity!(invoice)
+          CfdiSignatureVerifier.call(xml: invoice.xml_document.download)
+        end
         validate_amounts!(invoice)
         payable = invoice.create_account_payable!(payable_attributes(invoice))
         invoice.update!({ status: :posted, posted_at: Time.current }.merge(sat_attributes(validation)))
