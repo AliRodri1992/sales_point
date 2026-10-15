@@ -44,7 +44,7 @@ RSpec.describe 'Invoice fiscal document, purchase and cancellation integrity', t
       document = double(attached?: true, blob:)
       allow(invoice).to receive(:pdf_document).and_return(document)
       invoice.send(:valid_documents)
-      expect(invoice.errors[:pdf_document]).not_to be_empty
+      expect(invoice.errors.details[:pdf_document]).to include(hash_including(error: :too_long))
     end
 
     it 'accepts correctly typed XML and PDF attachments within size limits' do
