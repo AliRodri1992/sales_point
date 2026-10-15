@@ -13,7 +13,9 @@ RSpec.describe 'Onboarding updater decision paths', type: :service do
     end
 
     it 'returns false when saving the payment method is unsuccessful' do
-      settings = double(payment_method=: nil, save!: false)
+      settings = double
+      allow(settings).to receive(:payment_method=)
+      allow(settings).to receive(:save!).and_return(false)
       expect(described_class.call(organization, params, settings:)).to be(false)
     end
 
