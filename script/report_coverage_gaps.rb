@@ -36,5 +36,6 @@ rows.each do |row|
 
   puts "#{row[:path]} lines #{row[:total] - row[:misses].size}/#{row[:total]} " \
        "branches #{row[:branch_total] - row[:branch_misses]}/#{row[:branch_total]} " \
-       "missing line numbers: #{row[:misses].first(100).join(',')}"\n  puts "  uncovered branch locations: #{row[:uncovered_edges].first(20).join('; ')}" if row[:branch_misses].positive?
+       "missing line numbers: #{row[:misses].first(100).join(',')}"
+  puts "  uncovered branch locations: #{row[:uncovered_edges].first(20).join('; ')}" if row[:branch_misses].positive?
 end
