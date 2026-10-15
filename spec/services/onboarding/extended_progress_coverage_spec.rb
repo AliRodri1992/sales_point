@@ -33,15 +33,17 @@ RSpec.describe 'Extended organization onboarding progress branches', type: :serv
   end
 
   it 'reports missing company information' do
-    allow(organization).to receive_messages(name: nil, business_sector: nil,
-                                             organization_settings: double(first: nil))
+    allow(organization).to receive(:name).and_return(nil)
+    allow(organization).to receive(:business_sector).and_return(nil)
+    allow(organization).to receive(:organization_settings).and_return(double(first: nil))
     expect(calculator.send(:company_section)).to include(percentage: 0)
   end
 
   it 'reports complete company information when settings are configured' do
     settings = double(base_currency_id: 1, timezone: 'America/Mexico_City')
-    allow(organization).to receive_messages(name: 'Company', business_sector: 'grocery',
-                                             organization_settings: double(first: settings))
+    allow(organization).to receive(:name).and_return('Company')
+    allow(organization).to receive(:business_sector).and_return('grocery')
+    allow(organization).to receive(:organization_settings).and_return(double(first: settings))
     expect(calculator.send(:company_section)).to include(percentage: 100)
   end
 

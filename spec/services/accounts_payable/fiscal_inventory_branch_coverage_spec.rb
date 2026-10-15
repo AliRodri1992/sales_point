@@ -17,7 +17,7 @@ RSpec.describe 'Fiscal and inventory branching safety', type: :service do
     it 'rejects SOAP faults and accepts a valid SOAP document' do
       expect { verifier.send(:valid_sat_document, '<Envelope><Fault>Failed</Fault></Envelope>') }
         .to raise_error(ArgumentError, /Invalid SAT response/)
-      expect { verifier.send(:valid_sat_document, '<Envelope/>') }.to be_a(Nokogiri::XML::Document)
+      expect(verifier.send(:valid_sat_document, '<Envelope/>')).to be_a(Nokogiri::XML::Document)
     end
 
     it 'rejects a valid response that reports cancellation' do
