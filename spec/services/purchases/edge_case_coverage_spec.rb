@@ -8,9 +8,8 @@ RSpec.describe 'Purchasing flow negative-path behavior', type: :service do
     let(:line) { double('purchase line') }
 
     it 'rejects a negative delivered, accepted or damaged quantity' do
-      [-1, 0, 1].each do |negative|
+      %i[delivered accepted damaged].each do |key|
         values = { delivered: 3.to_d, accepted: 2.to_d, damaged: 1.to_d }
-        key = %i[delivered accepted damaged][negative + 1]
         values[key] = -1.to_d
         expect { described_class.validate_quantities!(order:, line:, **values) }
           .to raise_error(ArgumentError, /Invalid receiving quantities/)
@@ -73,7 +72,8 @@ RSpec.describe 'Purchasing flow negative-path behavior', type: :service do
     end
 
     it 'builds an empty draft quotation for an approved request without items' do
-      request = double(approved?: true, organization: nil, purchase_request_items: [])
+      request = PurchaseRequest.new
+      allow(request).to receive(:approved?).and_return(true)
       quotation = described_class.call(request:)
       expect(quotation).to be_a(PurchaseQuotation)
       expect(quotation.purchase_quotation_items).to be_empty
