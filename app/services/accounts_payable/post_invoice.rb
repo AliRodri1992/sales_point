@@ -27,7 +27,9 @@ module AccountsPayable
 
     def self.validate_invoice!(invoice)
       raise ArgumentError, 'Invoice already processed' unless invoice.draft?
+
       raise ArgumentError, 'Invoice total must be positive' unless invoice.total.positive?
+
       raise ArgumentError, 'CFDI XML is required' if invoice.cfdi? && !invoice.xml_document.attached?
     end
 
