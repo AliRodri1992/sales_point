@@ -35,7 +35,7 @@ module AccountsPayable
       document = Nokogiri::XML(xml) { |options| options.strict.nonet }
       root = document.root
       valid = root&.name == 'Comprobante' &&
-              root.namespace&.href == AccountsPayable::CfdiParser::CFDI_NS &&
+              root&.namespace&.href == AccountsPayable::CfdiParser::CFDI_NS &&
               root['Version'] == '4.0'
       raise ArgumentError, 'Invalid CFDI 4.0' unless valid
 
@@ -63,9 +63,8 @@ module AccountsPayable
     def self.verify_certificate_trust!(certificate, root)
       bundle = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
       raise ArgumentError, 'Trusted SAT certificate bundle is not configured' if bundle.to_s.empty?
-      unless File.file?(bundle)
-        raise ArgumentError, 'Trusted SAT certificate bundle is missing'
-      end
+
+      raise ArgumentError, 'Trusted SAT certificate bundle is missing' unless File.file?(bundle)
 
       store = OpenSSL::X509::Store.new
       store.add_file(bundle)

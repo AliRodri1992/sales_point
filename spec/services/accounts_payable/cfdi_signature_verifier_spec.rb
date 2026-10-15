@@ -47,10 +47,14 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     @trust_file&.close!
   end
 
+  def certificate_number
+    certificate.serial.to_s(16).scan(/../).map { |byte| byte.to_i(16).chr }.join
+  end
+
   def signed_xml(seal:)
     <<~XML
       <cfdi:Comprobante xmlns:cfdi="http://www.sat.gob.mx/cfd/4" Version="4.0"
-        Fecha="2026-01-01T12:00:00" NoCertificado="#{certificate.serial.to_s(16).scan(/../).map { |b| b.to_i(16).chr }.join}"
+        Fecha="2026-01-01T12:00:00" NoCertificado="#{certificate_number}"
         Certificado="#{Base64.strict_encode64(certificate.to_der)}" Sello="#{seal}"/>
     XML
   end

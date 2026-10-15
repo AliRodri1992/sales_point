@@ -46,7 +46,7 @@ RSpec.describe 'Accounts payable concurrent reconciliation', type: :model, concu
     expect(threads.map(&:value).sort).to eq(%i[posted rejected])
     expect(payable.reload.balance).to eq(30.to_d)
   ensure
-    threads&.each { |thread| thread.join if thread.alive? }
+    threads&.each(&:join)
   end
 
   it 'prevents two credits from exceeding a shared payable balance' do
