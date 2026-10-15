@@ -149,5 +149,4 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml:) }
       .to raise_error(ArgumentError, /signature verification failed/)
   end
-
 end
