@@ -20,8 +20,8 @@ module AccountsPayable
                                                      root.namespace&.href == AccountsPayable::CfdiParser::CFDI_NS &&
                                                      root['Version'] == '4.0'
 
-      certificate = OpenSSL::X509::Certificate.new(Base64.strict_decode64(root.fetch('Certificado')))
-      seal = Base64.strict_decode64(root.fetch('Sello'))
+      certificate = OpenSSL::X509::Certificate.new(Base64.strict_decode64(root['Certificado']))
+      seal = Base64.strict_decode64(root['Sello'])
       raise ArgumentError, 'CFDI certificate is not valid at issue date' unless certificate_valid?(certificate, root)
       raise ArgumentError, 'Certificate number does not match CFDI' unless certificate_number(certificate) == root['NoCertificado']
 
@@ -37,7 +37,7 @@ module AccountsPayable
     end
 
     def self.certificate_valid?(certificate, root)
-      issued_at = Time.iso8601(root.fetch('Fecha'))
+      issued_at = Time.iso8601(root['Fecha'])
       certificate.not_before <= issued_at && issued_at <= certificate.not_after
     end
 
