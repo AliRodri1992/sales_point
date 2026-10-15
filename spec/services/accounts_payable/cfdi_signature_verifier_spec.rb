@@ -17,7 +17,9 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     certificate.sign(private_key, OpenSSL::Digest.new('SHA256'))
     certificate
   end
-  let(:canonical_string) { '||4.0|2026-01-01T12:00:00||' }
+  let(:canonical_string) do
+    Nokogiri::XSLT(stylesheet).transform(Nokogiri::XML('<Comprobante/>')).to_s.strip
+  end
   let(:stylesheet) do
     <<~XSLT
       <?xml version="1.0"?>
