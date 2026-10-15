@@ -40,8 +40,8 @@ RSpec.describe 'Invoice fiscal document, purchase and cancellation integrity', t
     end
 
     it 'rejects oversized invoice PDF files' do
-      document = double(attached?: true, blob: double(content_type: 'application/pdf',
-                                                     byte_size: 11.megabytes))
+      blob = double(content_type: 'application/pdf', byte_size: 11.megabytes)
+      document = double(attached?: true, blob:)
       allow(invoice).to receive(:pdf_document).and_return(document)
       invoice.send(:valid_documents)
       expect(invoice.errors[:pdf_document]).not_to be_empty
