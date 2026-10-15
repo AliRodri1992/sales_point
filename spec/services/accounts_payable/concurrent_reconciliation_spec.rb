@@ -86,6 +86,61 @@ RSpec.describe 'Accounts payable concurrent reconciliation', type: :model do
     expect(invoice.reload).to be_posted
   end
 
+  it 'prevents a payment and a credit from over-allocating the same payable' do
+    entry = payment
+    credit = SupplierCreditNote.create!(organization:, supplier:, currency:, created_by: actor,
+                                        issued_on: Date.current, total: 70, status: :posted)
+    gate = Queue.new
+    operations = [
+      -> { AccountsPayable::ApplyPayment.call(
+        payment: entry, allocations: [{ account_payable_id: payable.id, amount: '70' }], actor:
+      ) },
+      -> { AccountsPayable::ApplyCredit.call(credit_note: credit, account_payable: payable,
+                                             amount: '70', actor:) }
+    ]
+    threads = operations.map do |operation|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          gate.pop
+          begin
+            operation.call
+            :applied
+          rescue ArgumentError, ActiveRecord::RecordInvalid
+            :rejected
+          end
+        end
+      end
+    end
+    2.times { gate << true }
+    expect(threads.map(&:value).sort).to eq(%i[applied rejected])
+    expect(payable.reload.balance).to eq(30.to_d)
+  ensure
+    threads&.each { |thread| thread.join if thread.alive? }
+  end
+
+  it 'rejects a second reversal of the same payment' do
+    entry = payment
+    AccountsPayable::ApplyPayment.call(
+      payment: entry, allocations: [{ account_payable_id: payable.id, amount: '70' }], actor:
+    )
+    AccountsPayable::ReversePayment.call(payment: entry.reload, actor:)
+    expect { AccountsPayable::ReversePayment.call(payment: entry.reload, actor:) }
+      .to raise_error(ArgumentError, /Only posted payments/)
+    expect(payable.reload.balance).to eq(100.to_d)
+  end
+
+  it 'does not persist a partial payment when an allocation exceeds the balance' do
+    entry = payment
+    expect do
+      AccountsPayable::ApplyPayment.call(
+        payment: entry, allocations: [{ account_payable_id: payable.id, amount: '100' }], actor:
+      )
+    end.to raise_error(ArgumentError, /Payment amount differs/)
+    expect(entry.reload).to be_draft
+    expect(entry.supplier_payment_allocations.count).to eq(0)
+    expect(payable.reload.balance).to eq(100.to_d)
+  end
+
   it 'restores available balance after reversing a posted payment' do
     entry = payment
     AccountsPayable::ApplyPayment.call(

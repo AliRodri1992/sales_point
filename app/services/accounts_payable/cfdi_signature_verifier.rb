@@ -17,7 +17,7 @@ module AccountsPayable
       certificate = parse_certificate(document.root)
       verify_certificate_date!(certificate, document.root)
       verify_certificate_number!(certificate, document.root)
-      verify_certificate_trust!(certificate)
+      verify_certificate_trust!(certificate, document.root)
       verify_seal!(document, certificate)
       true
     rescue OpenSSL::OpenSSLError, ArgumentError, Nokogiri::XML::SyntaxError,
@@ -60,13 +60,14 @@ module AccountsPayable
       raise ArgumentError, 'Certificate number does not match CFDI'
     end
 
-    def self.verify_certificate_trust!(certificate)
+    def self.verify_certificate_trust!(certificate, root)
       bundle = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
       raise ArgumentError, 'Trusted SAT certificate bundle is not configured' if bundle.to_s.empty?
       raise ArgumentError, 'Trusted SAT certificate bundle is missing' unless File.file?(bundle)
 
       store = OpenSSL::X509::Store.new
       store.add_file(bundle)
+      store.time = Time.zone.parse(root['Fecha'].to_s)
       raise ArgumentError, 'CFDI certificate is not trusted' unless store.verify(certificate)
     end
 
