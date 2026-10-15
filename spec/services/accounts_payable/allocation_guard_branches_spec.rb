@@ -93,7 +93,7 @@ RSpec.describe 'Accounts payable allocation guard paths', type: :service do
 
     it 'accepts amounts allocated exactly across multiple payables' do
       entries = [{ account_payable_id: 1, amount: '40' }, { account_payable_id: 2, amount: '60' }]
-      expect(posting(entries).send(:parsed_entries).map(&:last).sum).to eq(100.to_d)
+      expect(posting(entries).send(:parsed_entries).sum(&:last)).to eq(100.to_d)
     end
   end
 end
