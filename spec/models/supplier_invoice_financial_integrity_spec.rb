@@ -36,6 +36,17 @@ RSpec.describe SupplierInvoice, type: :model do
 
     it 'blocks destruction of a posted invoice' do
       expect { invoice.send(:prevent_posted_destruction) }.to throw_symbol(:abort)
-    end
+    end  end
+
+  it 'allows changing a draft invoice' do
+    invoice = described_class.new(status: :draft)
+    allow(invoice).to receive(:status_in_database).and_return('draft')
+    invoice.send(:immutable_after_posting)
+    expect(invoice.errors[:base]).to be_empty
+  end
+
+  it 'allows destroying a draft invoice' do
+    invoice = described_class.new(status: :draft)
+    expect { invoice.send(:prevent_posted_destruction) }.not_to throw_symbol(:abort)
   end
 end

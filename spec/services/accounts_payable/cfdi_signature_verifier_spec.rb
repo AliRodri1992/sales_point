@@ -84,4 +84,53 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml: '<xml/>') }
       .to raise_error(ArgumentError, /stylesheet is not installed/)
   end
+  it 'rejects a CFDI exceeding the permitted document size' do
+    expect { described_class.call(xml: 'x' * (10.megabytes + 1)) }
+      .to raise_error(ArgumentError, /document exceeds 10 MB/)
+  end
+
+  it 'rejects a document without a CFDI root' do
+    expect { described_class.call(xml: '<Other/>') }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects a document with an incorrect CFDI version' do
+    xml = signed_xml(seal: 'AAAA').sub('Version="4.0"', 'Version="3.3"')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects a mismatched certificate serial number' do
+    xml = signed_xml(seal: 'AAAA').sub("NoCertificado=\"#{certificate_number}\"", 'NoCertificado="wrong"')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Certificate number does not match/)
+  end
+
+  it 'rejects an expired certificate at the CFDI issue date' do
+    xml = signed_xml(seal: 'AAAA').sub('Fecha="2026-01-01T12:00:00"', 'Fecha="2035-01-01T12:00:00"')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /certificate is not valid at issue date/)
+  end
+
+  it 'rejects a missing configured SAT trust store' do
+    ENV.delete('SAT_CSD_TRUST_STORE')
+    expect { described_class.call(xml: signed_xml(seal: 'AAAA')) }
+      .to raise_error(ArgumentError, /bundle is not configured/)
+  end
+
+  it 'rejects a certificate not trusted by the configured store' do
+    @trust_file.rewind
+    @trust_file.truncate(0)
+    @trust_file.write('')
+    @trust_file.flush
+    expect { described_class.call(xml: signed_xml(seal: 'AAAA')) }
+      .to raise_error(ArgumentError, /signature verification failed/)
+  end
+
+  it 'rejects a malformed certificate' do
+    xml = signed_xml(seal: 'AAAA').sub(/Certificado="[^"]+"/, 'Certificado="invalid"')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /signature verification failed/)
+  end
+
 end
