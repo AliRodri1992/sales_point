@@ -8,7 +8,7 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
   let(:certificate) do
     certificate = OpenSSL::X509::Certificate.new
     certificate.version = 2
-    certificate.serial = 1
+    certificate.serial = OpenSSL::BN.new('3030303031303030303030303030303030303031', 16).to_i
     certificate.subject = OpenSSL::X509::Name.parse('/CN=CFDI Test')
     certificate.issuer = certificate.subject
     certificate.public_key = private_key.public_key
