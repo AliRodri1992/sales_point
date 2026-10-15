@@ -32,6 +32,7 @@ class SupplierInvoice < ApplicationRecord
 
   def immutable_after_posting
     return if status_in_database == 'draft'
+
     return if (changes_to_save.keys - %w[status cancelled_at]).empty? &&
               status_in_database == 'posted' && status == 'cancelled'
 
