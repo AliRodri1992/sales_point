@@ -84,6 +84,7 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml: '<xml/>') }
       .to raise_error(ArgumentError, /stylesheet is not installed/)
   end
+
   it 'rejects a CFDI exceeding the permitted document size' do
     expect { described_class.call(xml: 'x' * (10.megabytes + 1)) }
       .to raise_error(ArgumentError, /document exceeds 10 MB/)
@@ -132,5 +133,4 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml:) }
       .to raise_error(ArgumentError, /signature verification failed/)
   end
-
 end
