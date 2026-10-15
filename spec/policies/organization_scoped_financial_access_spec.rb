@@ -5,11 +5,8 @@ require 'rails_helper'
 RSpec.describe 'Financial and procurement policy organization scope', type: :policy do
   def member(user, exists:)
     membership = double
-    allow(membership).to receive(:where).and_return(membership)
-    allow(membership).to receive(:joins).and_return(membership)
-    allow(membership).to receive(:merge).and_return(membership)
-    allow(membership).to receive(:exists?).and_return(exists)
-    allow(membership).to receive(:select).and_return(membership)
+    allow(membership).to receive_messages(where: membership, joins: membership, merge: membership,
+                                          exists?: exists, select: membership)
     allow(user).to receive(:organization_memberships).and_return(membership)
   end
 
