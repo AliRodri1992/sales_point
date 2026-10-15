@@ -11,6 +11,7 @@ module AccountsPayable
 
     def self.call(xml:)
       require_stylesheet!
+
       raise ArgumentError, 'CFDI document exceeds 10 MB' if xml.bytesize > 10.megabytes
 
       document = parse_cfdi(xml)
@@ -36,7 +37,7 @@ module AccountsPayable
       root = document.root
       valid = root&.name == 'Comprobante' &&
               root&.namespace&.href == AccountsPayable::CfdiParser::CFDI_NS &&
-              root['Version'] == '4.0'
+              root&.[]('Version') == '4.0'
       raise ArgumentError, 'Invalid CFDI 4.0' unless valid
 
       document
@@ -64,7 +65,12 @@ module AccountsPayable
       bundle = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
       raise ArgumentError, 'Trusted SAT certificate bundle is not configured' if bundle.to_s.empty?
 
-      raise ArgumentError, 'Trusted SAT certificate bundle is missing' unless File.file?(bundle)
+      return verify_trusted_certificate!(certificate, root, bundle) if File.file?(bundle)
+
+      raise ArgumentError, 'Trusted SAT certificate bundle is missing'
+    end
+
+    def self.verify_trusted_certificate!(certificate, root, bundle)
 
       store = OpenSSL::X509::Store.new
       store.add_file(bundle)
