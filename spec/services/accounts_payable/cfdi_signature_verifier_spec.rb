@@ -133,4 +133,21 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml:) }
       .to raise_error(ArgumentError, /signature verification failed/)
   end
+  it 'rejects an empty XML document' do
+    expect { described_class.call(xml: '') }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects the wrong CFDI namespace' do
+    xml = signed_xml(seal: 'AAAA').sub('http://www.sat.gob.mx/cfd/4', 'urn:untrusted-cfdi')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects a malformed digital seal encoding' do
+    xml = signed_xml(seal: 'not-base64!!')
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /signature verification failed/)
+  end
+
 end
