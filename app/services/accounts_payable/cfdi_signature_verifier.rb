@@ -2,6 +2,7 @@
 
 require 'base64'
 require 'openssl'
+require 'time'
 
 module AccountsPayable
   # Verifies the CFDI issuer's RSA-SHA256 seal against the embedded X.509 certificate.
@@ -37,7 +38,7 @@ module AccountsPayable
     end
 
     def self.certificate_valid?(certificate, root)
-      issued_at = Time.iso8601(root['Fecha'])
+      issued_at = Time.parse(root['Fecha'].to_s)
       certificate.not_before <= issued_at && issued_at <= certificate.not_after
     end
 
