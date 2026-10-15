@@ -49,7 +49,7 @@ module AccountsPayable
 
     def self.verify_certificate_date!(certificate, root)
       issued_at = Time.zone.parse(root['Fecha'].to_s)
-      return if issued_at && issued_at.between?(certificate.not_before, certificate.not_after)
+      return if issued_at&.between?(certificate.not_before, certificate.not_after)
 
       raise ArgumentError, 'CFDI certificate is not valid at issue date'
     end
@@ -65,13 +65,12 @@ module AccountsPayable
       bundle = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
       raise ArgumentError, 'Trusted SAT certificate bundle is not configured' if bundle.to_s.empty?
 
-      return verify_trusted_certificate!(certificate, root, bundle) if File.file?(bundle)
+      raise ArgumentError, 'Trusted SAT certificate bundle is missing' unless File.file?(bundle)
 
-      raise ArgumentError, 'Trusted SAT certificate bundle is missing'
+      verify_trusted_certificate!(certificate, root, bundle)
     end
 
     def self.verify_trusted_certificate!(certificate, root, bundle)
-
       store = OpenSSL::X509::Store.new
       store.add_file(bundle)
       store.time = Time.zone.parse(root['Fecha'].to_s)

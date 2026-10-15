@@ -38,7 +38,9 @@ module AccountsPayable
       expected.each do |attribute, value|
         raise ArgumentError, "CFDI #{attribute} does not match invoice" unless data.fetch(attribute) == value
       end
-      raise ArgumentError, 'CFDI currency differs from invoice' unless data.fetch(:currency_code) == invoice.currency.code
+      return if data.fetch(:currency_code) == invoice.currency.code
+
+      raise ArgumentError, 'CFDI currency differs from invoice'
     end
 
     def self.validate_amounts!(invoice)
