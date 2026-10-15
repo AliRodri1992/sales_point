@@ -45,7 +45,6 @@ class SupplierInvoice < ApplicationRecord
     throw(:abort)
   end
 
-
   def consistent_relations
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
     return unless purchase_order

@@ -21,7 +21,6 @@ class SupplierInvoiceReceipt < ApplicationRecord
     throw(:abort)
   end
 
-
   def matching_purchase
     return unless supplier_invoice && goods_receipt
 
