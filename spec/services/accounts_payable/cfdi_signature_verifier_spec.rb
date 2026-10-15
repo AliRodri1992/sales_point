@@ -14,7 +14,7 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     certificate.public_key = private_key.public_key
     certificate.not_before = Time.utc(2020)
     certificate.not_after = Time.utc(2030)
-    certificate.sign(private_key, OpenSSL::Digest::SHA256.new)
+    certificate.sign(private_key, OpenSSL::Digest.new('SHA256'))
     certificate
   end
   let(:canonical_string) { '||4.0|2026-01-01T12:00:00||' }
@@ -56,19 +56,19 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
   end
 
   it 'accepts a matching RSA-SHA256 signature against the certificate' do
-    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, canonical_string))
+    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest.new('SHA256'), canonical_string))
     expect(described_class.call(xml: signed_xml(seal:))).to be(true)
   end
 
   it 'rejects an invalid digital seal' do
-    invalid = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, 'altered'))
+    invalid = Base64.strict_encode64(private_key.sign(OpenSSL::Digest.new('SHA256'), 'altered'))
     expect { described_class.call(xml: signed_xml(seal: invalid)) }
       .to raise_error(ArgumentError, /Invalid CFDI digital signature/)
   end
 
   it 'rejects an issuer certificate missing from configured trust' do
     ENV['SAT_CSD_TRUST_STORE'] = '/missing/sat-roots.pem'
-    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, canonical_string))
+    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest.new('SHA256'), canonical_string))
     expect { described_class.call(xml: signed_xml(seal:)) }
       .to raise_error(ArgumentError, /Trusted SAT certificate bundle is missing/)
   end
