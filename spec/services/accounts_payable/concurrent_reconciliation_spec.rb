@@ -49,6 +49,33 @@ RSpec.describe 'Accounts payable concurrent reconciliation', type: :model do
     threads&.each { |thread| thread.join if thread.alive? }
   end
 
+  it 'prevents two credits from exceeding a shared payable balance' do
+    credits = Array.new(2) do
+      SupplierCreditNote.create!(organization:, supplier:, currency:, created_by: actor,
+                                 issued_on: Date.current, total: 70, status: :posted)
+    end
+    gate = Queue.new
+    threads = credits.map do |entry|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          gate.pop
+          begin
+            AccountsPayable::ApplyCredit.call(credit_note: entry, account_payable: payable,
+                                              amount: '70', actor:)
+            :applied
+          rescue ArgumentError, ActiveRecord::RecordInvalid
+            :rejected
+          end
+        end
+      end
+    end
+    2.times { gate << true }
+    expect(threads.map(&:value).sort).to eq(%i[applied rejected])
+    expect(payable.reload.balance).to eq(30.to_d)
+  ensure
+    threads&.each { |thread| thread.join if thread.alive? }
+  end
+
   it 'does not allow cancelling a posted invoice after a payment is allocated' do
     entry = payment
     AccountsPayable::ApplyPayment.call(

@@ -21,11 +21,12 @@ module AccountsPayable
                                                      root.namespace&.href == AccountsPayable::CfdiParser::CFDI_NS &&
                                                      root['Version'] == '4.0'
 
-      certificate = OpenSSL::X509::Certificate.new(Base64.strict_decode64(root['Certificado']))
-      seal = Base64.strict_decode64(root['Sello'])
+      certificate = OpenSSL::X509::Certificate.new(Base64.strict_decode64(root['Certificado'].to_s))
+      seal = Base64.strict_decode64(root['Sello'].to_s)
       raise ArgumentError, 'CFDI certificate is not valid at issue date' unless certificate_valid?(certificate, root)
       raise ArgumentError, 'Certificate number does not match CFDI' unless certificate_number(certificate) == root['NoCertificado']
 
+      verify_certificate_trust!(certificate)
       stylesheet = Nokogiri::XSLT(File.read(STYLESHEET))
       chain = stylesheet.transform(document).to_s
       valid = certificate.public_key.verify(OpenSSL::Digest::SHA256.new, seal, chain)
@@ -33,8 +34,19 @@ module AccountsPayable
 
       true
     rescue OpenSSL::OpenSSLError, ArgumentError, Nokogiri::XML::SyntaxError, Nokogiri::XSLT::SyntaxError,
+           TypeError,
            KeyError => e
       raise ArgumentError, "CFDI signature verification failed: #{e.message}"
+    end
+
+    def self.verify_certificate_trust!(certificate)
+      bundle = ENV['SAT_CSD_TRUST_STORE']
+      raise ArgumentError, 'Trusted SAT certificate bundle is not configured' if bundle.to_s.empty?
+      raise ArgumentError, 'Trusted SAT certificate bundle is missing' unless File.file?(bundle)
+
+      store = OpenSSL::X509::Store.new
+      store.add_file(bundle)
+      raise ArgumentError, 'CFDI certificate is not trusted' unless store.verify(certificate)
     end
 
     def self.certificate_valid?(certificate, root)

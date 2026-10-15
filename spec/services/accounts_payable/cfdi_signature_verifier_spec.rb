@@ -33,7 +33,17 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
       file.write(stylesheet)
       file.flush
       stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', Pathname.new(file.path))
-      example.run
+      Tempfile.create(['sat-root', '.pem']) do |trust|
+        trust.write(certificate.to_pem)
+        trust.flush
+        previous = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
+        ENV['SAT_CSD_TRUST_STORE'] = trust.path
+        begin
+          example.run
+        ensure
+          ENV['SAT_CSD_TRUST_STORE'] = previous
+        end
+      end
     end
   end
 
@@ -54,6 +64,13 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     invalid = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, 'altered'))
     expect { described_class.call(xml: signed_xml(seal: invalid)) }
       .to raise_error(ArgumentError, /Invalid CFDI digital signature/)
+  end
+
+  it 'rejects an issuer certificate missing from configured trust' do
+    ENV['SAT_CSD_TRUST_STORE'] = '/missing/sat-roots.pem'
+    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest::SHA256.new, canonical_string))
+    expect { described_class.call(xml: signed_xml(seal:)) }
+      .to raise_error(ArgumentError, /Trusted SAT certificate bundle is missing/)
   end
 
   it 'fails closed when the SAT stylesheet is unavailable' do
