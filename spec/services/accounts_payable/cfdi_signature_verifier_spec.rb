@@ -28,23 +28,23 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     XSLT
   end
 
-  around do |example|
-    Tempfile.create(['sat-test', '.xslt']) do |file|
-      file.write(stylesheet)
-      file.flush
-      stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', Pathname.new(file.path))
-      Tempfile.create(['sat-root', '.pem']) do |trust|
-        trust.write(certificate.to_pem)
-        trust.flush
-        previous = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
-        ENV['SAT_CSD_TRUST_STORE'] = trust.path
-        begin
-          example.run
-        ensure
-          ENV['SAT_CSD_TRUST_STORE'] = previous
-        end
-      end
-    end
+  before do
+    @stylesheet_file = Tempfile.new(['sat-test', '.xslt'])
+    @stylesheet_file.write(stylesheet)
+    @stylesheet_file.flush
+    stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', Pathname.new(@stylesheet_file.path))
+
+    @trust_file = Tempfile.new(['sat-root', '.pem'])
+    @trust_file.write(certificate.to_pem)
+    @trust_file.flush
+    @previous_trust_store = ENV.fetch('SAT_CSD_TRUST_STORE', nil)
+    ENV['SAT_CSD_TRUST_STORE'] = @trust_file.path
+  end
+
+  after do
+    ENV['SAT_CSD_TRUST_STORE'] = @previous_trust_store
+    @stylesheet_file&.close!
+    @trust_file&.close!
   end
 
   def signed_xml(seal:)

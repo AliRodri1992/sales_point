@@ -81,6 +81,11 @@ RSpec.describe AccountsPayable::SatStatusVerifier do
   end
 
   it 'records successful SAT status when posting a CFDI' do
+    allow(AccountsPayable::CfdiParser).to receive(:call).and_return(
+      uuid: invoice.uuid, issuer_rfc: supplier.rfc, receiver_rfc: organization.tax_id,
+      total: invoice.total, currency_code: invoice.currency.code
+    )
+    allow(AccountsPayable::CfdiSignatureVerifier).to receive(:call).and_return(true)
     payable = AccountsPayable::PostInvoice.call(invoice:, actor:)
 
     expect(payable.amount).to eq(116)

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Accounts payable concurrent reconciliation', type: :model do
+RSpec.describe 'Accounts payable concurrent reconciliation', type: :model, concurrent_db: true do
   self.use_transactional_tests = false
 
   let!(:organization) { create(:organization) }
@@ -92,11 +92,15 @@ RSpec.describe 'Accounts payable concurrent reconciliation', type: :model do
                                         issued_on: Date.current, total: 70, status: :posted)
     gate = Queue.new
     operations = [
-      -> { AccountsPayable::ApplyPayment.call(
-        payment: entry, allocations: [{ account_payable_id: payable.id, amount: '70' }], actor:
-      ) },
-      -> { AccountsPayable::ApplyCredit.call(credit_note: credit, account_payable: payable,
-                                             amount: '70', actor:) }
+      lambda do
+        AccountsPayable::ApplyPayment.call(
+          payment: entry, allocations: [{ account_payable_id: payable.id, amount: '70' }], actor:
+        )
+      end,
+      lambda do
+        AccountsPayable::ApplyCredit.call(credit_note: credit, account_payable: payable,
+                                          amount: '70', actor:)
+      end
     ]
     threads = operations.map do |operation|
       Thread.new do
