@@ -18,8 +18,15 @@ rows = report.filter_map do |path, data|
   missing_lines = values.each_index.select { |index| values[index]&.zero? }.map { |index| index + 1 }
   branch_values = data.fetch('branches', {}).values.flat_map { |value| value.is_a?(Hash) ? value.values : [] }
   missing_branches = branch_values.count { |value| value.to_i.zero? }
+  uncovered_edges = data.fetch('branches', {}).flat_map do |condition, edges|
+    next [] unless edges.is_a?(Hash)
+
+    edges.filter_map do |edge, count|
+      "#{condition}:#{edge}" if count.to_i.zero?
+    end
+  end
   { path: path.delete_prefix("#{Dir.pwd}/"), total: relevant.size, misses: missing_lines,
-    branch_total: branch_values.size, branch_misses: missing_branches }
+    branch_total: branch_values.size, branch_misses: missing_branches, uncovered_edges: }
 end
 
 rows.sort_by! { |row| -(row[:misses].size + row[:branch_misses]) }
@@ -29,5 +36,5 @@ rows.each do |row|
 
   puts "#{row[:path]} lines #{row[:total] - row[:misses].size}/#{row[:total]} " \
        "branches #{row[:branch_total] - row[:branch_misses]}/#{row[:branch_total]} " \
-       "missing line numbers: #{row[:misses].first(100).join(',')}"
+       "missing line numbers: #{row[:misses].first(100).join(',')}"\n  puts "  uncovered branch locations: #{row[:uncovered_edges].first(20).join('; ')}" if row[:branch_misses].positive?
 end
