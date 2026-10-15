@@ -135,12 +135,17 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
   end
   it 'rejects an empty XML document' do
     expect { described_class.call(xml: '') }
-      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+      .to raise_error(ArgumentError, /Empty document/)
   end
 
   it 'rejects the wrong CFDI namespace' do
     xml = signed_xml(seal: 'AAAA').sub('http://www.sat.gob.mx/cfd/4', 'urn:untrusted-cfdi')
     expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects a comprobante without the CFDI namespace' do
+    expect { described_class.call(xml: '<Comprobante Version="4.0"/>') }
       .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
   end
 
