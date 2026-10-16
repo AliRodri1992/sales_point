@@ -1,6 +1,35 @@
 en:
   admin:
     supplier_dossier:
+      navigation:
+        label: "Supplier sections"
+        breadcrumbs: "Breadcrumb"
+        suppliers: "Suppliers"
+        content: "Supplier record content"
+        dossier: "Record"
+        operations: "Operations"
+        finances: "Finance"
+      overview:
+        upcoming_visits: "Upcoming visits and deliveries"
+        weekly: "Weekly"
+        recurrence: "Frequency"
+        next_date: "Date"
+        main_information: "Main information"
+        main_description: "Supplier details and purchasing terms"
+        registered_products: "Registered products"
+        active_contacts: "Registered contacts"
+        registered_addresses: "Registered addresses"
+        weekly_schedules: "Weekly visits and deliveries"
+        supplier_name: "Supplier name"
+        phone: "Phone"
+        email: "Email"
+        primary_contacts: "Main contacts"
+        contacts_subtitle: "Supplier contact people"
+        view_all: "View all"
+        supplier_schedule: "Visits and deliveries schedule"
+        schedule_subtitle: "Upcoming dates calculated from the weekly schedule"
+        view_calendar: "View calendar"
+        no_schedules: "No schedules registered"
       commercial:
         summary: "Commercial terms summary"
         description: "Overview of this supplier's purchasing terms."
@@ -56,7 +85,9 @@ en:
         individual: "Individual"
         company: "Company"
       sections:
-        general: "General and tax"
+        overview: "Overview"
+        general: "General information"
+        fiscal: "Tax information"
         commercial: "Commercial terms"
         contacts: "Contacts"
         addresses: "Addresses"

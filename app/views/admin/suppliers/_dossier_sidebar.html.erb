@@ -1,0 +1,66 @@
+<% sections = [
+  ['overview', 'layout-dashboard', :dossier],
+  ['general', 'building', :dossier],
+  ['fiscal', 'file', :dossier],
+  ['commercial', 'handshake', :dossier],
+  ['contacts', 'users', :dossier],
+  ['addresses', 'pin', :dossier],
+  ['schedules', 'calendar', :dossier],
+  ['documents', 'file', :dossier],
+  ['products', 'box', :operations]
+] %>
+<% sections.reject! { |section, _icon, _group| section == 'products' } unless can_view_products %>
+<% sections << ['finances', 'wallet', :finances] if can_view_finances %>
+<% sidebar_groups = sections.group_by(&:last) %>
+
+<aside class="w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:w-60 xl:w-64" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
+  <div class="lg:hidden">
+    <label for="supplier-dossier-section" class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_dossier.navigation.label') %></label>
+    <select id="supplier-dossier-section" data-supplier-dossier-target="mobileSelect" data-action="change->supplier-dossier#select" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 focus:border-emerald-600 focus:ring-emerald-600">
+      <% sidebar_groups.each do |group, entries| %>
+        <optgroup label="<%= t("admin.supplier_dossier.navigation.#{group}") %>">
+          <% entries.each do |section, _icon, _category| %>
+            <option value="<%= section %>"><%= t("admin.supplier_dossier.sections.#{section}") %></option>
+          <% end %>
+        </optgroup>
+      <% end %>
+    </select>
+  </div>
+
+  <nav class="hidden space-y-5 lg:block" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
+    <% sidebar_groups.each do |group, entries| %>
+      <div>
+        <h2 class="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.09em] text-slate-500"><%= t("admin.supplier_dossier.navigation.#{group}") %></h2>
+        <div class="space-y-1">
+          <% entries.each do |section, symbol, _category| %>
+            <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-controls="supplier-dossier-<%= section %>" aria-selected="false" class="group flex min-h-11 w-full items-center gap-3 rounded-lg border-l-[3px] border-transparent px-3 py-2.5 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0" aria-hidden="true">
+                <% case symbol %>
+                <% when 'layout-dashboard' %>
+                  <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>
+                <% when 'building' %>
+                  <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
+                <% when 'file' %>
+                  <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z M14 2v6h5M8 12h8M8 16h8"/>
+                <% when 'handshake' %>
+                  <path d="M2 8 6 5l4 2 2 2 2-2 4-2 4 3-3 8-4 3-3-2-2 1-3-2-3-4zM8 11l3-3 3 1 2 2-2 2-3-1-2 2"/>
+                <% when 'users' %>
+                  <circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2H3Z M17 11a3 3 0 1 0-1-6M18 14a5 5 0 0 1 3 5"/>
+                <% when 'pin' %>
+                  <path d="M20 10c0 5.25-8 11-8 11S4 15.25 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>
+                <% when 'calendar' %>
+                  <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/>
+                <% when 'box' %>
+                  <path d="m12 2 9 5-9 5-9-5 9-5ZM3 7v10l9 5 9-5V7M12 12v10"/>
+                <% when 'wallet' %>
+                  <rect x="2" y="5" width="20" height="16" rx="2"/><path d="M2 9h20M16 15h3"/>
+                <% end %>
+              </svg>
+              <span class="min-w-0 break-words"><%= t("admin.supplier_dossier.sections.#{section}") %></span>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </nav>
+</aside>

@@ -1,6 +1,35 @@
 es:
   admin:
     supplier_dossier:
+      navigation:
+        label: "Secciones del proveedor"
+        breadcrumbs: "Ruta de navegación"
+        suppliers: "Proveedores"
+        content: "Contenido del expediente"
+        dossier: "Expediente"
+        operations: "Operaciones"
+        finances: "Finanzas"
+      overview:
+        upcoming_visits: "Próximas visitas y entregas"
+        weekly: "Semanal"
+        recurrence: "Frecuencia"
+        next_date: "Fecha"
+        main_information: "Información principal"
+        main_description: "Datos generales y condiciones del proveedor"
+        registered_products: "Productos registrados"
+        active_contacts: "Contactos registrados"
+        registered_addresses: "Direcciones registradas"
+        weekly_schedules: "Visitas y entregas semanales"
+        supplier_name: "Nombre del proveedor"
+        phone: "Teléfono"
+        email: "Correo electrónico"
+        primary_contacts: "Contactos principales"
+        contacts_subtitle: "Personas de contacto del proveedor"
+        view_all: "Ver todos"
+        supplier_schedule: "Calendario de visitas y entregas"
+        schedule_subtitle: "Próximas fechas estimadas según el calendario semanal"
+        view_calendar: "Ver calendario"
+        no_schedules: "No hay horarios registrados"
       commercial:
         summary: "Resumen de condiciones comerciales"
         description: "Información general de las condiciones de compra con este proveedor."
@@ -56,7 +85,9 @@ es:
         individual: "Persona física"
         company: "Persona moral"
       sections:
-        general: "General y fiscal"
+        overview: "Resumen"
+        general: "Datos generales"
+        fiscal: "Datos fiscales"
         commercial: "Condiciones comerciales"
         contacts: "Contactos"
         addresses: "Direcciones"

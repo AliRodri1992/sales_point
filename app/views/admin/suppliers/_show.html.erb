@@ -4,164 +4,65 @@
 <% schedules = supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
-<% dossier_sections = %w[general commercial contacts addresses schedules documents products] %>
+<% dossier_sections = %w[overview general fiscal commercial contacts addresses schedules documents products] %>
 <% dossier_sections << 'finances' if can_view_finances %>
 
-<div class="space-y-6" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab]) ? params[:tab] : 'general' %>">
-  <header class="rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-sm sm:px-7">
-    <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-      <div class="flex min-w-0 items-center gap-4">
-      <div class="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700 sm:size-20">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-9" aria-hidden="true">
+<div class="space-y-5" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab]) ? params[:tab] : 'overview' %>">
+  <nav aria-label="<%= t('admin.supplier_dossier.navigation.breadcrumbs') %>" class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+    <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, class: 'transition hover:text-emerald-700' %>
+    <%= icon('chevron-right', class: 'size-4 text-slate-400') %>
+    <span class="font-semibold text-slate-800"><%= supplier.name %></span>
+  </nav>
+
+  <header class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-5">
+    <div class="flex min-w-0 items-center gap-4">
+      <span class="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800 sm:size-[76px]">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="size-9" aria-hidden="true">
           <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
         </svg>
-      </div>
+      </span>
       <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-3">
-          <h1 class="font-jakarta text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"><%= supplier.name %></h1>
-          <span class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>">
-            <span class="size-2 rounded-full <%= supplier.active? ? 'bg-emerald-600' : 'bg-slate-400' %>"></span>
-            <%= t("admin.suppliers.statuses.#{supplier.status}") %>
-          </span>
+          <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= supplier.name %></h1>
+          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
         </div>
         <p class="mt-1 text-sm text-slate-500">
           <%= supplier.code %>
           <% if supplier.classification.present? %>
-            <span class="mx-2 text-slate-300">|</span>
+            <span class="mx-2 text-slate-300">·</span>
             <%= t("admin.supplier_dossier.options.#{supplier.classification}") %>
           <% end %>
         </p>
       </div>
     </div>
-    <div class="flex flex-wrap items-center gap-2 lg:justify-end">
-      <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' }, class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
-        <%= icon('arrow-left', class: 'size-4') %>
-        <%= t('admin.supplier_dossier.back') %>
-      <% end %>
+    <div class="flex items-center gap-2">
       <% if can_edit %>
-        <details class="group relative">
-          <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
-            <%= icon('ellipsis-horizontal', class: 'size-5') %>
-            <%= t('admin.supplier_dossier.more_actions') %>
-            <%= icon('chevron-down', class: 'size-4 transition-transform group-open:rotate-180') %>
-          </summary>
-          <div class="absolute right-0 z-30 mt-2 min-w-48 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-            <%= link_to edit_admin_supplier_path(supplier), data: { turbo_frame: '_top' }, class: 'flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600' do %>
-              <%= icon('pencil', class: 'size-4') %>
-              <%= t('admin.suppliers.index.edit') %>
-            <% end %>
-          </div>
-        </details>
+        <%= link_to edit_admin_supplier_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-800 shadow-sm hover:bg-emerald-50 hover:text-emerald-800' do %>
+          <%= icon('pencil', class: 'size-4 text-emerald-700') %>
+          <%= t('admin.supplier_details.edit') %>
+        <% end %>
       <% end %>
-    </div>
+      <details class="group relative">
+        <summary class="inline-flex size-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden" aria-label="<%= t('admin.supplier_dossier.more_actions') %>">
+          <%= icon('ellipsis-horizontal', class: 'size-5') %>
+        </summary>
+        <div class="absolute right-0 z-20 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+          <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' }, class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50' do %>
+            <%= icon('arrow-left', class: 'size-4') %><%= t('admin.supplier_dossier.back') %>
+          <% end %>
+        </div>
+      </details>
     </div>
   </header>
 
-  <div>
-    <nav class="grid grid-cols-2 overflow-hidden rounded-xl border border-slate-200 bg-slate-50 sm:grid-cols-3 lg:grid-cols-8" aria-label="<%= t('admin.suppliers.show.title') %>">
-      <% dossier_sections.each_with_index do |section, index| %>
-        <button type="button" data-supplier-dossier-target="tab" data-action="supplier-dossier#select" data-section="<%= section %>" aria-selected="<%= index.zero? %>" class="flex min-h-14 w-full items-center justify-center px-2 py-3 text-center text-sm font-semibold transition-colors <%= index.zero? ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-slate-100' %>">
-          <span class="inline-flex max-w-full items-center justify-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5 shrink-0" aria-hidden="true">
-  <% case section %>
-  <% when 'general' %>
-    <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
-  <% when 'commercial' %>
-    <path d="m2 8 4-3 4 2 2 2 2-2 4-2 4 3-3 8-4 3-3-2-2 1-3-2-3-4z"/><path d="m8 11 3-3 3 1 2 2-2 2-3-1-2 2M7 15l3 3m0-4 3 3m1-4 3 3"/>
-  <% when 'contacts' %>
-    <circle cx="12" cy="7" r="3"/><path d="M6 20v-2a6 6 0 0 1 12 0v2H6Z"/><circle cx="4.5" cy="10" r="2"/><path d="M2 20v-3a4 4 0 0 1 3-3.87"/><circle cx="19.5" cy="10" r="2"/><path d="M22 20v-3a4 4 0 0 0-3-3.87"/>
-  <% when 'addresses' %>
-    <path d="M20 10c0 5.25-8 11-8 11S4 15.25 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>
-  <% when 'schedules' %>
-    <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-13 5 2.5 2.5L16 13"/>
-  <% when 'products' %>
-    <path d="M3 6h18M3 12h18M3 18h18M7 3v18"/>
-  <% when 'finances' %>
-    <path d="M3 7h18v13H3zM3 11h18M7 16h4"/>
-  <% when 'documents' %>
-    <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h5M8 12h8M8 16h8M8 19h5"/>
-  <% end %>
-</svg>
-            <span class="min-w-0 text-center leading-tight <%= section == 'commercial' ? 'max-w-28' : '' %>"><%= t("admin.supplier_dossier.sections.#{section}") %></span>
-          </span>
-        </button>
-      <% end %>
-    </nav>
+  <div class="flex flex-col items-start gap-4 lg:flex-row lg:gap-5">
+    <%= render 'dossier_sidebar', can_view_finances: can_view_finances, can_view_products: policy(supplier).view_products? %>
+    <div class="min-w-0 w-full flex-1 space-y-4" aria-label="<%= t('admin.supplier_dossier.navigation.content') %>">
+      <%= render 'dossier_overview', supplier: supplier, contacts: contacts, addresses: addresses, schedules: schedules, can_edit: can_edit, can_view_products: policy(supplier).view_products? %>
+      <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
+      <%= render 'dossier_fiscal', supplier: supplier, fiscal_address: fiscal_address, can_edit: can_edit %>
 
-    <section data-supplier-dossier-target="panel" data-section="general" class="pt-5">
-      <div class="grid gap-5 lg:grid-cols-2">
-        <% general_fields = [
-          [t('admin.supplier_dossier.general.code'), supplier.code],
-          [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
-          [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
-          [t('admin.supplier_dossier.fields.alias_name'), supplier.alias_name],
-          [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil],
-          [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
-          [t('admin.supplier_dossier.notes'), supplier.notes]
-        ] %>
-        <% fiscal_fields = [
-          [t('admin.supplier_dossier.general.rfc'), supplier.rfc],
-          [t('admin.supplier_dossier.fields.person_type'), supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil],
-          [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil],
-          [t('admin.supplier_dossier.general.postal_code'), supplier.postal_code]
-        ] %>
-        <% [[t('admin.supplier_dossier.general.information'), t('admin.supplier_dossier.general.information_description'), 'building-2', general_fields],
-            [t('admin.supplier_dossier.general.tax_information'), t('admin.supplier_dossier.general.tax_description'), 'file-text', fiscal_fields]].each do |heading, description, symbol, fields| %>
-          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-            <div class="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-5">
-              <div class="flex items-start gap-3">
-                <div class="flex size-14 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-emerald-50 text-emerald-800"><% if symbol == 'building-2' %>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true">
-                    <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
-                  </svg>
-                <% elsif symbol == 'file-text' %>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true">
-                    <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/>
-                    <path d="M14 2v6h5M8 12h8M8 16h8M8 19h5"/>
-                  </svg>
-                <% else %>
-                  <%= icon(symbol, class: 'size-5') %>
-                <% end %></div>
-                <div>
-                  <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= heading %></h2>
-                  <p class="mt-1 text-sm text-slate-500"><%= description %></p>
-                </div>
-              </div>
-              <% if can_edit %>
-                <%= link_to edit_admin_supplier_path(supplier), class: 'inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
-                  <%= icon('pencil', class: 'size-4') %>
-                  <%= t('admin.supplier_details.edit') %>
-                <% end %>
-              <% end %>
-            </div>
-            <dl class="divide-y divide-slate-100 px-5 py-2">
-              <% fields.each do |label, value| %>
-                <div class="grid gap-1 py-3 sm:grid-cols-[minmax(0,40%)_minmax(0,60%)] sm:gap-3">
-                  <dt class="text-sm text-slate-500"><%= label %></dt>
-                  <dd class="break-words whitespace-pre-wrap text-sm font-medium text-slate-900"><%= value.presence || '—' %></dd>
-                </div>
-              <% end %>
-            </dl>
-          </div>
-        <% end %>
-      </div>
-      <div class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/40 px-5 py-6 shadow-sm">
-        <div class="flex items-start gap-3">
-          <div class="flex size-14 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700"><%= icon('map-pin', class: 'size-5') %></div>
-          <div>
-            <h3 class="font-jakarta font-bold text-slate-900"><%= t('admin.supplier_dossier.general.fiscal_address') %></h3>
-            <p class="mt-1 max-w-2xl text-sm text-slate-600"><%= t('admin.supplier_dossier.general.address_hint') %></p>
-          </div>
-        </div>
-        <button type="button" data-action="supplier-dossier#select" data-section="addresses" class="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50">
-          <%= icon('map-pin', class: 'size-4') %>
-          <%= t('admin.supplier_dossier.general.view_addresses') %>
-          <%= icon('arrow-right', class: 'size-4') %>
-        </button>
-      </div>
-    </section>
-
-    <section data-supplier-dossier-target="panel" data-section="commercial" class="mt-5 hidden space-y-5"><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-5 flex items-center gap-3"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v5c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 10v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5M4 15v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4"/></svg></span><div><h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.summary') %></h2><p class="text-sm text-slate-500"><%= t('admin.supplier_dossier.commercial.description') %></p></div></div><dl class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2 lg:grid-cols-5"><div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.currency') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.currency&.code || '—' %></dd></div>
+    <section data-supplier-dossier-target="panel" data-section="commercial" class="hidden space-y-5"><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-5 flex items-center gap-3"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v5c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 10v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5M4 15v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4"/></svg></span><div><h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.summary') %></h2><p class="text-sm text-slate-500"><%= t('admin.supplier_dossier.commercial.description') %></p></div></div><dl class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2 lg:grid-cols-5"><div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.currency') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.currency&.code || '—' %></dd></div>
 <div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.credit_days') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.credit_days.present? ? supplier.credit_days : '—' %></dd></div>
 <div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.credit_limit') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit) : '—' %></dd></div>
 <div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.discount_percent') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.discount_percent.present? ? "#{supplier.discount_percent}%" : '—' %></dd></div>
@@ -170,7 +71,7 @@
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.credit_limit') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit) : '—' %></dd></div></dl></div><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-4 flex items-center gap-3 border-b border-slate-100 pb-4"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M19 5 5 19"/></svg></span><h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.purchase') %></h3></div><dl><div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.discount_percent') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.discount_percent.present? ? "#{supplier.discount_percent}%" : '—' %></dd></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.minimum_order_amount') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount) : '—' %></dd></div></dl></div></div></section>
 
-    <section data-supplier-dossier-target="panel" data-section="contacts" class="mt-5 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <section data-supplier-dossier-target="panel" data-section="contacts" class="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div class="flex items-center gap-3">
@@ -247,7 +148,7 @@
       </div>
     </section>
 
-    <section data-supplier-dossier-target="panel" data-section="addresses" class="mt-5 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <section data-supplier-dossier-target="panel" data-section="addresses" class="hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div class="flex items-center gap-3">
@@ -302,7 +203,7 @@
       </div>
     </section>
 
-    <section data-supplier-dossier-target="panel" data-section="schedules" class="mt-5 hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section data-supplier-dossier-target="panel" data-section="schedules" class="hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-5">
         <div>
           <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.schedules') %></h2>
@@ -335,7 +236,7 @@
       <%= link_to t('admin.supplier_dossier.schedules'), admin_supplier_schedules_path(supplier), class: 'mt-5 inline-block text-sm font-semibold text-emerald-700 hover:underline' %>
     </section>
 
-    <section data-supplier-dossier-target="panel" data-section="products" class="mt-5 hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <section data-supplier-dossier-target="panel" data-section="products" class="hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.procurement.title') %></h2>
       <p class="mt-2 text-sm text-slate-500"><%= t('admin.procurement.description') %></p>
       <% if policy(supplier).view_products? %>
@@ -345,7 +246,7 @@
     </section>
 
 <% if can_view_finances %>
-      <section data-supplier-dossier-target="panel" data-section="finances" class="mt-5 hidden space-y-5">
+      <section data-supplier-dossier-target="panel" data-section="finances" class="hidden space-y-5">
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div><h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.title') %></h2>
@@ -373,7 +274,7 @@
       </section>
     <% end %>
 
-    <section data-supplier-dossier-target="panel" data-section="documents" class="hidden p-6">
+    <section data-supplier-dossier-target="panel" data-section="documents" class="hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <h2 class="mb-4 text-lg font-bold"><%= t('admin.supplier_dossier.documents') %></h2>
       <% supplier.documents.each do |document| %>
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 py-3">
@@ -384,5 +285,6 @@
       <% if supplier.documents.empty? %><p class="text-sm text-slate-500">—</p><% end %>
       <div class="mt-5"><h3 class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_dossier.tags') %></h3><p class="mt-2 text-sm text-slate-600"><%= supplier.tags.join(', ').presence || '—' %></p></div>
     </section>
+    </div>
   </div>
 </div>

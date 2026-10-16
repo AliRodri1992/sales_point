@@ -1,6 +1,35 @@
 ko:
   admin:
     supplier_dossier:
+      navigation:
+        label: "공급업체 메뉴"
+        breadcrumbs: "탐색 경로"
+        suppliers: "공급업체"
+        content: "공급업체 정보 내용"
+        dossier: "공급업체 정보"
+        operations: "운영"
+        finances: "재무"
+      overview:
+        upcoming_visits: "예정된 방문 및 배송"
+        weekly: "매주"
+        recurrence: "반복"
+        next_date: "날짜"
+        main_information: "주요 정보"
+        main_description: "공급업체 정보 및 구매 조건"
+        registered_products: "등록 상품"
+        active_contacts: "등록 연락처"
+        registered_addresses: "등록 주소"
+        weekly_schedules: "주간 방문 및 배송"
+        supplier_name: "공급업체 이름"
+        phone: "전화번호"
+        email: "이메일"
+        primary_contacts: "주요 연락처"
+        contacts_subtitle: "공급업체 담당자"
+        view_all: "전체 보기"
+        supplier_schedule: "방문 및 배송 일정"
+        schedule_subtitle: "주간 일정에 따른 다음 예상 날짜"
+        view_calendar: "일정 보기"
+        no_schedules: "등록된 일정이 없습니다"
       commercial:
         summary: "거래 조건 요약"
         description: "이 공급업체의 구매 조건 개요"
@@ -56,7 +85,9 @@ ko:
         individual: "개인"
         company: "법인"
       sections:
-        general: "일반 및 세금 정보"
+        overview: "요약"
+        general: "일반 정보"
+        fiscal: "세금 정보"
         commercial: "거래 조건"
         contacts: "연락처"
         addresses: "주소"
