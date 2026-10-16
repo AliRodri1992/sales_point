@@ -10,12 +10,8 @@
     <% overview_metrics.each do |label, value, subtitle, symbol| %>
       <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-          <% case symbol %>
-          <% when 'users' %><%= icon('users', class: 'size-5') %>
-          <% when 'pin' %><%= icon('map-pin', class: 'size-5') %>
-          <% when 'calendar' %><%= icon('calendar-days', class: 'size-5') %>
-          <% else %><%= icon('cube', class: 'size-5') %>
-          <% end %>
+          <% metric_icon = { 'users' => 'users', 'pin' => 'map-pin', 'calendar' => 'calendar-days' }.fetch(symbol, 'cube') %>
+          <%= icon(metric_icon, class: 'size-5') %>
         </span>
         <div>
           <p class="text-sm font-medium text-slate-500"><%= label %></p>
