@@ -49,6 +49,8 @@ ko:
         fiscal_regime: "세금 제도"
         postal_code: "세금 우편번호"
         fiscal_address: "세금 주소"
+        address_description: "이 공급업체에 등록된 세금 주소입니다."
+        no_fiscal_address: "이 공급업체에 등록된 세금 주소가 아직 없습니다."
         address_hint: "주소 탭에서 세금 주소를 관리하고 기본 주소를 선택할 수 있습니다."
         view_addresses: "주소 보기"
       schedules: "일정"

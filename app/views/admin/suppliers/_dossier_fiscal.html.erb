@@ -17,9 +17,9 @@
     <% fiscal_fields = [
       [t('admin.supplier_dossier.general.rfc'), supplier.rfc],
       [t('admin.supplier_dossier.fields.person_type'), supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil],
-      [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil],
-      [t('admin.supplier_dossier.general.postal_code'), supplier.postal_code]
+      [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil]
     ] %>
+    <% fiscal_fields << [t('admin.supplier_dossier.general.postal_code'), supplier.postal_code] unless fiscal_address %>
     <dl class="grid gap-x-8 gap-y-4 pt-5 md:grid-cols-2">
       <% fiscal_fields.each do |label, value| %>
         <div class="border-b border-slate-100 pb-3">
@@ -28,18 +28,6 @@
         </div>
       <% end %>
     </dl>
-  </div>
-  <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5 shadow-sm sm:p-6">
-    <div class="flex items-start gap-3">
-      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700"><%= icon('map-pin', class: 'size-5') %></span>
-      <div>
-        <h3 class="font-jakarta font-bold text-slate-900"><%= t('admin.supplier_dossier.general.fiscal_address') %></h3>
-        <p class="mt-1 max-w-xl text-sm text-slate-600"><%= fiscal_address&.full_address.presence || t('admin.supplier_dossier.general.address_hint') %></p>
-      </div>
-    </div>
-    <button type="button" data-action="supplier-dossier#select" data-section="addresses" class="inline-flex min-h-10 items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50">
-      <%= t('admin.supplier_dossier.general.view_addresses') %>
-      <%= icon('arrow-right', class: 'size-4') %>
-    </button>
+    <%= render 'dossier_fiscal_address', fiscal_address: fiscal_address, supplier: supplier %>
   </div>
 </section>

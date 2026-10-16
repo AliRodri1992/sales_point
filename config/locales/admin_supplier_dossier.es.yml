@@ -49,6 +49,8 @@ es:
         fiscal_regime: "Régimen fiscal"
         postal_code: "Código postal fiscal"
         fiscal_address: "Domicilio fiscal"
+        address_description: "Dirección fiscal registrada para este proveedor."
+        no_fiscal_address: "Este proveedor todavía no tiene una dirección fiscal registrada."
         address_hint: "El domicilio fiscal se administra en Direcciones, donde puedes registrar varias direcciones y definir la principal."
         view_addresses: "Ver direcciones"
       schedules: "Calendarios"

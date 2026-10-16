@@ -49,6 +49,8 @@ en:
         fiscal_regime: "Tax regime"
         postal_code: "Tax postal code"
         fiscal_address: "Tax address"
+        address_description: "Tax address registered for this supplier."
+        no_fiscal_address: "This supplier does not have a registered tax address yet."
         address_hint: "Manage tax addresses in Addresses, where you can register multiple addresses and choose the primary one."
         view_addresses: "View addresses"
       schedules: Schedules

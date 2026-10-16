@@ -1,0 +1,42 @@
+<div class="mt-6 border-t border-slate-100 pt-5" data-fiscal-address>
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+        <%= icon('map-pin', class: 'size-5') %>
+      </span>
+      <div>
+        <h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.general.fiscal_address') %></h3>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.general.address_description') %></p>
+      </div>
+    </div>
+    <button type="button" data-action="supplier-dossier#select" data-section="addresses" class="inline-flex min-h-10 items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50">
+      <%= t('admin.supplier_dossier.general.view_addresses') %>
+      <%= icon('arrow-right', class: 'size-4') %>
+    </button>
+  </div>
+
+  <% if fiscal_address %>
+    <% street_number = [fiscal_address.street, fiscal_address.exterior_number].compact_blank.join(' ') %>
+    <% address_fields = [
+      [t('admin.supplier_details.address_fields.street'), street_number],
+      [t('admin.supplier_details.address_fields.interior_number'), fiscal_address.interior_number],
+      [t('admin.supplier_details.address_fields.neighborhood'), fiscal_address.neighborhood],
+      [t('admin.supplier_details.address_fields.city'), fiscal_address.city],
+      [t('admin.supplier_details.address_fields.state'), fiscal_address.state],
+      [t('admin.supplier_details.address_fields.postal_code'), fiscal_address.postal_code],
+      [t('admin.supplier_details.address_fields.country'), fiscal_address.country&.name]
+    ] %>
+    <dl class="mt-5 grid gap-x-8 gap-y-4 rounded-xl border border-emerald-100 bg-emerald-50/30 p-4 sm:grid-cols-2 sm:p-5">
+      <% address_fields.each do |label, value| %>
+        <div>
+          <dt class="text-xs font-medium text-slate-500"><%= label %></dt>
+          <dd class="mt-1 break-words text-sm font-semibold text-slate-900"><%= value.presence || '—' %></dd>
+        </div>
+      <% end %>
+    </dl>
+  <% else %>
+    <p class="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-600">
+      <%= t('admin.supplier_dossier.general.no_fiscal_address') %>
+    </p>
+  <% end %>
+</div>
