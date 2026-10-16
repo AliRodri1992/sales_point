@@ -19,11 +19,12 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
   end
 
   it 'shows the registered primary fiscal address with each address field' do
-    address = create(:address, :fiscal, :primary, addressable: supplier,
-                                               street: 'Calle Fiscal', exterior_number: '37',
-                                               interior_number: '2B', neighborhood: 'Centro Fiscal',
-                                               city: 'Ciudad Fiscal', state: 'Estado Fiscal',
-                                               postal_code: '54800')
+    fiscal_attributes = {
+      street: 'Calle Fiscal', exterior_number: '37', interior_number: '2B',
+      neighborhood: 'Centro Fiscal', city: 'Ciudad Fiscal', state: 'Estado Fiscal',
+      postal_code: '54800'
+    }
+    address = create(:address, :fiscal, :primary, addressable: supplier, **fiscal_attributes)
     create(:address, :delivery, addressable: supplier, street: 'Delivery Street')
 
     get admin_supplier_path(supplier, tab: 'fiscal')
