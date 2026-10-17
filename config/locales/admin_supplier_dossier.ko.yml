@@ -1,6 +1,9 @@
 ko:
   admin:
     supplier_dossier:
+      fiscal_address_empty:
+        title: "등록된 세무 주소가 없습니다"
+        description: "세무 및 관리 목적으로 공급업체의 세무 주소를 등록하세요."
       document_empty:
         subtitle: "이 공급업체 관련 문서, 파일 및 증빙 자료를 관리하세요."
         title: "아직 등록된 문서가 없습니다"
