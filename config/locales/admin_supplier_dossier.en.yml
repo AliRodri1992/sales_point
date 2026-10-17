@@ -1,6 +1,30 @@
 en:
   admin:
     supplier_dossier:
+      finance:
+        payables_description: "View this supplier's invoices, balances, and due dates."
+        manage_payables: "Manage payables"
+        posted_invoices: "Posted invoices"
+        outstanding_balance: "Outstanding balance"
+        upcoming: "Upcoming due dates"
+        next_30_days: "Within the next 30 days"
+        overdue: "Overdue"
+        no_payables: "No pending payables."
+        bank_description: "View this supplier's registered bank accounts."
+        manage_banks: "Manage bank accounts"
+        active: "Active"
+        no_banks: "No active bank accounts registered."
+        columns:
+          folio: "Folio / Series"
+          issued_on: "Issued"
+          due_on: "Due date"
+          amount: "Total"
+          balance: "Outstanding balance"
+          status: "Status"
+        states:
+          pending: "Pending"
+          partial: "Partial"
+          overdue: "Overdue"
       product_empty:
         manage: "Manage products"
         title: "No products registered yet"

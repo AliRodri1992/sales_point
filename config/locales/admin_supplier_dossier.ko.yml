@@ -1,6 +1,30 @@
 ko:
   admin:
     supplier_dossier:
+      finance:
+        payables_description: "공급업체의 송장, 잔액 및 만기일을 확인하세요."
+        manage_payables: "미지급금 관리"
+        posted_invoices: "확정된 송장"
+        outstanding_balance: "미지급 잔액"
+        upcoming: "다가오는 만기"
+        next_30_days: "향후 30일 이내"
+        overdue: "연체"
+        no_payables: "미지급금이 없습니다."
+        bank_description: "공급업체의 등록된 은행 계좌를 확인하세요."
+        manage_banks: "은행 계좌 관리"
+        active: "활성"
+        no_banks: "등록된 활성 은행 계좌가 없습니다."
+        columns:
+          folio: "번호 / 시리즈"
+          issued_on: "발행일"
+          due_on: "만기일"
+          amount: "총액"
+          balance: "미지급 잔액"
+          status: "상태"
+        states:
+          pending: "미지급"
+          partial: "부분 지급"
+          overdue: "연체"
       product_empty:
         manage: "제품 관리"
         title: "아직 등록된 제품이 없습니다"

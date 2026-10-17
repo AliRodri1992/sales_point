@@ -1,0 +1,124 @@
+<%# Read only financial overview. Monetary balances are always grouped by invoice currency. %>
+<% payables = supplier.account_payables.outstanding
+                      .includes(supplier_invoice: :currency,
+                                supplier_payment_allocations: :supplier_payment,
+                                supplier_credit_allocations: :supplier_credit_note)
+                      .order(due_on: :asc, id: :asc)
+                      .select { |payable| payable.balance.positive? } %>
+<% balances = payables.group_by { |payable| payable.supplier_invoice.currency.code } %>
+<% balance_labels = balances.sort.map { |code, entries| "#{number_to_currency(entries.sum(&:balance), unit: '')} #{code}" } %>
+<% balance_labels = ["#{number_to_currency(0, unit: '')} #{supplier.currency.code}"] if balance_labels.empty? %>
+<% upcoming_count = payables.count { |payable| payable.due_on.between?(Date.current, 30.days.from_now.to_date) } %>
+<% overdue_count = payables.count(&:overdue?) %>
+
+<section id="supplier-dossier-finances" data-supplier-dossier-target="panel" data-section="finances" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <div data-finance-payables class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex min-w-0 items-center gap-3">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('document-text', class: 'size-5') %></span>
+        <div>
+          <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.title') %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.payables_description') %></p>
+        </div>
+      </div>
+      <%= link_to admin_account_payables_path, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+        <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+        <%= t('admin.supplier_dossier.finance.manage_payables') %>
+      <% end %>
+    </div>
+
+    <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.posted_invoices') %></p>
+        <p data-finance-metric="invoices" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= supplier.supplier_invoices.posted.count %></p>
+      </div>
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.outstanding_balance') %></p>
+        <p data-finance-metric="balance" class="mt-2 break-words font-jakarta text-lg font-bold tabular-nums text-emerald-800"><%= balance_labels.join(' · ') %></p>
+      </div>
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.upcoming') %></p>
+        <p data-finance-metric="upcoming" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= upcoming_count %></p>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_dossier.finance.next_30_days') %></p>
+      </div>
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.overdue') %></p>
+        <p data-finance-metric="overdue" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-rose-700"><%= overdue_count %></p>
+      </div>
+    </div>
+
+    <div class="mt-5 overflow-x-auto rounded-xl border border-slate-200">
+      <table class="min-w-[700px] w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold text-slate-600">
+          <tr>
+            <% %w[folio issued_on due_on amount balance status].each do |column| %>
+              <th scope="col" class="px-4 py-3"><%= t("admin.supplier_dossier.finance.columns.#{column}") %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% payables.first(5).each do |payable| %>
+            <% invoice = payable.supplier_invoice %>
+            <% state = payable.overdue? ? 'overdue' : (payable.paid_amount.positive? || payable.credited_amount.positive? ? 'partial' : 'pending') %>
+            <% badge_style = state == 'overdue' ? 'bg-rose-50 text-rose-700' : state == 'partial' ? 'bg-amber-50 text-amber-800' : 'bg-emerald-50 text-emerald-800' %>
+            <tr class="hover:bg-slate-50/70">
+              <td class="px-4 py-3 font-semibold">
+                <%= link_to invoice.folio.presence || "##{invoice.id}", admin_account_payable_path(payable), class: 'text-emerald-800 hover:underline' %>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(invoice.issued_on) %></td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(payable.due_on) %></td>
+              <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700"><%= number_to_currency(payable.amount, unit: '') %> <%= invoice.currency.code %></td>
+              <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900"><%= number_to_currency(payable.balance, unit: '') %> <%= invoice.currency.code %></td>
+              <td class="px-4 py-3"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= badge_style %>"><%= t("admin.supplier_dossier.finance.states.#{state}") %></span></td>
+            </tr>
+          <% end %>
+          <% if payables.empty? %>
+            <tr><td colspan="6" class="px-4 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.no_payables') %></td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
+    <% bank_accounts = supplier.supplier_bank_accounts.active.includes(:sat_bank).order(primary: :desc, id: :desc).limit(3) %>
+    <div data-finance-bank-accounts class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex min-w-0 items-center gap-3">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('building-library', class: 'size-5') %></span>
+          <div>
+            <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.bank_accounts') %></h2>
+            <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.bank_description') %></p>
+          </div>
+        </div>
+        <%= link_to admin_supplier_bank_accounts_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+          <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+          <%= t('admin.supplier_dossier.finance.manage_banks') %>
+        <% end %>
+      </div>
+      <div class="mt-5 space-y-2">
+        <% bank_accounts.each do |account| %>
+          <div data-finance-bank-account class="grid min-w-0 gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto] sm:items-center">
+            <div class="min-w-0">
+              <p class="break-words font-semibold text-slate-900"><%= account.sat_bank&.name || account.bank_name %></p>
+              <p class="mt-1 truncate text-xs text-slate-500"><%= account.holder_name %></p>
+            </div>
+            <div class="min-w-0">
+              <p class="text-sm font-medium tabular-nums text-slate-800"><%= account.masked_number %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= account.currency_code %></p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+              <% if account.primary? %>
+                <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800"><%= t('admin.accounts_payable.primary') %></span>
+              <% end %>
+              <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800"><%= t('admin.supplier_dossier.finance.active') %></span>
+            </div>
+          </div>
+        <% end %>
+        <% if bank_accounts.empty? %>
+          <p class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.no_banks') %></p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

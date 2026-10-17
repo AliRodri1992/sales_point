@@ -1,6 +1,30 @@
 es:
   admin:
     supplier_dossier:
+      finance:
+        payables_description: "Consulta las facturas, sus saldos y vencimientos de este proveedor."
+        manage_payables: "Administrar cuentas por pagar"
+        posted_invoices: "Facturas contabilizadas"
+        outstanding_balance: "Saldo pendiente"
+        upcoming: "Próximos vencimientos"
+        next_30_days: "En los siguientes 30 días"
+        overdue: "Vencidas"
+        no_payables: "No hay cuentas por pagar pendientes."
+        bank_description: "Consulta las cuentas bancarias registradas para este proveedor."
+        manage_banks: "Administrar cuentas bancarias"
+        active: "Activa"
+        no_banks: "No hay cuentas bancarias activas registradas."
+        columns:
+          folio: "Folio / Serie"
+          issued_on: "Emisión"
+          due_on: "Vencimiento"
+          amount: "Total"
+          balance: "Saldo pendiente"
+          status: "Estado"
+        states:
+          pending: "Pendiente"
+          partial: "Parcial"
+          overdue: "Vencida"
       product_empty:
         manage: "Administrar productos"
         title: "Aún no hay productos registrados"
