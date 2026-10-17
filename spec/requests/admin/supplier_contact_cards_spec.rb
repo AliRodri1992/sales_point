@@ -17,6 +17,26 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     Nokogiri::HTML(response.body).css('article[data-supplier-contact-id]')
   end
 
+  it 'separates the contact cards from the title and filter area' do
+    create(:contact, contactable: supplier, name: 'Card outside header')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-contacts')
+    header = panel.at_css('[data-supplier-contacts-header]')
+    list_area = panel.at_css('[data-supplier-contacts-cards]')
+
+    expect(panel['class']).not_to include('bg-white')
+    expect(header.parent).to eq(panel)
+    expect(list_area.parent).to eq(panel)
+    expect(header['class']).to include('bg-white', 'rounded-2xl')
+    expect(header.text).to include('Supplier contact people', 'Manage contacts')
+    expect(header.css('article[data-supplier-contact-id]')).to be_empty
+    expect(list_area.css('article[data-supplier-contact-id]').size).to eq(1)
+    expect(list_area.at_css('[data-supplier-contacts-target="list"]')['class']).to include('md:grid-cols-2')
+    expect(list_area.at_css('[data-supplier-contacts-target="scroll"]')['class']).to include('overflow-y-auto')
+  end
+
   it 'renders compact contact cards in two columns with hidden expandable details' do
     attributes = {
       name: 'Laura Gómez', position: 'Purchasing',
