@@ -46,7 +46,7 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(fiscal_address_panel.text).to include('Fiscal Secundaria')
-    expect(fiscal_address_panel.text).not_to include('This supplier does not have a registered tax address')
+    expect(fiscal_address_panel.text).not_to include('No fiscal address registered yet')
   end
 
   it 'prefers the primary fiscal address over other fiscal addresses' do
@@ -64,7 +64,7 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
 
     get admin_supplier_path(supplier, tab: 'fiscal')
 
-    expect(fiscal_address_panel.text).to include('This supplier does not have a registered tax address yet.')
+    expect(fiscal_address_panel.text).to include('No fiscal address registered yet')
     expect(fiscal_address_panel.text).not_to include('Fiscal Eliminada')
   end
 
@@ -72,7 +72,7 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
     get admin_supplier_path(supplier, tab: 'fiscal')
 
     expect(response).to have_http_status(:ok)
-    expect(fiscal_address_panel.text).to include('This supplier does not have a registered tax address yet.')
+    expect(fiscal_address_panel.text).to include('No fiscal address registered yet')
     expect(Nokogiri::HTML(response.body).at_css('#supplier-dossier-fiscal').text).to include(supplier.postal_code)
   end
 
