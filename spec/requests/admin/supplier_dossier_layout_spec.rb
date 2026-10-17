@@ -32,6 +32,33 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(response.body).not_to include('data-section="reconciliation"')
   end
 
+  it 'places Back outside the three-dot menu and Edit inside it' do
+    get admin_supplier_path(supplier)
+
+    header = dossier.at_css('[data-controller="supplier-dossier"] > header')
+    back_link = header.at_css("a[href='#{admin_suppliers_path}']")
+    edit_link = header.at_css("details a[href='#{edit_admin_supplier_path(supplier)}']")
+
+    expect(back_link).to be_present
+    expect(back_link.text).to include('Back')
+    expect(back_link.ancestors('details')).to be_empty
+    expect(edit_link).to be_present
+    expect(edit_link.text).to include('Edit')
+    expect(header.css("a[href='#{edit_admin_supplier_path(supplier)}']").size).to eq(1)
+    expect(header.at_css('details summary[aria-label]')).to be_present
+  end
+
+  it 'keeps Back available and hides the edit menu without update permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:update?).and_return(false)
+
+    get admin_supplier_path(supplier)
+
+    header = dossier.at_css('[data-controller="supplier-dossier"] > header')
+    expect(header.at_css("a[href='#{admin_suppliers_path}']")).to be_present
+    expect(header.at_css('details')).to be_nil
+    expect(header.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_nil
+  end
+
   it 'separates general company information from fiscal details' do
     get admin_supplier_path(supplier)
 
