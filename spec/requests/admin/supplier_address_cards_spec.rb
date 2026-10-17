@@ -30,11 +30,12 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     get admin_supplier_path(supplier, tab: 'addresses')
 
     expect(response).to have_http_status(:ok)
-    expect(address_panel['data-controller']).to eq('supplier-addresses')
-    header = address_panel.at_css('[data-supplier-addresses-header]')
-    card_area = address_panel.at_css('[data-supplier-addresses-cards]')
-    expect(header.parent).to eq(address_panel)
-    expect(card_area.parent).to eq(address_panel)
+    panel = address_panel
+    expect(panel['data-controller']).to eq('supplier-addresses')
+    header = panel.at_css('[data-supplier-addresses-header]')
+    card_area = panel.at_css('[data-supplier-addresses-cards]')
+    expect(header.parent).to eq(panel)
+    expect(card_area.parent).to eq(panel)
     expect(header.css('article[data-supplier-address-id]')).to be_empty
 
     list = card_area.at_css('[data-supplier-addresses-target="list"]')
