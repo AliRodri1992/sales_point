@@ -51,6 +51,20 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_nil
   end
 
+  it 'separates the calendar empty state from its management header' do
+    get admin_supplier_path(supplier, tab: 'schedules')
+
+    panel = dossier.at_css('[data-section="schedules"]')
+    header = panel.at_css(':scope > div:first-child')
+    empty_state = panel.at_css('img[src*="scalendaries"]').parent
+
+    expect(header.text).to include('Manage calendars')
+    expect(header.at_css("a[href='#{admin_supplier_schedules_path(supplier)}']")).to be_present
+    expect(header.text).not_to include('No calendars registered yet')
+    expect(empty_state.text).to include('No calendars registered yet')
+    expect(panel.css("a[href='#{admin_supplier_schedules_path(supplier)}']").size).to eq(1)
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
