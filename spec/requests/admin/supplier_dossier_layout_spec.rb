@@ -21,7 +21,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'renders the illustrated document empty state with an upload entry point' do
     get admin_supplier_path(supplier, tab: 'documents')
 
-    panel = dossier.at_css('[data-section="documents"]')
+    panel = dossier.at_css('section[data-section="documents"]')
     expect(panel.at_css('img[src*="sdocuments"]')).to be_present
     expect(panel.text).to include('No documents registered yet')
     expect(panel.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_present
@@ -36,7 +36,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     get admin_supplier_path(supplier, tab: 'documents')
 
-    panel = dossier.at_css('[data-section="documents"]')
+    panel = dossier.at_css('section[data-section="documents"]')
     expect(panel.text).to include('invoice.pdf')
     expect(panel.at_css('img[src*="sdocuments"]')).to be_nil
   end
@@ -46,7 +46,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     get admin_supplier_path(supplier, tab: 'documents')
 
-    panel = dossier.at_css('[data-section="documents"]')
+    panel = dossier.at_css('section[data-section="documents"]')
     expect(panel.at_css('img[src*="sdocuments"]')).to be_present
     expect(panel.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_nil
   end
@@ -54,8 +54,8 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'separates the calendar empty state from its management header' do
     get admin_supplier_path(supplier, tab: 'schedules')
 
-    panel = dossier.at_css('[data-section="schedules"]')
-    header = panel.at_css(':scope > div:first-child')
+    panel = dossier.at_css('section[data-section="schedules"]')
+    header = panel.at_xpath('./div[1]')
     empty_state = panel.at_css('img[src*="scalendaries"]').parent
 
     expect(header.text).to include('Manage calendars')
