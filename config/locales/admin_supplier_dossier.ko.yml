@@ -1,6 +1,11 @@
 ko:
   admin:
     supplier_dossier:
+      schedule_empty:
+        subtitle: "지점별 방문, 주문 접수 및 배송 일정을 등록하세요."
+        title: "아직 등록된 일정이 없습니다"
+        description: "공급업체와의 업무를 관리할 방문, 주문 접수 또는 배송 일정을 추가하세요."
+        add_first: "첫 일정 추가"
       address_cards:
         empty_title: "아직 등록된 주소가 없습니다"
         empty_description: "공급업체의 세무, 상업 또는 배송 주소를 추가하여 정보를 한곳에서 관리하세요."
