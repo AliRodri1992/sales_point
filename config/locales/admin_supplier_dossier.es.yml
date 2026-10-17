@@ -1,6 +1,29 @@
 es:
   admin:
     supplier_dossier:
+      address_cards:
+        titles:
+          fiscal: "Domicilio fiscal"
+          delivery: "Dirección de entrega"
+          commercial: "Dirección comercial"
+          general: "Dirección general"
+        filters: "Filtrar direcciones"
+        filters_options:
+          all: "Todas"
+          fiscal: "Fiscales"
+          delivery: "Entregas"
+          commercial: "Comerciales"
+          general: "Generales"
+          primary: "Principales"
+        expand: "Mostrar detalles de %{name}"
+        collapse: "Ocultar detalles de %{name}"
+        yes: "Sí"
+        no: "No"
+        postal_abbreviation: "C. P."
+        loading: "Cargando más direcciones..."
+        load_error: "No se pudieron cargar las direcciones. Inténtalo nuevamente."
+        load_more: "Cargar más"
+        scroll_label: "Lista de direcciones con carga automática"
       contact_cards:
         phone_not_registered: "Teléfono no registrado"
         email_not_registered: "Correo electrónico no registrado"

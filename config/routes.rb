@@ -102,6 +102,7 @@ Rails.application.routes.draw do
 
     resources :suppliers do
       member { get :contacts_page }
+      member { get :addresses_page }
       resources :bank_accounts, controller: 'supplier_bank_accounts', except: %i[show] do
         member { post :reveal }
       end

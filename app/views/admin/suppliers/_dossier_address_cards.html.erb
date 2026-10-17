@@ -1,0 +1,89 @@
+<% addresses.each do |address| %>
+  <% purpose = address.purpose %>
+  <% purpose_color = {
+    'fiscal' => 'bg-sky-50 text-sky-700',
+    'delivery' => 'bg-emerald-50 text-emerald-700',
+    'commercial' => 'bg-amber-50 text-amber-700',
+    'general' => 'bg-slate-100 text-slate-600'
+  }.fetch(purpose, 'bg-slate-100 text-slate-600') %>
+  <% purpose_icon = {
+    'fiscal' => 'building-office-2',
+    'delivery' => 'truck',
+    'commercial' => 'briefcase',
+    'general' => 'map-pin'
+  }.fetch(purpose, 'map-pin') %>
+  <% street_line = [address.street, address.exterior_number].compact_blank.join(' ') %>
+  <% locality_line = [address.neighborhood, address.city, address.state].compact_blank.join(', ') %>
+  <article data-supplier-address-id="<%= address.id %>" class="min-w-0 self-start rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md sm:p-5">
+    <div class="flex min-w-0 items-start gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl <%= purpose_color %>">
+        <%= icon(purpose_icon, class: 'size-5') %>
+      </span>
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-2">
+          <h3 class="break-words font-jakarta text-sm font-bold text-slate-900 sm:text-base">
+            <%= t("admin.supplier_dossier.address_cards.titles.#{purpose}") %>
+          </h3>
+          <% if address.primary? %>
+            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800">
+              <%= icon('star', class: 'size-3.5') %><%= t('admin.supplier_details.primary') %>
+            </span>
+          <% end %>
+        </div>
+        <span class="mt-1 inline-flex rounded-md px-2 py-0.5 text-[11px] font-semibold <%= purpose_color %>">
+          <%= t("admin.supplier_details.address_purposes.#{purpose}") %>
+        </span>
+      </div>
+      <div class="flex shrink-0 items-center gap-1">
+        <% if can_manage_addresses %>
+          <details class="group relative">
+            <summary aria-label="<%= t('admin.supplier_details.actions') %>" class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
+              <%= icon('ellipsis-vertical', class: 'size-5') %>
+            </summary>
+            <div class="absolute right-0 z-20 mt-1 min-w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+              <%= link_to edit_admin_supplier_address_path(supplier, address), data: { turbo_frame: '_top' }, class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' do %>
+                <%= icon('pencil', class: 'size-4') %>
+                <%= t('admin.supplier_details.edit_address') %>
+              <% end %>
+            </div>
+          </details>
+        <% end %>
+        <button type="button" data-action="supplier-addresses#toggleCard" aria-controls="supplier-address-detail-<%= address.id %>" aria-expanded="false" aria-label="<%= t('admin.supplier_dossier.address_cards.expand', name: street_line) %>" data-expand-label="<%= t('admin.supplier_dossier.address_cards.expand', name: street_line) %>" data-collapse-label="<%= t('admin.supplier_dossier.address_cards.collapse', name: street_line) %>" class="flex size-9 items-center justify-center rounded-lg text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+          <%= icon('chevron-down', class: 'size-4 transition-transform') %>
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-4 flex items-start gap-2 sm:pl-14">
+      <%= icon('map-pin', class: 'mt-0.5 size-4 shrink-0 text-emerald-700') %>
+      <div class="min-w-0 space-y-1 text-xs text-slate-600 sm:text-sm">
+        <p class="break-words font-medium text-slate-800"><%= street_line.presence || '—' %></p>
+        <p class="break-words"><%= locality_line.presence || '—' %><% if address.postal_code.present? %>, <%= t('admin.supplier_dossier.address_cards.postal_abbreviation') %> <%= address.postal_code %><% end %></p>
+        <p class="break-words"><%= address.country.localized_name %></p>
+      </div>
+    </div>
+
+    <div id="supplier-address-detail-<%= address.id %>" data-address-detail class="mt-4 hidden border-t border-slate-100 pt-4">
+      <% fields = [
+        [t('admin.supplier_details.address_fields.street'), address.street],
+        [t('admin.supplier_details.address_fields.exterior_number'), address.exterior_number],
+        [t('admin.supplier_details.address_fields.interior_number'), address.interior_number],
+        [t('admin.supplier_details.address_fields.neighborhood'), address.neighborhood],
+        [t('admin.supplier_details.address_fields.city'), address.city],
+        [t('admin.supplier_details.address_fields.state'), address.state],
+        [t('admin.supplier_details.address_fields.postal_code'), address.postal_code],
+        [t('admin.supplier_details.address_fields.country'), address.country.localized_name],
+        [t('admin.supplier_details.address_fields.purpose'), t("admin.supplier_details.address_purposes.#{purpose}")],
+        [t('admin.supplier_details.primary'), t("admin.supplier_dossier.address_cards.#{address.primary? ? 'yes' : 'no'}")]
+      ] %>
+      <dl class="grid gap-x-4 gap-y-3 text-xs sm:grid-cols-2 sm:text-sm">
+        <% fields.each do |label, value| %>
+          <div class="min-w-0">
+            <dt class="text-slate-500"><%= label %></dt>
+            <dd class="mt-1 break-words font-semibold text-slate-800"><%= value.presence || '—' %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+  </article>
+<% end %>

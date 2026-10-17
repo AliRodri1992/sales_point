@@ -1,6 +1,29 @@
 en:
   admin:
     supplier_dossier:
+      address_cards:
+        titles:
+          fiscal: "Tax address"
+          delivery: "Delivery address"
+          commercial: "Commercial address"
+          general: "General address"
+        filters: "Filter addresses"
+        filters_options:
+          all: "All"
+          fiscal: "Tax"
+          delivery: "Delivery"
+          commercial: "Commercial"
+          general: "General"
+          primary: "Primary"
+        expand: "Show details for %{name}"
+        collapse: "Hide details for %{name}"
+        yes: "Yes"
+        no: "No"
+        postal_abbreviation: "ZIP"
+        loading: "Loading more addresses..."
+        load_error: "Addresses could not be loaded. Please try again."
+        load_more: "Load more"
+        scroll_label: "Address list with automatic loading"
       contact_cards:
         phone_not_registered: "Phone not registered"
         email_not_registered: "Email not registered"

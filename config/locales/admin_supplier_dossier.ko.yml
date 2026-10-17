@@ -1,6 +1,29 @@
 ko:
   admin:
     supplier_dossier:
+      address_cards:
+        titles:
+          fiscal: "세무 주소"
+          delivery: "배송 주소"
+          commercial: "상업 주소"
+          general: "일반 주소"
+        filters: "주소 필터"
+        filters_options:
+          all: "전체"
+          fiscal: "세무"
+          delivery: "배송"
+          commercial: "상업"
+          general: "일반"
+          primary: "대표"
+        expand: "%{name} 상세 정보 표시"
+        collapse: "%{name} 상세 정보 숨기기"
+        yes: "예"
+        no: "아니요"
+        postal_abbreviation: "우편번호"
+        loading: "주소 더 불러오는 중..."
+        load_error: "주소를 불러오지 못했습니다. 다시 시도하세요."
+        load_more: "더 불러오기"
+        scroll_label: "자동으로 추가 항목을 불러오는 주소 목록"
       contact_cards:
         phone_not_registered: "등록된 전화번호 없음"
         email_not_registered: "등록된 이메일 없음"

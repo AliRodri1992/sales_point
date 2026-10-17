@@ -9,11 +9,12 @@ module Admin
     include SuppliersExporting
     include SuppliersFormHelpers
     include SupplierContactsPagination
+    include SupplierAddressesPagination
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :require_supplier_organization!
-    before_action :set_supplier, only: %i[show contacts_page edit update destroy]
+    before_action :set_supplier, only: %i[show contacts_page addresses_page edit update destroy]
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     def index
@@ -33,10 +34,15 @@ module Admin
     def show
       authorize @supplier
       @dossier_contacts_page = Suppliers::DossierContactsPage.new(supplier: @supplier).call
+      @dossier_addresses_page = Suppliers::DossierAddressesPage.new(supplier: @supplier).call
     end
 
     def contacts_page
       render_dossier_contacts_page
+    end
+
+    def addresses_page
+      render_dossier_addresses_page
     end
 
     def new
