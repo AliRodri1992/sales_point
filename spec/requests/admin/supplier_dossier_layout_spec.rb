@@ -59,6 +59,33 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(header.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_nil
   end
 
+  it 'uses the entire right-side area for every supplier section' do
+    get admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    layout = dossier.at_css('[data-supplier-dossier-content]')
+    expect(layout).to be_present
+    expect(layout['class']).to include('w-full', 'flex-col')
+    expect(dossier.at_css('[data-supplier-dossier-content]').parent['class'])
+      .to include('lg:grid', 'lg:items-stretch')
+
+    sections = %w[overview general fiscal commercial contacts addresses schedules documents products finances]
+    expect(layout.css('[data-supplier-dossier-target="panel"]').pluck('data-section')).to match_array(sections)
+    layout.css('[data-supplier-dossier-target="panel"]').each do |panel|
+      expect(panel['class']).to include('w-full', 'min-w-0', 'lg:flex-1')
+    end
+  end
+
+  it 'highlights the full width of the selected menu item, not only its label' do
+    get admin_supplier_path(supplier)
+
+    sidebar = dossier.at_css('aside[aria-label] nav')
+    expect(sidebar['class']).to include('lg:-mx-3')
+    sidebar.css('button[data-supplier-dossier-target="tab"]').each do |tab|
+      expect(tab['class']).to include('w-full', 'lg:px-6')
+    end
+  end
+
   it 'separates general company information from fiscal details' do
     get admin_supplier_path(supplier)
 

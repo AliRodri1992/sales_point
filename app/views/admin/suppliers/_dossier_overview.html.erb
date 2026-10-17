@@ -1,4 +1,4 @@
-<section id="supplier-dossier-overview" data-supplier-dossier-target="panel" data-section="overview" class="space-y-4">
+<section id="supplier-dossier-overview" data-supplier-dossier-target="panel" data-section="overview" class="w-full min-w-0 lg:flex-1 space-y-4">
   <% overview_metrics = [
     [t('admin.supplier_dossier.sections.products'), (can_view_products ? supplier.supplier_products.available.count : nil), t('admin.supplier_dossier.overview.registered_products'), 'box'],
     [t('admin.supplier_dossier.sections.contacts'), contacts.size, t('admin.supplier_dossier.overview.active_contacts'), 'users'],
