@@ -65,6 +65,29 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.css("a[href='#{admin_supplier_schedules_path(supplier)}']").size).to eq(1)
   end
 
+  it 'shows a compact fiscal address empty state without an add button' do
+    get admin_supplier_path(supplier, tab: 'fiscal')
+
+    section = dossier.at_css('[data-fiscal-address]')
+    expect(section.at_css('img[src*="staxaddress"]')).to be_present
+    expect(section.text).to include('No fiscal address registered yet')
+    expect(section.css('a, button').map(&:text).join).not_to include('Add fiscal address')
+  end
+
+  it 'shows registered fiscal address fields instead of the empty illustration' do
+    supplier.addresses.create!(
+      street: 'Main Street', exterior_number: '10', neighborhood: 'Centro',
+      city: 'CDMX', state: 'CDMX', postal_code: '06000',
+      country: create(:country), purpose: 'fiscal'
+    )
+
+    get admin_supplier_path(supplier, tab: 'fiscal')
+
+    section = dossier.at_css('[data-fiscal-address]')
+    expect(section.text).to include('Main Street')
+    expect(section.at_css('img[src*="staxaddress"]')).to be_nil
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
