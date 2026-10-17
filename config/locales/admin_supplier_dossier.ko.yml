@@ -1,6 +1,12 @@
 ko:
   admin:
     supplier_dossier:
+      product_empty:
+        manage: "제품 관리"
+        title: "아직 등록된 제품이 없습니다"
+        description: "공급업체 제품을 등록하여 카탈로그를 통합하고 향후 구매를 간편하게 관리하세요."
+        add_first: "첫 제품 추가"
+        registered: "카탈로그에서 이 공급업체의 등록 제품을 확인하세요."
       fiscal_address_empty:
         title: "등록된 세무 주소가 없습니다"
         description: "세무 및 관리 목적으로 공급업체의 세무 주소를 등록하세요."

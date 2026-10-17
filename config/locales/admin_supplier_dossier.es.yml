@@ -1,6 +1,12 @@
 es:
   admin:
     supplier_dossier:
+      product_empty:
+        manage: "Administrar productos"
+        title: "Aún no hay productos registrados"
+        description: "Agrega productos o artículos de este proveedor para centralizar su catálogo y facilitar futuras compras."
+        add_first: "Agregar primer producto"
+        registered: "Consulta los productos asociados desde su catálogo."
       fiscal_address_empty:
         title: "Aún no hay dirección fiscal registrada"
         description: "Registra la dirección fiscal del proveedor para fines fiscales y administrativos."

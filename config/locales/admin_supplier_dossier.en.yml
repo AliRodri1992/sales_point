@@ -1,6 +1,12 @@
 en:
   admin:
     supplier_dossier:
+      product_empty:
+        manage: "Manage products"
+        title: "No products registered yet"
+        description: "Add this supplier's products or items to centralize its catalog and simplify future purchases."
+        add_first: "Add first product"
+        registered: "View this supplier's associated products in the catalog."
       fiscal_address_empty:
         title: "No fiscal address registered yet"
         description: "Register the supplier's fiscal address for tax and administrative purposes."

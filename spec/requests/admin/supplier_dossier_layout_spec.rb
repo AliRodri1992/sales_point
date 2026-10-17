@@ -104,6 +104,26 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(summary.text).to include('Main Street 23', 'Ixtepec', 'Oaxaca')
   end
 
+  it 'renders the empty products illustration and actions for administrators' do
+    get admin_supplier_path(supplier, tab: 'products')
+
+    panel = dossier.at_css('[data-section="products"]')
+    expect(panel.at_css('img[src*="sproducts"]')).to be_present
+    expect(panel.text).to include('No products registered yet')
+    expect(panel.at_css("a[href='#{admin_supplier_supplier_products_path(supplier)}']")).to be_present
+    expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_present
+  end
+
+  it 'does not show product creation without management permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'products')
+
+    panel = dossier.at_css('[data-section="products"]')
+    expect(panel.at_css('img[src*="sproducts"]')).to be_present
+    expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_nil
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
