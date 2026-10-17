@@ -1,6 +1,9 @@
 es:
   admin:
     supplier_dossier:
+      fiscal_address_empty:
+        title: "Aún no hay dirección fiscal registrada"
+        description: "Registra la dirección fiscal del proveedor para fines fiscales y administrativos."
       document_empty:
         subtitle: "Gestiona documentos, archivos y evidencias relacionados con este proveedor."
         title: "Aún no hay documentos registrados"
