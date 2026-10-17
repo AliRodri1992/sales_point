@@ -1,6 +1,11 @@
 es:
   admin:
     supplier_dossier:
+      schedule_empty:
+        subtitle: "Registra las visitas, toma de pedidos y repartos por sucursal."
+        title: "Aún no hay calendarios registrados"
+        description: "Agrega calendarios de visitas, toma de pedidos o repartos para organizar la relación con este proveedor."
+        add_first: "Agregar primer calendario"
       address_cards:
         empty_title: "Aún no hay direcciones registradas"
         empty_description: "Agrega direcciones fiscales, comerciales o de entrega para centralizar la información del proveedor."
