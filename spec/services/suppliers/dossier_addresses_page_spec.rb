@@ -61,9 +61,11 @@ RSpec.describe Suppliers::DossierAddressesPage do
 
   it 'searches street, address details, postal code and country, ignoring case' do
     country = create(:country, name: 'Exampleland')
-    target = create(:address, :delivery, addressable: supplier, country:,
-                                                 street: 'Calle del Sol', city: 'Pueblo Norte',
-                                                 neighborhood: 'Vista Bella', postal_code: '54831')
+    attributes = {
+      country:, street: 'Calle del Sol', city: 'Pueblo Norte',
+      neighborhood: 'Vista Bella', postal_code: '54831'
+    }
+    target = create(:address, :delivery, addressable: supplier, **attributes)
     create(:address, :fiscal, addressable: supplier, street: 'Different Street')
 
     ['calle del sol', 'Pueblo Norte', 'Vista Bella', '54831', 'Exampleland'].each do |term|

@@ -22,9 +22,11 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
   end
 
   it 'separates the header from two-column cards with expandable real address details' do
-    address = create(:address, :fiscal, :primary, addressable: supplier,
-                                                 street: 'Calle Principal', exterior_number: '42',
-                                                 city: 'Guadalajara', postal_code: '44100')
+    attributes = {
+      street: 'Calle Principal', exterior_number: '42',
+      city: 'Guadalajara', postal_code: '44100'
+    }
+    address = create(:address, :fiscal, :primary, addressable: supplier, **attributes)
     get admin_supplier_path(supplier, tab: 'addresses')
 
     expect(response).to have_http_status(:ok)
