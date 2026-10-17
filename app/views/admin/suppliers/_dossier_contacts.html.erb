@@ -19,9 +19,10 @@
   </div>
 
   <div class="mt-5 flex flex-wrap gap-2" aria-label="<%= t('admin.supplier_dossier.contact_cards.filters') %>">
-    <% %w[all primary active inactive].each do |filter| %>
-      <button type="button" data-supplier-contacts-target="filter" data-action="supplier-contacts#applyFilter" data-filter="<%= filter %>" aria-pressed="<%= filter == 'all' %>" class="min-h-9 rounded-full px-4 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 <%= filter == 'all' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>">
+    <% %w[all active inactive primary].each do |filter| %>
+      <button type="button" data-supplier-contacts-target="filter" data-action="supplier-contacts#applyFilter" data-filter="<%= filter %>" aria-pressed="<%= filter == 'all' %>" class="inline-flex min-h-9 items-center gap-1 rounded-full px-4 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 <%= filter == 'all' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>">
         <%= t("admin.supplier_dossier.contact_cards.filters_options.#{filter}") %>
+        <span data-supplier-contacts-target="filterCount" data-filter="<%= filter %>" class="inline-flex min-w-5 items-center justify-center rounded-full bg-white/80 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-slate-700"><%= contacts_page.filter_counts.fetch(filter) %></span>
       </button>
     <% end %>
   </div>

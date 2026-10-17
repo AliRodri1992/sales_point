@@ -24,6 +24,7 @@ module Admin
     def apply_contacts_page_headers(page)
       response.headers['X-Next-Page'] = page.next_page.to_s
       response.headers['X-Contacts-Count'] = page.total_count.to_s
+      response.headers['X-Contacts-Filter-Counts'] = page.filter_counts.to_json
       response.headers['Cache-Control'] = 'private, no-store'
     end
 

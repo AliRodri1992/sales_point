@@ -114,6 +114,60 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     end
   end
 
+  it 'shows counts for every filter in the expected order' do
+    create(:contact, contactable: supplier, name: 'Main', primary: true)
+    6.times { |index| create(:contact, contactable: supplier, name: "Active #{index}") }
+    3.times { |index| create(:contact, :inactive, contactable: supplier, name: "Inactive #{index}") }
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-contacts')
+    buttons = panel.css('button[data-supplier-contacts-target="filter"]')
+    expect(buttons.pluck('data-filter')).to eq(%w[all active inactive primary])
+    expect(buttons.map { |button| button.at_css('[data-supplier-contacts-target="filterCount"]').text })
+      .to eq(%w[10 7 3 1])
+    expect(buttons.map { |button| button.text.squish }).to eq(
+      ['All 10', 'Active 7', 'Inactive 3', 'Primary 1']
+    )
+  end
+
+  it 'returns all filter totals with every paginated response and updates them for searches' do
+    create(:contact, contactable: supplier, name: 'Purchasing Lead', primary: true)
+    create(:contact, contactable: supplier, name: 'Purchasing Support')
+    create(:contact, :inactive, contactable: supplier, name: 'Purchasing Former')
+    create(:contact, contactable: supplier, name: 'Warehouse Support')
+
+    get contacts_page_admin_supplier_path(supplier), params: { filter: 'active', page: 1 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.headers['X-Contacts-Count']).to eq('3')
+    expect(JSON.parse(response.headers['X-Contacts-Filter-Counts'])).to eq(
+      'all' => 4, 'active' => 3, 'inactive' => 1, 'primary' => 1
+    )
+
+    get contacts_page_admin_supplier_path(supplier), params: { filter: 'inactive', q: 'Purchasing' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.headers['X-Contacts-Count']).to eq('1')
+    expect(JSON.parse(response.headers['X-Contacts-Filter-Counts'])).to eq(
+      'all' => 3, 'active' => 2, 'inactive' => 1, 'primary' => 1
+    )
+    expect(cards.map(&:text).join(' ')).to include('Purchasing Former')
+    expect(cards.map(&:text).join(' ')).not_to include('Warehouse Support')
+  end
+
+  it 'keeps all filter counters at zero with no contacts' do
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-contacts')
+    badges = panel.css('[data-supplier-contacts-target="filterCount"]')
+    expect(badges.map(&:text)).to eq(%w[0 0 0 0])
+
+    get contacts_page_admin_supplier_path(supplier)
+
+    expect(JSON.parse(response.headers['X-Contacts-Filter-Counts']).values).to eq([0, 0, 0, 0])
+  end
+
   it 'renders only the first eight contacts and exposes the next page' do
     19.times { |index| create(:contact, contactable: supplier, name: format('Vendor Contact %02d', index)) }
 

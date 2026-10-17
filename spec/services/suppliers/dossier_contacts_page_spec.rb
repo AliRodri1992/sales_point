@@ -70,6 +70,55 @@ RSpec.describe Suppliers::DossierContactsPage do
     expect(page(filter: 'unexpected').total_count).to eq(3)
   end
 
+  it 'counts all, active, inactive and primary contacts independently of the selected tab' do
+    primary = create(:contact, contactable: supplier, name: 'Primary Contact', primary: true)
+    6.times { |index| create(:contact, contactable: supplier, name: "Active #{index}") }
+    3.times { |index| create(:contact, :inactive, contactable: supplier, name: "Inactive #{index}") }
+
+    expected = { 'all' => 10, 'active' => 7, 'inactive' => 3, 'primary' => 1 }
+
+    %w[all active inactive primary].each do |filter|
+      result = page(filter:)
+      expect(result.filter_counts).to eq(expected)
+      expect(result.total_count).to eq(expected.fetch(filter))
+    end
+    expect(page(filter: 'primary').contacts.map(&:id)).to eq([primary.id])
+  end
+
+  it 'updates all filter counts for the current search, without restricting them to the active tab' do
+    create(:contact, contactable: supplier, name: 'Warehouse Main', primary: true)
+    create(:contact, contactable: supplier, name: 'Warehouse Backup')
+    create(:contact, :inactive, contactable: supplier, name: 'Warehouse Former')
+    create(:contact, contactable: supplier, name: 'Accounting')
+
+    result = page(query: 'Warehouse', filter: 'inactive')
+
+    expect(result.filter_counts).to eq(
+      'all' => 3, 'active' => 2, 'inactive' => 1, 'primary' => 1
+    )
+    expect(result.contacts.map(&:name)).to eq(['Warehouse Former'])
+    expect(result.total_count).to eq(1)
+  end
+
+  it 'excludes deleted and unrelated contacts from every filter count' do
+    create(:contact, contactable: supplier, primary: true)
+    create(:contact, :inactive, contactable: supplier)
+    create(:contact, :deleted, contactable: supplier, primary: true)
+    create(:contact, contactable: create(:supplier))
+
+    expect(page.filter_counts).to eq(
+      'all' => 2, 'active' => 1, 'inactive' => 1, 'primary' => 1
+    )
+  end
+
+  it 'returns zero counts for all filters when no contacts match the search' do
+    create(:contact, contactable: supplier, name: 'Only Person')
+
+    expect(page(query: 'None').filter_counts).to eq(
+      'all' => 0, 'active' => 0, 'inactive' => 0, 'primary' => 0
+    )
+  end
+
   it 'treats blank and invalid pages as the first page' do
     create(:contact, contactable: supplier)
 

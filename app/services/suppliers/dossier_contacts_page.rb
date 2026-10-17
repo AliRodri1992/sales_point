@@ -6,7 +6,7 @@ module Suppliers
     PAGE_SIZE = 8
     FILTERS = %w[all primary active inactive].freeze
 
-    attr_reader :contacts, :total_count, :next_page, :page, :filter
+    attr_reader :contacts, :total_count, :next_page, :page, :filter, :filter_counts
 
     def initialize(supplier:, page: 1, query: nil, filter: 'all')
       @supplier = supplier
@@ -17,19 +17,29 @@ module Suppliers
 
     def call
       relation = @supplier.contacts.not_deleted
-      relation = apply_filter(relation)
       relation = apply_search(relation) if @query.present?
 
-      @total_count = relation.count
-      rows = relation.order(primary: :desc, name: :asc, id: :asc)
-                     .offset((page - 1) * PAGE_SIZE)
-                     .limit(PAGE_SIZE + 1).to_a
+      @filter_counts = calculate_filter_counts(relation)
+      @total_count = @filter_counts.fetch(filter)
+      rows = apply_filter(relation).order(primary: :desc, name: :asc, id: :asc)
+                                   .offset((page - 1) * PAGE_SIZE)
+                                   .limit(PAGE_SIZE + 1).to_a
       @contacts = rows.first(PAGE_SIZE)
       @next_page = page + 1 if rows.size > PAGE_SIZE
       self
     end
 
     private
+
+    def calculate_filter_counts(relation)
+      grouped_counts = relation.group(:active, :primary).count
+      {
+        'all' => grouped_counts.values.sum,
+        'active' => grouped_counts.sum { |(active, _primary), count| active ? count : 0 },
+        'inactive' => grouped_counts.sum { |(active, _primary), count| active == false ? count : 0 },
+        'primary' => grouped_counts.sum { |(_active, primary), count| primary ? count : 0 }
+      }
+    end
 
     def apply_filter(relation)
       case filter

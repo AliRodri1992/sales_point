@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Loads one server-rendered page at a time inside the supplier's contact list.
 // Search and filters run on the server; no duplicate full-list download is needed.
 export default class extends Controller {
-  static targets = ["scroll", "list", "search", "filter", "count", "sentinel", "empty", "loading", "error", "loadMore"]
+  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "loading", "error", "loadMore"]
   static values = {
     url: String,
     nextPage: Number,
@@ -128,6 +128,10 @@ export default class extends Controller {
       this.nextPageValue = Number(response.headers.get("X-Next-Page")) || 0
       const total = Number(response.headers.get("X-Contacts-Count")) || 0
       this.countTarget.textContent = String(total)
+      const counts = JSON.parse(response.headers.get("X-Contacts-Filter-Counts") || "{}")
+      this.filterCountTargets.forEach((badge) => {
+        badge.textContent = String(counts[badge.dataset.filter] ?? 0)
+      })
       this.emptyTarget.classList.toggle("hidden", total > 0)
     } catch (error) {
       if (error.name !== "AbortError" && this.request === controller) {

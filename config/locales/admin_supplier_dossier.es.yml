@@ -9,7 +9,7 @@ es:
         filters: "Filtrar contactos"
         filters_options:
           all: "Todos"
-          primary: "Principales"
+          primary: "Principal"
           active: "Activos"
           inactive: "Inactivos"
         expand: "Mostrar detalles de %{name}"
