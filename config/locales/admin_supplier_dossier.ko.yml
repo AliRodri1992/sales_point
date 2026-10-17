@@ -2,6 +2,9 @@ ko:
   admin:
     supplier_dossier:
       address_cards:
+        empty_title: "아직 등록된 주소가 없습니다"
+        empty_description: "공급업체의 세무, 상업 또는 배송 주소를 추가하여 정보를 한곳에서 관리하세요."
+        add_first: "첫 번째 주소 추가"
         titles:
           fiscal: "세무 주소"
           delivery: "배송 주소"
