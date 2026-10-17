@@ -2,6 +2,9 @@ es:
   admin:
     supplier_dossier:
       address_cards:
+        empty_title: "Aún no hay direcciones registradas"
+        empty_description: "Agrega direcciones fiscales, comerciales o de entrega para centralizar la información del proveedor."
+        add_first: "Agregar primera dirección"
         titles:
           fiscal: "Domicilio fiscal"
           delivery: "Dirección de entrega"
