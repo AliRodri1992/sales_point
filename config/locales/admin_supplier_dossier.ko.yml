@@ -1,6 +1,11 @@
 ko:
   admin:
     supplier_dossier:
+      document_empty:
+        subtitle: "이 공급업체 관련 문서, 파일 및 증빙 자료를 관리하세요."
+        title: "아직 등록된 문서가 없습니다"
+        description: "공급업체와 관련된 송장, 계약서, 증명서, 신분증 또는 기타 파일을 첨부하세요."
+        add_first: "첫 문서 추가"
       schedule_empty:
         subtitle: "지점별 방문, 주문 접수 및 배송 일정을 등록하세요."
         title: "아직 등록된 일정이 없습니다"
