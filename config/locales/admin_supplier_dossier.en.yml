@@ -1,6 +1,11 @@
 en:
   admin:
     supplier_dossier:
+      document_empty:
+        subtitle: "Manage documents, files, and supporting records for this supplier."
+        title: "No documents registered yet"
+        description: "Attach invoices, contracts, certificates, identification, or other supplier-related files."
+        add_first: "Add first document"
       schedule_empty:
         subtitle: "Schedule visits, order taking, and deliveries by branch."
         title: "No calendars registered yet"
