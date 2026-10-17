@@ -1,6 +1,11 @@
 es:
   admin:
     supplier_dossier:
+      document_empty:
+        subtitle: "Gestiona documentos, archivos y evidencias relacionados con este proveedor."
+        title: "Aún no hay documentos registrados"
+        description: "Adjunta facturas, contratos, constancias, identificaciones u otros archivos relacionados con este proveedor."
+        add_first: "Agregar primer documento"
       schedule_empty:
         subtitle: "Registra las visitas, toma de pedidos y repartos por sucursal."
         title: "Aún no hay calendarios registrados"
