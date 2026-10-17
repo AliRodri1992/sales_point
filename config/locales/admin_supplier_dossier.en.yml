@@ -1,6 +1,23 @@
 en:
   admin:
     supplier_dossier:
+      contact_cards:
+        subtitle: "Supplier contact people"
+        search_placeholder: "Search by name, position, phone or email..."
+        filters: "Filter contacts"
+        filters_options:
+          all: "All"
+          primary: "Primary"
+          active: "Active"
+          inactive: "Inactive"
+        expand: "Show details for %{name}"
+        collapse: "Hide details for %{name}"
+        yes: "Yes"
+        no: "No"
+        loading: "Loading more contacts..."
+        load_error: "Contacts could not be loaded. Please try again."
+        load_more: "Load more"
+        scroll_label: "Contact list with automatic loading"
       navigation:
         label: "Supplier sections"
         breadcrumbs: "Breadcrumb"

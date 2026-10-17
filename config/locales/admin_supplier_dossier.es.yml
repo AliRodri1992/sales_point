@@ -1,6 +1,23 @@
 es:
   admin:
     supplier_dossier:
+      contact_cards:
+        subtitle: "Personas de contacto del proveedor"
+        search_placeholder: "Buscar por nombre, cargo, teléfono o correo..."
+        filters: "Filtrar contactos"
+        filters_options:
+          all: "Todos"
+          primary: "Principales"
+          active: "Activos"
+          inactive: "Inactivos"
+        expand: "Mostrar detalles de %{name}"
+        collapse: "Ocultar detalles de %{name}"
+        yes: "Sí"
+        no: "No"
+        loading: "Cargando más contactos..."
+        load_error: "No se pudieron cargar los contactos. Inténtalo nuevamente."
+        load_more: "Cargar más"
+        scroll_label: "Lista de contactos con carga automática"
       navigation:
         label: "Secciones del proveedor"
         breadcrumbs: "Ruta de navegación"

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["tab", "panel", "mobileSelect", "contactSearch", "contactRow", "contactCount", "contactEmpty", "addressSearch", "addressRow", "addressCount", "addressEmpty"]
+  static targets = ["tab", "panel", "mobileSelect", "addressSearch", "addressRow", "addressCount", "addressEmpty"]
   static values = { initialTab: { type: String, default: "overview" } }
 
   connect() {
@@ -15,21 +15,6 @@ export default class extends Controller {
 
   disconnect() {
     window.removeEventListener("popstate", this.onPopState)
-  }
-
-  filterContacts(event) {
-    event?.preventDefault()
-    const query = this.contactSearchTarget.value.trim().toLocaleLowerCase()
-    let visibleCount = 0
-
-    this.contactRowTargets.forEach((row) => {
-      const matches = row.dataset.searchText.toLocaleLowerCase().includes(query)
-      row.classList.toggle("hidden", !matches)
-      if (matches) visibleCount += 1
-    })
-
-    this.contactCountTarget.textContent = visibleCount
-    this.contactEmptyTarget.classList.toggle("hidden", visibleCount !== 0)
   }
 
   filterAddresses() {

@@ -12,7 +12,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :require_supplier_organization!
-    before_action :set_supplier, only: %i[show edit update destroy]
+    before_action :set_supplier, only: %i[show contacts_page edit update destroy]
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     def index
@@ -31,6 +31,21 @@ module Admin
 
     def show
       authorize @supplier
+      @dossier_contacts_page = Suppliers::DossierContactsPage.new(supplier: @supplier).call
+    end
+
+    def contacts_page
+      authorize @supplier, :show?
+      authorize @supplier, :view_contacts?
+      page = Suppliers::DossierContactsPage.new(
+        supplier: @supplier, page: params[:page], query: params[:q], filter: params[:filter]
+      ).call
+
+      response.headers['X-Next-Page'] = page.next_page.to_s
+      response.headers['X-Contacts-Count'] = page.total_count.to_s
+      response.headers['Cache-Control'] = 'private, no-store'
+      render partial: 'admin/suppliers/dossier_contact_cards',
+             locals: { contacts: page.contacts, supplier: @supplier, can_manage_contacts: policy(@supplier).manage_contacts? }
     end
 
     def new

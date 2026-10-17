@@ -1,6 +1,23 @@
 ko:
   admin:
     supplier_dossier:
+      contact_cards:
+        subtitle: "공급업체 담당자"
+        search_placeholder: "이름, 직책, 전화번호 또는 이메일 검색..."
+        filters: "연락처 필터"
+        filters_options:
+          all: "전체"
+          primary: "대표"
+          active: "활성"
+          inactive: "비활성"
+        expand: "%{name}의 상세 정보 표시"
+        collapse: "%{name}의 상세 정보 숨기기"
+        yes: "예"
+        no: "아니요"
+        loading: "연락처 더 불러오는 중..."
+        load_error: "연락처를 불러오지 못했습니다. 다시 시도하세요."
+        load_more: "더 불러오기"
+        scroll_label: "자동으로 추가 항목을 불러오는 연락처 목록"
       navigation:
         label: "공급업체 메뉴"
         breadcrumbs: "탐색 경로"
