@@ -1,6 +1,9 @@
 en:
   admin:
     supplier_dossier:
+      fiscal_address_empty:
+        title: "No fiscal address registered yet"
+        description: "Register the supplier's fiscal address for tax and administrative purposes."
       document_empty:
         subtitle: "Manage documents, files, and supporting records for this supplier."
         title: "No documents registered yet"
