@@ -37,6 +37,22 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     expect(list_area.at_css('[data-supplier-contacts-target="scroll"]')['class']).to include('overflow-y-auto')
   end
 
+  it 'aligns the manage contacts action with the filter buttons on the same toolbar' do
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-contacts')
+    toolbar = panel.at_css('[data-supplier-contacts-toolbar]')
+    expect(toolbar).to be_present
+    expect(toolbar['class']).to include('flex', 'justify-between', 'flex-wrap')
+    expect(toolbar.css('button[data-supplier-contacts-target="filter"]').size).to eq(4)
+
+    link = toolbar.at_css("a[href='#{admin_supplier_contacts_path(supplier)}']")
+    expect(link).to be_present
+    expect(link['class']).to include('sm:ml-auto')
+    expect(link.text).to include('Manage contacts')
+    expect(panel.css("a[href='#{admin_supplier_contacts_path(supplier)}']").size).to eq(1)
+  end
+
   it 'renders compact contact cards in two columns with hidden expandable details' do
     attributes = {
       name: 'Laura Gómez', position: 'Purchasing',
