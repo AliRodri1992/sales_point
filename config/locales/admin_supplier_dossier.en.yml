@@ -7,6 +7,7 @@ en:
         description: "Attach invoices, contracts, certificates, identification, or other supplier-related files."
         add_first: "Add first document"
       schedule_empty:
+        manage: "Manage calendars"
         subtitle: "Schedule visits, order taking, and deliveries by branch."
         title: "No calendars registered yet"
         description: "Add visit, order-taking, or delivery schedules to organize your supplier operations."
