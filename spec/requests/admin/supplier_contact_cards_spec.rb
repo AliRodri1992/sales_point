@@ -18,8 +18,11 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
   end
 
   it 'renders compact contact cards in two columns with hidden expandable details' do
-    contact = create(:contact, contactable: supplier, name: 'Laura Gómez', position: 'Purchasing',
-                              notes: 'Call before delivery', email: 'laura@domain.example', primary: true)
+    attributes = {
+      name: 'Laura Gómez', position: 'Purchasing',
+      notes: 'Call before delivery', email: 'laura@domain.example', primary: true
+    }
+    contact = create(:contact, contactable: supplier, **attributes)
 
     get admin_supplier_path(supplier, tab: 'contacts')
 
@@ -61,8 +64,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
   end
 
   it 'applies search and filters to server paginated cards' do
-    contact = create(:contact, contactable: supplier, name: 'Maria Purchasing', position: 'Procurement',
-                              primary: true)
+    contact = create(:contact, contactable: supplier, name: 'Maria Purchasing', position: 'Procurement', primary: true)
     create(:contact, :inactive, contactable: supplier, name: 'Inactive Logistics')
 
     get contacts_page_admin_supplier_path(supplier), params: { q: 'Maria', filter: 'primary' }
