@@ -42,6 +42,58 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     expect(card.at_css("a[href='#{edit_admin_supplier_contact_path(supplier, contact)}']")).to be_present
   end
 
+  it 'shows both missing-contact labels when neither phone nor email is registered' do
+    contact = create(:contact, contactable: supplier, name: 'No Communication',
+                               phone: nil, mobile_phone: nil, email: nil)
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    card = cards.find { |item| item['data-supplier-contact-id'] == contact.id.to_s }
+    expect(card.text).to include('Phone not registered', 'Email not registered')
+    expect(card.css('a[href^="tel:"], a[href^="mailto:"]')).to be_empty
+
+    get contacts_page_admin_supplier_path(supplier)
+    expect(cards.first.text).to include('Phone not registered', 'Email not registered')
+  end
+
+  it 'shows a registered mobile number instead of the missing-phone label' do
+    create(:contact, contactable: supplier, name: 'Mobile Only',
+                     phone: nil, mobile_phone: '5512345678', email: nil)
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(cards.first.css('a[href^="tel:"]').length).to eq(1)
+    expect(cards.first.text).not_to include('Phone not registered')
+    expect(cards.first.text).to include('Email not registered')
+  end
+
+  it 'shows the missing-phone label but preserves the mail link if an email exists' do
+    create(:contact, contactable: supplier, name: 'Email Only',
+                     phone: nil, mobile_phone: nil, email: 'only@example.com')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(cards.first.text).to include('Phone not registered')
+    expect(cards.first.text).not_to include('Email not registered')
+    expect(cards.first.css('a[href^="mailto:"]').length).to eq(1)
+  end
+
+  it 'translates the missing communication labels into Spanish and Korean' do
+    {
+      es: ['Teléfono no registrado', 'Correo electrónico no registrado'],
+      ko: ['등록된 전화번호 없음', '등록된 이메일 없음']
+    }.each do |locale, labels|
+      language = Language.find_by(code: locale.to_s) ||
+                 create(:language, code: locale.to_s, name: locale.to_s, flag_iso: 'mx')
+      user.update!(language:)
+      create(:contact, contactable: supplier, phone: nil, mobile_phone: nil, email: nil) if locale == :es
+
+      get admin_supplier_path(supplier, tab: 'contacts')
+
+      expect(cards.first.text).to include(*labels)
+    end
+  end
+
   it 'renders only the first eight contacts and exposes the next page' do
     19.times { |index| create(:contact, contactable: supplier, name: format('Vendor Contact %02d', index)) }
 

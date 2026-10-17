@@ -2,6 +2,8 @@ ko:
   admin:
     supplier_dossier:
       contact_cards:
+        phone_not_registered: "등록된 전화번호 없음"
+        email_not_registered: "등록된 이메일 없음"
         subtitle: "공급업체 담당자"
         search_placeholder: "이름, 직책, 전화번호 또는 이메일 검색..."
         filters: "연락처 필터"

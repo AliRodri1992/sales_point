@@ -2,6 +2,8 @@ en:
   admin:
     supplier_dossier:
       contact_cards:
+        phone_not_registered: "Phone not registered"
+        email_not_registered: "Email not registered"
         subtitle: "Supplier contact people"
         search_placeholder: "Search by name, position, phone or email..."
         filters: "Filter contacts"

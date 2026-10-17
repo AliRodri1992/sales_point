@@ -39,12 +39,22 @@
           <%= icon('phone', class: 'size-4 shrink-0 text-emerald-700') %>
           <%= contact.phone.presence || contact.mobile_phone %>
         </a>
+      <% else %>
+        <span class="inline-flex items-center gap-2 text-xs font-medium text-slate-400 sm:text-sm">
+          <%= icon('phone', class: 'size-4 shrink-0 text-slate-400') %>
+          <%= t('admin.supplier_dossier.contact_cards.phone_not_registered') %>
+        </span>
       <% end %>
       <% if contact.email.present? %>
         <%= mail_to contact.email, class: 'inline-flex min-w-0 items-center gap-2 break-all text-xs font-medium text-emerald-700 hover:underline sm:text-sm' do %>
           <%= icon('envelope', class: 'size-4 shrink-0') %>
           <%= contact.email %>
         <% end %>
+      <% else %>
+        <span class="inline-flex min-w-0 items-center gap-2 text-xs font-medium text-slate-400 sm:text-sm">
+          <%= icon('envelope', class: 'size-4 shrink-0') %>
+          <%= t('admin.supplier_dossier.contact_cards.email_not_registered') %>
+        </span>
       <% end %>
     </div>
 
