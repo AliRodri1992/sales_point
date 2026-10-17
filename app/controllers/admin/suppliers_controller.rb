@@ -35,6 +35,10 @@ module Admin
       @dossier_contacts_page = Suppliers::DossierContactsPage.new(supplier: @supplier).call
     end
 
+    def contacts_page
+      render_dossier_contacts_page
+    end
+
     def new
       @supplier = current_organization.suppliers.new
       @supplier.contacts.build

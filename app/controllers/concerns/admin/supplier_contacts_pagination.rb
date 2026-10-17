@@ -2,11 +2,11 @@
 
 module Admin
   module SupplierContactsPagination
-    def contacts_page
+    def render_dossier_contacts_page
       authorize @supplier, :show?
       authorize @supplier, :view_contacts?
       page = paginated_supplier_contacts
-      set_contacts_page_headers(page)
+      apply_contacts_page_headers(page)
       render_contacts_page(page)
     end
 
@@ -21,7 +21,7 @@ module Admin
       ).call
     end
 
-    def set_contacts_page_headers(page)
+    def apply_contacts_page_headers(page)
       response.headers['X-Next-Page'] = page.next_page.to_s
       response.headers['X-Contacts-Count'] = page.total_count.to_s
       response.headers['Cache-Control'] = 'private, no-store'
