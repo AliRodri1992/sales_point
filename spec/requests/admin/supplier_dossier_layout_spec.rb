@@ -18,6 +18,39 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     Nokogiri::HTML(response.body)
   end
 
+  it 'renders the illustrated document empty state with an upload entry point' do
+    get admin_supplier_path(supplier, tab: 'documents')
+
+    panel = dossier.at_css('[data-section="documents"]')
+    expect(panel.at_css('img[src*="sdocuments"]')).to be_present
+    expect(panel.text).to include('No documents registered yet')
+    expect(panel.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_present
+  end
+
+  it 'hides the document empty state when attachments exist' do
+    supplier.documents.attach(
+      io: StringIO.new('%PDF-1.4 test document'),
+      filename: 'invoice.pdf',
+      content_type: 'application/pdf'
+    )
+
+    get admin_supplier_path(supplier, tab: 'documents')
+
+    panel = dossier.at_css('[data-section="documents"]')
+    expect(panel.text).to include('invoice.pdf')
+    expect(panel.at_css('img[src*="sdocuments"]')).to be_nil
+  end
+
+  it 'does not offer document upload without document management permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_documents?).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'documents')
+
+    panel = dossier.at_css('[data-section="documents"]')
+    expect(panel.at_css('img[src*="sdocuments"]')).to be_present
+    expect(panel.at_css("a[href='#{edit_admin_supplier_path(supplier)}']")).to be_nil
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
