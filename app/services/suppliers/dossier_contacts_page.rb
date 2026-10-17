@@ -21,15 +21,19 @@ module Suppliers
 
       @filter_counts = calculate_filter_counts(relation)
       @total_count = @filter_counts.fetch(filter)
-      rows = apply_filter(relation).order(primary: :desc, name: :asc, id: :asc)
-                                   .offset((page - 1) * PAGE_SIZE)
-                                   .limit(PAGE_SIZE + 1).to_a
-      @contacts = rows.first(PAGE_SIZE)
-      @next_page = page + 1 if rows.size > PAGE_SIZE
+      load_contacts_page(apply_filter(relation))
       self
     end
 
     private
+
+    def load_contacts_page(relation)
+      rows = relation.order(primary: :desc, name: :asc, id: :asc)
+                     .offset((page - 1) * PAGE_SIZE)
+                     .limit(PAGE_SIZE + 1).to_a
+      @contacts = rows.first(PAGE_SIZE)
+      @next_page = page + 1 if rows.size > PAGE_SIZE
+    end
 
     def calculate_filter_counts(relation)
       grouped_counts = relation.group(:active, :primary).count
