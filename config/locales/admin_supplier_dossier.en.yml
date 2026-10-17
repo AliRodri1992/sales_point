@@ -2,6 +2,9 @@ en:
   admin:
     supplier_dossier:
       address_cards:
+        empty_title: "No addresses registered yet"
+        empty_description: "Add fiscal, commercial, or delivery addresses to keep supplier information in one place."
+        add_first: "Add first address"
         titles:
           fiscal: "Tax address"
           delivery: "Delivery address"
