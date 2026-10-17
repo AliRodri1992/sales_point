@@ -11,10 +11,7 @@
         </div>
       </div>
       <div class="flex min-w-0 flex-wrap items-center gap-3 lg:justify-end">
-        <span class="inline-flex min-h-10 items-center text-sm font-medium text-slate-500" aria-live="polite">
-          <span data-supplier-addresses-target="count"><%= addresses_page.total_count %></span>
-          <%= t('admin.supplier_details.addresses') %>
-        </span>
+        <span data-supplier-addresses-target="count" class="sr-only" aria-live="polite"><%= addresses_page.total_count %></span>
         <label class="relative block w-full min-w-0 sm:w-72">
           <span class="sr-only"><%= t('admin.supplier_details.search_addresses') %></span>
           <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400') %>
