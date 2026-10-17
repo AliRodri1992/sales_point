@@ -35,8 +35,12 @@
       <% end %>
     </dl>
   <% else %>
-    <p class="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-600">
-      <%= t('admin.supplier_dossier.general.no_fiscal_address') %>
-    </p>
+    <div class="mt-5 flex flex-col items-center gap-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-5 sm:flex-row sm:justify-center sm:gap-6">
+      <%= image_tag 'staxaddress.png', alt: '', loading: 'lazy', class: 'h-auto w-32 shrink-0 sm:w-36' %>
+      <div class="max-w-md text-center sm:text-left">
+        <h4 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_dossier.fiscal_address_empty.title') %></h4>
+        <p class="mt-1 text-sm leading-6 text-slate-600"><%= t('admin.supplier_dossier.fiscal_address_empty.description') %></p>
+      </div>
+    </div>
   <% end %>
 </div>
