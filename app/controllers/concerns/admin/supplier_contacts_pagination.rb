@@ -2,6 +2,8 @@
 
 module Admin
   module SupplierContactsPagination
+    private
+
     def render_dossier_contacts_page
       authorize @supplier, :show?
       authorize @supplier, :view_contacts?
@@ -9,8 +11,6 @@ module Admin
       apply_contacts_page_headers(page)
       render_contacts_page(page)
     end
-
-    private
 
     def paginated_supplier_contacts
       Suppliers::DossierContactsPage.new(
