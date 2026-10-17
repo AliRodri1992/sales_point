@@ -88,6 +88,22 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(section.at_css('img[src*="staxaddress"]')).to be_nil
   end
 
+  it 'keeps supplier address summary aligned with the left card edge' do
+    supplier.addresses.create!(
+      street: 'Main Street', exterior_number: '23', neighborhood: 'Centro',
+      city: 'Ixtepec', state: 'Oaxaca', postal_code: '70111',
+      country: create(:country), purpose: 'delivery'
+    )
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    card = dossier.at_css('[data-supplier-address-id]')
+    summary = card.css('div').find { |node| node['class']&.include?('mt-4 flex items-start gap-2') }
+    expect(summary).to be_present
+    expect(summary['class']).not_to include('pl-14')
+    expect(summary.text).to include('Main Street 23', 'Ixtepec', 'Oaxaca')
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
