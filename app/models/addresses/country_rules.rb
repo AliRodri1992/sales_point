@@ -17,7 +17,7 @@ module Addresses
       'FR' => /\A\d{5}\z/,
       'IN' => /\A\d{6}\z/
     }.freeze
-    DEFAULT_POSTAL_FORMAT = /\A[A-Z\d][A-Z\d -]{0,9}\z/i
+    DEFAULT_POSTAL_FORMAT = /\A[A-Z\d][A-Z\d -]{1,9}\z/i
 
     def initialize(country_code)
       @country_code = country_code.to_s.upcase

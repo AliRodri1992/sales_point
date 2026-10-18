@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_060000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,8 +70,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_030000) do
     t.string "interior_number", limit: 20
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
+    t.datetime "location_confirmed_at"
     t.string "neighborhood", limit: 100
-    t.string "postal_code", limit: 10, null: false
+    t.string "postal_code", limit: 10
     t.boolean "primary", default: false, null: false
     t.string "purpose", limit: 30, default: "general", null: false
     t.string "reference_notes", limit: 200

@@ -39,12 +39,12 @@ class Address < ApplicationRecord
   }
 
   validates :street, presence: true, length: { in: 2..150 }, on: %i[create update]
-  validates :exterior_number, length: { maximum: 20 }, on: %i[create update]
+  validates :exterior_number, length: { in: 1..20 }, allow_blank: true, on: %i[create update]
   validates :interior_number, length: { maximum: 20 }, allow_blank: true, on: %i[create update]
   validates :reference_notes, length: { maximum: 200 }, allow_blank: true, on: %i[create update]
-  validates :neighborhood, length: { maximum: 100 }, allow_blank: true, on: %i[create update]
+  validates :neighborhood, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
-  validates :state, length: { maximum: 100 }, allow_blank: true, on: %i[create update]
+  validates :state, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
   validate :check_country_requirements, on: %i[create update onboardingstep2]
 
   validates :latitude,
