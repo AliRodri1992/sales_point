@@ -1,0 +1,60 @@
+<article data-supplier-bank-accounts-target="card"
+         data-search="<%= [account.sat_bank&.name, account.bank_name, account.holder_name, account.last_four].compact.join(' ').downcase %>"
+         data-currency="<%= account.currency_code %>"
+         class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md sm:p-5">
+  <div class="flex items-start gap-3">
+    <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+      <%= icon('building-library', class: 'size-6') %>
+    </span>
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 class="break-words font-jakarta text-base font-bold text-slate-900">
+          <%= account.sat_bank&.name || account.bank_name %>
+        </h2>
+        <% if account.primary? %>
+          <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+            <%= icon('star', class: 'size-3.5') %>
+            <%= t('admin.accounts_payable.primary') %>
+          </span>
+        <% end %>
+      </div>
+      <p class="mt-1 break-words text-sm text-slate-500"><%= account.holder_name %></p>
+    </div>
+    <% if policy(account).update? %>
+      <details class="group relative shrink-0">
+        <summary aria-label="<%= t('admin.accounts_payable.bank_list.actions') %>"
+                 class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
+          <%= icon('ellipsis-vertical', class: 'size-5') %>
+        </summary>
+        <div class="absolute right-0 z-20 mt-1 min-w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+          <%= link_to edit_admin_supplier_bank_account_path(supplier, account), class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' do %>
+            <%= icon('pencil', class: 'size-4') %>
+            <%= t('admin.accounts_payable.edit') %>
+          <% end %>
+          <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
+                        class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50',
+                        form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } } do %>
+            <%= icon('archive-box', class: 'size-4') %>
+            <%= t('admin.accounts_payable.archive') %>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+  </div>
+  <dl class="mt-5 grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2">
+    <div>
+      <dt class="text-xs font-medium text-slate-500"><%= t('admin.accounts_payable.account_number') %></dt>
+      <dd class="mt-1 font-semibold tabular-nums text-slate-900"><%= account.masked_number %></dd>
+    </div>
+    <div>
+      <dt class="text-xs font-medium text-slate-500"><%= t('admin.accounts_payable.currency') %></dt>
+      <dd class="mt-1 font-semibold text-slate-900"><%= account.currency_code %></dd>
+    </div>
+  </dl>
+  <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
+    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+      <span class="size-1.5 rounded-full bg-emerald-600"></span>
+      <%= t('admin.accounts_payable.bank_list.active') %>
+    </span>
+  </div>
+</article>

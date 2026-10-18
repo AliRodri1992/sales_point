@@ -94,3 +94,6 @@ application.register("supplier-payment-bank", SupplierPaymentBankController)
 
 import CfdiPreviewController from "./cfdi_preview_controller"
 application.register("cfdi-preview", CfdiPreviewController)
+
+import SupplierBankAccountsController from "./supplier_bank_accounts_controller"
+application.register("supplier-bank-accounts", SupplierBankAccountsController)
