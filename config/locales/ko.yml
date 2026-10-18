@@ -8,6 +8,10 @@ ko:
             rfc:
               person_type_mismatch: "선택한 사업자 유형과 일치하지 않습니다"
               invalid_date: "유효하지 않은 날짜가 포함되어 있습니다"
+        contact:
+          attributes:
+            primary:
+              taken: "이미 다른 활성 연락처로 지정되어 있습니다."
         address:
           attributes:
             primary:
@@ -22,6 +26,7 @@ ko:
         postal_code: "우편번호"
         person_type: "사업자 유형"
       contact:
+        primary: "대표 연락처는"
         name: "성명"
         mobile_phone: "휴대전화"
       address:
