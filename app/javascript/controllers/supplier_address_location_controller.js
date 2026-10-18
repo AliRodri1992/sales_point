@@ -9,14 +9,15 @@ export default class extends Controller {
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
     confirmed: String, searching: String, lowConfidence: String, adjusted: String,
-    reviewRequired: String
+    reviewRequired: String, confidence: Number
   }
 
   connect() {
     this.point = this.savedPoint()
     this.mapCenter = this.point ? { ...this.point } : null
+    this.suggestedPoint = this.point ? { ...this.point } : null
     this.zoomLevel = 15
-    this.confidence = 1
+    this.confidence = this.hasConfidenceValue ? this.confidenceValue : 1
     this.drag = null
     this.suppressClick = false
     this.pending = false
@@ -49,6 +50,7 @@ export default class extends Controller {
     this.pending = false
     this.lookupButtonTarget.disabled = false
     this.point = null
+    this.suggestedPoint = null
     this.mapCenter = null
     this.confidence = 1
     this.latitudeTarget.value = ""
@@ -95,6 +97,7 @@ export default class extends Controller {
       if (!this.valid(Number(data.latitude), Number(data.longitude))) throw new Error("Invalid coordinates")
       this.signatureTarget.value = data.signature
       this.point = { lat: Number(data.latitude), lon: Number(data.longitude) }
+      this.suggestedPoint = { ...this.point }
       this.mapCenter = { ...this.point }
       this.confidence = Number.isFinite(Number(data.confidence)) ? Number(data.confidence) : 0
       this.confirmedTarget.value = "0"
