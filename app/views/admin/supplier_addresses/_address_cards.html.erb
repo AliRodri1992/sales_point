@@ -31,6 +31,12 @@
         </p>
         <p class="break-words text-slate-500"><%= address.country.localized_name %></p>
         <%= render 'admin/supplier_addresses/geocoding_badge', address: address %>
+        <% if address.latitude.present? && address.longitude.present? %>
+          <p><%= link_to t('admin.supplier_details.view_on_map'),
+                         "https://www.openstreetmap.org/?mlat=#{address.latitude}&mlon=#{address.longitude}",
+                         target: '_blank', rel: 'noopener noreferrer',
+                         class: 'text-xs font-semibold text-emerald-700 underline' %></p>
+        <% end %>
         <% if address.reference_notes.present? %>
           <p class="mt-2 break-words text-xs text-slate-500">
             <%= t('admin.supplier_details.address_form.references') %>: <%= address.reference_notes %>
@@ -52,6 +58,11 @@
             <%= icon('arrow-path', class: 'size-4') %><%= t('admin.supplier_details.restore_address') %>
           <% end %>
         <% else %>
+          <% if address.geocoding_status == 'failed' %>
+            <%= button_to t('admin.supplier_details.retry_geocoding'),
+                          retry_geocoding_admin_supplier_address_path(@supplier, address), method: :post,
+                          class: 'min-h-10 rounded-xl border border-amber-200 px-3 text-sm text-amber-800' %>
+          <% end %>
           <% unless address.primary? %>
             <%= button_to set_primary_admin_supplier_address_path(@supplier, address), method: :patch,
                           form: { data: { turbo_confirm: t('admin.supplier_details.address_primary_confirm') } },
