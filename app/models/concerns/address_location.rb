@@ -30,6 +30,8 @@ module AddressLocation
     self.latitude = nil
     self.longitude = nil
     self.location_confirmed_at = nil
+    self.location_adjustment_reason = nil
+    self.geocoding_confidence = nil
     self.geocoding_status = 'pending'
   end
 end
