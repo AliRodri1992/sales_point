@@ -2,6 +2,10 @@ ko:
   admin:
     supplier_dossier:
       finance:
+        empty_payables_title: "아직 등록된 미지급금이 없습니다"
+        empty_payables_description: "공급업체의 송장이나 금융 약정이 등록되면 여기에서 잔액과 만기일을 확인할 수 있습니다."
+        empty_banks_title: "아직 등록된 은행 계좌가 없습니다"
+        empty_banks_description: "이 공급업체에 대한 결제를 빠르고 안전하게 관리하려면 하나 이상의 은행 계좌를 등록하세요."
         payables_description: "공급업체의 송장, 잔액 및 만기일을 확인하세요."
         manage_payables: "미지급금 관리"
         posted_invoices: "확정된 송장"

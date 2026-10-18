@@ -10,6 +10,7 @@
 <% balance_labels = ["#{number_to_currency(0, unit: '')} #{supplier.currency.code}"] if balance_labels.empty? %>
 <% upcoming_count = payables.count { |payable| payable.due_on.between?(Date.current, 30.days.from_now.to_date) } %>
 <% overdue_count = payables.count(&:overdue?) %>
+<% has_payable_records = supplier.account_payables.exists? %>
 
 <section id="supplier-dossier-finances" data-supplier-dossier-target="panel" data-section="finances" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
   <div data-finance-payables class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
@@ -21,12 +22,15 @@
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.payables_description') %></p>
         </div>
       </div>
-      <%= link_to admin_account_payables_path, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
-        <%= icon('arrow-top-right-on-square', class: 'size-4') %>
-        <%= t('admin.supplier_dossier.finance.manage_payables') %>
+      <% if has_payable_records %>
+        <%= link_to admin_account_payables_path, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+          <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+          <%= t('admin.supplier_dossier.finance.manage_payables') %>
+        <% end %>
       <% end %>
     </div>
 
+    <% if has_payable_records %>
     <div class="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <div class="rounded-xl border border-slate-200 p-4">
         <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.posted_invoices') %></p>
@@ -78,6 +82,21 @@
         </tbody>
       </table>
     </div>
+    <% else %>
+      <div data-finance-empty-payables class="mt-5 rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/20 px-5 py-7 sm:px-8 sm:py-8">
+        <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+          <%= image_tag 'saccountspayable.png', alt: '', loading: 'lazy', class: 'h-auto w-44 shrink-0 sm:w-56' %>
+          <div class="min-w-0 text-center sm:text-left">
+            <h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.finance.empty_payables_title') %></h3>
+            <p class="mt-2 max-w-lg text-sm leading-6 text-slate-600"><%= t('admin.supplier_dossier.finance.empty_payables_description') %></p>
+            <%= link_to admin_account_payables_path, class: 'mt-5 inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+              <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+              <%= t('admin.supplier_dossier.finance.manage_payables') %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <% if current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
@@ -91,13 +110,16 @@
             <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.bank_description') %></p>
           </div>
         </div>
-        <%= link_to admin_supplier_bank_accounts_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
-          <%= icon('arrow-top-right-on-square', class: 'size-4') %>
-          <%= t('admin.supplier_dossier.finance.manage_banks') %>
+        <% if bank_accounts.any? %>
+          <%= link_to admin_supplier_bank_accounts_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+            <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+            <%= t('admin.supplier_dossier.finance.manage_banks') %>
+          <% end %>
         <% end %>
       </div>
-      <div class="mt-5 space-y-2">
-        <% bank_accounts.each do |account| %>
+      <% if bank_accounts.any? %>
+        <div class="mt-5 space-y-2">
+          <% bank_accounts.each do |account| %>
           <div data-finance-bank-account class="grid min-w-0 gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto] sm:items-center">
             <div class="min-w-0">
               <p class="break-words font-semibold text-slate-900"><%= account.sat_bank&.name || account.bank_name %></p>
@@ -115,10 +137,22 @@
             </div>
           </div>
         <% end %>
-        <% if bank_accounts.empty? %>
-          <p class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.no_banks') %></p>
-        <% end %>
-      </div>
+        </div>
+      <% else %>
+        <div data-finance-empty-banks class="mt-5 rounded-2xl border border-dashed border-emerald-100 bg-emerald-50/20 px-5 py-7 sm:px-8 sm:py-8">
+          <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+            <%= image_tag 'sbankaccounts.png', alt: '', loading: 'lazy', class: 'h-auto w-44 shrink-0 sm:w-56' %>
+            <div class="min-w-0 text-center sm:text-left">
+              <h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.finance.empty_banks_title') %></h3>
+              <p class="mt-2 max-w-lg text-sm leading-6 text-slate-600"><%= t('admin.supplier_dossier.finance.empty_banks_description') %></p>
+              <%= link_to admin_supplier_bank_accounts_path(supplier), class: 'mt-5 inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+                <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+                <%= t('admin.supplier_dossier.finance.manage_banks') %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </section>

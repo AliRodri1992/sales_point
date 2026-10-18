@@ -33,8 +33,12 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     expect(response).to have_http_status(:ok)
     expect(finances.at_css('[data-finance-payables]')).to be_present
     expect(finances.at_css('[data-finance-bank-accounts]')).to be_present
-    expect(finances.text).to include('No pending payables', 'No active bank accounts')
-    expect(finances.at_css('[data-finance-metric="invoices"]').text.strip).to eq('0')
+    expect(finances.text).to include('No payables registered yet', 'No bank accounts registered yet')
+    expect(finances.at_css('[data-finance-empty-payables] img[src*="saccountspayable"]')).to be_present
+    expect(finances.at_css('[data-finance-empty-banks] img[src*="sbankaccounts"]')).to be_present
+    expect(finances.at_css('[data-finance-metric="invoices"]')).to be_nil
+    expect(finances.css("a[href='#{admin_account_payables_path}']").size).to eq(1)
+    expect(finances.css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']").size).to eq(1)
   end
 
   it 'shows real invoice balances and due-date counters' do
@@ -48,6 +52,33 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     expect(finances.at_css('[data-finance-metric="upcoming"]').text.strip).to eq('1')
     expect(finances.at_css('[data-finance-metric="overdue"]').text.strip).to eq('1')
     expect(finances.text).to include('INV-OLD', 'INV-SOON', 'Overdue')
+    expect(finances.at_css('[data-finance-empty-payables]')).to be_nil
+  end
+
+  it 'shows the bank empty state when all existing accounts are archived' do
+    SupplierBankAccount.create!(
+      organization:, supplier:, bank_name: 'Archived Bank',
+      holder_name: 'Supplier', account_number: '999987654321',
+      currency_code: 'MXN', deleted_at: Time.current
+    )
+
+    get admin_supplier_path(supplier, tab: 'finances')
+
+    bank_section = finances.at_css('[data-finance-bank-accounts]')
+    expect(bank_section.at_css('img[src*="sbankaccounts"]')).to be_present
+    expect(bank_section.text).not_to include('Archived Bank', '999987654321')
+  end
+
+  it 'keeps accounts payable details when invoices exist but no balances remain open' do
+    payable = posted_payable(amount: 100, due_on: Date.current + 2.days, folio: 'PAID-001')
+    allow_any_instance_of(AccountPayable).to receive(:balance).and_return(0.to_d)
+
+    get admin_supplier_path(supplier, tab: 'finances')
+
+    expect(payable).to be_persisted
+    expect(finances.at_css('[data-finance-empty-payables]')).to be_nil
+    expect(finances.text).to include('No pending payables')
+    expect(finances.at_css('[data-finance-metric="invoices"]').text.strip).to eq('1')
   end
 
   it 'shows only active bank accounts and never exposes unmasked numbers' do
@@ -66,6 +97,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
 
     bank_section = finances.at_css('[data-finance-bank-accounts]')
     expect(bank_section.text).to include('Delta Bank', bank.masked_number)
+    expect(bank_section.at_css('[data-finance-empty-banks]')).to be_nil
     expect(bank_section.text).not_to include('Archived Bank', '123456789012', '999987654321')
     expect(bank_section.css('[data-finance-bank-account]').size).to eq(1)
     expect(bank_section.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present

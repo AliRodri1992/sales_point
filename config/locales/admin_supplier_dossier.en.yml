@@ -2,6 +2,10 @@ en:
   admin:
     supplier_dossier:
       finance:
+        empty_payables_title: "No payables registered yet"
+        empty_payables_description: "Once supplier invoices or financial commitments are recorded, you can review balances and due dates here."
+        empty_banks_title: "No bank accounts registered yet"
+        empty_banks_description: "Register one or more bank accounts to manage payments to this supplier quickly and securely."
         payables_description: "View this supplier's invoices, balances, and due dates."
         manage_payables: "Manage payables"
         posted_invoices: "Posted invoices"

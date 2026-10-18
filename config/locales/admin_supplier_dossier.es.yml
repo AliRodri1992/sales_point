@@ -2,6 +2,10 @@ es:
   admin:
     supplier_dossier:
       finance:
+        empty_payables_title: "Aún no hay cuentas por pagar registradas"
+        empty_payables_description: "Cuando se registren facturas o compromisos financieros de este proveedor, aquí podrás consultar sus saldos y vencimientos."
+        empty_banks_title: "Aún no hay cuentas bancarias registradas"
+        empty_banks_description: "Registra una o más cuentas bancarias para gestionar los pagos a este proveedor de forma rápida y segura."
         payables_description: "Consulta las facturas, sus saldos y vencimientos de este proveedor."
         manage_payables: "Administrar cuentas por pagar"
         posted_invoices: "Facturas contabilizadas"
