@@ -23,8 +23,8 @@
                        (@address.persisted? && !@address.changed? && @address.latitude.present? && @address.longitude.present? ?
                         Suppliers::AddressLocationProof.issue(
                           address: @address, supplier: @supplier, user: current_user,
-                          latitude: @address.latitude, longitude: @address.longitude,
-                          confidence: @address.geocoding_confidence || 1.0
+                          coordinates: { latitude: @address.latitude, longitude: @address.longitude,
+                                         confidence: @address.geocoding_confidence || 1.0 }
                         ) : ''),
                        data: { supplier_address_location_target: 'signature' } %>
 
