@@ -46,6 +46,7 @@ RSpec.describe Suppliers::AddressLocationProof do
   end
 
   it 'invalidates the proof after an address change' do
+    token
     address.street = 'Calle diferente'
     expect(verified).to be false
   end
