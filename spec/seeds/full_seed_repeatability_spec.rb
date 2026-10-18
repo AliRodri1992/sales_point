@@ -14,10 +14,17 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     ]
   end
 
+  def seeded_identifiers
+    seeded_models.to_h do |model|
+      identifier = model.column_names.include?('id') ? :id : :code
+      [model.name, model.order(identifier).pluck(identifier)]
+    end
+  end
+
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
     Rails.application.load_seed
     counts = seeded_models.to_h { |model| [model.name, model.count] }
-    identifiers = seeded_models.to_h { |model| [model.name, model.order(model.primary_key).pluck(model.primary_key)] }
+    identifiers = seeded_identifiers
     supplier = Supplier.find_by!(code: 'SUP-0001')
     supplier.update!(legal_name: 'Datos fiscales revisados')
     admin = User.find_by!(email: 'administrador@delta.com')
@@ -32,7 +39,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     Rails.application.load_seed
 
     expect(seeded_models.to_h { |model| [model.name, model.count] }).to eq(counts)
-    expect(seeded_models.to_h { |model| [model.name, model.order(:id).pluck(:id)] }).to eq(identifiers)
+    expect(seeded_identifiers).to eq(identifiers)
     expect(supplier.reload.legal_name).to eq('Datos fiscales revisados')
     expect(admin.reload.valid_password?('PasswordManual#2026')).to be(true)
     expect(product.reload.name).to eq('Producto editado manualmente')
