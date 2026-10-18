@@ -36,13 +36,14 @@ RSpec.describe SupplierDossierExamples do
 
     described_class.seed!
 
-    expect([
+    later_counts = [
       Contact.where(contactable_type: 'Supplier', contactable_id: organization.suppliers.select(:id)).count,
       Address.where(addressable_type: 'Supplier', addressable_id: organization.suppliers.select(:id)).count,
       SupplierSchedule.where(supplier_id: organization.suppliers.select(:id)).count,
       ActiveStorage::Attachment.where(record_type: 'Supplier',
                                       record_id: organization.suppliers.select(:id)).count
-    ]).to eq(counts)
+    ]
+    expect(later_counts).to eq(counts)
     expect(contact.reload.email).to eq('renamed.demo@example.com')
     expect(address.reload.reference_notes).to eq('Dirección revisada manualmente')
     expect(schedule.reload.notes).to eq('Calendario revisado manualmente')
