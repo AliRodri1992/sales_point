@@ -4,7 +4,7 @@ module Suppliers
   # Paginates the addresses of one supplier, including type counts for filter chips.
   class DossierAddressesPage
     PAGE_SIZE = 8
-    FILTERS = %w[all fiscal delivery commercial general primary].freeze
+    FILTERS = %w[all fiscal delivery commercial general primary confirmed approximate pending failed].freeze
 
     attr_reader :addresses, :total_count, :next_page, :page, :filter, :filter_counts, :status
 
@@ -49,11 +49,19 @@ module Suppliers
         result[purpose] += count if result.key?(purpose)
         result['primary'] += count if primary
       end
+      result['confirmed'] = relation.where.not(location_confirmed_at: nil).where.not(latitude: nil, longitude: nil).count
+      result['approximate'] = relation.where(geocoding_status: 'success', location_confirmed_at: nil)
+                                      .where.not(latitude: nil, longitude: nil).count
+      result['pending'] = relation.where(geocoding_status: 'pending').count
+      result['failed'] = relation.where(geocoding_status: 'failed').count
       result
     end
 
     def apply_filter(relation)
       return relation.where(primary: true) if filter == 'primary'
+      return relation.where.not(location_confirmed_at: nil) if filter == 'confirmed'
+      return relation.where(geocoding_status: 'success', location_confirmed_at: nil) if filter == 'approximate'
+      return relation.where(geocoding_status: filter) if %w[pending failed].include?(filter)
       return relation if filter == 'all'
 
       relation.where(purpose: filter)
