@@ -465,4 +465,31 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.at_css('[data-address-empty="active"]')).to be_present
     expect(page.at_css("a[href='#{new_admin_supplier_address_path(supplier)}']")).to be_nil
   end
+  it 'atomically replaces the primary fiscal address from the edit form' do
+    previous = create(:address, :fiscal, :primary, addressable: supplier)
+    target = create(:address, :fiscal, addressable: supplier)
+
+    patch admin_supplier_address_path(supplier, target),
+          params: { address: address_attributes(primary: true) }
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(previous.reload).not_to be_primary
+    expect(target.reload).to be_primary
+  end
+
+  it 'shows a failed location even when coordinates are absent and allows retry' do
+    address = create(:address, :delivery, addressable: supplier, geocoding_status: 'failed',
+                     latitude: nil, longitude: nil)
+    get admin_supplier_addresses_path(supplier)
+    expect(response.body).to include('data-address-geocoding-status="failed"')
+
+    allow(GeocodeAddressJob).to receive(:perform_later)
+    post retry_geocoding_admin_supplier_address_path(supplier, address)
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(address.reload.geocoding_status).to eq('pending')
+    expect(GeocodeAddressJob).to have_received(:perform_later)
+  end
+
+
 end
