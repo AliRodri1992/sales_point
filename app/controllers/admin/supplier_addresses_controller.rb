@@ -87,12 +87,11 @@ module Admin
     end
 
     def retry_geocoding
-      return redirect_to admin_supplier_addresses_path(@supplier) if @address.location_confirmed?
+      return redirect_to primary_redirect_path if @address.location_confirmed?
 
       @address.update!(geocoding_status: :pending)
       enqueue_geocoding(@address)
-      redirect_to admin_supplier_addresses_path(@supplier),
-                  notice: t('admin.supplier_details.geocoding_requeued')
+      redirect_to primary_redirect_path, notice: t('admin.supplier_details.geocoding_requeued')
     end
 
     def set_primary
