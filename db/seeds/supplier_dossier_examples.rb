@@ -77,7 +77,7 @@ module SupplierDossierExamples
     end
 
     def seed_addresses(supplier, country, count)
-      return if supplier.addresses.with_deleted.count >= count
+      return if enough_addresses?(supplier, count)
 
       count.times do |index|
         reference = "DEMO-DIRECCION-#{index + 1}"
@@ -104,6 +104,14 @@ module SupplierDossierExamples
       }
     end
 
+    def enough_addresses?(supplier, count)
+      supplier.addresses.with_deleted.count >= count
+    end
+
+    def skip_schedules?(supplier, branches, count)
+      branches.empty? || supplier.supplier_schedules.count >= count
+    end
+
     def seed_documents(supplier, count)
       expected_formats = count == DOCUMENTS_PER_FEATURED_SUPPLIER ? SupplierDemoDocuments::FORMATS.length : 1
       return if supplier.documents.attachments.count >= count + expected_formats
@@ -122,7 +130,7 @@ module SupplierDossierExamples
     end
 
     def seed_schedules(supplier, branches, count)
-      return if branches.empty? || supplier.supplier_schedules.count >= count
+      return if skip_schedules?(supplier, branches, count)
 
       count.times do |index|
         kind = SupplierSchedule::KINDS[index % SupplierSchedule::KINDS.length]
