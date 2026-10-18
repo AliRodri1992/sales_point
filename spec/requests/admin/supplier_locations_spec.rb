@@ -152,5 +152,4 @@ RSpec.describe 'Supplier location verification', type: :request do
     expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
     expect(supplier.addresses.last.location_adjustment_reason).to be_present
   end
-
 end
