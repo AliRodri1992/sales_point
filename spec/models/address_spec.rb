@@ -44,9 +44,9 @@ RSpec.describe Address, type: :model do
     end
 
     it 'preserves manually entered fields when changing between country rules' do
-      address = build(:address, country: build(:country, iso_alpha2: 'US'),
-                      postal_code: '90210-1234', neighborhood: 'Original area',
-                      exterior_number: '100')
+      attributes = { country: build(:country, iso_alpha2: 'US'), postal_code: '90210-1234',
+                     neighborhood: 'Original area', exterior_number: '100' }
+      address = build(:address, **attributes)
       expect(address).to be_valid
 
       address.country = build(:country, iso_alpha2: 'CA')
