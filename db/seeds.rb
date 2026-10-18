@@ -374,7 +374,7 @@ def seed_admin_user
   assign_admin_user_attributes(user, language)
   user.save!
   $stdout.puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} " \
-       "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
+               "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
   assign_admin_role(user, administrator_role)
   $stdout.puts "[SEEDS][USUARIO][OK] Administrador configurado; roles=#{user.system_roles.pluck(:code).join(', ')}"
 end
@@ -397,7 +397,7 @@ def assign_admin_role(user, administrator_role)
   assignment.deleted_at = nil
   assignment.save!
   $stdout.puts "[SEEDS][ROL][#{action}] usuario_id=#{user.id} rol=#{administrator_role.code} " \
-       "asignacion_id=#{assignment.id}"
+               "asignacion_id=#{assignment.id}"
 end
 
 USER_SEED_ROLES = %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
