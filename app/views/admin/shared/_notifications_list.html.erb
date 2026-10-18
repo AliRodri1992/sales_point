@@ -1,5 +1,5 @@
 <div id="notifications_list" class="max-h-80 overflow-y-auto">
-  <% notifications = user.notifications.limit(5) %>
+  <% notifications = user.notifications.includes(:event).limit(5).select { |item| item.event.present? } %>
   <% if notifications.any? %>
     <% notifications.each do |notification| %>
       <%= render "admin/shared/notification", notification: notification %>
