@@ -130,19 +130,6 @@ module Admin
       )
     end
 
-    def supplier_update_destination
-      return admin_supplier_path(@supplier, tab: 'general') if params[:return_to] == 'general'
-
-      admin_suppliers_path
-    end
-
-    def supplier_update_attributes
-      attributes = supplier_params
-      uploads = attributes.delete(:documents)
-      attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
-      attributes
-    end
-
     def user_not_authorized
       redirect_to admin_suppliers_path, status: :forbidden,
                                         alert: t('admin.suppliers.errors.unauthorized')
