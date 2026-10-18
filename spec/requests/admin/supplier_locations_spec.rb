@@ -153,5 +153,4 @@ RSpec.describe 'Supplier location verification', type: :request do
     expect(supplier.addresses.last.location_adjustment_reason).to be_present
   end
 
-
 end
