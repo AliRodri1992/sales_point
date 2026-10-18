@@ -13,8 +13,8 @@
 <% has_payable_records = supplier.account_payables.exists? %>
 
 <section id="supplier-dossier-finances" data-supplier-dossier-target="panel" data-section="finances" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
-  <div data-finance-payables class="min-w-0 space-y-2">
-    <div data-finance-payables-header class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+  <div data-finance-payables class="min-w-0 space-y-0">
+    <div data-finance-payables-header class="flex flex-wrap items-center justify-between gap-4 rounded-t-2xl rounded-b-none border border-slate-200 bg-white p-4 sm:p-6">
       <div class="flex min-w-0 items-center gap-3">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('document-text', class: 'size-5') %></span>
         <div>
@@ -31,7 +31,7 @@
     </div>
 
     <% if has_payable_records %>
-      <div data-finance-payables-content class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div data-finance-payables-content class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <div class="rounded-xl border border-slate-200 p-4">
         <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.posted_invoices') %></p>
@@ -85,7 +85,7 @@
     </div>
       </div>
     <% else %>
-      <div data-finance-empty-payables class="rounded-2xl border border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+      <div data-finance-empty-payables class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-8">
         <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
           <%= image_tag 'saccountspayable.png', alt: '', loading: 'lazy', class: 'h-auto w-44 shrink-0 sm:w-56' %>
           <div class="min-w-0 text-center sm:text-left">
@@ -103,8 +103,8 @@
 
   <% if current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
     <% bank_accounts = supplier.supplier_bank_accounts.active.includes(:sat_bank).order(primary: :desc, id: :desc).limit(3) %>
-    <div data-finance-bank-accounts class="min-w-0 space-y-2">
-      <div data-finance-banks-header class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <div data-finance-bank-accounts class="min-w-0 space-y-0">
+      <div data-finance-banks-header class="flex flex-wrap items-center justify-between gap-4 rounded-t-2xl rounded-b-none border border-slate-200 bg-white p-4 sm:p-6">
         <div class="flex min-w-0 items-center gap-3">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('building-library', class: 'size-5') %></span>
           <div>
@@ -120,7 +120,7 @@
         <% end %>
       </div>
       <% if bank_accounts.any? %>
-        <div data-finance-banks-content class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div data-finance-banks-content class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white p-4 shadow-sm sm:p-6">
           <div class="space-y-2">
           <% bank_accounts.each do |account| %>
           <div data-finance-bank-account class="grid min-w-0 gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_auto] sm:items-center">
@@ -143,7 +143,7 @@
           </div>
         </div>
       <% else %>
-        <div data-finance-empty-banks class="rounded-2xl border border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+        <div data-finance-empty-banks class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-8">
           <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
             <%= image_tag 'sbankaccounts.png', alt: '', loading: 'lazy', class: 'h-auto w-44 shrink-0 sm:w-56' %>
             <div class="min-w-0 text-center sm:text-left">
