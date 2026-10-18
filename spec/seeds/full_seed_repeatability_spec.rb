@@ -28,7 +28,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     removed_offer = other_supplier.supplier_products.order(:id).first!
     product = removed_offer.product
     original_history_count = SupplierProductPrice.count
-    removed_offer.price_history.delete_all
+    SupplierProductPrice.where(supplier_product_id: removed_offer.id).delete_all
     removed_offer.destroy!
     filename = 'delta-demo-sup-0001-nota.txt'
     missing_attachment = supplier.documents.attachments.joins(:blob)
