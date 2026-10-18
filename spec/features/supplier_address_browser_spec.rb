@@ -133,6 +133,8 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     find('input[name="address[purpose]"][value="delivery"]', visible: :all).set(true)
     find('[data-action="supplier-address-location#lookup"]').click
     expect(page).to have_css('[data-supplier-address-location-target="reviewFields"]:not(.hidden)')
+    expect(page).to have_css('[data-supplier-address-location-target="reviewNotice"]:not(.hidden)',
+                             text: 'Verify the physical address')
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
 

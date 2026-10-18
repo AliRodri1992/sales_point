@@ -34,6 +34,22 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response.body).not_to include('translation_missing')
   end
 
+  it 'places the conditional location review warning directly beneath the map controls' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    controls = document.at_css('[data-address-map-controls]')
+    notice = document.at_css('[data-supplier-address-location-target="reviewNotice"]')
+    review = document.at_css('[data-supplier-address-location-target="reviewFields"]')
+
+    expect(controls.next_element).to eq(notice)
+    expect(notice.text.squish).to eq(I18n.t('admin.supplier_details.location_review_required', locale: :en))
+    expect(notice['class']).to include('hidden')
+    expect(review.at_css('input[name="address[location_reviewed]"][type="checkbox"]')).to be_present
+    expect(review.text).not_to include(notice.text.squish)
+  end
+
   it 'creates and displays a primary fiscal address' do
     post admin_supplier_addresses_path(supplier), params: { address: address_attributes }
 
