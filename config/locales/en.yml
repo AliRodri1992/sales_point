@@ -8,6 +8,10 @@ en:
             rfc:
               person_type_mismatch: "does not match the selected person type"
               invalid_date: "contains an invalid date"
+        address:
+          attributes:
+            primary:
+              taken: "has already been assigned to another address of this type."
     attributes:
       supplier:
         code: "Code"
@@ -21,6 +25,7 @@ en:
         name: "Full name"
         mobile_phone: "Mobile phone"
       address:
+        primary: "A primary address"
         city: City
         country: Country
         exterior_number: Exterior number

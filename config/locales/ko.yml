@@ -8,6 +8,10 @@ ko:
             rfc:
               person_type_mismatch: "선택한 사업자 유형과 일치하지 않습니다"
               invalid_date: "유효하지 않은 날짜가 포함되어 있습니다"
+        address:
+          attributes:
+            primary:
+              taken: "이미 같은 유형의 다른 주소에 지정되어 있습니다."
     attributes:
       supplier:
         code: "코드"
@@ -21,6 +25,7 @@ ko:
         name: "성명"
         mobile_phone: "휴대전화"
       address:
+        primary: "대표 주소는"
         city: 도시
         country: 국가
         exterior_number: 외부 번호

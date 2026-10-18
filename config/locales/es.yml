@@ -8,6 +8,10 @@ es:
             rfc:
               person_type_mismatch: "El RFC no corresponde al tipo de persona seleccionado"
               invalid_date: "El RFC contiene una fecha inexistente"
+        address:
+          attributes:
+            primary:
+              taken: "ya está asignada a otra dirección de este tipo."
     attributes:
       supplier:
         code: "Código"
@@ -21,6 +25,7 @@ es:
         name: "Nombre completo"
         mobile_phone: "Celular"
       address:
+        primary: "La dirección principal"
         city: Ciudad
         country: País
         exterior_number: Número exterior

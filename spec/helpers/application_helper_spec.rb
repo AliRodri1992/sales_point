@@ -185,6 +185,20 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+  describe '#error_message_for on duplicate primary addresses' do
+    it 'shows the Spanish message directly beneath the primary control' do
+      I18n.with_locale(:es) do
+        address = build(:address)
+        address.errors.add(:primary, :taken)
+
+        expect(helper.error_message_for(address, :primary)).to have_css(
+          'p[data-server-field-error]',
+          text: 'La dirección principal ya está asignada a otra dirección de este tipo.'
+        )
+      end
+    end
+  end
+
   describe '#user_avatar_colors and #user_avatar_style' do
     let(:user) { create(:user) }
 

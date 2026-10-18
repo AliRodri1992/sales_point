@@ -13,6 +13,25 @@ RSpec.describe 'Polymorphic address metadata', type: :model do
     expect(build(:address, addressable: create(:supplier), primary: true)).to be_valid
   end
 
+  it 'provides a localized, field-specific message for duplicate primary addresses' do
+    supplier = create(:supplier)
+    create(:address, :fiscal, :primary, addressable: supplier)
+
+    messages = {
+      es: 'La dirección principal ya está asignada a otra dirección de este tipo.',
+      en: 'A primary address has already been assigned to another address of this type.',
+      ko: '대표 주소는 이미 같은 유형의 다른 주소에 지정되어 있습니다.'
+    }
+
+    messages.each do |locale, message|
+      I18n.with_locale(locale) do
+        duplicate = build(:address, :fiscal, :primary, addressable: supplier)
+        expect(duplicate).not_to be_valid
+        expect(duplicate.errors.full_messages_for(:primary)).to include(message)
+      end
+    end
+  end
+
   it 'allows another primary after the original is soft deleted' do
     supplier = create(:supplier)
     original = create(:address, addressable: supplier, primary: true)
