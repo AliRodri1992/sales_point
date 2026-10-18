@@ -33,6 +33,7 @@
     <section data-controller="supplier-postal-assist supplier-country-fields"
              data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
              data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
+             data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
              data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
              data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
              data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
@@ -95,6 +96,7 @@
                               placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :neighborhood)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <datalist id="supplier-neighborhoods" data-supplier-postal-assist-target="neighborhoods"></datalist>
+          <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>" data-supplier-postal-assist-target="choices" data-action="change->supplier-postal-assist#chooseNeighborhood" class="mt-2 hidden min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm"></select>
           <%= error_message_for(@address, :neighborhood) %>
         </div>
 
