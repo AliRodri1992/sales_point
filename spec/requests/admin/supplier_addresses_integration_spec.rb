@@ -37,4 +37,72 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include('ABC', 'data-server-field-error')
   end
+  it 'uses the existing illustration without a duplicate create action for an empty list' do
+    get admin_supplier_addresses_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    empty = page.at_css('[data-address-empty="active"]')
+    expect(empty.at_css('img[src*="saddresses"]')).to be_present
+    expect(empty.text).to include('No addresses registered yet')
+    expect(empty.css('a, button')).to be_empty
+    expect(page.at_css('[data-address-statistics]')).to be_nil
+    expect(page.css("a[href='#{new_admin_supplier_address_path(supplier)}']").size).to eq(1)
+
+    tabs = page.at_css('[data-supplier-address-tabs]')
+    expect(tabs.css('a span').map(&:text).map(&:strip)).to eq(%w[0 0])
+  end
+
+  it 'shows a deleted-address empty state without duplicate buttons' do
+    get admin_supplier_addresses_path(supplier, status: 'deleted')
+
+    page = Nokogiri::HTML(response.body)
+    empty = page.at_css('[data-address-empty="deleted"]')
+    expect(empty.at_css('img[src*="saddresses"]')).to be_present
+    expect(empty.text).to include('No deleted addresses')
+    expect(empty.css('a, button')).to be_empty
+    expect(page.at_css('[data-address-statistics]')).to be_nil
+    expect(page.css("a[href='#{new_admin_supplier_address_path(supplier)}']").size).to eq(1)
+  end
+
+  it 'preserves the normal address cards and counters when records exist' do
+    create(:address, :fiscal, :primary, addressable: supplier)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-address-empty="active"]')).to be_nil
+    expect(page.at_css('[data-address-statistics]')).to be_present
+    expect(page.css('article').size).to eq(1)
+    expect(page.css("a[href='#{new_admin_supplier_address_path(supplier)}']").size).to eq(1)
+  end
+
+  it 'shows the empty active state when only archived addresses remain' do
+    address = create(:address, :fiscal, :primary, addressable: supplier)
+    address.update!(deleted_at: Time.current)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-address-empty="active"]')).to be_present
+    expect(page.at_css('[data-address-statistics]')).to be_present
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[0 1])
+
+    get admin_supplier_addresses_path(supplier, status: 'deleted')
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-address-empty="deleted"]')).to be_nil
+    expect(page.text).to include(address.street)
+  end
+
+  it 'does not show the create action to users without address management permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-address-empty="active"]')).to be_present
+    expect(page.at_css("a[href='#{new_admin_supplier_address_path(supplier)}']")).to be_nil
+  end
+
 end

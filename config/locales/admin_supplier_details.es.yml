@@ -3,6 +3,7 @@ es:
     supplier_details:
       manage_addresses: "Administrar direcciones"
       addresses_description: "Todas las direcciones registradas para este proveedor."
+      addresses_admin_description: "Administra las direcciones registradas de este proveedor."
       search_addresses: "Buscar direcciones..."
       no_addresses: "No se encontraron direcciones."
       address_columns:
@@ -48,6 +49,8 @@ es:
       secondary_option: "No, secundaria"
       primary_option: "Sí, principal"
       primary_hint: "Solo puede existir una dirección principal por tipo para cada proveedor."
+      empty_deleted_addresses_title: "No hay direcciones eliminadas"
+      empty_deleted_addresses_description: "Las direcciones que elimines aparecerán aquí y podrás recuperarlas cuando sea necesario."
       active_addresses: "Direcciones activas"
       deleted_addresses: "Direcciones eliminadas"
       deleted_addresses_description: "Puedes recuperar los domicilios eliminados cuando lo necesites."

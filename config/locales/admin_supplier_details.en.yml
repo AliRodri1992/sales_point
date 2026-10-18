@@ -3,6 +3,7 @@ en:
     supplier_details:
       manage_addresses: "Manage addresses"
       addresses_description: "All addresses registered for this supplier."
+      addresses_admin_description: "Manage the addresses registered for this supplier."
       search_addresses: "Search addresses..."
       no_addresses: "No addresses found."
       address_columns:
@@ -48,6 +49,8 @@ en:
       secondary_option: "No, secondary"
       primary_option: "Yes, primary"
       primary_hint: "Only one primary address is allowed per type for each supplier."
+      empty_deleted_addresses_title: "No deleted addresses"
+      empty_deleted_addresses_description: "Deleted addresses will appear here, where you can restore them when needed."
       active_addresses: "Active addresses"
       deleted_addresses: "Deleted addresses"
       deleted_addresses_description: "You can restore deleted addresses when needed."
