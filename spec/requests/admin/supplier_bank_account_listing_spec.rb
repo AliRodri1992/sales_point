@@ -90,7 +90,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
 
     crumbs = document.css('nav[aria-label] ol li')
-    expect(crumbs.map { |item| item.text.strip }).to eq(
+    expect(crumbs.map { |item| item.at_css('a, [aria-current="page"]').text.strip }).to eq(
       ['Home', 'Suppliers', supplier.name, 'Bank accounts']
     )
     expect(crumbs[2].at_css('a')['href']).to eq(admin_supplier_path(supplier))
