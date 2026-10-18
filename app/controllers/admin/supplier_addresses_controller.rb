@@ -40,7 +40,7 @@ module Admin
       @address = @supplier.addresses.new(address_params)
       return render :new, status: :unprocessable_content unless apply_confirmation?
 
-      if @address.save
+      if Suppliers::SaveAddress.new(supplier: @supplier, address: @address).call
         enqueue_geocoding(@address)
         notify_address('address_created')
         redirect_success('address_created')
@@ -57,7 +57,7 @@ module Admin
       @address.assign_attributes(address_params)
       return render :edit, status: :unprocessable_content unless apply_confirmation?
 
-      if @address.save
+      if Suppliers::SaveAddress.new(supplier: @supplier, address: @address).call
         enqueue_geocoding(@address) if @address.saved_changes.keys.intersect?(Address::GEOGRAPHIC_FIELDS)
         notify_address('address_updated')
         redirect_success('address_updated')
