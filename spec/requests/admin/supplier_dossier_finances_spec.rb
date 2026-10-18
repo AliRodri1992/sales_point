@@ -41,6 +41,36 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     expect(finances.css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']").size).to eq(1)
   end
 
+  it 'separates the accounts payable heading from its empty-state card' do
+    get admin_supplier_path(supplier, tab: 'finances')
+
+    wrapper = finances.at_css('[data-finance-payables]')
+    header = wrapper.at_css('[data-finance-payables-header]')
+    empty = wrapper.at_css('[data-finance-empty-payables]')
+
+    expect(header.parent).to eq(wrapper)
+    expect(empty.parent).to eq(wrapper)
+    expect(header.text).not_to include('No payables registered yet')
+    expect(empty.text).to include('No payables registered yet')
+    expect(header['class']).to include('bg-white')
+    expect(empty['class']).to include('bg-white')
+  end
+
+  it 'separates the bank accounts heading from its empty-state card' do
+    get admin_supplier_path(supplier, tab: 'finances')
+
+    wrapper = finances.at_css('[data-finance-bank-accounts]')
+    header = wrapper.at_css('[data-finance-banks-header]')
+    empty = wrapper.at_css('[data-finance-empty-banks]')
+
+    expect(header.parent).to eq(wrapper)
+    expect(empty.parent).to eq(wrapper)
+    expect(header.text).not_to include('No bank accounts registered yet')
+    expect(empty.text).to include('No bank accounts registered yet')
+    expect(header['class']).to include('bg-white')
+    expect(empty['class']).to include('bg-white')
+  end
+
   it 'shows real invoice balances and due-date counters' do
     posted_payable(amount: 150, due_on: Date.current - 1.day, folio: 'INV-OLD')
     posted_payable(amount: 70, due_on: Date.current + 5.days, folio: 'INV-SOON')
@@ -53,6 +83,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     expect(finances.at_css('[data-finance-metric="overdue"]').text.strip).to eq('1')
     expect(finances.text).to include('INV-OLD', 'INV-SOON', 'Overdue')
     expect(finances.at_css('[data-finance-empty-payables]')).to be_nil
+    expect(finances.at_css('[data-finance-payables-content]')).to be_present
   end
 
   it 'shows the bank empty state when all existing accounts are archived' do
@@ -98,6 +129,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     bank_section = finances.at_css('[data-finance-bank-accounts]')
     expect(bank_section.text).to include('Delta Bank', bank.masked_number)
     expect(bank_section.at_css('[data-finance-empty-banks]')).to be_nil
+    expect(bank_section.at_css('[data-finance-banks-content]')).to be_present
     expect(bank_section.text).not_to include('Archived Bank', '123456789012', '999987654321')
     expect(bank_section.css('[data-finance-bank-account]').size).to eq(1)
     expect(bank_section.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
