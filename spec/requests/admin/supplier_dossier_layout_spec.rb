@@ -124,7 +124,6 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_nil
   end
 
-
   def create_offer(item, attributes = {})
     SupplierProduct.create!({
       organization:, supplier:, product: item, currency: supplier.currency,

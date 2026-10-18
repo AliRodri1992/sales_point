@@ -13,14 +13,11 @@ module Suppliers
     end
 
     def call
-      relation = @supplier.supplier_products.available.joins(:product)
-                          .merge(@supplier.organization.products.not_deleted)
+      relation = product_offers
       @total_count = relation.count
       @total_pages = [(total_count.to_f / PAGE_SIZE).ceil, 1].max
       @page = @requested_page.clamp(1, total_pages)
-      @offers = relation.order('products.name ASC', 'supplier_products.id ASC')
-                        .includes(:currency, product: { image_attachment: :blob })
-                        .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).to_a
+      @offers = load_page(relation)
       self
     end
 
@@ -35,8 +32,21 @@ module Suppliers
     end
 
     def visible_pages
-      first_page = [[page - 2, 1].max, [total_pages - 4, 1].max].min
+      first_page = (page - 2).clamp(1, [total_pages - 4, 1].max)
       (first_page..[first_page + 4, total_pages].min).to_a
+    end
+
+    private
+
+    def product_offers
+      @supplier.supplier_products.available.joins(:product)
+               .merge(@supplier.organization.products.not_deleted)
+    end
+
+    def load_page(relation)
+      relation.order('products.name ASC', 'supplier_products.id ASC')
+              .includes(:currency, product: { image_attachment: :blob })
+              .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).to_a
     end
   end
 end
