@@ -37,16 +37,13 @@ class Language < ApplicationRecord
     where(deleted_at: nil)
   }
 
-  def flag_url(size = '64x48')
-    "https://flagcdn.com/#{size}/#{flag_iso}.png"
+  def flag_url(_size = '64x48')
+    path = "flags/#{flag_iso.to_s.downcase}.svg"
+    path = 'flags/unknown.svg' unless Rails.root.join('app/assets/images', path).file?
+    ActionController::Base.helpers.image_path(path)
   end
 
-  def flag_srcset
-    [
-      "#{flag_url('80x60')} 2x",
-      "#{flag_url('96x72')} 3x"
-    ].join(', ')
-  end
+  def flag_srcset = "#{flag_url} 1x"
 
   private
 

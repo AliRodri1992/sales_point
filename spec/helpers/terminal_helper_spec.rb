@@ -9,10 +9,17 @@ RSpec.describe TerminalHelper, type: :helper do
       expect(helper.language_flag_path(language)).not_to include('flagcdn.com')
     end
 
-    it 'falls back to FlagCDN when a local flag asset is unavailable' do
+    it 'uses the local flag for Timor-Leste rather than any external CDN' do
       language = build(:language, flag_iso: 'tl')
 
-      expect(helper.language_flag_path(language)).to eq('https://flagcdn.com/64x48/tl.png')
+      expect(helper.language_flag_path(language)).to include('/assets/flags/tl')
+      expect(helper.language_flag_path(language)).not_to include('flagcdn.com')
+    end
+
+    it 'uses a neutral local SVG for an unrecognized language flag code' do
+      language = build(:language, flag_iso: 'zz')
+
+      expect(helper.language_flag_path(language)).to include('/assets/flags/unknown')
     end
   end
 
