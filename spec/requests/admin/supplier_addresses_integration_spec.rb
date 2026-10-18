@@ -392,7 +392,8 @@ RSpec.describe 'Supplier address integration', type: :request do
     get admin_supplier_addresses_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    expect(page.css('article[data-supplier-address-id] form, article[data-supplier-address-id] a[href^="/admin"]')).to be_empty
+    actions = page.css('article[data-supplier-address-id] form, article[data-supplier-address-id] a[href^="/admin"]')
+    expect(actions).to be_empty
 
     get admin_supplier_addresses_path(supplier), headers: { 'X-Requested-With' => 'XMLHttpRequest' }
     expect(response).to have_http_status(:ok)
