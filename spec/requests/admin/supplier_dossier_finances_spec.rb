@@ -107,6 +107,15 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(heading_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
   end
 
+  it 'opens the bank accounts panel when returning from bank account administration' do
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    dossier = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-dossier"]')
+    expect(dossier['data-supplier-dossier-initial-tab-value']).to eq('bank_accounts')
+    expect(panel('bank_accounts')).to be_present
+    expect(panel('statement')).to be_present
+  end
+
   it 'supports bookmarks to the old finances tab' do
     get admin_supplier_path(supplier, tab: 'finances')
 

@@ -86,6 +86,33 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(response.body).not_to include('999900001234')
   end
 
+  it 'returns to the bank accounts tab of the supplier dossier' do
+    bank_account
+
+    get admin_supplier_bank_accounts_path(supplier)
+
+    back_path = admin_supplier_path(supplier, tab: 'bank_accounts')
+    back_link = document.at_css("a[href='#{back_path}']")
+    expect(back_link).to be_present
+    expect(back_link.text).to include('Back to supplier')
+
+    get back_link['href']
+
+    expect(response).to have_http_status(:ok)
+    dossier = document.at_css('[data-controller="supplier-dossier"]')
+    expect(dossier['data-supplier-dossier-initial-tab-value']).to eq('bank_accounts')
+    expect(document.at_css('section[data-section="bank_accounts"]')).to be_present
+    expect(document.at_css('button[data-supplier-dossier-target="tab"][data-section="bank_accounts"]'))
+      .to be_present
+  end
+
+  it 'uses the same return tab when no bank accounts are registered' do
+    get admin_supplier_bank_accounts_path(supplier)
+
+    expect(document.at_css("a[href='#{admin_supplier_path(supplier, tab: 'bank_accounts')}']"))
+      .to be_present
+  end
+
   it 'uses the existing supplier breadcrumb without adding supplier information cards' do
     get admin_supplier_bank_accounts_path(supplier)
 
