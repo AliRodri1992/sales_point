@@ -16,7 +16,7 @@
   <%= form.hidden_field :longitude, data: { supplier_address_location_target: 'longitude' } %>
   <%= hidden_field_tag 'address[location_confirmed]', '0', data: { supplier_address_location_target: 'confirmed' } %>
   <%= hidden_field_tag 'address[location_signature]',
-                       (@address.latitude.present? && @address.longitude.present? ?
+                       (@address.persisted? && !@address.changed? && @address.latitude.present? && @address.longitude.present? ?
                         Suppliers::AddressLocationProof.issue(
                           address: @address, supplier: @supplier, user: current_user,
                           latitude: @address.latitude, longitude: @address.longitude
