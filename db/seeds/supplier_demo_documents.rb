@@ -10,12 +10,10 @@ require 'caxlsx'
 # Real supplier uploads are never replaced or removed.
 module SupplierDemoDocuments
   FORMATS = [
-    ['constancia', 'pdf', 'application/pdf'],
-    ['nota', 'txt', 'text/plain'],
+    ['constancia', 'pdf', 'application/pdf'], ['nota', 'txt', 'text/plain'],
     ['contrato', 'docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     ['precios', 'xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    ['identificacion', 'jpg', 'image/jpeg'],
-    ['catalogo', 'csv', 'text/csv'],
+    ['identificacion', 'jpg', 'image/jpeg'], ['catalogo', 'csv', 'text/csv'],
     ['informacion', 'xml', 'application/xml']
   ].freeze
 
@@ -74,8 +72,7 @@ module SupplierDemoDocuments
     def pdf_objects(supplier)
       text = "BT /F1 14 Tf 45 760 Td (DEMO #{supplier.code} - SIN VALIDEZ) Tj ET"
       [
-        '<< /Type /Catalog /Pages 2 0 R >>',
-        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
         '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] ' \
         '/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
         '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
