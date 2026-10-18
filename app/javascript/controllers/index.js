@@ -97,3 +97,6 @@ application.register("cfdi-preview", CfdiPreviewController)
 
 import SupplierBankAccountsController from "./supplier_bank_accounts_controller"
 application.register("supplier-bank-accounts", SupplierBankAccountsController)
+
+import ProductsSearchController from "./products_search_controller"
+application.register("products-search", ProductsSearchController)
