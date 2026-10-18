@@ -35,6 +35,10 @@ es:
           pending: "Pendiente"
           partial: "Parcial"
           overdue: "Vencida"
+      product_cards:
+        preferred: "Preferido"
+        range: "Mostrando %{from} a %{to} de %{total} productos"
+        pages: "Páginas de productos del proveedor"
       product_empty:
         manage: "Administrar productos"
         title: "Aún no hay productos registrados"

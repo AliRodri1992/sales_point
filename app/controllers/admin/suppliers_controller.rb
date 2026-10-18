@@ -35,6 +35,11 @@ module Admin
       authorize @supplier
       @dossier_contacts_page = Suppliers::DossierContactsPage.new(supplier: @supplier).call
       @dossier_addresses_page = Suppliers::DossierAddressesPage.new(supplier: @supplier).call
+      if policy(@supplier).view_products?
+        @dossier_products_page = Suppliers::DossierProductsPage.new(
+          supplier: @supplier, page: params[:products_page]
+        ).call
+      end
     end
 
     def contacts_page

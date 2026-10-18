@@ -35,6 +35,10 @@ ko:
           pending: "미지급"
           partial: "부분 지급"
           overdue: "연체"
+      product_cards:
+        preferred: "우선 공급업체"
+        range: "총 %{total}개 중 %{from}–%{to}개 상품 표시"
+        pages: "공급업체 상품 페이지"
       product_empty:
         manage: "제품 관리"
         title: "아직 등록된 제품이 없습니다"

@@ -35,6 +35,10 @@ en:
           pending: "Pending"
           partial: "Partial"
           overdue: "Overdue"
+      product_cards:
+        preferred: "Preferred"
+        range: "Showing %{from}–%{to} of %{total} products"
+        pages: "Supplier product pages"
       product_empty:
         manage: "Manage products"
         title: "No products registered yet"

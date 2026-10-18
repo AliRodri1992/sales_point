@@ -124,6 +124,106 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_nil
   end
 
+
+  def create_offer(item, attributes = {})
+    SupplierProduct.create!({
+      organization:, supplier:, product: item, currency: supplier.currency,
+      presentation_name: 'Box', units_per_package: 12, purchase_price: 144,
+      minimum_quantity: 1, discount_percent: 0, freight_amount: 0,
+      nonrecoverable_tax: 0, lead_time_days: 3
+    }.merge(attributes))
+  end
+
+  def products_panel
+    dossier.at_css('section[data-section="products"]')
+  end
+
+  it 'shows four product preview cards with image fallback, prices and preferred indicators' do
+    pictured = create(:product, organization:, name: 'Pictured Item', sku: 'PIC-01')
+    png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
+    pictured.image.attach(io: StringIO.new(Base64.decode64(png)), filename: 'photo.png', content_type: 'image/png')
+    create_offer(pictured, supplier_sku: 'SUP-PIC', preferred: true)
+    create_offer(create(:product, organization:, name: 'Fallback Item'), supplier_sku: 'SUP-FALL')
+    3.times do |index|
+      create_offer(create(:product, organization:, name: "More Item #{index}"))
+    end
+
+    get admin_supplier_path(supplier, tab: 'products')
+
+    expect(response).to have_http_status(:ok)
+    cards = products_panel.css('[data-supplier-product-card]')
+    expect(cards.length).to eq(4)
+    photo_card = cards.find { |card| card.text.include?('Pictured Item') }
+    fallback_card = cards.find { |card| card.text.include?('Fallback Item') }
+    expect(photo_card.at_css('img')['src']).to include('active_storage')
+    expect(fallback_card.at_css('img')['src']).to include('supplier-product-placeholder')
+    expect(photo_card.text).to include('PIC-01', 'SUP-PIC', 'Preferred', '144', '12', 'MXN')
+    expect(products_panel.text).to include('Showing 1–4 of 5 products')
+    expect(products_panel.css('[data-supplier-products-grid]')).to be_present
+    expect(products_panel.css("a[href='#{admin_supplier_supplier_products_path(supplier)}']").size).to eq(1)
+    expect(products_panel.css('details, form')).to be_empty
+  end
+
+  it 'paginates four products and keeps Products selected on the next page' do
+    9.times do |number|
+      create_offer(create(:product, organization:, name: format('Sorted Product %02d', number)))
+    end
+
+    get admin_supplier_path(supplier, tab: 'products', products_page: 2)
+
+    expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
+      .to eq('products')
+    expect(products_panel.css('[data-supplier-product-card]').size).to eq(4)
+    expect(products_panel.text).to include('Showing 5–8 of 9 products')
+    expect(products_panel.text).to include('Sorted Product 04')
+    expect(products_panel.text).not_to include('Sorted Product 00', 'Sorted Product 08')
+    expect(products_panel.at_css('a[aria-current="page"]').text.strip).to eq('2')
+    expect(products_panel.at_css("a[href='#{admin_supplier_path(supplier, tab: 'products', products_page: 3)}']"))
+      .to be_present
+
+    get admin_supplier_path(supplier, tab: 'products', products_page: 3)
+
+    expect(products_panel.css('[data-supplier-product-card]').size).to eq(1)
+    expect(products_panel.text).to include('Showing 9–9 of 9 products')
+  end
+
+  it 'never displays unavailable, archived or other suppliers products' do
+    create_offer(create(:product, organization:, name: 'Current Product'))
+    create_offer(create(:product, organization:, name: 'Inactive Offer'), active: false)
+    create_offer(create(:product, organization:, name: 'Archived Offer'), deleted_at: Time.current)
+    create_offer(create(:product, organization:, name: 'Archived Product', deleted_at: Time.current))
+    other_supplier = create(:supplier, organization:)
+    SupplierProduct.create!(
+      organization:, supplier: other_supplier,
+      product: create(:product, organization:, name: 'Other Supplier Item'),
+      currency: supplier.currency, presentation_name: 'Box', units_per_package: 4,
+      purchase_price: 120, minimum_quantity: 1, discount_percent: 0,
+      freight_amount: 0, nonrecoverable_tax: 0, lead_time_days: 2
+    )
+
+    get admin_supplier_path(supplier, tab: 'products')
+
+    expect(products_panel.css('[data-supplier-product-card]').size).to eq(1)
+    expect(products_panel.text).to include('Current Product')
+    expect(products_panel.text).not_to include(
+      'Inactive Offer', 'Archived Offer', 'Archived Product', 'Other Supplier Item'
+    )
+  end
+
+  it 'omits product panel and cards when the user cannot view supplier products' do
+    create_offer(create(:product, organization:, name: 'Restricted Product'))
+    allow_any_instance_of(SupplierPolicy).to receive(:view_products?).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'products')
+
+    expect(response).to have_http_status(:ok)
+    expect(products_panel).to be_nil
+    expect(dossier.text).not_to include('Restricted Product')
+    expect(dossier.css('button[data-section="products"]')).to be_empty
+    expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
+      .to eq('overview')
+  end
+
   it 'shows the new responsive navigation with only existing supplier features' do
     get admin_supplier_path(supplier)
 
