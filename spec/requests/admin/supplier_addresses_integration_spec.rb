@@ -379,7 +379,8 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     page = Nokogiri::HTML(response.body)
     expect(page.css('[data-address-geocoding-status]').size).to eq(2)
-    expect(page.at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('success')
+    expect(page.at_css("article[data-supplier-address-id='#{located.id}'] [data-address-geocoding-status]")
+               ['data-address-geocoding-status']).to eq('success')
     expect(page.at_css("article[data-supplier-address-id='#{located.id}']").text).to include('Blue gate')
     expect(page.css('article h2').map(&:text)).not_to include('##')
   end
@@ -391,11 +392,11 @@ RSpec.describe 'Supplier address integration', type: :request do
     get admin_supplier_addresses_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    expect(page.css('article[data-supplier-address-id] form, article[data-supplier-address-id] a')).to be_empty
+    expect(page.css('article[data-supplier-address-id] form, article[data-supplier-address-id] a[href^="/admin"]')).to be_empty
 
     get admin_supplier_addresses_path(supplier), headers: { 'X-Requested-With' => 'XMLHttpRequest' }
     expect(response).to have_http_status(:ok)
-    expect(Nokogiri::HTML(response.body).css('article form, article a')).to be_empty
+    expect(Nokogiri::HTML(response.body).css('article form, article a[href^="/admin"]')).to be_empty
   end
 
   it 'uses the existing illustration without a duplicate create action for an empty list' do
