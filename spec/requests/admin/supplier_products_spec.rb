@@ -93,7 +93,7 @@ RSpec.describe 'Admin supplier procurement', type: :request do
   it 'returns to the supplier Products tab and shows Back to the left of Add' do
     get admin_supplier_supplier_products_path(supplier)
 
-    header = document.at_css('h1').parent.parent
+    header = document.at_css('[data-supplier-products-header]')
     links = header.css('a')
     expected_paths = [
       admin_supplier_path(supplier, tab: 'products'),
