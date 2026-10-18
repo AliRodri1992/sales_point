@@ -73,7 +73,8 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
     image_data = Base64.decode64(png)
     with_image.image.attach(io: StringIO.new(image_data), filename: 'supplier-photo.png', content_type: 'image/png')
-    offer_for(with_image, supplier_sku: 'PHOTO-SKU', preferred: true)
+    offer_for(with_image, supplier_sku: 'PHOTO-SKU')
+    with_image.update!(preferred_supplier: supplier)
     no_image = create(:product, organization:, name: 'Without Photo', code: 'NO-PHOTO')
     offer_for(no_image)
 

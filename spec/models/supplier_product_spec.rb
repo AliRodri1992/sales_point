@@ -58,10 +58,36 @@ RSpec.describe SupplierProduct, type: :model do
     expect(offer.price_history.order(:id).pluck(:presentation_name)).to eq(['Box', 'Pack of 24'])
   end
 
-  it 'allows a single preferred provider per organization and product' do
-    described_class.create!(offer_attributes.merge(preferred: true))
-    second_supplier = create(:supplier, organization:)
-    other = described_class.new(offer_attributes.merge(supplier: second_supplier, preferred: true))
-    expect(other).not_to be_valid
+  it 'marks all presentations of the selected supplier as preferred' do
+    first = described_class.create!(offer_attributes)
+    second = described_class.create!(offer_attributes.merge(presentation_name: 'Pack of 6'))
+    product.update!(preferred_supplier: supplier)
+
+    expect(first.reload).to be_preferred
+    expect(second.reload).to be_preferred
+  end
+
+  it 'clears preference only when the last active presentation is disabled' do
+    first = described_class.create!(offer_attributes)
+    second = described_class.create!(offer_attributes.merge(presentation_name: 'Pack of 6'))
+    product.update!(preferred_supplier: supplier)
+
+    first.update!(active: false)
+    expect(product.reload.preferred_supplier).to eq(supplier)
+
+    second.update!(active: false)
+    expect(product.reload.preferred_supplier).to be_nil
+
+    first.update!(active: true)
+    expect(product.reload.preferred_supplier).to be_nil
+  end
+
+  it 'clears preference after removing the final available presentation' do
+    offer = described_class.create!(offer_attributes)
+    product.update!(preferred_supplier: supplier)
+
+    offer.update!(deleted_at: Time.current)
+
+    expect(product.reload.preferred_supplier).to be_nil
   end
 end

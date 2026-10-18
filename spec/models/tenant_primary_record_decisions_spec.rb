@@ -73,23 +73,29 @@ RSpec.describe 'Tenant-scoped primary and preferred record rules' do
         presentation_name: 'Unit', units_per_package: 1, purchase_price: 10, minimum_quantity: 1 }
     end
 
-    it 'allows a first preferred offer for a product' do
-      expect(described_class.new(**attributes, preferred: true)).to be_valid
+    it 'allows assigning a preferred supplier after registering an active offer' do
+      offer = described_class.create!(**attributes)
+      product.update!(preferred_supplier: supplier)
+
+      expect(offer.reload).to be_preferred
     end
 
-    it 'rejects a second preferred supplier offer for the same product' do
-      described_class.create!(**attributes, preferred: true)
+    it 'allows another supplier offer without overwriting the preferred supplier' do
+      described_class.create!(**attributes)
+      product.update!(preferred_supplier: supplier)
       other_supplier = create(:supplier, organization:)
-      duplicate = described_class.new(**attributes, supplier: other_supplier, preferred: true)
-      expect(duplicate).not_to be_valid
-      expect(duplicate.errors.details[:preferred]).to include(hash_including(error: :taken))
-    end
+      alternative = described_class.new(**attributes, supplier: other_supplier)
 
-    it 'allows an unpreferred offer when another supplier is preferred' do
-      described_class.create!(**attributes, preferred: true)
-      other_supplier = create(:supplier, organization:)
-      alternative = described_class.new(**attributes, supplier: other_supplier, preferred: false)
       expect(alternative).to be_valid
+      expect(product.reload.preferred_supplier).to eq(supplier)
+    end
+
+    it 'rejects a preferred supplier without an active offer' do
+      other_supplier = create(:supplier, organization:)
+      product.preferred_supplier = other_supplier
+
+      expect(product).not_to be_valid
+      expect(product.errors[:preferred_supplier]).to be_present
     end
 
     it 'rejects product offers belonging to a separate organization' do
