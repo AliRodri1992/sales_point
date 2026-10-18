@@ -30,10 +30,9 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     original_history_count = SupplierProductPrice.count
     removed_offer.price_history.delete_all
     removed_offer.destroy!
+    filename = 'delta-demo-sup-0001-nota.txt'
     missing_attachment = supplier.documents.attachments.joins(:blob)
-                                 .find_by!(active_storage_blobs: {
-                                   filename: 'delta-demo-sup-0001-nota.txt'
-                                 })
+                                 .find_by!(active_storage_blobs: { filename: })
     missing_attachment.purge
     retained_ids = supplier.documents.attachments.pluck(:id).sort
 
@@ -41,9 +40,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
 
     expect(other_supplier.supplier_products.exists?(product_id: product.id)).to be(true)
     expect(supplier.documents.attachments.pluck(:id)).to include(*retained_ids)
-    expect(supplier.documents.attachments.joins(:blob).where(active_storage_blobs: {
-      filename: 'delta-demo-sup-0001-nota.txt'
-    }).count).to eq(1)
+    matches = supplier.documents.attachments.joins(:blob).where(active_storage_blobs: { filename: })
+    expect(matches.count).to eq(1)
     expect(SupplierProductPrice.count).to eq(original_history_count)
     expect(other_supplier.supplier_products.group(:product_id, :presentation_name).count.values.max).to eq(1)
 
