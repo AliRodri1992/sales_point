@@ -7,7 +7,7 @@
 <% elsif address.geocoding_status == 'failed' %>
   <span data-address-geocoding-status="failed"
         class="mt-2 inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-1 text-[11px] font-semibold text-rose-700">
-    <%= icon('alert-circle', class: 'size-3') %>
+    <%= icon('exclamation-circle', class: 'size-3') %>
     <%= t('admin.supplier_details.geocoding_failed') %>
   </span>
 <% elsif address.geocoding_status == 'pending' %>
