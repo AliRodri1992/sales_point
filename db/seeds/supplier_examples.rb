@@ -21,7 +21,8 @@ module SupplierExamples
     private
 
     def seed_demo_fiscal_regime
-      regime = SatFiscalRegime.find_or_initialize_by(code: '601', person_type: 'M')
+      scope = SatFiscalRegime.where(code: '601', person_type: 'M')
+      regime = scope.active.first || scope.order(updated_at: :desc, id: :desc).first || scope.new
       return if regime.persisted? && regime.deleted_at.nil?
 
       regime.update!(deleted_at: nil, description: regime.description.presence || 'General de Ley Personas Morales')
