@@ -19,6 +19,15 @@ RSpec.describe Address, type: :model do
       end
     end
 
+    it 'removes a stale postal code for a supplier moving to a no-postal-code country' do
+      supplier = create(:supplier)
+      address = create(:address, addressable: supplier, country: create(:country, iso_alpha2: 'MX'))
+      address.update!(country: create(:country, iso_alpha2: 'AE'))
+
+      expect(address.reload.postal_code).to be_nil
+      expect(address).to be_valid
+    end
+
     it 'supports US ZIP+4 and optional neighborhood and exterior number' do
       country = build(:country, iso_alpha2: 'US')
       attributes = { country:, exterior_number: nil, neighborhood: nil,
