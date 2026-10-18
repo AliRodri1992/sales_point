@@ -22,7 +22,7 @@
 
     <div data-supplier-addresses-toolbar class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
       <div class="flex min-w-0 flex-wrap items-center gap-2" aria-label="<%= t('admin.supplier_dossier.address_cards.filters') %>">
-        <% %w[all fiscal delivery commercial general primary].each do |filter| %>
+        <% Suppliers::DossierAddressesPage::FILTERS.each do |filter| %>
           <button type="button" data-supplier-addresses-target="filter" data-action="supplier-addresses#applyFilter" data-filter="<%= filter %>" aria-pressed="<%= filter == 'all' %>" class="inline-flex min-h-9 items-center gap-1 rounded-full px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 <%= filter == 'all' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>">
             <%= t("admin.supplier_dossier.address_cards.filters_options.#{filter}") %>
             <span data-supplier-addresses-target="filterCount" data-filter="<%= filter %>" class="inline-flex min-w-5 items-center justify-center rounded-full bg-white/80 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-slate-700"><%= addresses_page.filter_counts.fetch(filter) %></span>
