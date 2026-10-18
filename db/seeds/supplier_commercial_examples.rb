@@ -74,7 +74,7 @@ module SupplierCommercialExamples
         currency: supplier.currency, units_per_package: units,
         purchase_price: ((index + 1) * 20) + ((offset + 1) * units * 8),
         supplier_sku: "#{supplier.code}-#{product.code}-#{units}",
-        supplier_barcode: format('990%010d', (supplier.id * 10_000) + product.id),
+        supplier_barcode: demo_barcode(supplier, product),
         discount_percent: offset.odd? ? 3 : 0,
         freight_amount: offset.even? ? 5 : 0,
         nonrecoverable_tax: 0,
@@ -100,6 +100,10 @@ module SupplierCommercialExamples
         minimum_quantity: 1, discount_percent: 2, freight_amount: 12,
         nonrecoverable_tax: 0, lead_time_days: 2
       )
+    end
+
+    def demo_barcode(supplier, product)
+      format('990%010d', (supplier.id * 10_000) + product.id)
     end
 
     def demo_clabe(number)
