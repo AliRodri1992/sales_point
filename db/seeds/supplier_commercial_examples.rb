@@ -17,18 +17,8 @@ module SupplierCommercialExamples
       suppliers = organization.suppliers.available.order(:code).to_a
       return if products.empty? || suppliers.empty?
 
-      suppliers.each_with_index do |supplier, index|
-        seed_supplier_offers(supplier, index, products)
-      end
+      seed_supplier_offers(suppliers, products)
       seed_additional_presentation(suppliers.first, products.first)
-    end
-
-    def seed_supplier_offers(supplier, index, products)
-      OFFERS_PER_SUPPLIER.times do |offset|
-        presentation = PRESENTATIONS[(index + offset) % PRESENTATIONS.length]
-        product = products[(index + offset) % products.length]
-        seed_offer(supplier, product, presentation, index: index, offset: offset)
-      end
     end
 
     def seed_bank_accounts!
@@ -58,24 +48,31 @@ module SupplierCommercialExamples
       Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
     end
 
-    def seed_offer(supplier, product, presentation, index:, offset:)
-      name, units = presentation
-      attrs = { organization: supplier.organization, supplier: supplier, product: product, presentation_name: name }
+    def seed_supplier_offers(suppliers, products)
+      suppliers.each_with_index do |supplier, supplier_index|
+        OFFERS_PER_SUPPLIER.times do |offset|
+          product = products[(supplier_index + offset) % products.size]
+          presentation, units = PRESENTATIONS[(supplier_index + offset) % PRESENTATIONS.size]
+          seed_offer(supplier, product, presentation, units, supplier_index:, offset:)
+        end
+      end
+    end
+
+    def seed_offer(supplier, product, presentation, units, position)
+      attrs = { organization: supplier.organization, supplier:, product:, presentation_name: presentation }
       return if SupplierProduct.exists?(attrs)
 
       was_unlinked = product.supplier_products.empty?
-      SupplierProduct.create!(**attrs, **offer_attributes(supplier, product, units, index, offset))
-      return unless was_unlinked && product.preferred_supplier_id.nil?
-
-      Suppliers::PreferredSupplier.call(product: product, supplier: supplier, expected_supplier_id: nil)
+      SupplierProduct.create!(attrs.merge(offer_values(supplier, product, units, position)))
+      assign_first_preference(product, supplier) if was_unlinked
     end
 
-    def offer_attributes(supplier, product, units, index, offset)
-      price = ((index + 1) * 20) + ((offset + 1) * units * 8)
+    def offer_values(supplier, product, units, position)
+      index = position.fetch(:supplier_index)
+      offset = position.fetch(:offset)
       {
-        currency: supplier.currency,
-        units_per_package: units,
-        purchase_price: price,
+        currency: supplier.currency, units_per_package: units,
+        purchase_price: ((index + 1) * 20) + ((offset + 1) * units * 8),
         supplier_sku: "#{supplier.code}-#{product.code}-#{units}",
         supplier_barcode: format('990%010d', (supplier.id * 10_000) + product.id),
         discount_percent: offset.odd? ? 3 : 0,
@@ -84,6 +81,13 @@ module SupplierCommercialExamples
         minimum_quantity: 1,
         lead_time_days: (index % 5) + 1
       }
+    end
+
+    def assign_first_preference(product, supplier)
+      # An explicitly cleared preference must remain clear after re-seeding.
+      return unless product.preferred_supplier_id.nil?
+
+      Suppliers::PreferredSupplier.call(product:, supplier:, expected_supplier_id: nil)
     end
 
     def seed_additional_presentation(supplier, product)

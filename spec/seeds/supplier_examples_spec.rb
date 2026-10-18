@@ -63,5 +63,4 @@ RSpec.describe SupplierExamples do
     expect(contact.email).to eq('editado@example.com')
     expect(supplier.contacts.count).to eq(1)
   end
-
 end
