@@ -71,8 +71,8 @@ RSpec.describe Suppliers::DossierAddressesPage do
   it 'paginates deleted addresses separately from active ones and filters their types' do
     active = create(:address, :fiscal, addressable: supplier)
     18.times do |i|
-      create(:address, :delivery, addressable: supplier, street: "Archived #{i}",
-             reference_notes: "Old warehouse #{i}", deleted_at: Time.current)
+      attributes = { street: "Archived #{i}", reference_notes: "Old warehouse #{i}", deleted_at: Time.current }
+      create(:address, :delivery, addressable: supplier, **attributes)
     end
     first = page(status: 'deleted')
     second = page(status: 'deleted', page: 2)

@@ -213,9 +213,9 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('article[data-supplier-address-id]').size).to eq(8)
     expect(page.at_css('[data-supplier-addresses-next-page-value]')['data-supplier-addresses-next-page-value'])
       .to eq('2')
-    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[19 3])
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }).to eq(%w[19 3])
     expect(page.at_css('[data-address-statistics]')).to be_present
-    expect(page.css('[data-supplier-addresses-target="filterCount"]').map(&:text).map(&:strip))
+    expect(page.css('[data-supplier-addresses-target="filterCount"]').map { |element| element.text.strip })
       .to eq(%w[19 0 19 0 0 0])
   end
 
@@ -243,8 +243,8 @@ RSpec.describe 'Supplier address integration', type: :request do
   it 'searches and paginates deleted addresses without showing active records' do
     create(:address, :fiscal, addressable: supplier, street: 'Live Location')
     9.times do |i|
-      create(:address, :delivery, addressable: supplier,
-             street: "Archived Lane #{i}", reference_notes: "Old gate #{i}", deleted_at: Time.current)
+      attributes = { street: "Archived Lane #{i}", reference_notes: "Old gate #{i}", deleted_at: Time.current }
+      create(:address, :delivery, addressable: supplier, **attributes)
     end
 
     get admin_supplier_addresses_path(supplier, status: 'deleted')
@@ -252,7 +252,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('article[data-supplier-address-id]').size).to eq(8)
     expect(page.css('form[action*="restore"]').size).to eq(8)
     expect(page.text).not_to include('Live Location')
-    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[1 9])
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }).to eq(%w[1 9])
 
     get admin_supplier_addresses_path(supplier),
         params: { status: 'deleted', page: 2 }, headers: { 'X-Requested-With' => 'XMLHttpRequest' }
