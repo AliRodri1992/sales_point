@@ -4,6 +4,7 @@ class Product < ApplicationRecord
   has_paper_trail only: [:preferred_supplier_id]
   belongs_to :organization
   include PreferredSupplierValidation
+
   has_many :supplier_products, dependent: :restrict_with_exception
   has_many :inventories, dependent: :restrict_with_exception
   has_many :purchase_order_items, dependent: :restrict_with_exception
