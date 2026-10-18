@@ -199,7 +199,7 @@
         <div class="mb-4 flex items-center gap-3">
           <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('map-pin', class: 'size-5') %></span>
           <div>
-            <h2 id="supplier-address-preview-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_form.preview_heading') %></h2>
+            <h2 id="supplier-address-preview-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_form.summary_heading', default: 'Resumen de la dirección') %></h2>
             <p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.address_form.preview_description') %></p>
           </div>
         </div>
@@ -265,14 +265,14 @@
     <div class="min-w-0 border-t border-slate-100 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-labelledby="supplier-address-summary-heading">
       <div class="mb-3 flex items-center gap-2">
         <span class="flex size-9 items-center justify-center rounded-lg bg-sky-50 text-sky-700"><%= icon('document-text', class: 'size-5') %></span>
-        <h3 id="supplier-address-summary-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_form.preview_heading') %></h3>
+        <h3 id="supplier-address-summary-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.supplier_details.address_form.preview_address') %></h3>
       </div>
-    <dl class="grid min-w-0 gap-4 rounded-xl bg-slate-50 p-4 text-xs sm:grid-cols-2">
+    <dl class="grid min-w-0 gap-x-5 gap-y-4 bg-white text-sm sm:grid-cols-2">
             <div>
               <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_type') %></dt>
               <dd data-supplier-address-preview-target="purpose" class="mt-1 break-words font-semibold text-slate-800">—</dd>
             </div>
-            <div>
+            <div class="min-w-0 sm:col-span-2">
               <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_address') %></dt>
               <dd data-supplier-address-preview-target="address" class="mt-1 break-words text-slate-800"><%= t('admin.supplier_details.address_form.preview_pending') %></dd>
               <dd data-supplier-address-preview-target="area" class="mt-1 break-words text-slate-600"></dd>
@@ -282,7 +282,7 @@
               <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_priority') %></dt>
               <dd data-supplier-address-preview-target="primary" class="mt-1 break-words text-slate-800">—</dd>
             </div>
-            <p data-supplier-address-preview-target="reference" class="hidden break-words border-t border-slate-200 pt-2 text-slate-600"></p>
+            <div class="min-w-0 sm:col-span-2"><p data-supplier-address-preview-target="reference" class="hidden break-words border-t border-slate-200 pt-3 text-slate-600"></p></div>
           </dl>
     </div>
         </div>
