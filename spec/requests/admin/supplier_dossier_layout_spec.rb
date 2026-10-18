@@ -156,7 +156,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     fallback_card = cards.find { |card| card.text.include?('Fallback Item') }
     expect(photo_card.at_css('img')['src']).to include('active_storage')
     expect(fallback_card.at_css('img')['src']).to include('supplier-product-placeholder')
-    expect(photo_card.text).to include('PIC-01', 'SUP-PIC', 'Preferred', '144', '12', 'MXN')
+    expect(photo_card.text).to include('PIC-01', 'SUP-PIC', 'Preferred', '144', '12', supplier.currency.code)
     expect(products_panel.text).to include('Showing 1–4 of 5 products')
     expect(products_panel.css('[data-supplier-products-grid]')).to be_present
     expect(products_panel.css("a[href='#{admin_supplier_supplier_products_path(supplier)}']").size).to eq(1)
