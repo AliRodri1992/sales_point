@@ -114,6 +114,36 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_present
   end
 
+  it 'separates the products header from the empty content area' do
+    get admin_supplier_path(supplier, tab: 'products')
+
+    header = products_panel.at_css('[data-supplier-products-header]')
+    content = products_panel.at_css('[data-supplier-products-content]')
+    expect(products_panel['class']).to include('space-y-4')
+    expect(header.parent).to eq(products_panel)
+    expect(content.parent).to eq(products_panel)
+    expect(header.text).to include('Supplier products')
+    expect(header.text).to include('View the products associated with this supplier.')
+    expect(header.at_css("a[href='#{admin_supplier_supplier_products_path(supplier)}']")).to be_present
+    expect(header.at_css('img[src*="sproducts"]')).to be_nil
+    expect(content.at_css('[data-supplier-products-empty] img[src*="sproducts"]')).to be_present
+    expect(content.text).not_to include('Manage products')
+  end
+
+  it 'keeps the products header separate when supplier products are registered' do
+    create_offer(create(:product, organization:, name: 'Sample Product'))
+
+    get admin_supplier_path(supplier, tab: 'products')
+
+    header = products_panel.at_css('[data-supplier-products-header]')
+    content = products_panel.at_css('[data-supplier-products-content]')
+    expect(header.parent).to eq(content.parent)
+    expect(header.at_css('[data-supplier-product-card]')).to be_nil
+    expect(content.css('[data-supplier-product-card]').length).to eq(1)
+    expect(content.at_css('[data-supplier-products-pagination]')).to be_present
+    expect(content.at_css('[data-supplier-products-empty]')).to be_nil
+  end
+
   it 'does not show product creation without management permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
 
