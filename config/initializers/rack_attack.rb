@@ -17,8 +17,10 @@ class Rack::Attack
     req.ip if req.get? && req.path.match?(%r{\A/admin/suppliers/\d+/address_map\z})
   end
 
-  throttle("admin abuse", limit: 120, period: 1.minute) do |req|
-    req.path.include?("admin") ? req.ip : nil
+  throttle("admin abuse", limit: 10, period: 1.minute) do |req|
+    next if req.path.match?(%r{\A/admin/suppliers/\d+/(address_map|address_location_suggestion)\z})
+
+    req.ip if req.path.start_with?("/admin")
   end
 
   self.throttled_responder = lambda do |_req|
