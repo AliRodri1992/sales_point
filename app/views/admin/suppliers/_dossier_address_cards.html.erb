@@ -35,15 +35,18 @@
         </span>
       </div>
       <div class="flex shrink-0 items-center gap-1">
-        <% if can_manage_addresses %>
+        <% if can_manage_addresses && !address.primary? %>
           <details class="group relative">
             <summary aria-label="<%= t('admin.supplier_details.actions') %>" class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
               <%= icon('ellipsis-vertical', class: 'size-5') %>
             </summary>
-            <div class="absolute right-0 z-20 mt-1 min-w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
-              <%= link_to edit_admin_supplier_address_path(supplier, address), data: { turbo_frame: '_top' }, class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' do %>
-                <%= icon('pencil', class: 'size-4') %>
-                <%= t('admin.supplier_details.edit_address') %>
+            <div class="absolute right-0 z-20 mt-1 min-w-48 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+              <%= button_to set_primary_admin_supplier_address_path(supplier, address, source: 'dossier'),
+                            method: :patch,
+                            form: { data: { turbo_frame: '_top', turbo_confirm: t('admin.supplier_details.address_primary_confirm') } },
+                            class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' do %>
+                <%= icon('star', class: 'size-4') %>
+                <%= t('admin.supplier_details.set_primary_address') %>
               <% end %>
             </div>
           </details>
@@ -60,6 +63,7 @@
         <p class="break-words font-medium text-slate-800"><%= street_line.presence || '—' %></p>
         <p class="break-words"><%= locality_line.presence || '—' %><% if address.postal_code.present? %>, <%= t('admin.supplier_dossier.address_cards.postal_abbreviation') %> <%= address.postal_code %><% end %></p>
         <p class="break-words"><%= address.country.localized_name %></p>
+        <%= render 'admin/supplier_addresses/geocoding_badge', address: address %>
       </div>
     </div>
 
@@ -76,7 +80,7 @@
         [t('admin.supplier_details.address_fields.purpose'), t("admin.supplier_details.address_purposes.#{purpose}")],
         [t('admin.supplier_details.primary'), t("admin.supplier_dossier.address_cards.#{address.primary? ? 'yes' : 'no'}")]
       ] %>
-      <% if address.has_attribute?(:reference_notes) %>
+      <% if address.has_attribute?(:reference_notes) && address.reference_notes.present? %>
         <% fields.insert(7, [t('admin.supplier_details.address_form.references'), address.reference_notes]) %>
       <% end %>
       <dl class="grid gap-x-4 gap-y-3 text-xs sm:grid-cols-2 sm:text-sm">

@@ -267,6 +267,79 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response.headers['X-Addresses-Count']).to eq('1')
   end
 
+  it 'keeps edit and delete actions in administration and exposes primary selection only when needed' do
+    primary = create(:address, :fiscal, :primary, addressable: supplier)
+    secondary = create(:address, :fiscal, addressable: supplier)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    primary_card = page.at_css("article[data-supplier-address-id='#{primary.id}']")
+    secondary_card = page.at_css("article[data-supplier-address-id='#{secondary.id}']")
+    expect(primary_card.css('form[action*="set_primary"]')).to be_empty
+    expect(secondary_card.at_css("form[action='#{set_primary_admin_supplier_address_path(supplier, secondary)}']"))
+      .to be_present
+    expect(secondary_card.at_css("a[href='#{edit_admin_supplier_address_path(supplier, secondary)}']"))
+      .to be_present
+    expect(secondary_card.at_css("form[action='#{admin_supplier_address_path(supplier, secondary)}']"))
+      .to be_present
+  end
+
+  it 'switches primary addresses transactionally from administration' do
+    previous = create(:address, :fiscal, :primary, addressable: supplier)
+    target = create(:address, :fiscal, addressable: supplier)
+    delivery = create(:address, :delivery, :primary, addressable: supplier)
+
+    patch set_primary_admin_supplier_address_path(supplier, target)
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(target.reload).to be_primary
+    expect(previous.reload).not_to be_primary
+    expect(delivery.reload).to be_primary
+  end
+
+  it 'returns to the supplier dossier after a primary switch from its address cards' do
+    target = create(:address, :fiscal, addressable: supplier)
+
+    patch set_primary_admin_supplier_address_path(supplier, target, source: 'dossier')
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'addresses'))
+    expect(target.reload).to be_primary
+  end
+
+  it 'rejects the primary action when management permission is denied' do
+    target = create(:address, :fiscal, addressable: supplier)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+
+    patch set_primary_admin_supplier_address_path(supplier, target)
+
+    expect(response).to have_http_status(:forbidden)
+    expect(target.reload).not_to be_primary
+  end
+
+  it 'never changes an address belonging to a different supplier' do
+    external = create(:address, :fiscal, addressable: create(:supplier))
+
+    patch set_primary_admin_supplier_address_path(supplier, external)
+
+    expect(response).to have_http_status(:not_found)
+    expect(external.reload).not_to be_primary
+  end
+
+  it 'shows geocoding and references only when real location data exists' do
+    create(:address, :delivery, addressable: supplier, latitude: nil, longitude: nil)
+    located = create(:address, :fiscal, addressable: supplier,
+                     reference_notes: 'Blue gate', geocoding_status: :success)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('[data-address-geocoding-status]').size).to eq(1)
+    expect(page.at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('success')
+    expect(page.at_css("article[data-supplier-address-id='#{located.id}']").text).to include('Blue gate')
+    expect(page.css('article h2').map(&:text)).not_to include('##')
+  end
+
   it 'hides administration actions without management permission' do
     create(:address, :fiscal, addressable: supplier)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)

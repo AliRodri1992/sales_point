@@ -47,7 +47,44 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(card.text).to include(address.country.localized_name)
     expect(card.at_css('button[aria-expanded="false"]')).to be_present
     expect(card.at_css("[id='supplier-address-detail-#{address.id}']")['class']).to include('hidden')
-    expect(card.at_css("a[href='#{edit_admin_supplier_address_path(supplier, address)}']")).to be_present
+    expect(card.css("a[href='#{edit_admin_supplier_address_path(supplier, address)}']")).to be_empty
+    expect(card.css('details')).to be_empty
+  end
+
+  it 'offers setting secondary addresses as primary without edit or delete in the dossier' do
+    address = create(:address, :fiscal, addressable: supplier)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    card = cards.first
+    action_path = set_primary_admin_supplier_address_path(supplier, address, source: 'dossier')
+    expect(card.at_css("form[action='#{action_path}']")).to be_present
+    expect(card.css('a, form[action*="edit"], form[action*="destroy"]')).to be_empty
+    expect(card.at_css('button[aria-expanded="false"]')).to be_present
+    expect(address_panel.at_css('[data-supplier-addresses-target="list"]')['class']).to include('md:grid-cols-2')
+  end
+
+  it 'only renders coordinates status when geocoding has coordinates' do
+    no_coords = create(:address, :fiscal, addressable: supplier, latitude: nil, longitude: nil)
+    waiting = create(:address, :delivery, addressable: supplier, geocoding_status: 'pending')
+    located = create(:address, addressable: supplier, purpose: 'commercial', geocoding_status: 'success')
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(cards.find { |card| card['data-supplier-address-id'] == no_coords.id.to_s }
+             .css('[data-address-geocoding-status]')).to be_empty
+    expect(cards.find { |card| card['data-supplier-address-id'] == waiting.id.to_s }
+             .at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('pending')
+    expect(cards.find { |card| card['data-supplier-address-id'] == located.id.to_s }
+             .at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('success')
+  end
+
+  it 'omits blank references from the expanded details' do
+    create(:address, :fiscal, addressable: supplier, reference_notes: nil)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(cards.first.text).not_to include('Directions / landmarks')
   end
 
   it 'displays address references in the expanded details after the migration' do

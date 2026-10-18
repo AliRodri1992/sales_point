@@ -122,7 +122,10 @@ Rails.application.routes.draw do
         member { patch :restore }
       end
       resources :addresses, controller: 'supplier_addresses', except: %i[show] do
-        member { patch :restore }
+        member do
+          patch :restore
+          patch :set_primary
+        end
       end
     end
   end

@@ -30,6 +30,7 @@
           <% end %>
         </p>
         <p class="break-words text-slate-500"><%= address.country.localized_name %></p>
+        <%= render 'admin/supplier_addresses/geocoding_badge', address: address %>
         <% if address.reference_notes.present? %>
           <p class="mt-2 break-words text-xs text-slate-500">
             <%= t('admin.supplier_details.address_form.references') %>: <%= address.reference_notes %>
@@ -51,6 +52,13 @@
             <%= icon('arrow-path', class: 'size-4') %><%= t('admin.supplier_details.restore_address') %>
           <% end %>
         <% else %>
+          <% unless address.primary? %>
+            <%= button_to set_primary_admin_supplier_address_path(@supplier, address), method: :patch,
+                          form: { data: { turbo_confirm: t('admin.supplier_details.address_primary_confirm') } },
+                          class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50' do %>
+              <%= icon('star', class: 'size-4') %><%= t('admin.supplier_details.set_primary_address') %>
+            <% end %>
+          <% end %>
           <%= link_to edit_admin_supplier_address_path(@supplier, address),
                       class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100' do %>
             <%= icon('pencil-square', class: 'size-4') %><%= t('admin.supplier_details.edit') %>

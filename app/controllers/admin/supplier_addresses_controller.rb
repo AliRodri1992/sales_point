@@ -7,13 +7,14 @@ module Admin
     ACTION_POLICY = {
       'index' => :view_addresses?, 'new' => :manage_addresses?, 'create' => :manage_addresses?,
       'edit' => :manage_addresses?, 'update' => :manage_addresses?,
-      'destroy' => :manage_addresses?, 'restore' => :manage_addresses?
+      'destroy' => :manage_addresses?, 'restore' => :manage_addresses?,
+      'set_primary' => :manage_addresses?
     }.freeze
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :set_address, only: %i[edit update destroy]
+    before_action :set_address, only: %i[edit update destroy set_primary]
 
     def index
       @address_page = build_address_page
@@ -76,7 +77,26 @@ module Admin
       redirect_success('address_deleted')
     end
 
+    def set_primary
+      if Suppliers::SetPrimaryAddress.new(supplier: @supplier, address: @address).call
+        @address.reload
+        notify_address('address_updated')
+      end
+
+      redirect_to primary_redirect_path, flash: {
+        swal_message: t('admin.supplier_details.address_primary_updated')
+      }
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+      redirect_to primary_redirect_path, alert: t('admin.supplier_details.address_primary_error')
+    end
+
     private
+
+    def primary_redirect_path
+      return admin_supplier_path(@supplier, tab: 'addresses') if params[:source] == 'dossier'
+
+      admin_supplier_addresses_path(@supplier)
+    end
 
     def build_address_page
       Suppliers::DossierAddressesPage.new(

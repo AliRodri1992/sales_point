@@ -1,6 +1,13 @@
 es:
   admin:
     supplier_details:
+      set_primary_address: "Establecer como principal"
+      address_primary_confirm: "¿Establecer esta dirección como principal para su tipo? La principal anterior pasará a secundaria."
+      address_primary_updated: "Dirección principal actualizada correctamente."
+      address_primary_error: "No se pudo cambiar la dirección principal. Inténtalo nuevamente."
+      geocoding_success: "Ubicación geocodificada"
+      geocoding_pending: "Ubicación pendiente"
+      geocoding_approximate: "Coordenadas obtenidas automáticamente. La ubicación puede ser aproximada."
       manage_addresses: "Administrar direcciones"
       addresses_description: "Todas las direcciones registradas para este proveedor."
       addresses_admin_description: "Administra las direcciones registradas de este proveedor."
