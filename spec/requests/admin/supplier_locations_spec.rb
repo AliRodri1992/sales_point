@@ -118,5 +118,10 @@ RSpec.describe 'Supplier location verification', type: :request do
     post address_location_suggestion_admin_supplier_path(supplier), params: { address: fields }
 
     expect(response).to have_http_status(:service_unavailable)
+    expect(response.parsed_body).to eq('error' => 'location_unavailable')
+
+    post admin_supplier_addresses_path(supplier), params: { address: fields }
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(supplier.addresses.count).to eq(1)
   end
 end
