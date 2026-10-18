@@ -163,7 +163,7 @@
             <button type="button" data-supplier-address-location-target="mapClick"
                     data-action="click->supplier-address-location#adjust keydown->supplier-address-location#nudge pointerdown->supplier-address-location#dragStart pointermove->supplier-address-location#dragMove pointerup->supplier-address-location#dragEnd pointercancel->supplier-address-location#dragCancel wheel->supplier-address-location#wheelZoom:!passive"
                     aria-label="<%= t('admin.supplier_details.address_form.location_adjust') %>"
-                    class="absolute inset-0 hidden w-full cursor-crosshair focus-visible:ring-2 focus-visible:ring-emerald-500"></button>
+                    class="absolute inset-0 hidden w-full cursor-crosshair touch-none focus-visible:ring-2 focus-visible:ring-emerald-500"></button>
             <div data-supplier-address-location-target="pin"
                  class="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-full rounded-full bg-white/90 p-1 text-emerald-700 shadow-lg">
               <%= icon('map-pin', class: 'size-6') %>
@@ -290,7 +290,7 @@
   <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm sm:px-6">
     <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.address_form.required_legend') %> <span class="font-semibold text-rose-600">*</span></p>
     <div class="ml-auto flex flex-wrap items-center gap-3">
-      <%= link_to t('admin.supplier_details.address_form.cancel'), admin_supplier_addresses_path(@supplier),
+      <%= link_to t('admin.supplier_details.address_form.cancel'), (params[:source] == 'dossier' ? admin_supplier_path(@supplier, tab: 'addresses') : admin_supplier_addresses_path(@supplier)),
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
       <%= form.button type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
         <%= icon('check', class: 'size-4') %>
