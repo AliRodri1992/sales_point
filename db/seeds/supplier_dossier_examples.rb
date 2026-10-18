@@ -23,8 +23,10 @@ module SupplierDossierExamples
       branches = organization.branches.not_deleted.order(:id).to_a
       mexico = Country.find_by!(iso_alpha2: 'MX')
 
-      organization.suppliers.not_deleted.order(:code).each_with_index do |supplier, index|
-        seed_supplier(supplier, branches, mexico, featured: index.zero?)
+      codes = (1..SupplierExamples::COUNT).map { |number| format('SUP-%04d', number) }
+      suppliers = organization.suppliers.not_deleted.where(code: codes).order(:code)
+      suppliers.each do |supplier|
+        seed_supplier(supplier, branches, mexico, featured: supplier.code == 'SUP-0001')
       end
     end
 

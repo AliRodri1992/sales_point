@@ -36,8 +36,11 @@ module SupplierExamples
       if settings.new_record?
         settings.assign_attributes(base_currency: Currency.active.find_by!(code: 'MXN'),
                                    timezone: 'America/Mexico_City', payment_method: :cash)
-        settings.save!
+      else
+        settings.base_currency ||= Currency.active.find_by!(code: 'MXN')
+        settings.timezone = 'America/Mexico_City' if settings.timezone.blank?
       end
+      settings.save! if settings.new_record? || settings.changed?
       $stdout.puts "[SEEDS][CONFIGURACION][OK] organizacion_id=#{organization.id} " \
                    "moneda=#{settings.base_currency.code}"
       organization
@@ -107,8 +110,9 @@ module SupplierExamples
     end
 
     def fill_missing_details(supplier, attributes)
-      fields = %i[legal_name trade_name alias_name classification responsible_user
-                  sat_fiscal_regime email phone postal_code notes]
+      fields = %i[legal_name trade_name alias_name classification person_type
+                  responsible_user sat_fiscal_regime email phone postal_code notes
+                  currency credit_days credit_limit discount_percent minimum_order_amount]
       fields.each { |field| supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank? }
       supplier.tags = attributes[:tags] if supplier.tags.blank?
       supplier.save! if supplier.changed?

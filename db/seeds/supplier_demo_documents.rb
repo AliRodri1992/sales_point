@@ -13,7 +13,8 @@ module SupplierDemoDocuments
     ['constancia', 'pdf', 'application/pdf'], ['nota', 'txt', 'text/plain'],
     ['contrato', 'docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
     ['precios', 'xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    ['identificacion', 'jpg', 'image/jpeg'], ['catalogo', 'csv', 'text/csv'],
+    ['identificacion', 'jpg', 'image/jpeg'], ['fotografia', 'png', 'image/png'],
+    ['catalogo', 'csv', 'text/csv'],
     ['informacion', 'xml', 'application/xml']
   ].freeze
 
@@ -24,6 +25,11 @@ module SupplierDemoDocuments
     'MjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAwADADASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAA' \
     'AAAAAP/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQf/xAAUEQEAAAAAAAAAAAAAAAAA' \
     'AAAA/9oADAMBAAIRAxEAPwAArOAAAAAAAAAAAAAAAAH/2Q=='
+  ).freeze
+
+  # Small valid PNG sample for the attachment viewer, not a real identity document.
+  DEMO_PNG = Base64.decode64(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lN8AAAAASUVORK5CYII='
   ).freeze
 
   class << self
@@ -54,6 +60,7 @@ module SupplierDemoDocuments
       when 'docx' then docx_for(supplier)
       when 'xlsx' then xlsx_for(supplier)
       when 'jpg' then DEMO_JPEG
+      when 'png' then DEMO_PNG
       when 'csv' then "codigo,tipo\n#{supplier.code},demostracion\n"
       when 'xml' then %(<?xml version="1.0" encoding="UTF-8"?>\n<demo><proveedor>#{supplier.code}</proveedor></demo>\n)
       end

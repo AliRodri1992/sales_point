@@ -28,7 +28,7 @@ module SupplierCommercialExamples
     def seed_bank_accounts!
       return if Rails.env.production?
 
-      demo_organization.suppliers.not_deleted.order(:code).each do |supplier|
+      demo_suppliers(demo_organization).each do |supplier|
         # This includes archived records: an intentionally deleted bank account
         # must not be recreated or replaced with a different account number.
         next if supplier.supplier_bank_accounts.exists?
