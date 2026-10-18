@@ -50,6 +50,27 @@ RSpec.describe Address, type: :model do
     end
   end
 
+  describe 'restoring an archived primary' do
+    it 'refuses restoration when another active address is primary for its purpose' do
+      supplier = create(:supplier)
+      archived = create(:address, :fiscal, :primary, :deleted, addressable: supplier)
+      create(:address, :fiscal, :primary, addressable: supplier)
+
+      expect(archived.restore_safely).to be false
+      expect(archived.reload.deleted_at).to be_present
+      expect(archived.errors[:primary]).to be_present
+    end
+
+    it 'restores a primary when there is no active conflict' do
+      supplier = create(:supplier)
+      archived = create(:address, :delivery, :primary, :deleted, addressable: supplier)
+
+      expect(archived.restore_safely).to be true
+      expect(archived.reload).to be_primary
+      expect(archived.deleted_at).to be_nil
+    end
+  end
+
   describe 'location freshness' do
     it 'clears stale coordinates and confirmation when any location component changes' do
       address = create(:address)
