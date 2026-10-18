@@ -15,7 +15,8 @@ module Admin
     def apply_confirmation?
       return true unless params.dig(:address, :location_confirmed) == '1'
 
-      coords = params.expect(address: %i[latitude longitude location_signature location_adjustment_reason location_reviewed])
+      coords = params.expect(address: %i[latitude longitude location_signature
+                                         location_adjustment_reason location_reviewed])
       unless valid_location_proof?(coords)
         @address.errors.add(:base, :invalid_location_confirmation)
         return false
