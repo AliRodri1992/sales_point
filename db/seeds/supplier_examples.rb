@@ -111,9 +111,7 @@ module SupplierExamples
     def fill_missing_details(supplier, attributes)
       fields = %i[legal_name trade_name alias_name classification responsible_user
                   sat_fiscal_regime email phone postal_code notes]
-      fields.each do |field|
-        supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank?
-      end
+      fields.each { |field| supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank? }
       supplier.tags = attributes[:tags] if supplier.tags.blank?
       supplier.save! if supplier.changed?
     end
