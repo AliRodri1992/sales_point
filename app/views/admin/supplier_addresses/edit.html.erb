@@ -1,5 +1,5 @@
 <% content_for :title, t('admin.supplier_details.edit_address') %>
-<div class="mx-auto max-w-5xl space-y-6">
+<div class="mx-auto max-w-7xl space-y-6">
   <div class="flex flex-wrap items-center justify-between gap-4">
     <div>
       <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-emerald-700"><%= @supplier.code %> · <%= @supplier.name %></p>
@@ -11,16 +11,5 @@
       <%= t('admin.supplier_details.back') %>
     <% end %>
   </div>
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div class="border-b border-slate-100 bg-gradient-to-r from-emerald-50 via-white to-white px-6 py-5 lg:px-8">
-      <div class="flex items-center gap-3">
-        <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm"><%= icon('map-pin', class: 'size-5') %></div>
-        <div>
-          <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.edit_address') %></h2>
-          <p class="mt-1 text-sm text-slate-500"><%= @supplier.name %></p>
-        </div>
-      </div>
-    </div>
-    <%= render 'form' %>
-  </div>
+  <%= render 'form' %>
 </div>

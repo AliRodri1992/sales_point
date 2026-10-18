@@ -38,6 +38,7 @@ class Address < ApplicationRecord
   validates :street, presence: true, length: { in: 2..150 }, on: %i[create update]
   validates :exterior_number, presence: true, length: { in: 1..20 }, on: %i[create update]
   validates :interior_number, length: { maximum: 20 }, allow_blank: true, on: %i[create update]
+  validates :reference_notes, length: { maximum: 200 }, allow_blank: true, on: %i[create update]
   validates :neighborhood, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, presence: true, length: { in: 2..100 }, on: %i[create update]

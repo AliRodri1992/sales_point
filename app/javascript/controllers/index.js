@@ -74,6 +74,9 @@ application.register("supplier-contacts", SupplierContactsController)
 import SupplierAddressesController from "./supplier_addresses_controller"
 application.register("supplier-addresses", SupplierAddressesController)
 
+import SupplierAddressPreviewController from "./supplier_address_preview_controller"
+application.register("supplier-address-preview", SupplierAddressPreviewController)
+
 import SupplierSearchController from "./supplier_search_controller"
 application.register("supplier-search", SupplierSearchController)
 

@@ -30,6 +30,63 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response.body).to include('Main Street')
   end
 
+  it 'renders the supplier address editor as a single form with classification cards and a live preview' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    expect(form).to be_present
+    expect(form.at_css('section[aria-labelledby="supplier-address-location-heading"]')).to be_present
+    expect(form.at_css('section[aria-labelledby="supplier-address-classification-heading"]')).to be_present
+    expect(form.at_css('section[aria-labelledby="supplier-address-preview-heading"]')).to be_present
+    expect(form.css('input[name="address[purpose]"]').pluck('value')).to eq(
+      %w[fiscal commercial delivery general]
+    )
+    expect(form.css('input[name="address[primary]"]').pluck('value')).to match_array(%w[false true])
+    expect(form.at_css('textarea[name="address[reference_notes]"][maxlength="200"]')).to be_present
+    expect(form.at_css('[data-supplier-address-preview-target="address"]')).to be_present
+    expect(form.at_css('[data-supplier-address-preview-target="country"]')).to be_present
+    expect(form.at_css('[data-supplier-address-preview-target="reference"]')).to be_present
+    expect(form.at_css('p')).to be_present
+    expect(form.at_css('button[type="submit"]')).to be_present
+    expect(form.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
+    expect(page.text).to include('SUP-', 'Add address')
+    expect(page.css('[data-step]')).to be_empty
+  end
+
+  it 'persists optional address references and reuses the editor on update' do
+    post admin_supplier_addresses_path(supplier),
+         params: { address: address_attributes(reference_notes: 'White building near the market') }
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    address = supplier.addresses.last
+    expect(address.reference_notes).to eq('White building near the market')
+
+    get edit_admin_supplier_address_path(supplier, address)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('textarea[name="address[reference_notes]"]').text)
+      .to include('White building near the market')
+    expect(page.at_css('input[name="address[purpose]"][value="fiscal"]')['checked']).to be_present
+
+    patch admin_supplier_address_path(supplier, address),
+          params: { address: address_attributes(reference_notes: 'Next to the pharmacy', country_id: address.country_id) }
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(address.reload.reference_notes).to eq('Next to the pharmacy')
+  end
+
+  it 'shows the length validation next to optional address references' do
+    post admin_supplier_addresses_path(supplier),
+         params: { address: address_attributes(reference_notes: 'X' * 201) }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('textarea[name="address[reference_notes]"]').text).to include('XXX')
+    expect(page.text).to include('is too long')
+  end
+
   it 'retains invalid input and shows a field-specific postal code error' do
     post admin_supplier_addresses_path(supplier),
          params: { address: address_attributes(postal_code: 'ABC') }

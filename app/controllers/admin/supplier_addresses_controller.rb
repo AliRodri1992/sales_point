@@ -100,7 +100,8 @@ module Admin
     end
 
     def address_params
-      fields = %i[street exterior_number interior_number neighborhood city state country_id postal_code primary purpose]
+      fields = %i[street exterior_number interior_number neighborhood city state country_id postal_code
+                  primary purpose reference_notes]
       params.expect(address: fields)
     end
   end
