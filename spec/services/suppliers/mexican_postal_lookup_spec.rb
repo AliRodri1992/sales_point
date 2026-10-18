@@ -63,6 +63,7 @@ RSpec.describe Suppliers::MexicanPostalLookup do
   end
 
   it 'configures bounded timeouts for the external lookup' do
+    allow_any_instance_of(described_class).to receive(:connection).and_call_original
     options = described_class.new('54800').send(:connection).options
     expect(options.timeout).to eq(4)
     expect(options.open_timeout).to eq(2)
