@@ -4,7 +4,7 @@ module Geocoding
   class MapboxStaticMapService
     URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static'
 
-    def call(latitude:, longitude:)
+    def call(latitude:, longitude:, zoom: 15)
       token = ENV['MAPBOX_TOKEN'].presence
       return unless token
 
@@ -12,7 +12,8 @@ module Geocoding
       lon = Float(longitude)
       return unless lat.between?(-90, 90) && lon.between?(-180, 180)
 
-      path = "#{lon},#{lat},15,0/600x300"
+      level = Integer(zoom).clamp(12, 18)
+      path = "#{lon},#{lat},#{level},0/600x300"
       response = connection.get("#{URL}/#{path}?access_token=#{CGI.escape(token)}")
       return unless response.success? && response.body.present?
 
