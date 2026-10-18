@@ -138,7 +138,6 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(response.body).not_to include('data-section="reconciliation"')
   end
 
-
   it 'groups both financial entries under Finance on desktop and mobile' do
     get admin_supplier_path(supplier)
 
