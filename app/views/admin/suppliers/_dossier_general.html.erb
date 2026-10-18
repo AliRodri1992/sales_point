@@ -1,40 +1,118 @@
-<section id="supplier-dossier-general" data-supplier-dossier-target="panel" data-section="general" class="w-full min-w-0 lg:flex-1 hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-5">
-    <div class="flex items-center gap-3">
-      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-        <%= icon('building-office-2', class: 'size-6') %>
-      </span>
-      <div>
-        <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.general') %></h2>
-        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.general.information_description') %></p>
+<section id="supplier-dossier-general" data-supplier-dossier-target="panel" data-section="general" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 pb-5">
+      <div class="flex items-center gap-3">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('building-office-2', class: 'size-6') %></span>
+        <div>
+          <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.general') %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.general.information_description') %></p>
+        </div>
+      </div>
+      <% if can_edit %>
+        <%= link_to edit_admin_supplier_path(supplier, return_to: 'general'), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+          <%= icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="space-y-4">
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <h3 class="flex items-center gap-3 bg-slate-50 px-4 py-3 font-jakarta text-sm font-bold text-slate-900">
+          <span class="flex size-6 items-center justify-center rounded-lg bg-emerald-100 text-xs text-emerald-800">1</span>
+          <%= icon('building-office-2', class: 'size-5 text-emerald-700') %>
+          <%= t('admin.supplier_general_layout.identification') %>
+        </h3>
+        <% identity = [
+          [t('admin.supplier_dossier.general.code'), supplier.code],
+          [t('admin.supplier_dossier.overview.supplier_name'), supplier.name],
+          [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
+          [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
+          [t('admin.supplier_dossier.fields.alias_name'), supplier.alias_name],
+          [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil]
+        ] %>
+        <dl class="grid gap-x-8 gap-y-5 p-5 md:grid-cols-2">
+          <% identity.each do |label, value| %>
+            <div class="grid min-w-0 gap-2 sm:grid-cols-[10rem_minmax(0,1fr)]">
+              <dt class="text-sm text-slate-500"><%= label %></dt>
+              <dd class="break-words text-sm font-semibold text-slate-900"><%= value.presence || '—' %></dd>
+            </div>
+          <% end %>
+          <div class="grid gap-2 sm:grid-cols-[10rem_minmax(0,1fr)]">
+            <dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.general.status') %></dt>
+            <dd><span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><span class="size-2 rounded-full <%= supplier.active? ? 'bg-emerald-600' : 'bg-slate-500' %>"></span><%= t("admin.suppliers.statuses.#{supplier.status}") %></span></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <h3 class="flex items-center gap-3 bg-slate-50 px-4 py-3 font-jakarta text-sm font-bold text-slate-900">
+          <span class="flex size-6 items-center justify-center rounded-lg bg-emerald-100 text-xs text-emerald-800">2</span>
+          <%= icon('users', class: 'size-5 text-emerald-700') %>
+          <%= t('admin.supplier_general_layout.contact_management') %>
+        </h3>
+        <dl class="grid gap-5 p-5 md:grid-cols-2">
+          <div>
+            <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.phone') %></dt>
+            <% if supplier.phone.present? %>
+              <dd class="flex items-center gap-2 break-all text-sm font-semibold text-slate-900">
+                <%= supplier.phone %>
+                <%= link_to "tel:#{supplier.phone}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= icon('phone', class: 'size-4') %><% end %>
+              </dd>
+            <% else %>
+              <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.phone_missing') %></dd>
+            <% end %>
+          </div>
+          <div class="md:row-span-2">
+            <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.responsible') %></dt>
+            <% if supplier.responsible_user.present? %>
+              <dd class="flex items-center gap-3">
+                <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800"><%= supplier.responsible_user.display_name.split.map { |part| part.first }.first(2).join.upcase %></span>
+                <span class="break-words text-sm font-semibold text-slate-900"><%= supplier.responsible_user.display_name %></span>
+              </dd>
+            <% else %>
+              <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.responsible_missing') %></dd>
+            <% end %>
+          </div>
+          <div>
+            <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.email') %></dt>
+            <% if supplier.email.present? %>
+              <dd class="flex items-center gap-2 break-all text-sm font-semibold">
+                <%= mail_to supplier.email, supplier.email, class: 'text-emerald-700 hover:underline' %>
+                <%= mail_to supplier.email, icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
+              </dd>
+            <% else %>
+              <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>
+            <% end %>
+          </div>
+        </dl>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <h3 class="flex items-center gap-3 bg-slate-50 px-4 py-3 font-jakarta text-sm font-bold text-slate-900">
+          <span class="flex size-6 items-center justify-center rounded-lg bg-emerald-100 text-xs text-emerald-800">3</span>
+          <%= icon('document-text', class: 'size-5 text-emerald-700') %>
+          <%= t('admin.supplier_general_layout.additional') %>
+        </h3>
+        <dl class="space-y-5 p-5">
+          <div class="grid gap-3 sm:grid-cols-[7rem_minmax(0,1fr)]">
+            <dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.tags') %></dt>
+            <dd class="flex flex-wrap gap-2">
+              <% if supplier.tags.any? %>
+                <% tones = %w[bg-sky-100\ text-sky-800 bg-emerald-100\ text-emerald-800 bg-violet-100\ text-violet-800 bg-amber-100\ text-amber-800] %>
+                <% supplier.tags.each_with_index do |tag, index| %>
+                  <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold <%= tones[index % tones.length] %>"><%= icon('tag', class: 'size-3.5') %><%= tag %></span>
+                <% end %>
+              <% else %>
+                <span class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.tags_missing') %></span>
+              <% end %>
+            </dd>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-[7rem_minmax(0,1fr)]">
+            <dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.notes') %></dt>
+            <dd class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700 whitespace-pre-wrap break-words"><%= supplier.notes.presence || t('admin.supplier_general_layout.notes_missing') %></dd>
+          </div>
+        </dl>
       </div>
     </div>
-    <% if can_edit %>
-      <%= link_to edit_admin_supplier_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
-        <%= icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
-      <% end %>
-    <% end %>
   </div>
-  <% fields = [
-    [t('admin.supplier_dossier.general.code'), supplier.code],
-    [t('admin.supplier_dossier.overview.supplier_name'), supplier.name],
-    [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
-    [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
-    [t('admin.supplier_dossier.fields.alias_name'), supplier.alias_name],
-    [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil],
-    [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
-    [t('admin.supplier_dossier.responsible'), supplier.responsible_user&.display_name],
-    [t('admin.supplier_dossier.overview.phone'), supplier.phone],
-    [t('admin.supplier_dossier.overview.email'), supplier.email],
-    [t('admin.supplier_dossier.notes'), supplier.notes],
-    [t('admin.supplier_dossier.tags'), supplier.tags.join(', ').presence]
-  ] %>
-  <dl class="grid gap-x-8 gap-y-4 pt-5 md:grid-cols-2">
-    <% fields.each do |label, value| %>
-      <div class="border-b border-slate-100 pb-3">
-        <dt class="mb-1 text-xs font-medium text-slate-500"><%= label %></dt>
-        <dd class="break-words whitespace-pre-wrap text-sm font-semibold text-slate-900"><%= value.presence || '—' %></dd>
-      </div>
-    <% end %>
-  </dl>
 </section>

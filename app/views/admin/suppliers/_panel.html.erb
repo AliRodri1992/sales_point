@@ -14,7 +14,7 @@
         <%= supplier.persisted? ? t('admin.suppliers.edit.subtitle') : t('admin.suppliers.new.subtitle') %>
       </p>
     </div>
-    <%= link_to admin_suppliers_path, data: { turbo_frame: '_top' },
+    <%= link_to (supplier.persisted? && params[:return_to] == 'general' ? admin_supplier_path(supplier, tab: 'general') : admin_suppliers_path), data: { turbo_frame: '_top' },
                 class: 'inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-700' do %>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m12 19-7-7 7-7M5 12h14"/></svg>
       <%= t('admin.suppliers.show.back') %>

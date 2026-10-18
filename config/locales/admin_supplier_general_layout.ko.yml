@@ -1,0 +1,13 @@
+ko:
+  admin:
+    supplier_general_layout:
+      identification: "공급업체 식별 정보"
+      contact_management: "연락처 및 관리"
+      additional: "추가 정보"
+      call: "공급업체에 전화하기"
+      email_action: "이메일 보내기"
+      phone_missing: "등록된 전화번호 없음"
+      email_missing: "등록된 이메일 없음"
+      responsible_missing: "담당자 미지정"
+      tags_missing: "등록된 태그 없음"
+      notes_missing: "등록된 메모 없음"

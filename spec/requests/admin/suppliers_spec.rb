@@ -240,6 +240,55 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(supplier.reload.deleted_at).to be_present
   end
 
+  it 'returns to the general dossier tab when updated from general information' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'general')
+    expect(response.body).to include('return_to=general')
+
+    get edit_admin_supplier_path(supplier, return_to: 'general')
+    expect(response.body).to include('name="return_to"')
+    expect(response.body).to include('value="general"')
+    expect(response.body).to include(admin_supplier_path(supplier, tab: 'general'))
+
+    patch admin_supplier_path(supplier), params: { return_to: 'general', supplier: { name: 'Updated from dossier' } }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'general'))
+    expect(supplier.reload.name).to eq('Updated from dossier')
+  end
+
+  it 'preserves the general dossier origin after an invalid update' do
+    supplier = create(:supplier, organization:)
+
+    patch admin_supplier_path(supplier), params: { return_to: 'general', supplier: { name: '' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('name="return_to"')
+    expect(response.body).to include('value="general"')
+  end
+
+  it 'renders grouped general information and informative empty states' do
+    supplier = create(:supplier, organization:, email: nil, phone: nil, responsible_user: nil, notes: nil)
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    panel = document.at_css('#supplier-dossier-general')
+    expect(panel.css('h3').size).to eq(3)
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.phone_missing', locale: :en))
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.email_missing', locale: :en))
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.responsible_missing', locale: :en))
+  end
+
+  it 'renders supplier tags as individual chips' do
+    supplier = create(:supplier, organization:, tags: %w[Priority Distribution])
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-general')
+    expect(panel.css('span.rounded-full').map(&:text)).to include('Priority', 'Distribution')
+  end
+
   it 'renders validation errors when creating an invalid supplier' do
     post admin_suppliers_path, params: { supplier: { code: '', name: '' } }
 

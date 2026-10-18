@@ -86,7 +86,7 @@ module Admin
       if @supplier.update(attributes)
         notify_supplier('updated')
         broadcast_suppliers_update
-        redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.updated') }
+        redirect_to supplier_update_destination, flash: { swal_message: t('admin.suppliers.updated') }
       else
         render_supplier_form_error
       end
@@ -128,6 +128,12 @@ module Admin
           }
         ]
       )
+    end
+
+    def supplier_update_destination
+      return admin_supplier_path(@supplier, tab: 'general') if params[:return_to] == 'general'
+
+      admin_suppliers_path
     end
 
     def supplier_update_attributes
