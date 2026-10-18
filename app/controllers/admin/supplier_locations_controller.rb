@@ -16,10 +16,7 @@ module Admin
         return render json: { error: 'location_unavailable' }, status: :service_unavailable
       end
 
-      signature = Rails.application.message_verifier('supplier-address-location')
-                       .generate(address.geocoding_fingerprint, expires_in: 20.minutes)
-      response.headers['Cache-Control'] = 'private, no-store'
-      render json: result.slice(:latitude, :longitude, :full_address, :confidence).merge(signature:)
+      render_suggestion(address, result)
     end
 
     def map
@@ -35,6 +32,13 @@ module Admin
     private
 
     def not_found = head(:not_found)
+
+    def render_suggestion(address, result)
+      signature = Rails.application.message_verifier('supplier-address-location')
+                       .generate(address.geocoding_fingerprint, expires_in: 20.minutes)
+      response.headers['Cache-Control'] = 'private, no-store'
+      render json: result.slice(:latitude, :longitude, :full_address, :confidence).merge(signature:)
+    end
 
     def authorize_supplier
       return head :forbidden unless current_organization
