@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Addresses::CountryRules do
   {
-    'AR' => ['C1425ABC', '1425'],
+    'AR' => %w[C1425ABC 1425],
     'CO' => ['110111'],
     'CL' => ['8320000'],
     'PE' => ['15001'],
