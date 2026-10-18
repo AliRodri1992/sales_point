@@ -118,7 +118,9 @@ class Address < ApplicationRecord
   private
 
   def clear_unused_postal_code
-    self.postal_code = nil if country && !Addresses::CountryRules.new(country.iso_alpha2).postal_required?
+    return unless addressable_type == 'Supplier' && country
+
+    self.postal_code = nil unless Addresses::CountryRules.new(country.iso_alpha2).postal_required?
   end
 
   def check_country_requirements
