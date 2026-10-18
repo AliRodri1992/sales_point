@@ -12,7 +12,7 @@ RSpec.describe Suppliers::AddressLocationProof do
 
   def verified(latitude: 19.675, longitude: -99.182, reason: nil, **options)
     described_class.verify(
-      token:, address:, supplier:, user:, latitude:, longitude:, reason:, **options
+      token:, address:, supplier:, user:, selection: { latitude:, longitude:, reason: }, **options
     )
   end
 
@@ -34,13 +34,13 @@ RSpec.describe Suppliers::AddressLocationProof do
     expect(verified(latitude: 'invalid')).to be false
     expect(verified(latitude: 190.0)).to be false
     expect(described_class.verify(token: 'bad', address:, supplier:, user:,
-                                  latitude:, longitude:, reason: nil)).to be false
+                                  selection: { latitude:, longitude:, reason: nil })).to be false
   end
 
   it 'binds the proof to both the supplier and the operator' do
     other_supplier = create(:supplier)
     other_user = create(:user)
-    options = { token:, address:, latitude:, longitude:, reason: nil }
+    options = { token:, address:, selection: { latitude:, longitude:, reason: nil } }
     expect(described_class.verify(**options, supplier: other_supplier, user:)).to be false
     expect(described_class.verify(**options, supplier:, user: other_user)).to be false
   end
