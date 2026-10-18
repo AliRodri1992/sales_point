@@ -54,16 +54,20 @@ module SupplierDemoDocuments
     end
 
     def content_for(extension, supplier)
+      return image_contents(extension) if %w[jpg png].include?(extension)
+
       case extension
       when 'pdf' then pdf_for(supplier)
       when 'txt' then "EJEMPLO - SIN VALIDEZ\nProveedor: #{supplier.code}\nArchivo demostrativo.\n"
       when 'docx' then docx_for(supplier)
       when 'xlsx' then xlsx_for(supplier)
-      when 'jpg' then DEMO_JPEG
-      when 'png' then DEMO_PNG
       when 'csv' then "codigo,tipo\n#{supplier.code},demostracion\n"
       when 'xml' then %(<?xml version="1.0" encoding="UTF-8"?>\n<demo><proveedor>#{supplier.code}</proveedor></demo>\n)
       end
+    end
+
+    def image_contents(extension)
+      { 'jpg' => DEMO_JPEG, 'png' => DEMO_PNG }.fetch(extension)
     end
 
     def pdf_for(supplier)
