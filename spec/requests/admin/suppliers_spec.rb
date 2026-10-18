@@ -124,7 +124,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'accepts currency and country references for a supplier and its fiscal address' do
-    country = create(:country)
+    country = create(:country, iso_alpha2: 'MX')
     address_attributes = attributes_for(:address).except(:country).merge(
       country_id: country.id, purpose: 'fiscal'
     )
