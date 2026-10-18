@@ -17,14 +17,18 @@ module SupplierCommercialExamples
       suppliers = organization.suppliers.available.order(:code).to_a
       return if products.empty? || suppliers.empty?
 
-      suppliers.each_with_index do |supplier, supplier_index|
-        OFFERS_PER_SUPPLIER.times do |offset|
-          product = products[(supplier_index + offset) % products.length]
-          name, units = PRESENTATIONS[(supplier_index + offset) % PRESENTATIONS.length]
-          seed_offer(supplier, product, name, units, supplier_index, offset)
-        end
+      suppliers.each_with_index do |supplier, index|
+        seed_supplier_offers(supplier, index, products)
       end
       seed_additional_presentation(suppliers.first, products.first)
+    end
+
+    def seed_supplier_offers(supplier, index, products)
+      OFFERS_PER_SUPPLIER.times do |offset|
+        presentation = PRESENTATIONS[(index + offset) % PRESENTATIONS.length]
+        product = products[(index + offset) % products.length]
+        seed_offer(supplier, product, presentation, index: index, offset: offset)
+      end
     end
 
     def seed_bank_accounts!
@@ -54,28 +58,32 @@ module SupplierCommercialExamples
       Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
     end
 
-    def seed_offer(supplier, product, name, units, supplier_index, offset)
-      attrs = { organization: supplier.organization, supplier:, product:, presentation_name: name }
-      # A soft-deleted seed example should remain archived on later runs.
+    def seed_offer(supplier, product, presentation, index:, offset:)
+      name, units = presentation
+      attrs = { organization: supplier.organization, supplier: supplier, product: product, presentation_name: name }
       return if SupplierProduct.exists?(attrs)
 
       was_unlinked = product.supplier_products.empty?
-      price = (supplier_index + 1) * 20 + (offset + 1) * units * 8
-      SupplierProduct.create!(
-        **attrs, currency: supplier.currency, units_per_package: units, purchase_price: price,
+      SupplierProduct.create!(**attrs, **offer_attributes(supplier, product, units, index, offset))
+      return unless was_unlinked && product.preferred_supplier_id.nil?
+
+      Suppliers::PreferredSupplier.call(product: product, supplier: supplier, expected_supplier_id: nil)
+    end
+
+    def offer_attributes(supplier, product, units, index, offset)
+      price = ((index + 1) * 20) + ((offset + 1) * units * 8)
+      {
+        currency: supplier.currency,
+        units_per_package: units,
+        purchase_price: price,
         supplier_sku: "#{supplier.code}-#{product.code}-#{units}",
         supplier_barcode: format('990%010d', (supplier.id * 10_000) + product.id),
         discount_percent: offset.odd? ? 3 : 0,
         freight_amount: offset.even? ? 5 : 0,
         nonrecoverable_tax: 0,
         minimum_quantity: 1,
-        lead_time_days: (supplier_index % 5) + 1
-      )
-      # Assign a demo preference only when linking a product for the first time.
-      # Clearing that preference manually will not cause it to return on a re-seed.
-      return unless was_unlinked && product.preferred_supplier_id.nil?
-
-      Suppliers::PreferredSupplier.call(product:, supplier:, expected_supplier_id: nil)
+        lead_time_days: (index % 5) + 1
+      }
     end
 
     def seed_additional_presentation(supplier, product)
