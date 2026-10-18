@@ -105,7 +105,8 @@ module SupplierDossierExamples
     end
 
     def seed_documents(supplier, count)
-      return if supplier.documents.attachments.count >= count + SupplierDemoDocuments::FORMATS.length
+      expected_formats = count == DOCUMENTS_PER_FEATURED_SUPPLIER ? SupplierDemoDocuments::FORMATS.length : 1
+      return if supplier.documents.attachments.count >= count + expected_formats
 
       count.times do |index|
         name = format('demo-proveedor-%<code>s-documento-%<number>02d.png',
