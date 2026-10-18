@@ -34,8 +34,21 @@ export default class extends Controller {
   }
 
   input(event) {
-    if (event.target === this.field("postal_code")) this.lookup()
-    if (event.target === this.field("country_id")) this.lookup()
+    if (event.target !== this.field("postal_code") && event.target !== this.field("country_id")) return
+
+    this.clearPreviousSuggestions()
+    this.lookup()
+  }
+
+  clearPreviousSuggestions() {
+    for (const name of ["state", "city"]) {
+      const field = this.field(name)
+      if (field && this.lastFilled[name] && field.value === this.lastFilled[name]) {
+        field.value = ""
+        field.dispatchEvent(new Event("input", { bubbles: true }))
+      }
+      delete this.lastFilled[name]
+    }
   }
 
   lookup() {
