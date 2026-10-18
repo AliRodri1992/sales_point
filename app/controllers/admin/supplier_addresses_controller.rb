@@ -87,7 +87,7 @@ module Admin
     end
 
     def retry_geocoding
-      return redirect_to primary_redirect_path if @address.location_confirmed?
+      return redirect_to primary_redirect_path unless @address.geocoding_status == 'failed'
 
       @address.update!(geocoding_status: :pending)
       enqueue_geocoding(@address)
