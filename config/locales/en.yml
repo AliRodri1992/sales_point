@@ -14,6 +14,8 @@ en:
               taken: "has already been assigned to another active contact."
         address:
           attributes:
+            base:
+              invalid_location_confirmation: "The confirmed location no longer matches this address. Search again and confirm the new location."
             primary:
               taken: "has already been assigned to another address of this type."
     attributes:

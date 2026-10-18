@@ -112,6 +112,7 @@ en:
         primary: "Primary"
         active: "Active"
       address_form:
+        location_searching: "Looking up the address location…"
         location_search: "Find address on map"
         location_confirm: "Confirm location"
         location_optional: "Location is optional; coordinates will be looked up after saving."

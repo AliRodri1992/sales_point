@@ -112,6 +112,7 @@ es:
         primary: "Principal"
         active: "Activo"
       address_form:
+        location_searching: "Buscando la ubicación del domicilio…"
         location_search: "Buscar domicilio en el mapa"
         location_confirm: "Confirmar ubicación"
         location_optional: "La ubicación es opcional; al guardar, se buscarán coordenadas automáticamente."

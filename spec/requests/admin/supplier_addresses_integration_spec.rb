@@ -23,6 +23,17 @@ RSpec.describe 'Supplier address integration', type: :request do
       purpose: 'fiscal', primary: true }.merge(overrides)
   end
 
+  it 'renders translated Mapbox location progress text instead of translation_missing' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller~="supplier-address-location"]')
+    expect(form).to be_present
+    expect(form['data-supplier-address-location-searching-value']).to eq('Looking up the address location…')
+    expect(response.body).not_to include('translation_missing')
+  end
+
   it 'creates and displays a primary fiscal address' do
     post admin_supplier_addresses_path(supplier), params: { address: address_attributes }
 

@@ -14,6 +14,8 @@ ko:
               taken: "이미 다른 활성 연락처로 지정되어 있습니다."
         address:
           attributes:
+            base:
+              invalid_location_confirmation: "확인된 위치가 현재 주소와 일치하지 않습니다. 다시 검색한 후 위치를 확인하세요."
             primary:
               taken: "이미 같은 유형의 다른 주소에 지정되어 있습니다."
     attributes:
