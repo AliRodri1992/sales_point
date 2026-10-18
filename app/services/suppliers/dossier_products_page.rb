@@ -45,7 +45,7 @@ module Suppliers
 
     def load_page(relation)
       relation.order('products.name ASC', 'supplier_products.id ASC')
-              .includes(:currency, product: { image_attachment: :blob })
+              .includes(:currency, product: [:preferred_supplier, { image_attachment: :blob }])
               .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE).to_a
     end
   end
