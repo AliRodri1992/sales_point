@@ -56,7 +56,7 @@ RSpec.describe Suppliers::PreferredSupplier, type: :model, concurrent_db: true d
   end
 
   it 'does not allow inactive or foreign-organization supplier choices' do
-    first_supplier.supplier_products.update_all(active: false)
+    first_supplier.supplier_products.each { |entry| entry.update!(active: false) }
     expect { change_to(first_supplier) }.to raise_error(described_class::Unavailable)
 
     foreign = create(:supplier, organization: create(:organization))

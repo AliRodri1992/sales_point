@@ -8,7 +8,8 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :set_offer, only: %i[edit update destroy history set_preferred clear_preferred]
+    before_action :set_offer, only: %i[edit update destroy history]
+    before_action :set_offer, if: -> { action_name.in?(%w[set_preferred clear_preferred]) }
 
     OFFERS_PER_PAGE = 6
 
