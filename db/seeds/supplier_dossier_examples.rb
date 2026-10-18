@@ -2,6 +2,7 @@
 
 require 'base64'
 require 'stringio'
+require_relative 'supplier_demo_documents'
 
 # Repeatable demo records for supplier tabs and progressive lists.
 # Never calls external geocoding or overwrites existing user-entered records.
@@ -33,6 +34,7 @@ module SupplierDossierExamples
       seed_contacts(supplier, featured ? CONTACTS_PER_FEATURED_SUPPLIER : 3)
       seed_addresses(supplier, country, featured ? ADDRESSES_PER_FEATURED_SUPPLIER : 3)
       seed_documents(supplier, featured ? DOCUMENTS_PER_FEATURED_SUPPLIER : 2)
+      SupplierDemoDocuments.seed!(supplier:, featured:)
       seed_schedules(supplier, branches, featured ? SCHEDULES_PER_FEATURED_SUPPLIER : 2)
       report_supplier(supplier)
     end
