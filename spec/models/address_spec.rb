@@ -9,8 +9,9 @@ RSpec.describe Address, type: :model do
 
   describe 'country-specific address validation' do
     it 'requires all Mexican address fields and a five-digit postal code' do
-      address = build(:address, country: build(:country, iso_alpha2: 'MX'),
-                       exterior_number: nil, neighborhood: nil, state: nil, postal_code: 'ABC12')
+      attributes = { country: build(:country, iso_alpha2: 'MX'), exterior_number: nil,
+                     neighborhood: nil, state: nil, postal_code: 'ABC12' }
+      address = build(:address, **attributes)
       expect(address).not_to be_valid
       %i[exterior_number neighborhood state postal_code].each do |field|
         expect(address.errors[field]).to be_present
@@ -18,8 +19,9 @@ RSpec.describe Address, type: :model do
     end
 
     it 'supports US ZIP+4 and optional neighborhood and exterior number' do
-      address = build(:address, country: build(:country, iso_alpha2: 'US'),
-                       exterior_number: nil, neighborhood: nil, postal_code: '90210-1234')
+      attributes = { country: build(:country, iso_alpha2: 'US'), exterior_number: nil,
+                     neighborhood: nil, postal_code: '90210-1234' }
+      address = build(:address, **attributes)
       expect(address).to be_valid
     end
 
@@ -32,8 +34,9 @@ RSpec.describe Address, type: :model do
     end
 
     it 'allows countries without postal codes to omit the postal code and region' do
-      address = build(:address, country: build(:country, iso_alpha2: 'AE'),
-                       postal_code: nil, neighborhood: nil, state: nil, exterior_number: nil)
+      attributes = { country: build(:country, iso_alpha2: 'AE'), postal_code: nil,
+                     neighborhood: nil, state: nil, exterior_number: nil }
+      address = build(:address, **attributes)
       expect(address).to be_valid
     end
 
@@ -56,8 +59,9 @@ RSpec.describe Address, type: :model do
 
     it 'preserves confirmed coordinates when explicitly confirming the new address' do
       address = create(:address)
-      address.update!(street: 'A different street', latitude: 19.5, longitude: -99.2,
-                      location_confirmed_at: Time.current, geocoding_status: :success)
+      attributes = { street: 'A different street', latitude: 19.5, longitude: -99.2,
+                     location_confirmed_at: Time.current, geocoding_status: :success }
+      address.update!(**attributes)
       expect(address.reload.location_confirmed?).to be true
       expect(address.latitude.to_f).to eq(19.5)
     end

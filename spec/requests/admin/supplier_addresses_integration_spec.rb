@@ -13,9 +13,13 @@ RSpec.describe 'Supplier address integration', type: :request do
     sign_in user
   end
 
+  def mexican_country
+    Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
+  end
+
   def address_attributes(overrides = {})
     { street: 'Main Street', exterior_number: '12', neighborhood: 'Centro',
-      city: 'Mexico City', state: 'CDMX', country_id: (Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')).id, postal_code: '06000',
+      city: 'Mexico City', state: 'CDMX', country_id: mexican_country.id, postal_code: '06000',
       purpose: 'fiscal', primary: true }.merge(overrides)
   end
 
@@ -35,7 +39,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
-    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    form = page.at_css('form[data-controller~="supplier-address-preview"]')
     expect(form).to be_present
     expect(form.at_css('section[aria-labelledby="supplier-address-location-heading"]')).to be_present
     expect(form.at_css('section[aria-labelledby="supplier-address-classification-heading"]')).to be_present
@@ -67,7 +71,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(location.at_css('input[name="address[neighborhood]"][list="supplier-neighborhoods"]')).to be_present
     expect(location.at_css('datalist[data-supplier-postal-assist-target="neighborhoods"]')).to be_present
     expect(location.at_css('[data-supplier-postal-assist-target="status"]')).to be_present
-    expect(page.at_css('form[data-controller="supplier-address-preview"]')['novalidate']).not_to be_nil
+    expect(page.at_css('form[data-controller~="supplier-address-preview"]')['novalidate']).not_to be_nil
     expect(location.at_css('select[name="address[country_id]"] option[data-country-code="MX"][data-flag-url]'))
       .to be_present
   end
@@ -91,7 +95,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
-    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    form = page.at_css('form[data-controller~="supplier-address-preview"]')
     columns = form.at_css('div.grid.items-stretch')
     expect(columns).to be_present
 
@@ -121,7 +125,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     get new_admin_supplier_address_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    form = page.at_css('form[data-controller~="supplier-address-preview"]')
     expect(form['novalidate']).not_to be_nil
 
     browser_validations = %w[required pattern minlength maxlength]
@@ -145,7 +149,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
     page = Nokogiri::HTML(response.body)
-    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    form = page.at_css('form[data-controller~="supplier-address-preview"]')
     expect(form['novalidate']).not_to be_nil
 
     %w[country street exterior_number neighborhood city state postal_code purpose].each do |field|
@@ -187,7 +191,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
-    expect(page.at_css('form[data-controller="supplier-address-preview"]')).to be_present
+    expect(page.at_css('form[data-controller~="supplier-address-preview"]')).to be_present
     expect(page.at_css('textarea[name="address[reference_notes]"]')).to be_nil
   end
 
