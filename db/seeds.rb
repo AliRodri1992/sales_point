@@ -371,8 +371,10 @@ def seed_admin_user
   user = User.find_or_initialize_by(email: 'administrador@delta.com')
   action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
   $stdout.puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
-  assign_admin_user_attributes(user, language)
-  user.save! if user.new_record?
+  if user.new_record?
+    assign_admin_user_attributes(user, language)
+    user.save!
+  end
   report_admin_user(user, language)
   assign_admin_role(user, administrator_role)
   report_admin_roles(user)
@@ -420,8 +422,10 @@ end
 def seed_example_user(index, count, roles, language)
   user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
   action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
-  assign_user_attributes(user, language, index)
-  user.save! if user.new_record?
+  if user.new_record?
+    assign_user_attributes(user, language, index)
+    user.save!
+  end
   role = roles.fetch(index % roles.length)
   assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
