@@ -15,16 +15,7 @@ module Admin
       authorize @supplier, :view_products?
 
       @search = params[:q].to_s.strip.first(120)
-      scope = @supplier.supplier_products.available.joins(:product)
-                       .merge(current_organization.products.not_deleted)
-      scope = filter_offers(scope) if @search.present?
-
-      @total_offers = scope.count
-      @total_pages = [(@total_offers.to_f / OFFERS_PER_PAGE).ceil, 1].max
-      @page = [[params[:page].to_i, 1].max, @total_pages].min
-      @offers = scope.order('products.name ASC', 'supplier_products.id ASC')
-                     .includes(:currency, product: { image_attachment: :blob })
-                     .limit(OFFERS_PER_PAGE).offset((@page - 1) * OFFERS_PER_PAGE)
+      paginate_offers(filtered_offers)
     end
 
     def history
@@ -77,6 +68,21 @@ module Admin
     end
 
     private
+
+    def filtered_offers
+      scope = @supplier.supplier_products.available.joins(:product)
+                       .merge(current_organization.products.not_deleted)
+      @search.present? ? filter_offers(scope) : scope
+    end
+
+    def paginate_offers(scope)
+      @total_offers = scope.count
+      @total_pages = [(@total_offers.to_f / OFFERS_PER_PAGE).ceil, 1].max
+      @page = params[:page].to_i.clamp(1, @total_pages)
+      @offers = scope.order('products.name ASC', 'supplier_products.id ASC')
+                     .includes(:currency, product: { image_attachment: :blob })
+                     .limit(OFFERS_PER_PAGE).offset((@page - 1) * OFFERS_PER_PAGE)
+    end
 
     def filter_offers(scope)
       term = "%#{ActiveRecord::Base.sanitize_sql_like(@search)}%"

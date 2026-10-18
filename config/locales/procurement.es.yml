@@ -1,7 +1,6 @@
 es:
   admin:
     procurement:
-      description: "Consulta los productos asociados a este proveedor."
       add_short: "Agregar"
       thumbnail: "Miniatura"
       product_sku: "Producto / SKU"
@@ -19,7 +18,7 @@ es:
       try_another_search: "Prueba con otro nombre, código o SKU."
       clear_search: "Limpiar búsqueda"
       title: "Productos por proveedor"
-      description: "Administra presentaciones y costos de compra."
+      description: "Consulta los productos asociados a este proveedor."
       add: "Agregar producto"
       product: "Producto"
       presentation: "Presentación"

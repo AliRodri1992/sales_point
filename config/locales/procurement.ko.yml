@@ -1,7 +1,6 @@
 ko:
   admin:
     procurement:
-      description: "이 공급업체와 연결된 상품을 확인하세요."
       add_short: "추가"
       thumbnail: "미리보기"
       product_sku: "상품 / SKU"
@@ -19,7 +18,7 @@ ko:
       try_another_search: "다른 이름, 코드 또는 SKU로 검색하세요."
       clear_search: "검색 초기화"
       title: "공급업체 상품"
-      description: "구매 포장 및 공급업체 비용을 관리합니다."
+      description: "이 공급업체와 연결된 상품을 확인하세요."
       add: "상품 추가"
       product: "상품"
       presentation: "포장 단위"

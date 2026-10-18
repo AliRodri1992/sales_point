@@ -1,7 +1,6 @@
 en:
   admin:
     procurement:
-      description: "View the products associated with this supplier."
       add_short: "Add"
       thumbnail: "Thumbnail"
       product_sku: "Product / SKU"
@@ -19,7 +18,7 @@ en:
       try_another_search: "Try another name, code, or SKU."
       clear_search: "Clear search"
       title: "Supplier products"
-      description: "Manage purchase packaging and supplier costs."
+      description: "View the products associated with this supplier."
       add: "Add product"
       product: "Product"
       presentation: "Presentation"

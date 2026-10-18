@@ -70,11 +70,8 @@ RSpec.describe 'Admin supplier procurement', type: :request do
 
   it 'renders the product image or the emerald SVG placeholder, with SKU and costs' do
     with_image = create(:product, organization:, name: 'Photo Product', code: 'PHOTO-001')
-    with_image.image.attach(
-      io: StringIO.new(Base64.decode64(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
-      )), filename: 'supplier-photo.png', content_type: 'image/png'
-    )
+    image_data = Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg==')
+    with_image.image.attach(io: StringIO.new(image_data), filename: 'supplier-photo.png', content_type: 'image/png')
     offer_for(with_image, supplier_sku: 'PHOTO-SKU', preferred: true)
     no_image = create(:product, organization:, name: 'Without Photo', code: 'NO-PHOTO')
     offer_for(no_image)
@@ -95,12 +92,13 @@ RSpec.describe 'Admin supplier procurement', type: :request do
   it 'returns to the supplier Products tab and shows Back to the left of Add' do
     get admin_supplier_supplier_products_path(supplier)
 
-    header = document.at_css('header')
+    header = document.at_css('h1').parent.parent
     links = header.css('a')
-    expect(links.map { |link| link['href'] }).to eq([
+    expected_paths = [
       admin_supplier_path(supplier, tab: 'products'),
       new_admin_supplier_supplier_product_path(supplier)
-    ])
+    ]
+    expect(links.pluck('href')).to eq(expected_paths)
     expect(links.map { |link| link.text.strip }).to eq(%w[Back Add])
 
     get links.first['href']
@@ -175,5 +173,4 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     expect(document.css('a[href$="/edit"]')).to be_empty
     expect(document.css('[data-product-offer-row] form')).to be_empty
   end
-
 end
