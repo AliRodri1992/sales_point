@@ -77,8 +77,7 @@
         [t('admin.supplier_details.address_fields.state'), address.state],
         [t('admin.supplier_details.address_fields.postal_code'), address.postal_code],
         [t('admin.supplier_details.address_fields.country'), address.country.localized_name],
-        [t('admin.supplier_details.address_fields.purpose'), t("admin.supplier_details.address_purposes.#{purpose}")],
-        [t('admin.supplier_details.primary'), t("admin.supplier_dossier.address_cards.#{address.primary? ? 'yes' : 'no'}")]
+        [t('admin.supplier_details.address_fields.purpose'), t("admin.supplier_details.address_purposes.#{purpose}")]
       ] %>
       <% if address.has_attribute?(:reference_notes) && address.reference_notes.present? %>
         <% fields.insert(7, [t('admin.supplier_details.address_form.references'), address.reference_notes]) %>

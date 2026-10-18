@@ -51,6 +51,22 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(card.css('details')).to be_empty
   end
 
+  it 'shows the primary badge without repeating primary status in expanded details' do
+    primary = create(:address, :fiscal, :primary, addressable: supplier)
+    secondary = create(:address, :delivery, addressable: supplier)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    primary_card = cards.find { |card| card['data-supplier-address-id'] == primary.id.to_s }
+    secondary_card = cards.find { |card| card['data-supplier-address-id'] == secondary.id.to_s }
+
+    expect(primary_card.text).to include('Primary')
+    expect(primary_card.at_css('[data-address-detail]').css('dt').map(&:text)).not_to include('Primary')
+    expect(primary_card.at_css('[data-address-detail]').text).not_to include('Yes')
+    expect(secondary_card.at_css('[data-address-detail]').css('dt').map(&:text)).not_to include('Primary')
+    expect(secondary_card.at_css('[data-address-detail]').text).not_to include('No')
+  end
+
   it 'offers setting secondary addresses as primary without edit or delete in the dossier' do
     address = create(:address, :fiscal, addressable: supplier)
 
