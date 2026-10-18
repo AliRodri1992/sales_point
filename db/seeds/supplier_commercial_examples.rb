@@ -13,6 +13,10 @@ module SupplierCommercialExamples
       return if Rails.env.production?
 
       organization = demo_organization
+      seed_product_catalog(organization)
+    end
+
+    def seed_product_catalog(organization)
       products = organization.products.not_deleted.available.order(:code).to_a
       suppliers = organization.suppliers.available.order(:code).to_a
       return if products.empty? || suppliers.empty?
