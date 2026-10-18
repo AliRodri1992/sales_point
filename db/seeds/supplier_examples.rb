@@ -8,6 +8,7 @@ module SupplierExamples
   ORGANIZATION_NAME = 'Delta POS'
 
   def self.seed!
+    seed_demo_fiscal_regime
     organization = create_organization
     create_membership(organization)
     create_suppliers_for(organization)
@@ -16,6 +17,14 @@ module SupplierExamples
 
   class << self
     private
+
+    def seed_demo_fiscal_regime
+      return if SatFiscalRegime.where(code: '601', person_type: 'M', deleted_at: nil).exists?
+
+      SatFiscalRegime.create!(
+        code: '601', person_type: 'M', description: 'General de Ley Personas Morales'
+      )
+    end
 
     def create_organization
       organization = Organization.find_or_initialize_by(tax_id: ORGANIZATION_TAX_ID)
@@ -96,12 +105,13 @@ module SupplierExamples
         minimum_order_amount: 500 + (number * 100),
         tags: %w[demostracion compras],
         responsible_user: organization.users.find_by(email: 'administrador@delta.com'),
+        sat_fiscal_regime: SatFiscalRegime.find_by!(code: '601', person_type: 'M', deleted_at: nil),
         notes: "Proveedor de demostración #{number} para Delta POS."
       }
     end
 
     def fill_missing_details(supplier, attributes)
-      fields = %i[legal_name trade_name alias_name classification responsible_user]
+      fields = %i[legal_name trade_name alias_name classification responsible_user sat_fiscal_regime]
       fields.each do |field|
         supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank?
       end

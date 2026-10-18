@@ -504,6 +504,7 @@ SeedConsole.track('Organización Delta POS', Organization) do
   SupplierExamples.seed!
 end
 SeedConsole.report('Proveedores', Supplier)
+SeedConsole.report('Regímenes fiscales SAT', SatFiscalRegime)
 SeedConsole.report('Contactos', Contact)
 SeedConsole.report('Membresías', OrganizationMembership)
 

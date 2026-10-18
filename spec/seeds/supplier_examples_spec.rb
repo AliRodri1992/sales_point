@@ -38,6 +38,7 @@ RSpec.describe SupplierExamples do
     expect(supplier.classification).to be_present
     expect(supplier.tags).to include('demostracion')
     expect(supplier.responsible_user).to eq(administrator)
+    expect(supplier.sat_fiscal_regime.code).to eq('601')
     expect(supplier.contacts.first.mobile_phone).to be_present
     expect(supplier.organization_id).to eq(organization.id)
   end
