@@ -81,7 +81,11 @@ RSpec.describe Address, type: :model do
     it { is_expected.to validate_presence_of(:street) }
     it { is_expected.to validate_length_of(:street).is_at_least(2).is_at_most(150) }
     it { is_expected.to validate_presence_of(:exterior_number) }
-    it { is_expected.to validate_length_of(:exterior_number).is_at_most(20).allow_blank }
+    it 'rejects an exterior number longer than the database limit' do
+      address = build(:address, exterior_number: 'A' * 21)
+      expect(address).not_to be_valid
+      expect(address.errors[:exterior_number]).to be_present
+    end
     it { is_expected.to validate_length_of(:interior_number).is_at_most(20).allow_blank }
     it { is_expected.to validate_length_of(:reference_notes).is_at_most(200).allow_blank }
     it { is_expected.to validate_presence_of(:neighborhood) }

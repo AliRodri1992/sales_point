@@ -5,7 +5,7 @@ RSpec.describe 'Admin::Branches', type: :request do
   let(:branch_role) { create(:system_role, :branch) }
   let(:admin_user) { create(:user, system_roles: [system_admin_role]) }
 
-  let(:country) { create(:country) }
+  let(:country) { create(:country, iso_alpha2: 'MX') }
 
   before { sign_in admin_user }
 
