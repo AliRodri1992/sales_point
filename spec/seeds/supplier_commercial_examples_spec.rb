@@ -60,7 +60,7 @@ RSpec.describe SupplierCommercialExamples do
     expect(account.clabe.length).to eq(18)
     expect(account.clabe).to start_with('999')
     expect(account.bank_name).to include('NO REAL')
-    expect(account.read_attribute_before_type_cast(:clabe)).not_to eq(account.clabe)
+    expect(account.ciphertext_for(:clabe)).not_to include(account.clabe)
   end
 
   it 'does not replace bank details or recreate an archived bank account' do
