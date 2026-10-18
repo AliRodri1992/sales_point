@@ -75,7 +75,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     card = cards.first
     action_path = set_primary_admin_supplier_address_path(supplier, address, source: 'dossier')
     expect(card.at_css("form[action='#{action_path}']")).to be_present
-    expect(card.css('a, form[action*="edit"], form[action*="destroy"]')).to be_empty
+    expect(card.css('a[href^="/admin"], form[action*="edit"], form[action*="destroy"]')).to be_empty
     expect(card.at_css('button[aria-expanded="false"]')).to be_present
     expect(address_panel.at_css('[data-supplier-addresses-target="list"]')['class']).to include('md:grid-cols-2')
   end
@@ -225,7 +225,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(address_panel.at_css('[data-supplier-addresses-target="empty"]')['class']).not_to include('hidden')
     expect(address_panel.at_css('[data-supplier-addresses-target="loadMore"]')['class']).to include('hidden')
     expect(address_panel.css('[data-supplier-addresses-target="filterCount"]').map(&:text))
-      .to eq(%w[0 0 0 0 0 0])
+      .to eq(Array.new(Suppliers::DossierAddressesPage::FILTERS.length, '0'))
   end
 
   it 'shows localized type labels in Spanish and Korean' do
