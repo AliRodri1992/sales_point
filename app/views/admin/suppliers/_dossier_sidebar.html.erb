@@ -10,7 +10,7 @@
   ['products', 'box', :operations]
 ] %>
 <% sections.reject! { |section, _icon, _group| section == 'products' } unless can_view_products %>
-<% sections << ['bank_accounts', 'bank', :dossier] if can_view_bank_accounts %>
+<% sections << ['bank_accounts', 'bank', :finances] if can_view_bank_accounts %>
 <% sections << ['statement', 'wallet', :finances] if can_view_finances %>
 <% sidebar_groups = sections.group_by(&:last) %>
 

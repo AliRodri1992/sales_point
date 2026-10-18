@@ -138,6 +138,26 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(response.body).not_to include('data-section="reconciliation"')
   end
 
+
+  it 'groups both financial entries under Finance on desktop and mobile' do
+    get admin_supplier_path(supplier)
+
+    navigation = dossier.at_css('aside[aria-label]')
+    finance_group = navigation.css('nav > div').find do |group|
+      group.at_css('h2')&.text&.strip == I18n.t('admin.supplier_dossier.navigation.finances')
+    end
+    expect(finance_group).to be_present
+    expect(finance_group.css('button[data-section]').pluck('data-section')).to eq(
+      %w[bank_accounts statement]
+    )
+
+    mobile_finance = navigation.css('select optgroup').find do |group|
+      group['label'] == I18n.t('admin.supplier_dossier.navigation.finances')
+    end
+    expect(mobile_finance).to be_present
+    expect(mobile_finance.css('option').pluck('value')).to eq(%w[bank_accounts statement])
+  end
+
   it 'places Back outside the three-dot menu and Edit inside it' do
     get admin_supplier_path(supplier)
 

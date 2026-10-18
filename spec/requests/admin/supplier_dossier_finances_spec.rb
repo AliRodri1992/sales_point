@@ -32,8 +32,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(response).to have_http_status(:ok)
     expect(panel('statement').at_css('[data-finance-empty-payables] img[src*="saccountspayable"]')).to be_present
     expect(panel('statement').at_css('[data-finance-bank-accounts]')).to be_nil
-    payables_link = "a[href='#{admin_account_payables_path(supplier_id: supplier.id)}']"
-    expect(panel('statement').at_css(payables_link)).to be_present
+    expect(panel('statement').css('a')).to be_empty
+    expect(panel('statement').text).not_to include('Manage payables')
     expect(panel('bank_accounts').at_css('[data-finance-empty-banks] img[src*="sbankaccounts"]')).to be_present
     header = panel('bank_accounts').at_css('[data-finance-banks-header]')
     heading_row = header.at_css('[data-finance-banks-heading-row]')
@@ -61,6 +61,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(statement.at_css('[data-finance-metric="next_due"]').text).to include(formatted_due)
     expect(statement.text).to include('INV-OLD', 'INV-SOON')
     expect(statement.at_css('[data-finance-empty-payables]')).to be_nil
+    expect(statement.text).not_to include('Manage payables')
+    expect(statement.css("a[href*='account_payables']")).to be_empty
   end
 
   it 'never includes invoices from a different supplier in the statement' do
