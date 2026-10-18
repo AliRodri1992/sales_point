@@ -68,6 +68,8 @@ RSpec.describe Suppliers::DossierAddressesPage do
     expect(page(query: 'azul').addresses.pluck(:id)).to eq([match.id])
     expect(target.reload.neighborhood).to be_nil
     expect(page(query: 'Vista Bella').addresses.pluck(:id)).to eq([mexican.id])
+    expect(target.reload.neighborhood).to be_nil
+    expect(page(query: 'Vista Bella').addresses.pluck(:id)).to eq([mexican.id])
     expect(page(query: '%').addresses).to be_empty
   end
 
@@ -95,7 +97,7 @@ RSpec.describe Suppliers::DossierAddressesPage do
   end
 
   it 'searches street, address details, postal code and country, ignoring case' do
-    country = create(:country, name: 'Exampleland')
+    country = create(:country, name: 'Exampleland', iso_alpha2: 'US')
     attributes = {
       country:, street: 'Calle del Sol', city: 'Pueblo Norte',
       neighborhood: 'Vista Bella', postal_code: '54831'

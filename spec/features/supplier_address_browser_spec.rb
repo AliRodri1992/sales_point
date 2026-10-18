@@ -38,16 +38,20 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     choose_country('MX')
     postal = find('input[name="address[postal_code]"]', visible: :all)
     postal.set('06000')
+    neighborhood = find('input[name="address[neighborhood]"]', visible: :all)
+    neighborhood.set('Centro')
     city = find('input[name="address[city]"]', visible: :all)
     city.set('Cuauhtémoc')
     choose_country('AE')
 
     expect(postal.value).to eq('')
+    expect(neighborhood.value).to eq('')
     expect(city.value).to eq('')
     expect(page).to have_css('[data-country-postal-wrapper].hidden', visible: :all)
 
     choose_country('MX')
     expect(postal.value).to eq('06000')
+    expect(neighborhood.value).to eq('Centro')
     expect(city.value).to eq('Cuauhtémoc')
   end
 
