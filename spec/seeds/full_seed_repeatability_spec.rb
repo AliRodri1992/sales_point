@@ -6,10 +6,11 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
   let(:seeded_models) do
     [
       Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
+      SystemRole, Permission, SystemRolePermission, Language, Translate, SatMonth,
       Supplier, Contact, Address, SupplierSchedule, SupplierProduct,
       SupplierProductPrice, SupplierBankAccount, Product, Inventory,
       Branch, Category, Client, Country, Currency, CountryCurrency,
-      ActiveStorage::Attachment, SatFiscalRegime
+      ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime
     ]
   end
 
@@ -28,5 +29,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(admin.reload.valid_password?('PasswordManual#2026')).to be(true)
     expect(SupplierProduct.count).to be_positive
     expect(SupplierBankAccount.count).to eq(SupplierExamples::COUNT)
+    expect(Supplier.where(code: 'SUP-0001').first.documents.attachments.count).to be >= 19
+    expect(SupplierProduct.group(:supplier_id).count.keys.length).to eq(SupplierExamples::COUNT)
   end
 end

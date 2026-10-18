@@ -11,7 +11,7 @@ RSpec.describe SupplierCommercialExamples do
   before do
     SupplierExamples.seed!
     organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
-    8.times { |index| create(:product, organization:, code: format('DEMO-%04d', index + 1)) }
+    8.times { |index| create(:product, organization:, code: format('PROD%04d', index + 1)) }
   end
 
   it 'creates repeatable supplier offers, active product preferences and price history' do
@@ -46,6 +46,32 @@ RSpec.describe SupplierCommercialExamples do
     expect(offer.reload.purchase_price).to eq(987)
     expect(product.reload.preferred_supplier).to be_nil
     expect(SupplierProductPrice.count).to eq(price_history_before + 1)
+  end
+
+  it 'links inactive suppliers and inactive demo products without activating unavailable offers' do
+    org = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    inactive_product = create(:product, organization: org, code: 'PROD0015', status: :inactive)
+    described_class.seed_products!
+
+    inactive_supplier = org.suppliers.find_by!(code: 'SUP-0005')
+    expect(inactive_supplier).to be_inactive
+    expect(inactive_supplier.supplier_products.count).to eq(described_class::OFFERS_PER_SUPPLIER)
+    expect(inactive_supplier.supplier_products.where(active: true)).to be_empty
+    expect(inactive_product.supplier_products.count).to be_positive
+    expect(inactive_product.supplier_products.where(active: true)).to be_empty
+
+    count = SupplierProduct.count
+    described_class.seed_products!
+    expect(SupplierProduct.count).to eq(count)
+  end
+
+  it 'does not attach demonstration offers to manually created catalog products' do
+    org = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    manually_added = create(:product, organization: org, code: 'OWNED-ITEM')
+
+    described_class.seed_products!
+
+    expect(manually_added.supplier_products).to be_empty
   end
 
   it 'creates encrypted, checksum-valid and nonduplicated demo bank accounts' do
