@@ -108,7 +108,11 @@ Rails.application.routes.draw do
       end
 
       resources :supplier_products, path: 'products', except: %i[show] do
-        member { get :history }
+        member do
+          get :history
+          post :set_preferred
+          post :clear_preferred
+        end
       end
       get 'products/:product_id/comparison', to: 'supplier_product_comparisons#show', as: :product_comparison
       collection { get :export }

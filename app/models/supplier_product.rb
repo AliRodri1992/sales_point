@@ -19,11 +19,15 @@ class SupplierProduct < ApplicationRecord
   validates :discount_percent, numericality: { in: 0..100 }
   validates :lead_time_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :consistent_organization
-  validate :single_preferred_supplier
+  around_save :synchronize_preference
 
   scope :available, -> { where(deleted_at: nil, active: true) }
 
   after_save :record_price_change, if: :price_snapshot_changed?
+
+  def preferred?
+    product&.preferred_supplier_id == supplier_id
+  end
 
   def unit_cost
     amount = purchase_price * (1 - (discount_percent / 100))
@@ -37,11 +41,22 @@ class SupplierProduct < ApplicationRecord
     errors.add(:product, :invalid) if product && product.organization_id != organization_id
   end
 
-  def single_preferred_supplier
-    return unless preferred? && organization_id && product_id
+  # Serializes offer changes with preference decisions for this product.
+  def synchronize_preference
+    return yield unless product&.persisted?
 
-    candidates = self.class.available.where(organization_id:, product_id:, preferred: true)
-    errors.add(:preferred, :taken) if candidates.where.not(id: id).exists?
+    product.with_lock do
+      result = yield
+      clear_unavailable_preference if result && (saved_change_to_active? || saved_change_to_deleted_at?)
+      result
+    end
+  end
+
+  def clear_unavailable_preference
+    return unless product.preferred_supplier_id == supplier_id
+    return if product.supplier_products.available.where(supplier_id:).exists?
+
+    product.update!(preferred_supplier: nil)
   end
 
   def price_snapshot_changed?

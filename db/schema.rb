@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -711,6 +711,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
     t.string "name", null: false
     t.bigint "organization_id", null: false
     t.integer "position", default: 0
+    t.bigint "preferred_supplier_id"
     t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
     t.bigint "sat_tax_id"
     t.bigint "sat_unit_key_id"
@@ -729,6 +730,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
     t.index ["organization_id", "slug"], name: "idx_products_org_slug", unique: true, where: "((deleted_at IS NULL) AND (slug IS NOT NULL))"
     t.index ["organization_id"], name: "index_products_on_organization_id"
     t.index ["position"], name: "index_products_on_position"
+    t.index ["preferred_supplier_id"], name: "index_products_on_preferred_supplier_id"
     t.index ["sat_tax_id"], name: "index_products_on_sat_tax_id"
     t.index ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id"
     t.check_constraint "tracking_mode::text = ANY (ARRAY['none'::character varying, 'lot'::character varying, 'serial'::character varying]::text[])", name: "chk_products_tracking_mode"
@@ -1294,7 +1296,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
     t.decimal "minimum_quantity", precision: 14, scale: 4, default: "1.0", null: false
     t.decimal "nonrecoverable_tax", precision: 14, scale: 4, default: "0.0", null: false
     t.bigint "organization_id", null: false
-    t.boolean "preferred", default: false, null: false
     t.string "presentation_name", limit: 80, default: "Unit", null: false
     t.bigint "product_id", null: false
     t.decimal "purchase_price", precision: 14, scale: 4, default: "0.0", null: false
@@ -1304,7 +1305,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
     t.decimal "units_per_package", precision: 14, scale: 4, default: "1.0", null: false
     t.datetime "updated_at", null: false
     t.index ["currency_id"], name: "index_supplier_products_on_currency_id"
-    t.index ["organization_id", "product_id"], name: "idx_supplier_products_one_preferred", unique: true, where: "((preferred = true) AND (deleted_at IS NULL))"
     t.index ["organization_id", "supplier_id", "product_id", "presentation_name"], name: "idx_supplier_products_active_pair", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_supplier_products_on_organization_id"
     t.index ["product_id"], name: "index_supplier_products_on_product_id"
@@ -1570,6 +1570,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_020000) do
   add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "products", "categories"
   add_foreign_key "products", "organizations"
+  add_foreign_key "products", "suppliers", column: "preferred_supplier_id"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "purchase_approvals", "organizations"

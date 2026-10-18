@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class Product < ApplicationRecord
+  has_paper_trail only: [:preferred_supplier_id]
   belongs_to :organization
+  belongs_to :preferred_supplier, class_name: 'Supplier', optional: true
   has_many :supplier_products, dependent: :restrict_with_exception
+  validate :preferred_supplier_is_eligible, if: :will_save_change_to_preferred_supplier_id?
   has_many :inventories, dependent: :restrict_with_exception
   has_many :purchase_order_items, dependent: :restrict_with_exception
   has_many :purchase_request_items, dependent: :restrict_with_exception
@@ -86,6 +89,15 @@ class Product < ApplicationRecord
   def to_param = slug.presence
 
   private
+
+  def preferred_supplier_is_eligible
+    return if preferred_supplier_id.nil?
+
+    eligible = preferred_supplier&.organization_id == organization_id &&
+               preferred_supplier&.deleted_at.nil? && preferred_supplier&.active? &&
+               supplier_products.available.exists?(supplier_id: preferred_supplier_id)
+    errors.add(:preferred_supplier, :invalid) unless eligible
+  end
 
   def set_defaults
     self.status ||= 'active'
