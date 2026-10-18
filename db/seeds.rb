@@ -373,9 +373,17 @@ def seed_admin_user
   $stdout.puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
   assign_admin_user_attributes(user, language)
   user.save! if user.new_record?
+  report_admin_user(user, language)
+  assign_admin_role(user, administrator_role)
+  report_admin_roles(user)
+end
+
+def report_admin_user(user, language)
   $stdout.puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} " \
                "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
-  assign_admin_role(user, administrator_role)
+end
+
+def report_admin_roles(user)
   $stdout.puts "[SEEDS][USUARIO][OK] Administrador configurado; roles=#{user.system_roles.pluck(:code).join(', ')}"
 end
 
