@@ -372,7 +372,7 @@ def seed_admin_user
   action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
   $stdout.puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
   assign_admin_user_attributes(user, language)
-  user.save!
+  user.save! if user.new_record?
   $stdout.puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} " \
                "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
   assign_admin_role(user, administrator_role)
@@ -382,8 +382,7 @@ end
 def assign_admin_user_attributes(user, language)
   user.assign_attributes(
     username: 'administrador',
-    password: 'administrador',
-    password_confirmation: 'administrador',
+    **(user.new_record? ? { password: 'administrador', password_confirmation: 'administrador' } : {}),
     user_type: :employee,
     status: :active,
     theme: Theme::DEFAULT,
@@ -414,7 +413,7 @@ def seed_example_user(index, count, roles, language)
   user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
   action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
   assign_user_attributes(user, language, index)
-  user.save!
+  user.save! if user.new_record?
   role = roles.fetch(index % roles.length)
   assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
@@ -425,8 +424,7 @@ end
 def assign_user_attributes(user, language, index)
   user.assign_attributes(
     username: "user#{index + 1}",
-    password: 'password123',
-    password_confirmation: 'password123',
+    **(user.new_record? ? { password: 'password123', password_confirmation: 'password123' } : {}),
     user_type: :employee,
     status: :active,
     theme: Theme::DEFAULT,
@@ -502,7 +500,7 @@ SeedConsole.track('Clientes', Client) do
   20.times do |index|
     number = index + 1
     code = format('CLI%04d', number)
-    next if Client.exists?(code:)
+    next if Client.unscoped.exists?(code:)
 
     Client.create!(
       code:,
@@ -522,7 +520,7 @@ SeedConsole.track('Categorías', Category) do
   15.times do |index|
     number = index + 1
     code = format('cat%04d', number)
-    next if Category.exists?(code:)
+    next if Category.unscoped.exists?(code:)
 
     Category.create!(
       code:,
@@ -541,7 +539,7 @@ SeedConsole.track('Productos', Product) do
   15.times do |index|
     number = index + 1
     code = format('PROD%04d', number)
-    next if organization.products.exists?(code:)
+    next if Product.unscoped.exists?(organization:, code:)
 
     organization.products.create!(
       code:,
@@ -563,7 +561,7 @@ SeedConsole.track('Sucursales', Branch) do
   15.times do |index|
     number = index + 1
     name = format('Sucursal Delta %02d', number)
-    next if Branch.exists?(organization:, name:)
+    next if Branch.unscoped.exists?(organization:, name:)
 
     Branch.create!(
       organization:,
@@ -587,6 +585,15 @@ require_relative 'seeds/supplier_dossier_examples'
 SeedConsole.track('Expedientes de proveedores') do
   SupplierDossierExamples.seed!
 end
+
+require_relative 'seeds/supplier_commercial_examples'
+SeedConsole.track('Productos por proveedor', SupplierProduct) do
+  SupplierCommercialExamples.seed_products!
+end
+SeedConsole.track('Cuentas bancarias de proveedores', SupplierBankAccount) do
+  SupplierCommercialExamples.seed_bank_accounts!
+end
+SeedConsole.report('Proveedores preferidos', Product.where.not(preferred_supplier_id: nil))
 SeedConsole.report('Direcciones de proveedores', Address.where(addressable_type: 'Supplier'))
 SeedConsole.report('Calendarios de proveedores', SupplierSchedule)
 
