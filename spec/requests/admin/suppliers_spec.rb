@@ -289,6 +289,26 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(panel.css('span.rounded-full').map { |chip| chip.text.squish }).to include('Priority', 'Distribution')
   end
 
+  it 'places the address management link beside the heading and the search below the filters' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    section = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    title_row = section.at_css('[data-supplier-addresses-title-row]')
+    toolbar = section.at_css('[data-supplier-addresses-toolbar]')
+    filters = toolbar.at_css('[data-supplier-addresses-filters]')
+    search_row = toolbar.at_css('[data-supplier-addresses-search-row]')
+
+    expect(title_row.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
+    expect(title_row.at_css('input[type="search"]')).to be_nil
+    expect(filters.css('[data-supplier-addresses-target="filter"]')).not_to be_empty
+    expect(filters.next_element).to eq(search_row)
+    expect(search_row.at_css('input[data-supplier-addresses-target="search"]')).to be_present
+    expect(search_row.at_css('input')&.[]('data-action')).to eq('input->supplier-addresses#search')
+  end
+
   it 'renders validation errors when creating an invalid supplier' do
     post admin_suppliers_path, params: { supplier: { code: '', name: '' } }
 
