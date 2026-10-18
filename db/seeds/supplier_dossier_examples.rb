@@ -38,14 +38,14 @@ module SupplierDossierExamples
     end
 
     def report_supplier(supplier)
-      puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
+      $stdout.puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
            "direcciones=#{supplier.addresses.not_deleted.count} documentos=#{supplier.documents.attachments.count} " \
            "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
     end
 
     def seed_contacts(supplier, count)
       (2..count).each do |index|
-        email = format('demo.s%04d.c%02d@ejemplo.test', supplier.id, index)
+        email = format('demo.s%<supplier>04d.c%<contact>02d@ejemplo.test', supplier: supplier.id, contact: index)
         next if supplier.contacts.with_deleted.exists?(email: email)
 
         supplier.contacts.create!(contact_attributes(index, email))
@@ -90,7 +90,7 @@ module SupplierDossierExamples
 
     def seed_documents(supplier, count)
       count.times do |index|
-        name = format('demo-proveedor-%s-documento-%02d.png', supplier.code.downcase, index + 1)
+        name = format('demo-proveedor-%<code>s-documento-%<number>02d.png', code: supplier.code.downcase, number: index + 1)
         next if supplier.documents.attachments.joins(:blob).exists?(active_storage_blobs: { filename: name })
 
         supplier.documents.attach(
@@ -111,15 +111,13 @@ module SupplierDossierExamples
         notes = "DEMO-CALENDARIO-#{index + 1}"
         next if supplier.supplier_schedules.exists?(notes: notes)
 
-        supplier.supplier_schedules.create!(
-          branch: branch,
-          kind: kind,
-          weekday: weekday,
-          starts_at: '09:00',
-          ends_at: '11:00',
-          notes: notes
-        )
+        supplier.supplier_schedules.create!(schedule_attributes(branch, kind, weekday, notes))
       end
+    end
+
+    def schedule_attributes(branch, kind, weekday, notes)
+      { branch: branch, kind: kind, weekday: weekday,
+        starts_at: '09:00', ends_at: '11:00', notes: notes }
     end
   end
 end
