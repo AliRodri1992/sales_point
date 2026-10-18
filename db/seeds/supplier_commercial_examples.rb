@@ -17,8 +17,11 @@ module SupplierCommercialExamples
     end
 
     def seed_product_catalog(organization)
-      products = organization.products.not_deleted.available.order(:code).to_a
-      suppliers = organization.suppliers.available.order(:code).to_a
+      # Seed only our named demonstration records, never customer-created catalog items.
+      demo_codes = (1..15).map { |number| format('PROD%04d', number) }
+      supplier_codes = (1..SupplierExamples::COUNT).map { |number| format('SUP-%04d', number) }
+      products = organization.products.not_deleted.where(code: demo_codes).order(:code).to_a
+      suppliers = organization.suppliers.not_deleted.where(code: supplier_codes).order(:code).to_a
       return if products.empty? || suppliers.empty?
 
       seed_supplier_offers(suppliers, products)
@@ -67,8 +70,8 @@ module SupplierCommercialExamples
       return if SupplierProduct.exists?(attrs)
 
       was_unlinked = product.supplier_products.empty?
-      SupplierProduct.create!(attrs.merge(offer_values(supplier, product, units, position)))
-      assign_first_preference(product, supplier) if was_unlinked
+      offer = SupplierProduct.create!(attrs.merge(offer_values(supplier, product, units, position)))
+      assign_first_preference(product, supplier) if was_unlinked && offer.active? && supplier.active?
     end
 
     def offer_values(supplier, product, units, position)
@@ -76,6 +79,7 @@ module SupplierCommercialExamples
       offset = position.fetch(:offset)
       {
         currency: supplier.currency, units_per_package: units,
+        active: supplier.active? && product.active?,
         purchase_price: ((index + 1) * 20) + ((offset + 1) * units * 8),
         supplier_sku: "#{supplier.code}-#{product.code}-#{units}",
         supplier_barcode: demo_barcode(supplier, product),
