@@ -138,13 +138,30 @@ RSpec.describe 'Supplier location verification', type: :request do
     expect(supplier.addresses.count).to eq(0)
   end
 
+  it 'rejects low confidence even when coordinates match unless audited review is supplied' do
+    fake_geocoder(result.merge(confidence: 0.32))
+    post address_location_suggestion_admin_supplier_path(supplier), params: { address: fields }
+    signature = response.parsed_body.fetch('signature')
+    attrs = fields.merge(purpose: 'delivery', location_confirmed: '1',
+                         location_signature: signature, latitude: '19.6742', longitude: '-99.1803')
+    post admin_supplier_addresses_path(supplier), params: { address: attrs }
+    expect(response).to have_http_status(:unprocessable_content)
+
+    attrs[:location_reviewed] = '1'
+    attrs[:location_adjustment_reason] = 'Se comprobó la entrada principal'
+    post admin_supplier_addresses_path(supplier), params: { address: attrs }
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(supplier.addresses.last.geocoding_confidence.to_f).to eq(0.32)
+  end
+
   it 'records a justified distant marker adjustment' do
     fake_geocoder
     post address_location_suggestion_admin_supplier_path(supplier), params: { address: fields }
     signature = response.parsed_body.fetch('signature')
     attributes = fields.merge(purpose: 'delivery', primary: false,
-                              latitude: '20.000000', longitude: '-99.180300',
+                              latitude: '19.750000', longitude: '-99.180300',
                               location_confirmed: '1', location_signature: signature,
+                              location_reviewed: '1',
                               location_adjustment_reason: 'Acceso real por carretera diferente')
 
     post admin_supplier_addresses_path(supplier), params: { address: attributes }
