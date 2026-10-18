@@ -70,7 +70,8 @@ RSpec.describe 'Admin supplier procurement', type: :request do
 
   it 'renders the product image or the emerald SVG placeholder, with SKU and costs' do
     with_image = create(:product, organization:, name: 'Photo Product', code: 'PHOTO-001')
-    image_data = Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg==')
+    png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
+    image_data = Base64.decode64(png)
     with_image.image.attach(io: StringIO.new(image_data), filename: 'supplier-photo.png', content_type: 'image/png')
     offer_for(with_image, supplier_sku: 'PHOTO-SKU', preferred: true)
     no_image = create(:product, organization:, name: 'Without Photo', code: 'NO-PHOTO')
