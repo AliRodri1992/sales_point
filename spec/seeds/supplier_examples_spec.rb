@@ -71,6 +71,20 @@ RSpec.describe SupplierExamples do
     )
   end
 
+  it 'backfills missing commercial fields but preserves deliberate zero amounts' do
+    described_class.seed!
+    supplier = Supplier.find_by!(code: 'SUP-0002')
+    supplier.update!(credit_limit: 0, discount_percent: 0, responsible_user: nil,
+                     minimum_order_amount: 0)
+
+    described_class.seed!
+
+    expect(supplier.reload.credit_limit).to eq(0)
+    expect(supplier.discount_percent).to eq(0)
+    expect(supplier.minimum_order_amount).to eq(0)
+    expect(supplier.responsible_user.email).to eq('administrador@delta.com')
+  end
+
   it 'fills missing details without resetting user-edited supplier records or contacts' do
     described_class.seed!
 

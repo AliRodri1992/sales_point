@@ -28,8 +28,8 @@ RSpec.describe SupplierDossierExamples do
     expect(names).to include(
       "#{sample_prefix}constancia.pdf", "#{sample_prefix}nota.txt",
       "#{sample_prefix}contrato.docx", "#{sample_prefix}precios.xlsx",
-      "#{sample_prefix}identificacion.jpg", "#{sample_prefix}catalogo.csv",
-      "#{sample_prefix}informacion.xml"
+      "#{sample_prefix}identificacion.jpg", "#{sample_prefix}fotografia.png",
+      "#{sample_prefix}catalogo.csv", "#{sample_prefix}informacion.xml"
     )
     pdf = samples.find { |item| item.blob.filename.extension == 'pdf' }.blob.download
     expect(pdf).to start_with('%PDF-1.4')
@@ -42,6 +42,8 @@ RSpec.describe SupplierDossierExamples do
     end
     jpg = samples.find { |item| item.blob.filename.extension == 'jpg' }.blob.download
     expect(jpg.bytes.first(3)).to eq([255, 216, 255])
+    png = samples.find { |item| item.blob.filename.extension == 'png' }.blob.download
+    expect(png.bytes.first(8)).to eq([137, 80, 78, 71, 13, 10, 26, 10])
 
     original_ids = featured.documents.attachments.order(:id).pluck(:id)
     manual = featured.documents.attach(
@@ -55,6 +57,23 @@ RSpec.describe SupplierDossierExamples do
     expect(featured.documents.attachments.count).to eq(count_with_manual)
     expect(featured.documents.attachments.where(id: original_ids).count).to eq(original_ids.length)
     expect(manual).to be_present
+  end
+
+  it 'does not attach dossier examples to suppliers created manually in the demo tenant' do
+    organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    manual = create(:supplier, organization:, code: 'MANUAL-SUP')
+    document = manual.documents.attach(
+      io: StringIO.new('Archivo del usuario'), filename: 'original.txt', content_type: 'text/plain'
+    )
+    original_ids = manual.documents.attachments.pluck(:id)
+
+    2.times { described_class.seed! }
+
+    expect(manual.reload.contacts).to be_empty
+    expect(manual.addresses).to be_empty
+    expect(manual.supplier_schedules).to be_empty
+    expect(manual.documents.attachments.pluck(:id)).to eq(original_ids)
+    expect(document).to be_present
   end
 
   it 'distributes additional document formats across the other suppliers' do

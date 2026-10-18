@@ -74,6 +74,22 @@ RSpec.describe SupplierCommercialExamples do
     expect(manually_added.supplier_products).to be_empty
   end
 
+  it 'preserves manual supplier bank accounts without generating new demo accounts' do
+    organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    manual = create(:supplier, organization:, code: 'MANUAL-BANK')
+    account = manual.supplier_bank_accounts.create!(
+      organization:, holder_name: 'Cuenta administrada manualmente',
+      bank_name: 'Banco configurado por usuario', currency_code: 'MXN',
+      account_number: '9876543210'
+    )
+
+    2.times { described_class.seed_bank_accounts! }
+
+    expect(manual.supplier_bank_accounts.pluck(:id)).to eq([account.id])
+    expect(account.reload.holder_name).to eq('Cuenta administrada manualmente')
+    expect(organization.supplier_bank_accounts.count).to eq(SupplierExamples::COUNT + 1)
+  end
+
   it 'creates encrypted, checksum-valid and nonduplicated demo bank accounts' do
     2.times { described_class.seed_bank_accounts! }
 
