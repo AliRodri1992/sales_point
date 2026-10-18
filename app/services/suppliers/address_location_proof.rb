@@ -1,39 +1,64 @@
 # frozen_string_literal: true
 
 module Suppliers
-  # A signed, expiring geocoding proposal, scoped to both tenant and operator.
+  # A tenant- and user-scoped, expiring proposal. The server (not JavaScript)
+  # decides whether an adjusted/low-confidence position can be confirmed.
   class AddressLocationProof
     MAX_ADJUSTMENT_KM = 2.0
+    HARD_LIMIT_KM = 25.0
+    MIN_CONFIDENCE = 0.8
     EARTH_RADIUS_KM = 6371.0
 
-    def self.issue(address:, supplier:, user:, latitude:, longitude:)
+    def self.issue(address:, supplier:, user:, latitude:, longitude:, confidence: 1.0)
       payload = {
         fingerprint: address.geocoding_fingerprint,
         supplier_id: supplier.id, user_id: user.id,
-        latitude: Float(latitude), longitude: Float(longitude)
+        latitude: Float(latitude), longitude: Float(longitude),
+        confidence: Float(confidence || 0)
       }
       verifier.generate(payload, expires_in: 20.minutes)
     end
 
     def self.verify(token:, address:, supplier:, user:, selection:)
-      payload = verifier.verified(token)&.symbolize_keys
-      return false unless matching?(payload, address, supplier, user)
+      proposal = verified_proposal(token:, address:, supplier:, user:)
+      return false unless proposal
 
-      origin = [payload.fetch(:latitude), payload.fetch(:longitude)]
-      selected = [selection.fetch(:latitude), selection.fetch(:longitude)]
-      distance = distance_km(origin, selected)
-      return false unless distance.finite?
+      origin = proposal.values_at(:latitude, :longitude)
+      point = selection.values_at(:latitude, :longitude)
+      distance = distance_km(origin, point)
+      return false unless distance.finite? && distance <= HARD_LIMIT_KM
 
-      distance <= MAX_ADJUSTMENT_KM || selection[:reason].to_s.strip.length.between?(10, 250)
+      return true unless review_required?(proposal, distance)
+
+      selection[:reviewed].to_s == '1' && valid_reason?(selection[:reason])
     rescue ArgumentError, TypeError, KeyError
       false
     end
 
-    def self.matching?(payload, address, supplier, user)
-      payload.is_a?(Hash) &&
-        payload[:fingerprint] == address.geocoding_fingerprint &&
-        payload[:supplier_id] == supplier.id &&
-        payload[:user_id] == user.id
+    def self.confidence(token:, address:, supplier:, user:)
+      verified_proposal(token:, address:, supplier:, user:)&.fetch(:confidence)
+    end
+
+    def self.review_required?(proposal, distance)
+      proposal.fetch(:confidence) < MIN_CONFIDENCE || distance > MAX_ADJUSTMENT_KM
+    end
+
+    def self.valid_reason?(reason)
+      reason.to_s.strip.length.between?(10, 250)
+    end
+
+    def self.verified_proposal(token:, address:, supplier:, user:)
+      payload = verifier.verified(token)&.symbolize_keys
+      return unless payload.is_a?(Hash)
+      return unless payload[:fingerprint] == address.geocoding_fingerprint
+      return unless payload[:supplier_id] == supplier.id && payload[:user_id] == user.id
+
+      confidence = Float(payload.fetch(:confidence))
+      return unless confidence.between?(0, 1)
+
+      payload
+    rescue ArgumentError, TypeError, KeyError
+      nil
     end
 
     def self.distance_km(origin, selected)
@@ -56,9 +81,10 @@ module Suppliers
     end
 
     def self.verifier
-      Rails.application.message_verifier('supplier-address-location-v2')
+      Rails.application.message_verifier('supplier-address-location-v3')
     end
 
-    private_class_method :matching?, :distance_km, :haversine_factor, :radians, :verifier
+    private_class_method :verified_proposal, :review_required?, :valid_reason?,
+                         :distance_km, :haversine_factor, :radians, :verifier
   end
 end
