@@ -5,11 +5,11 @@ require 'rails_helper'
 RSpec.describe 'Full Delta POS seeds', type: :model do
   let(:seeded_models) do
     [
-    Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
-    Supplier, Contact, Address, SupplierSchedule, SupplierProduct,
-    SupplierProductPrice, SupplierBankAccount, Product, Inventory,
-    Branch, Category, Client, Country, Currency, CountryCurrency,
-    ActiveStorage::Attachment, SatFiscalRegime
+      Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
+      Supplier, Contact, Address, SupplierSchedule, SupplierProduct,
+      SupplierProductPrice, SupplierBankAccount, Product, Inventory,
+      Branch, Category, Client, Country, Currency, CountryCurrency,
+      ActiveStorage::Attachment, SatFiscalRegime
     ]
   end
 
