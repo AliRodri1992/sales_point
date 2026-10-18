@@ -32,7 +32,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(response).to have_http_status(:ok)
     expect(panel('statement').at_css('[data-finance-empty-payables] img[src*="saccountspayable"]')).to be_present
     expect(panel('statement').at_css('[data-finance-bank-accounts]')).to be_nil
-    expect(panel('statement').at_css("a[href='#{admin_account_payables_path(supplier_id: supplier.id)}']")).to be_present
+    payables_link = "a[href='#{admin_account_payables_path(supplier_id: supplier.id)}']"
+    expect(panel('statement').at_css(payables_link)).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-empty-banks] img[src*="sbankaccounts"]')).to be_present
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
