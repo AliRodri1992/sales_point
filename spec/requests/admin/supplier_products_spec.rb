@@ -138,6 +138,70 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     end
   end
 
+  it 'shows one preference action per offer and an indicator for all supplier presentations' do
+    first = offer_for(product)
+    second = offer_for(product, presentation_name: 'Pack of 24')
+
+    get admin_supplier_supplier_products_path(supplier)
+    expect(document.css("form[action='#{set_preferred_admin_supplier_supplier_product_path(supplier, first)}']"))
+      .to be_present
+
+    post set_preferred_admin_supplier_supplier_product_path(supplier, first),
+         params: { expected_supplier_id: '' }
+
+    expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier))
+    expect(product.reload.preferred_supplier).to eq(supplier)
+
+    get admin_supplier_supplier_products_path(supplier)
+    expect(document.text).to include('Yes, preferred')
+    expect(document.css("form[action='#{clear_preferred_admin_supplier_supplier_product_path(supplier, first)}']"))
+      .to be_present
+    expect(document.css("form[action='#{clear_preferred_admin_supplier_supplier_product_path(supplier, second)}']"))
+      .to be_present
+  end
+
+  it 'rejects stale preference changes rather than silently overwriting another user' do
+    first = offer_for(product)
+    second_supplier = create(:supplier, organization:)
+    second = offer_for(product, supplier: second_supplier, currency: second_supplier.currency)
+    post set_preferred_admin_supplier_supplier_product_path(supplier, first),
+         params: { expected_supplier_id: '' }
+    expect(product.reload.preferred_supplier_id).to eq(supplier.id)
+
+    post set_preferred_admin_supplier_supplier_product_path(second_supplier, second),
+         params: { expected_supplier_id: '' }
+    expect(product.reload.preferred_supplier_id).to eq(supplier.id)
+    expect(flash[:alert]).to include('Another user')
+
+    post set_preferred_admin_supplier_supplier_product_path(second_supplier, second),
+         params: { expected_supplier_id: supplier.id }
+    expect(product.reload.preferred_supplier_id).to eq(second_supplier.id)
+  end
+
+  it 'allows explicitly clearing the preference without selecting another supplier' do
+    offer = offer_for(product)
+    product.update!(preferred_supplier: supplier)
+
+    post clear_preferred_admin_supplier_supplier_product_path(supplier, offer),
+         params: { expected_supplier_id: supplier.id }
+
+    expect(product.reload.preferred_supplier).to be_nil
+    expect(flash[:notice]).to include('removed')
+  end
+
+  it 'keeps supplier preference commands protected by manage-products permission' do
+    offer = offer_for(product)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+
+    get admin_supplier_supplier_products_path(supplier)
+    expect(document.css("form[action='#{set_preferred_admin_supplier_supplier_product_path(supplier, offer)}']"))
+      .to be_empty
+
+    post set_preferred_admin_supplier_supplier_product_path(supplier, offer),
+         params: { expected_supplier_id: '' }
+    expect(product.reload.preferred_supplier).to be_nil
+  end
+
   it 'paginates six products without losing the search term' do
     8.times do |index|
       item = create(:product, organization:, name: format('Case Product %02d', index))
