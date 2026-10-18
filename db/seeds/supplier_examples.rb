@@ -19,11 +19,9 @@ module SupplierExamples
     private
 
     def seed_demo_fiscal_regime
-      return if SatFiscalRegime.where(code: '601', person_type: 'M', deleted_at: nil).exists?
-
-      SatFiscalRegime.create!(
-        code: '601', person_type: 'M', description: 'General de Ley Personas Morales'
-      )
+      SatFiscalRegime.find_or_create_by!(code: '601', person_type: 'M', deleted_at: nil) do |regime|
+        regime.description = 'General de Ley Personas Morales'
+      end
     end
 
     def create_organization
