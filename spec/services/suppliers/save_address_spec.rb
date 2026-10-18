@@ -33,4 +33,28 @@ RSpec.describe Suppliers::SaveAddress do
     expect(previous.reload).not_to be_primary
     expect(target.reload).to have_attributes(purpose: 'fiscal', primary: true)
   end
+  it 'serializes competing primary selections using real PostgreSQL connections', :concurrent_db do
+    addresses = Array.new(2) { create(:address, :fiscal, addressable: supplier) }
+    supplier_id = supplier.id
+    barrier = Queue.new
+    outcomes = Queue.new
+    threads = addresses.map do |address|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          barrier.pop
+          locked_supplier = Supplier.find(supplier_id)
+          target = Address.find(address.id)
+          target.primary = true
+          outcomes << described_class.new(supplier: locked_supplier, address: target).call
+        end
+      end
+    end
+    addresses.size.times { barrier << true }
+    threads.each(&:value)
+
+    expect(outcomes.size).to eq(2)
+    expect(Supplier.find(supplier_id).addresses.where(purpose: 'fiscal', primary: true).count).to eq(1)
+  end
+
+
 end
