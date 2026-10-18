@@ -11,7 +11,10 @@ module Admin
       attrs = location_params
       address = @supplier.addresses.new(attrs)
       result = Geocoding::MapboxValidateAddressService.new(address).call
-      return head :service_unavailable unless result[:valid]
+      unless result[:valid]
+        Rails.logger.warn('[SupplierLocations] Mapbox returned no valid location; check MAPBOX_TOKEN and address')
+        return render json: { error: 'location_unavailable' }, status: :service_unavailable
+      end
 
       signature = Rails.application.message_verifier('supplier-address-location')
                        .generate(address.geocoding_fingerprint, expires_in: 20.minutes)
