@@ -53,6 +53,7 @@ module Suppliers
       state, municipality, neighborhoods = catalog[@postal_code]
       return unless state
 
+      state = 'Estado de México' if state == 'México'
       { found: true, state:, municipality:, neighborhoods: }
     rescue Errno::ENOENT, JSON::ParserError => e
       Rails.logger.warn("[PostalCatalog] #{e.class}")
