@@ -14,6 +14,7 @@ export default class extends Controller {
     this.mapCenter = this.point
     this.zoomLevel = 15
     this.dragOrigin = null
+    this.suppressClick = false
     this.pending = false
     this.request = null
     if (this.point) this.showMap()
@@ -130,6 +131,10 @@ export default class extends Controller {
   }
 
   adjust(event) {
+    if (event.type === 'click' && this.suppressClick) {
+      this.suppressClick = false
+      return
+    }
     if (!this.mapCenter || !this.signatureTarget.value) return
 
     const rect = event.currentTarget.getBoundingClientRect()
@@ -162,13 +167,17 @@ export default class extends Controller {
   dragStart(event) {
     if (event.button !== 0 || !this.mapCenter) return
     this.dragOrigin = { x: event.clientX, y: event.clientY }
+    event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   dragEnd(event) {
     if (!this.dragOrigin) return
     const moved = Math.hypot(event.clientX - this.dragOrigin.x, event.clientY - this.dragOrigin.y)
     this.dragOrigin = null
-    if (moved > 4) this.adjust(event)
+    if (moved > 4) {
+      this.adjust(event)
+      this.suppressClick = true
+    }
   }
 
   nudge(event) {
