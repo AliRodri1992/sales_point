@@ -47,6 +47,7 @@ class Address < ApplicationRecord
   validates :neighborhood, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
+  before_validation :clear_unused_postal_code
   validate :check_country_requirements, on: %i[create update onboardingstep2]
 
   validates :latitude,
@@ -115,6 +116,10 @@ class Address < ApplicationRecord
   end
 
   private
+
+  def clear_unused_postal_code
+    self.postal_code = nil if country && !Addresses::CountryRules.new(country.iso_alpha2).postal_required?
+  end
 
   def check_country_requirements
     Addresses::CountryRules.new(country&.iso_alpha2).validate(self)
