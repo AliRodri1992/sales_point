@@ -67,6 +67,10 @@ module SupplierExamples
     end
 
     def supplier_attributes(number, organization)
+      supplier_identity_attributes(number).merge(supplier_commercial_attributes(number, organization))
+    end
+
+    def supplier_identity_attributes(number)
       {
         name: "Proveedor de ejemplo #{number}",
         legal_name: "Comercializadora Demo #{number}, S.A. de C.V.",
@@ -79,6 +83,12 @@ module SupplierExamples
         rfc: format('DPE260101%03d', number),
         postal_code: format('%05d', 60_000 + number),
         status: (number % 5).zero? ? :inactive : :active,
+        deleted_at: nil
+      }
+    end
+
+    def supplier_commercial_attributes(number, organization)
+      {
         currency: Currency.active.find_by!(code: 'MXN'),
         credit_days: number.even? ? 30 : 15,
         credit_limit: number * 10_000,
@@ -86,8 +96,7 @@ module SupplierExamples
         minimum_order_amount: 500 + (number * 100),
         tags: %w[demostracion compras],
         responsible_user: organization.users.find_by(email: 'administrador@delta.com'),
-        notes: "Proveedor de demostración #{number} para Delta POS.",
-        deleted_at: nil
+        notes: "Proveedor de demostración #{number} para Delta POS."
       }
     end
 
