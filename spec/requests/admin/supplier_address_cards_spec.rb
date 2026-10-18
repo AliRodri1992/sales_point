@@ -125,7 +125,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(cards.first.text).not_to include('Directions / landmarks')
   end
 
-  it 'displays correct counters and places Manage addresses alongside the filters' do
+  it 'displays correct counters, with Manage addresses in the heading row and search below filters' do
     create(:address, :fiscal, :primary, addressable: supplier)
     2.times { |i| create(:address, :delivery, addressable: supplier, street: "Delivery Street #{i}") }
     create(:address, addressable: supplier, purpose: 'commercial')
@@ -141,8 +141,11 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(buttons.first(6).map { |button| button.text.squish }).to eq(
       ['All 5', 'Tax 1', 'Delivery 2', 'Commercial 1', 'General 1', 'Primary 1']
     )
-    expect(toolbar.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
-    expect(toolbar.css("a[href='#{admin_supplier_addresses_path(supplier)}']").size).to eq(1)
+    title_row = address_panel.at_css('[data-supplier-addresses-title-row]')
+    expect(title_row.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
+    expect(toolbar.css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_empty
+    expect(toolbar.at_css('[data-supplier-addresses-filters]').next_element)
+      .to eq(toolbar.at_css('[data-supplier-addresses-search-row]'))
   end
 
   it 'loads only eight cards initially and provides subsequent pages' do

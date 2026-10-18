@@ -29,6 +29,14 @@ RUN apt-get update -qq && \
     gnupg \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
+# Browser specs run in the web container, not the Sidekiq worker.
+ARG INSTALL_TEST_BROWSER=false
+RUN if [ "$INSTALL_TEST_BROWSER" = "true" ]; then \
+      apt-get update -qq && \
+      apt-get install -y --no-install-recommends chromium chromium-driver && \
+      rm -rf /var/lib/apt/lists/*; \
+    fi
+
 # -------- NODE (compatible con Rails 8 + Hotwire + esbuild) --------
 ARG NODE_VERSION=20
 

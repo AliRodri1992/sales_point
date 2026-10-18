@@ -101,35 +101,41 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(postal.at_css('[data-supplier-postal-assist-target="status"]')).to be_present
   end
 
-  it 'places the preview above classification and aligns the right column with the address fields' do
+  it 'places classification alongside the domicile fields and a full-width map below' do
     get new_admin_supplier_address_path(supplier)
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
     form = page.at_css('form[data-controller~="supplier-address-preview"]')
     columns = form.at_css('div.grid.items-stretch')
-    expect(columns).to be_present
-
-    right_column = form.at_css('[data-address-layout="right"]')
-    expect(right_column['class']).to include('flex-col', 'lg:h-full')
-    expect(right_column.element_children.pluck('aria-labelledby')).to eq(
-      %w[supplier-address-preview-heading supplier-address-classification-heading]
+    expect(columns['class']).to include('lg:grid-cols-2')
+    expect(columns.element_children.pluck('aria-labelledby')).to eq(
+      %w[supplier-address-location-heading supplier-address-classification-heading]
     )
-    expect(right_column.element_children.last['class']).to include('flex-1')
+
+    preview = columns.next_element
+    expect(preview['aria-labelledby']).to eq('supplier-address-preview-heading')
+    expect(preview.at_css('[data-supplier-address-location-target="mapImage"]')).to be_present
+    expect(preview.at_css('[data-supplier-addresses-target="list"]')).to be_nil
+    expect(preview.at_css('#supplier-address-summary-heading')).to be_present
   end
 
-  it 'preserves the same section ordering when editing an address' do
+  it 'preserves the domicile, classification and map layout when editing an address' do
     address = create(:address, :fiscal, addressable: supplier)
 
     get edit_admin_supplier_address_path(supplier, address)
 
     expect(response).to have_http_status(:ok)
-    page = Nokogiri::HTML(response.body)
-    sections = page.css('[data-address-layout="right"] > section')
-    expect(sections.pluck('aria-labelledby')).to eq(
-      %w[supplier-address-preview-heading supplier-address-classification-heading]
+    form = Nokogiri::HTML(response.body).at_css('form[data-controller~="supplier-address-preview"]')
+    columns = form.at_css('div.grid.items-stretch')
+    expect(columns.element_children.pluck('aria-labelledby')).to eq(
+      %w[supplier-address-location-heading supplier-address-classification-heading]
     )
-    expect(sections.last['class']).to include('flex-1')
+    preview = columns.next_element
+    expect(preview['aria-labelledby']).to eq('supplier-address-preview-heading')
+    expect(preview.at_css('[data-supplier-address-location-target="mapPlaceholder"]')).to be_present
+    expect(preview.at_css('input[name="address[location_adjustment_reason]"]')).to be_present
+    expect(preview.at_css('#supplier-address-summary-heading')).to be_present
   end
 
   it 'uses the address model for validation instead of native browser restrictions' do

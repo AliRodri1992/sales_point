@@ -75,6 +75,12 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     find('button[data-direction="right"]').click
     expect(find('[data-supplier-address-location-target="mapImage"]', visible: :all)[:src]).not_to eq(old_map)
     find('[data-action="supplier-address-location#confirm"]').click
+    expect(page).to have_css('#supplier-location-reason-error:not(.hidden)', text: 'Adjustment reason cannot be blank')
+    expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
+
+    find('input[name="address[location_adjustment_reason]"]').set('Adjusted marker after checking the entrance')
+    find('[data-action="supplier-address-location#confirm"]').click
+    expect(page).to have_css('#supplier-location-reason-error.hidden', visible: :all)
 
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('1')
     find('form[data-controller~="supplier-address-location"] button[type="submit"]').click

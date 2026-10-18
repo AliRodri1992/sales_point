@@ -8,6 +8,7 @@ export default class extends Controller {
   connect() {
     this.countryDrafts = new Map()
     this.previousCode = null
+    this.updating = false
     this.update()
   }
 
@@ -36,30 +37,45 @@ export default class extends Controller {
     return result
   }
 
+  rememberDraft(event) {
+    if (this.updating || this.previousCode !== this.countryCode()) return
+    const input = event.target
+    const field = input.name?.split("[")?.at(-1)?.replace("]", "")
+    if (!field || !this.addressFields().includes(field)) return
+
+    this.countryDrafts.set(this.previousCode, {
+      ...this.countryDrafts.get(this.previousCode),
+      [field]: input.value
+    })
+  }
+
   switchCountry(code) {
     if (this.previousCode === code) return
+
     const fields = this.fields()
     if (this.previousCode !== null) {
-      const draft = this.countryDrafts.get(this.previousCode) || {}
+      const draft = { ...this.countryDrafts.get(this.previousCode) }
       for (const [name, input] of Object.entries(fields)) {
         if (this.applicable(name, this.previousCode)) draft[name] = input.value
       }
       this.countryDrafts.set(this.previousCode, draft)
     }
+
     const restored = this.countryDrafts.get(code) || {}
+    const initial = this.previousCode === null
+    const changed = []
+    this.updating = true
     for (const [name, input] of Object.entries(fields)) {
-      let value = input.value
-      if (!this.applicable(name, code)) {
-        value = ""
-      } else if (this.previousCode !== null) {
-        value = restored[name] || ""
-      }
-      if (input.value !== value) {
-        input.value = value
-        input.dispatchEvent(new Event("input", { bubbles: true }))
-      }
+      const value = this.applicable(name, code) ?
+        (initial ? input.value : (restored[name] ?? "")) : ""
+      if (input.value === value) continue
+
+      input.value = value
+      changed.push(input)
     }
     this.previousCode = code
+    this.updating = false
+    changed.forEach((input) => input.dispatchEvent(new Event("input", { bubbles: true })))
   }
 
   update() {

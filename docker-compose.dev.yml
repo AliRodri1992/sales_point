@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      args:
+        INSTALL_TEST_BROWSER: "true"
 
     container_name: rails_sale_point
 
@@ -28,6 +30,8 @@ services:
 
     environment:
       REDIS_URL: redis://redis:6379/0
+      CHROME_BINARY: /usr/bin/chromium
+      CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
     command: bash -c "bin/rails db:prepare && bin/dev"
 

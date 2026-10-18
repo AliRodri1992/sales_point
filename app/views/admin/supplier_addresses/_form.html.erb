@@ -38,7 +38,7 @@
   <div class="grid items-stretch gap-4 lg:grid-cols-2">
     <section data-controller="supplier-postal-assist supplier-country-fields"
              data-supplier-country-fields-state-required-codes-value="<%= Addresses::CountryRules::STATE_REQUIRED.to_json %>"
-             data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
+             data-action="input->supplier-country-fields#rememberDraft input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
              data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
              data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
              data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
