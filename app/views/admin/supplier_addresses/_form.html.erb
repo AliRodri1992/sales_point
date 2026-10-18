@@ -261,14 +261,6 @@
             </label>
           </div>
         </div>
-        <p data-supplier-address-location-target="status" role="status" aria-live="polite"
-           class="mt-2 text-xs leading-5 text-slate-600"><%= t('admin.supplier_details.address_form.location_optional') %></p>
-        <p class="mt-2 text-[11px] leading-5 text-slate-500">
-          <%= t('admin.supplier_details.address_form.location_map_help') %>
-          <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer"
-             class="font-semibold underline underline-offset-2">© Mapbox © OpenStreetMap</a>
-        </p>
-
     <div class="mt-6 border-t border-slate-100 pt-5" aria-labelledby="supplier-address-summary-heading">
       <div class="mb-3 flex items-center gap-2">
         <span class="flex size-9 items-center justify-center rounded-lg bg-sky-50 text-sky-700"><%= icon('document-text', class: 'size-5') %></span>
@@ -292,6 +284,15 @@
             <p data-supplier-address-preview-target="reference" class="hidden break-words border-t border-slate-200 pt-2 text-slate-600"></p>
           </dl>
     </div>
+        <p data-supplier-address-location-target="status" role="status" aria-live="polite"
+           class="mt-2 text-xs leading-5 text-slate-600"><%= t('admin.supplier_details.address_form.location_optional') %></p>
+        <p class="mt-2 text-[11px] leading-5 text-slate-500">
+          <%= t('admin.supplier_details.address_form.location_map_help') %>
+          <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer"
+             class="font-semibold underline underline-offset-2">© Mapbox © OpenStreetMap</a>
+        </p>
+
+
   </section>
 
   <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm sm:px-6">
