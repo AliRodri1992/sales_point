@@ -136,6 +136,7 @@ Rails.application.routes.draw do
         member do
           patch :restore
           patch :set_primary
+          post :retry_geocoding
         end
       end
     end
