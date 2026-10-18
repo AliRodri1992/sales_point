@@ -6,7 +6,7 @@ export default class extends Controller {
     "mapPlaceholder", "mapClick", "pin", "lookupButton", "confirmButton", "status"]
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
-    confirmed: String, searching: String
+    confirmed: String, searching: String, lowConfidence: String, adjusted: String
   }
 
   connect() {
@@ -47,6 +47,7 @@ export default class extends Controller {
     this.pending = false
     this.lookupButtonTarget.disabled = false
     this.point = null
+    this.suggestedPoint = null
     this.mapCenter = null
     this.latitudeTarget.value = ""
     this.longitudeTarget.value = ""
@@ -85,8 +86,9 @@ export default class extends Controller {
       if (!this.valid(Number(data.latitude), Number(data.longitude))) throw new Error("Invalid coordinates")
       this.signatureTarget.value = data.signature
       this.point = { lat: Number(data.latitude), lon: Number(data.longitude) }
+      this.suggestedPoint = { ...this.point }
       this.confirmedTarget.value = "0"
-      this.statusTarget.textContent = this.readyValue
+      this.statusTarget.textContent = Number(data.confidence) < 0.8 ? this.lowConfidenceValue : this.readyValue
       this.showMap()
     } catch (error) {
       if (error.name !== "AbortError" && request === this.request) {
@@ -150,7 +152,7 @@ export default class extends Controller {
 
     this.point = { lat, lon }
     this.confirmedTarget.value = "0"
-    this.statusTarget.textContent = this.readyValue
+    this.statusTarget.textContent = this.adjustedValue
     this.showMap()
   }
 
