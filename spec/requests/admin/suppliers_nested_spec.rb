@@ -32,7 +32,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
 
     expect do
       post admin_suppliers_path, params: { supplier: attributes }
-    end.to change(Supplier, :count).by(1)
+    end.to change(Supplier, :count).by(1), response.body.scan(/data-server-field-error[^>]*>[^<]+/).join(' | ')
 
     supplier = Supplier.order(:id).last
     expect(supplier.contacts.count).to eq(2)
