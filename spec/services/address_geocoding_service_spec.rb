@@ -45,4 +45,33 @@ RSpec.describe AddressGeocodingService do
     expect(address.reload.geocoding_status).to eq('failed')
     expect(address.reload.latitude).to be_nil
   end
+  it 'discards a provider response after the address changes during lookup' do
+    original = address.geocoding_fingerprint
+    provider = instance_double(Geocoding::MapboxValidateAddressService)
+    allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_return(provider)
+    allow(provider).to receive(:call) do
+      address.update!(street: 'Changed while geocoding')
+      result
+    end
+
+    described_class.new(address.id, original).call
+
+    expect(address.reload).to have_attributes(latitude: nil, longitude: nil,
+                                               geocoding_status: 'pending')
+  end
+
+  it 'does not mark the new location as failed after an obsolete lookup fails' do
+    original = address.geocoding_fingerprint
+    provider = instance_double(Geocoding::MapboxValidateAddressService)
+    allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_return(provider)
+    allow(provider).to receive(:call) do
+      address.update!(street: 'Changed while geocoding')
+      { valid: false }
+    end
+
+    described_class.new(address.id, original).call
+
+    expect(address.reload).to have_attributes(latitude: nil, longitude: nil,
+                                               geocoding_status: 'pending')
+  end
 end
