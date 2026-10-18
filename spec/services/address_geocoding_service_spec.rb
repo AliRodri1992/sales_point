@@ -56,8 +56,9 @@ RSpec.describe AddressGeocodingService do
 
     described_class.new(address.id, original).call
 
-    expect(address.reload).to have_attributes(latitude: nil, longitude: nil,
-                                               geocoding_status: 'pending')
+    expect(address.reload).to have_attributes(
+      latitude: nil, longitude: nil, geocoding_status: 'pending'
+    )
   end
 
   it 'does not mark the new location as failed after an obsolete lookup fails' do
@@ -71,7 +72,8 @@ RSpec.describe AddressGeocodingService do
 
     described_class.new(address.id, original).call
 
-    expect(address.reload).to have_attributes(latitude: nil, longitude: nil,
-                                               geocoding_status: 'pending')
+    expect(address.reload).to have_attributes(
+      latitude: nil, longitude: nil, geocoding_status: 'pending'
+    )
   end
 end
