@@ -119,6 +119,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y libpq-dev libvips
 
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -152,6 +159,8 @@ jobs:
       - name: Run RSpec
         env:
           COVERAGE: true
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: bundle exec rspec
 
       - name: Report coverage gaps
