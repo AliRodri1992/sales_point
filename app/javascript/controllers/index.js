@@ -80,6 +80,9 @@ application.register("supplier-address-preview", SupplierAddressPreviewControlle
 import SupplierPostalAssistController from "./supplier_postal_assist_controller"
 application.register("supplier-postal-assist", SupplierPostalAssistController)
 
+import SupplierCountryFieldsController from "./supplier_country_fields_controller"
+application.register("supplier-country-fields", SupplierCountryFieldsController)
+
 import SupplierSearchController from "./supplier_search_controller"
 application.register("supplier-search", SupplierSearchController)
 

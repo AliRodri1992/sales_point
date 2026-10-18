@@ -138,6 +138,22 @@ es:
         cancel: "Cancelar"
         save_address: "Guardar dirección"
         save_changes: "Guardar cambios"
+        country_labels:
+          state:
+            mx: "Estado"
+            other: "Estado / Provincia"
+          city:
+            mx: "Ciudad / Municipio"
+            other: "Ciudad / Localidad"
+          neighborhood:
+            mx: "Colonia"
+            other: "Barrio / Distrito"
+          exterior_number:
+            mx: "Número exterior"
+            other: "Número / Edificio"
+          postal_code:
+            mx: "Código postal"
+            other: "Código postal / ZIP"
         placeholders:
           postal_code: "Ej. 54700"
           state: "Ej. Estado de México"

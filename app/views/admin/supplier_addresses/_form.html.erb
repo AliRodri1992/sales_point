@@ -11,8 +11,8 @@
   <% end %>
 
   <div class="grid items-stretch gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
-    <section data-controller="supplier-postal-assist"
-             data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input"
+    <section data-controller="supplier-postal-assist supplier-country-fields"
+             data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
              data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
              data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
              data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
@@ -45,11 +45,11 @@
           </div>
           <%= error_message_for(@address, :country) %>
         </div>
-        <div class="min-w-0" data-address-field="postal_code">
+        <div class="min-w-0" data-address-field="postal_code" data-country-postal-wrapper>
           <%= form.label :postal_code, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-            <%= t('admin.supplier_details.address_fields.postal_code') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.postal_code.other') %>"><%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %></span> <span data-required-when="postal" class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
-          <%= form.text_field :postal_code, inputmode: 'numeric', autocomplete: 'postal-code',
+          <%= form.text_field :postal_code, inputmode: 'text', autocomplete: 'postal-code',
                               placeholder: t('admin.supplier_details.address_form.placeholders.postal_code'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :postal_code)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :postal_code) %>
@@ -59,7 +59,7 @@
         <% %i[state city].each do |field| %>
           <div class="min-w-0" data-address-field="<%= field %>">
             <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-              <%= t("admin.supplier_details.address_fields.#{field}") %> <span class="text-rose-600" aria-hidden="true">*</span>
+              <span data-country-label data-country-label-mx="<%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %>" data-country-label-other="<%= t("admin.supplier_details.address_form.country_labels.#{field}.other") %>"><%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %></span> <span data-required-when="<%= field == :city ? 'always' : 'state' %>" class="text-rose-600" aria-hidden="true">*</span>
             <% end %>
             <%= form.text_field field, autocomplete: (field == :state ? 'address-level1' : 'address-level2'),
                                 placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),
@@ -70,7 +70,7 @@
 
         <div class="sm:col-span-2" data-address-field="neighborhood">
           <%= form.label :neighborhood, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-            <%= t('admin.supplier_details.address_fields.neighborhood') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.other') %>"><%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %></span> <span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
           <%= form.text_field :neighborhood, list: 'supplier-neighborhoods',
                               placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
@@ -92,8 +92,11 @@
         <% %i[exterior_number interior_number].each do |field| %>
           <div class="min-w-0" data-address-field="<%= field %>">
             <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-              <%= t("admin.supplier_details.address_fields.#{field}") %>
-              <% if field == :exterior_number %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
+              <% if field == :exterior_number %>
+                <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.exterior_number.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.exterior_number.other') %>"><%= t('admin.supplier_details.address_form.country_labels.exterior_number.mx') %></span> <span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span>
+              <% else %>
+                <%= t("admin.supplier_details.address_fields.#{field}") %>
+              <% end %>
             <% end %>
             <%= form.text_field field,
                                 placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),

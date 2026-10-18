@@ -138,6 +138,22 @@ en:
         cancel: "Cancel"
         save_address: "Save address"
         save_changes: "Save changes"
+        country_labels:
+          state:
+            mx: "State"
+            other: "State / Province"
+          city:
+            mx: "City / Municipality"
+            other: "City / Locality"
+          neighborhood:
+            mx: "Neighborhood"
+            other: "Neighborhood / District"
+          exterior_number:
+            mx: "Exterior number"
+            other: "Building number"
+          postal_code:
+            mx: "Postal code"
+            other: "Postal / ZIP code"
         placeholders:
           postal_code: "E.g. 54700"
           state: "E.g. State of Mexico"

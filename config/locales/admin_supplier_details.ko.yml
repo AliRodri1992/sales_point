@@ -138,6 +138,22 @@ ko:
         cancel: "취소"
         save_address: "주소 저장"
         save_changes: "변경 사항 저장"
+        country_labels:
+          state:
+            mx: "주/도"
+            other: "주/도 / 지역"
+          city:
+            mx: "시 / 군"
+            other: "도시 / 지역"
+          neighborhood:
+            mx: "동네"
+            other: "구역 / 지구"
+          exterior_number:
+            mx: "외부 번호"
+            other: "건물 번호"
+          postal_code:
+            mx: "우편번호"
+            other: "우편번호 / ZIP"
         placeholders:
           postal_code: "예: 54700"
           state: "예: 멕시코주"
