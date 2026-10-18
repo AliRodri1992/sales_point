@@ -10,7 +10,7 @@ FactoryBot.define do
     country do
       Country.find_by(iso_alpha2: 'MX') ||
         FactoryBot.create(:country, name: 'Mexico', iso_alpha2: 'MX',
-                           iso_alpha3: 'MEX', iso_numeric: '484')
+                                    iso_alpha3: 'MEX', iso_numeric: '484')
     end
     postal_code { '54800' }
 

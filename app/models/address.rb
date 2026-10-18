@@ -113,5 +113,4 @@ class Address < ApplicationRecord
   def check_country_requirements
     Addresses::CountryRules.new(country&.iso_alpha2).validate(self)
   end
-
 end
