@@ -17,16 +17,27 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
     Rails.application.load_seed
     counts = seeded_models.to_h { |model| [model.name, model.count] }
+    identifiers = seeded_models.to_h { |model| [model.name, model.order(:id).pluck(:id)] }
     supplier = Supplier.find_by!(code: 'SUP-0001')
     supplier.update!(legal_name: 'Datos fiscales revisados')
     admin = User.find_by!(email: 'administrador@delta.com')
     admin.update!(password: 'PasswordManual#2026', password_confirmation: 'PasswordManual#2026')
+    product = supplier.organization.products.find_by!(code: 'PROD0001')
+    product.update!(name: 'Producto editado manualmente')
+    category = Category.find_by!(code: 'cat0001')
+    category.update!(name: 'Categoría editada manualmente')
+    bank_account = supplier.supplier_bank_accounts.first!
+    bank_account.update!(holder_name: 'Titular editado manualmente')
 
     Rails.application.load_seed
 
     expect(seeded_models.to_h { |model| [model.name, model.count] }).to eq(counts)
+    expect(seeded_models.to_h { |model| [model.name, model.order(:id).pluck(:id)] }).to eq(identifiers)
     expect(supplier.reload.legal_name).to eq('Datos fiscales revisados')
     expect(admin.reload.valid_password?('PasswordManual#2026')).to be(true)
+    expect(product.reload.name).to eq('Producto editado manualmente')
+    expect(category.reload.name).to eq('Categoría editada manualmente')
+    expect(bank_account.reload.holder_name).to eq('Titular editado manualmente')
     expect(SupplierProduct.count).to be_positive
     expect(SupplierBankAccount.count).to eq(SupplierExamples::COUNT)
     expect(Supplier.where(code: 'SUP-0001').first.documents.attachments.count).to be >= 20
