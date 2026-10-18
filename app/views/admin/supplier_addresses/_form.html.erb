@@ -37,6 +37,7 @@
 
   <div class="grid items-stretch gap-4 lg:grid-cols-2">
     <section data-controller="supplier-postal-assist supplier-country-fields"
+             data-supplier-country-fields-state-required-codes-value="<%= Addresses::CountryRules::STATE_REQUIRED.to_json %>"
              data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
              data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
              data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
@@ -214,12 +215,12 @@
           </div>
         </div>
         <div class="min-w-0">
-          <div class="relative isolate w-full aspect-[16/9] min-h-0 max-h-[640px] overflow-hidden rounded-xl bg-slate-100">
+          <div class="relative isolate aspect-[2/1] w-full min-h-0 overflow-hidden rounded-xl bg-slate-100">
             <div data-supplier-address-location-target="mapPlaceholder" class="absolute inset-0 flex items-center justify-center px-4 text-center text-xs text-slate-500">
               <%= t('admin.supplier_details.address_form.location_map_empty') %>
             </div>
             <img alt="<%= t('admin.supplier_details.address_form.location_map_alt') %>"
-                 data-supplier-address-location-target="mapImage" class="absolute inset-0 hidden size-full max-w-full object-fill">
+                 data-supplier-address-location-target="mapImage" class="absolute inset-0 hidden size-full max-w-full object-contain">
             <button type="button" data-supplier-address-location-target="mapClick"
                     data-action="click->supplier-address-location#adjust keydown->supplier-address-location#nudge pointerdown->supplier-address-location#dragStart pointermove->supplier-address-location#dragMove pointerup->supplier-address-location#dragEnd pointercancel->supplier-address-location#dragCancel wheel->supplier-address-location#wheelZoom:!passive"
                     aria-label="<%= t('admin.supplier_details.address_form.location_adjust') %>"

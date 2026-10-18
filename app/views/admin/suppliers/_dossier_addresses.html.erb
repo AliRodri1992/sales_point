@@ -1,4 +1,9 @@
-<section id="supplier-dossier-addresses" data-supplier-dossier-target="panel" data-section="addresses" data-controller="supplier-addresses" data-supplier-addresses-url-value="<%= addresses_page_admin_supplier_path(supplier) %>" data-supplier-addresses-next-page-value="<%= addresses_page.next_page || 0 %>" data-supplier-addresses-filter-value="all" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+<section id="supplier-dossier-addresses" data-supplier-dossier-target="panel" data-section="addresses" data-controller="supplier-addresses" data-supplier-addresses-url-value="<%= addresses_page_admin_supplier_path(supplier) %>" data-supplier-addresses-next-page-value="<%= addresses_page.next_page || 0 %>" data-supplier-addresses-filter-value="all"
+         data-supplier-addresses-empty-default-value="<%= t('admin.supplier_dossier.address_cards.empty_description') %>"
+         data-supplier-addresses-empty-no-results-value="<%= t('admin.supplier_dossier.address_cards.no_results_description') %>"
+         data-supplier-addresses-empty-title-default-value="<%= t('admin.supplier_dossier.address_cards.empty_title') %>"
+         data-supplier-addresses-empty-title-no-results-value="<%= t('admin.supplier_dossier.address_cards.no_results_title') %>"
+         class="hidden w-full min-w-0 space-y-4 lg:flex-1">
   <div data-supplier-addresses-header class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
     <div data-supplier-addresses-title-row class="grid grid-cols-1 items-center gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
       <div class="flex min-w-0 items-center gap-3">
@@ -12,9 +17,11 @@
       </div>
       <div class="flex min-w-0 flex-wrap items-center gap-3 lg:justify-end">
         <span data-supplier-addresses-target="count" class="sr-only" aria-live="polite"><%= addresses_page.total_count %></span>
-        <%= link_to admin_supplier_addresses_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
-          <%= icon('map-pin', class: 'size-4') %>
-          <%= t('admin.supplier_details.manage_addresses') %>
+        <% if can_manage_addresses %>
+          <%= link_to admin_supplier_addresses_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
+            <%= icon('map-pin', class: 'size-4') %>
+            <%= t('admin.supplier_details.manage_addresses') %>
+          <% end %>
         <% end %>
       </div>
     </div>
@@ -45,10 +52,10 @@
       </div>
       <div data-supplier-addresses-target="empty" class="<%= 'hidden' if addresses_page.total_count.positive? %> rounded-2xl border border-slate-200 bg-white px-5 py-10 text-center shadow-sm sm:px-8 sm:py-14">
         <%= image_tag 'saddresses.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[260px] sm:max-w-[300px]' %>
-        <h3 class="mt-3 font-jakarta text-lg font-bold text-slate-900 sm:text-xl"><%= t('admin.supplier_dossier.address_cards.empty_title') %></h3>
-        <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500"><%= t('admin.supplier_dossier.address_cards.empty_description') %></p>
+        <h3 data-supplier-addresses-target="emptyTitle" class="mt-3 font-jakarta text-lg font-bold text-slate-900 sm:text-xl"><%= t('admin.supplier_dossier.address_cards.empty_title') %></h3>
+        <p data-supplier-addresses-target="emptyText" class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500"><%= t('admin.supplier_dossier.address_cards.empty_description') %></p>
         <% if can_manage_addresses %>
-          <%= link_to new_admin_supplier_address_path(supplier, source: 'dossier'), class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+          <%= link_to new_admin_supplier_address_path(supplier, source: 'dossier'), data: { supplier_addresses_target: 'emptyAction' }, class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
             <%= icon('plus', class: 'size-4') %>
             <%= t('admin.supplier_dossier.address_cards.add_first') %>
           <% end %>

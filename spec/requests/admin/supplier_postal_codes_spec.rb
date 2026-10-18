@@ -92,4 +92,28 @@ RSpec.describe 'Supplier Mexican postal suggestions', type: :request do
     expect(response.body).to include('data-searchable="true"')
     expect(response.body).to include('data-wrap-options="true"')
   end
+  it 'keeps the Mapbox preview at the native 600 by 300 aspect ratio' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    map = document.at_css('[data-supplier-address-location-target="mapPlaceholder"]').parent
+
+    expect(map['class']).to include('aspect-[2/1]')
+    expect(map['class']).not_to include('max-h-[640px]')
+    expect(map.at_css('[data-supplier-address-location-target="mapImage"]')['class'])
+      .to include('object-contain')
+  end
+
+  it 'supplies the UI with the same required-region country codes as the model' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    fields = document.at_css('[data-controller*="supplier-country-fields"]')
+    codes = JSON.parse(fields['data-supplier-country-fields-state-required-codes-value'])
+
+    expect(codes).to match_array(Addresses::CountryRules::STATE_REQUIRED)
+    expect(codes).to include('AR', 'CO', 'CL', 'PE', 'ZA')
+  end
 end

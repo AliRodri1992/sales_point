@@ -3,6 +3,8 @@ import { Controller } from "@hotwired/stimulus"
 // Keep each country's unsaved draft separate. Hidden fields are cleared so a
 // previous country's information cannot be silently persisted on submit.
 export default class extends Controller {
+  static values = { stateRequiredCodes: Array }
+
   connect() {
     this.countryDrafts = new Map()
     this.previousCode = null
@@ -63,9 +65,12 @@ export default class extends Controller {
   update() {
     const code = this.countryCode()
     const mexico = code === "MX"
-    const stateRequired = ["MX", "US", "CA", "AU", "BR", "IN"].includes(code)
+    const stateRequired = this.stateRequiredCodesValue.includes(code)
     const postalRequired = this.applicable("postal_code", code)
     this.switchCountry(code)
+
+    const stateField = this.fields().state
+    if (stateField) stateField.required = stateRequired
 
     this.element.querySelectorAll("[data-country-label]").forEach((label) => {
       label.textContent = mexico ? label.dataset.countryLabelMx : label.dataset.countryLabelOther

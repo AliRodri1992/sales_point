@@ -3,13 +3,15 @@ import { Controller } from "@hotwired/stimulus"
 // Loads one server-rendered page at a time inside the supplier's address list.
 // Search and filters run on the server; no duplicate full-list download is needed.
 export default class extends Controller {
-  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "emptyText", "loading", "error", "loadMore"]
+  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "emptyText", "emptyTitle", "emptyAction", "loading", "error", "loadMore"]
   static values = {
     url: String,
     nextPage: Number,
     filter: { type: String, default: "all" },
     emptyDefault: String,
-    emptyNoResults: String
+    emptyNoResults: String,
+    emptyTitleDefault: String,
+    emptyTitleNoResults: String
   }
 
   connect() {
@@ -76,10 +78,14 @@ export default class extends Controller {
   }
 
   updateEmptyMessage() {
-    if (!this.hasEmptyTextTarget) return
-
     const searching = (this.hasSearchTarget && this.searchTarget.value.trim() !== "") || this.filterValue !== "all"
-    this.emptyTextTarget.textContent = searching ? this.emptyNoResultsValue : this.emptyDefaultValue
+    if (this.hasEmptyTextTarget) {
+      this.emptyTextTarget.textContent = searching ? this.emptyNoResultsValue : this.emptyDefaultValue
+    }
+    if (this.hasEmptyTitleTarget) {
+      this.emptyTitleTarget.textContent = searching ? this.emptyTitleNoResultsValue : this.emptyTitleDefaultValue
+    }
+    if (this.hasEmptyActionTarget) this.emptyActionTarget.classList.toggle("hidden", searching)
   }
 
   refresh() {

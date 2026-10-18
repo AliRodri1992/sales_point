@@ -309,6 +309,35 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(search_row.at_css('input')&.[]('data-action')).to eq('input->supplier-addresses#search')
   end
 
+  it 'hides the address management actions when the user has only viewing access' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    expect(panel.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_nil
+    expect(panel.css('[data-supplier-addresses-target="emptyAction"]')).to be_empty
+    expect(panel.at_css('input[data-supplier-addresses-target="search"]')).to be_present
+  end
+
+  it 'provides a distinct address search empty state with translated title and description' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    expect(panel['data-supplier-addresses-empty-title-no-results-value'])
+      .to eq(I18n.t('admin.supplier_dossier.address_cards.no_results_title', locale: :en))
+    expect(panel['data-supplier-addresses-empty-no-results-value'])
+      .to eq(I18n.t('admin.supplier_dossier.address_cards.no_results_description', locale: :en))
+    expect(panel.at_css('[data-supplier-addresses-target="emptyTitle"]')).to be_present
+    expect(panel.at_css('[data-supplier-addresses-target="emptyText"]')).to be_present
+    expect(panel.at_css('[data-supplier-addresses-target="emptyAction"]')).to be_present
+  end
+
   it 'renders validation errors when creating an invalid supplier' do
     post admin_suppliers_path, params: { supplier: { code: '', name: '' } }
 
