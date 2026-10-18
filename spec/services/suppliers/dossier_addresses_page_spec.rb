@@ -62,7 +62,7 @@ RSpec.describe Suppliers::DossierAddressesPage do
   it 'searches optional address references without matching unrelated suppliers' do
     match = create(:address, :fiscal, addressable: supplier, reference_notes: 'Portón AZUL del edificio')
     create(:address, :delivery, addressable: supplier, reference_notes: 'Portón verde')
-    create(:address, :general, addressable: create(:supplier), reference_notes: 'Portón AZUL')
+    create(:address, addressable: create(:supplier), purpose: 'general', reference_notes: 'Portón AZUL')
 
     expect(page(query: 'azul').addresses.pluck(:id)).to eq([match.id])
     expect(page(query: '%').addresses).to be_empty

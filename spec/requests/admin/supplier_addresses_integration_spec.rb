@@ -315,7 +315,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     get admin_supplier_addresses_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    expect(page.at_css('[data-address-empty="active"]')).to be_nil
+    expect(page.at_css('[data-address-empty="active"]')['class']).to include('hidden')
     expect(page.at_css('[data-address-statistics]')).to be_present
     expect(page.css('article').size).to eq(1)
     expect(page.css("a[href='#{new_admin_supplier_address_path(supplier)}']").size).to eq(1)
@@ -335,7 +335,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     get admin_supplier_addresses_path(supplier, status: 'deleted')
 
     page = Nokogiri::HTML(response.body)
-    expect(page.at_css('[data-address-empty="deleted"]')).to be_nil
+    expect(page.at_css('[data-address-empty="deleted"]')['class']).to include('hidden')
     expect(page.text).to include(address.street)
   end
 

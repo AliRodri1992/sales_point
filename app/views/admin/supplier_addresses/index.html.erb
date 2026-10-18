@@ -88,7 +88,7 @@
       <div class="mx-auto max-w-xl">
         <%= image_tag 'saddresses.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[240px] sm:max-w-[260px]' %>
         <h2 class="mt-3 font-jakarta text-xl font-bold text-slate-900">
-          <%= t("admin.supplier_details.#{@address_page.status == 'deleted' ? 'empty_deleted_addresses_title' : 'no_addresses'}") %>
+          <%= @address_page.status == 'deleted' ? t('admin.supplier_details.empty_deleted_addresses_title') : t('admin.supplier_dossier.address_cards.empty_title') %>
         </h2>
         <p data-supplier-addresses-target="emptyText" class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
           <%= @address_page.total_count.zero? && (params[:q].present? || @address_page.filter != 'all') ? t('admin.supplier_details.no_addresses') : t("admin.supplier_details.#{@address_page.status == 'deleted' ? 'empty_deleted_addresses_description' : 'addresses_description'}") %>
