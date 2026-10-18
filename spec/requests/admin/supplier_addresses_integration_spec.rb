@@ -55,7 +55,6 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('[data-step]')).to be_empty
   end
 
-
   it 'uses the address model for validation instead of native browser restrictions' do
     get new_admin_supplier_address_path(supplier)
 
@@ -63,10 +62,11 @@ RSpec.describe 'Supplier address integration', type: :request do
     form = page.at_css('form[data-controller="supplier-address-preview"]')
     expect(form['novalidate']).not_to be_nil
 
+    browser_validations = %w[required pattern minlength maxlength]
     %w[country_id postal_code street exterior_number interior_number neighborhood state city].each do |field|
       input = form.at_css("[name='address[#{field}]']")
       expect(input).to be_present
-      %w[required pattern minlength maxlength].each do |attribute|
+      browser_validations.each do |attribute|
         expect(input[attribute]).to be_nil
       end
     end
