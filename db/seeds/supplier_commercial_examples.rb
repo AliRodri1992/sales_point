@@ -74,7 +74,8 @@ module SupplierCommercialExamples
 
     def seed_offer(supplier, product, presentation, units, position)
       attrs = { organization: supplier.organization, supplier:, product:, presentation_name: presentation }
-      return if SupplierProduct.exists?(attrs)
+      supplier_sku = "#{supplier.code}-#{product.code}-#{units}"
+      return if SupplierProduct.exists?(attrs) || SupplierProduct.exists?(supplier:, product:, supplier_sku:)
 
       was_unlinked = product.supplier_products.empty?
       offer = SupplierProduct.create!(attrs.merge(offer_values(supplier, product, units, position)))
@@ -107,6 +108,7 @@ module SupplierCommercialExamples
 
     def seed_additional_presentation(supplier, product)
       return if SupplierProduct.exists?(supplier:, product:, presentation_name: 'Caja de 24')
+      return if SupplierProduct.exists?(supplier:, product:, supplier_sku: "#{supplier.code}-#{product.code}-24")
 
       SupplierProduct.create!(
         organization: supplier.organization, supplier:, product:, currency: supplier.currency,

@@ -33,6 +33,18 @@ RSpec.describe SupplierCommercialExamples do
     expect(SupplierProductPrice.count).to eq(SupplierProduct.count)
   end
 
+  it 'does not recreate a seeded purchasing presentation after a manual rename' do
+    described_class.seed_products!
+    offer = SupplierProduct.order(:id).first
+    count = SupplierProduct.count
+    offer.update!(presentation_name: 'Presentación personalizada')
+
+    described_class.seed_products!
+
+    expect(SupplierProduct.count).to eq(count)
+    expect(offer.reload.presentation_name).to eq('Presentación personalizada')
+  end
+
   it 'preserves edited offer values and manually removed preferred suppliers on a second run' do
     described_class.seed_products!
     offer = SupplierProduct.order(:id).first

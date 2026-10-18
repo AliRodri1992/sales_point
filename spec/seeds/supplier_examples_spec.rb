@@ -29,6 +29,18 @@ RSpec.describe SupplierExamples do
     expect(regime.reload.deleted_at).to be_nil
   end
 
+  it 'does not recreate a manually archived primary supplier contact' do
+    described_class.seed!
+    supplier = Supplier.find_by!(code: 'SUP-0001')
+    contact = supplier.contacts.first
+    contact.update!(deleted_at: Time.current)
+
+    described_class.seed!
+
+    expect(supplier.contacts.with_deleted.count).to eq(1)
+    expect(supplier.contacts.with_deleted.first.id).to eq(contact.id)
+  end
+
   it 'does not duplicate suppliers, contacts or memberships when run twice' do
     2.times { described_class.seed! }
 

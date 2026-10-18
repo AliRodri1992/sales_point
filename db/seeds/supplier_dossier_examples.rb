@@ -49,6 +49,8 @@ module SupplierDossierExamples
     end
 
     def seed_contacts(supplier, count)
+      return if supplier.contacts.with_deleted.count >= count
+
       (2..count).each do |index|
         email = format('demo.s%<supplier>04d.c%<contact>02d@ejemplo.test',
                        supplier: supplier.id, contact: index)
@@ -75,6 +77,8 @@ module SupplierDossierExamples
     end
 
     def seed_addresses(supplier, country, count)
+      return if supplier.addresses.with_deleted.count >= count
+
       count.times do |index|
         reference = "DEMO-DIRECCION-#{index + 1}"
         existing = supplier.addresses.with_deleted
@@ -101,6 +105,8 @@ module SupplierDossierExamples
     end
 
     def seed_documents(supplier, count)
+      return if supplier.documents.attachments.count >= count + SupplierDemoDocuments::FORMATS.length
+
       count.times do |index|
         name = format('demo-proveedor-%<code>s-documento-%<number>02d.png',
                       code: supplier.code.downcase, number: index + 1)
@@ -115,7 +121,7 @@ module SupplierDossierExamples
     end
 
     def seed_schedules(supplier, branches, count)
-      return if branches.empty?
+      return if branches.empty? || supplier.supplier_schedules.count >= count
 
       count.times do |index|
         kind = SupplierSchedule::KINDS[index % SupplierSchedule::KINDS.length]

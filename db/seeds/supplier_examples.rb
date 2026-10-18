@@ -112,7 +112,7 @@ module SupplierExamples
 
     def create_contact(supplier, number)
       # A manually renamed or archived primary contact must not be recreated.
-      return if supplier.contacts.exists?
+      return if supplier.contacts.with_deleted.exists?
 
       create_new_contact(supplier, number, "contacto#{number}@example.com")
     end

@@ -90,6 +90,25 @@ RSpec.describe SupplierDossierExamples do
     expect(extensions).to include('pdf', 'txt', 'docx', 'xlsx', 'jpg')
   end
 
+  it 'does not recreate records after user changes all their demo identifiers' do
+    described_class.seed!
+    supplier = Supplier.find_by!(code: 'SUP-0001')
+    contact = supplier.contacts.find_by!(name: 'Contacto demo 2')
+    address = supplier.addresses.find_by!(reference_notes: 'DEMO-DIRECCION-1')
+    schedule = supplier.supplier_schedules.find_by!(notes: 'DEMO-CALENDARIO-1')
+    counts = [supplier.contacts.with_deleted.count, supplier.addresses.with_deleted.count,
+              supplier.supplier_schedules.count, supplier.documents.attachments.count]
+
+    contact.update!(name: 'Responsable personalizado', email: 'personalizado@ejemplo.test', notes: nil)
+    address.update!(street: 'Avenida Personalizada', exterior_number: '999', reference_notes: nil)
+    schedule.update!(notes: 'Horario personalizado', starts_at: '12:00', ends_at: '14:00')
+
+    described_class.seed!
+
+    expect([supplier.contacts.with_deleted.count, supplier.addresses.with_deleted.count,
+            supplier.supplier_schedules.count, supplier.documents.attachments.count]).to eq(counts)
+  end
+
   it 'keeps contacts, addresses, attachments and schedules idempotent after manual edits' do
     described_class.seed!
     organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
