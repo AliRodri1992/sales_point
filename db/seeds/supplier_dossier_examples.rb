@@ -39,8 +39,8 @@ module SupplierDossierExamples
 
     def report_supplier(supplier)
       $stdout.puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
-           "direcciones=#{supplier.addresses.not_deleted.count} documentos=#{supplier.documents.attachments.count} " \
-           "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
+                   "direcciones=#{supplier.addresses.not_deleted.count} documentos=#{supplier.documents.attachments.count} " \
+                   "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
     end
 
     def seed_contacts(supplier, count)
