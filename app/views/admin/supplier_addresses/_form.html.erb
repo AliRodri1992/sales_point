@@ -1,5 +1,6 @@
 <%= form_with model: [:admin, @supplier, @address],
               class: 'space-y-4',
+              html: { novalidate: true },
               data: { controller: 'supplier-address-preview',
                       action: 'input->supplier-address-preview#refresh change->supplier-address-preview#refresh',
                       supplier_address_preview_placeholder_value: t('admin.supplier_details.address_form.preview_pending') } do |form| %>
@@ -22,7 +23,7 @@
       </div>
 
       <div class="grid gap-x-4 gap-y-5 sm:grid-cols-2">
-        <div class="min-w-0">
+        <div class="min-w-0" data-address-field="country">
           <%= form.label :country_id, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
             <%= t('admin.supplier_details.address_fields.country') %> <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
@@ -33,63 +34,59 @@
                               form.object.country_id
                             ),
                             { include_blank: t('admin.supplier_placeholders.country') },
-                            required: true,
                             class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:ring-emerald-500 #{form_state_classes(@address, :country)}" %>
           </div>
           <%= error_message_for(@address, :country) %>
         </div>
-        <div class="min-w-0">
+        <div class="min-w-0" data-address-field="postal_code">
           <%= form.label :postal_code, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
             <%= t('admin.supplier_details.address_fields.postal_code') %> <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
-          <%= form.text_field :postal_code, required: true, maxlength: 5, inputmode: 'numeric',
-                              pattern: '[0-9]{5}', autocomplete: 'postal-code',
+          <%= form.text_field :postal_code, inputmode: 'numeric', autocomplete: 'postal-code',
                               placeholder: t('admin.supplier_details.address_form.placeholders.postal_code'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :postal_code)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :postal_code) %>
         </div>
 
         <% %i[state city].each do |field| %>
-          <div class="min-w-0">
+          <div class="min-w-0" data-address-field="<%= field %>">
             <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
               <%= t("admin.supplier_details.address_fields.#{field}") %> <span class="text-rose-600" aria-hidden="true">*</span>
             <% end %>
-            <%= form.text_field field, required: true, minlength: 2, maxlength: 100,
-                                autocomplete: (field == :state ? 'address-level1' : 'address-level2'),
+            <%= form.text_field field, autocomplete: (field == :state ? 'address-level1' : 'address-level2'),
                                 placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),
                                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
             <%= error_message_for(@address, field) %>
           </div>
         <% end %>
 
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-2" data-address-field="neighborhood">
           <%= form.label :neighborhood, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
             <%= t('admin.supplier_details.address_fields.neighborhood') %> <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
-          <%= form.text_field :neighborhood, required: true, minlength: 2, maxlength: 100,
+          <%= form.text_field :neighborhood,
                               placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :neighborhood)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :neighborhood) %>
         </div>
 
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-2" data-address-field="street">
           <%= form.label :street, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
             <%= t('admin.supplier_details.address_fields.street') %> <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
-          <%= form.text_field :street, required: true, minlength: 2, maxlength: 150,
-                              autocomplete: 'street-address',
+          <%= form.text_field :street, autocomplete: 'street-address',
                               placeholder: t('admin.supplier_details.address_form.placeholders.street'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :street)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :street) %>
         </div>
 
         <% %i[exterior_number interior_number].each do |field| %>
-          <div class="min-w-0">
+          <div class="min-w-0" data-address-field="<%= field %>">
             <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
               <%= t("admin.supplier_details.address_fields.#{field}") %>
               <% if field == :exterior_number %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
             <% end %>
-            <%= form.text_field field, required: (field == :exterior_number), maxlength: 20,
+            <%= form.text_field field,
                                 placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),
                                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
             <%= error_message_for(@address, field) %>
@@ -97,9 +94,9 @@
         <% end %>
 
         <% if form.object.has_attribute?(:reference_notes) %>
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-2" data-address-field="reference_notes">
           <%= form.label :reference_notes, t('admin.supplier_details.address_form.references'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_area :reference_notes, rows: 2, maxlength: 200,
+          <%= form.text_area :reference_notes, rows: 2,
                              placeholder: t('admin.supplier_details.address_form.placeholders.references'),
                              class: "input-field min-h-20 w-full resize-y rounded-xl #{form_state_classes(@address, :reference_notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :reference_notes) %>
@@ -118,7 +115,7 @@
           </div>
         </div>
 
-        <fieldset>
+        <fieldset data-address-field="purpose">
           <legend class="mb-3 text-sm font-semibold text-slate-800">
             <%= t('admin.supplier_details.address_form.address_type') %> <span class="text-rose-600" aria-hidden="true">*</span>
           </legend>
@@ -128,7 +125,7 @@
               <label class="flex min-h-28 min-w-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-3 text-center text-xs font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 has-checked:border-emerald-600 has-checked:bg-emerald-50 has-checked:text-emerald-800 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-emerald-600">
                 <%= icon(purpose_icons.fetch(purpose), class: 'size-6') %>
                 <span><%= t("admin.supplier_details.address_purposes.#{purpose}") %></span>
-                <%= form.radio_button :purpose, purpose, required: true,
+                <%= form.radio_button :purpose, purpose,
                                       data: { label: t("admin.supplier_details.address_purposes.#{purpose}") },
                                       class: 'size-4 cursor-pointer accent-emerald-600' %>
               </label>
@@ -138,7 +135,7 @@
           <%= error_message_for(@address, :purpose) %>
         </fieldset>
 
-        <fieldset class="mt-6 border-t border-slate-100 pt-5">
+        <fieldset data-address-field="primary" class="mt-6 border-t border-slate-100 pt-5">
           <legend class="mb-3 text-sm font-semibold text-slate-800"><%= t('admin.supplier_details.address_form.is_primary') %></legend>
           <div class="space-y-2">
             <% [[false, 'secondary_option', 'secondary_hint'], [true, 'primary_option', 'primary_choice_hint']].each do |value, key, hint| %>

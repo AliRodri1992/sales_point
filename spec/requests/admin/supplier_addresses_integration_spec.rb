@@ -44,7 +44,7 @@ RSpec.describe 'Supplier address integration', type: :request do
       %w[fiscal commercial delivery general]
     )
     expect(form.css('input[name="address[primary]"]').pluck('value')).to match_array(%w[false true])
-    expect(form.at_css('textarea[name="address[reference_notes]"][maxlength="200"]')).to be_present
+    expect(form.at_css('textarea[name="address[reference_notes]"]')).to be_present
     expect(form.at_css('[data-supplier-address-preview-target="address"]')).to be_present
     expect(form.at_css('[data-supplier-address-preview-target="country"]')).to be_present
     expect(form.at_css('[data-supplier-address-preview-target="reference"]')).to be_present
@@ -53,6 +53,68 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(form.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
     expect(page.text).to include('SUP-', 'Add address')
     expect(page.css('[data-step]')).to be_empty
+  end
+
+
+  it 'uses the address model for validation instead of native browser restrictions' do
+    get new_admin_supplier_address_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    expect(form['novalidate']).not_to be_nil
+
+    %w[country_id postal_code street exterior_number interior_number neighborhood state city].each do |field|
+      input = form.at_css("[name='address[#{field}]']")
+      expect(input).to be_present
+      %w[required pattern minlength maxlength].each do |attribute|
+        expect(input[attribute]).to be_nil
+      end
+    end
+    expect(form.at_css('textarea[name="address[reference_notes]"]')['maxlength']).to be_nil
+    expect(form.css('input[name="address[purpose]"][required]')).to be_empty
+  end
+
+  it 'shows simultaneous model validation messages beneath each invalid address field' do
+    invalid = address_attributes(
+      country_id: '', street: '', exterior_number: '', neighborhood: '',
+      city: '', state: '', postal_code: 'AB123', purpose: 'invalid'
+    )
+    post admin_supplier_addresses_path(supplier), params: { address: invalid }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    expect(form['novalidate']).not_to be_nil
+
+    %w[country street exterior_number neighborhood city state postal_code purpose].each do |field|
+      wrapper = form.at_css("[data-address-field='#{field}']")
+      expect(wrapper).to be_present
+      expect(wrapper.at_css('[data-server-field-error]')).to be_present
+    end
+    expect(form.at_css("[data-address-field='country'] [data-server-field-error]").text)
+      .to include('Country')
+    expect(form.at_css("[data-address-field='postal_code'] [data-server-field-error]").text)
+      .to include('Postal code')
+    expect(form.at_css("[data-address-field='street'] [data-server-field-error]").text)
+      .to include('Street')
+    expect(form.at_css("input[name='address[postal_code]']")['value']).to eq('AB123')
+  end
+
+  it 'preserves entered values and inline model messages after an invalid edit' do
+    address = create(:address, :fiscal, addressable: supplier)
+    invalid = address_attributes(
+      country_id: address.country_id, street: 'X', city: '',
+      postal_code: '1234', purpose: 'delivery', primary: false
+    )
+    patch admin_supplier_address_path(supplier, address), params: { address: invalid }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    %w[street city postal_code].each do |field|
+      expect(page.at_css("[data-address-field='#{field}'] [data-server-field-error]")).to be_present
+    end
+    expect(page.at_css("input[name='address[street]']")['value']).to eq('X')
+    expect(page.at_css("input[name='address[postal_code]']")['value']).to eq('1234')
   end
 
   it 'renders the address form without references while the database migration is pending' do
