@@ -81,7 +81,7 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
   end
 
   scenario 'discards delayed geocoding responses after the address changes' do
-    create(:country, iso_alpha2: 'MX')
+    Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
     visit new_admin_supplier_address_path(supplier)
     choose_country('MX')
     find('input[name="address[street]"]').set('Avenida Reforma')
@@ -110,7 +110,7 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
   end
 
   scenario 'requires explicit review and reason for a low confidence marker' do
-    create(:country, iso_alpha2: 'MX')
+    Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
     suggestion = { valid: true, latitude: 19.6742, longitude: -99.1803,
                    full_address: 'Cuautitlán', confidence: 0.30 }
     allow_any_instance_of(Geocoding::MapboxValidateAddressService).to receive(:call).and_return(suggestion)
