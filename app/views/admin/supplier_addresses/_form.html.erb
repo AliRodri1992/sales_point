@@ -12,7 +12,9 @@
                 supplier_address_location_confirmed_value: t('admin.supplier_details.address_form.location_confirmed'),
                 supplier_address_location_searching_value: t('admin.supplier_details.address_form.location_searching'),
                 supplier_address_location_low_confidence_value: t('admin.supplier_details.location_low_confidence'),
-                supplier_address_location_adjusted_value: t('admin.supplier_details.location_adjusted')
+                supplier_address_location_adjusted_value: t('admin.supplier_details.location_adjusted'),
+                supplier_address_location_review_required_value: t('admin.supplier_details.location_review_required'),
+                supplier_address_location_confidence_value: @address.geocoding_confidence || 1.0
               } do |form| %>
   <%= form.hidden_field :latitude, data: { supplier_address_location_target: 'latitude' } %>
   <%= form.hidden_field :longitude, data: { supplier_address_location_target: 'longitude' } %>
@@ -151,12 +153,12 @@
           </div>
         </div>
         <div class="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-          <div class="relative min-h-44 overflow-hidden rounded-xl bg-slate-100">
+          <div class="relative aspect-[2/1] min-h-44 overflow-hidden rounded-xl bg-slate-100">
             <div data-supplier-address-location-target="mapPlaceholder" class="absolute inset-0 flex items-center justify-center px-4 text-center text-xs text-slate-500">
               <%= t('admin.supplier_details.address_form.location_map_empty') %>
             </div>
             <img alt="<%= t('admin.supplier_details.address_form.location_map_alt') %>"
-                 data-supplier-address-location-target="mapImage" class="hidden h-full min-h-44 w-full object-cover">
+                 data-supplier-address-location-target="mapImage" class="hidden h-full w-full object-fill">
             <button type="button" data-supplier-address-location-target="mapClick"
                     data-action="click->supplier-address-location#adjust keydown->supplier-address-location#nudge pointerdown->supplier-address-location#dragStart pointermove->supplier-address-location#dragMove pointerup->supplier-address-location#dragEnd pointercancel->supplier-address-location#dragCancel wheel->supplier-address-location#wheelZoom:!passive"
                     aria-label="<%= t('admin.supplier_details.address_form.location_adjust') %>"
