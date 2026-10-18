@@ -128,9 +128,7 @@ module Admin
       authorize @supplier, ACTION_POLICY.fetch(action_name)
     end
 
-    def set_address
-      @address = @supplier.addresses.not_deleted.find(params[:id])
-    end
+    def set_address = (@address = @supplier.addresses.not_deleted.find(params[:id]))
 
     def notify_address(action)
       Suppliers::NotifyService.call(action: action, supplier: @supplier, user: current_user, subject: @address)
@@ -141,9 +139,7 @@ module Admin
                   flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 
-    def load_countries
-      @countries = Country.active.ordered
-    end
+    def load_countries = (@countries = Country.active.ordered)
 
     def address_params
       fields = %i[street exterior_number interior_number neighborhood city state country_id postal_code

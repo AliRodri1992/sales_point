@@ -40,8 +40,9 @@ RSpec.describe Suppliers::SetPrimaryAddress do
     previous = create(:address, :delivery, :primary, addressable: supplier)
     target = create(:address, :delivery, addressable: supplier)
     allow_any_instance_of(Address).to receive(:update!).and_call_original
-    allow_any_instance_of(Address).to receive(:update!).with(primary: true)
-      .and_raise(ActiveRecord::RecordInvalid.new(target))
+    allow_any_instance_of(Address).to receive(:update!).with(primary: true).and_raise(
+      ActiveRecord::RecordInvalid.new(target)
+    )
 
     expect { promote(target) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(previous.reload).to be_primary

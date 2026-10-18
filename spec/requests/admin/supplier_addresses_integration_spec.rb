@@ -328,8 +328,8 @@ RSpec.describe 'Supplier address integration', type: :request do
 
   it 'shows geocoding and references only when real location data exists' do
     create(:address, :delivery, addressable: supplier, latitude: nil, longitude: nil)
-    located = create(:address, :fiscal, addressable: supplier,
-                     reference_notes: 'Blue gate', geocoding_status: :success)
+    attributes = { reference_notes: 'Blue gate', geocoding_status: :success }
+    located = create(:address, :fiscal, addressable: supplier, **attributes)
 
     get admin_supplier_addresses_path(supplier)
 
