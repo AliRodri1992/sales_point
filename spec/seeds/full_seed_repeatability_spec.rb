@@ -21,6 +21,36 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     end
   end
 
+  it 'backfills missing demo relationships and documents without duplicating existing data' do
+    Rails.application.load_seed
+    supplier = Supplier.find_by!(code: 'SUP-0001')
+    other_supplier = Supplier.find_by!(code: 'SUP-0002')
+    removed_offer = other_supplier.supplier_products.order(:id).first!
+    product = removed_offer.product
+    original_history_count = SupplierProductPrice.count
+    removed_offer.destroy!
+    missing_attachment = supplier.documents.attachments.joins(:blob)
+                                 .find_by!(active_storage_blobs: {
+                                   filename: 'delta-demo-sup-0001-nota.txt'
+                                 })
+    missing_attachment.purge
+    retained_ids = supplier.documents.attachments.pluck(:id).sort
+
+    Rails.application.load_seed
+
+    expect(other_supplier.supplier_products.exists?(product_id: product.id)).to be(true)
+    expect(supplier.documents.attachments.pluck(:id)).to include(*retained_ids)
+    expect(supplier.documents.attachments.joins(:blob).where(active_storage_blobs: {
+      filename: 'delta-demo-sup-0001-nota.txt'
+    }).count).to eq(1)
+    expect(SupplierProductPrice.count).to eq(original_history_count)
+    expect(other_supplier.supplier_products.group(:product_id, :presentation_name).count.values.max).to eq(1)
+
+    ids = seeded_identifiers
+    Rails.application.load_seed
+    expect(seeded_identifiers).to eq(ids)
+  end
+
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
     Rails.application.load_seed
     counts = seeded_models.to_h { |model| [model.name, model.count] }
