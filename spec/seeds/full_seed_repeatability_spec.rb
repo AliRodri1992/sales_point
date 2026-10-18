@@ -28,6 +28,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     removed_offer = other_supplier.supplier_products.order(:id).first!
     product = removed_offer.product
     original_history_count = SupplierProductPrice.count
+    removed_offer.price_history.delete_all
     removed_offer.destroy!
     missing_attachment = supplier.documents.attachments.joins(:blob)
                                  .find_by!(active_storage_blobs: {
