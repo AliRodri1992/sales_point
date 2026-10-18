@@ -33,10 +33,12 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
   end
 
   it 'creates and soft deletes supplier addresses' do
+    mexico = Country.find_by(iso_alpha2: 'MX') ||
+             create(:country, iso_alpha2: 'MX', iso_alpha3: 'MEX', iso_numeric: '484')
     post admin_supplier_addresses_path(supplier), params: {
       address: attributes_for(:address).slice(
         :street, :exterior_number, :interior_number, :neighborhood, :city, :state, :postal_code
-      ).merge(country_id: create(:country).id)
+      ).merge(country_id: mexico.id)
     }
     expect(response).to have_http_status(:redirect)
     address = supplier.addresses.last
