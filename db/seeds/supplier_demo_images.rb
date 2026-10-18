@@ -33,5 +33,4 @@ module SupplierDemoImages
   ).freeze
 
   OBSOLETE_JPEG_SHA256 = '8e3a6a63a12cbe868ada81d8602cc6b0d7c881568fff0d08f842dc3939e12e5c'
-
 end
