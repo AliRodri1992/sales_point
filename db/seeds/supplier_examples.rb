@@ -56,10 +56,7 @@ module SupplierExamples
     end
 
     def create_suppliers_for(organization)
-      COUNT.times do |index|
-        number = index + 1
-        create_supplier(organization, number)
-      end
+      COUNT.times { |index| create_supplier(organization, index + 1) }
     end
 
     def create_supplier(organization, number)
