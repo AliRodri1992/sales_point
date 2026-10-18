@@ -174,7 +174,8 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     pictured = create(:product, organization:, name: 'A Pictured Item', sku: 'PIC-01')
     png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
     pictured.image.attach(io: StringIO.new(Base64.decode64(png)), filename: 'photo.png', content_type: 'image/png')
-    create_offer(pictured, supplier_sku: 'SUP-PIC', preferred: true)
+    create_offer(pictured, supplier_sku: 'SUP-PIC')
+    pictured.update!(preferred_supplier: supplier)
     create_offer(create(:product, organization:, name: 'Fallback Item'), supplier_sku: 'SUP-FALL')
     3.times do |index|
       create_offer(create(:product, organization:, name: "More Item #{index}"))
