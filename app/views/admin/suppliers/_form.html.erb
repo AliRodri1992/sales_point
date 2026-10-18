@@ -165,7 +165,7 @@
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div class="sm:col-span-2">
       <%= form.label :documents, t('admin.supplier_dossier.documents'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.file_field :documents, multiple: true, title: t('admin.supplier_placeholders.documents'), accept: '.pdf,.png,.jpg,.jpeg', class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :documents)}" %>
+      <%= form.file_field :documents, multiple: true, title: t('admin.supplier_placeholders.documents'), accept: '.pdf,.png,.jpg,.jpeg,.txt,.doc,.docx,.xls,.xlsx,.csv,.xml', class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :documents)}" %>
       <%= error_message_for(supplier, :documents) %>
     </div>
     <div class="sm:col-span-2">
