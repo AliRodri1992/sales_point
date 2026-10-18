@@ -70,7 +70,6 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     expect(page).to have_current_path(admin_supplier_addresses_path(supplier), wait: 10)
 
     errors = page.all('[role="alert"], [data-server-field-error]', minimum: 0).map(&:text).join(' | ')
-    expect(supplier.addresses.reload.last&.location_confirmed?).to be(true),
-                                                                 "path=#{page.current_path} #{errors}"
+    expect(supplier.addresses.reload.last&.location_confirmed?).to be(true), "path=#{page.current_path} #{errors}"
   end
 end
