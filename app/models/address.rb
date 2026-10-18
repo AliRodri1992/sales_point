@@ -42,6 +42,8 @@ class Address < ApplicationRecord
   validates :exterior_number, length: { in: 1..20 }, allow_blank: true, on: %i[create update]
   validates :interior_number, length: { maximum: 20 }, allow_blank: true, on: %i[create update]
   validates :reference_notes, length: { maximum: 200 }, allow_blank: true, on: %i[create update]
+  validates :location_adjustment_reason, length: { maximum: 250 }, allow_blank: true
+  validates :geocoding_confidence, numericality: { in: 0..1 }, allow_nil: true
   validates :neighborhood, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
@@ -90,6 +92,10 @@ class Address < ApplicationRecord
       addressable_type: addressable.class.base_class.name,
       addressable_id: addressable.id, purpose: purpose, primary: true, deleted_at: nil
     ).where.not(id: id).exists?
+  end
+
+  def low_geocoding_confidence?
+    geocoding_confidence.present? && geocoding_confidence < 0.8
   end
 
   def geocoded?
