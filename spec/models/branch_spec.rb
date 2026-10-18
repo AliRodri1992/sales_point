@@ -39,7 +39,7 @@ RSpec.describe Branch, type: :model do
         neighborhood: 'Centro',
         city: 'Cuautitlán',
         state: 'Estado de México',
-        country: build(:country),
+        country: build(:country, iso_alpha2: 'MX'),
         postal_code: '54800'
       )
 
