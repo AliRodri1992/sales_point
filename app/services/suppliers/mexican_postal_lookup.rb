@@ -16,7 +16,8 @@ module Suppliers
       return unless ZIP_FORMAT.match?(@postal_code)
 
       Rails.cache.fetch("suppliers:mx_postal:#{@postal_code}", expires_in: CACHE_DURATION, skip_nil: true) do
-        lookup
+        result = lookup
+        result&.fetch(:found, false) ? result : (offline_suggestion || result)
       end
     end
 
@@ -42,6 +43,15 @@ module Suppliers
         municipality: entries.first['d_mnpio'],
         neighborhoods: entries.filter_map { |row| row['d_asenta'].presence }.uniq.sort
       }
+    end
+
+    def offline_suggestion
+      catalog = YAML.safe_load_file(Rails.root.join('config/data/supplier_postal_fallback.yml'))
+      entry = catalog[@postal_code]
+      return unless entry
+
+      { found: true, state: entry.fetch('state'), municipality: entry.fetch('municipality'),
+        neighborhoods: entry.fetch('neighborhoods') }
     end
 
     def connection
