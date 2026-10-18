@@ -261,7 +261,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(tab_counts).to eq(%w[19 3])
     expect(page.at_css('[data-address-statistics]')).to be_present
     expect(page.css('[data-supplier-addresses-target="filterCount"]').map { |element| element.text.strip })
-      .to eq(%w[19 0 19 0 0 0])
+      .to eq(%w[19 0 19 0 0 0 0 0 19 0])
   end
 
   it 'paginates and filters active addresses in the administration search endpoint' do
