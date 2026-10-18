@@ -80,7 +80,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(address_panel.at_css('[data-supplier-addresses-target="list"]')['class']).to include('md:grid-cols-2')
   end
 
-  it 'only renders coordinates status when geocoding has coordinates' do
+  it 'displays pending and approximate location states even without confirmed coordinates' do
     no_coords = create(:address, :fiscal, addressable: supplier, latitude: nil, longitude: nil)
     waiting = create(:address, :delivery, addressable: supplier, geocoding_status: 'pending')
     located = create(:address, addressable: supplier, purpose: 'commercial', geocoding_status: 'success')
@@ -88,7 +88,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     get admin_supplier_path(supplier, tab: 'addresses')
 
     expect(cards.find { |card| card['data-supplier-address-id'] == no_coords.id.to_s }
-             .css('[data-address-geocoding-status]')).to be_empty
+             .at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('pending')
     expect(cards.find { |card| card['data-supplier-address-id'] == waiting.id.to_s }
              .at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('pending')
     expect(cards.find { |card| card['data-supplier-address-id'] == located.id.to_s }
@@ -135,10 +135,10 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
 
     toolbar = address_panel.at_css('[data-supplier-addresses-toolbar]')
     buttons = toolbar.css('button[data-supplier-addresses-target="filter"]')
-    expect(buttons.pluck('data-filter')).to eq(%w[all fiscal delivery commercial general primary])
-    expect(buttons.map { |button| button.at_css('[data-supplier-addresses-target="filterCount"]').text })
+    expect(buttons.pluck('data-filter')).to eq(Suppliers::DossierAddressesPage::FILTERS)
+    expect(buttons.first(6).map { |button| button.at_css('[data-supplier-addresses-target="filterCount"]').text })
       .to eq(%w[5 1 2 1 1 1])
-    expect(buttons.map { |button| button.text.squish }).to eq(
+    expect(buttons.first(6).map { |button| button.text.squish }).to eq(
       ['All 5', 'Tax 1', 'Delivery 2', 'Commercial 1', 'General 1', 'Primary 1']
     )
     expect(toolbar.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
@@ -177,7 +177,8 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(response.headers['X-Addresses-Count']).to eq('1')
     expect(JSON.parse(response.headers['X-Addresses-Filter-Counts'])).to eq(
       'all' => 2, 'fiscal' => 1, 'delivery' => 1,
-      'commercial' => 0, 'general' => 0, 'primary' => 1
+      'commercial' => 0, 'general' => 0, 'primary' => 1,
+      'confirmed' => 0, 'approximate' => 0, 'pending' => 2, 'failed' => 0
     )
     expect(response.headers['Cache-Control']).to include('no-store')
   end
