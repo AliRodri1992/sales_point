@@ -54,7 +54,7 @@ RSpec.describe SupplierExamples do
 
     expect(supplier.reload).to have_attributes(
       legal_name: 'Razón social ajustada',
-      email: 'proveedor2@example.com', phone: '5500000002',
+      email: 'proveedor2@example.com', phone: '+525500000002',
       postal_code: '60002', notes: 'Proveedor de demostración 2 para Delta POS.'
     )
   end
