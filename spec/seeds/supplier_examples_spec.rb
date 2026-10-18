@@ -26,7 +26,8 @@ RSpec.describe SupplierExamples do
     described_class.seed!
 
     expect(SatFiscalRegime.count).to eq(count)
-    expect(regime.reload.deleted_at).to be_nil
+    expect(SatFiscalRegime.active.where(code: '601', person_type: 'M')).to exist
+    expect(SatFiscalRegime.active.where(code: '601').count).to eq(1)
   end
 
   it 'does not recreate a manually archived primary supplier contact' do
