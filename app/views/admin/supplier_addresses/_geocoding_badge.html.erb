@@ -1,23 +1,25 @@
-<%# Do not imply a validated street-level position: existing geocoding may use postal codes only. %>
-<% if address.latitude.present? && address.longitude.present? %>
-  <% if address.location_confirmed? %>
-    <span data-address-geocoding-status="confirmed"
-          class="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
-      <%= icon('check-circle', class: 'size-3') %>
-      <%= t('admin.supplier_details.address_form.location_confirmed') %>
-    </span>
-  <% elsif address.geocoding_status == 'success' %>
-    <span data-address-geocoding-status="success"
-          title="<%= t('admin.supplier_details.geocoding_approximate') %>"
-          class="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
-      <%= icon('map-pin', class: 'size-3') %>
-      <%= t('admin.supplier_details.geocoding_approximate') %>
-    </span>
-  <% elsif address.geocoding_status == 'pending' %>
-    <span data-address-geocoding-status="pending"
-          class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
-      <%= icon('clock', class: 'size-3') %>
-      <%= t('admin.supplier_details.geocoding_pending') %>
-    </span>
-  <% end %>
+<% if address.location_confirmed? && address.latitude.present? && address.longitude.present? %>
+  <span data-address-geocoding-status="confirmed"
+        class="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
+    <%= icon('check-circle', class: 'size-3') %>
+    <%= t('admin.supplier_details.address_form.location_confirmed') %>
+  </span>
+<% elsif address.geocoding_status == 'failed' %>
+  <span data-address-geocoding-status="failed"
+        class="mt-2 inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-1 text-[11px] font-semibold text-rose-700">
+    <%= icon('alert-circle', class: 'size-3') %>
+    <%= t('admin.supplier_details.geocoding_failed') %>
+  </span>
+<% elsif address.geocoding_status == 'pending' %>
+  <span data-address-geocoding-status="pending"
+        class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
+    <%= icon('clock', class: 'size-3') %>
+    <%= t('admin.supplier_details.geocoding_pending') %>
+  </span>
+<% elsif address.geocoding_status == 'success' %>
+  <span data-address-geocoding-status="success"
+        class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
+    <%= icon('map-pin', class: 'size-3') %>
+    <%= t(address.low_geocoding_confidence? ? 'admin.supplier_details.geocoding_low_confidence' : 'admin.supplier_details.geocoding_approximate') %>
+  </span>
 <% end %>
