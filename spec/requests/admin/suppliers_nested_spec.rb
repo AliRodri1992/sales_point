@@ -16,7 +16,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
 
   def address_attributes
     { street: 'Main Street', exterior_number: '12', neighborhood: 'Centro',
-      city: 'Mexico City', state: 'CDMX', country_id: create(:country).id,
+      city: 'Mexico City', state: 'CDMX', country_id: create(:country, iso_alpha2: 'MX').id,
       postal_code: '06000', purpose: 'fiscal', primary: true }
   end
 
@@ -30,9 +30,11 @@ RSpec.describe 'Supplier nested dossier', type: :request do
       addresses_attributes: { '0' => address_attributes }
     )
 
-    expect do
-      post admin_suppliers_path, params: { supplier: attributes }
-    end.to change(Supplier, :count).by(1), response.body.scan(/data-server-field-error[^>]*>[^<]+/).join(' | ')
+    before_count = Supplier.count
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    errors = Nokogiri::HTML(response.body).css('[data-server-field-error]').map(&:text).join(' | ')
+    expect(Supplier.count).to eq(before_count + 1), "status=#{response.status} #{errors}"
 
     supplier = Supplier.order(:id).last
     expect(supplier.contacts.count).to eq(2)
