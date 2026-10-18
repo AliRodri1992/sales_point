@@ -26,7 +26,13 @@ module Suppliers
       response = connection.get('/api/v1/zip_codes', zip_code: @postal_code, per_page: 200)
       return unless response.success?
 
-      rows = JSON.parse(response.body).fetch('zip_codes', [])
+      format_suggestions(JSON.parse(response.body).fetch('zip_codes', []))
+    rescue Faraday::Error, JSON::ParserError, TypeError, KeyError => e
+      Rails.logger.warn("Mexican postal lookup unavailable: #{e.class}")
+      nil
+    end
+
+    def format_suggestions(rows)
       entries = rows.select { |row| row['d_codigo'] == @postal_code }
       return { found: false, neighborhoods: [] } if entries.empty?
 
@@ -36,9 +42,6 @@ module Suppliers
         municipality: entries.first['d_mnpio'],
         neighborhoods: entries.filter_map { |row| row['d_asenta'].presence }.uniq.sort
       }
-    rescue Faraday::Error, JSON::ParserError, TypeError, KeyError => e
-      Rails.logger.warn("Mexican postal lookup unavailable: #{e.class}")
-      nil
     end
 
     def connection
