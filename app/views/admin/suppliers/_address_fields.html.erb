@@ -15,7 +15,8 @@
 <% end %>
   <div class="grid gap-4 sm:grid-cols-2">
     <% %i[street exterior_number interior_number neighborhood city state postal_code].each do |field| %>
-      <div <%= 'data-country-postal-wrapper' if field == :postal_code %>>
+      <div <%= 'data-country-postal-wrapper' if field == :postal_code %>
+           <%= 'data-country-field="neighborhood"' if field == :neighborhood %>>
         <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
           <% if %i[state city neighborhood exterior_number postal_code].include?(field) %>
             <span data-country-label data-country-label-mx="<%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %>" data-country-label-other="<%= t("admin.supplier_details.address_form.country_labels.#{field}.other") %>"><%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %></span>

@@ -46,12 +46,16 @@ export default class extends Controller {
     }
     const restored = this.countryDrafts.get(code) || {}
     for (const [name, input] of Object.entries(fields)) {
+      let value = input.value
       if (!this.applicable(name, code)) {
-        input.value = ""
+        value = ""
       } else if (this.previousCode !== null) {
-        input.value = restored[name] || ""
+        value = restored[name] || ""
       }
-      input.dispatchEvent(new Event("input", { bubbles: true }))
+      if (input.value !== value) {
+        input.value = value
+        input.dispatchEvent(new Event("input", { bubbles: true }))
+      }
     }
     this.previousCode = code
   }

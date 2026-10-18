@@ -25,6 +25,7 @@ module Addresses
 
     def mexico? = @country_code == 'MX'
     def exterior_required? = mexico?
+    def neighborhood_applicable? = mexico?
     def neighborhood_required? = mexico?
     def state_required? = STATE_REQUIRED.include?(@country_code)
     def postal_required? = NO_POSTAL_CODE.exclude?(@country_code)

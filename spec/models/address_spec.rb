@@ -28,6 +28,16 @@ RSpec.describe Address, type: :model do
       expect(address).to be_valid
     end
 
+    it 'clears Mexican-only fields for supplier addresses when changing country' do
+      supplier = create(:supplier)
+      address = create(:address, addressable: supplier, country: create(:country, iso_alpha2: 'MX'))
+      address.update!(country: create(:country, iso_alpha2: 'US'), postal_code: '90210-1234')
+
+      expect(address.reload.neighborhood).to be_nil
+      expect(address.exterior_number).to be_present
+      expect(address).to be_valid
+    end
+
     it 'supports US ZIP+4 and optional neighborhood and exterior number' do
       country = build(:country, iso_alpha2: 'US')
       attributes = { country:, exterior_number: nil, neighborhood: nil,
