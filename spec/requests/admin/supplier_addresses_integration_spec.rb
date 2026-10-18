@@ -66,7 +66,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
     right_column = form.at_css('[data-address-layout="right"]')
     expect(right_column['class']).to include('flex-col', 'lg:h-full')
-    expect(right_column.element_children.map { |element| element['aria-labelledby'] }).to eq(
+    expect(right_column.element_children.pluck('aria-labelledby')).to eq(
       %w[supplier-address-preview-heading supplier-address-classification-heading]
     )
     expect(right_column.element_children.last['class']).to include('flex-1')
@@ -80,7 +80,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
     sections = page.css('[data-address-layout="right"] > section')
-    expect(sections.map { |section| section['aria-labelledby'] }).to eq(
+    expect(sections.pluck('aria-labelledby')).to eq(
       %w[supplier-address-preview-heading supplier-address-classification-heading]
     )
     expect(sections.last['class']).to include('flex-1')
