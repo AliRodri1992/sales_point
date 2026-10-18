@@ -49,19 +49,31 @@ module Suppliers
         result[purpose] += count if result.key?(purpose)
         result['primary'] += count if primary
       end
-      result['confirmed'] = relation.where.not(location_confirmed_at: nil).where.not(latitude: nil, longitude: nil).count
-      result['approximate'] = relation.where(geocoding_status: 'success', location_confirmed_at: nil)
-                                      .where.not(latitude: nil, longitude: nil).count
-      result['pending'] = relation.where(geocoding_status: 'pending').count
-      result['failed'] = relation.where(geocoding_status: 'failed').count
-      result
+      result.merge!(geocoding_filter_counts(relation))
+    end
+
+    def geocoding_filter_counts(relation)
+      {
+        'confirmed' => confirmed_addresses(relation).count,
+        'approximate' => approximate_addresses(relation).count,
+        'pending' => relation.where(geocoding_status: 'pending').count,
+        'failed' => relation.where(geocoding_status: 'failed').count
+      }
+    end
+
+    def confirmed_addresses(relation)
+      relation.where.not(location_confirmed_at: nil).where.not(latitude: nil).where.not(longitude: nil)
+    end
+
+    def approximate_addresses(relation)
+      relation.where(geocoding_status: 'success', location_confirmed_at: nil)
+              .where.not(latitude: nil).where.not(longitude: nil)
     end
 
     def apply_filter(relation)
       return relation.where(primary: true) if filter == 'primary'
-      return relation.where.not(location_confirmed_at: nil).where.not(latitude: nil, longitude: nil) if filter == 'confirmed'
-      return relation.where(geocoding_status: 'success', location_confirmed_at: nil)
-                     .where.not(latitude: nil, longitude: nil) if filter == 'approximate'
+      return confirmed_addresses(relation) if filter == 'confirmed'
+      return approximate_addresses(relation) if filter == 'approximate'
       return relation.where(geocoding_status: filter) if %w[pending failed].include?(filter)
       return relation if filter == 'all'
 
