@@ -55,7 +55,7 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
       city: 'Cuautitlán', state: 'Estado de México', postal_code: '54800' }.each do |field, value|
       find("input[name='address[#{field}]']", visible: :all).set(value)
     end
-    find('input[name="address[purpose]"][value="delivery"]', visible: :all).choose
+    find('input[name="address[purpose]"][value="delivery"]', visible: :all).set(true)
     find('[data-action="supplier-address-location#lookup"]').click
     marker = find('[data-supplier-address-location-target="mapClick"]:not(.hidden)')
     marker.send_keys(:arrow_right)
