@@ -24,7 +24,8 @@ export default class extends Controller {
   }
 
   field(name) {
-    return this.element.querySelector('[name="address[' + name + ']"]')
+    return this.element.querySelector('[data-supplier-postal-field="' + name + '"]') ||
+      this.element.querySelector('[name="address[' + name + ']"]')
   }
 
   isMexico() {

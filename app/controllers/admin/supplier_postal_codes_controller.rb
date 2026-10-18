@@ -19,8 +19,12 @@ module Admin
     def authorize_supplier
       return head :forbidden unless current_organization
 
-      supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:id])
-      authorize supplier, :manage_addresses?
+      if params[:id].present?
+        supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:id])
+        authorize supplier, :manage_addresses?
+      else
+        authorize current_organization.suppliers.new, :create?
+      end
     end
 
     def validate_postal_query

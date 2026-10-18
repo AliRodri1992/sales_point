@@ -100,6 +100,8 @@ Rails.application.routes.draw do
       end
     end
 
+    get 'supplier_postal_suggestions', to: 'supplier_postal_codes#show', as: :supplier_postal_suggestions
+
     resources :suppliers do
       member { get :contacts_page }
       member { get :addresses_page }

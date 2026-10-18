@@ -1,4 +1,12 @@
-<div data-supplier-nested-item class="<%= local_assigns.fetch(:embedded, false) ? '' : 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' %>">
+<div data-supplier-nested-item
+     data-controller="supplier-postal-assist"
+     data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input"
+     data-supplier-postal-assist-url-value="<%= admin_supplier_postal_suggestions_path %>"
+     data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
+     data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
+     data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
+     data-supplier-postal-assist-unavailable-value="<%= t('admin.supplier_details.address_form.postal_unavailable') %>"
+     class="<%= local_assigns.fetch(:embedded, false) ? '' : 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' %>">
   <%= form.hidden_field :id if form.object.persisted? %>
   <%= form.hidden_field :_destroy, value: '0', data: { supplier_nested_destroy: true } %>
   <% if local_assigns.fetch(:allow_remove, true) %>
@@ -13,14 +21,24 @@
             <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
         <% end %>
-        <%= form.text_field field, placeholder: t("admin.supplier_placeholders.address.#{field}"), required: %i[street exterior_number neighborhood city state country postal_code].include?(field),
+        <%= form.text_field field,
+                            data: ( %i[state city postal_code neighborhood].include?(field) ? { supplier_postal_field: field } : {}),
+                            list: (field == :neighborhood ? "#{form.object_name}_neighborhoods".gsub(/[^a-zA-Z0-9_-]/, '_') : nil),
+                            placeholder: t("admin.supplier_placeholders.address.#{field}"), required: %i[street exterior_number neighborhood city state country postal_code].include?(field),
                             minlength: (%i[street neighborhood city state country].include?(field) ? 2 : nil),
                             maxlength: ({ street: 150, exterior_number: 20, interior_number: 20,
                                           neighborhood: 100, city: 100, state: 100, country: 100,
                                           postal_code: 5 }[field]),
                             pattern: (field == :postal_code ? '[0-9]{5}' : nil),
                             inputmode: (field == :postal_code ? 'numeric' : nil), class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+        <% if field == :neighborhood %>
+          <datalist id="<%= "#{form.object_name}_neighborhoods".gsub(/[^a-zA-Z0-9_-]/, '_') %>"
+                    data-supplier-postal-assist-target="neighborhoods"></datalist>
+        <% end %>
         <%= error_message_for(form.object, field) %>
+        <% if field == :postal_code %>
+          <p class="mt-1 text-xs text-slate-500" data-supplier-postal-assist-target="status" aria-live="polite"></p>
+        <% end %>
       </div>
     <% end %>
     <div>
@@ -28,7 +46,8 @@
         <%= t('admin.supplier_details.address_fields.country') %> <span class="text-rose-600" aria-hidden="true">*</span>
       <% end %>
       <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
-        <%= form.select :country_id, options_for_select((@countries || Country.active.ordered).map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: country_flag_asset_path(country) } }] }, form.object.country_id), { include_blank: t('admin.supplier_placeholders.country') }, required: true, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, :country)}" %>
+        <%= form.select :country_id, options_for_select((@countries || Country.active.ordered).map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: country_flag_asset_path(country) } }] }, form.object.country_id), { include_blank: t('admin.supplier_placeholders.country') }, required: true,
+                          data: { supplier_postal_field: 'country_id' }, class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, :country)}" %>
       </div>
       <%= error_message_for(form.object, :country) %>
     </div>

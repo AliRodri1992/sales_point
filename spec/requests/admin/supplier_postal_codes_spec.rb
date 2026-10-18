@@ -49,6 +49,25 @@ RSpec.describe 'Supplier Mexican postal suggestions', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
   end
 
+  it 'allows postal suggestions when creating a new supplier with permission' do
+    data = { found: true, municipality: 'Cuautitlán',
+             state: 'Estado de México', neighborhoods: ['Centro'] }
+    allow_any_instance_of(Suppliers::MexicanPostalLookup).to receive(:call).and_return(data)
+
+    get admin_supplier_postal_suggestions_path, params: { country: 'MX', postal_code: '54800' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body.fetch('municipality')).to eq('Cuautitlán')
+  end
+
+  it 'denies postal suggestions for supplier creation without the create permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:create?).and_return(false)
+
+    get admin_supplier_postal_suggestions_path, params: { country: 'MX', postal_code: '54800' }
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'rejects users lacking permission to manage supplier addresses' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
 
