@@ -10,9 +10,9 @@ RSpec.describe Suppliers::AddressLocationProof do
   let(:longitude) { -99.1803 }
   let(:token) { described_class.issue(address:, supplier:, user:, latitude:, longitude:) }
 
-  def verified(latitude: 19.675, longitude: -99.182, reason: nil, **options)
+  def verified(latitude: 19.675, longitude: -99.182, reason: nil, reviewed: nil, **options)
     described_class.verify(
-      token:, address:, supplier:, user:, selection: { latitude:, longitude:, reason: }, **options
+      token:, address:, supplier:, user:, selection: { latitude:, longitude:, reason:, reviewed: }, **options
     )
   end
 
@@ -25,9 +25,36 @@ RSpec.describe Suppliers::AddressLocationProof do
   end
 
   it 'requires a meaningful justification for distant adjustments' do
-    expect(verified(latitude: 20.0, longitude: -99.1803, reason: 'wrong')).to be false
+    expect(verified(latitude: 19.75, longitude: -99.1803, reason: 'wrong', reviewed: '1')).to be false
+    expect(verified(latitude: 19.75, longitude: -99.1803,
+                    reason: 'La entrada se encuentra en otra calle', reviewed: '1')).to be true
+  end
+
+  it 'blocks even justified markers farther than 25 km' do
     expect(verified(latitude: 20.0, longitude: -99.1803,
-                    reason: 'La entrada se encuentra en otra calle')).to be true
+                    reason: 'El acceso se encuentra muy lejos', reviewed: '1')).to be false
+  end
+
+  it 'requires explicit review for a move over 2 km' do
+    expect(verified(latitude: 19.75, longitude: -99.1803,
+                    reason: 'Acceso alterno a la bodega')).to be false
+  end
+
+  context 'with a low-confidence proposal' do
+    let(:token) do
+      described_class.issue(address:, supplier:, user:, latitude:, longitude:, confidence: 0.35)
+    end
+
+    it 'requires a justification and explicit verification even at suggested coordinates' do
+      expect(verified(latitude:, longitude:)).to be false
+      expect(verified(latitude:, longitude:, reviewed: '1')).to be false
+      expect(verified(latitude:, longitude:, reason: 'Acceso cotejado físicamente',
+                      reviewed: '1')).to be true
+    end
+
+    it 'preserves signed provider confidence for audit' do
+      expect(described_class.confidence(token:, address:, supplier:, user:)).to eq(0.35)
+    end
   end
 
   it 'rejects tampered or impossible coordinates' do
