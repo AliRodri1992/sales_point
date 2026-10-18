@@ -19,39 +19,49 @@ module SupplierDossierExamples
   class << self
     def seed!
       organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
-      suppliers = organization.suppliers.not_deleted.order(:code).to_a
       branches = organization.branches.not_deleted.order(:id).to_a
       mexico = Country.find_by!(iso_alpha2: 'MX')
 
-      suppliers.each_with_index do |supplier, supplier_index|
-        featured = supplier_index.zero?
-        seed_contacts(supplier, featured ? CONTACTS_PER_FEATURED_SUPPLIER : 3)
-        seed_addresses(supplier, mexico, featured ? ADDRESSES_PER_FEATURED_SUPPLIER : 3)
-        seed_documents(supplier, featured ? DOCUMENTS_PER_FEATURED_SUPPLIER : 2)
-        seed_schedules(supplier, branches, featured ? SCHEDULES_PER_FEATURED_SUPPLIER : 2)
-        puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
-             "direcciones=#{supplier.addresses.not_deleted.count} documentos=#{supplier.documents.attachments.count} " \
-             "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
+      organization.suppliers.not_deleted.order(:code).each_with_index do |supplier, index|
+        seed_supplier(supplier, branches, mexico, featured: index.zero?)
       end
     end
 
     private
+
+    def seed_supplier(supplier, branches, country, featured:)
+      seed_contacts(supplier, featured ? CONTACTS_PER_FEATURED_SUPPLIER : 3)
+      seed_addresses(supplier, country, featured ? ADDRESSES_PER_FEATURED_SUPPLIER : 3)
+      seed_documents(supplier, featured ? DOCUMENTS_PER_FEATURED_SUPPLIER : 2)
+      seed_schedules(supplier, branches, featured ? SCHEDULES_PER_FEATURED_SUPPLIER : 2)
+      report_supplier(supplier)
+    end
+
+    def report_supplier(supplier)
+      puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
+           "direcciones=#{supplier.addresses.not_deleted.count} documentos=#{supplier.documents.attachments.count} " \
+           "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
+    end
 
     def seed_contacts(supplier, count)
       (2..count).each do |index|
         email = format('demo.s%04d.c%02d@ejemplo.test', supplier.id, index)
         next if supplier.contacts.with_deleted.exists?(email: email)
 
-        supplier.contacts.create!(
-          name: "Contacto demo #{index}",
-          position: %w[Compras Ventas Logística Facturación][index % 4],
-          email: email,
-          phone: index.even? ? '5512345678' : nil,
-          primary: false,
-          active: (index % 4 != 0),
-          notes: 'Registro de demostración para validar filtros y carga progresiva.'
-        )
+        supplier.contacts.create!(contact_attributes(index, email))
       end
+    end
+
+    def contact_attributes(index, email)
+      {
+        name: "Contacto demo #{index}",
+        position: %w[Compras Ventas Logística Facturación][index % 4],
+        email: email,
+        phone: index.even? ? '5512345678' : nil,
+        primary: false,
+        active: (index % 4 != 0),
+        notes: 'Registro de demostración para validar filtros y carga progresiva.'
+      }
     end
 
     def seed_addresses(supplier, country, count)
@@ -60,24 +70,22 @@ module SupplierDossierExamples
         next if supplier.addresses.with_deleted.exists?(reference_notes: reference)
 
         purpose = Address::PURPOSES[index % Address::PURPOSES.length]
-        # Seeded addresses are suggestions pending geocoding, never user-confirmed.
-        supplier.addresses.create!(
-          purpose: purpose,
-          primary: !supplier.addresses.not_deleted.exists?(purpose: purpose, primary: true),
-          country: country,
-          street: "Avenida Ejemplo #{index + 1}",
-          exterior_number: (100 + index).to_s,
-          interior_number: index.even? ? nil : "B#{index}",
-          neighborhood: 'Centro',
-          city: 'Cuautitlán Izcalli',
-          state: 'Estado de México',
-          postal_code: '54700',
-          reference_notes: reference,
-          geocoding_status: :pending,
-          latitude: nil,
-          longitude: nil
-        )
+        primary = !supplier.addresses.not_deleted.exists?(purpose: purpose, primary: true)
+        supplier.addresses.create!(address_attributes(index, country, purpose, primary, reference))
       end
+    end
+
+    def address_attributes(index, country, purpose, primary, reference)
+      {
+        purpose: purpose, primary: primary, country: country,
+        street: "Avenida Ejemplo #{index + 1}",
+        exterior_number: (100 + index).to_s,
+        interior_number: index.even? ? nil : "B#{index}",
+        neighborhood: 'Centro', city: 'Cuautitlán Izcalli',
+        state: 'Estado de México', postal_code: '54700',
+        reference_notes: reference, geocoding_status: :pending,
+        latitude: nil, longitude: nil
+      }
     end
 
     def seed_documents(supplier, count)
