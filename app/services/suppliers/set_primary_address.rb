@@ -14,19 +14,15 @@ module Suppliers
         target = @supplier.addresses.not_deleted.find(@address.id)
         next false if target.primary?
 
-        demote_previous_primary(target)
+        self.class.demote_previous_primary(supplier: @supplier, target:)
         target.update!(primary: true)
         true
       end
     end
 
-    private
-
-    def demote_previous_primary(target)
-      @supplier.addresses.not_deleted.where(purpose: target.purpose, primary: true)
-               .where.not(id: target.id).find_each do |previous|
-        previous.update!(primary: false)
-      end
+    def self.demote_previous_primary(supplier:, target:)
+      supplier.addresses.not_deleted.where(purpose: target.purpose, primary: true)
+              .where.not(id: target.id).find_each { |previous| previous.update!(primary: false) }
     end
   end
 end
