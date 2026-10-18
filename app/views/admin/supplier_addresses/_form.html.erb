@@ -96,6 +96,7 @@
           </div>
         <% end %>
 
+        <% if form.object.has_attribute?(:reference_notes) %>
         <div class="sm:col-span-2">
           <%= form.label :reference_notes, t('admin.supplier_details.address_form.references'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
           <%= form.text_area :reference_notes, rows: 2, maxlength: 200,
@@ -103,6 +104,7 @@
                              class: "input-field min-h-20 w-full resize-y rounded-xl #{form_state_classes(@address, :reference_notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :reference_notes) %>
         </div>
+        <% end %>
       </div>
     </section>
 

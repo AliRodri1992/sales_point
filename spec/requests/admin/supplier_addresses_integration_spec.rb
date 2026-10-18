@@ -55,6 +55,18 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('[data-step]')).to be_empty
   end
 
+  it 'renders the address form without references while the database migration is pending' do
+    allow_any_instance_of(Address).to receive(:has_attribute?).and_call_original
+    allow_any_instance_of(Address).to receive(:has_attribute?).with(:reference_notes).and_return(false)
+
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('form[data-controller="supplier-address-preview"]')).to be_present
+    expect(page.at_css('textarea[name="address[reference_notes]"]')).to be_nil
+  end
+
   it 'persists optional address references and reuses the editor on update' do
     post admin_supplier_addresses_path(supplier),
          params: { address: address_attributes(reference_notes: 'White building near the market') }

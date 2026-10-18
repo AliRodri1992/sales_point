@@ -50,6 +50,28 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
     expect(card.at_css("a[href='#{edit_admin_supplier_address_path(supplier, address)}']")).to be_present
   end
 
+  it 'displays address references in the expanded details after the migration' do
+    create(:address, :fiscal, addressable: supplier, reference_notes: 'Next to the municipal park')
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    expect(cards.first.text).to include('Next to the municipal park')
+  end
+
+  it 'keeps supplier details available if the references column has not been migrated locally' do
+    create(:address, :fiscal, addressable: supplier)
+    allow_any_instance_of(Address).to receive(:has_attribute?).and_call_original
+    allow_any_instance_of(Address).to receive(:has_attribute?).with(:reference_notes).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    expect(cards.size).to eq(1)
+    expect(cards.first.text).to include('Av. Reforma')
+    expect(cards.first.text).not_to include('Directions / landmarks')
+  end
+
   it 'displays correct counters and places Manage addresses alongside the filters' do
     create(:address, :fiscal, :primary, addressable: supplier)
     2.times { |i| create(:address, :delivery, addressable: supplier, street: "Delivery Street #{i}") }
