@@ -13,7 +13,12 @@ export default class extends Controller {
     this.point = this.savedPoint()
     this.mapCenter = this.point
     this.pending = false
+    this.request = null
     if (this.point) this.showMap()
+  }
+
+  disconnect() {
+    this.request?.abort()
   }
 
   savedPoint() {
@@ -34,6 +39,10 @@ export default class extends Controller {
       "city", "state", "postal_code", "country_id"]
     if (!geographic.some((field) => name.endsWith("[" + field + "]"))) return
 
+    this.request?.abort()
+    this.request = null
+    this.pending = false
+    this.lookupButtonTarget.disabled = false
     this.point = null
     this.mapCenter = null
     this.latitudeTarget.value = ""
@@ -53,6 +62,9 @@ export default class extends Controller {
       const value = this.element.querySelector('[name="address[' + field + ']"]')?.value || ""
       body.append("address[" + field + "]", value)
     }
+    const snapshot = body.toString()
+    const request = new AbortController()
+    this.request = request
     this.pending = true
     this.lookupButtonTarget.disabled = true
     this.statusTarget.textContent = this.searchingValue
@@ -62,22 +74,37 @@ export default class extends Controller {
         headers: {
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || "",
           Accept: "application/json"
-        }, credentials: "same-origin"
+        }, credentials: "same-origin", signal: request.signal
       })
       if (!response.ok) throw new Error("Location lookup failed")
       const data = await response.json()
+      if (request !== this.request || snapshot !== this.addressSnapshot()) return
       if (!this.valid(Number(data.latitude), Number(data.longitude))) throw new Error("Invalid coordinates")
       this.signatureTarget.value = data.signature
       this.point = { lat: Number(data.latitude), lon: Number(data.longitude) }
       this.confirmedTarget.value = "0"
       this.statusTarget.textContent = this.readyValue
       this.showMap()
-    } catch (_error) {
-      this.statusTarget.textContent = this.unavailableValue
+    } catch (error) {
+      if (error.name !== "AbortError" && request === this.request) {
+        this.statusTarget.textContent = this.unavailableValue
+      }
     } finally {
-      this.pending = false
-      this.lookupButtonTarget.disabled = false
+      if (request === this.request) {
+        this.request = null
+        this.pending = false
+        this.lookupButtonTarget.disabled = false
+      }
     }
+  }
+
+  addressSnapshot() {
+    const body = new URLSearchParams()
+    for (const field of ["street", "exterior_number", "interior_number", "neighborhood",
+      "city", "state", "postal_code", "country_id"]) {
+      body.append("address[" + field + "]", this.element.querySelector('[name="address[' + field + ']"]')?.value || "")
+    }
+    return body.toString()
   }
 
   showMap() {
