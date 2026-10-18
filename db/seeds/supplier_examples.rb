@@ -31,7 +31,7 @@ module SupplierExamples
                                  timezone: 'UTC', payment_method: :cash)
       settings.save!
       $stdout.puts "[SEEDS][CONFIGURACION][OK] organizacion_id=#{organization.id} " \
-           "moneda=#{settings.base_currency.code}"
+                   "moneda=#{settings.base_currency.code}"
       organization
     end
 
@@ -41,7 +41,7 @@ module SupplierExamples
       membership.assign_attributes(status: :active, deleted_at: nil)
       membership.save!
       $stdout.puts "[SEEDS][MEMBRESIA][OK] usuario_id=#{admin.id} " \
-           "organizacion_id=#{organization.id} estado=#{membership.status}"
+                   "organizacion_id=#{organization.id} estado=#{membership.status}"
     end
 
     def create_suppliers_for(organization)
