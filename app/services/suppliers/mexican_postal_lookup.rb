@@ -46,12 +46,17 @@ module Suppliers
     end
 
     def offline_suggestion
-      catalog = YAML.safe_load_file(Rails.root.join('config/data/supplier_postal_fallback.yml'))
-      entry = catalog[@postal_code]
-      return unless entry
+      shard = @postal_code[0]
+      catalog = Rails.cache.fetch("suppliers:mx_postal:catalog:#{shard}", expires_in: 1.day) do
+        JSON.parse(Rails.root.join('config/data/postal', "mx_#{shard}.json").read)
+      end
+      state, municipality, neighborhoods = catalog[@postal_code]
+      return unless state
 
-      { found: true, state: entry.fetch('state'), municipality: entry.fetch('municipality'),
-        neighborhoods: entry.fetch('neighborhoods') }
+      { found: true, state:, municipality:, neighborhoods: }
+    rescue Errno::ENOENT, JSON::ParserError => e
+      Rails.logger.warn("[PostalCatalog] #{e.class}")
+      nil
     end
 
     def connection
