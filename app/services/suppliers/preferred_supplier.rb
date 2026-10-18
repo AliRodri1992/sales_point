@@ -18,7 +18,7 @@ module Suppliers
     def self.validate_supplier!(product, supplier)
       eligible = supplier.organization_id == product.organization_id &&
                  supplier.active? && supplier.deleted_at.nil? &&
-                 product.supplier_products.available.where(supplier_id: supplier.id).exists?
+                 product.supplier_products.available.exists?(supplier_id: supplier.id)
       raise Unavailable unless eligible
     end
 

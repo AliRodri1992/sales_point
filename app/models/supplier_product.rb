@@ -54,7 +54,7 @@ class SupplierProduct < ApplicationRecord
 
   def clear_unavailable_preference
     return unless product.preferred_supplier_id == supplier_id
-    return if product.supplier_products.available.where(supplier_id:).exists?
+    return if product.supplier_products.available.exists?(supplier_id:)
 
     product.update!(preferred_supplier: nil)
   end
