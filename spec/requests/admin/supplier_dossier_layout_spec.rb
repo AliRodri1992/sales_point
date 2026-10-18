@@ -117,11 +117,12 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'separates the products header from the empty content area' do
     get admin_supplier_path(supplier, tab: 'products')
 
-    header = products_panel.at_css('[data-supplier-products-header]')
-    content = products_panel.at_css('[data-supplier-products-content]')
-    expect(products_panel['class']).to include('space-y-4')
-    expect(header.parent).to eq(products_panel)
-    expect(content.parent).to eq(products_panel)
+    panel = products_panel
+    header = panel.at_css('[data-supplier-products-header]')
+    content = panel.at_css('[data-supplier-products-content]')
+    expect(panel['class']).to include('space-y-4')
+    expect(header.parent).to eq(panel)
+    expect(content.parent).to eq(panel)
     expect(header.text).to include('Supplier products')
     expect(header.text).to include('View the products associated with this supplier.')
     expect(header.at_css("a[href='#{admin_supplier_supplier_products_path(supplier)}']")).to be_present
@@ -135,9 +136,11 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     get admin_supplier_path(supplier, tab: 'products')
 
-    header = products_panel.at_css('[data-supplier-products-header]')
-    content = products_panel.at_css('[data-supplier-products-content]')
-    expect(header.parent).to eq(content.parent)
+    panel = products_panel
+    header = panel.at_css('[data-supplier-products-header]')
+    content = panel.at_css('[data-supplier-products-content]')
+    expect(header.parent).to eq(panel)
+    expect(content.parent).to eq(panel)
     expect(header.at_css('[data-supplier-product-card]')).to be_nil
     expect(content.css('[data-supplier-product-card]').length).to eq(1)
     expect(content.at_css('[data-supplier-products-pagination]')).to be_present
