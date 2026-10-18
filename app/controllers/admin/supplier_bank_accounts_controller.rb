@@ -9,7 +9,8 @@ module Admin
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
-      @accounts = policy_scope(@supplier.supplier_bank_accounts.active).includes(:sat_bank).order(primary: :desc, id: :desc)
+      @accounts = policy_scope(@supplier.supplier_bank_accounts.active)
+                  .includes(:sat_bank).order(primary: :desc, id: :desc)
     end
 
     def new

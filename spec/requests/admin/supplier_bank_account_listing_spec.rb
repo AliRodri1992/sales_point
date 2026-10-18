@@ -51,7 +51,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.text).not_to include('123456789012', '9876543210')
     expect(response.body).not_to include('123456789012', '9876543210')
     expect(document.css('a[href^="/admin/suppliers/"][href*="/bank_accounts/"][href$="/edit"]').size).to eq(2)
-    expect(document.css('form[action$="/bank_accounts/' + primary.id.to_s + '"]').size).to eq(1)
+    expect(document.css("form[action$='/bank_accounts/#{primary.id}']").size).to eq(1)
     expect(document.at_css('[data-bank-accounts-empty]')).to be_nil
   end
 
@@ -77,8 +77,10 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
 
     expect(document.at_css('input[data-action="input->supplier-bank-accounts#filter"]')).to be_present
-    expect(document.css('select[data-action="change->supplier-bank-accounts#filter"] option')
-                   .map { |option| option['value'] }).to include('MXN', 'USD')
+    expect(document.at_css('select[data-action="change->supplier-bank-accounts#filter"] option[value="MXN"]'))
+      .to be_present
+    expect(document.at_css('select[data-action="change->supplier-bank-accounts#filter"] option[value="USD"]'))
+      .to be_present
     expect(document.at_css('[data-supplier-bank-accounts-target="pagination"]')).to be_present
     expect(document.at_css('[data-supplier-bank-accounts-target="next"]')).to be_present
     expect(response.body).not_to include('999900001234')
