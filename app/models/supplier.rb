@@ -2,6 +2,7 @@
 
 class Supplier < ApplicationRecord
   include SupplierDocumentTypes
+
   has_paper_trail
 
   belongs_to :organization
