@@ -10,13 +10,13 @@ module Admin
       'index' => :view_addresses?, 'new' => :manage_addresses?, 'create' => :manage_addresses?,
       'edit' => :manage_addresses?, 'update' => :manage_addresses?,
       'destroy' => :manage_addresses?, 'restore' => :manage_addresses?,
-      'set_primary' => :manage_addresses?
+      'set_primary' => :manage_addresses?, 'retry_geocoding' => :manage_addresses?
     }.freeze
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :set_address, only: %i[edit update destroy set_primary]
+    before_action :set_address, only: %i[edit update destroy set_primary retry_geocoding]
 
     def index
       @address_page = build_address_page
@@ -84,6 +84,15 @@ module Admin
       @address.update!(deleted_at: Time.current)
       notify_address('address_deleted')
       redirect_success('address_deleted')
+    end
+
+    def retry_geocoding
+      return redirect_to admin_supplier_addresses_path(@supplier) if @address.location_confirmed?
+
+      @address.update!(geocoding_status: :pending)
+      enqueue_geocoding(@address)
+      redirect_to admin_supplier_addresses_path(@supplier),
+                  notice: t('admin.supplier_details.geocoding_requeued')
     end
 
     def set_primary
