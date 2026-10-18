@@ -17,6 +17,10 @@ RSpec.describe SupplierProduct, type: :model do
     }
   end
 
+  it 'does not call an unassigned offer preferred' do
+    expect(described_class.new).not_to be_preferred
+  end
+
   it 'normalizes discounted landed cost by the package conversion factor' do
     offer = described_class.create!(offer_attributes)
     expect(offer.unit_cost).to eq(BigDecimal('10'))

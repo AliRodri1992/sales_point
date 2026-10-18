@@ -26,7 +26,7 @@ class SupplierProduct < ApplicationRecord
   after_save :record_price_change, if: :price_snapshot_changed?
 
   def preferred?
-    product&.preferred_supplier_id == supplier_id
+    product&.preferred_supplier_id.present? && product.preferred_supplier_id == supplier_id
   end
 
   def unit_cost
