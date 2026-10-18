@@ -66,6 +66,8 @@ RSpec.describe Suppliers::DossierAddressesPage do
     create(:address, addressable: create(:supplier), purpose: 'general', reference_notes: 'Portón AZUL')
 
     expect(page(query: 'azul').addresses.pluck(:id)).to eq([match.id])
+    expect(target.reload.neighborhood).to be_nil
+    expect(page(query: 'Vista Bella').addresses.pluck(:id)).to eq([mexican.id])
     expect(page(query: '%').addresses).to be_empty
   end
 
@@ -100,8 +102,9 @@ RSpec.describe Suppliers::DossierAddressesPage do
     }
     target = create(:address, :delivery, addressable: supplier, **attributes)
     create(:address, :fiscal, addressable: supplier, street: 'Different Street')
+    mexican = create(:address, :delivery, addressable: supplier, neighborhood: 'Vista Bella')
 
-    ['calle del sol', 'Pueblo Norte', 'Vista Bella', '54831', 'Exampleland'].each do |term|
+    ['calle del sol', 'Pueblo Norte', '54831', 'Exampleland'].each do |term|
       expect(page(query: term).addresses.map(&:id)).to eq([target.id])
     end
     expect(page(query: '%').addresses).to be_empty

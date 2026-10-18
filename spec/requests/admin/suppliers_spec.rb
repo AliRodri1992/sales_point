@@ -286,7 +286,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     get admin_supplier_path(supplier, tab: 'general')
 
     panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-general')
-    expect(panel.css('span.rounded-full').map(&:text)).to include('Priority', 'Distribution')
+    expect(panel.css('span.rounded-full').map { |chip| chip.text.squish }).to include('Priority', 'Distribution')
   end
 
   it 'renders validation errors when creating an invalid supplier' do
