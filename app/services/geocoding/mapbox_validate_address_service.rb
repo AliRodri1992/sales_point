@@ -2,7 +2,7 @@
 
 module Geocoding
   class MapboxValidateAddressService
-    MAPBOX_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places'.freeze
+    MAPBOX_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places'
 
     def initialize(address)
       @address = address
@@ -14,16 +14,18 @@ module Geocoding
       response = connection.get(url)
       return { valid: false } unless response.success?
 
-      feature = JSON.parse(response.body).fetch('features', []).first
-      return { valid: false } unless feature
-
-      build_result(feature)
+      extract_response(response.body)
     rescue Faraday::Error, JSON::ParserError, TypeError, KeyError => e
       Rails.logger.warn("[MapboxAddress] #{e.class}")
       { valid: false }
     end
 
     private
+
+    def extract_response(body)
+      feature = JSON.parse(body).fetch('features', []).first
+      feature ? build_result(feature) : { valid: false }
+    end
 
     def build_result(feature)
       center = feature.fetch('center')

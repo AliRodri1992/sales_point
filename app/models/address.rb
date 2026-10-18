@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Address < ApplicationRecord
+  include AddressLocation
+
   has_paper_trail if: ->(record) { record.addressable_type == 'Supplier' }
 
   belongs_to :addressable, polymorphic: true
@@ -43,8 +45,7 @@ class Address < ApplicationRecord
   validates :neighborhood, length: { maximum: 100 }, allow_blank: true, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, length: { maximum: 100 }, allow_blank: true, on: %i[create update]
-  validate :validate_country_address, on: %i[create update onboardingstep2]
-  before_validation :invalidate_stale_coordinates, on: %i[create update]
+  validate :check_country_requirements, on: %i[create update onboardingstep2]
 
   validates :latitude,
             numericality: {
@@ -103,41 +104,10 @@ class Address < ApplicationRecord
     [street, exterior_number, interior_number, neighborhood, city, state, country&.name, postal_code].compact.join(', ')
   end
 
-  def geocoding_fingerprint
-    Digest::SHA256.hexdigest(geocoding_query.downcase.squish)
-  end
-
-  def geocoding_query
-    [street, exterior_number, interior_number, neighborhood, city, state,
-     postal_code, country&.iso_alpha2].compact_blank.join(', ')
-  end
-
-  def location_confirmed?
-    location_confirmed_at.present?
-  end
-
   private
 
-  def validate_country_address
-    rule = Addresses::CountryRules.new(country&.iso_alpha2)
-    errors.add(:exterior_number, :blank) if rule.exterior_required? && exterior_number.blank?
-    errors.add(:neighborhood, :blank) if rule.neighborhood_required? && neighborhood.blank?
-    errors.add(:state, :blank) if rule.state_required? && state.blank?
-    errors.add(:postal_code, :blank) if rule.postal_required? && postal_code.blank?
-    return if postal_code.blank?
-
-    errors.add(:postal_code, :invalid) unless rule.valid_postal_code?(postal_code)
-  end
-
-  def invalidate_stale_coordinates
-    fields = %w[street exterior_number interior_number neighborhood city state postal_code country_id]
-    return unless persisted? && fields.any? { |name| will_save_change_to_attribute?(name) }
-    return if will_save_change_to_location_confirmed_at? && location_confirmed_at.present?
-
-    self.latitude = nil
-    self.longitude = nil
-    self.location_confirmed_at = nil
-    self.geocoding_status = 'pending'
+  def check_country_requirements
+    Addresses::CountryRules.new(country&.iso_alpha2).validate(self)
   end
 
   def coordinates

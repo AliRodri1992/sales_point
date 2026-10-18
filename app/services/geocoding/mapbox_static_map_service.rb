@@ -2,7 +2,7 @@
 
 module Geocoding
   class MapboxStaticMapService
-    URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static'.freeze
+    URL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/static'
 
     def call(latitude:, longitude:)
       token = ENV['MAPBOX_TOKEN'].presence
@@ -13,14 +13,22 @@ module Geocoding
       return unless lat.between?(-90, 90) && lon.between?(-180, 180)
 
       path = "#{lon},#{lat},15,0/600x300"
-      response = Faraday.new { |c| c.options.timeout = 5; c.options.open_timeout = 2 }
-                        .get("#{URL}/#{path}?access_token=#{CGI.escape(token)}")
+      response = connection.get("#{URL}/#{path}?access_token=#{CGI.escape(token)}")
       return unless response.success? && response.body.present?
 
       response.body
     rescue ArgumentError, TypeError, Faraday::Error => e
       Rails.logger.warn("[MapboxStaticMap] #{e.class}")
       nil
+    end
+
+    private
+
+    def connection
+      Faraday.new do |client|
+        client.options.timeout = 5
+        client.options.open_timeout = 2
+      end
     end
   end
 end

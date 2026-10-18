@@ -36,7 +36,7 @@ module Admin
     def create
       load_countries
       @address = @supplier.addresses.new(address_params)
-      return render :new, status: :unprocessable_content unless apply_confirmation
+      return render :new, status: :unprocessable_content unless apply_confirmation?
 
       if @address.save
         enqueue_geocoding(@address)
@@ -53,7 +53,7 @@ module Admin
     def update
       load_countries
       @address.assign_attributes(address_params)
-      return render :edit, status: :unprocessable_content unless apply_confirmation
+      return render :edit, status: :unprocessable_content unless apply_confirmation?
 
       if @address.save
         enqueue_geocoding(@address) if @address.saved_changes.keys.intersect?(Address::GEOGRAPHIC_FIELDS)
@@ -154,7 +154,7 @@ module Admin
       GeocodeAddressJob.perform_later(address.id, address.geocoding_fingerprint)
     end
 
-    def apply_confirmation
+    def apply_confirmation?
       return true unless params.dig(:address, :location_confirmed) == '1'
 
       coords = params.expect(address: %i[latitude longitude location_signature]).to_h

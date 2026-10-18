@@ -47,8 +47,8 @@ RSpec.describe Address, type: :model do
   describe 'location freshness' do
     it 'clears stale coordinates and confirmation when any location component changes' do
       address = create(:address)
-      address.update!(latitude: 19.4, longitude: -99.1, location_confirmed_at: Time.current,
-                      geocoding_status: :success)
+      address.update!(latitude: 19.4, longitude: -99.1,
+                      location_confirmed_at: Time.current, geocoding_status: :success)
       address.update!(street: 'Different Street')
       expect(address).to have_attributes(latitude: nil, longitude: nil,
                                          location_confirmed_at: nil, geocoding_status: 'pending')
