@@ -11,6 +11,8 @@ es:
       location_adjustment_hint: "Obligatorio si mueve el marcador más de 2 km (10 a 250 caracteres)."
       postal_choose_neighborhood: "Seleccione una colonia sugerida"
       view_on_map: "Ver ubicación en el mapa"
+      location_low_confidence: "Mapbox devolvió una coincidencia poco precisa. Comprueba y ajusta el marcador."
+      location_adjusted: "Marcador ajustado manualmente. Confirma la ubicación antes de guardar."
       retry_geocoding: "Reintentar ubicación"
     supplier_dossier:
       address_cards:
