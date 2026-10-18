@@ -104,6 +104,19 @@
                                   admin_supplier_product_comparison_path(@supplier, product_id: offer.product_id),
                                   class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
                       <% if policy(@supplier).manage_products? %>
+                        <% if offer.preferred? %>
+                          <%= button_to t('admin.procurement.clear_preferred'),
+                                        clear_preferred_admin_supplier_supplier_product_path(@supplier, offer),
+                                        method: :post, params: { expected_supplier_id: product.preferred_supplier_id },
+                                        class: 'w-full rounded-lg px-3 py-2 text-left text-sm text-slate-700 hover:bg-emerald-50' %>
+                        <% else %>
+                          <%= button_to t('admin.procurement.set_preferred'),
+                                        set_preferred_admin_supplier_supplier_product_path(@supplier, offer),
+                                        method: :post, params: { expected_supplier_id: product.preferred_supplier_id },
+                                        form: { data: { turbo_confirm: t('admin.procurement.preferred_confirmation',
+                                                                       supplier: product.preferred_supplier&.name || t('admin.procurement.none')) } },
+                                        class: 'w-full rounded-lg px-3 py-2 text-left text-sm text-emerald-800 hover:bg-emerald-50' %>
+                        <% end %>
                         <%= link_to t('admin.procurement.edit'), edit_admin_supplier_supplier_product_path(@supplier, offer),
                                     class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
                         <%= button_to t('admin.procurement.delete'), admin_supplier_supplier_product_path(@supplier, offer),

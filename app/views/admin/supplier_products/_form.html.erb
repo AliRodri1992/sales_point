@@ -36,8 +36,8 @@
       </div>
     <% end %>
   </div>
+  <p class="text-sm text-slate-500"><%= t('admin.procurement.preferred_form_hint') %></p>
   <div class="flex flex-wrap gap-5">
-    <label class="flex items-center gap-2"><%= form.check_box :preferred %><%= t('admin.procurement.preferred') %></label>
     <label class="flex items-center gap-2"><%= form.check_box :active %><%= t('admin.procurement.active') %></label>
   </div>
   <div class="flex gap-3">
