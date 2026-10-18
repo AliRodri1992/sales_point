@@ -578,6 +578,13 @@ SeedConsole.track('Sucursales', Branch) do
   end
 end
 
+require_relative 'seeds/supplier_dossier_examples'
+SeedConsole.track('Expedientes de proveedores') do
+  SupplierDossierExamples.seed!
+end
+SeedConsole.report('Direcciones de proveedores', Address.where(addressable_type: 'Supplier'))
+SeedConsole.report('Calendarios de proveedores', SupplierSchedule)
+
 SeedConsole.track('Inventarios', Inventory) do
   organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
   branch = organization.branches.not_deleted.order(:id).first
