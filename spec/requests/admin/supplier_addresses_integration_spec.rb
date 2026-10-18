@@ -72,6 +72,20 @@ RSpec.describe 'Supplier address integration', type: :request do
       .to be_present
   end
 
+  it 'provides the postal assistant inside the supplier fiscal address editor' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    postal = page.at_css('[data-supplier-postal-assist-url-value]')
+    expect(postal).to be_present
+    expect(postal['data-supplier-postal-assist-url-value']).to eq(admin_supplier_postal_suggestions_path)
+    expect(postal.at_css('[data-supplier-postal-field="postal_code"]')).to be_present
+    expect(postal.at_css('[data-supplier-postal-field="country_id"]')).to be_present
+    expect(postal.at_css('[data-supplier-postal-assist-target="neighborhoods"]')).to be_present
+    expect(postal.at_css('[data-supplier-postal-assist-target="status"]')).to be_present
+  end
+
   it 'places the preview above classification and aligns the right column with the address fields' do
     get new_admin_supplier_address_path(supplier)
 
