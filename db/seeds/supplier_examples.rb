@@ -25,10 +25,12 @@ module SupplierExamples
         status: :active
       )
       organization.save!
+      puts "[SEEDS][ORGANIZACION][OK] id=#{organization.id} nombre=#{organization.name}"
       settings = OrganizationSetting.find_or_initialize_by(organization: organization)
       settings.assign_attributes(base_currency: Currency.active.find_by!(code: 'MXN'),
                                  timezone: 'UTC', payment_method: :cash)
       settings.save!
+      puts "[SEEDS][CONFIGURACION][OK] organizacion_id=#{organization.id} moneda=#{settings.base_currency.code}"
       organization
     end
 
@@ -37,6 +39,7 @@ module SupplierExamples
       membership = OrganizationMembership.find_or_initialize_by(organization:, user: admin)
       membership.assign_attributes(status: :active, deleted_at: nil)
       membership.save!
+      puts "[SEEDS][MEMBRESIA][OK] usuario_id=#{admin.id} organizacion_id=#{organization.id} estado=#{membership.status}"
     end
 
     def create_suppliers_for(organization)
