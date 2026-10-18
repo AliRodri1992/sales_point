@@ -3,6 +3,7 @@
 require 'base64'
 require 'stringio'
 require_relative 'supplier_demo_documents'
+require_relative 'supplier_dossier_uniqueness'
 
 # Repeatable demo records for supplier tabs and progressive lists.
 # Never calls external geocoding or overwrites existing user-entered records.
@@ -81,9 +82,7 @@ module SupplierDossierExamples
 
       count.times do |index|
         reference = "DEMO-DIRECCION-#{index + 1}"
-        existing = supplier.addresses.with_deleted
-        next if existing.exists?(reference_notes: reference) ||
-                existing.exists?(street: "Avenida Ejemplo #{index + 1}", exterior_number: (100 + index).to_s)
+        next if SupplierDossierUniqueness.address_exists?(supplier, index, reference)
 
         purpose = Address::PURPOSES[index % Address::PURPOSES.length]
         primary = !supplier.addresses.not_deleted.exists?(purpose: purpose, primary: true)
@@ -138,8 +137,7 @@ module SupplierDossierExamples
         weekday = index % 7
         notes = "DEMO-CALENDARIO-#{index + 1}"
         attributes = schedule_attributes(branch, kind, weekday, notes)
-        slot = attributes.slice(:branch, :kind, :weekday, :starts_at)
-        next if supplier.supplier_schedules.exists?(notes:) || supplier.supplier_schedules.exists?(slot)
+        next if SupplierDossierUniqueness.schedule_exists?(supplier, attributes, notes)
 
         supplier.supplier_schedules.create!(attributes)
       end
