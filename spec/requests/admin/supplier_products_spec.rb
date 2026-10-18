@@ -6,7 +6,7 @@ RSpec.describe 'Admin supplier procurement', type: :request do
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:product) { create(:product, organization:) }
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :english) }
 
   before do
     create(:organization_membership, user:, organization:)
