@@ -115,6 +115,12 @@ module Admin
       admin_supplier_addresses_path(@supplier)
     end
 
+    def address_form_destination
+      return admin_supplier_path(@supplier, tab: 'addresses') if params[:source] == 'dossier'
+
+      admin_supplier_addresses_path(@supplier)
+    end
+
     def set_supplier
       return head :forbidden unless current_organization
 
@@ -129,7 +135,7 @@ module Admin
     end
 
     def redirect_success(action)
-      redirect_to admin_supplier_addresses_path(@supplier),
+      redirect_to address_form_destination,
                   flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 

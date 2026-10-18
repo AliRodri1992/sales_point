@@ -27,6 +27,7 @@ export default class extends Controller {
 
   disconnect() {
     this.request?.abort()
+    this.drag = null
   }
 
   savedPoint() {
@@ -196,7 +197,7 @@ export default class extends Controller {
   }
 
   dragStart(event) {
-    if (event.button !== 0 || !this.mapCenter) return
+    if ((event.pointerType === 'mouse' && event.button !== 0) || !this.mapCenter || !this.point) return
     const rect = event.currentTarget.getBoundingClientRect()
     const center = this.project(this.mapCenter)
     const marker = this.project(this.point)
@@ -206,7 +207,7 @@ export default class extends Controller {
     this.drag = { x: event.clientX, y: event.clientY,
       center: { ...this.mapCenter }, point: { ...this.point },
       mode: nearMarker ? "marker" : "pan" }
-    event.currentTarget.setPointerCapture(event.pointerId)
+    event.currentTarget.setPointerCapture?.(event.pointerId)
   }
 
   dragMove(event) {

@@ -77,3 +77,20 @@ RSpec.describe AddressGeocodingService do
     )
   end
 end
+
+RSpec.describe 'Stale geocoding updates' do
+  it 'does not overwrite a location changed during a provider request' do
+    address = create(:address, latitude: nil, longitude: nil)
+    fingerprint = address.geocoding_fingerprint
+    provider = instance_double(Geocoding::MapboxValidateAddressService)
+    allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_return(provider)
+    allow(provider).to receive(:call) do
+      Address.find(address.id).update!(street: 'Updated by another request')
+      { valid: true, latitude: 19.4, longitude: -99.1 }
+    end
+
+    AddressGeocodingService.new(address.id, fingerprint).call
+
+    expect(address.reload).to have_attributes(latitude: nil, longitude: nil, geocoding_status: 'pending')
+  end
+end

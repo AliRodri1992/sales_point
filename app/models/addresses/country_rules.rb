@@ -3,7 +3,7 @@
 module Addresses
   class CountryRules
     NO_POSTAL_CODE = %w[AE HK MO QA].freeze
-    STATE_REQUIRED = %w[MX US CA AU BR IN].freeze
+    STATE_REQUIRED = %w[MX US CA AU BR IN AR CO CL PE ZA].freeze
     POSTAL_FORMATS = {
       'MX' => /\A\d{5}\z/,
       'US' => /\A\d{5}(?:-\d{4})?\z/,

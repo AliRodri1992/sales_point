@@ -29,6 +29,7 @@ class AddressGeocodingService
   private
 
   def eligible?
+    @address.reload
     !@address.location_confirmed? &&
       (@fingerprint.nil? || @address.geocoding_fingerprint == @fingerprint)
   end

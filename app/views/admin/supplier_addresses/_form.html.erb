@@ -16,6 +16,7 @@
                 supplier_address_location_review_required_value: t('admin.supplier_details.location_review_required'),
                 supplier_address_location_confidence_value: @address.geocoding_confidence || 1.0
               } do |form| %>
+  <%= hidden_field_tag :source, 'dossier' if params[:source] == 'dossier' %>
   <%= form.hidden_field :latitude, data: { supplier_address_location_target: 'latitude' } %>
   <%= form.hidden_field :longitude, data: { supplier_address_location_target: 'longitude' } %>
   <%= hidden_field_tag 'address[location_confirmed]', '0', data: { supplier_address_location_target: 'confirmed' } %>

@@ -6,7 +6,7 @@
       <h1 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.supplier_details.add_address') %></h1>
       <p class="mt-2 text-sm text-slate-500"><%= t('admin.supplier_details.addresses') %> · <%= @supplier.name %></p>
     </div>
-    <%= link_to admin_supplier_addresses_path(@supplier), class: 'inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
+    <%= link_to (params[:source] == 'dossier' ? admin_supplier_path(@supplier, tab: 'addresses') : admin_supplier_addresses_path(@supplier)), class: 'inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
       <%= icon('arrow-left', class: 'size-4') %>
       <%= t('admin.supplier_details.back') %>
     <% end %>
