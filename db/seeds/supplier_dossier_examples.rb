@@ -45,7 +45,8 @@ module SupplierDossierExamples
 
     def seed_contacts(supplier, count)
       (2..count).each do |index|
-        email = format('demo.s%<supplier>04d.c%<contact>02d@ejemplo.test', supplier: supplier.id, contact: index)
+        email = format('demo.s%<supplier>04d.c%<contact>02d@ejemplo.test',
+                       supplier: supplier.id, contact: index)
         next if supplier.contacts.with_deleted.exists?(email: email)
 
         supplier.contacts.create!(contact_attributes(index, email))
@@ -90,7 +91,8 @@ module SupplierDossierExamples
 
     def seed_documents(supplier, count)
       count.times do |index|
-        name = format('demo-proveedor-%<code>s-documento-%<number>02d.png', code: supplier.code.downcase, number: index + 1)
+        name = format('demo-proveedor-%<code>s-documento-%<number>02d.png',
+                      code: supplier.code.downcase, number: index + 1)
         next if supplier.documents.attachments.joins(:blob).exists?(active_storage_blobs: { filename: name })
 
         supplier.documents.attach(
