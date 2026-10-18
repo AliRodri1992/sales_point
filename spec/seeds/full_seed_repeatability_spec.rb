@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Full Delta POS seeds', type: :model do
+  SEEDED_MODELS = [
+    Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
+    Supplier, Contact, Address, SupplierSchedule, SupplierProduct,
+    SupplierProductPrice, SupplierBankAccount, Product, Inventory,
+    Branch, Category, Client, Country, Currency, CountryCurrency,
+    ActiveStorage::Attachment, SatFiscalRegime
+  ].freeze
+
+  it 'does not duplicate records or reset manual supplier and login changes on a second run' do
+    Rails.application.load_seed
+    counts = SEEDED_MODELS.to_h { |model| [model.name, model.count] }
+    supplier = Supplier.find_by!(code: 'SUP-0001')
+    supplier.update!(legal_name: 'Datos fiscales revisados')
+    admin = User.find_by!(email: 'administrador@delta.com')
+    admin.update!(password: 'PasswordManual#2026', password_confirmation: 'PasswordManual#2026')
+
+    Rails.application.load_seed
+
+    expect(SEEDED_MODELS.to_h { |model| [model.name, model.count] }).to eq(counts)
+    expect(supplier.reload.legal_name).to eq('Datos fiscales revisados')
+    expect(admin.reload.valid_password?('PasswordManual#2026')).to be(true)
+    expect(SupplierProduct.count).to be_positive
+    expect(SupplierBankAccount.count).to eq(SupplierExamples::COUNT)
+  end
+end
