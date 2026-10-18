@@ -478,8 +478,9 @@ RSpec.describe 'Supplier address integration', type: :request do
   end
 
   it 'shows a failed location even when coordinates are absent and allows retry' do
-    address = create(:address, :delivery, addressable: supplier,
-                     geocoding_status: 'failed', latitude: nil, longitude: nil)
+    attributes = { addressable: supplier, geocoding_status: 'failed',
+                   latitude: nil, longitude: nil }
+    address = create(:address, :delivery, **attributes)
     get admin_supplier_addresses_path(supplier)
     expect(response.body).to include('data-address-geocoding-status="failed"')
 
@@ -490,5 +491,4 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(address.reload.geocoding_status).to eq('pending')
     expect(GeocodeAddressJob).to have_received(:perform_later)
   end
-
 end
