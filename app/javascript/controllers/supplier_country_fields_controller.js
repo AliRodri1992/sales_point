@@ -1,21 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Visual requirements reflect the country rules in Addresses::CountryRules.
-// Inputs remain editable; the Address model owns the actual validation.
+// Keep editable country-specific drafts in memory; never submit stale fields
+// from a previously selected country. Address/CountryRules remain authoritative.
 export default class extends Controller {
   connect() {
-    this.postalDrafts = new Map()
-    this.previousCode = null
+    this.drafts = new Map()
+    this.previousCode = this.countryCode()
     this.update()
   }
 
+  countryCode() {
+    return this.element.querySelector('[name$="[country_id]"]')?.selectedOptions[0]?.dataset.countryCode || ""
+  }
+
+  countryFields() {
+    return ["exterior_number", "interior_number", "neighborhood", "city", "state", "postal_code"]
+  }
+
+  field(name) {
+    return this.element.querySelector('[name$="[' + name + ']"]')
+  }
+
   update() {
-    const country = this.element.querySelector('[name$="[country_id]"]')
-    const code = country?.selectedOptions[0]?.dataset.countryCode || "MX"
+    const code = this.countryCode()
+    if (this.previousCode !== code) this.switchCountry(code)
     const mexico = code === "MX"
     const stateRequired = ["MX", "US", "CA", "AU", "BR", "IN"].includes(code)
     const postalRequired = !["AE", "HK", "MO", "QA"].includes(code)
-    this.syncPostalCode(code, postalRequired)
 
     this.element.querySelectorAll("[data-country-label]").forEach((label) => {
       label.textContent = mexico ? label.dataset.countryLabelMx : label.dataset.countryLabelOther
@@ -26,22 +37,32 @@ export default class extends Controller {
         (mode === "state" && stateRequired) || (mode === "postal" && postalRequired)
       mark.classList.toggle("hidden", !visible)
     })
-    this.element.querySelectorAll("[data-country-postal-wrapper]").forEach((field) => {
-      field.classList.toggle("hidden", !postalRequired)
+    this.element.querySelectorAll("[data-country-postal-wrapper]").forEach((wrapper) => {
+      wrapper.classList.toggle("hidden", !postalRequired)
     })
+    const postal = this.field("postal_code")
+    if (postal) {
+      postal.disabled = !postalRequired
+      if (!postalRequired) postal.value = ""
+    }
   }
 
-  syncPostalCode(code, required) {
-    const postal = this.element.querySelector('[name$="[postal_code]"]')
-    if (!postal) return
-    if (this.previousCode && this.previousCode !== code) {
-      if (postal.value) this.postalDrafts.set(this.previousCode, postal.value)
-      postal.value = required ? (this.postalDrafts.get(code) || "") : ""
-      postal.dispatchEvent(new Event("input", { bubbles: true }))
-    } else if (!required && postal.value) {
-      this.postalDrafts.set(code, postal.value)
-      postal.value = ""
-      postal.dispatchEvent(new Event("input", { bubbles: true }))
+  switchCountry(code) {
+    const previous = {}
+    for (const name of this.countryFields()) {
+      const input = this.field(name)
+      if (input) previous[name] = input.value
+    }
+    if (this.previousCode) this.drafts.set(this.previousCode, previous)
+
+    const restored = this.drafts.get(code) || {}
+    for (const name of this.countryFields()) {
+      const input = this.field(name)
+      if (!input) continue
+      const next = restored[name] || ""
+      if (input.value === next) continue
+      input.value = next
+      input.dispatchEvent(new Event("input", { bubbles: true }))
     }
     this.previousCode = code
   }
