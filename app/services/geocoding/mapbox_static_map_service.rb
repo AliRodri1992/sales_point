@@ -14,10 +14,11 @@ module Geocoding
 
       level = Integer(zoom).clamp(12, 18)
       path = "#{lon},#{lat},#{level},0/600x300"
-      response = connection.get("#{URL}/#{path}?access_token=#{CGI.escape(token)}")
-      return unless response.success? && response.body.present?
-
-      response.body
+      key = Digest::SHA256.hexdigest("#{token}:#{path}")
+      Rails.cache.fetch("mapbox:static:#{key}", expires_in: 6.hours, skip_nil: true) do
+        response = connection.get("#{URL}/#{path}?access_token=#{CGI.escape(token)}")
+        response.body if response.success? && response.body.present?
+      end
     rescue ArgumentError, TypeError, Faraday::Error => e
       Rails.logger.warn("[MapboxStaticMap] #{e.class}")
       nil
