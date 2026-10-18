@@ -29,7 +29,9 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
     end
 
     it 'rejects unsupported document formats' do
-      supplier.documents.attach(io: StringIO.new('test'), filename: 'payload.exe', content_type: 'application/x-msdownload')
+      supplier.documents.attach(
+        io: StringIO.new('test'), filename: 'payload.exe', content_type: 'application/x-msdownload'
+      )
       expect(supplier).not_to be_valid
       expect(supplier.errors[:documents]).to be_present
     end
