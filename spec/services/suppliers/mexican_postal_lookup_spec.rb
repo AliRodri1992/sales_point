@@ -49,17 +49,24 @@ RSpec.describe Suppliers::MexicanPostalLookup do
 
   it 'fails open if the postal provider is unavailable' do
     allow(connection).to receive(:get).and_raise(Faraday::TimeoutError)
-    expect(described_class.new('54800').call).to be_nil
+    expect(described_class.new('54800').call).to include(found: true, state: 'Estado de México')
   end
 
   it 'fails open if the provider responds with malformed JSON' do
     allow(response).to receive(:body).and_return('{')
-    expect(described_class.new('54800').call).to be_nil
+    expect(described_class.new('54800').call).to include(found: true, state: 'Estado de México')
   end
 
   it 'does not use unsuccessful responses as valid suggestions' do
     allow(response).to receive(:success?).and_return(false)
-    expect(described_class.new('54800').call).to be_nil
+    expect(described_class.new('54800').call).to include(found: true, state: 'Estado de México')
+  end
+
+  it 'has nationwide local fallback when the remote service fails' do
+    allow(connection).to receive(:get).and_raise(Faraday::TimeoutError)
+    expect(described_class.new('06000').call).to include(found: true, state: 'Ciudad de México')
+    expect(described_class.new('54800').call).to include(found: true, state: 'Estado de México')
+    expect(described_class.new('64000').call).to include(found: true, state: 'Nuevo León')
   end
 
   it 'configures bounded timeouts for the external lookup' do
