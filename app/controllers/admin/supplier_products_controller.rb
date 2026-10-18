@@ -8,9 +8,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :set_offer, if: -> { action_name.in?(%w[
-      edit update destroy history set_preferred clear_preferred
-    ]) }
+    before_action :set_offer, if: :supplier_offer_action?
 
     OFFERS_PER_PAGE = 6
 
@@ -100,6 +98,10 @@ module Admin
       return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
+    end
+
+    def supplier_offer_action?
+      action_name.in?(%w[edit update destroy history set_preferred clear_preferred])
     end
 
     def set_offer
