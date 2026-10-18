@@ -373,7 +373,8 @@ def seed_admin_user
   puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
   assign_admin_user_attributes(user, language)
   user.save!
-  puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
+  puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} " \
+       "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
   assign_admin_role(user, administrator_role)
   puts "[SEEDS][USUARIO][OK] Administrador configurado; roles=#{user.system_roles.pluck(:code).join(', ')}"
 end
@@ -395,7 +396,8 @@ def assign_admin_role(user, administrator_role)
   action = assignment.new_record? ? 'CREAR' : 'VERIFICAR'
   assignment.deleted_at = nil
   assignment.save!
-  puts "[SEEDS][ROL][#{action}] usuario_id=#{user.id} rol=#{administrator_role.code} asignacion_id=#{assignment.id}"
+  puts "[SEEDS][ROL][#{action}] usuario_id=#{user.id} rol=#{administrator_role.code} " \
+       "asignacion_id=#{assignment.id}"
 end
 
 USER_SEED_ROLES = %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
@@ -412,7 +414,9 @@ def seed_users(count = 15)
     user.save!
     role = roles.order(:id).offset(index % roles.count).first!
     assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
-    puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} usuario=#{user.username} email=#{user.email} estado=#{user.status} rol=#{role.code} asignacion_id=#{assignment.id}"
+    puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
+         "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
+         "rol=#{role.code} asignacion_id=#{assignment.id}"
   end
   puts "[SEEDS][USUARIOS][OK] Total usuarios de ejemplo procesados=#{count}"
 end
