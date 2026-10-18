@@ -19,6 +19,10 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
   after { Warden.test_reset! }
 
   def choose_country(code)
+    unless page.has_css?('select[name="address[country_id]"]', visible: :all)
+      raise "Supplier address form unavailable at #{page.current_url}: #{page.text.first(250)}"
+    end
+
     page.execute_script(<<~JS, code)
       const select = document.querySelector('select[name="address[country_id]"]')
       select.value = select.querySelector('option[data-country-code="' + arguments[0] + '"]').value
