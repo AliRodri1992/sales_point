@@ -9,12 +9,12 @@ module Suppliers
     MIN_CONFIDENCE = 0.8
     EARTH_RADIUS_KM = 6371.0
 
-    def self.issue(address:, supplier:, user:, latitude:, longitude:, confidence: 1.0)
+    def self.issue(address:, supplier:, user:, coordinates:)
       payload = {
         fingerprint: address.geocoding_fingerprint,
         supplier_id: supplier.id, user_id: user.id,
-        latitude: Float(latitude), longitude: Float(longitude),
-        confidence: Float(confidence || 0)
+        latitude: Float(coordinates.fetch(:latitude)), longitude: Float(coordinates.fetch(:longitude)),
+        confidence: Float(coordinates.fetch(:confidence, 1.0) || 0)
       }
       verifier.generate(payload, expires_in: 20.minutes)
     end
