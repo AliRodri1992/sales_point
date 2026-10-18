@@ -5,8 +5,8 @@ require_relative 'supplier_demo_document_office'
 require 'digest'
 require 'stringio'
 
-# Small, valid, synthetic sample files. Never reattaches an existing filename.
-# Real supplier uploads are never replaced or removed.
+# Synthetic files are added by a deterministic filename.
+# Only the exact known broken demo JPEG can be replaced; user files stay untouched.
 module SupplierDemoDocuments
   FORMATS = [
     ['constancia', 'pdf', 'application/pdf'], ['nota', 'txt', 'text/plain'],
@@ -60,7 +60,7 @@ module SupplierDemoDocuments
     end
 
     def image_contents(extension)
-      { 'jpg' => SupplierDemoImages::DEMO_JPEG, 'png' => SupplierDemoImages::DEMO_PNG }.fetch(extension)
+      { 'jpg' => SupplierDemoImages::JPEG, 'png' => SupplierDemoImages::PNG }.fetch(extension)
     end
 
     def pdf_for(supplier)
