@@ -48,7 +48,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(statement.at_css('[data-finance-metric="balance"]').text).to include('220', supplier.currency.code)
     expect(statement.at_css('[data-finance-metric="overdue_balance"]').text).to include('150', supplier.currency.code)
     expect(statement.at_css('[data-finance-metric="pending_invoices"]').text.strip).to eq('2')
-    expect(statement.at_css('[data-finance-metric="next_due"]').text).to include(I18n.l(Date.current + 5.days))
+    formatted_due = I18n.with_locale(:en) { I18n.l(Date.current + 5.days) }
+    expect(statement.at_css('[data-finance-metric="next_due"]').text).to include(formatted_due)
     expect(statement.text).to include('INV-OLD', 'INV-SOON')
     expect(statement.at_css('[data-finance-empty-payables]')).to be_nil
   end
@@ -96,7 +97,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   it 'supports bookmarks to the old finances tab' do
     get admin_supplier_path(supplier, tab: 'finances')
 
-    expect(Nokogiri::HTML(response.body).at_css('[data-controller="supplier-dossier"]')
-      ['data-supplier-dossier-initial-tab-value']).to eq('statement')
+    dossier = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-dossier"]')
+    expect(dossier['data-supplier-dossier-initial-tab-value']).to eq('statement')
   end
 end
