@@ -5,7 +5,9 @@ module Suppliers
     def self.call(organization:, product:)
       return [] unless product.organization_id == organization.id
 
-      offers = SupplierProduct.available.includes(:supplier, :currency, product: :preferred_supplier).where(organization:, product:)
+      offers = SupplierProduct.available
+                              .includes(:supplier, :currency, product: :preferred_supplier)
+                              .where(organization:, product:)
       comparison = offers.map do |offer|
         {
           offer:,
