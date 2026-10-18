@@ -1,0 +1,21 @@
+en:
+  admin:
+    supplier_details:
+      geocoding_failed: "Could not locate address"
+      geocoding_low_confidence: "Approximate location: accuracy review needed"
+      geocoding_requeued: "Location lookup queued again."
+      location_zoom_in: "Zoom in"
+      location_zoom_out: "Zoom out"
+      location_adjustment_reason: "Reason for location adjustment"
+      location_adjustment_placeholder: "Explain why the marker is far from the suggested location"
+      location_adjustment_hint: "Required if the marker moves more than 2 km (10–250 characters)."
+      postal_choose_neighborhood: "Choose a suggested neighborhood"
+      view_on_map: "Open location on map"
+      retry_geocoding: "Retry location lookup"
+    supplier_dossier:
+      address_cards:
+        filters_options:
+          confirmed: "Confirmed"
+          approximate: "Approximate"
+          pending: "Pending"
+          failed: "Failed"
