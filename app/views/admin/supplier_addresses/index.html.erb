@@ -1,115 +1,108 @@
-<div class="space-y-6" data-controller="swal-confirm">
-  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="flex flex-wrap items-start justify-between gap-4">
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700"><%= @supplier.code %> · <%= @supplier.name %></p>
-      <h1 class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h1>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.addresses_admin_description') %></p>
+<div class="space-y-6" data-controller="swal-confirm supplier-addresses"
+     data-supplier-addresses-url-value="<%= admin_supplier_addresses_path(@supplier, status: @address_page.status) %>"
+     data-supplier-addresses-next-page-value="<%= @address_page.next_page || 0 %>"
+     data-supplier-addresses-filter-value="<%= @address_page.filter %>"
+     data-supplier-addresses-empty-default-value="<%= t("admin.supplier_details.#{@address_page.status == 'deleted' ? 'empty_deleted_addresses_description' : 'addresses_description'}") %>"
+     data-supplier-addresses-empty-no-results-value="<%= t('admin.supplier_details.no_addresses') %>">
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700"><%= @supplier.code %> · <%= @supplier.name %></p>
+        <h1 class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.supplier_details.addresses') %></h1>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.addresses_admin_description') %></p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'addresses'), class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+        <% if policy(@supplier).manage_addresses? %>
+          <%= link_to new_admin_supplier_address_path(@supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' do %>
+            <%= icon('plus', class: 'size-4') %>
+            <%= t('admin.supplier_details.add_address') %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
-    <div class="flex flex-wrap gap-2">
-      <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'addresses'), class: 'rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
-      <% if policy(@supplier).manage_addresses? %>
-        <%= link_to new_admin_supplier_address_path(@supplier), class: 'inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' do %><%= icon('plus', class: 'size-4') %><%= t('admin.supplier_details.add_address') %><% end %>
-      <% end %>
+  </div>
+
+  <% if @active_addresses_count.positive? || @deleted_addresses_count.positive? %>
+    <div data-address-statistics class="grid gap-3 sm:grid-cols-2">
+      <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.active_addresses') %></p>
+        <div class="mt-2 flex items-center gap-2"><%= icon('map-pin', class: 'size-5 text-emerald-700') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @active_addresses_count %></p></div>
+      </div>
+      <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_addresses') %></p>
+        <div class="mt-2 flex items-center gap-2"><%= icon('archive-box', class: 'size-5 text-slate-500') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @deleted_addresses_count %></p></div>
+      </div>
     </div>
-  </div>
-  </div>
-  <% deleted_addresses = @supplier.addresses.with_deleted.where.not(deleted_at: nil).order(deleted_at: :desc) %>
-  <% showing_deleted = params[:status] == 'deleted' %>
-  <% if @addresses.size.positive? || deleted_addresses.size.positive? %>
-  <div data-address-statistics class="grid gap-3 sm:grid-cols-2">
-    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="text-xs font-semibold text-emerald-800"><%= t('admin.supplier_details.active_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('map-pin', class: 'size-5 text-emerald-700') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= @addresses.size %></p></div></div>
-    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_addresses') %></p><div class="mt-2 flex items-center gap-2"><%= icon('archive-box', class: 'size-5 text-slate-500') %><p class="font-jakarta text-2xl font-bold text-slate-900"><%= deleted_addresses.size %></p></div></div>
-  </div>
   <% end %>
+
   <nav data-supplier-address-tabs class="inline-flex w-full flex-wrap gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 sm:w-auto" aria-label="<%= t('admin.supplier_details.addresses') %>">
-    <%= link_to admin_supplier_addresses_path(@supplier), class: "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{showing_deleted ? 'text-slate-600 hover:bg-white/70' : 'bg-white text-emerald-700 shadow-sm'}", aria: { current: ('page' unless showing_deleted) } do %>
+    <%= link_to admin_supplier_addresses_path(@supplier),
+                class: "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{@address_page.status == 'active' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:bg-white/70'}",
+                aria: { current: ('page' if @address_page.status == 'active') } do %>
       <%= t('admin.supplier_details.active_addresses') %>
-      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700"><%= @addresses.size %></span>
+      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700"><%= @active_addresses_count %></span>
     <% end %>
-    <%= link_to admin_supplier_addresses_path(@supplier, status: 'deleted'), class: "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{showing_deleted ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:bg-white/70'}", aria: { current: ('page' if showing_deleted) } do %>
+    <%= link_to admin_supplier_addresses_path(@supplier, status: 'deleted'),
+                class: "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition sm:flex-none #{@address_page.status == 'deleted' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-600 hover:bg-white/70'}",
+                aria: { current: ('page' if @address_page.status == 'deleted') } do %>
       <%= t('admin.supplier_details.deleted_addresses') %>
-      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700"><%= deleted_addresses.size %></span>
+      <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700"><%= @deleted_addresses_count %></span>
     <% end %>
   </nav>
-  <% unless showing_deleted %>
-  <% if @addresses.any? %>
-  <div class="grid items-stretch gap-4 md:grid-cols-2">
-    <% @addresses.each do |address| %>
-      <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-200 hover:shadow-md"><div class="flex-1 p-5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-3"><span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon({ 'fiscal' => 'building-library', 'commercial' => 'building-office-2', 'delivery' => 'truck', 'general' => 'map-pin' }.fetch(address.purpose, 'map-pin'), class: 'size-5') %></span><div><h2 class="font-jakarta font-bold text-slate-900"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %></h2><p class="text-xs text-slate-400">#<%= address.id %></p></div></div>
-          <% if address.primary? %><span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700"><%= icon('check-circle', class: 'size-3.5') %><%= t('admin.supplier_details.primary') %></span><% end %>
-        </div>
-        <div class="mt-4 space-y-1 text-sm leading-6 text-slate-600">
-          <p class="font-medium text-slate-800"><%= [address.street, address.exterior_number, address.interior_number.presence].compact.join(' ') %></p>
-          <p><%= address.neighborhood %></p>
-          <p><%= [address.city, address.state].reject(&:blank?).join(', ') %><% if address.postal_code.present? %> · <%= t('admin.supplier_details.address_fields.postal_code') %> <%= address.postal_code %><% end %></p>
-          <% if address.country.present? %><p class="text-slate-500"><%= address.country.localized_name %></p><% end %>
-        </div></div>
-        <% if policy(@supplier).manage_addresses? %>
-          <div class="flex min-h-16 items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
-            <%= link_to edit_admin_supplier_address_path(@supplier, address), class: 'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100' do %><%= icon('pencil-square', class: 'size-4') %><%= t('admin.supplier_details.edit') %><% end %>
-            <%= button_to admin_supplier_address_path(@supplier, address), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-50' do %><%= icon('trash', class: 'size-4') %><%= t('admin.supplier_details.delete') %><% end %>
-          </div>
-        <% end %>
-      </article>
-    <% end %>
-  </div>
-  <% else %>
-    <div data-address-empty="active" class="flex min-h-[390px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-10 text-center sm:px-8">
+
+  <section aria-label="<%= t('admin.supplier_details.addresses') %>" class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <label class="relative block w-full sm:max-w-sm">
+        <span class="sr-only"><%= t('admin.supplier_details.search_addresses') %></span>
+        <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400') %>
+        <input type="search" value="<%= params[:q].to_s.strip.first(120) %>"
+               data-supplier-addresses-target="search" data-action="input->supplier-addresses#search"
+               placeholder="<%= t('admin.supplier_details.search_addresses') %>"
+               class="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500">
+      </label>
+      <span class="sr-only" data-supplier-addresses-target="count" aria-live="polite"><%= @address_page.total_count %></span>
+    </div>
+    <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4" aria-label="<%= t('admin.supplier_dossier.address_cards.filters') %>">
+      <% Suppliers::DossierAddressesPage::FILTERS.each do |filter| %>
+        <% selected = @address_page.filter == filter %>
+        <button type="button" data-supplier-addresses-target="filter"
+                data-action="supplier-addresses#applyFilter" data-filter="<%= filter %>" aria-pressed="<%= selected %>"
+                class="inline-flex min-h-9 items-center gap-1 rounded-full px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 <%= selected ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' %>">
+          <%= t("admin.supplier_dossier.address_cards.filters_options.#{filter}") %>
+          <span data-supplier-addresses-target="filterCount" data-filter="<%= filter %>"
+                class="inline-flex min-w-5 items-center justify-center rounded-full bg-white/80 px-1.5 py-0.5 text-[11px] font-bold tabular-nums text-slate-700"><%= @address_page.filter_counts.fetch(filter) %></span>
+        </button>
+      <% end %>
+    </div>
+  </section>
+
+  <div class="max-h-[70vh] overflow-y-auto overscroll-contain pr-1" data-supplier-addresses-target="scroll"
+       tabindex="0" aria-label="<%= t('admin.supplier_details.addresses') %>">
+    <div class="grid items-stretch gap-4 md:grid-cols-2" data-supplier-addresses-target="list">
+      <%= render 'address_cards', addresses: @address_page.addresses,
+                                  can_manage_addresses: policy(@supplier).manage_addresses? %>
+    </div>
+    <div data-supplier-addresses-target="empty" data-address-empty="<%= @address_page.status %>"
+         class="<%= 'hidden' if @address_page.total_count.positive? %> flex min-h-[340px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-9 text-center sm:px-8">
       <div class="mx-auto max-w-xl">
         <%= image_tag 'saddresses.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[240px] sm:max-w-[260px]' %>
         <h2 class="mt-3 font-jakarta text-xl font-bold text-slate-900">
-          <%= t('admin.supplier_dossier.address_cards.empty_title') %>
+          <%= t("admin.supplier_details.#{@address_page.status == 'deleted' ? 'empty_deleted_addresses_title' : 'no_addresses'}") %>
         </h2>
-        <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
-          <%= t('admin.supplier_dossier.address_cards.empty_description') %>
+        <p data-supplier-addresses-target="emptyText" class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
+          <%= @address_page.total_count.zero? && (params[:q].present? || @address_page.filter != 'all') ? t('admin.supplier_details.no_addresses') : t("admin.supplier_details.#{@address_page.status == 'deleted' ? 'empty_deleted_addresses_description' : 'addresses_description'}") %>
         </p>
       </div>
     </div>
-  <% end %>
-  <% else %>
-    <% if deleted_addresses.any? %>
-    <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><p class="font-semibold text-slate-800"><%= t('admin.supplier_details.deleted_addresses') %></p><p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.deleted_addresses_description') %></p></div>
-    <div class="grid items-stretch gap-4 md:grid-cols-2">
-      <% deleted_addresses.each do |address| %>
-        <article class="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div class="flex-1 p-5">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div class="flex items-center gap-3"><span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-500"><%= icon({ 'fiscal' => 'building-library', 'commercial' => 'building-office-2', 'delivery' => 'truck', 'general' => 'map-pin' }.fetch(address.purpose, 'map-pin'), class: 'size-5') %></span><h2 class="font-jakarta font-bold text-slate-800"><%= t("admin.supplier_details.address_purposes.#{address.purpose}") %></h2></div>
-              <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"><%= t('admin.supplier_details.deleted_records') %></span>
-            </div>
-            <div class="mt-4 space-y-1 text-sm leading-6 text-slate-600">
-          <p class="font-medium text-slate-800"><%= [address.street, address.exterior_number, address.interior_number.presence].compact.join(' ') %></p>
-          <p><%= address.neighborhood %></p>
-          <p><%= [address.city, address.state].reject(&:blank?).join(', ') %><% if address.postal_code.present? %> · <%= t('admin.supplier_details.address_fields.postal_code') %> <%= address.postal_code %><% end %></p>
-          <% if address.country.present? %><p class="text-slate-500"><%= address.country.localized_name %></p><% end %>
-        </div>
-            <p class="mt-3 flex items-center gap-2 text-xs text-slate-500"><%= icon('clock', class: 'size-4') %><%= t('admin.supplier_details.deleted_on', date: l(address.deleted_at.to_date, format: :long)) %></p>
-          </div>
-          <% if policy(@supplier).manage_addresses? %>
-            <div class="flex min-h-14 items-center justify-end border-t border-slate-100 bg-slate-50 px-5 py-3">
-              <%= button_to restore_admin_supplier_address_path(@supplier, address), method: :patch, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>
-                <%= icon('arrow-path', class: 'size-4') %>
-                <%= t('admin.supplier_details.restore_address') %>
-              <% end %>
-            </div>
-          <% end %>
-        </article>
-      <% end %>
+    <div data-supplier-addresses-target="sentinel" class="h-1" aria-hidden="true"></div>
+    <p data-supplier-addresses-target="loading" role="status" class="hidden py-3 text-center text-xs font-semibold text-emerald-700"><%= t('admin.supplier_dossier.address_cards.loading') %></p>
+    <p data-supplier-addresses-target="error" role="alert" class="hidden py-3 text-center text-sm text-rose-700"><%= t('admin.supplier_dossier.address_cards.load_error') %></p>
+    <div class="flex justify-center py-3">
+      <button type="button" data-supplier-addresses-target="loadMore" data-action="supplier-addresses#loadMore"
+              class="<%= 'hidden' unless @address_page.next_page %> min-h-10 rounded-lg border border-slate-200 px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50">
+        <%= t('admin.supplier_dossier.address_cards.load_more') %>
+      </button>
     </div>
-    <% else %>
-      <div data-address-empty="deleted" class="flex min-h-[390px] items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-10 text-center sm:px-8">
-        <div class="mx-auto max-w-xl">
-          <%= image_tag 'saddresses.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[240px] sm:max-w-[260px]' %>
-          <h2 class="mt-3 font-jakarta text-xl font-bold text-slate-900">
-            <%= t('admin.supplier_details.empty_deleted_addresses_title') %>
-          </h2>
-          <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
-            <%= t('admin.supplier_details.empty_deleted_addresses_description') %>
-          </p>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
+  </div>
 </div>

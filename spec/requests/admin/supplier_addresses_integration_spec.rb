@@ -200,6 +200,85 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response.body).to include('ABC', 'data-server-field-error')
   end
 
+  it 'renders only eight active address cards and keeps accurate tab counts' do
+    19.times { |i| create(:address, :delivery, addressable: supplier, street: "Warehouse #{i}") }
+    3.times do |i|
+      create(:address, :fiscal, addressable: supplier, street: "Archived #{i}", deleted_at: Time.current)
+    end
+
+    get admin_supplier_addresses_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('article[data-supplier-address-id]').size).to eq(8)
+    expect(page.at_css('[data-supplier-addresses-next-page-value]')['data-supplier-addresses-next-page-value'])
+      .to eq('2')
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[19 3])
+    expect(page.at_css('[data-address-statistics]')).to be_present
+    expect(page.css('[data-supplier-addresses-target="filterCount"]').map(&:text).map(&:strip))
+      .to eq(%w[19 0 19 0 0 0])
+  end
+
+  it 'paginates and filters active addresses in the administration search endpoint' do
+    19.times { |i| create(:address, :delivery, addressable: supplier, street: "Delivery Lane #{i}") }
+    create(:address, :fiscal, addressable: supplier, reference_notes: 'Beside BLUE gate')
+    headers = { 'X-Requested-With' => 'XMLHttpRequest' }
+
+    get admin_supplier_addresses_path(supplier), params: { page: 2 }, headers: headers
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).css('article[data-supplier-address-id]').size).to eq(8)
+    expect(response.headers['X-Next-Page']).to eq('3')
+    expect(response.headers['X-Addresses-Count']).to eq('20')
+    expect(response.headers['Cache-Control']).to include('no-store')
+
+    get admin_supplier_addresses_path(supplier), params: { q: 'blue', filter: 'fiscal' }, headers: headers
+
+    expect(Nokogiri::HTML(response.body).css('article[data-supplier-address-id]').size).to eq(1)
+    expect(response.headers['X-Addresses-Count']).to eq('1')
+    expect(JSON.parse(response.headers['X-Addresses-Filter-Counts'])['fiscal']).to eq(1)
+    expect(Nokogiri::HTML(response.body).css('[data-supplier-address-tabs]')).to be_empty
+  end
+
+  it 'searches and paginates deleted addresses without showing active records' do
+    create(:address, :fiscal, addressable: supplier, street: 'Live Location')
+    9.times do |i|
+      create(:address, :delivery, addressable: supplier,
+             street: "Archived Lane #{i}", reference_notes: "Old gate #{i}", deleted_at: Time.current)
+    end
+
+    get admin_supplier_addresses_path(supplier, status: 'deleted')
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('article[data-supplier-address-id]').size).to eq(8)
+    expect(page.css('form[action*="restore"]').size).to eq(8)
+    expect(page.text).not_to include('Live Location')
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[1 9])
+
+    get admin_supplier_addresses_path(supplier),
+        params: { status: 'deleted', page: 2 }, headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+    expect(Nokogiri::HTML(response.body).css('article[data-supplier-address-id]').size).to eq(1)
+
+    get admin_supplier_addresses_path(supplier),
+        params: { status: 'deleted', q: 'old gate 7', filter: 'delivery' },
+        headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+    expect(Nokogiri::HTML(response.body).css('article[data-supplier-address-id]').size).to eq(1)
+    expect(response.headers['X-Addresses-Count']).to eq('1')
+  end
+
+  it 'hides administration actions without management permission' do
+    create(:address, :fiscal, addressable: supplier)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+
+    get admin_supplier_addresses_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('article[data-supplier-address-id] form, article[data-supplier-address-id] a')).to be_empty
+
+    get admin_supplier_addresses_path(supplier), headers: { 'X-Requested-With' => 'XMLHttpRequest' }
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).css('article form, article a')).to be_empty
+  end
+
   it 'uses the existing illustration without a duplicate create action for an empty list' do
     get admin_supplier_addresses_path(supplier)
 

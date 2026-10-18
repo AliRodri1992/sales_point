@@ -6,17 +6,18 @@ module Suppliers
     PAGE_SIZE = 8
     FILTERS = %w[all fiscal delivery commercial general primary].freeze
 
-    attr_reader :addresses, :total_count, :next_page, :page, :filter, :filter_counts
+    attr_reader :addresses, :total_count, :next_page, :page, :filter, :filter_counts, :status
 
-    def initialize(supplier:, page: 1, query: nil, filter: 'all')
+    def initialize(supplier:, page: 1, query: nil, filter: 'all', status: 'active')
       @supplier = supplier
       @page = [page.to_i, 1].max
       @query = query.to_s.strip.slice(0, 120)
       @filter = FILTERS.include?(filter) ? filter : 'all'
+      @status = status == 'deleted' ? 'deleted' : 'active'
     end
 
     def call
-      relation = @supplier.addresses.not_deleted.joins(:country)
+      relation = addresses_scope.joins(:country)
       relation = apply_search(relation) if @query.present?
       @filter_counts = calculate_filter_counts(relation)
       @total_count = @filter_counts.fetch(filter)
@@ -26,8 +27,15 @@ module Suppliers
 
     private
 
+    def addresses_scope
+      return @supplier.addresses.not_deleted if status == 'active'
+
+      @supplier.addresses.with_deleted.where.not(deleted_at: nil)
+    end
+
     def load_addresses_page(relation)
-      rows = relation.includes(:country).order(primary: :desc, purpose: :asc, id: :asc)
+      ordering = status == 'deleted' ? { deleted_at: :desc, id: :desc } : { primary: :desc, purpose: :asc, id: :asc }
+      rows = relation.includes(:country).order(ordering)
                      .offset((page - 1) * PAGE_SIZE).limit(PAGE_SIZE + 1).to_a
       @addresses = rows.first(PAGE_SIZE)
       @next_page = page + 1 if rows.size > PAGE_SIZE
@@ -57,7 +65,8 @@ module Suppliers
         'addresses.street ILIKE :term OR addresses.exterior_number ILIKE :term OR ' \
         'addresses.interior_number ILIKE :term OR addresses.neighborhood ILIKE :term OR ' \
         'addresses.city ILIKE :term OR addresses.state ILIKE :term OR ' \
-        'addresses.postal_code ILIKE :term OR countries.name ILIKE :term', term:
+        'addresses.postal_code ILIKE :term OR addresses.reference_notes ILIKE :term OR ' \
+        'countries.name ILIKE :term', term:
       )
     end
   end

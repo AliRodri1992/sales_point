@@ -59,6 +59,38 @@ RSpec.describe Suppliers::DossierAddressesPage do
     expect(page.filter_counts['fiscal']).to eq(0)
   end
 
+  it 'searches optional address references without matching unrelated suppliers' do
+    match = create(:address, :fiscal, addressable: supplier, reference_notes: 'Portón AZUL del edificio')
+    create(:address, :delivery, addressable: supplier, reference_notes: 'Portón verde')
+    create(:address, :general, addressable: create(:supplier), reference_notes: 'Portón AZUL')
+
+    expect(page(query: 'azul').addresses.pluck(:id)).to eq([match.id])
+    expect(page(query: '%').addresses).to be_empty
+  end
+
+  it 'paginates deleted addresses separately from active ones and filters their types' do
+    active = create(:address, :fiscal, addressable: supplier)
+    18.times do |i|
+      create(:address, :delivery, addressable: supplier, street: "Archived #{i}",
+             reference_notes: "Old warehouse #{i}", deleted_at: Time.current)
+    end
+    first = page(status: 'deleted')
+    second = page(status: 'deleted', page: 2)
+    third = page(status: 'deleted', page: 3)
+
+    expect(first.addresses.size).to eq(8)
+    expect(first.filter_counts['delivery']).to eq(18)
+    expect(first.filter_counts['fiscal']).to eq(0)
+    expect(first.next_page).to eq(2)
+    expect(second.addresses.size).to eq(8)
+    expect(third.addresses.size).to eq(2)
+    expect(third.next_page).to be_nil
+    expect((first.addresses + second.addresses + third.addresses).pluck(:id).uniq.size).to eq(18)
+    expect(page(status: 'deleted', query: 'warehouse 12', filter: 'delivery').total_count).to eq(1)
+    expect(page.addresses.pluck(:id)).to eq([active.id])
+    expect(page(status: 'unexpected').addresses.pluck(:id)).to eq([active.id])
+  end
+
   it 'searches street, address details, postal code and country, ignoring case' do
     country = create(:country, name: 'Exampleland')
     attributes = {

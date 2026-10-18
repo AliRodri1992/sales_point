@@ -3,11 +3,13 @@ import { Controller } from "@hotwired/stimulus"
 // Loads one server-rendered page at a time inside the supplier's address list.
 // Search and filters run on the server; no duplicate full-list download is needed.
 export default class extends Controller {
-  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "loading", "error", "loadMore"]
+  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "emptyText", "loading", "error", "loadMore"]
   static values = {
     url: String,
     nextPage: Number,
-    filter: { type: String, default: "all" }
+    filter: { type: String, default: "all" },
+    emptyDefault: String,
+    emptyNoResults: String
   }
 
   connect() {
@@ -16,6 +18,7 @@ export default class extends Controller {
     this.request = null
     this.searchTimer = null
     this.updateLoadMore()
+    this.updateEmptyMessage()
 
     if (this.hasScrollTarget && this.hasSentinelTarget && "IntersectionObserver" in window) {
       this.observer = new IntersectionObserver((entries) => {
@@ -72,11 +75,19 @@ export default class extends Controller {
     this.refresh()
   }
 
+  updateEmptyMessage() {
+    if (!this.hasEmptyTextTarget) return
+
+    const searching = (this.hasSearchTarget && this.searchTarget.value.trim() !== "") || this.filterValue !== "all"
+    this.emptyTextTarget.textContent = searching ? this.emptyNoResultsValue : this.emptyDefaultValue
+  }
+
   refresh() {
     this.abortRequest()
     this.listTarget.replaceChildren()
     this.nextPageValue = 1
     this.countTarget.textContent = "0"
+    this.updateEmptyMessage()
     this.emptyTarget.classList.add("hidden")
     this.errorTarget.classList.add("hidden")
     this.scrollTarget.scrollTop = 0

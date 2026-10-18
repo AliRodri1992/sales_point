@@ -16,8 +16,23 @@ module Admin
     before_action :set_address, only: %i[edit update destroy]
 
     def index
-      @address = @supplier.addresses.new
-      @addresses = @supplier.addresses.not_deleted.order(created_at: :desc)
+      @address_page = Suppliers::DossierAddressesPage.new(
+        supplier: @supplier, status: params[:status], page: params[:page],
+        query: params[:q], filter: params[:filter]
+      ).call
+
+      if request.xhr?
+        response.headers['X-Next-Page'] = @address_page.next_page.to_s
+        response.headers['X-Addresses-Count'] = @address_page.total_count.to_s
+        response.headers['X-Addresses-Filter-Counts'] = @address_page.filter_counts.to_json
+        response.headers['Cache-Control'] = 'private, no-store'
+        render partial: 'address_cards',
+               locals: { addresses: @address_page.addresses, can_manage_addresses: policy(@supplier).manage_addresses? }
+        return
+      end
+
+      @active_addresses_count = @supplier.addresses.not_deleted.count
+      @deleted_addresses_count = @supplier.addresses.with_deleted.where.not(deleted_at: nil).count
     end
 
     def new
