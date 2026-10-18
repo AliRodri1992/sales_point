@@ -11,6 +11,8 @@ ko:
       location_adjustment_hint: "마커를 2km 이상 이동하면 10~250자 사유가 필요합니다."
       postal_choose_neighborhood: "추천 동네 선택"
       view_on_map: "지도에서 위치 보기"
+      location_low_confidence: "Mapbox 검색 정확도가 낮습니다. 마커 위치를 확인하세요."
+      location_adjusted: "마커를 수동으로 조정했습니다. 저장하기 전에 위치를 확인하세요."
       retry_geocoding: "위치 다시 검색"
     supplier_dossier:
       address_cards:
