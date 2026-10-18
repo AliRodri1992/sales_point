@@ -33,7 +33,8 @@ RSpec.describe Suppliers::DossierAddressesPage do
     create(:address, addressable: supplier, purpose: 'general')
 
     counts = { 'all' => 5, 'fiscal' => 1, 'delivery' => 2, 'commercial' => 1,
-               'general' => 1, 'primary' => 1 }
+               'general' => 1, 'primary' => 1,
+               'confirmed' => 0, 'approximate' => 0, 'pending' => 5, 'failed' => 0 }
 
     Suppliers::DossierAddressesPage::FILTERS.each do |filter|
       result = page(filter:)
@@ -116,7 +117,8 @@ RSpec.describe Suppliers::DossierAddressesPage do
 
     expect(result.filter_counts).to eq(
       'all' => 2, 'fiscal' => 1, 'delivery' => 1,
-      'commercial' => 0, 'general' => 0, 'primary' => 1
+      'commercial' => 0, 'general' => 0, 'primary' => 1,
+      'confirmed' => 0, 'approximate' => 0, 'pending' => 2, 'failed' => 0
     )
     expect(result.addresses.size).to eq(1)
     expect(result.total_count).to eq(1)
@@ -125,7 +127,7 @@ RSpec.describe Suppliers::DossierAddressesPage do
   it 'returns zero counts for all types when no addresses match' do
     create(:address, :fiscal, addressable: supplier)
 
-    expect(page(query: 'Nothing matches').filter_counts.values).to eq([0, 0, 0, 0, 0, 0])
+    expect(page(query: 'Nothing matches').filter_counts.values).to all(be_zero)
   end
 
   it 'defaults unknown types and invalid page numbers safely' do
