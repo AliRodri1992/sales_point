@@ -15,16 +15,21 @@ module Admin
     def apply_confirmation?
       return true unless params.dig(:address, :location_confirmed) == '1'
 
-      coords = params.expect(address: %i[latitude longitude location_signature]).to_h
-      signature = Rails.application.message_verifier('supplier-address-location')
-                       .verified(coords['location_signature'])
-      unless signature == @address.geocoding_fingerprint
+      coords = params.expect(address: %i[latitude longitude location_signature location_adjustment_reason])
+      valid = Suppliers::AddressLocationProof.verify(
+        token: coords[:location_signature], address: @address,
+        supplier: @supplier, user: current_user,
+        latitude: coords[:latitude], longitude: coords[:longitude],
+        reason: coords[:location_adjustment_reason]
+      )
+      unless valid
         @address.errors.add(:base, :invalid_location_confirmation)
         return false
       end
 
       @address.assign_attributes(
-        latitude: coords['latitude'], longitude: coords['longitude'],
+        latitude: coords[:latitude], longitude: coords[:longitude],
+        location_adjustment_reason: coords[:location_adjustment_reason].presence,
         location_confirmed_at: Time.current, geocoding_status: 'success'
       )
       true
