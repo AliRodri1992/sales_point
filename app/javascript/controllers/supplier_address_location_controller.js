@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["latitude", "longitude", "signature", "confirmed", "mapImage",
     "mapPlaceholder", "mapClick", "pin", "lookupButton", "confirmButton", "status",
-    "reviewFields", "reviewed"]
+    "reviewFields", "reviewed", "reasonError"]
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
     confirmed: String, searching: String, lowConfidence: String, adjusted: String,
@@ -59,6 +59,7 @@ export default class extends Controller {
     this.signatureTarget.value = ""
     this.confirmedTarget.value = "0"
     this.reviewedTarget.checked = false
+    this.clearReasonError()
     this.showMap()
   }
 
@@ -303,8 +304,28 @@ export default class extends Controller {
     if (!required) this.reviewedTarget.checked = false
   }
 
+  clearReasonError() {
+    if (!this.hasReasonErrorTarget) return
+    this.reasonErrorTarget.classList.add("hidden")
+    const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
+    reason?.removeAttribute("aria-invalid")
+  }
+
+  validateReason() {
+    const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
+    if (reason?.value.trim()) {
+      this.clearReasonError()
+      return true
+    }
+    if (this.hasReasonErrorTarget) this.reasonErrorTarget.classList.remove("hidden")
+    reason?.setAttribute("aria-invalid", "true")
+    reason?.focus()
+    return false
+  }
+
   confirm() {
     if (!this.point || !this.signatureTarget.value) return
+    if (!this.validateReason()) return
     if (this.distanceKm() > 25) {
       this.statusTarget.textContent = this.unavailableValue
       return

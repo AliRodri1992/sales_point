@@ -1,0 +1,4 @@
+en:
+  admin:
+    supplier_details:
+      location_adjustment_required: "Adjustment reason cannot be blank"

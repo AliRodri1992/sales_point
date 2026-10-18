@@ -1,0 +1,4 @@
+es:
+  admin:
+    supplier_details:
+      location_adjustment_required: "Motivo de ajuste no puede estar vacío"
