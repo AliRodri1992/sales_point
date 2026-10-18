@@ -9,8 +9,9 @@ RSpec.describe Address, type: :model do
 
   describe 'country-specific address validation' do
     it 'requires all Mexican address fields and a five-digit postal code' do
-      attributes = { country: build(:country, iso_alpha2: 'MX'), exterior_number: nil,
-                     neighborhood: nil, state: nil, postal_code: 'ABC12' }
+      country = build(:country, iso_alpha2: 'MX')
+      attributes = { country:, exterior_number: nil, neighborhood: nil,
+                     state: nil, postal_code: 'ABC12' }
       address = build(:address, **attributes)
       expect(address).not_to be_valid
       %i[exterior_number neighborhood state postal_code].each do |field|
@@ -19,8 +20,9 @@ RSpec.describe Address, type: :model do
     end
 
     it 'supports US ZIP+4 and optional neighborhood and exterior number' do
-      attributes = { country: build(:country, iso_alpha2: 'US'), exterior_number: nil,
-                     neighborhood: nil, postal_code: '90210-1234' }
+      country = build(:country, iso_alpha2: 'US')
+      attributes = { country:, exterior_number: nil, neighborhood: nil,
+                     postal_code: '90210-1234' }
       address = build(:address, **attributes)
       expect(address).to be_valid
     end
@@ -34,8 +36,9 @@ RSpec.describe Address, type: :model do
     end
 
     it 'allows countries without postal codes to omit the postal code and region' do
-      attributes = { country: build(:country, iso_alpha2: 'AE'), postal_code: nil,
-                     neighborhood: nil, state: nil, exterior_number: nil }
+      country = build(:country, iso_alpha2: 'AE')
+      attributes = { country:, postal_code: nil, neighborhood: nil,
+                     state: nil, exterior_number: nil }
       address = build(:address, **attributes)
       expect(address).to be_valid
     end

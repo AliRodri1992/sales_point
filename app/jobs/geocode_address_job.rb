@@ -10,7 +10,7 @@ class GeocodeAddressJob < ApplicationJob
   end
 
   def perform(address_id, fingerprint = nil)
-    service = fingerprint ? AddressGeocodingService.new(address_id, fingerprint) : AddressGeocodingService.new(address_id)
-    service.call
+    args = fingerprint ? [address_id, fingerprint] : [address_id]
+    AddressGeocodingService.new(*args).call
   end
 end

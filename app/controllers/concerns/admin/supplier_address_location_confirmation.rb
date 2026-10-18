@@ -29,7 +29,5 @@ module Admin
       )
       true
     end
-
-
   end
 end
