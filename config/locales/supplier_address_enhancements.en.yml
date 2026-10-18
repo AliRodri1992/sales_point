@@ -11,6 +11,8 @@ en:
       location_adjustment_hint: "Required if the marker moves more than 2 km (10–250 characters)."
       postal_choose_neighborhood: "Choose a suggested neighborhood"
       view_on_map: "Open location on map"
+      location_low_confidence: "Mapbox found a low-confidence match. Please review the marker."
+      location_adjusted: "Marker adjusted manually. Confirm the location before saving."
       retry_geocoding: "Retry location lookup"
     supplier_dossier:
       address_cards:
