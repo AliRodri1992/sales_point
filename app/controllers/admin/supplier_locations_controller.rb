@@ -2,6 +2,8 @@
 
 module Admin
   class SupplierLocationsController < ApplicationController
+    rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
     before_action :authenticate_user!
     before_action :authorize_supplier
 
@@ -28,6 +30,8 @@ module Admin
     end
 
     private
+
+    def not_found = head(:not_found)
 
     def authorize_supplier
       return head :forbidden unless current_organization

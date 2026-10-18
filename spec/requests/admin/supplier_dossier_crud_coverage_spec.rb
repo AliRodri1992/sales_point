@@ -17,7 +17,7 @@ RSpec.describe 'Supplier contacts, addresses and schedules full CRUD', type: :re
   def new_address
     supplier.addresses.create!(
       street: 'Main Street', exterior_number: '10', city: 'CDMX', state: 'CDMX',
-      neighborhood: 'Centro', country: create(:country), postal_code: '06000',
+      neighborhood: 'Centro', country: create(:country, iso_alpha2: 'MX'), postal_code: '06000',
       purpose: 'fiscal'
     )
   end

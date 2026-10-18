@@ -63,7 +63,7 @@ RSpec.describe 'Supplier catalog failure and recovery paths', type: :request do
 
   it 'renders a safe error after duplicate supplier address update' do
     record = create(:address, addressable: supplier)
-    allow_any_instance_of(Address).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+    allow_any_instance_of(Address).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
     patch admin_supplier_address_path(supplier, record), params: {
       address: { street: 'Updated' }
     }

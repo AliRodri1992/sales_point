@@ -104,13 +104,14 @@ class Address < ApplicationRecord
     [street, exterior_number, interior_number, neighborhood, city, state, country&.name, postal_code].compact.join(', ')
   end
 
+  def coordinates
+    [latitude, longitude]
+  end
+
   private
 
   def check_country_requirements
     Addresses::CountryRules.new(country&.iso_alpha2).validate(self)
   end
 
-  def coordinates
-    [latitude, longitude]
-  end
 end

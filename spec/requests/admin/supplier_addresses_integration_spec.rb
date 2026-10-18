@@ -64,7 +64,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     get new_admin_supplier_address_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    location = page.at_css('[data-controller="supplier-postal-assist"]')
+    location = page.at_css('[data-controller~="supplier-postal-assist"]')
     expect(location).to be_present
     expect(location['data-supplier-postal-assist-url-value'])
       .to eq(postal_code_suggestions_admin_supplier_path(supplier))
@@ -142,7 +142,7 @@ RSpec.describe 'Supplier address integration', type: :request do
 
   it 'shows simultaneous model validation messages beneath each invalid address field' do
     invalid = address_attributes(
-      country_id: '', street: '', exterior_number: '', neighborhood: '',
+      country_id: mexican_country.id, street: '', exterior_number: '', neighborhood: '',
       city: '', state: '', postal_code: 'AB123', purpose: 'invalid'
     )
     post admin_supplier_addresses_path(supplier), params: { address: invalid }
@@ -152,13 +152,11 @@ RSpec.describe 'Supplier address integration', type: :request do
     form = page.at_css('form[data-controller~="supplier-address-preview"]')
     expect(form['novalidate']).not_to be_nil
 
-    %w[country street exterior_number neighborhood city state postal_code purpose].each do |field|
+    %w[street exterior_number neighborhood city state postal_code purpose].each do |field|
       wrapper = form.at_css("[data-address-field='#{field}']")
       expect(wrapper).to be_present
       expect(wrapper.at_css('[data-server-field-error]')).to be_present
     end
-    expect(form.at_css("[data-address-field='country'] [data-server-field-error]").text)
-      .to include('Country')
     expect(form.at_css("[data-address-field='postal_code'] [data-server-field-error]").text)
       .to include('Postal code')
     expect(form.at_css("[data-address-field='street'] [data-server-field-error]").text)

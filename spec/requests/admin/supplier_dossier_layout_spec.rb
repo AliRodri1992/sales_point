@@ -92,7 +92,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     supplier.addresses.create!(
       street: 'Main Street', exterior_number: '23', neighborhood: 'Centro',
       city: 'Ixtepec', state: 'Oaxaca', postal_code: '70111',
-      country: create(:country), purpose: 'delivery'
+      country: create(:country, iso_alpha2: 'MX'), purpose: 'delivery'
     )
 
     get admin_supplier_path(supplier, tab: 'addresses')
