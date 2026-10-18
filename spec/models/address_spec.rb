@@ -43,6 +43,24 @@ RSpec.describe Address, type: :model do
       expect(address).to be_valid
     end
 
+
+    it 'preserves manually entered fields when changing between country rules' do
+      address = build(:address, country: build(:country, iso_alpha2: 'US'),
+                      postal_code: '90210-1234', neighborhood: 'Original area',
+                      exterior_number: '100')
+      expect(address).to be_valid
+
+      address.country = build(:country, iso_alpha2: 'CA')
+      address.postal_code = 'K1A 0B1'
+      expect(address).to be_valid
+      expect(address.neighborhood).to eq('Original area')
+      expect(address.exterior_number).to eq('100')
+
+      address.country = build(:country, iso_alpha2: 'MX')
+      address.postal_code = '54800'
+      expect(address).to be_valid
+    end
+
     it 'rejects invalid postal formats for countries with known rules' do
       address = build(:address, country: build(:country, iso_alpha2: 'US'), postal_code: 'HELLO')
       expect(address).not_to be_valid
