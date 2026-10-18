@@ -369,9 +369,13 @@ def seed_admin_user
   language = Language.find_by!(code: 'es')
   administrator_role = SystemRole.find_by!(code: 'administrator')
   user = User.find_or_initialize_by(email: 'administrador@delta.com')
+  action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
+  puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
   assign_admin_user_attributes(user, language)
   user.save!
+  puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
   assign_admin_role(user, administrator_role)
+  puts "[SEEDS][USUARIO][OK] Administrador configurado; roles=#{user.system_roles.pluck(:code).join(', ')}"
 end
 
 def assign_admin_user_attributes(user, language)
@@ -387,9 +391,11 @@ def assign_admin_user_attributes(user, language)
 end
 
 def assign_admin_role(user, administrator_role)
-  UserRole.find_or_create_by!(user:, system_role: administrator_role, branch: nil) do |user_role|
-    user_role.deleted_at = nil
-  end
+  assignment = UserRole.find_or_initialize_by(user:, system_role: administrator_role, branch: nil)
+  action = assignment.new_record? ? 'CREAR' : 'VERIFICAR'
+  assignment.deleted_at = nil
+  assignment.save!
+  puts "[SEEDS][ROL][#{action}] usuario_id=#{user.id} rol=#{administrator_role.code} asignacion_id=#{assignment.id}"
 end
 
 USER_SEED_ROLES = %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
@@ -398,12 +404,17 @@ def seed_users(count = 15)
   roles = SystemRole.where(code: USER_SEED_ROLES)
   language = Language.find_by!(code: 'es')
 
+  puts "[SEEDS][USUARIOS][INICIO] Procesando #{count} usuarios de ejemplo; roles disponibles=#{roles.count}"
   count.times do |index|
     user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
+    action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
     assign_user_attributes(user, language, index)
     user.save!
-    UserRole.find_or_create_by!(user:, system_role: roles.sample, branch: nil)
+    role = roles.order(:id).offset(index % roles.count).first!
+    assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
+    puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} usuario=#{user.username} email=#{user.email} estado=#{user.status} rol=#{role.code} asignacion_id=#{assignment.id}"
   end
+  puts "[SEEDS][USUARIOS][OK] Total usuarios de ejemplo procesados=#{count}"
 end
 
 def assign_user_attributes(user, language, index)
