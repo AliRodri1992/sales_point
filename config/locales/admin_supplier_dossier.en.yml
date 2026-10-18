@@ -7,6 +7,12 @@ en:
         empty_banks_title: "No bank accounts registered yet"
         empty_banks_description: "Register one or more bank accounts to manage payments to this supplier quickly and securely."
         payables_description: "View this supplier's invoices, balances, and due dates."
+        overdue_balance: "Overdue balance"
+        pending_invoices: "Pending invoices"
+        next_due: "Next due date"
+        recent_invoices: "Latest invoices"
+        view_all_suppliers: "View all suppliers"
+        back_to_statement: "Back to statement"
         manage_payables: "Manage payables"
         posted_invoices: "Posted invoices"
         outstanding_balance: "Outstanding balance"
@@ -189,7 +195,8 @@ en:
         schedules: "Schedules"
         documents: "Documents"
         products: "Products"
-        finances: "Finances"
+        bank_accounts: "Bank accounts"
+        statement: "Account statement"
       kinds:
         visit: Visit
         order: Order taking

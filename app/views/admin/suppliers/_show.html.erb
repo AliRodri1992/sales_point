@@ -4,10 +4,12 @@
 <% schedules = supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
+<% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
 <% dossier_sections = %w[overview general fiscal commercial contacts addresses schedules documents products] %>
-<% dossier_sections << 'finances' if can_view_finances %>
+<% dossier_sections << 'bank_accounts' if can_view_bank_accounts %>
+<% dossier_sections << 'statement' if can_view_finances %>
 
-<div class="space-y-5" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab]) ? params[:tab] : 'overview' %>">
+<div class="space-y-5" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab] == 'finances' ? 'statement' : params[:tab]) ? (params[:tab] == 'finances' ? 'statement' : params[:tab]) : 'overview' %>">
   <nav aria-label="<%= t('admin.supplier_dossier.navigation.breadcrumbs') %>" class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
     <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, class: 'transition hover:text-emerald-700' %>
     <%= icon('chevron-right', class: 'size-4 text-slate-400') %>
@@ -57,7 +59,7 @@
   </header>
 
   <div class="flex flex-col gap-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-stretch lg:gap-5 xl:grid-cols-[16rem_minmax(0,1fr)]">
-    <%= render 'dossier_sidebar', can_view_finances: can_view_finances, can_view_products: policy(supplier).view_products? %>
+    <%= render 'dossier_sidebar', can_view_finances: can_view_finances, can_view_bank_accounts: can_view_bank_accounts, can_view_products: policy(supplier).view_products? %>
     <div class="flex min-w-0 w-full flex-1 flex-col gap-4" data-supplier-dossier-content aria-label="<%= t('admin.supplier_dossier.navigation.content') %>">
       <%= render 'dossier_overview', supplier: supplier, contacts: contacts, addresses: addresses, schedules: schedules, can_edit: can_edit, can_view_products: policy(supplier).view_products? %>
       <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
@@ -162,6 +164,9 @@
       <% end %>
     </section>
 
+    <% if can_view_bank_accounts %>
+      <%= render 'dossier_bank_accounts', supplier: supplier %>
+    <% end %>
     <% if can_view_finances %>
       <%= render 'dossier_finances', supplier: supplier %>
     <% end %>

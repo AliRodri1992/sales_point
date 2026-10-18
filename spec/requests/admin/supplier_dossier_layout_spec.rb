@@ -129,7 +129,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(dossier.css('button[data-supplier-dossier-target="tab"]').pluck('data-section')).to eq(
-      %w[overview general fiscal commercial contacts addresses schedules documents products finances]
+      %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
     )
     expect(dossier.at_css('select[data-supplier-dossier-target="mobileSelect"]')).to be_present
     expect(dossier.at_css('#supplier-dossier-overview')).to be_present
@@ -175,7 +175,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(dossier.at_css('[data-supplier-dossier-content]').parent['class'])
       .to include('lg:grid', 'lg:items-stretch')
 
-    sections = %w[overview general fiscal commercial contacts addresses schedules documents products finances]
+    sections = %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
     expect(layout.css('[data-supplier-dossier-target="panel"]').pluck('data-section')).to match_array(sections)
     layout.css('[data-supplier-dossier-target="panel"]').each do |panel|
       expect(panel['class']).to include('w-full', 'min-w-0', 'lg:flex-1')

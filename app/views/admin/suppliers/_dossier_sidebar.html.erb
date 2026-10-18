@@ -10,7 +10,8 @@
   ['products', 'box', :operations]
 ] %>
 <% sections.reject! { |section, _icon, _group| section == 'products' } unless can_view_products %>
-<% sections << ['finances', 'wallet', :finances] if can_view_finances %>
+<% sections << ['bank_accounts', 'bank', :dossier] if can_view_bank_accounts %>
+<% sections << ['statement', 'wallet', :finances] if can_view_finances %>
 <% sidebar_groups = sections.group_by(&:last) %>
 
 <aside class="min-w-0 w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:h-full lg:w-full" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
@@ -43,7 +44,8 @@
                 'pin' => 'map-pin',
                 'calendar' => 'calendar-days',
                 'box' => 'cube',
-                'wallet' => 'banknotes'
+                'wallet' => 'banknotes',
+                'bank' => 'building-library'
               }.fetch(symbol) %>
               <%= icon(navigation_icon, class: 'size-5 shrink-0') %>
               <span class="min-w-0 break-words"><%= t("admin.supplier_dossier.sections.#{section}") %></span>

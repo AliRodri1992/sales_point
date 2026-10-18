@@ -6,9 +6,10 @@ export default class extends Controller {
 
   connect() {
     const requested = new URL(window.location.href).searchParams.get("tab") || this.initialTabValue
-    this.activateTab(requested, false)
+    this.activateTab(requested === "finances" ? "statement" : requested, false)
     this.onPopState = () => {
-      this.activateTab(new URL(window.location.href).searchParams.get("tab") || "overview", false)
+      const section = new URL(window.location.href).searchParams.get("tab") || "overview"
+      this.activateTab(section === "finances" ? "statement" : section, false)
     }
     window.addEventListener("popstate", this.onPopState)
   }
