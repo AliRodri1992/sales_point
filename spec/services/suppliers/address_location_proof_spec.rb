@@ -8,7 +8,7 @@ RSpec.describe Suppliers::AddressLocationProof do
   let(:address) { build(:address, addressable: supplier) }
   let(:latitude) { 19.6742 }
   let(:longitude) { -99.1803 }
-  let(:token) { described_class.issue(address:, supplier:, user:, latitude:, longitude:) }
+  let(:token) { described_class.issue(address:, supplier:, user:, coordinates: { latitude:, longitude: }) }
 
   def verified(latitude: 19.675, longitude: -99.182, reason: nil, reviewed: nil, **options)
     described_class.verify(
@@ -42,7 +42,8 @@ RSpec.describe Suppliers::AddressLocationProof do
 
   context 'with a low-confidence proposal' do
     let(:token) do
-      described_class.issue(address:, supplier:, user:, latitude:, longitude:, confidence: 0.35)
+      described_class.issue(address:, supplier:, user:,
+                            coordinates: { latitude:, longitude:, confidence: 0.35 })
     end
 
     it 'requires a justification and explicit verification even at suggested coordinates' do
