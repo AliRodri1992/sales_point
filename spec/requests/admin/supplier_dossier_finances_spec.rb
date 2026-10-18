@@ -14,7 +14,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
   end
 
   def finances
-    Nokogiri::HTML(response.body).at_css('[data-section="finances"]')
+    Nokogiri::HTML(response.body).at_css('section[data-section="finances"]')
   end
 
   def posted_payable(amount:, due_on:, folio:)

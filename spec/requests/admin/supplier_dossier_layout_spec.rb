@@ -107,7 +107,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'renders the empty products illustration and actions for administrators' do
     get admin_supplier_path(supplier, tab: 'products')
 
-    panel = dossier.at_css('[data-section="products"]')
+    panel = dossier.at_css('section[data-section="products"]')
     expect(panel.at_css('img[src*="sproducts"]')).to be_present
     expect(panel.text).to include('No products registered yet')
     expect(panel.at_css("a[href='#{admin_supplier_supplier_products_path(supplier)}']")).to be_present
@@ -119,7 +119,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     get admin_supplier_path(supplier, tab: 'products')
 
-    panel = dossier.at_css('[data-section="products"]')
+    panel = dossier.at_css('section[data-section="products"]')
     expect(panel.at_css('img[src*="sproducts"]')).to be_present
     expect(panel.at_css("a[href='#{new_admin_supplier_supplier_product_path(supplier)}']")).to be_nil
   end
