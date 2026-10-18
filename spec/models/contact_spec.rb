@@ -40,6 +40,25 @@ RSpec.describe Contact, type: :model do
     expect(build(:contact, contactable: create(:organization), primary: true)).to be_valid
   end
 
+  it 'localizes the duplicate primary contact error for all supported languages' do
+    supplier = create(:supplier)
+    create(:contact, contactable: supplier, primary: true)
+
+    messages = {
+      es: 'El contacto principal ya está asignado a otro contacto activo.',
+      en: 'A primary contact has already been assigned to another active contact.',
+      ko: '대표 연락처는 이미 다른 활성 연락처로 지정되어 있습니다.'
+    }
+
+    messages.each do |locale, message|
+      I18n.with_locale(locale) do
+        duplicate = build(:contact, contactable: supplier, primary: true)
+        expect(duplicate).not_to be_valid
+        expect(duplicate.errors.full_messages_for(:primary)).to include(message)
+      end
+    end
+  end
+
   it 'ignores inactive and deleted primary contacts' do
     organization = create(:organization)
     create(:contact, contactable: organization, primary: true, active: false)
