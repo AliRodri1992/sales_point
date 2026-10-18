@@ -9,7 +9,15 @@ class Rack::Attack
     end
   end
 
-  throttle("admin abuse", limit: 10, period: 1.minute) do |req|
+  throttle("supplier geocoding", limit: 15, period: 1.minute) do |req|
+    req.ip if req.post? && req.path.match?(%r{\A/admin/suppliers/\d+/address_location_suggestion\z})
+  end
+
+  throttle("supplier map tiles", limit: 45, period: 1.minute) do |req|
+    req.ip if req.get? && req.path.match?(%r{\A/admin/suppliers/\d+/address_map\z})
+  end
+
+  throttle("admin abuse", limit: 120, period: 1.minute) do |req|
     req.path.include?("admin") ? req.ip : nil
   end
 
