@@ -1,6 +1,15 @@
 en:
   admin:
     procurement:
+      set_preferred: "Set preferred supplier"
+      clear_preferred: "Remove preference"
+      preferred_confirmation: "Change the preferred supplier? Current: %{supplier}."
+      none: "None"
+      preferred_updated: "Preferred supplier updated successfully."
+      preferred_cleared: "Preferred supplier removed."
+      preferred_conflict: "Another user changed this preference. Refresh the list and try again."
+      preferred_unavailable: "This supplier must have at least one active offer."
+      preferred_form_hint: "Preference belongs to the supplier for a product, not to an individual presentation. Manage it from the list."
       add_short: "Add"
       thumbnail: "Thumbnail"
       product_sku: "Product / SKU"

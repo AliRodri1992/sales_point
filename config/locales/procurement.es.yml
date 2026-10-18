@@ -1,6 +1,15 @@
 es:
   admin:
     procurement:
+      set_preferred: "Establecer proveedor preferido"
+      clear_preferred: "Quitar preferencia"
+      preferred_confirmation: "¿Cambiar el proveedor preferido? Actualmente: %{supplier}."
+      none: "Ninguno"
+      preferred_updated: "Proveedor preferido actualizado correctamente."
+      preferred_cleared: "Se quitó el proveedor preferido."
+      preferred_conflict: "Otro usuario modificó esta preferencia. Actualiza la lista e inténtalo nuevamente."
+      preferred_unavailable: "El proveedor debe contar con al menos una presentación activa."
+      preferred_form_hint: "La preferencia se establece por proveedor y producto, no por presentación. Puedes administrarla desde el listado."
       add_short: "Agregar"
       thumbnail: "Miniatura"
       product_sku: "Producto / SKU"

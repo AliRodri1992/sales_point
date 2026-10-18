@@ -1,6 +1,15 @@
 ko:
   admin:
     procurement:
+      set_preferred: "우선 공급업체로 지정"
+      clear_preferred: "우선 공급업체 해제"
+      preferred_confirmation: "우선 공급업체를 변경할까요? 현재: %{supplier}."
+      none: "없음"
+      preferred_updated: "우선 공급업체를 변경했습니다."
+      preferred_cleared: "우선 공급업체 지정을 해제했습니다."
+      preferred_conflict: "다른 사용자가 우선 공급업체를 변경했습니다. 목록을 새로고침한 뒤 다시 시도하세요."
+      preferred_unavailable: "활성 구매 제안이 있는 공급업체만 선택할 수 있습니다."
+      preferred_form_hint: "우선 공급업체는 구매 단위별이 아닌 상품별로 지정됩니다. 목록에서 관리할 수 있습니다."
       add_short: "추가"
       thumbnail: "미리보기"
       product_sku: "상품 / SKU"
