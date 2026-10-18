@@ -11,6 +11,7 @@ RSpec.describe Geocoding::MapboxValidateAddressService do
   let(:connection) { instance_double(Faraday::Connection, get: response) }
 
   before do
+    allow(ENV).to receive(:[]).and_call_original
     allow(ENV).to receive(:[]).with('MAPBOX_TOKEN').and_return('test-token')
     allow_any_instance_of(described_class).to receive(:connection).and_return(connection)
   end

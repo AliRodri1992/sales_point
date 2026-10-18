@@ -60,7 +60,7 @@ RSpec.describe 'Supplier address integration', type: :request do
   end
 
   it 'adds optional Mexico postal lookup without blocking model validations or manual input' do
-    create(:country, name: 'Mexico', iso_alpha2: 'MX', iso_alpha3: 'MEX', iso_numeric: '484')
+    mexican_country
     get new_admin_supplier_address_path(supplier)
 
     page = Nokogiri::HTML(response.body)

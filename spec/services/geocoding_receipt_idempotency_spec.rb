@@ -4,27 +4,36 @@ require 'rails_helper'
 
 RSpec.describe 'Geocoding and receipt idempotency decision paths', type: :service do
   describe AddressGeocodingService do
-    let(:service) { described_class.allocate }
+    let(:address) { create(:address, latitude: nil, longitude: nil) }
+    let(:service) { described_class.new(address.id, address.geocoding_fingerprint) }
 
-    it 'rejects empty geocoding results and missing coordinates' do
-      expect(service.send(:valid_result?, nil)).to be(false)
-      expect(service.send(:valid_result?, {})).to be(false)
-      expect(service.send(:valid_result?, { lat: 12.0 })).to be(false)
-      expect(service.send(:valid_result?, { lat: 12.0, lng: nil })).to be(false)
-    end
+    it 'rejects empty or missing coordinates from the provider' do
+      mock = instance_double(Geocoding::MapboxValidateAddressService, call: { valid: false })
+      allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_return(mock)
 
-    it 'accepts geocoding results containing latitude and longitude' do
-      expect(service.send(:valid_result?, { lat: 12.0, lng: -99.0 })).to be(true)
-    end
-
-    it 'marks geocoding as failed when a provider raises' do
-      address = double
-      allow(address).to receive(:update!)
-      service.instance_variable_set(:@address, address)
-      allow(service).to receive(:geocode_address).and_raise(StandardError, 'offline')
-      allow(service).to receive(:log_error)
       service.call
-      expect(address).to have_received(:update!).with(geocoding_status: 'failed')
+
+      expect(address.reload.latitude).to be_nil
+      expect(address.reload.geocoding_status).to eq('failed')
+    end
+
+    it 'accepts a full-address match and records its coordinates' do
+      result = { valid: true, latitude: 12.0, longitude: -99.0 }
+      mock = instance_double(Geocoding::MapboxValidateAddressService, call: result)
+      allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_return(mock)
+
+      service.call
+
+      expect(address.reload.coordinates.map(&:to_f)).to eq([12.0, -99.0])
+    end
+
+    it 'marks geocoding as failed if the provider raises unexpectedly' do
+      allow(Geocoding::MapboxValidateAddressService).to receive(:new).and_raise(StandardError, 'offline')
+      allow(Rails.logger).to receive(:error)
+
+      service.call
+
+      expect(address.reload.geocoding_status).to eq('failed')
     end
   end
 
