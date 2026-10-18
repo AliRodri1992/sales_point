@@ -36,8 +36,7 @@ module Admin
     def render_suggestion(address, result)
       signature = Suppliers::AddressLocationProof.issue(
         address:, supplier: @supplier, user: current_user,
-        latitude: result[:latitude], longitude: result[:longitude],
-        confidence: result[:confidence]
+        coordinates: result.slice(:latitude, :longitude, :confidence)
       )
       response.headers['Cache-Control'] = 'private, no-store'
       render json: result.slice(:latitude, :longitude, :full_address, :confidence).merge(signature:)
