@@ -175,7 +175,9 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(dossier.at_css('[data-supplier-dossier-content]').parent['class'])
       .to include('lg:grid', 'lg:items-stretch')
 
-    sections = %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
+    sections = %w[
+      overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement
+    ]
     expect(layout.css('[data-supplier-dossier-target="panel"]').pluck('data-section')).to match_array(sections)
     layout.css('[data-supplier-dossier-target="panel"]').each do |panel|
       expect(panel['class']).to include('w-full', 'min-w-0', 'lg:flex-1')

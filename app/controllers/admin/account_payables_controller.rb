@@ -6,12 +6,21 @@ module Admin
 
     def index
       authorize current_organization.account_payables.new, :index?
-      @supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id]) if params[:supplier_id].present?
-      payables = policy_scope(current_organization.account_payables)
-      payables = payables.where(supplier_id: @supplier.id) if @supplier
-      @payables = payables.includes(:supplier, supplier_invoice: :currency).order(due_on: :asc, id: :asc)
+      load_supplier_filter
+      @payables = scoped_payables.includes(:supplier, supplier_invoice: :currency).order(due_on: :asc, id: :asc)
       @open = open_payables(@payables)
       @currency_balances = summarize_by_currency(@open)
+    end
+
+    def load_supplier_filter
+      return if params[:supplier_id].blank?
+
+      @supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id])
+    end
+
+    def scoped_payables
+      scope = policy_scope(current_organization.account_payables)
+      @supplier ? scope.where(supplier_id: @supplier.id) : scope
     end
 
     def open_payables(payables)

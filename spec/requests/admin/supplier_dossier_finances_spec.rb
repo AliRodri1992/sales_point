@@ -17,7 +17,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     Nokogiri::HTML(response.body).at_css("section[data-section='#{section}']")
   end
 
-  def payable_for(supplier_record: supplier, amount:, due_on:, folio:)
+  def payable_for(amount:, due_on:, folio:, supplier_record: supplier)
     invoice = SupplierInvoice.create!(
       organization:, supplier: supplier_record, currency: supplier_record.currency, created_by: user,
       issued_on: Date.current, received_on: Date.current, due_on:,
