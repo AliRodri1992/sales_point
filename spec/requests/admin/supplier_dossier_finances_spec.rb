@@ -35,6 +35,14 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     payables_link = "a[href='#{admin_account_payables_path(supplier_id: supplier.id)}']"
     expect(panel('statement').at_css(payables_link)).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-empty-banks] img[src*="sbankaccounts"]')).to be_present
+    header = panel('bank_accounts').at_css('[data-finance-banks-header]')
+    heading_row = header.at_css('[data-finance-banks-heading-row]')
+    manage_link = "a[href='#{admin_supplier_bank_accounts_path(supplier)}']"
+    expect(heading_row.at_css('h2')).to be_present
+    expect(heading_row.at_css(manage_link)).to be_present
+    expect(header.at_css(manage_link)).to be_present
+    expect(panel('bank_accounts').css(manage_link).size).to eq(1)
+    expect(panel('bank_accounts').at_css('[data-finance-empty-banks] a')).to be_nil
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
   end
@@ -93,6 +101,9 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(panel('bank_accounts').text).to include('Delta Bank', bank.masked_number)
     expect(panel('bank_accounts').text).not_to include('Archived Bank', '123456789012', '999987654321')
     expect(panel('bank_accounts').css('[data-finance-bank-account]').size).to eq(1)
+    heading_row = panel('bank_accounts').at_css('[data-finance-banks-heading-row]')
+    expect(heading_row.at_css('h2')).to be_present
+    expect(heading_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
   end
 
   it 'supports bookmarks to the old finances tab' do
