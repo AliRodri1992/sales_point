@@ -2,13 +2,14 @@ import { Controller } from "@hotwired/stimulus"
 
 // Optional suggestions for Mexican postal codes, without overriding user edits.
 export default class extends Controller {
-  static targets = ["status", "neighborhoods"]
+  static targets = ["status", "neighborhoods", "choices"]
   static values = {
     url: String,
     loading: String,
     available: String,
     notFound: String,
-    unavailable: String
+    unavailable: String,
+    choicePlaceholder: String
   }
 
   connect() {
@@ -55,6 +56,10 @@ export default class extends Controller {
     clearTimeout(this.timer)
     this.request?.abort()
     this.neighborhoodsTarget.replaceChildren()
+    if (this.hasChoicesTarget) {
+      this.choicesTarget.replaceChildren()
+      this.choicesTarget.classList.add("hidden")
+    }
     this.statusTarget.textContent = ""
     if (!this.isMexico()) return
 
@@ -102,7 +107,28 @@ export default class extends Controller {
       option.value = name
       this.neighborhoodsTarget.append(option)
     }
+    if (this.hasChoicesTarget && (data.neighborhoods || []).length) {
+      const placeholder = document.createElement("option")
+      placeholder.value = ""
+      placeholder.textContent = this.choicePlaceholderValue
+      this.choicesTarget.append(placeholder)
+      for (const neighborhood of data.neighborhoods) {
+        const option = document.createElement("option")
+        option.value = neighborhood
+        option.textContent = neighborhood
+        this.choicesTarget.append(option)
+      }
+      this.choicesTarget.classList.remove("hidden")
+    }
     this.statusTarget.textContent = this.availableValue
+  }
+
+  chooseNeighborhood(event) {
+    const value = event.currentTarget.value
+    const field = this.field("neighborhood")
+    if (!field || !value) return
+    field.value = value
+    field.dispatchEvent(new Event("input", { bubbles: true }))
   }
 
   fillIfUnchanged(fieldName, suggestion) {
