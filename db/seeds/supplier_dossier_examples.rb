@@ -48,13 +48,17 @@ module SupplierDossierExamples
       (2..count).each do |index|
         email = format('demo.s%<supplier>04d.c%<contact>02d@ejemplo.test',
                        supplier: supplier.id, contact: index)
-        next if supplier.contacts.with_deleted.exists?(email: email)
+        contacts = supplier.contacts.with_deleted
+        reference = "DEMO-CONTACTO-#{index}"
+        # Preserve renamed, archived and manually updated demo contacts.
+        next if contacts.exists?(email:) || contacts.exists?(name: "Contacto demo #{index}") ||
+                contacts.exists?(notes: reference)
 
-        supplier.contacts.create!(contact_attributes(index, email))
+        supplier.contacts.create!(contact_attributes(index, email, reference))
       end
     end
 
-    def contact_attributes(index, email)
+    def contact_attributes(index, email, reference)
       {
         name: "Contacto demo #{index}",
         position: %w[Compras Ventas Logística Facturación][index % 4],
@@ -62,14 +66,16 @@ module SupplierDossierExamples
         phone: index.even? ? '5512345678' : nil,
         primary: false,
         active: (index % 4 != 0),
-        notes: 'Registro de demostración para validar filtros y carga progresiva.'
+        notes: reference
       }
     end
 
     def seed_addresses(supplier, country, count)
       count.times do |index|
         reference = "DEMO-DIRECCION-#{index + 1}"
-        next if supplier.addresses.with_deleted.exists?(reference_notes: reference)
+        existing = supplier.addresses.with_deleted
+        next if existing.exists?(reference_notes: reference) ||
+                existing.exists?(street: "Avenida Ejemplo #{index + 1}", exterior_number: (100 + index).to_s)
 
         purpose = Address::PURPOSES[index % Address::PURPOSES.length]
         primary = !supplier.addresses.not_deleted.exists?(purpose: purpose, primary: true)
@@ -112,9 +118,11 @@ module SupplierDossierExamples
         branch = branches[index % branches.length]
         weekday = index % 7
         notes = "DEMO-CALENDARIO-#{index + 1}"
-        next if supplier.supplier_schedules.exists?(notes: notes)
+        attributes = schedule_attributes(branch, kind, weekday, notes)
+        slot = attributes.slice(:branch, :kind, :weekday, :starts_at)
+        next if supplier.supplier_schedules.exists?(notes:) || supplier.supplier_schedules.exists?(slot)
 
-        supplier.supplier_schedules.create!(schedule_attributes(branch, kind, weekday, notes))
+        supplier.supplier_schedules.create!(attributes)
       end
     end
 
