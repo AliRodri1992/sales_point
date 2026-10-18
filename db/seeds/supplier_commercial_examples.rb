@@ -17,11 +17,8 @@ module SupplierCommercialExamples
     end
 
     def seed_product_catalog(organization)
-      # Seed only our named demonstration records, never customer-created catalog items.
-      demo_codes = (1..15).map { |number| format('PROD%04d', number) }
-      supplier_codes = (1..SupplierExamples::COUNT).map { |number| format('SUP-%04d', number) }
-      products = organization.products.not_deleted.where(code: demo_codes).order(:code).to_a
-      suppliers = organization.suppliers.not_deleted.where(code: supplier_codes).order(:code).to_a
+      products = demo_products(organization)
+      suppliers = demo_suppliers(organization)
       return if products.empty? || suppliers.empty?
 
       seed_supplier_offers(suppliers, products)
@@ -53,6 +50,16 @@ module SupplierCommercialExamples
 
     def demo_organization
       Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    end
+
+    def demo_products(organization)
+      codes = (1..15).map { |number| format('PROD%04d', number) }
+      organization.products.not_deleted.where(code: codes).order(:code).to_a
+    end
+
+    def demo_suppliers(organization)
+      codes = (1..SupplierExamples::COUNT).map { |number| format('SUP-%04d', number) }
+      organization.suppliers.not_deleted.where(code: codes).order(:code).to_a
     end
 
     def seed_supplier_offers(suppliers, products)
