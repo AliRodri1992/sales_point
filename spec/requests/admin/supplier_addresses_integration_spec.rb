@@ -70,9 +70,8 @@ RSpec.describe 'Supplier address integration', type: :request do
       .to include('White building near the market')
     expect(page.at_css('input[name="address[purpose]"][value="fiscal"]')['checked']).to be_present
 
-    patch admin_supplier_address_path(supplier, address),
-          params: { address: address_attributes(reference_notes: 'Next to the pharmacy',
-                                                  country_id: address.country_id) }
+    changes = address_attributes(reference_notes: 'Next to the pharmacy', country_id: address.country_id)
+    patch admin_supplier_address_path(supplier, address), params: { address: changes }
 
     expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
     expect(address.reload.reference_notes).to eq('Next to the pharmacy')
