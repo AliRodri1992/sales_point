@@ -59,8 +59,9 @@ module Suppliers
 
     def apply_filter(relation)
       return relation.where(primary: true) if filter == 'primary'
-      return relation.where.not(location_confirmed_at: nil) if filter == 'confirmed'
-      return relation.where(geocoding_status: 'success', location_confirmed_at: nil) if filter == 'approximate'
+      return relation.where.not(location_confirmed_at: nil).where.not(latitude: nil, longitude: nil) if filter == 'confirmed'
+      return relation.where(geocoding_status: 'success', location_confirmed_at: nil)
+                     .where.not(latitude: nil, longitude: nil) if filter == 'approximate'
       return relation.where(geocoding_status: filter) if %w[pending failed].include?(filter)
       return relation if filter == 'all'
 
