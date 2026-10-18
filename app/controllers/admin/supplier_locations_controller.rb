@@ -21,7 +21,7 @@ module Admin
 
     def map
       data = Geocoding::MapboxStaticMapService.new.call(
-        latitude: params[:latitude], longitude: params[:longitude]
+        latitude: params[:latitude], longitude: params[:longitude], zoom: params[:zoom] || 15
       )
       return head :service_unavailable unless data
 
@@ -34,8 +34,10 @@ module Admin
     def not_found = head(:not_found)
 
     def render_suggestion(address, result)
-      signature = Rails.application.message_verifier('supplier-address-location')
-                       .generate(address.geocoding_fingerprint, expires_in: 20.minutes)
+      signature = Suppliers::AddressLocationProof.issue(
+        address:, supplier: @supplier, user: current_user,
+        latitude: result[:latitude], longitude: result[:longitude]
+      )
       response.headers['Cache-Control'] = 'private, no-store'
       render json: result.slice(:latitude, :longitude, :full_address, :confidence).merge(signature:)
     end
