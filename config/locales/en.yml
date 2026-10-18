@@ -8,6 +8,10 @@ en:
             rfc:
               person_type_mismatch: "does not match the selected person type"
               invalid_date: "contains an invalid date"
+        contact:
+          attributes:
+            primary:
+              taken: "has already been assigned to another active contact."
         address:
           attributes:
             primary:
@@ -22,6 +26,7 @@ en:
         postal_code: "Postal code"
         person_type: "Person type"
       contact:
+        primary: "A primary contact"
         name: "Full name"
         mobile_phone: "Mobile phone"
       address:
