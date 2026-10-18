@@ -15,7 +15,7 @@ export default class extends Controller {
     this.button.className = "flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-left text-sm text-slate-800 transition hover:border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-100"
     this.button.setAttribute("aria-haspopup", "listbox")
     this.button.setAttribute("aria-expanded", "false")
-    this.button.setAttribute("aria-label", this.select.labels?.[0]?.textContent?.trim() || this.select.name)
+    this.button.setAttribute("aria-label", this.select.getAttribute("aria-label") || this.select.labels?.[0]?.textContent?.trim() || this.select.name)
     this.label = document.createElement("span")
     this.label.className = "min-w-0 truncate"
     const chevron = document.createElement("span")
@@ -26,7 +26,7 @@ export default class extends Controller {
     this.menu = document.createElement("div")
     this.menu.className = "absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
     this.menu.hidden = true
-    this.searchable = this.element.dataset.countryFlags === "true"
+    this.searchable = this.element.dataset.countryFlags === "true" || this.element.dataset.searchable === "true"
     if (this.searchable) {
       const searchWrapper = document.createElement("div")
       searchWrapper.className = "sticky top-0 z-10 bg-white p-1.5"
@@ -150,7 +150,7 @@ export default class extends Controller {
     }
 
     const name = document.createElement("span")
-    name.className = "truncate"
+    name.className = this.element.dataset.wrapOptions === "true" ? "min-w-0 break-words leading-5" : "truncate"
     name.textContent = option?.textContent?.trim() || ""
     content.append(name)
     return content

@@ -102,7 +102,17 @@
                               placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :neighborhood)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <datalist id="supplier-neighborhoods" data-supplier-postal-assist-target="neighborhoods"></datalist>
-          <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>" data-supplier-postal-assist-target="choices" data-action="change->supplier-postal-assist#chooseNeighborhood" class="mt-2 hidden min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm"></select>
+          <div class="relative mt-2 hidden" data-controller="delta-select"
+               data-searchable="true" data-wrap-options="true"
+               data-search-placeholder="<%= t('admin.supplier_details.postal_search_neighborhood') %>"
+               data-supplier-postal-assist-target="choicesWrapper">
+            <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+                    data-supplier-postal-assist-target="choices"
+                    data-action="change->supplier-postal-assist#chooseNeighborhood"
+                    class="block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100">
+              <option value=""><%= t('admin.supplier_details.postal_choose_neighborhood') %></option>
+            </select>
+          </div>
           <%= error_message_for(@address, :neighborhood) %>
         </div>
 

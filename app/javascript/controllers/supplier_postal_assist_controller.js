@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Optional suggestions for Mexican postal codes, without overriding user edits.
 export default class extends Controller {
-  static targets = ["status", "neighborhoods", "choices"]
+  static targets = ["status", "neighborhoods", "choices", "choicesWrapper"]
   static values = {
     url: String,
     loading: String,
@@ -58,7 +58,8 @@ export default class extends Controller {
     this.neighborhoodsTarget.replaceChildren()
     if (this.hasChoicesTarget) {
       this.choicesTarget.replaceChildren()
-      this.choicesTarget.classList.add("hidden")
+      this.choicesTarget.dispatchEvent(new Event("change", { bubbles: true }))
+      if (this.hasChoicesWrapperTarget) this.choicesWrapperTarget.classList.add("hidden")
     }
     this.statusTarget.textContent = ""
     if (!this.isMexico()) return
@@ -118,7 +119,8 @@ export default class extends Controller {
         option.textContent = neighborhood
         this.choicesTarget.append(option)
       }
-      this.choicesTarget.classList.remove("hidden")
+      if (this.hasChoicesWrapperTarget) this.choicesWrapperTarget.classList.remove("hidden")
+      this.choicesTarget.dispatchEvent(new Event("change", { bubbles: true }))
     }
     this.statusTarget.textContent = this.availableValue
   }

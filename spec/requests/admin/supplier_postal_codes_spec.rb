@@ -83,4 +83,13 @@ RSpec.describe 'Supplier Mexican postal suggestions', type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+  it 'renders the branded searchable neighborhood suggestion dropdown' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('data-supplier-postal-assist-target="choicesWrapper"')
+    expect(response.body).to include('data-supplier-postal-assist-target="choices"')
+    expect(response.body).to include('data-searchable="true"')
+    expect(response.body).to include('data-wrap-options="true"')
+  end
 end
