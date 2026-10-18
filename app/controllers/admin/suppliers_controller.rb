@@ -10,6 +10,7 @@ module Admin
     include SuppliersFormHelpers
     include SupplierContactsPagination
     include SupplierAddressesPagination
+    include SupplierDossierLoading
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -33,11 +34,7 @@ module Admin
 
     def show
       authorize @supplier
-      @dossier_contacts_page = Suppliers::DossierContactsPage.new(supplier: @supplier).call
-      @dossier_addresses_page = Suppliers::DossierAddressesPage.new(supplier: @supplier).call
-      return unless policy(@supplier).view_products?
-
-      @dossier_products_page = Suppliers::DossierProductsPage.new(supplier: @supplier, page: params[:products_page]).call
+      load_dossier_sections
     end
 
     def contacts_page
