@@ -138,7 +138,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   end
 
   it 'shows four product preview cards with image fallback, prices and preferred indicators' do
-    pictured = create(:product, organization:, name: 'Pictured Item', sku: 'PIC-01')
+    pictured = create(:product, organization:, name: 'A Pictured Item', sku: 'PIC-01')
     png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLynwAAAABJRU5ErkJggg=='
     pictured.image.attach(io: StringIO.new(Base64.decode64(png)), filename: 'photo.png', content_type: 'image/png')
     create_offer(pictured, supplier_sku: 'SUP-PIC', preferred: true)
