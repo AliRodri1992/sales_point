@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'base64'
-require 'csv'
 require 'cgi'
 require 'stringio'
 require 'zip'
@@ -57,15 +56,8 @@ module SupplierDemoDocuments
       when 'docx' then docx_for(supplier)
       when 'xlsx' then xlsx_for(supplier)
       when 'jpg' then DEMO_JPEG
-      when 'csv' then csv_for(supplier)
+      when 'csv' then "codigo,tipo\n#{supplier.code},demostracion\n"
       when 'xml' then %(<?xml version="1.0" encoding="UTF-8"?>\n<demo><proveedor>#{supplier.code}</proveedor></demo>\n)
-      end
-    end
-
-    def csv_for(supplier)
-      CSV.generate do |csv|
-        csv << %w[codigo tipo]
-        csv << [supplier.code, 'demostracion']
       end
     end
 
