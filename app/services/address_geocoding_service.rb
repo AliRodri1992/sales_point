@@ -1,51 +1,40 @@
+# frozen_string_literal: true
+
 class AddressGeocodingService
-  def initialize(address_id)
+  def initialize(address_id, fingerprint = nil)
     @address = Address.find(address_id)
+    @fingerprint = fingerprint
   end
 
   def call
-    return unless address
+    return unless eligible?
 
-    result = geocode_address
-    return unless valid_result?(result)
+    result = Geocoding::MapboxValidateAddressService.new(@address).call
+    return mark_as_failed unless result[:valid]
 
-    update_address(result)
-  rescue StandardError => e
-    log_error(e)
+    @address.with_lock do
+      next unless eligible?
+
+      @address.update!(
+        latitude: result[:latitude], longitude: result[:longitude],
+        geocoding_status: 'success', location_confirmed_at: nil
+      )
+    end
+  rescue Faraday::Error, StandardError => e
+    Rails.logger.error("[AddressGeocodingService] #{e.class}: #{e.message}")
     mark_as_failed
   end
 
   private
 
-  attr_reader :address
-
-  def geocode_address
-    Geocoding::GeocodePostalCodeService
-      .new(address.postal_code, address.country&.iso_alpha2)
-      .call
-  end
-
-  def valid_result?(result)
-    result.present? && result[:lat].present? && result[:lng].present?
-  end
-
-  def update_address(result)
-    address.update!(
-      latitude: result[:lat],
-      longitude: result[:lng],
-      geocoding_status: 'success'
-    )
+  def eligible?
+    !@address.location_confirmed? &&
+      (@fingerprint.nil? || @address.geocoding_fingerprint == @fingerprint)
   end
 
   def mark_as_failed
-    address.update!(
-      geocoding_status: 'failed'
-    )
-  end
-
-  def log_error(error)
-    Rails.logger.error(
-      "[AddressGeocodingService] #{error.class}: #{error.message}"
-    )
+    @address.with_lock do
+      @address.update!(geocoding_status: 'failed') if eligible?
+    end
   end
 end

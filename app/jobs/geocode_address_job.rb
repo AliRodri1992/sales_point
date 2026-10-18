@@ -9,7 +9,7 @@ class GeocodeAddressJob < ApplicationJob
     Rails.logger.error("[GeocodeAddressJob] Fatal: #{error.message}")
   end
 
-  def perform(address_id)
-    AddressGeocodingService.new(address_id).call
+  def perform(address_id, fingerprint = nil)
+    AddressGeocodingService.new(address_id, fingerprint).call
   end
 end

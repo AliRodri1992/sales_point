@@ -36,7 +36,10 @@ module Admin
     def create
       load_countries
       @address = @supplier.addresses.new(address_params)
+      return render :new, status: :unprocessable_content unless apply_confirmation
+
       if @address.save
+        enqueue_geocoding(@address)
         notify_address('address_created')
         redirect_success('address_created')
       else
@@ -49,7 +52,11 @@ module Admin
 
     def update
       load_countries
-      if @address.update(address_params)
+      @address.assign_attributes(address_params)
+      return render :edit, status: :unprocessable_content unless apply_confirmation
+
+      if @address.save
+        enqueue_geocoding(@address) if @address.saved_changes.keys.intersect?(Address::GEOGRAPHIC_FIELDS)
         notify_address('address_updated')
         redirect_success('address_updated')
       else
@@ -140,6 +147,30 @@ module Admin
     end
 
     def load_countries = (@countries = Country.active.ordered)
+
+    def enqueue_geocoding(address)
+      return if address.location_confirmed?
+
+      GeocodeAddressJob.perform_later(address.id, address.geocoding_fingerprint)
+    end
+
+    def apply_confirmation
+      return true unless params.dig(:address, :location_confirmed) == '1'
+
+      coords = params.expect(address: %i[latitude longitude location_signature]).to_h
+      signature = Rails.application.message_verifier('supplier-address-location')
+                       .verified(coords['location_signature'])
+      unless signature == @address.geocoding_fingerprint
+        @address.errors.add(:base, :invalid_location_confirmation)
+        return false
+      end
+
+      @address.assign_attributes(
+        latitude: coords['latitude'], longitude: coords['longitude'],
+        location_confirmed_at: Time.current, geocoding_status: 'success'
+      )
+      true
+    end
 
     def address_params
       fields = %i[street exterior_number interior_number neighborhood city state country_id postal_code

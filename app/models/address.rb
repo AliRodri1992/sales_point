@@ -10,6 +10,7 @@ class Address < ApplicationRecord
   scope :primary_addresses, -> { not_deleted.where(primary: true) }
 
   PURPOSES = %w[general fiscal commercial delivery].freeze
+  GEOGRAPHIC_FIELDS = %w[street exterior_number interior_number neighborhood city state postal_code country_id].freeze
 
   validates :purpose, inclusion: { in: PURPOSES }
   validate :single_primary_address

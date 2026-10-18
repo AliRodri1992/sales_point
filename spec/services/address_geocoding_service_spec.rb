@@ -3,60 +3,46 @@
 require 'rails_helper'
 
 RSpec.describe AddressGeocodingService do
-  describe '#call' do
-    let(:address) { create(:address) }
-    let(:service) { described_class.new(address.id) }
+  let(:address) { create(:address, latitude: nil, longitude: nil) }
+  let(:result) { { valid: true, latitude: 19.4, longitude: -99.1 } }
 
-    it 'updates a valid geocoding result' do
-      result = { lat: 19.4, lng: -99.1 }
+  before do
+    allow(Geocoding::MapboxValidateAddressService).to receive(:new)
+      .and_return(instance_double(Geocoding::MapboxValidateAddressService, call: result))
+  end
 
-      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .with(address.postal_code, address.country.iso_alpha2)
-        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: result))
+  it 'saves coordinates using the full-address provider' do
+    described_class.new(address.id, address.geocoding_fingerprint).call
 
-      service.call
+    expect(address.reload).to have_attributes(
+      latitude: 19.4, longitude: -99.1, geocoding_status: 'success'
+    )
+    expect(address.location_confirmed?).to be false
+  end
 
-      expect(address.reload).to have_attributes(
-        latitude: 19.4,
-        longitude: -99.1,
-        geocoding_status: 'success'
-      )
-    end
+  it 'does not overwrite coordinates when the address has since changed' do
+    before = address.geocoding_fingerprint
+    address.update!(street: 'Different Street')
 
-    it 'does not update an invalid geocoding result' do
-      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: {}))
+    described_class.new(address.id, before).call
 
-      service.call
+    expect(address.reload.latitude).to be_nil
+  end
 
-      expect(address.reload.geocoding_status).to eq('pending')
-    end
+  it 'does not overwrite user-confirmed locations' do
+    address.update!(location_confirmed_at: Time.current, latitude: 19.5, longitude: -99.3)
+    described_class.new(address.id, address.geocoding_fingerprint).call
 
-    it 'does not update the address when the geocoding result is nil' do
-      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: nil))
+    expect(address.reload.latitude.to_f).to eq(19.5)
+  end
 
-      service.call
+  it 'keeps a failed response from providing fake coordinates' do
+    allow(Geocoding::MapboxValidateAddressService).to receive(:new)
+      .and_return(instance_double(Geocoding::MapboxValidateAddressService, call: { valid: false }))
 
-      expect(address.reload.geocoding_status).to eq('pending')
-    end
+    described_class.new(address.id, address.geocoding_fingerprint).call
 
-    it 'does not update the address when the result has no longitude' do
-      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .and_return(instance_double(Geocoding::GeocodePostalCodeService, call: { lat: 19.4 }))
-
-      service.call
-
-      expect(address.reload.geocoding_status).to eq('pending')
-    end
-
-    it 'marks the address as failed when geocoding raises' do
-      allow(Geocoding::GeocodePostalCodeService).to receive(:new)
-        .and_raise(StandardError, 'provider unavailable')
-
-      service.call
-
-      expect(address.reload.geocoding_status).to eq('failed')
-    end
+    expect(address.reload.geocoding_status).to eq('failed')
+    expect(address.reload.latitude).to be_nil
   end
 end

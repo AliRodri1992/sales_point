@@ -106,6 +106,10 @@ Rails.application.routes.draw do
       member { get :contacts_page }
       member { get :addresses_page }
       member { get :postal_code_suggestions, to: 'supplier_postal_codes#show' }
+      member do
+        post :address_location_suggestion, to: 'supplier_locations#suggest'
+        get :address_map, to: 'supplier_locations#map'
+      end
       resources :bank_accounts, controller: 'supplier_bank_accounts', except: %i[show] do
         member { post :reveal }
       end
