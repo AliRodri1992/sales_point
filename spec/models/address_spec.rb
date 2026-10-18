@@ -7,6 +7,69 @@ RSpec.describe Address, type: :model do
     it { is_expected.to belong_to(:addressable) }
   end
 
+  describe 'country-specific address validation' do
+    it 'requires all Mexican address fields and a five-digit postal code' do
+      address = build(:address, country: build(:country, iso_alpha2: 'MX'),
+                       exterior_number: nil, neighborhood: nil, state: nil, postal_code: 'ABC12')
+      expect(address).not_to be_valid
+      %i[exterior_number neighborhood state postal_code].each do |field|
+        expect(address.errors[field]).to be_present
+      end
+    end
+
+    it 'supports US ZIP+4 and optional neighborhood and exterior number' do
+      address = build(:address, country: build(:country, iso_alpha2: 'US'),
+                       exterior_number: nil, neighborhood: nil, postal_code: '90210-1234')
+      expect(address).to be_valid
+    end
+
+    it 'supports Canadian alphanumeric and Korean postal formats' do
+      address = build(:address, country: build(:country, iso_alpha2: 'CA'), postal_code: 'K1A 0B1')
+      expect(address).to be_valid
+      address.country.iso_alpha2 = 'KR'
+      address.postal_code = '04524'
+      expect(address).to be_valid
+    end
+
+    it 'allows countries without postal codes to omit the postal code and region' do
+      address = build(:address, country: build(:country, iso_alpha2: 'AE'),
+                       postal_code: nil, neighborhood: nil, state: nil, exterior_number: nil)
+      expect(address).to be_valid
+    end
+
+    it 'rejects invalid postal formats for countries with known rules' do
+      address = build(:address, country: build(:country, iso_alpha2: 'US'), postal_code: 'HELLO')
+      expect(address).not_to be_valid
+      expect(address.errors[:postal_code]).to be_present
+    end
+  end
+
+  describe 'location freshness' do
+    it 'clears stale coordinates and confirmation when any location component changes' do
+      address = create(:address)
+      address.update!(latitude: 19.4, longitude: -99.1, location_confirmed_at: Time.current,
+                      geocoding_status: :success)
+      address.update!(street: 'Different Street')
+      expect(address).to have_attributes(latitude: nil, longitude: nil,
+                                         location_confirmed_at: nil, geocoding_status: 'pending')
+    end
+
+    it 'preserves confirmed coordinates when explicitly confirming the new address' do
+      address = create(:address)
+      address.update!(street: 'A different street', latitude: 19.5, longitude: -99.2,
+                      location_confirmed_at: Time.current, geocoding_status: :success)
+      expect(address.reload.location_confirmed?).to be true
+      expect(address.latitude.to_f).to eq(19.5)
+    end
+
+    it 'provides stable fingerprints for geocoding jobs' do
+      address = build(:address)
+      previous = address.geocoding_fingerprint
+      address.street = 'Another Street'
+      expect(address.geocoding_fingerprint).not_to eq(previous)
+    end
+  end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:street) }
     it { is_expected.to validate_length_of(:street).is_at_least(2).is_at_most(150) }
