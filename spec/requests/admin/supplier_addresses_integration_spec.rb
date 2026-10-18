@@ -213,7 +213,8 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('article[data-supplier-address-id]').size).to eq(8)
     expect(page.at_css('[data-supplier-addresses-next-page-value]')['data-supplier-addresses-next-page-value'])
       .to eq('2')
-    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }).to eq(%w[19 3])
+    tab_counts = page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }
+    expect(tab_counts).to eq(%w[19 3])
     expect(page.at_css('[data-address-statistics]')).to be_present
     expect(page.css('[data-supplier-addresses-target="filterCount"]').map { |element| element.text.strip })
       .to eq(%w[19 0 19 0 0 0])
@@ -252,7 +253,8 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('article[data-supplier-address-id]').size).to eq(8)
     expect(page.css('form[action*="restore"]').size).to eq(8)
     expect(page.text).not_to include('Live Location')
-    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }).to eq(%w[1 9])
+    tab_counts = page.at_css('[data-supplier-address-tabs]').css('a span').map { |element| element.text.strip }
+    expect(tab_counts).to eq(%w[1 9])
 
     get admin_supplier_addresses_path(supplier),
         params: { status: 'deleted', page: 2 }, headers: { 'X-Requested-With' => 'XMLHttpRequest' }
