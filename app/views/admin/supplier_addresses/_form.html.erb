@@ -10,7 +10,9 @@
                 supplier_address_location_unavailable_value: t('admin.supplier_details.address_form.location_unavailable'),
                 supplier_address_location_ready_value: t('admin.supplier_details.address_form.location_ready'),
                 supplier_address_location_confirmed_value: t('admin.supplier_details.address_form.location_confirmed'),
-                supplier_address_location_searching_value: t('admin.supplier_details.address_form.location_searching')
+                supplier_address_location_searching_value: t('admin.supplier_details.address_form.location_searching'),
+                supplier_address_location_low_confidence_value: t('admin.supplier_details.location_low_confidence'),
+                supplier_address_location_adjusted_value: t('admin.supplier_details.location_adjusted')
               } do |form| %>
   <%= form.hidden_field :latitude, data: { supplier_address_location_target: 'latitude' } %>
   <%= form.hidden_field :longitude, data: { supplier_address_location_target: 'longitude' } %>
