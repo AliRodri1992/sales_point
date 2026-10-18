@@ -45,6 +45,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     get admin_supplier_path(supplier, tab: 'finances')
 
     wrapper = finances.at_css('[data-finance-payables]')
+    expect(wrapper['class'].split).to include('space-y-2')
     header = wrapper.at_css('[data-finance-payables-header]')
     empty = wrapper.at_css('[data-finance-empty-payables]')
 
@@ -60,6 +61,7 @@ RSpec.describe 'Supplier dossier finances overview', type: :request do
     get admin_supplier_path(supplier, tab: 'finances')
 
     wrapper = finances.at_css('[data-finance-bank-accounts]')
+    expect(wrapper['class'].split).to include('space-y-2')
     header = wrapper.at_css('[data-finance-banks-header]')
     empty = wrapper.at_css('[data-finance-empty-banks]')
 
