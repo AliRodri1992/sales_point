@@ -19,7 +19,7 @@ RSpec.describe SupplierExamples do
 
   it 'reuses an archived demo fiscal regime instead of inserting a duplicate' do
     described_class.seed!
-    regime = SatFiscalRegime.find_by!(code: '601', person_type: 'M')
+    regime = SatFiscalRegime.active.find_by!(code: '601', person_type: 'M')
     count = SatFiscalRegime.count
     regime.update!(deleted_at: Time.current)
 
