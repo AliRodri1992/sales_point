@@ -17,7 +17,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
     Rails.application.load_seed
     counts = seeded_models.to_h { |model| [model.name, model.count] }
-    identifiers = seeded_models.to_h { |model| [model.name, model.order(:id).pluck(:id)] }
+    identifiers = seeded_models.to_h { |model| [model.name, model.order(model.primary_key).pluck(model.primary_key)] }
     supplier = Supplier.find_by!(code: 'SUP-0001')
     supplier.update!(legal_name: 'Datos fiscales revisados')
     admin = User.find_by!(email: 'administrador@delta.com')
