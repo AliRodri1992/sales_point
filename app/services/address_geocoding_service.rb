@@ -17,7 +17,8 @@ class AddressGeocodingService
 
       @address.update!(
         latitude: result[:latitude], longitude: result[:longitude],
-        geocoding_status: 'success', location_confirmed_at: nil
+        geocoding_status: 'success', location_confirmed_at: nil,
+        geocoding_confidence: result[:confidence]
       )
     end
   rescue Faraday::Error, StandardError => e
