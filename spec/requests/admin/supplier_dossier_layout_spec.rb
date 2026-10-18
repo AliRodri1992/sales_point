@@ -144,7 +144,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     navigation = dossier.at_css('aside[aria-label]')
     finance_group = navigation.css('nav > div').find do |group|
-      group.at_css('h2')&.text&.strip == I18n.t('admin.supplier_dossier.navigation.finances')
+      group.at_css('h2')&.text&.strip == I18n.t('admin.supplier_dossier.navigation.finances', locale: :en)
     end
     expect(finance_group).to be_present
     expect(finance_group.css('button[data-section]').pluck('data-section')).to eq(
@@ -152,7 +152,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     )
 
     mobile_finance = navigation.css('select optgroup').find do |group|
-      group['label'] == I18n.t('admin.supplier_dossier.navigation.finances')
+      group['label'] == I18n.t('admin.supplier_dossier.navigation.finances', locale: :en)
     end
     expect(mobile_finance).to be_present
     expect(mobile_finance.css('option').pluck('value')).to eq(%w[bank_accounts statement])

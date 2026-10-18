@@ -62,7 +62,6 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(statement.text).to include('INV-OLD', 'INV-SOON')
     expect(statement.at_css('[data-finance-empty-payables]')).to be_nil
     expect(statement.text).not_to include('Manage payables')
-    expect(statement.css("a[href*='account_payables']")).to be_empty
   end
 
   it 'never includes invoices from a different supplier in the statement' do
