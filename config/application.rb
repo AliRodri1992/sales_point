@@ -16,6 +16,10 @@ module SalePoint
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # Warden must run first so Rack::Attack can distinguish authenticated users.
+    # The global IP throttle remains active for every request.
+    config.middleware.move_after Warden::Manager, Rack::Attack
+
     config.active_job.queue_adapter = :sidekiq
 
     # Configure i18n
