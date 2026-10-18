@@ -51,6 +51,19 @@ module SuppliersFormHelpers
     render_supplier_form_error
   end
 
+  def supplier_update_destination
+    return admin_supplier_path(@supplier, tab: 'general') if params[:return_to] == 'general'
+
+    admin_suppliers_path
+  end
+
+  def supplier_update_attributes
+    attributes = supplier_params
+    uploads = attributes.delete(:documents)
+    attributes[:documents] = @supplier.documents.blobs.to_a + uploads if uploads.present?
+    attributes
+  end
+
   def notify_supplier(action)
     Suppliers::NotifyService.call(action:, supplier: @supplier, user: current_user)
   end
