@@ -112,6 +112,10 @@ en:
         primary: "Primary"
         active: "Active"
       address_form:
+        postal_loading: "Looking up postal-code neighborhoods…"
+        postal_available: "State and municipality suggested. Choose a neighborhood or type your own."
+        postal_not_found: "No suggestions found for this postal code. You can enter the address manually."
+        postal_unavailable: "Neighborhoods could not be retrieved. You can continue entering the address."
         location_heading: "Address details"
         location_description: "Location and address information."
         classification_heading: "Classification and use"

@@ -139,7 +139,8 @@ export default class extends Controller {
     const countryCode = this.element.dataset.countryFlags === "true" ? option?.dataset.countryCode : null
     if (countryCode && /^[A-Z]{2}$/.test(countryCode)) {
       const flag = document.createElement("img")
-      flag.src = `https://flagcdn.com/${countryCode.toLowerCase()}.svg`
+      flag.src = option.dataset.flagUrl || ""
+      if (!flag.src || !option.dataset.flagUrl) return this.textOnlyContent(option)
       flag.alt = ""
       flag.setAttribute("aria-hidden", "true")
       flag.loading = "lazy"
@@ -152,6 +153,16 @@ export default class extends Controller {
     const name = document.createElement("span")
     name.className = "truncate"
     name.textContent = option?.textContent?.trim() || ""
+    content.append(name)
+    return content
+  }
+
+  textOnlyContent(option) {
+    const name = document.createElement("span")
+    name.className = "truncate"
+    name.textContent = option?.textContent?.trim() || ""
+    const content = document.createElement("span")
+    content.className = "flex min-w-0 items-center gap-2.5"
     content.append(name)
     return content
   }

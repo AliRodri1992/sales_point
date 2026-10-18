@@ -77,6 +77,9 @@ application.register("supplier-addresses", SupplierAddressesController)
 import SupplierAddressPreviewController from "./supplier_address_preview_controller"
 application.register("supplier-address-preview", SupplierAddressPreviewController)
 
+import SupplierPostalAssistController from "./supplier_postal_assist_controller"
+application.register("supplier-postal-assist", SupplierPostalAssistController)
+
 import SupplierSearchController from "./supplier_search_controller"
 application.register("supplier-search", SupplierSearchController)
 

@@ -55,6 +55,22 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('[data-step]')).to be_empty
   end
 
+  it 'adds optional Mexico postal lookup without blocking model validations or manual input' do
+    get new_admin_supplier_address_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    location = page.at_css('[data-controller="supplier-postal-assist"]')
+    expect(location).to be_present
+    expect(location['data-supplier-postal-assist-url-value'])
+      .to eq(postal_code_suggestions_admin_supplier_path(supplier))
+    expect(location.at_css('input[name="address[neighborhood]"][list="supplier-neighborhoods"]')).to be_present
+    expect(location.at_css('datalist[data-supplier-postal-assist-target="neighborhoods"]')).to be_present
+    expect(location.at_css('[data-supplier-postal-assist-target="status"]')).to be_present
+    expect(page.at_css('form[data-controller="supplier-address-preview"]')['novalidate']).not_to be_nil
+    expect(location.at_css('select[name="address[country_id]"] option[data-country-code="MX"][data-flag-url]'))
+      .to be_present
+  end
+
   it 'places the preview above classification and aligns the right column with the address fields' do
     get new_admin_supplier_address_path(supplier)
 

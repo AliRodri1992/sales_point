@@ -112,6 +112,10 @@ es:
         primary: "Principal"
         active: "Activo"
       address_form:
+        postal_loading: "Consultando colonias del código postal…"
+        postal_available: "Estado y municipio sugeridos. Selecciona una colonia o escribe la tuya."
+        postal_not_found: "No hay sugerencias para este código postal. Puedes capturar la dirección manualmente."
+        postal_unavailable: "No se pudieron consultar las colonias. Puedes continuar capturando la dirección."
         location_heading: "Datos del domicilio"
         location_description: "Ubicación y detalles de la dirección."
         classification_heading: "Clasificación y uso"

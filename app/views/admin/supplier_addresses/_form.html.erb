@@ -11,7 +11,14 @@
   <% end %>
 
   <div class="grid items-stretch gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(320px,2fr)]">
-    <section aria-labelledby="supplier-address-location-heading" class="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <section data-controller="supplier-postal-assist"
+             data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input"
+             data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
+             data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
+             data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
+             data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
+             data-supplier-postal-assist-unavailable-value="<%= t('admin.supplier_details.address_form.postal_unavailable') %>"
+             aria-labelledby="supplier-address-location-heading" class="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div class="mb-6 flex items-center gap-3">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
           <%= icon('map-pin', class: 'size-5') %>
@@ -30,7 +37,7 @@
           <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
             <%= form.select :country_id,
                             options_for_select(
-                              @countries.map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }] },
+                              @countries.map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: image_path("flags/#{country.iso_alpha2.downcase}.svg") } }] },
                               form.object.country_id
                             ),
                             { include_blank: t('admin.supplier_placeholders.country') },
@@ -46,6 +53,7 @@
                               placeholder: t('admin.supplier_details.address_form.placeholders.postal_code'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :postal_code)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
           <%= error_message_for(@address, :postal_code) %>
+          <p data-supplier-postal-assist-target="status" aria-live="polite" class="mt-1 text-xs text-slate-500"></p>
         </div>
 
         <% %i[state city].each do |field| %>
@@ -64,9 +72,10 @@
           <%= form.label :neighborhood, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
             <%= t('admin.supplier_details.address_fields.neighborhood') %> <span class="text-rose-600" aria-hidden="true">*</span>
           <% end %>
-          <%= form.text_field :neighborhood,
+          <%= form.text_field :neighborhood, list: 'supplier-neighborhoods',
                               placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :neighborhood)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <datalist id="supplier-neighborhoods" data-supplier-postal-assist-target="neighborhoods"></datalist>
           <%= error_message_for(@address, :neighborhood) %>
         </div>
 

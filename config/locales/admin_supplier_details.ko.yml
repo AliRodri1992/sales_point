@@ -112,6 +112,10 @@ ko:
         primary: "대표"
         active: "활성"
       address_form:
+        postal_loading: "우편번호 지역 정보를 조회하고 있습니다…"
+        postal_available: "주와 시·군을 제안했습니다. 동네를 선택하거나 직접 입력하세요."
+        postal_not_found: "이 우편번호에 대한 제안이 없습니다. 주소를 직접 입력할 수 있습니다."
+        postal_unavailable: "지역 정보를 가져올 수 없습니다. 주소를 직접 입력할 수 있습니다."
         location_heading: "주소 정보"
         location_description: "주소 위치와 상세 정보입니다."
         classification_heading: "분류 및 사용"
