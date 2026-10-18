@@ -2,6 +2,7 @@
      data-controller="supplier-postal-assist supplier-country-fields"
      data-action="input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
      data-supplier-postal-assist-url-value="<%= admin_supplier_postal_suggestions_path %>"
+     data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
      data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
      data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
      data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
@@ -39,6 +40,10 @@
         <% if field == :neighborhood %>
           <datalist id="<%= "#{form.object_name}_neighborhoods".gsub(/[^a-zA-Z0-9_-]/, '_') %>"
                     data-supplier-postal-assist-target="neighborhoods"></datalist>
+          <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+                  data-supplier-postal-assist-target="choices"
+                  data-action="change->supplier-postal-assist#chooseNeighborhood"
+                  class="mt-2 hidden min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm"></select>
         <% end %>
         <%= error_message_for(form.object, field) %>
         <% if field == :postal_code %>
