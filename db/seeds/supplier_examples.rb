@@ -22,8 +22,7 @@ module SupplierExamples
       regime = SatFiscalRegime.find_or_initialize_by(code: '601', person_type: 'M')
       return if regime.persisted? && regime.deleted_at.nil?
 
-      regime.update!(deleted_at: nil, description: regime.description.presence ||
-                                               'General de Ley Personas Morales')
+      regime.update!(deleted_at: nil, description: regime.description.presence || 'General de Ley Personas Morales')
     end
 
     def create_organization
