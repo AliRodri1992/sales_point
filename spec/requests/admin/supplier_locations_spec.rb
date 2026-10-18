@@ -124,4 +124,34 @@ RSpec.describe 'Supplier location verification', type: :request do
     expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
     expect(supplier.addresses.count).to eq(1)
   end
+  it 'rejects arbitrary distant markers even with a valid address proof' do
+    fake_geocoder
+    post address_location_suggestion_admin_supplier_path(supplier), params: { address: fields }
+    signature = response.parsed_body.fetch('signature')
+    attributes = fields.merge(purpose: 'delivery', primary: false,
+                              latitude: '20.000000', longitude: '-99.180300',
+                              location_confirmed: '1', location_signature: signature)
+
+    post admin_supplier_addresses_path(supplier), params: { address: attributes }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(supplier.addresses.count).to eq(0)
+  end
+
+  it 'records a justified distant marker adjustment' do
+    fake_geocoder
+    post address_location_suggestion_admin_supplier_path(supplier), params: { address: fields }
+    signature = response.parsed_body.fetch('signature')
+    attributes = fields.merge(purpose: 'delivery', primary: false,
+                              latitude: '20.000000', longitude: '-99.180300',
+                              location_confirmed: '1', location_signature: signature,
+                              location_adjustment_reason: 'Acceso real por carretera diferente')
+
+    post admin_supplier_addresses_path(supplier), params: { address: attributes }
+
+    expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
+    expect(supplier.addresses.last.location_adjustment_reason).to be_present
+  end
+
+
 end
