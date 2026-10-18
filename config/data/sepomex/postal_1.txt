@@ -1,0 +1,425 @@
+10000|Ciudad de México|La Magdalena Contreras|Lomas Quebradas
+10010|Ciudad de México|La Magdalena Contreras|La Malinche|San Bartolo Ameyalco
+10020|Ciudad de México|La Magdalena Contreras|Cuauhtémoc
+10130|Ciudad de México|La Magdalena Contreras|El Maestro
+10200|Ciudad de México|La Magdalena Contreras|San Jerónimo Lídice
+10300|Ciudad de México|La Magdalena Contreras|San Bernabé Ocotepec
+10320|Ciudad de México|La Magdalena Contreras|El Tanque
+10330|Ciudad de México|La Magdalena Contreras|Las Cruces
+10340|Ciudad de México|La Magdalena Contreras|Los Padres
+10350|Ciudad de México|La Magdalena Contreras|Lomas de San Bernabé
+10360|Ciudad de México|La Magdalena Contreras|Huayatla
+10368|Ciudad de México|La Magdalena Contreras|Ampliación Potrerillo
+10369|Ciudad de México|La Magdalena Contreras|Ampliación Lomas de San Bernabé|Tierra Unida
+10370|Ciudad de México|La Magdalena Contreras|Palmas
+10378|Ciudad de México|La Magdalena Contreras|Atacaxco
+10379|Ciudad de México|La Magdalena Contreras|Vista Hermosa
+10380|Ciudad de México|La Magdalena Contreras|Barros Sierra
+10400|Ciudad de México|La Magdalena Contreras|San Jerónimo Aculco
+10500|Ciudad de México|La Magdalena Contreras|Barrio San Francisco
+10580|Ciudad de México|La Magdalena Contreras|Barranca Seca
+10600|Ciudad de México|La Magdalena Contreras|El Rosal
+10610|Ciudad de México|La Magdalena Contreras|El Toro
+10620|Ciudad de México|La Magdalena Contreras|Potrerillo
+10630|Ciudad de México|La Magdalena Contreras|El Ocotal
+10640|Ciudad de México|La Magdalena Contreras|La Carbonera|Pueblo Nuevo Alto|Pueblo Nuevo Bajo
+10660|Ciudad de México|La Magdalena Contreras|El Ermitaño
+10700|Ciudad de México|La Magdalena Contreras|Héroes de Padierna
+10710|Ciudad de México|La Magdalena Contreras|Santa Teresa
+10800|Ciudad de México|La Magdalena Contreras|La Cruz
+10810|Ciudad de México|La Magdalena Contreras|San Francisco
+10820|Ciudad de México|La Magdalena Contreras|La Guadalupe
+10830|Ciudad de México|La Magdalena Contreras|La Concepción
+10840|Ciudad de México|La Magdalena Contreras|Las Calles|Plazuela del Pedregal
+10900|Ciudad de México|La Magdalena Contreras|San Nicolás Totolapan
+10910|Ciudad de México|La Magdalena Contreras|La Magdalena
+10920|Ciudad de México|La Magdalena Contreras|Las Huertas
+10926|Ciudad de México|La Magdalena Contreras|Tierra Colorada
+11000|Ciudad de México|Miguel Hidalgo|Lomas de Chapultepec I Sección|Lomas de Chapultepec II Sección|Lomas de Chapultepec III Sección|Lomas de Chapultepec IV Sección|Lomas de Chapultepec V Sección|Lomas de Chapultepec VI Sección|Lomas de Chapultepec VII Sección|Lomas de Chapultepec VIII Sección
+11040|Ciudad de México|Miguel Hidalgo|Molino del Rey
+11100|Ciudad de México|Miguel Hidalgo|Bosque de Chapultepec II Sección|Bosque de Chapultepec III Sección
+11200|Ciudad de México|Miguel Hidalgo|Lomas Hermosa|Lomas de Sotelo
+11210|Ciudad de México|Miguel Hidalgo|San Lorenzo Tlaltenango
+11220|Ciudad de México|Miguel Hidalgo|Periodista
+11230|Ciudad de México|Miguel Hidalgo|Argentina Poniente
+11240|Ciudad de México|Miguel Hidalgo|Ignacio Manuel Altamirano
+11250|Ciudad de México|Miguel Hidalgo|10 de Abril
+11260|Ciudad de México|Miguel Hidalgo|México Nuevo|San Joaquín
+11270|Ciudad de México|Miguel Hidalgo|Argentina Antigua
+11280|Ciudad de México|Miguel Hidalgo|Torre Blanca
+11289|Ciudad de México|Miguel Hidalgo|Ampliación Torre Blanca
+11290|Ciudad de México|Miguel Hidalgo|Huíchapan|San Diego Ocoyoacac
+11300|Ciudad de México|Miguel Hidalgo|Verónica Anzures
+11310|Ciudad de México|Miguel Hidalgo|Mariano Escobedo
+11320|Ciudad de México|Miguel Hidalgo|Anáhuac I Sección|Anáhuac II Sección
+11330|Ciudad de México|Miguel Hidalgo|Un Hogar Para Nosotros
+11340|Ciudad de México|Miguel Hidalgo|Santo Tomas
+11350|Ciudad de México|Miguel Hidalgo|Plutarco Elías Calles
+11360|Ciudad de México|Miguel Hidalgo|Agricultura
+11370|Ciudad de México|Miguel Hidalgo|Tlaxpana
+11400|Ciudad de México|Miguel Hidalgo|Popotla
+11410|Ciudad de México|Miguel Hidalgo|Legaria|Tacuba
+11420|Ciudad de México|Miguel Hidalgo|Nextitla
+11430|Ciudad de México|Miguel Hidalgo|Pensil Norte|Ventura Pérez de Alva
+11440|Ciudad de México|Miguel Hidalgo|Reforma Pensil|San Juanico
+11450|Ciudad de México|Miguel Hidalgo|Ahuehuetes Anáhuac|Modelo Pensil|Peralitos
+11460|Ciudad de México|Miguel Hidalgo|Dos Lagos|Lago Norte|Lago Sur|Los Manzanos
+11470|Ciudad de México|Miguel Hidalgo|5 de Mayo|Deportivo Pensil
+11480|Ciudad de México|Miguel Hidalgo|Francisco I Madero|Popo
+11489|Ciudad de México|Miguel Hidalgo|Ampliación Popo
+11490|Ciudad de México|Miguel Hidalgo|Cuauhtémoc Pensil|Pensil Sur
+11500|Ciudad de México|Miguel Hidalgo|Irrigación
+11510|Ciudad de México|Miguel Hidalgo|Polanco I Sección
+11520|Ciudad de México|Miguel Hidalgo|Granada
+11529|Ciudad de México|Miguel Hidalgo|Ampliación Granada
+11530|Ciudad de México|Miguel Hidalgo|Polanco II Sección
+11540|Ciudad de México|Miguel Hidalgo|Polanco III Sección
+11550|Ciudad de México|Miguel Hidalgo|Polanco IV Sección
+11560|Ciudad de México|Miguel Hidalgo|Polanco V Sección
+11570|Ciudad de México|Miguel Hidalgo|Chapultepec Morales
+11580|Ciudad de México|Miguel Hidalgo|Bosque de Chapultepec I Sección
+11590|Ciudad de México|Miguel Hidalgo|Anzures
+11600|Ciudad de México|Miguel Hidalgo|Residencial Militar
+11610|Ciudad de México|Miguel Hidalgo|Manuel Ávila Camacho
+11619|Ciudad de México|Miguel Hidalgo|Campo Militar 1
+11650|Ciudad de México|Miguel Hidalgo|Reforma Social
+11700|Ciudad de México|Miguel Hidalgo|Bosque de las Lomas
+11800|Ciudad de México|Miguel Hidalgo|Escandón I Sección|Escandón II Sección
+11810|Ciudad de México|Miguel Hidalgo|16 de Septiembre
+11820|Ciudad de México|Miguel Hidalgo|América
+11830|Ciudad de México|Miguel Hidalgo|Daniel Garza
+11840|Ciudad de México|Miguel Hidalgo|Ampliación Daniel Garza
+11850|Ciudad de México|Miguel Hidalgo|San Miguel Chapultepec I Sección|San Miguel Chapultepec II Sección
+11860|Ciudad de México|Miguel Hidalgo|Observatorio
+11870|Ciudad de México|Miguel Hidalgo|Tacubaya
+11910|Ciudad de México|Miguel Hidalgo|Lomas de Bezares
+11920|Ciudad de México|Miguel Hidalgo|Real de las Lomas
+11930|Ciudad de México|Miguel Hidalgo|Lomas de Reforma
+11950|Ciudad de México|Miguel Hidalgo|Lomas Altas
+12000|Ciudad de México|Milpa Alta|La Concepción|La Luz|Los Ángeles|San Mateo|Santa Cruz|Santa Martha|Villa Milpa Alta Centro
+12070|Ciudad de México|Milpa Alta|San Agustin
+12080|Ciudad de México|Milpa Alta|San Agustin Ohtenco
+12100|Ciudad de México|Milpa Alta|Cruztitla|Tecaxtitla|Tenantitla|Xaltipac|Xochitepec
+12110|Ciudad de México|Milpa Alta|Emiliano Zapata|La Conchita
+12200|Ciudad de México|Milpa Alta|Nochtla|Ocotitla|Panchimalco|Tula
+12250|Ciudad de México|Milpa Alta|San Bartolomé Xicomulco
+12300|Ciudad de México|Milpa Alta|San Salvador Cuauhtenco
+12400|Ciudad de México|Milpa Alta|Centro|San Juan|San Miguel
+12410|Ciudad de México|Milpa Alta|Chalmita
+12500|Ciudad de México|Milpa Alta|San Lorenzo Tlacoyucan
+12600|Ciudad de México|Milpa Alta|San Jerónimo Miacatlán
+12700|Ciudad de México|Milpa Alta|San Francisco Tecoxpa
+12800|Ciudad de México|Milpa Alta|San Juan Tepenahuac
+12910|Ciudad de México|Milpa Alta|La Lupita Teticpac
+12920|Ciudad de México|Milpa Alta|San Marcos
+12930|Ciudad de México|Milpa Alta|San Miguel
+12940|Ciudad de México|Milpa Alta|San José
+12950|Ciudad de México|Milpa Alta|La Lupita Xolco
+13000|Ciudad de México|Tláhuac|La Asunción
+13010|Ciudad de México|Tláhuac|Santa Cecilia
+13020|Ciudad de México|Tláhuac|San José
+13030|Ciudad de México|Tláhuac|San Juan
+13040|Ciudad de México|Tláhuac|San Mateo
+13050|Ciudad de México|Tláhuac|La Habana
+13060|Ciudad de México|Tláhuac|La Guadalupe|Santa Ana
+13070|Ciudad de México|Tláhuac|La Magdalena|San Miguel
+13080|Ciudad de México|Tláhuac|Los Reyes
+13090|Ciudad de México|Tláhuac|Quiahuatla
+13093|Ciudad de México|Tláhuac|San Sebastián
+13094|Ciudad de México|Tláhuac|San Isidro
+13099|Ciudad de México|Tláhuac|San Andrés
+13100|Ciudad de México|Tláhuac|La Guadalupe
+13120|Ciudad de México|Tláhuac|Ampliación Santa Catarina|Santiago
+13150|Ciudad de México|Tláhuac|La Concepción
+13180|Ciudad de México|Tláhuac|San Miguel
+13200|Ciudad de México|Tláhuac|Miguel Hidalgo
+13210|Ciudad de México|Tláhuac|Los Olivos
+13219|Ciudad de México|Tláhuac|Ampliación Los Olivos|Las Arboledas
+13220|Ciudad de México|Tláhuac|La Nopalera
+13230|Ciudad de México|Tláhuac|Granjas Cabrera
+13250|Ciudad de México|Tláhuac|La Turba
+13270|Ciudad de México|Tláhuac|Del Mar
+13273|Ciudad de México|Tláhuac|La Draga
+13278|Ciudad de México|Tláhuac|Villa Centroamericana
+13280|Ciudad de México|Tláhuac|Agrícola Metropolitana
+13300|Ciudad de México|Tláhuac|Santa Ana Centro|Santa Ana Norte|Santa Ana Poniente|Santiago Centro|Santiago Norte
+13310|Ciudad de México|Tláhuac|Zapotitla
+13315|Ciudad de México|Tláhuac|Ampliación Zapotitla
+13319|Ciudad de México|Tláhuac|La Estación
+13360|Ciudad de México|Tláhuac|La Conchita Zapotitlán|Santa Ana Sur|Santiago Sur
+13400|Ciudad de México|Tláhuac|San Francisco Tlaltenco
+13410|Ciudad de México|Tláhuac|López Portillo
+13419|Ciudad de México|Tláhuac|Ampliación José López Portillo
+13420|Ciudad de México|Tláhuac|Selene
+13430|Ciudad de México|Tláhuac|Ampliación Selene
+13440|Ciudad de México|Tláhuac|Zacatenco
+13450|Ciudad de México|Tláhuac|Guadalupe Tlaltenco|Ojo de Agua
+13460|Ciudad de México|Tláhuac|El Triángulo
+13508|Ciudad de México|Tláhuac|La Soledad|San Agustín
+13509|Ciudad de México|Tláhuac|La Concepción
+13510|Ciudad de México|Tláhuac|La Lupita
+13520|Ciudad de México|Tláhuac|Francisco Villa
+13530|Ciudad de México|Tláhuac|Jaime Torres Bodet|La Asunción
+13540|Ciudad de México|Tláhuac|El Rosario|Tierra Blanca
+13545|Ciudad de México|Tláhuac|Ampliación La Conchita
+13549|Ciudad de México|Tláhuac|Peña Alta
+13550|Ciudad de México|Tláhuac|Jardines del Llano|Potrero del Llano
+13600|Ciudad de México|Tláhuac|San Bartolomé
+13610|Ciudad de México|Tláhuac|Los Reyes
+13625|Ciudad de México|Tláhuac|Santa Cruz
+13630|Ciudad de México|Tláhuac|San Agustín
+13640|Ciudad de México|Tláhuac|San Miguel
+13700|Ciudad de México|Tláhuac|San Nicolás Tetelco|Tepantitlamilco
+14000|Ciudad de México|Tlalpan|Tlalpan|Tlalpan Centro
+14010|Ciudad de México|Tlalpan|Parque del Pedregal
+14020|Ciudad de México|Tlalpan|Villa Olímpica
+14030|Ciudad de México|Tlalpan|Isidro Fabela
+14039|Ciudad de México|Tlalpan|Ampliación Isidro Fabela
+14040|Ciudad de México|Tlalpan|Cantera Puente de Piedra|Pueblo Quieto
+14049|Ciudad de México|Tlalpan|Comuneros de Santa Úrsula
+14050|Ciudad de México|Tlalpan|Toriello Guerra
+14060|Ciudad de México|Tlalpan|Peña Pobre
+14070|Ciudad de México|Tlalpan|Rómulo Sánchez Mireles|San Fernando|San Pedro Apóstol
+14080|Ciudad de México|Tlalpan|Belisario Domínguez Sección XVI|Del Niño Jesús
+14090|Ciudad de México|Tlalpan|La Joya
+14100|Ciudad de México|Tlalpan|Pedregal de San Nicolás 1A Sección|Pedregal de San Nicolás 2A Sección|Pedregal de San Nicolás 3A Sección|Pedregal de San Nicolás 4A Sección|Pedregal de San Nicolás 5ª Sección
+14108|Ciudad de México|Tlalpan|Chichicaspatl
+14110|Ciudad de México|Tlalpan|Ampliación Fuentes del Pedregal
+14120|Ciudad de México|Tlalpan|Rincón del Pedregal
+14140|Ciudad de México|Tlalpan|Fuentes del Pedregal
+14150|Ciudad de México|Tlalpan|Lomas del Pedregal Framboyanes
+14160|Ciudad de México|Tlalpan|Popular Santa Teresa
+14200|Ciudad de México|Tlalpan|Héroes de Padierna|Jardines del Ajusco
+14208|Ciudad de México|Tlalpan|Colinas del Ajusco
+14209|Ciudad de México|Tlalpan|Torres de Padierna
+14210|Ciudad de México|Tlalpan|Jardines en la Montaña
+14219|Ciudad de México|Tlalpan|Parque Nacional Bosque del Pedregal|Six Flags (Reino Aventura)
+14220|Ciudad de México|Tlalpan|Cuchilla de Padierna|Lomas del Pedregal
+14230|Ciudad de México|Tlalpan|Cultura Maya
+14239|Ciudad de México|Tlalpan|Los Encinos
+14240|Ciudad de México|Tlalpan|Lomas Hidalgo|Lomas de Padierna
+14248|Ciudad de México|Tlalpan|Cruz del Farol
+14250|Ciudad de México|Tlalpan|Miguel Hidalgo|Miguel Hidalgo 2A Sección|Miguel Hidalgo 3A Sección|Miguel Hidalgo 4A Sección
+14260|Ciudad de México|Tlalpan|El Capulín|Miguel Hidalgo 1A Sección
+14266|Ciudad de México|Tlalpan|Zacayucan Peña Pobre
+14267|Ciudad de México|Tlalpan|De Caramagüey
+14268|Ciudad de México|Tlalpan|La Lonja
+14269|Ciudad de México|Tlalpan|La Fama
+14270|Ciudad de México|Tlalpan|Primavera|Verano
+14275|Ciudad de México|Tlalpan|Paraje 38
+14300|Ciudad de México|Tlalpan|Nueva Oriental Coapa|Residencial Acoxpa|Residencial Miramontes
+14308|Ciudad de México|Tlalpan|Ex Hacienda Coapa
+14310|Ciudad de México|Tlalpan|Belisario Domínguez|Floresta Coyoacán
+14320|Ciudad de México|Tlalpan|Vergel Coapa
+14325|Ciudad de México|Tlalpan|Rinconada Coapa 2A Sección
+14326|Ciudad de México|Tlalpan|Tenorios
+14330|Ciudad de México|Tlalpan|Granjas Coapa|Rinconada Coapa 1A Sección
+14340|Ciudad de México|Tlalpan|Vergel de Coyoacán|Vergel del Sur
+14350|Ciudad de México|Tlalpan|Prado Coapa 1A Sección
+14357|Ciudad de México|Tlalpan|Prado Coapa 2A Sección|Prado Coapa 3A Sección
+14360|Ciudad de México|Tlalpan|Magisterial|Magisterial Coapa
+14370|Ciudad de México|Tlalpan|Residencial Chimali|San Lorenzo Huipulco|Villa Lázaro Cárdenas
+14376|Ciudad de México|Tlalpan|Arboledas del Sur
+14377|Ciudad de México|Tlalpan|Hacienda San Juan
+14380|Ciudad de México|Tlalpan|A.M.S.A|San Bartolo El Chico
+14386|Ciudad de México|Tlalpan|Rancho los Colorines
+14387|Ciudad de México|Tlalpan|Ex Hacienda San Juan de Dios
+14388|Ciudad de México|Tlalpan|Guadalupe
+14389|Ciudad de México|Tlalpan|Arenal de Guadalupe
+14390|Ciudad de México|Tlalpan|Narciso Mendoza|Residencial Villa Coapa|Rinconada Las Hadas|Villa Coapa
+14400|Ciudad de México|Tlalpan|San Andrés Totoltepec
+14406|Ciudad de México|Tlalpan|Divisadero
+14408|Ciudad de México|Tlalpan|Nuevo Renacimiento de Axalco
+14409|Ciudad de México|Tlalpan|Tecorral
+14410|Ciudad de México|Tlalpan|Bosques de Tepeximilpa|Fuentes Brotantes
+14420|Ciudad de México|Tlalpan|Cumbres de Tepetongo|Mesa de los Hornos|Santa Úrsula Xitla
+14426|Ciudad de México|Tlalpan|Texcaltenco|Tlaxcaltenco la Mesa
+14427|Ciudad de México|Tlalpan|San Juan Tepeximilpa|Tepeximilpa la Paz
+14429|Ciudad de México|Tlalpan|Santísima Trinidad
+14430|Ciudad de México|Tlalpan|El Truenito|Tlalcoligia
+14438|Ciudad de México|Tlalpan|Pedregal de Santa Úrsula Xitla
+14439|Ciudad de México|Tlalpan|Pedregal de las Águilas
+14440|Ciudad de México|Tlalpan|Los Volcanes
+14449|Ciudad de México|Tlalpan|El Mirador 1A Sección|El Mirador 2A Sección|El Mirador 3A Sección
+14456|Ciudad de México|Tlalpan|Atocpa|Atocpa Sur
+14460|Ciudad de México|Tlalpan|Tlalpuente
+14470|Ciudad de México|Tlalpan|Plan de Ayala|Tepetlica
+14476|Ciudad de México|Tlalpan|La Palma
+14479|Ciudad de México|Tlalpan|Viveros Coatectlán
+14480|Ciudad de México|Tlalpan|La Magdalena Petlacalco
+14490|Ciudad de México|Tlalpan|San Miguel Xicalco
+14500|Ciudad de México|Tlalpan|Ocotla Chico|San Miguel Topilejo
+14600|Ciudad de México|Tlalpan|Valle Escondido
+14608|Ciudad de México|Tlalpan|Colinas del Bosque
+14609|Ciudad de México|Tlalpan|Las Tórtolas
+14610|Ciudad de México|Tlalpan|Arenal Tepepan
+14620|Ciudad de México|Tlalpan|Club de Golf México
+14629|Ciudad de México|Tlalpan|San Buenaventura
+14630|Ciudad de México|Tlalpan|Chimalcoyoc|Villa Tlalpan
+14640|Ciudad de México|Tlalpan|Ejidos de San Pedro Mártir
+14643|Ciudad de México|Tlalpan|Fuentes de Tepepan|Tecoantitla Xolalpa
+14646|Ciudad de México|Tlalpan|Valle de Tepepan
+14647|Ciudad de México|Tlalpan|Juventud Unida|Movimiento Organizado de Tlalpan|Rinconada El Mirador
+14650|Ciudad de México|Tlalpan|San Pedro Mártir
+14653|Ciudad de México|Tlalpan|Heróico Colegio Militar
+14654|Ciudad de México|Tlalpan|Dolores Tlalli
+14655|Ciudad de México|Tlalpan|Valle Verde
+14657|Ciudad de México|Tlalpan|Tlalmille
+14658|Ciudad de México|Tlalpan|Mirador del Valle
+14659|Ciudad de México|Tlalpan|María Esther Zuno de Echeverría
+14700|Ciudad de México|Tlalpan|San Miguel Ajusco
+14710|Ciudad de México|Tlalpan|Santo Tomas Ajusco
+14720|Ciudad de México|Tlalpan|Belvedere Ajusco
+14730|Ciudad de México|Tlalpan|Lomas de Cuilotepec
+14734|Ciudad de México|Tlalpan|Zacatón
+14735|Ciudad de México|Tlalpan|Lomas de Cuilotepec II Sección|Lomas de Tepemecatl
+14737|Ciudad de México|Tlalpan|Vistas del Pedregal
+14738|Ciudad de México|Tlalpan|Bosques del Pedregal
+14739|Ciudad de México|Tlalpan|2 de Octubre
+14740|Ciudad de México|Tlalpan|Lomas de Padierna Sur
+14748|Ciudad de México|Tlalpan|Mirador I|Mirador II
+14749|Ciudad de México|Tlalpan|Chimilli
+14760|Ciudad de México|Tlalpan|Héroes de 1910
+14900|Ciudad de México|Tlalpan|Parres El Guarda
+15000|Ciudad de México|Venustiano Carranza|General Ignacio Zaragoza
+15010|Ciudad de México|Venustiano Carranza|Valentín Gómez Farias
+15020|Ciudad de México|Venustiano Carranza|Puebla
+15100|Ciudad de México|Venustiano Carranza|Zona Centro
+15200|Ciudad de México|Venustiano Carranza|Janitzio
+15210|Ciudad de México|Venustiano Carranza|Valle Gómez
+15220|Ciudad de México|Venustiano Carranza|Nicolás Bravo|Popular Rastro
+15230|Ciudad de México|Venustiano Carranza|Emilio Carranza
+15240|Ciudad de México|Venustiano Carranza|Michoacana
+15250|Ciudad de México|Venustiano Carranza|Ampliación Michoacana
+15260|Ciudad de México|Venustiano Carranza|Ampliación 20 de Noviembre
+15270|Ciudad de México|Venustiano Carranza|Morelos
+15280|Ciudad de México|Venustiano Carranza|Penitenciaria
+15290|Ciudad de México|Venustiano Carranza|10 de Mayo
+15300|Ciudad de México|Venustiano Carranza|20 de Noviembre
+15309|Ciudad de México|Venustiano Carranza|5o Tramo 20 de Noviembre
+15310|Ciudad de México|Venustiano Carranza|Felipe Ángeles
+15320|Ciudad de México|Venustiano Carranza|Azteca
+15330|Ciudad de México|Venustiano Carranza|Tres Mosqueteros
+15339|Ciudad de México|Venustiano Carranza|Ampliación Venustiano Carranza
+15340|Ciudad de México|Venustiano Carranza|Venustiano Carranza
+15350|Ciudad de México|Venustiano Carranza|Ampliación Penitenciaria
+15370|Ciudad de México|Venustiano Carranza|Progresista
+15380|Ciudad de México|Venustiano Carranza|Escuela de Tiro
+15390|Ciudad de México|Venustiano Carranza|7 de Julio
+15400|Ciudad de México|Venustiano Carranza|Romero Rubio
+15410|Ciudad de México|Venustiano Carranza|Simón Bolívar
+15420|Ciudad de México|Venustiano Carranza|Ampliación Simón Bolívar
+15430|Ciudad de México|Venustiano Carranza|Aquiles Serdán
+15440|Ciudad de México|Venustiano Carranza|1° de Mayo
+15450|Ciudad de México|Venustiano Carranza|Damián Carmona
+15460|Ciudad de México|Venustiano Carranza|Revolución
+15470|Ciudad de México|Venustiano Carranza|Miguel Hidalgo
+15500|Ciudad de México|Venustiano Carranza|Moctezuma 1a Sección
+15510|Ciudad de México|Venustiano Carranza|Pensador Mexicano
+15520|Ciudad de México|Venustiano Carranza|Peñón de los Baños
+15530|Ciudad de México|Venustiano Carranza|Moctezuma 2a Sección
+15540|Ciudad de México|Venustiano Carranza|Santa Cruz Aviación
+15600|Ciudad de México|Venustiano Carranza|Arenal 1a Sección
+15610|Ciudad de México|Venustiano Carranza|Cuchilla Pantitlán
+15620|Ciudad de México|Venustiano Carranza|México (Licenciado Benito Juárez)
+15630|Ciudad de México|Venustiano Carranza|Caracol
+15640|Ciudad de México|Venustiano Carranza|Arenal 4a Sección|Arenal Puerto Aéreo
+15650|Ciudad de México|Venustiano Carranza|Ampliación Caracol
+15660|Ciudad de México|Venustiano Carranza|Arenal 3a Sección
+15670|Ciudad de México|Venustiano Carranza|Adolfo López Mateos
+15680|Ciudad de México|Venustiano Carranza|Arenal 2a Sección
+15700|Ciudad de México|Venustiano Carranza|Federal
+15710|Ciudad de México|Venustiano Carranza|Industrial Puerto Aéreo
+15730|Ciudad de México|Venustiano Carranza|4 Árboles
+15740|Ciudad de México|Venustiano Carranza|Aviación Civil
+15750|Ciudad de México|Venustiano Carranza|Ampliación Aviación Civil
+15800|Ciudad de México|Venustiano Carranza|Jamaica
+15810|Ciudad de México|Venustiano Carranza|Merced Balbuena
+15820|Ciudad de México|Venustiano Carranza|Lorenzo Boturini
+15830|Ciudad de México|Venustiano Carranza|Artes Gráficas
+15840|Ciudad de México|Venustiano Carranza|Sevilla
+15850|Ciudad de México|Venustiano Carranza|Magdalena Mixiuhca
+15860|Ciudad de México|Venustiano Carranza|La Magdalena Mixiuhca
+15870|Ciudad de México|Venustiano Carranza|Aarón Sáenz
+15900|Ciudad de México|Venustiano Carranza|Jardín Balbuena
+15960|Ciudad de México|Venustiano Carranza|Del Parque
+15970|Ciudad de México|Venustiano Carranza|Aeronáutica Militar
+15980|Ciudad de México|Venustiano Carranza|24 de Abril
+15990|Ciudad de México|Venustiano Carranza|Álvaro Obregón
+16000|Ciudad de México|Xochimilco|La Concepción Tlacoapa|San Antonio|San Juan
+16010|Ciudad de México|Xochimilco|Bosque Residencial del Sur|Las Peritas|Paseos del Sur|San Bartolo El Chico
+16020|Ciudad de México|Xochimilco|San Juan Tepepan|Santa María Tepepan
+16029|Ciudad de México|Xochimilco|Ampliación Tepepan
+16030|Ciudad de México|Xochimilco|Ampliación La Noria|Huichapan|La Noria|Potrero de San Bernardino
+16034|Ciudad de México|Xochimilco|18
+16035|Ciudad de México|Xochimilco|Rinconada Coapa|San Lorenzo La Cebada
+16036|Ciudad de México|Xochimilco|Mercado de Flores Plantas y Hortalizas
+16038|Ciudad de México|Xochimilco|Ampliación San Marcos Norte
+16040|Ciudad de México|Xochimilco|La Asunción|San Lorenzo
+16050|Ciudad de México|Xochimilco|Jardines del Sur|San Marcos|Tierra Nueva
+16059|Ciudad de México|Xochimilco|Pueblo Santiago Tepalcatlalpan, U.H. Rinconada del Sur
+16060|Ciudad de México|Xochimilco|El Mirador
+16070|Ciudad de México|Xochimilco|Belén|El Rosario|La Guadalupita|Santa Crucita
+16080|Ciudad de México|Xochimilco|La Santísima|San Cristóbal|San Diego|San Esteban
+16083|Ciudad de México|Xochimilco|Caltongo
+16090|Ciudad de México|Xochimilco|San Pedro|Tablas de San Lorenzo|Xaltocan
+16100|Ciudad de México|Xochimilco|Santa Cruz Xochitepec
+16200|Ciudad de México|Xochimilco|Santiago Tepalcatlalpan
+16210|Ciudad de México|Xochimilco|La Concha|Pueblo Santiago Tepalcatlalpan U.H. Res. Santiago
+16240|Ciudad de México|Xochimilco|Tlaxopan
+16300|Ciudad de México|Xochimilco|San Lucas Xochimanca
+16310|Ciudad de México|Xochimilco|La Cañada
+16320|Ciudad de México|Xochimilco|San Lucas Oriente
+16340|Ciudad de México|Xochimilco|Texmic
+16400|Ciudad de México|Xochimilco|San Lorenzo Atemoaya
+16410|Ciudad de México|Xochimilco|Lomas de Tonalco
+16420|Ciudad de México|Xochimilco|San Jerónimo
+16428|Ciudad de México|Xochimilco|El Jazmín
+16429|Ciudad de México|Xochimilco|Rancho Tejomulco
+16430|Ciudad de México|Xochimilco|Xochipilli
+16440|Ciudad de México|Xochimilco|Año de Juárez
+16443|Ciudad de México|Xochimilco|Pocitos
+16450|Ciudad de México|Xochimilco|Santa María Nativitas
+16457|Ciudad de México|Xochimilco|Lomas de Nativitas
+16459|Ciudad de México|Xochimilco|Ampliación Nativitas
+16500|Ciudad de México|Xochimilco|Santa Cruz Acalpixca
+16513|Ciudad de México|Xochimilco|Apatlaco|Del Puente
+16514|Ciudad de México|Xochimilco|Calpulco|La Gallera|Tetitla
+16520|Ciudad de México|Xochimilco|La Planta
+16530|Ciudad de México|Xochimilco|Las Cruces|Las Flores
+16533|Ciudad de México|Xochimilco|Ahualapa
+16550|Ciudad de México|Xochimilco|Valle de Santa María
+16600|Ciudad de México|Xochimilco|San Gregorio Atlapulco
+16604|Ciudad de México|Xochimilco|San Andrés
+16605|Ciudad de México|Xochimilco|Los Reyes
+16606|Ciudad de México|Xochimilco|3 de Mayo
+16607|Ciudad de México|Xochimilco|San Antonio
+16609|Ciudad de México|Xochimilco|La Candelaria
+16610|Ciudad de México|Xochimilco|San Luis Tlaxialtemalco
+16614|Ciudad de México|Xochimilco|Niños Héroes
+16615|Ciudad de México|Xochimilco|La Asunción
+16616|Ciudad de México|Xochimilco|Santa Cecilia
+16617|Ciudad de México|Xochimilco|San Sebastián
+16620|Ciudad de México|Xochimilco|San José
+16629|Ciudad de México|Xochimilco|La Guadalupana|San Juan
+16630|Ciudad de México|Xochimilco|San Juan Moyotepec
+16640|Ciudad de México|Xochimilco|San Juan Minas
+16710|Ciudad de México|Xochimilco|Quirino Mendoza
+16720|Ciudad de México|Xochimilco|Del Carmen
+16739|Ciudad de México|Xochimilco|San Isidro
+16740|Ciudad de México|Xochimilco|Guadalupita
+16749|Ciudad de México|Xochimilco|Las Animas
+16750|Ciudad de México|Xochimilco|Calyequita
+16770|Ciudad de México|Xochimilco|San Felipe
+16776|Ciudad de México|Xochimilco|El Mirador|Santiaguito
+16780|Ciudad de México|Xochimilco|Cerrillos Primera Sección|Cerrillos Segunda Sección|Cerrillos Tercera Sección|Cristo Rey|El Sacrificio
+16797|Ciudad de México|Xochimilco|Nativitas
+16799|Ciudad de México|Xochimilco|Las Mesitas
+16800|Ciudad de México|Xochimilco|San Mateo Xalpa
+16810|Ciudad de México|Xochimilco|Rosario Tlali|San Andrés Ahuayucan|Santa Inés
+16813|Ciudad de México|Xochimilco|El Calvario
+16840|Ciudad de México|Xochimilco|Santa Cruz Chavarrieta
+16850|Ciudad de México|Xochimilco|Chapultepec
+16860|Ciudad de México|Xochimilco|Santa Cruz de Guadalupe
+16880|Ciudad de México|Xochimilco|Santa Cecilia Tepetlapa
+16900|Ciudad de México|Xochimilco|San Francisco Tlalnepantla
