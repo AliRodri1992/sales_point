@@ -37,6 +37,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include('ABC', 'data-server-field-error')
   end
+
   it 'uses the existing illustration without a duplicate create action for an empty list' do
     get admin_supplier_addresses_path(supplier)
 
@@ -50,7 +51,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css("a[href='#{new_admin_supplier_address_path(supplier)}']").size).to eq(1)
 
     tabs = page.at_css('[data-supplier-address-tabs]')
-    expect(tabs.css('a span').map(&:text).map(&:strip)).to eq(%w[0 0])
+    expect(tabs.css('a span').map { |item| item.text.strip }).to eq(%w[0 0])
   end
 
   it 'shows a deleted-address empty state without duplicate buttons' do
@@ -86,7 +87,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('[data-address-empty="active"]')).to be_present
     expect(page.at_css('[data-address-statistics]')).to be_present
-    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map(&:text).map(&:strip)).to eq(%w[0 1])
+    expect(page.at_css('[data-supplier-address-tabs]').css('a span').map { |item| item.text.strip }).to eq(%w[0 1])
 
     get admin_supplier_addresses_path(supplier, status: 'deleted')
 
@@ -104,5 +105,4 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.at_css('[data-address-empty="active"]')).to be_present
     expect(page.at_css("a[href='#{new_admin_supplier_address_path(supplier)}']")).to be_nil
   end
-
 end
