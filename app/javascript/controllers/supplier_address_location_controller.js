@@ -12,6 +12,8 @@ export default class extends Controller {
   connect() {
     this.point = this.savedPoint()
     this.mapCenter = this.point
+    this.zoomLevel = 15
+    this.dragOrigin = null
     this.pending = false
     this.request = null
     if (this.point) this.showMap()
@@ -123,6 +125,7 @@ export default class extends Controller {
     const url = new URL(this.mapUrlValue, window.location.href)
     url.searchParams.set("latitude", this.mapCenter.lat)
     url.searchParams.set("longitude", this.mapCenter.lon)
+    url.searchParams.set("zoom", String(this.zoomLevel))
     this.mapImageTarget.src = url.toString()
   }
 
@@ -130,8 +133,7 @@ export default class extends Controller {
     if (!this.mapCenter || !this.signatureTarget.value) return
 
     const rect = event.currentTarget.getBoundingClientRect()
-    const zoom = 15
-    const scale = 512 * 2 ** zoom
+    const scale = 512 * 2 ** this.zoomLevel
     const latRad = this.mapCenter.lat * Math.PI / 180
     const centerX = (this.mapCenter.lon + 180) / 360 * scale
     const centerY = (1 - Math.asinh(Math.tan(latRad)) / Math.PI) / 2 * scale
@@ -145,6 +147,42 @@ export default class extends Controller {
     this.confirmedTarget.value = "0"
     this.statusTarget.textContent = this.readyValue
     this.showMap()
+  }
+
+  zoomIn() {
+    this.zoomLevel = Math.min(this.zoomLevel + 1, 18)
+    if (this.point) this.showMap()
+  }
+
+  zoomOut() {
+    this.zoomLevel = Math.max(this.zoomLevel - 1, 12)
+    if (this.point) this.showMap()
+  }
+
+  dragStart(event) {
+    if (event.button !== 0 || !this.mapCenter) return
+    this.dragOrigin = { x: event.clientX, y: event.clientY }
+  }
+
+  dragEnd(event) {
+    if (!this.dragOrigin) return
+    const moved = Math.hypot(event.clientX - this.dragOrigin.x, event.clientY - this.dragOrigin.y)
+    this.dragOrigin = null
+    if (moved > 4) this.adjust(event)
+  }
+
+  nudge(event) {
+    const directions = {
+      ArrowLeft: [-10, 0], ArrowRight: [10, 0],
+      ArrowUp: [0, -10], ArrowDown: [0, 10]
+    }
+    if (!directions[event.key] || !this.point || !this.signatureTarget.value) return
+    event.preventDefault()
+    const rect = event.currentTarget.getBoundingClientRect()
+    const [dx, dy] = directions[event.key]
+    this.adjust({ currentTarget: event.currentTarget,
+      clientX: rect.left + rect.width / 2 + dx,
+      clientY: rect.top + rect.height / 2 + dy })
   }
 
   confirm() {
