@@ -5,7 +5,8 @@
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
 <% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
-<% dossier_sections = %w[overview general fiscal commercial contacts addresses schedules documents products] %>
+<% dossier_sections = %w[overview general fiscal commercial contacts addresses schedules documents] %>
+<% dossier_sections << 'products' if policy(supplier).view_products? %>
 <% dossier_sections << 'bank_accounts' if can_view_bank_accounts %>
 <% dossier_sections << 'statement' if can_view_finances %>
 
