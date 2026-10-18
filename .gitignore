@@ -116,3 +116,5 @@ app/assets/builds/
 .qoder/
 
 plantillas/
+
+*.example
