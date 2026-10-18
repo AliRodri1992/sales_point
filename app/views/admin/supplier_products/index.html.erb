@@ -1,47 +1,168 @@
-<div class="space-y-6">
-  <header class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <div>
-      <%= link_to @supplier.name, admin_supplier_path(@supplier, tab: 'products'), class: 'text-sm text-emerald-700 hover:underline' %>
-      <h1 class="mt-2 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.procurement.title') %></h1>
+<div class="space-y-5">
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <div class="min-w-0">
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.procurement.title') %></h1>
       <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.description') %></p>
     </div>
-    <% if policy(@supplier).manage_products? %>
-      <%= link_to t('admin.procurement.add'), new_admin_supplier_supplier_product_path(@supplier),
-                  class: 'rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700' %>
-    <% end %>
+    <div class="flex shrink-0 flex-wrap items-center gap-2">
+      <%= link_to admin_supplier_path(@supplier, tab: 'products'),
+                  class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-50' do %>
+        <%= icon('arrow-left', class: 'size-4') %>
+        <%= t('admin.procurement.back') %>
+      <% end %>
+      <% if policy(@supplier).manage_products? %>
+        <%= link_to new_admin_supplier_supplier_product_path(@supplier),
+                    class: 'inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800' do %>
+          <%= icon('plus', class: 'size-4') %>
+          <%= t('admin.procurement.add_short') %>
+        <% end %>
+      <% end %>
+    </div>
   </header>
-  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
-      <thead class="bg-slate-50 text-slate-600"><tr>
-        <% %w[product presentation purchase_price unit_cost preferred actions].each do |column| %>
-          <th class="px-4 py-3 font-semibold"><%= t("admin.procurement.#{column}") %></th>
+
+  <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <%= form_with url: admin_supplier_supplier_products_path(@supplier), method: :get,
+                  class: 'mb-5', data: { controller: 'products-search', products_search_delay_value: 350 } do %>
+      <label for="supplier-products-search" class="sr-only"><%= t('admin.procurement.search') %></label>
+      <div class="relative">
+        <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+        <%= search_field_tag :q, @search, id: 'supplier-products-search',
+                             placeholder: t('admin.procurement.search_placeholder'),
+                             autocomplete: 'off', data: { action: 'input->products-search#debouncedSubmit' },
+                             class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100' %>
+      </div>
+    <% end %>
+
+    <% if @total_offers.positive? %>
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full min-w-[880px] text-left text-sm">
+          <thead class="bg-slate-50 text-xs font-semibold text-slate-600">
+            <tr>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.thumbnail') %></th>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.product_sku') %></th>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.presentation') %></th>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.purchase_price') %></th>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.unit_cost') %></th>
+              <th scope="col" class="px-4 py-3"><%= t('admin.procurement.preferred') %></th>
+              <th scope="col" class="px-4 py-3 text-center"><%= t('admin.procurement.actions') %></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @offers.each do |offer| %>
+              <% product = offer.product %>
+              <tr data-product-offer-row class="hover:bg-emerald-50/30">
+                <td class="px-4 py-2.5">
+                  <div class="flex size-16 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+                    <% if product.image.attached? %>
+                      <%= image_tag product.image.variant(resize_to_limit: [112, 112]), alt: product.name,
+                                    loading: 'lazy', class: 'h-full w-full object-contain' %>
+                    <% else %>
+                      <%= image_tag 'supplier-product-placeholder.svg',
+                                    alt: t('admin.procurement.no_image'),
+                                    loading: 'lazy', class: 'h-full w-full object-contain' %>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-4 py-3">
+                  <p class="font-semibold text-slate-900"><%= product.name %></p>
+                  <p class="mt-1 text-xs text-slate-500">
+                    <%= t('admin.procurement.sku_label') %>:
+                    <%= offer.supplier_sku.presence || product.sku.presence || product.code %>
+                  </p>
+                </td>
+                <td class="px-4 py-3">
+                  <p class="font-medium text-slate-800"><%= offer.presentation_name %></p>
+                  <p class="mt-1 text-xs tabular-nums text-slate-500">
+                    <%= number_with_precision(offer.units_per_package, precision: 4, strip_insignificant_zeros: true) %>
+                    <%= t('admin.procurement.units_short') %>
+                  </p>
+                </td>
+                <td class="whitespace-nowrap px-4 py-3">
+                  <p class="font-semibold tabular-nums text-slate-900"><%= number_to_currency(offer.purchase_price, precision: 2) %></p>
+                  <p class="mt-1 text-xs text-slate-500"><%= offer.currency.code %></p>
+                </td>
+                <td class="whitespace-nowrap px-4 py-3">
+                  <p class="font-semibold tabular-nums text-slate-900"><%= number_to_currency(offer.unit_cost, precision: 4, strip_insignificant_zeros: true) %></p>
+                  <p class="mt-1 text-xs text-slate-500"><%= offer.currency.code %></p>
+                </td>
+                <td class="px-4 py-3">
+                  <% if offer.preferred? %>
+                    <span class="inline-flex whitespace-nowrap rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-800"><%= t('admin.procurement.preferred_yes') %></span>
+                  <% else %>
+                    <span class="text-slate-400">—</span>
+                  <% end %>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <details class="group relative inline-block text-left">
+                    <summary aria-label="<%= t('admin.procurement.actions') %>" class="inline-flex size-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 [&::-webkit-details-marker]:hidden">
+                      <%= icon('ellipsis-vertical', class: 'size-5') %>
+                    </summary>
+                    <div class="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+                      <%= link_to t('admin.procurement.history'), history_admin_supplier_supplier_product_path(@supplier, offer),
+                                  class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
+                      <%= link_to t('admin.procurement.compare'),
+                                  admin_supplier_product_comparison_path(@supplier, product_id: offer.product_id),
+                                  class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
+                      <% if policy(@supplier).manage_products? %>
+                        <%= link_to t('admin.procurement.edit'), edit_admin_supplier_supplier_product_path(@supplier, offer),
+                                    class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
+                        <%= button_to t('admin.procurement.delete'), admin_supplier_supplier_product_path(@supplier, offer),
+                                      method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
+                                      class: 'w-full rounded-lg px-3 py-2 text-left text-sm text-rose-700 hover:bg-rose-50' %>
+                      <% end %>
+                    </div>
+                  </details>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <% from = (@page - 1) * Admin::SupplierProductsController::OFFERS_PER_PAGE + 1 %>
+        <% to = [@page * Admin::SupplierProductsController::OFFERS_PER_PAGE, @total_offers].min %>
+        <p class="text-sm text-slate-500"><%= t('admin.procurement.pagination_range', from:, to:, total: @total_offers) %></p>
+        <% if @total_pages > 1 %>
+          <nav aria-label="<%= t('admin.procurement.pages') %>" class="flex items-center gap-1.5">
+            <% if @page > 1 %>
+              <%= link_to '‹', admin_supplier_supplier_products_path(@supplier, q: @search, page: @page - 1),
+                          aria: { label: t('admin.procurement.previous') },
+                          class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50' %>
+            <% end %>
+            <% ([1, *@page.pred.upto(@page + 1).to_a, @total_pages].uniq & (1..@total_pages).to_a).each do |page_number| %>
+              <%= link_to page_number, admin_supplier_supplier_products_path(@supplier, q: @search, page: page_number),
+                          aria: { current: ('page' if page_number == @page) },
+                          class: "inline-flex size-9 items-center justify-center rounded-lg border text-sm font-semibold #{page_number == @page ? 'border-emerald-600 bg-emerald-50 text-emerald-800' : 'border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50'}" %>
+            <% end %>
+            <% if @page < @total_pages %>
+              <%= link_to '›', admin_supplier_supplier_products_path(@supplier, q: @search, page: @page + 1),
+                          aria: { label: t('admin.procurement.next') },
+                          class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50' %>
+            <% end %>
+          </nav>
         <% end %>
-      </tr></thead>
-      <tbody class="divide-y divide-slate-100">
-        <% @offers.each do |offer| %>
-          <tr>
-            <td class="px-4 py-3"><%= offer.product.name %> <span class="text-slate-400"><%= offer.supplier_sku %></span></td>
-            <td class="px-4 py-3"><%= offer.presentation_name %> × <%= offer.units_per_package %></td>
-            <td class="px-4 py-3"><%= offer.purchase_price %> <%= offer.currency.code %></td>
-            <td class="px-4 py-3 font-semibold"><%= offer.unit_cost %> <%= offer.currency.code %></td>
-            <td class="px-4 py-3"><%= offer.preferred? ? t('admin.procurement.yes') : '—' %></td>
-            <td class="px-4 py-3">
-              <%= link_to t('admin.procurement.history'), history_admin_supplier_supplier_product_path(@supplier, offer),
-                          class: 'mr-3 text-emerald-700 hover:underline' %>
-              <%= link_to t('admin.procurement.compare'),
-                          admin_supplier_product_comparison_path(@supplier, product_id: offer.product_id),
-                          class: 'mr-3 text-emerald-700 hover:underline' %>
-              <% if policy(@supplier).manage_products? %>
-                <%= link_to t('admin.procurement.edit'), edit_admin_supplier_supplier_product_path(@supplier, offer), class: 'text-emerald-700 hover:underline' %>
-                <%= button_to t('admin.procurement.delete'), admin_supplier_supplier_product_path(@supplier, offer),
-                              method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
-                              class: 'mt-2 text-rose-600 hover:underline' %>
-              <% end %>
-            </td>
-          </tr>
+      </footer>
+    <% elsif @search.present? %>
+      <div data-product-search-empty class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center">
+        <%= icon('magnifying-glass', class: 'mx-auto size-8 text-emerald-600') %>
+        <h2 class="mt-3 font-jakarta text-lg font-semibold text-slate-900"><%= t('admin.procurement.no_matches') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.try_another_search') %></p>
+        <%= link_to t('admin.procurement.clear_search'), admin_supplier_supplier_products_path(@supplier),
+                    class: 'mt-4 inline-flex text-sm font-semibold text-emerald-800 hover:underline' %>
+      </div>
+    <% else %>
+      <div data-product-offers-empty class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center">
+        <%= image_tag 'sproducts.png', alt: '', loading: 'lazy', class: 'mx-auto h-40 w-auto' %>
+        <h2 class="mt-3 font-jakarta text-lg font-semibold text-slate-900"><%= t('admin.procurement.empty') %></h2>
+        <% if policy(@supplier).manage_products? %>
+          <%= link_to new_admin_supplier_supplier_product_path(@supplier),
+                      class: 'mt-4 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
+            <%= icon('plus', class: 'size-4') %>
+            <%= t('admin.procurement.add_short') %>
+          <% end %>
         <% end %>
-      </tbody>
-    </table>
-    <% if @offers.empty? %><p class="p-6 text-sm text-slate-500"><%= t('admin.procurement.empty') %></p><% end %>
-  </div>
+      </div>
+    <% end %>
+  </section>
 </div>

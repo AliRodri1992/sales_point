@@ -9,10 +9,22 @@ module Admin
     before_action :set_supplier
     before_action :set_offer, only: %i[edit update destroy history]
 
+    OFFERS_PER_PAGE = 6
+
     def index
       authorize @supplier, :view_products?
-      @offers = @supplier.supplier_products.available.includes(:product, :currency)
-      @offers = @offers.order(:product_id)
+
+      @search = params[:q].to_s.strip.first(120)
+      scope = @supplier.supplier_products.available.joins(:product)
+                       .merge(current_organization.products.not_deleted)
+      scope = filter_offers(scope) if @search.present?
+
+      @total_offers = scope.count
+      @total_pages = [(@total_offers.to_f / OFFERS_PER_PAGE).ceil, 1].max
+      @page = [[params[:page].to_i, 1].max, @total_pages].min
+      @offers = scope.order('products.name ASC', 'supplier_products.id ASC')
+                     .includes(:currency, product: { image_attachment: :blob })
+                     .limit(OFFERS_PER_PAGE).offset((@page - 1) * OFFERS_PER_PAGE)
     end
 
     def history
@@ -65,6 +77,15 @@ module Admin
     end
 
     private
+
+    def filter_offers(scope)
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(@search)}%"
+      scope.where(
+        'products.name ILIKE :term OR products.code ILIKE :term OR products.sku ILIKE :term OR ' \
+        'supplier_products.supplier_sku ILIKE :term',
+        term:
+      )
+    end
 
     def set_supplier
       return head :forbidden unless current_organization

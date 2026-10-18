@@ -1,6 +1,23 @@
 ko:
   admin:
     procurement:
+      description: "이 공급업체와 연결된 상품을 확인하세요."
+      add_short: "추가"
+      thumbnail: "미리보기"
+      product_sku: "상품 / SKU"
+      sku_label: "SKU"
+      units_short: "개"
+      preferred_yes: "우선 공급업체"
+      no_image: "상품 이미지 없음"
+      search: "상품 검색"
+      search_placeholder: "이름, SKU 또는 코드로 검색…"
+      pagination_range: "전체 %{total}개 중 %{from}–%{to}개 표시"
+      pages: "상품 페이지"
+      previous: "이전 페이지"
+      next: "다음 페이지"
+      no_matches: "일치하는 상품이 없습니다"
+      try_another_search: "다른 이름, 코드 또는 SKU로 검색하세요."
+      clear_search: "검색 초기화"
       title: "공급업체 상품"
       description: "구매 포장 및 공급업체 비용을 관리합니다."
       add: "상품 추가"

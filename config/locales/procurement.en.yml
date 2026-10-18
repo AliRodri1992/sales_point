@@ -1,6 +1,23 @@
 en:
   admin:
     procurement:
+      description: "View the products associated with this supplier."
+      add_short: "Add"
+      thumbnail: "Thumbnail"
+      product_sku: "Product / SKU"
+      sku_label: "SKU"
+      units_short: "units"
+      preferred_yes: "Yes, preferred"
+      no_image: "Product image unavailable"
+      search: "Search products"
+      search_placeholder: "Search by name, SKU, or code…"
+      pagination_range: "Showing %{from}–%{to} of %{total} products"
+      pages: "Product pages"
+      previous: "Previous page"
+      next: "Next page"
+      no_matches: "No matching products"
+      try_another_search: "Try another name, code, or SKU."
+      clear_search: "Clear search"
       title: "Supplier products"
       description: "Manage purchase packaging and supplier costs."
       add: "Add product"

@@ -1,6 +1,23 @@
 es:
   admin:
     procurement:
+      description: "Consulta los productos asociados a este proveedor."
+      add_short: "Agregar"
+      thumbnail: "Miniatura"
+      product_sku: "Producto / SKU"
+      sku_label: "SKU"
+      units_short: "unidades"
+      preferred_yes: "Sí, preferido"
+      no_image: "Imagen del producto no disponible"
+      search: "Buscar productos"
+      search_placeholder: "Buscar por nombre, SKU o código…"
+      pagination_range: "Mostrando %{from}–%{to} de %{total} productos"
+      pages: "Páginas de productos"
+      previous: "Página anterior"
+      next: "Página siguiente"
+      no_matches: "No se encontraron productos"
+      try_another_search: "Prueba con otro nombre, código o SKU."
+      clear_search: "Limpiar búsqueda"
       title: "Productos por proveedor"
       description: "Administra presentaciones y costos de compra."
       add: "Agregar producto"
