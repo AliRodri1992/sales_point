@@ -378,7 +378,7 @@ RSpec.describe 'Supplier address integration', type: :request do
     get admin_supplier_addresses_path(supplier)
 
     page = Nokogiri::HTML(response.body)
-    expect(page.css('[data-address-geocoding-status]').size).to eq(1)
+    expect(page.css('[data-address-geocoding-status]').size).to eq(2)
     expect(page.at_css('[data-address-geocoding-status]')['data-address-geocoding-status']).to eq('success')
     expect(page.at_css("article[data-supplier-address-id='#{located.id}']").text).to include('Blue gate')
     expect(page.css('article h2').map(&:text)).not_to include('##')
