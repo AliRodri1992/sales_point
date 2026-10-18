@@ -55,5 +55,4 @@ RSpec.describe Suppliers::SaveAddress do
     expect(outcomes.size).to eq(2)
     expect(Supplier.find(supplier_id).addresses.where(purpose: 'fiscal', primary: true).count).to eq(1)
   end
-
 end
