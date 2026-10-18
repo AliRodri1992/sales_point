@@ -17,6 +17,18 @@ RSpec.describe SupplierExamples do
     expect(organization.organization_memberships.where(user: administrator, status: :active).count).to eq(1)
   end
 
+  it 'reuses an archived demo fiscal regime instead of inserting a duplicate' do
+    described_class.seed!
+    regime = SatFiscalRegime.find_by!(code: '601', person_type: 'M')
+    count = SatFiscalRegime.count
+    regime.update!(deleted_at: Time.current)
+
+    described_class.seed!
+
+    expect(SatFiscalRegime.count).to eq(count)
+    expect(regime.reload.deleted_at).to be_nil
+  end
+
   it 'does not duplicate suppliers, contacts or memberships when run twice' do
     2.times { described_class.seed! }
 
