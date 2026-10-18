@@ -15,7 +15,7 @@ module Suppliers
     def call
       return unless ZIP_FORMAT.match?(@postal_code)
 
-      Rails.cache.fetch("suppliers:mx_postal:#{@postal_code}", expires_in: CACHE_DURATION) do
+      Rails.cache.fetch("suppliers:mx_postal:#{@postal_code}", expires_in: CACHE_DURATION, skip_nil: true) do
         lookup
       end
     end

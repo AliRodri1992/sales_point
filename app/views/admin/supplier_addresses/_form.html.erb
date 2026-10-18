@@ -37,7 +37,7 @@
           <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
             <%= form.select :country_id,
                             options_for_select(
-                              @countries.map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: image_path("flags/#{country.iso_alpha2.downcase}.svg") } }] },
+                              @countries.map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: country_flag_asset_path(country) } }] },
                               form.object.country_id
                             ),
                             { include_blank: t('admin.supplier_placeholders.country') },
