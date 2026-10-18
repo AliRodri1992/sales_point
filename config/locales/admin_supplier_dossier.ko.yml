@@ -107,8 +107,7 @@ ko:
         content: "공급업체 정보 내용"
         dossier: "공급업체 정보"
         operations: "운영"
-        bank_accounts: "은행 계좌"
-        statement: "거래 명세"
+        finances: "재무"
       overview:
         upcoming_visits: "예정된 방문 및 배송"
         weekly: "매주"
@@ -196,7 +195,8 @@ ko:
         schedules: "일정"
         documents: "문서"
         products: "상품"
-        finances: "재무"
+        bank_accounts: "은행 계좌"
+        statement: "거래 명세"
       kinds:
         visit: "방문"
         order: "주문 접수"

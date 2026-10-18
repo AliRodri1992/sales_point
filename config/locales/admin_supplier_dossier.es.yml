@@ -107,8 +107,7 @@ es:
         content: "Contenido del expediente"
         dossier: "Expediente"
         operations: "Operaciones"
-        bank_accounts: "Cuentas bancarias"
-        statement: "Estado de cuenta"
+        finances: "Finanzas"
       overview:
         upcoming_visits: "Próximas visitas y entregas"
         weekly: "Semanal"
@@ -196,7 +195,8 @@ es:
         schedules: "Calendarios"
         documents: "Documentos"
         products: "Productos"
-        finances: "Finanzas"
+        bank_accounts: "Cuentas bancarias"
+        statement: "Estado de cuenta"
       kinds:
         visit: "Visita"
         order: "Toma de pedidos"

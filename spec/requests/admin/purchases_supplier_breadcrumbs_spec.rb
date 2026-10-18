@@ -6,7 +6,9 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, :english) }
   let(:supplier) { create(:supplier, organization:) }
-  let(:dossier_sections) { %w[general commercial contacts addresses schedules documents products finances] }
+  let(:dossier_sections) do
+    %w[general commercial contacts addresses schedules documents bank_accounts products statement]
+  end
 
   before do
     create(:organization_membership, user:, organization:)
