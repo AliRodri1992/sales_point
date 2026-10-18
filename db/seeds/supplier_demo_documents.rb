@@ -90,6 +90,5 @@ module SupplierDemoDocuments
       offsets.drop(1).each { |offset| data << format('%010d 00000 n ', offset) << "\n" }
       data << "trailer\n<< /Size #{offsets.length} /Root 1 0 R >>\nstartxref\n#{start_xref}\n%%EOF\n"
     end
-
   end
 end
