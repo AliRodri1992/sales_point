@@ -11,10 +11,14 @@ module Geocoding
     def call
       return { valid: false } if token.blank?
 
-      response = connection.get(url)
-      return { valid: false } unless response.success?
+      key = Digest::SHA256.hexdigest("#{token}:#{@address.geocoding_fingerprint}")
+      Rails.cache.fetch("mapbox:geocoding:#{key}", expires_in: 12.hours, skip_nil: true) do
+        response = connection.get(url)
+        next unless response.success?
 
-      extract_response(response.body)
+        result = extract_response(response.body)
+        result if result[:valid]
+      end || { valid: false }
     rescue Faraday::Error, JSON::ParserError, TypeError, KeyError => e
       Rails.logger.warn("[MapboxAddress] #{e.class}")
       { valid: false }
