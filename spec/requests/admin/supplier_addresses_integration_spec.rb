@@ -55,6 +55,37 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(page.css('[data-step]')).to be_empty
   end
 
+  it 'places the preview above classification and aligns the right column with the address fields' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller="supplier-address-preview"]')
+    columns = form.at_css('div.grid.items-stretch')
+    expect(columns).to be_present
+
+    right_column = form.at_css('[data-address-layout="right"]')
+    expect(right_column['class']).to include('flex-col', 'lg:h-full')
+    expect(right_column.element_children.map { |element| element['aria-labelledby'] }).to eq(
+      %w[supplier-address-preview-heading supplier-address-classification-heading]
+    )
+    expect(right_column.element_children.last['class']).to include('flex-1')
+  end
+
+  it 'preserves the same section ordering when editing an address' do
+    address = create(:address, :fiscal, addressable: supplier)
+
+    get edit_admin_supplier_address_path(supplier, address)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    sections = page.css('[data-address-layout="right"] > section')
+    expect(sections.map { |section| section['aria-labelledby'] }).to eq(
+      %w[supplier-address-preview-heading supplier-address-classification-heading]
+    )
+    expect(sections.last['class']).to include('flex-1')
+  end
+
   it 'uses the address model for validation instead of native browser restrictions' do
     get new_admin_supplier_address_path(supplier)
 
