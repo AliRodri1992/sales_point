@@ -78,7 +78,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     supplier.addresses.create!(
       street: 'Main Street', exterior_number: '10', neighborhood: 'Centro',
       city: 'CDMX', state: 'CDMX', postal_code: '06000',
-      country: create(:country), purpose: 'fiscal'
+      country: create(:country), purpose: 'fiscal', primary: true
     )
 
     get admin_supplier_path(supplier, tab: 'fiscal')

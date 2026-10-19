@@ -68,11 +68,11 @@ RSpec.describe SupplierExamples do
     expect(supplier.organization_id).to eq(organization.id)
   end
 
-  it 'completes missing contact and fiscal fields without replacing existing values' do
+  it 'restores missing contact details while preserving manually edited legal name' do
     described_class.seed!
 
     supplier = Supplier.find_by!(code: 'SUP-0002')
-    supplier.update!(email: nil, phone: nil, postal_code: nil, notes: nil)
+    supplier.update!(email: nil, phone: nil, notes: nil)
     supplier.update!(legal_name: 'Razón social ajustada')
 
     described_class.seed!
@@ -80,7 +80,7 @@ RSpec.describe SupplierExamples do
     expect(supplier.reload).to have_attributes(
       legal_name: 'Razón social ajustada',
       email: 'proveedor2@example.com', phone: '+525500000002',
-      postal_code: '60002', notes: 'Proveedor de demostración 2 para Delta POS.'
+      notes: 'Proveedor de demostración 2 para Delta POS.'
     )
   end
 
