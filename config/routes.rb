@@ -127,6 +127,9 @@ Rails.application.routes.draw do
         post :validate_fiscal_address
       end
 
+      post 'documents', to: 'supplier_documents#create', as: :documents
+      get 'documents/:document_id/preview', to: 'supplier_documents#preview', as: :document_preview
+      patch 'documents/:document_id', to: 'supplier_documents#update', as: :document_update
       get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download
       delete 'documents/:document_id', to: 'supplier_documents#destroy', as: :document
       resources :schedules, controller: 'supplier_schedules', except: %i[show] do

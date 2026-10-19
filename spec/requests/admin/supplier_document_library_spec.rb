@@ -1,0 +1,144 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Supplier document library', type: :request do
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:user) { create(:user, :english) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: create(:system_role, code: 'administrator', role_type: :system))
+    sign_in user
+  end
+
+  after { @tempfiles&.each(&:close!) }
+
+  def upload(filename = 'contract.pdf', mime = 'application/pdf')
+    @tempfiles ||= []
+    tempfile = Tempfile.new(['supplier-document', File.extname(filename)])
+    tempfile.write('%PDF-1.4 sample supplier document')
+    tempfile.rewind
+    @tempfiles << tempfile
+    Rack::Test::UploadedFile.new(tempfile.path, mime, original_filename: filename)
+  end
+
+  def attachment
+    supplier.documents.attachments.order(:id).last
+  end
+
+  def panel
+    Nokogiri::HTML(response.body).at_css('[data-section="documents"]')
+  end
+
+  it 'renders two-column documents with locally generated SVG icons and a preview panel' do
+    supplier.documents.attach(upload('supplier-contract.pdf'))
+    supplier.documents.attach(upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+
+    get admin_supplier_path(supplier, tab: 'documents')
+
+    expect(response).to have_http_status(:ok)
+    expect(panel['data-controller']).to eq('supplier-documents')
+    expect(panel.css('[data-supplier-documents-target="card"]').size).to eq(2)
+    expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
+    expect(panel.css('img[src*="supplier-document-"]').size).to eq(2)
+    expect(panel.at_css('[data-supplier-documents-target="previewContent"]')).to be_present
+    expect(panel.css('button[data-supplier-documents-target="category"]').size).to eq(7)
+  end
+
+  it 'uploads files with valid metadata and redirects to the Documents section' do
+    post admin_supplier_documents_path(supplier), params: { document: {
+      file: upload, category: 'contract', description: 'Signed supply agreement'
+    } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to eq(1)
+    expect(attachment.blob.custom_metadata).to include(
+      'supplier_category' => 'contract',
+      'supplier_description' => 'Signed supply agreement',
+      'supplier_status' => 'active'
+    )
+  end
+
+  it 'rejects disallowed file formats or files above the size limit' do
+    post admin_supplier_documents_path(supplier), params: { document: {
+      file: upload('script.html', 'text/html'), category: 'other'
+    } }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to eq(0)
+  end
+
+  it 'updates document information without replacing its blob' do
+    supplier.documents.attach(upload)
+    original_id = attachment.id
+
+    patch admin_supplier_document_update_path(supplier, document_id: original_id),
+          params: { document: { category: 'fiscal', status: 'inactive', description: 'Updated certificate' } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(attachment.reload.id).to eq(original_id)
+    expect(attachment.blob.custom_metadata).to include(
+      'supplier_category' => 'fiscal', 'supplier_status' => 'inactive',
+      'supplier_description' => 'Updated certificate'
+    )
+  end
+
+  it 'replaces a document without removing other attachments' do
+    supplier.documents.attach(upload('old-contract.pdf'))
+    original_id = attachment.id
+    supplier.documents.attach(upload('untouched.pdf'))
+    other_id = attachment.id
+
+    patch admin_supplier_document_update_path(supplier, document_id: original_id),
+          params: { document: { file: upload('replacement.pdf') } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.pluck(:id)).not_to include(original_id)
+    expect(supplier.documents.attachments.pluck(:id)).to include(other_id)
+    expect(supplier.documents.attachments.map { |record| record.blob.filename.to_s })
+      .to contain_exactly('untouched.pdf', 'replacement.pdf')
+  end
+
+  it 'previews only allowed inline types and forces downloads otherwise' do
+    supplier.documents.attach(upload)
+    pdf_id = attachment.id
+    supplier.documents.attach(upload('notes.txt', 'text/plain'))
+    txt_id = attachment.id
+
+    get admin_supplier_document_preview_path(supplier, document_id: pdf_id)
+    expect(response).to have_http_status(:ok)
+    expect(response.headers['Content-Disposition']).to include('inline')
+    expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
+
+    get admin_supplier_document_preview_path(supplier, document_id: txt_id)
+    expect(response).to have_http_status(:unsupported_media_type)
+
+    get admin_supplier_document_download_path(supplier, document_id: txt_id)
+    expect(response).to have_http_status(:ok)
+    expect(response.headers['Content-Disposition']).to include('attachment')
+  end
+
+  it 'prevents access to another organizations documents' do
+    outsider = create(:supplier, organization: create(:organization))
+    outsider.documents.attach(upload)
+    document_id = outsider.documents.attachments.first.id
+
+    get admin_supplier_document_preview_path(outsider, document_id:)
+    expect(response).to have_http_status(:not_found)
+
+    patch admin_supplier_document_update_path(outsider, document_id:),
+          params: { document: { category: 'legal' } }
+    expect(response).to have_http_status(:not_found)
+
+    post admin_supplier_documents_path(outsider), params: { document: { file: upload } }
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'blocks document modifications without manage permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_documents?).and_return(false)
+    post admin_supplier_documents_path(supplier), params: { document: { file: upload } }
+    expect(response).to have_http_status(:forbidden).or redirect_to(admin_suppliers_path)
+    expect(supplier.documents.attachments).to be_empty
+  end
+end

@@ -68,6 +68,9 @@ application.register("international-phone", InternationalPhoneController)
 import SupplierDossierController from "./supplier_dossier_controller"
 application.register("supplier-dossier", SupplierDossierController)
 
+import SupplierDocumentsController from "./supplier_documents_controller"
+application.register("supplier-documents", SupplierDocumentsController)
+
 import SupplierContactsController from "./supplier_contacts_controller"
 application.register("supplier-contacts", SupplierContactsController)
 

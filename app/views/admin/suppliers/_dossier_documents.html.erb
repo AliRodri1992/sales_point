@@ -1,0 +1,231 @@
+<% attachments = supplier.documents.attachments.includes(:blob).order(created_at: :desc) %>
+<% documents = attachments.map { |attachment| Suppliers::DocumentPresenter.new(attachment) } %>
+<% categories = %w[all contract fiscal catalog technical legal other] %>
+<% formats = documents.map(&:format).uniq.sort %>
+<% dictionary = 'admin.supplier_documents' %>
+<% initial = documents.first %>
+
+<section id="supplier-dossier-documents" data-supplier-dossier-target="panel" data-section="documents"
+         data-controller="supplier-documents" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+          <%= icon('document-text', class: 'size-6') %>
+        </span>
+        <div>
+          <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.documents') %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.document_empty.subtitle') %></p>
+        </div>
+      </div>
+      <% if can_manage_documents %>
+        <details class="group relative w-full sm:w-auto" data-supplier-documents-target="upload">
+          <summary class="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 sm:w-auto [&::-webkit-details-marker]:hidden">
+            <%= icon('arrow-up-tray', class: 'size-4') %> <%= t("#{dictionary}.upload") %>
+          </summary>
+          <div class="absolute right-0 z-30 mt-2 w-full min-w-[18rem] max-w-sm rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:w-80">
+            <%= form_with url: admin_supplier_documents_path(supplier), scope: :document, multipart: true, class: 'space-y-3' do |f| %>
+              <h3 class="font-jakarta text-sm font-bold text-slate-900"><%= t("#{dictionary}.upload") %></h3>
+              <div>
+                <%= f.label :file, t("#{dictionary}.file"), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+                <%= f.file_field :file, required: true, accept: '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.csv,.xml,.txt', class: 'block w-full min-w-0 text-xs text-slate-700' %>
+                <p class="mt-1 text-xs text-slate-500"><%= t("#{dictionary}.file_hint") %></p>
+              </div>
+              <div>
+                <%= f.label :category, t("#{dictionary}.category"), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+                <%= f.select :category, categories.drop(1).map { |category| [t("#{dictionary}.categories.#{category}"), category] }, {}, class: 'w-full rounded-lg border border-slate-200 px-3 py-2 text-sm' %>
+              </div>
+              <div>
+                <%= f.label :description, t("#{dictionary}.description"), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+                <%= f.text_field :description, maxlength: 300, placeholder: t("#{dictionary}.description_placeholder"), class: 'w-full rounded-lg border border-slate-200 px-3 py-2 text-sm' %>
+              </div>
+              <%= f.submit t("#{dictionary}.upload"), class: 'w-full cursor-pointer rounded-lg bg-emerald-700 px-3 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800' %>
+            <% end %>
+          </div>
+        </details>
+      <% end %>
+    </div>
+
+    <% if documents.any? %>
+      <div class="mt-5 flex flex-wrap gap-2" aria-label="<%= t("#{dictionary}.categories_label") %>">
+        <% categories.each do |category| %>
+          <button type="button" data-supplier-documents-target="category" data-category="<%= category %>"
+                  data-action="supplier-documents#filter"
+                  class="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800"
+                  aria-pressed="<%= category == 'all' %>">
+            <%= t("#{dictionary}.categories.#{category}") %>
+            <span class="rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] tabular-nums">
+              <%= category == 'all' ? documents.size : documents.count { |document| document.category == category } %>
+            </span>
+          </button>
+        <% end %>
+      </div>
+      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_10rem_9rem_9rem]">
+        <label class="relative block min-w-0">
+          <span class="sr-only"><%= t("#{dictionary}.search") %></span>
+          <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-3 size-4 text-slate-400') %>
+          <input type="search" data-supplier-documents-target="search" data-action="input->supplier-documents#filter"
+                 placeholder="<%= t("#{dictionary}.search") %>"
+                 class="min-h-10 w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-emerald-600 focus:ring-emerald-600">
+        </label>
+        <label class="block text-xs font-semibold text-slate-600">
+          <%= t("#{dictionary}.format") %>
+          <select data-supplier-documents-target="format" data-action="change->supplier-documents#filter"
+                  class="mt-1 min-h-10 w-full rounded-xl border border-slate-200 bg-white px-2 text-sm font-normal text-slate-700">
+            <option value=""><%= t("#{dictionary}.all") %></option>
+            <% formats.each do |format| %><option value="<%= format %>"><%= format.upcase %></option><% end %>
+          </select>
+        </label>
+        <label class="block text-xs font-semibold text-slate-600">
+          <%= t("#{dictionary}.status") %>
+          <select data-supplier-documents-target="status" data-action="change->supplier-documents#filter"
+                  class="mt-1 min-h-10 w-full rounded-xl border border-slate-200 bg-white px-2 text-sm font-normal text-slate-700">
+            <option value=""><%= t("#{dictionary}.all") %></option>
+            <% %w[active inactive].each do |status| %><option value="<%= status %>"><%= t("#{dictionary}.statuses.#{status}") %></option><% end %>
+          </select>
+        </label>
+        <label class="block text-xs font-semibold text-slate-600">
+          <%= t("#{dictionary}.date") %>
+          <select data-supplier-documents-target="date" data-action="change->supplier-documents#filter"
+                  class="mt-1 min-h-10 w-full rounded-xl border border-slate-200 bg-white px-2 text-sm font-normal text-slate-700">
+            <option value=""><%= t("#{dictionary}.all") %></option>
+            <option value="30"><%= t("#{dictionary}.last_30_days") %></option>
+            <option value="365"><%= t("#{dictionary}.last_year") %></option>
+          </select>
+        </label>
+      </div>
+
+      <div class="mt-4 grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_19rem] 2xl:grid-cols-[minmax(0,1fr)_21rem]">
+        <div class="min-w-0">
+          <div data-supplier-documents-target="list" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
+            <% documents.each do |document| %>
+              <% attachment = document.attachment %>
+              <% download_url = admin_supplier_document_download_path(supplier, document_id: attachment.id) %>
+              <% preview_url = admin_supplier_document_preview_path(supplier, document_id: attachment.id) %>
+              <% update_url = admin_supplier_document_update_path(supplier, document_id: attachment.id) %>
+              <article data-supplier-documents-target="card" data-document-id="<%= attachment.id %>"
+                       data-category="<%= document.category %>" data-format="<%= document.format %>"
+                       data-status="<%= document.status %>" data-uploaded="<%= attachment.created_at.to_date.iso8601 %>"
+                       data-filename="<%= document.filename %>" data-size="<%= document.size %>"
+                       data-description="<%= document.description %>"
+                       data-date="<%= l(attachment.created_at, format: '%d %b %Y %H:%M') %>"
+                       data-download-url="<%= download_url %>" data-preview-url="<%= preview_url %>"
+                       data-update-url="<%= update_url %>" data-previewable="<%= document.previewable? %>"
+                       class="relative min-w-0 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:shadow-sm">
+                <div class="flex items-start gap-3">
+                  <%= image_tag "supplier-document-#{document.icon}.svg", alt: '', class: 'size-11 shrink-0' %>
+                  <div class="min-w-0 flex-1">
+                    <button type="button" data-action="supplier-documents#select" aria-label="<%= t("#{dictionary}.select", name: document.filename) %>"
+                            class="block w-full text-left focus-visible:rounded focus-visible:outline-2 focus-visible:outline-emerald-600">
+                      <span class="block break-all text-sm font-bold text-slate-900"><%= document.filename %></span>
+                      <span class="mt-1 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
+                        <%= t("#{dictionary}.categories.#{document.category}") %>
+                      </span>
+                    </button>
+                    <p class="mt-2 text-xs text-slate-500">
+                      <%= l(attachment.created_at.to_date, format: '%d %b %Y') %>
+                      <span class="mx-1">·</span><%= document.size %>
+                    </p>
+                    <p class="mt-2 min-h-4 break-words text-xs text-slate-500"><%= document.description.presence || t("#{dictionary}.no_description") %></p>
+                  </div>
+                  <details class="relative shrink-0">
+                    <summary class="flex size-8 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 [&::-webkit-details-marker]:hidden" aria-label="<%= t("#{dictionary}.actions") %>">
+                      <%= icon('ellipsis-vertical', class: 'size-5') %>
+                    </summary>
+                    <div class="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
+                      <%= link_to t("#{dictionary}.download"), download_url, class: 'block rounded px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50' %>
+                      <% if can_manage_documents %>
+                        <%= button_to t("#{dictionary}.delete"), admin_supplier_document_path(supplier, document_id: attachment.id),
+                                      method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
+                                      class: 'w-full rounded px-3 py-2 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50' %>
+                      <% end %>
+                    </div>
+                  </details>
+                </div>
+              </article>
+            <% end %>
+          </div>
+          <div data-supplier-documents-target="noResults" class="hidden mt-4 rounded-xl border border-slate-200 p-8 text-center text-sm text-slate-500">
+            <%= t("#{dictionary}.no_results") %>
+          </div>
+          <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+            <p data-supplier-documents-target="range" class="text-xs text-slate-500" aria-live="polite"></p>
+            <div class="flex items-center gap-2">
+              <button type="button" data-action="supplier-documents#previous" data-supplier-documents-target="previous"
+                      aria-label="<%= t("#{dictionary}.previous") %>" class="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-emerald-50">
+                <%= icon('chevron-left', class: 'size-4') %>
+              </button>
+              <span data-supplier-documents-target="page" class="flex size-9 items-center justify-center rounded-lg border border-emerald-600 bg-emerald-50 text-xs font-semibold text-emerald-800">1</span>
+              <button type="button" data-action="supplier-documents#next" data-supplier-documents-target="next"
+                      aria-label="<%= t("#{dictionary}.next") %>" class="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-emerald-50">
+                <%= icon('chevron-right', class: 'size-4') %>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <aside class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/50 p-4" aria-label="<%= t("#{dictionary}.preview") %>">
+          <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t("#{dictionary}.preview") %></h3>
+          <div data-supplier-documents-target="previewEmpty" class="hidden mt-5 text-center text-sm text-slate-500"><%= t("#{dictionary}.select_hint") %></div>
+          <div data-supplier-documents-target="previewContent">
+            <div class="mt-3 flex h-56 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+              <iframe data-supplier-documents-target="previewFrame" title="<%= t("#{dictionary}.preview") %>" loading="lazy"
+                      class="hidden size-full border-0" sandbox></iframe>
+              <img data-supplier-documents-target="previewImage" alt="<%= t("#{dictionary}.preview") %>" class="hidden h-full w-full object-contain">
+              <div data-supplier-documents-target="unsupported" class="hidden px-5 text-center text-sm text-slate-500">
+                <%= icon('document-text', class: 'mx-auto mb-3 size-10 text-emerald-600') %><%= t("#{dictionary}.unsupported_preview") %>
+              </div>
+            </div>
+            <p data-supplier-documents-target="previewName" class="mt-4 break-all text-sm font-bold text-slate-900"></p>
+            <dl class="mt-3 space-y-3 text-xs">
+              <div class="grid grid-cols-[5rem_minmax(0,1fr)] gap-2"><dt class="text-slate-500"><%= t("#{dictionary}.category") %></dt><dd data-supplier-documents-target="previewType" class="font-medium text-slate-800"></dd></div>
+              <div class="grid grid-cols-[5rem_minmax(0,1fr)] gap-2"><dt class="text-slate-500"><%= t("#{dictionary}.size") %></dt><dd data-supplier-documents-target="previewSize" class="font-medium text-slate-800"></dd></div>
+              <div class="grid grid-cols-[5rem_minmax(0,1fr)] gap-2"><dt class="text-slate-500"><%= t("#{dictionary}.date") %></dt><dd data-supplier-documents-target="previewDate" class="font-medium text-slate-800"></dd></div>
+              <div class="grid grid-cols-[5rem_minmax(0,1fr)] gap-2"><dt class="text-slate-500"><%= t("#{dictionary}.description") %></dt><dd data-supplier-documents-target="previewDescription" class="break-words font-medium text-slate-800"></dd></div>
+            </dl>
+            <div class="mt-5 grid grid-cols-2 gap-2">
+              <a data-supplier-documents-target="download" href="#" class="flex min-h-10 items-center justify-center gap-1 rounded-lg bg-emerald-700 px-2 text-xs font-bold text-white hover:bg-emerald-800"><%= icon('arrow-down-tray', class: 'size-4') %><%= t("#{dictionary}.download") %></a>
+              <a data-supplier-documents-target="open" href="#" target="_blank" rel="noopener noreferrer"
+                 class="flex min-h-10 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50"><%= icon('arrow-top-right-on-square', class: 'size-4') %><%= t("#{dictionary}.open") %></a>
+            </div>
+            <% if can_manage_documents %>
+              <details data-supplier-documents-target="replaceDetails" class="mt-2">
+                <summary class="flex min-h-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-emerald-50 [&::-webkit-details-marker]:hidden"><%= t("#{dictionary}.replace") %></summary>
+                <%= form_with url: admin_supplier_document_update_path(supplier, document_id: initial&.attachment&.id || 0), scope: :document, method: :patch, multipart: true,
+                              data: { supplier_documents_target: 'replaceForm' }, class: 'mt-2 space-y-2' do |f| %>
+                  <%= f.file_field :file, required: true, accept: '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.csv,.xml,.txt', class: 'block w-full text-xs' %>
+                  <%= f.submit t("#{dictionary}.save"), class: 'w-full cursor-pointer rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white' %>
+                <% end %>
+              </details>
+              <details data-supplier-documents-target="editDetails" class="mt-2">
+                <summary class="flex min-h-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-emerald-50 [&::-webkit-details-marker]:hidden"><%= t("#{dictionary}.edit_info") %></summary>
+                <%= form_with url: admin_supplier_document_update_path(supplier, document_id: initial&.attachment&.id || 0), scope: :document, method: :patch,
+                              data: { supplier_documents_target: 'editForm' }, class: 'mt-2 space-y-3' do |f| %>
+                  <%= f.label :category, t("#{dictionary}.category"), class: 'block text-xs font-semibold text-slate-700' %>
+                  <%= f.select :category, categories.drop(1).map { |category| [t("#{dictionary}.categories.#{category}"), category] }, {},
+                               data: { supplier_documents_target: 'editCategory' }, class: 'w-full rounded-lg border border-slate-200 px-3 py-2 text-xs' %>
+                  <%= f.label :status, t("#{dictionary}.status"), class: 'block text-xs font-semibold text-slate-700' %>
+                  <%= f.select :status, %w[active inactive].map { |status| [t("#{dictionary}.statuses.#{status}"), status] }, {},
+                               data: { supplier_documents_target: 'editStatus' }, class: 'w-full rounded-lg border border-slate-200 px-3 py-2 text-xs' %>
+                  <%= f.label :description, t("#{dictionary}.description"), class: 'block text-xs font-semibold text-slate-700' %>
+                  <%= f.text_area :description, rows: 2, maxlength: 300, data: { supplier_documents_target: 'editDescription' },
+                                  class: 'w-full rounded-lg border border-slate-200 px-3 py-2 text-xs' %>
+                  <%= f.submit t("#{dictionary}.save"), class: 'w-full cursor-pointer rounded-lg bg-emerald-700 px-3 py-2 text-xs font-semibold text-white' %>
+                <% end %>
+              </details>
+            <% end %>
+          </div>
+        </aside>
+      </div>
+    <% else %>
+      <div class="mt-5 rounded-2xl border border-slate-200 px-5 py-10 text-center sm:px-8">
+        <%= image_tag 'sdocuments.png', alt: '', loading: 'lazy', class: 'mx-auto w-full max-w-[250px]' %>
+        <h3 class="mt-3 font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.document_empty.title') %></h3>
+        <p class="mx-auto mt-2 max-w-lg text-sm text-slate-500"><%= t('admin.supplier_dossier.document_empty.description') %></p>
+        <% if can_manage_documents %>
+          <p class="mt-3 text-sm font-semibold text-emerald-700"><%= t("#{dictionary}.upload_hint") %></p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>
