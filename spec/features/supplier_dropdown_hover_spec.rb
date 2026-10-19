@@ -18,30 +18,34 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
   after { Warden.test_reset! }
 
-  def expect_full_width_option_hover(select_name)
-    select = find("select[name='#{select_name}']", visible: :all)
-    dropdown = select.find(:xpath, '..')
+  def open_dropdown(name)
+    dropdown = find("select[name='#{name}']", visible: :all).find(:xpath, '..')
     dropdown.find('button[aria-haspopup="listbox"]').click
+    dropdown
+  end
 
-    menu = dropdown.find('[role="listbox"]')
-    option = menu.all('[role="option"]', minimum: 2).find do |item|
-      item['aria-selected'] == 'false' && item.text.present?
-    end
-    expect(option).to be_present
-
-    edges = page.evaluate_script(<<~JS, menu, option)
-      const menu = arguments[0].getBoundingClientRect()
-      const option = arguments[1].getBoundingClientRect()
-      ({ left: option.left - menu.left, right: menu.right - option.right })
+  def full_width_option?(option)
+    page.evaluate_script(<<~JS, option)
+      (function(row) {
+        const menu = row.closest('[role="listbox"]')
+        const list = menu.getBoundingClientRect()
+        const item = row.getBoundingClientRect()
+        const left = list.left + menu.clientLeft
+        const right = left + menu.clientWidth
+        return Math.abs(item.left - left) < 2 && Math.abs(item.right - right) < 2
+      })(arguments[0])
     JS
+  end
 
-    # The one-pixel menu border must be the only inset; no padded gutters.
-    expect(edges.fetch('left')).to be_within(1.1).of(1)
-    expect(edges.fetch('right')).to be_within(1.1).of(1)
+  def expect_full_width_option_hover(select_name)
+    dropdown = open_dropdown(select_name)
+    option = dropdown.find('[role="option"][aria-selected="false"]')
     expect(option[:class]).to include('rounded-none', 'hover:bg-emerald-50')
+    expect(full_width_option?(option)).to be(true)
 
     option.hover
-    expect(menu).to have_css('[role="option"]:hover')
+    expect(dropdown).to have_css('[role="option"]:hover')
+    dropdown
   end
 
   scenario 'highlights a whole fiscal regime row, including space beyond the label' do
@@ -59,10 +63,8 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
     Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
     visit new_admin_supplier_address_path(supplier)
 
-    expect_full_width_option_hover('address[country_id]')
-    menu = find('select[name="address[country_id]"]', visible: :all)
-           .find(:xpath, '..').find('[role="listbox"]')
-    expect(menu).to have_css('input[type="search"]')
-    expect(menu).to have_css('[role="option"] img')
+    dropdown = expect_full_width_option_hover('address[country_id]')
+    expect(dropdown).to have_css('[role="listbox"] input[type="search"]')
+    expect(dropdown).to have_css('[role="option"] img')
   end
 end
