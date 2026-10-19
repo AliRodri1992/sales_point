@@ -66,6 +66,6 @@ RSpec.describe 'Supplier fiscal address step validation', type: :request do
     sign_out user
     post validate_fiscal_address_admin_suppliers_path, params: { address: fiscal_address }, as: :json
 
-    expect(response).to redirect_to(new_user_session_path)
+    expect(response).to have_http_status(:unauthorized)
   end
 end
