@@ -41,7 +41,7 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
   end
 
   def fiscal_field(name)
-    find('[data-supplier-address-validation] [data-supplier-address-field="' + name + '"]',
+    find("[data-supplier-address-validation] [data-supplier-address-field='#{name}']",
          visible: :all)
   end
 
@@ -52,7 +52,7 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
     find('[data-action="supplier-form#next"]').click
 
     %w[street exterior_number neighborhood city state postal_code].each do |field|
-      expect(fiscal_field(field)).to have_css('[data-supplier-address-model-error="' + field + '"]:not(.hidden)')
+      expect(fiscal_field(field)).to have_css("[data-supplier-address-model-error='#{field}']:not(.hidden)")
       expect(fiscal_field(field)).to have_css('[aria-invalid="true"]', visible: :all)
     end
     expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')

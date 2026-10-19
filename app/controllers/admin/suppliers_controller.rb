@@ -11,6 +11,7 @@ module Admin
     include SupplierContactsPagination
     include SupplierAddressesPagination
     include SupplierDossierLoading
+    include SupplierFiscalAddressValidation
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -43,25 +44,6 @@ module Admin
 
     def addresses_page
       render_dossier_addresses_page
-    end
-
-    def validate_fiscal_address
-      @supplier = current_organization.suppliers.new
-      authorize @supplier, :new?
-      authorize @supplier, :manage_addresses?
-
-      address = @supplier.addresses.build(
-        params.expect(address: %i[
-          street exterior_number interior_number neighborhood city state country_id postal_code
-        ]).merge(purpose: 'fiscal', primary: true)
-      )
-      if address.valid?
-        render json: { valid: true }
-      else
-        errors = address.errors.to_hash
-        errors[:country_id] = Array(errors[:country_id]) + Array(errors.delete(:country)) if errors.key?(:country)
-        render json: { valid: false, errors: }, status: :unprocessable_content
-      end
     end
 
     def new
