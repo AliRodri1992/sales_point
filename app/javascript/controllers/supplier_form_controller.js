@@ -6,7 +6,8 @@ export default class extends Controller {
     "addressValidationError"]
   static values = {
     index: { type: Number, default: 0 },
-    addressValidationUrl: String
+    addressValidationUrl: String,
+    newRecord: Boolean
   }
 
   connect() {
@@ -297,7 +298,10 @@ export default class extends Controller {
     if (!this.hasSummaryTarget) return
     this.summaryTarget.replaceChildren()
 
-    this.stepTargets.slice(0, -1).forEach((step) => {
+    this.stepTargets.slice(0, -1).forEach((step, index) => {
+      // Only the creation summary omits contacts, commercial terms and branch operations.
+      if (this.newRecordValue && [2, 3, 4].includes(index)) return
+
       const title = step.querySelector("h2")?.textContent?.trim() || ""
       const fields = [...step.querySelectorAll("input, select, textarea")]
         .filter((field) => !field.closest("[data-supplier-nested-item]"))
