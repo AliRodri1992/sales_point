@@ -34,26 +34,23 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(response.body).not_to include('translation_missing')
   end
 
-  it 'places the conditional location review warning directly beneath the map controls' do
+  it 'shows dynamic map feedback immediately below the controls without a static review warning' do
     get new_admin_supplier_address_path(supplier)
 
     expect(response).to have_http_status(:ok)
     document = Nokogiri::HTML(response.body)
     controls = document.at_css('[data-address-map-controls]')
-    notice = document.at_css('[data-supplier-address-location-target="reviewNotice"]')
     review = document.at_css('[data-supplier-address-location-target="reviewFields"]')
-
     status_panel = document.at_css('[data-supplier-address-location-target="statusPanel"]')
+
     expect(controls.next_element).to eq(status_panel)
-    expect(status_panel.next_element).to eq(notice)
+    expect(status_panel.next_element['class']).to include('lg:grid-cols-2')
     expect(status_panel.at_css('[data-supplier-address-location-target="status"]')).to be_present
     expect(status_panel.at_css('[data-supplier-address-location-target="statusIcon"]')).to be_present
     expect(status_panel.at_css('[data-supplier-address-location-target="saveHint"]')).to be_present
     expect(document.css('[data-supplier-address-location-target="status"]').size).to eq(1)
-    expect(notice.text.squish).to eq(I18n.t('admin.supplier_details.location_review_required', locale: :en))
-    expect(notice['class']).to include('hidden')
+    expect(document.css('[data-supplier-address-location-target="reviewNotice"]')).to be_empty
     expect(review.at_css('input[name="address[location_reviewed]"][type="checkbox"]')).to be_present
-    expect(review.text).not_to include(notice.text.squish)
   end
 
   it 'creates and displays a primary fiscal address' do

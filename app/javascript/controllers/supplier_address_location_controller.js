@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["latitude", "longitude", "signature", "confirmed", "mapImage",
     "mapPlaceholder", "mapClick", "pin", "lookupButton", "confirmButton", "status",
-    "reviewFields", "reviewNotice", "reviewed", "reasonError",
+    "reviewFields", "reviewed", "reasonError",
     "statusPanel", "statusIcon", "saveHint", "confirmButtonLabel", "confirmButtonIcon"]
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
@@ -47,7 +47,6 @@ export default class extends Controller {
     this.confirmButtonTarget.disabled = confirmed
     this.confirmButtonLabelTarget.textContent = confirmed ? this.confirmedButtonValue : this.confirmButtonValue
     this.confirmButtonIconTarget.classList.toggle("hidden", !confirmed)
-    if (confirmed) this.reviewNoticeTarget.classList.add("hidden")
   }
 
   disconnect() {
@@ -194,7 +193,6 @@ export default class extends Controller {
     if (!visible) {
       this.pinTarget.classList.add("hidden")
       this.reviewFieldsTarget.classList.add("hidden")
-      this.reviewNoticeTarget.classList.add("hidden")
       this.mapImageTarget.removeAttribute("src")
       return
     }
@@ -331,7 +329,6 @@ export default class extends Controller {
   toggleReview() {
     const required = this.confidence < 0.8 || this.distanceKm() > 2
     this.reviewFieldsTarget.classList.toggle("hidden", !required)
-    this.reviewNoticeTarget.classList.toggle("hidden", !required || this.confirmedTarget.value === "1")
     if (!required) this.reviewedTarget.checked = false
   }
 

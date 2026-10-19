@@ -137,19 +137,21 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     find('input[name="address[purpose]"][value="delivery"]', visible: :all).set(true)
     find('[data-action="supplier-address-location#lookup"]').click
     expect(page).to have_css('[data-supplier-address-location-target="reviewFields"]:not(.hidden)')
-    expect(page).to have_css('[data-supplier-address-location-target="reviewNotice"]:not(.hidden)',
-                             text: 'Verify the physical address')
+    expect(page).to have_no_css('[data-supplier-address-location-target="reviewNotice"]')
     expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-amber-50',
                              text: 'low-confidence')
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
 
     find('input[name="address[location_adjustment_reason]"]').set('Verifiqué la entrada principal')
+    find('[data-action="supplier-address-location#confirm"]').click
+    expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-amber-50',
+                             text: 'Verify the physical address')
+    expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
     find('input[name="address[location_reviewed]"][type="checkbox"]').set(true)
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('1')
     expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-emerald-50')
-    expect(page).to have_css('[data-supplier-address-location-target="reviewNotice"].hidden', visible: :all)
     expect(page).to have_button('Location confirmed', disabled: true)
     find('form[data-controller~="supplier-address-location"] button[type="submit"]').click
     expect(page).to have_current_path(admin_supplier_addresses_path(supplier), wait: 10)
