@@ -298,10 +298,8 @@ export default class extends Controller {
     if (!this.hasSummaryTarget) return
     this.summaryTarget.replaceChildren()
 
-    this.stepTargets.slice(0, -1).forEach((step, index) => {
-      // Creation summary shows only general and fiscal details; all wizard steps remain available.
-      if (this.newRecordValue && index > 1) return
-
+    // The summary only previews General and Fiscal. Other steps remain editable.
+    this.stepTargets.slice(0, 2).forEach((step) => {
       const title = step.querySelector("h2")?.textContent?.trim() || ""
       const fields = [...step.querySelectorAll("input, select, textarea")]
         .filter((field) => !field.closest("[data-supplier-nested-item]"))
