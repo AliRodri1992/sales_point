@@ -7,11 +7,7 @@ require Rails.root.join('lib/financial_encryption/configuration')
 # gitignored file shared by Docker web and Sidekiq containers.
 encryption_keys = FinancialEncryption::Configuration.resolve(
   environ: ENV,
-  credentials: lambda {
-    Rails.application.credentials[:active_record_encryption]
-  rescue ActiveSupport::EncryptedFile::MissingKeyError
-    nil
-  },
+  credentials: -> { Rails.application.credentials[:active_record_encryption] },
   environment: Rails.env,
   local_path: Rails.root.join('config/financial_encryption.local.json')
 )

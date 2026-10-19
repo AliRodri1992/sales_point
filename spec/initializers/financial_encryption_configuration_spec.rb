@@ -11,7 +11,7 @@ RSpec.describe FinancialEncryption::Configuration do
     end
   end
 
-  def resolved(environment: 'development', environ: {}, credentials: -> { nil })
+  def resolved(environment: 'development', environ: {}, credentials: -> {})
     described_class.resolve(environ:, credentials:, environment:, local_path: @local_path)
   end
 
@@ -33,7 +33,7 @@ RSpec.describe FinancialEncryption::Configuration do
   end
 
   it 'uses explicit environment keys without reading credentials or writing a local file' do
-    values = FinancialEncryption::KEY_NAMES.to_h { |name| [name, "external-#{name}-secret-value"] }
+    values = FinancialEncryption::KEY_NAMES.index_with { |name| "external-#{name}-secret-value" }
     environ = values.to_h { |name, value| ["ACTIVE_RECORD_ENCRYPTION_#{name.upcase}", value] }
 
     expect(resolved(environ:, credentials: -> { raise 'Credentials must not be read' })).to eq(values)
@@ -41,14 +41,14 @@ RSpec.describe FinancialEncryption::Configuration do
   end
 
   it 'uses Rails credentials when environment keys are absent' do
-    values = FinancialEncryption::KEY_NAMES.to_h { |name| [name, "credential-#{name}-secret-value"] }
+    values = FinancialEncryption::KEY_NAMES.index_with { |name| "credential-#{name}-secret-value" }
 
     expect(resolved(credentials: -> { values.transform_keys(&:to_sym) })).to eq(values)
     expect(File.exist?(@local_path)).to be(false)
   end
 
   it 'allows individual environment values to override credentials' do
-    values = FinancialEncryption::KEY_NAMES.to_h { |name| [name, "credential-#{name}-secret-value"] }
+    values = FinancialEncryption::KEY_NAMES.index_with { |name| "credential-#{name}-secret-value" }
     environ = { 'ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY' => 'replacement-primary-key' }
 
     expect(resolved(environ:, credentials: -> { values })).to eq(

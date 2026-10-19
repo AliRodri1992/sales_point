@@ -36,6 +36,8 @@ module FinancialEncryption
         value = credentials[name] || credentials[name.to_sym]
         keys[name] = value if value.is_a?(String) && !value.empty?
       end
+    rescue ActiveSupport::EncryptedFile::MissingKeyError
+      {}
     end
 
     def self.require_complete!(keys)
@@ -61,7 +63,7 @@ module FinancialEncryption
     end
 
     def self.create!(path)
-      keys = KEY_NAMES.to_h { |name| [name, SecureRandom.hex(32)] }
+      keys = KEY_NAMES.index_with { SecureRandom.hex(32) }
       Tempfile.create(['financial-encryption-', '.tmp'], File.dirname(path)) do |file|
         file.chmod(0o600)
         file.write(JSON.pretty_generate(keys))
