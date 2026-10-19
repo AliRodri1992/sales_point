@@ -122,7 +122,10 @@ Rails.application.routes.draw do
         end
       end
       get 'products/:product_id/comparison', to: 'supplier_product_comparisons#show', as: :product_comparison
-      collection { get :export }
+      collection do
+        get :export
+        post :validate_fiscal_address
+      end
 
       get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download
       delete 'documents/:document_id', to: 'supplier_documents#destroy', as: :document

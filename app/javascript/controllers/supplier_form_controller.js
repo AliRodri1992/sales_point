@@ -2,16 +2,25 @@ import { Controller } from "@hotwired/stimulus"
 
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
-  static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary"]
-  static values = { index: { type: Number, default: 0 } }
+  static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary",
+    "addressValidationError"]
+  static values = {
+    index: { type: Number, default: 0 },
+    addressValidationUrl: String
+  }
 
   connect() {
-    this.element.addEventListener("input", (event) => {
-      if (event.target.matches("input[required], select[required], textarea[required]")) this.validateField(event.target)
-    })
-    this.element.addEventListener("change", (event) => {
-      if (event.target.matches("input[required], select[required], textarea[required]")) this.validateField(event.target)
-    })
+    this.validating = false
+    this.allowSubmit = false
+    for (const eventName of ["input", "change"]) {
+      this.element.addEventListener(eventName, (event) => {
+        if (event.target.closest("[data-supplier-address-validation]")) {
+          this.clearAddressFieldError(event.target)
+        } else if (event.target.matches("input[required], select[required], textarea[required]")) {
+          this.validateField(event.target)
+        }
+      })
+    }
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
@@ -52,29 +61,153 @@ export default class extends Controller {
     return valid
   }
 
-  select(event) {
-    const destination = Number(event.currentTarget.dataset.stepIndex)
-    if (destination > this.indexValue && !this.validateThrough(destination)) return
-    this.indexValue = destination
+  addressRoot() {
+    return this.stepTargets[1]?.querySelector("[data-supplier-address-validation]:not([hidden])")
   }
 
-  next() {
-    if (!this.validateStep(this.indexValue)) return
-    this.indexValue = Math.min(this.indexValue + 1, this.stepTargets.length - 1)
+  addressInput(root, name) {
+    return root.querySelector('[name$="[' + name + ']"]')
   }
 
-  submit(event) {
-    if (!this.validateThrough(this.stepTargets.length - 1)) {
-      event.preventDefault()
+  clearAddressFieldError(field) {
+    const root = field.closest("[data-supplier-address-validation]")
+    if (!root) return
+    if (field.name?.endsWith("[country_id]")) {
+      this.clearAddressErrors(root)
       return
     }
-    if (this.indexValue !== this.stepTargets.length - 1) {
-      event.preventDefault()
-      this.indexValue = this.stepTargets.length - 1
+    const name = field.name?.split("[").pop()?.replace("]", "")
+    const message = root.querySelector('[data-supplier-address-model-error="' + name + '"]')
+    if (!message) return
+    message.classList.add("hidden")
+    message.textContent = ""
+    field.removeAttribute("aria-invalid")
+    field.classList.remove("border-rose-500", "bg-rose-50")
+  }
+
+  clearAddressErrors(root) {
+    root.querySelectorAll("[data-supplier-address-model-error]").forEach((message) => {
+      message.classList.add("hidden")
+      message.textContent = ""
+    })
+    root.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
+      field.removeAttribute("aria-invalid")
+      field.classList.remove("border-rose-500", "bg-rose-50")
+    })
+    if (this.hasAddressValidationErrorTarget) {
+      this.addressValidationErrorTarget.textContent = ""
+      this.addressValidationErrorTarget.classList.add("hidden")
+    }
+  }
+
+  showAddressErrors(root, errors) {
+    let firstField = null
+    for (const [name, messages] of Object.entries(errors)) {
+      const message = root.querySelector('[data-supplier-address-model-error="' + name + '"]')
+      if (!message) continue
+      message.textContent = (Array.isArray(messages) ? messages : [messages]).join(" ")
+      message.classList.remove("hidden")
+      const field = this.addressInput(root, name)
+      if (!field) continue
+      field.setAttribute("aria-invalid", "true")
+      field.classList.add("border-rose-500", "bg-rose-50")
+      firstField ||= field
+    }
+    return firstField
+  }
+
+  async validateFiscalAddress(index) {
+    if (index !== 1 || !this.addressValidationUrlValue) return true
+    const root = this.addressRoot()
+    if (!root) return true
+    const attributes = ["street", "exterior_number", "interior_number",
+      "neighborhood", "city", "state", "postal_code", "country_id"]
+    const body = new URLSearchParams()
+    attributes.forEach((name) => {
+      body.append("address[" + name + "]", this.addressInput(root, name)?.value || "")
+    })
+    this.clearAddressErrors(root)
+
+    try {
+      const response = await fetch(this.addressValidationUrlValue, {
+        method: "POST",
+        body,
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || ""
+        }
+      })
+      if (response.ok) return true
+      if (response.status !== 422) throw new Error("Address validation unavailable")
+
+      const result = await response.json()
+      const first = this.showAddressErrors(root, result.errors || {})
+      this.invalidAddressField = first
+      return false
+    } catch (_error) {
+      if (this.hasAddressValidationErrorTarget) {
+        this.addressValidationErrorTarget.textContent =
+          this.element.dataset.supplierFormValidationUnavailableMessage
+        this.addressValidationErrorTarget.classList.remove("hidden")
+      }
+      this.invalidAddressField = null
+      return false
+    }
+  }
+
+  focusField(field) {
+    const dropdown = field?.closest('[data-controller~="delta-select"]')
+    const target = dropdown?.querySelector('button[aria-haspopup="listbox"]') || field
+    target?.focus()
+  }
+
+  async select(event) {
+    if (this.validating) return
+    const destination = Number(event.currentTarget.dataset.stepIndex)
+    this.validating = true
+    try {
+      if (destination > this.indexValue && !await this.validateThrough(destination)) return
+      this.indexValue = destination
+    } finally {
+      this.validating = false
+    }
+  }
+
+  async next() {
+    if (this.validating) return
+    this.validating = true
+    try {
+      if (!await this.validateStep(this.indexValue)) return
+      this.indexValue = Math.min(this.indexValue + 1, this.stepTargets.length - 1)
+    } finally {
+      this.validating = false
+    }
+  }
+
+  async submit(event) {
+    if (this.allowSubmit) {
+      this.allowSubmit = false
+      return
+    }
+    event.preventDefault()
+    if (this.validating) return
+    this.validating = true
+    try {
+      if (!await this.validateThrough(this.stepTargets.length - 1)) return
+      if (this.indexValue !== this.stepTargets.length - 1) {
+        this.indexValue = this.stepTargets.length - 1
+        return
+      }
+      this.allowSubmit = true
+      this.element.requestSubmit(this.submitTarget)
+    } finally {
+      this.validating = false
     }
   }
 
   previous() {
+    if (this.validating) return
     this.indexValue = Math.max(this.indexValue - 1, 0)
   }
 
@@ -82,25 +215,25 @@ export default class extends Controller {
     if (this.hasStepTarget) this.render()
   }
 
-  validateThrough(destination) {
+  async validateThrough(destination) {
     for (let index = 0; index < destination; index += 1) {
-      if (!this.validateStep(index)) {
-        this.indexValue = index
-        return false
-      }
+      if (!await this.validateStep(index)) return false
     }
     return true
   }
 
-  validateStep(index) {
+  async validateStep(index) {
     const step = this.stepTargets[index]
     const fields = [...step.querySelectorAll("input[required], select[required], textarea[required]")]
+      .filter((field) => !field.disabled && !field.closest("[data-supplier-address-validation]") &&
+        !field.closest("template"))
     const invalid = fields.filter((field) => !this.validateField(field))
-    if (!invalid.length) return true
+    const addressValid = await this.validateFiscalAddress(index)
+    if (!invalid.length && addressValid) return true
 
     this.indexValue = index
     this.render()
-    invalid[0].focus()
+    this.focusField(invalid[0] || this.invalidAddressField)
     return false
   }
 
