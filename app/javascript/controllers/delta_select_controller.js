@@ -24,12 +24,12 @@ export default class extends Controller {
     this.button.append(this.label, chevron)
 
     this.menu = document.createElement("div")
-    this.menu.className = "absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
+    this.menu.className = "absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto overflow-x-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl"
     this.menu.hidden = true
     this.searchable = this.element.dataset.countryFlags === "true" || this.element.dataset.searchable === "true"
     if (this.searchable) {
       const searchWrapper = document.createElement("div")
-      searchWrapper.className = "sticky top-0 z-10 bg-white p-1.5"
+      searchWrapper.className = "sticky top-0 z-10 border-b border-slate-100 bg-white px-3 py-2.5"
       this.searchInput = document.createElement("input")
       this.searchInput.type = "search"
       this.searchInput.autocomplete = "off"
@@ -39,6 +39,7 @@ export default class extends Controller {
       searchWrapper.append(this.searchInput)
       this.menu.append(searchWrapper)
       this.optionsContainer = document.createElement("div")
+      this.optionsContainer.className = "w-full"
       this.menu.append(this.optionsContainer)
       this.onSearchInput = () => this.filterOptions()
       this.searchInput.addEventListener("input", this.onSearchInput)
@@ -96,7 +97,7 @@ export default class extends Controller {
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
       item.dataset.searchText = `${option.textContent} ${option.dataset.countryCode || ""}`
-      item.className = `flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none ${option.selected ? "bg-emerald-50 font-semibold text-emerald-800" : "text-slate-700"}`
+      item.className = `flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none px-4 py-3 text-left text-sm transition-colors hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none ${option.selected ? "bg-emerald-50 font-semibold text-emerald-800" : "text-slate-700"}`
       item.append(this.optionContent(option))
       if (option.selected) {
         const check = document.createElement("span")
