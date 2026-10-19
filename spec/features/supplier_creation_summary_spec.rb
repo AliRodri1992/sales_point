@@ -88,10 +88,9 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-form-target="tab"]', count: 7, visible: :all)
     expect(page).to have_css("input[name$='[name]'][value='Contacto de ventas']", visible: :all)
     expect(page).to have_css('input[name="supplier[credit_days]"][value="45"]', visible: :all)
-    expect(page).to have_css('textarea[name="supplier[notes]"]', text: 'Notas internas del proveedor',
-                            visible: :all)
-    expect(page).to have_css('input[name="supplier[responsible_user_id]"], select[name="supplier[responsible_user_id]"]',
-                            visible: :all)
+    expect(page).to have_css('textarea[name="supplier[notes]"]',
+                             text: 'Notas internas del proveedor', visible: :all)
+    expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
     expect(main_contact.reload.name).to eq('Contacto de ventas')
   end
 end
