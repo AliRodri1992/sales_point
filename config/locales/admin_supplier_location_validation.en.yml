@@ -1,0 +1,5 @@
+en:
+  admin:
+    supplier_details:
+      location_adjustment_min_length: "The adjustment reason must contain at least 10 characters"
+      location_review_acknowledgment_required: "You must check the location review checkbox"

@@ -53,6 +53,29 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(review.at_css('input[name="address[location_reviewed]"][type="checkbox"]')).to be_present
   end
 
+  it 'renders separate translated errors beneath the adjustment reason and review checkbox' do
+    get new_admin_supplier_address_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css('form[data-controller~="supplier-address-location"]')
+    reason = form.at_css('input[name="address[location_adjustment_reason]"]')
+    reason_error = form.at_css('#supplier-location-reason-error')
+    checkbox = form.at_css('input[name="address[location_reviewed]"][type="checkbox"]')
+    review_error = form.at_css('#supplier-location-review-error')
+
+    expect(reason_error['data-supplier-address-location-target']).to eq('reasonError')
+    expect(reason.next_element).to eq(reason_error)
+    expect(reason['aria-describedby']).to eq('supplier-location-reason-error')
+    expect(form['data-supplier-address-location-reason-min-length-value'])
+      .to eq(I18n.t('admin.supplier_details.location_adjustment_min_length', locale: :en))
+    expect(review_error['data-supplier-address-location-target']).to eq('reviewError')
+    expect(checkbox['aria-describedby']).to eq('supplier-location-review-error')
+    expect(checkbox['data-action']).to include('change->supplier-address-location#clearReviewError')
+    expect(review_error.text.squish)
+      .to eq(I18n.t('admin.supplier_details.location_review_acknowledgment_required', locale: :en))
+  end
+
   it 'creates and displays a primary fiscal address' do
     post admin_supplier_addresses_path(supplier), params: { address: address_attributes }
 

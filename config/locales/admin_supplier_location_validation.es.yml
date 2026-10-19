@@ -1,0 +1,5 @@
+es:
+  admin:
+    supplier_details:
+      location_adjustment_min_length: "El motivo de ajuste debe contener al menos 10 caracteres"
+      location_review_acknowledgment_required: "Debes marcar la casilla de revisión de ubicación"

@@ -141,14 +141,28 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-amber-50',
                              text: 'low-confidence')
     find('[data-action="supplier-address-location#confirm"]').click
+    expect(page).to have_css('#supplier-location-reason-error:not(.hidden)',
+                             text: 'Adjustment reason cannot be blank')
+    expect(page).to have_css('#supplier-location-review-error:not(.hidden)',
+                             text: 'You must check the location review checkbox')
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
 
-    find('input[name="address[location_adjustment_reason]"]').set('Verifiqué la entrada principal')
+    reason = find('input[name="address[location_adjustment_reason]"]')
+    reason.set('Too short')
+    expect(page).to have_css('#supplier-location-reason-error:not(.hidden)',
+                             text: 'The adjustment reason must contain at least 10 characters')
     find('[data-action="supplier-address-location#confirm"]').click
-    expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-amber-50',
-                             text: 'Verify the physical address')
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
+
+    reason.set('Verifiqué la entrada principal')
+    expect(page).to have_css('#supplier-location-reason-error.hidden', visible: :all)
+    find('[data-action="supplier-address-location#confirm"]').click
+    expect(page).to have_css('#supplier-location-review-error:not(.hidden)',
+                             text: 'You must check the location review checkbox')
+    expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
+
     find('input[name="address[location_reviewed]"][type="checkbox"]').set(true)
+    expect(page).to have_css('#supplier-location-review-error.hidden', visible: :all)
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('1')
     expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-emerald-50')

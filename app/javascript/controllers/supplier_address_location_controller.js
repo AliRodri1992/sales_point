@@ -5,13 +5,13 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["latitude", "longitude", "signature", "confirmed", "mapImage",
     "mapPlaceholder", "mapClick", "pin", "lookupButton", "confirmButton", "status",
-    "reviewFields", "reviewed", "reasonError",
+    "reviewFields", "reviewed", "reasonError", "reviewError",
     "statusPanel", "statusIcon", "saveHint", "confirmButtonLabel", "confirmButtonIcon"]
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
     confirmed: String, searching: String, lowConfidence: String, adjusted: String,
-    reviewRequired: String, confidence: Number, confirmButton: String,
-    confirmedButton: String, changed: String
+    reviewRequired: String, reasonRequired: String, reasonMinLength: String,
+    confidence: Number, confirmButton: String, confirmedButton: String, changed: String
   }
 
   connect() {
@@ -83,7 +83,8 @@ export default class extends Controller {
     this.signatureTarget.value = ""
     this.confirmedTarget.value = "0"
     this.reviewedTarget.checked = false
-    this.clearReasonError()
+    this.resetReasonError()
+    this.resetReviewError()
     this.setStatus(this.changedValue)
     this.showMap()
   }
@@ -129,6 +130,8 @@ export default class extends Controller {
       this.confidence = Number.isFinite(Number(data.confidence)) ? Number(data.confidence) : 0
       this.confirmedTarget.value = "0"
       this.reviewedTarget.checked = false
+      this.resetReasonError()
+      this.resetReviewError()
       this.setStatus(this.confidence < 0.8 ? this.lowConfidenceValue : this.readyValue,
         this.confidence < 0.8 ? "warning" : "info")
       this.showMap()
@@ -193,6 +196,7 @@ export default class extends Controller {
     if (!visible) {
       this.pinTarget.classList.add("hidden")
       this.reviewFieldsTarget.classList.add("hidden")
+      this.resetReviewError()
       this.mapImageTarget.removeAttribute("src")
       return
     }
@@ -329,42 +333,81 @@ export default class extends Controller {
   toggleReview() {
     const required = this.confidence < 0.8 || this.distanceKm() > 2
     this.reviewFieldsTarget.classList.toggle("hidden", !required)
-    if (!required) this.reviewedTarget.checked = false
+    if (!required) {
+      this.reviewedTarget.checked = false
+      this.resetReviewError()
+    }
+    this.clearReasonError()
+  }
+
+  adjustmentReason() {
+    return this.element.querySelector('[name="address[location_adjustment_reason]"]')
+  }
+
+  reviewRequired() {
+    return !this.reviewFieldsTarget.classList.contains("hidden")
+  }
+
+  resetReasonError() {
+    this.reasonErrorTarget.classList.add("hidden")
+    this.adjustmentReason()?.removeAttribute("aria-invalid")
   }
 
   clearReasonError() {
-    if (!this.hasReasonErrorTarget) return
-    this.reasonErrorTarget.classList.add("hidden")
-    const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
-    reason?.removeAttribute("aria-invalid")
+    if (!this.reasonErrorTarget.classList.contains("hidden")) this.validateReason()
   }
 
   validateReason() {
-    const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
-    if (reason?.value.trim()) {
-      this.clearReasonError()
-      return true
+    const reason = this.adjustmentReason()
+    const length = reason?.value.trim().length || 0
+    const error = length === 0 ? this.reasonRequiredValue :
+      (this.reviewRequired() && length < 10 ? this.reasonMinLengthValue : null)
+    this.reasonErrorTarget.classList.toggle("hidden", !error)
+    if (error) {
+      this.reasonErrorTarget.textContent = error
+      reason?.setAttribute("aria-invalid", "true")
+    } else {
+      reason?.removeAttribute("aria-invalid")
     }
-    if (this.hasReasonErrorTarget) this.reasonErrorTarget.classList.remove("hidden")
-    reason?.setAttribute("aria-invalid", "true")
-    reason?.focus()
-    return false
+    return !error
+  }
+
+  resetReviewError() {
+    this.reviewErrorTarget.classList.add("hidden")
+    this.reviewedTarget.removeAttribute("aria-invalid")
+  }
+
+  clearReviewError() {
+    if (this.reviewedTarget.checked || !this.reviewRequired()) this.resetReviewError()
+  }
+
+  validateReview() {
+    const valid = !this.reviewRequired() || this.reviewedTarget.checked
+    this.reviewErrorTarget.classList.toggle("hidden", valid)
+    if (valid) {
+      this.reviewedTarget.removeAttribute("aria-invalid")
+    } else {
+      this.reviewedTarget.setAttribute("aria-invalid", "true")
+    }
+    return valid
   }
 
   confirm() {
     if (!this.point || !this.signatureTarget.value) return
-    if (!this.validateReason()) return
     if (this.distanceKm() > 25) {
       this.setStatus(this.unavailableValue, "error")
       return
     }
-    if (!this.reviewFieldsTarget.classList.contains("hidden")) {
-      const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
-      if (!this.reviewedTarget.checked || reason.value.trim().length < 10) {
-        this.setStatus(this.reviewRequiredValue, "warning")
-        reason.focus()
-        return
+
+    const validReason = this.validateReason()
+    const validReview = this.validateReview()
+    if (!validReason || !validReview) {
+      if (!validReason) {
+        this.adjustmentReason()?.focus()
+      } else {
+        this.reviewedTarget.focus()
       }
+      return
     }
     this.latitudeTarget.value = this.point.lat.toFixed(6)
     this.longitudeTarget.value = this.point.lon.toFixed(6)

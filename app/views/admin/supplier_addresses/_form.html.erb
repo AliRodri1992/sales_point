@@ -14,6 +14,8 @@
                 supplier_address_location_low_confidence_value: t('admin.supplier_details.location_low_confidence'),
                 supplier_address_location_adjusted_value: t('admin.supplier_details.location_adjusted'),
                 supplier_address_location_review_required_value: t('admin.supplier_details.location_review_required'),
+                supplier_address_location_reason_required_value: t('admin.supplier_details.location_adjustment_required'),
+                supplier_address_location_reason_min_length_value: t('admin.supplier_details.location_adjustment_min_length'),
                 supplier_address_location_confirm_button_value: t('admin.supplier_details.address_form.location_confirm'),
                 supplier_address_location_confirmed_button_value: t('admin.supplier_details.address_form.location_confirmed_button'),
                 supplier_address_location_changed_value: t('admin.supplier_details.address_form.location_changed'),
@@ -285,10 +287,16 @@
             <%= hidden_field_tag 'address[location_reviewed]', '0' %>
             <label class="mt-2 flex items-start gap-2 text-xs text-amber-900">
               <%= check_box_tag 'address[location_reviewed]', '1', false,
-                                data: { supplier_address_location_target: 'reviewed' },
+                                data: { supplier_address_location_target: 'reviewed',
+                                        action: 'change->supplier-address-location#clearReviewError' },
+                                aria: { describedby: 'supplier-location-review-error' },
                                 class: 'mt-0.5 size-4 shrink-0' %>
               <span><%= t('admin.supplier_details.location_review_acknowledgment') %></span>
             </label>
+            <p id="supplier-location-review-error" data-supplier-address-location-target="reviewError"
+               role="alert" class="mt-2 hidden text-xs font-semibold text-rose-600">
+              <%= t('admin.supplier_details.location_review_acknowledgment_required') %>
+            </p>
           </div>
         </div>
     <div class="min-w-0 border-t border-slate-100 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-labelledby="supplier-address-summary-heading">
