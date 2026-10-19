@@ -38,7 +38,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     panel = dossier.at_css('section[data-section="documents"]')
     expect(panel.text).to include('invoice.pdf')
-    expect(panel.at_css('img[src*="supplier-document-pdf.svg"]')).to be_present
+    expect(panel.at_css('img[src*="supplier-document-pdf"]')).to be_present
     expect(panel.at_css('[data-supplier-documents-target="card"]')).to be_present
     expect(panel.at_css('img[src*="sdocuments"]')).to be_nil
   end

@@ -18,7 +18,7 @@ RSpec.describe 'Supplier document library', type: :request do
   def upload(filename = 'contract.pdf', mime = 'application/pdf')
     @tempfiles ||= []
     tempfile = Tempfile.new(['supplier-document', File.extname(filename)])
-    tempfile.write('%PDF-1.4 sample supplier document')
+    tempfile.write(mime == 'text/plain' ? 'Plain text supplier note' : '%PDF-1.4 sample supplier document')
     tempfile.rewind
     @tempfiles << tempfile
     Rack::Test::UploadedFile.new(tempfile.path, mime, original_filename: filename)
@@ -29,7 +29,7 @@ RSpec.describe 'Supplier document library', type: :request do
   end
 
   def panel
-    Nokogiri::HTML(response.body).at_css('[data-section="documents"]')
+    Nokogiri::HTML(response.body).at_css('section[data-section="documents"]')
   end
 
   it 'renders two-column documents with locally generated SVG icons and a preview panel' do
@@ -96,6 +96,8 @@ RSpec.describe 'Supplier document library', type: :request do
           params: { document: { file: upload('replacement.pdf') } }
 
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(flash[:notice]).to eq('Document replaced successfully.')
+    supplier.reload
     expect(supplier.documents.attachments.pluck(:id)).not_to include(original_id)
     expect(supplier.documents.attachments.pluck(:id)).to include(other_id)
     expect(supplier.documents.attachments.map { |record| record.blob.filename.to_s })
@@ -128,10 +130,12 @@ RSpec.describe 'Supplier document library', type: :request do
 
     get admin_supplier_document_preview_path(outsider, document_id:)
     expect(response).to have_http_status(:not_found)
+    sign_in user
 
     patch admin_supplier_document_update_path(outsider, document_id:),
           params: { document: { category: 'legal' } }
     expect(response).to have_http_status(:not_found)
+    sign_in user
 
     post admin_supplier_documents_path(outsider), params: { document: { file: upload } }
     expect(response).to have_http_status(:not_found)
