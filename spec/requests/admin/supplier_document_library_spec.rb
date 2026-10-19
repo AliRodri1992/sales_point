@@ -34,7 +34,9 @@ RSpec.describe 'Supplier document library', type: :request do
 
   it 'renders two-column documents with locally generated SVG icons and a preview panel' do
     supplier.documents.attach(upload('supplier-contract.pdf'))
-    supplier.documents.attach(upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+    supplier.documents.attach(
+      upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    )
 
     get admin_supplier_path(supplier, tab: 'documents')
 
