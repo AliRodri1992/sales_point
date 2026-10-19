@@ -223,6 +223,24 @@ RSpec.describe 'Supplier address integration', type: :request do
     expect(form.at_css("input[name='address[postal_code]']")['value']).to eq('AB123')
   end
 
+  context 'when the user prefers Spanish' do
+    let(:user) { create(:user, :spanish) }
+
+    it 'shows matching full field messages in the standalone address editor' do
+      post admin_supplier_addresses_path(supplier),
+           params: { address: address_attributes(street: '', country_id: '') }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      page = Nokogiri::HTML(response.body)
+      { street: 'Calle no puede estar vacío', country: 'País no puede estar vacío' }.each do |field, expected|
+        message = page.at_css("[data-address-field='#{field}'] [data-server-field-error]")
+        expect(message).to be_present
+        expect(message.text.strip).to eq(expected)
+        expect(message['class'].split).to include('mt-1', 'text-xs', 'text-rose-600')
+      end
+    end
+  end
+
   it 'preserves entered values and inline model messages after an invalid edit' do
     address = create(:address, :fiscal, addressable: supplier)
     invalid = address_attributes(

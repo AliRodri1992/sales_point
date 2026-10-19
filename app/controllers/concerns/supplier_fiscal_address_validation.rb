@@ -26,8 +26,9 @@ module SupplierFiscalAddressValidation
   end
 
   def fiscal_address_errors(address)
-    errors = address.errors.to_hash
-    errors[:country_id] = Array(errors.delete(:country)) + Array(errors[:country_id]) if errors.key?(:country)
-    errors
+    address.errors.each_with_object({}) do |error, errors|
+      field = error.attribute == :country ? :country_id : error.attribute
+      errors[field] ||= [error.full_message]
+    end
   end
 end

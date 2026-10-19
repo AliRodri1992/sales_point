@@ -14,6 +14,8 @@ es:
               taken: "ya está asignado a otro contacto activo."
         address:
           attributes:
+            country:
+              required: "no puede estar vacío"
             base:
               invalid_location_confirmation: "La ubicación confirmada ya no corresponde al domicilio actual. Vuelve a buscarla y confírmala."
             primary:
