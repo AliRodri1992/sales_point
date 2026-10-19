@@ -40,8 +40,10 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
   end
 
   it 'does not display a secondary fiscal address when no primary is configured' do
-    create(:address, :fiscal, addressable: supplier, primary: false, street: 'Fiscal Secundaria',
-                                      postal_code: '54820')
+    create(
+      :address, :fiscal, addressable: supplier, primary: false,
+      street: 'Fiscal Secundaria', postal_code: '54820'
+    )
 
     get admin_supplier_path(supplier, tab: 'fiscal')
 
