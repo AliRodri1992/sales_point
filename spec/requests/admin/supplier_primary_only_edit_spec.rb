@@ -49,7 +49,8 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(form.css('[data-action="supplier-nested#add"], [data-action="supplier-nested#remove"]')).to be_empty
     expect(form.css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_empty
     expect(form.css("a[href='#{admin_supplier_contacts_path(supplier)}']")).to be_empty
-    labels = form.css('[data-supplier-nested-item] label, [data-supplier-nested-item] span').map { |node| node.text.strip }
+    labels = form.css('[data-supplier-nested-item] label, [data-supplier-nested-item] span')
+                 .map { |node| node.text.strip }
     expect(labels).not_to include('Primary')
     expect(form.css('select[name*="[purpose]"]')).to be_empty
     expect(form.at_css('input[name$="[purpose]"][value="fiscal"]')).to be_present
