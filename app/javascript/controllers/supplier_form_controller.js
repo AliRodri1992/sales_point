@@ -299,8 +299,8 @@ export default class extends Controller {
     this.summaryTarget.replaceChildren()
 
     this.stepTargets.slice(0, -1).forEach((step, index) => {
-      // Only the creation summary omits contacts, commercial terms and branch operations.
-      if (this.newRecordValue && [2, 3, 4].includes(index)) return
+      // Creation summary shows only general and fiscal details; all wizard steps remain available.
+      if (this.newRecordValue && index > 1) return
 
       const title = step.querySelector("h2")?.textContent?.trim() || ""
       const fields = [...step.querySelectorAll("input, select, textarea")]

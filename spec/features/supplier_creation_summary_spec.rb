@@ -27,7 +27,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     find('[data-supplier-form-target="summary"]')
   end
 
-  scenario 'omits contacts, commercial terms and branch operations from the new supplier summary' do
+  scenario 'shows only general and fiscal details in the new supplier summary' do
     visit new_admin_supplier_path
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
 
@@ -43,14 +43,20 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
 
     summary = show_summary
     headings = summary.all('h3').map(&:text)
-    expect(headings).to eq(%w[step_1 step_2 step_7].map do |step|
+    expect(headings).to eq(%w[step_1 step_2].map do |step|
       I18n.t("admin.suppliers.onboarding.steps.#{step}")
     end)
-    expect(summary).to have_text('SUP-SUMMARY-01', 'XAXX010101000', 'Notas del proveedor')
-    expect(summary).to have_no_text('5534037737', '45')
+    expect(summary).to have_text('SUP-SUMMARY-01')
+    expect(summary).to have_text('XAXX010101000')
+    expect(summary).to have_text('Avenida Reforma')
+    expect(summary).to have_no_text('Notas del proveedor')
+    expect(summary).to have_no_text('5534037737')
+    expect(summary).to have_no_text('45')
+    expect(page).to have_css('[data-supplier-form-target="tab"]', count: 7, visible: :all)
     expect(page).to have_css('input[name$="[mobile_phone]"]', visible: :all)
     expect(page).to have_css('input[name="supplier[credit_days]"]', visible: :all)
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
+    expect(page).to have_css('textarea[name="supplier[notes]"]', visible: :all)
   end
 
   scenario 'preserves the commercial summary when editing an existing supplier' do
