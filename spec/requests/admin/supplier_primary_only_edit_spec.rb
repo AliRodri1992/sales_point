@@ -24,7 +24,13 @@ RSpec.describe 'Edit supplier primary records', type: :request do
   end
 
   def field_records(name)
-    form.css("[data-supplier-nested-target='items'] [data-supplier-nested-item] input[name*='[#{name}_attributes]'][name$='[id]']")
+    form.css(
+      "[data-supplier-nested-item] input[name*='[#{name}_attributes]'][name$='[id]']"
+    )
+  end
+
+  def nested_values(association, attribute)
+    form.css("input[name*='[#{association}_attributes]'][name$='[#{attribute}]']").pluck('value')
   end
 
   it 'renders only the principal fiscal address and principal contact, without removal controls' do
@@ -37,16 +43,16 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     get edit_admin_supplier_path(supplier)
 
     expect(response).to have_http_status(:ok)
-    expect(field_records('addresses').map { |input| input['value'] }.uniq).to eq([fiscal.id.to_s])
-    expect(field_records('contacts').map { |input| input['value'] }.uniq).to eq([main_contact.id.to_s])
+    expect(field_records('addresses').pluck('value').uniq).to eq([fiscal.id.to_s])
+    expect(field_records('contacts').pluck('value').uniq).to eq([main_contact.id.to_s])
     expect(form.text).not_to include('Secondary Contact')
     expect(form.css('[data-action="supplier-nested#add"], [data-action="supplier-nested#remove"]')).to be_empty
     expect(form.css('select[name*="[purpose]"]')).to be_empty
     expect(form.at_css('input[name$="[purpose]"][value="fiscal"]')).to be_present
     expect(form.at_css('input[name*="[addresses_attributes]"][name$="[primary]"][value="1"]')).to be_present
     expect(form.at_css('input[name*="[contacts_attributes]"][name$="[primary]"][value="1"]')).to be_present
-    expect(form.css('input[name*="[addresses_attributes]"][name$="[street]"]').map { |e| e['value'] }).to eq(['Main Street'])
-    expect(form.css('input[name*="[contacts_attributes]"][name$="[name]"]').map { |e| e['value'] }).to eq(['Primary Contact'])
+    expect(nested_values('addresses', 'street')).to eq(['Main Street'])
+    expect(nested_values('contacts', 'name')).to eq(['Primary Contact'])
   end
 
   it 'updates the principal records without changing secondary records' do
@@ -93,9 +99,9 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(field_records('addresses').map { |input| input['value'] }.uniq).to eq([fiscal.id.to_s])
-    expect(field_records('contacts').map { |input| input['value'] }.uniq).to eq([main_contact.id.to_s])
-    expect(form.css('input[name*="[addresses_attributes]"][name$="[street]"]').map { |e| e['value'] }).to eq(['Edited Fiscal'])
-    expect(form.css('input[name*="[contacts_attributes]"][name$="[name]"]').map { |e| e['value'] }).to eq(['Edited Primary'])
+    expect(field_records('addresses').pluck('value').uniq).to eq([fiscal.id.to_s])
+    expect(field_records('contacts').pluck('value').uniq).to eq([main_contact.id.to_s])
+    expect(nested_values('addresses', 'street')).to eq(['Edited Fiscal'])
+    expect(nested_values('contacts', 'name')).to eq(['Edited Primary'])
   end
 end
