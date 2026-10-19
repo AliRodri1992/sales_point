@@ -8,7 +8,6 @@ FactoryBot.define do
     sequence(:rfc) { |n| "XAXX010101#{format('%03d', n)}" }
     person_type { 'individual' }
     phone { '5555555555' }
-    postal_code { '06000' }
     status { :active }
     notes { nil }
     sat_fiscal_regime { nil }

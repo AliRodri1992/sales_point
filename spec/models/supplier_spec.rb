@@ -21,10 +21,9 @@ RSpec.describe Supplier, type: :model do
       expect(supplier).not_to be_valid
     end
 
-    it 'rejects invalid contact data' do
+    it 'rejects invalid email and RFC data' do
       supplier.email = 'invalid-email'
       supplier.rfc = 'INVALID'
-      supplier.postal_code = '1234'
       expect(supplier).not_to be_valid
     end
 
@@ -71,6 +70,10 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
+  it 'does not store a duplicate supplier-level postal code' do
+    expect(described_class.column_names).not_to include('postal_code')
+  end
+
   describe 'catalog associations' do
     it { is_expected.to belong_to(:currency) }
   end
@@ -114,12 +117,12 @@ RSpec.describe Supplier, type: :model do
       supplier.assign_attributes(
         code: '  SUP-0001  ', name: '  Proveedor Demo  ',
         email: '  PROVEEDOR@EXAMPLE.COM  ', phone: ' 5555555555 ',
-        rfc: ' xaxx010101001 ', postal_code: ' 06000 ', notes: '  Nota  '
+        rfc: ' xaxx010101001 ', notes: '  Nota  '
       )
       supplier.valid?
-      expect(supplier.attributes.values_at('code', 'name', 'email', 'phone', 'rfc', 'postal_code', 'notes'))
+      expect(supplier.attributes.values_at('code', 'name', 'email', 'phone', 'rfc', 'notes'))
         .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com', '+525555555555',
-                'XAXX010101001', '06000', 'Nota'])
+                'XAXX010101001', 'Nota'])
     end
   end
 

@@ -39,14 +39,15 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
     expect(Nokogiri::HTML(response.body).at_css('#supplier-dossier-fiscal').text).not_to include('06000')
   end
 
-  it 'shows an existing fiscal address even when it was not marked primary' do
-    create(:address, :fiscal, addressable: supplier, primary: false, street: 'Fiscal Secundaria')
+  it 'does not display a secondary fiscal address when no primary is configured' do
+    create(:address, :fiscal, addressable: supplier, primary: false, street: 'Fiscal Secundaria',
+                                      postal_code: '54820')
 
     get admin_supplier_path(supplier, tab: 'fiscal')
 
     expect(response).to have_http_status(:ok)
-    expect(fiscal_address_panel.text).to include('Fiscal Secundaria')
-    expect(fiscal_address_panel.text).not_to include('No fiscal address registered yet')
+    expect(fiscal_address_panel.text).to include('No fiscal address registered yet')
+    expect(fiscal_address_panel.text).not_to include('Fiscal Secundaria', '54820')
   end
 
   it 'prefers the primary fiscal address over other fiscal addresses' do
@@ -68,12 +69,22 @@ RSpec.describe 'Supplier fiscal address on the dossier', type: :request do
     expect(fiscal_address_panel.text).not_to include('Fiscal Eliminada')
   end
 
-  it 'shows the missing-address state and preserves the supplier tax postal code' do
+  it 'shows the missing-address state without a supplier-level tax postal code' do
     get admin_supplier_path(supplier, tab: 'fiscal')
 
     expect(response).to have_http_status(:ok)
     expect(fiscal_address_panel.text).to include('No fiscal address registered yet')
-    expect(Nokogiri::HTML(response.body).at_css('#supplier-dossier-fiscal').text).to include(supplier.postal_code)
+    expect(Supplier.column_names).not_to include('postal_code')
+    expect(Nokogiri::HTML(response.body).at_css('#supplier-dossier-fiscal').text).not_to include('06000')
+  end
+
+  it 'never uses the postal code of a primary non-fiscal address as the fiscal postal code' do
+    create(:address, :delivery, :primary, addressable: supplier, postal_code: '54830')
+
+    get admin_supplier_path(supplier, tab: 'fiscal')
+
+    expect(fiscal_address_panel.text).to include('No fiscal address registered yet')
+    expect(Nokogiri::HTML(response.body).at_css('#supplier-dossier-fiscal').text).not_to include('54830')
   end
 
   it 'translates the fiscal-address section into Spanish and Korean' do

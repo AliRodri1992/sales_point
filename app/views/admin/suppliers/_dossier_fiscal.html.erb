@@ -19,7 +19,6 @@
       [t('admin.supplier_dossier.fields.person_type'), supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil],
       [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil]
     ] %>
-    <% fiscal_fields << [t('admin.supplier_dossier.general.postal_code'), supplier.postal_code] unless fiscal_address %>
     <dl class="grid gap-x-8 gap-y-4 pt-5 md:grid-cols-2">
       <% fiscal_fields.each do |label, value| %>
         <div class="border-b border-slate-100 pb-3">
@@ -28,6 +27,6 @@
         </div>
       <% end %>
     </dl>
-    <%= render 'dossier_fiscal_address', fiscal_address: fiscal_address, supplier: supplier %>
+    <%= render 'dossier_fiscal_address', fiscal_address: fiscal_address %>
   </div>
 </section>

@@ -61,10 +61,6 @@ class Supplier < ApplicationRecord
             format: { with: /\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/i, message: :invalid_format },
             presence: true
 
-  validates :postal_code,
-            format: { with: /\A\d{5}\z/, message: :invalid_format },
-            allow_blank: true
-
   validates :notes, length: { maximum: 1000 }, allow_blank: true
 
   enum :status, { active: 'active', inactive: 'inactive' }, validate: true, default: :active
@@ -116,7 +112,6 @@ class Supplier < ApplicationRecord
     normalize_email
     normalize_phone
     normalize_rfc
-    normalize_text_field(:postal_code, &:strip)
     normalize_text_field(:notes, &:strip)
   end
 

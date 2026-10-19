@@ -10,7 +10,6 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
       t.string :phone, limit: 30
       t.string :rfc, limit: 13
       t.references :sat_fiscal_regime, foreign_key: true
-      t.string :postal_code, limit: 5
       t.string :status, null: false, limit: 20, default: 'active'
       t.text :notes
       t.timestamp :deleted_at
@@ -44,9 +43,6 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
     add_check_constraint :suppliers,
                          "rfc IS NULL OR rfc = '' OR rfc ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'",
                          name: 'chk_suppliers_rfc_format'
-    add_check_constraint :suppliers,
-                         "postal_code IS NULL OR postal_code = '' OR postal_code ~ '^[0-9]{5}$'",
-                         name: 'chk_suppliers_postal_code_format'
     add_check_constraint :suppliers,
                          "status IN ('active', 'inactive')",
                          name: 'chk_suppliers_status'

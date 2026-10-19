@@ -1354,7 +1354,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120000) do
     t.bigint "organization_id", null: false
     t.string "person_type", limit: 20
     t.string "phone", limit: 30
-    t.string "postal_code", limit: 5
     t.bigint "responsible_user_id"
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
@@ -1379,7 +1378,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120000) do
     t.check_constraint "credit_limit >= 0::numeric AND minimum_order_amount >= 0::numeric", name: "chk_supplier_amounts"
     t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_discount"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
-    t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_suppliers_postal_code_format"
     t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_suppliers_rfc_format"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_suppliers_status"
   end

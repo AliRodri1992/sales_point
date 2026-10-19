@@ -1,6 +1,6 @@
 <% contacts = supplier.contacts.not_deleted.order(primary: :desc, name: :asc) %>
 <% addresses = supplier.addresses.not_deleted %>
-<% fiscal_address = addresses.where(purpose: 'fiscal').order(primary: :desc, id: :asc).includes(:country).first %>
+<% fiscal_address = addresses.where(purpose: 'fiscal', primary: true).includes(:country).first %>
 <% schedules = supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>

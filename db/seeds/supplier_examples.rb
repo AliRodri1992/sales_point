@@ -82,7 +82,6 @@ module SupplierExamples
         email: "proveedor#{number}@example.com",
         phone: format('55%08d', number),
         rfc: format('DPE260101%03d', number),
-        postal_code: format('%05d', 60_000 + number),
         status: (number % 5).zero? ? :inactive : :active,
         deleted_at: nil
       }
@@ -104,7 +103,7 @@ module SupplierExamples
 
     def fill_missing_details(supplier, attributes)
       fields = %i[legal_name trade_name alias_name classification person_type
-                  responsible_user sat_fiscal_regime email phone postal_code notes
+                  responsible_user sat_fiscal_regime email phone notes
                   currency credit_days credit_limit discount_percent minimum_order_amount]
       fields.each { |field| supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank? }
       supplier.tags = attributes[:tags] if supplier.tags.blank?

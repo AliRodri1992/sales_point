@@ -48,7 +48,7 @@ module Admin
     def new
       @supplier = current_organization.suppliers.new
       @supplier.contacts.build
-      @supplier.addresses.build
+      @supplier.addresses.build(purpose: 'fiscal', primary: true)
       authorize @supplier
       load_fiscal_regimes
       load_reference_catalogs
