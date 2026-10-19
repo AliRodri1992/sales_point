@@ -118,3 +118,7 @@ app/assets/builds/
 plantillas/
 
 *.example
+
+# Development-only Active Record Encryption keys (never commit)
+/config/financial_encryption.local.json
+/config/financial_encryption.local.json.lock
