@@ -95,7 +95,6 @@
             <% if fiscal_addresses.empty? %>
               <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_fiscal_address') %></p>
             <% end %>
-            <%= link_to t('admin.supplier_details.manage_addresses'), admin_supplier_addresses_path(supplier), class: 'inline-flex mt-3 text-sm font-semibold text-emerald-700 hover:text-emerald-800' %>
           <% end %>
         </div>
       </section>
@@ -112,7 +111,6 @@
             <% if primary_contacts.empty? %>
               <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_contact') %></p>
             <% end %>
-            <%= link_to t('admin.supplier_details.manage_contacts'), admin_supplier_contacts_path(supplier), class: 'inline-flex mt-3 text-sm font-semibold text-emerald-700 hover:text-emerald-800' %>
           <% end %>
         </div>
       </section>

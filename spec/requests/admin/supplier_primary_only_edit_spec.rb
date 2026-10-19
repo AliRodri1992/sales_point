@@ -47,6 +47,10 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(field_records('contacts').pluck('value').uniq).to eq([main_contact.id.to_s])
     expect(form.text).not_to include('Secondary Contact')
     expect(form.css('[data-action="supplier-nested#add"], [data-action="supplier-nested#remove"]')).to be_empty
+    expect(form.css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_empty
+    expect(form.css("a[href='#{admin_supplier_contacts_path(supplier)}']")).to be_empty
+    labels = form.css('[data-supplier-nested-item] label, [data-supplier-nested-item] span').map { |node| node.text.strip }
+    expect(labels).not_to include('Primary')
     expect(form.css('select[name*="[purpose]"]')).to be_empty
     expect(form.at_css('input[name$="[purpose]"][value="fiscal"]')).to be_present
     expect(form.at_css('input[name*="[addresses_attributes]"][name$="[primary]"][value="1"]')).to be_present
@@ -74,7 +78,7 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(secondary_contact.reload.name).to eq('Keep Contact')
   end
 
-  it 'shows management links rather than editing secondary records when no primary exists' do
+  it 'does not show management links or secondary records when the primary is missing' do
     supplier.addresses.create!(**address_attributes, street: 'Only Secondary', purpose: 'fiscal')
     supplier.contacts.create!(name: 'Only Secondary Contact')
 
@@ -84,8 +88,16 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(field_records('addresses')).to be_empty
     expect(field_records('contacts')).to be_empty
     expect(form.text).to include('No primary fiscal address is registered', 'No primary contact is registered')
-    expect(form.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
-    expect(form.at_css("a[href='#{admin_supplier_contacts_path(supplier)}']")).to be_present
+    expect(form.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_nil
+    expect(form.at_css("a[href='#{admin_supplier_contacts_path(supplier)}']")).to be_nil
+  end
+
+  it 'keeps primary controls visible when creating a new supplier' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    expect(form.at_css('input[name*="[addresses_attributes]"][name$="[primary]"][type="checkbox"]')).to be_present
+    expect(form.at_css('input[name*="[contacts_attributes]"][name$="[primary]"][type="checkbox"]')).to be_present
   end
 
   it 'keeps the primary fields visible after an invalid supplier update' do
