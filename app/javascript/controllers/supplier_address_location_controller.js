@@ -5,11 +5,13 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["latitude", "longitude", "signature", "confirmed", "mapImage",
     "mapPlaceholder", "mapClick", "pin", "lookupButton", "confirmButton", "status",
-    "reviewFields", "reviewNotice", "reviewed", "reasonError"]
+    "reviewFields", "reviewNotice", "reviewed", "reasonError",
+    "statusPanel", "statusIcon", "saveHint", "confirmButtonLabel", "confirmButtonIcon"]
   static values = {
     suggestUrl: String, mapUrl: String, unavailable: String, ready: String,
     confirmed: String, searching: String, lowConfidence: String, adjusted: String,
-    reviewRequired: String, confidence: Number
+    reviewRequired: String, confidence: Number, confirmButton: String,
+    confirmedButton: String, changed: String
   }
 
   connect() {
@@ -23,6 +25,29 @@ export default class extends Controller {
     this.pending = false
     this.request = null
     this.showMap()
+  }
+
+  setStatus(message, tone = "neutral") {
+    const colors = {
+      neutral: ["border-slate-200", "bg-slate-50", "text-slate-700"],
+      info: ["border-sky-200", "bg-sky-50", "text-sky-800"],
+      warning: ["border-amber-200", "bg-amber-50", "text-amber-900"],
+      error: ["border-rose-200", "bg-rose-50", "text-rose-800"],
+      success: ["border-emerald-200", "bg-emerald-50", "text-emerald-900"]
+    }
+    Object.values(colors).forEach((classes) => this.statusPanelTarget.classList.remove(...classes))
+    this.statusPanelTarget.classList.add(...colors[tone])
+    this.statusTarget.textContent = message
+    this.statusIconTarget.classList.toggle("hidden", tone !== "success")
+    this.saveHintTarget.classList.toggle("hidden", tone !== "success")
+  }
+
+  syncConfirmation() {
+    const confirmed = this.confirmedTarget.value === "1" && !!this.point
+    this.confirmButtonTarget.disabled = confirmed
+    this.confirmButtonLabelTarget.textContent = confirmed ? this.confirmedButtonValue : this.confirmButtonValue
+    this.confirmButtonIconTarget.classList.toggle("hidden", !confirmed)
+    if (confirmed) this.reviewNoticeTarget.classList.add("hidden")
   }
 
   disconnect() {
@@ -60,6 +85,7 @@ export default class extends Controller {
     this.confirmedTarget.value = "0"
     this.reviewedTarget.checked = false
     this.clearReasonError()
+    this.setStatus(this.changedValue)
     this.showMap()
   }
 
@@ -84,7 +110,7 @@ export default class extends Controller {
     this.request = request
     this.pending = true
     this.lookupButtonTarget.disabled = true
-    this.statusTarget.textContent = this.searchingValue
+    this.setStatus(this.searchingValue, "info")
     try {
       const response = await fetch(this.suggestUrlValue, {
         method: "POST", body: new URLSearchParams(snapshot),
@@ -104,11 +130,12 @@ export default class extends Controller {
       this.confidence = Number.isFinite(Number(data.confidence)) ? Number(data.confidence) : 0
       this.confirmedTarget.value = "0"
       this.reviewedTarget.checked = false
-      this.statusTarget.textContent = this.confidence < 0.8 ? this.lowConfidenceValue : this.readyValue
+      this.setStatus(this.confidence < 0.8 ? this.lowConfidenceValue : this.readyValue,
+        this.confidence < 0.8 ? "warning" : "info")
       this.showMap()
     } catch (error) {
       if (error.name !== "AbortError" && request === this.request) {
-        this.statusTarget.textContent = this.unavailableValue
+        this.setStatus(this.unavailableValue, "error")
       }
     } finally {
       if (request === this.request) {
@@ -158,6 +185,7 @@ export default class extends Controller {
   }
 
   showMap() {
+    this.syncConfirmation()
     const visible = !!this.point
     this.mapPlaceholderTarget.classList.toggle("hidden", visible)
     this.mapImageTarget.classList.toggle("hidden", !visible)
@@ -184,7 +212,8 @@ export default class extends Controller {
     if (!this.signatureTarget.value || !this.valid(point.lat, point.lon)) return
     this.point = point
     this.confirmedTarget.value = "0"
-    this.statusTarget.textContent = this.adjustedValue
+    this.setStatus(this.adjustedValue, "warning")
+    this.syncConfirmation()
     this.positionPin()
   }
 
@@ -302,7 +331,7 @@ export default class extends Controller {
   toggleReview() {
     const required = this.confidence < 0.8 || this.distanceKm() > 2
     this.reviewFieldsTarget.classList.toggle("hidden", !required)
-    this.reviewNoticeTarget.classList.toggle("hidden", !required)
+    this.reviewNoticeTarget.classList.toggle("hidden", !required || this.confirmedTarget.value === "1")
     if (!required) this.reviewedTarget.checked = false
   }
 
@@ -329,13 +358,13 @@ export default class extends Controller {
     if (!this.point || !this.signatureTarget.value) return
     if (!this.validateReason()) return
     if (this.distanceKm() > 25) {
-      this.statusTarget.textContent = this.unavailableValue
+      this.setStatus(this.unavailableValue, "error")
       return
     }
     if (!this.reviewFieldsTarget.classList.contains("hidden")) {
       const reason = this.element.querySelector('[name="address[location_adjustment_reason]"]')
       if (!this.reviewedTarget.checked || reason.value.trim().length < 10) {
-        this.statusTarget.textContent = this.reviewRequiredValue
+        this.setStatus(this.reviewRequiredValue, "warning")
         reason.focus()
         return
       }
@@ -343,6 +372,7 @@ export default class extends Controller {
     this.latitudeTarget.value = this.point.lat.toFixed(6)
     this.longitudeTarget.value = this.point.lon.toFixed(6)
     this.confirmedTarget.value = "1"
-    this.statusTarget.textContent = this.confirmedValue
+    this.setStatus(this.confirmedValue, "success")
+    this.syncConfirmation()
   }
 }

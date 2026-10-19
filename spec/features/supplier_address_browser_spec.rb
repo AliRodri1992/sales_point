@@ -83,6 +83,10 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     expect(page).to have_css('#supplier-location-reason-error.hidden', visible: :all)
 
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('1')
+    expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-emerald-50',
+                             text: 'Location confirmed for this address')
+    expect(page).to have_css('[data-supplier-address-location-target="saveHint"]:not(.hidden)')
+    expect(page).to have_button('Location confirmed', disabled: true)
     find('form[data-controller~="supplier-address-location"] button[type="submit"]').click
     expect(page).to have_current_path(admin_supplier_addresses_path(supplier), wait: 10)
 
@@ -135,6 +139,8 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-address-location-target="reviewFields"]:not(.hidden)')
     expect(page).to have_css('[data-supplier-address-location-target="reviewNotice"]:not(.hidden)',
                              text: 'Verify the physical address')
+    expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-amber-50',
+                             text: 'low-confidence')
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('0')
 
@@ -142,6 +148,9 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     find('input[name="address[location_reviewed]"][type="checkbox"]').set(true)
     find('[data-action="supplier-address-location#confirm"]').click
     expect(find('input[name="address[location_confirmed]"]', visible: :all).value).to eq('1')
+    expect(page).to have_css('[data-supplier-address-location-target="statusPanel"].bg-emerald-50')
+    expect(page).to have_css('[data-supplier-address-location-target="reviewNotice"].hidden', visible: :all)
+    expect(page).to have_button('Location confirmed', disabled: true)
     find('form[data-controller~="supplier-address-location"] button[type="submit"]').click
     expect(page).to have_current_path(admin_supplier_addresses_path(supplier), wait: 10)
     expect(supplier.addresses.reload.last.geocoding_confidence.to_f).to eq(0.3)

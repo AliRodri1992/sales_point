@@ -1,0 +1,7 @@
+es:
+  admin:
+    supplier_details:
+      address_form:
+        location_confirmed_button: "Ubicación confirmada"
+        location_confirmed_save_hint: "Para guardar esta ubicación, pulsa el botón de guardar al final del formulario."
+        location_changed: "El domicilio cambió. Busca y confirma nuevamente la ubicación."

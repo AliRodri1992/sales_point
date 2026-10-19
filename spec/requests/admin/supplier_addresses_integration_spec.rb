@@ -43,7 +43,13 @@ RSpec.describe 'Supplier address integration', type: :request do
     notice = document.at_css('[data-supplier-address-location-target="reviewNotice"]')
     review = document.at_css('[data-supplier-address-location-target="reviewFields"]')
 
-    expect(controls.next_element).to eq(notice)
+    status_panel = document.at_css('[data-supplier-address-location-target="statusPanel"]')
+    expect(controls.next_element).to eq(status_panel)
+    expect(status_panel.next_element).to eq(notice)
+    expect(status_panel.at_css('[data-supplier-address-location-target="status"]')).to be_present
+    expect(status_panel.at_css('[data-supplier-address-location-target="statusIcon"]')).to be_present
+    expect(status_panel.at_css('[data-supplier-address-location-target="saveHint"]')).to be_present
+    expect(document.css('[data-supplier-address-location-target="status"]').size).to eq(1)
     expect(notice.text.squish).to eq(I18n.t('admin.supplier_details.location_review_required', locale: :en))
     expect(notice['class']).to include('hidden')
     expect(review.at_css('input[name="address[location_reviewed]"][type="checkbox"]')).to be_present
