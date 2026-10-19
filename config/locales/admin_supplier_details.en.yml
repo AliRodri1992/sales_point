@@ -8,6 +8,8 @@ en:
       geocoding_success: "Geocoded location"
       geocoding_pending: "Location pending"
       geocoding_approximate: "Coordinates obtained automatically. The location may be approximate."
+      no_primary_fiscal_address: "No primary fiscal address is registered. Manage it from Addresses."
+      no_primary_contact: "No primary contact is registered. Manage it from Contacts."
       manage_addresses: "Manage addresses"
       addresses_description: "All addresses registered for this supplier."
       addresses_admin_description: "Manage the addresses registered for this supplier."

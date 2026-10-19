@@ -85,36 +85,34 @@
           <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_purposes.fiscal') %></h3>
           <p data-supplier-form-target="addressValidationError" role="alert"
              class="mt-2 hidden text-sm font-semibold text-rose-600" aria-live="polite"></p>
+          <% fiscal_addresses = supplier.persisted? ? supplier.addresses.to_a.select { |address| address.primary? && address.purpose == 'fiscal' && address.deleted_at.nil? } : supplier.addresses %>
           <div data-supplier-nested-target="items" class="space-y-4">
-            <%= form.fields_for :addresses do |address_form| %>
-              <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: supplier.persisted?, embedded: true, fiscal_locked: !supplier.persisted? %>
+            <%= form.fields_for :addresses, fiscal_addresses do |address_form| %>
+              <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: false, embedded: true, fiscal_locked: true, primary_locked: supplier.persisted? %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
-            <template data-supplier-nested-target="template">
-              <%= form.fields_for :addresses, Address.new, child_index: 'NEW_RECORD' do |address_form| %>
-                <%= render 'admin/suppliers/address_fields', form: address_form %>
-              <% end %>
-            </template>
-            <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+            <% if fiscal_addresses.empty? %>
+              <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_fiscal_address') %></p>
+            <% end %>
+            <%= link_to t('admin.supplier_details.manage_addresses'), admin_supplier_addresses_path(supplier), class: 'inline-flex mt-3 text-sm font-semibold text-emerald-700 hover:text-emerald-800' %>
           <% end %>
         </div>
       </section>
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_3') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_3') %></p></div>
         <div data-controller="supplier-nested" class="space-y-4">
+          <% primary_contacts = supplier.persisted? ? supplier.contacts.to_a.select { |contact| contact.primary? && contact.deleted_at.nil? } : supplier.contacts %>
           <div data-supplier-nested-target="items" class="space-y-4">
-            <%= form.fields_for :contacts do |contact_form| %>
-              <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: supplier.persisted?, embedded: true %>
+            <%= form.fields_for :contacts, primary_contacts do |contact_form| %>
+              <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: false, embedded: true, primary_locked: supplier.persisted? %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
-            <template data-supplier-nested-target="template">
-              <%= form.fields_for :contacts, Contact.new, child_index: 'NEW_RECORD' do |contact_form| %>
-                <%= render 'admin/suppliers/contact_fields', form: contact_form %>
-              <% end %>
-            </template>
-            <button type="button" data-action="supplier-nested#add" class="rounded-xl border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"><%= t('admin.supplier_details.add') %></button>
+            <% if primary_contacts.empty? %>
+              <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_contact') %></p>
+            <% end %>
+            <%= link_to t('admin.supplier_details.manage_contacts'), admin_supplier_contacts_path(supplier), class: 'inline-flex mt-3 text-sm font-semibold text-emerald-700 hover:text-emerald-800' %>
           <% end %>
         </div>
       </section>

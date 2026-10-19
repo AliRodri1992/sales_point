@@ -8,6 +8,8 @@ ko:
       geocoding_success: "지오코딩된 위치"
       geocoding_pending: "위치 확인 대기"
       geocoding_approximate: "자동으로 얻은 좌표로 실제 위치와 차이가 있을 수 있습니다."
+      no_primary_fiscal_address: "등록된 대표 세금 주소가 없습니다. 주소 관리에서 설정하세요."
+      no_primary_contact: "등록된 대표 연락처가 없습니다. 연락처 관리에서 설정하세요."
       manage_addresses: "주소 관리"
       addresses_description: "이 공급업체에 등록된 모든 주소입니다."
       addresses_admin_description: "이 공급업체에 등록된 주소를 관리합니다."
