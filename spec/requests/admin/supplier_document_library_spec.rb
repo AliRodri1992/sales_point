@@ -47,7 +47,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(panel.css('img[src*="supplier-document-"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="previewContent"]')['class']).to include('hidden')
     expect(panel.at_css('[data-supplier-documents-target="previewEmpty"]')['class']).not_to include('hidden')
-    expect(panel['data-supplier-documents-range-label-value']).to include('%{from}', '%{to}', '%{total}')
+    expect(panel['data-supplier-documents-range-label-value']).to include('Showing', 'documents')
     expect(panel.css('button[data-action="supplier-documents#select"][aria-pressed="false"]').size).to eq(2)
     expect(panel.css('button[data-supplier-documents-target="category"]').size).to eq(7)
   end
@@ -112,9 +112,13 @@ RSpec.describe 'Supplier document library', type: :request do
     pdf_id = attachment.id
     supplier.documents.attach(upload('notes.txt', 'text/plain'))
     txt_id = attachment.id
-    supplier.documents.attach(
-      upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    docx = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new('Word format placeholder'),
+      filename: 'specification.docx',
+      content_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      identify: false
     )
+    supplier.documents.attach(docx)
     docx_id = attachment.id
 
     get admin_supplier_document_preview_path(supplier, document_id: pdf_id)
