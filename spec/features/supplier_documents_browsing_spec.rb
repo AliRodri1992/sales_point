@@ -38,7 +38,9 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
 
     expect(page).to have_css('[data-supplier-documents-target="dialog"].hidden', visible: :all)
     expect(page).to have_css('[data-supplier-documents-target="card"] button[aria-pressed="false"]', count: 2)
-    expect(page).to have_css('[data-supplier-documents-target="list"]')
+    expect(page).to have_css('table [data-supplier-documents-target="list"] tr', count: 2)
+    expect(page).to have_css('[data-supplier-documents-target="dropzone"]')
+    expect(page).to have_css('[data-supplier-documents-target="filters"].items-end')
 
     select_document('Supplier contract.pdf')
     expect(page).to have_css('[data-supplier-documents-target="dialog"]:not(.hidden)')
@@ -92,9 +94,32 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
 
     close_drawer
     find('[data-supplier-documents-target="search"]').set('')
-    find('button[data-category="contract"]', text: 'Contracts').click
+    find('[data-supplier-documents-target="categorySelect"]').select('Contracts')
     expect(page).to have_css('[data-supplier-documents-target="card"]:not(.hidden)', count: 1)
     expect(page).to have_css('[data-supplier-documents-target="range"]', text: 'Showing 1–1 of 1')
+  end
+
+  scenario 'uploads multiple files from the inline drop zone without opening a new page' do
+    visit admin_supplier_path(supplier, tab: 'documents')
+
+    Tempfile.create(['supplier-sample', '.pdf']) do |first|
+      Tempfile.create(['supplier-extra', '.pdf']) do |second|
+        [first, second].each do |file|
+          file.write('%PDF-1.4 example document')
+          file.flush
+        end
+
+        find('[data-supplier-documents-target="uploadInput"]', visible: :all)
+          .attach_file([first.path, second.path])
+        expect(page).to have_css('[data-supplier-documents-target="uploadSelection"]:not(.hidden)')
+        expect(page).to have_css('[data-supplier-documents-target="uploadCount"]', text: '2 file(s) selected')
+
+        find('[data-supplier-documents-target="uploadSubmit"]').click
+
+        expect(page).to have_css('[data-supplier-documents-target="card"]', count: 2)
+        expect(page).to have_css('[data-supplier-documents-target="dropzone"]')
+      end
+    end
   end
 
   scenario 'paginates eight cards without hiding the supplier navigation' do

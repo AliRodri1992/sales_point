@@ -1,6 +1,12 @@
 en:
   admin:
     supplier_documents:
+      name: "Name"
+      document_type: "Document type"
+      drop_title: "Drag and drop files here"
+      drop_subtitle: "or select files from your device"
+      files_selected: "%{count} file(s) selected"
+      invalid_files: "Select 1 to 10 supported files, up to 10 MB each."
       upload: "Upload document"
       file: "File"
       file_hint: "PDF, Word, Excel, image, text or XML · 10 MB maximum"

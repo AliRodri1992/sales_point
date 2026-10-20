@@ -1,6 +1,12 @@
 es:
   admin:
     supplier_documents:
+      name: "Nombre"
+      document_type: "Tipo de documento"
+      drop_title: "Arrastra y suelta archivos aquí"
+      drop_subtitle: "o selecciona archivos desde tu equipo"
+      files_selected: "%{count} archivo(s) seleccionados"
+      invalid_files: "Selecciona entre 1 y 10 archivos permitidos, de máximo 10 MB cada uno."
       upload: "Subir documento"
       file: "Archivo"
       file_hint: "PDF, Word, Excel, imagen, texto o XML · Máximo 10 MB"

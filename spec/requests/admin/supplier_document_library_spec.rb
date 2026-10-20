@@ -33,7 +33,7 @@ RSpec.describe 'Supplier document library', type: :request do
     Nokogiri::HTML(response.body).at_css('section[data-section="documents"]')
   end
 
-  it 'renders two-column documents with locally generated SVG icons and a preview panel' do
+  it 'renders a table, aligned search filters, inline uploader and the right-side preview modal' do
     supplier.documents.attach(upload('supplier-contract.pdf'))
     supplier.documents.attach(
       upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
@@ -44,7 +44,12 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to have_http_status(:ok)
     expect(panel['data-controller']).to eq('supplier-documents')
     expect(panel.css('[data-supplier-documents-target="card"]').size).to eq(2)
-    expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
+    expect(panel.at_css('[data-supplier-documents-target="list"]').name).to eq('tbody')
+    expect(panel.at_css('table thead')).to be_present
+    expect(panel.css('table thead th').map(&:text)).to include('Name', 'Document type', 'Status')
+    expect(panel.at_css('[data-supplier-documents-target="filters"]')['class']).to include('items-end')
+    expect(panel.at_css('[data-supplier-documents-target="dropzone"]')).to be_present
+    expect(panel.at_css('input[type="file"][multiple]')['name']).to eq('document[files][]')
     expect(panel.css('img[src*="supplier-document-"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="previewContent"]')['class']).to include('hidden')
     expect(panel.at_css('[data-supplier-documents-target="previewEmpty"]')['class']).to include('hidden')
@@ -55,7 +60,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(dialog.at_css('aside[role="dialog"][aria-modal="true"]')).to be_present
     expect(dialog.at_css('button[data-supplier-documents-target="closeButton"]')).to be_present
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).not_to include('xl:grid-cols')
-    expect(panel.css('button[data-supplier-documents-target="category"]').size).to eq(7)
+    expect(panel.css('select[data-supplier-documents-target="categorySelect"] option').size).to eq(7)
   end
 
   it 'uploads files with valid metadata and redirects to the Documents section' do
@@ -70,6 +75,37 @@ RSpec.describe 'Supplier document library', type: :request do
       'supplier_description' => 'Signed supply agreement',
       'supplier_status' => 'active'
     )
+  end
+
+  it 'uploads several documents in one request and retains their metadata' do
+    post admin_supplier_documents_path(supplier), params: { document: {
+      files: [upload('contract-one.pdf'), upload('contract-two.pdf')],
+      category: 'contract', description: 'Multiple agreements'
+    } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.reload.documents.attachments.count).to eq(2)
+    expect(supplier.documents.blobs.map(&:filename).map(&:to_s))
+      .to contain_exactly('contract-one.pdf', 'contract-two.pdf')
+    expect(supplier.documents.blobs.map(&:custom_metadata)).to all(include(
+      'supplier_category' => 'contract', 'supplier_description' => 'Multiple agreements'
+    ))
+  end
+
+  it 'rejects an entire batch when any file is disallowed' do
+    post admin_supplier_documents_path(supplier), params: { document: {
+      files: [upload('valid.pdf'), upload('unsafe.html', 'text/html')], category: 'other'
+    } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to eq(0)
+  end
+
+  it 'rejects malformed upload lists' do
+    post admin_supplier_documents_path(supplier), params: { document: { files: ['bad-value'] } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to eq(0)
   end
 
   it 'rejects disallowed file formats or files above the size limit' do

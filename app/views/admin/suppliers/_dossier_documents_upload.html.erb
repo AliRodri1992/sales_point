@@ -1,0 +1,42 @@
+<%= form_with url: admin_supplier_documents_path(supplier), scope: :document, multipart: true,
+              data: { supplier_documents_target: 'uploadForm',
+                      action: 'submit->supplier-documents#submitUploads' },
+              class: 'mt-5 space-y-3' do |f| %>
+  <div data-supplier-documents-target="dropzone"
+       data-action="dragenter->supplier-documents#dragOver dragover->supplier-documents#dragOver dragleave->supplier-documents#dragLeave drop->supplier-documents#dropFiles"
+       class="flex min-h-36 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/70 px-4 py-5 text-center transition-colors">
+    <%= icon('cloud-arrow-up', class: 'mb-2 size-9 text-emerald-600') %>
+    <button type="button" data-action="supplier-documents#pickFiles"
+            class="rounded-md text-sm font-semibold text-slate-900 underline-offset-2 hover:text-emerald-700 hover:underline focus-visible:outline-2 focus-visible:outline-emerald-600">
+      <%= t("#{dictionary}.drop_title") %>
+    </button>
+    <p class="mt-1 text-xs text-slate-500"><%= t("#{dictionary}.drop_subtitle") %></p>
+    <p class="mt-2 text-xs text-slate-500"><%= t("#{dictionary}.file_hint") %></p>
+    <%= f.file_field :files, multiple: true, required: true,
+                     accept: '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.csv,.xml,.txt',
+                     data: { supplier_documents_target: 'uploadInput', action: 'change->supplier-documents#filesChanged' },
+                     class: 'sr-only' %>
+  </div>
+  <p data-supplier-documents-target="uploadError" class="hidden text-sm font-semibold text-rose-700" role="alert"></p>
+  <div data-supplier-documents-target="uploadSelection" class="hidden rounded-xl border border-emerald-200 bg-emerald-50/40 p-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
+      <div class="min-w-0 flex-1">
+        <p data-supplier-documents-target="uploadCount" class="text-sm font-semibold text-emerald-800" aria-live="polite"></p>
+        <p data-supplier-documents-target="uploadNames" class="mt-1 break-all text-xs text-slate-600"></p>
+      </div>
+      <div class="w-full sm:w-44">
+        <%= f.label :category, t("#{dictionary}.category"), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+        <%= f.select :category, categories.drop(1).map { |category| [t("#{dictionary}.categories.#{category}"), category] },
+                     { selected: 'other' },
+                     class: 'h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-800 focus:border-emerald-600 focus:ring-emerald-600' %>
+      </div>
+      <div class="w-full sm:w-56">
+        <%= f.label :description, t("#{dictionary}.description"), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+        <%= f.text_field :description, maxlength: 300, placeholder: t("#{dictionary}.description_placeholder"),
+                         class: 'h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-emerald-600 focus:ring-emerald-600' %>
+      </div>
+      <%= f.submit t("#{dictionary}.upload"), data: { supplier_documents_target: 'uploadSubmit' },
+                   class: 'h-10 cursor-pointer rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800' %>
+    </div>
+  </div>
+<% end %>

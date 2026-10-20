@@ -17,11 +17,13 @@ module Admin
 
     def create
       supplier = authorized_supplier(:manage_documents?)
-      return reject_file(supplier) unless valid_file?(document_file)
+      files = document_files
+      return reject_file(supplier) unless files.size.between?(1, 10) && files.all? { |file| valid_file?(file) }
 
-      supplier.documents.attach(document_file)
-      attachment = supplier.documents.attachments.order(:id).last
-      update_metadata(attachment.blob)
+      supplier.documents.attach(files)
+      supplier.documents.attachments.order(:id).last(files.size).each do |attachment|
+        update_metadata(attachment.blob)
+      end
       redirect_documents(supplier, :uploaded)
     end
 
@@ -92,7 +94,13 @@ module Admin
     end
 
     def document_params
-      params.fetch(:document, ActionController::Parameters.new).permit(:file, :category, :description, :status)
+      params.fetch(:document, ActionController::Parameters.new)
+            .permit(:file, :category, :description, :status, files: [])
+    end
+
+    def document_files
+      uploaded = Array(document_params[:files]).compact_blank
+      uploaded.presence || Array(document_file).compact_blank
     end
 
     def document_file
@@ -100,7 +108,8 @@ module Admin
     end
 
     def valid_file?(file)
-      file.present? && file.size <= 10.megabytes &&
+      file.respond_to?(:content_type) && file.respond_to?(:size) &&
+        file.size.positive? && file.size <= 10.megabytes &&
         file.content_type.in?(SupplierDocumentTypes::ALLOWED_DOCUMENT_TYPES)
     end
 
