@@ -99,8 +99,7 @@ module Admin
     end
 
     def document_files
-      uploaded = Array(document_params[:files]).compact_blank
-      uploaded.presence || Array(document_file).compact_blank
+      Array(document_params[:files]).compact_blank.presence || Array(document_file).compact_blank
     end
 
     def document_file

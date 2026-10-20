@@ -85,11 +85,11 @@ RSpec.describe 'Supplier document library', type: :request do
 
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
     expect(supplier.reload.documents.attachments.count).to eq(2)
-    expect(supplier.documents.blobs.map(&:filename).map(&:to_s))
+    expect(supplier.documents.blobs.map { |blob| blob.filename.to_s })
       .to contain_exactly('contract-one.pdf', 'contract-two.pdf')
-    expect(supplier.documents.blobs.map(&:custom_metadata)).to all(include(
-      'supplier_category' => 'contract', 'supplier_description' => 'Multiple agreements'
-    ))
+    expect(supplier.documents.blobs.map(&:custom_metadata)).to all(
+      include('supplier_category' => 'contract', 'supplier_description' => 'Multiple agreements')
+    )
   end
 
   it 'rejects an entire batch when any file is disallowed' do

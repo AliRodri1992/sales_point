@@ -122,6 +122,25 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     end
   end
 
+  scenario 'accepts files dropped directly on the upload area' do
+    visit admin_supplier_path(supplier, tab: 'documents')
+
+    page.execute_script(<<~JS)
+      const transfer = new DataTransfer()
+      transfer.items.add(new File(["%PDF-1.4 demo"], "dropped-document.pdf", { type: "application/pdf" }))
+      const dropzone = document.querySelector('[data-supplier-documents-target="dropzone"]')
+      dropzone.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }))
+    JS
+
+    expect(page).to have_css('[data-supplier-documents-target="uploadSelection"]:not(.hidden)')
+    expect(page).to have_css('[data-supplier-documents-target="uploadNames"]', text: 'dropped-document.pdf')
+
+    find('[data-supplier-documents-target="uploadSubmit"]').click
+
+    expect(page).to have_css('[data-supplier-documents-target="card"]', count: 1)
+    expect(page).to have_text('dropped-document.pdf')
+  end
+
   scenario 'paginates eight cards without hiding the supplier navigation' do
     10.times { |number| add_file("Supplier file #{number}.pdf") }
 
