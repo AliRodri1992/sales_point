@@ -45,7 +45,7 @@ module Suppliers
       namespaces = { 'w' => 'http://schemas.openxmlformats.org/wordprocessingml/2006/main' }
       paragraphs = xml.xpath('//w:body//w:p', namespaces)
       lines = paragraphs.map { |paragraph| paragraph.xpath('.//w:t', namespaces).map(&:text).join }
-      lines.reject(&:blank?).join("\n").first(MAX_TEXT_CHARS)
+      lines.compact_blank.join("\n").first(MAX_TEXT_CHARS)
     end
 
     def xlsx_text(zip)

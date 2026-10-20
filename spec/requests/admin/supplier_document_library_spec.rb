@@ -148,7 +148,6 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response.headers['Content-Disposition']).to include('attachment')
   end
 
-
   it 'previews valid Office attachments as safe plain text for the slide-out drawer' do
     {
       'sample.docx' => [SupplierDemoDocumentOffice.docx_for(supplier),
