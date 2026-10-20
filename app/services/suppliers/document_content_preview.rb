@@ -19,9 +19,11 @@ module Suppliers
       return unless @blob.content_type.in?([DOCX_TYPE, XLSX_TYPE])
       return if @blob.byte_size > 10.megabytes
 
+      text = nil
       Zip::File.open_buffer(@blob.download) do |zip|
-        @blob.content_type == DOCX_TYPE ? docx_text(zip) : xlsx_text(zip)
+        text = @blob.content_type == DOCX_TYPE ? docx_text(zip) : xlsx_text(zip)
       end
+      text
     rescue Zip::Error, Nokogiri::XML::SyntaxError, ArgumentError
       nil
     end
