@@ -23,6 +23,7 @@ module Suppliers
       when 'application/pdf' then 'pdf'
       when 'image/png', 'image/jpeg' then 'image'
       when 'text/plain', 'text/csv', 'application/csv', 'text/xml', 'application/xml' then 'text'
+      when Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE then 'text'
       else 'none'
       end
     end

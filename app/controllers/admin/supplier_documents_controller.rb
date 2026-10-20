@@ -5,7 +5,10 @@ module Admin
     include SupplierAuditTrail
 
     TEXT_PREVIEW_TYPES = %w[text/plain text/csv application/csv text/xml application/xml].freeze
-    PREVIEW_TYPES = (%w[application/pdf image/png image/jpeg] + TEXT_PREVIEW_TYPES).freeze
+    OFFICE_PREVIEW_TYPES = [Suppliers::DocumentContentPreview::DOCX_TYPE,
+                            Suppliers::DocumentContentPreview::XLSX_TYPE].freeze
+    PREVIEW_TYPES = (%w[application/pdf image/png image/jpeg] + TEXT_PREVIEW_TYPES +
+                     OFFICE_PREVIEW_TYPES).freeze
     CATEGORIES = %w[contract fiscal catalog technical legal other].freeze
     STATUSES = %w[active inactive].freeze
 
@@ -34,8 +37,9 @@ module Admin
       attachment = authorized_attachment(:view_documents?)
       return head :unsupported_media_type unless attachment.blob.content_type.in?(PREVIEW_TYPES)
 
-      response.headers['Content-Security-Policy'] = "default-src 'none'; frame-ancestors 'self'; object-src 'none'"
+      response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
       return send_text_preview(attachment) if attachment.blob.content_type.in?(TEXT_PREVIEW_TYPES)
+      return send_office_preview(attachment) if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
 
       send_attachment(attachment, disposition: 'inline')
     end
@@ -77,8 +81,19 @@ module Admin
     end
 
     def send_text_preview(attachment)
-      response.headers['X-Content-Type-Options'] = 'nosniff'
       text = attachment.blob.download.byteslice(0, 60_000).force_encoding(Encoding::UTF_8).scrub
+      send_plain_text(attachment, text)
+    end
+
+    def send_office_preview(attachment)
+      text = Suppliers::DocumentContentPreview.new(attachment.blob).call
+      return head :unsupported_media_type if text.blank?
+
+      send_plain_text(attachment, text)
+    end
+
+    def send_plain_text(attachment, text)
+      response.headers['X-Content-Type-Options'] = 'nosniff'
       send_data text, filename: attachment.blob.filename.to_s,
                       type: 'text/plain; charset=utf-8', disposition: 'inline'
     end

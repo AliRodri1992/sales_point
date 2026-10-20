@@ -97,7 +97,7 @@
         </label>
       </div>
 
-      <div class="mt-4 grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_19rem] 2xl:grid-cols-[minmax(0,1fr)_21rem]">
+      <div class="mt-4 min-w-0">
         <div class="min-w-0">
           <div data-supplier-documents-target="list" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
             <% documents.each do |document| %>
@@ -170,12 +170,26 @@
           </div>
         </div>
 
-        <aside id="supplier-document-preview" class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/50 p-4"
-               aria-label="<%= t("#{dictionary}.preview") %>" aria-live="polite">
-          <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t("#{dictionary}.preview") %></h3>
-          <div data-supplier-documents-target="previewEmpty" class="mt-5 rounded-lg border border-dashed border-emerald-200 bg-white px-4 py-10 text-center text-sm text-slate-500"><%= t("#{dictionary}.select_hint") %></div>
+        <div data-supplier-documents-target="dialog"
+             class="fixed inset-0 z-[100] hidden"
+             data-action="keydown@window->supplier-documents#handleKeydown">
+          <div data-action="click->supplier-documents#closePreview"
+               class="absolute inset-0 bg-slate-900/50" aria-hidden="true"></div>
+          <aside id="supplier-document-preview" role="dialog" aria-modal="true"
+                 aria-labelledby="supplier-document-preview-title"
+                 class="absolute inset-y-0 right-0 flex h-full w-full max-w-[42rem] flex-col overflow-y-auto border-l border-emerald-100 bg-white p-5 shadow-2xl sm:p-6">
+            <div class="sticky top-0 z-10 -mx-5 -mt-5 mb-3 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 sm:-mx-6 sm:-mt-6 sm:px-6">
+              <h3 id="supplier-document-preview-title" class="font-jakarta text-lg font-bold text-slate-900"><%= t("#{dictionary}.preview") %></h3>
+              <button type="button" data-supplier-documents-target="closeButton"
+                      data-action="supplier-documents#closePreview"
+                      class="inline-flex size-10 items-center justify-center rounded-xl text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800"
+                      aria-label="<%= t("#{dictionary}.close_preview") %>">
+                <%= icon('x-mark', class: 'size-5') %>
+              </button>
+            </div>
+          <div data-supplier-documents-target="previewEmpty" class="hidden mt-5 rounded-lg border border-dashed border-emerald-200 bg-white px-4 py-10 text-center text-sm text-slate-500"><%= t("#{dictionary}.select_hint") %></div>
           <div data-supplier-documents-target="previewContent" class="hidden">
-            <div class="mt-3 flex h-56 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white">
+            <div class="mt-3 flex h-[54vh] min-h-64 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
               <iframe data-supplier-documents-target="previewFrame" title="<%= t("#{dictionary}.preview") %>"
                       class="hidden size-full border-0" referrerpolicy="same-origin"></iframe>
               <img data-supplier-documents-target="previewImage" alt="<%= t("#{dictionary}.preview") %>" class="hidden h-full w-full object-contain">
@@ -224,7 +238,8 @@
               </details>
             <% end %>
           </div>
-        </aside>
+          </aside>
+        </div>
       </div>
     <% else %>
       <div class="mt-5 rounded-2xl border border-slate-200 px-5 py-10 text-center sm:px-8">

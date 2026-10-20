@@ -7,6 +7,7 @@ export default class extends Controller {
     "range", "page", "previous", "next", "previewContent", "previewEmpty",
     "previewName", "previewType", "previewSize", "previewDate", "previewDescription",
     "previewFrame", "previewImage", "previewText", "unsupported", "previewError",
+    "dialog", "closeButton",
     "download", "open", "replaceForm", "editForm", "editCategory", "editStatus",
     "editDescription", "replaceDetails", "editDetails"
   ]
@@ -23,13 +24,14 @@ export default class extends Controller {
     this.pageNumber = 1
     this.selectedId = null
     this.previewRequest = null
+    this.lastTrigger = null
+    this.scrollWasLocked = false
     this.refresh()
   }
 
   disconnect() {
+    this.closePreview({ restoreFocus: false })
     this.cancelPreview()
-    if (this.hasPreviewFrameTarget) this.previewFrameTarget.removeAttribute("src")
-    if (this.hasPreviewImageTarget) this.previewImageTarget.removeAttribute("src")
   }
 
   filter(event) {
@@ -58,7 +60,57 @@ export default class extends Controller {
     if (!card) return
 
     this.selectedId = card.dataset.documentId
+    this.lastTrigger = event.currentTarget
+    this.openPreview()
     this.renderSelection(card)
+  }
+
+  openPreview() {
+    this.scrollWasLocked = document.body.classList.contains("overflow-hidden")
+    document.body.classList.add("overflow-hidden")
+    this.dialogTarget.classList.remove("hidden")
+    this.closeButtonTarget.focus()
+  }
+
+  closePreview({ restoreFocus = true } = {}) {
+    if (!this.hasDialogTarget || this.dialogTarget.classList.contains("hidden")) return
+
+    this.dialogTarget.classList.add("hidden")
+    this.cancelPreview()
+    this.previewFrameTarget.removeAttribute("src")
+    this.previewImageTarget.removeAttribute("src")
+    if (!this.scrollWasLocked) document.body.classList.remove("overflow-hidden")
+    if (restoreFocus && this.lastTrigger?.isConnected) this.lastTrigger.focus()
+  }
+
+  handleKeydown(event) {
+    if (this.dialogTarget.classList.contains("hidden")) return
+
+    if (event.key === "Escape") {
+      event.preventDefault()
+      this.closePreview()
+    } else if (event.key === "Tab") {
+      this.keepFocusInsideDialog(event)
+    }
+  }
+
+  keepFocusInsideDialog(event) {
+    const all = this.dialogTarget.querySelectorAll(
+      "button:not([disabled]), a[href], summary, input:not([disabled]), select:not([disabled]), textarea:not([disabled])"
+    )
+    const visible = Array.from(all).filter((element) => (
+      element.getClientRects().length && !element.closest(".hidden")
+    ))
+    const first = visible[0]
+    const last = visible[visible.length - 1]
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last?.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first?.focus()
+    }
   }
 
   matches() {
@@ -120,6 +172,7 @@ export default class extends Controller {
 
   clearSelection() {
     this.selectedId = null
+    this.closePreview()
     this.cancelPreview()
     this.cardTargets.forEach((card) => this.markSelected(card, false))
     this.previewContentTarget.classList.add("hidden")

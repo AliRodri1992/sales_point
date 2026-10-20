@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require Rails.root.join('db/seeds/supplier_demo_document_office')
 
 RSpec.describe 'Supplier document library', type: :request do
   let(:organization) { create(:organization) }
@@ -46,9 +47,14 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
     expect(panel.css('img[src*="supplier-document-"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="previewContent"]')['class']).to include('hidden')
-    expect(panel.at_css('[data-supplier-documents-target="previewEmpty"]')['class']).not_to include('hidden')
+    expect(panel.at_css('[data-supplier-documents-target="previewEmpty"]')['class']).to include('hidden')
     expect(panel['data-supplier-documents-range-label-value']).to include('Showing', 'documents')
     expect(panel.css('button[data-action="supplier-documents#select"][aria-pressed="false"]').size).to eq(2)
+    dialog = panel.at_css('[data-supplier-documents-target="dialog"]')
+    expect(dialog['class']).to include('fixed', 'hidden')
+    expect(dialog.at_css('aside[role="dialog"][aria-modal="true"]')).to be_present
+    expect(dialog.at_css('button[data-supplier-documents-target="closeButton"]')).to be_present
+    expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).not_to include('xl:grid-cols')
     expect(panel.css('button[data-supplier-documents-target="category"]').size).to eq(7)
   end
 
@@ -125,7 +131,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.headers['Content-Disposition']).to include('inline')
     expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
-    expect(response.headers['Content-Security-Policy']).to include("frame-ancestors 'self'")
+    expect(response.headers['Content-Security-Policy']).to eq("frame-ancestors 'self'")
     expect(response.headers['Content-Security-Policy']).not_to include('sandbox')
 
     get admin_supplier_document_preview_path(supplier, document_id: txt_id)
@@ -140,6 +146,29 @@ RSpec.describe 'Supplier document library', type: :request do
     get admin_supplier_document_download_path(supplier, document_id: txt_id)
     expect(response).to have_http_status(:ok)
     expect(response.headers['Content-Disposition']).to include('attachment')
+  end
+
+
+  it 'previews valid Office attachments as safe plain text for the slide-out drawer' do
+    {
+      'sample.docx' => [SupplierDemoDocumentOffice.docx_for(supplier),
+                        Suppliers::DocumentContentPreview::DOCX_TYPE, 'DEMO'],
+      'sample.xlsx' => [SupplierDemoDocumentOffice.xlsx_for(supplier),
+                        Suppliers::DocumentContentPreview::XLSX_TYPE, 'Proveedor']
+    }.each do |filename, (content, mime, expected)|
+      office = ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new(content), filename:, content_type: mime, identify: false
+      )
+      supplier.documents.attach(office)
+      id = supplier.documents.attachments.order(:id).last.id
+
+      get admin_supplier_document_preview_path(supplier, document_id: id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('text/plain')
+      expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
+      expect(response.body).to include(expected)
+    end
   end
 
   it 'prevents access to another organizations documents' do
