@@ -32,6 +32,7 @@ es:
       preview: "Vista previa"
       select_hint: "Selecciona un documento para ver sus detalles."
       unsupported_preview: "No hay vista previa disponible para este tipo de archivo."
+      preview_error: "No se pudo cargar la vista previa. Puedes descargar el archivo."
       select: "Ver detalles de %{name}"
       size: "Tamaño"
       download: "Descargar"

@@ -4,7 +4,8 @@ module Admin
   class SupplierDocumentsController < ApplicationController
     include SupplierAuditTrail
 
-    PREVIEW_TYPES = %w[application/pdf image/png image/jpeg].freeze
+    TEXT_PREVIEW_TYPES = %w[text/plain text/csv application/csv text/xml application/xml].freeze
+    PREVIEW_TYPES = (%w[application/pdf image/png image/jpeg] + TEXT_PREVIEW_TYPES).freeze
     CATEGORIES = %w[contract fiscal catalog technical legal other].freeze
     STATUSES = %w[active inactive].freeze
 
@@ -33,7 +34,9 @@ module Admin
       attachment = authorized_attachment(:view_documents?)
       return head :unsupported_media_type unless attachment.blob.content_type.in?(PREVIEW_TYPES)
 
-      response.headers['Content-Security-Policy'] = "default-src 'none'; sandbox"
+      response.headers['Content-Security-Policy'] = "default-src 'none'; frame-ancestors 'self'; object-src 'none'"
+      return send_text_preview(attachment) if attachment.blob.content_type.in?(TEXT_PREVIEW_TYPES)
+
       send_attachment(attachment, disposition: 'inline')
     end
 
@@ -71,6 +74,13 @@ module Admin
                 filename: attachment.blob.filename.to_s,
                 type: attachment.blob.content_type,
                 disposition:
+    end
+
+    def send_text_preview(attachment)
+      response.headers['X-Content-Type-Options'] = 'nosniff'
+      text = attachment.blob.download.byteslice(0, 60_000).force_encoding(Encoding::UTF_8).scrub
+      send_data text, filename: attachment.blob.filename.to_s,
+                      type: 'text/plain; charset=utf-8', disposition: 'inline'
     end
 
     def replace_document(supplier, attachment)

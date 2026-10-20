@@ -1,14 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Read-only document library controls; mutations use authenticated Rails forms.
+// Browses supplier attachments locally; every preview uses the authorized Rails endpoint.
 export default class extends Controller {
   static targets = [
     "category", "search", "format", "status", "date", "card", "noResults",
     "range", "page", "previous", "next", "previewContent", "previewEmpty",
     "previewName", "previewType", "previewSize", "previewDate", "previewDescription",
-    "previewFrame", "previewImage", "unsupported", "download", "open",
-    "replaceForm", "editForm", "editCategory", "editStatus", "editDescription",
-    "replaceDetails", "editDetails"
+    "previewFrame", "previewImage", "previewText", "unsupported", "previewError",
+    "download", "open", "replaceForm", "editForm", "editCategory", "editStatus",
+    "editDescription", "replaceDetails", "editDetails"
   ]
 
   static values = {
@@ -22,7 +22,14 @@ export default class extends Controller {
     this.category = "all"
     this.pageNumber = 1
     this.selectedId = null
+    this.previewRequest = null
     this.refresh()
+  }
+
+  disconnect() {
+    this.cancelPreview()
+    if (this.hasPreviewFrameTarget) this.previewFrameTarget.removeAttribute("src")
+    if (this.hasPreviewImageTarget) this.previewImageTarget.removeAttribute("src")
   }
 
   filter(event) {
@@ -102,28 +109,39 @@ export default class extends Controller {
       button.classList.toggle("text-white", active)
       button.classList.toggle("border-emerald-700", active)
       button.classList.toggle("bg-white", !active)
+      const count = button.querySelector("[data-category-count]")
+      if (count) count.classList.toggle("text-emerald-800", active)
     })
 
-    const selection = visible.find((card) => card.dataset.documentId === this.selectedId) || visible[0]
-    if (selection) {
-      this.selectedId = selection.dataset.documentId
-      this.renderSelection(selection)
-    } else {
-      this.selectedId = null
-      this.previewEmptyTarget.classList.remove("hidden")
-      this.previewContentTarget.classList.add("hidden")
-      this.previewFrameTarget.removeAttribute("src")
-    }
+    const selected = visible.find((card) => card.dataset.documentId === this.selectedId)
+    if (selected) this.renderSelection(selected)
+    else this.clearSelection()
+  }
+
+  clearSelection() {
+    this.selectedId = null
+    this.cancelPreview()
+    this.cardTargets.forEach((card) => this.markSelected(card, false))
+    this.previewContentTarget.classList.add("hidden")
+    this.previewEmptyTarget.classList.remove("hidden")
+    this.previewFrameTarget.removeAttribute("src")
+    this.previewImageTarget.removeAttribute("src")
+    this.previewTextTarget.textContent = ""
+  }
+
+  markSelected(card, selected) {
+    card.classList.toggle("border-emerald-500", selected)
+    card.classList.toggle("bg-emerald-50/50", selected)
+    card.classList.toggle("ring-1", selected)
+    card.classList.toggle("ring-emerald-500", selected)
+    const button = card.querySelector('[data-action="supplier-documents#select"]')
+    if (button) button.setAttribute("aria-pressed", String(selected))
   }
 
   renderSelection(card) {
-    this.cardTargets.forEach((item) => {
-      const selected = item === card
-      item.classList.toggle("border-emerald-500", selected)
-      item.classList.toggle("bg-emerald-50/50", selected)
-    })
-
     const data = card.dataset
+    this.cardTargets.forEach((item) => this.markSelected(item, item === card))
+    this.selectedId = data.documentId
     this.previewEmptyTarget.classList.add("hidden")
     this.previewContentTarget.classList.remove("hidden")
     this.previewNameTarget.textContent = data.filename
@@ -133,21 +151,66 @@ export default class extends Controller {
     this.previewDateTarget.textContent = data.date
     this.previewDescriptionTarget.textContent = data.description || "—"
     this.downloadTarget.href = data.downloadUrl
-    this.openTarget.href = data.previewable === "true" ? data.previewUrl : data.downloadUrl
+    this.openTarget.href = data.previewKind !== "none" ? data.previewUrl : data.downloadUrl
+    this.renderPreview(data)
+    this.syncEditForms(data)
+  }
 
-    const pdf = data.previewable === "true" && data.format === "pdf"
-    const image = data.previewable === "true" && ["png", "jpg", "jpeg"].includes(data.format)
-    this.previewFrameTarget.classList.toggle("hidden", !pdf)
-    this.previewImageTarget.classList.toggle("hidden", !image)
-    this.unsupportedTarget.classList.toggle("hidden", pdf || image)
-    if (pdf) {
-      if (this.previewFrameTarget.getAttribute("src") !== data.previewUrl) this.previewFrameTarget.src = data.previewUrl
-    } else {
-      this.previewFrameTarget.removeAttribute("src")
+  renderPreview(data) {
+    this.cancelPreview()
+    this.previewFrameTarget.classList.add("hidden")
+    this.previewImageTarget.classList.add("hidden")
+    this.previewTextTarget.classList.add("hidden")
+    this.unsupportedTarget.classList.add("hidden")
+    this.previewErrorTarget.classList.add("hidden")
+    this.previewFrameTarget.removeAttribute("src")
+    this.previewImageTarget.removeAttribute("src")
+    this.previewTextTarget.textContent = ""
+
+    switch (data.previewKind) {
+      case "pdf":
+        this.previewFrameTarget.classList.remove("hidden")
+        this.previewFrameTarget.src = data.previewUrl
+        break
+      case "image":
+        this.previewImageTarget.classList.remove("hidden")
+        this.previewImageTarget.src = data.previewUrl
+        break
+      case "text":
+        this.loadTextPreview(data)
+        break
+      default:
+        this.unsupportedTarget.classList.remove("hidden")
     }
-    if (image) this.previewImageTarget.src = data.previewUrl
-    else this.previewImageTarget.removeAttribute("src")
+  }
 
+  async loadTextPreview(data) {
+    const request = new AbortController()
+    this.previewRequest = request
+    try {
+      const response = await fetch(data.previewUrl, {
+        credentials: "same-origin",
+        signal: request.signal,
+        headers: { Accept: "text/plain" }
+      })
+      if (!response.ok) throw new Error("Preview request failed")
+      const content = await response.text()
+      if (request.signal.aborted || data.documentId !== this.selectedId) return
+
+      this.previewTextTarget.textContent = content
+      this.previewTextTarget.classList.remove("hidden")
+    } catch (error) {
+      if (request.signal.aborted || data.documentId !== this.selectedId) return
+      this.previewErrorTarget.classList.remove("hidden")
+    }
+  }
+
+  cancelPreview() {
+    this.previewRequest?.abort()
+    this.previewRequest = null
+  }
+
+  syncEditForms(data) {
     if (this.hasEditFormTarget) {
       this.editFormTarget.action = data.updateUrl
       this.editCategoryTarget.value = data.category

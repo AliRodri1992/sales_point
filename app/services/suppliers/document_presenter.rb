@@ -16,7 +16,16 @@ module Suppliers
     def format = attachment.blob.filename.extension.downcase
     def description = metadata['supplier_description'].presence || ''
     def status = metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active'
-    def previewable? = attachment.blob.content_type.in?(PREVIEW_TYPES)
+    def previewable? = preview_kind != 'none'
+
+    def preview_kind
+      case attachment.blob.content_type
+      when 'application/pdf' then 'pdf'
+      when 'image/png', 'image/jpeg' then 'image'
+      when 'text/plain', 'text/csv', 'application/csv', 'text/xml', 'application/xml' then 'text'
+      else 'none'
+      end
+    end
 
     def category
       given = metadata['supplier_category']

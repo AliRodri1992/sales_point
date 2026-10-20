@@ -45,7 +45,10 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(panel.css('[data-supplier-documents-target="card"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
     expect(panel.css('img[src*="supplier-document-"]').size).to eq(2)
-    expect(panel.at_css('[data-supplier-documents-target="previewContent"]')).to be_present
+    expect(panel.at_css('[data-supplier-documents-target="previewContent"]')['class']).to include('hidden')
+    expect(panel.at_css('[data-supplier-documents-target="previewEmpty"]')['class']).not_to include('hidden')
+    expect(panel['data-supplier-documents-range-label-value']).to include('%{from}', '%{to}', '%{total}')
+    expect(panel.css('button[data-action="supplier-documents#select"][aria-pressed="false"]').size).to eq(2)
     expect(panel.css('button[data-supplier-documents-target="category"]').size).to eq(7)
   end
 
@@ -109,13 +112,25 @@ RSpec.describe 'Supplier document library', type: :request do
     pdf_id = attachment.id
     supplier.documents.attach(upload('notes.txt', 'text/plain'))
     txt_id = attachment.id
+    supplier.documents.attach(
+      upload('specification.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    )
+    docx_id = attachment.id
 
     get admin_supplier_document_preview_path(supplier, document_id: pdf_id)
     expect(response).to have_http_status(:ok)
     expect(response.headers['Content-Disposition']).to include('inline')
     expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
+    expect(response.headers['Content-Security-Policy']).to include("frame-ancestors 'self'")
+    expect(response.headers['Content-Security-Policy']).not_to include('sandbox')
 
     get admin_supplier_document_preview_path(supplier, document_id: txt_id)
+    expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq('text/plain')
+    expect(response.body).to include('Plain text supplier note')
+    expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
+
+    get admin_supplier_document_preview_path(supplier, document_id: docx_id)
     expect(response).to have_http_status(:unsupported_media_type)
 
     get admin_supplier_document_download_path(supplier, document_id: txt_id)

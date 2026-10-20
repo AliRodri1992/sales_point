@@ -32,6 +32,7 @@ en:
       preview: "Preview"
       select_hint: "Select a document to view its details."
       unsupported_preview: "A preview is not available for this file type."
+      preview_error: "The preview could not be loaded. You can download the file."
       select: "View details for %{name}"
       size: "Size"
       download: "Download"
