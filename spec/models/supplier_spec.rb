@@ -15,6 +15,22 @@ RSpec.describe Supplier, type: :model do
       expect(supplier.errors.attribute_names).to include(:person_type)
     end
 
+    it 'requires a foreign tax identifier instead of an RFC for a foreign fiscal address' do
+      country = create(:country, iso_alpha2: 'US')
+      supplier.addresses.build(country:, purpose: 'fiscal', primary: true)
+      supplier.rfc = nil
+      supplier.foreign_tax_id = 'US-98-7654321'
+
+      expect(supplier).to be_valid
+      expect(supplier.rfc).to be_nil
+    end
+
+    it 'rejects a mismatched Mexican SAT regime' do
+      supplier.sat_fiscal_regime = create(:sat_fiscal_regime, person_type: 'M')
+      expect(supplier).not_to be_valid
+      expect(supplier.errors.attribute_names).to include(:sat_fiscal_regime)
+    end
+
     it 'requires code and name' do
       supplier.code = nil
       supplier.name = nil

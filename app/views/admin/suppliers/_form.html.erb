@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, supplier], class: 'flex h-full flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form', turbo: false, action: 'submit->supplier-form#submit', supplier_form_new_record_value: supplier.new_record?, required_message: t('admin.suppliers.onboarding.required_field'), invalid_format_message: t('admin.suppliers.onboarding.invalid_format'), supplier_form_address_validation_url_value: (validate_fiscal_address_admin_suppliers_path if supplier.new_record?), supplier_form_validation_unavailable_message: t('admin.suppliers.onboarding.address_validation_unavailable') } do |form| %>
+<%= form_with model: [:admin, supplier], class: 'flex h-full flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form supplier-tax-residency', turbo: false, action: 'submit->supplier-form#submit change->supplier-tax-residency#update', supplier_form_new_record_value: supplier.new_record?, required_message: t('admin.suppliers.onboarding.required_field'), invalid_format_message: t('admin.suppliers.onboarding.invalid_format'), supplier_form_address_validation_url_value: (validate_fiscal_address_admin_suppliers_path if supplier.new_record?), supplier_form_validation_unavailable_message: t('admin.suppliers.onboarding.address_validation_unavailable') } do |form| %>
   <%= hidden_field_tag :return_to, 'general' if supplier.persisted? && params[:return_to] == 'general' %>
   <% if supplier.errors[:base].any? %>
     <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"><%= supplier.errors.full_messages_for(:base).first %></div>
@@ -65,17 +65,25 @@
       <div class="relative" data-controller="delta-select"><%= form.select :person_type, %w[individual company].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: t('admin.supplier_dossier.placeholders.person_type') }, required: true, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :person_type)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :person_type) %>
     </div>
-    <div>
+    <div data-supplier-tax-residency-target="mexican">
       <%= form.label :rfc, class: 'mb-2 flex items-center gap-1 text-sm font-semibold text-slate-700' do %><%= t('admin.suppliers.form.rfc') %><span class="text-rose-600" aria-hidden="true">*</span><% end %>
       <%= form.text_field :rfc, required: true, maxlength: 13, pattern: '[A-Za-z&Ññ]{3,4}[0-9]{6}[A-Za-z0-9]{3}',
                           class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :rfc)} px-4 py-3 text-sm uppercase text-slate-800 placeholder:text-slate-400",
                           placeholder: t('admin.suppliers.form.rfc_placeholder') %>
       <%= error_message_for(supplier, :rfc) %>
     </div>
-    <div>
+    <div data-supplier-tax-residency-target="foreign" class="hidden">
+      <%= form.label :foreign_tax_id, t('admin.supplier_fiscal.foreign_tax_id'),
+                     class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :foreign_tax_id, maxlength: 80,
+                          placeholder: t('admin.supplier_fiscal.foreign_tax_placeholder'),
+                          class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm #{form_state_classes(supplier, :foreign_tax_id)}" %>
+      <%= error_message_for(supplier, :foreign_tax_id) %>
+    </div>
+    <div data-supplier-tax-residency-target="regime">
       <%= form.label :sat_fiscal_regime_id, t('admin.suppliers.form.fiscal_regime'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <div class="relative" data-controller="delta-select"><%= form.collection_select :sat_fiscal_regime_id, @fiscal_regimes, :id,
-                                 ->(regime) { "#{regime.code} — #{regime.description}" },
+      <div class="relative" data-controller="delta-select"><%= form.select :sat_fiscal_regime_id,
+                                 options_for_select(@fiscal_regimes.map { |regime| ["#{regime.code} — #{regime.description}", regime.id, { data: { person_type: regime.person_type } }] }, supplier.sat_fiscal_regime_id),
                                  { include_blank: t('admin.suppliers.form.fiscal_regime_blank') },
                                  class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :sat_fiscal_regime_id)} px-4 py-3 text-sm text-slate-800 appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :sat_fiscal_regime_id) %>

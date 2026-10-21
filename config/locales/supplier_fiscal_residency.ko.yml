@@ -1,0 +1,5 @@
+ko:
+  admin:
+    supplier_fiscal:
+      foreign_tax_id: "해외 납세자 식별번호"
+      foreign_tax_placeholder: "예: EIN, VAT 또는 세금 등록 번호"

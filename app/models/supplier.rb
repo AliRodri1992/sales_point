@@ -3,6 +3,7 @@
 class Supplier < ApplicationRecord
   include SupplierDocumentTypes
   include SupplierLifecycle
+  include SupplierFiscalRules
 
   has_paper_trail
 
@@ -26,7 +27,6 @@ class Supplier < ApplicationRecord
   has_many_attached :documents
   validate :responsible_user_in_organization
   validate :documents_are_safe
-  validate :rfc_must_match_person_type_and_date
 
   def tags_text = tags.join(', ')
 
@@ -57,12 +57,6 @@ class Supplier < ApplicationRecord
   validates :phone, length: { maximum: 30 }, allow_blank: true
   validate :phone_must_be_valid
 
-  validates :rfc,
-            length: { in: 12..13 },
-            uniqueness: { scope: :organization_id, conditions: -> { where(deleted_at: nil) } },
-            format: { with: /\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/i, message: :invalid_format },
-            presence: true
-
   validates :notes, length: { maximum: 1000 }, allow_blank: true
 
   enum :status, { active: 'active', inactive: 'inactive' }, validate: true, default: :active
@@ -79,28 +73,6 @@ class Supplier < ApplicationRecord
 
 
   private
-
-  def rfc_must_match_person_type_and_date
-    return if rfc.blank? || !rfc.match?(/\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/)
-
-    prefix_length = rfc.length == 13 ? 4 : 3
-    errors.add(:rfc, :person_type_mismatch) if rfc_person_type_mismatch?(prefix_length)
-    errors.add(:rfc, :invalid_date) unless rfc_date_valid?(prefix_length)
-  end
-
-  def rfc_person_type_mismatch?(prefix_length)
-    (person_type == 'individual' && prefix_length != 4) ||
-      (person_type == 'company' && prefix_length != 3)
-  end
-
-  def rfc_date_valid?(prefix_length)
-    date_digits = rfc[prefix_length, 6]
-    month = date_digits[2, 2].to_i
-    day = date_digits[4, 2].to_i
-    year = date_digits[0, 2].to_i
-
-    [2000 + year, 1900 + year].any? { |full_year| Date.valid_date?(full_year, month, day) }
-  end
 
   def responsible_user_in_organization
     return if responsible_user.blank?

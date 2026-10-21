@@ -16,6 +16,7 @@
     </div>
     <% fiscal_fields = [
       [t('admin.supplier_dossier.general.rfc'), supplier.rfc],
+      [t('admin.supplier_fiscal.foreign_tax_id'), supplier.foreign_tax_id],
       [t('admin.supplier_dossier.fields.person_type'), supplier.person_type.present? ? t("admin.supplier_dossier.options.#{supplier.person_type}") : nil],
       [t('admin.supplier_dossier.general.fiscal_regime'), supplier.sat_fiscal_regime ? "#{supplier.sat_fiscal_regime.code} — #{supplier.sat_fiscal_regime.description}" : nil]
     ] %>

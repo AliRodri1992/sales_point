@@ -6,7 +6,7 @@ module SuppliersFormHelpers
   def supplier_scalar_attributes
     %i[
       code name legal_name trade_name alias_name classification person_type
-      email phone rfc sat_fiscal_regime_id status notes
+      email phone rfc foreign_tax_id sat_fiscal_regime_id status notes
       currency_id credit_days credit_limit discount_percent minimum_order_amount
       responsible_user_id tags_text
     ]
@@ -18,7 +18,7 @@ module SuppliersFormHelpers
     authorize policy_record, :manage_addresses? if attributes.key?(:addresses_attributes)
     authorize policy_record, :manage_documents? if attributes.key?(:documents)
 
-    fiscal_fields = %w[rfc sat_fiscal_regime_id person_type]
+    fiscal_fields = %w[rfc foreign_tax_id sat_fiscal_regime_id person_type]
     commercial_fields = %w[currency_id credit_days credit_limit discount_percent minimum_order_amount]
     authorize policy_record, :manage_fiscal? if attributes.keys.map(&:to_s).intersect?(fiscal_fields)
     authorize policy_record, :manage_commercial? if attributes.keys.map(&:to_s).intersect?(commercial_fields)

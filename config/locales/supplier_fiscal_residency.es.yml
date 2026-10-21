@@ -1,0 +1,5 @@
+es:
+  admin:
+    supplier_fiscal:
+      foreign_tax_id: "Identificador fiscal extranjero"
+      foreign_tax_placeholder: "Ej. EIN, VAT o identificación tributaria"
