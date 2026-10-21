@@ -46,33 +46,29 @@ module SuppliersFormHelpers
   end
 
   def valid_primary_record?(record, association, creating:)
-    return false if invalid_submitted_primary?(record, association)
+    return false unless valid_primary_flags?(record, association)
+    return record[:id].blank? if creating
 
-    id = record[:id]
-    return false if creating && id.present?
-
-    existing = @supplier.public_send(association).not_deleted.find_by(id:) if id.present?
-    return existing_primary_valid?(existing, association) if existing
-    return false if id.present?
-    return true if creating
-
-    existing_primary_scope(association).none?
+    record[:id].present? ? existing_primary_record?(record, association) :
+      no_primary_record?(association)
   end
 
-  def invalid_submitted_primary?(record, association)
-    return true if ActiveModel::Type::Boolean.new.cast(record[:_destroy])
-    return true if record.key?(:primary) && !ActiveModel::Type::Boolean.new.cast(record[:primary])
+  def valid_primary_flags?(record, association)
+    return false if ActiveModel::Type::Boolean.new.cast(record[:_destroy])
+    return false if record.key?(:primary) && !ActiveModel::Type::Boolean.new.cast(record[:primary])
 
-    association == :addresses && record.key?(:purpose) && record[:purpose] != 'fiscal'
+    association != :addresses || !record.key?(:purpose) || record[:purpose] == 'fiscal'
   end
 
-  def existing_primary_valid?(existing, association)
-    existing.primary? && (association != :addresses || existing.purpose == 'fiscal')
+  def existing_primary_record?(record, association)
+    existing = @supplier.public_send(association).not_deleted.find_by(id: record[:id])
+    existing&.primary? && (association != :addresses || existing.purpose == 'fiscal')
   end
 
-  def existing_primary_scope(association)
-    scope = @supplier.public_send(association).not_deleted.where(primary: true)
-    association == :addresses ? scope.where(purpose: 'fiscal') : scope
+  def no_primary_record?(association)
+    @supplier.public_send(association).not_deleted.where(
+      primary: true, **(association == :addresses ? { purpose: 'fiscal' } : {})
+    ).none?
   end
 
   def load_fiscal_regimes
