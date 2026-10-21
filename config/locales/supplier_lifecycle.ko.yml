@@ -1,0 +1,11 @@
+ko:
+  admin:
+    suppliers:
+      lifecycle:
+        archived_list: "보관된 공급업체"
+        active_list: "현재 공급업체"
+        restore: "공급업체 복구"
+        restored: "공급업체가 비활성 상태로 복구되었습니다."
+        restore_conflict: "다른 활성 공급업체가 동일한 식별자를 사용합니다."
+        open_orders: "공급업체를 보관하기 전에 미결 구매 주문을 종료하세요."
+        outstanding_payables: "공급업체를 보관하기 전에 미지급 송장을 정산하세요."

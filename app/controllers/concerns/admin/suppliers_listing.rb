@@ -21,13 +21,15 @@ module Admin
     private
 
     def load_suppliers
-      base_scope = policy_scope(current_organization.suppliers.not_deleted)
+      active_scope = policy_scope(current_organization.suppliers.not_deleted)
       @supplier_stats = {
-        total: base_scope.count,
-        active: base_scope.where(status: 'active').count,
-        inactive: base_scope.where(status: 'inactive').count,
-        credit: base_scope.where('credit_limit > 0').count
+        total: active_scope.count,
+        active: active_scope.where(status: 'active').count,
+        inactive: active_scope.where(status: 'inactive').count,
+        credit: active_scope.where('credit_limit > 0').count
       }
+      base_scope = params[:archived] == '1' ?
+        policy_scope(current_organization.suppliers.where.not(deleted_at: nil)) : active_scope
       @supplier_regimes = SatFiscalRegime.current.order(:code)
       @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime))
       @total_count = @suppliers.count

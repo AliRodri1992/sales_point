@@ -80,6 +80,29 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to redirect_to(admin_suppliers_path)
   end
 
+  it 'archives and restores a supplier as inactive without deleting its records' do
+    supplier = create(:supplier, organization:)
+    contact = supplier.contacts.create!(name: 'Keep me', primary: true)
+    delete admin_supplier_path(supplier)
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.reload.deleted_at).to be_present
+
+    patch restore_admin_supplier_path(supplier)
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.reload).to be_inactive
+    expect(supplier.deleted_at).to be_nil
+    expect(contact.reload.name).to eq('Keep me')
+  end
+
+  it 'refuses archiving while a purchase order remains open' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(Supplier).to receive(:archivable?).and_return(false)
+    delete admin_supplier_path(supplier)
+
+    expect(response).to redirect_to(admin_supplier_path(supplier))
+    expect(supplier.reload.deleted_at).to be_nil
+  end
+
   it 'requires authentication' do
     sign_out user
     get admin_suppliers_path

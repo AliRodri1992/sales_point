@@ -26,6 +26,18 @@ class Supplier < ApplicationRecord
   validate :documents_are_safe
   validate :rfc_must_match_person_type_and_date
 
+  OPEN_PURCHASE_STATUSES = %w[draft pending_approval approved ordered partially_received].freeze
+
+  def archivable?
+    if purchase_orders.where(status: OPEN_PURCHASE_STATUSES).exists?
+      errors.add(:base, I18n.t('admin.suppliers.lifecycle.open_orders'))
+    end
+    if account_payables.with_positive_balance.exists?
+      errors.add(:base, I18n.t('admin.suppliers.lifecycle.outstanding_payables'))
+    end
+    errors.empty?
+  end
+
   def tags_text = tags.join(', ')
 
   def tags_text=(value)

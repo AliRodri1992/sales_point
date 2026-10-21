@@ -103,6 +103,7 @@ Rails.application.routes.draw do
     get 'supplier_postal_suggestions', to: 'supplier_postal_codes#show', as: :supplier_postal_suggestions
 
     resources :suppliers do
+      member { patch :restore }
       member { get :contacts_page }
       member { get :addresses_page }
       member { get :postal_code_suggestions, to: 'supplier_postal_codes#show' }

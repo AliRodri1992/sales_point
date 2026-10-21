@@ -1,0 +1,11 @@
+es:
+  admin:
+    suppliers:
+      lifecycle:
+        archived_list: "Proveedores archivados"
+        active_list: "Proveedores vigentes"
+        restore: "Recuperar proveedor"
+        restored: "Proveedor recuperado como inactivo."
+        restore_conflict: "No se puede recuperar: otro proveedor utiliza este identificador."
+        open_orders: "Cierre las órdenes de compra pendientes antes de archivar este proveedor."
+        outstanding_payables: "Liquide las facturas pendientes antes de archivar este proveedor."

@@ -24,6 +24,7 @@ class SupplierPolicy
   def edit? = authorized_record? && allowed?('suppliers.update')
   def update? = edit?
   def destroy? = authorized_record? && allowed?('suppliers.destroy')
+  def restore? = destroy?
   def view_general? = authorized_record? && (allowed?('suppliers.view') || allowed?('suppliers.update'))
 
   def view_contacts?

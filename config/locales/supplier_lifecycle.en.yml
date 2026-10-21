@@ -1,0 +1,11 @@
+en:
+  admin:
+    suppliers:
+      lifecycle:
+        archived_list: "Archived suppliers"
+        active_list: "Active suppliers"
+        restore: "Restore supplier"
+        restored: "Supplier restored as inactive."
+        restore_conflict: "Cannot restore: another active supplier uses this identifier."
+        open_orders: "Close outstanding purchase orders before archiving this supplier."
+        outstanding_payables: "Settle outstanding invoices before archiving this supplier."
