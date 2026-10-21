@@ -49,8 +49,9 @@ module SuppliersFormHelpers
     return false unless valid_primary_flags?(record, association)
     return record[:id].blank? if creating
 
-    record[:id].present? ? existing_primary_record?(record, association) :
-      no_primary_record?(association)
+    return existing_primary_record?(record, association) if record[:id].present?
+
+    no_primary_record?(association)
   end
 
   def valid_primary_flags?(record, association)

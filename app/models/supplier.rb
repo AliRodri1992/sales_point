@@ -2,6 +2,7 @@
 
 class Supplier < ApplicationRecord
   include SupplierDocumentTypes
+  include SupplierLifecycle
 
   has_paper_trail
 
@@ -26,18 +27,6 @@ class Supplier < ApplicationRecord
   validate :responsible_user_in_organization
   validate :documents_are_safe
   validate :rfc_must_match_person_type_and_date
-
-  OPEN_PURCHASE_STATUSES = %w[draft pending_approval approved ordered partially_received].freeze
-
-  def archivable?
-    if purchase_orders.where(status: OPEN_PURCHASE_STATUSES).exists?
-      errors.add(:base, I18n.t('admin.suppliers.lifecycle.open_orders'))
-    end
-    if account_payables.with_positive_balance.exists?
-      errors.add(:base, I18n.t('admin.suppliers.lifecycle.outstanding_payables'))
-    end
-    errors.empty?
-  end
 
   def tags_text = tags.join(', ')
 
@@ -87,21 +76,9 @@ class Supplier < ApplicationRecord
   scope :sorted, ->(column, direction) { order(column => direction) }
 
   before_validation :normalize_fields
-  after_update :clear_unavailable_product_preferences, if: :supplier_became_unavailable?
+
 
   private
-
-  def supplier_became_unavailable?
-    (saved_change_to_status? || saved_change_to_deleted_at?) && (inactive? || deleted_at.present?)
-  end
-
-  def clear_unavailable_product_preferences
-    Product.where(preferred_supplier_id: id).order(:id).find_each do |product|
-      product.with_lock do
-        product.update!(preferred_supplier: nil) if product.preferred_supplier_id == id
-      end
-    end
-  end
 
   def rfc_must_match_person_type_and_date
     return if rfc.blank? || !rfc.match?(/\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/)

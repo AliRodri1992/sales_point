@@ -21,20 +21,27 @@ module Admin
     private
 
     def load_suppliers
-      active_scope = policy_scope(current_organization.suppliers.not_deleted)
-      @supplier_stats = {
-        total: active_scope.count,
-        active: active_scope.where(status: 'active').count,
-        inactive: active_scope.where(status: 'inactive').count,
-        credit: active_scope.where('credit_limit > 0').count
-      }
-      base_scope = params[:archived] == '1' ?
-        policy_scope(current_organization.suppliers.where.not(deleted_at: nil)) : active_scope
+      load_supplier_stats
       @supplier_regimes = SatFiscalRegime.current.order(:code)
-      @suppliers = apply_filters(base_scope.includes(:sat_fiscal_regime))
+      @suppliers = apply_filters(suppliers_list_scope.includes(:sat_fiscal_regime))
       @total_count = @suppliers.count
-      @suppliers = apply_sorting(@suppliers)
-      @suppliers = paginate(@suppliers)
+      @suppliers = paginate(apply_sorting(@suppliers))
+    end
+
+    def load_supplier_stats
+      scope = policy_scope(current_organization.suppliers.not_deleted)
+      @supplier_stats = {
+        total: scope.count,
+        active: scope.where(status: 'active').count,
+        inactive: scope.where(status: 'inactive').count,
+        credit: scope.where('credit_limit > 0').count
+      }
+    end
+
+    def suppliers_list_scope
+      return policy_scope(current_organization.suppliers.not_deleted) unless params[:archived] == '1'
+
+      policy_scope(current_organization.suppliers.where.not(deleted_at: nil))
     end
 
     def apply_sorting(scope)
