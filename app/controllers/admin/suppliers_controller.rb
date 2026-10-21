@@ -80,10 +80,6 @@ module Admin
       render_supplier_duplicate_error
     end
 
-    def destroy
-      super
-    end
-
     def update
       authorize @supplier
 
@@ -100,6 +96,10 @@ module Admin
       end
     rescue ActiveRecord::RecordNotUnique
       render_supplier_duplicate_error
+    end
+
+    def destroy
+      super
     end
 
     private

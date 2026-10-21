@@ -64,5 +64,4 @@ module SupplierFiscalRules
 
     [2000 + year, 1900 + year].any? { |full_year| Date.valid_date?(full_year, month, day) }
   end
-
 end
