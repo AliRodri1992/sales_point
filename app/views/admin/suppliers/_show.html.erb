@@ -1,16 +1,25 @@
-<% contacts = supplier.contacts.not_deleted.order(primary: :desc, name: :asc) %>
-<% addresses = supplier.addresses.not_deleted %>
-<% fiscal_address = addresses.where(purpose: 'fiscal', primary: true).includes(:country).first %>
-<% schedules = supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) %>
+<% dossier_policy = policy(supplier) %>
+<% can_view_general = dossier_policy.view_general? %>
+<% can_view_overview = can_view_general && dossier_policy.view_contacts? &&
+                       dossier_policy.view_addresses? && dossier_policy.view_schedules? &&
+                       dossier_policy.view_commercial? %>
+<% contacts = dossier_policy.view_contacts? ? supplier.contacts.not_deleted.order(primary: :desc, name: :asc) : [] %>
+<% addresses = dossier_policy.view_addresses? ? supplier.addresses.not_deleted : [] %>
+<% fiscal_address = dossier_policy.view_fiscal? ? supplier.addresses.not_deleted.where(purpose: 'fiscal', primary: true).includes(:country).first : nil %>
+<% schedules = dossier_policy.view_schedules? ? supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) : [] %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
 <% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
-<% dossier_sections = %w[overview general fiscal commercial contacts addresses schedules documents] %>
-<% dossier_sections << 'products' if policy(supplier).view_products? %>
+<% dossier_sections = [] %>
+<% dossier_sections << 'overview' if can_view_overview %>
+<% dossier_sections << 'general' if can_view_general %>
+<% %w[fiscal commercial contacts addresses schedules documents products].each do |section| %>
+  <% dossier_sections << section if dossier_policy.public_send("view_#{section}?") %>
+<% end %>
 <% dossier_sections << 'bank_accounts' if can_view_bank_accounts %>
 <% dossier_sections << 'statement' if can_view_finances %>
 
-<div class="space-y-5" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab] == 'finances' ? 'statement' : params[:tab]) ? (params[:tab] == 'finances' ? 'statement' : params[:tab]) : 'overview' %>">
+<div class="space-y-5" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab] == 'finances' ? 'statement' : params[:tab]) ? (params[:tab] == 'finances' ? 'statement' : params[:tab]) : dossier_sections.first %>">
   <nav aria-label="<%= t('admin.supplier_dossier.navigation.breadcrumbs') %>" class="flex flex-wrap items-center gap-2 text-sm text-slate-500">
     <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, class: 'transition hover:text-emerald-700' %>
     <%= icon('chevron-right', class: 'size-4 text-slate-400') %>
@@ -60,12 +69,19 @@
   </header>
 
   <div class="flex flex-col gap-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-stretch lg:gap-5 xl:grid-cols-[16rem_minmax(0,1fr)]">
-    <%= render 'dossier_sidebar', can_view_finances: can_view_finances, can_view_bank_accounts: can_view_bank_accounts, can_view_products: policy(supplier).view_products? %>
+    <%= render 'dossier_sidebar', allowed_sections: dossier_sections %>
     <div class="flex min-w-0 w-full flex-1 flex-col gap-4" data-supplier-dossier-content aria-label="<%= t('admin.supplier_dossier.navigation.content') %>">
-      <%= render 'dossier_overview', supplier: supplier, contacts: contacts, addresses: addresses, schedules: schedules, can_edit: can_edit, can_view_products: policy(supplier).view_products? %>
+      <% if can_view_overview %>
+      <%= render 'dossier_overview', supplier: supplier, contacts: contacts, addresses: addresses, schedules: schedules, can_edit: can_edit, can_view_products: dossier_policy.view_products? %>
+      <% end %>
+      <% if can_view_general %>
       <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
+      <% end %>
+      <% if dossier_policy.view_fiscal? %>
       <%= render 'dossier_fiscal', supplier: supplier, fiscal_address: fiscal_address, can_edit: can_edit %>
+      <% end %>
 
+    <% if dossier_policy.view_commercial? %>
     <section data-supplier-dossier-target="panel" data-section="commercial" class="w-full min-w-0 lg:flex-1 hidden space-y-5"><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-5 flex items-center gap-3"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v5c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 10v5c0 1.66 3.58 3 8 3s8-1.34 8-3v-5M4 15v4c0 1.66 3.58 3 8 3s8-1.34 8-3v-4"/></svg></span><div><h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.summary') %></h2><p class="text-sm text-slate-500"><%= t('admin.supplier_dossier.commercial.description') %></p></div></div><dl class="grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-2 lg:grid-cols-5"><div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.currency') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.currency&.code || '—' %></dd></div>
 <div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.credit_days') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.credit_days.present? ? supplier.credit_days : '—' %></dd></div>
 <div><dt class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.fields.credit_limit') %></dt><dd class="mt-1 font-bold text-slate-900"><%= supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit) : '—' %></dd></div>
@@ -74,11 +90,17 @@
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.credit_days') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.credit_days.present? ? supplier.credit_days : '—' %></dd></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.credit_limit') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit) : '—' %></dd></div></dl></div><div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><div class="mb-4 flex items-center gap-3 border-b border-slate-100 pb-4"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6" aria-hidden="true"><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/><path d="M19 5 5 19"/></svg></span><h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.purchase') %></h3></div><dl><div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.discount_percent') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.discount_percent.present? ? "#{supplier.discount_percent}%" : '—' %></dd></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.minimum_order_amount') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount) : '—' %></dd></div></dl></div></div></section>
+    <% end %>
 
-    <%= render 'dossier_contacts', supplier: supplier, contacts_page: @dossier_contacts_page, can_manage_contacts: policy(supplier).manage_contacts? %>
+    <% if dossier_policy.view_contacts? %>
+    <%= render 'dossier_contacts', supplier: supplier, contacts_page: @dossier_contacts_page, can_manage_contacts: dossier_policy.manage_contacts? %>
+    <% end %>
 
-    <%= render 'dossier_addresses', supplier: supplier, addresses_page: @dossier_addresses_page, can_manage_addresses: policy(supplier).manage_addresses? %>
+    <% if dossier_policy.view_addresses? %>
+    <%= render 'dossier_addresses', supplier: supplier, addresses_page: @dossier_addresses_page, can_manage_addresses: dossier_policy.manage_addresses? %>
+    <% end %>
 
+    <% if dossier_policy.view_schedules? %>
     <section data-supplier-dossier-target="panel" data-section="schedules" class="w-full min-w-0 lg:flex-1 hidden space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div class="flex min-w-0 items-center gap-3">
@@ -88,7 +110,7 @@
             <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.schedule_empty.subtitle') %></p>
           </div>
         </div>
-        <% if can_edit %>
+        <% if dossier_policy.manage_schedules? %>
           <%= link_to admin_supplier_schedules_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
             <%= icon('calendar-days', class: 'size-4') %>
             <%= t('admin.supplier_dossier.schedule_empty.manage') %>
@@ -106,7 +128,7 @@
                   <p class="mt-2 font-semibold text-slate-900"><%= t('date.day_names')[schedule.weekday] %></p>
                   <p class="mt-1 text-sm text-slate-600"><%= schedule.starts_at.strftime('%H:%M') %><% if schedule.ends_at.present? %>–<%= schedule.ends_at.strftime('%H:%M') %><% end %></p>
                   <% if schedule.notes.present? %><p class="mt-2 text-sm text-slate-600"><%= schedule.notes %></p><% end %>
-                  <% if can_edit %><%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(supplier, schedule), class: 'mt-3 inline-block text-sm font-semibold text-emerald-700 hover:underline' %><% end %>
+                  <% if dossier_policy.manage_schedules? %><%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(supplier, schedule), class: 'mt-3 inline-block text-sm font-semibold text-emerald-700 hover:underline' %><% end %>
                 </div>
               <% end %>
             </div>
@@ -117,7 +139,7 @@
           <%= image_tag 'scalendaries.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[260px] sm:max-w-[300px]' %>
           <h3 class="mt-3 font-jakarta text-lg font-bold text-slate-900 sm:text-xl"><%= t('admin.supplier_dossier.schedule_empty.title') %></h3>
           <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500"><%= t('admin.supplier_dossier.schedule_empty.description') %></p>
-          <% if can_edit %>
+          <% if dossier_policy.manage_schedules? %>
             <%= link_to new_admin_supplier_schedule_path(supplier), class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700' do %>
               <%= icon('plus', class: 'size-4') %>
               <%= t('admin.supplier_dossier.schedule_empty.add_first') %>
@@ -126,6 +148,7 @@
         </div>
       <% end %>
     </section>
+    <% end %>
 
     <% if policy(supplier).view_products? %>
       <%= render 'dossier_products', supplier:, products_page: @dossier_products_page %>
@@ -138,7 +161,9 @@
       <%= render 'dossier_finances', supplier: supplier %>
     <% end %>
 
-    <%= render 'dossier_documents', supplier: supplier, can_manage_documents: policy(supplier).manage_documents? %>
+    <% if dossier_policy.view_documents? %>
+    <%= render 'dossier_documents', supplier: supplier, can_manage_documents: dossier_policy.manage_documents? %>
+    <% end %>
     </div>
   </div>
 </div>

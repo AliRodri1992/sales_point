@@ -9,9 +9,9 @@
   ['documents', 'file', :dossier],
   ['products', 'box', :operations]
 ] %>
-<% sections.reject! { |section, _icon, _group| section == 'products' } unless can_view_products %>
-<% sections << ['bank_accounts', 'bank', :finances] if can_view_bank_accounts %>
-<% sections << ['statement', 'wallet', :finances] if can_view_finances %>
+<% sections << ['bank_accounts', 'bank', :finances] if allowed_sections.include?('bank_accounts') %>
+<% sections << ['statement', 'wallet', :finances] if allowed_sections.include?('statement') %>
+<% sections.select! { |section, _icon, _group| allowed_sections.include?(section) } %>
 <% sidebar_groups = sections.group_by(&:last) %>
 
 <aside class="min-w-0 w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:h-full lg:w-full" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">

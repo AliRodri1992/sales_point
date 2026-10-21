@@ -29,6 +29,17 @@ RSpec.describe SupplierPolicy do
     expect(policy.manage_fiscal?).to be(false)
   end
 
+  it 'grants dossier access only to the authorized section and scopes the supplier' do
+    allow(user).to receive(:permission?) { |permission| permission == 'suppliers.contacts.manage' }
+    policy = described_class.new(user, supplier)
+
+    expect(policy.show?).to be(true)
+    expect(policy.view_contacts?).to be(true)
+    expect(policy.view_fiscal?).to be(false)
+    expect(policy.view_documents?).to be(false)
+    expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
+  end
+
   it 'rejects an unrelated organization even with the permission' do
     foreign_supplier = create(:supplier, organization: create(:organization))
     allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)
