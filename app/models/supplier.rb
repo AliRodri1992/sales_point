@@ -71,7 +71,6 @@ class Supplier < ApplicationRecord
 
   before_validation :normalize_fields
 
-
   private
 
   def responsible_user_in_organization

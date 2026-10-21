@@ -50,9 +50,11 @@ class SupplierPolicy
   end
 
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')
+
   def view_fiscal?
     authorized_record? && (allowed?('suppliers.fiscal.view') || allowed?('suppliers.fiscal.manage'))
   end
+
   def manage_fiscal? = authorized_record? && allowed?('suppliers.fiscal.manage')
 
   def view_commercial?

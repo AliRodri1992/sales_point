@@ -17,7 +17,7 @@ module SupplierFiscalRules
   end
 
   def mexican_tax_resident?
-    fiscal = addresses.find do |address|
+    fiscal = addresses.to_a.find do |address|
       address.purpose == 'fiscal' && address.primary? &&
         address.deleted_at.nil? && !address.marked_for_destruction?
     end
@@ -65,4 +65,4 @@ module SupplierFiscalRules
     [2000 + year, 1900 + year].any? { |full_year| Date.valid_date?(full_year, month, day) }
   end
 
-}
+end
