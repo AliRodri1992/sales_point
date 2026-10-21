@@ -46,20 +46,33 @@ module SuppliersFormHelpers
   end
 
   def valid_primary_record?(record, association, creating:)
-    return false if ActiveModel::Type::Boolean.new.cast(record[:_destroy])
-    return false if record.key?(:primary) && !ActiveModel::Type::Boolean.new.cast(record[:primary])
-    return false if association == :addresses && record.key?(:purpose) && record[:purpose] != 'fiscal'
+    return false if invalid_submitted_primary?(record, association)
 
-    existing = @supplier.public_send(association).not_deleted.find_by(id: record[:id]) if record[:id].present?
-    return false if creating && record[:id].present?
-    return existing.primary? && (association != :addresses || existing.purpose == 'fiscal') if existing
+    id = record[:id]
+    return false if creating && id.present?
 
-    return false if record[:id].present?
+    existing = @supplier.public_send(association).not_deleted.find_by(id:) if id.present?
+    return existing_primary_valid?(existing, association) if existing
+    return false if id.present?
     return true if creating
 
-    @supplier.public_send(association).not_deleted.where(
-      primary: true, **(association == :addresses ? { purpose: 'fiscal' } : {})
-    ).none?
+    existing_primary_scope(association).none?
+  end
+
+  def invalid_submitted_primary?(record, association)
+    return true if ActiveModel::Type::Boolean.new.cast(record[:_destroy])
+    return true if record.key?(:primary) && !ActiveModel::Type::Boolean.new.cast(record[:primary])
+
+    association == :addresses && record.key?(:purpose) && record[:purpose] != 'fiscal'
+  end
+
+  def existing_primary_valid?(existing, association)
+    existing.primary? && (association != :addresses || existing.purpose == 'fiscal')
+  end
+
+  def existing_primary_scope(association)
+    scope = @supplier.public_send(association).not_deleted.where(primary: true)
+    association == :addresses ? scope.where(purpose: 'fiscal') : scope
   end
 
   def load_fiscal_regimes

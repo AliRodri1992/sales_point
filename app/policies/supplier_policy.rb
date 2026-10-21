@@ -29,28 +29,39 @@ class SupplierPolicy
   def view_contacts?
     authorized_record? && (allowed?('suppliers.contacts.view') || allowed?('suppliers.contacts.manage'))
   end
+
   def manage_contacts? = authorized_record? && allowed?('suppliers.contacts.manage')
+
   def view_addresses?
     authorized_record? && (allowed?('suppliers.addresses.view') || allowed?('suppliers.addresses.manage'))
   end
+
   def manage_addresses? = authorized_record? && allowed?('suppliers.addresses.manage')
+
   def view_schedules?
     authorized_record? && (allowed?('suppliers.schedules.view') || allowed?('suppliers.schedules.manage'))
   end
+
   def manage_schedules? = authorized_record? && allowed?('suppliers.schedules.manage')
+
   def view_documents?
     authorized_record? && (allowed?('suppliers.documents.view') || allowed?('suppliers.documents.manage'))
   end
+
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')
   def view_fiscal? = authorized_record? && (allowed?('suppliers.fiscal.view') || allowed?('suppliers.fiscal.manage'))
   def manage_fiscal? = authorized_record? && allowed?('suppliers.fiscal.manage')
+
   def view_commercial?
     authorized_record? && (allowed?('suppliers.commercial.view') || allowed?('suppliers.commercial.manage'))
   end
+
   def manage_commercial? = authorized_record? && allowed?('suppliers.commercial.manage')
+
   def view_products?
     authorized_record? && (allowed?('suppliers.products.view') || allowed?('suppliers.products.manage'))
   end
+
   def manage_products? = authorized_record? && allowed?('suppliers.products.manage')
   def export? = authorized_organization? && allowed?('suppliers.export')
 
