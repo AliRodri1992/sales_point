@@ -62,7 +62,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(dialog.at_css('aside[role="dialog"][aria-modal="true"]')).to be_present
     expect(dialog.at_css('button[data-supplier-documents-target="closeButton"]')).to be_present
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).not_to include('xl:grid-cols')
-    expect(panel.css('article[data-supplier-documents-target="card"] [data-action="supplier-documents#select"]').size).to eq(2)
+    expect(panel.css('article[data-supplier-documents-target="card"] button[data-action]').size).to eq(2)
     expect(panel.css('select[data-supplier-documents-target="categorySelect"] option').size).to eq(7)
   end
 
