@@ -38,7 +38,8 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
 
     expect(page).to have_css('[data-supplier-documents-target="dialog"].hidden', visible: :all)
     expect(page).to have_css('[data-supplier-documents-target="card"] button[aria-pressed="false"]', count: 2)
-    expect(page).to have_css('table [data-supplier-documents-target="list"] tr', count: 2)
+    expect(page).to have_css('[data-supplier-documents-target="list"].grid article[data-supplier-documents-target="card"]', count: 2)
+    expect(page).to have_no_css('table[data-supplier-documents-target="list"]')
     expect(page).to have_css('[data-supplier-documents-target="dropzone"]')
     expect(page).to have_css('[data-supplier-documents-target="filters"].items-end')
 
