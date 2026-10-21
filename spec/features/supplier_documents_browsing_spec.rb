@@ -144,7 +144,8 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
 
   scenario 'keeps all document cards equally sized with long file names and descriptions' do
     add_file('Short.pdf')
-    add_file(('supplier-contract-' * 8) + '.pdf')
+    long_filename = 'supplier-contract-' * 8
+    add_file("#{long_filename}.pdf")
     add_file('Medium name.pdf')
 
     attachment = supplier.documents.attachments.order(:id).last
@@ -164,8 +165,8 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
           width: card.getBoundingClientRect().width
         }))
     JS
-    expect(sizes.map { |size| size['height'] }.uniq.size).to eq(1)
-    expect(sizes.map { |size| size['width'] }.uniq.size).to eq(1)
+    expect(sizes.pluck('height').uniq.size).to eq(1)
+    expect(sizes.pluck('width').uniq.size).to eq(1)
     expect(sizes.first['height']).to be > 0
 
     select_document('Short.pdf')
