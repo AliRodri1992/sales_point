@@ -5,17 +5,18 @@ module Suppliers
     CATEGORIES = %w[contract fiscal catalog technical legal other].freeze
     PREVIEW_TYPES = %w[application/pdf image/png image/jpeg].freeze
 
-    attr_reader :attachment
+    attr_reader :attachment, :document
 
-    def initialize(attachment)
-      @attachment = attachment
+    def initialize(source)
+      @document = source if source.is_a?(SupplierDocument)
+      @attachment = document ? document.attachment : source
     end
 
     def filename = attachment.blob.filename.to_s
     def size = ActiveSupport::NumberHelper.number_to_human_size(attachment.blob.byte_size)
     def format = attachment.blob.filename.extension.downcase
-    def description = metadata['supplier_description'].presence || ''
-    def status = metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active'
+    def description = document ? document.description.to_s : (metadata['supplier_description'].presence || '')
+    def status = document ? document.status : (metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active')
     def previewable? = preview_kind != 'none'
 
     def preview_kind
@@ -30,6 +31,8 @@ module Suppliers
     end
 
     def category
+      return document.category if document
+
       given = metadata['supplier_category']
       return given if given.in?(CATEGORIES)
 

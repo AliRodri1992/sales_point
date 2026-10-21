@@ -25,6 +25,7 @@ class Supplier < ApplicationRecord
   has_many :supplier_schedules, dependent: :destroy
   has_many :supplier_schedule_exceptions, dependent: :destroy
   has_many_attached :documents
+  has_many :supplier_documents, dependent: :restrict_with_exception
   validate :responsible_user_in_organization
   validate :documents_are_safe
 

@@ -1,0 +1,6 @@
+en:
+  admin:
+    supplier_document_history:
+      versions: "Version history"
+      trash: "Trash"
+      restore: "Restore"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_143000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_21_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1186,6 +1186,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_143000) do
     t.index ["supplier_invoice_id"], name: "index_supplier_invoice_receipts_on_supplier_invoice_id"
   end
 
+  create_table "supplier_documents", force: :cascade do |t|
+    t.bigint "attachment_id", null: false
+    t.string "category", default: "other", null: false
+    t.datetime "created_at", null: false
+    t.boolean "current_version", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "deleted_by_id"
+    t.string "description", limit: 300
+    t.bigint "previous_version_id"
+    t.string "series_id", null: false
+    t.string "status", default: "active", null: false
+    t.bigint "supplier_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.bigint "uploaded_by_id"
+    t.integer "version", default: 1, null: false
+    t.index ["attachment_id"], name: "index_supplier_documents_on_attachment_id", unique: true
+    t.index ["deleted_by_id"], name: "index_supplier_documents_on_deleted_by_id"
+    t.index ["previous_version_id"], name: "index_supplier_documents_on_previous_version_id"
+    t.index ["supplier_id", "current_version", "deleted_at"], name: "idx_supplier_document_listing"
+    t.index ["supplier_id", "series_id", "version"], name: "idx_supplier_document_version", unique: true
+    t.index ["supplier_id"], name: "index_supplier_documents_on_supplier_id"
+    t.index ["updated_by_id"], name: "index_supplier_documents_on_updated_by_id"
+    t.index ["uploaded_by_id"], name: "index_supplier_documents_on_uploaded_by_id"
+  end
+
   create_table "supplier_invoices", force: :cascade do |t|
     t.datetime "cancelled_at"
     t.datetime "created_at", null: false
@@ -1645,6 +1671,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_143000) do
   add_foreign_key "supplier_invoice_lines", "supplier_invoices"
   add_foreign_key "supplier_invoice_receipts", "goods_receipts"
   add_foreign_key "supplier_invoice_receipts", "supplier_invoices"
+  add_foreign_key "supplier_documents", "active_storage_attachments", column: "attachment_id"
+  add_foreign_key "supplier_documents", "supplier_documents", column: "previous_version_id"
+  add_foreign_key "supplier_documents", "suppliers"
+  add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
+  add_foreign_key "supplier_documents", "users", column: "updated_by_id"
+  add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
   add_foreign_key "supplier_invoices", "currencies"
   add_foreign_key "supplier_invoices", "organizations"
   add_foreign_key "supplier_invoices", "purchase_orders"

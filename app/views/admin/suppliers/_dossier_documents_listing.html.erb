@@ -82,6 +82,9 @@
                       <%= icon('ellipsis-vertical', class: 'size-5') %>
                     </summary>
                     <div class="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
+                      <%= link_to t('admin.supplier_document_history.versions'),
+                                  admin_supplier_document_history_path(supplier, document_id: attachment.id),
+                                  class: 'block rounded px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50' %>
                       <%= link_to t("#{dictionary}.download"), download_url, class: 'block rounded px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50' %>
                       <% if can_manage_documents %>
                         <%= button_to t("#{dictionary}.delete"), admin_supplier_document_path(supplier, document_id: attachment.id),

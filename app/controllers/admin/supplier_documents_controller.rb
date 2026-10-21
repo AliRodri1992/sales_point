@@ -22,17 +22,17 @@ module Admin
 
       supplier.documents.attach(files)
       supplier.documents.attachments.order(:id).last(files.size).each do |attachment|
-        update_metadata(attachment.blob)
+        supplier.supplier_documents.create!(attachment:, uploaded_by: current_user, **metadata_attributes)
       end
       redirect_documents(supplier, :uploaded)
     end
 
     def update
       supplier = authorized_supplier(:manage_documents?)
-      attachment = supplier.documents.attachments.find(params[:document_id])
-      return replace_document(supplier, attachment) if document_file.present?
+      document = current_document(supplier)
+      return replace_document(supplier, document) if document_file.present?
 
-      update_metadata(attachment.blob)
+      document.update!(**metadata_attributes(document), updated_by: current_user)
       redirect_documents(supplier, :updated)
     end
 
@@ -53,11 +53,30 @@ module Admin
 
     def destroy
       supplier = authorized_supplier(:manage_documents?)
-      attachment = supplier.documents.attachments.find(params[:document_id])
-      id = attachment.id
-      attachment.purge
-      notify_document_deleted(supplier, id)
+      document = current_document(supplier)
+      document.update!(deleted_at: Time.current, deleted_by: current_user)
+      notify_document_deleted(supplier, document.attachment_id)
       redirect_documents(supplier, :deleted)
+    end
+
+    def restore
+      supplier = authorized_supplier(:manage_documents?)
+      SupplierDocument.import_existing!(supplier)
+      document = supplier.supplier_documents.trashed.find_by!(attachment_id: params[:document_id])
+      document.update!(deleted_at: nil, deleted_by: nil, updated_by: current_user)
+      redirect_documents(supplier, :updated)
+    end
+
+    def history
+      supplier = authorized_supplier(:view_documents?)
+      document = document_for(supplier)
+      @supplier = supplier
+      @versions = supplier.supplier_documents.where(series_id: document.series_id).order(version: :desc)
+    end
+
+    def version_download
+      supplier = authorized_supplier(:view_documents?)
+      send_attachment(document_for(supplier).attachment, disposition: 'attachment')
     end
 
     private
@@ -72,7 +91,7 @@ module Admin
 
     def authorized_attachment(permission)
       supplier = authorized_supplier(permission)
-      supplier.documents.attachments.find(params[:document_id])
+      current_document(supplier).attachment
     end
 
     def send_attachment(attachment, disposition:)
@@ -83,14 +102,29 @@ module Admin
                 disposition:
     end
 
-    def replace_document(supplier, attachment)
+    def replace_document(supplier, document)
       return reject_file(supplier) unless valid_file?(document_file)
 
-      supplier.documents.attach(document_file)
-      replacement = supplier.documents.attachments.order(:id).last
-      update_metadata(replacement.blob, previous: attachment.blob)
-      attachment.purge
+      supplier.with_lock do
+        supplier.documents.attach(document_file)
+        attachment = supplier.documents.attachments.order(:id).last
+        document.update!(current_version: false, updated_by: current_user)
+        supplier.supplier_documents.create!(
+          attachment:, uploaded_by: current_user, previous_version: document,
+          series_id: document.series_id, version: document.version + 1, **metadata_attributes(document)
+        )
+      end
       redirect_documents(supplier, :replaced)
+    end
+
+    def current_document(supplier)
+      SupplierDocument.import_existing!(supplier)
+      supplier.supplier_documents.visible.find_by!(attachment_id: params[:document_id])
+    end
+
+    def document_for(supplier)
+      SupplierDocument.import_existing!(supplier)
+      supplier.supplier_documents.find_by!(attachment_id: params[:document_id])
     end
 
     def document_params
@@ -117,18 +151,12 @@ module Admin
                   alert: t('admin.supplier_documents.invalid_file')
     end
 
-    def update_metadata(blob, previous: nil)
-      prior = previous&.custom_metadata || blob.custom_metadata
-      metadata = blob.custom_metadata.merge(document_metadata(prior))
-      blob.update!(metadata: blob.metadata.merge('custom' => metadata))
-    end
-
-    def document_metadata(prior)
+    def metadata_attributes(previous = nil)
       data = document_params
       {
-        'supplier_category' => allowed_value(data[:category], prior['supplier_category'], CATEGORIES, 'other'),
-        'supplier_status' => allowed_value(data[:status], prior['supplier_status'], STATUSES, 'active'),
-        'supplier_description' => description_value(data, prior)
+        category: allowed_value(data[:category], previous&.category, CATEGORIES, 'other'),
+        status: allowed_value(data[:status], previous&.status, STATUSES, 'active'),
+        description: description_value(data, previous)
       }
     end
 
@@ -138,7 +166,7 @@ module Admin
     end
 
     def description_value(data, previous)
-      description = data.key?(:description) ? data[:description] : previous['supplier_description']
+      description = data.key?(:description) ? data[:description] : previous&.description
       description.to_s.strip.first(300)
     end
 

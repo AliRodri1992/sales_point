@@ -1,0 +1,23 @@
+<div class="mx-auto max-w-5xl space-y-5">
+  <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'documents'),
+              class: 'text-sm font-semibold text-emerald-800 hover:underline' %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6">
+    <h1 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_document_history.versions') %></h1>
+    <div class="mt-5 space-y-3">
+      <% @versions.each do |version| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
+          <div>
+            <p class="font-semibold text-slate-900"><%= version.attachment.blob.filename %></p>
+            <p class="mt-1 text-xs text-slate-600">
+              v<%= version.version %> · <%= l(version.created_at, format: :short) %>
+              · <%= version.uploaded_by&.display_name || '—' %>
+            </p>
+          </div>
+          <%= link_to t('admin.supplier_documents.download'),
+                      admin_supplier_document_version_download_path(@supplier, document_id: version.attachment_id),
+                      class: 'rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800' %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+</div>

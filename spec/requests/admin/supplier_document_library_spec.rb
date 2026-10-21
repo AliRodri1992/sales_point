@@ -78,10 +78,9 @@ RSpec.describe 'Supplier document library', type: :request do
 
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
     expect(supplier.documents.attachments.count).to eq(1)
-    expect(attachment.blob.custom_metadata).to include(
-      'supplier_category' => 'contract',
-      'supplier_description' => 'Signed supply agreement',
-      'supplier_status' => 'active'
+    expect(supplier.supplier_documents.first).to have_attributes(
+      category: 'contract', description: 'Signed supply agreement', status: 'active',
+      uploaded_by_id: user.id
     )
   end
 
@@ -95,9 +94,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(supplier.reload.documents.attachments.count).to eq(2)
     expect(supplier.documents.blobs.map { |blob| blob.filename.to_s })
       .to contain_exactly('contract-one.pdf', 'contract-two.pdf')
-    expect(supplier.documents.blobs.map(&:custom_metadata)).to all(
-      include('supplier_category' => 'contract', 'supplier_description' => 'Multiple agreements')
-    )
+    expect(supplier.supplier_documents.pluck(:description)).to all(eq('Multiple agreements'))
   end
 
   it 'rejects an entire batch when any file is disallowed' do
@@ -133,9 +130,9 @@ RSpec.describe 'Supplier document library', type: :request do
 
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
     expect(attachment.reload.id).to eq(original_id)
-    expect(attachment.blob.custom_metadata).to include(
-      'supplier_category' => 'fiscal', 'supplier_status' => 'inactive',
-      'supplier_description' => 'Updated certificate'
+    expect(supplier.supplier_documents.find_by!(attachment_id: original_id)).to have_attributes(
+      category: 'fiscal', status: 'inactive', description: 'Updated certificate',
+      updated_by_id: user.id
     )
   end
 
@@ -151,10 +148,10 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
     expect(flash[:notice]).to eq('Document replaced successfully.')
     supplier.reload
-    expect(supplier.documents.attachments.pluck(:id)).not_to include(original_id)
-    expect(supplier.documents.attachments.pluck(:id)).to include(other_id)
-    expect(supplier.documents.attachments.map { |record| record.blob.filename.to_s })
+    expect(supplier.documents.attachments.pluck(:id)).to include(original_id, other_id)
+    expect(supplier.supplier_documents.visible.map { |record| record.attachment.blob.filename.to_s })
       .to contain_exactly('untouched.pdf', 'replacement.pdf')
+    expect(supplier.supplier_documents.find_by!(attachment_id: original_id)).not_to be_current_version
   end
 
   it 'previews only allowed inline types and forces downloads otherwise' do
