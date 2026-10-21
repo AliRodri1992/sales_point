@@ -46,7 +46,10 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(panel.css('[data-supplier-documents-target="card"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="list"]').name).to eq('div')
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
-    expect(panel.css('article[data-supplier-documents-target="card"]').size).to eq(2)
+    cards = panel.css('article[data-supplier-documents-target="card"]')
+    expect(cards.size).to eq(2)
+    expect(cards.map { |card| card['class'] }).to all(include('h-52'))
+    expect(cards.map { |card| card.at_css('button span[title]') }).to all(be_present)
     expect(panel.at_css('table')).to be_nil
     expect(panel.css('article[data-supplier-documents-target="card"] img[src*="supplier-document-"]').size).to eq(2)
     expect(panel.at_css('[data-supplier-documents-target="filters"]')['class']).to include('items-end')

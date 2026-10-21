@@ -41,7 +41,7 @@
 </div>
 
 <div class="mt-5 min-w-0">
-<div data-supplier-documents-target="list" class="grid grid-cols-1 items-start gap-3 md:grid-cols-2">
+<div data-supplier-documents-target="list" class="grid auto-rows-fr grid-cols-1 items-stretch gap-3 md:grid-cols-2">
             <% documents.each do |document| %>
               <% attachment = document.attachment %>
               <% download_url = admin_supplier_document_download_path(supplier, document_id: attachment.id) %>
@@ -56,23 +56,23 @@
                        data-date="<%= l(attachment.created_at, format: '%d %b %Y %H:%M') %>"
                        data-download-url="<%= download_url %>" data-preview-url="<%= preview_url %>"
                        data-update-url="<%= update_url %>" data-preview-kind="<%= document.preview_kind %>"
-                       class="relative min-w-0 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:shadow-sm">
-                <div class="flex items-start gap-3">
+                       class="relative h-52 min-w-0 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:shadow-sm">
+                <div class="flex h-full min-h-0 items-start gap-3">
                   <button type="button" data-action="supplier-documents#select" aria-pressed="false"
                           aria-controls="supplier-document-preview"
                           aria-label="<%= t("#{dictionary}.select", name: document.filename) %>"
-                          class="flex min-w-0 flex-1 items-start gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+                          class="flex h-full min-h-0 min-w-0 flex-1 items-start gap-3 rounded-lg text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
                     <%= image_tag "supplier-document-#{document.icon}.svg", alt: '', class: 'size-11 shrink-0' %>
-                    <span class="min-w-0 flex-1">
-                      <span class="block break-all text-sm font-bold text-slate-900"><%= document.filename %></span>
-                      <span class="mt-1 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
+                    <span class="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+                      <span class="line-clamp-2 break-all text-sm font-bold text-slate-900" title="<%= document.filename %>"><%= document.filename %></span>
+                      <span class="mt-1 inline-flex w-fit shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
                         <%= t("#{dictionary}.categories.#{document.category}") %>
                       </span>
-                      <span class="mt-2 block text-xs text-slate-500">
+                      <span class="mt-2 block shrink-0 text-xs text-slate-500">
                         <%= l(attachment.created_at.to_date, format: '%d %b %Y') %>
                         <span class="mx-1">·</span><%= document.size %>
                       </span>
-                      <span class="mt-2 block min-h-4 break-words text-xs text-slate-500">
+                      <span class="mt-2 line-clamp-2 min-h-0 break-words text-xs text-slate-500" title="<%= document.description.presence || t("#{dictionary}.no_description") %>">
                         <%= document.description.presence || t("#{dictionary}.no_description") %>
                       </span>
                     </span>

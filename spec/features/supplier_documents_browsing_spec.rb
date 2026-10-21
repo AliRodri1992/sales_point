@@ -142,6 +142,36 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     expect(page).to have_text('dropped-document.pdf')
   end
 
+  scenario 'keeps all document cards equally sized with long file names and descriptions' do
+    add_file('Short.pdf')
+    add_file(('supplier-contract-' * 8) + '.pdf')
+    add_file('Medium name.pdf')
+
+    attachment = supplier.documents.attachments.order(:id).last
+    attachment.blob.update!(
+      metadata: attachment.blob.metadata.merge(
+        'custom' => { 'supplier_description' => 'Long description ' * 40 }
+      )
+    )
+
+    visit admin_supplier_path(supplier, tab: 'documents')
+
+    expect(page).to have_css('article[data-supplier-documents-target="card"]', count: 3)
+    sizes = page.evaluate_script(<<~JS)
+      Array.from(document.querySelectorAll('article[data-supplier-documents-target="card"]'))
+        .map((card) => ({
+          height: card.getBoundingClientRect().height,
+          width: card.getBoundingClientRect().width
+        }))
+    JS
+    expect(sizes.map { |size| size['height'] }.uniq.size).to eq(1)
+    expect(sizes.map { |size| size['width'] }.uniq.size).to eq(1)
+    expect(sizes.first['height']).to be > 0
+
+    select_document('Short.pdf')
+    expect(page).to have_css('[data-supplier-documents-target="dialog"]:not(.hidden)')
+  end
+
   scenario 'paginates eight cards without hiding the supplier navigation' do
     10.times { |number| add_file("Supplier file #{number}.pdf") }
 
