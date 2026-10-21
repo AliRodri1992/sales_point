@@ -33,4 +33,18 @@ RSpec.describe SupplierSchedule, type: :model do
                                    weekday: 7, starts_at: '09:00')
     expect(schedule).not_to be_valid
   end
+  it 'prevents overlapping windows for the same supplier, branch and event' do
+    supplier = create(:supplier)
+    branch = create(:branch, organization: supplier.organization)
+    described_class.create!(
+      supplier:, branch:, kind: 'delivery', weekday: 1,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    conflicting = described_class.new(
+      supplier:, branch:, kind: 'delivery', weekday: 1,
+      starts_at: '10:00', ends_at: '12:00'
+    )
+    expect(conflicting).not_to be_valid
+    expect(conflicting.errors.attribute_names).to include(:starts_at)
+  end
 end

@@ -1,0 +1,15 @@
+ko:
+  admin:
+    supplier_schedule_exceptions:
+      title: "휴일 및 배송 예외"
+      starts_on: "시작 날짜"
+      ends_on: "종료 날짜 (선택)"
+      reason: "사유"
+      notes: "메모"
+      all_branches: "모든 지점"
+      saved: "일정 예외가 저장되었습니다."
+      deleted: "일정 예외가 삭제되었습니다."
+      reasons:
+        holiday: "휴일"
+        suspension: "일시 중단"
+        exception: "특정 날짜 예외"

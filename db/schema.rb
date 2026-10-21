@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_21_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1317,6 +1317,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120000) do
     t.check_constraint "units_per_package > 0::numeric", name: "chk_supplier_product_factor"
   end
 
+  create_table "supplier_schedule_exceptions", force: :cascade do |t|
+    t.bigint "branch_id"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.date "ends_on"
+    t.text "notes"
+    t.string "reason", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "supplier_schedule_id"
+    t.date "starts_on", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_supplier_schedule_exceptions_on_branch_id"
+    t.index ["created_by_id"], name: "index_supplier_schedule_exceptions_on_created_by_id"
+    t.index ["supplier_id", "starts_on"], name: "index_supplier_schedule_exceptions_on_supplier_id_and_starts_on"
+    t.index ["supplier_id"], name: "index_supplier_schedule_exceptions_on_supplier_id"
+    t.index ["supplier_schedule_id"], name: "index_supplier_schedule_exceptions_on_supplier_schedule_id"
+  end
+
   create_table "supplier_schedules", force: :cascade do |t|
     t.bigint "branch_id", null: false
     t.datetime "created_at", null: false
@@ -1646,6 +1664,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_120000) do
   add_foreign_key "supplier_products", "organizations"
   add_foreign_key "supplier_products", "products"
   add_foreign_key "supplier_products", "suppliers"
+  add_foreign_key "supplier_schedule_exceptions", "branches"
+  add_foreign_key "supplier_schedule_exceptions", "supplier_schedules"
+  add_foreign_key "supplier_schedule_exceptions", "suppliers"
+  add_foreign_key "supplier_schedule_exceptions", "users", column: "created_by_id"
   add_foreign_key "supplier_schedules", "branches"
   add_foreign_key "supplier_schedules", "suppliers"
   add_foreign_key "suppliers", "currencies"

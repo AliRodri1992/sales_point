@@ -11,6 +11,9 @@ module Admin
 
     def index
       @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
+      @exceptions = @supplier.supplier_schedule_exceptions.includes(:branch, :supplier_schedule)
+                             .order(starts_on: :desc).limit(30)
+      load_branches
     end
 
     def new

@@ -133,6 +133,7 @@ Rails.application.routes.draw do
       patch 'documents/:document_id', to: 'supplier_documents#update', as: :document_update
       get 'documents/:document_id/download', to: 'supplier_documents#download', as: :document_download
       delete 'documents/:document_id', to: 'supplier_documents#destroy', as: :document
+      resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create destroy]
       resources :schedules, controller: 'supplier_schedules', except: %i[show] do
         member { patch :restore }
       end

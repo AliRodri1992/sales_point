@@ -1,0 +1,15 @@
+en:
+  admin:
+    supplier_schedule_exceptions:
+      title: "Holiday and delivery exceptions"
+      starts_on: "Start date"
+      ends_on: "End date (optional)"
+      reason: "Reason"
+      notes: "Notes"
+      all_branches: "All branches"
+      saved: "Calendar exception saved."
+      deleted: "Calendar exception removed."
+      reasons:
+        holiday: "Holiday"
+        suspension: "Temporary suspension"
+        exception: "Specific date exception"

@@ -14,6 +14,15 @@ class SupplierSchedule < ApplicationRecord
   validates :notes, length: { maximum: 1000 }, allow_blank: true
   validate :same_organization
   validate :valid_time_range
+  validate :non_overlapping_time_slots
+
+  def occurs_on?(date)
+    return false unless weekday == date.wday
+
+    !supplier.supplier_schedule_exceptions.where(starts_on: ..date)
+             .where('ends_on IS NULL OR ends_on >= ?', date)
+             .where(branch_id: [nil, branch_id], supplier_schedule_id: [nil, id]).exists?
+  end
 
   def restore_safely
     return false if deleted_at.nil?
@@ -35,6 +44,19 @@ class SupplierSchedule < ApplicationRecord
     return if starts_at.blank? || ends_at.blank?
 
     errors.add(:ends_at, :invalid) if ends_at <= starts_at
+  end
+
+  def non_overlapping_time_slots
+    return if deleted_at.present? || supplier_id.blank? || branch_id.blank?
+    return if kind.blank? || weekday.nil? || starts_at.blank? || (ends_at.present? && ends_at <= starts_at)
+
+    finish = ends_at || starts_at + 1.minute
+    conflicts = self.class.not_deleted.where(supplier_id:, branch_id:, kind:, weekday:).where.not(id:)
+    overlaps = conflicts.where(
+      "starts_at < :finish AND COALESCE(ends_at, starts_at + interval '1 minute') > :start",
+      finish:, start: starts_at
+    ).exists?
+    errors.add(:starts_at, :taken) if overlaps
   end
 
   def same_organization

@@ -30,6 +30,59 @@
       </article>
     <% end %>
   </div>
+  <% if policy(@supplier).manage_schedules? %>
+    <section class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %></h2>
+      <%= form_with url: admin_supplier_schedule_exceptions_path(@supplier),
+                    scope: :supplier_schedule_exception, class: 'grid gap-3 md:grid-cols-2' do |form| %>
+        <div>
+          <%= form.label :starts_on, t('admin.supplier_schedule_exceptions.starts_on') %>
+          <%= form.date_field :starts_on, required: true, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div>
+          <%= form.label :ends_on, t('admin.supplier_schedule_exceptions.ends_on') %>
+          <%= form.date_field :ends_on, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div>
+          <%= form.label :reason, t('admin.supplier_schedule_exceptions.reason') %>
+          <%= form.select :reason, SupplierScheduleException::REASONS.map { |value| [t("admin.supplier_schedule_exceptions.reasons.#{value}"), value] },
+                          {}, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div>
+          <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
+          <%= form.collection_select :branch_id, @branches, :id, :name,
+                                     { include_blank: t('admin.supplier_schedule_exceptions.all_branches') },
+                                     class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :notes, t('admin.supplier_schedule_exceptions.notes') %>
+          <%= form.text_area :notes, rows: 2, maxlength: 1000, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <%= form.submit t('admin.supplier_details.save'), class: 'w-fit cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
+      <% end %>
+    </section>
+  <% end %>
+  <% if @exceptions.any? %>
+    <section class="space-y-3">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %></h2>
+      <% @exceptions.each do |exception| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4">
+          <p class="text-sm text-slate-700">
+            <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
+            · <%= l(exception.starts_on) %>
+            <% if exception.ends_on.present? %>–<%= l(exception.ends_on) %><% end %>
+            · <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
+            <% if exception.notes.present? %>· <%= exception.notes %><% end %>
+          </p>
+          <% if policy(@supplier).manage_schedules? %>
+            <%= button_to t('admin.supplier_details.delete'),
+                          admin_supplier_schedule_exception_path(@supplier, exception),
+                          method: :delete, class: 'text-sm font-semibold text-rose-700' %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
   <% if @schedules.empty? %>
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
   <% end %>

@@ -21,6 +21,7 @@ class Supplier < ApplicationRecord
   belongs_to :sat_fiscal_regime, optional: true
   belongs_to :responsible_user, class_name: 'User', optional: true
   has_many :supplier_schedules, dependent: :destroy
+  has_many :supplier_schedule_exceptions, dependent: :destroy
   has_many_attached :documents
   validate :responsible_user_in_organization
   validate :documents_are_safe

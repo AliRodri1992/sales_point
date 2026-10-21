@@ -1,0 +1,15 @@
+es:
+  admin:
+    supplier_schedule_exceptions:
+      title: "Festivos y excepciones de entrega"
+      starts_on: "Fecha inicial"
+      ends_on: "Fecha final (opcional)"
+      reason: "Motivo"
+      notes: "Notas"
+      all_branches: "Todas las sucursales"
+      saved: "Excepción del calendario guardada."
+      deleted: "Excepción del calendario eliminada."
+      reasons:
+        holiday: "Día festivo"
+        suspension: "Suspensión temporal"
+        exception: "Excepción de fecha específica"
