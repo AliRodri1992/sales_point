@@ -24,6 +24,44 @@ module SuppliersFormHelpers
     authorize policy_record, :manage_commercial? if attributes.keys.map(&:to_s).intersect?(commercial_fields)
   end
 
+  def validate_primary_dossier_submission!(attributes, creating:)
+    return if primary_dossier_submission_valid?(attributes, creating:)
+
+    @supplier.errors.add(:base, :invalid)
+    render_supplier_form_error
+  end
+
+  def primary_dossier_submission_valid?(attributes, creating:)
+    valid_primary_records?(attributes[:contacts_attributes], :contacts, creating:) &&
+      valid_primary_records?(attributes[:addresses_attributes], :addresses, creating:)
+  end
+
+  def valid_primary_records?(raw, association, creating:)
+    return true if raw.blank?
+
+    records = raw.respond_to?(:values) ? raw.values : Array(raw)
+    return false if records.size > 1
+
+    records.all? { |record| valid_primary_record?(record, association, creating:) }
+  end
+
+  def valid_primary_record?(record, association, creating:)
+    return false if ActiveModel::Type::Boolean.new.cast(record[:_destroy])
+    return false if record.key?(:primary) && !ActiveModel::Type::Boolean.new.cast(record[:primary])
+    return false if association == :addresses && record.key?(:purpose) && record[:purpose] != 'fiscal'
+
+    existing = @supplier.public_send(association).not_deleted.find_by(id: record[:id]) if record[:id].present?
+    return false if creating && record[:id].present?
+    return existing.primary? && (association != :addresses || existing.purpose == 'fiscal') if existing
+
+    return false if record[:id].present?
+    return true if creating
+
+    @supplier.public_send(association).not_deleted.where(
+      primary: true, **(association == :addresses ? { purpose: 'fiscal' } : {})
+    ).none?
+  end
+
   def load_fiscal_regimes
     @fiscal_regimes = SatFiscalRegime.current.order(:code)
   end

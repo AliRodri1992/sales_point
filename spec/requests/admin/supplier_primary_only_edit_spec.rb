@@ -79,6 +79,29 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(secondary_contact.reload.name).to eq('Keep Contact')
   end
 
+  it 'rejects editing secondary records through crafted parameters' do
+    primary = supplier.contacts.create!(name: 'Main', primary: true)
+    secondary = supplier.contacts.create!(name: 'Other')
+    patch admin_supplier_path(supplier), params: { supplier: {
+      contacts_attributes: { '0' => { id: secondary.id, name: 'Tampered', primary: true } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(secondary.reload.name).to eq('Other')
+    expect(primary.reload.name).to eq('Main')
+  end
+
+  it 'rejects multiple fiscal addresses in an update' do
+    fiscal = supplier.addresses.create!(**address_attributes, purpose: 'fiscal', primary: true)
+    patch admin_supplier_path(supplier), params: { supplier: { addresses_attributes: {
+      '0' => { id: fiscal.id, street: 'Changed', primary: true },
+      '1' => { **address_attributes, purpose: 'fiscal', primary: true }
+    } } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(fiscal.reload.street).to eq('Main Street')
+  end
+
   it 'does not show management links or secondary records when the primary is missing' do
     supplier.addresses.create!(**address_attributes, street: 'Only Secondary', purpose: 'fiscal')
     supplier.contacts.create!(name: 'Only Secondary Contact')

@@ -6,6 +6,7 @@ module Suppliers
       return [] unless product.organization_id == organization.id
 
       offers = SupplierProduct.available
+                              .joins(:supplier).merge(Supplier.available)
                               .includes(:supplier, :currency, product: :preferred_supplier)
                               .where(organization:, product:)
       comparison = offers.map do |offer|

@@ -74,8 +74,21 @@ class Supplier < ApplicationRecord
   scope :sorted, ->(column, direction) { order(column => direction) }
 
   before_validation :normalize_fields
+  after_update :clear_unavailable_product_preferences, if: :supplier_became_unavailable?
 
   private
+
+  def supplier_became_unavailable?
+    (saved_change_to_status? || saved_change_to_deleted_at?) && (inactive? || deleted_at.present?)
+  end
+
+  def clear_unavailable_product_preferences
+    Product.where(preferred_supplier_id: id).order(:id).find_each do |product|
+      product.with_lock do
+        product.update!(preferred_supplier: nil) if product.preferred_supplier_id == id
+      end
+    end
+  end
 
   def rfc_must_match_person_type_and_date
     return if rfc.blank? || !rfc.match?(/\A[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}\z/)

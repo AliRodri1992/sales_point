@@ -66,6 +66,7 @@ module Admin
       @supplier = build_new_supplier
       authorize @supplier
       authorize_supplier_attributes!(supplier_params)
+      return if validate_primary_dossier_submission!(supplier_params, creating: true)
 
       if @supplier.save
         notify_supplier('created')
@@ -83,6 +84,7 @@ module Admin
 
       attributes = supplier_update_attributes
       authorize_supplier_attributes!(attributes)
+      return if validate_primary_dossier_submission!(attributes, creating: false)
 
       if @supplier.update(attributes)
         notify_supplier('updated')

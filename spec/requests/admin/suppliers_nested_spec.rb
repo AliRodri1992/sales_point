@@ -20,7 +20,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
       postal_code: '06000', purpose: 'fiscal', primary: true }
   end
 
-  it 'creates supplier with multiple contacts and a fiscal address' do
+  it 'rejects multiple contacts in one creation request' do
     attributes = attributes_for(:supplier).merge(
       currency_id: currency.id,
       contacts_attributes: {
@@ -34,14 +34,21 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     post admin_suppliers_path, params: { supplier: attributes }
 
     errors = Nokogiri::HTML(response.body).css('[data-server-field-error]').map(&:text).join(' | ')
-    expect(Supplier.count).to eq(before_count + 1), "status=#{response.status} #{errors}"
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Supplier.count).to eq(before_count), errors
+  end
 
-    supplier = Supplier.order(:id).last
-    expect(supplier.contacts.count).to eq(2)
-    expect(supplier.addresses.count).to eq(1)
-    expect(supplier.contacts.find_by!(name: 'Primary').email).to eq('primary@example.com')
-    expect(supplier.contacts.find_by!(name: 'Primary').phone).to start_with('+52')
-    expect(supplier.addresses.first.purpose).to eq('fiscal')
+  it 'creates exactly one primary contact and fiscal address' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Primary', primary: true } },
+      addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to have_http_status(:redirect)
+    saved = Supplier.order(:id).last
+    expect(saved.contacts.first).to be_primary
+    expect(saved.addresses.first).to have_attributes(primary: true, purpose: 'fiscal')
   end
 
   it 'retains invalid nested address and contact values in the response' do
@@ -60,7 +67,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
 
   it 'updates existing nested records without replacing their identifiers' do
     supplier = create(:supplier, organization:)
-    contact = supplier.contacts.create!(name: 'Original')
+    contact = supplier.contacts.create!(name: 'Original', primary: true)
     address = supplier.addresses.create!(address_attributes)
 
     patch admin_supplier_path(supplier), params: {
