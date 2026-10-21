@@ -13,9 +13,9 @@ module Suppliers
       scope.exists?([SQL, { finish:, start: @schedule.starts_at }])
     end
 
-    private
-
     SQL = "starts_at < :finish AND COALESCE(ends_at, starts_at + interval '1 minute') > :start"
+
+    private
 
     def valid_slot?
       @schedule.deleted_at.nil? && @schedule.supplier_id.present? &&

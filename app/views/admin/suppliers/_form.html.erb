@@ -93,14 +93,15 @@
           <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_purposes.fiscal') %></h3>
           <p data-supplier-form-target="addressValidationError" role="alert"
              class="mt-2 hidden text-sm font-semibold text-rose-600" aria-live="polite"></p>
-          <% fiscal_addresses = supplier.persisted? ? supplier.addresses.to_a.select { |address| address.primary? && address.purpose == 'fiscal' && address.deleted_at.nil? } : supplier.addresses %>
+          <% fiscal_addresses = supplier.persisted? ? supplier.addresses.to_a.select { |address| address.primary? && address.purpose == 'fiscal' && address.deleted_at.nil? } : supplier.addresses.to_a %>
+          <% fiscal_addresses << supplier.addresses.build(purpose: 'fiscal', primary: true) if fiscal_addresses.empty? %>
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :addresses, fiscal_addresses do |address_form| %>
               <%= render 'admin/suppliers/address_fields', form: address_form, allow_remove: false, embedded: true, fiscal_locked: true, primary_locked: supplier.persisted? %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
-            <% if fiscal_addresses.empty? %>
+            <% if supplier.addresses.none?(&:persisted?) %>
               <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_fiscal_address') %></p>
             <% end %>
           <% end %>
@@ -109,14 +110,15 @@
       <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_3') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_3') %></p></div>
         <div data-controller="supplier-nested" class="space-y-4">
-          <% primary_contacts = supplier.persisted? ? supplier.contacts.to_a.select { |contact| contact.primary? && contact.deleted_at.nil? } : supplier.contacts %>
+          <% primary_contacts = supplier.persisted? ? supplier.contacts.to_a.select { |contact| contact.primary? && contact.deleted_at.nil? } : supplier.contacts.to_a %>
+          <% primary_contacts << supplier.contacts.build(primary: true) if primary_contacts.empty? %>
           <div data-supplier-nested-target="items" class="space-y-4">
             <%= form.fields_for :contacts, primary_contacts do |contact_form| %>
               <%= render 'admin/suppliers/contact_fields', form: contact_form, allow_remove: false, embedded: true, primary_locked: supplier.persisted? %>
             <% end %>
           </div>
           <% if supplier.persisted? %>
-            <% if primary_contacts.empty? %>
+            <% if supplier.contacts.none?(&:persisted?) %>
               <p class="text-sm text-slate-500"><%= t('admin.supplier_details.no_primary_contact') %></p>
             <% end %>
           <% end %>

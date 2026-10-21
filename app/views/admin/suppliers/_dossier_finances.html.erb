@@ -1,18 +1,10 @@
-<%# Read only financial overview. Monetary balances are always grouped by invoice currency. %>
-<% payables = supplier.account_payables.outstanding
-                      .includes(supplier_invoice: :currency,
-                                supplier_payment_allocations: :supplier_payment,
-                                supplier_credit_allocations: :supplier_credit_note)
-                      .order(due_on: :asc, id: :asc)
-                      .select { |payable| payable.balance.positive? } %>
-<% balances = payables.group_by { |payable| payable.supplier_invoice.currency.code } %>
-<% overdue_balances = payables.select(&:overdue?).group_by { |payable| payable.supplier_invoice.currency.code } %>
-<% balance_labels = balances.sort.map { |code, entries| "#{number_to_currency(entries.sum(&:balance), unit: '')} #{code}" } %>
-<% balance_labels = ["#{number_to_currency(0, unit: '')} #{supplier.currency.code}"] if balance_labels.empty? %>
-<% overdue_labels = overdue_balances.sort.map { |code, entries| "#{number_to_currency(entries.sum(&:balance), unit: '')} #{code}" } %>
-<% overdue_labels = ["#{number_to_currency(0, unit: '')} #{supplier.currency.code}"] if overdue_labels.empty? %>
-<% next_due = payables.filter_map { |payable| payable.due_on if payable.due_on >= Date.current }.min %>
-<% has_payable_records = supplier.account_payables.exists? %>
+<%# SQL aggregation avoids loading the entire financial history. %>
+<% summary = Suppliers::FinancialSummary.new(supplier).call %>
+<% payables = summary.recent %>
+<% balance_labels = summary.balance_labels { |amount| number_to_currency(amount, unit: '') } %>
+<% overdue_labels = summary.overdue_labels { |amount| number_to_currency(amount, unit: '') } %>
+<% next_due = summary.next_due %>
+<% has_payable_records = summary.has_payable_records %>
 
 <section id="supplier-dossier-statement" data-supplier-dossier-target="panel" data-section="statement" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
   <div data-finance-payables class="min-w-0 space-y-0">
@@ -39,7 +31,7 @@
           </div>
           <div class="rounded-xl border border-slate-200 p-4">
             <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.pending_invoices') %></p>
-            <p data-finance-metric="pending_invoices" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= payables.size %></p>
+            <p data-finance-metric="pending_invoices" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= summary.pending_count %></p>
           </div>
           <div class="rounded-xl border border-slate-200 p-4">
             <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.next_due') %></p>
@@ -58,7 +50,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <% payables.sort_by { |payable| [payable.supplier_invoice.issued_on, payable.id] }.reverse.first(5).each do |payable| %>
+          <% payables.each do |payable| %>
             <% invoice = payable.supplier_invoice %>
             <% state = payable.overdue? ? 'overdue' : (payable.paid_amount.positive? || payable.credited_amount.positive? ? 'partial' : 'pending') %>
             <% badge_style = state == 'overdue' ? 'bg-rose-50 text-rose-700' : state == 'partial' ? 'bg-amber-50 text-amber-800' : 'bg-emerald-50 text-emerald-800' %>

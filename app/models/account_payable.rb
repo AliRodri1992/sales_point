@@ -13,22 +13,23 @@ class AccountPayable < ApplicationRecord
 
   scope :outstanding, -> { joins(:supplier_invoice).where(supplier_invoices: { status: 'posted' }) }
 
-  # SQL-side balance selection avoids materializing all invoices when checking archiving.
-  scope :with_positive_balance, lambda {
-    outstanding.where(<<~SQL.squish)
-      account_payables.amount >
+  def self.balance_sql
+    <<~SQL.squish
+      account_payables.amount -
         COALESCE((
           SELECT SUM(allocation.amount) FROM supplier_payment_allocations allocation
           INNER JOIN supplier_payments payment ON payment.id = allocation.supplier_payment_id
           WHERE allocation.account_payable_id = account_payables.id AND payment.status = 'posted'
-        ), 0) +
+        ), 0) -
         COALESCE((
           SELECT SUM(allocation.amount) FROM supplier_credit_allocations allocation
           INNER JOIN supplier_credit_notes note ON note.id = allocation.supplier_credit_note_id
           WHERE allocation.account_payable_id = account_payables.id AND note.status = 'posted'
         ), 0)
     SQL
-  }
+  end
+
+  scope :with_positive_balance, -> { outstanding.where("#{balance_sql} > 0") }
 
   def paid_amount
     supplier_payment_allocations.joins(:supplier_payment)

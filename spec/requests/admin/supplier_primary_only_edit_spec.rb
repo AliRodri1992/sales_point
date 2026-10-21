@@ -109,9 +109,8 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     get edit_admin_supplier_path(supplier)
 
     expect(response).to have_http_status(:ok)
-    expect(field_records('addresses')).to be_empty
-    expect(field_records('contacts')).to be_empty
-    expect(form.text).to include('No primary fiscal address is registered', 'No primary contact is registered')
+    expect(form.css('input[name*="[addresses_attributes]"][name$="[primary]"][value="1"]')).to be_present
+    expect(form.css('input[name*="[contacts_attributes]"][name$="[primary]"][value="1"]')).to be_present
     expect(form.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_nil
     expect(form.at_css("a[href='#{admin_supplier_contacts_path(supplier)}']")).to be_nil
   end
