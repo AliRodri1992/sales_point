@@ -1,0 +1,27 @@
+<div data-supplier-general-area="identification" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <h3 class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 font-jakarta text-base font-bold text-slate-900">
+
+    <%= icon('building-office-2', class: 'size-5 text-emerald-700') %>
+    <%= t('admin.supplier_general_layout.identification') %>
+  </h3>
+  <% identity = [
+    [t('admin.supplier_dossier.general.code'), supplier.code],
+    [t('admin.supplier_dossier.overview.supplier_name'), supplier.name],
+    [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
+    [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
+    [t('admin.supplier_dossier.fields.alias_name'), supplier.alias_name],
+    [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil]
+  ] %>
+  <dl class="grid gap-x-8 gap-y-5 p-5 md:grid-cols-2">
+    <% identity.each do |label, value| %>
+      <div class="grid min-w-0 gap-2 sm:grid-cols-[10rem_minmax(0,1fr)]">
+        <dt class="text-sm text-slate-500"><%= label %></dt>
+        <dd class="break-words text-sm font-semibold text-slate-900"><%= value.presence || '—' %></dd>
+      </div>
+    <% end %>
+    <div class="grid gap-2 sm:grid-cols-[10rem_minmax(0,1fr)]">
+      <dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.general.status') %></dt>
+      <dd><span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><span class="size-2 rounded-full <%= supplier.active? ? 'bg-emerald-600' : 'bg-slate-500' %>"></span><%= t("admin.suppliers.statuses.#{supplier.status}") %></span></dd>
+    </div>
+  </dl>
+</div>
