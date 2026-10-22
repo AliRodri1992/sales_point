@@ -64,6 +64,46 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     expect(saved.addresses.first).to have_attributes(purpose: 'fiscal', primary: true)
   end
 
+  it 'geocodes the newly registered supplier fiscal address using the complete address' do
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id, addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    address = Supplier.order(:id).last.addresses.first
+    expect(GeocodeAddressJob).to have_received(:perform_later).with(
+      address.id, address.geocoding_fingerprint
+    ).once
+  end
+
+  it 'geocodes a changed fiscal address when edited through the main supplier form' do
+    supplier = create(:supplier, organization:)
+    address = supplier.addresses.create!(address_attributes)
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    patch admin_supplier_path(supplier), params: { supplier: {
+      addresses_attributes: { '0' => { id: address.id, street: 'Changed street' } }
+    } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(GeocodeAddressJob).to have_received(:perform_later).with(
+      address.id, address.reload.geocoding_fingerprint
+    ).once
+  end
+
+  it 'does not enqueue geocoding when an update has no address changes' do
+    supplier = create(:supplier, organization:)
+    supplier.addresses.create!(address_attributes)
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated supplier name' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(GeocodeAddressJob).not_to have_received(:perform_later)
+  end
+
   it 'rejects an explicit nonfiscal address in the supplier registration payload' do
     post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
       currency_id: currency.id,

@@ -70,6 +70,7 @@ module Admin
       return if validate_primary_dossier_submission!(supplier_params, creating: true)
 
       if @supplier.save
+        enqueue_nested_address_geocoding
         notify_supplier('created')
         broadcast_suppliers_update
         redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.created') }
@@ -90,6 +91,7 @@ module Admin
       normalize_primary_dossier_attributes!(attributes)
 
       if @supplier.update(attributes)
+        enqueue_nested_address_geocoding
         notify_supplier('updated')
         broadcast_suppliers_update
         redirect_to supplier_update_destination, flash: { swal_message: t('admin.suppliers.updated') }

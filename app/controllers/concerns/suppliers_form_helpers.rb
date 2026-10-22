@@ -86,6 +86,16 @@ module SuppliersFormHelpers
     attributes
   end
 
+  def enqueue_nested_address_geocoding
+    @supplier.addresses.target.each do |address|
+      next unless address.persisted? && address.deleted_at.nil? && !address.location_confirmed?
+      next unless address.saved_change_to_id? ||
+                  address.saved_changes.keys.intersect?(Address::GEOGRAPHIC_FIELDS)
+
+      GeocodeAddressJob.perform_later(address.id, address.geocoding_fingerprint)
+    end
+  end
+
   def load_fiscal_regimes
     @fiscal_regimes = SatFiscalRegime.current.order(:code)
   end
