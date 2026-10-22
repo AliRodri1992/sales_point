@@ -35,6 +35,26 @@ RSpec.describe Purchases::Workflow do
     expect(order.reload).to be_ordered
   end
 
+  it 'rejects new purchasing steps for an inactive supplier but permits cancellation' do
+    supplier.update!(status: :inactive)
+    expect { described_class.call(order:, action: :submit, user: requester) }
+      .to raise_error(ArgumentError, /unavailable/)
+    expect(order.reload).to be_draft
+
+    described_class.call(order:, action: :cancel, user: requester)
+    expect(order.reload).to be_cancelled
+  end
+
+  it 'blocks dispatch if a supplier becomes inactive after approval' do
+    described_class.call(order:, action: :submit, user: requester)
+    described_class.call(order:, action: :approve, user: approver)
+    supplier.update!(status: :inactive)
+
+    expect { described_class.call(order:, action: :dispatch, user: approver) }
+      .to raise_error(ArgumentError, /unavailable/)
+    expect(order.reload).to be_approved
+  end
+
   it 'prevents self approval' do
     described_class.call(order:, action: :submit, user: requester)
 
