@@ -5,37 +5,41 @@
     <span class="sr-only"><%= t("#{dictionary}.search") %></span>
     <span class="relative block">
       <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-3 size-4 text-slate-400') %>
-      <input type="search" data-supplier-documents-target="search"
+      <input type="search" name="documents_q" value="<%= params[:documents_q] %>"
+             data-supplier-documents-target="search"
              data-action="input->supplier-documents#filter" placeholder="<%= t("#{dictionary}.search") %>"
              class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-emerald-600 focus:ring-emerald-600">
     </span>
   </label>
   <label class="block min-w-0">
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.document_type") %></span>
-    <select data-supplier-documents-target="categorySelect" data-action="change->supplier-documents#filter"
+    <select name="documents_category" data-supplier-documents-target="categorySelect"
+            data-action="change->supplier-documents#filter"
             class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <% categories.each do |category| %>
-        <option value="<%= category == 'all' ? '' : category %>"><%= t("#{dictionary}.categories.#{category}") %></option>
+        <option value="<%= category == 'all' ? '' : category %>" <%= 'selected' if params[:documents_category].to_s == (category == 'all' ? '' : category) %>><%= t("#{dictionary}.categories.#{category}") %></option>
       <% end %>
     </select>
   </label>
   <label class="block min-w-0">
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.status") %></span>
-    <select data-supplier-documents-target="status" data-action="change->supplier-documents#filter"
+    <select name="documents_status" data-supplier-documents-target="status"
+            data-action="change->supplier-documents#filter"
             class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <option value=""><%= t("#{dictionary}.all") %></option>
       <% %w[active inactive].each do |status| %>
-        <option value="<%= status %>"><%= t("#{dictionary}.statuses.#{status}") %></option>
+        <option value="<%= status %>" <%= 'selected' if params[:documents_status] == status %>><%= t("#{dictionary}.statuses.#{status}") %></option>
       <% end %>
     </select>
   </label>
   <label class="block min-w-0">
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.date") %></span>
-    <select data-supplier-documents-target="date" data-action="change->supplier-documents#filter"
+    <select name="documents_days" data-supplier-documents-target="date"
+            data-action="change->supplier-documents#filter"
             class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <option value=""><%= t("#{dictionary}.all") %></option>
-      <option value="30"><%= t("#{dictionary}.last_30_days") %></option>
-      <option value="365"><%= t("#{dictionary}.last_year") %></option>
+      <option value="30" <%= 'selected' if params[:documents_days] == '30' %>><%= t("#{dictionary}.last_30_days") %></option>
+      <option value="365" <%= 'selected' if params[:documents_days] == '365' %>><%= t("#{dictionary}.last_year") %></option>
     </select>
   </label>
 </div>

@@ -27,8 +27,9 @@ class SupplierDocument < ApplicationRecord
   before_validation :set_series_id, on: :create
 
   def self.import_existing!(supplier)
-    tracked_ids = supplier.supplier_documents.with_deleted.pluck(:attachment_id)
-    supplier.documents.attachments.includes(:blob).where.not(id: tracked_ids).find_each do |attachment|
+    tracked = supplier.supplier_documents.with_deleted.select(:attachment_id)
+    ActiveStorage::Attachment.where(record: supplier, name: 'documents')
+                             .where.not(id: tracked).includes(:blob).find_each do |attachment|
       presenter = Suppliers::DocumentPresenter.new(attachment)
       supplier.supplier_documents.create!(
         attachment:, category: presenter.category, status: presenter.status,

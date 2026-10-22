@@ -18,14 +18,19 @@ export default class extends Controller {
     rangeLabel: String,
     filesSelected: String,
     invalidFiles: String,
-    pageSize: { type: Number, default: 8 }
+    pageSize: { type: Number, default: 8 },
+    serverPage: Number,
+    serverTotal: Number,
+    serverFiltered: Boolean,
+    nextUrl: String,
+    previousUrl: String
   }
 
   connect() {
     if (this.hasUploadInputTarget) this.filesChanged()
     if (!this.hasCardTarget) return
 
-    this.pageNumber = 1
+    this.pageNumber = this.hasServerPageValue ? this.serverPageValue : 1
     this.selectedId = null
     this.previewRequest = null
     this.lastTrigger = null
@@ -36,11 +41,33 @@ export default class extends Controller {
   disconnect() {
     this.closePreview({ restoreFocus: false })
     this.cancelPreview()
+    if (this.filterTimer) clearTimeout(this.filterTimer)
   }
 
-  filter() {
-    this.pageNumber = 1
-    this.refresh()
+  filter(event) {
+    if (this.hasCardTarget) this.refresh()
+    if (this.hasServerTotalValue && this.serverTotalValue <= this.pageSizeValue &&
+      !this.serverFilteredValue) return
+
+    if (this.filterTimer) clearTimeout(this.filterTimer)
+    this.filterTimer = setTimeout(() => this.applyServerFilters(), event?.type === "input" ? 350 : 0)
+  }
+
+  applyServerFilters() {
+    const url = new URL(window.location.href)
+    url.searchParams.set("tab", "documents")
+    const filters = {
+      documents_q: this.searchTarget.value.trim(),
+      documents_category: this.categorySelectTarget.value,
+      documents_status: this.statusTarget.value,
+      documents_days: this.dateTarget.value
+    }
+    for (const [name, value] of Object.entries(filters)) {
+      if (value) url.searchParams.set(name, value)
+      else url.searchParams.delete(name)
+    }
+    url.searchParams.delete("documents_page")
+    window.location.assign(url.toString())
   }
 
   pickFiles() {
@@ -104,13 +131,15 @@ export default class extends Controller {
   }
 
   previous() {
-    if (this.pageNumber <= 1) return
+    if (this.hasPreviousUrlValue) return window.location.assign(this.previousUrlValue)
+    if (this.hasServerPageValue || this.pageNumber <= 1) return
     this.pageNumber -= 1
     this.refresh()
   }
 
   next() {
-    if (this.pageNumber * this.pageSizeValue >= this.matches().length) return
+    if (this.hasNextUrlValue) return window.location.assign(this.nextUrlValue)
+    if (this.hasServerPageValue || this.pageNumber * this.pageSizeValue >= this.matches().length) return
     this.pageNumber += 1
     this.refresh()
   }
@@ -192,9 +221,10 @@ export default class extends Controller {
   refresh() {
     const matches = this.matches()
     const total = matches.length
-    const pages = Math.max(1, Math.ceil(total / this.pageSizeValue))
-    this.pageNumber = Math.min(this.pageNumber, pages)
-    const start = (this.pageNumber - 1) * this.pageSizeValue
+    const server = this.hasServerPageValue
+    const localPages = Math.max(1, Math.ceil(total / this.pageSizeValue))
+    if (!server) this.pageNumber = Math.min(this.pageNumber, localPages)
+    const start = server ? 0 : (this.pageNumber - 1) * this.pageSizeValue
     const visible = matches.slice(start, start + this.pageSizeValue)
 
     this.cardTargets.forEach((card) => {
@@ -203,16 +233,21 @@ export default class extends Controller {
       card.setAttribute("aria-hidden", String(!displayed))
     })
     this.noResultsTarget.classList.toggle("hidden", total > 0)
+    const overall = server ? this.serverTotalValue : total
+    const first = server ? (this.pageNumber - 1) * this.pageSizeValue + 1 : start + 1
+    const last = server ? Math.min(this.pageNumber * this.pageSizeValue, overall) :
+      Math.min(start + this.pageSizeValue, total)
     this.rangeTarget.textContent = this.rangeLabelValue
-      .replace("%{from}", total ? String(start + 1) : "0")
-      .replace("%{to}", String(Math.min(start + this.pageSizeValue, total)))
-      .replace("%{total}", String(total))
+      .replace("%{from}", overall ? String(first) : "0")
+      .replace("%{to}", String(last))
+      .replace("%{total}", String(overall))
     this.pageTarget.textContent = String(this.pageNumber)
-    this.previousTarget.disabled = this.pageNumber === 1
-    this.nextTarget.disabled = this.pageNumber === pages
-    this.previousTarget.classList.toggle("opacity-40", this.pageNumber === 1)
-    this.nextTarget.classList.toggle("opacity-40", this.pageNumber === pages)
-
+    const previousDisabled = server ? !this.hasPreviousUrlValue : this.pageNumber === 1
+    const nextDisabled = server ? !this.hasNextUrlValue : this.pageNumber === localPages
+    this.previousTarget.disabled = previousDisabled
+    this.nextTarget.disabled = nextDisabled
+    this.previousTarget.classList.toggle("opacity-40", previousDisabled)
+    this.nextTarget.classList.toggle("opacity-40", nextDisabled)
 
     const selected = visible.find((card) => card.dataset.documentId === this.selectedId)
     if (selected) this.renderSelection(selected)

@@ -1,6 +1,4 @@
-<% SupplierDocument.import_existing!(supplier) %>
-<% active_records = supplier.supplier_documents.visible.includes(attachment: :blob).order(created_at: :desc) %>
-<% documents = active_records.map { |record| Suppliers::DocumentPresenter.new(record) } %>
+<% documents = @dossier_documents_page.documents.map { |record| Suppliers::DocumentPresenter.new(record) } %>
 <% deleted_documents = supplier.supplier_documents.trashed.includes(attachment: :blob).order(deleted_at: :desc).limit(30) %>
 <% categories = %w[all contract fiscal catalog technical legal other] %>
 <% dictionary = 'admin.supplier_documents' %>
@@ -11,6 +9,15 @@
          data-supplier-documents-range-label-value="<%= t("#{dictionary}.range", from: '%{from}', to: '%{to}', total: '%{total}') %>"
          data-supplier-documents-files-selected-value="<%= t("#{dictionary}.files_selected", count: '%{count}') %>"
          data-supplier-documents-invalid-files-value="<%= t("#{dictionary}.invalid_files") %>"
+         data-supplier-documents-server-page-value="<%= @dossier_documents_page.page %>"
+         data-supplier-documents-server-total-value="<%= @dossier_documents_page.total_count %>"
+         data-supplier-documents-server-filtered-value="<%= params[:documents_q].present? || params[:documents_category].present? || params[:documents_status].present? || params[:documents_days].present? %>"
+         <% if @dossier_documents_page.page > 1 %>
+           data-supplier-documents-previous-url-value="<%= admin_supplier_path(supplier, tab: 'documents', documents_page: @dossier_documents_page.page - 1, documents_q: params[:documents_q], documents_category: params[:documents_category], documents_status: params[:documents_status], documents_days: params[:documents_days]) %>"
+         <% end %>
+         <% if @dossier_documents_page.page < @dossier_documents_page.total_pages %>
+           data-supplier-documents-next-url-value="<%= admin_supplier_path(supplier, tab: 'documents', documents_page: @dossier_documents_page.page + 1, documents_q: params[:documents_q], documents_category: params[:documents_category], documents_status: params[:documents_status], documents_days: params[:documents_days]) %>"
+         <% end %>
          class="hidden w-full min-w-0 space-y-4 lg:flex-1">
   <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
@@ -52,7 +59,7 @@
       </details>
     <% end %>
 
-    <% if documents.any? %>
+    <% if documents.any? || supplier.supplier_documents.visible.exists? %>
       <%= render 'dossier_documents_listing', supplier: supplier, documents: documents,
                   categories: categories, can_manage_documents: can_manage_documents, dictionary: dictionary %>
 
