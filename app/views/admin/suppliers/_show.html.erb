@@ -9,7 +9,8 @@
 <% schedules = dossier_policy.view_schedules? ? supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) : [] %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
-<% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') %>
+<% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') ||
+                            current_user.permission?('accounts_payable.banks.manage') %>
 <% dossier_sections = [] %>
 <% dossier_sections << 'overview' if can_view_overview %>
 <% dossier_sections << 'general' if can_view_general %>
@@ -40,7 +41,7 @@
         </div>
         <p class="mt-1 text-sm text-slate-500">
           <%= supplier.code %>
-          <% if supplier.classification.present? %>
+          <% if can_view_general && supplier.classification.present? %>
             <span class="mx-2 text-slate-300">·</span>
             <%= t("admin.supplier_dossier.options.#{supplier.classification}") %>
           <% end %>

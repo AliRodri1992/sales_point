@@ -47,6 +47,14 @@ RSpec.describe SupplierPolicy do
     expect(described_class.new(user, supplier).show?).to be(true)
   end
 
+  it 'allows bank account management with the corresponding finance permission only' do
+    allow(user).to receive(:permission?) { |code| code == 'accounts_payable.banks.manage' }
+
+    expect(described_class.new(user, supplier).show?).to be(true)
+    expect(described_class.new(user, supplier).view_fiscal?).to be(false)
+    expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
+  end
+
   it 'rejects an unrelated organization even with the permission' do
     foreign_supplier = create(:supplier, organization: create(:organization))
     allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)
