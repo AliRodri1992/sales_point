@@ -42,6 +42,17 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
     expect(described_class.new(blob).call).to be_nil
   end
 
+  it 'does not use incomplete output when the conversion subprocess fails' do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new('test office bytes'), filename: 'report.docx',
+      content_type: described_class::CONTENT_TYPES.first, identify: false
+    )
+    allow(described_class).to receive(:available?).and_return(true)
+    allow(SupplierOfficeConverterProcess).to receive(:call).and_return(false)
+
+    expect(described_class.new(blob).call).to be_nil
+  end
+
   it 'rejects an extension inconsistent with an allowed Office media type' do
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new('invalid Office extension'), filename: 'report.bin',

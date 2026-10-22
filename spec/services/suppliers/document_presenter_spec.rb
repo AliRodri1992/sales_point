@@ -39,21 +39,19 @@ RSpec.describe Suppliers::DocumentPresenter do
 
   it 'reads legacy attachment metadata and defaults an invalid status safely' do
     attachment = attachment_for('contract.pdf')
-    attachment.blob.update!(
-      metadata: attachment.blob.metadata.merge('custom' => {
-        'supplier_category' => 'fiscal',
-        'supplier_description' => 'Tax documentation',
-        'supplier_status' => 'inactive'
-      })
-    )
+    custom = {
+      'supplier_category' => 'fiscal',
+      'supplier_description' => 'Tax documentation',
+      'supplier_status' => 'inactive'
+    }
+    attachment.blob.update!(metadata: attachment.blob.metadata.merge('custom' => custom))
     presenter = described_class.new(attachment)
     expect(presenter.category).to eq('fiscal')
     expect(presenter.description).to eq('Tax documentation')
     expect(presenter.status).to eq('inactive')
 
-    attachment.blob.update!(metadata: attachment.blob.metadata.merge('custom' => {
-      'supplier_category' => 'not_a_category', 'supplier_status' => 'bad_value'
-    }))
+    invalid = { 'supplier_category' => 'not_a_category', 'supplier_status' => 'bad_value' }
+    attachment.blob.update!(metadata: attachment.blob.metadata.merge('custom' => invalid))
     fallback = described_class.new(attachment.reload)
     expect(fallback.category).to eq('contract')
     expect(fallback.status).to eq('active')
