@@ -14,7 +14,7 @@ RSpec.describe 'Database supplier schedule overlap protection', type: :model do
       supplier_id: supplier.id, branch_id: branch.id, kind: 'delivery', weekday: 1,
       starts_at: '10:00', ends_at: '12:00', created_at: Time.current, updated_at: Time.current
     }
-    # rubocop:disable-next-line Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     operation = -> { SupplierSchedule.insert_all!([overlap]) }
     expect(&operation).to raise_error(ActiveRecord::StatementInvalid)
   end
