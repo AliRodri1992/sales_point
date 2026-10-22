@@ -7,8 +7,7 @@ module Admin
     include SupplierDocumentManagement
 
     TEXT_PREVIEW_TYPES = %w[text/plain text/csv application/csv text/xml application/xml].freeze
-    OFFICE_PREVIEW_TYPES = [Suppliers::DocumentContentPreview::DOCX_TYPE,
-                            Suppliers::DocumentContentPreview::XLSX_TYPE].freeze
+    OFFICE_PREVIEW_TYPES = Suppliers::OfficeDocumentPdf::CONTENT_TYPES.freeze
     PREVIEW_TYPES = (%w[application/pdf image/png image/jpeg] + TEXT_PREVIEW_TYPES +
                      OFFICE_PREVIEW_TYPES).freeze
     CATEGORIES = %w[contract fiscal catalog technical legal other].freeze
@@ -40,7 +39,14 @@ module Admin
 
       response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
       return send_text_preview(attachment) if attachment.blob.content_type.in?(TEXT_PREVIEW_TYPES)
-      return send_office_preview(attachment) if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
+      if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
+        return send_office_pdf_preview(attachment) if Suppliers::OfficeDocumentPdf.available?
+        return send_office_preview(attachment) if attachment.blob.content_type.in?(
+          [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
+        )
+      end
+
+      return head :unsupported_media_type if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
 
       send_attachment(attachment, disposition: 'inline')
     end

@@ -189,7 +189,28 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response.headers['Content-Disposition']).to include('attachment')
   end
 
+  it 'streams and caches a rendered PDF for valid Office documents when conversion is available' do
+    office = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(supplier)), filename: 'example.docx',
+      content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
+    )
+    supplier.documents.attach(office)
+    id = supplier.documents.attachments.last.id
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(true)
+    converter = instance_double(Suppliers::OfficeDocumentPdf, call: '%PDF-1.4 converted')
+    expect(Suppliers::OfficeDocumentPdf).to receive(:new).once.and_return(converter)
+
+    2.times do
+      get admin_supplier_document_preview_path(supplier, document_id: id)
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('application/pdf')
+      expect(response.body).to start_with('%PDF-1.4')
+    end
+    expect(supplier.supplier_documents.find_by!(attachment_id: id).preview_pdf).to be_attached
+  end
+
   it 'previews valid Office attachments as safe plain text for the slide-out drawer' do
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(false)
     {
       'sample.docx' => [SupplierDemoDocumentOffice.docx_for(supplier),
                         Suppliers::DocumentContentPreview::DOCX_TYPE, 'DEMO'],

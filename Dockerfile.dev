@@ -24,6 +24,8 @@ RUN apt-get update -qq && \
     python-is-python3 \
     postgresql-client \
     wkhtmltopdf \
+    libreoffice-writer \
+    libreoffice-calc \
     fonts-dejavu-core \
     ca-certificates \
     gnupg \

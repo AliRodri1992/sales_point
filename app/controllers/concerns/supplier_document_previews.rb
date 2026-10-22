@@ -9,6 +9,30 @@ module SupplierDocumentPreviews
     send_plain_text(attachment, text)
   end
 
+  def send_office_pdf_preview(attachment)
+    document = SupplierDocument.find_by!(attachment_id: attachment.id)
+    data = nil
+    document.with_lock do
+      data = document.preview_pdf.attached? ? document.preview_pdf.download : create_office_preview(document)
+    end
+    return head :unsupported_media_type unless data
+
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    send_data data, filename: "#{attachment.blob.filename.base}.pdf",
+                    type: 'application/pdf', disposition: 'inline'
+  end
+
+  def create_office_preview(document)
+    pdf = Suppliers::OfficeDocumentPdf.new(document.attachment.blob).call
+    return if pdf.blank?
+
+    document.preview_pdf.attach(
+      io: StringIO.new(pdf), filename: "#{document.attachment.blob.filename.base}.pdf",
+      content_type: 'application/pdf'
+    )
+    pdf
+  end
+
   def send_office_preview(attachment)
     text = Suppliers::DocumentContentPreview.new(attachment.blob).call
     return head :unsupported_media_type if text.blank?

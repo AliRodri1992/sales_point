@@ -5,6 +5,7 @@ class SupplierDocument < ApplicationRecord
   STATUSES = %w[active inactive].freeze
 
   has_paper_trail
+  has_one_attached :preview_pdf
 
   belongs_to :supplier
   belongs_to :attachment, class_name: 'ActiveStorage::Attachment'

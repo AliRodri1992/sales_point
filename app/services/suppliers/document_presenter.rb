@@ -34,9 +34,14 @@ module Suppliers
       case attachment.blob.content_type
       when 'application/pdf' then 'pdf'
       when 'image/png', 'image/jpeg' then 'image'
-      when 'text/plain', 'text/csv', 'application/csv', 'text/xml', 'application/xml',
-           Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE
+      when 'text/plain', 'text/csv', 'application/csv', 'text/xml', 'application/xml'
         'text'
+      when *Suppliers::OfficeDocumentPdf::CONTENT_TYPES
+        return 'pdf' if Suppliers::OfficeDocumentPdf.available?
+
+        attachment.blob.content_type.in?(
+          [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
+        ) ? 'text' : 'none'
       else 'none'
       end
     end
