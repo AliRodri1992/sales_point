@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_013000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1201,12 +1201,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_010000) do
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
     t.bigint "uploaded_by_id"
-    t.integer "version", default: 1, null: false
+    t.integer "revision_number", default: 1, null: false
     t.index ["attachment_id"], name: "index_supplier_documents_on_attachment_id", unique: true
     t.index ["deleted_by_id"], name: "index_supplier_documents_on_deleted_by_id"
     t.index ["previous_version_id"], name: "index_supplier_documents_on_previous_version_id"
     t.index ["supplier_id", "current_version", "deleted_at"], name: "idx_supplier_document_listing"
-    t.index ["supplier_id", "series_id", "version"], name: "idx_supplier_document_version", unique: true
+    t.index ["supplier_id", "series_id", "revision_number"], name: "idx_supplier_document_version", unique: true
     t.index ["supplier_id"], name: "index_supplier_documents_on_supplier_id"
     t.index ["updated_by_id"], name: "index_supplier_documents_on_updated_by_id"
     t.index ["uploaded_by_id"], name: "index_supplier_documents_on_uploaded_by_id"

@@ -24,7 +24,7 @@ module SupplierDocumentManagement
     document.update!(current_version: false, updated_by: current_user)
     supplier.supplier_documents.create!(
       attachment:, uploaded_by: current_user, previous_version: document,
-      series_id: document.series_id, version: document.version + 1, **metadata_attributes(document)
+      series_id: document.series_id, revision_number: document.revision_number + 1, **metadata_attributes(document)
     )
   end
 

@@ -19,7 +19,7 @@ class SupplierDocument < ApplicationRecord
   validates :category, inclusion: { in: CATEGORIES }
   validates :status, inclusion: { in: STATUSES }
   validates :description, length: { maximum: 300 }
-  validates :version, numericality: { only_integer: true, greater_than: 0 }
+  validates :revision_number, numericality: { only_integer: true, greater_than: 0 }
   validates :attachment_id, uniqueness: true
   validates :series_id, presence: true
   validate :attachment_matches_supplier
@@ -32,7 +32,7 @@ class SupplierDocument < ApplicationRecord
       presenter = Suppliers::DocumentPresenter.new(attachment)
       supplier.supplier_documents.create!(
         attachment:, category: presenter.category, status: presenter.status,
-        description: presenter.description.first(300), version: 1, current_version: true
+        description: presenter.description.first(300), revision_number: 1, current_version: true
       )
     end
   end

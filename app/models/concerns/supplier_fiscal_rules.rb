@@ -17,9 +17,12 @@ module SupplierFiscalRules
   end
 
   def mexican_tax_resident?
-    fiscal = addresses.to_a.find do |address|
+    fiscal = addresses.target.find do |address|
       address.purpose == 'fiscal' && address.primary? &&
         address.deleted_at.nil? && !address.marked_for_destruction?
+    end
+    if fiscal.nil? && persisted? && !addresses.loaded?
+      fiscal = addresses.not_deleted.find_by(purpose: 'fiscal', primary: true)
     end
     fiscal.nil? || fiscal.country&.iso_alpha2 == 'MX'
   end

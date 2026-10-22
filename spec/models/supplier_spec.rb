@@ -9,6 +9,12 @@ RSpec.describe Supplier, type: :model do
       expect(supplier).to be_valid
     end
 
+    it 'does not cache an empty address collection during supplier creation' do
+      saved = create(:supplier, organization:)
+
+      expect(saved.association(:addresses)).not_to be_loaded
+    end
+
     it 'requires a valid person type' do
       supplier.person_type = nil
       expect(supplier).not_to be_valid
