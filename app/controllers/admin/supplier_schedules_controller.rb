@@ -48,12 +48,17 @@ module Admin
 
     def restore
       @schedule = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).find(params[:id])
-      if @schedule.restore_safely
+      restored = @supplier.with_lock { @schedule.restore_safely }
+      if restored
         notify_schedule('schedule_restored')
         redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
       else
         redirect_to admin_supplier_schedules_path(@supplier), alert: @schedule.errors.full_messages.to_sentence
       end
+    rescue ActiveRecord::StatementInvalid => e
+      raise unless e.cause.is_a?(PG::ExclusionViolation)
+
+      redirect_to admin_supplier_schedules_path(@supplier), alert: t('errors.messages.taken')
     end
 
     def destroy

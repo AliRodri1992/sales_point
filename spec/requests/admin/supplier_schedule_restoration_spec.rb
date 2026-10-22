@@ -24,6 +24,21 @@ RSpec.describe 'Supplier schedule restoration', type: :request do
     expect(schedule.reload.deleted_at).to be_nil
   end
 
+  it 'keeps an overlapping archived schedule deleted and reports the conflict' do
+    schedule = SupplierSchedule.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1, starts_at: '09:00', ends_at: '11:00'
+    )
+    schedule.update!(deleted_at: Time.current)
+    SupplierSchedule.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1, starts_at: '10:00', ends_at: '12:00'
+    )
+
+    patch restore_admin_supplier_schedule_path(supplier, schedule)
+
+    expect(response).to redirect_to(admin_supplier_schedules_path(supplier))
+    expect(schedule.reload.deleted_at).to be_present
+  end
+
   it 'does not restore a schedule belonging to another organization' do
     foreign_org = create(:organization)
     foreign_supplier = create(:supplier, organization: foreign_org)
