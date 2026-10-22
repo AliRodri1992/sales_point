@@ -5,7 +5,7 @@ require 'ripper'
 
 RSpec.describe 'Database migration syntax' do
   it 'parses every migration before it is executed' do
-    migration_paths = Dir[File.expand_path('../../db/migrate/*.rb', __dir__)].sort
+    migration_paths = Dir[File.expand_path('../../db/migrate/*.rb', __dir__)]
 
     expect(migration_paths).not_to be_empty
 
