@@ -1,5 +1,9 @@
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+<% can_view_fiscal = current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+                     current_user.permission?('suppliers.fiscal.manage') %>
+<% can_view_general = current_user.admin? || current_user.permission?('suppliers.view') ||
+                      current_user.permission?('suppliers.update') %>
 
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
@@ -26,16 +30,16 @@
                   <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3"/></svg></span>
                   <div class="min-w-0">
                     <p class="font-semibold text-slate-900"><%= supplier.name %></p><p class="text-xs text-slate-400"><%= supplier.code %></p>
-                    <% if supplier.trade_name.present? && supplier.trade_name != supplier.name %>
+                    <% if can_view_general && supplier.trade_name.present? && supplier.trade_name != supplier.name %>
                       <p class="text-xs text-slate-500"><%= supplier.trade_name %></p>
-                    <% elsif supplier.classification.present? %>
+                    <% elsif can_view_general && supplier.classification.present? %>
                       <p class="text-xs text-slate-500"><%= t("admin.suppliers.index.advanced.options.#{supplier.classification}") %></p>
                     <% end %>
                   </div>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= supplier.rfc.presence || '—' %></td>
-              <td class="px-4 py-3 text-slate-600"><%= supplier.email.presence || '—' %></td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= can_view_fiscal ? supplier.rfc.presence || '—' : '—' %></td>
+              <td class="px-4 py-3 text-slate-600"><%= can_view_general ? supplier.email.presence || '—' : '—' %></td>
               <td class="px-4 py-3 text-center">
                 <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
               </td>

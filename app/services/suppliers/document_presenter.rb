@@ -15,6 +15,7 @@ module Suppliers
     def filename = attachment.blob.filename.to_s
     def size = ActiveSupport::NumberHelper.number_to_human_size(attachment.blob.byte_size)
     def format = attachment.blob.filename.extension.downcase
+
     def description
       return document.description.to_s if document
 

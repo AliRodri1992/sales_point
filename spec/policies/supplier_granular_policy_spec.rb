@@ -40,6 +40,13 @@ RSpec.describe SupplierPolicy do
     expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
   end
 
+  it 'permits listing suppliers with only a contacts-management privilege' do
+    allow(user).to receive(:permission?) { |permission| permission == 'suppliers.contacts.manage' }
+
+    expect(described_class.new(user, Supplier).index?).to be(true)
+    expect(described_class.new(user, supplier).show?).to be(true)
+  end
+
   it 'rejects an unrelated organization even with the permission' do
     foreign_supplier = create(:supplier, organization: create(:organization))
     allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)

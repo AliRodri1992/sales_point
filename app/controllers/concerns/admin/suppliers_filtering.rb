@@ -27,7 +27,12 @@ module Admin
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      scope.search(params[:search])
+      if current_user.admin? || current_user.permission?('suppliers.view')
+        return scope.search(params[:search])
+      end
+
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
+      scope.where('suppliers.code ILIKE :term OR suppliers.name ILIKE :term', term:)
     end
 
     def apply_select_filters(scope)
