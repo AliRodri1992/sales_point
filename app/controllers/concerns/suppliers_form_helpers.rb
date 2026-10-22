@@ -15,15 +15,22 @@ module SuppliersFormHelpers
   def authorize_supplier_attributes!(attributes)
     return if action_name == 'create' && policy(@supplier).create?
 
-    policy_record = @supplier
-    authorize policy_record, :manage_contacts? if attributes.key?(:contacts_attributes)
-    authorize policy_record, :manage_addresses? if attributes.key?(:addresses_attributes)
-    authorize policy_record, :manage_documents? if attributes.key?(:documents)
+    authorize_nested_sections!(attributes)
+    authorize_sensitive_fields!(attributes)
+  end
 
-    fiscal_fields = %w[rfc foreign_tax_id sat_fiscal_regime_id person_type]
-    commercial_fields = %w[currency_id credit_days credit_limit discount_percent minimum_order_amount]
-    authorize policy_record, :manage_fiscal? if attributes.keys.map(&:to_s).intersect?(fiscal_fields)
-    authorize policy_record, :manage_commercial? if attributes.keys.map(&:to_s).intersect?(commercial_fields)
+  def authorize_nested_sections!(attributes)
+    authorize @supplier, :manage_contacts? if attributes.key?(:contacts_attributes)
+    authorize @supplier, :manage_addresses? if attributes.key?(:addresses_attributes)
+    authorize @supplier, :manage_documents? if attributes.key?(:documents)
+  end
+
+  def authorize_sensitive_fields!(attributes)
+    fiscal = %w[rfc foreign_tax_id sat_fiscal_regime_id person_type]
+    commercial = %w[currency_id credit_days credit_limit discount_percent minimum_order_amount]
+    keys = attributes.keys.map(&:to_s)
+    authorize @supplier, :manage_fiscal? if keys.intersect?(fiscal)
+    authorize @supplier, :manage_commercial? if keys.intersect?(commercial)
   end
 
   def validate_primary_dossier_submission!(attributes, creating:)

@@ -9,12 +9,7 @@ module Admin
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
-      scope = policy_scope(@supplier.supplier_bank_accounts.active)
-      if params[:q].present?
-        term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
-        scope = scope.where('bank_name ILIKE :term OR holder_name ILIKE :term', term:)
-      end
-      scope = scope.where(currency_code: params[:currency]) if params[:currency].present?
+      scope = filtered_accounts
       @currencies = @supplier.supplier_bank_accounts.active.distinct.order(:currency_code).pluck(:currency_code)
       @accounts_total = scope.count
       @accounts_pages = [(@accounts_total.to_f / 8).ceil, 1].max
@@ -71,6 +66,17 @@ module Admin
     end
 
     private
+
+    def filtered_accounts
+      scope = policy_scope(@supplier.supplier_bank_accounts.active)
+      if params[:q].present?
+        term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
+        scope = scope.where('bank_name ILIKE :term OR holder_name ILIKE :term', term:)
+      end
+      return scope if params[:currency].blank?
+
+      scope.where(currency_code: params[:currency])
+    end
 
     def set_supplier
       @supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id])

@@ -8,9 +8,17 @@ module Admin
       authorize current_organization.account_payables.new, :index?
       load_supplier_filter
       scope = scoped_payables
-      @open = scope.with_positive_balance
-      @open_count = @open.count
-      @currency_balances = Suppliers::PayablesCurrencySummary.new(@open).call
+      load_financial_overview(scope)
+      paginate_financial_records(scope)
+    end
+
+    def load_financial_overview(scope)
+      open = scope.with_positive_balance
+      @open_count = open.count
+      @currency_balances = Suppliers::PayablesCurrencySummary.new(open).call
+    end
+
+    def paginate_financial_records(scope)
       @total_payables = scope.count
       @pages = [(@total_payables.to_f / 20).ceil, 1].max
       @page = params[:page].to_i.clamp(1, @pages)

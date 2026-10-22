@@ -20,8 +20,8 @@ RSpec.describe 'Supplier closing rules' do
   end
 
   it 'prevents supplier closure while draft invoices exist' do
-    allow(supplier.supplier_invoices).to receive(:where).with(status: 'draft')
-      .and_return(double(exists?: true))
+    allow(supplier.supplier_invoices).to receive(:exists?).with(status: 'draft')
+                                        .and_return(true)
     expect(supplier.archivable?).to be(false)
   end
 end
