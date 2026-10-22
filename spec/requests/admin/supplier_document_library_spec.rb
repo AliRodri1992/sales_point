@@ -223,7 +223,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(trashed.deleted_by_id).to eq(user.id)
     expect(supplier.documents.attachments.exists?(id)).to be(true)
 
-    patch restore_admin_supplier_document_path(supplier, document_id: id)
+    patch admin_supplier_document_restore_path(supplier, document_id: id)
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
     expect(trashed.reload.deleted_at).to be_nil
 

@@ -51,7 +51,7 @@
             <div class="flex items-center justify-between gap-3 rounded-lg bg-white p-3">
               <span class="break-all text-xs text-slate-700"><%= deleted.attachment.blob.filename %></span>
               <%= button_to t('admin.supplier_document_history.restore'),
-                            restore_admin_supplier_document_path(supplier, document_id: deleted.attachment_id),
+                            admin_supplier_document_restore_path(supplier, document_id: deleted.attachment_id),
                             method: :patch, class: 'rounded-lg border border-emerald-200 px-3 py-2 text-xs font-semibold text-emerald-800' %>
             </div>
           <% end %>

@@ -221,7 +221,8 @@ export default class extends Controller {
   refresh() {
     const matches = this.matches()
     const total = matches.length
-    const server = this.hasServerPageValue
+    const server = this.hasServerPageValue &&
+      (this.serverTotalValue > this.pageSizeValue || this.serverFilteredValue)
     const localPages = Math.max(1, Math.ceil(total / this.pageSizeValue))
     if (!server) this.pageNumber = Math.min(this.pageNumber, localPages)
     const start = server ? 0 : (this.pageNumber - 1) * this.pageSizeValue
