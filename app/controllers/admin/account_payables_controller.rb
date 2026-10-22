@@ -7,9 +7,15 @@ module Admin
     def index
       authorize current_organization.account_payables.new, :index?
       load_supplier_filter
-      @payables = scoped_payables.includes(:supplier, supplier_invoice: :currency).order(due_on: :asc, id: :asc)
-      @open = open_payables(@payables)
-      @currency_balances = summarize_by_currency(@open)
+      scope = scoped_payables
+      @open = scope.with_positive_balance
+      @open_count = @open.count
+      @currency_balances = Suppliers::PayablesCurrencySummary.new(@open).call
+      @total_payables = scope.count
+      @pages = [(@total_payables.to_f / 20).ceil, 1].max
+      @page = params[:page].to_i.clamp(1, @pages)
+      @payables = scope.includes(:supplier, supplier_invoice: :currency)
+                       .order(due_on: :asc, id: :asc).limit(20).offset((@page - 1) * 20)
     end
 
     def load_supplier_filter
@@ -21,17 +27,6 @@ module Admin
     def scoped_payables
       scope = policy_scope(current_organization.account_payables)
       @supplier ? scope.where(supplier_id: @supplier.id) : scope
-    end
-
-    def open_payables(payables)
-      payables.select { |payable| payable.supplier_invoice.posted? && payable.balance.positive? }
-    end
-
-    def summarize_by_currency(payables)
-      payables.group_by { |payable| payable.supplier_invoice.currency.code }
-              .transform_values do |entries|
-        { open: entries.sum(&:balance), overdue: entries.select(&:overdue?).sum(&:balance) }
-      end
     end
 
     def show
