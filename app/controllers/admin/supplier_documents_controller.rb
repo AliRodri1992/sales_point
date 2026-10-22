@@ -4,6 +4,7 @@ module Admin
   class SupplierDocumentsController < ApplicationController
     include SupplierAuditTrail
     include SupplierDocumentPreviews
+    include SupplierDocumentManagement
 
     TEXT_PREVIEW_TYPES = %w[text/plain text/csv application/csv text/xml application/xml].freeze
     OFFICE_PREVIEW_TYPES = [Suppliers::DocumentContentPreview::DOCX_TYPE,
@@ -20,10 +21,7 @@ module Admin
       files = document_files
       return reject_file(supplier) unless files.size.between?(1, 10) && files.all? { |file| valid_file?(file) }
 
-      supplier.documents.attach(files)
-      supplier.documents.attachments.order(:id).last(files.size).each do |attachment|
-        supplier.supplier_documents.create!(attachment:, uploaded_by: current_user, **metadata_attributes)
-      end
+      persist_uploaded_documents(supplier, files)
       redirect_documents(supplier, :uploaded)
     end
 
@@ -102,31 +100,6 @@ module Admin
                 disposition:
     end
 
-    def replace_document(supplier, document)
-      return reject_file(supplier) unless valid_file?(document_file)
-
-      supplier.with_lock do
-        supplier.documents.attach(document_file)
-        attachment = supplier.documents.attachments.order(:id).last
-        document.update!(current_version: false, updated_by: current_user)
-        supplier.supplier_documents.create!(
-          attachment:, uploaded_by: current_user, previous_version: document,
-          series_id: document.series_id, version: document.version + 1, **metadata_attributes(document)
-        )
-      end
-      redirect_documents(supplier, :replaced)
-    end
-
-    def current_document(supplier)
-      SupplierDocument.import_existing!(supplier)
-      supplier.supplier_documents.visible.find_by!(attachment_id: params[:document_id])
-    end
-
-    def document_for(supplier)
-      SupplierDocument.import_existing!(supplier)
-      supplier.supplier_documents.find_by!(attachment_id: params[:document_id])
-    end
-
     def document_params
       params.fetch(:document, ActionController::Parameters.new)
             .permit(:file, :category, :description, :status, files: [])
@@ -149,25 +122,6 @@ module Admin
     def reject_file(supplier)
       redirect_to admin_supplier_path(supplier, tab: 'documents'),
                   alert: t('admin.supplier_documents.invalid_file')
-    end
-
-    def metadata_attributes(previous = nil)
-      data = document_params
-      {
-        category: allowed_value(data[:category], previous&.category, CATEGORIES, 'other'),
-        status: allowed_value(data[:status], previous&.status, STATUSES, 'active'),
-        description: description_value(data, previous)
-      }
-    end
-
-    def allowed_value(provided, previous, choices, fallback)
-      value = provided.presence || previous || fallback
-      choices.include?(value) ? value : fallback
-    end
-
-    def description_value(data, previous)
-      description = data.key?(:description) ? data[:description] : previous&.description
-      description.to_s.strip.first(300)
     end
 
     def redirect_documents(supplier, action)

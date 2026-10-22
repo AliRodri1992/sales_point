@@ -77,8 +77,14 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   end
 
   it 'retains the financial summary even when all balances are settled' do
-    payable_for(amount: 100, due_on: Date.current + 2.days, folio: 'PAID-001')
-    allow_any_instance_of(AccountPayable).to receive(:balance).and_return(0.to_d)
+    payable = payable_for(amount: 100, due_on: Date.current + 2.days, folio: 'PAID-001')
+    payment = SupplierPayment.create!(
+      organization:, supplier:, currency: supplier.currency, created_by: user,
+      paid_on: Date.current, amount: 100, status: :posted
+    )
+    SupplierPaymentAllocation.create!(
+      organization:, supplier_payment: payment, account_payable: payable, amount: 100
+    )
 
     get admin_supplier_path(supplier, tab: 'statement')
 

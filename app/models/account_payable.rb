@@ -29,7 +29,7 @@ class AccountPayable < ApplicationRecord
     SQL
   end
 
-  scope :with_positive_balance, -> { outstanding.where("#{balance_sql} > 0") }
+  scope :with_positive_balance, -> { outstanding.where(Arel.sql("#{balance_sql} > 0")) }
 
   def paid_amount
     supplier_payment_allocations.joins(:supplier_payment)

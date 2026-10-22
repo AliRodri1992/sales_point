@@ -17,7 +17,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :require_supplier_organization!
-    before_action :set_supplier, only: %i[show contacts_page addresses_page edit update]
+    before_action :set_supplier, only: %i[show contacts_page addresses_page edit update destroy]
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     def index

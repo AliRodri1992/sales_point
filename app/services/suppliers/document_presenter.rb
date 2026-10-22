@@ -15,8 +15,17 @@ module Suppliers
     def filename = attachment.blob.filename.to_s
     def size = ActiveSupport::NumberHelper.number_to_human_size(attachment.blob.byte_size)
     def format = attachment.blob.filename.extension.downcase
-    def description = document ? document.description.to_s : (metadata['supplier_description'].presence || '')
-    def status = document ? document.status : (metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active')
+    def description
+      return document.description.to_s if document
+
+      metadata['supplier_description'].presence || ''
+    end
+
+    def status
+      return document.status if document
+
+      metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active'
+    end
     def previewable? = preview_kind != 'none'
 
     def preview_kind

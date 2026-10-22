@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_21_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1347,6 +1347,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_21_150000) do
     t.bigint "branch_id"
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
+    t.datetime "deleted_at", precision: nil
     t.date "ends_on"
     t.text "notes"
     t.string "reason", null: false

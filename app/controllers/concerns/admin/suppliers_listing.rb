@@ -41,7 +41,7 @@ module Admin
     def suppliers_list_scope
       return policy_scope(current_organization.suppliers.not_deleted) unless params[:archived] == '1'
 
-      policy_scope(current_organization.suppliers.where.not(deleted_at: nil))
+      policy_scope(current_organization.suppliers.with_deleted.where.not(deleted_at: nil))
     end
 
     def apply_sorting(scope)

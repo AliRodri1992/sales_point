@@ -18,6 +18,7 @@ class SupplierSchedule < ApplicationRecord
 
   def occurs_on?(date)
     return false unless weekday == date.wday
+    return true unless supplier&.persisted?
 
     !supplier.supplier_schedule_exceptions.where(starts_on: ..date)
              .where('ends_on IS NULL OR ends_on >= ?', date)

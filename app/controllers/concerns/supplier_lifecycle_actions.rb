@@ -12,7 +12,7 @@ module SupplierLifecycleActions
   end
 
   def restore
-    @supplier = current_organization.suppliers.where.not(deleted_at: nil).find(params[:id])
+    @supplier = current_organization.suppliers.with_deleted.where.not(deleted_at: nil).find(params[:id])
     authorize @supplier, :restore?
     if @supplier.update(deleted_at: nil, status: :inactive)
       notify_supplier('updated')

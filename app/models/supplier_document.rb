@@ -14,7 +14,7 @@ class SupplierDocument < ApplicationRecord
   belongs_to :deleted_by, class_name: 'User', optional: true
 
   scope :visible, -> { where(current_version: true, deleted_at: nil) }
-  scope :trashed, -> { where(current_version: true).where.not(deleted_at: nil) }
+  scope :trashed, -> { with_deleted.where(current_version: true).where.not(deleted_at: nil) }
 
   validates :category, inclusion: { in: CATEGORIES }
   validates :status, inclusion: { in: STATUSES }
@@ -27,12 +27,12 @@ class SupplierDocument < ApplicationRecord
   before_validation :set_series_id, on: :create
 
   def self.import_existing!(supplier)
-    tracked_ids = supplier.supplier_documents.pluck(:attachment_id)
+    tracked_ids = supplier.supplier_documents.with_deleted.pluck(:attachment_id)
     supplier.documents.attachments.includes(:blob).where.not(id: tracked_ids).find_each do |attachment|
       presenter = Suppliers::DocumentPresenter.new(attachment)
       supplier.supplier_documents.create!(
         attachment:, category: presenter.category, status: presenter.status,
-        description: presenter.description, version: 1, current_version: true
+        description: presenter.description.first(300), version: 1, current_version: true
       )
     end
   end

@@ -17,7 +17,10 @@ RSpec.describe Supplier, type: :model do
 
     it 'requires a foreign tax identifier instead of an RFC for a foreign fiscal address' do
       country = create(:country, iso_alpha2: 'US')
-      supplier.addresses.build(country:, purpose: 'fiscal', primary: true)
+      supplier.addresses.build(
+        country:, purpose: 'fiscal', primary: true, street: 'Main St',
+        city: 'Austin', state: 'TX', postal_code: '78701'
+      )
       supplier.rfc = nil
       supplier.foreign_tax_id = 'US-98-7654321'
 

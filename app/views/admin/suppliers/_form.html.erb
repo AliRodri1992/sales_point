@@ -1,4 +1,4 @@
-<%= form_with model: [:admin, supplier], class: 'flex h-full flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form supplier-tax-residency', turbo: false, action: 'submit->supplier-form#submit change->supplier-tax-residency#update', supplier_form_new_record_value: supplier.new_record?, required_message: t('admin.suppliers.onboarding.required_field'), invalid_format_message: t('admin.suppliers.onboarding.invalid_format'), supplier_form_address_validation_url_value: (validate_fiscal_address_admin_suppliers_path if supplier.new_record?), supplier_form_validation_unavailable_message: t('admin.suppliers.onboarding.address_validation_unavailable') } do |form| %>
+<%= form_with model: [:admin, supplier], class: 'flex h-full flex-col gap-5', html: { novalidate: true }, data: { controller: 'supplier-form', turbo: false, action: 'submit->supplier-form#submit', supplier_form_new_record_value: supplier.new_record?, required_message: t('admin.suppliers.onboarding.required_field'), invalid_format_message: t('admin.suppliers.onboarding.invalid_format'), supplier_form_address_validation_url_value: (validate_fiscal_address_admin_suppliers_path if supplier.new_record?), supplier_form_validation_unavailable_message: t('admin.suppliers.onboarding.address_validation_unavailable') } do |form| %>
   <%= hidden_field_tag :return_to, 'general' if supplier.persisted? && params[:return_to] == 'general' %>
   <% if supplier.errors[:base].any? %>
     <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"><%= supplier.errors.full_messages_for(:base).first %></div>
@@ -57,7 +57,7 @@
           <% end %>
         </div>
       </section>
-      <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
+      <section data-supplier-form-target="step" data-controller="supplier-tax-residency" data-action="change->supplier-tax-residency#update" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_2') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_2') %></p></div>
         <div class="grid gap-x-5 gap-y-6 sm:grid-cols-2">
     <div>
