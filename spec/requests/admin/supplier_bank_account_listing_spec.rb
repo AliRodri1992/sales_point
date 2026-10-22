@@ -113,6 +113,32 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       .to be_present
   end
 
+  it 'atomically switches the primary bank account for a supplier' do
+    original = bank_account(primary: true)
+    other = bank_account(bank_name: 'Backup bank', account_number: '999900001234')
+
+    patch admin_supplier_bank_account_path(supplier, other), params: {
+      supplier_bank_account: { primary: '1' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(original.reload).not_to be_primary
+    expect(other.reload).to be_primary
+    expect(supplier.supplier_bank_accounts.active.where(primary: true).count).to eq(1)
+  end
+
+  it 'rolls back the previous primary bank demotion when the replacement is invalid' do
+    original = bank_account(primary: true)
+    post admin_supplier_bank_accounts_path(supplier), params: {
+      supplier_bank_account: { bank_name: 'Backup', account_number: '123456789',
+                               holder_name: '', currency_code: 'MXN', primary: '1' }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(original.reload).to be_primary
+    expect(supplier.supplier_bank_accounts.active.where(primary: true).count).to eq(1)
+  end
+
   it 'uses the existing supplier breadcrumb without adding supplier information cards' do
     get admin_supplier_bank_accounts_path(supplier)
 

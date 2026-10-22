@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 class SupplierBankAccountPolicy < FinancialPolicy
-  def index? = organization_access? && (allowed?('accounts_payable.banks.view') ||
-                                         allowed?('accounts_payable.banks.manage'))
+  def index?
+    organization_access? && (allowed?('accounts_payable.banks.view') ||
+                             allowed?('accounts_payable.banks.manage'))
+  end
+
   def show? = index?
   def create? = organization_access? && allowed?('accounts_payable.banks.manage')
   def edit? = create?

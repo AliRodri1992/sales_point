@@ -89,7 +89,7 @@ module Admin
     end
 
     def save_account
-      SupplierBankAccount.transaction do
+      @supplier.with_lock do
         if @account.primary?
           @supplier.supplier_bank_accounts.active.where.not(id: @account.id).where(primary: true)
                    .find_each { |previous| previous.update!(primary: false) }
