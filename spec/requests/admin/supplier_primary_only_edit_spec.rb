@@ -102,6 +102,17 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(fiscal.reload.street).to eq('Main Street')
   end
 
+  it 'creates a missing primary contact without changing existing secondary contacts' do
+    secondary = supplier.contacts.create!(name: 'Keep secondary')
+    patch admin_supplier_path(supplier), params: { supplier: {
+      contacts_attributes: { '0' => { name: 'New primary' } }
+    } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.contacts.reload.find_by!(name: 'New primary')).to be_primary
+    expect(secondary.reload).to have_attributes(name: 'Keep secondary', primary: false)
+  end
+
   it 'does not show management links or secondary records when the primary is missing' do
     supplier.addresses.create!(**address_attributes, street: 'Only Secondary', purpose: 'fiscal')
     supplier.contacts.create!(name: 'Only Secondary Contact')

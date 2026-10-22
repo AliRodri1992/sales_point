@@ -51,6 +51,28 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     expect(saved.addresses.first).to have_attributes(primary: true, purpose: 'fiscal')
   end
 
+  it 'enforces primary contact and fiscal address when flags are omitted' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Main contact' } },
+      addresses_attributes: { '0' => address_attributes.except(:purpose, :primary) }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    saved = Supplier.order(:id).last
+    expect(saved.contacts.first).to be_primary
+    expect(saved.addresses.first).to have_attributes(purpose: 'fiscal', primary: true)
+  end
+
+  it 'rejects an explicit nonfiscal address in the supplier registration payload' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      addresses_attributes: { '0' => address_attributes.merge(purpose: 'delivery') }
+    ) }
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
   it 'retains invalid nested address and contact values in the response' do
     post admin_suppliers_path, params: {
       supplier: attributes_for(:supplier).merge(

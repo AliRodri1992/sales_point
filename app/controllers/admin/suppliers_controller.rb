@@ -49,7 +49,7 @@ module Admin
 
     def new
       @supplier = current_organization.suppliers.new
-      @supplier.contacts.build
+      @supplier.contacts.build(primary: true)
       @supplier.addresses.build(purpose: 'fiscal', primary: true)
       authorize @supplier
       load_fiscal_regimes
@@ -86,6 +86,8 @@ module Admin
       attributes = supplier_update_attributes
       authorize_supplier_attributes!(attributes)
       return if validate_primary_dossier_submission!(attributes, creating: false)
+
+      normalize_primary_dossier_attributes!(attributes)
 
       if @supplier.update(attributes)
         notify_supplier('updated')

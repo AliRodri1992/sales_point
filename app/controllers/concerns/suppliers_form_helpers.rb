@@ -72,6 +72,20 @@ module SuppliersFormHelpers
     ).none?
   end
 
+  def normalize_primary_dossier_attributes!(attributes)
+    %i[contacts addresses].each do |association|
+      nested = attributes[:"#{association}_attributes"]
+      next if nested.blank?
+
+      records = nested.respond_to?(:values) ? nested.values : Array(nested)
+      records.each do |record|
+        record[:primary] = true
+        record[:purpose] = 'fiscal' if association == :addresses
+      end
+    end
+    attributes
+  end
+
   def load_fiscal_regimes
     @fiscal_regimes = SatFiscalRegime.current.order(:code)
   end
@@ -84,7 +98,14 @@ module SuppliersFormHelpers
   def build_new_supplier
     supplier = current_organization.suppliers.new(supplier_params.except(:status))
     supplier.status = :active
-    supplier.contacts.each { |contact| contact.active = true }
+    supplier.contacts.each do |contact|
+      contact.active = true
+      contact.primary = true
+    end
+    supplier.addresses.each do |address|
+      address.purpose = 'fiscal'
+      address.primary = true
+    end
     supplier
   end
 
