@@ -37,7 +37,10 @@ module SupplierDemoDocuments
         io: StringIO.new(content_for(extension, supplier).b),
         filename:, content_type: mime
       )
-      existing&.purge
+      if existing
+        SupplierDocument.with_deleted.where(attachment_id: existing.id).delete_all
+        existing.purge
+      end
     end
 
     def obsolete_demo_jpeg?(attachment, extension)

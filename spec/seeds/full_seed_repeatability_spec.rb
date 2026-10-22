@@ -33,6 +33,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     filename = 'delta-demo-sup-0001-nota.txt'
     missing_attachment = supplier.documents.attachments.joins(:blob)
                                  .find_by!(active_storage_blobs: { filename: })
+    SupplierDocument.with_deleted.where(attachment_id: missing_attachment.id).delete_all
     missing_attachment.purge
     retained_ids = supplier.documents.attachments.pluck(:id).sort
 

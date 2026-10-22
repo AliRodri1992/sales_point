@@ -28,14 +28,16 @@ class SupplierDocument < ApplicationRecord
   before_validation :set_series_id, on: :create
 
   def self.import_existing!(supplier)
-    tracked = supplier.supplier_documents.with_deleted.select(:attachment_id)
-    ActiveStorage::Attachment.where(record: supplier, name: 'documents')
-                             .where.not(id: tracked).includes(:blob).find_each do |attachment|
-      presenter = Suppliers::DocumentPresenter.new(attachment)
-      supplier.supplier_documents.create!(
-        attachment:, category: presenter.category, status: presenter.status,
-        description: presenter.description.first(300), revision_number: 1, current_version: true
-      )
+    supplier.with_lock do
+      tracked = supplier.supplier_documents.with_deleted.select(:attachment_id)
+      ActiveStorage::Attachment.where(record: supplier, name: 'documents')
+                               .where.not(id: tracked).includes(:blob).find_each do |attachment|
+        presenter = Suppliers::DocumentPresenter.new(attachment)
+        supplier.supplier_documents.create!(
+          attachment:, category: presenter.category, status: presenter.status,
+          description: presenter.description.first(300), revision_number: 1, current_version: true
+        )
+      end
     end
   end
 

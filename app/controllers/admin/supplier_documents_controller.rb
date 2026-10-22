@@ -67,7 +67,6 @@ module Admin
 
     def restore
       supplier = authorized_supplier(:manage_documents?)
-      SupplierDocument.import_existing!(supplier)
       document = supplier.supplier_documents.trashed.find_by!(attachment_id: params[:document_id])
       document.update!(deleted_at: nil, deleted_by: nil, updated_by: current_user)
       redirect_documents(supplier, :updated)

@@ -21,7 +21,6 @@ module SupplierDossierLoading
   end
 
   def load_dossier_documents
-    SupplierDocument.import_existing!(@supplier)
     @dossier_documents_page = Suppliers::DossierDocumentsPage.new(
       supplier: @supplier, page: params[:documents_page],
       filters: {

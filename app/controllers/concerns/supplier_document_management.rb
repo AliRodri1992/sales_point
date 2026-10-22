@@ -7,7 +7,9 @@ module SupplierDocumentManagement
     supplier.documents.attach(files)
     ActiveStorage::Attachment.where(record: supplier, name: 'documents')
                              .order(id: :desc).limit(files.size).each do |attachment|
-      supplier.supplier_documents.create!(attachment:, uploaded_by: current_user, **metadata_attributes)
+      document = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
+      document.assign_attributes(uploaded_by: current_user, **metadata_attributes)
+      document.save!
     end
   end
 
@@ -22,19 +24,19 @@ module SupplierDocumentManagement
     supplier.documents.attach(document_file)
     attachment = ActiveStorage::Attachment.where(record: supplier, name: 'documents').order(:id).last
     document.update!(current_version: false, updated_by: current_user)
-    supplier.supplier_documents.create!(
-      attachment:, uploaded_by: current_user, previous_version: document,
-      series_id: document.series_id, revision_number: document.revision_number + 1, **metadata_attributes(document)
+    replacement = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
+    replacement.assign_attributes(
+      uploaded_by: current_user, previous_version: document, series_id: document.series_id,
+      revision_number: document.revision_number + 1, **metadata_attributes(document)
     )
+    replacement.save!
   end
 
   def current_document(supplier)
-    SupplierDocument.import_existing!(supplier)
     supplier.supplier_documents.visible.find_by!(attachment_id: params[:document_id])
   end
 
   def document_for(supplier)
-    SupplierDocument.import_existing!(supplier)
     supplier.supplier_documents.find_by!(attachment_id: params[:document_id])
   end
 
