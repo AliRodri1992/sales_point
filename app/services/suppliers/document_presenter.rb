@@ -26,6 +26,7 @@ module Suppliers
 
       metadata['supplier_status'].in?(%w[active inactive]) ? metadata['supplier_status'] : 'active'
     end
+
     def previewable? = preview_kind != 'none'
 
     def preview_kind
