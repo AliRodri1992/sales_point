@@ -32,7 +32,6 @@ RSpec.describe 'Supplier document and schedule concurrency', type: :model, concu
     )
     attachment = supplier.documents.attachments.last
     # Simulate an attachment created before supplier document tracking existed.
-    # rubocop:disable-next Rails/SkipsModelValidations
     SupplierDocument.where(attachment_id: attachment.id).delete_all
 
     results = parallel_attempts do
