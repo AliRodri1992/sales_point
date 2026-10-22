@@ -27,13 +27,13 @@ module Purchases
         @order.with_lock do
           raise ArgumentError, 'An order with receipts cannot be cancelled' if cancelled_received_order?
 
-        state = TRANSITIONS.fetch(@order.status, {})[@action]
-        raise ArgumentError, 'Invalid order status transition' unless state
+          state = TRANSITIONS.fetch(@order.status, {})[@action]
+          raise ArgumentError, 'Invalid order status transition' unless state
 
-        validate_transition!
-        ensure_available_supplier! if @action.in?(%i[submit approve dispatch])
-        update_status!(state)
-        record_decision!(state) if @action.in?(%i[approve reject])
+          validate_transition!
+          ensure_available_supplier! if @action.in?(%i[submit approve dispatch])
+          update_status!(state)
+          record_decision!(state) if @action.in?(%i[approve reject])
           @order
         end
       end

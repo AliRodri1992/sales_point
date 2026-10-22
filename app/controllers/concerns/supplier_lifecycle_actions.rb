@@ -11,6 +11,7 @@ module SupplierLifecycleActions
       true
     end
     return archive_blocked unless archived
+
     notify_supplier('destroyed')
     broadcast_suppliers_update
     redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.destroyed') }

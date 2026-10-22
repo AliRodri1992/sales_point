@@ -57,14 +57,18 @@ RSpec.describe 'Purchase workflow and idempotency edge cases', type: :service do
     end
 
     it 'rejects closing an order without any receipts' do
-      order = double(status: 'ordered', goods_receipts: double(exists?: false))
+      supplier = double
+      allow(supplier).to receive(:with_lock).and_yield
+      order = double(status: 'ordered', goods_receipts: double(exists?: false), supplier:)
       allow(order).to receive(:with_lock).and_yield
       instance = described_class.new(order:, action: :close, user: double(id: 3), notes: nil)
       expect { instance.call }.to raise_error(ArgumentError, /Cannot close before receiving/)
     end
 
     it 'rejects unsupported order status transitions' do
-      order = double(status: 'received')
+      supplier = double
+      allow(supplier).to receive(:with_lock).and_yield
+      order = double(status: 'received', supplier:)
       allow(order).to receive(:with_lock).and_yield
       instance = described_class.new(order:, action: :approve, user: double(id: 3), notes: nil)
       expect { instance.call }.to raise_error(ArgumentError, /Invalid order status transition/)

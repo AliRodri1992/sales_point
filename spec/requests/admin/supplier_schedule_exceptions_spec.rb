@@ -14,7 +14,7 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
   end
 
   it 'paginates exceptions and allows bulk archiving and restoration' do
-    exceptions = 23.times.map do |index|
+    exceptions = Array.new(23) do |index|
       supplier.supplier_schedule_exceptions.create!(
         starts_on: Date.current + index.days, reason: 'holiday', created_by: user
       )

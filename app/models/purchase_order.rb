@@ -27,8 +27,8 @@ class PurchaseOrder < ApplicationRecord
   validates :exchange_rate, numericality: { greater_than: 0 }
   validate :consistent_organization
   validate :available_supplier_for_new_order, on: :create
-  around_create :serialize_supplier_creation
   before_validation :set_code, on: :create
+  around_create :serialize_supplier_creation
 
   def goods_total
     purchase_order_items.sum(&:line_total)

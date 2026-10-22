@@ -49,8 +49,10 @@ RSpec.describe 'Return and approval boundary decisions', type: :service do
 
   describe Purchases::Workflow do
     def with_locked_order(action:, status:, receipts_exist: false, items: [])
+      supplier = double
+      allow(supplier).to receive(:with_lock).and_yield
       order = double(status:, goods_receipts: double(exists?: receipts_exist),
-                     purchase_order_items: items, requested_by_id: 4)
+                     purchase_order_items: items, requested_by_id: 4, supplier:)
       allow(order).to receive(:with_lock).and_yield
       Purchases::Workflow.new(order:, action:, user: double(id: 4), notes: nil)
     end
