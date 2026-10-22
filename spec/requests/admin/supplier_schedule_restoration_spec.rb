@@ -37,6 +37,7 @@ RSpec.describe 'Supplier schedule restoration', type: :request do
 
     expect(response).to redirect_to(admin_supplier_schedules_path(supplier))
     expect(schedule.reload.deleted_at).to be_present
+    expect(flash[:alert]).to be_present
   end
 
   it 'does not restore a schedule belonging to another organization' do

@@ -49,12 +49,7 @@ module Admin
     def restore
       @schedule = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).find(params[:id])
       restored = @supplier.with_lock { @schedule.restore_safely }
-      if restored
-        notify_schedule('schedule_restored')
-        redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
-      else
-        redirect_to admin_supplier_schedules_path(@supplier), alert: @schedule.errors.full_messages.to_sentence
-      end
+      restored ? schedule_restore_success : schedule_restore_error
     rescue ActiveRecord::StatementInvalid => e
       raise unless e.cause.is_a?(PG::ExclusionViolation)
 
@@ -68,6 +63,15 @@ module Admin
     end
 
     private
+
+    def schedule_restore_success
+      notify_schedule('schedule_restored')
+      redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
+    end
+
+    def schedule_restore_error
+      redirect_to admin_supplier_schedules_path(@supplier), alert: @schedule.errors.full_messages.to_sentence
+    end
 
     def load_exceptions
       @archived_exceptions = params[:archived] == '1'
