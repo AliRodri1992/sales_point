@@ -62,27 +62,61 @@
       <% end %>
     </section>
   <% end %>
-  <% if @exceptions.any? %>
-    <section class="space-y-3">
-      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %></h2>
-      <% @exceptions.each do |exception| %>
-        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4">
-          <p class="text-sm text-slate-700">
-            <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
-            · <%= l(exception.starts_on) %>
-            <% if exception.ends_on.present? %>–<%= l(exception.ends_on) %><% end %>
-            · <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
-            <% if exception.notes.present? %>· <%= exception.notes %><% end %>
-          </p>
-          <% if policy(@supplier).manage_schedules? %>
-            <%= button_to t('admin.supplier_details.delete'),
-                          admin_supplier_schedule_exception_path(@supplier, exception),
-                          method: :delete, class: 'text-sm font-semibold text-rose-700' %>
-          <% end %>
+  <section class="space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %>
+        (<%= @exceptions_total %>)</h2>
+      <div class="flex gap-3 text-sm font-semibold text-emerald-800">
+        <%= link_to t('admin.supplier_closure.active_records'),
+                    admin_supplier_schedules_path(@supplier), class: 'hover:underline' %>
+        <%= link_to t('admin.supplier_closure.archived_records'),
+                    admin_supplier_schedules_path(@supplier, archived: '1'), class: 'hover:underline' %>
+      </div>
+    </div>
+    <% if @exceptions.any? %>
+      <%= form_with url: bulk_update_admin_supplier_schedule_exceptions_path(@supplier),
+                    method: :patch, class: 'space-y-3' do %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3">
+          <label class="flex items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" onchange="this.closest('form').querySelectorAll('[name=\u0022exception_ids[]\u0022]').forEach(element => element.checked = this.checked)">
+            <%= t('admin.supplier_closure.select_all') %>
+          </label>
+          <%= hidden_field_tag :operation, @archived_exceptions ? 'restore' : 'archive' %>
+          <%= submit_tag t(@archived_exceptions ? 'admin.supplier_closure.bulk_restore' :
+                           'admin.supplier_closure.bulk_archive'), name: nil,
+                         class: 'cursor-pointer rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white' %>
         </div>
+        <% @exceptions.each do |exception| %>
+          <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4">
+            <%= check_box_tag 'exception_ids[]', exception.id, false,
+                              class: 'size-4 rounded border-slate-300 text-emerald-700' %>
+            <span class="text-sm text-slate-700">
+              <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
+              · <%= l(exception.starts_on) %>
+              <% if exception.ends_on.present? %>–<%= l(exception.ends_on) %><% end %>
+              · <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
+              <% if exception.notes.present? %>· <%= exception.notes %><% end %>
+            </span>
+          </label>
+        <% end %>
       <% end %>
-    </section>
-  <% end %>
+    <% end %>
+    <nav class="flex items-center justify-between text-sm text-slate-600">
+      <span><%= @exceptions_page %> / <%= @exceptions_pages %></span>
+      <div class="flex gap-2">
+        <% if @exceptions_page > 1 %>
+          <%= link_to '‹', admin_supplier_schedules_path(@supplier, archived: params[:archived],
+                                                         page: @exceptions_page - 1),
+                      class: 'rounded-lg border border-slate-200 px-4 py-2' %>
+        <% end %>
+        <% if @exceptions_page < @exceptions_pages %>
+          <%= link_to '›', admin_supplier_schedules_path(@supplier, archived: params[:archived],
+                                                         page: @exceptions_page + 1),
+                      class: 'rounded-lg border border-slate-200 px-4 py-2' %>
+        <% end %>
+      </div>
+    </nav>
+  </section>
   <% if @schedules.empty? %>
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
   <% end %>

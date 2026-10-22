@@ -429,13 +429,11 @@
             <span><%= t('admin.shared.user_menu.security') %></span>
           </button>
 
-          <button
-            type="button"
-            class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-nexus-blue"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-slate-400" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4M12 17h.01"/></svg>
-            <span><%= t('admin.shared.user_menu.help_center') %></span>
-          </button>
+          <%= link_to admin_guide_path,
+                      class: 'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800' do %>
+            <%= icon('book-open', class: 'size-4 text-emerald-700') %>
+            <span><%= t('admin.supplier_closure.user_guide') %></span>
+          <% end %>
         </div>
 
         <div class="border-t border-slate-100 py-1">

@@ -1,0 +1,43 @@
+en:
+  admin:
+    supplier_closure:
+      user_guide: "User guide"
+      guide_title: "System user guide"
+      guide_intro: "Learn the main Delta POS workflows. Available features depend on your permissions."
+      open_module: "Open module"
+      active_records: "Active"
+      archived_records: "Archived"
+      select_all: "Select page"
+      bulk_archive: "Archive selected"
+      bulk_restore: "Restore selected"
+      guide:
+        profile:
+          title: "Profile and preferences"
+          description: "Consulta tus datos personales y configura tus preferencias desde el menú de usuario."
+        suppliers:
+          title: "Supplier catalog"
+          description: "Crea un proveedor con un contacto principal y dirección fiscal. Administra registros adicionales desde su expediente."
+        contacts:
+          title: "Supplier contacts"
+          description: "Agrega, edita, establece el principal, archiva y recupera contactos desde Ver proveedor."
+        addresses:
+          title: "Addresses and locations"
+          description: "Selecciona el país, completa el domicilio, revisa la sugerencia del mapa y confirma su ubicación."
+        products:
+          title: "Products and prices"
+          description: "Asocia productos, registra precios y compara ofertas; asigna proveedor preferido solo si está disponible."
+        documents:
+          title: "Document library"
+          description: "Arrastra archivos, filtra la biblioteca, abre la vista previa lateral, consulta versiones y restaura documentos."
+        schedules:
+          title: "Schedules and exceptions"
+          description: "Programa visitas, pedidos y entregas por sucursal; consulta suspensiones y gestiona excepciones por fecha."
+        finances:
+          title: "Payables and finances"
+          description: "Consulta el saldo, registra facturas, pagos y notas de crédito con los permisos correspondientes."
+        purchases:
+          title: "Purchases and receiving"
+          description: "Crea solicitudes y órdenes, solicita aprobaciones, registra la recepción y revisa movimientos de inventario."
+        reports:
+          title: "Reports"
+          description: "Usa los reportes disponibles según tus permisos y exporta los datos autorizados."

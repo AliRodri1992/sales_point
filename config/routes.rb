@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     resources :users
     resources :clients
     resource :profile, only: %i[show update]
+    get 'guide', to: 'guide#show', as: :guide
     resource :organization, only: [] do
       resources :contacts, controller: 'organization_contacts', except: %i[show] do
         member { patch :restore }
@@ -137,7 +138,9 @@ Rails.application.routes.draw do
       get 'documents/:document_id/history', to: 'supplier_documents#history', as: :document_history
       get 'documents/:document_id/version_download',
           to: 'supplier_documents#version_download', as: :document_version_download
-      resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create destroy]
+      resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create destroy] do
+        collection { patch :bulk_update }
+      end
       resources :schedules, controller: 'supplier_schedules', except: %i[show] do
         member { patch :restore }
       end

@@ -1,0 +1,43 @@
+ko:
+  admin:
+    supplier_closure:
+      user_guide: "사용 안내"
+      guide_title: "시스템 사용 안내"
+      guide_intro: "Delta POS의 주요 기능을 확인하세요. 권한에 따라 사용 가능한 기능이 달라집니다."
+      open_module: "모듈 열기"
+      active_records: "활성"
+      archived_records: "보관됨"
+      select_all: "전체 선택"
+      bulk_archive: "선택 보관"
+      bulk_restore: "선택 복구"
+      guide:
+        profile:
+          title: "Perfil y preferencias"
+          description: "Consulta tus datos personales y configura tus preferencias desde el menú de usuario."
+        suppliers:
+          title: "Catálogo de proveedores"
+          description: "Crea un proveedor con un contacto principal y dirección fiscal. Administra registros adicionales desde su expediente."
+        contacts:
+          title: "Contactos del proveedor"
+          description: "Agrega, edita, establece el principal, archiva y recupera contactos desde Ver proveedor."
+        addresses:
+          title: "Direcciones y ubicación"
+          description: "Selecciona el país, completa el domicilio, revisa la sugerencia del mapa y confirma su ubicación."
+        products:
+          title: "Productos y precios"
+          description: "Asocia productos, registra precios y compara ofertas; asigna proveedor preferido solo si está disponible."
+        documents:
+          title: "Biblioteca documental"
+          description: "Arrastra archivos, filtra la biblioteca, abre la vista previa lateral, consulta versiones y restaura documentos."
+        schedules:
+          title: "Calendarios y excepciones"
+          description: "Programa visitas, pedidos y entregas por sucursal; consulta suspensiones y gestiona excepciones por fecha."
+        finances:
+          title: "Finanzas y cuentas por pagar"
+          description: "Consulta el saldo, registra facturas, pagos y notas de crédito con los permisos correspondientes."
+        purchases:
+          title: "Compras y recepción"
+          description: "Crea solicitudes y órdenes, solicita aprobaciones, registra la recepción y revisa movimientos de inventario."
+        reports:
+          title: "Reportes"
+          description: "Usa los reportes disponibles según tus permisos y exporta los datos autorizados."
