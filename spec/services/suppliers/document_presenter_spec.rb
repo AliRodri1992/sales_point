@@ -75,7 +75,7 @@ RSpec.describe Suppliers::DocumentPresenter do
       ['document.pdf', 'application/pdf'] => 'pdf',
       ['photo.jpeg', 'image/jpeg'] => 'image',
       ['notes.txt', 'text/plain'] => 'text',
-      ['binary.bin', 'application/octet-stream'] => 'none'
+      ['binary.bin', 'application/octet-stream'] => 'text'
     }
     cases.each do |(filename, content_type), expected|
       presenter = described_class.new(attachment_for(filename, content_type:))

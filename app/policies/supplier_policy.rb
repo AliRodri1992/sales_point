@@ -8,6 +8,7 @@ class SupplierPolicy
     suppliers.fiscal.view suppliers.fiscal.manage suppliers.commercial.view
     suppliers.commercial.manage suppliers.products.view suppliers.products.manage
     accounts_payable.view accounts_payable.banks.view accounts_payable.banks.manage
+    suppliers.export suppliers.create
   ].freeze
 
   attr_reader :user, :supplier

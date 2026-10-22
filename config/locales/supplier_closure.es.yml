@@ -1,0 +1,5 @@
+es:
+  admin:
+    suppliers:
+      lifecycle:
+        draft_invoices: "No se puede archivar el proveedor mientras tenga facturas en borrador."

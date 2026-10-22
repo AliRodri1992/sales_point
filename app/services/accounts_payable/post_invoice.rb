@@ -4,8 +4,10 @@ module AccountsPayable
   class PostInvoice
     def self.call(invoice:, actor:)
       validation = SatStatusVerifier.call(invoice:) if invoice.draft? && invoice.cfdi?
-      invoice.with_lock do
-        validate_invoice!(invoice)
+      invoice.supplier.with_lock do
+        invoice.with_lock do
+          validate_invoice!(invoice)
+          validate_supplier!(invoice)
         if invoice.cfdi?
           validate_cfdi_identity!(invoice)
           CfdiSignatureVerifier.call(xml: invoice.xml_document.download)
@@ -13,9 +15,15 @@ module AccountsPayable
         validate_amounts!(invoice)
         payable = invoice.create_account_payable!(payable_attributes(invoice))
         invoice.update!({ status: :posted, posted_at: Time.current }.merge(sat_attributes(validation)))
-        audit_posting!(invoice, actor)
-        payable
+          audit_posting!(invoice, actor)
+          payable
+        end
       end
+    end
+
+    def self.validate_supplier!(invoice)
+      supplier = invoice.supplier
+      raise ArgumentError, 'Supplier is unavailable' unless supplier&.active? && supplier.deleted_at.nil?
     end
 
     def self.sat_attributes(validation)

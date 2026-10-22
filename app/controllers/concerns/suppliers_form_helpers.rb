@@ -13,6 +13,8 @@ module SuppliersFormHelpers
   end
 
   def authorize_supplier_attributes!(attributes)
+    return if action_name == 'create' && policy(@supplier).create?
+
     policy_record = @supplier
     authorize policy_record, :manage_contacts? if attributes.key?(:contacts_attributes)
     authorize policy_record, :manage_addresses? if attributes.key?(:addresses_attributes)

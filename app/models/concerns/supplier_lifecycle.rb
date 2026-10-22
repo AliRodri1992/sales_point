@@ -13,6 +13,9 @@ module SupplierLifecycle
     if purchase_orders.exists?(status: OPEN_PURCHASE_STATUSES)
       errors.add(:base, I18n.t('admin.suppliers.lifecycle.open_orders'))
     end
+    if supplier_invoices.where(status: 'draft').exists?
+      errors.add(:base, I18n.t('admin.suppliers.lifecycle.draft_invoices'))
+    end
     if account_payables.with_positive_balance.exists?
       errors.add(:base, I18n.t('admin.suppliers.lifecycle.outstanding_payables'))
     end

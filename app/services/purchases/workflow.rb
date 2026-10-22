@@ -30,6 +30,7 @@ module Purchases
         raise ArgumentError, 'Invalid order status transition' unless state
 
         validate_transition!
+        ensure_available_supplier! if @action.in?(%i[submit approve dispatch])
         update_status!(state)
         record_decision!(state) if @action.in?(%i[approve reject])
         @order
@@ -64,6 +65,11 @@ module Purchases
         raise ArgumentError, 'Cannot close before receiving merchandise'
       end
       raise ArgumentError, 'Requester cannot approve or reject own order' if self_decision?
+    end
+
+    def ensure_available_supplier!
+      supplier = @order.supplier
+      raise ArgumentError, 'Supplier is unavailable' unless supplier&.active? && supplier.deleted_at.nil?
     end
 
     def cancelled_received_order?

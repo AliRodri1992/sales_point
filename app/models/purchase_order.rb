@@ -26,6 +26,7 @@ class PurchaseOrder < ApplicationRecord
   validates :freight_amount, :insurance_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :exchange_rate, numericality: { greater_than: 0 }
   validate :consistent_organization
+  validate :available_supplier_for_new_order, on: :create
   before_validation :set_code, on: :create
 
   def goods_total
@@ -61,6 +62,10 @@ class PurchaseOrder < ApplicationRecord
     validate_purchase_request
     validate_purchase_quotation
     validate_purchase_items
+  end
+
+  def available_supplier_for_new_order
+    errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
   end
 
   def validate_purchase_branch
