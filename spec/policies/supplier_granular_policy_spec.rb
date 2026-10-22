@@ -55,6 +55,14 @@ RSpec.describe SupplierPolicy do
     expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
   end
 
+  it 'allows export-only and create-only users to scope their organization' do
+    %w[suppliers.export suppliers.create].each do |permission|
+      allow(user).to receive(:permission?) { |code| code == permission }
+      expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
+      expect(described_class.new(user, Supplier).index?).to be(true)
+    end
+  end
+
   it 'rejects an unrelated organization even with the permission' do
     foreign_supplier = create(:supplier, organization: create(:organization))
     allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)

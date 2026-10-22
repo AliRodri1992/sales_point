@@ -48,6 +48,17 @@ RSpec.describe 'Supplier-filtered accounts payable', type: :request do
     expect(Nokogiri::HTML(response.body).at_css('tbody').css('tr').size).to eq(2)
   end
 
+  it 'paginates payables without affecting organization-wide totals' do
+    22.times { |index| payable_for(supplier, "PAGE-#{index}") }
+
+    get admin_account_payables_path(page: 1)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(20)
+    expect(response.body).to include('22')
+
+    get admin_account_payables_path(page: 2)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(2)
+  end
+
   it 'rejects a supplier from a different organization' do
     outsider = create(:supplier, organization: create(:organization))
 

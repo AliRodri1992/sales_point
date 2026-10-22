@@ -85,6 +85,18 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(response.body).not_to include('999900001234')
   end
 
+  it 'paginates and filters more than eight supplier bank accounts' do
+    10.times do |index|
+      bank_account(bank_name: "Bank #{index}", account_number: format('%012d', index + 1))
+    end
+    get admin_supplier_bank_accounts_path(supplier)
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(8)
+    get admin_supplier_bank_accounts_path(supplier, page: 2)
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(2)
+    get admin_supplier_bank_accounts_path(supplier, q: 'Bank 9')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(1)
+  end
+
   it 'returns to the bank accounts tab of the supplier dossier' do
     bank_account
 
