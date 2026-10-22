@@ -27,6 +27,7 @@ class PurchaseOrder < ApplicationRecord
   validates :exchange_rate, numericality: { greater_than: 0 }
   validate :consistent_organization
   validate :available_supplier_for_new_order, on: :create
+  around_create :serialize_supplier_creation
   before_validation :set_code, on: :create
 
   def goods_total
@@ -62,6 +63,16 @@ class PurchaseOrder < ApplicationRecord
     validate_purchase_request
     validate_purchase_quotation
     validate_purchase_items
+  end
+
+  def serialize_supplier_creation
+    supplier.with_lock do
+      unless supplier.active? && supplier.deleted_at.nil?
+        errors.add(:supplier, :invalid)
+        raise ActiveRecord::RecordInvalid, self
+      end
+      yield
+    end
   end
 
   def available_supplier_for_new_order

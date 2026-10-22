@@ -13,31 +13,31 @@ en:
       guide:
         profile:
           title: "Profile and preferences"
-          description: "Consulta tus datos personales y configura tus preferencias desde el menú de usuario."
+          description: "Review your account information and adjust your preferences using the user menu."
         suppliers:
           title: "Supplier catalog"
-          description: "Crea un proveedor con un contacto principal y dirección fiscal. Administra registros adicionales desde su expediente."
+          description: "Register a supplier with one primary contact and fiscal address. Manage additional records in the supplier dossier."
         contacts:
           title: "Supplier contacts"
-          description: "Agrega, edita, establece el principal, archiva y recupera contactos desde Ver proveedor."
+          description: "Create, edit, set a primary contact, archive or restore supplier contacts from the supplier dossier."
         addresses:
           title: "Addresses and locations"
-          description: "Selecciona el país, completa el domicilio, revisa la sugerencia del mapa y confirma su ubicación."
+          description: "Choose a country, enter the address, review the map suggestion, and confirm the location."
         products:
           title: "Products and prices"
-          description: "Asocia productos, registra precios y compara ofertas; asigna proveedor preferido solo si está disponible."
+          description: "Associate products, register prices and compare offers. Choose a preferred supplier only when available."
         documents:
           title: "Document library"
-          description: "Arrastra archivos, filtra la biblioteca, abre la vista previa lateral, consulta versiones y restaura documentos."
+          description: "Drag and drop files, filter the library, view previews, inspect versions, and restore documents."
         schedules:
           title: "Schedules and exceptions"
-          description: "Programa visitas, pedidos y entregas por sucursal; consulta suspensiones y gestiona excepciones por fecha."
+          description: "Plan branch visits, orders and deliveries; manage holidays and suspensions by date."
         finances:
           title: "Payables and finances"
-          description: "Consulta el saldo, registra facturas, pagos y notas de crédito con los permisos correspondientes."
+          description: "Review outstanding balances and register invoices, payments and credit notes with the required permissions."
         purchases:
           title: "Purchases and receiving"
-          description: "Crea solicitudes y órdenes, solicita aprobaciones, registra la recepción y revisa movimientos de inventario."
+          description: "Create requisitions and purchase orders, request approvals, record receiving, and check inventory changes."
         reports:
           title: "Reports"
-          description: "Usa los reportes disponibles según tus permisos y exporta los datos autorizados."
+          description: "Access reports allowed by your role and export only authorized data."

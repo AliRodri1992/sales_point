@@ -76,6 +76,7 @@
     <% if @exceptions.any? %>
       <%= form_with url: bulk_update_admin_supplier_schedule_exceptions_path(@supplier),
                     method: :patch, class: 'space-y-3' do %>
+        <% if policy(@supplier).manage_schedules? %>
         <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3">
           <label class="flex items-center gap-2 text-sm text-slate-700">
             <input type="checkbox" onchange="this.closest('form').querySelectorAll('[name=\u0022exception_ids[]\u0022]').forEach(element => element.checked = this.checked)">
@@ -86,10 +87,13 @@
                            'admin.supplier_closure.bulk_archive'), name: nil,
                          class: 'cursor-pointer rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white' %>
         </div>
+        <% end %>
         <% @exceptions.each do |exception| %>
           <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4">
-            <%= check_box_tag 'exception_ids[]', exception.id, false,
-                              class: 'size-4 rounded border-slate-300 text-emerald-700' %>
+            <% if policy(@supplier).manage_schedules? %>
+              <%= check_box_tag 'exception_ids[]', exception.id, false,
+                                class: 'size-4 rounded border-slate-300 text-emerald-700' %>
+            <% end %>
             <span class="text-sm text-slate-700">
               <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
               · <%= l(exception.starts_on) %>

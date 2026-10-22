@@ -3,9 +3,14 @@
 module SupplierLifecycleActions
   def destroy
     authorize @supplier
-    return archive_blocked unless @supplier.archivable?
+    archived = @supplier.with_lock do
+      @supplier.errors.clear
+      next false unless @supplier.archivable?
 
-    @supplier.update!(deleted_at: Time.current, status: :inactive)
+      @supplier.update!(deleted_at: Time.current, status: :inactive)
+      true
+    end
+    return archive_blocked unless archived
     notify_supplier('destroyed')
     broadcast_suppliers_update
     redirect_to admin_suppliers_path, flash: { swal_message: t('admin.suppliers.destroyed') }

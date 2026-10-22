@@ -12,32 +12,32 @@ ko:
       bulk_restore: "선택 복구"
       guide:
         profile:
-          title: "Perfil y preferencias"
-          description: "Consulta tus datos personales y configura tus preferencias desde el menú de usuario."
+          title: "프로필 및 설정"
+          description: "사용자 메뉴에서 계정 정보를 확인하고 환경설정을 변경하세요."
         suppliers:
-          title: "Catálogo de proveedores"
-          description: "Crea un proveedor con un contacto principal y dirección fiscal. Administra registros adicionales desde su expediente."
+          title: "공급업체 목록"
+          description: "기본 담당자 한 명과 기본 세무 주소로 공급업체를 등록합니다. 추가 정보는 공급업체 상세 화면에서 관리합니다."
         contacts:
-          title: "Contactos del proveedor"
-          description: "Agrega, edita, establece el principal, archiva y recupera contactos desde Ver proveedor."
+          title: "공급업체 담당자"
+          description: "공급업체 상세 화면에서 담당자 등록, 편집, 기본 지정, 보관 및 복원을 수행합니다."
         addresses:
-          title: "Direcciones y ubicación"
-          description: "Selecciona el país, completa el domicilio, revisa la sugerencia del mapa y confirma su ubicación."
+          title: "주소 및 위치"
+          description: "국가를 선택하고 주소를 입력한 뒤 지도 위치를 검토하고 확인합니다."
         products:
-          title: "Productos y precios"
-          description: "Asocia productos, registra precios y compara ofertas; asigna proveedor preferido solo si está disponible."
+          title: "상품과 가격"
+          description: "상품을 연결하고 가격을 등록하며 제안을 비교합니다. 이용 가능한 공급업체만 우선 지정할 수 있습니다."
         documents:
-          title: "Biblioteca documental"
-          description: "Arrastra archivos, filtra la biblioteca, abre la vista previa lateral, consulta versiones y restaura documentos."
+          title: "문서 보관함"
+          description: "파일을 끌어다 놓고 필터링하며 미리보기, 버전 기록 및 복원 기능을 사용합니다."
         schedules:
-          title: "Calendarios y excepciones"
-          description: "Programa visitas, pedidos y entregas por sucursal; consulta suspensiones y gestiona excepciones por fecha."
+          title: "일정과 예외"
+          description: "지점별 방문, 주문 및 배송 일정을 만들고 날짜별 휴무와 중단을 관리합니다."
         finances:
-          title: "Finanzas y cuentas por pagar"
-          description: "Consulta el saldo, registra facturas, pagos y notas de crédito con los permisos correspondientes."
+          title: "미지급금과 재무"
+          description: "미지급 잔액을 확인하고 권한에 따라 송장, 지급 및 대변 메모를 등록합니다."
         purchases:
-          title: "Compras y recepción"
-          description: "Crea solicitudes y órdenes, solicita aprobaciones, registra la recepción y revisa movimientos de inventario."
+          title: "구매 및 입고"
+          description: "구매 요청과 주문을 생성하고 승인을 요청하며 입고와 재고 변동을 확인합니다."
         reports:
-          title: "Reportes"
-          description: "Usa los reportes disponibles según tus permisos y exporta los datos autorizados."
+          title: "보고서"
+          description: "권한이 허용된 보고서를 열고 승인된 데이터만 내보냅니다."
