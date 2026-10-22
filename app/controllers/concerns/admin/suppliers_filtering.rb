@@ -15,6 +15,12 @@ module Admin
     private
 
     def apply_filters(scope)
+      unless current_user.admin? || current_user.permission?('suppliers.view')
+        return apply_search_filter(scope).with_status(params[:status]) if %w[active inactive].include?(params[:status])
+
+        return apply_search_filter(scope)
+      end
+
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
       scope = apply_currency_filter(scope)
@@ -27,9 +33,7 @@ module Admin
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      if current_user.admin? || current_user.permission?('suppliers.view')
-        return scope.search(params[:search])
-      end
+      return scope.search(params[:search]) if current_user.admin? || current_user.permission?('suppliers.view')
 
       term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
       scope.where('suppliers.code ILIKE :term OR suppliers.name ILIKE :term', term:)

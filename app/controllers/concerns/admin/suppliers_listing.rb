@@ -46,6 +46,9 @@ module Admin
 
     def apply_sorting(scope)
       column = SORTABLE_COLUMNS.fetch(params[:sort], 'suppliers.name')
+      unless current_user.admin? || current_user.permission?('suppliers.view')
+        column = 'suppliers.name' unless column.in?(%w[suppliers.name suppliers.code suppliers.status])
+      end
       direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
       scope.order(column => direction)
     end

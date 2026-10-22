@@ -20,6 +20,7 @@ class SupplierPolicy
   def index?
     authorized_organization? && DOSSIER_PERMISSIONS.any? { |permission| allowed?(permission) }
   end
+
   def show? = authorized_record? && DOSSIER_PERMISSIONS.any? { |permission| allowed?(permission) }
   def new? = authorized_organization? && allowed?('suppliers.create')
   def create? = new?

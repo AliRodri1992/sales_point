@@ -211,6 +211,27 @@ RSpec.describe 'Supplier document library', type: :request do
     end
   end
 
+  it 'retains deleted documents in the recoverable trash with their owner and history' do
+    post admin_supplier_documents_path(supplier), params: {
+      document: { file: upload('signed.pdf'), category: 'contract' }
+    }
+    id = supplier.documents.attachments.last.id
+
+    delete admin_supplier_document_path(supplier, document_id: id)
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    trashed = supplier.supplier_documents.trashed.find_by!(attachment_id: id)
+    expect(trashed.deleted_by_id).to eq(user.id)
+    expect(supplier.documents.attachments.exists?(id)).to be(true)
+
+    patch restore_admin_supplier_document_path(supplier, document_id: id)
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(trashed.reload.deleted_at).to be_nil
+
+    get admin_supplier_document_history_path(supplier, document_id: id)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('signed.pdf')
+  end
+
   it 'prevents access to another organizations documents' do
     outsider = create(:supplier, organization: create(:organization))
     outsider.documents.attach(upload)
