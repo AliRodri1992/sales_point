@@ -48,7 +48,7 @@
   <% end %>
 
   <% if @accounts.any? %>
-    <div class="grid min-w-0 gap-4 xl:grid-cols-2">
+    <div data-supplier-bank-accounts-target="list" class="grid min-w-0 gap-4 xl:grid-cols-2">
       <%= render partial: 'account_card', collection: @accounts, as: :account, locals: { supplier: @supplier } %>
     </div>
     <nav class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500" aria-label="Bank account pages">

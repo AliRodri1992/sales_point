@@ -70,19 +70,18 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.text).not_to include('Archived Bank', 'Other Supplier Bank', 'Outside Bank')
   end
 
-  it 'provides live search, currency filtering, and pagination controls' do
+  it 'provides server-side search, currency filtering, and pagination controls' do
     bank_account(currency_code: 'MXN')
     bank_account(bank_name: 'USD Bank', currency_code: 'USD', account_number: '999900001234')
 
     get admin_supplier_bank_accounts_path(supplier)
 
-    expect(document.at_css('input[data-action="input->supplier-bank-accounts#filter"]')).to be_present
-    expect(document.at_css('select[data-action="change->supplier-bank-accounts#filter"] option[value="MXN"]'))
-      .to be_present
-    expect(document.at_css('select[data-action="change->supplier-bank-accounts#filter"] option[value="USD"]'))
-      .to be_present
-    expect(document.at_css('[data-supplier-bank-accounts-target="pagination"]')).to be_present
-    expect(document.at_css('[data-supplier-bank-accounts-target="next"]')).to be_present
+    expect(document.at_css('input[name="q"]')).to be_present
+    expect(document.at_css('select[name="currency"] option[value="MXN"]')).to be_present
+    expect(document.at_css('select[name="currency"] option[value="USD"]')).to be_present
+    get admin_supplier_bank_accounts_path(supplier, currency: 'USD', q: 'USD Bank')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
+    expect(document.text).not_to include('Example Bank')
     expect(response.body).not_to include('999900001234')
   end
 

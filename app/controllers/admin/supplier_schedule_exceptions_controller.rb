@@ -32,14 +32,18 @@ module Admin
 
       restoring = params[:operation] == 'restore'
       @supplier.with_lock { apply_bulk_update!(ids, restoring:) }
-      redirect_to admin_supplier_schedules_path(@supplier, archived: restoring ? '1' : nil),
-                  notice: t('admin.supplier_schedule_exceptions.saved')
-    rescue ActiveRecord::RecordInvalid => error
+      redirect_bulk_success(restoring)
+    rescue ActiveRecord::RecordInvalid => e
       redirect_to admin_supplier_schedules_path(@supplier),
-                  alert: error.record.errors.full_messages.to_sentence
+                  alert: e.record.errors.full_messages.to_sentence
     end
 
     private
+
+    def redirect_bulk_success(restoring)
+      redirect_to admin_supplier_schedules_path(@supplier, archived: restoring ? '1' : nil),
+                  notice: t('admin.supplier_schedule_exceptions.saved')
+    end
 
     def valid_bulk_request?(ids)
       ids.present? && ids.size <= 100 && ids.all? { |id| id.match?(/\A[1-9]\d*\z/) } &&
@@ -48,7 +52,7 @@ module Admin
 
     def apply_bulk_update!(ids, restoring:)
       scope = @supplier.supplier_schedule_exceptions
-      scope = restoring ? scope.with_deleted.where.not(deleted_at: nil) : scope
+      scope = scope.with_deleted.where.not(deleted_at: nil) if restoring
       records = scope.where(id: ids).order(:id).to_a
       raise ActiveRecord::RecordNotFound unless records.size == ids.size
 

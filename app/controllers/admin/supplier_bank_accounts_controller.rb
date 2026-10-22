@@ -11,11 +11,7 @@ module Admin
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
       scope = filtered_accounts
       @currencies = @supplier.supplier_bank_accounts.active.distinct.order(:currency_code).pluck(:currency_code)
-      @accounts_total = scope.count
-      @accounts_pages = [(@accounts_total.to_f / 8).ceil, 1].max
-      @accounts_page = params[:page].to_i.clamp(1, @accounts_pages)
-      @accounts = scope.includes(:sat_bank).order(primary: :desc, id: :desc)
-                       .limit(8).offset((@accounts_page - 1) * 8)
+      paginate_accounts(scope)
     end
 
     def new
@@ -66,6 +62,14 @@ module Admin
     end
 
     private
+
+    def paginate_accounts(scope)
+      @accounts_total = scope.count
+      @accounts_pages = [(@accounts_total.to_f / 8).ceil, 1].max
+      @accounts_page = params[:page].to_i.clamp(1, @accounts_pages)
+      @accounts = scope.includes(:sat_bank).order(primary: :desc, id: :desc)
+                       .limit(8).offset((@accounts_page - 1) * 8)
+    end
 
     def filtered_accounts
       scope = policy_scope(@supplier.supplier_bank_accounts.active)

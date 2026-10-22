@@ -11,14 +11,7 @@ module Admin
 
     def index
       @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
-      @archived_exceptions = params[:archived] == '1'
-      exception_scope = @supplier.supplier_schedule_exceptions
-      exception_scope = @archived_exceptions ? exception_scope.with_deleted.where.not(deleted_at: nil) : exception_scope
-      @exceptions_total = exception_scope.count
-      @exceptions_pages = [(@exceptions_total.to_f / 20).ceil, 1].max
-      @exceptions_page = params[:page].to_i.clamp(1, @exceptions_pages)
-      @exceptions = exception_scope.includes(:branch, :supplier_schedule).order(starts_on: :desc, id: :desc)
-                                   .limit(20).offset((@exceptions_page - 1) * 20)
+      load_exceptions
       load_branches
     end
 
@@ -71,10 +64,21 @@ module Admin
 
     private
 
+    def load_exceptions
+      @archived_exceptions = params[:archived] == '1'
+      scope = @supplier.supplier_schedule_exceptions
+      scope = scope.with_deleted.where.not(deleted_at: nil) if @archived_exceptions
+      @exceptions_total = scope.count
+      @exceptions_pages = [(@exceptions_total.to_f / 20).ceil, 1].max
+      @exceptions_page = params[:page].to_i.clamp(1, @exceptions_pages)
+      @exceptions = scope.includes(:branch, :supplier_schedule).order(starts_on: :desc, id: :desc)
+                         .limit(20).offset((@exceptions_page - 1) * 20)
+    end
+
     def save_schedule
       @supplier.with_lock { @schedule.save }
-    rescue ActiveRecord::StatementInvalid => error
-      raise unless error.cause.is_a?(PG::ExclusionViolation)
+    rescue ActiveRecord::StatementInvalid => e
+      raise unless e.cause.is_a?(PG::ExclusionViolation)
 
       @schedule.errors.add(:starts_at, :taken)
       false
