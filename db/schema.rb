@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_013000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_22_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "btree_gist"
 
   create_table "account_payables", force: :cascade do |t|
     t.decimal "amount", precision: 18, scale: 2, null: false
@@ -1380,6 +1381,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_013000) do
     t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying::text, 'order'::character varying::text, 'delivery'::character varying::text])", name: "chk_supplier_schedules_kind"
     t.check_constraint "weekday >= 0 AND weekday <= 6", name: "chk_supplier_schedules_weekday"
   end
+
+  execute <<~SQL
+    ALTER TABLE supplier_schedules ADD CONSTRAINT supplier_schedules_no_overlap
+    EXCLUDE USING gist (
+      supplier_id WITH =, branch_id WITH =, kind WITH =, weekday WITH =,
+      int4range(
+        extract(epoch FROM starts_at)::integer,
+        COALESCE(extract(epoch FROM ends_at)::integer,
+                 extract(epoch FROM starts_at)::integer + 60),
+        '[)'
+      ) WITH &&
+    ) WHERE (deleted_at IS NULL);
+  SQL
 
   create_table "suppliers", force: :cascade do |t|
     t.string "alias_name", limit: 100

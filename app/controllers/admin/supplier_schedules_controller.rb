@@ -33,7 +33,7 @@ module Admin
 
     def create
       @schedule = @supplier.supplier_schedules.new(schedule_params)
-      if @schedule.save
+      if save_schedule
         notify_schedule('schedule_created')
         redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
       else
@@ -43,7 +43,8 @@ module Admin
     end
 
     def update
-      if @schedule.update(schedule_params)
+      @schedule.assign_attributes(schedule_params)
+      if save_schedule
         notify_schedule('schedule_updated')
         redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
       else
@@ -69,6 +70,15 @@ module Admin
     end
 
     private
+
+    def save_schedule
+      @supplier.with_lock { @schedule.save }
+    rescue ActiveRecord::StatementInvalid => error
+      raise unless error.cause.is_a?(PG::ExclusionViolation)
+
+      @schedule.errors.add(:starts_at, :taken)
+      false
+    end
 
     def set_supplier
       return head :forbidden unless current_organization

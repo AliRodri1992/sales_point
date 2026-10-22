@@ -28,20 +28,10 @@ module Admin
 
     def bulk_update
       ids = Array(params[:exception_ids]).map(&:to_s).uniq
-      return head :bad_request if ids.empty? || ids.size > 100 || ids.any? { |id| !id.match?(/\A[1-9]\d*\z/) }
-      return head :bad_request unless params[:operation].in?(%w[archive restore])
+      return head :bad_request unless valid_bulk_request?(ids)
 
       restoring = params[:operation] == 'restore'
-      scope = @supplier.supplier_schedule_exceptions
-      scope = restoring ? scope.with_deleted.where.not(deleted_at: nil) : scope
-      records = scope.where(id: ids).order(:id).to_a
-      return head :not_found unless records.size == ids.size
-
-      @supplier.with_lock do
-        records.each do |exception|
-          exception.update!(deleted_at: restoring ? nil : Time.current)
-        end
-      end
+      @supplier.with_lock { apply_bulk_update!(ids, restoring:) }
       redirect_to admin_supplier_schedules_path(@supplier, archived: restoring ? '1' : nil),
                   notice: t('admin.supplier_schedule_exceptions.saved')
     rescue ActiveRecord::RecordInvalid => error
@@ -50,6 +40,20 @@ module Admin
     end
 
     private
+
+    def valid_bulk_request?(ids)
+      ids.present? && ids.size <= 100 && ids.all? { |id| id.match?(/\A[1-9]\d*\z/) } &&
+        params[:operation].in?(%w[archive restore])
+    end
+
+    def apply_bulk_update!(ids, restoring:)
+      scope = @supplier.supplier_schedule_exceptions
+      scope = restoring ? scope.with_deleted.where.not(deleted_at: nil) : scope
+      records = scope.where(id: ids).order(:id).to_a
+      raise ActiveRecord::RecordNotFound unless records.size == ids.size
+
+      records.each { |record| record.update!(deleted_at: restoring ? nil : Time.current) }
+    end
 
     def set_supplier
       return head :forbidden unless current_organization
