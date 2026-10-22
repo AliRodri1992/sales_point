@@ -15,11 +15,7 @@ module Admin
     private
 
     def apply_filters(scope)
-      unless current_user.admin? || current_user.permission?('suppliers.view')
-        return apply_search_filter(scope).with_status(params[:status]) if %w[active inactive].include?(params[:status])
-
-        return apply_search_filter(scope)
-      end
+      return limited_filters(scope) unless current_user.admin? || current_user.permission?('suppliers.view')
 
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
@@ -28,6 +24,11 @@ module Admin
       scope = apply_credit_filter(scope)
       scope = apply_numeric_filters(scope)
       apply_date_filters(scope)
+    end
+
+    def limited_filters(scope)
+      result = apply_search_filter(scope)
+      %w[active inactive].include?(params[:status]) ? result.with_status(params[:status]) : result
     end
 
     def apply_search_filter(scope)

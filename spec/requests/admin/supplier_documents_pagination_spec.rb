@@ -23,7 +23,8 @@ RSpec.describe 'Supplier document server pagination', type: :request do
     get admin_supplier_path(supplier, tab: 'documents')
     document = Nokogiri::HTML(response.body)
     expect(document.css('[data-supplier-documents-target="card"]').size).to eq(8)
-    expect(document.at_css('[data-supplier-documents-server-total-value]')['data-supplier-documents-server-total-value']).to eq('11')
+    pagination = document.at_css('[data-supplier-documents-server-total-value]')
+    expect(pagination['data-supplier-documents-server-total-value']).to eq('11')
 
     get admin_supplier_path(supplier, tab: 'documents', documents_page: 2)
     expect(Nokogiri::HTML(response.body).css('[data-supplier-documents-target="card"]').size).to eq(3)

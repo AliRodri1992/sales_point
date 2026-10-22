@@ -215,7 +215,7 @@ RSpec.describe 'Supplier document library', type: :request do
     post admin_supplier_documents_path(supplier), params: {
       document: { file: upload('signed.pdf'), category: 'contract' }
     }
-    id = supplier.documents.attachments.last.id
+    id = supplier.reload.documents.attachments.last.id
 
     delete admin_supplier_document_path(supplier, document_id: id)
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))

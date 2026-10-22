@@ -17,17 +17,21 @@ module SupplierFiscalRules
   end
 
   def mexican_tax_resident?
-    fiscal = addresses.target.find do |address|
-      address.purpose == 'fiscal' && address.primary? &&
-        address.deleted_at.nil? && !address.marked_for_destruction?
-    end
-    if fiscal.nil? && persisted? && !addresses.loaded?
-      fiscal = addresses.not_deleted.find_by(purpose: 'fiscal', primary: true)
-    end
+    fiscal = primary_fiscal_address
     fiscal.nil? || fiscal.country&.iso_alpha2 == 'MX'
   end
 
   private
+
+  def primary_fiscal_address
+    fiscal = addresses.target.find do |address|
+      address.purpose == 'fiscal' && address.primary? &&
+        address.deleted_at.nil? && !address.marked_for_destruction?
+    end
+    return fiscal if fiscal || !persisted? || addresses.loaded?
+
+    addresses.not_deleted.find_by(purpose: 'fiscal', primary: true)
+  end
 
   def normalize_tax_identifiers
     self.foreign_tax_id = foreign_tax_id.to_s.strip.presence

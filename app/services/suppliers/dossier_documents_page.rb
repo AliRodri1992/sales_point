@@ -5,13 +5,13 @@ module Suppliers
     PER_PAGE = 8
     attr_reader :documents, :total_count, :page, :total_pages
 
-    def initialize(supplier:, page: nil, query: nil, category: nil, status: nil, days: nil)
+    def initialize(supplier:, page: nil, filters: {})
       @supplier = supplier
       @requested_page = page
-      @query = query.to_s.strip.first(120)
-      @category = category
-      @status = status
-      @days = days
+      @query = filters[:query].to_s.strip.first(120)
+      @category = filters[:category]
+      @status = filters[:status]
+      @days = filters[:days]
     end
 
     def call
@@ -32,7 +32,7 @@ module Suppliers
       scope = search_scope(scope) if @query.present?
       scope = scope.where(category: @category) if SupplierDocument::CATEGORIES.include?(@category)
       scope = scope.where(status: @status) if SupplierDocument::STATUSES.include?(@status)
-      scope = scope.where('active_storage_attachments.created_at >= ?', @days.to_i.days.ago) if @days.in?(%w[30 365])
+      scope = scope.where(active_storage_attachments: { created_at: @days.to_i.days.ago.. }) if @days.in?(%w[30 365])
       scope
     end
 

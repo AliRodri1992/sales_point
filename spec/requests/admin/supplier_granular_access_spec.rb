@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Supplier dossier granular access', type: :request do
   let(:organization) { create(:organization) }
-  let(:supplier) { create(:supplier, organization:) }
+  let!(:supplier) { create(:supplier, organization:) }
   let(:user) { create(:user, :english) }
 
   before do

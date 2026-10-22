@@ -46,11 +46,15 @@ module Admin
 
     def apply_sorting(scope)
       column = SORTABLE_COLUMNS.fetch(params[:sort], 'suppliers.name')
-      unless current_user.admin? || current_user.permission?('suppliers.view')
-        column = 'suppliers.name' unless column.in?(%w[suppliers.name suppliers.code suppliers.status])
-      end
+      column = 'suppliers.name' if restricted_sort?(column)
       direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
       scope.order(column => direction)
+    end
+
+    def restricted_sort?(column)
+      return false if current_user.admin? || current_user.permission?('suppliers.view')
+
+      !column.in?(%w[suppliers.name suppliers.code suppliers.status])
     end
 
     def paginate(scope)
