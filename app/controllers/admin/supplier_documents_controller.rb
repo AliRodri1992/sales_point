@@ -38,17 +38,19 @@ module Admin
       return head :unsupported_media_type unless attachment.blob.content_type.in?(PREVIEW_TYPES)
 
       response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
+      return send_office_document_preview(attachment) if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
       return send_text_preview(attachment) if attachment.blob.content_type.in?(TEXT_PREVIEW_TYPES)
-      if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
-        return send_office_pdf_preview(attachment) if Suppliers::OfficeDocumentPdf.available?
-        return send_office_preview(attachment) if attachment.blob.content_type.in?(
-          [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
-        )
-      end
-
-      return head :unsupported_media_type if attachment.blob.content_type.in?(OFFICE_PREVIEW_TYPES)
 
       send_attachment(attachment, disposition: 'inline')
+    end
+
+    def send_office_document_preview(attachment)
+      return send_office_pdf_preview(attachment) if Suppliers::OfficeDocumentPdf.available?
+
+      modern = [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
+      return send_office_preview(attachment) if attachment.blob.content_type.in?(modern)
+
+      head :unsupported_media_type
     end
 
     def download
@@ -75,7 +77,7 @@ module Admin
       supplier = authorized_supplier(:view_documents?)
       document = document_for(supplier)
       @supplier = supplier
-      @versions = supplier.supplier_documents.where(series_id: document.series_id).order(version: :desc)
+      @versions = supplier.supplier_documents.where(series_id: document.series_id).order(revision_number: :desc)
     end
 
     def version_download

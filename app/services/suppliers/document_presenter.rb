@@ -39,9 +39,10 @@ module Suppliers
       when *Suppliers::OfficeDocumentPdf::CONTENT_TYPES
         return 'pdf' if Suppliers::OfficeDocumentPdf.available?
 
-        attachment.blob.content_type.in?(
-          [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
-        ) ? 'text' : 'none'
+        types = [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]
+        return 'text' if attachment.blob.content_type.in?(types)
+
+        'none'
       else 'none'
       end
     end

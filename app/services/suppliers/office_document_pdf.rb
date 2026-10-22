@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'tmpdir'
-require 'timeout'
+require_relative '../../../lib/supplier_office_converter_process'
 
 module Suppliers
   # Converts supported Office formats to a PDF using a locally installed
@@ -17,7 +17,7 @@ module Suppliers
     OUTPUT_LIMIT = 20.megabytes
 
     def self.binary
-      ENV.fetch('LIBREOFFICE_BIN', '/usr/bin/libreoffice')
+      '/usr/bin/libreoffice'
     end
 
     def self.available?
@@ -57,22 +57,7 @@ module Suppliers
     end
 
     def execute_conversion(directory, input)
-      profile = "file://#{File.join(directory, 'profile')}"
-      args = [self.class.binary, "-env:UserInstallation=#{profile}", '--headless',
-              '--nologo', '--nodefault', '--norestore', '--convert-to',
-              'pdf', '--outdir', directory, input]
-      pid = Process.spawn(*args, chdir: directory, pgroup: true,
-                                 out: File::NULL, err: File::NULL)
-      begin
-        _pid, status = Timeout.timeout(25) { Process.waitpid2(pid) }
-        status.success?
-      rescue Timeout::Error
-        Process.kill('KILL', -pid)
-        Process.waitpid(pid)
-        false
-      rescue Errno::ESRCH, Errno::ECHILD
-        false
-      end
+      SupplierOfficeConverterProcess.call(directory:, input:)
     end
   end
 end
