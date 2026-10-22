@@ -66,13 +66,17 @@ module Admin
 
     def load_exceptions
       @archived_exceptions = params[:archived] == '1'
-      scope = @supplier.supplier_schedule_exceptions
-      scope = scope.with_deleted.where.not(deleted_at: nil) if @archived_exceptions
+      scope = exception_scope
       @exceptions_total = scope.count
       @exceptions_pages = [(@exceptions_total.to_f / 20).ceil, 1].max
       @exceptions_page = params[:page].to_i.clamp(1, @exceptions_pages)
       @exceptions = scope.includes(:branch, :supplier_schedule).order(starts_on: :desc, id: :desc)
                          .limit(20).offset((@exceptions_page - 1) * 20)
+    end
+
+    def exception_scope
+      scope = @supplier.supplier_schedule_exceptions
+      @archived_exceptions ? scope.with_deleted.where.not(deleted_at: nil) : scope
     end
 
     def save_schedule
