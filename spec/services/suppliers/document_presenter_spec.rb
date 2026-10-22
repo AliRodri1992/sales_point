@@ -10,7 +10,7 @@ RSpec.describe Suppliers::DocumentPresenter do
       io: StringIO.new('test document'), filename:, content_type:, identify: false
     )
     supplier.documents.attach(blob)
-    supplier.documents.attachments.order(:id).last
+    ActiveStorage::Attachment.where(record: supplier, name: 'documents').order(:id).last
   end
 
   it 'infers all supported filing categories from the filename' do
