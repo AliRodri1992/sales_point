@@ -35,6 +35,7 @@ RSpec.describe Suppliers::CalendarBoard do
     expect(board.items_on(date).pluck(:title)).to eq(['Visible delivery'])
     expect(board.next_navigation(1)[:calendar_month]).to eq('2026-11')
     expect(board.weeks.flatten).to include(date)
+    expect(board.weeks.map(&:size).uniq).to eq([7])
   end
 
   it 'handles invalid calendar dates without an exception' do

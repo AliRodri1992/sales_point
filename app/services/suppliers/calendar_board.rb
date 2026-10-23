@@ -48,7 +48,7 @@ module Suppliers
       @view = options[:view] == 'week' ? 'week' : 'month'
       @focus_date = valid_date(options[:day]) || default_focus
       @start_date = view == 'week' ? focus_date.beginning_of_week(:monday) : month.beginning_of_week(:monday)
-      @end_date = view == 'week' ? start_date + 6 : month.end_of_month.end_of_week(:sunday)
+      @end_date = view == 'week' ? start_date + 6 : month.end_of_month.end_of_week(:monday)
     end
 
     def setup_filters(options)
