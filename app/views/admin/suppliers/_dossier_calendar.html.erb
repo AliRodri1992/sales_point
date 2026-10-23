@@ -108,7 +108,7 @@
         <div class="min-w-[665px]">
           <div class="grid grid-cols-7 border-b border-slate-100 bg-slate-50 text-center text-xs font-bold uppercase tracking-wide text-slate-500">
             <% (0..6).each do |offset| %>
-              <div class="py-3"><%= t('date.abbr_day_names')[(offset + 1) % 7] %></div>
+              <div class="py-3"><%= t('date.day_names')[(offset + 1) % 7].to_s.first(3) %></div>
             <% end %>
           </div>
           <% calendar.weeks.each do |week| %>
