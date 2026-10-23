@@ -1,0 +1,51 @@
+---
+es:
+  admin:
+    supplier_calendar:
+      title: Calendarios del proveedor
+      subtitle: Consulta las actividades recurrentes, eventos puntuales y excepciones por sucursal.
+      manage: Administrar horarios y excepciones
+      new_event: Nuevo evento
+      edit_event: Editar evento
+      create_event: Registrar evento
+      save_changes: Guardar cambios
+      cancel: Cancelar
+      event_help: Programa una actividad para una fecha y hora específicas. No modificará los horarios semanales.
+      title_placeholder: Ej. Entrega extraordinaria de mercancía
+      select_branch: Selecciona una sucursal
+      all_branches: Todas las sucursales
+      all_kinds: Todas las actividades
+      filter: Filtrar
+      month: Mes
+      week: Semana
+      previous: Anterior
+      next: Siguiente
+      today: Hoy
+      scheduled: Horarios semanales
+      punctual: Eventos puntuales
+      exceptions: Excepciones
+      weekly: Recurrente
+      single: Evento
+      no_schedules: Todavía no hay horarios recurrentes.
+      no_events: No hay eventos puntuales en este periodo.
+      no_activities: No hay actividades configuradas.
+      more: "%{count} más"
+      new_schedule: Nuevo horario
+      edit: Editar
+      delete: Eliminar
+      delete_confirm: ¿Eliminar este evento? Puedes conservar el registro histórico sin mostrarlo en la agenda.
+      event_details: Próximos eventos
+      exception_note: Excepción
+      fields:
+        title: Nombre del evento
+        starts_at: Fecha y hora de inicio
+        ends_at: Fecha y hora de término (opcional)
+      kinds:
+        visit: Visita
+        order: Pedido
+        delivery: Reparto
+        other: Otra actividad
+      messages:
+        created: Evento creado correctamente.
+        updated: Evento actualizado correctamente.
+        deleted: Evento eliminado correctamente.

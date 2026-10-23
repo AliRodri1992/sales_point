@@ -1,0 +1,51 @@
+---
+en:
+  admin:
+    supplier_calendar:
+      title: Supplier calendars
+      subtitle: View recurring activities, dated events, and exceptions by branch.
+      manage: Manage schedules and exceptions
+      new_event: New event
+      edit_event: Edit event
+      create_event: Create event
+      save_changes: Save changes
+      cancel: Cancel
+      event_help: Schedule an activity on a specific date and time without changing weekly schedules.
+      title_placeholder: Example - Special merchandise delivery
+      select_branch: Select a branch
+      all_branches: All branches
+      all_kinds: All activities
+      filter: Filter
+      month: Month
+      week: Week
+      previous: Previous
+      next: Next
+      today: Today
+      scheduled: Weekly schedules
+      punctual: One-time events
+      exceptions: Exceptions
+      weekly: Recurring
+      single: Event
+      no_schedules: There are no recurring schedules yet.
+      no_events: No one-time events in this period.
+      no_activities: No activities configured.
+      more: "%{count} more"
+      new_schedule: New schedule
+      edit: Edit
+      delete: Delete
+      delete_confirm: Delete this event? It will remain in history but will no longer appear on the calendar.
+      event_details: Upcoming events
+      exception_note: Exception
+      fields:
+        title: Event title
+        starts_at: Start date and time
+        ends_at: End date and time (optional)
+      kinds:
+        visit: Visit
+        order: Order
+        delivery: Delivery
+        other: Other activity
+      messages:
+        created: Event created successfully.
+        updated: Event updated successfully.
+        deleted: Event deleted successfully.
