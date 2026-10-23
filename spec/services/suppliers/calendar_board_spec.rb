@@ -38,6 +38,19 @@ RSpec.describe Suppliers::CalendarBoard do
     expect(board.weeks.map(&:size).uniq).to eq([7])
   end
 
+  it 'selects dates in the visible range and retains calendar filters in day navigation' do
+    board = described_class.new(supplier:, month: '2026-10', selected_day: '2026-10-23',
+                                kind: 'visit', branch_id: branch.id)
+    expect(board.selected_date).to eq(date)
+    expect(board.day_navigation(date)).to include(
+      calendar_selected_day: '2026-10-23', calendar_branch: branch.id, calendar_kind: 'visit'
+    )
+    expect(board.selected_items).to be_empty
+
+    board = described_class.new(supplier:, month: '2026-11', selected_day: '2026-10-23')
+    expect(board.selected_date).to eq(Date.iso8601('2026-11-01'))
+  end
+
   it 'handles invalid calendar dates without an exception' do
     board = described_class.new(supplier:, month: 'invalid', view: 'unknown', day: 'not-a-date')
     expect(board.view).to eq('month')

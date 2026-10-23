@@ -69,6 +69,52 @@ RSpec.describe 'Supplier dated events', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it 'recovers an archived event from the supplier dossier without duplicating it' do
+    event = supplier.supplier_events.create!(attributes.except(:branch_id).merge(branch:, created_by: user))
+    event.update!(deleted_at: Time.current)
+
+    get admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10')
+    panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
+    expect(panel.at_css('[data-calendar-archived]')).to be_present
+    expect(panel.at_css("form[action='#{restore_admin_supplier_event_path(supplier, event)}']")).to be_present
+    expect(panel.css("[data-calendar-event='#{event.id}']")).to be_empty
+
+    expect do
+      patch restore_admin_supplier_event_path(supplier, event)
+    end.not_to change(SupplierEvent, :count)
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(event.reload.deleted_at).to be_nil
+  end
+
+  it 'rejects restoration of events owned by another supplier' do
+    other = create(:supplier, organization:)
+    event = other.supplier_events.create!(title: 'Archived', kind: 'visit', branch:,
+                                          starts_at: Time.zone.local(2026, 10, 23, 10),
+                                          deleted_at: Time.current)
+    patch restore_admin_supplier_event_path(supplier, event)
+
+    expect(response).to have_http_status(:not_found)
+    expect(event.reload.deleted_at).to be_present
+  end
+
+  it 'shows all activities for a selected day even when the grid overflows' do
+    5.times do |index|
+      supplier.supplier_events.create!(title: "Activity #{index + 1}", branch:, kind: 'visit',
+                                       starts_at: Time.zone.local(2026, 10, 23, 9 + index))
+    end
+
+    get admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10',
+                            calendar_selected_day: '2026-10-23')
+
+    panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
+    selected_day = panel.at_css('[data-calendar-day-details]')
+    expect(selected_day.css('[data-day-item="event"]').size).to eq(5)
+    expect(panel.at_css('[data-calendar-date="2026-10-23"]').css('a').map(&:text).join)
+      .to include('2 more')
+    expect(panel.at_css('[data-calendar-day-details] button[data-date="2026-10-23"]')).to be_present
+  end
+
   it 'shows monthly and weekly navigation, filtering and a creation drawer' do
     calendar_params = {
       tab: 'schedules', calendar_view: 'week', calendar_day: '2026-10-23', calendar_kind: 'visit'
