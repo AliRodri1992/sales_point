@@ -16,8 +16,15 @@ module SupplierDossierLoading
   def load_dossier_calendar
     @supplier_calendar = Suppliers::CalendarBoard.new(
       supplier: @supplier, month: params[:calendar_month], day: params[:calendar_day],
-      view: params[:calendar_view], branch_id: params[:calendar_branch], kind: params[:calendar_kind]
+      view: params[:calendar_view], branch_id: params[:calendar_branch], kind: params[:calendar_kind],
+      selected_day: params[:calendar_selected_day]
     )
+    @calendar_archived_events = if policy(@supplier).manage_schedules?
+                                  @supplier.supplier_events.where.not(deleted_at: nil).includes(:branch)
+                                           .order(deleted_at: :desc).limit(8)
+                                else
+                                  []
+                                end
     @calendar_branches = current_organization.branches.not_deleted.order(:name)
   end
 

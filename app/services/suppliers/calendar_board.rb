@@ -31,8 +31,8 @@ module Suppliers
     end
 
     def day_navigation(date)
-      { calendar_month: month.strftime('%Y-%m'), calendar_day: focus_date.iso8601,
-        calendar_view: view, calendar_selected_day: date.iso8601 }.merge(filtered_params)
+      filtered_params.merge(calendar_month: month.strftime('%Y-%m'), calendar_day: focus_date.iso8601,
+                            calendar_view: view, calendar_selected_day: date.iso8601)
     end
 
     def exception_count

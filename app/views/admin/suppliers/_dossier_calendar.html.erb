@@ -20,7 +20,8 @@
         <%= link_to new_admin_supplier_schedule_path(supplier, return_to: 'dossier'), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
           <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_schedule') %>
         <% end %>
-        <button type="button" data-action="supplier-calendar#open" class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700">
+        <button type="button" data-action="supplier-calendar#open"
+                data-date="<%= calendar.selected_date.iso8601 %>" class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700">
           <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_event') %>
         </button>
       <% end %>
@@ -48,6 +49,7 @@
       <%= hidden_field_tag :calendar_month, calendar.month.strftime('%Y-%m') %>
       <%= hidden_field_tag :calendar_day, calendar.focus_date.iso8601 %>
       <%= hidden_field_tag :calendar_view, calendar.view %>
+      <%= hidden_field_tag :calendar_selected_day, calendar.selected_date.iso8601 %>
       <div>
         <%= form.label :calendar_branch, t('admin.supplier_dossier.branch'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
         <%= form.select :calendar_branch, options_from_collection_for_select(branches, :id, :name, calendar.branch_id),
@@ -117,17 +119,22 @@
                 <% items = calendar.items_on(date) %>
                 <% exceptions = calendar.exceptions_on(date) %>
                 <div data-calendar-date="<%= date.iso8601 %>" class="min-h-32 min-w-0 border-r border-slate-100 p-2 last:border-0 <%= date.month == calendar.month.month ? 'bg-white' : 'bg-slate-50/70' %>">
-                  <span class="inline-flex size-7 items-center justify-center rounded-full text-xs font-bold <%= date == Date.current ? 'bg-emerald-600 text-white' : 'text-slate-700' %>"><%= date.day %></span>
+                  <%= link_to date.day, admin_supplier_path(supplier, tab: 'schedules', **calendar.day_navigation(date)),
+                              aria: { label: l(date, format: :long) },
+                              class: "inline-flex size-7 items-center justify-center rounded-full text-xs font-bold #{date == calendar.selected_date ? 'bg-emerald-700 text-white' : date == Date.current ? 'bg-emerald-100 text-emerald-800' : 'text-slate-700 hover:bg-slate-100'}" %>
                   <div class="mt-1 space-y-1.5">
                     <% items.first(3).each do |item| %>
                       <% tone = { 'visit' => 'border-sky-200 bg-sky-50 text-sky-900', 'order' => 'border-amber-200 bg-amber-50 text-amber-900', 'delivery' => 'border-emerald-200 bg-emerald-50 text-emerald-900', 'other' => 'border-violet-200 bg-violet-50 text-violet-900' }.fetch(item[:kind]) %>
-                      <div class="truncate rounded-md border px-1.5 py-1 text-[10px] font-semibold <%= tone %>"
-                           title="<%= "#{item[:time]} · #{item[:title]} · #{item[:branch]}" %>">
+                      <%= link_to admin_supplier_path(supplier, tab: 'schedules', **calendar.day_navigation(date)),
+                                  class: "block truncate rounded-md border px-1.5 py-1 text-[10px] font-semibold #{tone}",
+                                  title: "#{item[:time]} · #{item[:title]} · #{item[:branch]}" do %>
                         <%= item[:time] %> · <%= item[:title] %>
-                      </div>
+                      <% end %>
                     <% end %>
                     <% if items.length > 3 %>
-                      <span class="block text-[10px] font-semibold text-slate-500"><%= t('admin.supplier_calendar.more', count: items.length - 3) %></span>
+                      <%= link_to t('admin.supplier_calendar.more', count: items.length - 3),
+                                  admin_supplier_path(supplier, tab: 'schedules', **calendar.day_navigation(date)),
+                                  class: 'block text-[10px] font-semibold text-emerald-700 hover:underline' %>
                     <% end %>
                     <% if exceptions.any? %>
                       <span class="block truncate rounded-md bg-rose-50 px-1.5 py-1 text-[10px] font-semibold text-rose-700" title="<%= t('admin.supplier_calendar.exceptions') %>">
@@ -144,6 +151,7 @@
     </div>
 
     <aside class="space-y-4">
+      <%= render 'dossier_calendar_day', supplier: supplier, calendar: calendar, can_manage: can_manage %>
       <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_calendar.scheduled') %></h3>
         <div class="mt-4 space-y-3">
@@ -181,20 +189,7 @@
               <p class="mt-1 break-words text-sm font-bold text-slate-900"><%= event.title %></p>
               <p class="mt-1 text-xs text-slate-500"><%= l(event.starts_at, format: '%d/%m/%Y %H:%M') %> · <%= event.branch.name %></p>
               <% if can_manage %>
-                <div class="mt-2 flex items-center gap-3 border-t border-slate-200 pt-2">
-                  <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_event_path(supplier, event),
-                              data: {
-                                action: 'supplier-calendar#edit', event_url: admin_supplier_event_path(supplier, event),
-                                event_title: event.title, event_kind: event.kind, event_branch: event.branch_id,
-                                event_start: event.starts_at.in_time_zone.strftime('%Y-%m-%dT%H:%M'),
-                                event_end: event.ends_at&.in_time_zone&.strftime('%Y-%m-%dT%H:%M'),
-                                event_notes: event.notes
-                              },
-                              class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
-                  <%= button_to t('admin.supplier_calendar.delete'), admin_supplier_event_path(supplier, event),
-                                method: :delete, form: { data: { turbo_confirm: t('admin.supplier_calendar.delete_confirm') } },
-                                class: 'text-xs font-semibold text-rose-700 hover:underline' %>
-                </div>
+                <%= render 'dossier_calendar_event_actions', supplier: supplier, event: event %>
               <% end %>
             </div>
           <% end %>
@@ -205,6 +200,23 @@
       </div>
     </aside>
   </div>
+  <% if can_manage && archived_events.any? %>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" data-calendar-archived>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_calendar.archived_events') %></h3>
+      <div class="mt-3 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        <% archived_events.each do |event| %>
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3">
+            <div>
+              <p class="text-sm font-semibold text-slate-800"><%= event.title %></p>
+              <p class="text-xs text-slate-500"><%= l(event.starts_at, format: '%d/%m/%Y %H:%M') %> · <%= event.branch.name %></p>
+            </div>
+            <%= button_to t('admin.supplier_calendar.restore'), restore_admin_supplier_event_path(supplier, event),
+                          method: :patch, class: 'rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-50' %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
   <% if calendar.schedules.empty? && calendar.events.empty? %>
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-6 text-center shadow-sm">
       <%= image_tag 'scalendaries.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-36' %>

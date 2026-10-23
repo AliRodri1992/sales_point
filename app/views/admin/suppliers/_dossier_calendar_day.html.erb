@@ -1,0 +1,55 @@
+<section data-calendar-day-details class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="flex flex-wrap items-start justify-between gap-2">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700"><%= t('admin.supplier_calendar.selected_day') %></p>
+      <h3 class="mt-1 font-jakarta text-base font-bold capitalize text-slate-900">
+        <%= l(calendar.selected_date, format: :long) %>
+      </h3>
+    </div>
+    <% if can_manage %>
+      <button type="button" data-action="supplier-calendar#open"
+              data-date="<%= calendar.selected_date.iso8601 %>"
+              class="inline-flex min-h-9 items-center gap-1 rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700">
+        <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_event') %>
+      </button>
+    <% end %>
+  </div>
+  <div class="mt-4 space-y-3">
+    <% calendar.selected_items.each do |item| %>
+      <article class="rounded-xl border border-slate-100 bg-slate-50/70 p-3" data-day-item="<%= item[:type] %>">
+        <p class="text-xs font-semibold text-emerald-700">
+          <%= item[:time] %> · <%= t("admin.supplier_calendar.kinds.#{item[:kind]}") %>
+          · <%= t("admin.supplier_calendar.#{item[:type] == :event ? 'single' : 'weekly'}") %>
+        </p>
+        <p class="mt-1 break-words text-sm font-bold text-slate-900"><%= item[:title] %></p>
+        <p class="mt-1 text-xs text-slate-500"><%= item[:branch] %></p>
+        <% if can_manage %>
+          <% if item[:type] == :event %>
+            <%= render 'dossier_calendar_event_actions', supplier: supplier, event: item[:record] %>
+          <% else %>
+            <%= link_to t('admin.supplier_calendar.edit'),
+                        edit_admin_supplier_schedule_path(supplier, item[:record], return_to: 'dossier'),
+                        class: 'mt-2 inline-block text-xs font-semibold text-emerald-700 hover:underline' %>
+          <% end %>
+        <% end %>
+      </article>
+    <% end %>
+    <% calendar.selected_exceptions.each do |exception| %>
+      <div class="rounded-xl border border-rose-100 bg-rose-50 p-3">
+        <p class="text-xs font-semibold text-rose-700">
+          <%= t('admin.supplier_calendar.exception_note') %> ·
+          <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
+        </p>
+        <p class="mt-1 text-xs text-rose-700">
+          <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
+        </p>
+        <% if exception.notes.present? %><p class="mt-1 text-xs text-slate-600"><%= exception.notes %></p><% end %>
+      </div>
+    <% end %>
+    <% if calendar.selected_items.empty? && calendar.selected_exceptions.empty? %>
+      <p class="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+        <%= t('admin.supplier_calendar.no_activities') %>
+      </p>
+    <% end %>
+  </div>
+</section>

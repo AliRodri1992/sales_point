@@ -103,7 +103,8 @@
 
     <% if dossier_policy.view_schedules? %>
     <%= render 'dossier_calendar', supplier: supplier, calendar: @supplier_calendar,
-               branches: @calendar_branches, can_manage: dossier_policy.manage_schedules? %>
+               branches: @calendar_branches, archived_events: @calendar_archived_events,
+               can_manage: dossier_policy.manage_schedules? %>
     <% end %>
 
     <% if policy(supplier).view_products? %>
