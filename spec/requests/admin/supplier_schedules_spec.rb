@@ -36,6 +36,14 @@ RSpec.describe 'Admin supplier schedules', type: :request do
     expect(response.body).to include(branch.name, 'Weekly visit')
   end
 
+  it 'returns to supplier calendars after creating a schedule from the dossier' do
+    post admin_supplier_schedules_path(supplier), params: {
+      return_to: 'dossier', supplier_schedule: schedule_attributes
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+  end
+
   it 'updates an existing delivery schedule' do
     schedule = SupplierSchedule.create!(supplier:, branch:, kind: 'delivery',
                                         weekday: 2, starts_at: '10:00', ends_at: '12:00')

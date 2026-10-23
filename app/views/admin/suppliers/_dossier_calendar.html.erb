@@ -17,7 +17,7 @@
           <%= icon('cog-6-tooth', class: 'size-4') %>
           <%= t('admin.supplier_dossier.schedule_empty.manage') %>
         <% end %>
-        <%= link_to new_admin_supplier_schedule_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
+        <%= link_to new_admin_supplier_schedule_path(supplier, return_to: 'dossier'), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
           <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_schedule') %>
         <% end %>
         <button type="button" data-action="supplier-calendar#open" class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700">
@@ -153,10 +153,11 @@
                 <span class="text-xs font-bold text-emerald-800"><%= t("admin.supplier_calendar.kinds.#{schedule.kind}") %></span>
                 <% if can_manage %>
                   <div class="flex items-center gap-2">
-                    <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_schedule_path(supplier, schedule),
+                    <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_schedule_path(supplier, schedule, return_to: 'dossier'),
                                 class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
                     <%= button_to t('admin.supplier_calendar.delete'), admin_supplier_schedule_path(supplier, schedule),
-                                  method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
+                                  method: :delete, params: { return_to: 'dossier' },
+                                  form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
                                   class: 'text-xs font-semibold text-rose-700 hover:underline' %>
                   </div>
                 <% end %>

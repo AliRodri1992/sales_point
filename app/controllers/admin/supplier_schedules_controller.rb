@@ -28,7 +28,7 @@ module Admin
       @schedule = @supplier.supplier_schedules.new(schedule_params)
       if save_schedule
         notify_schedule('schedule_created')
-        redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
+        redirect_to schedule_destination, notice: t('admin.supplier_details.saved')
       else
         load_branches
         render :new, status: :unprocessable_content
@@ -39,7 +39,7 @@ module Admin
       @schedule.assign_attributes(schedule_params)
       if save_schedule
         notify_schedule('schedule_updated')
-        redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
+        redirect_to schedule_destination, notice: t('admin.supplier_details.saved')
       else
         load_branches
         render :edit, status: :unprocessable_content
@@ -59,14 +59,20 @@ module Admin
     def destroy
       @schedule.update!(deleted_at: Time.current)
       notify_schedule('schedule_deleted')
-      redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.deleted')
+      redirect_to schedule_destination, notice: t('admin.supplier_details.deleted')
     end
 
     private
 
+    def schedule_destination
+      return admin_supplier_path(@supplier, tab: 'schedules') if params[:return_to] == 'dossier'
+
+      admin_supplier_schedules_path(@supplier)
+    end
+
     def schedule_restore_success
       notify_schedule('schedule_restored')
-      redirect_to admin_supplier_schedules_path(@supplier), notice: t('admin.supplier_details.saved')
+      redirect_to schedule_destination, notice: t('admin.supplier_details.saved')
     end
 
     def schedule_restore_error
