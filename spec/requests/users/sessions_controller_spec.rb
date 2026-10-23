@@ -28,4 +28,34 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(session[:swal_icon]).to eq('success')
     expect(session[:swal_message]).to eq(I18n.t('devise.sessions.signed_in'))
   end
+
+  it 'displays the sign-in success via SweetAlert2 once on the dashboard' do
+    post user_session_path, params: { user: { email: user.email, password: } }
+    follow_redirect!
+
+    page = Nokogiri::HTML(response.body)
+    alert = page.at_css('#flash [data-controller="swal-flash"]')
+    expect(alert['data-swal-flash-message-value']).to eq(I18n.t('devise.sessions.signed_in'))
+    expect(alert['data-swal-flash-icon-value']).to eq('success')
+    expect(alert['data-swal-flash-mode-value']).to eq('toast')
+    expect(session[:swal_message]).to be_nil
+
+    get admin_dashboard_path
+    expect(Nokogiri::HTML(response.body).at_css('#flash [data-controller="swal-flash"]')).to be_nil
+  end
+
+  it 'shows already authenticated via a SweetAlert2 dialog, not a flash banner' do
+    sign_in user
+    get new_user_session_path
+    expect(response).to redirect_to(admin_dashboard_path)
+    follow_redirect!
+
+    page = Nokogiri::HTML(response.body)
+    alert = page.at_css('#flash [data-controller="swal-flash"]')
+    expect(alert['data-swal-flash-message-value']).to eq(I18n.t('devise.failure.already_authenticated'))
+    expect(alert['data-swal-flash-icon-value']).to eq('info')
+    expect(alert['data-swal-flash-mode-value']).to eq('modal')
+    expect(page.at_css('#flash .bg-rose-50')).to be_nil
+    expect(page.at_css('#flash .bg-emerald-50')).to be_nil
+  end
 end

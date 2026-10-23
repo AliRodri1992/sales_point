@@ -1,19 +1,27 @@
-<% if flash[:swal_message].present? %>
+<% already_authenticated_message = t('devise.failure.already_authenticated') %>
+<% already_authenticated = [flash[:notice], flash[:alert]].include?(already_authenticated_message) %>
+<% sign_in_message = session.delete(:swal_message) %>
+<% sign_in_icon = session.delete(:swal_icon) %>
+<% swal_message = already_authenticated ? already_authenticated_message : sign_in_message.presence || flash[:swal_message] %>
+<% swal_icon = already_authenticated ? 'info' : sign_in_icon.presence || flash[:swal_icon] || 'success' %>
+
+<% if swal_message.present? %>
   <div
     data-controller="swal-flash"
-    data-swal-flash-message-value="<%= flash[:swal_message] %>"
-    data-swal-flash-icon-value="<%= flash[:swal_icon] || 'success' %>"
+    data-swal-flash-message-value="<%= swal_message %>"
+    data-swal-flash-icon-value="<%= swal_icon %>"
+    data-swal-flash-mode-value="<%= already_authenticated ? 'modal' : 'toast' %>"
     class="hidden"
   ></div>
 <% end %>
 
-<% if flash[:notice].present? %>
+<% if flash[:notice].present? && !already_authenticated %>
   <div class="mb-6 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
     <%= icon('check-circle', class: 'size-5 shrink-0') %>
     <%= flash[:notice] %>
   </div>
 <% end %>
-<% if flash[:alert].present? %>
+<% if flash[:alert].present? && !already_authenticated %>
   <div class="mb-6 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
     <%= icon('exclamation-circle', class: 'size-5 shrink-0') %>
     <%= flash[:alert] %>
