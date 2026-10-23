@@ -2,12 +2,13 @@
 
 module Suppliers
   class CalendarBoard
-    attr_reader :month, :view, :focus_date, :start_date, :end_date, :branch_id, :kind, :schedules, :events
+    attr_reader :month, :view, :focus_date, :start_date, :end_date, :selected_date, :branch_id, :kind, :schedules, :events
 
     def initialize(supplier:, **options)
       @supplier = supplier
       setup_navigation(options)
       setup_filters(options)
+      setup_selection(options)
       load_entries
     end
 
@@ -19,6 +20,19 @@ module Suppliers
       return [] unless date.between?(start_date, end_date)
 
       (weekly_items(date) + dated_items(date)).sort_by { |item| item[:time] }
+    end
+
+    def selected_items
+      items_on(selected_date)
+    end
+
+    def selected_exceptions
+      exceptions_on(selected_date)
+    end
+
+    def day_navigation(date)
+      { calendar_month: month.strftime('%Y-%m'), calendar_day: focus_date.iso8601,
+        calendar_view: view, calendar_selected_day: date.iso8601 }.merge(filtered_params)
     end
 
     def exception_count
@@ -38,7 +52,7 @@ module Suppliers
     end
 
     def filtered_params
-      { calendar_branch: branch_id, calendar_kind: kind }
+      { calendar_branch: branch_id, calendar_kind: kind, calendar_selected_day: selected_date.iso8601 }
     end
 
     private
@@ -54,6 +68,15 @@ module Suppliers
     def setup_filters(options)
       @branch_id = parse_branch(options[:branch_id])
       @kind = SupplierEvent::KINDS.include?(options[:kind]) ? options[:kind] : nil
+    end
+
+    def setup_selection(options)
+      requested = valid_date(options[:selected_day])
+      @selected_date = if requested&.between?(start_date, end_date)
+                         requested
+                       else
+                         focus_date.between?(start_date, end_date) ? focus_date : start_date
+                       end
     end
 
     def default_focus
