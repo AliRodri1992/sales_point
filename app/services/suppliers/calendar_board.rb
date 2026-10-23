@@ -6,13 +6,8 @@ module Suppliers
 
     def initialize(supplier:, **options)
       @supplier = supplier
-      @month = parse_month(options[:month])
-      @view = options[:view] == 'week' ? 'week' : 'month'
-      @focus_date = valid_date(options[:day]) || default_focus
-      @branch_id = parse_branch(options[:branch_id])
-      @kind = SupplierEvent::KINDS.include?(options[:kind]) ? options[:kind] : nil
-      @start_date = view == 'week' ? focus_date.beginning_of_week(:monday) : month.beginning_of_week(:monday)
-      @end_date = view == 'week' ? start_date + 6 : month.end_of_month.end_of_week(:sunday)
+      setup_navigation(options)
+      setup_filters(options)
       load_entries
     end
 
@@ -47,6 +42,19 @@ module Suppliers
     end
 
     private
+
+    def setup_navigation(options)
+      @month = parse_month(options[:month])
+      @view = options[:view] == 'week' ? 'week' : 'month'
+      @focus_date = valid_date(options[:day]) || default_focus
+      @start_date = view == 'week' ? focus_date.beginning_of_week(:monday) : month.beginning_of_week(:monday)
+      @end_date = view == 'week' ? start_date + 6 : month.end_of_month.end_of_week(:sunday)
+    end
+
+    def setup_filters(options)
+      @branch_id = parse_branch(options[:branch_id])
+      @kind = SupplierEvent::KINDS.include?(options[:kind]) ? options[:kind] : nil
+    end
 
     def default_focus
       month == Date.current.beginning_of_month ? Date.current : month

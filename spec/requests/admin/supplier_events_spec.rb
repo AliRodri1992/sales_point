@@ -71,7 +71,7 @@ RSpec.describe 'Supplier dated events', type: :request do
 
   it 'shows monthly and weekly navigation, filtering and a creation drawer' do
     get admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'week',
-                            calendar_day: '2026-10-23', calendar_kind: 'visit')
+                                     calendar_day: '2026-10-23', calendar_kind: 'visit')
 
     panel = Nokogiri::HTML(response.body).at_css('[data-section="schedules"]')
     expect(panel.css('[data-calendar-date]').size).to eq(7)

@@ -18,7 +18,7 @@ RSpec.describe Suppliers::CalendarBoard do
     )
 
     board = described_class.new(supplier:, month: '2026-10')
-    expect(board.items_on(date).map { |item| item[:type] }).to eq([:event])
+    expect(board.items_on(date).pluck(:type)).to eq([:event])
     expect(board.exception_count).to eq(1)
   end
 
@@ -32,7 +32,7 @@ RSpec.describe Suppliers::CalendarBoard do
                                      starts_at: Time.zone.local(2026, 10, 23, 14))
 
     board = described_class.new(supplier:, month: '2026-10', branch_id: branch.id, kind: 'delivery')
-    expect(board.items_on(date).map { |item| item[:title] }).to eq(['Visible delivery'])
+    expect(board.items_on(date).pluck(:title)).to eq(['Visible delivery'])
     expect(board.next_navigation(1)[:calendar_month]).to eq('2026-11')
     expect(board.weeks.flatten).to include(date)
   end
