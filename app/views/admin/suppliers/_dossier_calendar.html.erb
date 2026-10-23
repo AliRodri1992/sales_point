@@ -199,4 +199,7 @@
       <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.schedule_empty.description') %></p>
     </div>
   <% end %>
+  <% if can_manage %>
+    <%= render 'dossier_calendar_event_drawer', supplier: supplier, branches: branches %>
+  <% end %>
 </section>
