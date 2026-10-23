@@ -104,8 +104,9 @@ RSpec.describe 'Supplier dated events', type: :request do
                                        starts_at: Time.zone.local(2026, 10, 23, 9 + index))
     end
 
-    get admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10',
-                            calendar_selected_day: '2026-10-23')
+    calendar_params = { tab: 'schedules', calendar_month: '2026-10',
+                        calendar_selected_day: '2026-10-23' }
+    get admin_supplier_path(supplier, calendar_params)
 
     panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
     selected_day = panel.at_css('[data-calendar-day-details]')

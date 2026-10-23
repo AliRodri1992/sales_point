@@ -21,8 +21,9 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
 
   scenario 'creates and edits a dated event in the accessible side drawer' do
     branch
-    visit admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10',
-                              calendar_selected_day: '2026-10-23')
+    calendar_params = { tab: 'schedules', calendar_month: '2026-10',
+                        calendar_selected_day: '2026-10-23' }
+    visit admin_supplier_path(supplier, calendar_params)
 
     find('header button[data-action="supplier-calendar#open"]').click
     expect(page).to have_css('[data-supplier-calendar-target="drawer"][aria-hidden="false"]')

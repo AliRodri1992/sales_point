@@ -14,18 +14,22 @@ module SupplierDossierLoading
   end
 
   def load_dossier_calendar
-    @supplier_calendar = Suppliers::CalendarBoard.new(
-      supplier: @supplier, month: params[:calendar_month], day: params[:calendar_day],
-      view: params[:calendar_view], branch_id: params[:calendar_branch], kind: params[:calendar_kind],
-      selected_day: params[:calendar_selected_day]
-    )
-    @calendar_archived_events = if policy(@supplier).manage_schedules?
-                                  @supplier.supplier_events.where.not(deleted_at: nil).includes(:branch)
-                                           .order(deleted_at: :desc).limit(8)
-                                else
-                                  []
-                                end
+    @supplier_calendar = Suppliers::CalendarBoard.new(supplier: @supplier, **calendar_options)
+    @calendar_archived_events = archived_calendar_events
     @calendar_branches = current_organization.branches.not_deleted.order(:name)
+  end
+
+  def calendar_options
+    { month: params[:calendar_month], day: params[:calendar_day], view: params[:calendar_view],
+      branch_id: params[:calendar_branch], kind: params[:calendar_kind],
+      selected_day: params[:calendar_selected_day] }
+  end
+
+  def archived_calendar_events
+    return [] unless policy(@supplier).manage_schedules?
+
+    @supplier.supplier_events.where.not(deleted_at: nil).includes(:branch)
+             .order(deleted_at: :desc).limit(8)
   end
 
   def load_dossier_contacts
