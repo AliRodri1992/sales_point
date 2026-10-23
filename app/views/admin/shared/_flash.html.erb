@@ -1,9 +1,10 @@
 <% already_authenticated_message = t('devise.failure.already_authenticated') %>
 <% already_authenticated = [flash[:notice], flash[:alert]].include?(already_authenticated_message) %>
 <% sign_in_message = session.delete(:swal_message) %>
+<% sign_in_message_key = session.delete(:swal_message_key) %>
 <% sign_in_icon = session.delete(:swal_icon) %>
 <% sign_in_mode = session.delete(:swal_mode) %>
-<% swal_message = already_authenticated ? already_authenticated_message : sign_in_message.presence || flash[:swal_message] %>
+<% swal_message = already_authenticated ? already_authenticated_message : (sign_in_message_key.present? ? t(sign_in_message_key) : sign_in_message.presence || flash[:swal_message]) %>
 <% swal_icon = already_authenticated ? 'info' : sign_in_icon.presence || flash[:swal_icon] || 'success' %>
 
 <% if swal_message.present? %>

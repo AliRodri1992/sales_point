@@ -20,9 +20,9 @@ module Users
     private
 
     def require_no_authentication
-      return super unless user_signed_in?
+      return super unless action_name == 'new' && user_signed_in?
 
-      session[:swal_message] = t('devise.failure.already_authenticated')
+      session[:swal_message_key] = 'devise.failure.already_authenticated'
       session[:swal_icon] = 'info'
       session[:swal_mode] = 'modal'
       redirect_to admin_dashboard_path
