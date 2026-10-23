@@ -1,0 +1,202 @@
+<section data-supplier-dossier-target="panel" data-section="schedules"
+         data-controller="supplier-calendar"
+         class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <header class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div class="flex min-w-0 items-center gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+        <%= icon('calendar-days', class: 'size-6') %>
+      </span>
+      <div>
+        <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_calendar.title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_calendar.subtitle') %></p>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <% if can_manage %>
+        <%= link_to admin_supplier_schedules_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
+          <%= icon('cog-6-tooth', class: 'size-4') %>
+          <%= t('admin.supplier_dossier.schedule_empty.manage') %>
+        <% end %>
+        <%= link_to new_admin_supplier_schedule_path(supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
+          <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_schedule') %>
+        <% end %>
+        <button type="button" data-action="supplier-calendar#open" class="inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white hover:bg-emerald-700">
+          <%= icon('plus', class: 'size-4') %><%= t('admin.supplier_calendar.new_event') %>
+        </button>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_calendar.scheduled') %></p>
+      <p class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= calendar.schedules.size %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_calendar.punctual') %></p>
+      <p class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= calendar.events.size %></p>
+    </div>
+    <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_calendar.exceptions') %></p>
+      <p class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= calendar.exception_count %></p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+    <%= form_with url: admin_supplier_path(supplier), method: :get, class: 'grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_auto]' do |form| %>
+      <%= hidden_field_tag :tab, 'schedules' %>
+      <%= hidden_field_tag :calendar_month, calendar.month.strftime('%Y-%m') %>
+      <%= hidden_field_tag :calendar_day, calendar.focus_date.iso8601 %>
+      <%= hidden_field_tag :calendar_view, calendar.view %>
+      <div>
+        <%= form.label :calendar_branch, t('admin.supplier_dossier.branch'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
+        <%= form.select :calendar_branch, options_from_collection_for_select(branches, :id, :name, calendar.branch_id),
+                        { include_blank: t('admin.supplier_calendar.all_branches') },
+                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm' %>
+      </div>
+      <div>
+        <%= form.label :calendar_kind, t('admin.supplier_dossier.kind'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
+        <%= form.select :calendar_kind, options_for_select(SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] }, calendar.kind),
+                        { include_blank: t('admin.supplier_calendar.all_kinds') },
+                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm' %>
+      </div>
+      <%= form.submit t('admin.supplier_calendar.filter'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    <% end %>
+  </div>
+
+  <div class="grid items-start gap-4 2xl:grid-cols-[minmax(0,1fr)_18rem]">
+    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 sm:px-5">
+        <div class="flex items-center gap-2">
+          <%= link_to admin_supplier_path(supplier, { tab: 'schedules' }.merge(calendar.next_navigation(-1), calendar.filtered_params)),
+                      aria: { label: t('admin.supplier_calendar.previous') },
+                      class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50' do %>
+            <%= icon('chevron-left', class: 'size-4') %>
+          <% end %>
+          <h3 class="min-w-[8rem] text-center font-jakarta text-base font-bold text-slate-900">
+            <%= l(calendar.view == 'month' ? calendar.month : calendar.focus_date, format: '%B %Y') %>
+          </h3>
+          <%= link_to admin_supplier_path(supplier, { tab: 'schedules' }.merge(calendar.next_navigation(1), calendar.filtered_params)),
+                      aria: { label: t('admin.supplier_calendar.next') },
+                      class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50' do %>
+            <%= icon('chevron-right', class: 'size-4') %>
+          <% end %>
+          <%= link_to t('admin.supplier_calendar.today'),
+                      admin_supplier_path(supplier, tab: 'schedules', calendar_view: calendar.view,
+                                         calendar_day: Date.current.iso8601, calendar_month: Date.current.strftime('%Y-%m'),
+                                         **calendar.filtered_params),
+                      class: 'rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50' %>
+        </div>
+        <div class="inline-flex rounded-xl bg-slate-100 p-1 text-xs font-semibold">
+          <% %w[month week].each do |mode| %>
+            <%= link_to t("admin.supplier_calendar.#{mode}"),
+                        admin_supplier_path(supplier, tab: 'schedules', calendar_view: mode,
+                                           calendar_month: calendar.month.strftime('%Y-%m'),
+                                           calendar_day: calendar.focus_date.iso8601, **calendar.filtered_params),
+                        class: "rounded-lg px-3 py-2 #{calendar.view == mode ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'}",
+                        'aria-current': (calendar.view == mode ? 'page' : nil) %>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-slate-100 px-5 py-3 text-xs text-slate-600">
+        <% %w[visit order delivery other].each do |kind| %>
+          <% tone = { 'visit' => 'bg-sky-500', 'order' => 'bg-amber-500', 'delivery' => 'bg-emerald-500', 'other' => 'bg-violet-500' }.fetch(kind) %>
+          <span class="inline-flex items-center gap-2"><span class="size-2.5 rounded-full <%= tone %>"></span><%= t("admin.supplier_calendar.kinds.#{kind}") %></span>
+        <% end %>
+      </div>
+      <div class="overflow-x-auto">
+        <div class="min-w-[665px]">
+          <div class="grid grid-cols-7 border-b border-slate-100 bg-slate-50 text-center text-xs font-bold uppercase tracking-wide text-slate-500">
+            <% (0..6).each do |offset| %>
+              <div class="py-3"><%= t('date.abbr_day_names')[(offset + 1) % 7] %></div>
+            <% end %>
+          </div>
+          <% calendar.weeks.each do |week| %>
+            <div class="grid grid-cols-7 border-b border-slate-100 last:border-0">
+              <% week.each do |date| %>
+                <% items = calendar.items_on(date) %>
+                <% exceptions = calendar.exceptions_on(date) %>
+                <div data-calendar-date="<%= date.iso8601 %>" class="min-h-32 min-w-0 border-r border-slate-100 p-2 last:border-0 <%= date.month == calendar.month.month ? 'bg-white' : 'bg-slate-50/70' %>">
+                  <span class="inline-flex size-7 items-center justify-center rounded-full text-xs font-bold <%= date == Date.current ? 'bg-emerald-600 text-white' : 'text-slate-700' %>"><%= date.day %></span>
+                  <div class="mt-1 space-y-1.5">
+                    <% items.first(3).each do |item| %>
+                      <% tone = { 'visit' => 'border-sky-200 bg-sky-50 text-sky-900', 'order' => 'border-amber-200 bg-amber-50 text-amber-900', 'delivery' => 'border-emerald-200 bg-emerald-50 text-emerald-900', 'other' => 'border-violet-200 bg-violet-50 text-violet-900' }.fetch(item[:kind]) %>
+                      <div class="truncate rounded-md border px-1.5 py-1 text-[10px] font-semibold <%= tone %>"
+                           title="<%= "#{item[:time]} · #{item[:title]} · #{item[:branch]}" %>">
+                        <%= item[:time] %> · <%= item[:title] %>
+                      </div>
+                    <% end %>
+                    <% if items.length > 3 %>
+                      <span class="block text-[10px] font-semibold text-slate-500"><%= t('admin.supplier_calendar.more', count: items.length - 3) %></span>
+                    <% end %>
+                    <% if exceptions.any? %>
+                      <span class="block truncate rounded-md bg-rose-50 px-1.5 py-1 text-[10px] font-semibold text-rose-700" title="<%= t('admin.supplier_calendar.exceptions') %>">
+                        <%= t('admin.supplier_calendar.exception_note') %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <aside class="space-y-4">
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_calendar.scheduled') %></h3>
+        <div class="mt-4 space-y-3">
+          <% calendar.schedules.first(8).each do |schedule| %>
+            <div class="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-emerald-800"><%= t("admin.supplier_calendar.kinds.#{schedule.kind}") %></span>
+                <% if can_manage %>
+                  <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_schedule_path(supplier, schedule),
+                              class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
+                <% end %>
+              </div>
+              <p class="mt-1 text-sm font-semibold text-slate-900"><%= schedule.branch.name %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= t('date.day_names')[schedule.weekday] %> · <%= schedule.starts_at.strftime('%H:%M') %></p>
+            </div>
+          <% end %>
+          <% if calendar.schedules.empty? %>
+            <p class="text-sm text-slate-500"><%= t('admin.supplier_calendar.no_schedules') %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_calendar.event_details') %></h3>
+        <div class="mt-4 space-y-3">
+          <% calendar.events.first(12).each do |event| %>
+            <div data-calendar-event="<%= event.id %>" class="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
+              <p class="text-xs font-semibold text-emerald-800"><%= t("admin.supplier_calendar.kinds.#{event.kind}") %></p>
+              <p class="mt-1 break-words text-sm font-bold text-slate-900"><%= event.title %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= l(event.starts_at, format: '%d/%m/%Y %H:%M') %> · <%= event.branch.name %></p>
+              <% if can_manage %>
+                <div class="mt-2 flex items-center gap-3 border-t border-slate-200 pt-2">
+                  <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_event_path(supplier, event),
+                              class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
+                  <%= button_to t('admin.supplier_calendar.delete'), admin_supplier_event_path(supplier, event),
+                                method: :delete, form: { data: { turbo_confirm: t('admin.supplier_calendar.delete_confirm') } },
+                                class: 'text-xs font-semibold text-rose-700 hover:underline' %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+          <% if calendar.events.empty? %>
+            <p class="text-sm text-slate-500"><%= t('admin.supplier_calendar.no_events') %></p>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <% if calendar.schedules.empty? && calendar.events.empty? %>
+    <div class="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-6 text-center shadow-sm">
+      <%= image_tag 'scalendaries.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-36' %>
+      <h3 class="mt-2 font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_dossier.schedule_empty.title') %></h3>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.schedule_empty.description') %></p>
+    </div>
+  <% end %>
+</section>

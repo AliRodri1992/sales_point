@@ -40,6 +40,10 @@ module Suppliers
       (weekly + dated).sort_by { |entry| entry[:time] }
     end
 
+    def exception_count
+      @exceptions.size
+    end
+
     def exceptions_on(date)
       @exceptions.select do |exception|
         date >= exception.starts_on && date <= (exception.ends_on || exception.starts_on)
