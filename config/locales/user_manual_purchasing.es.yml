@@ -1,0 +1,139 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        purchasing:
+          title: "Compras y recepción"
+          description: "Desde la necesidad de compra hasta el despacho, recepción y devolución de mercancía."
+          topics:
+            -
+              id: "purchase_requests"
+              title: "Solicitudes de compra"
+              description: "Especifica lo que se necesita adquirir para una sucursal."
+              tasks:
+                -
+                  title: "Crear una solicitud"
+                  steps:
+                    -
+                      "Abre «Solicitudes de compra» y pulsa «Nueva solicitud»."
+                    -
+                      "Selecciona sucursal, fecha en que se necesitan los artículos y notas."
+                    -
+                      "Añade cada producto y su cantidad; verifica que no falte ningún renglón."
+                    -
+                      "Guarda la solicitud como borrador y revisa su detalle."
+                -
+                  title: "Enviar y decidir"
+                  steps:
+                    -
+                      "Abre el borrador y utiliza la acción «Enviar»."
+                    -
+                      "Un usuario autorizado revisa el detalle y pulsa «Aprobar» o «Rechazar»."
+                    -
+                      "Si sigue en borrador y ya no se necesita, utiliza «Cancelar»."
+                    -
+                      "Consulta el estado actualizado antes de iniciar una cotización."
+              note: "Una solicitud aprobada todavía no representa mercancía recibida ni una obligación pagada."
+            -
+              id: "purchase_quotations"
+              title: "Cotizaciones de compra"
+              description: "Registra propuestas de proveedor y confirma su vigencia."
+              tasks:
+                -
+                  title: "Crear una cotización"
+                  steps:
+                    -
+                      "Abre «Cotizaciones de compra» y selecciona «Nueva cotización», o inicia el proceso desde una solicitud."
+                    -
+                      "Indica proveedor, moneda, fecha de vigencia y notas."
+                    -
+                      "Agrega productos, cantidades, unidades por empaque, costos, descuentos y días de entrega."
+                    -
+                      "Guarda el borrador y verifica todos los datos."
+                -
+                  title: "Enviar, aceptar o rechazar"
+                  steps:
+                    -
+                      "Abre una cotización en borrador y utiliza «Enviar»."
+                    -
+                      "Cuando el proveedor confirme, elige «Aceptar» o «Rechazar» según corresponda."
+                    -
+                      "Antes de aceptar, revisa que la propuesta no haya expirado."
+                    -
+                      "Una cotización enviada no puede modificarse como si aún fuera borrador."
+              note: "Una cotización aceptada puede utilizarse para construir una orden de compra."
+            -
+              id: "purchase_orders"
+              title: "Órdenes de compra"
+              description: "Formaliza un pedido y controla su autorización y envío."
+              tasks:
+                -
+                  title: "Dar de alta una orden"
+                  steps:
+                    -
+                      "Abre «Órdenes de compra» y selecciona «Nueva orden», o parte de una cotización aceptada."
+                    -
+                      "Indica sucursal, proveedor, moneda y fecha de entrega estimada."
+                    -
+                      "Añade los productos y captura cantidades, precio unitario, descuentos, flete, seguros e impuestos aplicables."
+                    -
+                      "Guarda como borrador y valida los totales calculados."
+                -
+                  title: "Autorizar y enviar al proveedor"
+                  steps:
+                    -
+                      "Desde el detalle utiliza «Enviar» para solicitar aprobación."
+                    -
+                      "Un responsable autorizado selecciona «Aprobar» o «Rechazar»."
+                    -
+                      "Si la orden fue aprobada y el proveedor sigue disponible, utiliza «Enviar orden» o la acción de despacho."
+                    -
+                      "Consulta su estado antes de capturar recepciones."
+                -
+                  title: "Cancelar o cerrar una orden"
+                  steps:
+                    -
+                      "En el detalle revisa el estado actual y las entregas asociadas."
+                    -
+                      "Utiliza «Cancelar» únicamente si se permite por la etapa del flujo."
+                    -
+                      "Cuando estén resueltos los compromisos, utiliza «Cerrar» conforme a las reglas vigentes."
+              note: "La baja o inactividad de un proveedor puede impedir nuevas órdenes y despachos; los compromisos históricos se siguen resolviendo."
+            -
+              id: "goods_receipts"
+              title: "Recepción de mercancía"
+              description: "Confirma las cantidades que realmente llegaron."
+              tasks:
+                -
+                  title: "Registrar una recepción"
+                  steps:
+                    -
+                      "Entra a una orden de compra que permita recepciones y abre «Recepciones»."
+                    -
+                      "Pulsa «Nueva recepción» y revisa sucursal, artículos pendientes y cantidades solicitadas."
+                    -
+                      "Captura las unidades efectivamente recibidas y los lotes cuando el artículo los requiera."
+                    -
+                      "Guarda y abre el comprobante de recepción."
+                    -
+                      "Comprueba los movimientos de inventario de la sucursal."
+              note: "Una recepción parcial no cierra automáticamente todos los pendientes de una orden."
+            -
+              id: "purchase_returns"
+              title: "Devoluciones a proveedor"
+              description: "Devuelve artículos recibidos con una trazabilidad correcta."
+              tasks:
+                -
+                  title: "Crear una devolución"
+                  steps:
+                    -
+                      "Abre la recepción de mercancía de origen."
+                    -
+                      "Selecciona «Nueva devolución» y escoge los productos y cantidades correspondientes."
+                    -
+                      "Captura motivo y observaciones cuando se soliciten."
+                    -
+                      "Guarda la devolución; posteriormente utiliza «Procesar devolución» con la autorización necesaria."
+                    -
+                      "Revisa el estado, los registros de inventario y sus documentos relacionados."
+              note: "La devolución se origina desde una recepción, no desde una venta nueva."

@@ -1,0 +1,15 @@
+en:
+  admin:
+    user_manual:
+      eyebrow: "Learning center"
+      intro: "Step-by-step manual for Delta POS operational modules. Open a topic to learn how to create, view, edit, archive and complete workflows. Actions depend on your permissions and the installed version. Detailed steps are currently available in Spanish."
+      search_label: "What would you like to learn?"
+      search_placeholder: "E.g. product, category, supplier, invoice…"
+      search_hint: "Search any module, action or step. Matching topics expand automatically."
+      contents: "Table of contents"
+      procedures: "procedures"
+      before: "Before you begin"
+      result: "Expected result"
+      important: "Important"
+      no_results: "No procedures match your search. Try another term."
+      back_to_search: "Back to search"

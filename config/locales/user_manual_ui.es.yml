@@ -1,0 +1,15 @@
+es:
+  admin:
+    user_manual:
+      eyebrow: "Centro de aprendizaje"
+      intro: "Manual paso a paso de los módulos operativos de Delta POS. Abre cada tema para aprender a crear, consultar, editar, archivar y realizar operaciones. Algunas acciones dependen de tus permisos y de la versión instalada."
+      search_label: "¿Qué necesitas aprender?"
+      search_placeholder: "Ej. crear un producto, eliminar categoría, registrar factura…"
+      search_hint: "Busca por módulo, acción o texto de cualquier paso. Los temas coincidentes se desplegarán."
+      contents: "Índice de contenidos"
+      procedures: "procedimientos"
+      before: "Antes de comenzar"
+      result: "Resultado esperado"
+      important: "Importante"
+      no_results: "No encontramos procedimientos para esta búsqueda. Intenta con otras palabras."
+      back_to_search: "Volver al buscador"

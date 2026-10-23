@@ -1,0 +1,316 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        suppliers:
+          title: "Proveedores y expediente"
+          description: "Aprende a registrar proveedores y gestionar cada pestaña de su expediente: información, contactos, direcciones, documentos y compras."
+          topics:
+            -
+              id: "suppliers"
+              title: "Catálogo de proveedores"
+              description: "Alta, consulta, modificación, archivo y recuperación."
+              before: "Requiere una organización y permisos específicos sobre proveedores."
+              tasks:
+                -
+                  title: "Dar de alta un proveedor"
+                  steps:
+                    -
+                      "Abre «Proveedores» desde el menú lateral y selecciona «Nuevo proveedor»."
+                    -
+                      "Captura razón social, nombre comercial, alias y clasificación cuando corresponda."
+                    -
+                      "En datos fiscales selecciona tipo de persona (obligatorio), régimen fiscal y RFC; completa ahí la dirección fiscal principal."
+                    -
+                      "En el alta captura un solo contacto principal y una única dirección fiscal principal."
+                    -
+                      "Indica la moneda del proveedor y cualquier condición comercial disponible."
+                    -
+                      "Guarda, vuelve al listado y abre «Ver proveedor» para completar el expediente."
+                  result: "Se crea un proveedor dentro de la organización y se habilitan sus pestañas."
+                -
+                  title: "Editar o dar de baja un proveedor"
+                  steps:
+                    -
+                      "Busca por nombre o utiliza los filtros del catálogo."
+                    -
+                      "Abre «Ver» para revisar sus pestañas o selecciona «Editar» para actualizar datos generales."
+                    -
+                      "Antes de archivar, comprueba si tiene órdenes abiertas, facturas u otros saldos pendientes."
+                    -
+                      "Selecciona la acción de archivar y revisa el resultado del sistema."
+                -
+                  title: "Recuperar un proveedor"
+                  steps:
+                    -
+                      "Abre el listado de proveedores archivados o eliminados."
+                    -
+                      "Localiza el registro exacto y utiliza «Recuperar»."
+                    -
+                      "Abre de nuevo el expediente y verifica su estado: recuperar no supone volverlo activo automáticamente."
+              note: "El archivado puede bloquearse cuando existen compromisos pendientes; no borres facturas ni órdenes históricas para forzar la baja."
+            -
+              id: "supplier_fiscal"
+              title: "Información fiscal del proveedor"
+              description: "Datos tributarios y domicilio fiscal principal."
+              tasks:
+                -
+                  title: "Registrar o corregir datos fiscales"
+                  steps:
+                    -
+                      "Desde «Proveedores» abre el expediente y entra a «Datos fiscales»."
+                    -
+                      "Selecciona el tipo de persona y régimen fiscal correctos cuando apliquen."
+                    -
+                      "Captura RFC y el resto de la información fiscal solicitada."
+                    -
+                      "Edita la dirección fiscal principal; usa su código postal en lugar de duplicarlo en el proveedor."
+                    -
+                      "Guarda y verifica los datos mostrados en la pestaña fiscal."
+              note: "La dirección fiscal y su código postal pertenecen al registro de dirección principal de tipo fiscal."
+            -
+              id: "supplier_contacts"
+              title: "Contactos del proveedor"
+              description: "Personas responsables de pedidos, entregas o trámites."
+              tasks:
+                -
+                  title: "Agregar un contacto"
+                  steps:
+                    -
+                      "Abre «Ver proveedor» → «Contactos» y entra en la administración."
+                    -
+                      "Selecciona «Agregar contacto» y completa nombre, cargo, correo y teléfonos."
+                    -
+                      "Verifica el prefijo de país del número internacional, si lo utilizas."
+                    -
+                      "Marca como principal cuando corresponda y guarda."
+                -
+                  title: "Editar, eliminar o recuperar contactos"
+                  steps:
+                    -
+                      "Usa el buscador del listado para localizar un contacto."
+                    -
+                      "Selecciona «Editar» para modificar información o cambiar el principal."
+                    -
+                      "Elige «Eliminar» para archivar un contacto; utiliza la pestaña de eliminados para «Recuperar»."
+                    -
+                      "Regresa a «Ver proveedor»; debe conservarse la pestaña Contactos."
+              note: "El formulario inicial de proveedor no agrega contactos ilimitados; se gestionan después desde el expediente."
+            -
+              id: "supplier_addresses"
+              title: "Direcciones y geolocalización"
+              description: "Ubicaciones por propósito con dirección principal y vista de mapa."
+              tasks:
+                -
+                  title: "Agregar una dirección"
+                  steps:
+                    -
+                      "Desde «Ver proveedor» → «Direcciones», entra a la administración de direcciones."
+                    -
+                      "Selecciona «Agregar dirección», propósito y país."
+                    -
+                      "Captura los campos aplicables para el país: calle, número exterior, colonia, ciudad, estado y código postal cuando correspondan."
+                    -
+                      "Revisa la ubicación sugerida en el mapa y confirma que el punto sea correcto."
+                    -
+                      "Marca «Principal» si debe sustituir a la dirección principal del mismo propósito."
+                    -
+                      "Guarda y comprueba la tarjeta de dirección."
+                -
+                  title: "Editar o cambiar la dirección principal"
+                  steps:
+                    -
+                      "Busca la dirección entre las activas y elige «Editar»."
+                    -
+                      "Corrige datos; si cambió la ubicación, revisa la propuesta del mapa."
+                    -
+                      "Usa «Establecer como principal» cuando esa dirección deba ser la principal para el propósito."
+                    -
+                      "Comprueba que la dirección anterior ya no figure como principal del mismo propósito."
+                -
+                  title: "Eliminar y recuperar direcciones"
+                  steps:
+                    -
+                      "Desde las tarjetas de direcciones activas elige la que dejará de utilizarse."
+                    -
+                      "Selecciona «Eliminar» y confirma."
+                    -
+                      "Abre la pestaña de eliminadas y utiliza «Recuperar» cuando corresponda."
+              note: "Una geocodificación sugerida puede ser imprecisa; confirma la ubicación antes de utilizarla en operaciones."
+            -
+              id: "supplier_commercial"
+              title: "Condiciones comerciales"
+              description: "Moneda, crédito, descuentos y responsable interno."
+              tasks:
+                -
+                  title: "Actualizar acuerdos comerciales"
+                  steps:
+                    -
+                      "En el expediente abre «Datos comerciales»."
+                    -
+                      "Verifica moneda de compra, condiciones de crédito, descuentos y pedido mínimo cuando correspondan."
+                    -
+                      "Asigna el responsable interno, agrega etiquetas o notas disponibles."
+                    -
+                      "Guarda y revisa el resumen de condiciones en el expediente."
+              note: "La moneda del proveedor no necesariamente es igual a la moneda base de la organización."
+            -
+              id: "supplier_products"
+              title: "Productos y ofertas de proveedor"
+              description: "Relaciona artículos, registra precios y selecciona proveedor preferido."
+              before: "El artículo debe existir primero en Catálogos → Productos."
+              tasks:
+                -
+                  title: "Asociar un producto al proveedor"
+                  steps:
+                    -
+                      "En «Ver proveedor» → «Productos» abre la administración de ofertas."
+                    -
+                      "Selecciona «Agregar producto» y elige un producto ya creado en el catálogo de tu organización."
+                    -
+                      "Captura SKU del proveedor, presentación, unidades por empaque, precio de compra, moneda y descuentos."
+                    -
+                      "Completa cantidad mínima, gastos adicionales y plazo de entrega cuando aplique."
+                    -
+                      "Guarda y comprueba la nueva oferta en el listado."
+                -
+                  title: "Comparar precios y marcar preferido"
+                  steps:
+                    -
+                      "Entra a las ofertas y abre la comparación para el producto correspondiente."
+                    -
+                      "Compara los importes, costos adicionales, tiempos de entrega y condiciones."
+                    -
+                      "Marca como preferido solo a un proveedor y oferta disponibles."
+                    -
+                      "Consulta el historial de precios antes de modificar las condiciones."
+                -
+                  title: "Editar o archivar una oferta"
+                  steps:
+                    -
+                      "Busca la oferta del proveedor y selecciona «Editar»."
+                    -
+                      "Actualiza los campos permitidos y guarda."
+                    -
+                      "Si ya no debe utilizarse, selecciona «Eliminar» y comprueba que no aparezca entre ofertas disponibles."
+              note: "No utilices ofertas inactivas para nuevas órdenes; revisa el historial de precios cuando haya cambios."
+            -
+              id: "supplier_documents"
+              title: "Biblioteca de documentos"
+              description: "Contratos, constancias, archivos y versiones del proveedor."
+              tasks:
+                -
+                  title: "Subir documentos"
+                  steps:
+                    -
+                      "En «Ver proveedor» abre la pestaña «Documentos»."
+                    -
+                      "Arrastra archivos al área de carga o pulsa para seleccionarlos desde el equipo."
+                    -
+                      "Elige categoría y proporciona descripción cuando corresponda."
+                    -
+                      "Confirma la subida y verifica que aparezcan nuevas tarjetas en la biblioteca."
+                  result: "Los archivos se vinculan al expediente del proveedor."
+                -
+                  title: "Previsualizar y descargar"
+                  steps:
+                    -
+                      "Usa el buscador o filtros para localizar el documento."
+                    -
+                      "En la tarjeta selecciona «Vista previa» y abre el panel lateral."
+                    -
+                      "Revisa el contenido cuando el formato admita previsualización; los archivos Office pueden requerir un conversor disponible."
+                    -
+                      "Pulsa «Descargar» para obtener el archivo original."
+                -
+                  title: "Versiones, baja y recuperación"
+                  steps:
+                    -
+                      "Utiliza la opción de reemplazar para cargar una versión actualizada del archivo."
+                    -
+                      "En «Historial» consulta revisiones anteriores y descarga una si es necesario."
+                    -
+                      "Archiva un documento desde sus acciones y recupéralo desde la vista de documentos eliminados."
+              note: "Puedes cargar de 1 a 10 archivos por operación; cada archivo debe tener un tipo admitido y un tamaño de hasta 10 MB."
+            -
+              id: "supplier_calendar"
+              title: "Calendarios, horarios y excepciones"
+              description: "Planifica visitas, pedidos y entregas por sucursal."
+              tasks:
+                -
+                  title: "Crear una programación semanal"
+                  steps:
+                    -
+                      "En el expediente entra a «Calendarios» y abre la administración de horarios."
+                    -
+                      "Selecciona «Nuevo horario», sucursal, tipo de actividad y día de la semana."
+                    -
+                      "Especifica hora inicial, hora final y notas si corresponde."
+                    -
+                      "Guarda y verifica que el intervalo se muestre sin superponerse con horarios incompatibles."
+                -
+                  title: "Crear y editar eventos en fechas específicas"
+                  steps:
+                    -
+                      "Desde el calendario selecciona un día o la opción «Nuevo evento»."
+                    -
+                      "Captura título, tipo, sucursal, fecha y horario."
+                    -
+                      "Guarda y comprueba la aparición del evento en la vista mensual o diaria."
+                    -
+                      "Usa las acciones del evento para editarlo, archivarlo o recuperarlo."
+                -
+                  title: "Añadir y administrar excepciones"
+                  steps:
+                    -
+                      "En la sección de excepciones elige «Agregar excepción»."
+                    -
+                      "Captura fechas inicial y final, motivo, sucursal y notas."
+                    -
+                      "Guarda y revisa el período afectado."
+                    -
+                      "Para archivar o recuperar varias excepciones, utiliza la selección masiva de hasta 100 registros."
+              note: "Los intervalos superpuestos no se admiten para la misma combinación de planificación; revisa los conflictos mostrados."
+            -
+              id: "supplier_banks"
+              title: "Cuentas bancarias de proveedores"
+              description: "Protege CLABE y números de cuenta y controla las cuentas autorizadas."
+              tasks:
+                -
+                  title: "Registrar una cuenta"
+                  steps:
+                    -
+                      "Abre el expediente del proveedor y entra al apartado de cuentas bancarias."
+                    -
+                      "Selecciona «Nueva cuenta»."
+                    -
+                      "Indica banco, titular, cuenta o CLABE, moneda y si será la principal."
+                    -
+                      "Guarda y localiza el registro en la lista de cuentas."
+                -
+                  title: "Editar, consultar datos protegidos o archivar"
+                  steps:
+                    -
+                      "Busca la cuenta por banco o titular y filtra por moneda si lo necesitas."
+                    -
+                      "Abre «Editar» para modificar los datos permitidos."
+                    -
+                      "Usa «Revelar» únicamente si tienes autorización y es indispensable para el proceso."
+                    -
+                      "Archiva una cuenta que ya no deba usarse en pagos futuros."
+              note: "No difundas números de cuenta completos en capturas; las revelaciones se auditan y dependen de permisos."
+            -
+              id: "supplier_export"
+              title: "Exportación de proveedores"
+              description: "Consulta listados autorizados fuera del sistema."
+              tasks:
+                -
+                  title: "Generar una exportación"
+                  steps:
+                    -
+                      "Entra al catálogo «Proveedores» y aplica búsqueda o filtros."
+                    -
+                      "Selecciona «Exportar» si el sistema te muestra esa acción según tus permisos."
+                    -
+                      "Revisa el archivo generado antes de compartirlo o usarlo para conciliación."
+              note: "El permiso para exportar es independiente de la autorización para editar proveedores."

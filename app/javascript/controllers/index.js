@@ -118,3 +118,6 @@ application.register("supplier-bank-accounts", SupplierBankAccountsController)
 
 import ProductsSearchController from "./products_search_controller"
 application.register("products-search", ProductsSearchController)
+
+import UserGuideController from "./user_guide_controller"
+application.register("user-guide", UserGuideController)
