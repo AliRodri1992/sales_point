@@ -51,6 +51,14 @@ RSpec.describe Suppliers::CalendarBoard do
     expect(board.selected_date).to eq(Date.iso8601('2026-11-01'))
   end
 
+  it 'keeps the month synchronized with week navigation across a month boundary' do
+    board = described_class.new(supplier:, month: '2026-10', view: 'week', day: '2026-11-03')
+
+    expect(board.month).to eq(Date.iso8601('2026-11-01'))
+    expect(board.weeks.map(&:size)).to eq([7])
+    expect(board.next_navigation(-1)[:calendar_day]).to eq('2026-10-27')
+  end
+
   it 'handles invalid calendar dates without an exception' do
     board = described_class.new(supplier:, month: 'invalid', view: 'unknown', day: 'not-a-date')
     expect(board.view).to eq('month')
