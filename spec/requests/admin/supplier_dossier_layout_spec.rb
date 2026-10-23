@@ -57,7 +57,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     get admin_supplier_path(supplier, tab: 'schedules')
 
     panel = dossier.at_css('section[data-section="schedules"]')
-    header = panel.at_xpath('./div[1]')
+    header = panel.at_css('header')
     empty_state = panel.at_css('img[src*="scalendaries"]').parent
 
     expect(header.text).to include('Manage calendars')
