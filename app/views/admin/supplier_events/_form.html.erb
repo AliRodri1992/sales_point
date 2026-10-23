@@ -1,0 +1,38 @@
+<%= form_with model: @event, url: @event.persisted? ? admin_supplier_event_path(@supplier, @event) : admin_supplier_events_path(@supplier), data: { turbo: false }, class: 'space-y-5' do |form| %>
+  <div>
+    <%= form.label :title, t('admin.supplier_calendar.fields.title'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+    <%= form.text_field :title, required: true, maxlength: 150, placeholder: t('admin.supplier_calendar.title_placeholder'), class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-emerald-100' %>
+    <%= error_message_for(@event, :title) %>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :kind, t('admin.supplier_dossier.kind'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :kind, SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] }, {}, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
+      <%= error_message_for(@event, :kind) %>
+    </div>
+    <div>
+      <%= form.label :branch_id, t('admin.supplier_dossier.branch'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.collection_select :branch_id, @branches, :id, :name, { include_blank: t('admin.supplier_calendar.select_branch') }, required: true, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
+      <%= error_message_for(@event, :branch) %>
+    </div>
+    <div>
+      <%= form.label :starts_at, t('admin.supplier_calendar.fields.starts_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.datetime_local_field :starts_at, required: true, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
+      <%= error_message_for(@event, :starts_at) %>
+    </div>
+    <div>
+      <%= form.label :ends_at, t('admin.supplier_calendar.fields.ends_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.datetime_local_field :ends_at, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
+      <%= error_message_for(@event, :ends_at) %>
+    </div>
+  </div>
+  <div>
+    <%= form.label :notes, t('admin.supplier_dossier.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+    <%= form.text_area :notes, rows: 4, maxlength: 1000, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
+    <%= error_message_for(@event, :notes) %>
+  </div>
+  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_path(@supplier, tab: 'schedules'), class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+    <%= form.submit t("admin.supplier_calendar.#{@event.persisted? ? 'save_changes' : 'create_event'}"), class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700' %>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_23_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1344,6 +1344,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
     t.check_constraint "units_per_package > 0::numeric", name: "chk_supplier_product_factor"
   end
 
+  create_table "supplier_events", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "created_by_id"
+    t.string "title", limit: 150, null: false
+    t.string "kind", null: false
+    t.datetime "starts_at", precision: nil, null: false
+    t.datetime "ends_at", precision: nil
+    t.text "notes"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_supplier_events_on_branch_id"
+    t.index ["created_by_id"], name: "index_supplier_events_on_created_by_id"
+    t.index ["deleted_at"], name: "index_supplier_events_on_deleted_at"
+    t.index ["supplier_id", "starts_at"], name: "idx_supplier_events_by_date"
+    t.index ["supplier_id"], name: "index_supplier_events_on_supplier_id"
+  end
+
   create_table "supplier_schedule_exceptions", force: :cascade do |t|
     t.bigint "branch_id"
     t.datetime "created_at", null: false
@@ -1675,6 +1694,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
   add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
   add_foreign_key "supplier_documents", "users", column: "updated_by_id"
   add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
+  add_foreign_key "supplier_events", "branches"
+  add_foreign_key "supplier_events", "suppliers"
+  add_foreign_key "supplier_events", "users", column: "created_by_id"
   add_foreign_key "supplier_event_deliveries", "suppliers"
   add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
   add_foreign_key "supplier_invoice_lines", "supplier_invoices"
