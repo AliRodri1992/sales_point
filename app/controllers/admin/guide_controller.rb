@@ -9,7 +9,7 @@ module Admin
 
     def show
       @sections = SECTION_ORDER.map do |section|
-        key = 'admin.user_manual.sections.' + section
+        key = "admin.user_manual.sections.#{section}"
         I18n.t(key, default: I18n.t(key, locale: :es))
       end
     end
