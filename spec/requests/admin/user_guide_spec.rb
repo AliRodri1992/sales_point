@@ -53,6 +53,21 @@ RSpec.describe 'Delta POS user guide', type: :request do
     expect(ids.uniq).to eq(ids)
   end
 
+  it 'keeps all detailed Spanish procedures available under English and Korean chapter headings' do
+    %i[en ko].each do |locale|
+      I18n.with_locale(locale) do
+        Admin::GuideController::SECTION_ORDER.each do |section|
+          spanish = I18n.t("admin.user_manual.sections.#{section}", locale: :es)
+          translated = I18n.t("admin.user_manual.sections.#{section}", locale:)
+          expect(translated[:title]).to be_present
+          expect(translated[:description]).to be_present
+          expect(translated[:topics]).to eq([])
+          expect(spanish[:topics]).not_to be_empty
+        end
+      end
+    end
+  end
+
   it 'requires authentication' do
     sign_out user
     get admin_guide_path

@@ -1,0 +1,32 @@
+en:
+  admin:
+    user_manual:
+      sections:
+        startup:
+          title: "Initial setup and branches"
+          description: "Set up your organization, onboarding, branches, dashboard, and personal preferences."
+          topics: []
+        security:
+          title: "Users, roles, and permissions"
+          description: "Create user accounts and manage roles, access, and language preferences."
+          topics: []
+        catalogs:
+          title: "Catalogs, inventory, and customers"
+          description: "Manage product categories, products, stock by branch, and customer records."
+          topics: []
+        suppliers:
+          title: "Suppliers and their records"
+          description: "Register suppliers and manage contacts, addresses, offers, documents, and schedules."
+          topics: []
+        purchasing:
+          title: "Purchases and receiving"
+          description: "Manage purchasing requests, quotations, orders, receiving, and returns."
+          topics: []
+        finances:
+          title: "Supplier invoices and accounts payable"
+          description: "Register invoices and apply payments and credits while reconciling balances."
+          topics: []
+        communication:
+          title: "Communication and module status"
+          description: "Review notifications, messaging, demo requests, and upcoming features."
+          topics: []

@@ -1,0 +1,32 @@
+ko:
+  admin:
+    user_manual:
+      sections:
+        startup:
+          title: "초기 설정 및 지점"
+          description: "회사 설정, 초기 등록, 지점, 대시보드와 사용자 환경설정을 관리합니다."
+          topics: []
+        security:
+          title: "사용자, 역할 및 권한"
+          description: "사용자를 등록하고 역할, 접근 권한, 언어 설정을 관리합니다."
+          topics: []
+        catalogs:
+          title: "카탈로그, 재고 및 고객"
+          description: "상품 분류, 상품, 지점별 재고 및 고객 정보를 관리합니다."
+          topics: []
+        suppliers:
+          title: "공급업체 및 상세 정보"
+          description: "공급업체와 담당자, 주소, 상품 제안, 문서 및 일정을 관리합니다."
+          topics: []
+        purchasing:
+          title: "구매 및 입고"
+          description: "구매 요청, 견적, 발주, 입고 및 반품을 관리합니다."
+          topics: []
+        finances:
+          title: "공급업체 송장 및 미지급금"
+          description: "송장, 지급 및 대변전표를 등록하고 잔액을 대조합니다."
+          topics: []
+        communication:
+          title: "커뮤니케이션 및 모듈 상태"
+          description: "알림, 메시지, 데모 요청 및 예정 기능을 확인합니다."
+          topics: []

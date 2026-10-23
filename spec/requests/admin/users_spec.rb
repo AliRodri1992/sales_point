@@ -69,12 +69,14 @@ RSpec.describe 'Admin::Users', type: :request do
     end
 
     it 'creates a user and displays the success Swal message' do
-      post admin_users_path, params: valid_params
+      expect { post admin_users_path, params: valid_params }.to change(User, :count).by(1)
 
+      created_user = User.find_by!(email: valid_params.dig(:user, :email))
+      expect(created_user).to be_active
       expect(response).to redirect_to(admin_users_path)
       follow_redirect!
       expect(response.body).to include(I18n.t('admin.users.created', locale: :es))
-      expect(User.find_by(email: 'created@example.com')).to be_present
+      expect(User.exists?(created_user.id)).to be(true)
     end
 
     it 're-renders the form with validation errors and no required attributes' do
