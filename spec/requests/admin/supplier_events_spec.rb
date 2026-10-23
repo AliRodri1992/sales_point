@@ -86,7 +86,8 @@ RSpec.describe 'Supplier dated events', type: :request do
 
     expect do
       patch restore_admin_supplier_event_path(supplier, event)
-    end.not_to change(SupplierEvent, :count)
+    end.to change { supplier.supplier_events.not_deleted.count }.by(1)
+       .and not_change { supplier.supplier_events.with_deleted.count }
 
     expect(response).to redirect_to(calendar_destination)
     expect(event.reload.deleted_at).to be_nil
