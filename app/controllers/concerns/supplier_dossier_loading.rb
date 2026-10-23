@@ -9,7 +9,16 @@ module SupplierDossierLoading
     load_dossier_contacts if supplier_policy.view_contacts?
     load_dossier_addresses if supplier_policy.view_addresses?
     load_dossier_documents if supplier_policy.view_documents?
+    load_dossier_calendar if supplier_policy.view_schedules?
     load_dossier_products if supplier_policy.view_products?
+  end
+
+  def load_dossier_calendar
+    @supplier_calendar = Suppliers::CalendarBoard.new(
+      supplier: @supplier, month: params[:calendar_month], day: params[:calendar_day],
+      view: params[:calendar_view], branch_id: params[:calendar_branch], kind: params[:calendar_kind]
+    )
+    @calendar_branches = current_organization.branches.not_deleted.order(:name)
   end
 
   def load_dossier_contacts
