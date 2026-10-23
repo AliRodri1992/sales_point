@@ -19,6 +19,11 @@ RSpec.describe 'Supplier dated events', type: :request do
       starts_at: '2026-10-23T09:00', ends_at: '2026-10-23T11:00', notes: 'Bring samples' }.merge(overrides)
   end
 
+  def calendar_destination
+    params = { tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-23' }
+    admin_supplier_path(supplier, params)
+  end
+
   it 'creates a dated event and displays it in the dossier calendar' do
     expect do
       post admin_supplier_events_path(supplier), params: { supplier_event: attributes }
@@ -26,7 +31,7 @@ RSpec.describe 'Supplier dated events', type: :request do
 
     event = supplier.supplier_events.last
     expect(event).to have_attributes(title: 'Extra delivery', kind: 'delivery', created_by: user)
-    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-23'))
+    expect(response).to redirect_to(calendar_destination)
 
     get admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10')
     panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
@@ -38,11 +43,11 @@ RSpec.describe 'Supplier dated events', type: :request do
     event = supplier.supplier_events.create!(attributes.except(:branch_id).merge(branch:, created_by: user))
     patch admin_supplier_event_path(supplier, event),
           params: { supplier_event: attributes(title: 'New title') }
-    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-23'))
+    expect(response).to redirect_to(calendar_destination)
     expect(event.reload.title).to eq('New title')
 
     delete admin_supplier_event_path(supplier, event)
-    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-23'))
+    expect(response).to redirect_to(calendar_destination)
     expect(event.reload.deleted_at).to be_present
     expect(supplier.supplier_events.not_deleted).to be_empty
   end
@@ -83,7 +88,7 @@ RSpec.describe 'Supplier dated events', type: :request do
       patch restore_admin_supplier_event_path(supplier, event)
     end.not_to change(SupplierEvent, :count)
 
-    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-23'))
+    expect(response).to redirect_to(calendar_destination)
     expect(event.reload.deleted_at).to be_nil
   end
 

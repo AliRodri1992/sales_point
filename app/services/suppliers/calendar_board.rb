@@ -4,8 +4,8 @@ module Suppliers
   class CalendarBoard
     include CalendarBoardNavigation
 
-    attr_reader :month, :view, :focus_date, :start_date, :end_date, :selected_date
-    attr_reader :branch_id, :kind, :schedules, :events
+    attr_reader :month, :view, :focus_date, :start_date, :end_date, :selected_date,
+                :branch_id, :kind, :schedules, :events
 
     def initialize(supplier:, **options)
       @supplier = supplier
@@ -60,7 +60,6 @@ module Suppliers
 
     private
 
-
     def setup_filters(options)
       @branch_id = parse_branch(options[:branch_id])
       @kind = SupplierEvent::KINDS.include?(options[:kind]) ? options[:kind] : nil
@@ -74,10 +73,6 @@ module Suppliers
                          focus_date.between?(start_date, end_date) ? focus_date : start_date
                        end
     end
-
-
-
-
 
     def load_entries
       load_schedules
