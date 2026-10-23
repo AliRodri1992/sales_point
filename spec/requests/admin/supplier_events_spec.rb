@@ -29,7 +29,7 @@ RSpec.describe 'Supplier dated events', type: :request do
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
 
     get admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10')
-    panel = Nokogiri::HTML(response.body).at_css('[data-section="schedules"]')
+    panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
     expect(panel.css('[data-calendar-date="2026-10-23"]').first.text).to include('Extra delivery')
     expect(panel.at_css("[data-calendar-event='#{event.id}']")).to be_present
   end
@@ -75,7 +75,7 @@ RSpec.describe 'Supplier dated events', type: :request do
     }
     get admin_supplier_path(supplier, calendar_params)
 
-    panel = Nokogiri::HTML(response.body).at_css('[data-section="schedules"]')
+    panel = Nokogiri::HTML(response.body).at_css('section[data-section="schedules"]')
     expect(panel.css('[data-calendar-date]').size).to eq(7)
     expect(panel.at_css('[data-supplier-calendar-target="drawer"]')).to be_present
     expect(panel.at_css("form[action='#{admin_supplier_events_path(supplier)}']")).to be_present

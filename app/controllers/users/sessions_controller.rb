@@ -19,6 +19,15 @@ module Users
 
     private
 
+    def require_no_authentication
+      return super unless user_signed_in?
+
+      session[:swal_message] = t('devise.failure.already_authenticated')
+      session[:swal_icon] = 'info'
+      session[:swal_mode] = 'modal'
+      redirect_to admin_dashboard_path
+    end
+
     def set_flash_message!(action, kind, options = {})
       return if action.to_sym == :signed_in
 
