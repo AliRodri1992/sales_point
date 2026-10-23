@@ -12,8 +12,8 @@
 
 ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_catalog.plpgsql"
   enable_extension "btree_gist"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "account_payables", force: :cascade do |t|
     t.decimal "amount", precision: 18, scale: 2, null: false
@@ -1151,6 +1151,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
     t.check_constraint "total > 0::numeric", name: "chk_supplier_credit_note_amount"
   end
 
+  create_table "supplier_documents", force: :cascade do |t|
+    t.bigint "attachment_id", null: false
+    t.string "category", default: "other", null: false
+    t.datetime "created_at", null: false
+    t.boolean "current_version", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "deleted_by_id"
+    t.string "description", limit: 300
+    t.bigint "previous_version_id"
+    t.integer "revision_number", default: 1, null: false
+    t.string "series_id", null: false
+    t.string "status", default: "active", null: false
+    t.bigint "supplier_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.bigint "uploaded_by_id"
+    t.index ["attachment_id"], name: "index_supplier_documents_on_attachment_id", unique: true
+    t.index ["deleted_by_id"], name: "index_supplier_documents_on_deleted_by_id"
+    t.index ["previous_version_id"], name: "index_supplier_documents_on_previous_version_id"
+    t.index ["supplier_id", "current_version", "deleted_at"], name: "idx_supplier_document_listing"
+    t.index ["supplier_id", "series_id", "revision_number"], name: "idx_supplier_document_version", unique: true
+    t.index ["supplier_id"], name: "index_supplier_documents_on_supplier_id"
+    t.index ["updated_by_id"], name: "index_supplier_documents_on_updated_by_id"
+    t.index ["uploaded_by_id"], name: "index_supplier_documents_on_uploaded_by_id"
+  end
+
   create_table "supplier_event_deliveries", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -1185,32 +1211,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
     t.index ["goods_receipt_id"], name: "index_supplier_invoice_receipts_on_goods_receipt_id"
     t.index ["supplier_invoice_id", "goods_receipt_id"], name: "idx_supplier_invoice_receipt_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["supplier_invoice_id"], name: "index_supplier_invoice_receipts_on_supplier_invoice_id"
-  end
-
-  create_table "supplier_documents", force: :cascade do |t|
-    t.bigint "attachment_id", null: false
-    t.string "category", default: "other", null: false
-    t.datetime "created_at", null: false
-    t.boolean "current_version", default: true, null: false
-    t.datetime "deleted_at", precision: nil
-    t.bigint "deleted_by_id"
-    t.string "description", limit: 300
-    t.bigint "previous_version_id"
-    t.string "series_id", null: false
-    t.string "status", default: "active", null: false
-    t.bigint "supplier_id", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "updated_by_id"
-    t.bigint "uploaded_by_id"
-    t.integer "revision_number", default: 1, null: false
-    t.index ["attachment_id"], name: "index_supplier_documents_on_attachment_id", unique: true
-    t.index ["deleted_by_id"], name: "index_supplier_documents_on_deleted_by_id"
-    t.index ["previous_version_id"], name: "index_supplier_documents_on_previous_version_id"
-    t.index ["supplier_id", "current_version", "deleted_at"], name: "idx_supplier_document_listing"
-    t.index ["supplier_id", "series_id", "revision_number"], name: "idx_supplier_document_version", unique: true
-    t.index ["supplier_id"], name: "index_supplier_documents_on_supplier_id"
-    t.index ["updated_by_id"], name: "index_supplier_documents_on_updated_by_id"
-    t.index ["uploaded_by_id"], name: "index_supplier_documents_on_uploaded_by_id"
   end
 
   create_table "supplier_invoices", force: :cascade do |t|
@@ -1352,13 +1352,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
     t.date "ends_on"
     t.text "notes"
     t.string "reason", null: false
+    t.date "starts_on", null: false
     t.bigint "supplier_id", null: false
     t.bigint "supplier_schedule_id"
-    t.date "starts_on", null: false
     t.datetime "updated_at", null: false
     t.index ["branch_id"], name: "index_supplier_schedule_exceptions_on_branch_id"
     t.index ["created_by_id"], name: "index_supplier_schedule_exceptions_on_created_by_id"
-    t.index ["supplier_id", "starts_on"], name: "index_supplier_schedule_exceptions_on_supplier_id_and_starts_on"
+    t.index ["supplier_id", "starts_on"], name: "idx_on_supplier_id_starts_on_0b80f77e34"
     t.index ["supplier_id"], name: "index_supplier_schedule_exceptions_on_supplier_id"
     t.index ["supplier_schedule_id"], name: "index_supplier_schedule_exceptions_on_supplier_schedule_id"
   end
@@ -1380,20 +1380,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
     t.index ["supplier_id"], name: "index_supplier_schedules_on_supplier_id"
     t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying::text, 'order'::character varying::text, 'delivery'::character varying::text])", name: "chk_supplier_schedules_kind"
     t.check_constraint "weekday >= 0 AND weekday <= 6", name: "chk_supplier_schedules_weekday"
+    t.exclusion_constraint "supplier_id WITH =, branch_id WITH =, kind WITH =, weekday WITH =, int4range((EXTRACT(epoch FROM starts_at))::integer, COALESCE((EXTRACT(epoch FROM ends_at))::integer, ((EXTRACT(epoch FROM starts_at))::integer + 60)), '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, name: "supplier_schedules_no_overlap"
   end
-
-  execute <<~SQL
-    ALTER TABLE supplier_schedules ADD CONSTRAINT supplier_schedules_no_overlap
-    EXCLUDE USING gist (
-      supplier_id WITH =, branch_id WITH =, kind WITH =, weekday WITH =,
-      int4range(
-        extract(epoch FROM starts_at)::integer,
-        COALESCE(extract(epoch FROM ends_at)::integer,
-                 extract(epoch FROM starts_at)::integer + 60),
-        '[)'
-      ) WITH &&
-    ) WHERE (deleted_at IS NULL);
-  SQL
 
   create_table "suppliers", force: :cascade do |t|
     t.string "alias_name", limit: 100
@@ -1681,17 +1669,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_22_091000) do
   add_foreign_key "supplier_credit_notes", "supplier_invoices"
   add_foreign_key "supplier_credit_notes", "suppliers"
   add_foreign_key "supplier_credit_notes", "users", column: "created_by_id"
-  add_foreign_key "supplier_event_deliveries", "suppliers"
-  add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
-  add_foreign_key "supplier_invoice_lines", "supplier_invoices"
-  add_foreign_key "supplier_invoice_receipts", "goods_receipts"
-  add_foreign_key "supplier_invoice_receipts", "supplier_invoices"
   add_foreign_key "supplier_documents", "active_storage_attachments", column: "attachment_id"
   add_foreign_key "supplier_documents", "supplier_documents", column: "previous_version_id"
   add_foreign_key "supplier_documents", "suppliers"
   add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
   add_foreign_key "supplier_documents", "users", column: "updated_by_id"
   add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
+  add_foreign_key "supplier_event_deliveries", "suppliers"
+  add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
+  add_foreign_key "supplier_invoice_lines", "supplier_invoices"
+  add_foreign_key "supplier_invoice_receipts", "goods_receipts"
+  add_foreign_key "supplier_invoice_receipts", "supplier_invoices"
   add_foreign_key "supplier_invoices", "currencies"
   add_foreign_key "supplier_invoices", "organizations"
   add_foreign_key "supplier_invoices", "purchase_orders"
