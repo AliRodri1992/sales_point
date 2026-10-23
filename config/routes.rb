@@ -141,7 +141,9 @@ Rails.application.routes.draw do
       resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create destroy] do
         collection { patch :bulk_update }
       end
-      resources :events, controller: 'supplier_events', only: %i[new create edit update destroy]
+      resources :events, controller: 'supplier_events', only: %i[new create edit update destroy] do
+        member { patch :restore }
+      end
       resources :schedules, controller: 'supplier_schedules', except: %i[show] do
         member { patch :restore }
       end

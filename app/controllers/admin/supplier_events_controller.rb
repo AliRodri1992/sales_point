@@ -39,6 +39,14 @@ module Admin
       redirect_success(:deleted)
     end
 
+    def restore
+      @event = @supplier.supplier_events.where.not(deleted_at: nil).find(params[:id])
+      return redirect_success(:restored) if @event.update(deleted_at: nil)
+
+      redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
+                  alert: @event.errors.full_messages.to_sentence
+    end
+
     private
 
     def set_supplier

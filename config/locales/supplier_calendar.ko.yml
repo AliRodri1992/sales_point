@@ -34,6 +34,9 @@ ko:
       edit: 수정
       delete: 삭제
       delete_confirm: 이 이벤트를 삭제하시겠습니까? 기록은 보존되지만 캘린더에는 표시되지 않습니다.
+      selected_day: 선택한 날짜
+      archived_events: 최근 삭제된 이벤트
+      restore: 복구
       event_details: 다가오는 이벤트
       exception_note: 예외
       fields:
@@ -49,3 +52,4 @@ ko:
         created: 이벤트가 생성되었습니다.
         updated: 이벤트가 수정되었습니다.
         deleted: 이벤트가 삭제되었습니다.
+        restored: 이벤트가 복구되었습니다.

@@ -4,25 +4,28 @@ export default class extends Controller {
   static targets = ["drawer", "form", "method", "heading", "submit"]
 
   connect() {
-    this.handleKeydown = (event) => {
-      if (event.key === "Escape" && this.hasDrawerTarget && !this.drawerTarget.classList.contains("hidden")) {
-        this.close()
-      }
-    }
+    this.handleKeydown = (event) => this.onKeydown(event)
     document.addEventListener("keydown", this.handleKeydown)
   }
 
   disconnect() {
     document.removeEventListener("keydown", this.handleKeydown)
-    document.body.style.overflow = ""
+    if (this.hasDrawerTarget && !this.drawerTarget.classList.contains("hidden")) {
+      document.body.style.overflow = this.previousOverflow || ""
+    }
   }
 
-  open() {
+  open(event) {
     this.formTarget.reset()
-    this.formTarget.action = this.formTarget.dataset.createUrl || this.formTarget.action
+    this.formTarget.action = this.formTarget.dataset.createUrl
     this.methodTarget.value = ""
     this.headingTarget.textContent = this.headingTarget.dataset.newText
     this.submitTarget.value = this.submitTarget.dataset.newText
+    const date = event?.currentTarget?.dataset.date
+    if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      this.fill("starts_at", `${date}T09:00`)
+      this.fill("ends_at", `${date}T10:00`)
+    }
     this.showDrawer()
   }
 
@@ -49,6 +52,8 @@ export default class extends Controller {
   }
 
   showDrawer() {
+    this.previousFocus = document.activeElement
+    this.previousOverflow = document.body.style.overflow
     this.drawerTarget.classList.remove("hidden")
     this.drawerTarget.setAttribute("aria-hidden", "false")
     document.body.style.overflow = "hidden"
@@ -56,8 +61,37 @@ export default class extends Controller {
   }
 
   close() {
+    if (this.drawerTarget.classList.contains("hidden")) return
+
     this.drawerTarget.classList.add("hidden")
     this.drawerTarget.setAttribute("aria-hidden", "true")
-    document.body.style.overflow = ""
+    document.body.style.overflow = this.previousOverflow || ""
+    this.previousFocus?.focus()
+  }
+
+  onKeydown(event) {
+    if (!this.hasDrawerTarget || this.drawerTarget.classList.contains("hidden")) return
+    if (event.key === "Escape") {
+      event.preventDefault()
+      this.close()
+    } else if (event.key === "Tab") {
+      this.trapFocus(event)
+    }
+  }
+
+  trapFocus(event) {
+    const selector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+    const inputs = [...this.drawerTarget.querySelectorAll(selector)].filter((node) => node.getClientRects().length)
+    if (inputs.length === 0) return
+
+    const first = inputs[0]
+    const last = inputs[inputs.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
   }
 }

@@ -34,6 +34,9 @@ es:
       edit: Editar
       delete: Eliminar
       delete_confirm: ¿Eliminar este evento? Puedes conservar el registro histórico sin mostrarlo en la agenda.
+      selected_day: Actividades del día
+      archived_events: Eventos eliminados recientemente
+      restore: Recuperar
       event_details: Próximos eventos
       exception_note: Excepción
       fields:
@@ -49,3 +52,4 @@ es:
         created: Evento creado correctamente.
         updated: Evento actualizado correctamente.
         deleted: Evento eliminado correctamente.
+        restored: Evento recuperado correctamente.
