@@ -81,7 +81,8 @@ export default class extends Controller {
 
   trapFocus(event) {
     const selector = 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
-    const inputs = [...this.drawerTarget.querySelectorAll(selector)].filter((node) => node.getClientRects().length)
+    const dialog = this.drawerTarget.querySelector('[role="dialog"]')
+    const inputs = [...dialog.querySelectorAll(selector)].filter((node) => node.getClientRects().length)
     if (inputs.length === 0) return
 
     const first = inputs[0]
