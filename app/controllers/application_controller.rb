@@ -16,7 +16,9 @@ class ApplicationController < ActionController::Base
   def current_organization
     return unless current_user
 
-    @current_organization ||= current_user.organizations.active_records.first
+    @current_organization ||= Organization.active_records
+                                  .where(id: current_user.organization_memberships.active.select(:organization_id))
+                                  .first
   end
 
   def available_branches
