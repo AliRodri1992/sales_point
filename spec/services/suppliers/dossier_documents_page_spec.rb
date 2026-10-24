@@ -12,7 +12,7 @@ RSpec.describe Suppliers::DossierDocumentsPage do
       content_type: 'text/plain'
     )
     supplier.supplier_documents.create!(
-      attachment: supplier.documents.attachments.last, category:, status:, description:
+      attachment: supplier.documents.attachments.order(:id).last!, category:, status:, description:
     )
   end
 
