@@ -47,6 +47,24 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     expect(foreign.reload.deleted_at).to be_nil
   end
 
+  it 'prevents editing and bulk restoration for an inactive supplier' do
+    exception = supplier.supplier_schedule_exceptions.create!(
+      starts_on: Date.current, reason: 'holiday'
+    )
+    exception.update!(deleted_at: Time.current)
+    supplier.update!(status: :inactive)
+
+    patch bulk_update_admin_supplier_schedule_exceptions_path(supplier),
+          params: { exception_ids: [exception.id], operation: 'restore' }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(exception.reload.deleted_at).to be_present
+
+    patch admin_supplier_schedule_exception_path(supplier, exception),
+          params: { supplier_schedule_exception: { reason: 'suspension' } }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(exception.reload.reason).to eq('holiday')
+  end
+
   it 'updates an exception scoped to a specific recurring supplier schedule' do
     branch = create(:branch, organization:)
     schedule = supplier.supplier_schedules.create!(

@@ -72,6 +72,22 @@ RSpec.describe 'Admin supplier schedules', type: :request do
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
   end
 
+  it 'rejects modifications and restoration when the supplier is inactive' do
+    schedule = supplier.supplier_schedules.create!(
+      branch:, kind: 'delivery', weekday: 2, starts_at: '10:00', ends_at: '12:00'
+    )
+    supplier.update!(status: :inactive)
+    patch admin_supplier_schedule_path(supplier, schedule),
+          params: { supplier_schedule: schedule_attributes(starts_at: '13:00') }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(schedule.reload.starts_at.strftime('%H:%M')).to eq('10:00')
+
+    schedule.update!(deleted_at: Time.current)
+    patch restore_admin_supplier_schedule_path(supplier, schedule)
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(schedule.reload.deleted_at).to be_present
+  end
+
   it 'updates an existing delivery schedule' do
     schedule = SupplierSchedule.create!(supplier:, branch:, kind: 'delivery',
                                         weekday: 2, starts_at: '10:00', ends_at: '12:00')

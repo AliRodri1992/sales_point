@@ -46,6 +46,8 @@ module Admin
     end
 
     def restore
+      return reject_unavailable_supplier unless @supplier.active?
+
       @event = @supplier.supplier_events.with_deleted.where.not(deleted_at: nil).find(params[:id])
       return redirect_success(:restored) if @event.update(deleted_at: nil)
 

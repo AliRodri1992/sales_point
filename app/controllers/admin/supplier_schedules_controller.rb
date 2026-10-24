@@ -8,6 +8,7 @@ module Admin
     before_action :authenticate_user!
     before_action :set_supplier
     before_action :set_schedule, only: %i[edit update destroy]
+    before_action :require_available_supplier, only: %i[new create edit update restore]
 
     def index
       @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
@@ -25,11 +26,6 @@ module Admin
     end
 
     def create
-      unless @supplier.active?
-        return redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
-                           alert: t('admin.supplier_calendar.supplier_unavailable')
-      end
-
       @schedule = @supplier.supplier_schedules.new(schedule_params)
       if save_schedule
         notify_schedule('schedule_created')
@@ -68,6 +64,13 @@ module Admin
     end
 
     private
+
+    def require_available_supplier
+      return if @supplier.active?
+
+      redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
+                  alert: t('admin.supplier_calendar.supplier_unavailable')
+    end
 
     def schedule_destination
       return admin_supplier_path(@supplier, tab: 'schedules') if params[:return_to] == 'dossier'

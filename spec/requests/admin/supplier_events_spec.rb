@@ -77,6 +77,19 @@ RSpec.describe 'Supplier dated events', type: :request do
     expect(supplier.supplier_events.count).to be_zero
   end
 
+  it 'does not restore an archived event while the supplier is inactive' do
+    event = supplier.supplier_events.create!(
+      branch:, kind: 'visit', title: 'Historical visit', starts_at: 1.day.from_now
+    )
+    event.update!(deleted_at: Time.current)
+    supplier.update!(status: :inactive)
+
+    patch restore_admin_supplier_event_path(supplier, event)
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(event.reload.deleted_at).to be_present
+  end
+
   it 'creates a dated event and displays it in the dossier calendar' do
     expect do
       post admin_supplier_events_path(supplier), params: { supplier_event: attributes }

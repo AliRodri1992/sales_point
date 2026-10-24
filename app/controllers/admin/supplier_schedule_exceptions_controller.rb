@@ -7,6 +7,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
+    before_action :require_available_supplier, only: %i[edit update create]
 
     def edit
       @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
@@ -15,11 +16,6 @@ module Admin
     end
 
     def create
-      unless @supplier.active?
-        return redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
-                           alert: t('admin.supplier_calendar.supplier_unavailable')
-      end
-
       exception = @supplier.supplier_schedule_exceptions.new(exception_params)
       exception.created_by = current_user
       if exception.save
@@ -53,6 +49,8 @@ module Admin
       return head :bad_request unless valid_bulk_request?(ids)
 
       restoring = params[:operation] == 'restore'
+      return require_available_supplier if restoring && !@supplier.active?
+
       @supplier.with_lock { apply_bulk_update!(ids, restoring:) }
       redirect_bulk_success(restoring)
     rescue ActiveRecord::RecordInvalid => e
@@ -61,6 +59,13 @@ module Admin
     end
 
     private
+
+    def require_available_supplier
+      return if @supplier.active?
+
+      redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
+                  alert: t('admin.supplier_calendar.supplier_unavailable')
+    end
 
     def redirect_bulk_success(restoring)
       redirect_to admin_supplier_schedules_path(@supplier, archived: restoring ? '1' : nil),
