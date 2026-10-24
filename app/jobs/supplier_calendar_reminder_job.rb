@@ -6,7 +6,8 @@ class SupplierCalendarReminderJob < ApplicationJob
   def perform(today = nil)
     Organization.active_records.find_each do |organization|
       zone = organization.organization_settings.active_records.first&.timezone
-      Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone) do
+      timezone = ActiveSupport::TimeZone[zone] if zone.present?
+      Time.use_zone(timezone || Time.zone) do
         date = (today || Date.current) + 1
         remind_events(organization, date)
         remind_schedules(organization, date)
