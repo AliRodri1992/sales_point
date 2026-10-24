@@ -31,6 +31,16 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
     find('.deltin-launcher').click
     expect(page).to have_css('#deltin-panel:not([hidden])', visible: true)
     expect(find('.deltin-launcher', visible: :all)['aria-expanded']).to eq('true')
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const controller = window.Stimulus.getControllerForElementAndIdentifier(
+          document.querySelector('.deltin-shell'), 'deltin-assistant'
+        )
+        return typeof controller.context === 'object' &&
+          Boolean(controller.context?.scope?.targets) &&
+          typeof controller.moduleContext === 'string'
+      })()
+    JS
 
     find('[data-deltin-assistant-target="closeButton"]').click
     expect(page).to have_css('#deltin-panel[hidden]', visible: :all)
@@ -77,8 +87,8 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
       })()
     JS
 
-    expect(positions.fetch('puppy')).to eq(56)
-    expect(positions.fetch('people')).to eq(56)
-    expect(positions.fetch('gap').abs).to be >= 16
+    expect(positions.fetch('puppy')).to eq(76)
+    expect(positions.fetch('people')).to eq(76)
+    expect(positions.fetch('gap')).to eq(32)
   end
 end

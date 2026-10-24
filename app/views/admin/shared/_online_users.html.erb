@@ -2,7 +2,7 @@
   id="onlineUsersPanel"
   data-controller="online-users"
   data-online-users-current-user-id-value="<%= current_user.id %>"
-  class="panel-hidden fixed bottom-24 right-28 z-50 w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+  class="panel-hidden fixed bottom-[112px] right-4 z-50 sm:right-[128px] w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
 >
   <div class="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-4 py-3">
     <div class="flex items-center gap-3">
@@ -39,7 +39,7 @@
 
 <div
   id="conversationPanel"
-  class="panel-hidden fixed bottom-24 right-24 z-50 w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+  class="panel-hidden fixed bottom-[112px] right-4 z-50 sm:right-[128px] w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
 >
   <turbo-frame id="conversation_panel">
     <div class="flex h-80 items-center justify-center p-8">
@@ -53,7 +53,7 @@
 <button
   id="onlineUsersButton"
   type="button"
-  class="fixed bottom-6 right-28 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg"
+  class="fixed bottom-5 right-[128px] z-40 flex h-[76px] w-[76px] items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg"
   aria-label="<%= t('admin.shared.online_users.open') %>"
 >
   <%= icon("users", variant: :solid, class: "size-8") %>
