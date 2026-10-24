@@ -94,4 +94,42 @@ RSpec.describe AccountsPayable::SatStatusVerifier do
     expect(invoice.sat_response_code).to eq('S - Correcto')
     expect(invoice.sat_verified_at).to be_present
   end
+
+  it 'rejects a non-success response from the SAT status endpoint' do
+    unavailable = Net::HTTPServiceUnavailable.new('1.1', '503', 'Service Unavailable')
+    allow(http).to receive(:request).and_return(unavailable)
+
+    expect { described_class.call(invoice:) }
+      .to raise_error(ArgumentError, /SAT service is unavailable/)
+  end
+
+  it 'requires attached CFDI XML before contacting SAT' do
+    invoice.xml_document.purge
+
+    expect { described_class.call(invoice:) }
+      .to raise_error(ArgumentError, 'Missing CFDI XML')
+  end
+
+  it 'rejects a response with no CFDI status' do
+    allow(response).to receive(:body).and_return(
+      '<ConsultaResponse><CodigoEstatus>S - Correcto</CodigoEstatus></ConsultaResponse>'
+    )
+
+    expect { described_class.call(invoice:) }
+      .to raise_error(ArgumentError, 'Invalid SAT response')
+  end
+
+  it 'rejects an empty SAT response body' do
+    allow(response).to receive(:body).and_return('')
+
+    expect { described_class.call(invoice:) }
+      .to raise_error(ArgumentError, 'Invalid SAT response')
+  end
+
+  it 'rejects invalid SAT XML rather than interpreting it as a valid status' do
+    allow(response).to receive(:body).and_return('<ConsultaResponse>')
+
+    expect { described_class.call(invoice:) }
+      .to raise_error(ArgumentError, 'Invalid SAT response')
+  end
 end

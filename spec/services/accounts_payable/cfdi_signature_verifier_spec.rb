@@ -154,4 +154,23 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml:) }
       .to raise_error(ArgumentError, /signature verification failed/)
   end
+
+  it 'rejects a CFDI with a missing issuance date' do
+    xml = signed_xml(seal: 'AAAA').sub(/Fecha="[^"]+"/, '')
+
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /certificate is not valid at issue date/)
+  end
+
+  it 'rejects a cryptographically valid certificate without a trusted issuer' do
+    store = instance_double(OpenSSL::X509::Store)
+    allow(OpenSSL::X509::Store).to receive(:new).and_return(store)
+    allow(store).to receive(:add_file).with(@trust_file.path)
+    allow(store).to receive(:time=)
+    allow(store).to receive(:verify).and_return(false)
+    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest.new('SHA256'), canonical_string))
+
+    expect { described_class.call(xml: signed_xml(seal:)) }
+      .to raise_error(ArgumentError, /CFDI certificate is not trusted/)
+  end
 end
