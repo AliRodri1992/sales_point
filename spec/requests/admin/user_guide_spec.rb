@@ -68,7 +68,6 @@ RSpec.describe 'Delta POS user guide', type: :request do
     end
   end
 
-
   it 'provides a distinct local SVG for every step-by-step procedure' do
     get admin_guide_path
 
