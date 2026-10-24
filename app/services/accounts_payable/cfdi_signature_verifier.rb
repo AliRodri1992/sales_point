@@ -55,7 +55,7 @@ module AccountsPayable
 
     def self.validate_supported_complements!(document)
       unknown = document.xpath('//*').find do |element|
-        !SUPPORTED_NAMESPACES.include?(element.namespace&.href)
+        SUPPORTED_NAMESPACES.exclude?(element.namespace&.href)
       end
       return unless unknown
 
