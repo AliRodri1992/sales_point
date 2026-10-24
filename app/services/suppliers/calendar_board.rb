@@ -9,6 +9,8 @@ module Suppliers
 
     def initialize(supplier:, **options)
       @supplier = supplier
+      settings = supplier.organization.organization_settings.active_records
+      @timezone = ActiveSupport::TimeZone[settings.pick(:timezone)] || Time.zone
       setup_navigation(options)
       setup_filters(options)
       setup_selection(options)
@@ -102,7 +104,7 @@ module Suppliers
     end
 
     def event_range
-      [(end_date + 1).in_time_zone.beginning_of_day, start_date.in_time_zone.beginning_of_day]
+      [(end_date + 1).in_time_zone(@timezone).beginning_of_day, start_date.in_time_zone(@timezone).beginning_of_day]
     end
 
     def load_exceptions
@@ -128,7 +130,7 @@ module Suppliers
         next unless event.occurs_on?(date)
 
         { type: :event, kind: event.kind, title: event.title, branch: event.branch.name,
-          time: event.all_day? ? '--:--' : event.starts_at.in_time_zone.strftime('%H:%M'), record: event }
+          time: event.all_day? ? '--:--' : event.starts_at.in_time_zone(@timezone).strftime('%H:%M'), record: event }
       end
     end
 

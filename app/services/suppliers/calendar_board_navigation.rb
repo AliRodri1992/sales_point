@@ -23,13 +23,17 @@ module Suppliers
     end
 
     def default_focus
-      month == Date.current.beginning_of_month ? Date.current : month
+      month == local_today.beginning_of_month ? local_today : month
     end
 
     def parse_month(value)
-      return Date.current.beginning_of_month unless value.to_s.match?(/\A\d{4}-\d{2}\z/)
+      return local_today.beginning_of_month unless value.to_s.match?(/\A\d{4}-\d{2}\z/)
 
-      valid_date("#{value}-01") || Date.current.beginning_of_month
+      valid_date("#{value}-01") || local_today.beginning_of_month
+    end
+
+    def local_today
+      Time.current.in_time_zone(@timezone).to_date
     end
 
     def parse_branch(value)

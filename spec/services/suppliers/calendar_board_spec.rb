@@ -84,4 +84,18 @@ RSpec.describe Suppliers::CalendarBoard do
     expect(board.view).to eq('month')
     expect(board.month).to eq(Date.current.beginning_of_month)
   end
+
+  it 'includes UTC-next-day events on the correct local calendar day' do
+    create(:organization_setting, organization:, timezone: 'America/Tijuana')
+    supplier.supplier_events.create!(
+      title: 'Evening local delivery', branch:, kind: 'delivery',
+      starts_at: Time.utc(2026, 11, 1, 5), ends_at: Time.utc(2026, 11, 1, 6)
+    )
+
+    board = described_class.new(supplier:, view: 'day', day: '2026-10-31')
+
+    expect(board.items_on(Date.new(2026, 10, 31)).pluck(:title))
+      .to eq(['Evening local delivery'])
+    expect(board.items_on(Date.new(2026, 10, 31)).pluck(:time)).to eq(['22:00'])
+  end
 end
