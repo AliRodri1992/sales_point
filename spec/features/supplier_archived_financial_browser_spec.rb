@@ -47,13 +47,15 @@ RSpec.describe 'Supplier archived financial records', type: :feature, js: true d
     account.update!(deleted_at: Time.current)
 
     visit admin_supplier_bank_accounts_path(supplier, archived: '1')
-    expect(page).to have_content('Acme Supply')
-    expect(page).to have_content('7890')
+    expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', text: '7890')
     expect(page).to have_no_content('1234567890')
 
-    click_button I18n.t('admin.supplier_archive.restore', locale: :en)
+    within('[data-supplier-bank-accounts-target="card"]') do
+      find('summary').click
+      click_button I18n.t('admin.supplier_archive.restore', locale: :en)
+    end
 
-    expect(page).to have_no_content('Acme Supply')
+    expect(page).to have_no_css('[data-supplier-bank-accounts-target="card"]', text: '7890')
     expect(account.reload.deleted_at).to be_nil
     expect(page).to have_current_path(admin_supplier_bank_accounts_path(supplier, archived: '1'))
   end

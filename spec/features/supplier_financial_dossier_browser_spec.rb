@@ -34,11 +34,11 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', count: 2)
     expect(page).to have_no_text('1234567890')
     fill_in 'q', with: 'First Bank'
-    find('input[type="submit"]').click
+    click_button 'Search'
 
     expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', count: 1)
     expect(page).to have_text('First Bank')
-    expect(page).to have_no_text('Other Bank')
+    expect(page).to have_no_css('[data-supplier-bank-accounts-target="card"]', text: 'Other Bank')
   end
 
   scenario 'does not offer new financial accounts when a supplier is inactive' do

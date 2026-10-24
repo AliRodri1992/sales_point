@@ -50,7 +50,7 @@ class SupplierBankAccount < ApplicationRecord
     values = [card_last_four, card_expiration_month, card_expiration_year]
     return if values.all?(&:blank?)
 
-    errors.add(:card_last_four, :invalid) unless card_last_four.to_s.match?(/\\A\\d{4}\\z/)
+    errors.add(:card_last_four, :invalid) unless card_last_four.to_s.match?(/\A\d{4}\z/)
     errors.add(:card_expiration_month, :invalid) unless (1..12).cover?(card_expiration_month.to_i)
     errors.add(:card_expiration_year, :invalid) unless (2000..2100).cover?(card_expiration_year.to_i)
   end
