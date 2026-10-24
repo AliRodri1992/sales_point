@@ -23,7 +23,9 @@ module Suppliers
     end
 
     def from
-      total_count.zero? ? 0 : ((page - 1) * PAGE_SIZE + 1)
+      return 0 if total_count.zero?
+
+      (page - 1) * PAGE_SIZE + 1
     end
 
     def to
