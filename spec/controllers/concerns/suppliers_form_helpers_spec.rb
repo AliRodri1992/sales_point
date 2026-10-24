@@ -81,7 +81,7 @@ RSpec.describe SuppliersFormHelpers do
                         :addresses, creating: false)).to be(true)
     supplier.addresses.create!(
       purpose: 'fiscal', primary: true, country: create(:country, iso_alpha2: 'MX'),
-      street: 'Existing fiscal address', city: 'Mexico City', state: 'CDMX',
+      street: 'Existing fiscal address', exterior_number: '10', city: 'Mexico City', state: 'CDMX',
       neighborhood: 'Centro', postal_code: '06000'
     )
     expect(handler.send(:valid_primary_records?,
