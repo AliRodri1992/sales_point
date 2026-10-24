@@ -240,4 +240,24 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
         .to raise_error(ArgumentError, /Nested SAT stylesheet dependency is not allowed/)
     end
   end
+
+  it 'rejects a CFDI with no Version attribute' do
+    xml = signed_xml(seal: 'AAAA').sub('Version="4.0"', '')
+
+    expect { described_class.call(xml:) }.to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
+
+  it 'rejects a CFDI containing XML elements without a known fiscal namespace' do
+    xml = signed_xml(seal: 'AAAA').sub('/>', '><Unknown/></cfdi:Comprobante>')
+
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Unsupported CFDI complement/)
+  end
+
+  it 'rejects an empty parsed XML document before processing any certificate' do
+    allow(Nokogiri).to receive(:XML).and_return(Nokogiri::XML::Document.new)
+
+    expect { described_class.send(:parse_cfdi, '<ignored/>') }
+      .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
+  end
 end
