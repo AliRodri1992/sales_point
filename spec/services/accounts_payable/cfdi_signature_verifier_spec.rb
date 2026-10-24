@@ -2,6 +2,8 @@
 
 require 'rails_helper'
 require 'tempfile'
+require 'tmpdir'
+require 'fileutils'
 
 RSpec.describe AccountsPayable::CfdiSignatureVerifier do
   let(:private_key) { OpenSSL::PKey::RSA.generate(2048) }
@@ -195,5 +197,47 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     compiled = described_class.offline_stylesheet
     expect(compiled).not_to include('<xsl:include')
     expect { Nokogiri::XSLT(compiled) }.not_to raise_error
+  end
+
+  it 'blocks local include paths that escape the trusted SAT directory' do
+    @stylesheet_file.rewind
+    @stylesheet_file.truncate(0)
+    @stylesheet_file.write('<xsl:include href="../untrusted.xslt"/>')
+    @stylesheet_file.flush
+
+    expect { described_class.offline_stylesheet }
+      .to raise_error(ArgumentError, /Unsafe CFDI stylesheet dependency/)
+  end
+
+  it 'rejects missing offline SAT stylesheet dependencies' do
+    @stylesheet_file.rewind
+    @stylesheet_file.truncate(0)
+    @stylesheet_file.write('<xsl:include href="xslt/missing.xslt"/>')
+    @stylesheet_file.flush
+
+    expect { described_class.offline_stylesheet }
+      .to raise_error(ArgumentError, /Missing offline SAT stylesheet dependency/)
+  end
+
+  it 'rejects XSLT fragments that are malformed or contain nested includes' do
+    Dir.mktmpdir('sat-cfdi') do |dir|
+      root = Pathname.new(dir).join('root.xslt')
+      template = Pathname.new(dir).join('xslt/dependency.xslt')
+      FileUtils.mkdir_p(template.dirname)
+      File.write(root, '<xsl:include href="xslt/dependency.xslt"/>')
+      stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', root)
+
+      File.write(template, 'not a stylesheet')
+      expect { described_class.offline_stylesheet }
+        .to raise_error(ArgumentError, /Invalid offline SAT stylesheet dependency/)
+
+      File.write(template, <<~XSLT)
+        <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+          <xsl:include href="https://untrusted.example/other.xslt"/>
+        </xsl:stylesheet>
+      XSLT
+      expect { described_class.offline_stylesheet }
+        .to raise_error(ArgumentError, /Nested SAT stylesheet dependency is not allowed/)
+    end
   end
 end
