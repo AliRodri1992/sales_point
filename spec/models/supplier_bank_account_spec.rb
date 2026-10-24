@@ -49,4 +49,25 @@ RSpec.describe SupplierBankAccount do
 
     expect(account).not_to be_valid
   end
+
+  it 'rejects creating bank accounts for inactive suppliers' do
+    supplier.update!(status: :inactive)
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
+      bank_name: 'Banco Demo', account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:supplier]).to be_present
+  end
+
+  it 'allows historical bank accounts to be edited after supplier deactivation' do
+    account = described_class.create!(
+      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
+      bank_name: 'Banco Demo', account_number: '1234567890', currency_code: 'MXN'
+    )
+    supplier.update!(status: :inactive)
+
+    expect(account.update(holder_name: 'Proveedor histórico')).to be(true)
+  end
 end
