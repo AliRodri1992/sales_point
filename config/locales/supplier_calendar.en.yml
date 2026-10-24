@@ -37,6 +37,12 @@ en:
       selected_day: Selected day
       archived_events: Recently deleted events
       restore: Restore
+      all_day: "All day"
+      status: "Status"
+      statuses:
+        scheduled: "Scheduled"
+        completed: "Completed"
+        cancelled: "Cancelled"
       event_details: Upcoming events
       exception_note: Exception
       fields:

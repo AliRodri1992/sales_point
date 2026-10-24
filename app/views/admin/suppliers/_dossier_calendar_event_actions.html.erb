@@ -5,7 +5,7 @@
                 event_title: event.title, event_kind: event.kind, event_branch: event.branch_id,
                 event_start: event.starts_at.in_time_zone.strftime('%Y-%m-%dT%H:%M'),
                 event_end: event.ends_at&.in_time_zone&.strftime('%Y-%m-%dT%H:%M'),
-                event_notes: event.notes
+                event_notes: event.notes, event_all_day: event.all_day?, event_status: event.status
               }, class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
   <%= button_to t('admin.supplier_calendar.delete'), admin_supplier_event_path(supplier, event),
                 method: :delete, form: { data: { turbo_confirm: t('admin.supplier_calendar.delete_confirm') } },

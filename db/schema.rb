@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_23_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1350,6 +1350,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_010000) do
     t.bigint "created_by_id"
     t.string "title", limit: 150, null: false
     t.string "kind", null: false
+    t.boolean "all_day", default: false, null: false
+    t.string "status", default: "scheduled", null: false
     t.datetime "starts_at", precision: nil, null: false
     t.datetime "ends_at", precision: nil
     t.text "notes"
@@ -1360,6 +1362,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_010000) do
     t.index ["created_by_id"], name: "index_supplier_events_on_created_by_id"
     t.index ["deleted_at"], name: "index_supplier_events_on_deleted_at"
     t.index ["supplier_id", "starts_at"], name: "idx_supplier_events_by_date"
+    t.index ["supplier_id", "status", "starts_at"], name: "idx_supplier_events_status_date"
     t.index ["supplier_id"], name: "index_supplier_events_on_supplier_id"
   end
 
@@ -1694,6 +1697,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_23_010000) do
   add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
   add_foreign_key "supplier_documents", "users", column: "updated_by_id"
   add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
+  add_check_constraint "supplier_events", "ends_at IS NULL OR ends_at > starts_at", name: "chk_supplier_event_period"
+  add_check_constraint "supplier_events", "status::text = ANY (ARRAY['scheduled'::character varying, 'completed'::character varying, 'cancelled'::character varying]::text[])", name: "chk_supplier_event_status"
   add_foreign_key "supplier_events", "branches"
   add_foreign_key "supplier_events", "suppliers"
   add_foreign_key "supplier_events", "users", column: "created_by_id"

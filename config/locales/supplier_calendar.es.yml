@@ -37,6 +37,12 @@ es:
       selected_day: Actividades del día
       archived_events: Eventos eliminados recientemente
       restore: Recuperar
+      all_day: "Todo el día"
+      status: "Estado"
+      statuses:
+        scheduled: "Programado"
+        completed: "Completado"
+        cancelled: "Cancelado"
       event_details: Próximos eventos
       exception_note: Excepción
       fields:

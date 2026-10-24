@@ -41,6 +41,8 @@ export default class extends Controller {
     this.fill("starts_at", values.eventStart)
     this.fill("ends_at", values.eventEnd)
     this.fill("notes", values.eventNotes)
+    this.fill("status", values.eventStatus)
+    this.fill("all_day", values.eventAllDay === "true")
     this.headingTarget.textContent = this.headingTarget.dataset.editText
     this.submitTarget.value = this.submitTarget.dataset.editText
     this.showDrawer()
@@ -48,7 +50,10 @@ export default class extends Controller {
 
   fill(field, value) {
     const input = this.formTarget.elements.namedItem(`supplier_event[${field}]`)
-    if (input) input.value = value || ""
+    if (input) {
+      if (input.type === "checkbox") input.checked = Boolean(value)
+      else input.value = value || ""
+    }
   }
 
   showDrawer() {

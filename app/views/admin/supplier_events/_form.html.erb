@@ -26,6 +26,15 @@
       <%= error_message_for(@event, :ends_at) %>
     </div>
   </div>
+  <div class="flex items-center gap-3">
+    <%= form.check_box :all_day, class: 'size-4 rounded border-slate-300' %>
+    <%= form.label :all_day, t('admin.supplier_calendar.all_day') %>
+  </div>
+  <div>
+    <%= form.label :status, t('admin.supplier_calendar.status') %>
+    <%= form.select :status, SupplierEvent::STATUSES.map { |value| [t("admin.supplier_calendar.statuses.#{value}"), value] },
+                    {}, class: 'w-full rounded-xl border border-slate-200 p-3' %>
+  </div>
   <div>
     <%= form.label :notes, t('admin.supplier_dossier.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
     <%= form.text_area :notes, rows: 4, maxlength: 1000, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>

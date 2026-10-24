@@ -88,8 +88,11 @@ module Suppliers
     end
 
     def load_dated_events
-      range = start_date.in_time_zone.beginning_of_day...(@end_date + 1).in_time_zone.beginning_of_day
-      scope = @supplier.supplier_events.not_deleted.includes(:branch).where(starts_at: range).order(:starts_at)
+      from = start_date.in_time_zone.beginning_of_day
+      until_date = (end_date + 1).in_time_zone.beginning_of_day
+      scope = @supplier.supplier_events.not_deleted.includes(:branch)
+                       .where('starts_at < ? AND (ends_at IS NULL OR ends_at > ?)', until_date, from)
+                       .order(:starts_at)
       scope = scope.where(branch_id:) if branch_id
       scope = scope.where(kind:) if kind
       @events = scope.to_a
@@ -115,10 +118,10 @@ module Suppliers
 
     def dated_items(date)
       events.filter_map do |event|
-        next unless event.starts_at.in_time_zone.to_date == date
+        next unless event.occurs_on?(date)
 
         { type: :event, kind: event.kind, title: event.title, branch: event.branch.name,
-          time: event.starts_at.in_time_zone.strftime('%H:%M'), record: event }
+          time: event.all_day? ? '--:--' : event.starts_at.in_time_zone.strftime('%H:%M'), record: event }
       end
     end
 

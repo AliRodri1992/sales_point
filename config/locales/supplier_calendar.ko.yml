@@ -37,6 +37,12 @@ ko:
       selected_day: 선택한 날짜
       archived_events: 최근 삭제된 이벤트
       restore: 복구
+      all_day: "종일"
+      status: "상태"
+      statuses:
+        scheduled: "예정"
+        completed: "완료"
+        cancelled: "취소"
       event_details: 다가오는 이벤트
       exception_note: 예외
       fields:

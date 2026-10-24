@@ -82,7 +82,7 @@ module Admin
     end
 
     def event_params
-      params.expect(supplier_event: %i[title kind branch_id starts_at ends_at notes])
+      params.expect(supplier_event: %i[title kind branch_id starts_at ends_at notes all_day status])
     end
   end
 end
