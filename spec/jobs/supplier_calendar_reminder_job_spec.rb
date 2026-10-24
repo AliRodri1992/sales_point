@@ -88,4 +88,28 @@ RSpec.describe SupplierCalendarReminderJob do
     expect { described_class.perform_now(Date.current) }
       .not_to change(SupplierEventDelivery, :count)
   end
+
+  it 'evaluates upcoming events using the timezone configured for the organization' do
+    create(:organization_setting, organization:, timezone: 'America/Tijuana')
+    local_date = Date.new(2026, 10, 25)
+    zone = ActiveSupport::TimeZone['America/Tijuana']
+    supplier.supplier_events.create!(
+      title: 'Local morning visit', kind: 'visit', status: 'scheduled', branch:,
+      starts_at: zone.local(2026, 10, 25, 9)
+    )
+
+    expect { described_class.perform_now(local_date - 1) }
+      .to change(SupplierEventDelivery, :count).by(1)
+  end
+
+  it 'skips activities without an assigned responsible user' do
+    supplier.update!(responsible_user: nil)
+    supplier.supplier_events.create!(
+      title: 'Unassigned visit', kind: 'visit', status: 'scheduled', branch:,
+      starts_at: tomorrow.in_time_zone.change(hour: 9)
+    )
+
+    expect { described_class.perform_now(Date.current) }
+      .not_to change(SupplierEventDelivery, :count)
+  end
 end
