@@ -57,4 +57,23 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-calendar-target="drawer"][aria-hidden="true"]', visible: :all)
     expect(page.evaluate_script('document.activeElement.dataset.action')).to eq('supplier-calendar#open')
   end
+
+  scenario 'shows an all-day multi-day visit on each affected daily calendar' do
+    supplier.supplier_events.create!(
+      branch:, title: 'Multi-day conference', kind: 'visit', status: 'scheduled',
+      all_day: true,
+      starts_at: Time.utc(2026, 10, 22, 12),
+      ends_at: Time.utc(2026, 10, 25, 0)
+    )
+
+    (22..24).each do |day|
+      visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
+                                calendar_day: format('2026-10-%02d', day))
+      expect(page).to have_css('[data-calendar-day-details]', text: 'Multi-day conference')
+    end
+
+    visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
+                              calendar_day: '2026-10-25')
+    expect(page).to have_no_css('[data-calendar-day-details]', text: 'Multi-day conference')
+  end
 end
