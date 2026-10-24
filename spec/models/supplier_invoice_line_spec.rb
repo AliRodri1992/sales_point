@@ -31,7 +31,7 @@ RSpec.describe SupplierInvoiceLine do
 
   it 'allows draft deletion but aborts destruction after posting' do
     line = described_class.new(supplier_invoice: invoice)
-    expect { line.send(:invoice_must_be_draft_for_destroy) }.not_to change { line.errors.count }
+    expect { line.send(:invoice_must_be_draft_for_destroy) }.not_to(change { line.errors.count })
 
     invoice.status = 'posted'
     outcome = catch(:abort) do
