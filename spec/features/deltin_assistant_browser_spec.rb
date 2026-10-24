@@ -54,6 +54,18 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
                               href: '/admin/guide#guide-products')
   end
 
+  scenario 'closes from the overlay and opens contextual help from a quick question' do
+    visit admin_products_path
+    find('.deltin-launcher').click
+    find('[data-action="click->deltin-assistant#quickAsk"]').first.click
+
+    expect(page).to have_css('[data-deltin-assistant-target="result"]:not([hidden])')
+    find('#deltin-panel > button[data-action="click->deltin-assistant#close"]').click
+
+    expect(page).to have_css('#deltin-panel[hidden]', visible: :all)
+    expect(find('.deltin-launcher', visible: :all)['aria-expanded']).to eq('false')
+  end
+
   scenario 'keeps the assistant and online users buttons equally sized and separated' do
     visit admin_dashboard_path
 

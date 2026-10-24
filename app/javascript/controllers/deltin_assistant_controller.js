@@ -23,6 +23,29 @@ export default class extends Controller {
     }
     this.launcherTarget.addEventListener("click", this.boundLauncherClick)
     this.element.dataset.assistantReady = "true"
+    // Delegate the panel controls at capture time. These controls must remain
+    // operable when Turbo updates the drawer or Stimulus action bindings race.
+    this.boundAssistantClick = (event) => {
+      const control = event.target.closest('[data-action^="click->deltin-assistant#"]')
+      if (!control || !this.element.contains(control)) return
+
+      const action = control.dataset.action
+      if (!["click->deltin-assistant#close", "click->deltin-assistant#quickAsk",
+        "click->deltin-assistant#speak"].includes(action)) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      if (action.endsWith("#close")) this.close()
+      if (action.endsWith("#quickAsk")) this.quickAsk({ currentTarget: control })
+      if (action.endsWith("#speak")) this.speak()
+    }
+    this.element.addEventListener("click", this.boundAssistantClick, true)
+    this.boundAssistantSubmit = (event) => {
+      if (!event.target.matches('form[data-action="submit->deltin-assistant#ask"]')) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
+      this.ask(event)
+    }
+    this.element.addEventListener("submit", this.boundAssistantSubmit, true)
     this.boundEscape = (event) => {
       if (this.panelTarget.hidden) return
       if (event.key === "Escape") this.close()
@@ -37,6 +60,8 @@ export default class extends Controller {
 
   disconnect() {
     this.launcherTarget.removeEventListener("click", this.boundLauncherClick)
+    this.element.removeEventListener("click", this.boundAssistantClick, true)
+    this.element.removeEventListener("submit", this.boundAssistantSubmit, true)
     delete this.element.dataset.assistantReady
     document.removeEventListener("keydown", this.boundEscape)
     document.removeEventListener("turbo:before-cache", this.boundTurbo)
