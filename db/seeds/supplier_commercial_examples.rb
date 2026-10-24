@@ -29,6 +29,8 @@ module SupplierCommercialExamples
       return if Rails.env.production?
 
       demo_suppliers(demo_organization).each do |supplier|
+        next unless supplier.active?
+
         # This includes archived records: an intentionally deleted bank account
         # must not be recreated or replaced with a different account number.
         next if supplier.supplier_bank_accounts.exists?
