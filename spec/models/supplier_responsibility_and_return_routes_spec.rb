@@ -11,17 +11,18 @@ RSpec.describe 'Supplier contact ownership and return routing', type: :model do
     end
 
     it 'rejects a responsible user without active organization membership' do
-      supplier = described_class.new(responsible_user_id: 5)
-      allow(supplier).to receive(:responsible_user).and_return(double)
-      allow(supplier).to receive(:organization).and_return(double(users: double(exists?: false)))
+      organization = create(:organization)
+      responsible = create(:user)
+      supplier = described_class.new(organization:, responsible_user: responsible)
       supplier.send(:responsible_user_in_organization)
       expect(supplier.errors[:responsible_user]).not_to be_empty
     end
 
     it 'accepts an assigned responsible user in the organization' do
-      supplier = described_class.new(responsible_user_id: 5)
-      allow(supplier).to receive(:responsible_user).and_return(double)
-      allow(supplier).to receive(:organization).and_return(double(users: double(exists?: true)))
+      organization = create(:organization)
+      responsible = create(:user)
+      create(:organization_membership, organization:, user: responsible)
+      supplier = described_class.new(organization:, responsible_user: responsible)
       supplier.send(:responsible_user_in_organization)
       expect(supplier.errors[:responsible_user]).to be_empty
     end
