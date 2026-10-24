@@ -33,7 +33,8 @@ RSpec.describe 'Supplier dated events', type: :request do
     event = supplier.supplier_events.last
     expect(event).to have_attributes(all_day: true, status: 'completed')
     expect(event.occurs_on?(Date.new(2026, 10, 24))).to be(true)
-    expect(event.occurs_on?(Date.new(2026, 10, 26))).to be(false)
+    expect(event.occurs_on?(Date.new(2026, 10, 26))).to be(true)
+    expect(event.occurs_on?(Date.new(2026, 10, 27))).to be(false)
   end
 
   it 'rejects an unrecognized event status' do

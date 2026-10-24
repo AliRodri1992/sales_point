@@ -12,7 +12,7 @@ RSpec.describe Suppliers::CalendarBoard do
     supplier.supplier_events.create!(
       title: 'Conference', branch:, kind: 'visit', all_day: true,
       starts_at: Time.zone.local(2026, 10, 22, 9),
-      ends_at: Time.zone.local(2026, 10, 25, 9)
+      ends_at: Time.zone.local(2026, 10, 25, 0)
     )
 
     calendar = described_class.new(supplier:, month: '2026-10')

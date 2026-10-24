@@ -22,7 +22,7 @@ class SupplierEvent < ApplicationRecord
 
   def occurs_on?(date)
     first_day = starts_at.in_time_zone.to_date
-    last_day = (ends_at ? ends_at - 1.microsecond : starts_at).in_time_zone.to_date
+    last_day = (ends_at ? ends_at - Rational(1, 1_000_000) : starts_at).in_time_zone.to_date
     date.between?(first_day, [first_day, last_day].max)
   end
 
