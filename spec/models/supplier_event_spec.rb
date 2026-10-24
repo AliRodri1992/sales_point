@@ -21,4 +21,16 @@ RSpec.describe SupplierEvent, type: :model do
     supplier.update!(status: :inactive)
     expect(event.update(title: 'Historical follow-up')).to be(true)
   end
+
+  it 'uses the organization timezone for events crossing a UTC date boundary' do
+    organization.organization_settings.active_records.update_all(timezone: 'America/Mexico_City')
+    event = described_class.create!(
+      supplier:, branch:, kind: 'visit', title: 'Night delivery',
+      starts_at: Time.utc(2026, 10, 25, 2, 0),
+      ends_at: Time.utc(2026, 10, 25, 3, 0)
+    )
+
+    expect(event.occurs_on?(Date.new(2026, 10, 24))).to be(true)
+    expect(event.occurs_on?(Date.new(2026, 10, 25))).to be(false)
+  end
 end
