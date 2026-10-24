@@ -315,8 +315,8 @@ RSpec.describe Address, type: :model do
   it 'does not discard client address fields when supplier-only normalization runs' do
     client = create(:client)
     country = create(:country, iso_alpha2: 'US')
-    address = build(:address, addressable: client, country:,
-                    postal_code: '90210', neighborhood: 'Kept neighborhood')
+    details = { postal_code: '90210', neighborhood: 'Kept neighborhood' }
+    address = build(:address, addressable: client, country:, **details)
 
     address.send(:clear_unused_supplier_fields)
 

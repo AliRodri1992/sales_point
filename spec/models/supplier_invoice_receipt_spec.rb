@@ -44,7 +44,10 @@ RSpec.describe SupplierInvoiceReceipt do
     invoice.status = 'posted'
     join.send(:invoice_must_be_draft)
     expect(join.errors[:base]).to include('Invoice is not editable')
-    expect(catch(:abort) { join.send(:invoice_must_be_draft_for_destroy); :continued })
-      .not_to eq(:continued)
+    result = catch(:abort) do
+      join.send(:invoice_must_be_draft_for_destroy)
+      :continued
+    end
+    expect(result).not_to eq(:continued)
   end
 end
