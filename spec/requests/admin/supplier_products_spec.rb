@@ -32,7 +32,7 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     expect(response).to have_http_status(:ok)
     get admin_supplier_supplier_products_path(supplier, archived: '1')
     expect(response).to have_http_status(:ok)
-    expect(document.text).to include(product.name)
+    expect(Nokogiri::HTML(response.body).text).to include(product.name)
 
     patch restore_admin_supplier_supplier_product_path(supplier, offer)
     expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier, archived: '1'))
