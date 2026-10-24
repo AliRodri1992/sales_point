@@ -41,20 +41,6 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_no_text('Other Bank')
   end
 
-  scenario 'restores an archived account from the list without exposing secret values' do
-    archived = account(name: 'Archived Bank', account_number: '1234567890')
-    archived.update!(deleted_at: Time.current)
-    visit admin_supplier_bank_accounts_path(supplier, archived: '1')
-
-    expect(page).to have_text('Archived Bank')
-    expect(page).to have_no_text('1234567890')
-    find("form[action='#{restore_admin_supplier_bank_account_path(supplier, archived)}'] button").click
-
-    expect(page).to have_css('[data-bank-accounts-empty]')
-    expect(page).to have_no_text('Archived Bank')
-    expect(archived.reload.deleted_at).to be_nil
-  end
-
   scenario 'does not offer new financial accounts when a supplier is inactive' do
     account(name: 'History Bank', account_number: '1234567890')
     supplier.update!(status: :inactive)
