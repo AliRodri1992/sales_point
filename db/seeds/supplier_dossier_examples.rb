@@ -131,6 +131,7 @@ module SupplierDossierExamples
     end
 
     def seed_schedules(supplier, branches, count)
+      return unless supplier.active?
       return if skip_schedules?(supplier, branches, count)
 
       count.times do |index|
