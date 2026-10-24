@@ -88,7 +88,7 @@ RSpec.describe SupplierEvent, type: :model do
   it 'treats an all-day event ending at midnight as exclusive of the following day' do
     event = described_class.create!(
       supplier:, branch:, kind: 'visit', title: 'Full-day activity', all_day: true,
-      starts_at: Time.utc(2026, 10, 25), ends_at: Time.utc(2026, 10, 26)
+      starts_at: Time.zone.local(2026, 10, 25), ends_at: Time.zone.local(2026, 10, 26)
     )
 
     expect(event.occurs_on?(Date.new(2026, 10, 25))).to be(true)
