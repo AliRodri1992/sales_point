@@ -38,6 +38,7 @@ module SupplierLifecycleActions
   end
 
   def archive_restore_error
-    redirect_to admin_suppliers_path(archived: '1'), alert: @supplier.errors.full_messages.to_sentence
+    message = @supplier.errors.full_messages.to_sentence.presence || t('admin.suppliers.lifecycle.restore_conflict')
+    redirect_to admin_suppliers_path(archived: '1'), alert: message
   end
 end
