@@ -106,4 +106,31 @@ RSpec.describe SupplierBankAccount do
     expect(account.currency_code).to eq('MXN')
     expect(account.last_four).to eq('5678')
   end
+
+  it 'returns a generic mask when no sensitive account number is present' do
+    account = described_class.new
+
+    expect(account.masked_number).to eq('••••')
+  end
+
+  it 'requires a bank name when no SAT bank code is selected' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Vendor',
+      account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:bank_name]).to be_present
+  end
+
+  it 'rejects a supplied bank code when a CLABE belongs to a different bank' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Vendor',
+      bank_name: 'Bank', sat_bank_code: '002', clabe: '032180000118359719',
+      currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:sat_bank_code]).to be_present
+  end
 end

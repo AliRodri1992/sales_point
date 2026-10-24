@@ -94,4 +94,11 @@ RSpec.describe SupplierScheduleException, type: :model do
     expect(record).not_to be_valid
     expect(record.errors[:supplier_schedule]).to be_present
   end
+
+  it 'validates that every exception belongs to an existing supplier' do
+    record = described_class.new(reason: 'holiday', starts_on: Date.current)
+
+    expect(record).not_to be_valid
+    expect(record.errors[:supplier]).to be_present
+  end
 end
