@@ -37,7 +37,8 @@ RSpec.describe Suppliers::DocumentContentPreview do
   end
 
   it 'refuses a DOCX entry larger than the extraction budget' do
-    xml = "<w:document xmlns:w='#{word_ns}'><w:body><w:p><w:t>#{'x' * (1.megabyte + 1)}</w:t></w:p></w:body></w:document>"
+    xml = "<w:document xmlns:w='#{word_ns}'><w:body><w:p>" \
+          "<w:t>#{'x' * (1.megabyte + 1)}</w:t></w:p></w:body></w:document>"
     blob = office_blob(zipped('word/document.xml' => xml),
                        type: described_class::DOCX_TYPE, filename: 'oversized.docx')
 
@@ -46,7 +47,7 @@ RSpec.describe Suppliers::DocumentContentPreview do
 
   it 'parses DOCX paragraphs but never exposes markup' do
     xml = "<w:document xmlns:w='#{word_ns}'><w:body><w:p><w:t>First</w:t></w:p>" \
-          "<w:p><w:t>Second</w:t></w:p></w:body></w:document>"
+          '<w:p><w:t>Second</w:t></w:p></w:body></w:document>'
     blob = office_blob(zipped('word/document.xml' => xml),
                        type: described_class::DOCX_TYPE, filename: 'note.docx')
 
