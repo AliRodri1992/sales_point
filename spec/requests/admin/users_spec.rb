@@ -134,4 +134,43 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(admin_user.reload.deleted_at).to be_nil
     end
   end
+
+  describe 'server-side pagination and sorting boundaries' do
+    before do
+      16.times do |index|
+        create(:user, email: format('paginate-%02d@example.com', index),
+                      username: format('employee_%02d', index))
+      end
+    end
+
+    it 'honors permitted sorting and a small page size for a long user list' do
+      get admin_users_path, params: {
+        per_page: 5, sort: 'users.username', direction: 'desc'
+      }
+
+      rows = Nokogiri::HTML(response.body).css('tbody tr')
+      expect(response).to have_http_status(:ok)
+      expect(rows.length).to eq(5)
+      expect(rows.first.text).to include('employee_15')
+    end
+
+    it 'clamps pagination beyond the final page instead of showing an empty list' do
+      get admin_users_path, params: { per_page: 5, page: 999 }
+
+      rows = Nokogiri::HTML(response.body).css('tbody tr')
+      expect(response).to have_http_status(:ok)
+      expect(rows.length).to be_between(1, 5)
+    end
+
+    it 'ignores unsupported page sizes and SQL sort tokens' do
+      get admin_users_path, params: {
+        per_page: 99, sort: 'users.password_digest', direction: 'DESC;DELETE'
+      }
+
+      rows = Nokogiri::HTML(response.body).css('tbody tr')
+      expect(response).to have_http_status(:ok)
+      expect(rows.length).to eq(10)
+      expect(rows.first.text).not_to include('password_digest')
+    end
+  end
 end
