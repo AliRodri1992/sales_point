@@ -6,6 +6,8 @@ RSpec.describe Admin::GuideHelper, type: :helper do
   let(:actor) { create(:user) }
 
   before do
+    helper.define_singleton_method(:current_organization) { nil }
+    helper.define_singleton_method(:policy) { |record| Pundit.policy(actor, record) }
     allow(helper).to receive(:current_user).and_return(actor)
     allow(helper).to receive(:current_organization).and_return(nil)
     allow(helper).to receive(:policy).with(Supplier).and_return(double(index?: false))
