@@ -113,12 +113,13 @@ Rails.application.routes.draw do
         get :address_map, to: 'supplier_locations#map'
       end
       resources :bank_accounts, controller: 'supplier_bank_accounts', except: %i[show] do
-        member { post :reveal }
+        member { post :reveal; patch :restore }
       end
 
       resources :supplier_products, path: 'products', except: %i[show] do
         member do
           get :history
+          patch :restore
           post :set_preferred
           post :clear_preferred
         end

@@ -1,0 +1,8 @@
+es:
+  admin:
+    supplier_archive:
+      active: "Activos"
+      archived: "Archivados"
+      restore: "Recuperar"
+      restored_offer: "Oferta recuperada correctamente."
+      restore_conflict: "No se puede recuperar por un conflicto con otro registro."

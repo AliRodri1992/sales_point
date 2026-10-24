@@ -5,7 +5,7 @@ module Admin
     include FinancialAccess
 
     before_action :set_supplier
-    before_action :set_account, only: %i[edit update destroy reveal]
+    before_action :set_account, only: %i[edit update destroy reveal restore]
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
@@ -55,6 +55,17 @@ module Admin
       redirect_to admin_supplier_bank_accounts_path(@supplier)
     end
 
+    def restore
+      authorize @account, :update?
+      @account.update!(deleted_at: nil, primary: false)
+      FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
+                                  event: 'bank_account.restored', subject: @account)
+      redirect_to admin_supplier_bank_accounts_path(@supplier, archived: '1')
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+      redirect_to admin_supplier_bank_accounts_path(@supplier, archived: '1'),
+                  alert: t('admin.supplier_archive.restore_conflict')
+    end
+
     def reveal
       authorize @account
       response.headers['Cache-Control'] = 'no-store'
@@ -72,7 +83,9 @@ module Admin
     end
 
     def filtered_accounts
-      scope = policy_scope(@supplier.supplier_bank_accounts.active)
+      collection = @supplier.supplier_bank_accounts
+      collection = params[:archived] == '1' ? collection.with_deleted.where.not(deleted_at: nil) : collection.active
+      scope = policy_scope(collection)
       if params[:q].present?
         term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
         scope = scope.where('bank_name ILIKE :term OR holder_name ILIKE :term', term:)
@@ -87,7 +100,11 @@ module Admin
     end
 
     def set_account
-      @account = @supplier.supplier_bank_accounts.active.find(params[:id])
+      @account = if action_name == 'restore'
+                   @supplier.supplier_bank_accounts.with_deleted.where.not(deleted_at: nil).find(params[:id])
+                 else
+                   @supplier.supplier_bank_accounts.active.find(params[:id])
+                 end
     end
 
     def load_banks

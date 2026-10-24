@@ -1,0 +1,8 @@
+en:
+  admin:
+    supplier_archive:
+      active: "Active"
+      archived: "Archived"
+      restore: "Restore"
+      restored_offer: "Offer restored successfully."
+      restore_conflict: "The record cannot be restored due to a conflict."

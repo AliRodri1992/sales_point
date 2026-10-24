@@ -1,0 +1,8 @@
+ko:
+  admin:
+    supplier_archive:
+      active: "활성"
+      archived: "보관됨"
+      restore: "복구"
+      restored_offer: "상품 제안이 복구되었습니다."
+      restore_conflict: "다른 기록과 충돌하여 복구할 수 없습니다."

@@ -68,10 +68,24 @@ module Admin
       redirect_to admin_supplier_supplier_products_path(@supplier), notice: t('admin.procurement.deleted')
     end
 
+    def restore
+      authorize @supplier, :manage_products?
+      @supplier.with_lock { @offer.update!(deleted_at: nil, active: true) }
+      redirect_to admin_supplier_supplier_products_path(@supplier, archived: '1'),
+                  notice: t('admin.supplier_archive.restored_offer')
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+      redirect_to admin_supplier_supplier_products_path(@supplier, archived: '1'),
+                  alert: t('admin.supplier_archive.restore_conflict')
+    end
+
     private
 
     def filtered_offers
-      scope = @supplier.supplier_products.available.joins(:product)
+      scope = if params[:archived] == '1'
+                @supplier.supplier_products.with_deleted.where.not(deleted_at: nil).joins(:product)
+              else
+                @supplier.supplier_products.available.joins(:product)
+              end
                        .merge(current_organization.products.not_deleted)
       @search.present? ? filter_offers(scope) : scope
     end
@@ -101,11 +115,16 @@ module Admin
     end
 
     def supplier_offer_action?
-      action_name.in?(%w[edit update destroy history set_preferred clear_preferred])
+      action_name.in?(%w[edit update destroy history restore set_preferred clear_preferred])
     end
 
     def set_offer
-      @offer = @supplier.supplier_products.available.find(params[:id])
+      @offer = if action_name.in?(%w[history restore])
+                 @supplier.supplier_products.with_deleted.find(params[:id])
+               else
+                 @supplier.supplier_products.available.find(params[:id])
+               end
+      raise ActiveRecord::RecordNotFound if action_name == 'restore' && @offer.deleted_at.nil?
     end
 
     def organization_products
