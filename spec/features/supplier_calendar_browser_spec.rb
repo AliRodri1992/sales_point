@@ -27,6 +27,7 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
 
     find('header button[data-action="supplier-calendar#open"]').click
     expect(page).to have_css('[data-supplier-calendar-target="drawer"][aria-hidden="false"]')
+    expect(page).to have_no_css('.deltin-launcher', visible: true)
     expect(find('[name="supplier_event[starts_at]"]').value).to start_with('2026-10-23')
 
     find('[name="supplier_event[title]"]').set('Special delivery')

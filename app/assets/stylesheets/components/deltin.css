@@ -38,3 +38,8 @@
 @media (prefers-reduced-motion: reduce) {
   .deltin-shell *, .deltin-shell *::before, .deltin-shell *::after { animation: none !important; transition: none !important; }
 }
+
+/* A calendar drawer owns the right edge: never cover its save controls. */
+body:has([data-supplier-calendar-target="drawer"][aria-hidden="false"]) .deltin-launcher {
+  display: none !important;
+}

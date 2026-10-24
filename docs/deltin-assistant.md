@@ -8,6 +8,7 @@ La integración está disponible en cualquier pantalla que usa `admin_dashboard`
 - Expresiones `idle`, `happy`, `thinking`, `concerned`, `laughing` y `talking`, mediante CSS y Stimulus.
 - Boca animada **durante la lectura en voz alta** usando Web Speech API del navegador (solo después de pulsar «Leer en voz alta»).
 - Panel adaptativo móvil/escritorio, apertura/cierre y navegación por teclado.
+- El lanzador se oculta automáticamente mientras está abierto el formulario lateral de eventos del calendario, para no tapar los botones de guardar.
 - Respuestas procedentes de los procedimientos realmente documentados en los YAML de la guía: no se generan explicaciones inexistentes ni se ejecutan acciones financieras.
 - Control de sesión, organización activa, permisos por área (incluidos datos fiscales, bancos y finanzas), CSRF, restricciones de longitud y respuesta sin caché.
 - No se envían datos a servidores de IA: el asistente es **guía contextual basada en reglas**; conectar un LLM externo requiere otra fase, autorización de envío de datos, configuración de proveedor y pruebas adicionales.
