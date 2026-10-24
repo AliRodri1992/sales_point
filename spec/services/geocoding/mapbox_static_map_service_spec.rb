@@ -32,4 +32,21 @@ RSpec.describe Geocoding::MapboxStaticMapService do
     allow(ENV).to receive(:[]).with('MAPBOX_TOKEN').and_return(nil)
     expect(service.call(latitude: 19.5, longitude: -99.1)).to be_nil
   end
+
+  it 'rejects an unsuccessful image request without exposing the provider response' do
+    allow(response).to receive(:success?).and_return(false)
+
+    expect(service.call(latitude: 19.5, longitude: -99.1)).to be_nil
+  end
+
+  it 'rejects an empty map image even after a successful response' do
+    allow(response).to receive(:body).and_return('')
+
+    expect(service.call(latitude: 19.5, longitude: -99.1)).to be_nil
+  end
+
+  it 'rejects malformed numeric values and nonfinite coordinates' do
+    expect(service.call(latitude: 'invalid', longitude: -99.1)).to be_nil
+    expect(service.call(latitude: 19.5, longitude: Float::INFINITY)).to be_nil
+  end
 end

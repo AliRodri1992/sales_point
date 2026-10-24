@@ -37,4 +37,30 @@ RSpec.describe Geocoding::MapboxValidateAddressService do
     expect(described_class.new(address).call).to eq(valid: false)
     expect(connection).not_to have_received(:get)
   end
+
+  it 'rejects a failed provider response without attempting to parse it' do
+    allow(response).to receive(:success?).and_return(false)
+
+    expect(described_class.new(address).call).to eq(valid: false)
+  end
+
+  it 'rejects invalid or out-of-range geographic coordinates' do
+    invalid = { features: [{ center: [-200, 95], place_name: 'Untrusted location' }] }
+    allow(response).to receive(:body).and_return(invalid.to_json)
+
+    expect(described_class.new(address).call).to eq(valid: false)
+  end
+
+  it 'handles malformed provider JSON as an invalid location' do
+    allow(response).to receive(:body).and_return('{not-json}')
+
+    expect(described_class.new(address).call).to eq(valid: false)
+  end
+
+  it 'rejects incomplete location data instead of trusting a partial result' do
+    invalid = { features: [{ place_name: 'Missing latitude', center: [-99.13] }] }
+    allow(response).to receive(:body).and_return(invalid.to_json)
+
+    expect(described_class.new(address).call).to eq(valid: false)
+  end
 end
