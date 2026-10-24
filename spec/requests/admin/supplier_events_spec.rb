@@ -206,7 +206,7 @@ RSpec.describe 'Supplier dated events', type: :request do
 
     get new_admin_supplier_event_path(supplier)
 
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'retains an archived event when restoring its saved attributes fails' do
