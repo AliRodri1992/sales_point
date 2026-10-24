@@ -8,6 +8,26 @@ RSpec.describe Suppliers::CalendarBoard do
   let(:branch) { create(:branch, organization:) }
   let(:date) { Date.iso8601('2026-10-23') }
 
+  it 'shows one event on each day that its time range overlaps' do
+    supplier.supplier_events.create!(
+      title: 'Conference', branch:, kind: 'visit', all_day: true,
+      starts_at: Time.zone.local(2026, 10, 22, 9),
+      ends_at: Time.zone.local(2026, 10, 25, 9)
+    )
+
+    calendar = described_class.new(supplier:, month: '2026-10')
+    expect(calendar.items_on(Date.new(2026, 10, 22)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 23)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 24)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 25))).to be_empty
+  end
+
+  it 'renders a single-date day view with the daily navigation step' do
+    calendar = described_class.new(supplier:, view: 'day', day: '2026-10-23')
+    expect(calendar.weeks).to eq([[Date.new(2026, 10, 23)]])
+    expect(calendar.next_navigation(1)).to include(calendar_view: 'day', calendar_day: '2026-10-24')
+  end
+
   it 'shows weekly schedules without suspensions and includes dated events separately' do
     schedule = SupplierSchedule.create!(supplier:, branch:, kind: 'visit', weekday: date.wday,
                                         starts_at: '09:00', ends_at: '11:00')

@@ -47,6 +47,24 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     expect(foreign.reload.deleted_at).to be_nil
   end
 
+  it 'updates an exception scoped to a specific recurring supplier schedule' do
+    branch = create(:branch, organization:)
+    schedule = supplier.supplier_schedules.create!(
+      branch:, kind: 'delivery', weekday: Date.current.wday,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    exception = supplier.supplier_schedule_exceptions.create!(
+      starts_on: Date.current, reason: 'holiday'
+    )
+    patch admin_supplier_schedule_exception_path(supplier, exception),
+          params: { supplier_schedule_exception: {
+            reason: 'suspension', starts_on: Date.current, supplier_schedule_id: schedule.id
+          } }
+
+    expect(response).to redirect_to(admin_supplier_schedules_path(supplier))
+    expect(exception.reload).to have_attributes(supplier_schedule_id: schedule.id, reason: 'suspension')
+  end
+
   it 'creates and removes a delivery suspension' do
     post admin_supplier_schedule_exceptions_path(supplier), params: {
       supplier_schedule_exception: { starts_on: Date.current, ends_on: Date.tomorrow,

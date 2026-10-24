@@ -25,6 +25,21 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     Nokogiri::HTML(response.body)
   end
 
+  it 'shows deleted account details masked and restores the same record' do
+    account = bank_account
+    delete admin_supplier_bank_account_path(supplier, account)
+    get admin_supplier_bank_accounts_path(supplier, archived: '1')
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include(account.account_number)
+    expect(document.text).to include('Vendor Holdings')
+
+    patch restore_admin_supplier_bank_account_path(supplier, account)
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier, archived: '1'))
+    expect(account.reload.deleted_at).to be_nil
+    expect(account.primary).to be(false)
+  end
+
   it 'shows the reusable illustration and a registration action when no accounts exist' do
     get admin_supplier_bank_accounts_path(supplier)
 

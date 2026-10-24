@@ -23,6 +23,24 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     }
   end
 
+  it 'recovers an archived offer while preserving its historical prices' do
+    offer = offer_for(product)
+    history_count = offer.price_history.count
+    delete admin_supplier_supplier_product_path(supplier, offer)
+
+    get history_admin_supplier_supplier_product_path(supplier, offer)
+    expect(response).to have_http_status(:ok)
+    get admin_supplier_supplier_products_path(supplier, archived: '1')
+    expect(response).to have_http_status(:ok)
+    expect(document.text).to include(product.name)
+
+    patch restore_admin_supplier_supplier_product_path(supplier, offer)
+    expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier, archived: '1'))
+    expect(offer.reload).to be_active
+    expect(offer.deleted_at).to be_nil
+    expect(offer.price_history.count).to eq(history_count)
+  end
+
   it 'creates a product offer scoped to the current organization' do
     post admin_supplier_supplier_products_path(supplier), params: { supplier_product: valid_offer }
 

@@ -24,6 +24,34 @@ RSpec.describe 'Supplier dated events', type: :request do
     admin_supplier_path(supplier, params)
   end
 
+  it 'persists a multi-day all-day event and its lifecycle status' do
+    post admin_supplier_events_path(supplier), params: {
+      supplier_event: attributes(all_day: true, status: 'completed', ends_at: '2026-10-26T09:00')
+    }
+
+    expect(response).to redirect_to(calendar_destination)
+    event = supplier.supplier_events.last
+    expect(event).to have_attributes(all_day: true, status: 'completed')
+    expect(event.occurs_on?(Date.new(2026, 10, 24))).to be(true)
+    expect(event.occurs_on?(Date.new(2026, 10, 26))).to be(false)
+  end
+
+  it 'rejects an unrecognized event status' do
+    post admin_supplier_events_path(supplier),
+         params: { supplier_event: attributes(status: 'unknown') }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(supplier.supplier_events.count).to be_zero
+  end
+
+  it 'prevents new activities for an inactive supplier' do
+    supplier.update!(status: 'inactive')
+    post admin_supplier_events_path(supplier), params: { supplier_event: attributes }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(supplier.supplier_events.count).to be_zero
+  end
+
   it 'creates a dated event and displays it in the dossier calendar' do
     expect do
       post admin_supplier_events_path(supplier), params: { supplier_event: attributes }
