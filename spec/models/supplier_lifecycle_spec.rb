@@ -34,4 +34,34 @@ RSpec.describe SupplierLifecycle, type: :model do
     expect(supplier.archivable?).to be(false)
     expect(supplier.errors[:base]).to include(I18n.t('admin.suppliers.lifecycle.outstanding_payables'))
   end
+
+  it 'clears a preferred supplier when the supplier becomes inactive' do
+    organization = create(:organization)
+    unavailable = create(:supplier, organization:)
+    product = create(:product, organization:, preferred_supplier: unavailable)
+
+    unavailable.update!(status: :inactive)
+
+    expect(product.reload.preferred_supplier).to be_nil
+  end
+
+  it 'clears preference when the supplier is archived without changing its active status' do
+    organization = create(:organization)
+    unavailable = create(:supplier, organization:)
+    product = create(:product, organization:, preferred_supplier: unavailable)
+
+    unavailable.update!(deleted_at: Time.current)
+
+    expect(product.reload.preferred_supplier).to be_nil
+  end
+
+  it 'does not alter preferences while editing an available supplier' do
+    organization = create(:organization)
+    available = create(:supplier, organization:)
+    product = create(:product, organization:, preferred_supplier: available)
+
+    available.update!(notes: 'Historical trade terms')
+
+    expect(product.reload.preferred_supplier).to eq(available)
+  end
 end
