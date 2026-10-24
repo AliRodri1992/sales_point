@@ -47,4 +47,21 @@ RSpec.describe SupplierSchedule, type: :model do
     expect(conflicting).not_to be_valid
     expect(conflicting.errors.attribute_names).to include(:starts_at)
   end
+
+  it 'enforces the database exclusion constraint even when Rails validations are bypassed' do
+    described_class.create!(
+      supplier:, branch:, kind: 'delivery', weekday: 1,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    conflicting = described_class.new(
+      supplier:, branch:, kind: 'delivery', weekday: 1,
+      starts_at: '10:00', ends_at: '12:00'
+    )
+
+    expect do
+      conflicting.save!(validate: false)
+    end.to raise_error(ActiveRecord::StatementInvalid) { |error|
+      expect(error.cause).to be_a(PG::ExclusionViolation)
+    }
+  end
 end
