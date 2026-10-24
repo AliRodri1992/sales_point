@@ -25,7 +25,8 @@ module Admin
 
       @event = @supplier.supplier_events.new(event_params)
       @event.created_by = current_user
-      return redirect_success(:created) if @event.save
+      saved = @supplier.with_lock { @event.save }
+      return redirect_success(:created) if saved
 
       load_branches
       render :new, status: :unprocessable_content
