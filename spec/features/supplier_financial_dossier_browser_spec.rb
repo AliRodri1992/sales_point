@@ -57,6 +57,7 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
       click_button 'Search'
     end
 
+    expect(page).to have_current_path(/banks_q=BBVA/)
     expect(page).to have_current_path(admin_supplier_path(supplier), ignore_query: true)
     expect(URI.decode_www_form(URI.parse(page.current_url).query).to_h).to include(
       'tab' => 'bank_accounts', 'banks_q' => 'BBVA', 'banks_status' => 'active'
