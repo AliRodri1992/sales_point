@@ -36,7 +36,7 @@ RSpec.describe 'Purchase quotation validation and protected transitions', type: 
 
     get edit_admin_purchase_quotation_path(record)
 
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'rejects changing an accepted quotation through draft-only updates' do
@@ -46,7 +46,7 @@ RSpec.describe 'Purchase quotation validation and protected transitions', type: 
       purchase_quotation: { notes: 'Unauthorized change' }
     }
 
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
     expect(record.reload.notes).to be_nil
   end
 
@@ -87,7 +87,7 @@ RSpec.describe 'Purchase quotation validation and protected transitions', type: 
 
     post submit_admin_purchase_quotation_path(record)
 
-    expect(response).to redirect_to(admin_purchase_quotation_path(record))
+    expect(response).to have_http_status(:forbidden)
     expect(record.reload).to be_submitted
   end
 

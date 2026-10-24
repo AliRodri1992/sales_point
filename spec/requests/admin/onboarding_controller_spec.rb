@@ -82,11 +82,16 @@ RSpec.describe Admin::OnboardingController, type: :request do
     expect(organization.onboarding_audits.where(action: 'started')).to be_empty
   end
 
-  it 'does not authorize access without an active organization membership' do
+  it 'denies all onboarding endpoints after membership deactivation' do
     user.organization_memberships.find_by!(organization:).update!(status: :inactive)
 
     get admin_onboarding_path
+    expect(response).to have_http_status(:not_found)
 
+    patch admin_onboarding_path(step: 1), params: {}
+    expect(response).to have_http_status(:not_found)
+
+    patch admin_onboarding_reset_path
     expect(response).to have_http_status(:not_found)
   end
 end
