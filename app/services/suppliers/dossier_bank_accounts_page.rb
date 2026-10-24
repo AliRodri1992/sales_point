@@ -25,7 +25,8 @@ module Suppliers
     def from
       return 0 if total_count.zero?
 
-      (page - 1) * PAGE_SIZE + 1
+      offset = (page - 1) * PAGE_SIZE
+      offset.succ
     end
 
     def to
