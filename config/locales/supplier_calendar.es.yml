@@ -43,6 +43,7 @@ es:
         scheduled: "Programado"
         completed: "Completado"
         cancelled: "Cancelado"
+      supplier_unavailable: "Proveedor no disponible para programar nuevas actividades."
       event_details: Próximos eventos
       exception_note: Excepción
       fields:

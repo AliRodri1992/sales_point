@@ -33,9 +33,9 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def with_organization_timezone(&block)
+  def with_organization_timezone(&)
     zone = current_organization&.organization_setting&.timezone
-    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &block)
+    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &)
   end
 
   def configure_permitted_parameters

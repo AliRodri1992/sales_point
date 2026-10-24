@@ -88,14 +88,19 @@ module Suppliers
     end
 
     def load_dated_events
-      from = start_date.in_time_zone.beginning_of_day
-      until_date = (end_date + 1).in_time_zone.beginning_of_day
-      scope = @supplier.supplier_events.not_deleted.includes(:branch)
-                       .where('starts_at < ? AND (ends_at IS NULL OR ends_at > ?)', until_date, from)
+      scope = @supplier.supplier_events.not_deleted.includes(:branch).where(overlapping_events_sql, *event_range)
                        .order(:starts_at)
       scope = scope.where(branch_id:) if branch_id
       scope = scope.where(kind:) if kind
       @events = scope.to_a
+    end
+
+    def overlapping_events_sql
+      'starts_at < ? AND (ends_at IS NULL OR ends_at > ?)'
+    end
+
+    def event_range
+      [(end_date + 1).in_time_zone.beginning_of_day, start_date.in_time_zone.beginning_of_day]
     end
 
     def load_exceptions

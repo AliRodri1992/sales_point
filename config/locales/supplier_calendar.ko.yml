@@ -43,6 +43,7 @@ ko:
         scheduled: "예정"
         completed: "완료"
         cancelled: "취소"
+      supplier_unavailable: "이 공급업체에는 새로운 일정을 등록할 수 없습니다."
       event_details: 다가오는 이벤트
       exception_note: 예외
       fields:

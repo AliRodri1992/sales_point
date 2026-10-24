@@ -9,8 +9,10 @@ module Admin
     before_action :set_supplier
 
     def create
-      return redirect_to(admin_supplier_path(@supplier, tab: 'schedules'),
-                         alert: 'Supplier is unavailable') unless @supplier.active?
+      unless @supplier.active?
+        return redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
+                           alert: t('admin.supplier_calendar.supplier_unavailable')
+      end
 
       exception = @supplier.supplier_schedule_exceptions.new(exception_params)
       exception.created_by = current_user

@@ -43,6 +43,7 @@ en:
         scheduled: "Scheduled"
         completed: "Completed"
         cancelled: "Cancelled"
+      supplier_unavailable: "This supplier is unavailable for new scheduling."
       event_details: Upcoming events
       exception_note: Exception
       fields:

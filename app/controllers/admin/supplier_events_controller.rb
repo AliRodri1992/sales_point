@@ -65,7 +65,7 @@ module Admin
     end
 
     def reject_unavailable_supplier
-      redirect_to admin_supplier_path(@supplier, tab: 'schedules'), alert: 'Supplier is unavailable'
+      redirect_to admin_supplier_path(@supplier, tab: 'schedules'), alert: t('admin.supplier_calendar.supplier_unavailable')
     end
 
     def load_branches
