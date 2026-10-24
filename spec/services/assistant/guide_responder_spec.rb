@@ -78,4 +78,54 @@ RSpec.describe Assistant::GuideResponder do
   it 'does not hide public catalogue guide topics by default' do
     expect(responder.send(:allowed?, 'products')).to be(true)
   end
+
+  it 'returns a documented walkthrough for a matching topic and task' do
+    create(:organization_membership, organization:, user:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    topic = responder.send(:accessible_topics).find { |entry| entry.fetch(:tasks).any? }
+    task = topic.fetch(:tasks).first
+
+    result = responder.call(question: task.fetch(:title), context: topic.fetch(:id))
+
+    expect(result).to include(source: 'guide', mood: 'happy')
+    expect(result[:title]).to eq(task.fetch(:title))
+    expect(result[:steps]).not_to be_empty
+    expect(result[:guide_url]).to include(topic.fetch(:id))
+  end
+
+  it 'boosts relevant tasks when a matching module context is supplied' do
+    topic = { id: 'catalogs', title: 'Catalog management' }
+    task = { title: 'Create a category' }
+    tokens = responder.send(:normalized_tokens, 'Create a category')
+
+    with_context = responder.send(:score_for, tokens, topic, task, 'catalogs')
+    without_context = responder.send(:score_for, tokens, topic, task, 'unrelated')
+
+    expect(with_context).to be > without_context
+  end
+
+  it 'allows a supplier guide procedure with a management permission but no viewing permission' do
+    create(:organization_membership, organization:, user:)
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+    allow(user).to receive(:permission?).with('suppliers.schedules.manage').and_return(true)
+
+    expect(responder.send(:supplier_access?, 'supplier_calendar')).to be(true)
+    expect(responder.send(:supplier_access?, 'supplier_fiscal')).to be(false)
+  end
+
+  it 'permits general supplier navigation when a dossier permission is present' do
+    create(:organization_membership, organization:, user:)
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+    allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
+
+    expect(responder.send(:supplier_access?, 'suppliers')).to be(true)
+  end
+
+  it 'removes repeated and irrelevant tokens from natural-language questions' do
+    tokens = responder.send(:normalized_tokens, 'Cómo crear crear las categorías')
+
+    expect(tokens).to eq(%w[crear categorias])
+  end
 end
