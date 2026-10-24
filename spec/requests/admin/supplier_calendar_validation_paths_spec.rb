@@ -136,4 +136,50 @@ RSpec.describe 'Supplier calendar validation paths', type: :request do
     expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
     expect(event.reload.title).to eq('Historical')
   end
+
+  it 'converts a PostgreSQL overlap error into a validation response on schedule creation' do
+    recurring_schedule
+    allow_any_instance_of(Suppliers::ScheduleConflict).to receive(:exists?).and_return(false)
+
+    expect do
+      post admin_supplier_schedules_path(supplier), params: {
+        supplier_schedule: {
+          branch_id: branch.id, kind: 'visit', weekday: Date.current.wday,
+          starts_at: '09:30', ends_at: '10:30'
+        }
+      }
+    end.not_to change(SupplierSchedule.not_deleted, :count)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('09:30')
+  end
+
+  it 'converts a PostgreSQL overlap error into a validation response on schedule update' do
+    recurring_schedule
+    other = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: Date.current.wday,
+      starts_at: '11:00', ends_at: '12:00'
+    )
+    allow_any_instance_of(Suppliers::ScheduleConflict).to receive(:exists?).and_return(false)
+
+    patch admin_supplier_schedule_path(supplier, other), params: {
+      supplier_schedule: { starts_at: '09:30', ends_at: '10:30' }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(other.reload.starts_at.strftime('%H:%M')).to eq('11:00')
+  end
+
+  it 'blocks creating new recurring schedules for inactive suppliers' do
+    supplier.update!(status: :inactive)
+    post admin_supplier_schedules_path(supplier), params: {
+      supplier_schedule: {
+        branch_id: branch.id, kind: 'visit', weekday: Date.current.wday,
+        starts_at: '09:00', ends_at: '10:00'
+      }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(supplier.supplier_schedules.count).to eq(0)
+  end
 end
