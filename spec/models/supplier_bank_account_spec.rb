@@ -70,4 +70,40 @@ RSpec.describe SupplierBankAccount do
 
     expect(account.update(holder_name: 'Proveedor histórico')).to be(true)
   end
+
+  it 'rejects an invalid account number and mismatched SAT bank code' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Supplier',
+      bank_name: 'Demo Bank', account_number: 'abc', currency_code: 'MXN'
+    )
+    expect(account).not_to be_valid
+    expect(account.errors[:account_number]).to be_present
+
+    account.account_number = '1234567890'
+    account.sat_bank_code = '002'
+    account.clabe = '032180000118359719'
+    expect(account).not_to be_valid
+    expect(account.errors[:sat_bank_code]).to be_present
+  end
+
+  it 'supports an account with no saved account number but valid CLABE' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Supplier',
+      bank_name: 'Demo Bank', clabe: '032180000118359719', currency_code: 'MXN'
+    )
+    expect(account).to be_valid
+    expect(account.masked_number).to eq('•••• 9719')
+  end
+
+  it 'normalizes account numbers and currency on validation' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Supplier',
+      bank_name: 'Demo Bank', account_number: " 1234 5678 ", currency_code: 'mxn'
+    )
+    account.valid?
+
+    expect(account.account_number).to eq('12345678')
+    expect(account.currency_code).to eq('MXN')
+    expect(account.last_four).to eq('5678')
+  end
 end

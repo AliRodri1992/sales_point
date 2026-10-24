@@ -111,4 +111,42 @@ RSpec.describe SupplierProduct, type: :model do
 
     expect(product.reload.preferred_supplier).to be_nil
   end
+
+  it 'keeps an inactive supplier offer editable without reactivation' do
+    offer = described_class.create!(offer_attributes)
+    supplier.update!(status: :inactive)
+
+    expect(offer.update!(purchase_price: 310)).to be(true)
+    expect(offer.reload.purchase_price).to eq(310)
+  end
+
+  it 'rejects restoring an archived offer while its supplier is inactive' do
+    offer = described_class.create!(offer_attributes)
+    offer.update!(deleted_at: Time.current)
+    supplier.update!(status: :inactive)
+
+    expect(offer.update(deleted_at: nil)).to be(false)
+    expect(offer.errors[:supplier]).to be_present
+  end
+
+  it 'does not register another price snapshot when only notes change' do
+    offer = described_class.create!(offer_attributes)
+    previous = offer.price_history.count
+
+    expect(offer.update(active: false)).to be(true)
+    expect(offer.price_history.count).to eq(previous)
+  end
+
+  it 'does not clear a preferred supplier when modifying an unrelated offer' do
+    offer = described_class.create!(offer_attributes)
+    another_supplier = create(:supplier, organization:)
+    alternative = described_class.create!(offer_attributes.merge(
+      supplier: another_supplier, presentation_name: 'Alternative box'
+    ))
+    product.update!(preferred_supplier: supplier)
+
+    alternative.update!(active: false)
+
+    expect(product.reload.preferred_supplier).to eq(offer.supplier)
+  end
 end
