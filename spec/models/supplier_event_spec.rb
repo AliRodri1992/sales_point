@@ -29,6 +29,7 @@ RSpec.describe SupplierEvent, type: :model do
     )
 
     expect(event.occurs_on?(Date.new(2026, 10, 25))).to be(true)
+    expect(event.occurs_on?(Date.new(2026, 10, 24))).to be(false)
   end
 
   it 'uses the organization timezone for events crossing a UTC date boundary' do
