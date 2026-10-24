@@ -57,7 +57,7 @@ module Admin
 
     def restore
       authorize @account, :update?
-      @account.update!(deleted_at: nil, primary: false)
+      @supplier.with_lock { @account.update!(deleted_at: nil, primary: false) }
       FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
                                   event: 'bank_account.restored', subject: @account)
       redirect_to admin_supplier_bank_accounts_path(@supplier, archived: '1')

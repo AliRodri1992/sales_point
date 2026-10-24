@@ -32,6 +32,8 @@ module Admin
     end
 
     def update
+      return reject_unavailable_supplier unless @supplier.active?
+
       return redirect_success(:updated) if @event.update(event_params)
 
       load_branches

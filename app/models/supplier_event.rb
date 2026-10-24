@@ -19,6 +19,7 @@ class SupplierEvent < ApplicationRecord
   validate :valid_time_range
   validates :ends_at, presence: true, if: :all_day?
   validate :branch_in_supplier_organization
+  validate :available_supplier_on_creation, on: :create
 
   def occurs_on?(date)
     first_day = starts_at.in_time_zone.to_date
@@ -27,6 +28,12 @@ class SupplierEvent < ApplicationRecord
   end
 
   private
+
+  def available_supplier_on_creation
+    return if supplier&.active? && supplier.deleted_at.nil?
+
+    errors.add(:supplier, :invalid)
+  end
 
   def valid_time_range
     return if starts_at.blank? || ends_at.blank?
