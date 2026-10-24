@@ -43,3 +43,9 @@
 body:has([data-supplier-calendar-target="drawer"][aria-hidden="false"]) .deltin-launcher {
   display: none !important;
 }
+
+/* Hit testing belongs to the accessible button, not its overhanging SVG shapes. */
+.deltin-launcher .deltin-character,
+.deltin-launcher .deltin-character * {
+  pointer-events: none;
+}
