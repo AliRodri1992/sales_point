@@ -15,7 +15,14 @@ export default class extends Controller {
     this.requestController = null
     this.speech = null
     this.previousFocus = null
-    this.detectContext()
+    // Bind the launcher immediately, even when contextual data cannot be read.
+    this.boundLauncherClick = (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+      this.open()
+    }
+    this.launcherTarget.addEventListener("click", this.boundLauncherClick)
+    this.element.dataset.assistantReady = "true"
     this.boundEscape = (event) => {
       if (this.panelTarget.hidden) return
       if (event.key === "Escape") this.close()
@@ -29,6 +36,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.launcherTarget.removeEventListener("click", this.boundLauncherClick)
+    delete this.element.dataset.assistantReady
     document.removeEventListener("keydown", this.boundEscape)
     document.removeEventListener("turbo:before-cache", this.boundTurbo)
     document.getElementById("onlineUsersButton")?.removeEventListener("click", this.boundOtherPanel)
@@ -65,12 +74,12 @@ export default class extends Controller {
   }
 
   open() {
-    this.detectContext()
     this.previousFocus = document.activeElement
     this.panelTarget.hidden = false
     this.launcherTarget.setAttribute("aria-expanded", "true")
     this.closeButtonTarget.focus()
     this.mood("happy")
+    this.detectContext()
   }
 
   close() {

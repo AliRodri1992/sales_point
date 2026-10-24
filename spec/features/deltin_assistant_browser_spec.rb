@@ -21,6 +21,7 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
     visit admin_dashboard_path
 
     expect(page).to have_css('.deltin-launcher', visible: true)
+    expect(page).to have_css('.deltin-shell[data-assistant-ready="true"]')
     expect(page.evaluate_script(<<~JS)).to be(true)
       Boolean(window.Stimulus.getControllerForElementAndIdentifier(
         document.querySelector('.deltin-shell'), 'deltin-assistant'
