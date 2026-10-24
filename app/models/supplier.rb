@@ -78,7 +78,8 @@ class Supplier < ApplicationRecord
   def responsible_user_in_organization
     return if responsible_user.blank?
 
-    errors.add(:responsible_user, :invalid) unless organization&.users&.exists?(id: responsible_user_id)
+    memberships = organization&.organization_memberships&.active
+    errors.add(:responsible_user, :invalid) unless memberships&.exists?(user_id: responsible_user_id)
   end
 
   def normalize_fields
