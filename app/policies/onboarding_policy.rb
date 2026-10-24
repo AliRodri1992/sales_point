@@ -21,6 +21,6 @@ class OnboardingPolicy < ApplicationPolicy
 
   def active_organization?
     user.organization_memberships.active.joins(:organization)
-        .where(organizations: { deleted_at: nil }).exists?
+        .exists?(organizations: { deleted_at: nil })
   end
 end
