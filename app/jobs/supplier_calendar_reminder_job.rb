@@ -33,17 +33,25 @@ class SupplierCalendarReminderJob < ApplicationJob
 
   def notify(supplier, activity, date, title)
     recipient = supplier.responsible_user
-    return unless recipient&.organization_memberships&.active&.exists?(organization_id: supplier.organization_id)
+    return unless authorized_recipient?(recipient, supplier)
 
-    token = Digest::SHA256.hexdigest([activity.class.name, activity.id, date.iso8601, recipient.id].join(':'))
-    receipt = SupplierEventDelivery.create_or_find_by!(event_key: token) do |record|
-      record.supplier = supplier
-      record.recipient = recipient
-    end
-    return unless receipt.previously_new_record?
+    key = Digest::SHA256.hexdigest([activity.class.name, activity.id, date.iso8601, recipient.id].join(':'))
+    return unless new_delivery?(supplier, recipient, key)
 
     SupplierCalendarReminderNotification.with(record: supplier, event_title: title, scheduled_for: date)
                                         .deliver(recipient, enqueue_job: false)
     recipient.broadcast_notifications_refresh
+
+  end
+
+  def authorized_recipient?(recipient, supplier)
+    recipient && recipient.organization_memberships.active.exists?(organization_id: supplier.organization_id)
+  end
+
+  def new_delivery?(supplier, recipient, key)
+    SupplierEventDelivery.create_or_find_by!(event_key: key) do |record|
+      record.supplier = supplier
+      record.recipient = recipient
+    end.previously_new_record?
   end
 end
