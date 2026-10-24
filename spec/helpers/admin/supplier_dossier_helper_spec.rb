@@ -58,6 +58,5 @@ RSpec.describe Admin::SupplierDossierHelper, type: :helper do
 
       expect(helper.supplier_dossier_next_occurrence(schedule, now:)).to eq(Date.new(2026, 10, 16))
     end
-
   end
 end
