@@ -40,12 +40,12 @@ RSpec.describe 'Admin suppliers', type: :request do
 
     patch admin_supplier_path(foreign_supplier), params: { supplier: { name: 'Unauthorized' } }
     expect(response).to have_http_status(:not_found)
-    expect(Supplier.with_deleted.find_by!(id: foreign_supplier.id).name).to eq(original_name)
+    expect(Supplier.with_deleted.find(foreign_supplier.id).name).to eq(original_name)
 
     sign_in user
     delete admin_supplier_path(foreign_supplier)
     expect(response).to have_http_status(:not_found)
-    persisted = Supplier.with_deleted.find_by!(id: foreign_supplier.id)
+    persisted = Supplier.with_deleted.find(foreign_supplier.id)
     expect(persisted).to have_attributes(name: original_name, deleted_at: nil)
   end
 
