@@ -80,6 +80,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(Supplier.where(code: 'SUP-0001').first.documents.attachments.count).to be >= 20
     sample_names = supplier.documents.attachments.joins(:blob).pluck('active_storage_blobs.filename')
     expect(sample_names).to include('delta-demo-sup-0001-fotografia.png')
-    expect(SupplierProduct.group(:supplier_id).count.keys.length).to eq(SupplierExamples::COUNT)
+    expect(SupplierProduct.group(:supplier_id).count.keys.length)
+      .to eq(Supplier.where(code: (1..SupplierExamples::COUNT).map { |n| format('SUP-%04d', n) })
+                     .available.count)
   end
 end
