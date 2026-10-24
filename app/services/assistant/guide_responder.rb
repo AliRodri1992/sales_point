@@ -37,36 +37,43 @@ module Assistant
 
     def organization_access?
       @user && @organization &&
-        @user.organization_memberships.where(
+        @user.organization_memberships.exists?(
           organization_id: @organization.id, status: :active
-        ).exists?
+        )
     end
 
     def best_match(question, context)
       query = normalized_tokens(question)
       candidates = accessible_topics.flat_map do |topic|
         topic.fetch(:tasks).map do |task|
-          title = normalized_tokens(task.fetch(:title))
-          topic_title = normalized_tokens(topic.fetch(:title))
-          score = (query & title).size * 5 + (query & topic_title).size * 3
-          score += 4 if normalized_tokens(topic.fetch(:id).tr('_', ' ')).intersect?(query)
-          score += 2 if topic.fetch(:id) == context
-          [score, topic, task]
+          [score_for(query, topic, task, context), topic, task]
         end
       end
       winner = candidates.max_by(&:first)
-      winner&.first&.positive? ? winner.last(2) : nil
+      return unless winner&.first&.positive?
+
+      winner.last(2)
+    end
+
+    def score_for(query, topic, task, context)
+      score = (query & normalized_tokens(task.fetch(:title))).size * 5
+      score += (query & normalized_tokens(topic.fetch(:title))).size * 3
+      score += 4 if normalized_tokens(topic.fetch(:id).tr('_', ' ')).intersect?(query)
+      score += 2 if topic.fetch(:id) == context
+      score
     end
 
     def normalized_tokens(text)
-      I18n.transliterate(text.to_s.downcase)
+      I18n.transliterate(text.to_s.downcase, locale: :en)
           .scan(/[[:alnum:]]+/).reject { |word| word.length < 3 || STOP_WORDS.include?(word) }.uniq
     end
 
     def accessible_topics
-      %w[startup security catalogs suppliers purchasing finances communication].flat_map do |section|
+      sections = %w[startup security catalogs suppliers purchasing finances communication]
+      topics = sections.flat_map do |section|
         I18n.t("admin.user_manual.sections.#{section}", locale: :es).fetch(:topics)
-      end.reject { |topic| topic[:id] == 'coming_soon' || !allowed?(topic[:id]) }
+      end
+      topics.reject { |topic| topic[:id] == 'coming_soon' || !allowed?(topic[:id]) }
     end
 
     def allowed?(topic)

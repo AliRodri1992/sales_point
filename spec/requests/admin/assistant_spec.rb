@@ -64,7 +64,7 @@ RSpec.describe 'Deltín assistant', type: :request do
   end
 
   it 'does not return procedures without an active organization membership' do
-    organization.organization_memberships.where(user:).update_all(status: 'inactive')
+    user.organization_memberships.find_by!(organization:).update!(status: :inactive)
 
     post admin_assistant_reply_path, params: { message: 'Dar de alta un producto' }, as: :json
 
