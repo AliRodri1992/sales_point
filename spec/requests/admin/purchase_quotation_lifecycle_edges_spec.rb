@@ -23,7 +23,7 @@ RSpec.describe 'Purchase quotation lifecycle authorization and validation', type
     record = quotation(status: 'accepted')
 
     get edit_admin_purchase_quotation_path(record)
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
   end
 
   it 'refuses updating an already submitted quotation' do
@@ -32,7 +32,7 @@ RSpec.describe 'Purchase quotation lifecycle authorization and validation', type
     patch admin_purchase_quotation_path(record),
           params: { purchase_quotation: { notes: 'Unauthorized changes' } }
 
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
     expect(record.reload.notes).not_to eq('Unauthorized changes')
   end
 
@@ -50,7 +50,7 @@ RSpec.describe 'Purchase quotation lifecycle authorization and validation', type
     expect(record.reload).to be_submitted
 
     post submit_admin_purchase_quotation_path(record)
-    expect(response).to redirect_to(admin_purchase_quotation_path(record))
+    expect(response).to have_http_status(:forbidden)
     expect(record.reload).to be_submitted
   end
 
