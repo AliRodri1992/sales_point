@@ -25,6 +25,9 @@ module Admin
     end
 
     def create
+      return redirect_to(admin_supplier_path(@supplier, tab: 'schedules'),
+                         alert: 'Supplier is unavailable') unless @supplier.active?
+
       @schedule = @supplier.supplier_schedules.new(schedule_params)
       if save_schedule
         notify_schedule('schedule_created')

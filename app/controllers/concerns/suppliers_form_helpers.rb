@@ -15,8 +15,6 @@ module SuppliersFormHelpers
   end
 
   def authorize_supplier_attributes!(attributes)
-    return if action_name == 'create' && policy(@supplier).create?
-
     authorize_nested_sections!(attributes)
     authorize_sensitive_fields!(attributes)
   end

@@ -48,6 +48,7 @@ module Admin
       @credit.with_lock do
         raise ArgumentError, 'Credit already processed' unless @credit.draft?
 
+        AccountsPayable::ValidateCreditCfdi.call(credit_note: @credit) if @credit.xml_document.attached?
         @credit.update!(status: :posted)
         FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
                                     event: 'credit.posted', subject: @credit)

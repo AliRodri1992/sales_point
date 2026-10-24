@@ -10,6 +10,8 @@ module Admin
     before_action :set_event, only: %i[edit update destroy]
 
     def new
+      return reject_unavailable_supplier unless @supplier.active?
+
       @event = @supplier.supplier_events.new(starts_at: Time.zone.now.change(min: 0))
       load_branches
     end
@@ -19,6 +21,8 @@ module Admin
     end
 
     def create
+      return reject_unavailable_supplier unless @supplier.active?
+
       @event = @supplier.supplier_events.new(event_params)
       @event.created_by = current_user
       return redirect_success(:created) if @event.save
@@ -58,6 +62,10 @@ module Admin
 
     def set_event
       @event = @supplier.supplier_events.not_deleted.find(params[:id])
+    end
+
+    def reject_unavailable_supplier
+      redirect_to admin_supplier_path(@supplier, tab: 'schedules'), alert: 'Supplier is unavailable'
     end
 
     def load_branches

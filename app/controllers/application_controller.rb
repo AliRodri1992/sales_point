@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
 
   allow_browser versions: :modern
 
+  around_action :with_organization_timezone
   before_action :set_locale
   before_action :configure_permitted_parameters, if: :devise_controller?
   after_action :set_action_cable_user_id_cookie
@@ -31,6 +32,11 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def with_organization_timezone(&block)
+    zone = current_organization&.organization_setting&.timezone
+    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &block)
+  end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[email password password_confirmation theme])
