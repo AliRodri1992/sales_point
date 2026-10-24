@@ -50,4 +50,13 @@ RSpec.describe 'Supplier document authorization', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(ActiveStorage::Attachment.exists?(attachment.id)).to be(true)
   end
+
+  it 'responds with not found for a document whose storage blob is unavailable' do
+    attachment = attach_document(supplier)
+    allow_any_instance_of(ActiveStorage::Attachment).to receive(:blob).and_return(nil)
+
+    get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:not_found)
+  end
 end

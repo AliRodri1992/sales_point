@@ -35,6 +35,8 @@ module Admin
 
     def preview
       attachment = authorized_attachment(:view_documents?)
+      raise ActiveRecord::RecordNotFound unless attachment.blob
+
       return head :unsupported_media_type unless attachment.blob.content_type.in?(PREVIEW_TYPES)
 
       response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
@@ -100,6 +102,8 @@ module Admin
     end
 
     def send_attachment(attachment, disposition:)
+      raise ActiveRecord::RecordNotFound unless attachment.blob
+
       response.headers['X-Content-Type-Options'] = 'nosniff'
       send_data attachment.blob.download,
                 filename: attachment.blob.filename.to_s,
