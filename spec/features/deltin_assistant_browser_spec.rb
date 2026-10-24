@@ -67,7 +67,7 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
   scenario 'closes from the overlay and opens contextual help from a quick question' do
     visit admin_products_path
     find('.deltin-launcher').click
-    find('[data-action="click->deltin-assistant#quickAsk"]').first.click
+    first('[data-action="click->deltin-assistant#quickAsk"]').click
 
     expect(page).to have_css('[data-deltin-assistant-target="result"]:not([hidden])')
     find('#deltin-panel > button[data-action="click->deltin-assistant#close"]').click
