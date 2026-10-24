@@ -61,7 +61,7 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
       (() => {
         const puppy = document.querySelector('.deltin-launcher').getBoundingClientRect()
         const people = document.getElementById('onlineUsersButton').getBoundingClientRect()
-        return { puppy: puppy.width, people: people.width, gap: people.right - puppy.left }
+        return { puppy: puppy.width, people: people.width, gap: puppy.left - people.right }
       })()
     JS
 

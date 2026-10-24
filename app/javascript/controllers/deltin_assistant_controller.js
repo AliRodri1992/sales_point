@@ -68,7 +68,7 @@ export default class extends Controller {
       [/\/admin\/onboarding/, "onboarding"],
       [/\/admin\/dashboard/, "dashboard"]
     ]
-    this.context = matches.find(([pattern]) => pattern.test(path))?.[1] || ""
+    this.moduleContext = matches.find(([pattern]) => pattern.test(path))?.[1] || ""
     const heading = document.querySelector("main h1")?.textContent?.trim()
     this.screenTarget.textContent = heading || this.labelsValue.topic || "Delta POS"
   }
@@ -119,8 +119,8 @@ export default class extends Controller {
   quickAsk(event) {
     const message = event.currentTarget.dataset.question || ""
     if (!message) return
-    const question = message.includes("este módulo") && this.context
-      ? this.context.replaceAll("_", " ") : message
+    const question = message.includes("este módulo") && this.moduleContext
+      ? this.moduleContext.replaceAll("_", " ") : message
     this.questionTarget.value = question
     this.submitQuestion(question)
     if (event.currentTarget.dataset.question?.includes("módulo")) this.spotlight()
@@ -149,7 +149,7 @@ export default class extends Controller {
           "Accept": "application/json",
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || ""
         },
-        body: JSON.stringify({ message, context: this.context }),
+        body: JSON.stringify({ message, context: this.moduleContext }),
         signal: request.signal
       })
       if (!response.ok) throw new Error("assistant request failed")
@@ -238,8 +238,8 @@ export default class extends Controller {
 
   spotlight() {
     this.resetSpotlight()
-    const selector = this.context === "products" ? 'a[href="/admin/products/new"]'
-      : this.context === "suppliers" ? 'a[href="/admin/suppliers/new"]' : null
+    const selector = this.moduleContext === "products" ? 'a[href="/admin/products/new"]'
+      : this.moduleContext === "suppliers" ? 'a[href="/admin/suppliers/new"]' : null
     if (!selector) return
     this.highlighted = document.querySelector(selector)
     this.highlighted?.classList.add("deltin-step-highlight")
