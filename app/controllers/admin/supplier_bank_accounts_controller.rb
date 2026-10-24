@@ -11,9 +11,8 @@ module Admin
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
-      scope = filtered_accounts
       @currencies = @supplier.supplier_bank_accounts.active.distinct.order(:currency_code).pluck(:currency_code)
-      paginate_accounts(scope)
+      paginate_accounts(filtered_accounts)
     end
 
     def new
