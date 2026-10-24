@@ -6,3 +6,4 @@ es:
       restore: "Recuperar"
       restored_offer: "Oferta recuperada correctamente."
       restore_conflict: "No se puede recuperar por un conflicto con otro registro."
+      unavailable_supplier: "El proveedor está inactivo. No puedes crear ni reactivar ofertas."

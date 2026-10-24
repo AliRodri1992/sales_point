@@ -6,3 +6,4 @@ ko:
       restore: "복구"
       restored_offer: "상품 제안이 복구되었습니다."
       restore_conflict: "다른 기록과 충돌하여 복구할 수 없습니다."
+      unavailable_supplier: "공급업체가 비활성 상태입니다. 새 상품 제안을 생성하거나 복구할 수 없습니다."

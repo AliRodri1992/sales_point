@@ -41,6 +41,14 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     expect(offer.price_history.count).to eq(history_count)
   end
 
+  it 'blocks new product offers for inactive suppliers' do
+    supplier.update!(status: :inactive)
+    post admin_supplier_supplier_products_path(supplier), params: { supplier_product: valid_offer }
+
+    expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier))
+    expect(supplier.supplier_products.count).to be_zero
+  end
+
   it 'creates a product offer scoped to the current organization' do
     post admin_supplier_supplier_products_path(supplier), params: { supplier_product: valid_offer }
 

@@ -17,6 +17,23 @@ RSpec.describe SupplierProduct, type: :model do
     }
   end
 
+  it 'rejects creating a new offer for an inactive supplier' do
+    supplier.update!(status: :inactive)
+    offer = described_class.new(offer_attributes)
+
+    expect(offer).not_to be_valid
+    expect(offer.errors[:supplier]).to be_present
+  end
+
+  it 'prevents reactivating a historical offer when its supplier is inactive' do
+    offer = described_class.create!(offer_attributes)
+    offer.update!(active: false)
+    supplier.update!(status: :inactive)
+
+    expect(offer.update(active: true)).to be(false)
+    expect(offer.reload.active).to be(false)
+  end
+
   it 'does not call an unassigned offer preferred' do
     expect(described_class.new).not_to be_preferred
   end

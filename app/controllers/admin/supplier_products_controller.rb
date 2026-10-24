@@ -8,6 +8,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
+    before_action :require_active_supplier, only: %i[new create edit update restore]
     before_action :set_offer, if: :supplier_offer_action?
 
     OFFERS_PER_PAGE = 6
@@ -79,6 +80,13 @@ module Admin
     end
 
     private
+
+    def require_active_supplier
+      return if @supplier.active?
+
+      redirect_to admin_supplier_supplier_products_path(@supplier),
+                  alert: t('admin.supplier_archive.unavailable_supplier')
+    end
 
     def filtered_offers
       scope = @supplier.supplier_products

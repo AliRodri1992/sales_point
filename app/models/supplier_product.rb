@@ -19,6 +19,7 @@ class SupplierProduct < ApplicationRecord
   validates :discount_percent, numericality: { in: 0..100 }
   validates :lead_time_days, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :consistent_organization
+  validate :supplier_available_for_activation, if: :activating_offer?
   around_save :synchronize_preference
 
   scope :available, -> { where(deleted_at: nil, active: true) }
@@ -35,6 +36,17 @@ class SupplierProduct < ApplicationRecord
   end
 
   private
+
+  def activating_offer?
+    new_record? || (will_save_change_to_active? && active?) ||
+      (will_save_change_to_deleted_at? && deleted_at.nil?)
+  end
+
+  def supplier_available_for_activation
+    return if supplier&.active? && supplier.deleted_at.nil?
+
+    errors.add(:supplier, :invalid)
+  end
 
   def consistent_organization
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id

@@ -6,3 +6,4 @@ en:
       restore: "Restore"
       restored_offer: "Offer restored successfully."
       restore_conflict: "The record cannot be restored due to a conflict."
+      unavailable_supplier: "The supplier is inactive. You cannot create or reactivate offers."
