@@ -66,4 +66,37 @@ RSpec.describe AccountsPayable::CfdiParser do
     expect { described_class.call(xml: invalid) }
       .to raise_error(ArgumentError, /Missing CFDI issuer, receiver or tax stamp/)
   end
+
+  it 'does not allow an unrecognized or malformed CFDI UUID' do
+    malformed = xml.sub('12345678-1234-1234-1234-1234567890AB', 'INVALID')
+
+    expect { described_class.call(xml: malformed) }
+      .to raise_error(ArgumentError, /Invalid CFDI UUID/)
+  end
+
+  it 'rejects a CFDI that omits the digital tax stamp' do
+    missing_stamp = xml.sub(/<tfd:TimbreFiscalDigital[^>]+\/>/, '')
+
+    expect { described_class.call(xml: missing_stamp) }
+      .to raise_error(ArgumentError, /Missing CFDI issuer, receiver or tax stamp/)
+  end
+
+  it 'reports invalid issuance dates without persisting partial data' do
+    incorrect_date = xml.sub('Fecha="2026-10-13T12:00:00"', 'Fecha="not-a-date"')
+
+    expect { described_class.call(xml: incorrect_date) }
+      .to raise_error(ArgumentError, /CFDI rejected/)
+  end
+
+  it 'accepts a credit-note CFDI only when that document type is expected' do
+    credit_xml = xml.sub('TipoDeComprobante="I"', 'TipoDeComprobante="E"')
+
+    expect(described_class.call(xml: credit_xml, expected_type: 'E')[:total]).to eq(116.to_d)
+  end
+
+  it 'defaults missing discount, exchange rate, and tax totals to safe values' do
+    result = described_class.call(xml:)
+
+    expect(result).to include(discount: 0.to_d, exchange_rate: 1.to_d, tax_amount: 0.to_d)
+  end
 end

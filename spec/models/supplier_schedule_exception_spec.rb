@@ -62,4 +62,36 @@ RSpec.describe SupplierScheduleException, type: :model do
     expect(record).not_to be_valid
     expect(record.errors[:supplier_schedule]).to be_present
   end
+
+  it 'rejects exceptions with an end date before the start date' do
+    record = described_class.new(supplier:, reason: 'suspension',
+                                 starts_on: Date.new(2026, 11, 3), ends_on: Date.new(2026, 11, 2))
+
+    expect(record).not_to be_valid
+    expect(record.errors[:ends_on]).to be_present
+  end
+
+  it 'accepts a single-day exception with no end date or assigned branch' do
+    record = described_class.new(supplier:, reason: 'holiday', starts_on: Date.current)
+
+    expect(record).to be_valid
+  end
+
+  it 'requires the opening date even when the exception has an end date' do
+    record = described_class.new(supplier:, reason: 'exception', ends_on: Date.tomorrow)
+
+    expect(record).not_to be_valid
+    expect(record.errors[:starts_on]).to be_present
+  end
+
+  it 'rejects exceptions assigned to a schedule from another branch' do
+    other_branch = create(:branch, organization:, name: 'Secondary dock')
+    record = described_class.new(
+      supplier:, branch: other_branch, supplier_schedule: schedule,
+      reason: 'exception', starts_on: Date.current
+    )
+
+    expect(record).not_to be_valid
+    expect(record.errors[:supplier_schedule]).to be_present
+  end
 end
