@@ -64,4 +64,20 @@ RSpec.describe SupplierSchedule, type: :model do
       expect(error.cause).to be_a(PG::ExclusionViolation)
     }
   end
+
+  it 'refuses new schedules for an inactive supplier while preserving historic schedules' do
+    historical = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: 2,
+      starts_at: '08:00', ends_at: '09:00'
+    )
+    supplier.update!(status: :inactive)
+    new_schedule = described_class.new(
+      supplier:, branch:, kind: 'order', weekday: 3,
+      starts_at: '08:00', ends_at: '09:00'
+    )
+
+    expect(new_schedule).not_to be_valid
+    expect(new_schedule.errors[:supplier]).to be_present
+    expect(historical.update(notes: 'Historical commitment')).to be(true)
+  end
 end
