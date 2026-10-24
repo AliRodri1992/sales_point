@@ -7,6 +7,7 @@ RSpec.describe Admin::SuppliersListing do
   let(:query) do
     Class.new do
       include Admin::SuppliersListing
+
       attr_accessor :params, :actor
 
       def current_user = actor
