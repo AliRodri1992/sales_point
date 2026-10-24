@@ -4,6 +4,7 @@ module Admin
   class SupplierBankAccountsController < ApplicationController
     include FinancialAccess
     include SupplierBankAccountCreationGuard
+    include SupplierBankAccountListing
 
     before_action :set_supplier
     before_action :require_available_supplier, only: %i[new create]
@@ -11,16 +12,7 @@ module Admin
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
-      @status = %w[all active archived].include?(params[:status]) ? params[:status] : status_from_legacy
-      accessible = policy_scope(@supplier.supplier_bank_accounts.with_deleted)
-      @account_counts = {
-        all: accessible.count,
-        active: accessible.where(deleted_at: nil).count,
-        archived: accessible.where.not(deleted_at: nil).count
-      }
-      @bank_options = accessible.includes(:sat_bank).map { |record| record.sat_bank&.name || record.bank_name }
-                                .compact.uniq.sort
-      paginate_accounts(filtered_accounts(accessible))
+      load_account_listing
     end
 
     def new
@@ -82,39 +74,6 @@ module Admin
     end
 
     private
-
-    def paginate_accounts(scope)
-      @accounts_total = scope.count
-      @accounts_pages = [(@accounts_total.to_f / 8).ceil, 1].max
-      @accounts_page = params[:page].to_i.clamp(1, @accounts_pages)
-      @accounts = scope.includes(:sat_bank).order(primary: :desc, id: :desc)
-                       .limit(8).offset((@accounts_page - 1) * 8)
-    end
-
-    def filtered_accounts(accessible)
-      scope = case @status
-              when 'active' then accessible.where(deleted_at: nil)
-              when 'archived' then accessible.where.not(deleted_at: nil)
-              else accessible
-              end
-      scope = scope.left_joins(:sat_bank)
-      if params[:q].present?
-        term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
-        scope = scope.where(
-          'supplier_bank_accounts.bank_name ILIKE :term OR holder_name ILIKE :term OR ' \
-          'last_four ILIKE :term OR sat_banks.name ILIKE :term', term:
-        )
-      end
-      if params[:bank].present?
-        scope = scope.where('supplier_bank_accounts.bank_name = :name OR sat_banks.name = :name',
-                            name: params[:bank].to_s.first(120))
-      end
-      scope.distinct
-    end
-
-    def status_from_legacy
-      params[:archived] == '1' ? 'archived' : 'all'
-    end
 
     def set_supplier
       @supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id])

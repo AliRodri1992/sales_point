@@ -19,6 +19,7 @@ class SupplierBankAccount < ApplicationRecord
   validate :valid_account_number
   validate :consistent_bank_code
   before_validation :normalize_bank_values
+  before_validation :normalize_card_preview
 
   scope :active, -> { where(deleted_at: nil) }
 
@@ -33,7 +34,7 @@ class SupplierBankAccount < ApplicationRecord
   def card_expiration_label
     return if card_expiration_month.blank? || card_expiration_year.blank?
 
-    format('%02d/%02d', card_expiration_month, card_expiration_year % 100)
+    format('%<month>02d/%<year>02d', month: card_expiration_month, year: card_expiration_year % 100)
   end
 
   def reveal!(actor:)
@@ -67,6 +68,9 @@ class SupplierBankAccount < ApplicationRecord
     self.account_number = compact_number(account_number)
     self.last_four = (clabe.presence || account_number).to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
+  end
+
+  def normalize_card_preview
     self.card_last_four = card_last_four.to_s.strip.presence
   end
 
