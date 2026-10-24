@@ -44,6 +44,9 @@ en:
         completed: "Completed"
         cancelled: "Cancelled"
       supplier_unavailable: "This supplier is unavailable for new scheduling."
+      specific_schedule: "Specific schedule"
+      all_schedules: "All schedules"
+      edit_exception: "Edit exception"
       event_details: Upcoming events
       exception_note: Exception
       fields:

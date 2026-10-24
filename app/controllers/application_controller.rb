@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
   private
 
   def with_organization_timezone(&)
-    zone = current_organization&.organization_setting&.timezone
+    zone = current_organization&.organization_settings&.active_records&.first&.timezone
     Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &)
   end
 

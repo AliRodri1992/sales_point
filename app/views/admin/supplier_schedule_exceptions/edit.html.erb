@@ -1,0 +1,42 @@
+<div class="mx-auto max-w-2xl space-y-5">
+  <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_schedules_path(@supplier),
+              class: 'text-sm font-semibold text-emerald-700' %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <h1 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_calendar.edit_exception') %></h1>
+    <%= form_with model: @exception, url: admin_supplier_schedule_exception_path(@supplier, @exception),
+                  class: 'mt-5 grid gap-4 sm:grid-cols-2' do |form| %>
+      <div>
+        <%= form.label :starts_on, t('admin.supplier_schedule_exceptions.starts_on') %>
+        <%= form.date_field :starts_on, required: true, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <div>
+        <%= form.label :ends_on, t('admin.supplier_schedule_exceptions.ends_on') %>
+        <%= form.date_field :ends_on, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <div>
+        <%= form.label :reason, t('admin.supplier_schedule_exceptions.reason') %>
+        <%= form.select :reason, SupplierScheduleException::REASONS.map { |v| [t("admin.supplier_schedule_exceptions.reasons.#{v}"), v] },
+                        {}, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <div>
+        <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
+        <%= form.collection_select :branch_id, @branches, :id, :name,
+                                   { include_blank: t('admin.supplier_schedule_exceptions.all_branches') },
+                                   class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :supplier_schedule_id, t('admin.supplier_calendar.specific_schedule') %>
+        <%= form.collection_select :supplier_schedule_id, @schedules, :id, :id,
+                                   { include_blank: t('admin.supplier_calendar.all_schedules') },
+                                   class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :notes, t('admin.supplier_schedule_exceptions.notes') %>
+        <%= form.text_area :notes, rows: 3, maxlength: 1000,
+                           class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+      </div>
+      <%= form.submit t('admin.supplier_calendar.save_changes'),
+                      class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
+    <% end %>
+  </section>
+</div>

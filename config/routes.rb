@@ -139,7 +139,7 @@ Rails.application.routes.draw do
       get 'documents/:document_id/history', to: 'supplier_documents#history', as: :document_history
       get 'documents/:document_id/version_download',
           to: 'supplier_documents#version_download', as: :document_version_download
-      resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create destroy] do
+      resources :schedule_exceptions, controller: 'supplier_schedule_exceptions', only: %i[create edit update destroy] do
         collection { patch :bulk_update }
       end
       resources :events, controller: 'supplier_events', only: %i[new create edit update destroy] do

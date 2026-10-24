@@ -44,6 +44,9 @@ es:
         completed: "Completado"
         cancelled: "Cancelado"
       supplier_unavailable: "Proveedor no disponible para programar nuevas actividades."
+      specific_schedule: "Horario específico"
+      all_schedules: "Todos los horarios"
+      edit_exception: "Editar excepción"
       event_details: Próximos eventos
       exception_note: Excepción
       fields:

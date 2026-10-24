@@ -24,6 +24,23 @@ module Admin
       end
     end
 
+    def edit
+      @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
+      @branches = current_organization.branches.not_deleted.order(:name)
+      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
+    end
+
+    def update
+      exception = @supplier.supplier_schedule_exceptions.find(params[:id])
+      if exception.update(exception_params)
+        redirect_to admin_supplier_schedules_path(@supplier),
+                    notice: t('admin.supplier_schedule_exceptions.saved')
+      else
+        redirect_to edit_admin_supplier_schedule_exception_path(@supplier, exception),
+                    alert: exception.errors.full_messages.to_sentence
+      end
+    end
+
     def destroy
       exception = @supplier.supplier_schedule_exceptions.find(params[:id])
       exception.destroy!
@@ -72,7 +89,7 @@ module Admin
     end
 
     def exception_params
-      params.expect(supplier_schedule_exception: %i[starts_on ends_on reason branch_id notes])
+      params.expect(supplier_schedule_exception: %i[starts_on ends_on reason branch_id supplier_schedule_id notes])
     end
   end
 end
