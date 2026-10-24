@@ -67,13 +67,13 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     )
 
     (22..24).each do |day|
-      visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
-                                calendar_day: format('2026-10-%02d', day))
+      query = { tab: 'schedules', calendar_view: 'day', calendar_day: format('2026-10-%02d', day) }
+      visit admin_supplier_path(supplier, query)
       expect(page).to have_css('[data-calendar-day-details]', text: 'Multi-day conference')
     end
 
-    visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
-                              calendar_day: '2026-10-25')
+    query = { tab: 'schedules', calendar_view: 'day', calendar_day: '2026-10-25' }
+    visit admin_supplier_path(supplier, query)
     expect(page).to have_no_css('[data-calendar-day-details]', text: 'Multi-day conference')
   end
 end
