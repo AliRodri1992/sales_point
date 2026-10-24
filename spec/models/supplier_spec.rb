@@ -163,4 +163,35 @@ RSpec.describe Supplier, type: :model do
       expect(Supplier.available).not_to include(inactive, deleted)
     end
   end
+
+  describe 'responsible user assignment' do
+    it 'rejects a responsible user outside the supplier organization' do
+      supplier.responsible_user = create(:user)
+
+      expect(supplier).not_to be_valid
+      expect(supplier.errors[:responsible_user]).to be_present
+    end
+
+    it 'accepts an assigned responsible user with an organization membership' do
+      responsible = create(:user)
+      create(:organization_membership, organization:, user: responsible)
+      supplier.responsible_user = responsible
+
+      expect(supplier).to be_valid
+    end
+
+    it 'rejects a responsible user when the supplier has no organization' do
+      supplier.organization = nil
+      supplier.responsible_user = create(:user)
+
+      expect(supplier).not_to be_valid
+      expect(supplier.errors[:responsible_user]).to be_present
+    end
+  end
+
+  it 'does not modify a text field when a normalization block was not supplied' do
+    supplier.name = '  Unnormalized value  '
+    supplier.send(:normalize_text_field, :name)
+    expect(supplier.name).to eq('  Unnormalized value  ')
+  end
 end
