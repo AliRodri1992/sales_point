@@ -57,7 +57,7 @@ RSpec.describe Suppliers::DossierDocumentsPage do
       filename: 'old.txt', category: 'technical', status: 'active',
       description: 'Old specification'
     )
-    old.attachment.update_columns(created_at: 40.days.ago)
+    old.attachment.update!(created_at: 40.days.ago)
 
     page = described_class.new(supplier:, filters: { days: '30' }).call
 
