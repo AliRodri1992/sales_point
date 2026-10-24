@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     resources :clients
     resource :profile, only: %i[show update]
     get 'guide', to: 'guide#show', as: :guide
+    post 'assistant/reply', to: 'assistant#reply', as: :assistant_reply
     resource :organization, only: [] do
       resources :contacts, controller: 'organization_contacts', except: %i[show] do
         member { patch :restore }

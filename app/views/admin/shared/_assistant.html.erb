@@ -1,0 +1,122 @@
+<div class="deltin-shell" data-controller="deltin-assistant" data-mood="idle"
+     data-deltin-assistant-endpoint-value="<%= admin_assistant_reply_path %>"
+     data-deltin-assistant-locale-value="<%= I18n.locale %>"
+     data-deltin-assistant-labels-value="<%= {
+       failed: t('admin.assistant.request_failed'),
+       processing: t('admin.assistant.processing'),
+       found: t('admin.assistant.quick_guide'),
+       view: t('admin.assistant.guide_link'),
+       topic: t('admin.assistant.help_topic')
+     }.to_json %>">
+  <button type="button" data-deltin-assistant-target="launcher"
+          data-action="click->deltin-assistant#open"
+          aria-controls="deltin-panel" aria-expanded="false"
+          aria-label="<%= t('admin.assistant.open') %>"
+          class="deltin-launcher fixed bottom-5 right-5 z-[60] flex size-[76px] items-center justify-center rounded-full border-[3px] border-white bg-gradient-to-br from-blue-100 to-blue-500 transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-blue-600">
+    <span class="absolute inset-0 overflow-hidden rounded-full">
+      <%= render 'admin/shared/deltin_mascot', variant: 'launcher' %>
+    </span>
+    <span class="absolute right-0 top-0 size-4 rounded-full border-[3px] border-white bg-emerald-400"></span>
+  </button>
+
+  <div id="deltin-panel" data-deltin-assistant-target="panel" hidden
+       class="fixed inset-0 z-[70]" role="dialog" aria-modal="true"
+       aria-labelledby="deltin-panel-title">
+    <button type="button" class="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px] lg:bg-slate-950/10"
+            data-action="click->deltin-assistant#close"
+            aria-label="<%= t('admin.assistant.close') %>"></button>
+    <aside class="deltin-panel absolute inset-y-0 right-0 flex flex-col overflow-hidden border-l border-slate-200 bg-white">
+      <header class="flex shrink-0 items-center justify-between gap-2 border-b border-slate-100 px-5 py-4">
+        <div class="flex min-w-0 items-center gap-2.5">
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-xl text-blue-600">✦</span>
+          <h2 id="deltin-panel-title" class="truncate font-jakarta text-base font-bold text-slate-900"><%= t('admin.assistant.title') %></h2>
+          <span class="hidden shrink-0 rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-bold text-emerald-700 sm:inline-flex"><%= t('admin.assistant.available') %></span>
+        </div>
+        <button type="button" data-deltin-assistant-target="closeButton" data-action="click->deltin-assistant#close"
+                class="flex size-9 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+                aria-label="<%= t('admin.assistant.close') %>">
+          <%= icon('x-mark', class: 'size-5') %>
+        </button>
+      </header>
+
+      <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-b from-blue-50 to-white">
+          <div class="pointer-events-none absolute left-4 top-7 select-none text-4xl text-blue-100">✿</div>
+          <div class="pointer-events-none absolute right-4 top-14 select-none text-4xl text-blue-100">✿</div>
+          <div class="mx-auto h-44 max-w-[220px]" data-deltin-assistant-target="portrait">
+            <%= render 'admin/shared/deltin_mascot', variant: 'portrait' %>
+          </div>
+          <span class="pointer-events-none absolute right-7 top-6 flex h-12 w-14 items-center justify-center rounded-2xl border-2 border-blue-400 bg-white text-2xl font-bold text-blue-600 shadow-sm">···</span>
+        </div>
+        <div>
+          <h3 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900"><%= t('admin.assistant.greeting') %></h3>
+          <p class="mt-1 text-sm text-slate-600"><%= t('admin.assistant.greeting_subtitle') %></p>
+        </div>
+        <div class="flex items-center gap-3 rounded-xl border border-blue-200 bg-blue-50 px-3 py-3">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-700"><%= icon('computer-desktop', class: 'size-6') %></span>
+          <div class="min-w-0">
+            <p class="text-xs font-semibold text-slate-600"><%= t('admin.assistant.current_screen') %>:
+              <strong data-deltin-assistant-target="screen" class="text-blue-700"><%= t('admin.assistant.general_screen') %></strong>
+            </p>
+            <p class="mt-1 text-xs leading-5 text-slate-600"><%= t('admin.assistant.greeting_subtitle') %></p>
+          </div>
+        </div>
+
+        <section aria-label="<%= t('admin.assistant.prompt') %>">
+          <h4 class="mb-2 text-sm font-bold text-slate-900"><%= t('admin.assistant.prompt') %></h4>
+          <div class="grid grid-cols-2 gap-2">
+            <% [
+              ['cube', 'create_product', 'question_product', 'create_product_detail'],
+              ['truck', 'supplier_help', 'question_supplier', 'supplier_help_detail'],
+              ['exclamation-triangle', 'explain_error', 'question_error', 'explain_error_detail'],
+              ['book-open', 'guided', 'question_steps', 'guided_detail']
+            ].each do |symbol, label_key, question_key, description_key| %>
+              <button type="button" data-action="click->deltin-assistant#quickAsk"
+                      data-question="<%= t("admin.assistant.#{question_key}") %>"
+                      class="flex min-h-20 flex-col items-start gap-1 rounded-xl border border-slate-200 bg-white p-3 text-left transition hover:border-blue-300 hover:bg-blue-50">
+                <span class="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600"><%= icon(symbol, class: 'size-5') %></span>
+                <span class="text-xs font-bold text-slate-900"><%= t("admin.assistant.#{label_key}") %></span>
+                <span class="text-[11px] leading-4 text-slate-500"><%= t("admin.assistant.#{description_key}") %></span>
+              </button>
+            <% end %>
+          </div>
+        </section>
+
+        <section data-deltin-assistant-target="result" hidden class="rounded-xl border border-blue-200 bg-white">
+          <div class="flex items-center justify-between gap-2 rounded-t-xl bg-blue-50 px-3 py-2.5">
+            <h4 data-deltin-assistant-target="resultTitle" class="text-sm font-bold text-slate-900"><%= t('admin.assistant.quick_guide') %></h4>
+            <button type="button" data-action="click->deltin-assistant#speak"
+                    data-deltin-assistant-target="speechButton"
+                    class="rounded-lg border border-blue-100 bg-white px-2 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                    aria-label="<%= t('admin.assistant.speak') %>"><%= t('admin.assistant.voice_off') %></button>
+          </div>
+          <p data-deltin-assistant-target="reply" role="status" aria-live="polite"
+             class="deltin-message px-3 pt-3 text-sm leading-6 text-slate-700"></p>
+          <ol data-deltin-assistant-target="steps" class="space-y-3 px-4 py-3 text-sm text-slate-700"></ol>
+          <p data-deltin-assistant-target="note" hidden class="mx-3 mb-3 rounded-lg bg-amber-50 p-3 text-xs leading-5 text-amber-900"></p>
+          <a data-deltin-assistant-target="guideLink" href="<%= admin_guide_path %>"
+             class="mx-3 mb-3 inline-flex items-center gap-2 text-xs font-bold text-blue-700 hover:underline">
+            <%= icon('book-open', class: 'size-4') %>
+            <%= t('admin.assistant.guide_link') %>
+          </a>
+        </section>
+        <p class="text-[11px] leading-5 text-slate-400"><%= t('admin.assistant.notice') %></p>
+      </div>
+
+      <form data-action="submit->deltin-assistant#ask" class="shrink-0 border-t border-slate-200 bg-white px-4 py-3">
+        <div class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2 shadow-sm focus-within:border-blue-500">
+          <span class="ml-1 text-blue-600" aria-hidden="true">✦</span>
+          <input data-deltin-assistant-target="question" type="search" maxlength="500"
+                 autocomplete="off" required
+                 class="min-w-0 flex-1 border-0 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400"
+                 placeholder="<%= t('admin.assistant.question_placeholder') %>">
+          <button type="submit" data-deltin-assistant-target="sendButton"
+                  class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40"
+                  aria-label="<%= t('admin.assistant.ask') %>">
+            <%= icon('paper-airplane', class: 'size-4') %>
+          </button>
+        </div>
+      </form>
+    </aside>
+  </div>
+</div>

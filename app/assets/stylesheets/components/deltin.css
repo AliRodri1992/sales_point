@@ -1,0 +1,40 @@
+/* Deltín: SVG expressions and right-side assistant drawer. Local-only assets. */
+.deltin-shell [hidden] { display: none !important; }
+.deltin-character { overflow: visible; }
+.deltin-head, .deltin-wave, .deltin-ears, .deltin-body { transform-origin: center; }
+.deltin-head { animation: deltin-breathe 3.2s ease-in-out infinite; }
+.deltin-wave { transform-origin: 229px 203px; animation: deltin-wave 3.6s ease-in-out infinite; }
+.deltin-eye { transform-box: fill-box; transform-origin: center; animation: deltin-blink 6.5s infinite; }
+.deltin-mouth { display: none; }
+.deltin-shell[data-mood="idle"] .deltin-mouth-smile,
+.deltin-shell[data-mood="happy"] .deltin-mouth-smile,
+.deltin-shell[data-mood="thinking"] .deltin-mouth-doubt,
+.deltin-shell[data-mood="concerned"] .deltin-mouth-doubt { display: block; }
+.deltin-shell[data-mood="talking"] .deltin-mouth-talk {
+  display: block; transform-box: fill-box; transform-origin: center;
+  animation: deltin-talk .24s ease-in-out infinite alternate;
+}
+.deltin-shell[data-mood="laughing"] .deltin-mouth-laugh { display: block; }
+.deltin-shell[data-mood="thinking"] .deltin-head { animation: deltin-think 1.8s ease-in-out infinite alternate; }
+.deltin-shell[data-mood="concerned"] .deltin-brows { transform: translateY(5px); }
+.deltin-shell[data-mood="laughing"] .deltin-head { animation: deltin-laugh .25s ease-in-out infinite alternate; }
+.deltin-shell:not([data-mood="thinking"]) .deltin-question { display: none; }
+.deltin-shell:not([data-mood="happy"]):not([data-mood="laughing"]) .deltin-sparkle { display: none; }
+.deltin-panel { width: min(100vw, 440px); max-width: 100vw; box-shadow: -24px 0 70px rgba(15,23,42,.18); animation: deltin-slide .23s ease-out; }
+.deltin-launcher { box-shadow: 0 8px 25px rgba(37,99,235,.28); transition: transform .2s ease; }
+.deltin-launcher:hover { transform: translateY(-3px); }
+.deltin-message { overflow-wrap: anywhere; }
+.deltin-step-highlight { outline: 3px solid #059669 !important; outline-offset: 5px; border-radius: 8px; position: relative; z-index: 42; }
+@keyframes deltin-blink {
+  0%, 41%, 43%, 90%, 92%, 100% { transform: scaleY(1); }
+  42%, 91% { transform: scaleY(.06); }
+}
+@keyframes deltin-talk { to { transform: scaleY(.45) scaleX(1.18); } }
+@keyframes deltin-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2px); } }
+@keyframes deltin-think { to { transform: rotate(-6deg) translateY(-2px); } }
+@keyframes deltin-laugh { to { transform: translateY(-4px) rotate(2deg); } }
+@keyframes deltin-wave { 0%, 65%, 100% { transform: rotate(0); } 75% { transform: rotate(-10deg); } 85% { transform: rotate(9deg); } }
+@keyframes deltin-slide { from { transform: translateX(24px); opacity: .75; } to { transform: translateX(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .deltin-shell *, .deltin-shell *::before, .deltin-shell *::after { animation: none !important; transition: none !important; }
+}

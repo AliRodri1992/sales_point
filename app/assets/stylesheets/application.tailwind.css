@@ -3,6 +3,7 @@
 @import "./gridstack.css";
 /* Components */
 @import "./components/themes.css";
+@import "./components/deltin.css";
 
 @theme {
     --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;

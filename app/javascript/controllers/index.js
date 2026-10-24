@@ -121,3 +121,6 @@ application.register("products-search", ProductsSearchController)
 
 import UserGuideController from "./user_guide_controller"
 application.register("user-guide", UserGuideController)
+
+import DeltinAssistantController from "./deltin_assistant_controller"
+application.register("deltin-assistant", DeltinAssistantController)
