@@ -8,6 +8,7 @@ module Admin
     before_action :authenticate_user!
     before_action :set_supplier
     before_action :require_available_supplier, only: %i[edit update create]
+    before_action :require_available_supplier, if: :restoring_exceptions?
 
     def edit
       @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
@@ -49,8 +50,6 @@ module Admin
       return head :bad_request unless valid_bulk_request?(ids)
 
       restoring = params[:operation] == 'restore'
-      return require_available_supplier if restoring && !@supplier.active?
-
       @supplier.with_lock { apply_bulk_update!(ids, restoring:) }
       redirect_bulk_success(restoring)
     rescue ActiveRecord::RecordInvalid => e
@@ -59,6 +58,10 @@ module Admin
     end
 
     private
+
+    def restoring_exceptions?
+      action_name == 'bulk_update' && params[:operation] == 'restore'
+    end
 
     def require_available_supplier
       return if @supplier.active?
