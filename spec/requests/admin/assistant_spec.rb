@@ -11,17 +11,21 @@ RSpec.describe 'Deltín assistant', type: :request do
     sign_in user
   end
 
-  it 'integrates an expressive SVG assistant in the admin layout' do
+  it 'uses the approved two-ear mascot assets in the admin layout' do
     get admin_dashboard_path
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('[data-controller="deltin-assistant"]')).to be_present
     expect(page.at_css('#deltin-panel[role="dialog"]')).to be_present
-    expect(page.css('svg.deltin-character').size).to eq(2)
-    expect(page.at_css('.deltin-mouth-talk')).to be_present
-    expect(page.at_css('.deltin-mouth-laugh')).to be_present
-    expect(page.at_css('.deltin-question')).to be_present
+    avatar = page.at_css('img.deltin-avatar')
+    portrait = page.at_css('img.deltin-portrait')
+    expect(avatar['src']).to include('deltin/portrait')
+    expect(portrait['src']).to include('deltin/waving')
+    expect(portrait['alt']).to eq(I18n.t('admin.assistant.mascot_alt'))
+    expect(page.at_css('svg.deltin-character')).to be_nil
+    expect(Rails.root.join('app/assets/images/deltin/portrait.webp')).to exist
+    expect(Rails.root.join('app/assets/images/deltin/waving.webp')).to exist
     expect(page.at_css('#chatFloatingButton')).to be_nil
   end
 

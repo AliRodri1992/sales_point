@@ -4,9 +4,9 @@ La integración está disponible en cualquier pantalla que usa `admin_dashboard`
 
 ## Primera versión funcional
 
-- SVG vectorial local de un perrito naranja/blanco con headset azul y collar.
-- Expresiones `idle`, `happy`, `thinking`, `concerned`, `laughing` y `talking`, mediante CSS y Stimulus.
-- Boca animada **durante la lectura en voz alta** usando Web Speech API del navegador (solo después de pulsar «Leer en voz alta»).
+- Imágenes oficiales de Deltín: retrato para el lanzador y mascota de cuerpo completo saludando para el panel. Ambos son recursos WebP locales optimizados, derivados de las ilustraciones aprobadas; no se usa un SVG redibujado.
+- Estados animados `idle`, `happy`, `thinking`, `concerned`, `laughing` y `talking` con movimientos CSS sobre las ilustraciones originales. La versión estática del arte no dispone de capas faciales independientes; durante la lectura se anima suavemente el cuerpo (no hay lip-sync preciso de la boca).
+- Lectura en voz alta opcional mediante Web Speech API, con animación de habla sincronizada con el inicio y fin de la locución.
 - Panel adaptativo móvil/escritorio, apertura/cierre y navegación por teclado.
 - El lanzador se oculta automáticamente mientras está abierto el formulario lateral de eventos del calendario, para no tapar los botones de guardar.
 - Respuestas procedentes de los procedimientos realmente documentados en los YAML de la guía: no se generan explicaciones inexistentes ni se ejecutan acciones financieras.
@@ -16,8 +16,8 @@ La integración está disponible en cualquier pantalla que usa `admin_dashboard`
 ## Dónde se mantiene
 
 - `app/views/admin/shared/_assistant.html.erb`: diseño del panel.
-- `app/views/admin/shared/_deltin_mascot.html.erb`: dibujo SVG de la mascota.
-- `app/assets/stylesheets/components/deltin.css`: expresiones, boca, parpadeo, patita, preferencias de movimiento reducido.
+- `app/assets/images/deltin/{portrait,waving}.webp`: arte oficial para botón y panel.
+- `app/assets/stylesheets/components/deltin.css`: movimiento de los estados de ánimo y preferencias de movimiento reducido.
 - `app/javascript/controllers/deltin_assistant_controller.js`: interacción y lectura de voz.
 - `app/controllers/admin/assistant_controller.rb`: endpoint POST autenticado.
 - `app/services/assistant/guide_responder.rb`: búsqueda en procedimientos de la guía según permisos.

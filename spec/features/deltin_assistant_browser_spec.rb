@@ -22,6 +22,7 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
 
     expect(page).to have_css('.deltin-launcher', visible: true)
     expect(page).to have_css('.deltin-shell[data-assistant-ready="true"]')
+    expect(page).to have_css('.deltin-avatar[src*="deltin/portrait"]', visible: true)
     expect(page.evaluate_script(<<~JS)).to be(true)
       Boolean(window.Stimulus.getControllerForElementAndIdentifier(
         document.querySelector('.deltin-shell'), 'deltin-assistant'
@@ -30,6 +31,8 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
 
     find('.deltin-launcher').click
     expect(page).to have_css('#deltin-panel:not([hidden])', visible: true)
+    expect(page).to have_css('.deltin-portrait[src*="deltin/waving"]', visible: true)
+    expect(page.evaluate_script("document.querySelector('.deltin-portrait').naturalWidth")).to be > 0
     expect(find('.deltin-launcher', visible: :all)['aria-expanded']).to eq('true')
     expect(page.evaluate_script(<<~JS)).to be(true)
       (() => {
