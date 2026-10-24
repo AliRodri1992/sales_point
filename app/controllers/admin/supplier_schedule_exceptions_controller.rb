@@ -8,6 +8,12 @@ module Admin
     before_action :authenticate_user!
     before_action :set_supplier
 
+    def edit
+      @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
+      @branches = current_organization.branches.not_deleted.order(:name)
+      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
+    end
+
     def create
       unless @supplier.active?
         return redirect_to admin_supplier_path(@supplier, tab: 'schedules'),
@@ -22,12 +28,6 @@ module Admin
       else
         redirect_to admin_supplier_schedules_path(@supplier), alert: exception.errors.full_messages.to_sentence
       end
-    end
-
-    def edit
-      @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
-      @branches = current_organization.branches.not_deleted.order(:name)
-      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
     end
 
     def update

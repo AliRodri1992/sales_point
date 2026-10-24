@@ -83,9 +83,7 @@ module Admin
     end
 
     def filtered_accounts
-      collection = @supplier.supplier_bank_accounts
-      collection = params[:archived] == '1' ? collection.with_deleted.where.not(deleted_at: nil) : collection.active
-      scope = policy_scope(collection)
+      scope = policy_scope(account_scope)
       if params[:q].present?
         term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
         scope = scope.where('bank_name ILIKE :term OR holder_name ILIKE :term', term:)
@@ -93,6 +91,13 @@ module Admin
       return scope if params[:currency].blank?
 
       scope.where(currency_code: params[:currency])
+    end
+
+    def account_scope
+      records = @supplier.supplier_bank_accounts
+      return records.active unless params[:archived] == '1'
+
+      records.with_deleted.where.not(deleted_at: nil)
     end
 
     def set_supplier

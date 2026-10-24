@@ -6,7 +6,8 @@ module Admin
     include FinancialPagination
     include Admin::CreditNotePosting
 
-    before_action :set_credit, only: %i[show post_credit apply cancel download_xml]
+    before_action :set_credit, only: %i[show apply cancel download_xml]
+    before_action :set_credit, if: -> { action_name == 'post_credit' }
 
     def index
       authorize current_organization.supplier_credit_notes.new, :index?

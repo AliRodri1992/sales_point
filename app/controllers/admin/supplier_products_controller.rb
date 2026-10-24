@@ -81,12 +81,9 @@ module Admin
     private
 
     def filtered_offers
-      scope = if params[:archived] == '1'
-                @supplier.supplier_products.with_deleted.where.not(deleted_at: nil).joins(:product)
-              else
-                @supplier.supplier_products.available.joins(:product)
-              end
-                       .merge(current_organization.products.not_deleted)
+      scope = @supplier.supplier_products
+      scope = params[:archived] == '1' ? scope.with_deleted.where.not(deleted_at: nil) : scope.available
+      scope = scope.joins(:product).merge(current_organization.products.not_deleted)
       @search.present? ? filter_offers(scope) : scope
     end
 
