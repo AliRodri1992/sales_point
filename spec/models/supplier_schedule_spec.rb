@@ -80,4 +80,55 @@ RSpec.describe SupplierSchedule, type: :model do
     expect(new_schedule.errors[:supplier]).to be_present
     expect(historical.update(notes: 'Historical commitment')).to be(true)
   end
+
+  it 'does not restore a schedule that is already active' do
+    schedule = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+
+    expect(schedule.restore_safely).to be(false)
+  end
+
+  it 'restores an archived slot when no competing schedule exists' do
+    schedule = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    schedule.update!(deleted_at: Time.current)
+
+    expect(schedule.restore_safely).to be(true)
+    expect(schedule.reload.deleted_at).to be_nil
+  end
+
+  it 'refuses restoring an archived slot that would overlap an active schedule' do
+    schedule = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    schedule.update!(deleted_at: Time.current)
+    described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: 1,
+      starts_at: '10:00', ends_at: '12:00'
+    )
+
+    expect(schedule.restore_safely).to be(false)
+    expect(schedule.deleted_at).to be_present
+    expect(schedule.errors[:starts_at]).to be_present
+  end
+
+  it 'skips recurring visits when an exception covers their date' do
+    date = Date.new(2026, 10, 26)
+    schedule = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: date.wday,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    expect(schedule.occurs_on?(date)).to be(true)
+    expect(schedule.occurs_on?(date + 1)).to be(false)
+
+    supplier.supplier_schedule_exceptions.create!(
+      branch:, reason: 'holiday', starts_on: date, ends_on: date + 7
+    )
+    expect(schedule.occurs_on?(date)).to be(false)
+  end
 end
