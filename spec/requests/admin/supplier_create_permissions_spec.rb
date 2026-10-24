@@ -51,10 +51,9 @@ RSpec.describe 'Supplier registration section permissions', type: :request do
   end
 
   it 'requires explicit address permission for nested fiscal addresses during registration' do
+    addresses = { '0' => { street: 'Hidden address', purpose: 'fiscal', primary: true } }
     expect do
-      create_supplier(addresses_attributes: {
-        '0' => { street: 'Hidden address', purpose: 'fiscal', primary: true }
-      })
+      create_supplier(addresses_attributes: addresses)
     end.not_to change(Supplier, :count)
 
     expect(response).to have_http_status(:forbidden)
