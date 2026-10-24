@@ -189,4 +189,40 @@ RSpec.describe Assistant::GuideResponder do
     expect(responder.send(:supplier_access?, 'supplier_calendar')).to be(true)
     expect(responder.send(:supplier_access?, 'supplier_fiscal')).to be(false)
   end
+
+  it 'does not expose administrator-only guide sections to ordinary users' do
+    allow(user).to receive(:admin?).and_return(false)
+
+    expect(responder.send(:allowed?, 'users')).to be(false)
+    expect(responder.send(:allowed?, 'roles')).to be(false)
+  end
+
+  it 'allows administrator guide sections to administrators' do
+    allow(user).to receive(:admin?).and_return(true)
+
+    expect(responder.send(:allowed?, 'users')).to be(true)
+  end
+
+  it 'denies a supplier detail when only unrelated permissions are granted' do
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+    allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
+
+    expect(responder.send(:supplier_access?, 'supplier_documents')).to be(false)
+  end
+
+  it 'grants a supplier detail when its management permission is present' do
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+    allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
+    allow(user).to receive(:permission?).with('suppliers.documents.manage').and_return(true)
+
+    expect(responder.send(:supplier_access?, 'supplier_documents')).to be(true)
+  end
+
+  it 'handles an empty question without inventing a guide match' do
+    create(:organization_membership, organization:, user:)
+
+    expect(responder.call(question: '', context: 'unrelated')[:steps]).to be_empty
+  end
 end
