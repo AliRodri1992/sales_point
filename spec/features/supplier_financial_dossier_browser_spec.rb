@@ -50,8 +50,8 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_no_text('1234567890')
     find("form[action='#{restore_admin_supplier_bank_account_path(supplier, archived)}'] button").click
 
-    expect(archived.reload.deleted_at).to be_nil
     expect(page).to have_current_path(admin_supplier_bank_accounts_path(supplier, archived: '1'), ignore_query: false)
+    expect(archived.reload.deleted_at).to be_nil
   end
 
   scenario 'does not offer new financial accounts when a supplier is inactive' do
