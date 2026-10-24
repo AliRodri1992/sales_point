@@ -132,7 +132,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(cards.first.text).to include('BBVA', '•••• •••• •••• 6789', '08/29')
     expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '123456789012')
     expect(cards.first.at_css('[title="Primary"]')).to be_present
-    expect(cards.first.at_css('summary[aria-label="Actions"]')).to be_present
+    expect(cards.first.at_css('summary[aria-label="Bank account actions"]')).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_present
     expect(panel('bank_accounts').css('select[name="banks_bank"] option[value="BBVA México"]').size).to eq(1)
   end

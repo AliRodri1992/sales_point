@@ -17,24 +17,13 @@ module Suppliers
 
     def call
       scope = @supplier.supplier_bank_accounts.with_deleted
-      @counts = {
-        all: scope.count,
-        active: scope.where(deleted_at: nil).count,
-        archived: scope.where.not(deleted_at: nil).count
-      }
-      @banks = by_status(scope).includes(:sat_bank)
-                    .filter_map { |account| account.sat_bank&.name || account.bank_name }.uniq.sort
-      filtered = filtered_scope(scope)
-      @total_count = filtered.count
-      @total_pages = [(@total_count.to_f / PAGE_SIZE).ceil, 1].max
-      @page = @page.clamp(1, @total_pages)
-      @accounts = filtered.includes(:sat_bank).order(primary: :desc, id: :desc)
-                          .limit(PAGE_SIZE).offset((@page - 1) * PAGE_SIZE)
+      load_facets(scope)
+      load_results(filtered_scope(scope))
       self
     end
 
     def from
-      total_count.zero? ? 0 : (page - 1) * PAGE_SIZE + 1
+      total_count.zero? ? 0 : ((page - 1) * PAGE_SIZE + 1)
     end
 
     def to
@@ -42,6 +31,24 @@ module Suppliers
     end
 
     private
+
+    def load_facets(scope)
+      @counts = {
+        all: scope.count,
+        active: scope.where(deleted_at: nil).count,
+        archived: scope.where.not(deleted_at: nil).count
+      }
+      bank_options = by_status(scope).includes(:sat_bank)
+      @banks = bank_options.filter_map { |account| account.sat_bank&.name || account.bank_name }.uniq.sort
+    end
+
+    def load_results(scope)
+      @total_count = scope.count
+      @total_pages = [(@total_count.to_f / PAGE_SIZE).ceil, 1].max
+      @page = @page.clamp(1, @total_pages)
+      @accounts = scope.includes(:sat_bank).order(primary: :desc, id: :desc)
+                       .limit(PAGE_SIZE).offset((@page - 1) * PAGE_SIZE)
+    end
 
     def filtered_scope(scope)
       scope = by_status(scope).left_joins(:sat_bank)
