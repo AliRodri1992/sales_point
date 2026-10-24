@@ -22,7 +22,8 @@ class SupplierEvent < ApplicationRecord
   validate :available_supplier_on_creation, on: :create
 
   def occurs_on?(date)
-    zone = ActiveSupport::TimeZone[supplier.organization.organization_settings.active_records.pick(:timezone)] || Time.zone
+    settings = supplier.organization.organization_settings.active_records
+    zone = ActiveSupport::TimeZone[settings.pick(:timezone)] || Time.zone
     first_day = starts_at.in_time_zone(zone).to_date
     last_day = (ends_at ? ends_at - Rational(1, 1_000_000) : starts_at).in_time_zone(zone).to_date
     date.between?(first_day, [first_day, last_day].max)

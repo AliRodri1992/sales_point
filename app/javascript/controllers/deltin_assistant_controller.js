@@ -17,7 +17,9 @@ export default class extends Controller {
     this.previousFocus = null
     this.detectContext()
     this.boundEscape = (event) => {
-      if (event.key === "Escape" && !this.panelTarget.hidden) this.close()
+      if (this.panelTarget.hidden) return
+      if (event.key === "Escape") this.close()
+      if (event.key === "Tab") this.keepFocus(event)
     }
     document.addEventListener("keydown", this.boundEscape)
     this.boundTurbo = () => this.stopSpeaking()
@@ -80,6 +82,22 @@ export default class extends Controller {
     this.resetSpotlight()
     this.mood("idle")
     if (this.previousFocus?.isConnected) this.previousFocus.focus()
+  }
+
+  keepFocus(event) {
+    const elements = Array.from(this.panelTarget.querySelectorAll(
+      "button:not([disabled]), input:not([disabled]), a[href]"
+    )).filter((element) => !element.closest("[hidden]"))
+    if (!elements.length) return
+    const first = elements[0]
+    const last = elements[elements.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first.focus()
+    }
   }
 
   ask(event) {
@@ -180,7 +198,11 @@ export default class extends Controller {
     const utterance = new SpeechSynthesisUtterance(this.lastAnswer)
     utterance.lang = this.localeValue === "ko" ? "ko-KR" : this.localeValue === "en" ? "en-US" : "es-MX"
     utterance.rate = 0.95
-    utterance.onstart = () => { if (this.speech === utterance) this.mood("talking") }
+    utterance.onstart = () => {
+      if (this.speech !== utterance) return
+      this.mood("talking")
+      this.speechButtonTarget.textContent = this.labelsValue.stopVoice
+    }
     utterance.onend = () => this.finishSpeaking(utterance)
     utterance.onerror = () => this.finishSpeaking(utterance)
     this.speech = utterance
@@ -190,12 +212,14 @@ export default class extends Controller {
   finishSpeaking(utterance) {
     if (this.speech !== utterance) return
     this.speech = null
+    this.speechButtonTarget.textContent = this.labelsValue.startVoice
     this.mood("happy")
   }
 
   stopSpeaking() {
     if (typeof window !== "undefined" && "speechSynthesis" in window) window.speechSynthesis.cancel()
     this.speech = null
+    this.speechButtonTarget.textContent = this.labelsValue.startVoice
     if (this.element.dataset.mood === "talking") this.mood("idle")
   }
 
