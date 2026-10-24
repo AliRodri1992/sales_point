@@ -84,9 +84,9 @@ module AccountsPayable
     ].freeze
 
     def self.offline_stylesheet
-      File.read(STYLESHEET).gsub(/<xsl:include\s+href="([^"]+)"\s*\/>/) do
+      File.read(STYLESHEET).gsub(%r{<xsl:include\s+href="([^"]+)"\s*/>}) do
         href = Regexp.last_match(1)
-        unless href.match?(/\Axslt\/[A-Za-z0-9_\.\/-]+\.xslt\z/) && href.split('/').exclude?('..')
+        unless href.match?(%r{\Axslt/[A-Za-z0-9_./-]+\.xslt\z}) && href.split('/').exclude?('..')
           raise ArgumentError, 'Unsafe CFDI stylesheet dependency'
         end
 
