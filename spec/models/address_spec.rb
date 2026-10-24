@@ -290,4 +290,37 @@ RSpec.describe Address, type: :model do
       end
     end
   end
+
+  describe 'archived address restoration failures' do
+    it 'keeps the archived timestamp when the database rejects a concurrent restoration' do
+      supplier = create(:supplier)
+      archived = create(:address, :delivery, :primary, :deleted, addressable: supplier)
+      original_deleted_at = archived.deleted_at
+      allow(archived).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      expect(archived.restore_safely).to be(false)
+      expect(archived.deleted_at).to eq(original_deleted_at)
+      expect(archived.errors[:primary]).to be_present
+    end
+
+    it 'does not alter a primary address that has never been archived' do
+      supplier = create(:supplier)
+      address = create(:address, :delivery, :primary, addressable: supplier)
+
+      expect(address.restore_safely).to be(false)
+      expect(address.reload.deleted_at).to be_nil
+    end
+  end
+
+  it 'does not discard client address fields when supplier-only normalization runs' do
+    client = create(:client)
+    country = create(:country, iso_alpha2: 'US')
+    address = build(:address, addressable: client, country:,
+                    postal_code: '90210', neighborhood: 'Kept neighborhood')
+
+    address.send(:clear_unused_supplier_fields)
+
+    expect(address.neighborhood).to eq('Kept neighborhood')
+    expect(address.postal_code).to eq('90210')
+  end
 end
