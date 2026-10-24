@@ -41,6 +41,28 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_no_css('[data-supplier-bank-accounts-target="card"]', text: 'Other Bank')
   end
 
+  scenario 'displays the approved bank cards within View Supplier and keeps search in that tab' do
+    account(name: 'BBVA México', account_number: '1234567890')
+    visit admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
+    expect(page).to have_css('#supplier-dossier-bank-accounts [data-supplier-bank-accounts-target="card"]', count: 1)
+    expect(page).to have_css('#supplier-dossier-bank-accounts [data-finance-bank-add-tile]', visible: true)
+
+    within('#supplier-dossier-bank-accounts') do
+      expect(page).to have_text('BBVA')
+      expect(page).to have_no_text('1234567890')
+      expect(page).to have_no_text('MXN')
+      fill_in 'banks_q', with: 'BBVA'
+      click_button 'Search'
+    end
+
+    expect(page).to have_current_path(admin_supplier_path(supplier, tab: 'bank_accounts', banks_q: 'BBVA',
+                                                           banks_bank: '', banks_status: 'active'))
+    expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
+    expect(page).to have_css('#supplier-dossier-bank-accounts [data-supplier-bank-accounts-target="card"]', count: 1)
+  end
+
   scenario 'does not offer new financial accounts when a supplier is inactive' do
     account(name: 'History Bank', account_number: '1234567890')
     supplier.update!(status: :inactive)

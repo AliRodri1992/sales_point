@@ -11,6 +11,7 @@ module SupplierDossierLoading
     load_dossier_documents if supplier_policy.view_documents?
     load_dossier_calendar if supplier_policy.view_schedules?
     load_dossier_products if supplier_policy.view_products?
+    load_dossier_bank_accounts if bank_account_dossier_access?
   end
 
   def load_dossier_calendar
@@ -47,6 +48,18 @@ module SupplierDossierLoading
         query: params[:documents_q], category: params[:documents_category],
         status: params[:documents_status], days: params[:documents_days]
       }
+    ).call
+  end
+
+  def bank_account_dossier_access?
+    account = @supplier.supplier_bank_accounts.new(organization: current_organization)
+    policy(account).index?
+  end
+
+  def load_dossier_bank_accounts
+    @dossier_bank_accounts_page = Suppliers::DossierBankAccountsPage.new(
+      supplier: @supplier, query: params[:banks_q], bank: params[:banks_bank],
+      status: params[:banks_status], page: params[:banks_page]
     ).call
   end
 

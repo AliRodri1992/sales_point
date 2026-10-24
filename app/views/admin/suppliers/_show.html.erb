@@ -9,8 +9,7 @@
 <% schedules = dossier_policy.view_schedules? ? supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) : [] %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
-<% can_view_bank_accounts = current_user.admin? || current_user.permission?('accounts_payable.banks.view') ||
-                            current_user.permission?('accounts_payable.banks.manage') %>
+<% can_view_bank_accounts = @dossier_bank_accounts_page.present? %>
 <% dossier_sections = [] %>
 <% dossier_sections << 'overview' if can_view_overview %>
 <% dossier_sections << 'general' if can_view_general %>
