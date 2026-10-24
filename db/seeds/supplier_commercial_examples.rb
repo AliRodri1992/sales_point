@@ -64,6 +64,8 @@ module SupplierCommercialExamples
 
     def seed_supplier_offers(suppliers, products)
       suppliers.each_with_index do |supplier, supplier_index|
+        next unless supplier.active?
+
         OFFERS_PER_SUPPLIER.times do |offset|
           product = products[(supplier_index + offset) % products.size]
           presentation, units = PRESENTATIONS[(supplier_index + offset) % PRESENTATIONS.size]
@@ -107,6 +109,7 @@ module SupplierCommercialExamples
     end
 
     def seed_additional_presentation(supplier, product)
+      return unless supplier.active?
       return if SupplierProduct.exists?(supplier:, product:, presentation_name: 'Caja de 24')
       return if SupplierProduct.exists?(supplier:, product:, supplier_sku: "#{supplier.code}-#{product.code}-24")
 
