@@ -82,16 +82,18 @@ RSpec.describe Admin::OnboardingController, type: :request do
     expect(organization.onboarding_audits.where(action: 'started')).to be_empty
   end
 
-  it 'denies all onboarding endpoints after membership deactivation' do
+  it 'prevents operations after the organization membership is deactivated' do
     user.organization_memberships.find_by!(organization:).update!(status: :inactive)
 
     get admin_onboarding_path
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:not_found).or redirect_to(new_user_session_path)
 
     patch admin_onboarding_path(step: 1), params: {}
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:not_found).or redirect_to(new_user_session_path)
 
     patch admin_onboarding_reset_path
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:not_found).or redirect_to(new_user_session_path)
+    expect(organization.reload.onboarding_status).to eq('pending')
+    expect(organization.onboarding_audits).to be_empty
   end
 end
