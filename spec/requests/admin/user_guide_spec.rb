@@ -68,6 +68,38 @@ RSpec.describe 'Delta POS user guide', type: :request do
     end
   end
 
+
+  it 'provides a distinct local SVG for every step-by-step procedure' do
+    get admin_guide_path
+
+    page = Nokogiri::HTML(response.body)
+    expected = Admin::GuideController::SECTION_ORDER.sum do |section|
+      I18n.t("admin.user_manual.sections.#{section}", locale: :es).fetch(:topics).sum do |topic|
+        topic.fetch(:tasks).size
+      end
+    end
+
+    figures = page.css('figure.guide-diagram')
+    expect(figures.size).to eq(expected)
+    expect(figures.size).to eq(78)
+    expect(page.css('article[data-user-guide-target="topic"]').size).to eq(35)
+    expect(page.at_css('img[alt*="Visual learning path"]')).to be_present
+    expect(page.at_css('dialog[data-user-guide-target="viewer"]')).to be_present
+    expect(page.css('button[data-action="click->user-guide#openIllustration"]').size).to eq(78)
+
+    figures.each do |figure|
+      image = figure.at_css('img')
+      file = Rails.root.join('app/assets/images/guide',
+                             "#{figure['data-topic']}-#{figure['data-procedure']}.svg")
+      expect(image['src']).to include('.svg')
+      expect(image['alt']).to be_present
+      expect(File).to exist(file)
+      xml = File.read(file)
+      expect(xml).to include('<svg', 'viewBox=', 'aria-labelledby=', '01 · LOCALIZA', '02 · REALIZA')
+      expect(xml).not_to include('<script', 'http://cdn', 'https://cdn')
+    end
+  end
+
   it 'requires authentication' do
     sign_out user
     get admin_guide_path

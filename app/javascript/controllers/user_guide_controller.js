@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Search chapter titles, task steps and results without server requests.
 export default class extends Controller {
-  static targets = ["search", "section", "topic", "navSection", "navItem", "empty"]
+  static targets = ["search", "section", "topic", "navSection", "navItem", "empty", "viewer", "viewerImage", "viewerCaption"]
 
   filter() {
     const term = this.normalize(this.searchTarget.value)
@@ -37,6 +37,41 @@ export default class extends Controller {
     const id = event.currentTarget.getAttribute("href")?.slice(1)
     const topic = this.topicTargets.find((element) => element.id === id)
     if (topic) topic.querySelector("details").open = true
+  }
+
+  expandAll() {
+    this.topicTargets.filter((topic) => !topic.classList.contains("hidden")).forEach((topic) => {
+      topic.querySelector("details").open = true
+    })
+  }
+
+  collapseAll() {
+    this.topicTargets.forEach((topic) => {
+      topic.querySelector("details").open = false
+    })
+  }
+
+  openIllustration(event) {
+    const figure = event.currentTarget.closest("figure")
+    const image = figure?.querySelector("img")
+    if (!image) return
+
+    this.viewerImageTarget.src = image.currentSrc || image.src
+    this.viewerImageTarget.alt = image.alt
+    this.viewerCaptionTarget.textContent = figure.querySelector("figcaption")?.textContent?.trim() || image.alt
+    this.viewerTarget.showModal()
+  }
+
+  closeIllustration() {
+    this.viewerTarget.close()
+  }
+
+  closeOutside(event) {
+    if (event.target === this.viewerTarget) this.closeIllustration()
+  }
+
+  clearIllustration() {
+    this.viewerImageTarget.removeAttribute("src")
   }
 
   normalize(value) {
