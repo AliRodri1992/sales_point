@@ -24,6 +24,30 @@ RSpec.describe 'Supplier dated events', type: :request do
     admin_supplier_path(supplier, params)
   end
 
+  it 'renders the new and edit forms for authorized supplier activities' do
+    get new_admin_supplier_event_path(supplier)
+    expect(response).to have_http_status(:ok)
+
+    event = supplier.supplier_events.create!(
+      branch:, title: 'Visit', kind: 'visit', starts_at: Time.zone.now
+    )
+    get edit_admin_supplier_event_path(supplier, event)
+    expect(response).to have_http_status(:ok)
+  end
+
+  it 'blocks editing a future event after supplier deactivation' do
+    event = supplier.supplier_events.create!(
+      branch:, title: 'Original visit', kind: 'visit', starts_at: Time.zone.now + 1.day
+    )
+    supplier.update!(status: :inactive)
+
+    patch admin_supplier_event_path(supplier, event),
+          params: { supplier_event: { title: 'Unauthorized reschedule' } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(event.reload.title).to eq('Original visit')
+  end
+
   it 'persists a multi-day all-day event and its lifecycle status' do
     post admin_supplier_events_path(supplier), params: {
       supplier_event: attributes(all_day: true, status: 'completed', ends_at: '2026-10-26T09:00')

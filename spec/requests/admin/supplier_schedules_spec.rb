@@ -20,6 +20,34 @@ RSpec.describe 'Admin supplier schedules', type: :request do
       starts_at: '09:00', ends_at: '11:00', notes: 'Weekly visit' }.merge(overrides)
   end
 
+  it 'renders the new and edit screens for recurring supplier schedules' do
+    get new_admin_supplier_schedule_path(supplier)
+    expect(response).to have_http_status(:ok)
+
+    schedule = supplier.supplier_schedules.create!(schedule_attributes.except(:branch_id).merge(branch:))
+    get edit_admin_supplier_schedule_path(supplier, schedule)
+    expect(response).to have_http_status(:ok)
+  end
+
+  it 'blocks new recurring schedules when the supplier is inactive' do
+    supplier.update!(status: :inactive)
+
+    post admin_supplier_schedules_path(supplier),
+         params: { supplier_schedule: schedule_attributes }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(supplier.supplier_schedules.count).to eq(0)
+  end
+
+  it 'renders errors when editing an existing schedule to an invalid range' do
+    schedule = supplier.supplier_schedules.create!(schedule_attributes.except(:branch_id).merge(branch:))
+    patch admin_supplier_schedule_path(supplier, schedule),
+          params: { supplier_schedule: schedule_attributes(starts_at: '17:00', ends_at: '09:00') }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(schedule.reload.starts_at.strftime('%H:%M')).to eq('09:00')
+  end
+
   it 'creates a branch visit and displays it in the supplier dossier' do
     expect do
       post admin_supplier_schedules_path(supplier),
