@@ -44,7 +44,7 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(Nokogiri::HTML(response.body).at_css('#flash [data-controller="swal-flash"]')).to be_nil
   end
 
-  it 'shows already authenticated via a SweetAlert2 dialog, not a flash banner' do
+  it 'shows already authenticated as a SweetAlert2 toast, not a flash banner' do
     sign_in user
     get new_user_session_path
     expect(response).to redirect_to(admin_dashboard_path)
@@ -54,8 +54,12 @@ RSpec.describe Users::SessionsController, type: :request do
     alert = page.at_css('#flash [data-controller="swal-flash"]')
     expect(alert['data-swal-flash-message-value']).to eq(I18n.t('devise.failure.already_authenticated'))
     expect(alert['data-swal-flash-icon-value']).to eq('info')
-    expect(alert['data-swal-flash-mode-value']).to eq('modal')
+    expect(alert['data-swal-flash-mode-value']).to eq('toast')
     expect(page.at_css('#flash .bg-rose-50')).to be_nil
     expect(page.at_css('#flash .bg-emerald-50')).to be_nil
+    expect(session[:swal_mode]).to be_nil
+
+    get admin_dashboard_path
+    expect(Nokogiri::HTML(response.body).at_css('#flash [data-controller="swal-flash"]')).to be_nil
   end
 end

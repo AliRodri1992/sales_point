@@ -12,7 +12,7 @@
     data-controller="swal-flash"
     data-swal-flash-message-value="<%= swal_message %>"
     data-swal-flash-icon-value="<%= swal_icon %>"
-    data-swal-flash-mode-value="<%= already_authenticated || sign_in_mode == 'modal' ? 'modal' : 'toast' %>"
+    data-swal-flash-mode-value="<%= sign_in_mode == 'modal' && !already_authenticated ? 'modal' : 'toast' %>"
     class="hidden"
   ></div>
 <% end %>

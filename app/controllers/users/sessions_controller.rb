@@ -24,7 +24,7 @@ module Users
 
       session[:swal_message_key] = 'devise.failure.already_authenticated'
       session[:swal_icon] = 'info'
-      session[:swal_mode] = 'modal'
+      session[:swal_mode] = 'toast'
       redirect_to admin_dashboard_path
     end
 
