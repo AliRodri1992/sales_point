@@ -82,7 +82,7 @@ module Admin
       Suppliers::NotifyService.call(action: "event_#{action}", supplier: @supplier,
                                     user: current_user, subject: @event)
       timezone = @supplier.organization.organization_settings.active_records.pick(:timezone)
-      zone = ActiveSupport::TimeZone[timezone] || Time.zone
+      zone = timezone.present? ? ActiveSupport::TimeZone[timezone] : Time.zone
       event_date = @event.starts_at.in_time_zone(zone).to_date
       redirect_to admin_supplier_path(@supplier, tab: 'schedules', calendar_month: event_date.strftime('%Y-%m'),
                                                  calendar_selected_day: event_date.iso8601),

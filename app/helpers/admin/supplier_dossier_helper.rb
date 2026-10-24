@@ -6,7 +6,7 @@ module Admin
     # Show the next occurrence calculated from the weekday and start time.
     def supplier_dossier_next_occurrence(schedule, now: Time.zone.now)
       timezone = schedule.supplier&.organization&.organization_settings&.active_records&.pick(:timezone)
-      zone = ActiveSupport::TimeZone[timezone] || Time.zone
+      zone = timezone.present? ? ActiveSupport::TimeZone[timezone] : Time.zone
       local_now = now.in_time_zone(zone)
       date = local_now.to_date
       date += (schedule.weekday - date.wday) % 7

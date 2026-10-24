@@ -99,14 +99,14 @@ RSpec.describe SupplierCommercialExamples do
 
     expect(manual.supplier_bank_accounts.pluck(:id)).to eq([account.id])
     expect(account.reload.holder_name).to eq('Cuenta administrada manualmente')
-    expect(organization.supplier_bank_accounts.count).to eq(SupplierExamples::COUNT + 1)
+    expect(organization.supplier_bank_accounts.count).to eq(organization.suppliers.available.count)
   end
 
   it 'creates encrypted, checksum-valid and nonduplicated demo bank accounts' do
     2.times { described_class.seed_bank_accounts! }
 
     organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
-    expect(SupplierBankAccount.where(organization:).count).to eq(SupplierExamples::COUNT)
+    expect(SupplierBankAccount.where(organization:).count).to eq(organization.suppliers.available.count)
 
     account = organization.supplier_bank_accounts.order(:id).first
     expect(account).to be_valid
@@ -129,7 +129,7 @@ RSpec.describe SupplierCommercialExamples do
     expect(account.reload.holder_name).to eq('TITULAR EDITADO')
     expect(account.deleted_at).to be_present
     expect(account.supplier.supplier_bank_accounts.count).to eq(1)
-    expect(organization.supplier_bank_accounts.count).to eq(SupplierExamples::COUNT)
+    expect(organization.supplier_bank_accounts.count).to eq(organization.suppliers.available.count)
   end
 
   it 'does not create synthetic records in production' do

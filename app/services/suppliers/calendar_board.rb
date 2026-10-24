@@ -10,7 +10,8 @@ module Suppliers
     def initialize(supplier:, **options)
       @supplier = supplier
       settings = supplier.organization.organization_settings.active_records
-      @timezone = ActiveSupport::TimeZone[settings.pick(:timezone)] || Time.zone
+      timezone = settings.pick(:timezone)
+      @timezone = timezone.present? ? ActiveSupport::TimeZone[timezone] : Time.zone
       setup_navigation(options)
       setup_filters(options)
       setup_selection(options)
