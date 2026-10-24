@@ -49,6 +49,17 @@ RSpec.describe 'Deltín assistant', type: :request do
     expect(response.parsed_body['guide_url']).to eq('/admin/guide')
   end
 
+  it 'explains validation errors without inventing an operation' do
+    post admin_assistant_reply_path, params: {
+      message: 'Corregir un error de validación', context: 'products'
+    }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body['mood']).to eq('concerned')
+    expect(response.parsed_body['source']).to eq('help')
+    expect(response.parsed_body.fetch('steps').length).to eq(4)
+  end
+
   it 'rejects empty and oversized messages' do
     ['', 'x' * 501].each do |message|
       post admin_assistant_reply_path, params: { message: }, as: :json

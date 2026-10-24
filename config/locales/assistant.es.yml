@@ -40,3 +40,10 @@ es:
       empty: "Selecciona una opción o escribe tu pregunta."
       processing: "Buscando en la guía..."
       help_topic: "Ayuda del módulo"
+      error_title: "Revisa este error"
+      error_intro: "Puedo ayudarte a diagnosticarlo sin modificar tus datos. Para identificar la causa exacta necesito el texto del error."
+      error_steps:
+        - "Lee el mensaje que aparece en el formulario y localiza el campo señalado."
+        - "Comprueba campos obligatorios, formato y valores duplicados."
+        - "Revisa que tengas permiso para realizar esa operación."
+        - "Vuelve a guardar; si persiste, comparte el mensaje exacto con soporte."

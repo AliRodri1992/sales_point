@@ -17,6 +17,7 @@ module Assistant
 
     def call(question:, context: '')
       return unavailable unless organization_access?
+      return explain_error if question.match?(/error|validaci[oó]n|no puedo guardar|invalid|오류/i)
 
       selection = best_match(question, context)
       return unavailable unless selection
@@ -105,6 +106,18 @@ module Assistant
 
     def permitted?(permission)
       @user.admin? || @user.permission?(permission)
+    end
+
+    def explain_error
+      {
+        reply: I18n.t('admin.assistant.error_intro'),
+        title: I18n.t('admin.assistant.error_title'),
+        steps: I18n.t('admin.assistant.error_steps'),
+        note: nil,
+        guide_url: '/admin/guide',
+        mood: 'concerned',
+        source: 'help'
+      }
     end
 
     def unavailable

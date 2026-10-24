@@ -40,3 +40,10 @@ en:
       empty: "Select an action or type your question."
       processing: "Searching the guide..."
       help_topic: "Module help"
+      error_title: "Let's review this error"
+      error_intro: "I can help troubleshoot without changing data. The exact error message is needed for a specific diagnosis."
+      error_steps:
+        - "Read the validation message and identify the highlighted field."
+        - "Check required fields, formats and duplicate values."
+        - "Confirm your account has permission to perform this action."
+        - "Try again; if the error persists, provide the exact message to support."
