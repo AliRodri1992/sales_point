@@ -6,15 +6,20 @@ module Suppliers
 
     def setup_navigation(options)
       @month = parse_month(options[:month])
-      @view = options[:view] == 'week' ? 'week' : 'month'
+      @view = %w[month week day].include?(options[:view]) ? options[:view] : 'month'
       @focus_date = valid_date(options[:day]) || default_focus
-      @month = focus_date.beginning_of_month if view == 'week'
+      @month = focus_date.beginning_of_month unless view == 'month'
       setup_range
     end
 
     def setup_range
-      @start_date = view == 'week' ? focus_date.beginning_of_week(:monday) : month.beginning_of_week(:monday)
-      @end_date = view == 'week' ? start_date + 6 : month.end_of_month.end_of_week(:monday)
+      @start_date = view == 'month' ? month.beginning_of_week(:monday) : focus_date.beginning_of_week(:monday)
+      @start_date = focus_date if view == 'day'
+      @end_date = if view == 'month'
+                    month.end_of_month.end_of_week(:monday)
+                  else
+                    view == 'day' ? focus_date : start_date + 6
+                  end
     end
 
     def default_focus

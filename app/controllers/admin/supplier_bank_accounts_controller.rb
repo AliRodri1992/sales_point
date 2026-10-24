@@ -112,9 +112,7 @@ module Admin
                  end
     end
 
-    def load_banks
-      @banks = SatBank.current.order(:name)
-    end
+    def load_banks = (@banks = SatBank.current.order(:name))
 
     def bank_params
       params.expect(supplier_bank_account: %i[

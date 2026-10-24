@@ -47,7 +47,9 @@ module Suppliers
     end
 
     def next_navigation(direction)
-      if view == 'week'
+      if view == 'day'
+        { calendar_view: 'day', calendar_day: (focus_date + direction).iso8601 }
+      elsif view == 'week'
         { calendar_view: 'week', calendar_day: (focus_date + (direction * 7)).iso8601 }
       else
         { calendar_view: 'month', calendar_month: month.advance(months: direction).strftime('%Y-%m') }

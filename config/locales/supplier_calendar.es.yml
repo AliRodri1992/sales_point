@@ -20,6 +20,8 @@ es:
       week: Semana
       previous: Anterior
       next: Siguiente
+      day: "Día"
+      reminder: "Mañana: %{title} de %{supplier}, %{date}."
       today: Hoy
       scheduled: Horarios semanales
       punctual: Eventos puntuales

@@ -14,6 +14,10 @@ production:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
 
+  supplier_calendar_reminders:
+    class: SupplierCalendarReminderJob
+    schedule: "0 13 * * *"
+
   accounts_payable_reminders:
     class: AccountsPayableReminderJob
     # 14:00 UTC = 08:00 America/Mexico_City (the financial team's daily review)

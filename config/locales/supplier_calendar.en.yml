@@ -20,6 +20,8 @@ en:
       week: Week
       previous: Previous
       next: Next
+      day: "Day"
+      reminder: "Tomorrow: %{title} for %{supplier}, %{date}."
       today: Today
       scheduled: Weekly schedules
       punctual: One-time events
