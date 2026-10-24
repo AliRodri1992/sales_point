@@ -172,7 +172,6 @@ RSpec.describe Supplier, type: :model do
       expect(supplier.errors[:responsible_user]).to be_present
     end
 
-
     it 'rejects assigning a responsible user whose organization membership was deactivated' do
       responsible = create(:user)
       membership = create(:organization_membership, organization:, user: responsible)
