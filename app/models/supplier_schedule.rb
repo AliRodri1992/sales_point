@@ -13,6 +13,7 @@ class SupplierSchedule < ApplicationRecord
   validates :starts_at, presence: true
   validates :notes, length: { maximum: 1000 }, allow_blank: true
   validate :same_organization
+  validate :available_supplier_on_creation, on: :create
   validate :valid_time_range
   validate :non_overlapping_time_slots
 
@@ -40,6 +41,10 @@ class SupplierSchedule < ApplicationRecord
   end
 
   private
+
+  def available_supplier_on_creation
+    errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
+  end
 
   def valid_time_range
     return if starts_at.blank? || ends_at.blank?
