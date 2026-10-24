@@ -200,4 +200,39 @@ RSpec.describe 'Supplier dated events', type: :request do
     expect(panel.at_css("form[action='#{admin_supplier_events_path(supplier)}']")).to be_present
     expect(panel.at_css("a[href='#{admin_supplier_schedules_path(supplier)}']")).to be_present
   end
+
+  it 'rejects a supplier calendar request without an active organization membership' do
+    user.organization_memberships.find_by!(organization:).update!(status: :inactive)
+
+    get new_admin_supplier_event_path(supplier)
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'retains an archived event when restoring its saved attributes fails' do
+    event = supplier.supplier_events.create!(
+      branch:, kind: 'visit', title: 'Archived', starts_at: Time.zone.local(2026, 10, 23),
+      deleted_at: Time.current
+    )
+    allow_any_instance_of(SupplierEvent).to receive(:update).and_return(false)
+
+    patch restore_admin_supplier_event_path(supplier, event)
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'schedules'))
+    expect(event.reload.deleted_at).to be_present
+  end
+
+  it 'redirects to the organization-local day after creating a cross-midnight event' do
+    create(:organization_setting, organization:, timezone: 'America/Tijuana')
+    post admin_supplier_events_path(supplier), params: {
+      supplier_event: attributes(
+        starts_at: Time.utc(2026, 11, 1, 5).iso8601,
+        ends_at: Time.utc(2026, 11, 1, 6).iso8601
+      )
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(
+      supplier, tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-31'
+    ))
+  end
 end
