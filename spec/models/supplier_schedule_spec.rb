@@ -131,4 +131,20 @@ RSpec.describe SupplierSchedule, type: :model do
     )
     expect(schedule.occurs_on?(date)).to be(false)
   end
+
+  it 'does not let an archived exception suppress a recurring visit' do
+    date = Date.new(2026, 10, 26)
+    schedule = described_class.create!(
+      supplier:, branch:, kind: 'visit', weekday: date.wday,
+      starts_at: '08:00', ends_at: '09:00'
+    )
+    exception = supplier.supplier_schedule_exceptions.create!(
+      branch:, supplier_schedule: schedule, reason: 'suspension', starts_on: date
+    )
+    expect(schedule.occurs_on?(date)).to be(false)
+
+    exception.update!(deleted_at: Time.current)
+
+    expect(schedule.occurs_on?(date)).to be(true)
+  end
 end

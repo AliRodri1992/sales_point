@@ -21,7 +21,7 @@ class SupplierSchedule < ApplicationRecord
     return false unless weekday == date.wday
     return true unless supplier&.persisted?
 
-    !supplier.supplier_schedule_exceptions.where(starts_on: ..date)
+    !supplier.supplier_schedule_exceptions.where(deleted_at: nil, starts_on: ..date)
              .where('COALESCE(ends_on, starts_on) >= ?', date)
              .exists?(branch_id: [nil, branch_id], supplier_schedule_id: [nil, id])
   end
