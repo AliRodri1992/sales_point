@@ -75,7 +75,7 @@ RSpec.describe AccountsPayable::CfdiParser do
   end
 
   it 'rejects a CFDI that omits the digital tax stamp' do
-    missing_stamp = xml.sub(/<tfd:TimbreFiscalDigital[^>]+\/>/, '')
+    missing_stamp = xml.sub(%r{<tfd:TimbreFiscalDigital[^>]+/>}, '')
 
     expect { described_class.call(xml: missing_stamp) }
       .to raise_error(ArgumentError, /Missing CFDI issuer, receiver or tax stamp/)
