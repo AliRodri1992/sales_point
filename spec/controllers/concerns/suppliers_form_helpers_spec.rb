@@ -70,4 +70,40 @@ RSpec.describe SuppliersFormHelpers do
     expect(contact[:primary]).to be(true)
     expect(address).to include(primary: true, purpose: 'fiscal')
   end
+
+  it 'rejects a nonexistent contact id rather than treating it as a new contact' do
+    expect(valid_records?([{ id: 999_999_999, name: 'Tampered' }])).to be(false)
+  end
+
+  it 'requires a primary fiscal address when a new address is submitted' do
+    expect(handler.send(:valid_primary_records?,
+                        [{ street: 'New fiscal address', purpose: 'fiscal' }],
+                        :addresses, creating: false)).to be(true)
+    supplier.addresses.create!(
+      purpose: 'fiscal', primary: true, country: create(:country, iso_alpha2: 'MX'),
+      street: 'Existing fiscal address', city: 'Mexico City', state: 'CDMX',
+      neighborhood: 'Centro', postal_code: '06000'
+    )
+    expect(handler.send(:valid_primary_records?,
+                        [{ street: 'Another fiscal address', purpose: 'fiscal' }],
+                        :addresses, creating: false)).to be(false)
+  end
+
+  it 'ignores empty nested collections during normalization' do
+    attrs = { contacts_attributes: {}, addresses_attributes: nil }
+
+    expect(handler.send(:normalize_primary_dossier_attributes!, attrs)).to eq(attrs)
+  end
+
+  it 'does not enqueue geocoding for unsaved addresses' do
+    supplier.addresses.build(
+      purpose: 'delivery', country: create(:country, iso_alpha2: 'MX'),
+      street: 'Unstored Street', city: 'Mexico City'
+    )
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    handler.send(:enqueue_nested_address_geocoding)
+
+    expect(GeocodeAddressJob).not_to have_received(:perform_later)
+  end
 end
