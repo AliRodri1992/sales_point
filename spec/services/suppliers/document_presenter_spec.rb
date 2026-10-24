@@ -100,4 +100,22 @@ RSpec.describe Suppliers::DocumentPresenter do
     expect(docx.preview_kind).to eq('text')
     expect(legacy.preview_kind).to eq('none')
   end
+
+  it 'uses all safe text MIME types and rejects unsupported text formats' do
+    %w[text/csv application/csv text/xml application/xml].each do |mime|
+      document = described_class.new(attachment_for('report.dat', content_type: mime))
+      expect(document.preview_kind).to eq('text')
+    end
+    document = described_class.new(attachment_for('data.dat', content_type: 'application/x-executable'))
+    expect(document.preview_kind).to eq('none')
+  end
+
+  it 'recognizes jpeg pictures and legacy spreadsheet file icons' do
+    picture = described_class.new(attachment_for('image.jpg', content_type: 'image/jpeg'))
+    spreadsheet = described_class.new(attachment_for('ledger.csv', content_type: 'text/csv'))
+
+    expect(picture.preview_kind).to eq('image')
+    expect(picture.icon).to eq('image')
+    expect(spreadsheet.icon).to eq('excel')
+  end
 end

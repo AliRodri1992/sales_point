@@ -176,4 +176,35 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(crumbs.last.at_css('[aria-current="page"]')).to be_present
     expect(document.at_css('[data-bank-accounts-supplier-summary]')).to be_nil
   end
+
+  it 'blocks new banking details when the supplier is inactive but preserves history' do
+    existing = bank_account
+    supplier.update!(status: :inactive)
+
+    get new_admin_supplier_bank_account_path(supplier)
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+
+    expect do
+      post admin_supplier_bank_accounts_path(supplier), params: {
+        supplier_bank_account: { bank_name: 'Not allowed', holder_name: 'New',
+                                 account_number: '55554444', currency_code: 'MXN' }
+      }
+    end.not_to change(SupplierBankAccount, :count)
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+
+    get admin_supplier_bank_accounts_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(document.text).to include(existing.holder_name)
+  end
+
+  it 'does not expose banking records belonging to another organization in edit or reveal' do
+    external = create(:supplier, organization: create(:organization))
+    account = bank_account(supplier: external, organization: external.organization)
+
+    get edit_admin_supplier_bank_account_path(supplier, account)
+    expect(response).to have_http_status(:not_found)
+
+    post reveal_admin_supplier_bank_account_path(supplier, account)
+    expect(response).to have_http_status(:not_found)
+  end
 end
