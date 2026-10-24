@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 
 module SupplierBankAccountCreationGuard
-  extend ActiveSupport::Concern
-
-  included do
-    before_action :require_available_supplier, only: %i[new create]
-  end
-
   private
 
   def require_available_supplier
