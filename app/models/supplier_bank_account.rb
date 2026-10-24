@@ -13,6 +13,7 @@ class SupplierBankAccount < ApplicationRecord
   validates :account_number, presence: true, unless: -> { clabe.present? }
   validates :currency_code, presence: true, length: { is: 3 }
   validate :same_organization
+  validate :supplier_available_for_creation, on: :create
   validate :valid_clabe
   validate :valid_account_number
   validate :consistent_bank_code
@@ -32,6 +33,10 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   private
+
+  def supplier_available_for_creation
+    errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
+  end
 
   def same_organization
     errors.add(:supplier, :invalid) if supplier && supplier.organization_id != organization_id
