@@ -5,6 +5,7 @@ module Admin
     include FinancialAccess
 
     before_action :set_supplier
+    before_action :require_available_supplier, only: %i[new create]
     before_action :set_account, only: %i[edit update destroy reveal restore]
 
     def index
@@ -73,6 +74,13 @@ module Admin
     end
 
     private
+
+    def require_available_supplier
+      return if @supplier.active? && @supplier.deleted_at.nil?
+
+      redirect_to admin_supplier_bank_accounts_path(@supplier),
+                  alert: t('admin.supplier_calendar.supplier_unavailable')
+    end
 
     def paginate_accounts(scope)
       @accounts_total = scope.count
