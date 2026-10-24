@@ -98,4 +98,43 @@ RSpec.describe Suppliers::CalendarBoard do
       .to eq(['Evening local delivery'])
     expect(board.items_on(Date.new(2026, 10, 31)).pluck(:time)).to eq(['22:00'])
   end
+
+  it 'never leaks events or appointments outside the selected calendar range' do
+    supplier.supplier_events.create!(
+      title: 'Outside month', branch:, kind: 'visit',
+      starts_at: Time.zone.local(2026, 11, 23, 12)
+    )
+    board = described_class.new(supplier:, month: '2026-10')
+
+    expect(board.items_on(Date.new(2026, 11, 23))).to be_empty
+    expect(board.items_on(Date.new(2026, 9, 23))).to be_empty
+    expect(board.events).to be_empty
+  end
+
+  it 'ignores an unknown kind filter instead of hiding all scheduled activities' do
+    supplier.supplier_events.create!(
+      title: 'Visible with invalid filter', branch:, kind: 'visit',
+      starts_at: Time.zone.local(2026, 10, 23, 12)
+    )
+    board = described_class.new(supplier:, month: '2026-10', kind: 'invalid')
+
+    expect(board.kind).to be_nil
+    expect(board.items_on(date).pluck(:title)).to include('Visible with invalid filter')
+  end
+
+  it 'does not suppress a weekly appointment with an exception for another schedule' do
+    original = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: date.wday, starts_at: '09:00', ends_at: '10:00'
+    )
+    another = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: date.wday, starts_at: '11:00', ends_at: '12:00'
+    )
+    supplier.supplier_schedule_exceptions.create!(
+      supplier_schedule: original, branch:, reason: 'holiday', starts_on: date
+    )
+    board = described_class.new(supplier:, month: '2026-10')
+
+    expect(board.items_on(date).pluck(:record)).to include(another)
+    expect(board.items_on(date).pluck(:record)).not_to include(original)
+  end
 end
