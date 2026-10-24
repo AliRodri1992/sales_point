@@ -260,4 +260,15 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.send(:parse_cfdi, '<ignored/>') }
       .to raise_error(ArgumentError, /Invalid CFDI 4.0/)
   end
+
+  it 'verifies a synthetic RSA seal against the full installed SAT canonicalization template' do
+    original = Rails.root.join('config/sat/cadenaoriginal_4_0.xslt')
+    stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', original)
+    stylesheet = Nokogiri::XSLT(described_class.offline_stylesheet)
+    unsigned = signed_xml(seal: '')
+    canonical = stylesheet.transform(Nokogiri::XML(unsigned)).to_s.strip
+    seal = Base64.strict_encode64(private_key.sign(OpenSSL::Digest.new('SHA256'), canonical))
+
+    expect(described_class.call(xml: signed_xml(seal:))).to be(true)
+  end
 end
