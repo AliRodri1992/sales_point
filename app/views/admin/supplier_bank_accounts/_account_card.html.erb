@@ -1,60 +1,97 @@
+<% bank_name = account.sat_bank&.name.presence || account.bank_name.presence || t('admin.bank_cards.unknown_bank') %>
+<% identity = bank_name.downcase %>
+<% brand = if account.sat_bank_code == '012' || identity.include?('bbva')
+             :bbva
+           elsif account.sat_bank_code == '072' || identity.include?('banorte')
+             :banorte
+           elsif account.sat_bank_code == '014' || identity.include?('santander')
+             :santander
+           else
+             :other
+           end %>
+<% card_style = {
+  bbva: 'bg-gradient-to-br from-[#002b63] via-[#06478d] to-[#0876cf] text-white',
+  banorte: 'bg-gradient-to-br from-[#a90026] via-[#d4002d] to-[#f12041] text-white',
+  santander: 'border-slate-200 bg-gradient-to-br from-white to-[#f5f6fa] text-slate-900',
+  other: 'bg-gradient-to-br from-[#064e3b] via-[#047857] to-[#10b981] text-white'
+}.fetch(brand) %>
+<% muted = brand == :santander ? 'text-slate-600' : 'text-white/80' %>
+<% archived = account.deleted_at.present? %>
 <article data-supplier-bank-accounts-target="card"
-         data-search="<%= [account.sat_bank&.name, account.bank_name, account.holder_name, account.last_four].compact.join(' ').downcase %>"
-         data-currency="<%= account.currency_code %>"
-         class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-emerald-200 hover:shadow-md sm:p-5">
-  <div class="flex items-start gap-3">
-    <span class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-      <%= icon('building-library', class: 'size-6') %>
-    </span>
-    <div class="min-w-0 flex-1">
-      <div class="flex flex-wrap items-center gap-2">
-        <h2 class="break-words font-jakarta text-base font-bold text-slate-900">
-          <%= account.sat_bank&.name || account.bank_name %>
-        </h2>
-        <% if account.primary? %>
-          <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">
-            <%= icon('star', class: 'size-3.5') %>
-            <%= t('admin.accounts_payable.primary') %>
-          </span>
-        <% end %>
-      </div>
-      <p class="mt-1 break-words text-sm text-slate-500"><%= account.holder_name %></p>
-    </div>
-    <% if policy(account).update? %>
-      <details class="group relative shrink-0">
-        <summary aria-label="<%= t('admin.accounts_payable.bank_list.actions') %>"
-                 class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
-          <%= icon('ellipsis-vertical', class: 'size-5') %>
-        </summary>
-        <div class="absolute right-0 z-20 mt-1 min-w-36 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
-          <%= link_to edit_admin_supplier_bank_account_path(supplier, account), class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' do %>
-            <%= icon('pencil', class: 'size-4') %>
-            <%= t('admin.accounts_payable.edit') %>
-          <% end %>
-          <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
-                        class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50',
-                        form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } } do %>
-            <%= icon('archive-box', class: 'size-4') %>
-            <%= t('admin.accounts_payable.archive') %>
-          <% end %>
-        </div>
-      </details>
-    <% end %>
+         data-search="<%= [bank_name, account.holder_name, account.last_four, account.card_last_four].compact.join(' ').downcase %>"
+         class="group relative isolate z-0 flex min-h-[214px] min-w-0 flex-col justify-between rounded-2xl border border-white/10 p-5 shadow-sm transition hover:z-20 hover:-translate-y-0.5 hover:shadow-lg focus-within:z-20 <%= card_style %>"
+         aria-label="<%= t('admin.bank_cards.account_accessible', bank: bank_name, digits: account.card_last_four.presence || account.last_four.presence || '----') %>">
+  <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-2xl">
+    <div class="absolute -bottom-20 -right-20 size-52 rounded-full border-[32px] border-current opacity-[0.06]"></div>
+    <div class="absolute -right-8 top-12 h-44 w-28 rotate-30 bg-current opacity-[0.05]"></div>
   </div>
-  <dl class="mt-5 grid gap-3 border-t border-slate-100 pt-4 sm:grid-cols-2">
-    <div>
-      <dt class="text-xs font-medium text-slate-500"><%= t('admin.accounts_payable.account_number') %></dt>
-      <dd class="mt-1 font-semibold tabular-nums text-slate-900"><%= account.masked_number %></dd>
+
+  <div class="flex items-start justify-between gap-2">
+    <div class="min-w-0 truncate font-jakarta text-2xl font-extrabold tracking-[-0.06em]" aria-label="<%= bank_name %>">
+      <% case brand %>
+      <% when :bbva %>
+        <span class="tracking-[-0.07em]">BBVA</span>
+      <% when :banorte %>
+        <span class="inline-flex items-center gap-1.5">
+          <svg viewBox="0 0 30 30" class="size-7" fill="currentColor" aria-hidden="true"><path d="M3 13c8-9 16-11 24-7-5 1-9 4-12 8L3 13Zm1 5 11-2 12 8c-9 4-18 1-23-6Zm13-3 10-8c2 7 0 12-2 15l-8-7Z"/></svg>
+          <span class="text-[20px] font-bold tracking-tight">BANORTE</span>
+        </span>
+      <% when :santander %>
+        <span class="inline-flex items-center gap-2 font-jakarta text-xl font-bold tracking-tight text-[#d6001c]">
+          <svg viewBox="0 0 28 32" class="size-7" fill="currentColor" aria-hidden="true"><path d="M13 1c2 8-3 9-1 16 1 3 6 4 7 9 4-7 1-12-3-16-3-3-3-5-3-9Zm-7 12c-2 5-1 9 3 13-1-6 1-8-3-13Zm16 2c5 8 2 16-8 16-7 0-12-5-11-11 3 8 13 11 19-5Z"/></svg>
+          <span>Santander</span>
+        </span>
+      <% else %>
+        <span class="truncate text-xl tracking-normal"><%= bank_name %></span>
+      <% end %>
     </div>
-    <div>
-      <dt class="text-xs font-medium text-slate-500"><%= t('admin.accounts_payable.currency') %></dt>
-      <dd class="mt-1 font-semibold text-slate-900"><%= account.currency_code %></dd>
+    <div class="relative z-10 flex shrink-0 items-center gap-1.5">
+      <span class="rounded-full px-2 py-1 text-[11px] font-bold <%= archived ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800' %>">
+        <%= t("admin.bank_cards.#{archived ? 'inactive' : 'active'}") %>
+      </span>
+      <% if account.primary? && !archived %>
+        <span class="flex size-8 items-center justify-center rounded-lg bg-white/20" title="<%= t('admin.accounts_payable.primary') %>" aria-label="<%= t('admin.accounts_payable.primary') %>">
+          <svg viewBox="0 0 24 24" fill="currentColor" class="size-4 text-amber-300" aria-hidden="true">
+            <path d="m2.5 7 5 4 4.5-7 4.5 7 5-4-2 12H4.5l-2-12Zm3 14h13v-2h-13v2Z"/>
+          </svg>
+        </span>
+      <% end %>
+      <% if policy(account).update? %>
+        <details class="group/menu relative">
+          <summary aria-label="<%= t('admin.accounts_payable.bank_list.actions') %>"
+                   class="flex size-8 cursor-pointer list-none items-center justify-center rounded-lg bg-white/20 outline-offset-2 transition hover:bg-white/30 focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
+            <%= icon('ellipsis-vertical', class: 'size-5') %>
+          </summary>
+          <div class="absolute right-0 top-full z-30 mt-1 min-w-40 rounded-xl border border-slate-200 bg-white p-1 text-slate-700 shadow-xl">
+            <% if archived %>
+              <%= button_to t('admin.supplier_archive.restore'),
+                            restore_admin_supplier_bank_account_path(supplier, account), method: :patch,
+                            class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-emerald-700 hover:bg-emerald-50' %>
+            <% else %>
+              <%= link_to edit_admin_supplier_bank_account_path(supplier, account),
+                          class: 'block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-50' do %>
+                <%= icon('pencil', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.edit') %>
+              <% end %>
+              <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
+                            form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
+                            class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
+                <%= icon('archive-box', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.archive') %>
+              <% end %>
+            <% end %>
+          </div>
+        </details>
+      <% end %>
     </div>
-  </dl>
-  <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
-    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
-      <span class="size-1.5 rounded-full bg-emerald-600"></span>
-      <%= t('admin.accounts_payable.bank_list.active') %>
-    </span>
+  </div>
+
+  <div class="relative z-0 mt-8">
+    <div class="font-jakarta text-xl font-bold tracking-[0.045em] tabular-nums sm:text-2xl"><%= account.card_display_number %></div>
+    <p class="mt-3 text-xs font-medium <%= muted %>">
+      <% if account.card_expiration_label.present? %>
+        <%= t('admin.bank_cards.expires', date: account.card_expiration_label) %>
+      <% else %>
+        <%= t('admin.bank_cards.no_expiration') %>
+      <% end %>
+    </p>
   </div>
 </article>

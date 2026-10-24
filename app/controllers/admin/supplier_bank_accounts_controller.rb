@@ -11,8 +11,16 @@ module Admin
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
-      @currencies = @supplier.supplier_bank_accounts.active.distinct.order(:currency_code).pluck(:currency_code)
-      paginate_accounts(filtered_accounts)
+      @status = %w[all active archived].include?(params[:status]) ? params[:status] : status_from_legacy
+      accessible = policy_scope(@supplier.supplier_bank_accounts.with_deleted)
+      @account_counts = {
+        all: accessible.count,
+        active: accessible.where(deleted_at: nil).count,
+        archived: accessible.where.not(deleted_at: nil).count
+      }
+      @bank_options = accessible.includes(:sat_bank).map { |record| record.sat_bank&.name || record.bank_name }
+                                .compact.uniq.sort
+      paginate_accounts(filtered_accounts(accessible))
     end
 
     def new
@@ -83,22 +91,29 @@ module Admin
                        .limit(8).offset((@accounts_page - 1) * 8)
     end
 
-    def filtered_accounts
-      scope = policy_scope(account_scope)
+    def filtered_accounts(accessible)
+      scope = case @status
+              when 'active' then accessible.where(deleted_at: nil)
+              when 'archived' then accessible.where.not(deleted_at: nil)
+              else accessible
+              end
+      scope = scope.left_joins(:sat_bank)
       if params[:q].present?
         term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.first(100))}%"
-        scope = scope.where('bank_name ILIKE :term OR holder_name ILIKE :term', term:)
+        scope = scope.where(
+          'supplier_bank_accounts.bank_name ILIKE :term OR holder_name ILIKE :term OR ' \
+          'last_four ILIKE :term OR sat_banks.name ILIKE :term', term:
+        )
       end
-      return scope if params[:currency].blank?
-
-      scope.where(currency_code: params[:currency])
+      if params[:bank].present?
+        scope = scope.where('supplier_bank_accounts.bank_name = :name OR sat_banks.name = :name',
+                            name: params[:bank].to_s.first(120))
+      end
+      scope.distinct
     end
 
-    def account_scope
-      records = @supplier.supplier_bank_accounts
-      return records.active unless params[:archived] == '1'
-
-      records.with_deleted.where.not(deleted_at: nil)
+    def status_from_legacy
+      params[:archived] == '1' ? 'archived' : 'all'
     end
 
     def set_supplier
@@ -119,6 +134,7 @@ module Admin
       params.expect(supplier_bank_account: %i[
                       sat_bank_code bank_name holder_name
                       account_number clabe currency_code primary
+                      card_last_four card_expiration_month card_expiration_year
                     ])
     end
 

@@ -107,6 +107,39 @@ RSpec.describe SupplierBankAccount do
     expect(account.last_four).to eq('5678')
   end
 
+  it 'shows an optional card expiration without storing the full card number' do
+    account = described_class.create!(
+      organization: supplier.organization, supplier:, bank_name: 'BBVA México',
+      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
+      card_last_four: '6789', card_expiration_month: 8, card_expiration_year: 2029
+    )
+
+    expect(account.reload.card_display_number).to eq('•••• •••• •••• 6789')
+    expect(account.card_expiration_label).to eq('08/29')
+    expect(account.attributes).not_to have_key('card_number')
+  end
+
+  it 'requires a complete and valid card preview when any card detail is supplied' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, bank_name: 'Example Bank',
+      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
+      card_last_four: 'abcd', card_expiration_month: 13, card_expiration_year: 1999
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors.attribute_names).to include(:card_last_four, :card_expiration_month, :card_expiration_year)
+
+    account.assign_attributes(card_last_four: '1234', card_expiration_month: 10, card_expiration_year: 2029)
+    expect(account).to be_valid
+  end
+
+  it 'shows that the expiry was not registered for a traditional account' do
+    account = described_class.new(last_four: '1234')
+
+    expect(account.card_display_number).to eq('•••• •••• •••• 1234')
+    expect(account.card_expiration_label).to be_nil
+  end
+
   it 'returns a generic mask when no sensitive account number is present' do
     account = described_class.new
 

@@ -12,6 +12,7 @@ class SupplierBankAccount < ApplicationRecord
   validates :bank_name, presence: true, unless: -> { sat_bank_code.present? }
   validates :account_number, presence: true, unless: -> { clabe.present? }
   validates :currency_code, presence: true, length: { is: 3 }
+  validate :valid_card_preview
   validate :same_organization
   validate :supplier_available_for_creation, on: :create
   validate :valid_clabe
@@ -25,6 +26,16 @@ class SupplierBankAccount < ApplicationRecord
     last_four.present? ? "•••• #{last_four}" : '••••'
   end
 
+  def card_display_number
+    "•••• •••• •••• #{card_last_four.presence || last_four.presence || '••••'}"
+  end
+
+  def card_expiration_label
+    return if card_expiration_month.blank? || card_expiration_year.blank?
+
+    format('%02d/%02d', card_expiration_month, card_expiration_year % 100)
+  end
+
   def reveal!(actor:)
     raise Pundit::NotAuthorizedError unless Pundit.policy(actor, self)&.reveal?
 
@@ -33,6 +44,15 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   private
+
+  def valid_card_preview
+    values = [card_last_four, card_expiration_month, card_expiration_year]
+    return if values.all?(&:blank?)
+
+    errors.add(:card_last_four, :invalid) unless card_last_four.to_s.match?(/\\A\\d{4}\\z/)
+    errors.add(:card_expiration_month, :invalid) unless (1..12).cover?(card_expiration_month.to_i)
+    errors.add(:card_expiration_year, :invalid) unless (2000..2100).cover?(card_expiration_year.to_i)
+  end
 
   def supplier_available_for_creation
     errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
@@ -47,6 +67,7 @@ class SupplierBankAccount < ApplicationRecord
     self.account_number = compact_number(account_number)
     self.last_four = (clabe.presence || account_number).to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
+    self.card_last_four = card_last_four.to_s.strip.presence
   end
 
   def compact_number(value)

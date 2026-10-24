@@ -44,13 +44,13 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
 
     expect(response).to have_http_status(:ok)
-    expect(document.at_css('[data-bank-accounts-empty] img[src*="sbankaccounts"]')).to be_present
+    expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
     expect(document.text).to include('No bank accounts registered yet')
     expect(document.at_css("a[href='#{new_admin_supplier_bank_account_path(supplier)}']")).to be_present
     expect(document.css('[data-supplier-bank-accounts-target="card"]')).to be_empty
   end
 
-  it 'renders two-column account cards with masked data and permission-protected actions' do
+  it 'renders three-column bank cards with masked data and permission-protected actions' do
     primary = bank_account(primary: true)
     bank_account(bank_name: 'Another Bank', holder_name: 'Vendor Finance',
                  account_number: '9876543210', currency_code: 'USD')
@@ -58,11 +58,13 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
 
     expect(response).to have_http_status(:ok)
-    expect(document.at_css('[data-supplier-bank-accounts-target="list"]')['class']).to include('xl:grid-cols-2')
+    expect(document.at_css('[data-supplier-bank-accounts-target="list"]')['class']).to include('xl:grid-cols-3')
     cards = document.css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.length).to eq(2)
-    expect(document.text).to include('Example Bank', 'Another Bank', 'Vendor Finance')
-    expect(document.text).to include(primary.masked_number, 'Primary')
+    expect(document.text).to include('Example Bank', 'Another Bank')
+    expect(document.text).not_to include('Vendor Finance')
+    expect(document.text).to include(primary.card_display_number)
+    expect(document.at_css('[title="Primary"]')).to be_present
     expect(document.text).not_to include('123456789012', '9876543210')
     expect(response.body).not_to include('123456789012', '9876543210')
     expect(document.css('a[href^="/admin/suppliers/"][href*="/bank_accounts/"][href$="/edit"]').size).to eq(2)
@@ -78,23 +80,23 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     external = create(:supplier, organization: create(:organization))
     bank_account(supplier: external, organization: external.organization, bank_name: 'Outside Bank')
 
-    get admin_supplier_bank_accounts_path(supplier)
+    get admin_supplier_bank_accounts_path(supplier, status: 'active')
 
     expect(response).to have_http_status(:ok)
     expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
     expect(document.text).not_to include('Archived Bank', 'Other Supplier Bank', 'Outside Bank')
   end
 
-  it 'provides server-side search, currency filtering, and pagination controls' do
+  it 'provides server-side search, bank filtering, and pagination controls' do
     bank_account(currency_code: 'MXN')
     bank_account(bank_name: 'USD Bank', currency_code: 'USD', account_number: '999900001234')
 
     get admin_supplier_bank_accounts_path(supplier)
 
     expect(document.at_css('input[name="q"]')).to be_present
-    expect(document.at_css('select[name="currency"] option[value="MXN"]')).to be_present
-    expect(document.at_css('select[name="currency"] option[value="USD"]')).to be_present
-    get admin_supplier_bank_accounts_path(supplier, currency: 'USD', q: 'USD Bank')
+    expect(document.at_css('select[name="bank"] option[value="Example Bank"]')).to be_present
+    expect(document.at_css('select[name="bank"] option[value="USD Bank"]')).to be_present
+    get admin_supplier_bank_accounts_path(supplier, bank: 'USD Bank', q: 'USD')
     expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
     expect(document.text).not_to include('Example Bank')
     expect(response.body).not_to include('999900001234')
@@ -110,6 +112,35 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(2)
     get admin_supplier_bank_accounts_path(supplier, q: 'Bank 9')
     expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(1)
+  end
+
+  it 'renders real card expiration metadata without exposing a full number or currency' do
+    account = bank_account(
+      bank_name: 'BBVA México', card_last_four: '6789',
+      card_expiration_month: 8, card_expiration_year: 2029
+    )
+
+    get admin_supplier_bank_accounts_path(supplier)
+
+    card = document.at_css('[data-supplier-bank-accounts-target="card"]')
+    expect(card.text).to include('BBVA', '•••• •••• •••• 6789', '08/29')
+    expect(card.text).not_to include('MXN', 'Vendor Holdings', 'BBVA México')
+    expect(response.body).not_to include(account.account_number)
+    expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
+  end
+
+  it 'filters active and archived cards and shows a restore action for the archived account' do
+    bank_account(bank_name: 'Active Bank')
+    archived = bank_account(bank_name: 'Old Bank', deleted_at: Time.current)
+
+    get admin_supplier_bank_accounts_path(supplier, status: 'all')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(2)
+    expect(document.text).to include('Active', 'Inactive')
+
+    get admin_supplier_bank_accounts_path(supplier, status: 'archived')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
+    expect(document.at_css("form[action$='/bank_accounts/#{archived.id}/restore']")).to be_present
+    expect(document.at_css('[data-bank-accounts-add-tile]')).to be_nil
   end
 
   it 'returns to the bank accounts tab of the supplier dossier' do
@@ -194,7 +225,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     get admin_supplier_bank_accounts_path(supplier)
     expect(response).to have_http_status(:ok)
-    expect(document.text).to include(existing.holder_name)
+    expect(document.text).to include(existing.card_display_number)
   end
 
   it 'does not expose banking records belonging to another organization in edit or reveal' do
