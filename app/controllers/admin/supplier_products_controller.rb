@@ -4,6 +4,8 @@ module Admin
   class SupplierProductsController < ApplicationController
     include SupplierAuditTrail
     include SupplierProductPreferences
+    include SupplierOfferAvailability
+    include SupplierOfferFiltering
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -81,20 +83,6 @@ module Admin
 
     private
 
-    def require_active_supplier
-      return if @supplier.active?
-
-      redirect_to admin_supplier_supplier_products_path(@supplier),
-                  alert: t('admin.supplier_archive.unavailable_supplier')
-    end
-
-    def filtered_offers
-      scope = @supplier.supplier_products
-      scope = params[:archived] == '1' ? scope.with_deleted.where.not(deleted_at: nil) : scope.available
-      scope = scope.joins(:product).merge(current_organization.products.not_deleted)
-      @search.present? ? filter_offers(scope) : scope
-    end
-
     def paginate_offers(scope)
       @total_offers = scope.count
       @total_pages = [(@total_offers.to_f / OFFERS_PER_PAGE).ceil, 1].max
@@ -102,15 +90,6 @@ module Admin
       @offers = scope.order('products.name ASC', 'supplier_products.id ASC')
                      .includes(:currency, product: [:preferred_supplier, { image_attachment: :blob }])
                      .limit(OFFERS_PER_PAGE).offset((@page - 1) * OFFERS_PER_PAGE)
-    end
-
-    def filter_offers(scope)
-      term = "%#{ActiveRecord::Base.sanitize_sql_like(@search)}%"
-      scope.where(
-        'products.name ILIKE :term OR products.code ILIKE :term OR products.sku ILIKE :term OR ' \
-        'supplier_products.supplier_sku ILIKE :term',
-        term:
-      )
     end
 
     def set_supplier
