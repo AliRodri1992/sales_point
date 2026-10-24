@@ -231,8 +231,7 @@ RSpec.describe 'Supplier dated events', type: :request do
       )
     }
 
-    destination = admin_supplier_path(supplier, tab: 'schedules', calendar_month: '2026-10',
-                                              calendar_selected_day: '2026-10-31')
-    expect(response).to redirect_to(destination)
+    destination = { tab: 'schedules', calendar_month: '2026-10', calendar_selected_day: '2026-10-31' }
+    expect(response).to redirect_to(admin_supplier_path(supplier, destination))
   end
 end

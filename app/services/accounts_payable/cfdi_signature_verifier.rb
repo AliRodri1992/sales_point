@@ -84,30 +84,7 @@ module AccountsPayable
     ].freeze
 
     def self.offline_stylesheet
-      File.read(STYLESHEET).gsub(%r{<xsl:include\s+href="([^"]+)"\s*/>}) do
-        href = Regexp.last_match(1)
-        unless href.match?(%r{\Axslt/[A-Za-z0-9_./-]+\.xslt\z}) && href.split('/').exclude?('..')
-          raise ArgumentError, 'Unsafe CFDI stylesheet dependency'
-        end
-
-        file = STYLESHEET.dirname.join(href)
-        raise ArgumentError, 'Missing offline SAT stylesheet dependency' unless file.file?
-
-        source = File.read(file)
-        start_tag = source.index('<xsl:stylesheet')
-        end_tag = source.rindex('</xsl:stylesheet>')
-        raise ArgumentError, 'Invalid offline SAT stylesheet dependency' unless start_tag && end_tag
-
-        open_tag = source.index('>', start_tag)
-        raise ArgumentError, 'Invalid offline SAT stylesheet dependency' unless open_tag
-
-        body = source[(open_tag + 1)...end_tag]
-        if body.match?(/<xsl:(?:include|import)\b/)
-          raise ArgumentError, 'Nested SAT stylesheet dependency is not allowed'
-        end
-
-        body
-      end
+      SatStylesheetLoader.call(stylesheet: STYLESHEET)
     end
 
     def self.validate_supported_complements!(document)
