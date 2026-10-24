@@ -78,4 +78,17 @@ RSpec.describe Suppliers::AddressLocationProof do
     address.street = 'Calle diferente'
     expect(verified).to be false
   end
+
+  it 'does not disclose confidence for a forged proposal token' do
+    expect(described_class.confidence(token: 'malformed', address:, supplier:, user:)).to be_nil
+  end
+
+  it 'rejects longitude values outside the geographic limits' do
+    expect(verified(longitude: -190)).to be(false)
+  end
+
+  it 'rejects a review reason longer than the permitted limit' do
+    expect(verified(latitude: 19.75, longitude: -99.1803, reason: 'x' * 251, reviewed: '1'))
+      .to be(false)
+  end
 end

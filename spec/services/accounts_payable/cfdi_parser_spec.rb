@@ -39,4 +39,31 @@ RSpec.describe AccountsPayable::CfdiParser do
     expect { described_class.call(xml: xml.sub('TipoDeComprobante="I"', 'TipoDeComprobante="E"')) }
       .to raise_error(ArgumentError)
   end
+
+  it 'computes transferred and withheld taxes from CFDI fiscal totals' do
+    input = xml.sub('<cfdi:Conceptos>', <<~XML.strip)
+      <cfdi:Impuestos TotalImpuestosTrasladados="16.00"
+                      TotalImpuestosRetenidos="2.00"/>
+      <cfdi:Conceptos>
+    XML
+
+    parsed = described_class.call(xml: input)
+
+    expect(parsed[:tax_amount]).to eq(14.to_d)
+  end
+
+  it 'preserves discount and currency conversion from CFDI attributes' do
+    input = xml.sub('SubTotal="100.00"', 'SubTotal="100.00" Descuento="5.00" TipoCambio="1.05"')
+
+    parsed = described_class.call(xml: input)
+
+    expect(parsed).to include(discount: 5.to_d, exchange_rate: BigDecimal('1.05'))
+  end
+
+  it 'rejects a missing CFDI issuer or receiver without parsing partial finances' do
+    invalid = xml.sub('<cfdi:Receptor Rfc="AAA010101AAA" />', '')
+
+    expect { described_class.call(xml: invalid) }
+      .to raise_error(ArgumentError, /Missing CFDI issuer, receiver or tax stamp/)
+  end
 end
