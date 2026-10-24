@@ -145,7 +145,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
     it 'honors permitted sorting and a small page size for a long user list' do
       get admin_users_path, params: {
-        per_page: 5, sort: 'users.username', direction: 'desc'
+        q: 'paginate-', per_page: 5, sort: 'users.username', direction: 'desc'
       }
 
       rows = Nokogiri::HTML(response.body).css('tbody tr')
