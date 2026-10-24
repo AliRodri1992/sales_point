@@ -113,7 +113,7 @@ RSpec.describe 'SupplierPolicy dossier authorization boundaries' do
   end
 
   it 'does not accept an inactive membership even with supplier permissions' do
-    user.organization_memberships.update_all(status: :inactive)
+    user.organization_memberships.find_each { |membership| membership.update!(status: :inactive) }
     allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
     policy = SupplierPolicy.new(user, supplier)
 
