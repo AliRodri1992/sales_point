@@ -66,6 +66,16 @@ RSpec.describe SupplierCalendarReminderJob do
       .not_to change(SupplierEventDelivery, :count)
   end
 
+  it 'does not send reminders for cancelled events' do
+    supplier.supplier_events.create!(
+      title: 'Cancelled visit', kind: 'visit', status: 'cancelled', branch:,
+      starts_at: tomorrow.in_time_zone.change(hour: 9)
+    )
+
+    expect { described_class.perform_now(Date.current) }
+      .not_to change(SupplierEventDelivery, :count)
+  end
+
   it 'respects an exception suspending a weekly visit' do
     schedule = supplier.supplier_schedules.create!(
       branch:, kind: 'visit', weekday: tomorrow.wday,
