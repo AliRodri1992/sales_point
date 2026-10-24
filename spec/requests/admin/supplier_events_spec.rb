@@ -37,7 +37,7 @@ RSpec.describe 'Supplier dated events', type: :request do
 
   it 'blocks editing a future event after supplier deactivation' do
     event = supplier.supplier_events.create!(
-      branch:, title: 'Original visit', kind: 'visit', starts_at: Time.zone.now + 1.day
+      branch:, title: 'Original visit', kind: 'visit', starts_at: 1.day.from_now
     )
     supplier.update!(status: :inactive)
 

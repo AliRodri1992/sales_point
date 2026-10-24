@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe SupplierScheduleException, type: :model do
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
-  let(:branch) { create(:branch, organization:) }
+  let(:branch) { create(:branch, organization:, name: 'Receiving dock') }
   let(:schedule) do
     supplier.supplier_schedules.create!(
       branch:, kind: 'visit', weekday: Date.current.wday, starts_at: '09:00', ends_at: '10:00'
@@ -13,7 +13,7 @@ RSpec.describe SupplierScheduleException, type: :model do
   end
 
   it 'rejects exceptions for a different branch than their recurring schedule' do
-    other_branch = create(:branch, organization:)
+    other_branch = create(:branch, organization:, name: 'Central depot')
     exception = described_class.new(
       supplier:, branch: other_branch, supplier_schedule: schedule,
       reason: 'suspension', starts_on: Date.current
