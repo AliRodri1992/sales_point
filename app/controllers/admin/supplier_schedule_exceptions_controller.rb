@@ -7,8 +7,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_supplier
-    before_action :require_available_supplier, only: %i[edit update create]
-    before_action :require_available_supplier, if: :restoring_exceptions?
+    before_action :require_available_supplier, if: :requires_available_supplier?
 
     def edit
       @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
@@ -59,8 +58,9 @@ module Admin
 
     private
 
-    def restoring_exceptions?
-      action_name == 'bulk_update' && params[:operation] == 'restore'
+    def requires_available_supplier?
+      action_name.in?(%w[edit update create]) ||
+        (action_name == 'bulk_update' && params[:operation] == 'restore')
     end
 
     def require_available_supplier
