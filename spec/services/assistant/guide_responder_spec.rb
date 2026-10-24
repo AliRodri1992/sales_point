@@ -128,4 +128,39 @@ RSpec.describe Assistant::GuideResponder do
 
     expect(tokens).to eq(%w[crear categorias])
   end
+
+  it 'rejects assistance without an authenticated actor before consulting membership records' do
+    result = described_class.new(user: nil, organization:).call(question: 'Crear producto')
+
+    expect(result[:steps]).to be_empty
+    expect(result[:source]).to eq('guide')
+  end
+
+  it 'returns no suggested procedure when the accessible guide contains no topics' do
+    create(:organization_membership, organization:, user:)
+    allow(responder).to receive(:accessible_topics).and_return([])
+
+    result = responder.call(question: 'Create a category')
+
+    expect(result[:steps]).to be_empty
+    expect(result[:title]).to be_nil
+  end
+
+  it 'keeps a concerned mood when a matching task mentions a problem without an error keyword' do
+    create(:organization_membership, organization:, user:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    topic = responder.send(:accessible_topics).find { |candidate| candidate.fetch(:tasks).any? }
+    task = topic.fetch(:tasks).first
+
+    result = responder.call(question: "Problema: #{task.fetch(:title)}", context: topic.fetch(:id))
+
+    expect(result[:source]).to eq('guide')
+    expect(result[:mood]).to eq('concerned')
+  end
+
+  it 'does not count stop words as meaningful guide search terms' do
+    tokens = responder.send(:normalized_tokens, 'cómo puedo hacer esto para los usuarios')
+
+    expect(tokens).to eq(['usuarios'])
+  end
 end
