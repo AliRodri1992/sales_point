@@ -173,4 +173,24 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
     expect { described_class.call(xml: signed_xml(seal:)) }
       .to raise_error(ArgumentError, /CFDI certificate is not trusted/)
   end
+
+  it 'rejects unrecognized fiscal complements before checking the digital seal' do
+    xml = signed_xml(seal: 'AAAA').sub('/>', <<~XML.strip)
+      >
+        <cfdi:Complemento>
+          <unknown:Extra xmlns:unknown="urn:untrusted:complement"/>
+        </cfdi:Complemento>
+      </cfdi:Comprobante>
+    XML
+
+    expect { described_class.call(xml:) }
+      .to raise_error(ArgumentError, /Unsupported CFDI complement/)
+  end
+
+  it 'compiles the bundled offline SAT stylesheet without remote includes' do
+    original = Rails.root.join('config/sat/cadenaoriginal_4_0.xslt')
+    contents = File.read(original)
+    expect(contents).not_to include('<xsl:include')
+    expect { Nokogiri::XSLT(contents) }.not_to raise_error
+  end
 end

@@ -15,6 +15,7 @@ module AccountsPayable
       raise ArgumentError, 'CFDI document exceeds 10 MB' if xml.bytesize > 10.megabytes
 
       document = parse_cfdi(xml)
+      validate_supported_complements!(document)
       certificate = parse_certificate(document.root)
       verify_certificate_date!(certificate, document.root)
       verify_certificate_number!(certificate, document.root)
@@ -41,6 +42,24 @@ module AccountsPayable
       raise ArgumentError, 'Invalid CFDI 4.0' unless valid
 
       document
+    end
+
+    # The bundled stylesheet includes only the core CFDI and Pagos 2.0 templates.
+    # Reject other namespaces so an unknown complemento cannot be omitted from a
+    # seemingly valid cadena and inadvertently pass issuer-signature verification.
+    SUPPORTED_NAMESPACES = [
+      AccountsPayable::CfdiParser::CFDI_NS,
+      'http://www.sat.gob.mx/TimbreFiscalDigital',
+      'http://www.sat.gob.mx/Pagos20'
+    ].freeze
+
+    def self.validate_supported_complements!(document)
+      unknown = document.xpath('//*').find do |element|
+        !SUPPORTED_NAMESPACES.include?(element.namespace&.href)
+      end
+      return unless unknown
+
+      raise ArgumentError, "Unsupported CFDI complement: #{unknown.name}"
     end
 
     def self.parse_certificate(root)
