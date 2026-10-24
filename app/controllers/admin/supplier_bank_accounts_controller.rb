@@ -6,6 +6,7 @@ module Admin
     include SupplierBankAccountCreationGuard
 
     before_action :set_supplier
+    before_action :require_available_supplier, only: %i[new create]
     before_action :set_account, only: %i[edit update destroy reveal restore]
 
     def index
