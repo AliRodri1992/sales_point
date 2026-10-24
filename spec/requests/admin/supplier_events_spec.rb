@@ -201,12 +201,12 @@ RSpec.describe 'Supplier dated events', type: :request do
     expect(panel.at_css("a[href='#{admin_supplier_schedules_path(supplier)}']")).to be_present
   end
 
-  it 'rejects a supplier calendar request without an active organization membership' do
+  it 'does not disclose the supplier calendar without an active organization membership' do
     user.organization_memberships.find_by!(organization:).update!(status: :inactive)
 
     get new_admin_supplier_event_path(supplier)
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to have_http_status(:not_found)
   end
 
   it 'retains an archived event when restoring its saved attributes fails' do
