@@ -4,6 +4,7 @@ require 'base64'
 require 'stringio'
 require_relative 'supplier_demo_documents'
 require_relative 'supplier_dossier_uniqueness'
+require_relative 'supplier_calendar_events'
 
 # Repeatable demo records for supplier tabs and progressive lists.
 # Never calls external geocoding or overwrites existing user-entered records.
@@ -39,6 +40,7 @@ module SupplierDossierExamples
       seed_documents(supplier, featured ? DOCUMENTS_PER_FEATURED_SUPPLIER : 2)
       SupplierDemoDocuments.seed!(supplier:, featured:)
       seed_schedules(supplier, branches, featured ? SCHEDULES_PER_FEATURED_SUPPLIER : 2)
+      SupplierCalendarEvents.seed!(supplier:, branches:) if featured
       report_supplier(supplier)
     end
 

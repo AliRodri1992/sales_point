@@ -7,7 +7,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     [
       Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
       SystemRole, Permission, SystemRolePermission, Language, Translate, SatMonth,
-      Supplier, Contact, Address, SupplierSchedule, SupplierProduct,
+      Supplier, Contact, Address, SupplierSchedule, SupplierEvent, SupplierProduct,
       SupplierProductPrice, SupplierBankAccount, Product, Inventory,
       Branch, Category, Client, Country, Currency, CountryCurrency,
       ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime

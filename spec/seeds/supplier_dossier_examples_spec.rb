@@ -59,6 +59,24 @@ RSpec.describe SupplierDossierExamples do
     expect(manual).to be_present
   end
 
+  it 'seeds dated visits and deliveries only once, retaining edits and archived records' do
+    described_class.seed!
+    supplier = Supplier.find_by!(code: 'SUP-0001')
+    events = supplier.supplier_events.with_deleted.order(:id)
+    expect(events.count).to eq(5)
+    expect(events.pluck(:all_day)).to include(true, false)
+    expect(events.pluck(:status)).to include('scheduled', 'completed')
+
+    event = events.first
+    event.update!(title: 'Personalized visit', notes: 'Edited manually')
+    event.update!(deleted_at: Time.current)
+    described_class.seed!
+
+    expect(supplier.supplier_events.with_deleted.count).to eq(5)
+    expect(event.reload.title).to eq('Personalized visit')
+    expect(event.deleted_at).to be_present
+  end
+
   it 'does not attach dossier examples to suppliers created manually in the demo tenant' do
     organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
     manual = create(:supplier, organization:, code: 'MANUAL-SUP')
