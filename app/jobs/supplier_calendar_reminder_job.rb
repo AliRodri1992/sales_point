@@ -41,7 +41,6 @@ class SupplierCalendarReminderJob < ApplicationJob
     SupplierCalendarReminderNotification.with(record: supplier, event_title: title, scheduled_for: date)
                                         .deliver(recipient, enqueue_job: false)
     recipient.broadcast_notifications_refresh
-
   end
 
   def authorized_recipient?(recipient, supplier)
