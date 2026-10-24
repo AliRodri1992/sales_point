@@ -15,6 +15,6 @@ module OrganizationTimeZone
     organization = current_organization
     settings = organization.organization_settings.active_records.first if organization
     zone = settings&.timezone
-    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &)
+    Time.use_zone(zone.presence || Time.zone, &)
   end
 end
