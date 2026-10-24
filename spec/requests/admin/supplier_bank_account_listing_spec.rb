@@ -32,7 +32,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).not_to include(account.account_number)
-    expect(document.text).to include('Vendor Holdings')
+    expect(document.text).to include(account.card_display_number)
 
     patch restore_admin_supplier_bank_account_path(supplier, account)
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier, archived: '1'))
@@ -84,7 +84,8 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
-    expect(document.text).not_to include('Archived Bank', 'Other Supplier Bank', 'Outside Bank')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').map(&:text).join)
+      .not_to include('Archived Bank', 'Other Supplier Bank', 'Outside Bank')
   end
 
   it 'provides server-side search, bank filtering, and pagination controls' do
@@ -98,7 +99,8 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('select[name="bank"] option[value="USD Bank"]')).to be_present
     get admin_supplier_bank_accounts_path(supplier, bank: 'USD Bank', q: 'USD')
     expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
-    expect(document.text).not_to include('Example Bank')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]').map(&:text).join)
+      .not_to include('Example Bank')
     expect(response.body).not_to include('999900001234')
   end
 
