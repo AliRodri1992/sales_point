@@ -140,9 +140,8 @@ RSpec.describe SupplierProduct, type: :model do
   it 'does not clear a preferred supplier when modifying an unrelated offer' do
     offer = described_class.create!(offer_attributes)
     another_supplier = create(:supplier, organization:)
-    alternative = described_class.create!(offer_attributes.merge(
-      supplier: another_supplier, presentation_name: 'Alternative box'
-    ))
+    alternative_attributes = offer_attributes.merge(supplier: another_supplier, presentation_name: 'Alternative box')
+    alternative = described_class.create!(alternative_attributes)
     product.update!(preferred_supplier: supplier)
 
     alternative.update!(active: false)

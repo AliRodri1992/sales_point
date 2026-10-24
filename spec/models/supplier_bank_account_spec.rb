@@ -98,7 +98,7 @@ RSpec.describe SupplierBankAccount do
   it 'normalizes account numbers and currency on validation' do
     account = described_class.new(
       organization: supplier.organization, supplier:, holder_name: 'Supplier',
-      bank_name: 'Demo Bank', account_number: " 1234 5678 ", currency_code: 'mxn'
+      bank_name: 'Demo Bank', account_number: ' 1234 5678 ', currency_code: 'mxn'
     )
     account.valid?
 
