@@ -277,4 +277,50 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to have_http_status(:forbidden).or redirect_to(admin_suppliers_path)
     expect(supplier.documents.attachments).to be_empty
   end
+
+  it 'refuses a batch larger than ten documents before persisting any attachment' do
+    files = (1..11).map { |number| upload("contract-#{number}.pdf") }
+    post admin_supplier_documents_path(supplier), params: {
+      document: { files:, category: 'contract' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to be_zero
+  end
+
+  it 'rejects a zero-byte attachment instead of recording unusable metadata' do
+    tempfile = Tempfile.new(['empty-supplier-file', '.pdf'])
+    @tempfiles ||= []
+    @tempfiles << tempfile
+    file = Rack::Test::UploadedFile.new(tempfile.path, 'application/pdf', original_filename: 'empty.pdf')
+    post admin_supplier_documents_path(supplier), params: { document: { file: } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to be_zero
+  end
+
+  it 'rejects an unsafe replacement while preserving the original document' do
+    supplier.documents.attach(upload('safe-contract.pdf'))
+    original = attachment
+
+    patch admin_supplier_document_update_path(supplier, document_id: original.id),
+          params: { document: { file: upload('dangerous.html', 'text/html') } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.documents.attachments.count).to eq(1)
+    expect(original.reload.blob.filename.to_s).to eq('safe-contract.pdf')
+  end
+
+  it 'normalizes invalid document classification to a safe known category' do
+    supplier.documents.attach(upload('unknown-description.pdf'))
+    id = attachment.id
+
+    patch admin_supplier_document_update_path(supplier, document_id: id),
+          params: { document: { category: 'unauthorized', status: 'unsupported' } }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(supplier.supplier_documents.find_by!(attachment_id: id)).to have_attributes(
+      category: 'other', status: 'active'
+    )
+  end
 end
