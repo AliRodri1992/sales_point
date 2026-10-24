@@ -150,4 +150,45 @@ RSpec.describe 'Edit supplier primary records', type: :request do
     expect(nested_values('addresses', 'street')).to eq(['Edited Fiscal'])
     expect(nested_values('contacts', 'name')).to eq(['Edited Primary'])
   end
+
+  it 'rejects deleting the primary contact through the supplier editing form' do
+    contact = supplier.contacts.create!(name: 'Primary', primary: true)
+    patch admin_supplier_path(supplier), params: { supplier: {
+      contacts_attributes: { '0' => { id: contact.id, _destroy: '1' } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(contact.reload.deleted_at).to be_nil
+  end
+
+  it 'rejects clearing the primary flag through crafted parameters' do
+    contact = supplier.contacts.create!(name: 'Primary', primary: true)
+    patch admin_supplier_path(supplier), params: { supplier: {
+      contacts_attributes: { '0' => { id: contact.id, primary: '0' } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(contact.reload).to be_primary
+  end
+
+  it 'rejects replacing an existing primary contact by posting an additional record' do
+    existing = supplier.contacts.create!(name: 'Existing primary', primary: true)
+    patch admin_supplier_path(supplier), params: { supplier: {
+      contacts_attributes: { '0' => { name: 'Injected replacement', primary: true } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(existing.reload).to be_primary
+    expect(supplier.contacts.count).to eq(1)
+  end
+
+  it 'rejects changing a primary fiscal address into a delivery address' do
+    fiscal = supplier.addresses.create!(**address_attributes, purpose: 'fiscal', primary: true)
+    patch admin_supplier_path(supplier), params: { supplier: {
+      addresses_attributes: { '0' => { id: fiscal.id, purpose: 'delivery' } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(fiscal.reload.purpose).to eq('fiscal')
+  end
 end

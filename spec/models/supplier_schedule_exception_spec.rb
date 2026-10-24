@@ -29,4 +29,37 @@ RSpec.describe SupplierScheduleException, type: :model do
     )
     expect(exception).to be_valid
   end
+
+  it 'rejects an exception extending beyond one year' do
+    record = described_class.new(
+      supplier:, reason: 'holiday',
+      starts_on: Date.new(2026, 10, 1), ends_on: Date.new(2027, 11, 1)
+    )
+
+    expect(record).not_to be_valid
+    expect(record.errors[:ends_on]).to be_present
+  end
+
+  it 'rejects exceptions scoped to another organizations branch' do
+    other_branch = create(:branch, organization: create(:organization))
+    record = described_class.new(
+      supplier:, branch: other_branch, reason: 'suspension', starts_on: Date.current
+    )
+
+    expect(record).not_to be_valid
+    expect(record.errors[:branch]).to be_present
+  end
+
+  it 'rejects selecting another suppliers recurring schedule' do
+    other_supplier = create(:supplier, organization:)
+    other_schedule = other_supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: 2, starts_at: '09:00', ends_at: '10:00'
+    )
+    record = described_class.new(
+      supplier:, supplier_schedule: other_schedule, reason: 'holiday', starts_on: Date.current
+    )
+
+    expect(record).not_to be_valid
+    expect(record.errors[:supplier_schedule]).to be_present
+  end
 end

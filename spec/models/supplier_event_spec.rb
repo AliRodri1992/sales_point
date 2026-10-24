@@ -43,4 +43,45 @@ RSpec.describe SupplierEvent, type: :model do
     expect(event.occurs_on?(Date.new(2026, 10, 24))).to be(true)
     expect(event.occurs_on?(Date.new(2026, 10, 25))).to be(false)
   end
+
+  it 'rejects an end time earlier than the start of an event' do
+    event = described_class.new(
+      supplier:, branch:, kind: 'visit', title: 'Reverse window',
+      starts_at: Time.utc(2026, 10, 25, 14), ends_at: Time.utc(2026, 10, 25, 13)
+    )
+
+    expect(event).not_to be_valid
+    expect(event.errors[:ends_at]).to be_present
+  end
+
+  it 'requires an end time for all-day activities' do
+    event = described_class.new(
+      supplier:, branch:, kind: 'visit', title: 'Full-day visit',
+      starts_at: Time.utc(2026, 10, 25), all_day: true
+    )
+
+    expect(event).not_to be_valid
+    expect(event.errors[:ends_at]).to be_present
+  end
+
+  it 'rejects assigning an activity to a different organizations branch' do
+    foreign_branch = create(:branch, organization: create(:organization))
+    event = described_class.new(
+      supplier:, branch: foreign_branch, kind: 'visit', title: 'Mismatched branch',
+      starts_at: Time.utc(2026, 10, 25)
+    )
+
+    expect(event).not_to be_valid
+    expect(event.errors[:branch]).to be_present
+  end
+
+  it 'treats an event without an end time as a single local-day occurrence' do
+    event = described_class.create!(
+      supplier:, branch:, kind: 'visit', title: 'Single visit',
+      starts_at: Time.utc(2026, 10, 25, 12)
+    )
+
+    expect(event.occurs_on?(Date.new(2026, 10, 25))).to be(true)
+    expect(event.occurs_on?(Date.new(2026, 10, 26))).to be(false)
+  end
 end
