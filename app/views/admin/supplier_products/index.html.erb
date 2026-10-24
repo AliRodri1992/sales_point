@@ -10,7 +10,7 @@
         <%= icon('arrow-left', class: 'size-4') %>
         <%= t('admin.procurement.back') %>
       <% end %>
-      <% if policy(@supplier).manage_products? %>
+      <% if @supplier.active? && policy(@supplier).manage_products? %>
         <%= link_to new_admin_supplier_supplier_product_path(@supplier),
                     class: 'inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800' do %>
           <%= icon('plus', class: 'size-4') %>
@@ -110,7 +110,7 @@
                       <%= link_to t('admin.procurement.compare'),
                                   admin_supplier_product_comparison_path(@supplier, product_id: offer.product_id),
                                   class: 'block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-800' %>
-                      <% if policy(@supplier).manage_products? %>
+                      <% if @supplier.active? && policy(@supplier).manage_products? %>
                         <% if params[:archived] == '1' %>
                           <%= button_to t('admin.supplier_archive.restore'),
                                         restore_admin_supplier_supplier_product_path(@supplier, offer), method: :patch,
@@ -181,7 +181,7 @@
       <div data-product-offers-empty class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center">
         <%= image_tag 'sproducts.png', alt: '', loading: 'lazy', class: 'mx-auto h-40 w-auto' %>
         <h2 class="mt-3 font-jakarta text-lg font-semibold text-slate-900"><%= t('admin.procurement.empty') %></h2>
-        <% if policy(@supplier).manage_products? %>
+        <% if @supplier.active? && policy(@supplier).manage_products? %>
           <%= link_to new_admin_supplier_supplier_product_path(@supplier),
                       class: 'mt-4 inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
             <%= icon('plus', class: 'size-4') %>

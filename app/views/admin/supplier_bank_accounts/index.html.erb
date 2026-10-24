@@ -9,7 +9,7 @@
         <%= icon('arrow-left', class: 'size-4') %>
         <%= t('admin.accounts_payable.bank_list.back_to_supplier') %>
       <% end %>
-      <% if policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
+      <% if @supplier.active? && policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
         <%= link_to new_admin_supplier_bank_account_path(@supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
           <%= icon('plus', class: 'size-4') %>
           <%= t('admin.accounts_payable.new_bank') %>
@@ -96,7 +96,7 @@
         <div class="max-w-lg text-center md:text-left">
           <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.bank_list.empty_title') %></h2>
           <p class="mt-2 text-sm leading-6 text-slate-500"><%= t('admin.accounts_payable.bank_list.empty_description') %></p>
-          <% if policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
+          <% if @supplier.active? && policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
             <%= link_to new_admin_supplier_bank_account_path(@supplier), class: 'mt-5 inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
               <%= icon('plus', class: 'size-4') %>
               <%= t('admin.accounts_payable.new_bank') %>
