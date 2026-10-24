@@ -11,8 +11,10 @@ module OrganizationTimeZone
 
   private
 
-  def with_organization_time_zone(&action)
-    zone = current_organization&.organization_settings&.active_records&.first&.timezone
-    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &action)
+  def with_organization_time_zone(&)
+    organization = current_organization
+    settings = organization.organization_settings.active_records.first if organization
+    zone = settings&.timezone
+    Time.use_zone(ActiveSupport::TimeZone[zone] || Time.zone, &)
   end
 end

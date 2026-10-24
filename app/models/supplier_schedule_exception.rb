@@ -27,10 +27,12 @@ class SupplierScheduleException < ApplicationRecord
     return unless supplier
 
     errors.add(:branch, :invalid) if branch && branch.organization_id != supplier.organization_id
-    return unless supplier_schedule
+    validate_schedule_scope if supplier_schedule
+  end
 
-    valid_schedule = supplier_schedule.supplier_id == supplier.id &&
-                     (branch_id.nil? || branch_id == supplier_schedule.branch_id)
-    errors.add(:supplier_schedule, :invalid) unless valid_schedule
+  def validate_schedule_scope
+    same_supplier = supplier_schedule.supplier_id == supplier.id
+    same_branch = branch_id.nil? || branch_id == supplier_schedule.branch_id
+    errors.add(:supplier_schedule, :invalid) unless same_supplier && same_branch
   end
 end
