@@ -54,4 +54,39 @@ RSpec.describe Admin::OnboardingController, type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
   end
+
+  it 'uses the current progress step when no step is supplied' do
+    organization.update!(onboarding_current_step: 3)
+    allow(Onboarding::StepUpdater).to receive(:call).and_return(true)
+
+    patch admin_onboarding_path, params: {}
+
+    expect(response).to redirect_to(admin_onboarding_path(step: 4))
+    expect(Onboarding::StepUpdater).to have_received(:call).with(hash_including(step: 3))
+  end
+
+  it 'treats negative and nonnumeric step values as the first step' do
+    allow(Onboarding::StepUpdater).to receive(:call).and_return(true)
+
+    %w[-2 invalid].each do |step|
+      patch admin_onboarding_path(step:), params: {}
+      expect(response).to redirect_to(admin_onboarding_path(step: 2))
+    end
+  end
+
+  it 'does not duplicate the onboarding started audit when progress already began' do
+    organization.update!(onboarding_status: :in_progress)
+    get admin_onboarding_path
+
+    expect(response).to have_http_status(:ok)
+    expect(organization.onboarding_audits.where(action: 'started')).to be_empty
+  end
+
+  it 'does not authorize access without an active organization membership' do
+    user.organization_memberships.find_by!(organization:).update!(status: :inactive)
+
+    get admin_onboarding_path
+
+    expect(response).to have_http_status(:not_found)
+  end
 end
