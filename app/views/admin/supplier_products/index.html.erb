@@ -29,6 +29,7 @@
   <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
     <%= form_with url: admin_supplier_supplier_products_path(@supplier), method: :get,
                   class: 'mb-5', data: { controller: 'products-search', products_search_delay_value: 350 } do %>
+      <%= hidden_field_tag :archived, '1' if params[:archived] == '1' %>
       <label for="supplier-products-search" class="sr-only"><%= t('admin.procurement.search') %></label>
       <div class="relative">
         <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
@@ -151,17 +152,17 @@
         <% if @total_pages > 1 %>
           <nav aria-label="<%= t('admin.procurement.pages') %>" class="flex items-center gap-1.5">
             <% if @page > 1 %>
-              <%= link_to '‹', admin_supplier_supplier_products_path(@supplier, q: @search, page: @page - 1),
+              <%= link_to '‹', admin_supplier_supplier_products_path(@supplier, q: @search, archived: params[:archived], page: @page - 1),
                           aria: { label: t('admin.procurement.previous') },
                           class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50' %>
             <% end %>
             <% ([1, *@page.pred.upto(@page + 1).to_a, @total_pages].uniq & (1..@total_pages).to_a).each do |page_number| %>
-              <%= link_to page_number, admin_supplier_supplier_products_path(@supplier, q: @search, page: page_number),
+              <%= link_to page_number, admin_supplier_supplier_products_path(@supplier, q: @search, archived: params[:archived], page: page_number),
                           aria: { current: ('page' if page_number == @page) },
                           class: "inline-flex size-9 items-center justify-center rounded-lg border text-sm font-semibold #{page_number == @page ? 'border-emerald-600 bg-emerald-50 text-emerald-800' : 'border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50'}" %>
             <% end %>
             <% if @page < @total_pages %>
-              <%= link_to '›', admin_supplier_supplier_products_path(@supplier, q: @search, page: @page + 1),
+              <%= link_to '›', admin_supplier_supplier_products_path(@supplier, q: @search, archived: params[:archived], page: @page + 1),
                           aria: { label: t('admin.procurement.next') },
                           class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:border-emerald-200 hover:bg-emerald-50' %>
             <% end %>
@@ -173,7 +174,7 @@
         <%= icon('magnifying-glass', class: 'mx-auto size-8 text-emerald-600') %>
         <h2 class="mt-3 font-jakarta text-lg font-semibold text-slate-900"><%= t('admin.procurement.no_matches') %></h2>
         <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.try_another_search') %></p>
-        <%= link_to t('admin.procurement.clear_search'), admin_supplier_supplier_products_path(@supplier),
+        <%= link_to t('admin.procurement.clear_search'), admin_supplier_supplier_products_path(@supplier, archived: params[:archived]),
                     class: 'mt-4 inline-flex text-sm font-semibold text-emerald-800 hover:underline' %>
       </div>
     <% else %>
