@@ -35,6 +35,19 @@ RSpec.describe SupplierCalendarReminderJob do
     expect(recipient.reload.notifications.count).to eq(2)
   end
 
+  it 'does not mark an activity delivered when the notification fails' do
+    supplier.supplier_events.create!(
+      title: 'Retryable delivery', kind: 'delivery', branch:,
+      starts_at: tomorrow.in_time_zone.change(hour: 9)
+    )
+    allow(SupplierCalendarReminderNotification).to receive(:with)
+      .and_raise(StandardError, 'Delivery failure')
+
+    expect { described_class.perform_now(Date.current) }
+      .to raise_error(StandardError, /Delivery failure/)
+    expect(SupplierEventDelivery.count).to eq(0)
+  end
+
   it 'skips inactive suppliers and completed individual events' do
     supplier.supplier_events.create!(
       title: 'Finished delivery', kind: 'delivery', status: 'completed', branch:,

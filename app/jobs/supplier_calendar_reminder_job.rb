@@ -36,11 +36,14 @@ class SupplierCalendarReminderJob < ApplicationJob
     return unless authorized_recipient?(recipient, supplier)
 
     key = Digest::SHA256.hexdigest([activity.class.name, activity.id, date.iso8601, recipient.id].join(':'))
-    return unless new_delivery?(supplier, recipient, key)
+    delivered = SupplierEventDelivery.transaction do
+      next false unless new_delivery?(supplier, recipient, key)
 
-    SupplierCalendarReminderNotification.with(record: supplier, event_title: title, scheduled_for: date)
-                                        .deliver(recipient, enqueue_job: false)
-    recipient.broadcast_notifications_refresh
+      SupplierCalendarReminderNotification.with(record: supplier, event_title: title, scheduled_for: date)
+                                          .deliver(recipient, enqueue_job: false)
+      true
+    end
+    recipient.broadcast_notifications_refresh if delivered
   end
 
   def authorized_recipient?(recipient, supplier)
