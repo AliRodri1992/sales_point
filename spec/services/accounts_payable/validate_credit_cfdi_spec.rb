@@ -6,8 +6,9 @@ RSpec.describe AccountsPayable::ValidateCreditCfdi do
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:credit) do
-    SupplierCreditNote.new(organization:, supplier:, currency: supplier.currency,
-                           uuid: 'D43A75A7-832E-4C41-8175-977713154DBA', total: 125)
+    SupplierCreditNote.create!(organization:, supplier:, currency: supplier.currency,
+                               created_by: create(:user), issued_on: Date.current,
+                               uuid: 'D43A75A7-832E-4C41-8175-977713154DBA', total: 125)
   end
 
   it 'rejects issuer, receiver, UUID and currency mismatches without trusting the signature' do
