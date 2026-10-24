@@ -190,7 +190,10 @@ RSpec.describe AccountsPayable::CfdiSignatureVerifier do
   it 'compiles the bundled offline SAT stylesheet without remote includes' do
     original = Rails.root.join('config/sat/cadenaoriginal_4_0.xslt')
     contents = File.read(original)
-    expect(contents).not_to include('<xsl:include')
-    expect { Nokogiri::XSLT(contents) }.not_to raise_error
+    expect(contents).to include('<xsl:include')
+    stub_const('AccountsPayable::CfdiSignatureVerifier::STYLESHEET', original)
+    compiled = described_class.offline_stylesheet
+    expect(compiled).not_to include('<xsl:include')
+    expect { Nokogiri::XSLT(compiled) }.not_to raise_error
   end
 end

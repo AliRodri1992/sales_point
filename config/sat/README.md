@@ -1,10 +1,40 @@
-# CFDI 4.0 signature stylesheet
+# SAT CFDI 4.0 offline cadena original
 
-This directory contains an offline, self-contained compilation of the SAT CFDI 4.0 cadena-original stylesheet, with SAT utility and Pagos 2.0 templates inlined. No network stylesheet resolution occurs while validating invoices.
+Source: SAT 4.0 cadena original and all 33 referenced complement templates mirrored by https://github.com/phpcfdi/resources-sat-xml at `resources/www.sat.gob.mx/sitio_internet/cfd/`. Vendored 2026-10-24.
 
-Normative source: http://www.sat.gob.mx/sitio_internet/cfd/4/cadenaoriginal_4_0/cadenaoriginal_4_0.xslt
-The stylesheets were obtained from https://github.com/cmendezs/mcp-cfdi-mx/tree/main/src/mcp_cfdi_mx/resources on 2026-10-24 and kept in their original template order.
+The runtime only reads XSLT files in this repository. `CfdiSignatureVerifier.offline_stylesheet` expands the 33 local includes into a self-contained XSLT before compiling it. Remote includes and unknown namespaces are rejected. Keep `SAT_CSD_TRUST_STORE` configured with verified SAT issuer trust anchors. Verification with real signed CFDI fixtures and SAT certificates is required before production.
 
-**Scope:** core CFDI 4.0, SAT digital stamp (excluded from the issuer cadena), and Pagos 2.0. Other complement namespaces are explicitly rejected by `AccountsPayable::CfdiSignatureVerifier` rather than silently ignored.
-
-For production, configure `SAT_CSD_TRUST_STORE` to a locally mounted PEM trust store containing SAT-authorized certificate issuers. Do not commit certificates or private keys here. Refresh the stylesheet and issuer trust store as SAT publishes updates; verify representative signed real CFDI before enabling posting.
+Dependency paths and Git blob IDs (preserved from the mirrored SAT files):
+- `2/cadenaoriginal_2_0/utilerias.xslt` (`2fdcfdc449f2659c7f0cbcdbc4deefb6291ceda1`)
+- `donat/donat11.xslt` (`da5041b8c467dc49c6a3dbe52a51fbd879fc21e4`)
+- `divisas/divisas.xslt` (`20df3a3f91f90e71f1bd846a7b27b03140fe7496`)
+- `implocal/implocal.xslt` (`70639cca4604ad3625a32493014ac9373e0ef5a1`)
+- `leyendasFiscales/leyendasFisc.xslt` (`ddee46eaf04d081170808a1cfef429e7b0a35b3b`)
+- `pfic/pfic.xslt` (`1bff0cfd328c8c29d38924ae92d7869584f35f62`)
+- `TuristaPasajeroExtranjero/TuristaPasajeroExtranjero.xslt` (`369e16fe97e6355edfff08e33ee425c2a5db69a3`)
+- `nomina/nomina12.xslt` (`1b8464842b6bbb23498dc799ee54b36e68ad8b38`)
+- `cfdiregistrofiscal/cfdiregistrofiscal.xslt` (`fc36c67590aa1273ca65ca508662cecbd3b8d6bf`)
+- `pagoenespecie/pagoenespecie.xslt` (`16f0c50388b389549f3bd61d18efdcae5f4d2af3`)
+- `aerolineas/aerolineas.xslt` (`e5c38d905cf5a93f519ae3e463c9c22f136fcc0c`)
+- `valesdedespensa/valesdedespensa.xslt` (`1022c80e7f00f2d96d3ad63fe8d06464f884d48b`)
+- `notariospublicos/notariospublicos.xslt` (`210a0e79dadb99c6e2ea2a771c78aed1bc4ae83a`)
+- `vehiculousado/vehiculousado.xslt` (`2e364affdfc04c5c26f8f7b861e8427a7b45e9a5`)
+- `servicioparcialconstruccion/servicioparcialconstruccion.xslt` (`2a03dd5eebf52370e4b1ad36c50c3cc7d4eb029e`)
+- `renovacionysustitucionvehiculos/renovacionysustitucionvehiculos.xslt` (`54bb30dbb40e13e587ceddac050d0a63ca018af3`)
+- `certificadodestruccion/certificadodedestruccion.xslt` (`6118240aa969ef47bcac40dc23100be2d4291aea`)
+- `arteantiguedades/obrasarteantiguedades.xslt` (`c3f1f236c1281e5b37d27cdda94ee2c62bd36c22`)
+- `ComercioExterior11/ComercioExterior11.xslt` (`ebc624a9933d072bc6c64c9c2bdda6ed83bba18c`)
+- `ComercioExterior20/ComercioExterior20.xslt` (`696759e4ec0d6b5b399a11ce3381d25300294d0a`)
+- `ine/ine11.xslt` (`7d9ac31fce9eb986ba553d905496660db642f332`)
+- `iedu/iedu.xslt` (`1570f0d1190cd5dd08e837578583c67857323e46`)
+- `ventavehiculos/ventavehiculos11.xslt` (`378218370339316a13f2232882d8d022e0f42cc6`)
+- `detallista/detallista.xslt` (`7a92fa48dac5b7cdc507aa4a1e4bb1b823b3ad33`)
+- `EstadoDeCuentaCombustible/ecc12.xslt` (`9eeb93881f0b9447fe5c00f9736763d6d44dd6fb`)
+- `consumodecombustibles/consumodeCombustibles11.xslt` (`8bfd86bc03382668b63e36119d77a9a5b33fedd9`)
+- `GastosHidrocarburos10/GastosHidrocarburos10.xslt` (`b3a5fa4f5a54e75585359d336f22c30eff846d7a`)
+- `IngresosHidrocarburos10/IngresosHidrocarburos.xslt` (`bbe1405b023b9a5e2082b0d2f75f7d9e4b47ea2b`)
+- `CartaPorte/CartaPorte20.xslt` (`7760cdc83e28a889e940ea8230bbd0a5a5963d5b`)
+- `Pagos/Pagos20.xslt` (`68e05afcb32d37d1cc7daa3b2203074be1e0f1bb`)
+- `CartaPorte/CartaPorte30.xslt` (`bf5f5deb153efb1300c6928a9e4ec6bbb146faa0`)
+- `CartaPorte/CartaPorte31.xslt` (`51a15a7fbd62c63f33a8d0a104320d049c3d3f4b`)
+- `HidrocarburosPetro/hidrocarburospetroliferos.xslt` (`75072a8d718878978ca91c0c6ded6b0c4fe02485`)

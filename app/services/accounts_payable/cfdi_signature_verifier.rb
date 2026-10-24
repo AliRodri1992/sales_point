@@ -44,14 +44,63 @@ module AccountsPayable
       document
     end
 
-    # The bundled stylesheet includes only the core CFDI and Pagos 2.0 templates.
-    # Reject other namespaces so an unknown complemento cannot be omitted from a
-    # seemingly valid cadena and inadvertently pass issuer-signature verification.
+    # Every supported complement has an offline SAT XSLT dependency.
+    # Unknown namespaces fail closed rather than silently being skipped.
     SUPPORTED_NAMESPACES = [
-      AccountsPayable::CfdiParser::CFDI_NS,
+      'http://www.sat.gob.mx/cfd/4',
       'http://www.sat.gob.mx/TimbreFiscalDigital',
-      'http://www.sat.gob.mx/Pagos20'
+      'http://www.sat.gob.mx/ComercioExterior11',
+      'http://www.sat.gob.mx/ComercioExterior20',
+      'http://www.sat.gob.mx/donat',
+      'http://www.sat.gob.mx/divisas',
+      'http://www.sat.gob.mx/implocal',
+      'http://www.sat.gob.mx/leyendasFiscales',
+      'http://www.sat.gob.mx/pfic',
+      'http://www.sat.gob.mx/TuristaPasajeroExtranjero',
+      'http://www.sat.gob.mx/nomina12',
+      'http://www.sat.gob.mx/registrofiscal',
+      'http://www.sat.gob.mx/pagoenespecie',
+      'http://www.sat.gob.mx/aerolineas',
+      'http://www.sat.gob.mx/valesdedespensa',
+      'http://www.sat.gob.mx/notariospublicos',
+      'http://www.sat.gob.mx/vehiculousado',
+      'http://www.sat.gob.mx/servicioparcialconstruccion',
+      'http://www.sat.gob.mx/renovacionysustitucionvehiculos',
+      'http://www.sat.gob.mx/certificadodestruccion',
+      'http://www.sat.gob.mx/arteantiguedades',
+      'http://www.sat.gob.mx/ine',
+      'http://www.sat.gob.mx/iedu',
+      'http://www.sat.gob.mx/ventavehiculos',
+      'http://www.sat.gob.mx/detallista',
+      'http://www.sat.gob.mx/EstadoDeCuentaCombustible12',
+      'http://www.sat.gob.mx/ConsumoDeCombustibles11',
+      'http://www.sat.gob.mx/GastosHidrocarburos10',
+      'http://www.sat.gob.mx/IngresosHidrocarburos10',
+      'http://www.sat.gob.mx/CartaPorte20',
+      'http://www.sat.gob.mx/Pagos20',
+      'http://www.sat.gob.mx/CartaPorte30',
+      'http://www.sat.gob.mx/CartaPorte31',
+      'http://www.sat.gob.mx/hidrocarburospetroliferos'
     ].freeze
+
+    def self.offline_stylesheet
+      File.read(STYLESHEET).gsub(/<xsl:include\s+href="([^"]+)"\s*\/>/) do
+        href = Regexp.last_match(1)
+        unless href.match?(/\Axslt\/[A-Za-z0-9_\.\/-]+\.xslt\z/) && href.split('/').exclude?('..')
+          raise ArgumentError, 'Unsafe CFDI stylesheet dependency'
+        end
+
+        file = STYLESHEET.dirname.join(href)
+        raise ArgumentError, 'Missing offline SAT stylesheet dependency' unless file.file?
+
+        source = File.read(file)
+        open = source.index('>', source.index('<xsl:stylesheet')) + 1
+        close = source.rindex('</xsl:stylesheet>')
+        raise ArgumentError, 'Invalid offline SAT stylesheet dependency' unless close
+
+        source[open...close]
+      end
+    end
 
     def self.validate_supported_complements!(document)
       unknown = document.xpath('//*').find do |element|
@@ -97,7 +146,7 @@ module AccountsPayable
     end
 
     def self.verify_seal!(document, certificate)
-      stylesheet = Nokogiri::XSLT(File.read(STYLESHEET))
+      stylesheet = Nokogiri::XSLT(offline_stylesheet)
       chain = stylesheet.transform(document).to_s.strip
       seal = Base64.strict_decode64(document.root['Sello'].to_s)
       return if certificate.public_key.verify(OpenSSL::Digest.new('SHA256'), seal, chain)
