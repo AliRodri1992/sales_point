@@ -80,7 +80,9 @@ module Admin
     def redirect_success(action)
       Suppliers::NotifyService.call(action: "event_#{action}", supplier: @supplier,
                                     user: current_user, subject: @event)
-      event_date = @event.starts_at.in_time_zone.to_date
+      timezone = @supplier.organization.organization_settings.active_records.pick(:timezone)
+      zone = ActiveSupport::TimeZone[timezone] || Time.zone
+      event_date = @event.starts_at.in_time_zone(zone).to_date
       redirect_to admin_supplier_path(@supplier, tab: 'schedules', calendar_month: event_date.strftime('%Y-%m'),
                                                  calendar_selected_day: event_date.iso8601),
                   flash: { swal_message: t("admin.supplier_calendar.messages.#{action}") }
