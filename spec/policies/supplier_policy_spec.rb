@@ -56,3 +56,90 @@ RSpec.describe SupplierPolicy::Scope do
     expect(described_class.new(nil, scope).resolve).to be_empty
   end
 end
+
+RSpec.describe 'SupplierPolicy dossier authorization boundaries' do
+  let(:organization) { create(:organization) }
+  let(:supplier) { build(:supplier, organization:) }
+  let(:user) { create(:user) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+  end
+
+  it 'allows document management to imply document viewing but not supplier editing' do
+    allow(user).to receive(:permission?).with('suppliers.documents.manage').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.index?).to be(true)
+    expect(policy.show?).to be(true)
+    expect(policy.view_documents?).to be(true)
+    expect(policy.manage_documents?).to be(true)
+    expect(policy.view_fiscal?).to be(false)
+    expect(policy.edit?).to be(false)
+  end
+
+  it 'allows fiscal management to imply fiscal viewing but not contacts' do
+    allow(user).to receive(:permission?).with('suppliers.fiscal.manage').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.view_fiscal?).to be(true)
+    expect(policy.manage_fiscal?).to be(true)
+    expect(policy.view_contacts?).to be(false)
+    expect(policy.manage_contacts?).to be(false)
+  end
+
+  it 'allows address and schedule management only for their own dossier sections' do
+    allow(user).to receive(:permission?).with('suppliers.addresses.manage').and_return(true)
+    allow(user).to receive(:permission?).with('suppliers.schedules.manage').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.view_addresses?).to be(true)
+    expect(policy.manage_addresses?).to be(true)
+    expect(policy.view_schedules?).to be(true)
+    expect(policy.manage_schedules?).to be(true)
+    expect(policy.view_products?).to be(false)
+  end
+
+  it 'separates product management from commercial and banking access' do
+    allow(user).to receive(:permission?).with('suppliers.products.manage').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.view_products?).to be(true)
+    expect(policy.manage_products?).to be(true)
+    expect(policy.view_commercial?).to be(false)
+    expect(policy.manage_commercial?).to be(false)
+  end
+
+  it 'does not accept an inactive membership even with supplier permissions' do
+    user.organization_memberships.update_all(status: :inactive)
+    allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.index?).to be(false)
+    expect(policy.show?).to be(false)
+    expect(policy.view_general?).to be(false)
+    expect(policy.export?).to be(false)
+  end
+
+  it 'does not disclose a supplier from another organization' do
+    foreign_supplier = build(:supplier, organization: create(:organization))
+    allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
+    policy = SupplierPolicy.new(user, foreign_supplier)
+
+    expect(policy.show?).to be(false)
+    expect(policy.view_general?).to be(false)
+    expect(policy.view_documents?).to be(false)
+  end
+
+  it 'requires create permission independently of list and export permissions' do
+    allow(user).to receive(:permission?).with('suppliers.export').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.index?).to be(true)
+    expect(policy.export?).to be(true)
+    expect(policy.new?).to be(false)
+    expect(policy.create?).to be(false)
+  end
+end

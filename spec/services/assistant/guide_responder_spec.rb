@@ -212,6 +212,7 @@ RSpec.describe Assistant::GuideResponder do
   end
 
   it 'grants a supplier detail when its management permission is present' do
+    create(:organization_membership, organization:, user:)
     allow(user).to receive(:admin?).and_return(false)
     allow(user).to receive(:permission?).and_return(false)
     allow(user).to receive(:permission?).with('suppliers.view').and_return(true)
