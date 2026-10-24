@@ -112,4 +112,22 @@ RSpec.describe SupplierCalendarReminderJob do
     expect { described_class.perform_now(Date.current) }
       .not_to change(SupplierEventDelivery, :count)
   end
+
+  it 'resumes weekly reminders after a schedule exception is archived' do
+    schedule = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: tomorrow.wday,
+      starts_at: '09:00', ends_at: '10:00'
+    )
+    exception = supplier.supplier_schedule_exceptions.create!(
+      branch:, supplier_schedule: schedule, reason: 'suspension', starts_on: tomorrow
+    )
+
+    expect { described_class.perform_now(Date.current) }
+      .not_to change(SupplierEventDelivery, :count)
+
+    exception.update!(deleted_at: Time.current)
+
+    expect { described_class.perform_now(Date.current) }
+      .to change(SupplierEventDelivery, :count).by(1)
+  end
 end
