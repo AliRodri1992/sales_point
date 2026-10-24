@@ -45,8 +45,8 @@ module Admin
     private
 
     def set_organization
-      membership = current_user.organization_memberships.active.includes(:organization)
-                               .where(organizations: { deleted_at: nil }).first
+      membership = current_user.organization_memberships.active.joins(:organization)
+                               .merge(Organization.active_records).first
       @organization = membership&.organization
       raise ActiveRecord::RecordNotFound unless @organization
     end
