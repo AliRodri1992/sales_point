@@ -163,4 +163,30 @@ RSpec.describe Assistant::GuideResponder do
 
     expect(tokens).to eq(['usuarios'])
   end
+
+  it 'refuses to reveal guide content when no authenticated user exists' do
+    result = described_class.new(user: nil, organization:).call(question: 'Create product')
+
+    expect(result[:steps]).to be_empty
+    expect(result[:source]).to eq('guide')
+  end
+
+  it 'normalizes short stop words into an empty search without inventing results' do
+    create(:organization_membership, organization:, user:)
+
+    result = responder.call(question: 'the and for with from', context: '')
+
+    expect(result[:steps]).to be_empty
+    expect(result[:guide_url]).to eq('/admin/guide')
+  end
+
+  it 'does not disclose specialized supplier fiscal steps through calendar access' do
+    create(:organization_membership, organization:, user:)
+    allow(user).to receive(:admin?).and_return(false)
+    allow(user).to receive(:permission?).and_return(false)
+    allow(user).to receive(:permission?).with('suppliers.schedules.view').and_return(true)
+
+    expect(responder.send(:supplier_access?, 'supplier_calendar')).to be(true)
+    expect(responder.send(:supplier_access?, 'supplier_fiscal')).to be(false)
+  end
 end
