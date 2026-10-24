@@ -204,6 +204,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get edit_admin_supplier_bank_account_path(supplier, account)
     expect(response).to have_http_status(:not_found)
 
+    sign_in user
     post reveal_admin_supplier_bank_account_path(supplier, account)
     expect(response).to have_http_status(:not_found)
   end

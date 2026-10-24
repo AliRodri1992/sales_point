@@ -107,6 +107,7 @@ RSpec.describe Suppliers::DocumentPresenter do
       expect(document.preview_kind).to eq('text')
     end
     document = described_class.new(attachment_for('data.dat', content_type: 'application/x-executable'))
+    allow(document.attachment.blob).to receive(:content_type).and_return('application/x-executable')
     expect(document.preview_kind).to eq('none')
   end
 
