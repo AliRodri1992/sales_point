@@ -265,4 +265,32 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     expect(document.css('a[href$="/edit"]')).to be_empty
     expect(document.css('[data-product-offer-row] form')).to be_empty
   end
+
+  it 'preserves historical offers but rejects recovery while the supplier is inactive' do
+    offer = offer_for(product)
+    delete admin_supplier_supplier_product_path(supplier, offer)
+    supplier.update!(status: :inactive)
+
+    patch restore_admin_supplier_supplier_product_path(supplier, offer)
+
+    expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier))
+    expect(offer.reload.deleted_at).to be_present
+    expect(offer.price_history).to exist
+
+    get history_admin_supplier_supplier_product_path(supplier, offer)
+    expect(response).to have_http_status(:ok)
+  end
+
+  it 'rejects recovery of an archived presentation when a replacement exists' do
+    archived = offer_for(product)
+    delete admin_supplier_supplier_product_path(supplier, archived)
+    replacement = offer_for(product)
+    expect(replacement).to be_persisted
+
+    patch restore_admin_supplier_supplier_product_path(supplier, archived)
+
+    expect(response).to redirect_to(admin_supplier_supplier_products_path(supplier, archived: '1'))
+    expect(archived.reload.deleted_at).to be_present
+    expect(replacement.reload.deleted_at).to be_nil
+  end
 end
