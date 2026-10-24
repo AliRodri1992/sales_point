@@ -4,7 +4,7 @@ La integración está disponible en cualquier pantalla que usa `admin_dashboard`
 
 ## Primera versión funcional
 
-- Imágenes oficiales de Deltín: retrato para el lanzador y mascota de cuerpo completo saludando para el panel. Ambos son recursos WebP locales optimizados, derivados de las ilustraciones aprobadas; no se usa un SVG redibujado.
+- Imágenes oficiales de Deltín: retrato para el lanzador y mascota de cuerpo completo saludando para el panel. Ambos son SVG vectorizados con trazados reales sobre las ilustraciones aprobadas; no contienen imágenes incrustadas. La vectorización conserva formas y colores principales, aunque no es idéntica píxel por píxel a las imágenes originales.
 - Estados animados `idle`, `happy`, `thinking`, `concerned`, `laughing` y `talking` con movimientos CSS sobre las ilustraciones originales. La versión estática del arte no dispone de capas faciales independientes; durante la lectura se anima suavemente el cuerpo (no hay lip-sync preciso de la boca).
 - Lectura en voz alta opcional mediante Web Speech API, con animación de habla sincronizada con el inicio y fin de la locución.
 - Panel adaptativo móvil/escritorio, apertura/cierre y navegación por teclado.
@@ -16,7 +16,7 @@ La integración está disponible en cualquier pantalla que usa `admin_dashboard`
 ## Dónde se mantiene
 
 - `app/views/admin/shared/_assistant.html.erb`: diseño del panel.
-- `app/assets/images/deltin/{portrait,waving}.webp`: arte oficial para botón y panel.
+- `app/assets/images/deltin/{portrait,waving}.svg`: arte oficial para botón y panel.
 - `app/assets/stylesheets/components/deltin.css`: movimiento de los estados de ánimo y preferencias de movimiento reducido.
 - `app/javascript/controllers/deltin_assistant_controller.js`: interacción y lectura de voz.
 - `app/controllers/admin/assistant_controller.rb`: endpoint POST autenticado.
@@ -33,3 +33,7 @@ Nota: los procedimientos detallados de los módulos están actualmente redactado
 `bundle exec rubocop`
 
 Se debe revisar CI antes de dar por validado el cambio.
+
+## Fuente vectorial
+
+Los SVG de `app/assets/images/deltin/` contienen únicamente formas `path` rellenas con colores sólidos; no existen referencias a imágenes `<image>` ni datos PNG/WebP incrustados. La silueta corresponde a las dos poses aprobadas y conserva las dos orejas. Los retratos son ilustraciones vectorizadas a partir de los originales y simplifican parte de los degradados finos. Los estados de ánimo actuales transforman el gráfico completo; las piezas faciales individuales requerirían una recreación por capas específica para lograr sincronización labial precisa.

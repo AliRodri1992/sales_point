@@ -24,8 +24,14 @@ RSpec.describe 'Deltín assistant', type: :request do
     expect(portrait['src']).to include('deltin/waving')
     expect(portrait['alt']).to eq(I18n.t('admin.assistant.mascot_alt'))
     expect(page.at_css('svg.deltin-character')).to be_nil
-    expect(Rails.root.join('app/assets/images/deltin/portrait.webp')).to exist
-    expect(Rails.root.join('app/assets/images/deltin/waving.webp')).to exist
+    expect(Rails.root.join('app/assets/images/deltin/portrait.svg')).to exist
+    expect(Rails.root.join('app/assets/images/deltin/waving.svg')).to exist
+    %w[portrait waving].each do |pose|
+      svg = Nokogiri::XML(Rails.root.join("app/assets/images/deltin/#{pose}.svg").read)
+      expect(svg.at_xpath('//*[local-name()="svg"]')).to be_present
+      expect(svg.xpath('//*[local-name()="path"]').size).to be > 30
+      expect(svg.xpath('//*[local-name()="image"]')).to be_empty
+    end
     expect(page.at_css('#chatFloatingButton')).to be_nil
   end
 
