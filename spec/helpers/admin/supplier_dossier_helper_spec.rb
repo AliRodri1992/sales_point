@@ -20,5 +20,18 @@ RSpec.describe Admin::SupplierDossierHelper, type: :helper do
       visit = SupplierSchedule.new(weekday: 5, starts_at: Time.zone.parse('08:00'))
       expect(helper.supplier_dossier_next_occurrence(visit, now:)).to eq(Date.new(2026, 10, 23))
     end
+
+    it 'uses the supplier organization time when UTC has already reached tomorrow' do
+      organization = create(:organization)
+      create(:organization_setting, organization:, timezone: 'America/Mexico_City')
+      supplier = create(:supplier, organization:)
+      branch = create(:branch, organization:)
+      schedule = supplier.supplier_schedules.create!(
+        branch:, kind: 'visit', weekday: 5, starts_at: '21:00', ends_at: '22:00'
+      )
+
+      expect(helper.supplier_dossier_next_occurrence(schedule, now: Time.utc(2026, 10, 17, 2)))
+        .to eq(Date.new(2026, 10, 16))
+    end
   end
 end
