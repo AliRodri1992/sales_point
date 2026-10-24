@@ -11,9 +11,10 @@ RSpec.describe Suppliers::DossierDocumentsPage do
       io: StringIO.new('Sample supplier document'), filename:,
       content_type: 'text/plain'
     )
-    supplier.supplier_documents.create!(
-      attachment: supplier.documents.attachments.order(:id).last!, category:, status:, description:
-    )
+    attachment = supplier.documents.attachments.order(:id).last!
+    document = supplier.supplier_documents.find_or_initialize_by(attachment:)
+    document.update!(category:, status:, description:)
+    document
   end
 
   it 'filters by text, category and status together' do
