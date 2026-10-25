@@ -106,6 +106,19 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
     expect(described_class.new(document).valid?).to be(false)
   end
 
+  it 'rejects a file with an unsupported extension even when its MIME is known' do
+    document = blob('placeholder', 'content.bin', 'application/msword')
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
+  it 'rejects an empty Office upload before decompressing it' do
+    document = blob('', 'empty.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+    expect(document).not_to receive(:download)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
   it 'rejects legacy Word files without an OLE container signature' do
     document = blob('ordinary text', 'legacy.doc', 'application/msword')
 

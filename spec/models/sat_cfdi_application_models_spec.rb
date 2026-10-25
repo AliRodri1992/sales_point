@@ -167,6 +167,42 @@ RSpec.describe 'SAT CFDI 4.0 application models', type: :model do
     expect(catalog.errors[:valid_to]).to be_present
   end
 
+  describe 'SAT tax rate boundaries' do
+    let(:attributes) do
+      {
+        catalog_key: '002-Tasa-Traslado', description: 'IVA transfer',
+        tax_code: '002', factor_type: 'Tasa', tax_type: 'transfer'
+      }
+    end
+
+    it 'accepts a missing minimum rate when the maximum is known' do
+      rate = SatTaxRate.new(**attributes, minimum_rate: nil, maximum_rate: 0.16)
+
+      expect(rate).to be_valid
+    end
+
+    it 'accepts a missing maximum rate when the minimum is known' do
+      rate = SatTaxRate.new(**attributes, minimum_rate: 0.08, maximum_rate: nil)
+
+      expect(rate).to be_valid
+    end
+
+    it 'accepts inclusive minimum and maximum values' do
+      rate = SatTaxRate.new(**attributes, minimum_rate: 0.08, maximum_rate: 0.16)
+
+      expect(rate).to be_valid
+      rate.maximum_rate = 0.08
+      expect(rate).to be_valid
+    end
+
+    it 'rejects an inverted percentage range' do
+      rate = SatTaxRate.new(**attributes, minimum_rate: 0.16, maximum_rate: 0.08)
+
+      expect(rate).not_to be_valid
+      expect(rate.errors[:maximum_rate]).to be_present
+    end
+  end
+
   it 'connects the SAT country and state catalogs using their SAT codes' do
     expect(SatState.reflect_on_association(:country).foreign_key).to eq('country_code')
     expect(SatCountry.reflect_on_association(:states).foreign_key).to eq('country_code')

@@ -56,6 +56,38 @@ RSpec.describe TestDatabaseLock do
     expect(connector).not_to have_received(:call)
   end
 
+  it 'does not acquire a second PostgreSQL connection while already locked' do
+    expect(connector).to receive(:call).once.and_return(connection)
+
+    guard.acquire
+    guard.acquire
+    guard.release
+    expect(connection).to have_received(:close).once
+  end
+
+  it 'does not attempt to unlock an unacquired connection' do
+    expect(connection).not_to receive(:exec_params)
+    guard.release
+  end
+
+  it 'connects without a password when none is configured' do
+    environment.delete('POSTGRES_PASSWORD')
+    expect(guard.send(:connection_options)).not_to have_key(:password)
+  end
+
+  it 'rejects invalid timeouts and closes the acquired connection' do
+    environment['TEST_DB_LOCK_TIMEOUT_SECONDS'] = '0'
+
+    expect { guard.acquire }.to raise_error(ArgumentError, /must be positive/)
+    expect(connection).to have_received(:close)
+  end
+
+  it 'serializes both positive and negative PostgreSQL advisory keys' do
+    expect(guard.send(:lock_identifiers).last).to be_negative
+    environment['POSTGRES_DB_TEST'] = 'another_test_db'
+    expect(guard.send(:lock_identifiers).last).to be_positive
+  end
+
   it 'uses a different advisory key for each test database' do
     original_key = guard.send(:lock_identifiers)
     environment['POSTGRES_DB_TEST'] = 'another_test_db'
