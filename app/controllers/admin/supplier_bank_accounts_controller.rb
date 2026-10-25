@@ -27,7 +27,8 @@ module Admin
     end
 
     def create
-      @account = @supplier.supplier_bank_accounts.new(bank_params.merge(organization: current_organization))
+      attributes = bank_params.except(:status, :blocked_reason)
+      @account = @supplier.supplier_bank_accounts.new(attributes.merge(organization: current_organization, status: 'active'))
       authorize @account
       if save_account
         redirect_to admin_supplier_bank_accounts_path(@supplier)

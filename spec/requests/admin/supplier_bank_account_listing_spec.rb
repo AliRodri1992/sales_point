@@ -133,7 +133,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get edit_admin_supplier_bank_account_path(supplier, account)
 
     expect(response).to have_http_status(:ok)
-    expect(document.at_css('form[data-controller="supplier-bank-clabe"]')).to be_present
+    expect(document.at_css('form[data-controller~="supplier-bank-clabe"]')).to be_present
     expect(document.at_css('input[data-supplier-bank-clabe-target="clabe"]')).to be_present
     expect(document.at_css('select[data-supplier-bank-clabe-target="bank"]')).to be_present
     expect(response.body).not_to include(account.account_number)
@@ -144,10 +144,56 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(response).to have_http_status(:ok)
     expect(document.at_css('select[name="supplier_bank_account[account_type]"]')).to be_present
     expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
-    expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_present
+    expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_nil
+    expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_nil
     expect(document.at_css('input[name="supplier_bank_account[card_number]"]')).to be_present
     expect(document.at_css('input[name*="card_expiration"]')).to be_nil
     expect(document.at_css('input[name*="cvv"]')).to be_nil
+  end
+
+  it 'renders the responsive, localized create form with the Deltin sidebar and full-width actions' do
+    get new_admin_supplier_bank_account_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('[data-bank-account-form-page="new"]')).to be_present
+    expect(document.at_css('form[data-controller~="supplier-bank-form"]')).to be_present
+    expect(document.at_css('img[src*="deltin/waving"]')).to be_present
+    expect(document.at_css('[data-bank-form-actions] button[type="submit"]')).to be_present
+    expect(document.css('[data-bank-form-section]').size).to eq(2)
+    expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_nil
+    expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_nil
+    expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
+  end
+
+  it 'renders the edit controls and keeps every encrypted input blank' do
+    account = bank_account(clabe: '012180001234567890', card_number: '4111111111111111')
+
+    get edit_admin_supplier_bank_account_path(supplier, account)
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('[data-bank-account-form-page="edit"]')).to be_present
+    expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_present
+    expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_present
+    %w[clabe account_number card_number].each do |field|
+      input = document.at_css("input[name='supplier_bank_account[#{field}]']")
+      expect(input['value']).to be_blank
+    end
+    expect(response.body).not_to include(account.account_number, account.clabe, account.card_number)
+  end
+
+  it 'forces new accounts active even when a forged request submits another status' do
+    post admin_supplier_bank_accounts_path(supplier), params: {
+      supplier_bank_account: {
+        bank_name: 'Sample Bank', holder_name: 'Vendor Holdings',
+        account_number: '123456789012', currency_code: 'MXN',
+        status: 'blocked', blocked_reason: 'Forged'
+      }
+    }
+
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    account = supplier.supplier_bank_accounts.order(:id).last
+    expect(account.status).to eq('active')
+    expect(account.blocked_reason).to be_nil
   end
 
   it 'accepts a verified, blocked account with an explicit reason and server-created verified timestamp' do
