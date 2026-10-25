@@ -9,9 +9,11 @@ Estas instrucciones se aplican a todo este repositorio y a cualquier agente de I
 - Aplicar validaciones de permisos (Pundit), aislamiento organizacional, protección de datos bancarios y consistencia de operaciones financieras al tocar proveedores o facturación.
 
 ## Política obligatoria de commits para agentes de IA
-- **Cada commit creado por el agente debe modificar al menos 5 archivos distintos** con cambios reales, necesarios y vinculados a un objetivo técnico coherente.
-- Nunca realizar commits con 1, 2, 3 o 4 archivos salvo **autorización explícita del usuario** para una excepción.
-- Si una tarea legítima modifica menos de 5 archivos, **conservar los cambios sin confirmar** y continuar únicamente con tareas relacionadas antes de agruparlos. Comunicar el bloqueo si no existen cambios adicionales justificados.
+- **Cada commit creado por el agente debe modificar al menos 5 archivos distintos** con cambios reales, necesarios y vinculados a un objetivo técnico coherente, salvo la excepción exclusiva del esquema descrita abajo.
+- **Única excepción autorizada sin consultar:** un commit de exactamente **un archivo**, que modifique exclusivamente `db/schema.rb` ya existente, y solamente cuando sea necesario actualizar el esquema real de la base de datos tras cambios legítimos del modelo de datos. Confirmar previamente que el diff es una actualización correcta generada por Rails; la comprobación automática verifica la ruta y que el estado Git sea modificación (M), pero no puede verificar por sí sola la necesidad técnica.
+- **Nunca** crear commits de 2, 3 o 4 archivos, aunque uno de ellos sea el esquema. Tampoco admitir commits individuales de otros archivos, ni crear, renombrar o eliminar `schema.rb` como excepción.
+- Si una tarea legítima modifica de 1 a 4 archivos y no encaja en la única excepción, **conservar los cambios sin confirmar** y agrupar únicamente trabajo relacionado. Comunicar el bloqueo si no hay modificaciones adicionales justificadas.
+- Cualquier otra excepción distinta debe recibir autorización explícita del usuario.
 - No cambiar archivos arbitrarios, generar archivos vacíos ni incluir retoques cosméticos para llegar a cinco.
 - No confundir archivos cambiados con líneas: cuentan rutas de archivo diferentes, incluidas altas, cambios, renombres y bajas.
 - Commits coherentes y revisables: no unir funcionalidades independientes solo por cumplir un número.

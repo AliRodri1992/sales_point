@@ -9,14 +9,14 @@ permissions:
 
 jobs:
   commit-policy:
-    name: Verify minimum five changed files per commit
+    name: Verify five files or schema-only exception
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Test commit policy verifier
+      - name: Test minimum file rule and schema-only exception
         run: bash test/commit_min_files_test.sh
 
       - name: Check all newly pushed commits
