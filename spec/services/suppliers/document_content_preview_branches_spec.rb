@@ -11,8 +11,14 @@ RSpec.describe Suppliers::DocumentContentPreview do
   end
 
   def zipped(entries)
+    defaults = {
+      '[Content_Types].xml' => <<~XML,
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"/>
+      XML
+      'xl/workbook.xml' => '<workbook/>'
+    }
     Zip::OutputStream.write_buffer do |stream|
-      entries.each do |name, value|
+      defaults.merge(entries).each do |name, value|
         stream.put_next_entry(name)
         stream.write(value)
       end

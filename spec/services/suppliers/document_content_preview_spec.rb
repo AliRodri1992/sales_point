@@ -36,6 +36,16 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(invalid).call).to be_nil
   end
 
+  it 'refuses an unrelated ZIP disguised as an Office attachment' do
+    archive = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('notes.txt')
+      zip.write('not a spreadsheet')
+    end.string
+    fake = blob(archive, 'spoofed.xlsx', described_class::XLSX_TYPE)
+
+    expect(described_class.new(fake).call).to be_nil
+  end
+
   it 'skips unrelated MIME types' do
     pdf = blob('%PDF-1.4', 'sample.pdf', 'application/pdf')
 

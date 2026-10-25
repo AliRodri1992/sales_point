@@ -17,7 +17,7 @@ module Suppliers
 
     def call
       return unless @blob.content_type.in?([DOCX_TYPE, XLSX_TYPE])
-      return if @blob.byte_size > 10.megabytes
+      return unless OfficeDocumentFormatValidator.new(@blob).valid?
 
       text = nil
       Zip::File.open_buffer(@blob.download) do |zip|

@@ -44,17 +44,23 @@ module Suppliers
       bytes = @blob.download
       return false unless bytes.start_with?(ZIP_SIGNATURE)
 
-      Zip::File.open_buffer(bytes) do |zip|
-        manifest = zip.find_entry('[Content_Types].xml')
-        main = zip.find_entry(main_entry)
-        next false unless manifest && main
-        next false unless manifest.size.between?(1, MAX_MANIFEST_BYTES) && main.size.positive?
+      Zip::File.open_buffer(bytes) { |zip| valid_package?(zip, main_entry) }
+    end
 
-        xml = Nokogiri::XML(manifest.get_input_stream.read(MAX_MANIFEST_BYTES + 1)) do |config|
-          config.strict.nonet
-        end
-        xml.root&.name == 'Types' && xml.root&.namespace&.href == PACKAGE_NAMESPACE
+    def valid_package?(zip, main_entry)
+      manifest = zip.find_entry('[Content_Types].xml')
+      main = zip.find_entry(main_entry)
+      return false unless manifest && main
+      return false unless manifest.size.between?(1, MAX_MANIFEST_BYTES) && main.size.positive?
+
+      valid_manifest?(manifest)
+    end
+
+    def valid_manifest?(entry)
+      xml = Nokogiri::XML(entry.get_input_stream.read(MAX_MANIFEST_BYTES + 1)) do |config|
+        config.strict.nonet
       end
+      xml.root&.name == 'Types' && xml.root&.namespace&.href == PACKAGE_NAMESPACE
     end
   end
 end
