@@ -17,6 +17,7 @@ module Suppliers
     OLE_SIGNATURE = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1].pack('C*').freeze
     ZIP_SIGNATURE = "PK\x03\x04".b.freeze
     MAX_MANIFEST_BYTES = 1.megabyte
+    MAX_MAIN_PART_BYTES = 20.megabytes
     PACKAGE_NAMESPACE = 'http://schemas.openxmlformats.org/package/2006/content-types'
 
     def initialize(blob)
@@ -53,7 +54,7 @@ module Suppliers
       manifest = zip.find_entry('[Content_Types].xml')
       main = zip.find_entry(main_entry)
       return false unless manifest && main
-      return false unless manifest.size.between?(1, MAX_MANIFEST_BYTES) && main.size.positive?
+      return false unless manifest.size.between?(1, MAX_MANIFEST_BYTES) && main.size.between?(1, MAX_MAIN_PART_BYTES)
 
       valid_manifest?(manifest)
     end

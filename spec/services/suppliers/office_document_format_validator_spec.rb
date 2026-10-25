@@ -48,7 +48,7 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
   end
 
   it 'rejects a truncated archive without raising a ZIP parsing error' do
-    document = blob("PK\\x03\\x04".b, 'truncated.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+    document = blob("PK\x03\x04".b, 'truncated.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
 
     expect(described_class.new(document).valid?).to be(false)
   end
@@ -83,6 +83,18 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
       zip.write(SupplierDemoDocumentOffice.docx_content_types)
     end.string
     document = blob(content, 'missing-document.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
+  it 'rejects an Office ZIP whose main XML expands beyond the preview budget' do
+    content = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write(SupplierDemoDocumentOffice.docx_content_types)
+      zip.put_next_entry('word/document.xml')
+      zip.write('x' * (described_class::MAX_MAIN_PART_BYTES + 1))
+    end.string
+    document = blob(content, 'oversized-entry.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
 
     expect(described_class.new(document).valid?).to be(false)
   end

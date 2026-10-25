@@ -205,7 +205,7 @@ RSpec.describe 'Supplier document library', type: :request do
 
   it 'rejects a truncated Office ZIP without raising a server error' do
     document = ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new("PK\\x03\\x04".b), filename: 'broken.docx',
+      io: StringIO.new("PK\x03\x04".b), filename: 'broken.docx',
       content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
     )
     supplier.documents.attach(document)

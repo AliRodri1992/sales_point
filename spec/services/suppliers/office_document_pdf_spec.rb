@@ -104,6 +104,17 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
     expect(described_class.new(document).call).to be_nil
   end
 
+  it 'avoids invoking LibreOffice for a truncated ZIP signature' do
+    document = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("PK\x03\x04".b), filename: 'truncated.docx',
+      content_type: described_class::CONTENT_TYPES.first, identify: false
+    )
+    allow(described_class).to receive(:available?).and_return(true)
+    expect(SupplierOfficeConverterProcess).not_to receive(:call)
+
+    expect(described_class.new(document).call).to be_nil
+  end
+
   it 'does not convert plain text masquerading as a DOCX' do
     document = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new('Word format placeholder'), filename: 'fake.docx',
