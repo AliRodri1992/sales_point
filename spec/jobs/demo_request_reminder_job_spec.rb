@@ -40,4 +40,12 @@ RSpec.describe DemoRequestReminderJob, type: :job do
 
     described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
   end
+  it 'ignores a reminder for a demo request deleted before execution' do
+    request_id = demo_request.id
+    scheduled_at = demo_request.scheduled_at.to_i
+    demo_request.destroy!
+
+    expect(DemoRequestMailer).not_to receive(:with)
+    expect { described_class.perform_now(request_id, 'one_hour', scheduled_at) }.not_to raise_error
+  end
 end

@@ -47,6 +47,8 @@ module Admin
     end
 
     def send_office_document_preview(attachment)
+      return head :unsupported_media_type unless Suppliers::OfficeDocumentFormatValidator.new(attachment.blob).valid?
+
       return send_office_pdf_preview(attachment) if Suppliers::OfficeDocumentPdf.available?
 
       modern = [Suppliers::DocumentContentPreview::DOCX_TYPE, Suppliers::DocumentContentPreview::XLSX_TYPE]

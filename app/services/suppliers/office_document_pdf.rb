@@ -29,8 +29,8 @@ module Suppliers
     end
 
     def call
-      return unless self.class.available? && supported?
-      return if @blob.byte_size > 10.megabytes
+      return unless self.class.available?
+      return unless supported? && OfficeDocumentFormatValidator.new(@blob).valid?
 
       Dir.mktmpdir('delta-office-preview-') { |directory| convert(directory) }
     rescue IOError, SystemCallError, Timeout::Error
