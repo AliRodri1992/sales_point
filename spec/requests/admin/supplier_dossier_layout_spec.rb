@@ -67,6 +67,22 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.css("a[href='#{admin_supplier_schedules_path(supplier)}']").size).to eq(1)
   end
 
+  it 'places bank account management next to the dossier search filter, not in the header' do
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    panel = dossier.at_css('#supplier-dossier-bank-accounts')
+    header = panel.at_css('[data-finance-banks-header]')
+    content = panel.at_css('[data-finance-banks-content]')
+    row = content.at_css('[data-finance-banks-search-row]')
+    manage_path = admin_supplier_bank_accounts_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(header.at_css("a[href='#{manage_path}']")).to be_nil
+    expect(row.at_css('input#dossier-banks-search')).to be_present
+    expect(row.at_css("a[href='#{manage_path}']")).to be_present
+    expect(content.css("a[href='#{manage_path}']").size).to eq(1)
+  end
+
   it 'shows a compact fiscal address empty state without an add button' do
     get admin_supplier_path(supplier, tab: 'fiscal')
 
