@@ -40,7 +40,7 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
   def expect_full_width_option_hover(select_name)
     dropdown = open_dropdown(select_name)
     option = dropdown.find('[role="option"][aria-selected="false"]')
-    expect(option[:class]).to include('rounded-none', 'hover:bg-emerald-50')
+    expect(option[:class]).to include('rounded-none', 'delta-select-option')
     expect(full_width_option?(option)).to be(true)
 
     option.hover

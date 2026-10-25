@@ -1385,3 +1385,30 @@ select:focus-visible {
   .demo-request-page .demo-request__input, .demo-request-page .iti input.iti__tel-input, .demo-request-page select { min-height: 2.75rem; }
 }
 @media (prefers-reduced-motion: reduce) { .demo-request-page .success-state { animation: none; } }
+
+
+/* Delta POS selects: an unselected hover is subtle; selected is solid emerald. */
+.delta-select-open { z-index: 60; }
+[data-controller~="delta-select"] .delta-select-native {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  pointer-events: none !important;
+}
+.delta-select-option { background: white; color: #334155; }
+.delta-select-option:not([aria-selected="true"]):hover,
+.delta-select-option:not([aria-selected="true"]):focus-visible { background: #d1fae5; color: #065f46; }
+.delta-select-option[aria-selected="true"] { background: var(--brand, #047857); color: white; font-weight: 700; }
+.delta-select-option[aria-selected="true"]:hover,
+.delta-select-option[aria-selected="true"]:focus-visible { background: #065f46; color: white; }
+.delta-select-option:disabled { cursor: not-allowed; opacity: .45; }
+[data-controller~="delta-select"] .delta-select-menu[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .delta-select-option { transition: none; }
+}

@@ -6,12 +6,15 @@ export default class extends Controller {
     this.select = this.element.querySelector("select")
     if (!this.select) return
 
+    this.element.querySelectorAll("[data-delta-select-generated]").forEach((node) => node.remove())
     this.element.dataset.deltaSelectReady = "true"
-    this.select.classList.add("sr-only")
+    this.select.classList.add("delta-select-native")
+    this.oldTabIndex = this.select.getAttribute("tabindex")
     this.select.tabIndex = -1
 
     this.button = document.createElement("button")
     this.button.type = "button"
+    this.button.dataset.deltaSelectGenerated = "true"
     this.button.className = "flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-left text-sm text-slate-800 transition hover:border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-100"
     this.button.setAttribute("aria-haspopup", "listbox")
     this.button.setAttribute("aria-expanded", "false")
@@ -26,6 +29,7 @@ export default class extends Controller {
     this.menu = document.createElement("div")
     this.menu.className = "absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto overflow-x-hidden rounded-xl border border-slate-200 bg-white p-0 shadow-xl"
     this.menu.hidden = true
+    this.menu.dataset.deltaSelectGenerated = "true"
     this.searchable = this.element.dataset.countryFlags === "true" || this.element.dataset.searchable === "true"
     if (this.searchable) {
       const searchWrapper = document.createElement("div")
@@ -66,9 +70,17 @@ export default class extends Controller {
       }
     }
     this.onChange = () => this.refresh()
+    this.optionObserver = new MutationObserver(() => this.refresh())
+    this.optionObserver.observe(this.select, { childList: true, subtree: true, characterData: true, attributes: true,
+      attributeFilter: ["disabled", "selected", "label", "hidden"] })
+    this.onReset = () => setTimeout(() => this.refresh(), 0)
+    this.onInvalid = (event) => { event.preventDefault(); this.button.focus() }
     this.button.addEventListener("click", this.onButtonClick)
+    this.button.disabled = this.select.disabled
     this.element.addEventListener("keydown", this.onKeyDown)
     this.select.addEventListener("change", this.onChange)
+    this.select.addEventListener("invalid", this.onInvalid)
+    this.select.form?.addEventListener("reset", this.onReset)
     document.addEventListener("click", this.onDocumentClick)
     this.refresh()
   }
@@ -78,15 +90,23 @@ export default class extends Controller {
     this.button?.removeEventListener("click", this.onButtonClick)
     this.element.removeEventListener("keydown", this.onKeyDown)
     this.select?.removeEventListener("change", this.onChange)
+    this.select?.removeEventListener("invalid", this.onInvalid)
+    this.select?.form?.removeEventListener("reset", this.onReset)
+    this.optionObserver?.disconnect()
     this.searchInput?.removeEventListener("input", this.onSearchInput)
     this.button?.remove()
     this.menu?.remove()
-    this.select?.classList.remove("sr-only")
-    if (this.select) this.select.tabIndex = 0
+    this.select?.classList.remove("delta-select-native")
+    if (this.select) {
+      if (this.oldTabIndex === null) this.select.removeAttribute("tabindex")
+      else this.select.setAttribute("tabindex", this.oldTabIndex)
+    }
     delete this.element.dataset.deltaSelectReady
   }
 
   refresh() {
+    this.button.disabled = this.select.disabled
+    this.button.setAttribute("aria-invalid", String(!this.select.validity.valid))
     this.label.replaceChildren(this.optionContent(this.select.selectedOptions[0]))
     this.optionsContainer.replaceChildren()
     const options = [...this.select.options]
@@ -97,11 +117,11 @@ export default class extends Controller {
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
       item.dataset.searchText = `${option.textContent} ${option.dataset.countryCode || ""}`
-      item.className = `flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none px-4 py-3 text-left text-sm transition-colors hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none ${option.selected ? "bg-emerald-50 font-semibold text-emerald-800" : "text-slate-700"}`
+      item.className = "delta-select-option flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none"
       item.append(this.optionContent(option))
       if (option.selected) {
         const check = document.createElement("span")
-        check.className = "ml-2 text-emerald-600"
+        check.className = "ml-2 shrink-0 font-bold text-current"
         check.textContent = "✓"
         item.append(check)
       }
@@ -158,6 +178,7 @@ export default class extends Controller {
   }
 
   choose(index) {
+    if (this.select.options[index]?.disabled) return
     this.select.selectedIndex = index
     this.select.dispatchEvent(new Event("change", { bubbles: true }))
     this.close()
@@ -170,16 +191,20 @@ export default class extends Controller {
   }
 
   open() {
+    if (this.select.disabled) return
+    this.refresh()
     if (this.searchable) {
       this.searchInput.value = ""
       this.filterOptions()
     }
     this.menu.hidden = false
+    this.element.classList.add("delta-select-open")
     this.button.setAttribute("aria-expanded", "true")
     this.searchInput?.focus()
   }
 
   close() {
+    this.element.classList.remove("delta-select-open")
     this.menu.hidden = true
     this.button.setAttribute("aria-expanded", "false")
   }
