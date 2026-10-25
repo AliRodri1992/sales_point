@@ -40,6 +40,13 @@ RSpec.describe DemoRequestReminderJob, type: :job do
 
     described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
   end
+  it 'rejects an archived request even when the record has already been loaded' do
+    record = demo_request
+    record.destroy!
+
+    expect(described_class.new.send(:valid_reminder?, record, record.scheduled_at.to_i)).to be(false)
+  end
+
   it 'ignores a reminder for a demo request deleted before execution' do
     request_id = demo_request.id
     scheduled_at = demo_request.scheduled_at.to_i

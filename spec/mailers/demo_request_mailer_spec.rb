@@ -123,6 +123,27 @@ RSpec.describe 'DemoRequestMailer queued delivery recovery', type: :mailer do
     expect(ActionMailer::Base.deliveries).to be_empty
   end
 
+  it 'suppresses all email actions for a soft-deleted demo request' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    demo_request.destroy!
+    archived = DemoRequest.with_deleted.find(demo_request.id)
+
+    %i[confirmation scheduled new_request].each do |action|
+      mail = DemoRequestMailer.with(demo_request: archived, locale: 'en').public_send(action)
+
+      expect(mail.message.perform_deliveries).to be(false)
+      expect { mail.deliver_now }.not_to change(ActionMailer::Base.deliveries, :size)
+    end
+  end
+
+  it 'leaves a live request deliverable, including the scheduled email' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    mail = DemoRequestMailer.with(demo_request:, locale: 'en').scheduled
+
+    expect(mail.message.perform_deliveries).to be(true)
+    expect { mail.deliver_now }.to change(ActionMailer::Base.deliveries, :size).by(1)
+  end
+
   it 'delivers the same serialized mail normally while its record exists' do
     demo_request = create(:demo_request)
     serialized = serialized_delivery(demo_request)

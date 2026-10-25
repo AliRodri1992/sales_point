@@ -192,6 +192,28 @@ RSpec.describe DemoRequest, type: :model do
     end
   end
 
+  describe '#available_for_notification?' do
+    it 'permits an active persisted request' do
+      record = create(:demo_request)
+
+      expect(record).to be_available_for_notification
+    end
+
+    it 'rejects a soft-deleted demo request even when loaded with_deleted' do
+      record = create(:demo_request)
+      record.destroy!
+
+      expect(described_class.with_deleted.find(record.id)).not_to be_available_for_notification
+    end
+
+    it 'rejects an explicitly destroyed in-memory request' do
+      record = build(:demo_request)
+      allow(record).to receive(:destroyed?).and_return(true)
+
+      expect(record).not_to be_available_for_notification
+    end
+  end
+
   describe 'status' do
     it 'defines statuses' do
       expect(described_class.statuses).to eq(
