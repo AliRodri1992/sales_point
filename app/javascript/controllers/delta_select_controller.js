@@ -11,6 +11,8 @@ export default class extends Controller {
     this.select = this.element.querySelector("select")
     if (!this.select) return
 
+    this.lastOptionsSignature = null
+
     this.element.querySelectorAll("[data-delta-select-generated]").forEach((node) => node.remove())
     this.element.dataset.deltaSelectReady = "true"
     this.select.classList.add("delta-select-native")
@@ -135,9 +137,17 @@ export default class extends Controller {
   refresh() {
     this.button.disabled = this.select.disabled
     this.button.setAttribute("aria-invalid", String(!this.select.validity.valid))
+    const options = [...this.select.options]
+    const signature = JSON.stringify(options.map((option) => [
+      option.value, option.textContent, option.selected, option.disabled,
+      option.hidden, option.dataset.countryCode, option.dataset.flagUrl
+    ]))
+    // Focus and opening may trigger refresh several times. Recreating unchanged
+    // buttons detaches Selenium targets and loses keyboard focus mid-click.
+    if (signature === this.lastOptionsSignature) return
+    this.lastOptionsSignature = signature
     this.label.replaceChildren(this.optionContent(this.select.selectedOptions[0]))
     this.optionsContainer.replaceChildren()
-    const options = [...this.select.options]
     options.forEach((option, index) => {
       const item = document.createElement("button")
       item.type = "button"

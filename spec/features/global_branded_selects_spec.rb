@@ -44,6 +44,29 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
     expect(wrapper).to have_css('button[aria-expanded="false"]')
   end
 
+  scenario 'keeps rendered choices stable on repeated focus while syncing changed native options' do
+    visit new_admin_product_path
+    wrapper = enhanced_select('product[tracking_mode]')
+    wrapper.find('button[aria-haspopup="listbox"]').click
+    expect(wrapper).to have_css('[role="option"]')
+
+    page.execute_script(<<~JS, wrapper)
+      const select = arguments[0].querySelector('select')
+      const original = arguments[0].querySelector('[role="option"]')
+      original.dataset.stabilityMarker = 'preserved'
+      arguments[0].querySelector('button[aria-haspopup="listbox"]').focus()
+      select.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(wrapper).to have_css('[role="option"][data-stability-marker="preserved"]')
+
+    page.execute_script(<<~JS, wrapper)
+      const select = arguments[0].querySelector('select')
+      select.add(new Option('New tracking mode', 'new-mode'))
+    JS
+    expect(wrapper).to have_css('[role="option"]', text: 'New tracking mode')
+  end
+
   scenario 'preserves account status filtering after a custom dropdown selection' do
     visit admin_supplier_bank_accounts_path(supplier)
 
