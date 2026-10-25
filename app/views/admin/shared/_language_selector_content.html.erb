@@ -6,7 +6,7 @@
       type="button"
       data-action="click->language-selector#select"
       data-language="<%= language.code %>"
-      class="language-option flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-emerald-500 text-white' : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-700' %>"
+      class="language-option flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm font-medium transition <%= language.id == current.id ? 'bg-emerald-700 text-white hover:bg-emerald-800' : 'text-slate-700 hover:bg-emerald-100 hover:text-emerald-900' %>"
     >
       <img
         src="<%= language_flag_path(language) %>"

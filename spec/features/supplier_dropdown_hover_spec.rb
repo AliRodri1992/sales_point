@@ -45,6 +45,8 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
     option.hover
     expect(dropdown).to have_css('[role="option"]:hover')
+    selected = dropdown.find('[role="option"][aria-selected="true"]')
+    expect(selected.native.css_value('background-color')).not_to eq(option.native.css_value('background-color'))
     dropdown
   end
 

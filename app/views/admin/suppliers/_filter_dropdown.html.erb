@@ -16,11 +16,11 @@
       <% if local_assigns[:plain_options] %>
         <button type="button" role="option" data-action="click->supplier-dropdown#choose"
                 data-option-value="<%= value %>" aria-selected="<%= current_value == value.to_s %>"
-                class="block min-h-11 w-full cursor-pointer px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-50 aria-selected:font-semibold aria-selected:text-emerald-700">
+                class="block min-h-11 w-full cursor-pointer px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-100 hover:text-emerald-900 focus-visible:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-700 aria-selected:font-bold aria-selected:text-white aria-selected:hover:bg-emerald-800 aria-selected:hover:text-white">
           <span data-option-label><%= label %></span>
         </button>
       <% else %>
-        <label for="<%= option_id %>" data-action="click->supplier-dropdown#choose" class="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-emerald-50 has-[:checked]:bg-emerald-50 has-[:checked]:font-semibold has-[:checked]:text-emerald-700">
+        <label for="<%= option_id %>" data-action="click->supplier-dropdown#choose" class="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-emerald-100 has-[:checked]:bg-emerald-700 has-[:checked]:font-bold has-[:checked]:text-white has-[:checked]:hover:bg-emerald-800">
           <%= radio_button_tag name, value, current_value == value.to_s, id: option_id, class: 'size-4 accent-emerald-600' %>
           <span data-option-label><%= label %></span>
         </label>
