@@ -2,15 +2,11 @@
 
 A modern **Point of Sale (POS)** system built with **Ruby on Rails 8**, designed for inventory management, sales tracking, and user administration for small to medium-sized businesses.
 
-## Política de commits de agentes de IA
+## Política de commits
 
-Este repositorio aplica las instrucciones de [AGENTS.md](AGENTS.md). Por regla general, cada commit debe incluir **al menos cinco archivos realmente modificados y relacionados**.
+Los commits pueden incluir **uno o más archivos**, según lo requiera el cambio. No se impone un número mínimo ni una excepción exclusiva para `db/schema.rb`. Consulta [AGENTS.md](AGENTS.md) para las pautas de revisión y calidad.
 
-**Excepción única:** se permite un commit de exactamente un archivo cuando sea necesario modificar el esquema Rails existente `db/schema.rb`. Debe ser una modificación real del esquema (no un archivo nuevo, renombrado o eliminado), sin otros archivos incluidos en el commit. La revisión humana o del agente debe justificar la necesidad del cambio; la herramienta automatizada solamente valida la ruta, el tipo de modificación y la cantidad de archivos. Los commits de dos, tres o cuatro archivos siguen prohibidos.
-
-La comprobación local utiliza `bash bin/check-commit-min-files --staged` y el hook Overcommit configurado en `.overcommit.yml`. Las pruebas del control están en `test/commit_min_files_test.sh`; GitHub Actions comprueba la regla mediante `.github/workflows/commit-policy.yml`. No introducir archivos falsos o cambios irrelevantes para alcanzar el mínimo.
-
-
+Overcommit y GitHub Actions mantienen las comprobaciones de código y seguridad, sin bloquear commits por su cantidad de archivos.
 
 ---
 
