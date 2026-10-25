@@ -14,7 +14,7 @@ ko:
       holder_placeholder: "예금주 전체 이름"
       bank_placeholder: "예: BBVA"
       account_placeholder: "예: 012345678901"
-      account_hint: "4~20자리. 계좌번호 또는 CLABE를 입력하세요."
+      account_hint: "4~20자리. 유효한 CLABE를 입력했다면 선택 사항입니다."
       card_placeholder: "선택 사항: 12~19자리 카드 번호"
       keep_secret: "비워두면 현재 값이 유지되며 전체 번호는 표시되지 않습니다."
       configuration_title: "상태 및 확인"

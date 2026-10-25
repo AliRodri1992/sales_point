@@ -29,7 +29,9 @@ export default class extends Controller {
 
     const cardDigits = this.cardNumberTarget.value.replace(/\D/g, "")
     const accountDigits = this.accountNumberTarget.value.replace(/\D/g, "")
-    const lastFour = cardDigits.slice(-4) || accountDigits.slice(-4) || this.existingDigitsValue
+    const newCardDigits = cardDigits.length >= 4 ? cardDigits.slice(-4) : ""
+    const newAccountDigits = accountDigits.length >= 4 ? accountDigits.slice(-4) : ""
+    const lastFour = newCardDigits || newAccountDigits || this.existingDigitsValue
     this.previewNumberTarget.textContent = "•••• •••• •••• " + (lastFour || "••••")
 
     const active = !this.hasStatusTarget || this.statusTarget.value === "active"

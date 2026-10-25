@@ -14,7 +14,7 @@ en:
       holder_placeholder: "Full account holder name"
       bank_placeholder: "e.g. BBVA Mexico"
       account_placeholder: "e.g. 012345678901"
-      account_hint: "4 to 20 digits. Enter an account number or CLABE."
+      account_hint: "4 to 20 digits. Optional if a valid CLABE is entered."
       card_placeholder: "Optional 12–19 digit card number"
       keep_secret: "Leave blank to retain the current value. Full numbers are never displayed."
       configuration_title: "Control and verification"

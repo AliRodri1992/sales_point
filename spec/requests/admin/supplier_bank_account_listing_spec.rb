@@ -166,7 +166,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   end
 
   it 'renders the edit controls and keeps every encrypted input blank' do
-    account = bank_account(clabe: '012180001234567890', card_number: '4111111111111111')
+    account = bank_account(clabe: '012180001234567899', card_number: '4111111111111111')
 
     get edit_admin_supplier_bank_account_path(supplier, account)
 

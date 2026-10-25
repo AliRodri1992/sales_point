@@ -14,7 +14,7 @@ es:
       holder_placeholder: "Nombre completo del titular"
       bank_placeholder: "Ej. BBVA México"
       account_placeholder: "Ej. 012345678901"
-      account_hint: "De 4 a 20 dígitos. Indica cuenta o CLABE."
+      account_hint: "De 4 a 20 dígitos. Opcional si capturas una CLABE válida."
       card_placeholder: "Número opcional de 12 a 19 dígitos"
       keep_secret: "En blanco se conserva el valor actual; no se muestran números completos."
       configuration_title: "Control y verificación"
