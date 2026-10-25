@@ -163,6 +163,13 @@ jobs:
         run: |
           bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb
 
+      - name: Run focused supplier branch-coverage regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/models/supplier_bank_account_spec.rb spec/services/suppliers/dossier_bank_accounts_page_spec.rb spec/requests/admin/supplier_postal_codes_spec.rb spec/requests/admin/supplier_documents_spec.rb spec/models/supplier_invoice_receipt_spec.rb spec/requests/admin/organization_contacts_spec.rb
+
       - name: Run RSpec
         env:
           COVERAGE: true

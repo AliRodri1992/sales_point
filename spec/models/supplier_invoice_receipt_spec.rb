@@ -50,4 +50,22 @@ RSpec.describe SupplierInvoiceReceipt do
     end
     expect(result).not_to eq(:continued)
   end
+
+  it 'rejects edits and destroys when the invoice association is missing' do
+    join = described_class.new
+    join.send(:invoice_must_be_draft)
+    expect(join.errors[:base]).to include('Invoice is not editable')
+
+    result = catch(:abort) do
+      join.send(:invoice_must_be_draft_for_destroy)
+      :continued
+    end
+    expect(result).not_to eq(:continued)
+  end
+
+  it 'does not attempt purchase matching if only an invoice is associated' do
+    join = described_class.new(supplier_invoice: invoice)
+    expect { join.send(:matching_purchase) }.not_to raise_error
+    expect(join.errors[:goods_receipt]).to be_empty
+  end
 end

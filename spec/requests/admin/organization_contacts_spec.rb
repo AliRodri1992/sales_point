@@ -32,4 +32,20 @@ RSpec.describe 'Organization contacts', type: :request do
     expect(response).to have_http_status(:redirect)
     expect(contact.reload.deleted_at).to be_present
   end
+
+  it 'forbids contact management if the organization context is missing' do
+    allow_any_instance_of(Admin::OrganizationContactsController).to receive(:current_organization).and_return(nil)
+
+    get admin_organization_contacts_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'forbids contact management when the user is not an administrator' do
+    allow_any_instance_of(User).to receive(:admin?).and_return(false)
+
+    get admin_organization_contacts_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
 end

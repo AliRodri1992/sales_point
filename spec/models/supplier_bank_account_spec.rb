@@ -204,4 +204,25 @@ RSpec.describe SupplierBankAccount do
     expect(account).not_to be_valid
     expect(account.errors[:sat_bank_code]).to be_present
   end
+
+  it 'rejects banking records without an associated supplier without raising' do
+    account = described_class.new(
+      organization: create(:organization), holder_name: 'Missing Supplier',
+      bank_name: 'Example Bank', account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:supplier]).to be_present
+  end
+
+  it 'allows a CLABE when its selected SAT bank code matches its prefix' do
+    bank = create(:sat_bank, code: '032', name: 'Banco Verificado')
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Vendor',
+      sat_bank_code: bank.code, clabe: '032180000118359719', currency_code: 'MXN'
+    )
+
+    expect(account).to be_valid
+    expect(account.sat_bank_code).to eq('032')
+  end
 end

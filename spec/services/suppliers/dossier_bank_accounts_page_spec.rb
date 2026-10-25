@@ -67,4 +67,22 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
     expect(invalid.from).to eq(0)
     expect(invalid.to).to eq(0)
   end
+
+  it 'includes active and archived records in the all view and prefers SAT bank names' do
+    bank = create(:sat_bank, code: '032', name: 'Banco SAT')
+    SupplierBankAccount.create!(
+      organization:, supplier:, sat_bank_code: bank.code, holder_name: 'Supplier',
+      account_number: '1234567890', currency_code: 'MXN'
+    )
+    create_account(name: 'Archived Bank', digits: '1234', deleted_at: Time.current)
+
+    page = described_class.new(supplier:, status: 'all', bank: 'Banco SAT').call
+    expect(page.banks).to include('Banco SAT', 'Archived Bank')
+    expect(page.accounts.count).to eq(1)
+    expect(page.accounts.first.sat_bank.name).to eq('Banco SAT')
+
+    unfiltered = described_class.new(supplier:, status: 'all').call
+    expect(unfiltered.accounts.count).to eq(2)
+    expect(unfiltered.counts).to eq(all: 2, active: 1, archived: 1)
+  end
 end

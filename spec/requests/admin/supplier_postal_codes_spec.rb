@@ -116,4 +116,22 @@ RSpec.describe 'Supplier Mexican postal suggestions', type: :request do
     expect(codes).to match_array(Addresses::CountryRules::STATE_REQUIRED)
     expect(codes).to include('AR', 'CO', 'CL', 'PE', 'ZA')
   end
+
+  it 'forbids postal suggestions without an active organization context' do
+    allow_any_instance_of(Admin::SupplierPostalCodesController).to receive(:current_organization).and_return(nil)
+    expect(Suppliers::MexicanPostalLookup).not_to receive(:new)
+
+    lookup
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'never invokes an external lookup for invalid postal input' do
+    expect(Suppliers::MexicanPostalLookup).not_to receive(:new)
+
+    get postal_code_suggestions_admin_supplier_path(supplier),
+        params: { country: 'MX', postal_code: '54-800' }
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
 end
