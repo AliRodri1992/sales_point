@@ -13,12 +13,6 @@
             <p class="mt-1 text-sm text-slate-500"><%= t('admin.accounts_payable.bank_list.description') %></p>
           </div>
         </div>
-        <%= link_to admin_supplier_bank_accounts_path(supplier),
-                    aria: { label: t('admin.supplier_dossier.finance.manage_banks') },
-                    class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
-          <%= icon('arrow-top-right-on-square', class: 'size-4') %>
-          <%= t('admin.supplier_dossier.finance.manage_banks') %>
-        <% end %>
       </div>
     </div>
 
@@ -26,12 +20,20 @@
       <%= form_with url: admin_supplier_path(supplier), method: :get,
                     class: 'space-y-3' do %>
         <%= hidden_field_tag :tab, 'bank_accounts' %>
-        <div class="relative min-w-0">
-          <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
-          <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
-          <%= search_field_tag :banks_q, bank_page.query, id: 'dossier-banks-search', maxlength: 100,
-                               placeholder: t('admin.accounts_payable.bank_list.search_placeholder'),
-                               class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+        <div data-finance-banks-search-row class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="relative min-w-0 flex-1">
+            <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
+            <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+            <%= search_field_tag :banks_q, bank_page.query, id: 'dossier-banks-search', maxlength: 100,
+                                 placeholder: t('admin.accounts_payable.bank_list.search_placeholder'),
+                                 class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+          </div>
+          <%= link_to admin_supplier_bank_accounts_path(supplier),
+                      aria: { label: t('admin.supplier_dossier.finance.manage_banks') },
+                      class: 'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 sm:w-auto sm:shrink-0' do %>
+            <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+            <%= t('admin.supplier_dossier.finance.manage_banks') %>
+          <% end %>
         </div>
         <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
           <div>

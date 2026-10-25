@@ -48,7 +48,8 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
     expect(page).to have_css('#supplier-dossier-bank-accounts [data-supplier-bank-accounts-target="card"]', count: 1)
     expect(page).to have_css(
-      "#supplier-dossier-bank-accounts a[href='#{admin_supplier_bank_accounts_path(supplier)}']", visible: true
+      '#supplier-dossier-bank-accounts [data-finance-banks-search-row] ' \
+      "a[href='#{admin_supplier_bank_accounts_path(supplier)}']", visible: true
     )
 
     within('#supplier-dossier-bank-accounts') do
