@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_020300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -92,7 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["postal_code"], name: "index_addresses_on_postal_code"
     t.check_constraint "latitude >= '-90'::integer::numeric AND latitude <= 90::numeric OR latitude IS NULL", name: "check_latitude_range"
     t.check_constraint "longitude >= '-180'::integer::numeric AND longitude <= 180::numeric OR longitude IS NULL", name: "check_longitude_range"
-    t.check_constraint "purpose::text = ANY (ARRAY['general'::character varying::text, 'fiscal'::character varying::text, 'commercial'::character varying::text, 'delivery'::character varying::text])", name: "chk_addresses_purpose"
+    t.check_constraint "purpose::text = ANY (ARRAY['general'::character varying, 'fiscal'::character varying, 'commercial'::character varying, 'delivery'::character varying]::text[])", name: "chk_addresses_purpose"
   end
 
   create_table "branches", force: :cascade do |t|
@@ -148,7 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_clients_name_format"
     t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_clients_postal_code_format"
     t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_clients_rfc_format"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "chk_clients_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_clients_status"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -333,7 +333,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index "organization_id, lower((email)::text)", name: "idx_employees_org_email_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_employees_on_deleted_at"
     t.index ["organization_id"], name: "index_employees_on_organization_id"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'terminated'::character varying::text])", name: "check_employees_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'terminated'::character varying]::text[])", name: "check_employees_status"
   end
 
   create_table "financial_audit_events", force: :cascade do |t|
@@ -507,7 +507,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["active", "position"], name: "index_membership_features_on_active_and_position"
     t.index ["deleted_at"], name: "index_membership_features_on_deleted_at"
     t.index ["key"], name: "index_membership_features_on_key", unique: true
-    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying::text, 'integer'::character varying::text, 'decimal'::character varying::text, 'text'::character varying::text])", name: "chk_membership_features_value_type"
+    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying, 'integer'::character varying, 'decimal'::character varying, 'text'::character varying]::text[])", name: "chk_membership_features_value_type"
   end
 
   create_table "membership_plan_features", force: :cascade do |t|
@@ -543,7 +543,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["active", "position"], name: "index_membership_plans_on_active_and_position"
     t.index ["deleted_at"], name: "index_membership_plans_on_deleted_at"
     t.index ["slug"], name: "index_membership_plans_on_slug", unique: true
-    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying::text, 'yearly'::character varying::text])", name: "chk_membership_plans_billing_interval"
+    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying, 'yearly'::character varying]::text[])", name: "chk_membership_plans_billing_interval"
     t.check_constraint "price >= 0::numeric", name: "chk_membership_plans_price_non_negative"
     t.check_constraint "trial_days >= 0", name: "chk_membership_plans_trial_days_non_negative"
   end
@@ -616,7 +616,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
     t.index ["user_id"], name: "index_organization_memberships_on_user_id"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_org_memberships_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_org_memberships_status"
   end
 
   create_table "organization_migrations", force: :cascade do |t|
@@ -630,9 +630,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_organization_migrations_on_deleted_at"
     t.index ["organization_id"], name: "idx_org_migrations_org_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_migrations_on_organization_id"
-    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying::text, 'inventory'::character varying::text, 'customers'::character varying::text, 'all'::character varying::text])", name: "check_org_migrations_priority"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'in_progress'::character varying::text, 'completed'::character varying::text])", name: "check_org_migrations_status"
-    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying::text, '500_5000'::character varying::text, 'over_5000'::character varying::text])", name: "check_org_migrations_volume"
+    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying, 'inventory'::character varying, 'customers'::character varying, 'all'::character varying]::text[])", name: "check_org_migrations_priority"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_org_migrations_status"
+    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying, '500_5000'::character varying, 'over_5000'::character varying]::text[])", name: "check_org_migrations_volume"
   end
 
   create_table "organization_settings", force: :cascade do |t|
@@ -647,7 +647,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
-    t.check_constraint "payment_method::text = ANY (ARRAY['cash'::character varying::text, 'card'::character varying::text, 'qr'::character varying::text])", name: "check_organization_settings_payment_method"
+    t.check_constraint "payment_method::text = ANY (ARRAY['cash'::character varying, 'card'::character varying, 'qr'::character varying]::text[])", name: "check_organization_settings_payment_method"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -666,8 +666,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
     t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
     t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
-    t.check_constraint "onboarding_status::text = ANY (ARRAY['pending'::character varying::text, 'in_progress'::character varying::text, 'completed'::character varying::text])", name: "check_organizations_onboarding_status"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'suspended'::character varying::text])", name: "check_organizations_status"
+    t.check_constraint "onboarding_status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_organizations_onboarding_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'suspended'::character varying]::text[])", name: "check_organizations_status"
   end
 
   create_table "payment_integrations", force: :cascade do |t|
@@ -681,8 +681,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_payment_integrations_on_deleted_at"
     t.index ["organization_id", "provider"], name: "idx_payment_integrations_org_provider_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_payment_integrations_on_organization_id"
-    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying::text, 'qr'::character varying::text])", name: "check_payment_integrations_provider"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'inactive'::character varying::text])", name: "check_payment_integrations_status"
+    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying, 'qr'::character varying]::text[])", name: "check_payment_integrations_provider"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name: "check_payment_integrations_status"
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -699,7 +699,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_permissions_on_deleted_at"
     t.index ["module_name", "status"], name: "index_permissions_on_module_name_and_status"
     t.index ["status"], name: "index_permissions_on_status"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_permissions_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_permissions_status"
   end
 
   create_table "products", force: :cascade do |t|
@@ -737,7 +737,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["preferred_supplier_id"], name: "index_products_on_preferred_supplier_id"
     t.index ["sat_tax_id"], name: "index_products_on_sat_tax_id"
     t.index ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id"
-    t.check_constraint "tracking_mode::text = ANY (ARRAY['none'::character varying::text, 'lot'::character varying::text, 'serial'::character varying::text])", name: "chk_products_tracking_mode"
+    t.check_constraint "tracking_mode::text = ANY (ARRAY['none'::character varying, 'lot'::character varying, 'serial'::character varying]::text[])", name: "chk_products_tracking_mode"
   end
 
   create_table "purchase_approvals", force: :cascade do |t|
@@ -916,7 +916,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["goods_receipt_item_id"], name: "index_purchase_return_items_on_goods_receipt_item_id"
     t.index ["purchase_return_id"], name: "index_purchase_return_items_on_purchase_return_id"
     t.check_constraint "quantity > 0::numeric", name: "chk_purchase_return_positive"
-    t.check_constraint "stock_disposition::text = ANY (ARRAY['accepted'::character varying::text, 'quarantined'::character varying::text])", name: "chk_purchase_return_stock_disposition"
+    t.check_constraint "stock_disposition::text = ANY (ARRAY['accepted'::character varying, 'quarantined'::character varying]::text[])", name: "chk_purchase_return_stock_disposition"
   end
 
   create_table "purchase_returns", force: :cascade do |t|
@@ -952,6 +952,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_banks_validity"
   end
 
+  create_table "sat_cfdi_uses", force: :cascade do |t|
+    t.boolean "applies_to_company", default: false, null: false
+    t.boolean "applies_to_individual", default: false, null: false
+    t.string "code", limit: 4, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.text "fiscal_regime_codes", default: [], null: false, array: true
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_cfdi_uses_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_cfdi_uses_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_cfdi_uses_validity"
+    t.check_constraint "code::text ~ '^[A-Z0-9]{3,4}$'::text", name: "chk_sat_cfdi_uses_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_cfdi_uses_validity"
+  end
+
+  create_table "sat_countries", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "postal_code_format", limit: 255
+    t.boolean "status", default: true, null: false
+    t.string "tax_id_format", limit: 255
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_countries_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_countries_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_countries_validity"
+    t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_sat_countries_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_countries_validity"
+  end
+
   create_table "sat_currencies", force: :cascade do |t|
     t.string "code", limit: 3, null: false
     t.datetime "created_at", null: false
@@ -966,25 +1003,131 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "code::text = upper(TRIM(BOTH FROM code))", name: "chk_sat_currencies_code_uppercase"
     t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_sat_currencies_code_format"
     t.check_constraint "decimals = ANY (ARRAY[0, 2, 3, 4, 5, 6, 8])", name: "chk_sat_currencies_decimals_allowed"
-    t.check_constraint "decimals >= 0 AND decimals <= 6", name: "chk_sat_currencies_decimals_range"
     t.check_constraint "variation_percentage >= 0::numeric OR variation_percentage IS NULL", name: "chk_sat_currencies_variation_positive"
   end
 
+  create_table "sat_customs_offices", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_customs_offices_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_customs_offices_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_offices_validity"
+    t.check_constraint "code::text ~ '^[0-9]{1,3}$'::text", name: "chk_sat_customs_offices_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_offices_validity"
+  end
+
+  create_table "sat_customs_patents", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_customs_patents_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_customs_patents_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_patents_validity"
+    t.check_constraint "code::text ~ '^[0-9]{4}$'::text", name: "chk_sat_customs_patents_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_patents_validity"
+  end
+
+  create_table "sat_customs_pediment_numbers", force: :cascade do |t|
+    t.string "code", limit: 40, null: false
+    t.datetime "created_at", null: false
+    t.string "customs_office_code", limit: 5
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.integer "fiscal_year"
+    t.string "patent_code", limit: 5
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_customs_pediment_numbers_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["customs_office_code"], name: "idx_sat_customs_pediment_numbers_customs_office_code"
+    t.index ["deleted_at"], name: "index_sat_customs_pediment_numbers_on_deleted_at"
+    t.index ["fiscal_year"], name: "idx_sat_customs_pediment_numbers_fiscal_year"
+    t.index ["patent_code"], name: "idx_sat_customs_pediment_numbers_patent_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_pediment_numbers_validity"
+    t.check_constraint "fiscal_year IS NULL OR fiscal_year >= 2000 AND fiscal_year <= 2100", name: "chk_sat_customs_pediment_numbers_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_pediment_numbers_validity"
+  end
+
+  create_table "sat_export_types", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_export_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_export_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_export_types_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_export_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_export_types_validity"
+  end
+
+  create_table "sat_factor_types", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_factor_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_factor_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_factor_types_validity"
+    t.check_constraint "code::text = ANY (ARRAY['Tasa'::character varying, 'Cuota'::character varying, 'Exento'::character varying]::text[])", name: "chk_sat_factor_types_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_factor_types_validity"
+  end
+
   create_table "sat_fiscal_regimes", force: :cascade do |t|
+    t.boolean "applies_to_company", default: false, null: false
+    t.boolean "applies_to_individual", default: false, null: false
     t.string "code", limit: 3, null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "description", limit: 255, null: false
-    t.string "person_type", limit: 1, null: false
+    t.string "person_type", limit: 1
     t.datetime "updated_at", null: false
     t.date "valid_from"
     t.date "valid_to"
+    t.index ["code", "valid_from", "valid_to"], name: "idx_sat_fiscal_regimes_code_validity"
     t.index ["code", "valid_from"], name: "index_sat_fiscal_regimes_on_code_and_valid_from", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_sat_fiscal_regimes_on_deleted_at"
     t.index ["person_type"], name: "index_sat_fiscal_regimes_on_person_type", where: "(deleted_at IS NULL)"
     t.index ["valid_from", "valid_to"], name: "index_sat_fiscal_regimes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying::text, 'M'::character varying::text])"
+    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying, 'M'::character varying]::text[])"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
+  end
+
+  create_table "sat_localities", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "state_code", limit: 3, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["deleted_at"], name: "index_sat_localities_on_deleted_at"
+    t.index ["state_code", "code"], name: "idx_sat_localities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["state_code"], name: "idx_sat_localities_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_localities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{1,5}$'::text", name: "chk_sat_localities_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_localities_validity"
   end
 
   create_table "sat_months", primary_key: "code", id: { type: :string, limit: 2 }, force: :cascade do |t|
@@ -1002,9 +1145,45 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["status"], name: "index_sat_months_on_status"
     t.index ["valid_from", "valid_to"], name: "index_sat_months_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
     t.check_constraint "code::integer = month_number"
-    t.check_constraint "code::text ~ '^(0[1-9]|1[0-2])$'::text"
-    t.check_constraint "month_number >= 1 AND month_number <= 12"
+    t.check_constraint "code::text ~ '^(0[1-9]|1[0-8])$'::text", name: "chk_sat_months_cfdi40_code"
+    t.check_constraint "month_number >= 1 AND month_number <= 18", name: "chk_sat_months_cfdi40_number"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
+  end
+
+  create_table "sat_municipalities", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "state_code", limit: 3, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["deleted_at"], name: "index_sat_municipalities_on_deleted_at"
+    t.index ["state_code", "code"], name: "idx_sat_municipalities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["state_code"], name: "idx_sat_municipalities_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_municipalities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_municipalities_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_municipalities_validity"
+  end
+
+  create_table "sat_neighborhoods", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "postal_code", limit: 5, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["deleted_at"], name: "index_sat_neighborhoods_on_deleted_at"
+    t.index ["postal_code", "code"], name: "idx_sat_neighborhoods_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["postal_code"], name: "idx_sat_neighborhoods_postal_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_neighborhoods_validity"
+    t.check_constraint "postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_sat_neighborhoods_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_neighborhoods_validity"
   end
 
   create_table "sat_payment_method_types", force: :cascade do |t|
@@ -1020,7 +1199,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_sat_payment_method_types_on_deleted_at"
     t.index ["status"], name: "index_sat_payment_method_types_on_status"
     t.index ["valid_from", "valid_to"], name: "index_sat_payment_method_types_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying::text, 'PPD'::character varying::text])", name: "chk_sat_payment_method_types_code"
+    t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying, 'PPD'::character varying]::text[])", name: "chk_sat_payment_method_types_code"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_method_types_validity"
   end
 
@@ -1040,6 +1219,155 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["valid_from", "valid_to"], name: "index_sat_payment_methods_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
     t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_payment_methods_code_format"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_methods_validity"
+  end
+
+  create_table "sat_periodicities", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_periodicities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_periodicities_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_periodicities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_periodicities_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_periodicities_validity"
+  end
+
+  create_table "sat_postal_codes", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "locality_code", limit: 5
+    t.string "municipality_code", limit: 5
+    t.string "state_code", limit: 3
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_postal_codes_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_postal_codes_on_deleted_at"
+    t.index ["municipality_code"], name: "idx_sat_postal_codes_municipality_code"
+    t.index ["state_code"], name: "idx_sat_postal_codes_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_postal_codes_validity"
+    t.check_constraint "code::text ~ '^[0-9]{5}$'::text", name: "chk_sat_postal_codes_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_postal_codes_validity"
+  end
+
+  create_table "sat_product_service_keys", force: :cascade do |t|
+    t.string "code", limit: 8, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 500, null: false
+    t.boolean "includes_ieps"
+    t.boolean "includes_vat"
+    t.string "required_complement", limit: 255
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_product_service_keys_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_product_service_keys_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_product_service_keys_validity"
+    t.check_constraint "code::text ~ '^[0-9]{8}$'::text", name: "chk_sat_product_service_keys_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_product_service_keys_validity"
+  end
+
+  create_table "sat_relationship_types", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_relationship_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_relationship_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_relationship_types_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_relationship_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_relationship_types_validity"
+  end
+
+  create_table "sat_states", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "country_code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["country_code", "code"], name: "idx_sat_states_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["country_code"], name: "idx_sat_states_country_code"
+    t.index ["deleted_at"], name: "index_sat_states_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_states_validity"
+    t.check_constraint "code::text ~ '^[A-Z0-9]{2,3}$'::text", name: "chk_sat_states_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_states_validity"
+  end
+
+  create_table "sat_tax_codes", force: :cascade do |t|
+    t.boolean "allows_transfer", default: false, null: false
+    t.boolean "allows_withholding", default: false, null: false
+    t.string "code", limit: 3, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_tax_codes_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_codes_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_codes_validity"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_tax_codes_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_codes_validity"
+  end
+
+  create_table "sat_tax_objects", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_tax_objects_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_objects_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_objects_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_tax_objects_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_objects_validity"
+  end
+
+  create_table "sat_tax_rates", force: :cascade do |t|
+    t.string "catalog_key", limit: 160, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.string "factor_type", limit: 10, null: false
+    t.boolean "fixed_rate", default: false, null: false
+    t.decimal "maximum_rate", precision: 14, scale: 8
+    t.decimal "minimum_rate", precision: 14, scale: 8
+    t.boolean "status", default: true, null: false
+    t.string "tax_code", limit: 3, null: false
+    t.string "tax_type", limit: 12, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["catalog_key"], name: "idx_sat_tax_rates_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_rates_on_deleted_at"
+    t.index ["factor_type"], name: "idx_sat_tax_rates_factor_type"
+    t.index ["tax_code"], name: "idx_sat_tax_rates_tax_code"
+    t.index ["tax_type"], name: "idx_sat_tax_rates_tax_type"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_rates_validity"
+    t.check_constraint "minimum_rate IS NULL OR maximum_rate IS NULL OR minimum_rate <= maximum_rate", name: "chk_sat_tax_rates_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_rates_validity"
   end
 
   create_table "sat_taxes", force: :cascade do |t|
@@ -1065,10 +1393,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["status"], name: "index_sat_taxes_on_status"
     t.index ["tax_type"], name: "index_sat_taxes_on_tax_type"
     t.index ["valid_from", "valid_to"], name: "index_sat_taxes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
-    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying::text, 'service'::character varying::text, 'both'::character varying::text])) OR applies_to IS NULL"
-    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying::text, 'quota'::character varying::text, 'exempt'::character varying::text])"
+    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying, 'service'::character varying, 'both'::character varying]::text[])) OR applies_to IS NULL"
+    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying, 'quota'::character varying, 'exempt'::character varying]::text[])"
     t.check_constraint "tax_type::text = 'transfer'::text AND is_transferrable = true OR tax_type::text = 'withheld'::text AND is_retainable = true"
-    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying::text, 'withheld'::character varying::text])"
+    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying, 'withheld'::character varying]::text[])"
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
   end
 
@@ -1089,6 +1417,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_unit_keys_valid_range"
   end
 
+  create_table "sat_voucher_types", force: :cascade do |t|
+    t.string "code", limit: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "description", limit: 255, null: false
+    t.boolean "status", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.index ["code"], name: "idx_sat_voucher_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_voucher_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_voucher_types_validity"
+    t.check_constraint "code::text ~ '^[IETNP]$'::text", name: "chk_sat_voucher_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_voucher_types_validity"
+  end
+
   create_table "supplier_bank_accounts", force: :cascade do |t|
     t.string "account_number"
     t.string "account_type", limit: 30
@@ -1099,7 +1443,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.string "clabe"
     t.datetime "created_at", null: false
     t.string "currency_code", limit: 3, default: "MXN", null: false
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "holder_name", limit: 180, null: false
     t.string "last_four", limit: 4
     t.bigint "organization_id", null: false
@@ -1108,11 +1452,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.string "status", limit: 20, default: "active", null: false
     t.bigint "supplier_id", null: false
     t.datetime "updated_at", null: false
-    t.datetime "verified_at"
     t.string "verification_status", limit: 20, default: "pending", null: false
+    t.datetime "verified_at", precision: nil
     t.index ["deleted_at"], name: "index_supplier_bank_accounts_on_deleted_at"
-    t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
     t.index ["organization_id", "supplier_id", "primary"], name: "idx_supplier_bank_accounts_org_supplier"
+    t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
     t.index ["organization_id"], name: "index_supplier_bank_accounts_on_organization_id"
     t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
     t.index ["supplier_id"], name: "index_supplier_bank_accounts_on_supplier_id"
@@ -1195,6 +1539,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["event_key"], name: "index_supplier_event_deliveries_on_event_key", unique: true
     t.index ["recipient_id"], name: "index_supplier_event_deliveries_on_recipient_id"
     t.index ["supplier_id"], name: "index_supplier_event_deliveries_on_supplier_id"
+  end
+
+  create_table "supplier_events", force: :cascade do |t|
+    t.boolean "all_day", default: false, null: false
+    t.bigint "branch_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "ends_at", precision: nil
+    t.string "kind", null: false
+    t.text "notes"
+    t.datetime "starts_at", precision: nil, null: false
+    t.string "status", default: "scheduled", null: false
+    t.bigint "supplier_id", null: false
+    t.string "title", limit: 150, null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_supplier_events_on_branch_id"
+    t.index ["created_by_id"], name: "index_supplier_events_on_created_by_id"
+    t.index ["deleted_at"], name: "index_supplier_events_on_deleted_at"
+    t.index ["supplier_id", "starts_at"], name: "idx_supplier_events_by_date"
+    t.index ["supplier_id", "status", "starts_at"], name: "idx_supplier_events_status_date"
+    t.index ["supplier_id"], name: "index_supplier_events_on_supplier_id"
+    t.check_constraint "ends_at IS NULL OR ends_at > starts_at", name: "chk_supplier_event_period"
+    t.check_constraint "status::text = ANY (ARRAY['scheduled'::character varying, 'completed'::character varying, 'cancelled'::character varying]::text[])", name: "chk_supplier_event_status"
   end
 
   create_table "supplier_invoice_lines", force: :cascade do |t|
@@ -1352,28 +1720,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "units_per_package > 0::numeric", name: "chk_supplier_product_factor"
   end
 
-  create_table "supplier_events", force: :cascade do |t|
-    t.bigint "supplier_id", null: false
-    t.bigint "branch_id", null: false
-    t.bigint "created_by_id"
-    t.string "title", limit: 150, null: false
-    t.string "kind", null: false
-    t.boolean "all_day", default: false, null: false
-    t.string "status", default: "scheduled", null: false
-    t.datetime "starts_at", precision: nil, null: false
-    t.datetime "ends_at", precision: nil
-    t.text "notes"
-    t.datetime "deleted_at", precision: nil
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["branch_id"], name: "index_supplier_events_on_branch_id"
-    t.index ["created_by_id"], name: "index_supplier_events_on_created_by_id"
-    t.index ["deleted_at"], name: "index_supplier_events_on_deleted_at"
-    t.index ["supplier_id", "starts_at"], name: "idx_supplier_events_by_date"
-    t.index ["supplier_id", "status", "starts_at"], name: "idx_supplier_events_status_date"
-    t.index ["supplier_id"], name: "index_supplier_events_on_supplier_id"
-  end
-
   create_table "supplier_schedule_exceptions", force: :cascade do |t|
     t.bigint "branch_id"
     t.datetime "created_at", null: false
@@ -1408,7 +1754,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_supplier_schedules_on_deleted_at"
     t.index ["supplier_id", "branch_id", "kind", "weekday", "starts_at"], name: "idx_supplier_schedules_unique_slot", unique: true, where: "(deleted_at IS NULL)"
     t.index ["supplier_id"], name: "index_supplier_schedules_on_supplier_id"
-    t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying::text, 'order'::character varying::text, 'delivery'::character varying::text])", name: "chk_supplier_schedules_kind"
+    t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying, 'order'::character varying, 'delivery'::character varying]::text[])", name: "chk_supplier_schedules_kind"
     t.check_constraint "weekday >= 0 AND weekday <= 6", name: "chk_supplier_schedules_weekday"
     t.exclusion_constraint "supplier_id WITH =, branch_id WITH =, kind WITH =, weekday WITH =, int4range((EXTRACT(epoch FROM starts_at))::integer, COALESCE((EXTRACT(epoch FROM ends_at))::integer, ((EXTRACT(epoch FROM starts_at))::integer + 60)), '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, name: "supplier_schedules_no_overlap"
   end
@@ -1457,7 +1803,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_discount"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
     t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_suppliers_rfc_format"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "chk_suppliers_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_suppliers_status"
   end
 
   create_table "system_role_permissions", force: :cascade do |t|
@@ -1487,8 +1833,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
     t.index ["role_type", "status"], name: "index_system_roles_on_role_type_and_status"
     t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
-    t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying::text, 'branch'::character varying::text])", name: "check_system_roles_role_type"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text, 'deprecated'::character varying::text])", name: "check_system_roles_status"
+    t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying, 'branch'::character varying]::text[])", name: "check_system_roles_role_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'deprecated'::character varying]::text[])", name: "check_system_roles_status"
   end
 
   create_table "terminals", force: :cascade do |t|
@@ -1502,7 +1848,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index "branch_id, lower((code)::text)", name: "idx_terminals_branch_code_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["branch_id"], name: "index_terminals_on_branch_id"
     t.index ["deleted_at"], name: "index_terminals_on_deleted_at"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_terminals_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_terminals_status"
   end
 
   create_table "translates", force: :cascade do |t|
@@ -1579,8 +1925,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'blocked'::character varying::text, 'suspended'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
-    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'blocked'::character varying, 'suspended'::character varying, 'deleted'::character varying]::text[])", name: "chk_users_status"
+    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying, 'customer'::character varying, 'supplier'::character varying]::text[])", name: "chk_users_user_type"
   end
 
   create_table "versions", force: :cascade do |t|
@@ -1705,13 +2051,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
   add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
   add_foreign_key "supplier_documents", "users", column: "updated_by_id"
   add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
-  add_check_constraint "supplier_events", "ends_at IS NULL OR ends_at > starts_at", name: "chk_supplier_event_period"
-  add_check_constraint "supplier_events", "status::text = ANY (ARRAY['scheduled'::character varying, 'completed'::character varying, 'cancelled'::character varying]::text[])", name: "chk_supplier_event_status"
+  add_foreign_key "supplier_event_deliveries", "suppliers"
+  add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
   add_foreign_key "supplier_events", "branches"
   add_foreign_key "supplier_events", "suppliers"
   add_foreign_key "supplier_events", "users", column: "created_by_id"
-  add_foreign_key "supplier_event_deliveries", "suppliers"
-  add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
   add_foreign_key "supplier_invoice_lines", "supplier_invoices"
   add_foreign_key "supplier_invoice_receipts", "goods_receipts"
   add_foreign_key "supplier_invoice_receipts", "supplier_invoices"
