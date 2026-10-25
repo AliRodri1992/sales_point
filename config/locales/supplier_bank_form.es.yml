@@ -1,7 +1,6 @@
 es:
   admin:
     supplier_bank_form:
-      breadcrumb: "Ruta de navegación"
       new_description: "Registra una cuenta bancaria para gestionar de forma segura los pagos al proveedor."
       edit_description: "Actualiza los datos de la cuenta; los valores confidenciales solo se sustituyen cuando ingresas otros nuevos."
       new_badge: "Nueva cuenta"
