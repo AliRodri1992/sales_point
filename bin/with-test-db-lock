@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/test_database_lock'
+
+abort '[RSpec] ERROR: Missing command for the test database lock.' if ARGV.empty?
+
+status = 1
+begin
+  TestDatabaseLock.new.synchronize do
+    # A child RSpec process inherits the parent's PostgreSQL session lock.
+    # Do not attempt to reacquire it from rails_helper on another connection.
+    ENV['TEST_DATABASE_LOCK_HELD'] = '1'
+    success = system(*ARGV)
+    status = success ? 0 : (Process.last_status&.exitstatus || 1)
+  end
+rescue TestDatabaseLock::Timeout => e
+  warn "[RSpec] ERROR: #{e.message}"
+  status = 75
+end
+
+exit status

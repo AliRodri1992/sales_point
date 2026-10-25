@@ -155,6 +155,18 @@ RSpec.describe 'SAT CFDI 4.0 application models', type: :model do
     expect(model.valid_on(Date.current).to_sql).to include('valid_from')
   end
 
+  it 'checks historical validity for a SAT catalog without deleting past keys' do
+    catalog = SatVoucherType.new(code: 'I', description: 'Ingreso', valid_from: Date.new(2026, 1, 1),
+                                 valid_to: Date.new(2026, 12, 31))
+    expect(catalog.valid_for_date?(Date.new(2025, 12, 31))).to be(false)
+    expect(catalog.valid_for_date?(Date.new(2026, 6, 1))).to be(true)
+    expect(catalog.valid_for_date?(Date.new(2027, 1, 1))).to be(false)
+
+    catalog.valid_to = Date.new(2025, 12, 31)
+    expect(catalog).not_to be_valid
+    expect(catalog.errors[:valid_to]).to be_present
+  end
+
   it 'connects the SAT country and state catalogs using their SAT codes' do
     expect(SatState.reflect_on_association(:country).foreign_key).to eq('country_code')
     expect(SatCountry.reflect_on_association(:states).foreign_key).to eq('country_code')

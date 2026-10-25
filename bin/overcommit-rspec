@@ -29,7 +29,7 @@ test_environment=(
   -e POSTGRES_PASSWORD=postgres
 )
 
-rails_and_specs='unset DATABASE_URL; bin/rails db:prepare && exec bundle exec rspec "$@"'
+rails_and_specs='unset DATABASE_URL; exec bundle exec ruby bin/with-test-db-lock sh -lc '\''bin/rails db:prepare && exec bundle exec rspec "$@"'\'' overcommit-rspec "$@"'
 
 if [[ -n "$running_web" ]]; then
   printf '[RSpec] Ejecutando pruebas en el contenedor web existente.\n'

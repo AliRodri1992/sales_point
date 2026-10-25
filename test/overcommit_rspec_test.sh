@@ -50,7 +50,8 @@ check_invocation running 0 ' exec -T ' spec/models/example_spec.rb
 [[ "$(grep -c ' exec -T ' "$fixture/docker.calls")" == 1 ]] || fail 'Debe utilizar exec una sola vez.'
 grep -q 'RAILS_ENV=test' "$fixture/docker.calls" || fail 'El entorno debe ser test.'
 grep -q 'POSTGRES_HOST=db' "$fixture/docker.calls" || fail 'La BD debe ser db dentro de Docker.'
-grep -q 'unset DATABASE_URL; bin/rails db:prepare && exec bundle exec rspec' "$fixture/docker.calls" || fail 'Debe preparar la BD y correr RSpec.'
+grep -q 'unset DATABASE_URL; exec bundle exec ruby bin/with-test-db-lock' "$fixture/docker.calls" || fail 'Debe reservar la BD de pruebas.'
+grep -q 'bin/rails db:prepare && exec bundle exec rspec' "$fixture/docker.calls" || fail 'Debe preparar la BD y correr RSpec.'
 grep -q 'spec/models/example_spec.rb' "$fixture/docker.calls" || fail 'Debe pasar argumentos a RSpec.'
 
 check_invocation stopped 0 ' run --rm -T '
