@@ -28,7 +28,8 @@ module Admin
 
     def create
       attributes = bank_params.except(:status, :blocked_reason)
-      attributes.merge!(organization: current_organization, status: 'active')
+      attributes[:organization] = current_organization
+      attributes[:status] = 'active'
       @account = @supplier.supplier_bank_accounts.new(attributes)
       authorize @account
       if save_account

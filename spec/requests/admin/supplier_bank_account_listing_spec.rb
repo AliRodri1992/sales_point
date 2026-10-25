@@ -163,6 +163,8 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_nil
     expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_nil
     expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
+    expect(document.at_css('[data-supplier-bank-form-target="previewNumber"]')).to be_present
+    expect(document.at_css('input[data-supplier-bank-form-target="primary"]')).to be_present
   end
 
   it 'renders the edit controls and keeps every encrypted input blank' do

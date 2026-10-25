@@ -37,4 +37,4 @@ ko:
       tips_title: "도움말"
       tip_bank: "SAT 은행을 선택하거나 이름을 입력하세요. 전체 CLABE로 은행을 자동 확인할 수 있습니다."
       tip_clabe: "CLABE 18자리와 계좌번호를 확인하세요."
-      tip_primary: "결제 가능한 계좌만 대표 계좌로 설정하세요."
+      tip_primary: "공급업체당 하나의 활성 계좌만 대표 계좌가 될 수 있습니다."

@@ -31,6 +31,7 @@ export default class extends Controller {
     const accountDigits = this.accountNumberTarget.value.replace(/\D/g, "")
     const newCardDigits = cardDigits.length >= 4 ? cardDigits.slice(-4) : ""
     const newAccountDigits = accountDigits.length >= 4 ? accountDigits.slice(-4) : ""
+    // Prefer a newly entered card number, followed by the account, then masked saved digits.
     const lastFour = newCardDigits || newAccountDigits || this.existingDigitsValue
     this.previewNumberTarget.textContent = "•••• •••• •••• " + (lastFour || "••••")
 

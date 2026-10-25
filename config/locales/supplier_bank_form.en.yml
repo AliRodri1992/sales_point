@@ -37,4 +37,4 @@ en:
       tips_title: "Helpful tips"
       tip_bank: "Select a SAT bank or enter the bank name. A complete CLABE can identify the bank automatically."
       tip_clabe: "Check all 18 CLABE digits and account details."
-      tip_primary: "Only make an available payment account primary."
+      tip_primary: "Only one active account can be primary for each supplier."

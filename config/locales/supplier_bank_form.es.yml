@@ -37,4 +37,4 @@ es:
       tips_title: "Recomendaciones"
       tip_bank: "Selecciona el banco SAT o proporciona su nombre; al ingresar una CLABE completa se puede identificar automáticamente."
       tip_clabe: "Verifica los 18 dígitos y el número de cuenta antes de guardar."
-      tip_primary: "Solo establece como principal una cuenta disponible para pagos."
+      tip_primary: "Solo una cuenta activa puede ser principal por proveedor."
