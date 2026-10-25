@@ -41,8 +41,9 @@ RSpec.describe TestDatabaseLock do
 
   it 'raises a clear error and closes the connection when the wait expires' do
     allow(result).to receive(:getvalue).and_return('f')
-    allow(connection).to receive(:exec_params).with('SELECT pg_advisory_lock($1, $2)', anything)
-                                               .and_raise(PG::LockNotAvailable)
+    allow(connection).to receive(:exec_params)
+      .with('SELECT pg_advisory_lock($1, $2)', anything)
+      .and_raise(PG::LockNotAvailable)
 
     expect { guard.synchronize { raise 'should not execute' } }
       .to raise_error(described_class::Timeout, /Finish the other RSpec run/)
