@@ -91,10 +91,9 @@ module Admin
 
     def bank_params
       attributes = params.expect(supplier_bank_account: %i[
-                      sat_bank_code bank_name holder_name
-                      account_number clabe card_number currency_code primary
-                      account_type status verification_status blocked_reason
-                    ])
+        sat_bank_code bank_name holder_name account_number clabe card_number
+        currency_code primary account_type status verification_status blocked_reason
+      ])
       attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
       attributes
     end

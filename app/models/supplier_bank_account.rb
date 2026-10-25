@@ -33,7 +33,7 @@ class SupplierBankAccount < ApplicationRecord
   before_validation :normalize_verification
 
   scope :active, -> { where(deleted_at: nil) }
-  scope :eligible_for_online_payment, -> {
+  scope :eligible_for_online_payment, lambda {
     active.where(status: 'active', verification_status: 'verified').where.not(clabe: nil)
   }
 
@@ -66,13 +66,21 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   def normalize_bank_values
+    normalize_sensitive_numbers
+    normalize_display_fields
+    derive_sat_bank_from_clabe
+  end
+
+  def normalize_sensitive_numbers
     self.clabe = compact_number(clabe)
     self.account_number = compact_number(account_number)
     self.card_number = compact_number(card_number)
+  end
+
+  def normalize_display_fields
     self.last_four = (clabe.presence || account_number).to_s.last(4).presence
     self.card_last_four = card_number.to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
-    derive_sat_bank_from_clabe
   end
 
   def derive_sat_bank_from_clabe

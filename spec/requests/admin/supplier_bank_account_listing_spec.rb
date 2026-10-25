@@ -146,8 +146,10 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
                                verification_status: 'verified', account_type: 'checking' }
     }
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
-    expect(account.reload).to have_attributes(status: 'blocked', blocked_reason: 'Account compromised',
-                                               verification_status: 'verified', account_type: 'checking')
+    expect(account.reload.status).to eq('blocked')
+    expect(account.blocked_reason).to eq('Account compromised')
+    expect(account.verification_status).to eq('verified')
+    expect(account.account_type).to eq('checking')
     expect(account.verified_at).to be_present
   end
 
