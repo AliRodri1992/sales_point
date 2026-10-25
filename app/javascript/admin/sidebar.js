@@ -7,6 +7,7 @@ const sidebarTooltip = () => document.getElementById(TOOLTIP_ID)
 const sidebarFlyout = () => document.getElementById(FLYOUT_ID)
 
 const isCollapsedSidebar = () =>
+    window.innerWidth >= 1024 &&
     document.getElementById("adminSidebar")?.classList.contains("sidebar-collapsed")
 
 const removeSidebarTooltip = () => {
@@ -105,7 +106,7 @@ const showSidebarFlyout = (target) => {
     const flyout = document.createElement("div")
     flyout.id = FLYOUT_ID
     flyout.className = "admin-sidebar-flyout"
-    flyout.setAttribute("role", "menu")
+    flyout.setAttribute("role", "navigation")
     flyout.setAttribute(
         "aria-label",
         target.querySelector(".sidebar-label")?.textContent?.trim() || ""

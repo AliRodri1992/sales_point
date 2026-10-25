@@ -36,6 +36,10 @@ ko:
         users: 사용자
         taxes: 세금
         role_admin: 관리자
+        role_user: 사용자
+        navigation: 사이드바 탐색
+        close_navigation: 탐색 메뉴 닫기
+        coming_soon: 준비 중
         onboarding:
           title: 초기 설정
           progress: 초기 설정 %{percentage}% 완료

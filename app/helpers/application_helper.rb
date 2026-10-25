@@ -44,18 +44,30 @@ module ApplicationHelper
     progress[:sections].find { |item| item[:key].to_sym == section.to_sym }&.fetch(:percentage, 100) == 100
   end
 
+  SIDEBAR_CONTROLLER_GROUPS = {
+    'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
+                      supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
+    'purchase_orders' => %w[goods_receipts purchase_requests purchase_quotations],
+    'account_payables' => %w[supplier_invoices supplier_payments supplier_credit_notes]
+  }.freeze
+
   def sidebar_item_active?(controller)
-    controller_name == controller.to_s
+    key = controller.to_s
+    controller_name == key || SIDEBAR_CONTROLLER_GROUPS.fetch(key, []).include?(controller_name)
+  end
+
+  def sidebar_role_label(user)
+    t(user.admin? ? 'admin.shared.sidebar.role_admin' : 'admin.shared.sidebar.role_user')
   end
 
   def sidebar_link_classes(controller, variant: :default)
     active = sidebar_item_active?(controller)
-    shared = 'flex items-center gap-3 rounded-xl text-sm transition'
+    shared = 'flex items-center gap-3 rounded-xl text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600'
     spacing = variant == :submenu ? 'px-3 py-2' : 'px-3 py-2.5'
-    return "#{shared} #{spacing} bg-blue-50 font-semibold text-blue-600" if active
+    return "#{shared} #{spacing} bg-emerald-700 font-semibold text-white hover:bg-emerald-800" if active
 
     color = variant == :submenu ? 'text-slate-500' : 'text-slate-600'
-    "#{shared} #{spacing} font-medium #{color} hover:bg-slate-50 hover:text-slate-900}"
+    "#{shared} #{spacing} font-medium #{color} hover:bg-emerald-50 hover:text-emerald-800"
   end
 
   def sidebar_section_open?(*controllers)

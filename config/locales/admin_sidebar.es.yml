@@ -36,6 +36,10 @@ es:
         users: Usuarios
         taxes: Impuestos
         role_admin: Administrador
+        role_user: Usuario
+        navigation: Navegación lateral
+        close_navigation: Cerrar navegación
+        coming_soon: Próximamente
         onboarding:
           title: Configuración inicial
           progress: Configuración inicial al %{percentage}%

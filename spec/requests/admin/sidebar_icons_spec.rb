@@ -34,6 +34,29 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     end
   end
 
+  it 'makes future features non-clickable and gives the sidebar a mobile close control' do
+    get admin_dashboard_path
+
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    expect(sidebar.at_css('nav a[href="#"]')).to be_nil
+    expect(sidebar.css('nav [aria-disabled="true"]')).not_to be_empty
+    expect(sidebar.at_css('#sidebarCloseButton')['aria-label']).to eq(
+      I18n.t('admin.shared.sidebar.close_navigation', locale: :en)
+    )
+    expect(sidebar.at_css('nav')['aria-label']).to eq(I18n.t('admin.shared.sidebar.navigation', locale: :en))
+    expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('false')
+    expect(sidebar.to_html).not_to include('data-tooltip="Low stock">8')
+  end
+
+  it 'highlights supplier dossier subpages under Suppliers with aria-current' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_addresses_path(supplier)
+
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('page')
+  end
+
   it 'keeps SVG navigation icons when the sidebar is collapsed' do
     user.update!(sidebar_collapsed: true)
 

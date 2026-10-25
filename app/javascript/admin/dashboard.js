@@ -22,6 +22,8 @@ document.addEventListener("turbo:load", () => {
 
     const sidebar = document.getElementById("adminSidebar")
     const sidebarToggle = document.getElementById("sidebarToggle")
+    const sidebarCloseButton = document.getElementById("sidebarCloseButton")
+    const sidebarContent = sidebar?.nextElementSibling
     const sidebarOverlay =
         document.getElementById("sidebarOverlay")
 
@@ -378,29 +380,58 @@ document.addEventListener("turbo:load", () => {
         if (!sidebar) return
 
         sidebar.classList.add("sidebar-open")
+        sidebar.setAttribute("role", "dialog")
+        sidebar.setAttribute("aria-modal", "true")
+        sidebarToggle?.setAttribute("aria-expanded", "true")
+        sidebarContent?.setAttribute("inert", "")
+        document.body.classList.add("sidebar-drawer-open")
+        sidebarCloseButton?.focus()
 
         if (sidebarOverlay) {
             sidebarOverlay.classList.add("is-visible")
-            sidebarOverlay.setAttribute(
-                "aria-hidden",
-                "false"
-            )
+            sidebarOverlay.setAttribute("aria-hidden", "true")
         }
     }
 
     const closeMobileSidebar = () => {
         if (!sidebar) return
 
+        const wasOpen = sidebar.classList.contains("sidebar-open")
         sidebar.classList.remove("sidebar-open")
+        sidebar.removeAttribute("role")
+        sidebar.removeAttribute("aria-modal")
+        sidebarToggle?.setAttribute("aria-expanded", "false")
+        sidebarContent?.removeAttribute("inert")
+        document.body.classList.remove("sidebar-drawer-open")
 
         if (sidebarOverlay) {
             sidebarOverlay.classList.remove("is-visible")
-            sidebarOverlay.setAttribute(
-                "aria-hidden",
-                "true"
-            )
+            sidebarOverlay.setAttribute("aria-hidden", "true")
+        }
+
+        if (wasOpen && window.innerWidth < 1024) sidebarToggle?.focus()
+    }
+
+    const trapMobileSidebarFocus = (event) => {
+        if (event.key !== "Tab" || !sidebar?.classList.contains("sidebar-open")) return
+
+        const candidates = sidebar.querySelectorAll("a[href], button:not([disabled]), summary, [tabindex='0']")
+        const focusable = [...candidates].filter((item) => item.getClientRects().length > 0)
+        if (!focusable.length) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
         }
     }
+
+    document.addEventListener("keydown", trapMobileSidebarFocus)
+    sidebarCloseButton?.addEventListener("click", closeMobileSidebar)
 
     if (sidebar && sidebarToggle) {
         sidebarToggle.addEventListener("click", () => {
@@ -422,6 +453,7 @@ document.addEventListener("turbo:load", () => {
             const collapsed = sidebar.classList.toggle(
                 "sidebar-collapsed"
             )
+            sidebarToggle.setAttribute("aria-expanded", String(!collapsed))
             persistSidebarState(collapsed)
         })
     }
@@ -940,10 +972,8 @@ document.addEventListener("turbo:load", () => {
 
             if (window.innerWidth >= 1024) {
                 closeMobileSidebar()
-            } else {
-                sidebar.classList.remove(
-                    "sidebar-collapsed"
-                )
+                sidebarToggle?.setAttribute("aria-expanded",
+                    String(!sidebar.classList.contains("sidebar-collapsed")))
             }
         }
     )

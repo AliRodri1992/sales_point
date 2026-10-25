@@ -252,7 +252,7 @@ select {
 }
 
 /* ============================================================
-   NEXO POS — Sidebar
+   DELTA POS — Sidebar
    ============================================================ */
 
 #adminSidebar {
@@ -267,6 +267,14 @@ select {
 
 #adminSidebar nav {
     min-height: 0;
+}
+
+#adminSidebar nav [aria-disabled="true"] {
+    pointer-events: none;
+}
+
+body.sidebar-drawer-open {
+    overflow: hidden;
 }
 
 #adminSidebar > div:last-child {
@@ -326,6 +334,10 @@ select {
 
     #adminSidebar.sidebar-open {
         transform: translateX(0);
+    }
+
+    #adminSidebar .sidebar-mobile-close {
+        display: inline-flex;
     }
 }
 
@@ -434,8 +446,18 @@ select {
         justify-content: center;
     }
 
-    #adminSidebar.sidebar-collapsed > div:last-child button {
+    #adminSidebar.sidebar-collapsed .sidebar-user-row > div:first-child {
         display: none;
+    }
+
+    #adminSidebar.sidebar-collapsed #sidebarUserMenuButton {
+        display: inline-flex;
+        margin: auto;
+    }
+
+    #adminSidebar.sidebar-collapsed #sidebarUserMenu {
+        left: 3.75rem;
+        bottom: 0;
     }
 
     #adminSidebar.sidebar-collapsed nav a,

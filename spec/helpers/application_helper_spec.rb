@@ -36,18 +36,18 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       it 'highlights the item when active' do
         classes = helper.sidebar_link_classes('dashboard')
-        expect(classes).to include('bg-blue-50', 'font-semibold', 'text-blue-600')
+        expect(classes).to include('bg-emerald-700', 'font-semibold', 'text-white')
       end
 
       it 'highlights only the matching item (only one active)' do
-        expect(helper.sidebar_link_classes('dashboard')).to include('bg-blue-50')
-        expect(helper.sidebar_link_classes('languages')).not_to include('bg-blue-50')
+        expect(helper.sidebar_link_classes('dashboard')).to include('bg-emerald-700')
+        expect(helper.sidebar_link_classes('languages')).not_to include('bg-emerald-700')
       end
 
       it 'does not highlight when inactive' do
         classes = helper.sidebar_link_classes('languages')
-        expect(classes).to include('text-slate-600', 'hover:bg-slate-50')
-        expect(classes).not_to include('bg-blue-50', 'text-blue-600')
+        expect(classes).to include('text-slate-600', 'hover:bg-emerald-50')
+        expect(classes).not_to include('bg-emerald-700', 'text-white')
       end
     end
 
@@ -61,13 +61,13 @@ RSpec.describe ApplicationHelper, type: :helper do
       it 'highlights the item when active' do
         expect(
           helper.sidebar_link_classes('languages', variant: :submenu)
-        ).to include('bg-blue-50', 'font-semibold', 'text-blue-600')
+        ).to include('bg-emerald-700', 'font-semibold', 'text-white')
       end
 
       it 'keeps slate-500 coloring when inactive' do
         classes = helper.sidebar_link_classes('dashboard', variant: :submenu)
-        expect(classes).to include('text-slate-500', 'hover:bg-slate-50')
-        expect(classes).not_to include('bg-blue-50')
+        expect(classes).to include('text-slate-500', 'hover:bg-emerald-50')
+        expect(classes).not_to include('bg-emerald-700')
       end
     end
   end
@@ -101,6 +101,37 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       allow(helper).to receive(:controller_name).and_return('dashboard')
       expect(helper.sidebar_section_open?('languages')).to be(false)
+    end
+  end
+
+  describe '#sidebar grouped navigation' do
+    it 'keeps Suppliers active throughout its address and banking dossier' do
+      allow(helper).to receive(:controller_name).and_return('supplier_bank_accounts')
+      expect(helper.sidebar_item_active?('suppliers')).to be(true)
+      expect(helper.sidebar_item_active?('account_payables')).to be(false)
+    end
+
+    it 'highlights payables for invoice and payment submodules' do
+      allow(helper).to receive(:controller_name).and_return('supplier_invoices')
+      expect(helper.sidebar_item_active?('account_payables')).to be(true)
+      expect(helper.sidebar_item_active?('suppliers')).to be(false)
+    end
+
+    it 'keeps nested purchase workflows in the purchasing section' do
+      allow(helper).to receive(:controller_name).and_return('goods_receipts')
+      expect(helper.sidebar_item_active?('purchase_orders')).to be(true)
+    end
+
+    it 'marks the current link using Delta Emerald, without invalid classes' do
+      allow(helper).to receive(:controller_name).and_return('supplier_addresses')
+      expect(helper.sidebar_link_classes('suppliers')).to include('bg-emerald-700', 'text-white')
+      expect(helper.sidebar_link_classes('products')).not_to include('text-slate-900}')
+    end
+
+    it 'shows a generic role for non-administrators' do
+      allow(helper).to receive(:t).and_call_original
+      expect(helper.sidebar_role_label(double(admin?: false))).to eq(I18n.t('admin.shared.sidebar.role_user'))
+      expect(helper.sidebar_role_label(double(admin?: true))).to eq(I18n.t('admin.shared.sidebar.role_admin'))
     end
   end
 
