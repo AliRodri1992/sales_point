@@ -72,6 +72,9 @@ export default class extends Controller {
       }
     }
     this.onChange = () => this.refresh()
+    this.onReposition = () => {
+      if (!this.menu.hidden) this.positionMenu()
+    }
     this.optionObserver = new MutationObserver(() => this.refresh())
     this.optionObserver.observe(this.select, { childList: true, subtree: true, characterData: true, attributes: true,
       attributeFilter: ["disabled", "selected", "label", "hidden"] })
@@ -96,6 +99,8 @@ export default class extends Controller {
     this.select?.removeEventListener("invalid", this.onInvalid)
     this.select?.form?.removeEventListener("reset", this.onReset)
     this.optionObserver?.disconnect()
+    document.removeEventListener("scroll", this.onReposition, true)
+    window.removeEventListener("resize", this.onReposition)
     this.searchInput?.removeEventListener("input", this.onSearchInput)
     this.button?.remove()
     this.menu?.remove()
@@ -202,11 +207,35 @@ export default class extends Controller {
     }
     this.menu.hidden = false
     this.element.classList.add("delta-select-open")
+    this.positionMenu()
+    document.addEventListener("scroll", this.onReposition, true)
+    window.addEventListener("resize", this.onReposition)
     this.button.setAttribute("aria-expanded", "true")
     this.searchInput?.focus()
   }
 
+  positionMenu() {
+    const button = this.button.getBoundingClientRect()
+    const below = Math.max(0, window.innerHeight - button.bottom - 8)
+    const above = Math.max(0, button.top - 8)
+    const showAbove = below < 180 && above > below
+    const available = showAbove ? above : below
+    const maxHeight = Math.min(256, Math.max(80, available - 6))
+    const height = Math.min(this.menu.scrollHeight, maxHeight)
+    const top = showAbove ? button.top - height - 6 : button.bottom + 6
+
+    Object.assign(this.menu.style, {
+      position: "fixed",
+      left: Math.max(4, button.left) + "px",
+      top: Math.max(4, top) + "px",
+      width: button.width + "px",
+      maxHeight: maxHeight + "px"
+    })
+  }
+
   close() {
+    document.removeEventListener("scroll", this.onReposition, true)
+    window.removeEventListener("resize", this.onReposition)
     this.element.classList.remove("delta-select-open")
     this.menu.hidden = true
     this.button.setAttribute("aria-expanded", "false")

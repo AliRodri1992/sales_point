@@ -95,7 +95,11 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
 
     close_drawer
     find('[data-supplier-documents-target="search"]').set('')
-    find('[data-supplier-documents-target="categorySelect"]').select('Contracts')
+    category_select = find('[data-supplier-documents-target="categorySelect"]', visible: :all)
+    category_dropdown = category_select.find(:xpath, '..')
+    category_dropdown.find('button[aria-haspopup="listbox"]').click
+    category_dropdown.find('[role="option"]', text: 'Contracts', exact_text: true).click
+    expect(category_select.value).to be_present
     expect(page).to have_css('[data-supplier-documents-target="card"]:not(.hidden)', count: 1)
     expect(page).to have_css('[data-supplier-documents-target="range"]', text: 'Showing 1–1 of 1')
   end

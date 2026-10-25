@@ -32,6 +32,7 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
     wrapper = enhanced_select('product[tracking_mode]')
     wrapper.find('button[aria-haspopup="listbox"]').click
 
+    expect(wrapper).to have_css('button[aria-expanded="true"]')
     expect(wrapper).to have_css('[role="option"][aria-selected="true"]')
     expect(wrapper).to have_css('[role="option"][aria-selected="false"]')
     expect(wrapper).to have_css('select[name="product[tracking_mode]"]', visible: :all)

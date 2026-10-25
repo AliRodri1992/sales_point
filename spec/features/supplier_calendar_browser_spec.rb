@@ -31,7 +31,11 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(find('[name="supplier_event[starts_at]"]').value).to start_with('2026-10-23')
 
     find('[name="supplier_event[title]"]').set('Special delivery')
-    find('[name="supplier_event[branch_id]"]').select(branch.name)
+    branch_select = find('[name="supplier_event[branch_id]"]', visible: :all)
+    branch_dropdown = branch_select.find(:xpath, '..')
+    branch_dropdown.find('button[aria-haspopup="listbox"]').click
+    branch_dropdown.find('[role="option"]', text: branch.name, exact_text: true).click
+    expect(branch_select.value).to eq(branch.id.to_s)
     find('[data-supplier-calendar-target="submit"]').click
 
     expect(page).to have_css('[data-calendar-event]', text: 'Special delivery')
