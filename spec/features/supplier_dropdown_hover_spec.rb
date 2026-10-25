@@ -20,7 +20,8 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
   def open_dropdown(name)
     dropdown = find("select[name='#{name}']", visible: :all).find(:xpath, '..')
-    click_branded_dropdown(dropdown)
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
     dropdown
   end
 
@@ -39,7 +40,7 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
   def expect_full_width_option_hover(select_name)
     dropdown = open_dropdown(select_name)
-    expect_branded_dropdown_open(dropdown)
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
     option = dropdown.find('[role="option"][aria-selected="false"]')
     expect(option[:class]).to include('rounded-none', 'delta-select-option')
     expect(full_width_option?(option)).to be(true)

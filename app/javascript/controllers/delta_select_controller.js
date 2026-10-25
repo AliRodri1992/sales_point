@@ -5,6 +5,9 @@ let uniqueSelectId = 0
 // Progressive enhancement: the native select remains the submitted form control.
 export default class extends Controller {
   connect() {
+    // Turbo/Stimulus may temporarily disconnect and reconnect an unchanged
+    // form element. Preserve an open dropdown across that lifecycle event.
+    const restoreOpen = this.element.dataset.deltaSelectRestoreOpen === "true"
     this.select = this.element.querySelector("select")
     if (!this.select) return
 
@@ -95,9 +98,11 @@ export default class extends Controller {
     this.select.form?.addEventListener("reset", this.onReset)
     document.addEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.refresh()
+    if (restoreOpen) this.open()
   }
 
   disconnect() {
+    this.element.dataset.deltaSelectRestoreOpen = String(this.menu?.hidden === false)
     document.removeEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.button?.removeEventListener("click", this.onButtonClick)
     this.element.removeEventListener("keydown", this.onKeyDown)
@@ -212,6 +217,7 @@ export default class extends Controller {
       this.filterOptions()
     }
     this.menu.hidden = false
+    this.element.dataset.deltaSelectRestoreOpen = "true"
     this.button.setAttribute("aria-expanded", "true")
     this.element.classList.add("delta-select-open")
     this.positionMenu()
@@ -243,6 +249,7 @@ export default class extends Controller {
     document.removeEventListener("scroll", this.onReposition, true)
     window.removeEventListener("resize", this.onReposition)
     this.element.classList.remove("delta-select-open")
+    this.element.dataset.deltaSelectRestoreOpen = "false"
     this.menu.hidden = true
     this.button.setAttribute("aria-expanded", "false")
   }

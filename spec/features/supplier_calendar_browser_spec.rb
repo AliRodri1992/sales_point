@@ -33,7 +33,8 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     find('[name="supplier_event[title]"]').set('Special delivery')
     branch_select = find('[name="supplier_event[branch_id]"]', visible: :all)
     branch_dropdown = branch_select.find(:xpath, '..')
-    click_branded_dropdown(branch_dropdown)
+    branch_dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(branch_dropdown).to have_css('button[aria-expanded="true"]')
     expect(branch_dropdown).to have_css('[role="option"]', text: branch.name)
     branch_dropdown.find('[role="option"]', text: branch.name, exact_text: true).click
     expect(branch_dropdown).to have_css('button[aria-expanded="false"]')
