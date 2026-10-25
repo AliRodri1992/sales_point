@@ -1,5 +1,17 @@
 es:
   activerecord:
+    errors:
+      models:
+        supplier_bank_account:
+          attributes:
+            clabe:
+              invalid: "debe contener 18 dígitos y un dígito verificador válido"
+            account_number:
+              invalid: "debe contener entre 4 y 20 dígitos"
+            card_number:
+              invalid: "debe contener entre 12 y 19 dígitos con verificación válida"
+            sat_bank_code:
+              invalid: "debe existir en el catálogo y coincidir con la CLABE"
     attributes:
       supplier_bank_account:
         holder_name: "Titular de la cuenta"

@@ -1,5 +1,17 @@
 ko:
   activerecord:
+    errors:
+      models:
+        supplier_bank_account:
+          attributes:
+            clabe:
+              invalid: "18자리 숫자와 올바른 검사 숫자를 포함해야 합니다"
+            account_number:
+              invalid: "4~20자리 숫자여야 합니다"
+            card_number:
+              invalid: "유효한 검사 숫자를 포함한 12~19자리여야 합니다"
+            sat_bank_code:
+              invalid: "은행 목록에 존재하고 CLABE와 일치해야 합니다"
     attributes:
       supplier_bank_account:
         holder_name: "예금주"

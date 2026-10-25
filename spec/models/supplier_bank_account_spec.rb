@@ -184,6 +184,16 @@ RSpec.describe SupplierBankAccount do
     expect(account.masked_number).to eq('••••')
   end
 
+  it 'validates the bank name length in the model instead of relying on HTML maxlength' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
+      bank_name: 'X' * 121, account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:bank_name]).to be_present
+  end
+
   it 'rejects a nonexistent SAT bank through model errors instead of a database foreign key failure' do
     account = described_class.new(
       organization: supplier.organization, supplier:,

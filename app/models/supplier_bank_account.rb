@@ -15,6 +15,7 @@ class SupplierBankAccount < ApplicationRecord
   encrypts :account_number, :clabe, :card_number
   validates :holder_name, presence: true, length: { maximum: 180 }
   validates :bank_name, presence: true, unless: -> { sat_bank_code.present? }
+  validates :bank_name, length: { maximum: 120 }, allow_blank: true
   validates :account_number, presence: true, unless: -> { clabe.present? }
   validates :currency_code, presence: true, length: { is: 3 }
   validates :account_type, inclusion: { in: ACCOUNT_TYPES }, allow_blank: true
