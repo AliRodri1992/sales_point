@@ -42,6 +42,16 @@ RSpec.describe 'Financial breadcrumbs', type: :request do
     end
   end
 
+  it 'keeps the breadcrumb landmark separate from the labeled sidebar navigation' do
+    get admin_supplier_invoices_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('nav[aria-label]').map { |navigation| navigation['aria-label'] }).to eq(
+      [I18n.t('admin.breadcrumbs.label', locale: :en)]
+    )
+    expect(document.at_css('#adminSidebar nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+  end
+
   it 'uses localized parent and action labels on the supplier invoice form' do
     get new_admin_supplier_invoice_path
 

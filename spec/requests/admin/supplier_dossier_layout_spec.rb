@@ -276,7 +276,9 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'groups both financial entries under Finance on desktop and mobile' do
     get admin_supplier_path(supplier)
 
+    expect(dossier.at_css('#adminSidebar')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
     navigation = dossier.at_css('aside[aria-label]')
+    expect(navigation['id']).not_to eq('adminSidebar')
     finance_group = navigation.css('nav > div').find do |group|
       group.at_css('h2')&.text&.strip == I18n.t('admin.supplier_dossier.navigation.finances', locale: :en)
     end

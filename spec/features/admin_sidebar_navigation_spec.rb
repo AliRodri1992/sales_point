@@ -27,6 +27,8 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
 
     expect(page).to have_css('#adminSidebar.sidebar-open')
     expect(find('#adminSidebar')['aria-modal']).to eq('true')
+    expect(find('#adminSidebar')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(find('#adminSidebarNavigationLabel', visible: :all).text(:all)).to eq('Sidebar navigation')
     expect(find('#sidebarToggle', visible: :all)['aria-expanded']).to eq('true')
     expect(page).to have_css('body.sidebar-drawer-open')
     expect(find('#sidebarCloseButton')).to be_visible

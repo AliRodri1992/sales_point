@@ -43,6 +43,15 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
     end
   end
 
+  it 'preserves the accessible breadcrumb landmark independently of the sidebar' do
+    get admin_purchase_orders_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('nav[aria-label]').size).to eq(1)
+    expect(document.at_css('#adminSidebar nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(current_crumb).to eq(I18n.t('admin.purchases.orders', locale: :en))
+  end
+
   it 'uses translated breadcrumb labels when creating and viewing a purchase request' do
     branch = create(:branch, organization:)
     request = PurchaseRequest.create!(organization:, branch:, requested_by: user)
