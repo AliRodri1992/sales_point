@@ -277,6 +277,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     get admin_supplier_path(supplier)
 
     expect(dossier.at_css('#adminSidebar')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(dossier.at_css('#adminSidebar')['aria-label']).to be_nil
     navigation = dossier.at_css('aside[aria-label]')
     expect(navigation['id']).not_to eq('adminSidebar')
     finance_group = navigation.css('nav > div').find do |group|

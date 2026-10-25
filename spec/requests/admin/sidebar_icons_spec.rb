@@ -46,7 +46,9 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     )
     expect(close_button.at_css('svg path')).to be_present
     expect(sidebar['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(sidebar['aria-label']).to be_nil
     expect(sidebar.at_css('nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(sidebar.at_css('nav')['aria-label']).to be_nil
     expect(sidebar.at_css('#adminSidebarNavigationLabel').text).to eq(
       I18n.t('admin.shared.sidebar.navigation', locale: :en)
     )

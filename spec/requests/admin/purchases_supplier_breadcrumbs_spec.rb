@@ -47,7 +47,9 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
     get admin_purchase_orders_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.css('nav[aria-label]').size).to eq(1)
+    expect(document.css('nav[aria-label]').pluck('aria-label')).to include(
+      I18n.t('admin.breadcrumbs.label', locale: :en)
+    )
     expect(document.at_css('#adminSidebar nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
     expect(current_crumb).to eq(I18n.t('admin.purchases.orders', locale: :en))
   end

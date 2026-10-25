@@ -46,9 +46,9 @@ RSpec.describe 'Financial breadcrumbs', type: :request do
     get admin_supplier_invoices_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.css('nav[aria-label]').map { |navigation| navigation['aria-label'] }).to eq(
-      [I18n.t('admin.breadcrumbs.label', locale: :en)]
-    )
+    labels = document.css('nav[aria-label]').pluck('aria-label')
+    expect(labels).to include(I18n.t('admin.breadcrumbs.label', locale: :en))
+    expect(labels).not_to include(I18n.t('admin.shared.sidebar.navigation', locale: :en))
     expect(document.at_css('#adminSidebar nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
   end
 
