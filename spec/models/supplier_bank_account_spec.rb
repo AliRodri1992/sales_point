@@ -184,6 +184,32 @@ RSpec.describe SupplierBankAccount do
     expect(account.masked_number).to eq('••••')
   end
 
+  it 'rejects a nonexistent SAT bank through model errors instead of a database foreign key failure' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:,
+      holder_name: 'Proveedor', bank_name: 'Banco Demo',
+      sat_bank_code: '999', account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:sat_bank_code]).to be_present
+  end
+
+  it 'formats every field error with its translated name in Spanish' do
+    I18n.with_locale(:es) do
+      account = described_class.new(
+        organization: supplier.organization, supplier:,
+        holder_name: '', bank_name: '', currency_code: '',
+        account_number: 'abc'
+      )
+      expect(account).not_to be_valid
+      expect(account.errors.full_messages_for(:holder_name).first).to start_with('Titular de la cuenta ')
+      expect(account.errors.full_messages_for(:bank_name).first).to start_with('Nombre del banco ')
+      expect(account.errors.full_messages_for(:account_number).first).to start_with('Número de cuenta ')
+      expect(account.errors.full_messages_for(:currency_code).first).to start_with('Moneda ')
+    end
+  end
+
   it 'requires a bank name when no SAT bank code is selected' do
     account = described_class.new(
       organization: supplier.organization, supplier:, holder_name: 'Vendor',

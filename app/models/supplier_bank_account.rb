@@ -28,6 +28,7 @@ class SupplierBankAccount < ApplicationRecord
   validate :valid_account_number
   validate :valid_card_number
   validate :consistent_bank_code
+  validate :sat_bank_code_exists
 
   before_validation :normalize_bank_values
   before_validation :normalize_verification
@@ -137,6 +138,12 @@ class SupplierBankAccount < ApplicationRecord
     return if clabe.blank? || sat_bank_code.blank?
 
     errors.add(:sat_bank_code, :invalid) unless clabe.start_with?(sat_bank_code)
+  end
+
+  def sat_bank_code_exists
+    return if sat_bank_code.blank? || SatBank.exists?(code: sat_bank_code)
+
+    errors.add(:sat_bank_code, :invalid)
   end
 
   def valid_clabe_format?

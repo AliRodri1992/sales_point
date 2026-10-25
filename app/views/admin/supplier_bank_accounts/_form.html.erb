@@ -1,8 +1,18 @@
 <% editing = @account.persisted? %>
-<%= render 'admin/financials/errors', record: @account %>
+<% non_field_errors = @account.errors.attribute_names & %i[base supplier organization] %>
+<% if non_field_errors.any? %>
+  <div role="alert" class="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+    <% non_field_errors.each do |attribute| %>
+      <% @account.errors.full_messages_for(attribute).each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
 <%= form_with model: @account,
               url: (editing ? admin_supplier_bank_account_path(@supplier, @account) : admin_supplier_bank_accounts_path(@supplier)),
               method: (editing ? :patch : :post),
+              html: { novalidate: true },
               class: 'grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)]',
               data: {
                 controller: 'supplier-bank-clabe supplier-bank-form',
@@ -27,17 +37,23 @@
       <div class="grid min-w-0 gap-x-5 gap-y-5 sm:grid-cols-2">
         <div class="min-w-0 sm:col-span-2">
           <%= f.label :holder_name, t('admin.accounts_payable.holder_name'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.text_field :holder_name, required: true, maxlength: 180, autocomplete: 'off',
+          <%= f.text_field :holder_name, autocomplete: 'off',
                            placeholder: t('admin.supplier_bank_form.holder_placeholder'),
                            data: { supplier_bank_form_target: 'holder' },
-                           class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+                           class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:holder_name].any?,
+                                   describedby: (@account.errors[:holder_name].any? ? 'supplier-bank-holder_name-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :holder_name %>
         </div>
         <div class="min-w-0">
           <%= f.label :clabe, t('admin.accounts_payable.clabe'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.password_field :clabe, value: nil, autocomplete: 'new-password', inputmode: 'numeric', maxlength: 18,
+          <%= f.password_field :clabe, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
                                placeholder: (editing ? @account.masked_number : t('admin.supplier_bank_details.clabe_placeholder')),
                                data: { supplier_bank_clabe_target: 'clabe', action: 'input->supplier-bank-clabe#lookup' },
-                               class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+                               class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:clabe].any?,
+                                   describedby: (@account.errors[:clabe].any? ? 'supplier-bank-clabe-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :clabe %>
           <p class="mt-2 text-xs leading-5 text-slate-500"><%= editing ? t('admin.supplier_bank_form.keep_secret') : t('admin.supplier_bank_details.clabe_hint') %></p>
         </div>
         <div class="min-w-0">
@@ -45,26 +61,37 @@
           <%= f.collection_select :sat_bank_code, @banks, :code, :display_name,
                                   { include_blank: t('admin.supplier_bank_details.select_bank') },
                                   { data: { supplier_bank_clabe_target: 'bank', supplier_bank_form_target: 'bank' },
-                                    class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' } %>
+                                    class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10', aria: { invalid: @account.errors[:sat_bank_code].any?,
+                                   describedby: (@account.errors[:sat_bank_code].any? ? 'supplier-bank-sat_bank_code-errors' : nil) } } %>
+          <%= render 'field_errors', record: @account, attribute: :sat_bank_code %>
           <p class="mt-2 text-xs leading-5 text-slate-500"><%= t('admin.supplier_bank_details.bank_hint') %></p>
         </div>
         <div class="min-w-0">
           <%= f.label :bank_name, t('admin.accounts_payable.bank_name'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.text_field :bank_name, maxlength: 120, placeholder: t('admin.supplier_bank_form.bank_placeholder'),
-                           data: { supplier_bank_form_target: 'bankName' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+          <%= f.text_field :bank_name, placeholder: t('admin.supplier_bank_form.bank_placeholder'),
+                           data: { supplier_bank_form_target: 'bankName' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:bank_name].any?,
+                                   describedby: (@account.errors[:bank_name].any? ? 'supplier-bank-bank_name-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :bank_name %>
         </div>
         <div class="min-w-0">
           <%= f.label :account_number, t('admin.accounts_payable.account_number'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.password_field :account_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric', maxlength: 20,
+          <%= f.password_field :account_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
                                placeholder: (editing ? @account.masked_number : t('admin.supplier_bank_form.account_placeholder')),
-                               data: { supplier_bank_form_target: 'accountNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+                               data: { supplier_bank_form_target: 'accountNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:account_number].any?,
+                                   describedby: (@account.errors[:account_number].any? ? 'supplier-bank-account_number-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :account_number %>
           <p class="mt-2 text-xs leading-5 text-slate-500"><%= editing ? t('admin.supplier_bank_form.keep_secret') : t('admin.supplier_bank_form.account_hint') %></p>
         </div>
         <div class="min-w-0">
           <%= f.label :card_number, t('admin.supplier_bank_details.card_number'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.password_field :card_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric', maxlength: 19,
+          <%= f.password_field :card_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
                                placeholder: (editing && @account.card_last_four.present? ? "•••• #{@account.card_last_four}" : t('admin.supplier_bank_form.card_placeholder')),
-                               data: { supplier_bank_form_target: 'cardNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+                               data: { supplier_bank_form_target: 'cardNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:card_number].any?,
+                                   describedby: (@account.errors[:card_number].any? ? 'supplier-bank-card_number-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :card_number %>
           <p class="mt-2 text-xs leading-5 text-slate-500"><%= editing ? t('admin.supplier_bank_form.keep_secret') : t('admin.supplier_bank_details.card_hint') %></p>
         </div>
         <div class="min-w-0">
@@ -72,12 +99,17 @@
           <%= f.select :account_type,
                        SupplierBankAccount::ACCOUNT_TYPES.map { |type| [t("admin.supplier_bank_details.account_types.#{type}"), type] },
                        { include_blank: t('admin.supplier_bank_details.select_type') },
-                       { data: { supplier_bank_form_target: 'accountType' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' } %>
+                       { data: { supplier_bank_form_target: 'accountType' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10', aria: { invalid: @account.errors[:account_type].any?,
+                                   describedby: (@account.errors[:account_type].any? ? 'supplier-bank-account_type-errors' : nil) } } %>
+          <%= render 'field_errors', record: @account, attribute: :account_type %>
         </div>
         <div class="min-w-0">
           <%= f.label :currency_code, t('admin.accounts_payable.currency'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.text_field :currency_code, maxlength: 3, required: true, autocomplete: 'off', placeholder: 'MXN',
-                           class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 uppercase' %>
+          <%= f.text_field :currency_code, autocomplete: 'off', placeholder: 'MXN',
+                           class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 uppercase',
+                               aria: { invalid: @account.errors[:currency_code].any?,
+                                   describedby: (@account.errors[:currency_code].any? ? 'supplier-bank-currency_code-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :currency_code %>
         </div>
       </div>
     </section>
@@ -93,14 +125,18 @@
           <div class="min-w-0">
             <%= f.label :status, t('admin.supplier_bank_details.status'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
             <%= f.select :status, SupplierBankAccount::STATUSES.map { |status| [t("admin.supplier_bank_details.statuses.#{status}"), status] },
-                         {}, { data: { supplier_bank_form_target: 'status' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' } %>
+                         {}, { data: { supplier_bank_form_target: 'status' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10', aria: { invalid: @account.errors[:status].any?,
+                                   describedby: (@account.errors[:status].any? ? 'supplier-bank-status-errors' : nil) } } %>
+          <%= render 'field_errors', record: @account, attribute: :status %>
           </div>
         <% end %>
         <div class="min-w-0">
           <%= f.label :verification_status, t('admin.supplier_bank_details.verification_status'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
           <%= f.select :verification_status,
                        SupplierBankAccount::VERIFICATION_STATUSES.map { |status| [t("admin.supplier_bank_details.verification_states.#{status}"), status] },
-                       {}, { class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' } %>
+                       {}, { class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10', aria: { invalid: @account.errors[:verification_status].any?,
+                                   describedby: (@account.errors[:verification_status].any? ? 'supplier-bank-verification_status-errors' : nil) } } %>
+          <%= render 'field_errors', record: @account, attribute: :verification_status %>
           <% if @account.verified_at.present? %>
             <p class="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><%= icon('check-circle', class: 'size-4') %>
               <%= t('admin.supplier_bank_details.verified_at', date: l(@account.verified_at, format: :short)) %></p>
@@ -108,10 +144,13 @@
         </div>
       </div>
       <% if editing %>
-        <div data-supplier-bank-form-target="blockedReasonGroup" class="mt-5 <%= 'hidden' unless @account.status == 'blocked' %>">
+        <div data-supplier-bank-form-target="blockedReasonGroup" class="mt-5 <%= 'hidden' unless @account.status == 'blocked' || @account.errors[:blocked_reason].any? %>">
           <%= f.label :blocked_reason, t('admin.supplier_bank_details.blocked_reason'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.text_area :blocked_reason, rows: 3, maxlength: 500, placeholder: t('admin.supplier_bank_details.blocked_reason_hint'),
-                          class: 'w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10' %>
+          <%= f.text_area :blocked_reason, rows: 3, placeholder: t('admin.supplier_bank_details.blocked_reason_hint'),
+                          class: 'w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10',
+                               aria: { invalid: @account.errors[:blocked_reason].any?,
+                                   describedby: (@account.errors[:blocked_reason].any? ? 'supplier-bank-blocked_reason-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :blocked_reason %>
         </div>
       <% end %>
       <div class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
@@ -121,7 +160,10 @@
             <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.supplier_bank_form.primary_hint') %></p></div>
         </div>
         <label class="relative inline-flex cursor-pointer items-center" aria-label="<%= t('admin.accounts_payable.primary') %>">
-          <%= f.check_box :primary, class: 'peer sr-only', data: { supplier_bank_form_target: 'primary' } %>
+          <%= f.check_box :primary, class: 'peer sr-only', data: { supplier_bank_form_target: 'primary' },
+                               aria: { invalid: @account.errors[:primary].any?,
+                                   describedby: (@account.errors[:primary].any? ? 'supplier-bank-primary-errors' : nil) } %>
+          <%= render 'field_errors', record: @account, attribute: :primary %>
           <span class="h-7 w-12 rounded-full bg-slate-300 transition peer-checked:bg-emerald-700 peer-focus-visible:ring-4 peer-focus-visible:ring-emerald-200 after:absolute after:left-1 after:top-1 after:size-5 after:rounded-full after:bg-white after:shadow-sm after:transition after:content-[''] peer-checked:after:translate-x-5"></span>
         </label>
       </div>

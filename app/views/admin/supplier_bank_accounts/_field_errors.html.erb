@@ -1,0 +1,13 @@
+<% if record.errors[attribute].any? %>
+  <div id="supplier-bank-<%= attribute %>-errors"
+       data-bank-field-errors="<%= attribute %>"
+       role="alert"
+       class="mt-2 space-y-1 text-xs font-semibold leading-5 text-rose-700">
+    <% record.errors.full_messages_for(attribute).each do |message| %>
+      <p class="flex items-start gap-1.5">
+        <%= icon('exclamation-circle', class: 'mt-0.5 size-4 shrink-0') %>
+        <span><%= message %></span>
+      </p>
+    <% end %>
+  </div>
+<% end %>

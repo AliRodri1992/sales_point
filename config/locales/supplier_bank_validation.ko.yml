@@ -1,0 +1,16 @@
+ko:
+  activerecord:
+    attributes:
+      supplier_bank_account:
+        holder_name: "예금주"
+        clabe: "CLABE"
+        sat_bank_code: "SAT 은행"
+        bank_name: "은행 이름"
+        account_number: "계좌번호"
+        card_number: "카드 번호"
+        account_type: "계좌 유형"
+        currency_code: "통화"
+        status: "계좌 상태"
+        verification_status: "확인 상태"
+        blocked_reason: "차단 사유"
+        primary: "대표 계좌"

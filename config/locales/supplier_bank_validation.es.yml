@@ -1,0 +1,16 @@
+es:
+  activerecord:
+    attributes:
+      supplier_bank_account:
+        holder_name: "Titular de la cuenta"
+        clabe: "CLABE"
+        sat_bank_code: "Banco SAT"
+        bank_name: "Nombre del banco"
+        account_number: "Número de cuenta"
+        card_number: "Número de tarjeta"
+        account_type: "Tipo de cuenta"
+        currency_code: "Moneda"
+        status: "Estado de la cuenta"
+        verification_status: "Estado de verificación"
+        blocked_reason: "Motivo de bloqueo"
+        primary: "Cuenta principal"

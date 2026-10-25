@@ -198,6 +198,50 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(account.blocked_reason).to be_nil
   end
 
+  it 'uses model validation with inline messages for each field instead of browser required attributes' do
+    get new_admin_supplier_bank_account_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('form[novalidate]')).to be_present
+    expect(document.css('form input[required], form select[required], form textarea[required]')).to be_empty
+
+    post admin_supplier_bank_accounts_path(supplier), params: {
+      supplier_bank_account: {
+        holder_name: '', clabe: 'invalid', sat_bank_code: '999',
+        bank_name: '', account_number: '12', card_number: '123',
+        account_type: 'unknown', currency_code: 'US',
+        verification_status: 'invalid'
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    %w[holder_name clabe sat_bank_code account_number card_number
+       account_type currency_code verification_status].each do |attribute|
+      error = document.at_css(%([data-bank-field-errors="#{attribute}"]))
+      input = document.at_css(%([name="supplier_bank_account[#{attribute}]"]))
+      expect(error).to be_present
+      expect(error.text).to include(SupplierBankAccount.human_attribute_name(attribute))
+      expect(input['aria-invalid']).to eq('true')
+      expect(input['aria-describedby']).to eq("supplier-bank-#{attribute}-errors")
+    end
+    expect(document.at_css('[data-bank-field-errors="bank_name"]')).to be_nil
+    expect(document.css('form input[required], form select[required], form textarea[required]')).to be_empty
+  end
+
+  it 'displays a blocked reason error beside its textarea during an invalid edit' do
+    account = bank_account
+    patch admin_supplier_bank_account_path(supplier, account), params: {
+      supplier_bank_account: { status: 'blocked', blocked_reason: '' }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    field = document.at_css('[data-supplier-bank-form-target="blockedReasonGroup"]')
+    expect(field['class']).not_to include('hidden')
+    expect(field.at_css('[data-bank-field-errors="blocked_reason"]')).to be_present
+    expect(field.at_css('textarea')['aria-invalid']).to eq('true')
+    expect(account.reload.status).to eq('active')
+  end
+
   it 'accepts a verified, blocked account with an explicit reason and server-created verified timestamp' do
     account = bank_account
     patch admin_supplier_bank_account_path(supplier, account), params: {

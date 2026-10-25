@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    attributes:
+      supplier_bank_account:
+        holder_name: "Account holder"
+        clabe: "CLABE"
+        sat_bank_code: "SAT bank"
+        bank_name: "Bank name"
+        account_number: "Account number"
+        card_number: "Card number"
+        account_type: "Account type"
+        currency_code: "Currency"
+        status: "Account status"
+        verification_status: "Verification status"
+        blocked_reason: "Blocking reason"
+        primary: "Primary account"
