@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MIN_FILES=5
+
+count_paths() {
+  LC_ALL=C sort -u | awk 'END { print NR+0 }'
+}
+
+validate_count() {
+  local changed="$1" reference="$2"
+  if (( changed < MIN_FILES )); then
+    printf 'ERROR: %s contiene %s archivos modificados; se requieren al menos %s.\n' "$reference" "$changed" "$MIN_FILES" >&2
+    printf 'Agrupa cambios funcionalmente relacionados; no modifiques archivos innecesarios.\n' >&2
+    return 1
+  fi
+  printf 'OK: %s contiene %s archivos modificados (mínimo %s).\n' "$reference" "$changed" "$MIN_FILES"
+}
+
+check_commit() {
+  local revision="$1" parents changed
+  parents="$(git rev-list --parents -n 1 "$revision")"
+  if (( $(wc -w <<< "$parents") > 2 )); then
+    printf 'INFO: %s es un commit de fusión; no se aplica el mínimo.\n' "$revision"
+    return 0
+  fi
+  if git rev-parse -q --verify "${revision}^" >/dev/null 2>&1; then
+    changed="$(git diff --name-only --diff-filter=ACDMRTUXB "${revision}^" "$revision" | count_paths)"
+  else
+    changed="$(git ls-tree -r --name-only "$revision" | count_paths)"
+  fi
+  validate_count "$changed" "$revision"
+}
+
+case "${1:---staged}" in
+  --staged)
+    changed="$(git diff --cached --name-only --diff-filter=ACDMRTUXB | count_paths)"
+    validate_count "$changed" 'el área de preparación (staging)'
+    ;;
+  --commit)
+    [[ $# -eq 2 ]] || { echo 'Uso: check-commit-min-files --commit SHA' >&2; exit 2; }
+    check_commit "$2"
+    ;;
+  --range)
+    [[ $# -eq 3 ]] || { echo 'Uso: check-commit-min-files --range ANTES DESPUES' >&2; exit 2; }
+    while IFS= read -r revision; do
+      check_commit "$revision"
+    done < <(git rev-list --reverse --no-merges "${2}..${3}")
+    ;;
+  *)
+    echo 'Uso: check-commit-min-files [--staged | --commit SHA | --range ANTES DESPUES]' >&2
+    exit 2
+    ;;
+esac
