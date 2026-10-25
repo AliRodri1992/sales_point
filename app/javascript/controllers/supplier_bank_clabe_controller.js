@@ -11,6 +11,9 @@ export default class extends Controller {
 
     const bankCode = clabe.slice(0, 3)
     const available = Array.from(this.bankTarget.options).some(({ value }) => value === bankCode)
-    if (available) this.bankTarget.value = bankCode
+    if (available) {
+      this.bankTarget.value = bankCode
+      this.bankTarget.dispatchEvent(new Event("change", { bubbles: true }))
+    }
   }
 }

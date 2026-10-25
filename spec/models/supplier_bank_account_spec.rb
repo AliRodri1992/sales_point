@@ -17,6 +17,18 @@ RSpec.describe SupplierBankAccount do
     expect(account.ciphertext_for(:clabe)).not_to include('032180000118359719')
   end
 
+  it 'derives the active SAT bank from an entered CLABE' do
+    bank = create(:sat_bank, code: '032', name: 'Bank of Mexico')
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
+      clabe: '032180000118359719', currency_code: 'MXN'
+    )
+
+    expect(account).to be_valid
+    expect(account.sat_bank_code).to eq(bank.code)
+    expect(account.bank_name).to be_nil
+  end
+
   it 'rejects an invalid CLABE control digit' do
     account = described_class.new(
       organization: supplier.organization, supplier:, holder_name: 'Proveedor',

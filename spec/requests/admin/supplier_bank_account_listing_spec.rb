@@ -128,6 +128,17 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
   end
 
+  it 'registers the CLABE bank lookup controller and never preloads sensitive values' do
+    account = bank_account
+    get edit_admin_supplier_bank_account_path(supplier, account)
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('form[data-controller="supplier-bank-clabe"]')).to be_present
+    expect(document.at_css('input[data-supplier-bank-clabe-target="clabe"]')).to be_present
+    expect(document.at_css('select[data-supplier-bank-clabe-target="bank"]')).to be_present
+    expect(response.body).not_to include(account.account_number)
+  end
+
   it 'provides account type, blocked reason and verification state without collecting expiry or CVV' do
     get new_admin_supplier_bank_account_path(supplier)
     expect(response).to have_http_status(:ok)

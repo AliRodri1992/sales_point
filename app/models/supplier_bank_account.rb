@@ -86,7 +86,7 @@ class SupplierBankAccount < ApplicationRecord
   def derive_sat_bank_from_clabe
     return unless clabe&.match?(/\A\d{18}\z/) && sat_bank_code.blank?
 
-    bank = SatBank.find_by(code: clabe.first(3))
+    bank = SatBank.current.find_by(code: clabe.first(3))
     self.sat_bank_code = bank.code if bank
   end
 
