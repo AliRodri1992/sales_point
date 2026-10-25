@@ -36,6 +36,12 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
     expect(wrapper).to have_css('[role="option"][aria-selected="true"]')
     expect(wrapper).to have_css('[role="option"][aria-selected="false"]')
     expect(wrapper).to have_css('select[name="product[tracking_mode]"]', visible: :all)
+    wrapper.find('button[aria-haspopup="listbox"]').click
+    expect(wrapper).to have_css('button[aria-expanded="false"]')
+    wrapper.find('button[aria-haspopup="listbox"]').click
+    expect(wrapper).to have_css('button[aria-expanded="true"]')
+    find('h1, header', match: :first).click
+    expect(wrapper).to have_css('button[aria-expanded="false"]')
   end
 
   scenario 'preserves account status filtering after a custom dropdown selection' do

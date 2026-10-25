@@ -30,6 +30,25 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     JS
   end
 
+  scenario 'opens the country dropdown and selects Mexico with a visible flag' do
+    Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
+    visit new_admin_supplier_address_path(supplier)
+
+    country_select = find('select[name="address[country_id]"]', visible: :all)
+    dropdown = country_select.find(:xpath, '..')
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
+    expect(dropdown).to have_css('[role="listbox"] input[type="search"]')
+    expect(dropdown).to have_css('[role="option"] img')
+
+    dropdown.find('[role="listbox"] input[type="search"]').set('mex')
+    mexico_option = dropdown.find('[role="option"]:not([hidden])', text: /Mexico|México/)
+    mexico_option.click
+
+    expect(country_select.find('option:checked', visible: :all)['data-country-code']).to eq('MX')
+    expect(dropdown).to have_css('button[aria-expanded="false"]')
+  end
+
   scenario 'keeps a Mexican postal draft while switching to a country without codes' do
     Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
     Country.find_by(iso_alpha2: 'AE') || create(:country, iso_alpha2: 'AE')

@@ -57,8 +57,14 @@ export default class extends Controller {
     this.button.setAttribute("aria-controls", this.menu.id)
     this.element.append(this.button, this.menu)
 
-    this.onButtonClick = () => this.toggle()
-    this.onDocumentClick = (event) => {
+    // A document click listener could close the list on the very click that
+    // opened it (notably after focus changes in searchable dropdowns).
+    // Handle outside pointer presses before the trigger's click instead.
+    this.onButtonClick = (event) => {
+      event.stopPropagation()
+      this.toggle()
+    }
+    this.onOutsidePointerDown = (event) => {
       if (!this.element.contains(event.target)) this.close()
     }
     this.onKeyDown = (event) => {
@@ -87,12 +93,12 @@ export default class extends Controller {
     this.select.addEventListener("change", this.onChange)
     this.select.addEventListener("invalid", this.onInvalid)
     this.select.form?.addEventListener("reset", this.onReset)
-    document.addEventListener("click", this.onDocumentClick)
+    document.addEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.refresh()
   }
 
   disconnect() {
-    document.removeEventListener("click", this.onDocumentClick)
+    document.removeEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.button?.removeEventListener("click", this.onButtonClick)
     this.element.removeEventListener("keydown", this.onKeyDown)
     this.select?.removeEventListener("change", this.onChange)
@@ -206,11 +212,11 @@ export default class extends Controller {
       this.filterOptions()
     }
     this.menu.hidden = false
+    this.button.setAttribute("aria-expanded", "true")
     this.element.classList.add("delta-select-open")
     this.positionMenu()
     document.addEventListener("scroll", this.onReposition, true)
     window.addEventListener("resize", this.onReposition)
-    this.button.setAttribute("aria-expanded", "true")
     this.searchInput?.focus()
   }
 

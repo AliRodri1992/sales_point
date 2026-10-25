@@ -21,6 +21,7 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
   def open_dropdown(name)
     dropdown = find("select[name='#{name}']", visible: :all).find(:xpath, '..')
     dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
     dropdown
   end
 
@@ -73,5 +74,13 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
     dropdown = expect_full_width_option_hover('address[country_id]')
     expect(dropdown).to have_css('[role="listbox"] input[type="search"]')
     expect(dropdown).to have_css('[role="option"] img')
+
+    search = dropdown.find('[role="listbox"] input[type="search"]')
+    search.set('mex')
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
+    expect(dropdown).to have_css('[role="option"]:not([hidden]) img')
+    expect(dropdown).to have_css('[role="option"]:not([hidden])', text: /México|Mexico/)
+    search.set('')
+    expect(dropdown).to have_css('[role="option"][aria-selected="false"]')
   end
 end
