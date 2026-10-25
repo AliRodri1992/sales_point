@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class DemoRequestMailer < ApplicationMailer
+  # A queued email may refer to a demo request deleted after it was enqueued.
+  # MailDeliveryJob forwards deserialization exceptions to the mailer class.
+  # Only discard permanently missing records, never transient database errors.
+  rescue_from ActiveJob::DeserializationError do |error|
+    raise error unless error.cause.is_a?(ActiveRecord::RecordNotFound)
+
+    Rails.logger.info('[DemoRequestMailer] Skipped stale email: referenced record no longer exists')
+  end
+
   def new_request
     @demo_request = params[:demo_request]
     @locale = params[:locale].presence_in(I18n.available_locales.map(&:to_s)) || I18n.default_locale.to_s
