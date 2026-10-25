@@ -1,7 +1,6 @@
 ko:
   admin:
     supplier_bank_form:
-      breadcrumb: "탐색 경로"
       new_description: "공급업체 지급을 위한 은행 계좌를 안전하게 등록합니다."
       edit_description: "은행 계좌를 수정합니다. 기밀 정보는 새 값을 입력한 경우에만 변경됩니다."
       new_badge: "새 계좌"

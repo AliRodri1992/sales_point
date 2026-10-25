@@ -1,7 +1,6 @@
 en:
   admin:
     supplier_bank_form:
-      breadcrumb: "Breadcrumb"
       new_description: "Register a bank account to manage supplier payments securely."
       edit_description: "Update account information. Confidential values are only replaced when new ones are entered."
       new_badge: "New account"

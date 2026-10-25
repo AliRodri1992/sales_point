@@ -151,6 +151,19 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('input[name*="cvv"]')).to be_nil
   end
 
+  it 'keeps only the shared application breadcrumb on both bank account forms' do
+    account = bank_account
+    [new_admin_supplier_bank_account_path(supplier),
+     edit_admin_supplier_bank_account_path(supplier, account)].each do |path|
+      get path
+
+      expect(response).to have_http_status(:ok)
+      expect(document.css('nav[aria-label] ol li [aria-current="page"]').size).to eq(1)
+      expect(document.css('[data-bank-account-form-page] nav')).to be_empty
+      expect(document.at_css('nav[aria-label] ol li [aria-current="page"]')).to be_present
+    end
+  end
+
   it 'renders the responsive, localized create form with the Deltin sidebar and full-width actions' do
     get new_admin_supplier_bank_account_path(supplier)
 
@@ -203,7 +216,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(document.at_css('form[novalidate]')).to be_present
-    expect(document.css('form input[required], form select[required], form textarea[required]')).to be_empty
+    expect(document.css('[data-bank-account-form-page] form [required]')).to be_empty
 
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
@@ -225,7 +238,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       expect(input['aria-describedby']).to eq("supplier-bank-#{attribute}-errors")
     end
     expect(document.at_css('[data-bank-field-errors="bank_name"]')).to be_nil
-    expect(document.css('form input[required], form select[required], form textarea[required]')).to be_empty
+    expect(document.css('[data-bank-account-form-page] form [required]')).to be_empty
   end
 
   it 'displays a blocked reason error beside its textarea during an invalid edit' do
