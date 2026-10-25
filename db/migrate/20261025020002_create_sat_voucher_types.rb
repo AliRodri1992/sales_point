@@ -22,7 +22,7 @@ class CreateSatVoucherTypes < ActiveRecord::Migration[8.1]
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_voucher_types_validity'
     add_check_constraint :sat_voucher_types,
-                         "code ~ '^[IETNP]",
+                         "code ~ '^[IETNP]$'",
                          name: 'chk_sat_voucher_types_code_format'
   end
 end

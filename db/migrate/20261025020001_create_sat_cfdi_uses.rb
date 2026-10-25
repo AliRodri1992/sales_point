@@ -25,7 +25,7 @@ class CreateSatCfdiUses < ActiveRecord::Migration[8.1]
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_cfdi_uses_validity'
     add_check_constraint :sat_cfdi_uses,
-                         "code ~ '^[A-Z0-9]{3,4}",
+                         "code ~ '^[A-Z0-9]{3,4}$'",
                          name: 'chk_sat_cfdi_uses_code_format'
   end
 end
