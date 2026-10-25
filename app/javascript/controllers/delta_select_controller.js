@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+let uniqueSelectId = 0
+
 // Progressive enhancement: the native select remains the submitted form control.
 export default class extends Controller {
   connect() {
@@ -15,7 +17,7 @@ export default class extends Controller {
     this.button = document.createElement("button")
     this.button.type = "button"
     this.button.dataset.deltaSelectGenerated = "true"
-    this.button.className = "flex min-h-12 w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-left text-sm text-slate-800 transition hover:border-emerald-300 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+    this.button.className = "flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-left text-sm text-slate-800 transition hover:border-emerald-400 focus:outline-none focus:ring-4 focus:ring-emerald-100"
     this.button.setAttribute("aria-haspopup", "listbox")
     this.button.setAttribute("aria-expanded", "false")
     this.button.setAttribute("aria-label", this.select.getAttribute("aria-label") || this.select.labels?.[0]?.textContent?.trim() || this.select.name)
@@ -51,7 +53,7 @@ export default class extends Controller {
       this.optionsContainer = this.menu
     }
     this.menu.setAttribute("role", "listbox")
-    this.menu.id = `delta-options-${this.select.id}`
+    this.menu.id = "delta-options-" + (this.select.id || "dynamic-" + ++uniqueSelectId)
     this.button.setAttribute("aria-controls", this.menu.id)
     this.element.append(this.button, this.menu)
 
@@ -77,6 +79,7 @@ export default class extends Controller {
     this.onInvalid = (event) => { event.preventDefault(); this.button.focus() }
     this.button.addEventListener("click", this.onButtonClick)
     this.button.disabled = this.select.disabled
+    this.button.addEventListener("focus", () => this.refresh())
     this.element.addEventListener("keydown", this.onKeyDown)
     this.select.addEventListener("change", this.onChange)
     this.select.addEventListener("invalid", this.onInvalid)

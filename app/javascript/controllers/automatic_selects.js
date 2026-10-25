@@ -28,7 +28,10 @@ function enhance(root) {
 function start() {
   if (!document.body) return
   enhance(document.body)
-  if (start.observer) return
+  // Turbo Drive can replace the BODY. Observe the active body, never a detached one.
+  if (start.observer && start.observedBody === document.body) return
+  start.observer?.disconnect()
+  start.observedBody = document.body
 
   start.observer = new MutationObserver((mutations) => {
     mutations.forEach(({ addedNodes }) => {

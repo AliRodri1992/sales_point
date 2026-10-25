@@ -45,9 +45,13 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
     option.hover
     expect(dropdown).to have_css('[role="option"]:hover')
-    selected = dropdown.find('[role="option"][aria-selected="true"]')
-    expect(selected.native.css_value('background-color')).not_to eq(option.native.css_value('background-color'))
+    expect_selected_state_contrast(dropdown, option)
     dropdown
+  end
+
+  def expect_selected_state_contrast(dropdown, hovered_option)
+    selected = dropdown.find('[role="option"][aria-selected="true"]')
+    expect(selected.native.css_value('background-color')).not_to eq(hovered_option.native.css_value('background-color'))
   end
 
   scenario 'highlights a whole fiscal regime row, including space beyond the label' do
