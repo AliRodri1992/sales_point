@@ -62,7 +62,8 @@ module ApplicationHelper
 
   def sidebar_link_classes(controller, variant: :default)
     active = sidebar_item_active?(controller)
-    shared = 'flex items-center gap-3 rounded-xl text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600'
+    shared = 'flex items-center gap-3 rounded-xl text-sm transition ' \
+             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600'
     spacing = variant == :submenu ? 'px-3 py-2' : 'px-3 py-2.5'
     return "#{shared} #{spacing} bg-emerald-700 font-semibold text-white hover:bg-emerald-800" if active
 

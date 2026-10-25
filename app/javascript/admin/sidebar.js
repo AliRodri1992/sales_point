@@ -100,6 +100,10 @@ const showSidebarFlyout = (target) => {
     }
 
     removeSidebarTooltip()
+    if (activeFlyoutTarget === target && sidebarFlyout()) {
+        refreshSidebarFlyout()
+        return
+    }
     removeSidebarFlyout()
     activeFlyoutTarget = target
 
@@ -246,8 +250,10 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
+        const returnTarget = activeFlyoutTarget
         removeSidebarFlyout()
         removeSidebarTooltip()
+        if (returnTarget && isCollapsedSidebar()) returnTarget.focus()
         return
     }
 

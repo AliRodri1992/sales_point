@@ -267,6 +267,12 @@ select {
 
 #adminSidebar nav {
     min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#adminSidebar nav::-webkit-scrollbar {
+    display: none;
 }
 
 #adminSidebar nav [aria-disabled="true"] {
