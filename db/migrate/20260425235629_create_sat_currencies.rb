@@ -25,10 +25,6 @@ class CreateSatCurrencies < ActiveRecord::Migration[8.1]
                          name: "chk_sat_currencies_code_format"
 
     add_check_constraint :sat_currencies,
-                         "decimals BETWEEN 0 AND 6",
-                         name: "chk_sat_currencies_decimals_range"
-
-    add_check_constraint :sat_currencies,
                          "decimals IN (0,2,3,4,5,6,8)",
                          name: "chk_sat_currencies_decimals_allowed"
 

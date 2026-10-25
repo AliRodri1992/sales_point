@@ -18,10 +18,10 @@ class CreateSatMonths < ActiveRecord::Migration[8.1]
     execute "ALTER TABLE sat_months ADD PRIMARY KEY (code);"
 
     add_check_constraint :sat_months,
-                         "code ~ '^(0[1-9]|1[0-2])$'"
+                         "code ~ '^(0[1-9]|1[0-8])$'"
 
     add_check_constraint :sat_months,
-                         "month_number BETWEEN 1 AND 12"
+                         "month_number BETWEEN 1 AND 18"
 
     add_check_constraint :sat_months,
                          "(valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from)"
