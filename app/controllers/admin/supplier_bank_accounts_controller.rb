@@ -90,11 +90,13 @@ module Admin
     def load_banks = (@banks = SatBank.current.order(:name))
 
     def bank_params
-      params.expect(supplier_bank_account: %i[
+      attributes = params.expect(supplier_bank_account: %i[
                       sat_bank_code bank_name holder_name
                       account_number clabe currency_code primary
                       card_last_four card_expiration_month card_expiration_year
                     ])
+      attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
+      attributes
     end
 
     def assign_bank_details
