@@ -171,6 +171,8 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(panel.css('input[type="radio"]')).to be_empty
     expect(panel.css('button[data-option-value]')).not_to be_empty
     expect(panel.css('button[data-option-value]').all? { |button| button['class'].include?('w-full') }).to be(true)
+    expect(panel.css('button[role="option"][aria-selected="true"]').size).to eq(2)
+    expect(panel.css('[role="listbox"]').size).to eq(2)
     expect(panel.css('input[type="hidden"][name="banks_status"]')).not_to be_empty
   end
 

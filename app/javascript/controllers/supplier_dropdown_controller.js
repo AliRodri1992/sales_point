@@ -28,7 +28,7 @@ export default class extends Controller {
       this.element.querySelectorAll("button[data-option-value]").forEach((button) => {
         button.setAttribute("aria-selected", String(button === option))
       })
-      this.close()
+      this.close(true)
       return
     }
 
@@ -42,7 +42,8 @@ export default class extends Controller {
     this.close()
   }
 
-  close() {
+  close(refocus = false) {
     this.element.open = false
+    if (refocus) this.element.querySelector("summary")?.focus()
   }
 }

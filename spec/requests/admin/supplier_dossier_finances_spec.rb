@@ -45,8 +45,10 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(header.at_css(manage_link)).to be_present
     expect(panel('bank_accounts').css(manage_link).size).to eq(1)
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
-    expect(panel('bank_accounts').at_css('input[type="radio"][name="banks_status"][value="active"]')).to be_present
-    expect(panel('bank_accounts').at_css('input[type="radio"][name="banks_bank"]')).to be_present
+    expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_status"][value="active"]')).to be_present
+    expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_bank"]')).to be_present
+    expect(panel('bank_accounts').at_css('button[data-option-value="active"][aria-selected="true"]')).to be_present
+    expect(panel('bank_accounts').css('input[type="radio"]')).to be_empty
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
   end
 
@@ -123,19 +125,19 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'BBVA México', holder_name: 'Secret Account Holder',
       account_number: '123456789012', currency_code: 'MXN', primary: true,
-      card_last_four: '6789', card_expiration_month: 8, card_expiration_year: 2029
+      card_number: '4111111111111111'
     )
 
     get admin_supplier_path(supplier, tab: 'bank_accounts')
 
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.size).to eq(1)
-    expect(cards.first.text).to include('BBVA', '•••• •••• •••• 6789', '08/29')
+    expect(cards.first.text).to include('BBVA', '•••• •••• •••• 1111')
     expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '123456789012')
     expect(cards.first.at_css('[title="Primary"]')).to be_present
     expect(cards.first.at_css('summary[aria-label="Bank account actions"]')).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
-    expect(panel('bank_accounts').css('input[type="radio"][name="banks_bank"][value="BBVA México"]').size).to eq(1)
+    expect(panel('bank_accounts').css('button[data-option-value="BBVA México"]').size).to eq(1)
   end
 
   it 'shows archived accounts only on their status tab and permits their recovery' do

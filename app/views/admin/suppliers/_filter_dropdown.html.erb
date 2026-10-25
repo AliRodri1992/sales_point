@@ -8,13 +8,14 @@
   <% if local_assigns[:plain_options] %>
     <%= hidden_field_tag name, current_value, data: { supplier_dropdown_target: 'value' } %>
   <% end %>
-  <div class="absolute left-0 right-0 top-full z-30 mt-1 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
+  <div role="<%= local_assigns[:plain_options] ? 'listbox' : 'group' %>"
+       class="absolute left-0 right-0 top-full z-30 mt-1 max-h-56 overflow-x-hidden overflow-y-auto rounded-xl border border-slate-200 bg-white <%= local_assigns[:plain_options] ? '' : 'p-1' %> shadow-xl">
     <% options.each do |label, value| %>
       <% option_id = "supplier_#{name}_#{value.to_s.parameterize.presence || 'all'}" %>
       <% if local_assigns[:plain_options] %>
-        <button type="button" data-action="click->supplier-dropdown#choose"
+        <button type="button" role="option" data-action="click->supplier-dropdown#choose"
                 data-option-value="<%= value %>" aria-selected="<%= current_value == value.to_s %>"
-                class="block min-h-10 w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-50 aria-selected:font-semibold aria-selected:text-emerald-700">
+                class="block min-h-11 w-full cursor-pointer px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-50 aria-selected:font-semibold aria-selected:text-emerald-700">
           <span data-option-label><%= label %></span>
         </button>
       <% else %>
