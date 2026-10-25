@@ -26,5 +26,8 @@ class CreateSatPostalCodes < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_postal_codes,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_postal_codes_validity'
+    add_check_constraint :sat_postal_codes,
+                         "code ~ '^[0-9]{5}",
+                         name: 'chk_sat_postal_codes_code_format'
   end
 end

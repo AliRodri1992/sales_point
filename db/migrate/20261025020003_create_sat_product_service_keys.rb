@@ -24,5 +24,8 @@ class CreateSatProductServiceKeys < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_product_service_keys,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_product_service_keys_validity'
+    add_check_constraint :sat_product_service_keys,
+                         "code ~ '^[0-9]{8}",
+                         name: 'chk_sat_product_service_keys_code_format'
   end
 end

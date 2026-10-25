@@ -21,5 +21,8 @@ class CreateSatTaxObjects < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_tax_objects,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_tax_objects_validity'
+    add_check_constraint :sat_tax_objects,
+                         "code ~ '^[0-9]{2}",
+                         name: 'chk_sat_tax_objects_code_format'
   end
 end
