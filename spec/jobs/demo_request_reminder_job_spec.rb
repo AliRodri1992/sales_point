@@ -47,6 +47,15 @@ RSpec.describe DemoRequestReminderJob, type: :job do
     expect(described_class.new.send(:valid_reminder?, record, record.scheduled_at.to_i)).to be(false)
   end
 
+  it 'sends a reminder after a previously archived request is restored' do
+    record = demo_request
+    record.destroy!
+    record.restore
+    expect(DemoRequestDeliveryService).to receive(:call).with(record, 'one_hour')
+
+    described_class.perform_now(record.id, 'one_hour', record.scheduled_at.to_i)
+  end
+
   it 'ignores a reminder for a demo request deleted before execution' do
     request_id = demo_request.id
     scheduled_at = demo_request.scheduled_at.to_i

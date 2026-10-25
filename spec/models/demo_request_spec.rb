@@ -206,6 +206,14 @@ RSpec.describe DemoRequest, type: :model do
       expect(described_class.with_deleted.find(record.id)).not_to be_available_for_notification
     end
 
+    it 'permits a recovered demo request once its soft deletion is cleared' do
+      record = create(:demo_request)
+      record.destroy!
+      record.restore
+
+      expect(record.reload).to be_available_for_notification
+    end
+
     it 'rejects an explicitly destroyed in-memory request' do
       record = build(:demo_request)
       allow(record).to receive(:destroyed?).and_return(true)

@@ -92,10 +92,10 @@ RSpec.describe 'DemoRequestMailer workflow updates', type: :mailer do
 end
 
 RSpec.describe 'DemoRequestMailer queued delivery recovery', type: :mailer do
-  def serialized_delivery(demo_request, action: 'confirmation')
+  def serialized_delivery(demo_request, action: 'confirmation', args: [])
     ActionMailer::MailDeliveryJob.new(
       'DemoRequestMailer', action, 'deliver_now',
-      args: [], params: { demo_request:, locale: 'en' }
+      args:, params: { demo_request:, locale: 'en' }
     ).serialize
   end
 
@@ -134,6 +134,28 @@ RSpec.describe 'DemoRequestMailer queued delivery recovery', type: :mailer do
       expect(mail.message.perform_deliveries).to be(false)
       expect { mail.deliver_now }.not_to change(ActionMailer::Base.deliveries, :size)
     end
+  end
+
+  it 'never delivers queued reminders for a deleted request' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    serialized = serialized_delivery(demo_request, action: 'reminder', args: ['one_hour'])
+    demo_request.destroy!
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }.not_to raise_error
+    expect(ActionMailer::Base.deliveries).to be_empty
+  end
+
+  it 'suppresses assignment updates when the associated request was archived' do
+    demo_request = create(:demo_request)
+    assignee = create(:user)
+    actor = create(:user)
+    demo_request.destroy!
+
+    message = DemoRequestMailer.with(demo_request:, assignee:, actor:,
+                                     action: 'assigned', locale: 'en').workflow_update
+
+    expect(message.message.perform_deliveries).to be(false)
+    expect { message.deliver_now }.not_to change(ActionMailer::Base.deliveries, :size)
   end
 
   it 'leaves a live request deliverable, including the scheduled email' do
