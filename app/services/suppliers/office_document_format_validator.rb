@@ -16,6 +16,8 @@ module Suppliers
     }.freeze
     OLE_SIGNATURE = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1].pack('C*').freeze
     ZIP_SIGNATURE = "PK\x03\x04".b.freeze
+    MAX_MANIFEST_BYTES = 1.megabyte
+    PACKAGE_NAMESPACE = 'http://schemas.openxmlformats.org/package/2006/content-types'
 
     def initialize(blob)
       @blob = blob
@@ -29,7 +31,7 @@ module Suppliers
 
       expected_type = LEGACY_FORMATS[extension]
       expected_type.present? && @blob.content_type == expected_type && @blob.download.start_with?(OLE_SIGNATURE)
-    rescue Zip::Error, IOError, SystemCallError
+    rescue Zip::Error, Nokogiri::XML::SyntaxError, IOError, SystemCallError
       false
     end
 
@@ -43,7 +45,15 @@ module Suppliers
       return false unless bytes.start_with?(ZIP_SIGNATURE)
 
       Zip::File.open_buffer(bytes) do |zip|
-        zip.find_entry('[Content_Types].xml').present? && zip.find_entry(main_entry).present?
+        manifest = zip.find_entry('[Content_Types].xml')
+        main = zip.find_entry(main_entry)
+        next false unless manifest && main
+        next false unless manifest.size.between?(1, MAX_MANIFEST_BYTES) && main.size.positive?
+
+        xml = Nokogiri::XML(manifest.get_input_stream.read(MAX_MANIFEST_BYTES + 1)) do |config|
+          config.strict.nonet
+        end
+        xml.root&.name == 'Types' && xml.root&.namespace&.href == PACKAGE_NAMESPACE
       end
     end
   end

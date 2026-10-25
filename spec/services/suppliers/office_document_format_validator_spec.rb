@@ -40,6 +40,28 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
     expect(described_class.new(document).valid?).to be(false)
   end
 
+  it 'rejects a ZIP whose Office manifest is not valid XML' do
+    content = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write('<Types><wrong></Types>')
+      zip.put_next_entry('word/document.xml')
+      zip.write('<document/>')
+    end.string
+    document = blob(content, 'malformed-manifest.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
+  it 'rejects a ZIP whose Office document part is missing' do
+    content = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write(SupplierDemoDocumentOffice.docx_content_types)
+    end.string
+    document = blob(content, 'missing-document.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
   it 'rejects Office content when the extension and declared type disagree' do
     document = blob(SupplierDemoDocumentOffice.docx_for(supplier), 'contract.xlsx',
                     Suppliers::DocumentContentPreview::DOCX_TYPE)
@@ -54,7 +76,8 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
   end
 
   it 'recognizes the OLE signature of a legacy Office container' do
-    document = blob(described_class::OLE_SIGNATURE + 'binary-data', 'legacy.doc', 'application/msword')
+    signature = described_class::OLE_SIGNATURE.dup
+    document = blob(signature << 'binary-data', 'legacy.doc', 'application/msword')
 
     expect(described_class.new(document).valid?).to be(true)
   end

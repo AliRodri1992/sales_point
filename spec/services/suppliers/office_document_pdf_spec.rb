@@ -75,6 +75,21 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
     expect(described_class.new(blob).call).to be_nil
   end
 
+  it 'does not pass an incomplete ZIP archive to LibreOffice' do
+    zipped = Zip::OutputStream.write_buffer do |archive|
+      archive.put_next_entry('[Content_Types].xml')
+      archive.write(SupplierDemoDocumentOffice.docx_content_types)
+    end.string
+    document = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(zipped), filename: 'incomplete.docx',
+      content_type: described_class::CONTENT_TYPES.first, identify: false
+    )
+    allow(described_class).to receive(:available?).and_return(true)
+    expect(SupplierOfficeConverterProcess).not_to receive(:call)
+
+    expect(described_class.new(document).call).to be_nil
+  end
+
   it 'does not convert plain text masquerading as a DOCX' do
     document = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new('Word format placeholder'), filename: 'fake.docx',

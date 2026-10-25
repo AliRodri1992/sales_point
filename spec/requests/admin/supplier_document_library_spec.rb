@@ -203,6 +203,20 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to have_http_status(:unsupported_media_type)
   end
 
+  it 'rejects legacy Office extensions backed by ordinary text' do
+    document = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new('ordinary text'), filename: 'legacy.doc',
+      content_type: 'application/msword', identify: false
+    )
+    supplier.documents.attach(document)
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(true)
+    expect(Suppliers::OfficeDocumentPdf).not_to receive(:new)
+
+    get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:unsupported_media_type)
+  end
+
   it 'streams and caches a rendered PDF for valid Office documents when conversion is available' do
     office = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(SupplierDemoDocumentOffice.docx_for(supplier)), filename: 'example.docx',
