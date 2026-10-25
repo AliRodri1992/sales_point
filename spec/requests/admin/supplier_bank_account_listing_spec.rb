@@ -242,6 +242,20 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(supplier.supplier_bank_accounts.active.where(primary: true).count).to eq(1)
   end
 
+  it 'does not demote a valid primary account when a blocked account attempts to become primary' do
+    original = bank_account(primary: true)
+    other = bank_account(bank_name: 'Backup bank', account_number: '999900001234')
+
+    patch admin_supplier_bank_account_path(supplier, other), params: {
+      supplier_bank_account: { primary: '1', status: 'blocked', blocked_reason: 'Cuenta comprometida' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(original.reload).to be_primary
+    expect(other.reload).not_to be_primary
+    expect(other.status).to eq('blocked')
+  end
+
   it 'rolls back the previous primary bank demotion when the replacement is invalid' do
     original = bank_account(primary: true)
     post admin_supplier_bank_accounts_path(supplier), params: {

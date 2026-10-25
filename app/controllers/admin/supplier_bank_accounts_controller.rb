@@ -90,10 +90,9 @@ module Admin
     def load_banks = (@banks = SatBank.current.order(:name))
 
     def bank_params
-      attributes = params.expect(supplier_bank_account: %i[
-        sat_bank_code bank_name holder_name account_number clabe card_number
-        currency_code primary account_type status verification_status blocked_reason
-      ])
+      sensitive_fields = %i[sat_bank_code bank_name holder_name account_number clabe card_number]
+      status_fields = %i[currency_code primary account_type status verification_status blocked_reason]
+      attributes = params.expect(supplier_bank_account: sensitive_fields + status_fields)
       attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
       attributes
     end
@@ -108,7 +107,7 @@ module Admin
 
     def save_account
       @supplier.with_lock do
-        if @account.primary?
+        if @account.primary? && @account.status == 'active'
           @supplier.supplier_bank_accounts.active.where.not(id: @account.id).where(primary: true)
                    .find_each { |previous| previous.update!(primary: false) }
         end

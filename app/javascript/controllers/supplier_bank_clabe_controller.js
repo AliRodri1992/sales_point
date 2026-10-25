@@ -7,7 +7,7 @@ export default class extends Controller {
 
   lookup() {
     const clabe = this.clabeTarget.value.replace(/\s/g, "")
-    if (!/^\d{3,18}$/.test(clabe)) return
+    if (!/^\d{18}$/.test(clabe)) return
 
     const bankCode = clabe.slice(0, 3)
     const available = Array.from(this.bankTarget.options).some(({ value }) => value === bankCode)

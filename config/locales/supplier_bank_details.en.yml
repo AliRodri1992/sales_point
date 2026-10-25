@@ -2,7 +2,7 @@ en:
   admin:
     supplier_bank_details:
       clabe_placeholder: "18 digits for SPEI transfers"
-      clabe_hint: "A CLABE is required for SPEI; the bank is identified automatically when entered."
+      clabe_hint: "An 18-digit CLABE is required for SPEI; the bank is identified automatically once all digits are entered."
       select_bank: "Select a bank"
       bank_hint: "The first three CLABE digits identify the bank. You may also select a bank."
       card_number: "Card number (optional)"
