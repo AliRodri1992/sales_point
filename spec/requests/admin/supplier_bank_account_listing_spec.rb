@@ -216,7 +216,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(document.at_css('form[novalidate]')).to be_present
-    expect(document.css('[data-bank-account-form-page] form input[required], [data-bank-account-form-page] form select[required], [data-bank-account-form-page] form textarea[required]')).to be_empty
+    expect(document.css('[data-bank-account-form-page] form [required]')).to be_empty
 
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
@@ -238,7 +238,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       expect(input['aria-describedby']).to eq("supplier-bank-#{attribute}-errors")
     end
     expect(document.at_css('[data-bank-field-errors="bank_name"]')).to be_nil
-    expect(document.css('[data-bank-account-form-page] form input[required], [data-bank-account-form-page] form select[required], [data-bank-account-form-page] form textarea[required]')).to be_empty
+    expect(document.css('[data-bank-account-form-page] form [required]')).to be_empty
   end
 
   it 'displays a blocked reason error beside its textarea during an invalid edit' do
