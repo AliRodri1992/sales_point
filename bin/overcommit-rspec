@@ -1,25 +1,47 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export RAILS_ENV=test
-export POSTGRES_DB_TEST="${POSTGRES_DB_TEST:-sale_point_test}"
-export POSTGRES_USER="${POSTGRES_USER:-postgres}"
-export POSTGRES_PASSWORD="${POSTGRES_PASSWORD:-postgres}"
-export POSTGRES_HOST="${POSTGRES_HOST:-db}"
-export POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
 
-if docker ps --format '{{.Names}}' | grep -qx 'rails_sale_point'; then
-  exec docker exec \
-    -e RAILS_ENV="$RAILS_ENV" \
-    -e POSTGRES_DB_TEST="$POSTGRES_DB_TEST" \
-    -e POSTGRES_USER="$POSTGRES_USER" \
-    -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
-    -e POSTGRES_HOST="$POSTGRES_HOST" \
-    -e POSTGRES_PORT="$POSTGRES_PORT" \
-    rails_sale_point \
-    sh -lc 'unset DATABASE_URL && bundle exec rails db:test:prepare && bundle exec rspec "$@"' \
-    overcommit-rspec "$@"
+fail() {
+  printf '[RSpec] ERROR: %s\n' "$1" >&2
+  exit 1
+}
+
+command -v docker >/dev/null 2>&1 || fail 'Docker no está instalado o no está en PATH.'
+docker info >/dev/null 2>&1 || fail 'Docker Desktop no está iniciado o el daemon no está disponible.'
+docker compose version >/dev/null 2>&1 || fail 'Se requiere Docker Compose v2 (docker compose).'
+
+compose=(docker compose -f docker-compose.dev.yml)
+if ! running_web="$("${compose[@]}" ps --status running --quiet web)"; then
+  fail 'No se pudo consultar el servicio web. Comprueba docker-compose.dev.yml y .env.development.'
 fi
 
-bundle exec rails db:test:prepare
-exec bundle exec rspec
+# These test-only overrides target PostgreSQL on the Compose network, never
+# localhost or a development DATABASE_URL inherited from the container.
+test_environment=(
+  -e RAILS_ENV=test
+  -e POSTGRES_DB_TEST="${POSTGRES_DB_TEST:-sale_point_test}"
+  -e POSTGRES_HOST=db
+  -e POSTGRES_PORT=5432
+  -e POSTGRES_USER=postgres
+  -e POSTGRES_PASSWORD=postgres
+)
+
+rails_and_specs='unset DATABASE_URL; bin/rails db:prepare && exec bundle exec rspec "$@"'
+
+if [[ -n "$running_web" ]]; then
+  printf '[RSpec] Ejecutando pruebas en el contenedor web existente.\n'
+  command=("${compose[@]}" exec -T "${test_environment[@]}" web sh -lc "$rails_and_specs" overcommit-rspec "$@")
+else
+  printf '[RSpec] El servicio web está detenido; iniciando un contenedor temporal con sus dependencias.\n'
+  command=("${compose[@]}" run --rm -T "${test_environment[@]}" web sh -lc "$rails_and_specs" overcommit-rspec "$@")
+fi
+
+status=0
+"${command[@]}" || status=$?
+if (( status != 0 )); then
+  printf '[RSpec] ERROR: No se completó db:prepare + RSpec en Docker (código %s). Revisa los errores de PostgreSQL o de las pruebas.\n' "$status" >&2
+fi
+exit "$status"

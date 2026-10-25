@@ -19,6 +19,9 @@ jobs:
       - name: Test minimum file rule and schema-only exception
         run: bash test/commit_min_files_test.sh
 
+      - name: Test Docker-only RSpec pre-push hook without Docker daemon
+        run: bash test/overcommit_rspec_test.sh
+
       - name: Check all newly pushed commits
         if: github.event_name == 'push'
         env:

@@ -31,6 +31,14 @@ Tras obtener esta configuración o cuando Overcommit lo solicite, ejecutar `bund
 - Conservar convenciones existentes, permisos/autorización, pruebas, accesibilidad, estilos e internacionalización.
 - Si un comando no pudo ejecutarse por limitaciones del entorno, informar qué falta verificar, sin declarar éxito ficticio.
 
+## Pre-push y pruebas RSpec locales
+
+- `bin/overcommit-rspec` usa únicamente `docker compose -f docker-compose.dev.yml`. No añadir fallback de Rails ejecutado en el host: `db` solo se resuelve en la red Compose.
+- Si `web` está activo, ejecutar vía `exec -T`; si está detenido, `run --rm -T` debe iniciar las dependencias. Ambas rutas fuerzan `RAILS_ENV=test`, preparan la base de pruebas y eliminan `DATABASE_URL`.
+- Fallos del daemon, Compose, PostgreSQL o RSpec deben detener el push y propagarse; nunca utilizar `--no-verify` como solución.
+- Antes de cambiar el hook, ejecutar `bash test/overcommit_rspec_test.sh`, que simula las rutas con y sin contenedor y fallos de Docker sin conectarse a servicios externos. CI ejecuta este verificador en `.github/workflows/commit-policy.yml`.
+- Tras actualizar el hook en una máquina local, revisar el script y volver a firmar con `bundle exec overcommit --sign pre-push` si Overcommit lo solicita.
+
 ## Verificaciones específicas del proyecto
 - Con contenedores activos: `docker compose -f docker-compose.dev.yml exec web bundle exec rspec`, `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
 - Ejecutar las pruebas/coberturas requeridas por la tarea; no afirmar porcentajes sin el reporte actual de SimpleCov.

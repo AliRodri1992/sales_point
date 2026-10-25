@@ -164,6 +164,34 @@ docker compose exec web bundle exec rspec
 
 ---
 
+## Pre-push: RSpec mediante Docker Compose
+
+El hook `bin/overcommit-rspec` **nunca ejecuta Rails en macOS**. Comprueba que Docker
+Desktop y Docker Compose v2 estén disponibles y usa `docker-compose.dev.yml`:
+
+- Si `web` está ejecutándose: `docker compose -f docker-compose.dev.yml exec -T web`.
+- Si `web` está detenido: `docker compose -f docker-compose.dev.yml run --rm -T web`,
+  que inicia `db` y `redis` como dependencias.
+- Dentro del contenedor fuerza `RAILS_ENV=test`, `POSTGRES_HOST=db`, elimina
+  `DATABASE_URL`, ejecuta `bin/rails db:prepare` y después `bundle exec rspec`.
+- Si Docker, PostgreSQL o RSpec fallan, **se bloquea el push con un error visible**.
+  No hay ejecución alternativa en el Mac ni desactivación de verificaciones.
+
+Para ejecutar o diagnosticar manualmente:
+
+```bash
+bash test/overcommit_rspec_test.sh        # Pruebas aisladas del hook: no requieren Docker
+docker compose -f docker-compose.dev.yml ps
+docker compose -f docker-compose.dev.yml up -d db redis web
+docker compose -f docker-compose.dev.yml exec -T web env RAILS_ENV=test bin/rails db:prepare
+docker compose -f docker-compose.dev.yml exec -T web env RAILS_ENV=test bundle exec rspec
+```
+
+Cuando Overcommit advierta que cambió el script, **revísalo** antes de ejecutar
+`bundle exec overcommit --sign pre-push`.
+
+---
+
 ## 🧪 Testing
 
 ### Run all tests
