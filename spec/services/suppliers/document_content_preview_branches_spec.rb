@@ -36,6 +36,12 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(blob).call).to be_nil
   end
 
+  it 'ignores a truncated Office archive without raising an exception' do
+    blob = office_blob("PK\x03\x04".b,
+                       type: described_class::DOCX_TYPE, filename: 'truncated.docx')
+    expect(described_class.new(blob).call).to be_nil
+  end
+
   it 'returns nothing when a DOCX has no document XML entry' do
     blob = office_blob(zipped('notes.txt' => 'Not a Word document'),
                        type: described_class::DOCX_TYPE, filename: 'empty.docx')
