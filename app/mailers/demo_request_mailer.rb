@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DemoRequestMailer < ApplicationMailer
+  include DemoRequestDeliveryGuard
+
   # A queued email may refer to a demo request deleted after it was enqueued.
   # MailDeliveryJob forwards deserialization exceptions to the mailer class.
   # Only discard permanently missing records, never transient database errors.

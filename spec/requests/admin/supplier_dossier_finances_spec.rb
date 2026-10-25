@@ -41,8 +41,11 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     heading_row = header.at_css('[data-finance-banks-heading-row]')
     manage_link = "a[href='#{admin_supplier_bank_accounts_path(supplier)}']"
     expect(heading_row.at_css('h2')).to be_present
-    expect(heading_row.at_css(manage_link)).to be_present
-    expect(header.at_css(manage_link)).to be_present
+    expect(heading_row.at_css(manage_link)).to be_nil
+    expect(header.at_css(manage_link)).to be_nil
+    search_row = panel('bank_accounts').at_css('[data-finance-banks-search-row]')
+    expect(search_row.at_css('#dossier-banks-search')).to be_present
+    expect(search_row.at_css(manage_link)).to be_present
     expect(panel('bank_accounts').css(manage_link).size).to eq(1)
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
     expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_status"][value="active"]')).to be_present
@@ -118,7 +121,9 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     heading_row = panel('bank_accounts').at_css('[data-finance-banks-heading-row]')
     expect(heading_row.at_css('h2')).to be_present
-    expect(heading_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
+    expect(heading_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_nil
+    search_row = panel('bank_accounts').at_css('[data-finance-banks-search-row]')
+    expect(search_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
   end
 
   it 'reuses the bank card design, hiding bank names when a logo exists' do

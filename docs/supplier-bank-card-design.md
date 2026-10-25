@@ -29,5 +29,6 @@ las archivadas aparecen al seleccionar Inactivas.
 
 Los datos se consultan exclusivamente a través de la asociación del proveedor de la
 organización autorizada. No se muestran moneda, titular, cuenta completa ni panel lateral
-de información en las tarjetas. El botón «Administrar cuentas bancarias» sigue enlazando
-a la vista completa para tareas especializadas.
+de información en las tarjetas. El botón «Administrar cuentas bancarias» se ubica
+junto al campo de búsqueda en escritorio y debajo de él en móvil, nunca en el
+encabezado. Conserva el enlace a la vista completa para tareas especializadas.
