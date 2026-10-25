@@ -30,12 +30,25 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
     expect(described_class.new(document).valid?).to be(false)
   end
 
+  it 'returns a strict boolean for structurally valid Office packages' do
+    document = blob(SupplierDemoDocumentOffice.docx_for(supplier), 'contract.docx',
+                    Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to equal(true)
+  end
+
   it 'rejects a ZIP without the Office package manifest' do
     content = Zip::OutputStream.write_buffer do |zip|
       zip.put_next_entry('word/document.xml')
       zip.write('<document/>')
     end.string
     document = blob(content, 'missing-manifest.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
+  it 'rejects a truncated archive without raising a ZIP parsing error' do
+    document = blob("PK\\x03\\x04".b, 'truncated.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
 
     expect(described_class.new(document).valid?).to be(false)
   end

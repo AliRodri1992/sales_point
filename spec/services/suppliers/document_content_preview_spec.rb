@@ -30,6 +30,13 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(office).call).to include('Proveedor', 'SUP-0001', 'Lista de precios')
   end
 
+  it 'extracts text from an intact Office ZIP after format validation' do
+    document = blob(SupplierDemoDocumentOffice.docx_for(supplier), 'intact.docx',
+                    described_class::DOCX_TYPE)
+
+    expect(described_class.new(document).call).to include('DEMO SUP-0001')
+  end
+
   it 'does not attempt to parse invalid compressed attachments' do
     invalid = blob('not a ZIP document', 'fake.docx', described_class::DOCX_TYPE)
 

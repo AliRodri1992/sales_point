@@ -44,7 +44,9 @@ module Suppliers
       bytes = @blob.download
       return false unless bytes.start_with?(ZIP_SIGNATURE)
 
-      Zip::File.open_buffer(bytes) { |zip| valid_package?(zip, main_entry) }
+      valid = false
+      Zip::File.open_buffer(bytes) { |zip| valid = valid_package?(zip, main_entry) }
+      valid
     end
 
     def valid_package?(zip, main_entry)
