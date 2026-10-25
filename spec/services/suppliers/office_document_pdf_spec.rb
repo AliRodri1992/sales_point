@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require Rails.root.join('db/seeds/supplier_demo_document_office')
 
 RSpec.describe Suppliers::OfficeDocumentPdf do
   it 'rejects unsupported document types before attempting conversion' do
@@ -15,7 +16,7 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
 
   it 'converts a supported document into a PDF in a private directory' do
     blob = ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new('test office bytes'), filename: 'report.docx',
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(Struct.new(:code).new('SUP-0001'))), filename: 'report.docx',
       content_type: described_class::CONTENT_TYPES.first, identify: false
     )
     allow(described_class).to receive(:available?).and_return(true)
@@ -30,7 +31,7 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
 
   it 'rejects conversion output without a valid PDF signature' do
     blob = ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new('test office bytes'), filename: 'report.docx',
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(Struct.new(:code).new('SUP-0001'))), filename: 'report.docx',
       content_type: described_class::CONTENT_TYPES.first, identify: false
     )
     allow(described_class).to receive(:available?).and_return(true)
@@ -44,7 +45,7 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
 
   it 'does not use incomplete output when the conversion subprocess fails' do
     blob = ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new('test office bytes'), filename: 'report.docx',
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(Struct.new(:code).new('SUP-0001'))), filename: 'report.docx',
       content_type: described_class::CONTENT_TYPES.first, identify: false
     )
     allow(described_class).to receive(:available?).and_return(true)
@@ -72,6 +73,17 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
     allow(blob).to receive(:byte_size).and_return(10.megabytes + 1)
 
     expect(described_class.new(blob).call).to be_nil
+  end
+
+  it 'does not convert plain text masquerading as a DOCX' do
+    document = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new('Word format placeholder'), filename: 'fake.docx',
+      content_type: described_class::CONTENT_TYPES.first, identify: false
+    )
+    allow(described_class).to receive(:available?).and_return(true)
+    expect(SupplierOfficeConverterProcess).not_to receive(:call)
+
+    expect(described_class.new(document).call).to be_nil
   end
 
   it 'returns nil when no local conversion binary is installed' do

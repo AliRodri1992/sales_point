@@ -181,12 +181,26 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response.body).to include('Plain text supplier note')
     expect(response.headers['X-Content-Type-Options']).to eq('nosniff')
 
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(true)
+    expect(Suppliers::OfficeDocumentPdf).not_to receive(:new)
     get admin_supplier_document_preview_path(supplier, document_id: docx_id)
     expect(response).to have_http_status(:unsupported_media_type)
 
     get admin_supplier_document_download_path(supplier, document_id: txt_id)
     expect(response).to have_http_status(:ok)
     expect(response.headers['Content-Disposition']).to include('attachment')
+  end
+
+  it 'refuses Office files whose extension and MIME type disagree' do
+    office = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(supplier)), filename: 'wrong.xlsx',
+      content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
+    )
+    supplier.documents.attach(office)
+
+    get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:unsupported_media_type)
   end
 
   it 'streams and caches a rendered PDF for valid Office documents when conversion is available' do
