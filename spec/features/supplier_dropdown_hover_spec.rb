@@ -20,7 +20,8 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
   def open_dropdown(name)
     dropdown = find("select[name='#{name}']", visible: :all).find(:xpath, '..')
-    click_branded_dropdown(dropdown)
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
     dropdown
   end
 

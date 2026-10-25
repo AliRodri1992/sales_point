@@ -36,7 +36,8 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
 
     country_select = find('select[name="address[country_id]"]', visible: :all)
     dropdown = country_select.find(:xpath, '..')
-    click_branded_dropdown(dropdown)
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(dropdown).to have_css('button[aria-expanded="true"]')
     expect(dropdown).to have_css('[role="listbox"] input[type="search"]')
     expect(dropdown).to have_css('[role="option"] img')
 

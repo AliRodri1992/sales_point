@@ -5,7 +5,6 @@ let uniqueSelectId = 0
 // Progressive enhancement: the native select remains the submitted form control.
 export default class extends Controller {
   connect() {
-    this.traceEvent("connect-before")
     // Turbo/Stimulus may temporarily disconnect and reconnect an unchanged
     // form element. Preserve an open dropdown across that lifecycle event.
     const restoreOpen = this.element.dataset.deltaSelectRestoreOpen === "true"
@@ -61,17 +60,21 @@ export default class extends Controller {
     this.button.setAttribute("aria-controls", this.menu.id)
     this.element.append(this.button, this.menu)
 
-    // A document click listener could close the list on the very click that
-    // opened it (notably after focus changes in searchable dropdowns).
-    // Handle outside pointer presses before the trigger's click instead.
-    this.onButtonClick = (event) => {
-      this.traceEvent("button-click")
+    // Activate on pointerdown, before the browser changes focus. Some forms
+    // update their DOM between pointerdown and click, which loses the click.
+    // Native keyboard/assistive activation generates click with detail === 0.
+    this.onButtonPointerDown = (event) => {
+      if (event.button !== 0) return
+      event.preventDefault()
       event.stopPropagation()
       this.toggle()
-      this.traceEvent("button-click-after")
+      if (!this.searchable) this.button.focus()
+    }
+    this.onButtonClick = (event) => {
+      event.stopPropagation()
+      if (event.detail === 0) this.toggle()
     }
     this.onOutsidePointerDown = (event) => {
-      this.traceEvent("pointer:" + event.target.tagName + ":" + this.element.contains(event.target))
       if (!this.element.contains(event.target)) this.close()
     }
     this.onKeyDown = (event) => {
@@ -93,6 +96,7 @@ export default class extends Controller {
       attributeFilter: ["disabled", "selected", "label", "hidden"] })
     this.onReset = () => setTimeout(() => this.refresh(), 0)
     this.onInvalid = (event) => { event.preventDefault(); this.button.focus() }
+    this.button.addEventListener("pointerdown", this.onButtonPointerDown)
     this.button.addEventListener("click", this.onButtonClick)
     this.button.disabled = this.select.disabled
     this.button.addEventListener("focus", () => this.refresh())
@@ -103,13 +107,12 @@ export default class extends Controller {
     document.addEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.refresh()
     if (restoreOpen) this.open()
-    this.traceEvent("connect-after")
   }
 
   disconnect() {
-    this.traceEvent("disconnect")
     this.element.dataset.deltaSelectRestoreOpen = String(this.menu?.hidden === false)
     document.removeEventListener("pointerdown", this.onOutsidePointerDown, true)
+    this.button?.removeEventListener("pointerdown", this.onButtonPointerDown)
     this.button?.removeEventListener("click", this.onButtonClick)
     this.element.removeEventListener("keydown", this.onKeyDown)
     this.select?.removeEventListener("change", this.onChange)
@@ -211,13 +214,11 @@ export default class extends Controller {
   }
 
   toggle() {
-    this.traceEvent("toggle")
     if (this.menu.hidden) this.open()
     else this.close()
   }
 
   open() {
-    this.traceEvent("open")
     if (this.select.disabled) return
     this.refresh()
     if (this.searchable) {
@@ -253,15 +254,7 @@ export default class extends Controller {
     })
   }
 
-  traceEvent(name) {
-    if (this.element.dataset.deltaSelectTrace !== "true") return
-    const active = this.element.querySelector('button[aria-haspopup="listbox"]')
-    window.__deltaSelectTrace ||= []
-    window.__deltaSelectTrace.push(name + ":" + (active?.getAttribute("aria-expanded") || "none"))
-  }
-
   close() {
-    this.traceEvent("close")
     document.removeEventListener("scroll", this.onReposition, true)
     window.removeEventListener("resize", this.onReposition)
     this.element.classList.remove("delta-select-open")
