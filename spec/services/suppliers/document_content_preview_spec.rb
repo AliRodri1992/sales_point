@@ -30,10 +30,27 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(office).call).to include('Proveedor', 'SUP-0001', 'Lista de precios')
   end
 
+  it 'extracts text from an intact Office ZIP after format validation' do
+    document = blob(SupplierDemoDocumentOffice.docx_for(supplier), 'intact.docx',
+                    described_class::DOCX_TYPE)
+
+    expect(described_class.new(document).call).to include('DEMO SUP-0001')
+  end
+
   it 'does not attempt to parse invalid compressed attachments' do
     invalid = blob('not a ZIP document', 'fake.docx', described_class::DOCX_TYPE)
 
     expect(described_class.new(invalid).call).to be_nil
+  end
+
+  it 'refuses an unrelated ZIP disguised as an Office attachment' do
+    archive = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('notes.txt')
+      zip.write('not a spreadsheet')
+    end.string
+    fake = blob(archive, 'spoofed.xlsx', described_class::XLSX_TYPE)
+
+    expect(described_class.new(fake).call).to be_nil
   end
 
   it 'skips unrelated MIME types' do

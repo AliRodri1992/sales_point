@@ -203,6 +203,18 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(response).to have_http_status(:unsupported_media_type)
   end
 
+  it 'rejects a truncated Office ZIP without raising a server error' do
+    document = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("PK\\x03\\x04".b), filename: 'broken.docx',
+      content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
+    )
+    supplier.documents.attach(document)
+
+    get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:unsupported_media_type)
+  end
+
   it 'rejects legacy Office extensions backed by ordinary text' do
     document = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new('ordinary text'), filename: 'legacy.doc',
