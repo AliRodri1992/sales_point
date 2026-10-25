@@ -172,6 +172,30 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       .to be_present
   end
 
+  it 'accepts a blank SAT bank when editing a bank account with a manual bank name' do
+    account = bank_account(bank_name: 'Manual Bank')
+
+    patch admin_supplier_bank_account_path(supplier, account), params: {
+      supplier_bank_account: { sat_bank_code: '', bank_name: 'Updated Bank',
+                               holder_name: 'Vendor Holdings', currency_code: 'MXN' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(account.reload.sat_bank_code).to be_nil
+    expect(account.bank_name).to eq('Updated Bank')
+  end
+
+  it 'accepts a blank SAT bank when registering a manual bank account' do
+    post admin_supplier_bank_accounts_path(supplier), params: {
+      supplier_bank_account: { sat_bank_code: '', bank_name: 'Manual Bank',
+                               holder_name: 'Vendor Holdings', account_number: '123456789012',
+                               currency_code: 'MXN' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(supplier.supplier_bank_accounts.last.sat_bank_code).to be_nil
+  end
+
   it 'atomically switches the primary bank account for a supplier' do
     original = bank_account(primary: true)
     other = bank_account(bank_name: 'Backup bank', account_number: '999900001234')
