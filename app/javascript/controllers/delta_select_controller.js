@@ -5,6 +5,7 @@ let uniqueSelectId = 0
 // Progressive enhancement: the native select remains the submitted form control.
 export default class extends Controller {
   connect() {
+    this.traceEvent("connect-before")
     // Turbo/Stimulus may temporarily disconnect and reconnect an unchanged
     // form element. Preserve an open dropdown across that lifecycle event.
     const restoreOpen = this.element.dataset.deltaSelectRestoreOpen === "true"
@@ -64,10 +65,13 @@ export default class extends Controller {
     // opened it (notably after focus changes in searchable dropdowns).
     // Handle outside pointer presses before the trigger's click instead.
     this.onButtonClick = (event) => {
+      this.traceEvent("button-click")
       event.stopPropagation()
       this.toggle()
+      this.traceEvent("button-click-after")
     }
     this.onOutsidePointerDown = (event) => {
+      this.traceEvent("pointer:" + event.target.tagName + ":" + this.element.contains(event.target))
       if (!this.element.contains(event.target)) this.close()
     }
     this.onKeyDown = (event) => {
@@ -99,9 +103,11 @@ export default class extends Controller {
     document.addEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.refresh()
     if (restoreOpen) this.open()
+    this.traceEvent("connect-after")
   }
 
   disconnect() {
+    this.traceEvent("disconnect")
     this.element.dataset.deltaSelectRestoreOpen = String(this.menu?.hidden === false)
     document.removeEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.button?.removeEventListener("click", this.onButtonClick)
@@ -205,11 +211,13 @@ export default class extends Controller {
   }
 
   toggle() {
+    this.traceEvent("toggle")
     if (this.menu.hidden) this.open()
     else this.close()
   }
 
   open() {
+    this.traceEvent("open")
     if (this.select.disabled) return
     this.refresh()
     if (this.searchable) {
@@ -245,7 +253,15 @@ export default class extends Controller {
     })
   }
 
+  traceEvent(name) {
+    if (this.element.dataset.deltaSelectTrace !== "true") return
+    const active = this.element.querySelector('button[aria-haspopup="listbox"]')
+    window.__deltaSelectTrace ||= []
+    window.__deltaSelectTrace.push(name + ":" + (active?.getAttribute("aria-expanded") || "none"))
+  }
+
   close() {
+    this.traceEvent("close")
     document.removeEventListener("scroll", this.onReposition, true)
     window.removeEventListener("resize", this.onReposition)
     this.element.classList.remove("delta-select-open")

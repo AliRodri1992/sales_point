@@ -156,6 +156,13 @@ jobs:
           echo
           echo "__SCHEMA_END__"
 
+      - name: Run focused branded dropdown browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb
+
       - name: Run RSpec
         env:
           COVERAGE: true
