@@ -163,6 +163,8 @@ RSpec.describe SupplierBankAccount do
     account.update!(status: 'blocked', blocked_reason: 'Unverified change', primary: true)
     expect(account.reload.primary).to be(false)
     expect(account.blocked_reason).to eq('Unverified change')
+    account.update!(status: 'active')
+    expect(account.reload.blocked_reason).to be_nil
 
     account.destroy!
     expect(described_class.with_deleted.find(account.id).deleted_at).to be_present

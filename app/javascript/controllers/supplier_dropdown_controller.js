@@ -42,6 +42,23 @@ export default class extends Controller {
     this.close()
   }
 
+  navigate(event) {
+    if (!this.hasValueTarget || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
+
+    const options = Array.from(this.element.querySelectorAll("button[data-option-value]"))
+    if (options.length === 0) return
+
+    const current = options.indexOf(document.activeElement)
+    let index = current
+    if (event.key === "ArrowDown") index = (current + 1) % options.length
+    if (event.key === "ArrowUp") index = (current - 1 + options.length) % options.length
+    if (event.key === "Home") index = 0
+    if (event.key === "End") index = options.length - 1
+
+    event.preventDefault()
+    options[index].focus()
+  }
+
   close(refocus = false) {
     this.element.open = false
     if (refocus) this.element.querySelector("summary")?.focus()

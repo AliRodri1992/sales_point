@@ -176,6 +176,15 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(panel.css('input[type="hidden"][name="banks_status"]')).not_to be_empty
   end
 
+  it 'rejects blocking a bank account without a reason' do
+    account = bank_account
+    patch admin_supplier_bank_account_path(supplier, account), params: {
+      supplier_bank_account: { status: 'blocked', blocked_reason: '' }
+    }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(account.reload.status).to eq('active')
+  end
+
   it 'filters active and archived cards and shows a restore action for the archived account' do
     bank_account(bank_name: 'Active Bank')
     archived = bank_account(bank_name: 'Old Bank', deleted_at: Time.current)
