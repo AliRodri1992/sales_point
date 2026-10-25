@@ -35,7 +35,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(panel('statement').css('a')).to be_empty
     expect(panel('statement').text).not_to include('Manage payables')
     expect(panel('bank_accounts').at_css('[data-finance-empty-banks]')).to be_present
-    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_present
+    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     expect(panel('bank_accounts').at_css('[data-finance-bank-cards]')).to be_present
     header = panel('bank_accounts').at_css('[data-finance-banks-header]')
     heading_row = header.at_css('[data-finance-banks-heading-row]')
@@ -45,7 +45,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(header.at_css(manage_link)).to be_present
     expect(panel('bank_accounts').css(manage_link).size).to eq(1)
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
-    expect(panel('bank_accounts').at_css('select[name="banks_status"]')).to be_present
+    expect(panel('bank_accounts').at_css('input[type="radio"][name="banks_status"][value="active"]')).to be_present
+    expect(panel('bank_accounts').at_css('input[type="radio"][name="banks_bank"]')).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
   end
 
@@ -112,7 +113,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(cards.first.text).to include('Delta Bank', bank.card_display_number)
     expect(cards.first.text).not_to include('MXN', 'Supplier')
     expect(panel('bank_accounts').text).not_to include('Archived Bank', '123456789012', '999987654321')
-    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_present
+    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     heading_row = panel('bank_accounts').at_css('[data-finance-banks-heading-row]')
     expect(heading_row.at_css('h2')).to be_present
     expect(heading_row.at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
@@ -133,8 +134,8 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '123456789012')
     expect(cards.first.at_css('[title="Primary"]')).to be_present
     expect(cards.first.at_css('summary[aria-label="Bank account actions"]')).to be_present
-    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_present
-    expect(panel('bank_accounts').css('select[name="banks_bank"] option[value="BBVA México"]').size).to eq(1)
+    expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
+    expect(panel('bank_accounts').css('input[type="radio"][name="banks_bank"][value="BBVA México"]').size).to eq(1)
   end
 
   it 'shows archived accounts only on their status tab and permits their recovery' do
