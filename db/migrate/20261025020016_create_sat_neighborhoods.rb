@@ -23,5 +23,8 @@ class CreateSatNeighborhoods < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_neighborhoods,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_neighborhoods_validity'
+    add_check_constraint :sat_neighborhoods,
+                         "postal_code ~ '^[0-9]{5}$'",
+                         name: 'chk_sat_neighborhoods_identifier'
   end
 end

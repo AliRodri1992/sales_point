@@ -29,7 +29,7 @@ RSpec.describe 'SAT CFDI 4.0 catalog persistence', type: :model do
     ['sat_localities', %w[state_code code],
      { code: '0001', description: 'Localidad', state_code: 'AGU' }],
     ['sat_municipalities', %w[state_code code],
-     { code: '0001', description: 'Municipio', state_code: 'AGU' }],
+     { code: '0001', description: 'Municipio', state_code: 'AGU' }]
   ].each do |table, keys, attributes|
     describe table do
       let(:model) do

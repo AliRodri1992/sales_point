@@ -23,5 +23,8 @@ class CreateSatMunicipalities < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_municipalities,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_municipalities_validity'
+    add_check_constraint :sat_municipalities,
+                         "code ~ '^[0-9]{3}$'",
+                         name: 'chk_sat_municipalities_identifier'
   end
 end

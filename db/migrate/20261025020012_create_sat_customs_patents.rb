@@ -21,5 +21,8 @@ class CreateSatCustomsPatents < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_customs_patents,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_customs_patents_validity'
+    add_check_constraint :sat_customs_patents,
+                         "code ~ '^[0-9]{4}$'",
+                         name: 'chk_sat_customs_patents_identifier'
   end
 end
