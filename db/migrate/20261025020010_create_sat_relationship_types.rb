@@ -21,5 +21,8 @@ class CreateSatRelationshipTypes < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_relationship_types,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_relationship_types_validity'
+    add_check_constraint :sat_relationship_types,
+                         "code ~ '^[0-9]{2}",
+                         name: 'chk_sat_relationship_types_code_format'
   end
 end

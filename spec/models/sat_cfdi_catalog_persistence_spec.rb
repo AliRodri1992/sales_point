@@ -19,7 +19,7 @@ RSpec.describe 'SAT CFDI 4.0 catalog persistence', type: :model do
     ['sat_customs_patents', %w[code], { code: '1234', description: 'Patente' }],
     ['sat_customs_pediment_numbers', %w[code], { code: '24 01 1234 0000123', description: 'Pedimento' }],
     ['sat_tax_rates', %w[catalog_key],
-     { catalog_key: '002/Tasa/transfer/0.16', description: 'IVA',,
+     { catalog_key: '002/Tasa/transfer/0.16', description: 'IVA',
        tax_code: '002', factor_type: 'Tasa', tax_type: 'transfer' }],
     ['sat_tax_codes', %w[code], { code: '002', description: 'IVA' }],
     ['sat_neighborhoods', %w[postal_code code],
