@@ -23,5 +23,8 @@ class CreateSatStates < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_states,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_states_validity'
+    add_check_constraint :sat_states,
+                         "code ~ '^[A-Z0-9]{2,3}$'",
+                         name: 'chk_sat_states_details'
   end
 end

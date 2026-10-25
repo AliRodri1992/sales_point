@@ -27,5 +27,8 @@ class CreateSatCustomsPedimentNumbers < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_customs_pediment_numbers,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_customs_pediment_numbers_validity'
+    add_check_constraint :sat_customs_pediment_numbers,
+                         "fiscal_year IS NULL OR fiscal_year BETWEEN 2000 AND 2100",
+                         name: 'chk_sat_customs_pediment_numbers_details'
   end
 end

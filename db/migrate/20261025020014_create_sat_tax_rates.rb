@@ -31,5 +31,8 @@ class CreateSatTaxRates < ActiveRecord::Migration[8.1]
     add_check_constraint :sat_tax_rates,
                          'valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from',
                          name: 'chk_sat_tax_rates_validity'
+    add_check_constraint :sat_tax_rates,
+                         "minimum_rate IS NULL OR maximum_rate IS NULL OR minimum_rate <= maximum_rate",
+                         name: 'chk_sat_tax_rates_details'
   end
 end
