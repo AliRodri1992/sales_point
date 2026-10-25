@@ -50,14 +50,10 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
     wrapper.find('button[aria-haspopup="listbox"]').click
     expect(wrapper).to have_css('[role="option"]')
 
+    expect_stable_option_on_focus(wrapper, marker: 'preserved')
     page.execute_script(<<~JS, wrapper)
-      const select = arguments[0].querySelector('select')
-      const original = arguments[0].querySelector('[role="option"]')
-      original.dataset.stabilityMarker = 'preserved'
-      arguments[0].querySelector('button[aria-haspopup="listbox"]').focus()
-      select.dispatchEvent(new Event('change', { bubbles: true }))
+      arguments[0].querySelector('select').dispatchEvent(new Event('change', { bubbles: true }))
     JS
-
     expect(wrapper).to have_css('[role="option"][data-stability-marker="preserved"]')
 
     page.execute_script(<<~JS, wrapper)

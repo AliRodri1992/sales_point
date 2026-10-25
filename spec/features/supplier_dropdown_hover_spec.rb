@@ -47,12 +47,7 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
     option.hover
     expect(dropdown).to have_css('[role="option"]:hover')
-    page.execute_script(<<~JS, dropdown)
-      const option = arguments[0].querySelector('[role="option"][aria-selected="false"]')
-      option.dataset.stabilityMarker = 'hover'
-      arguments[0].querySelector('button[aria-haspopup="listbox"]').focus()
-    JS
-    expect(dropdown).to have_css('[role="option"][data-stability-marker="hover"]')
+    expect_stable_option_on_focus(dropdown, marker: 'hover')
     expect_selected_state_contrast(dropdown, option)
     dropdown
   end

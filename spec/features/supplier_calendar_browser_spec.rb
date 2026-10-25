@@ -35,12 +35,7 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     branch_dropdown = branch_select.find(:xpath, '..')
     branch_dropdown.find('button[aria-haspopup="listbox"]').click
     expect(branch_dropdown).to have_css('button[aria-expanded="true"]')
-    page.execute_script(<<~JS, branch_dropdown)
-      const option = arguments[0].querySelector('[role="option"]')
-      option.dataset.stabilityMarker = 'calendar'
-      arguments[0].querySelector('button[aria-haspopup="listbox"]').focus()
-    JS
-    expect(branch_dropdown).to have_css('[role="option"][data-stability-marker="calendar"]')
+    expect_stable_option_on_focus(branch_dropdown, marker: 'calendar')
     expect(branch_dropdown).to have_css('[role="option"]', text: branch.name)
     branch_dropdown.find('[role="option"]', text: branch.name, exact_text: true).click
     expect(branch_dropdown).to have_css('button[aria-expanded="false"]')

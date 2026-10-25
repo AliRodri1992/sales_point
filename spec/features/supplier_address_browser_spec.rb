@@ -42,12 +42,7 @@ RSpec.describe 'Supplier address browser workflow', type: :feature, js: true do
     expect(dropdown).to have_css('[role="option"] img')
 
     dropdown.find('[role="listbox"] input[type="search"]').set('mex')
-    page.execute_script(<<~JS, dropdown)
-      const option = arguments[0].querySelector('[role="option"]:not([hidden])')
-      option.dataset.stabilityMarker = 'country'
-      arguments[0].querySelector('button[aria-haspopup="listbox"]').focus()
-    JS
-    expect(dropdown).to have_css('[role="option"][data-stability-marker="country"]')
+    expect_stable_option_on_focus(dropdown, marker: 'country')
     mexico_option = dropdown.find('[role="option"]:not([hidden])', text: /Mexico|México/)
     mexico_option.click
 

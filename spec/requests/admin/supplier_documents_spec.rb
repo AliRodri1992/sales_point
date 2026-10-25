@@ -61,11 +61,8 @@ RSpec.describe 'Supplier document authorization', type: :request do
   end
 
   it 'refuses inline previews of unsupported HTML documents' do
-    supplier.documents.attach(
-      io: StringIO.new('<script>alert(1)</script>'),
-      filename: 'unsafe.html', content_type: 'text/html'
-    )
-    attachment = supplier.documents.attachments.last
+    attachment = attach_document(supplier)
+    attachment.blob.update!(content_type: 'text/html', filename: 'unsafe.html')
 
     get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
 
@@ -73,11 +70,8 @@ RSpec.describe 'Supplier document authorization', type: :request do
   end
 
   it 'does not render legacy Office documents when the PDF converter is unavailable' do
-    supplier.documents.attach(
-      io: StringIO.new('legacy Word document'),
-      filename: 'supplier.doc', content_type: 'application/msword'
-    )
-    attachment = supplier.documents.attachments.last
+    attachment = attach_document(supplier)
+    attachment.blob.update!(content_type: 'application/msword', filename: 'supplier.doc')
     allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(false)
 
     get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
