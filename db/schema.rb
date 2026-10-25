@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_163000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1091,10 +1091,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_163000) do
 
   create_table "supplier_bank_accounts", force: :cascade do |t|
     t.string "account_number"
+    t.string "account_type", limit: 30
     t.string "bank_name", limit: 120
-    t.integer "card_expiration_month"
-    t.integer "card_expiration_year"
+    t.string "blocked_reason", limit: 500
     t.string "card_last_four", limit: 4
+    t.string "card_number"
     t.string "clabe"
     t.datetime "created_at", null: false
     t.string "currency_code", limit: 3, default: "MXN", null: false
@@ -1104,9 +1105,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_163000) do
     t.bigint "organization_id", null: false
     t.boolean "primary", default: false, null: false
     t.string "sat_bank_code", limit: 3
+    t.string "status", limit: 20, default: "active", null: false
     t.bigint "supplier_id", null: false
     t.datetime "updated_at", null: false
+    t.datetime "verified_at"
+    t.string "verification_status", limit: 20, default: "pending", null: false
     t.index ["deleted_at"], name: "index_supplier_bank_accounts_on_deleted_at"
+    t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
     t.index ["organization_id", "supplier_id", "primary"], name: "idx_supplier_bank_accounts_org_supplier"
     t.index ["organization_id"], name: "index_supplier_bank_accounts_on_organization_id"
     t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"

@@ -1,27 +1,41 @@
 # frozen_string_literal: true
 
 class SupplierBankAccount < ApplicationRecord
+  ACCOUNT_TYPES = %w[checking savings payroll business other].freeze
+  STATUSES = %w[active inactive blocked].freeze
+  VERIFICATION_STATUSES = %w[pending verified rejected].freeze
+
   belongs_to :organization
   belongs_to :supplier
   belongs_to :sat_bank, foreign_key: :sat_bank_code, primary_key: :code,
                         optional: true, inverse_of: :supplier_bank_accounts
   has_many :supplier_payments, dependent: :restrict_with_exception
 
-  encrypts :account_number, :clabe
+  # Paranoia is inherited from ApplicationRecord: deleted_at is a timestamp.
+  encrypts :account_number, :clabe, :card_number
   validates :holder_name, presence: true, length: { maximum: 180 }
   validates :bank_name, presence: true, unless: -> { sat_bank_code.present? }
   validates :account_number, presence: true, unless: -> { clabe.present? }
   validates :currency_code, presence: true, length: { is: 3 }
-  validate :valid_card_preview
+  validates :account_type, inclusion: { in: ACCOUNT_TYPES }, allow_blank: true
+  validates :status, inclusion: { in: STATUSES }
+  validates :verification_status, inclusion: { in: VERIFICATION_STATUSES }
+  validates :blocked_reason, presence: true, if: -> { status == 'blocked' }
+  validates :blocked_reason, length: { maximum: 500 }, allow_blank: true
   validate :same_organization
   validate :supplier_available_for_creation, on: :create
   validate :valid_clabe
   validate :valid_account_number
+  validate :valid_card_number
   validate :consistent_bank_code
+
   before_validation :normalize_bank_values
-  before_validation :normalize_card_preview
+  before_validation :normalize_verification
 
   scope :active, -> { where(deleted_at: nil) }
+  scope :eligible_for_online_payment, -> {
+    active.where(status: 'active', verification_status: 'verified').where.not(clabe: nil)
+  }
 
   def masked_number
     last_four.present? ? "•••• #{last_four}" : '••••'
@@ -31,11 +45,8 @@ class SupplierBankAccount < ApplicationRecord
     "•••• •••• •••• #{card_last_four.presence || last_four.presence || '••••'}"
   end
 
-  def card_expiration_label
-    return if card_expiration_month.blank? || card_expiration_year.blank?
-
-    format('%<month>02d/%<year>02d', month: card_expiration_month, year: card_expiration_year % 100)
-  end
+  # The bank card layout is retained; bank-account expiry is no longer stored.
+  def card_expiration_label = nil
 
   def reveal!(actor:)
     raise Pundit::NotAuthorizedError unless Pundit.policy(actor, self)&.reveal?
@@ -45,15 +56,6 @@ class SupplierBankAccount < ApplicationRecord
   end
 
   private
-
-  def valid_card_preview
-    values = [card_last_four, card_expiration_month, card_expiration_year]
-    return if values.all?(&:blank?)
-
-    errors.add(:card_last_four, :invalid) unless card_last_four.to_s.match?(/\A\d{4}\z/)
-    errors.add(:card_expiration_month, :invalid) unless (1..12).cover?(card_expiration_month.to_i)
-    errors.add(:card_expiration_year, :invalid) unless (2000..2100).cover?(card_expiration_year.to_i)
-  end
 
   def supplier_available_for_creation
     errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
@@ -66,12 +68,29 @@ class SupplierBankAccount < ApplicationRecord
   def normalize_bank_values
     self.clabe = compact_number(clabe)
     self.account_number = compact_number(account_number)
+    self.card_number = compact_number(card_number)
     self.last_four = (clabe.presence || account_number).to_s.last(4).presence
+    self.card_last_four = card_number.to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
+    derive_sat_bank_from_clabe
   end
 
-  def normalize_card_preview
-    self.card_last_four = card_last_four.to_s.strip.presence
+  def derive_sat_bank_from_clabe
+    return unless clabe&.match?(/\A\d{18}\z/) && sat_bank_code.blank?
+
+    bank = SatBank.find_by(code: clabe.first(3))
+    self.sat_bank_code = bank.code if bank
+  end
+
+  def normalize_verification
+    self.primary = false if status.in?(%w[inactive blocked])
+    self.blocked_reason = blocked_reason.to_s.strip.presence if status == 'blocked'
+    self.blocked_reason = nil unless status == 'blocked'
+    if verification_status == 'verified'
+      self.verified_at ||= Time.current
+    else
+      self.verified_at = nil
+    end
   end
 
   def compact_number(value)
@@ -88,6 +107,22 @@ class SupplierBankAccount < ApplicationRecord
     return if account_number.blank?
 
     errors.add(:account_number, :invalid) unless account_number.match?(/\A\d{4,20}\z/)
+  end
+
+  def valid_card_number
+    return if card_number.blank?
+
+    digits = card_number.chars.map(&:to_i)
+    return if card_number.match?(/\A\d{12,19}\z/) && luhn_checksum_valid?(digits)
+
+    errors.add(:card_number, :invalid)
+  end
+
+  def luhn_checksum_valid?(digits)
+    digits.reverse.each_with_index.sum do |digit, index|
+      value = index.odd? ? digit * 2 : digit
+      value > 9 ? value - 9 : value
+    end.modulo(10).zero?
   end
 
   def consistent_bank_code

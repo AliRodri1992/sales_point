@@ -1,0 +1,30 @@
+es:
+  admin:
+    supplier_bank_details:
+      clabe_placeholder: "18 dígitos para transferencias SPEI"
+      clabe_hint: "La CLABE es necesaria para SPEI; si se captura, el banco se identifica automáticamente."
+      select_bank: "Seleccione un banco"
+      bank_hint: "Se identifica por los tres primeros dígitos de la CLABE. También puedes seleccionar el banco."
+      card_number: "Número de tarjeta (opcional)"
+      card_hint: "Solo si es necesario: se cifra y se mostrará enmascarado. Nunca captures CVV, NIP ni vencimiento."
+      account_type: "Tipo de cuenta"
+      select_type: "Seleccione tipo de cuenta"
+      account_types:
+        checking: "Cheques"
+        savings: "Ahorro"
+        payroll: "Nómina"
+        business: "Empresarial"
+        other: "Otro"
+      status: "Estado de la cuenta"
+      statuses:
+        active: "Activa"
+        inactive: "Inactiva"
+        blocked: "Bloqueada"
+      verification_status: "Estado de verificación"
+      verification_states:
+        pending: "Pendiente"
+        verified: "Verificada"
+        rejected: "Rechazada"
+      verified_at: "Verificada el %{date}"
+      blocked_reason: "Motivo de bloqueo"
+      blocked_reason_hint: "Obligatorio cuando el estado es Bloqueada"

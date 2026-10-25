@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["menu", "label"]
+  static targets = ["menu", "label", "value"]
 
   connect() {
     this.onOutsideClick = (event) => {
@@ -20,13 +20,25 @@ export default class extends Controller {
   }
 
   choose(event) {
-    const input = event.target.closest("label")?.querySelector("input")
+    const option = event.currentTarget
+    if (this.hasValueTarget && option.matches("button[data-option-value]")) {
+      this.valueTarget.value = option.dataset.optionValue
+      this.valueTarget.dispatchEvent(new Event("change", { bubbles: true }))
+      this.labelTarget.textContent = option.querySelector("[data-option-label]").textContent.trim()
+      this.element.querySelectorAll("button[data-option-value]").forEach((button) => {
+        button.setAttribute("aria-selected", String(button === option))
+      })
+      this.close()
+      return
+    }
+
+    const input = option.closest("label")?.querySelector("input")
     if (!input) return
 
     event.preventDefault()
     input.checked = true
     input.dispatchEvent(new Event("change", { bubbles: true }))
-    this.labelTarget.textContent = event.target.closest("label").querySelector("[data-option-label]").textContent.trim()
+    this.labelTarget.textContent = option.querySelector("[data-option-label]").textContent.trim()
     this.close()
   }
 

@@ -107,30 +107,54 @@ RSpec.describe SupplierBankAccount do
     expect(account.last_four).to eq('5678')
   end
 
-  it 'shows an optional card expiration without storing the full card number' do
+  it 'encrypts the optional card number, derives its last four digits and never stores expiration' do
     account = described_class.create!(
       organization: supplier.organization, supplier:, bank_name: 'BBVA México',
       holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
-      card_last_four: '6789', card_expiration_month: 8, card_expiration_year: 2029
+      card_number: '4111111111111111'
     )
 
-    expect(account.reload.card_display_number).to eq('•••• •••• •••• 6789')
-    expect(account.card_expiration_label).to eq('08/29')
-    expect(account.attributes).not_to have_key('card_number')
+    expect(account.reload.card_display_number).to eq('•••• •••• •••• 1111')
+    expect(account.card_expiration_label).to be_nil
+    expect(account.ciphertext_for(:card_number)).not_to include('4111111111111111')
+    expect(account.attributes).not_to have_key('card_expiration_year')
   end
 
-  it 'requires a complete and valid card preview when any card detail is supplied' do
+  it 'rejects invalid card numbers without requiring one for SPEI' do
     account = described_class.new(
       organization: supplier.organization, supplier:, bank_name: 'Example Bank',
       holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
-      card_last_four: 'abcd', card_expiration_month: 13, card_expiration_year: 1999
+      card_number: '4111111111111112'
     )
 
     expect(account).not_to be_valid
-    expect(account.errors.attribute_names).to include(:card_last_four, :card_expiration_month, :card_expiration_year)
+    expect(account.errors[:card_number]).to be_present
 
-    account.assign_attributes(card_last_four: '1234', card_expiration_month: 10, card_expiration_year: 2029)
+    account.card_number = '4111111111111111'
     expect(account).to be_valid
+  end
+
+  it 'manages verification timestamps and blocked reasons without disabling paranoia' do
+    account = described_class.create!(
+      organization: supplier.organization, supplier:, bank_name: 'Example Bank',
+      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN'
+    )
+
+    expect(account.verification_status).to eq('pending')
+    expect(account.verified_at).to be_nil
+    account.update!(verification_status: 'verified')
+    expect(account.verified_at).to be_present
+    account.update!(verification_status: 'rejected')
+    expect(account.verified_at).to be_nil
+
+    expect(account.update(status: 'blocked', blocked_reason: '')).to be(false)
+    account.update!(status: 'blocked', blocked_reason: 'Unverified change', primary: true)
+    expect(account.reload.primary).to be(false)
+    expect(account.blocked_reason).to eq('Unverified change')
+
+    account.destroy
+    expect(described_class.with_deleted.find(account.id).deleted_at).to be_present
+    expect(described_class.where(id: account.id)).not_to exist
   end
 
   it 'shows that the expiry was not registered for a traditional account' do

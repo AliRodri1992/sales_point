@@ -1,0 +1,30 @@
+en:
+  admin:
+    supplier_bank_details:
+      clabe_placeholder: "18 digits for SPEI transfers"
+      clabe_hint: "A CLABE is required for SPEI; the bank is identified automatically when entered."
+      select_bank: "Select a bank"
+      bank_hint: "The first three CLABE digits identify the bank. You may also select a bank."
+      card_number: "Card number (optional)"
+      card_hint: "Only if required: encrypted and displayed masked. Never enter CVV, PIN or expiration."
+      account_type: "Account type"
+      select_type: "Select account type"
+      account_types:
+        checking: "Checking"
+        savings: "Savings"
+        payroll: "Payroll"
+        business: "Business"
+        other: "Other"
+      status: "Account status"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+        blocked: "Blocked"
+      verification_status: "Verification status"
+      verification_states:
+        pending: "Pending"
+        verified: "Verified"
+        rejected: "Rejected"
+      verified_at: "Verified on %{date}"
+      blocked_reason: "Reason for blocking"
+      blocked_reason_hint: "Required when the status is Blocked"

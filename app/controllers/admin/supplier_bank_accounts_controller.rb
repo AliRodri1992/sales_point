@@ -92,8 +92,8 @@ module Admin
     def bank_params
       attributes = params.expect(supplier_bank_account: %i[
                       sat_bank_code bank_name holder_name
-                      account_number clabe currency_code primary
-                      card_last_four card_expiration_month card_expiration_year
+                      account_number clabe card_number currency_code primary
+                      account_type status verification_status blocked_reason
                     ])
       attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
       attributes
@@ -101,9 +101,10 @@ module Admin
 
     def assign_bank_details
       attributes = bank_params
-      @account.assign_attributes(attributes.except(:account_number, :clabe))
+      @account.assign_attributes(attributes.except(:account_number, :clabe, :card_number))
       @account.account_number = attributes[:account_number] if attributes[:account_number].present?
       @account.clabe = attributes[:clabe] if attributes[:clabe].present?
+      @account.card_number = attributes[:card_number] if attributes[:card_number].present?
     end
 
     def save_account

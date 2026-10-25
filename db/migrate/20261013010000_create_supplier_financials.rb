@@ -10,13 +10,21 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
       t.string :holder_name, null: false, limit: 180
       t.string :account_number
       t.string :clabe
+      t.string :card_number
+      t.string :card_last_four, limit: 4
       t.string :last_four, limit: 4
+      t.string :account_type, limit: 30
+      t.string :status, limit: 20, default: 'active', null: false
+      t.string :verification_status, limit: 20, default: 'pending', null: false
+      t.timestamp :verified_at
+      t.string :blocked_reason, limit: 500
       t.boolean :primary, default: false, null: false
       t.string :currency_code, limit: 3, default: 'MXN', null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
       t.index %i[organization_id supplier_id primary], name: 'idx_supplier_bank_accounts_org_supplier'
       t.index :deleted_at
+      t.index %i[organization_id supplier_id status], name: 'idx_supplier_bank_account_status'
       t.index %i[supplier_id primary], unique: true, where: '"primary" = true AND deleted_at IS NULL',
               name: 'idx_supplier_one_primary_bank_account'
       t.foreign_key :sat_banks, column: :sat_bank_code, primary_key: :code

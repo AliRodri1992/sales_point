@@ -1,0 +1,30 @@
+ko:
+  admin:
+    supplier_bank_details:
+      clabe_placeholder: "SPEI 이체용 18자리"
+      clabe_hint: "SPEI에는 CLABE가 필요하며 입력하면 은행을 자동으로 식별합니다."
+      select_bank: "은행 선택"
+      bank_hint: "CLABE 앞 3자리로 은행을 식별합니다. 은행을 직접 선택할 수도 있습니다."
+      card_number: "카드 번호 (선택)"
+      card_hint: "필요한 경우에만 입력합니다. 암호화하여 저장하고 마스킹합니다. CVV, PIN, 만료일을 입력하지 마세요."
+      account_type: "계좌 유형"
+      select_type: "계좌 유형 선택"
+      account_types:
+        checking: "당좌"
+        savings: "저축"
+        payroll: "급여"
+        business: "기업"
+        other: "기타"
+      status: "계좌 상태"
+      statuses:
+        active: "활성"
+        inactive: "비활성"
+        blocked: "차단"
+      verification_status: "확인 상태"
+      verification_states:
+        pending: "대기"
+        verified: "확인됨"
+        rejected: "거절됨"
+      verified_at: "확인 일자: %{date}"
+      blocked_reason: "차단 사유"
+      blocked_reason_hint: "차단 상태일 때 필수"

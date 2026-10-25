@@ -116,19 +116,49 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(1)
   end
 
-  it 'renders real card expiration metadata without exposing a full number or currency' do
-    account = bank_account(
-      bank_name: 'BBVA México', card_last_four: '6789',
-      card_expiration_month: 8, card_expiration_year: 2029
-    )
+  it 'retains the existing card design while masking the encrypted optional card number' do
+    account = bank_account(bank_name: 'BBVA México', card_number: '4111111111111111')
 
     get admin_supplier_bank_accounts_path(supplier)
 
     card = document.at_css('[data-supplier-bank-accounts-target="card"]')
-    expect(card.text).to include('BBVA', '•••• •••• •••• 6789', '08/29')
+    expect(card.text).to include('BBVA', '•••• •••• •••• 1111')
     expect(card.text).not_to include('MXN', 'Vendor Holdings', 'BBVA México')
-    expect(response.body).not_to include(account.account_number)
+    expect(response.body).not_to include(account.account_number, account.card_number)
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
+  end
+
+  it 'provides account type, blocked reason and verification state without collecting expiry or CVV' do
+    get new_admin_supplier_bank_account_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('select[name="supplier_bank_account[account_type]"]')).to be_present
+    expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
+    expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_present
+    expect(document.at_css('input[name="supplier_bank_account[card_number]"]')).to be_present
+    expect(document.at_css('input[name*="card_expiration"]')).to be_nil
+    expect(document.at_css('input[name*="cvv"]')).to be_nil
+  end
+
+  it 'accepts a verified, blocked account with an explicit reason and server-created verified timestamp' do
+    account = bank_account
+    patch admin_supplier_bank_account_path(supplier, account), params: {
+      supplier_bank_account: { status: 'blocked', blocked_reason: 'Account compromised',
+                               verification_status: 'verified', account_type: 'checking' }
+    }
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(account.reload).to have_attributes(status: 'blocked', blocked_reason: 'Account compromised',
+                                               verification_status: 'verified', account_type: 'checking')
+    expect(account.verified_at).to be_present
+  end
+
+  it 'shows bank dossier filters as full-width options without radio buttons' do
+    bank_account
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+    panel = document.at_css('#supplier-dossier-bank-accounts')
+    expect(panel.css('input[type="radio"]')).to be_empty
+    expect(panel.css('button[data-option-value]')).not_to be_empty
+    expect(panel.css('button[data-option-value]').all? { |button| button['class'].include?('w-full') }).to be(true)
+    expect(panel.css('input[type="hidden"][name="banks_status"]')).not_to be_empty
   end
 
   it 'filters active and archived cards and shows a restore action for the archived account' do
