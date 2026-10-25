@@ -85,4 +85,14 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
     expect(unfiltered.accounts.count).to eq(2)
     expect(unfiltered.counts).to eq(all: 2, active: 1, archived: 1)
   end
+
+  it 'escapes wildcard characters in bank account searches' do
+    create_account(name: 'Banco 100% Proveedor', digits: '7700')
+    create_account(name: 'Banco 100X Proveedor', digits: '8800')
+
+    page = described_class.new(supplier:, status: 'all', query: '100%').call
+
+    expect(page.accounts.map(&:bank_name)).to eq(['Banco 100% Proveedor'])
+    expect(page.total_count).to eq(1)
+  end
 end

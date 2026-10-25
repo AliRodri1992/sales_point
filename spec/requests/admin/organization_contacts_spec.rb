@@ -48,4 +48,12 @@ RSpec.describe 'Organization contacts', type: :request do
 
     expect(response).to have_http_status(:forbidden)
   end
+
+  it 'redirects unauthenticated users away from organization contacts' do
+    sign_out user
+
+    get admin_organization_contacts_path
+
+    expect(response).to redirect_to(new_user_session_path)
+  end
 end

@@ -134,4 +134,13 @@ RSpec.describe 'Supplier Mexican postal suggestions', type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
   end
+
+  it 'rejects a postal code containing a newline without contacting the provider' do
+    expect(Suppliers::MexicanPostalLookup).not_to receive(:new)
+
+    get postal_code_suggestions_admin_supplier_path(supplier),
+        params: { country: 'MX', postal_code: "54800\n" }
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
 end

@@ -78,4 +78,22 @@ RSpec.describe 'Supplier document authorization', type: :request do
 
     expect(response).to have_http_status(:unsupported_media_type)
   end
+
+  it 'does not disclose documents without a current organization' do
+    attachment = attach_document(supplier)
+    allow_any_instance_of(Admin::SupplierDocumentsController).to receive(:current_organization).and_return(nil)
+
+    get admin_supplier_document_download_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'refuses downloads when an attachment has lost its storage blob' do
+    attachment = attach_document(supplier)
+    allow_any_instance_of(ActiveStorage::Attachment).to receive(:blob).and_return(nil)
+
+    get admin_supplier_document_download_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:not_found)
+  end
 end

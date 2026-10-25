@@ -68,4 +68,11 @@ RSpec.describe SupplierInvoiceReceipt do
     expect { join.send(:matching_purchase) }.not_to raise_error
     expect(join.errors[:goods_receipt]).to be_empty
   end
+
+  it 'does not attempt purchase matching when the goods receipt has no invoice' do
+    join = described_class.new(goods_receipt: receipt)
+
+    expect { join.send(:matching_purchase) }.not_to raise_error
+    expect(join.errors[:goods_receipt]).to be_empty
+  end
 end
