@@ -34,7 +34,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     expect(header.css('article[data-supplier-contact-id]')).to be_empty
     expect(list_area.css('article[data-supplier-contact-id]').size).to eq(1)
     expect(list_area.at_css('[data-supplier-contacts-target="list"]')['class']).to include('md:grid-cols-2')
-    expect(list_area.at_css('[data-supplier-contacts-target="scroll"]')['class']).to include('overflow-y-auto')
+    expect(list_area.at_css('[data-supplier-contacts-target="scroll"]')['class']).not_to include('overflow-y-auto')
   end
 
   it 'aligns the manage contacts action with the filter buttons on the same toolbar' do
@@ -66,7 +66,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-contacts')
     expect(panel['data-controller']).to eq('supplier-contacts')
     expect(panel.at_css('[data-supplier-contacts-target="list"]')['class']).to include('md:grid-cols-2')
-    expect(panel.at_css('[data-supplier-contacts-target="scroll"]')['class']).to include('overflow-y-auto')
+    expect(panel.at_css('[data-supplier-contacts-target="scroll"]')['class']).not_to include('overflow-y-auto')
     expect(panel.at_css('[data-supplier-contacts-target="sentinel"]')).to be_present
 
     card = panel.at_css("article[data-supplier-contact-id='#{contact.id}']")

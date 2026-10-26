@@ -40,7 +40,7 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
 
     list = card_area.at_css('[data-supplier-addresses-target="list"]')
     expect(list['class']).to include('md:grid-cols-2')
-    expect(card_area.at_css('[data-supplier-addresses-target="scroll"]')['class']).to include('overflow-y-auto')
+    expect(card_area.at_css('[data-supplier-addresses-target="scroll"]')['class']).not_to include('overflow-y-auto')
     card = list.at_css("article[data-supplier-address-id='#{address.id}']")
     expect(card).to be_present
     expect(card.text).to include('Calle Principal', '42', 'Guadalajara', '44100')
