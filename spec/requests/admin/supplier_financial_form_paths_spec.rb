@@ -38,6 +38,10 @@ RSpec.describe 'Financial credit and banking form paths', type: :request do
   it 'displays a new supplier credit-note form' do
     get new_admin_supplier_credit_note_path
     expect(response).to have_http_status(:ok)
+    form = Nokogiri::HTML(response.body).at_css('form[action="/admin/supplier_credit_notes"]')
+    expect(form).to be_present
+    expect(form.at_css('select[name="supplier_credit_note[supplier_id]"]')).to be_present
+    expect(form.at_css('select[name="supplier_credit_note[supplier_invoice_id]"]')).to be_present
   end
 
   it 'accepts manual credit note details' do

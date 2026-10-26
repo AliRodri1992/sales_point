@@ -1,30 +1,30 @@
 <%= render 'admin/financials/navigation' %>
-<section class="max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-  <h1 class="mb-5 font-jakarta text-2xl font-bold"><%= t('admin.accounts_payable.new_payment') %></h1>
+<section class="w-full max-w-5xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+  <h1 class="mb-5 border-b border-slate-100 pb-5 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.accounts_payable.new_payment') %></h1>
   <%= render 'admin/financials/errors', record: @payment %>
-  <%= form_with model: [:admin, @payment], class: 'grid gap-4 md:grid-cols-2',
+  <%= form_with model: [:admin, @payment], class: 'grid min-w-0 gap-5 md:grid-cols-2',
                 data: { controller: 'supplier-payment-bank' } do |f| %>
-    <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'block text-sm font-medium' %>
-      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'supplier', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %></div>
-    <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'block text-sm font-medium' %>
-      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'currency', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %></div>
-    <div class="md:col-span-2"><%= f.label :supplier_bank_account_id, t('admin.accounts_payable.bank_accounts'), class: 'block text-sm font-medium' %>
+    <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'supplier', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+    <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'currency', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+    <div class="md:col-span-2"><%= f.label :supplier_bank_account_id, t('admin.accounts_payable.bank_accounts'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <%= f.select :supplier_bank_account_id,
                    options_for_select(@bank_accounts.map { |account| ["#{account.bank_name.presence || account.sat_bank_code} · #{account.masked_number}", account.id, { data: { supplier_id: account.supplier_id, currency_code: account.currency_code } }] }),
                    { include_blank: true },
-                   { data: { 'supplier-payment-bank-target': 'account' }, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' } %>
+                   { data: { 'supplier-payment-bank-target': 'account' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
     </div>
     <% %i[amount paid_on reference].each do |field| %>
-      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'block text-sm font-medium' %>
-        <% if field == :paid_on %><%= f.date_field field, required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %>
-        <% elsif field == :amount %><%= f.number_field field, min: '0.01', step: '0.01', required: true, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %>
-        <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %><% end %></div>
+      <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <% if field == :paid_on %><%= f.date_field field, required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
+        <% elsif field == :amount %><%= f.number_field field, min: '0.01', step: '0.01', required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
+        <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %><% end %></div>
     <% end %>
-    <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'block text-sm font-medium' %>
-      <%= f.text_area :notes, class: 'mt-1 w-full rounded-xl border border-slate-300 p-3' %></div>
+    <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <%= f.text_area :notes, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
     <div class="flex gap-3 md:col-span-2">
-      <%= f.submit t('admin.accounts_payable.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
-      <%= link_to t('admin.accounts_payable.back'), admin_supplier_payments_path, class: 'rounded-xl border border-slate-300 px-5 py-3' %>
+      <%= f.submit t('admin.accounts_payable.save'), class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-800' %>
+      <%= link_to t('admin.accounts_payable.back'), admin_supplier_payments_path, class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
     </div>
   <% end %>
 </section>

@@ -134,7 +134,9 @@ module Admin
       @suppliers = current_organization.suppliers.available.order(:name)
       @currencies = Currency.active.order(:code)
       @invoices = current_organization.supplier_invoices.posted.order(created_at: :desc).limit(200)
-      @returns = current_organization.purchase_returns.processed.order(created_at: :desc).limit(200)
+      @returns = current_organization.purchase_returns.processed
+                                 .includes(goods_receipt: :purchase_order)
+                                 .order(created_at: :desc).limit(200)
     end
   end
 end
