@@ -66,11 +66,9 @@ docker compose -f docker-compose.dev.yml logs --timestamps --tail=250 web assets
 docker stats --no-stream rails_sale_point sidekiq_sale_point
 ```
 
-Un `OOMKilled=true` indica que Docker terminó el proceso por memoria; `OOMKilled=false` requiere examinar los logs, incluso cuando el código de salida no es cero. En Docker Desktop, confirma el límite de memoria asignado, especialmente al ejecutar RSpec, Chromium y Sidekiq a la vez. El hook pre-push puede iniciar un contenedor `web` temporal para las pruebas si el principal está detenido: esto no significa que el propio hook haya detenido el servicio.
+Un `OOMKilled=true` indica que Docker terminó el proceso por memoria; `OOMKilled=false` requiere examinar los logs, incluso cuando el código de salida no es cero. En Docker Desktop, confirma el límite de memoria asignado, especialmente al ejecutar RSpec, Chromium y Sidekiq a la vez. El hook pre-push **siempre** inicia un contenedor `web` temporal para las pruebas, aunque el principal esté encendido. No ejecuta RSpec dentro del contenedor principal, así que un fallo de los tests no termina el servicio web de desarrollo.
 
 **Importante:** no ejecutar `docker compose down -v` ni `docker volume prune` para solucionar este problema; eso podría borrar la base de datos de desarrollo.
-
----
 
 ---
 

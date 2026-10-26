@@ -14,9 +14,6 @@ docker info >/dev/null 2>&1 || fail 'Docker Desktop no está iniciado o el daemo
 docker compose version >/dev/null 2>&1 || fail 'Se requiere Docker Compose v2 (docker compose).'
 
 compose=(docker compose -f docker-compose.dev.yml)
-if ! running_web="$("${compose[@]}" ps --status running --quiet web)"; then
-  fail 'No se pudo consultar el servicio web. Comprueba docker-compose.dev.yml y .env.development.'
-fi
 
 # These test-only overrides target PostgreSQL on the Compose network, never
 # localhost or a development DATABASE_URL inherited from the container.
@@ -31,13 +28,10 @@ test_environment=(
 
 rails_and_specs='unset DATABASE_URL; exec bundle exec ruby bin/with-test-db-lock sh -lc '\''bin/rails db:prepare && exec bundle exec rspec "$@"'\'' overcommit-rspec "$@"'
 
-if [[ -n "$running_web" ]]; then
-  printf '[RSpec] Ejecutando pruebas en el contenedor web existente.\n'
-  command=("${compose[@]}" exec -T "${test_environment[@]}" web sh -lc "$rails_and_specs" overcommit-rspec "$@")
-else
-  printf '[RSpec] El servicio web está detenido; iniciando un contenedor temporal con sus dependencias.\n'
-  command=("${compose[@]}" run --rm -T "${test_environment[@]}" web sh -lc "$rails_and_specs" overcommit-rspec "$@")
-fi
+# Always run in an isolated, disposable container to prevent browser specs
+# and test processes from exhausting the live development web container.
+printf '[RSpec] Ejecutando pruebas en un contenedor temporal aislado; el servidor web no se interrumpe.\n'
+command=("${compose[@]}" run --rm -T "${test_environment[@]}" web sh -lc "$rails_and_specs" overcommit-rspec "$@")
 
 status=0
 "${command[@]}" || status=$?
