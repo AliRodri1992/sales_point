@@ -2,7 +2,8 @@
 
 module Admin
   class SupplierCreditNotesController < ApplicationController
-    include FinancialAccess, FinancialPagination, FinancialListingFilters
+    include FinancialAccess
+    include FinancialPagination
     include Admin::CreditNotePosting
 
     before_action :set_credit, only: %i[show apply cancel download_xml post_credit]
@@ -13,9 +14,8 @@ module Admin
 
     def index
       authorize current_organization.supplier_credit_notes.new, :index?
-      scope = policy_scope(current_organization.supplier_credit_notes)
-      scope = filter_financial_listing(scope, statuses: SupplierCreditNote.statuses.keys, reference_column: 'folio')
-      @credits = paginate_financial(scope, includes: %i[supplier currency])
+      @credits = paginate_filtered_financial(policy_scope(current_organization.supplier_credit_notes),
+                                             includes: %i[supplier currency], reference_column: :folio)
     end
 
     def show
