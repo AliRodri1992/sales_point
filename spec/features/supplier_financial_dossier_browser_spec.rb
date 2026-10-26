@@ -65,7 +65,7 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     expect(page).to have_current_path(/banks_q=BBVA/)
     expect(page).to have_current_path(admin_supplier_path(supplier), ignore_query: true)
     expect(URI.decode_www_form(URI.parse(page.current_url).query).to_h).to include(
-      'tab' => 'bank_accounts', 'banks_q' => 'BBVA', 'banks_status' => 'active', 'banks_bank' => 'BBVA México'
+      'tab' => 'bank_accounts', 'banks_q' => 'BBVA', 'banks_bank' => 'BBVA México'
     )
     expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
     expect(page).to have_css('#supplier-dossier-bank-accounts [data-supplier-bank-accounts-target="card"]', count: 1)

@@ -50,7 +50,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
     expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_status"][value="active"]')).to be_present
     expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_bank"]')).to be_present
-    expect(panel('bank_accounts').at_css('button[data-option-value="active"][aria-selected="true"]')).to be_present
+    expect(panel('bank_accounts').at_css('[data-finance-bank-status-tabs] a[aria-current="page"]')).to be_present
     expect(panel('bank_accounts').css('input[type="radio"]')).to be_empty
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
   end

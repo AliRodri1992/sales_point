@@ -38,15 +38,16 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
   it 'shows only one bank status filter in the dossier' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
-    panel = dossier.at_css('[data-section="bank_accounts"]')
+    panel = dossier.at_css('section[data-section="bank_accounts"]')
     expect(panel.css('[data-finance-bank-status-tabs] a').size).to eq(3)
-    expect(panel.css('[name="banks_status"]')).to be_empty
+    expect(panel.css('select[name="banks_status"]')).to be_empty
+    expect(panel.css('input[type="hidden"][name="banks_status"]').size).to eq(1)
   end
 
   it 'uses ISO currency codes for supplier commercial amounts' do
     supplier.update!(credit_limit: 800, minimum_order_amount: 200)
     get admin_supplier_path(supplier, tab: 'commercial')
-    panel = dossier.at_css('[data-section="commercial"]')
+    panel = dossier.at_css('section[data-section="commercial"]')
     expect(panel.text).to include('800', '200', supplier.currency.code)
   end
 

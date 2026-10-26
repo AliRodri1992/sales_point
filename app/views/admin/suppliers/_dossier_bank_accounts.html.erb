@@ -20,6 +20,7 @@
       <%= form_with url: admin_supplier_path(supplier), method: :get,
                     class: 'space-y-3' do %>
         <%= hidden_field_tag :tab, 'bank_accounts' %>
+        <%= hidden_field_tag :banks_status, bank_page.status %>
         <div data-finance-banks-search-row class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div class="relative min-w-0 flex-1">
             <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
