@@ -16,11 +16,17 @@
   </div>
   <div class="mt-4 space-y-3">
     <% calendar.selected_items.each do |item| %>
-      <article class="rounded-xl border border-slate-100 bg-slate-50/70 p-3" data-day-item="<%= item[:type] %>">
-        <p class="text-xs font-semibold text-emerald-700">
-          <%= item[:time] %> · <%= t("admin.supplier_calendar.kinds.#{item[:kind]}") %>
-          · <%= t("admin.supplier_calendar.#{item[:type] == :event ? 'single' : 'weekly'}") %>
-        </p>
+      <article class="rounded-xl border border-slate-100 bg-slate-50/70 p-3" data-day-item="<%= item[:type] %>" data-event-status="<%= item[:record].status if item[:type] == :event %>">
+        <% kind_style = { 'visit' => 'bg-sky-50 text-sky-800', 'order' => 'bg-amber-50 text-amber-800', 'delivery' => 'bg-emerald-50 text-emerald-800', 'other' => 'bg-violet-50 text-violet-800' }.fetch(item[:kind].to_s) %>
+        <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+          <span class="text-slate-600"><%= item[:time] %></span>
+          <span class="rounded-full px-2 py-1 <%= kind_style %>"><%= t("admin.supplier_calendar.kinds.#{item[:kind]}") %></span>
+          <span class="rounded-full bg-slate-100 px-2 py-1 text-slate-700"><%= t("admin.supplier_calendar.#{item[:type] == :event ? 'single' : 'weekly'}") %></span>
+          <% if item[:type] == :event %>
+            <% status_style = { 'scheduled' => 'bg-amber-50 text-amber-800', 'completed' => 'bg-emerald-50 text-emerald-800', 'cancelled' => 'bg-rose-50 text-rose-800' }.fetch(item[:record].status) %>
+            <span class="rounded-full px-2 py-1 <%= status_style %>"><%= t("admin.supplier_calendar.statuses.#{item[:record].status}") %></span>
+          <% end %>
+        </div>
         <p class="mt-1 break-words text-sm font-bold text-slate-900"><%= item[:title] %></p>
         <p class="mt-1 text-xs text-slate-500"><%= item[:branch] %></p>
         <% if can_manage %>

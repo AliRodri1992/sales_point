@@ -166,7 +166,8 @@
           <% calendar.schedules.first(8).each do |schedule| %>
             <div class="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold text-emerald-800"><%= t("admin.supplier_calendar.kinds.#{schedule.kind}") %></span>
+                <% kind_style = { 'visit' => 'bg-sky-50 text-sky-800', 'order' => 'bg-amber-50 text-amber-800', 'delivery' => 'bg-emerald-50 text-emerald-800' }.fetch(schedule.kind, 'bg-slate-100 text-slate-700') %>
+                <span class="rounded-full px-2 py-1 text-xs font-bold <%= kind_style %>"><%= t("admin.supplier_calendar.kinds.#{schedule.kind}") %></span>
                 <% if can_manage %>
                   <div class="flex items-center gap-2">
                     <% if supplier.active? %>
@@ -195,7 +196,12 @@
         <div class="mt-4 space-y-3">
           <% calendar.events.first(12).each do |event| %>
             <div data-calendar-event="<%= event.id %>" class="rounded-xl border border-slate-100 bg-slate-50/70 p-3">
-              <p class="text-xs font-semibold text-emerald-800"><%= t("admin.supplier_calendar.kinds.#{event.kind}") %></p>
+              <% event_style = { 'visit' => 'bg-sky-50 text-sky-800', 'order' => 'bg-amber-50 text-amber-800', 'delivery' => 'bg-emerald-50 text-emerald-800', 'other' => 'bg-violet-50 text-violet-800' }.fetch(event.kind) %>
+              <% status_style = { 'scheduled' => 'bg-amber-50 text-amber-800', 'completed' => 'bg-emerald-50 text-emerald-800', 'cancelled' => 'bg-rose-50 text-rose-800' }.fetch(event.status) %>
+              <div class="flex flex-wrap gap-2">
+                <span class="rounded-full px-2 py-1 text-xs font-semibold <%= event_style %>"><%= t("admin.supplier_calendar.kinds.#{event.kind}") %></span>
+                <span class="rounded-full px-2 py-1 text-xs font-semibold <%= status_style %>"><%= t("admin.supplier_calendar.statuses.#{event.status}") %></span>
+              </div>
               <p class="mt-1 break-words text-sm font-bold text-slate-900"><%= event.title %></p>
               <p class="mt-1 text-xs text-slate-500"><%= l(event.starts_at, format: '%d/%m/%Y %H:%M') %> · <%= event.branch.name %></p>
               <% if can_manage %>

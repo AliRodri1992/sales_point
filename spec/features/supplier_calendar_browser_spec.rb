@@ -55,6 +55,20 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(supplier.supplier_events.not_deleted.count).to eq(1)
   end
 
+  scenario 'distinguishes visit types and completion states in the daily view' do
+    supplier.supplier_events.create!(
+      branch:, title: 'Completed delivery', kind: 'delivery', status: 'completed',
+      starts_at: Time.zone.local(2026, 10, 23, 9), ends_at: Time.zone.local(2026, 10, 23, 10)
+    )
+    visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
+                                       calendar_day: '2026-10-23')
+
+    item = find('[data-day-item="event"][data-event-status="completed"]')
+    expect(item).to have_text('Completed delivery')
+    expect(item).to have_text('Completed')
+    expect(item).to have_css('.bg-emerald-50', text: 'Delivery')
+  end
+
   scenario 'closes the drawer with Escape and restores focus to the opener' do
     visit admin_supplier_path(supplier, tab: 'schedules')
     button = find('header button[data-action="supplier-calendar#open"]')
