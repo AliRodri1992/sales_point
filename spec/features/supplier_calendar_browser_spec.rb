@@ -61,7 +61,7 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
       starts_at: Time.zone.local(2026, 10, 23, 9), ends_at: Time.zone.local(2026, 10, 23, 10)
     )
     visit admin_supplier_path(supplier, tab: 'schedules', calendar_view: 'day',
-                                       calendar_day: '2026-10-23')
+                                         calendar_day: '2026-10-23')
 
     item = find('[data-day-item="event"][data-event-status="completed"]')
     expect(item).to have_text('Completed delivery')
