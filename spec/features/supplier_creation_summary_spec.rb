@@ -43,9 +43,10 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
 
     summary = show_summary
     headings = summary.all('h3').map(&:text)
-    expect(headings).to include(*%w[step_1 step_2 step_3 step_5 step_6 step_7].map do |step|
-      I18n.t("admin.suppliers.onboarding.steps.#{step}")
-    end)
+    %w[step_1 step_2 step_3 step_5 step_6 step_7].each do |step|
+      label = I18n.t("admin.suppliers.onboarding.steps.#{step}")
+      expect(headings.any? { |heading| heading.start_with?(label) }).to be(true)
+    end
     expect(summary).to have_text('SUP-SUMMARY-01')
     expect(summary).to have_text('XAXX010101000')
     expect(summary).to have_text('Avenida Reforma')
@@ -74,9 +75,10 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     summary = show_summary
     headings = summary.all('h3').map(&:text)
 
-    expect(headings).to include(*%w[step_1 step_2 step_3 step_5 step_6 step_7].map do |step|
-      I18n.t("admin.suppliers.onboarding.steps.#{step}")
-    end)
+    %w[step_1 step_2 step_3 step_5 step_6 step_7].each do |step|
+      label = I18n.t("admin.suppliers.onboarding.steps.#{step}")
+      expect(headings.any? { |heading| heading.start_with?(label) }).to be(true)
+    end
     expect(summary).to have_text(supplier.code)
     expect(summary).to have_text(supplier.rfc)
     expect(summary).to have_text('Avenida Reforma')

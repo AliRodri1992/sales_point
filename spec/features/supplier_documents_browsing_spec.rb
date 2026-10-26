@@ -196,6 +196,18 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-documents-target="dialog"]:not(.hidden)')
   end
 
+  scenario 'updates server-backed document filters without a full page reload' do
+    10.times { |number| add_file("Supplier file #{number}.pdf") }
+    visit admin_supplier_path(supplier, tab: 'documents')
+
+    page.execute_script('window.__documentFilterPageMarker = 77')
+    find('[data-supplier-documents-target="search"]').set('Supplier file 9')
+    expect(page).to have_css('[data-supplier-documents-server-total-value="1"]', wait: 10)
+    expect(page).to have_css('[data-supplier-documents-target="card"]:not(.hidden)', count: 1)
+    expect(page.evaluate_script('window.__documentFilterPageMarker')).to eq(77)
+    expect(page).to have_no_css('[data-supplier-documents-target="filterError"]:not(.hidden)')
+  end
+
   scenario 'paginates eight cards without hiding the supplier navigation' do
     10.times { |number| add_file("Supplier file #{number}.pdf") }
 

@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Browses supplier attachments locally; every preview uses the authorized Rails endpoint.
 export default class extends Controller {
   static targets = [
-    "categorySelect", "search", "status", "date", "card", "noResults",
+    "categorySelect", "search", "status", "date", "card", "noResults", "filterError",
     "uploadForm", "uploadInput", "uploadSelection", "uploadSubmit", "uploadNames",
     "uploadCount", "uploadError", "dropzone", "queuedList", "queuedDialog",
     "queuedClose", "queuedImage", "queuedFrame", "queuedText", "queuedUnsupported",
@@ -29,6 +29,7 @@ export default class extends Controller {
   }
 
   connect() {
+    this.filterRequest = null
     this.queuedFiles = []
     this.queuedPreviewTrigger = null
     this.queuedDialogOverflow = null
@@ -49,6 +50,7 @@ export default class extends Controller {
     this.closePreview({ restoreFocus: false })
     this.cancelPreview()
     if (this.filterTimer) clearTimeout(this.filterTimer)
+    this.filterRequest?.abort()
   }
 
   filter(event) {
@@ -74,7 +76,56 @@ export default class extends Controller {
       else url.searchParams.delete(name)
     }
     url.searchParams.delete("documents_page")
-    window.location.assign(url.toString())
+    this.loadDocuments(url, { restoreSearch: true })
+  }
+
+  retryFilters(event) {
+    event.preventDefault()
+    this.applyServerFilters()
+  }
+
+  async loadDocuments(location, { restoreSearch = false } = {}) {
+    this.filterRequest?.abort()
+    const request = new AbortController()
+    this.filterRequest = request
+    const url = new URL(location, window.location.href)
+    const keepFocus = restoreSearch && this.hasSearchTarget && document.activeElement === this.searchTarget
+    const caret = keepFocus ? this.searchTarget.selectionStart : null
+    this.filterErrorTarget?.classList.add("hidden")
+    this.element.setAttribute("aria-busy", "true")
+
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: "text/html", "X-Requested-With": "XMLHttpRequest" },
+        credentials: "same-origin", signal: request.signal
+      })
+      if (!response.ok) throw new Error(`Document filters failed: ${response.status}`)
+      const html = await response.text()
+      if (request.signal.aborted) return
+      const parsed = new DOMParser().parseFromString(html, "text/html")
+      const updated = parsed.querySelector('section[data-section="documents"][data-controller~="supplier-documents"]')
+      if (!updated) throw new Error("Document section missing from response")
+      const visible = !this.element.hidden
+      updated.hidden = !visible
+      updated.classList.toggle("hidden", !visible)
+      updated.setAttribute("aria-hidden", String(!visible))
+      this.element.replaceWith(updated)
+      window.history.replaceState(window.history.state, "", url)
+      if (keepFocus) {
+        const input = updated.querySelector('[data-supplier-documents-target="search"]')
+        input?.focus()
+        if (caret != null) input?.setSelectionRange(caret, caret)
+      }
+    } catch (error) {
+      if (error.name === "AbortError") return
+      if (this.hasFilterErrorTarget) this.filterErrorTarget.classList.remove("hidden")
+      console.error(error)
+    } finally {
+      if (this.filterRequest === request) {
+        this.element.removeAttribute("aria-busy")
+        this.filterRequest = null
+      }
+    }
   }
 
   pickFiles() {
@@ -237,14 +288,14 @@ export default class extends Controller {
   }
 
   previous() {
-    if (this.hasPreviousUrlValue) return window.location.assign(this.previousUrlValue)
+    if (this.hasPreviousUrlValue) return this.loadDocuments(this.previousUrlValue)
     if (this.hasServerPageValue || this.pageNumber <= 1) return
     this.pageNumber -= 1
     this.refresh()
   }
 
   next() {
-    if (this.hasNextUrlValue) return window.location.assign(this.nextUrlValue)
+    if (this.hasNextUrlValue) return this.loadDocuments(this.nextUrlValue)
     if (this.hasServerPageValue || this.pageNumber * this.pageSizeValue >= this.matches().length) return
     this.pageNumber += 1
     this.refresh()
