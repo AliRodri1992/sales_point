@@ -71,7 +71,7 @@ SYSTEM_ROLES = [
     description: 'Soporte técnico y resolución de incidencias.',
     role_type: :system
   }
-].freeze
+].freeze unless defined?(SYSTEM_ROLES)
 
 DEFAULT_PERMISSIONS = [
   {
@@ -298,7 +298,7 @@ DEFAULT_PERMISSIONS = [
     description: 'Add, update and archive vendor bank accounts.' },
   { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
     description: 'Access full encrypted banking details with audit logging.' }
-].freeze
+].freeze unless defined?(DEFAULT_PERMISSIONS)
 
 def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
@@ -339,13 +339,6 @@ def flatten_hash(hash, prefix = '')
     end
   end
   result
-end
-
-def create_sat_month(number)
-  SatMonth.find_or_create_by!(code: format('%02d', number)) do |month|
-    month.description = Date::MONTHNAMES[number]
-    month.month_number = number
-  end
 end
 
 def seed_permissions
@@ -409,7 +402,7 @@ def assign_admin_role(user, administrator_role)
                "asignacion_id=#{assignment.id}"
 end
 
-USER_SEED_ROLES = %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
+USER_SEED_ROLES ||= %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
 
 def seed_users(count = 15)
   roles = SystemRole.where(code: USER_SEED_ROLES).order(:id).to_a
@@ -481,11 +474,10 @@ SeedConsole.track('Traducciones', Translate) do
   end
 end
 
-SeedConsole.track('Meses SAT', SatMonth) do
-  (1..12).each do |i|
-    create_sat_month(i)
-  end
-end
+require_relative 'seeds/sat_catalogs'
+require_relative 'seeds/sat_catalog_csv'
+SatCatalogSeeds.seed!
+SeedConsole.track('CSV completos del SAT') { SatCatalogCsv.seed! }
 
 require_relative 'seeds/currencies'
 require_relative 'seeds/countries'

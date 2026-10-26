@@ -10,7 +10,10 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
       Supplier, Contact, Address, SupplierSchedule, SupplierEvent, SupplierProduct,
       SupplierProductPrice, SupplierBankAccount, Product, Inventory,
       Branch, Category, Client, Country, Currency, CountryCurrency,
-      ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime
+      ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime, SatBank,
+      SatCfdiUse, SatCountry, SatCurrency, SatExportType, SatFactorType,
+      SatPaymentMethod, SatPaymentMethodType, SatPeriodicity, SatRelationshipType,
+      SatTaxCode, SatTaxObject, SatUnitKey, SatVoucherType
     ]
   end
 
