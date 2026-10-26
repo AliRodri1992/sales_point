@@ -14,6 +14,7 @@ RSpec.describe 'SAT catalog seeds', type: :model do
     expect(SatMonth.find_by!(code: '18').description).to eq('Noviembre-Diciembre')
     expect(SatFiscalRegime.find_by!(code: '601').person_type).to eq('M')
     expect(SatFiscalRegime.find_by!(code: '626').applies_to_company).to be(true)
+    expect(SatFiscalRegime.for_person('M')).to include(SatFiscalRegime.find_by!(code: '626'))
     expect(SatPaymentMethodType.order(:code).pluck(:code)).to include('PUE', 'PPD')
     expect(SatPaymentMethod.find_by!(code: '03').description).to include('Transferencia')
     expect(SatCfdiUse.find_by!(code: 'G03').description).to eq('Gastos en general')

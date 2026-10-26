@@ -99,7 +99,7 @@ module SatCatalogCsv
 
     # SAT source is normalized; DB types and constraints validate each row.
     # Bulk loading large postal/product/pediment catalogs must avoid N queries.
-    # rubocop:disable-next-line Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     model.insert_all(batch, returning: false)
     batch.clear
     count

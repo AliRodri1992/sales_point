@@ -4,7 +4,10 @@ class SatFiscalRegime < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   scope :for_person, lambda { |type|
-    PERSON_TYPES.include?(type) ? where(person_type: type) : none
+    next none unless PERSON_TYPES.include?(type)
+
+    applicability = type == 'F' ? :applies_to_individual : :applies_to_company
+    where(person_type: type).or(where(applicability => true))
   }
 
   scope :valid_on, lambda { |date = Date.current|
