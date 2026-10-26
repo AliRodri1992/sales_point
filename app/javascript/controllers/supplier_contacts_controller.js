@@ -20,7 +20,7 @@ export default class extends Controller {
     if (this.hasScrollTarget && this.hasSentinelTarget && "IntersectionObserver" in window) {
       this.observer = new IntersectionObserver((entries) => {
         if (entries.some((entry) => entry.isIntersecting)) this.loadMore()
-      }, { root: this.scrollTarget, rootMargin: "200px 0px" })
+      }, { root: null, rootMargin: "200px 0px" })
       this.observer.observe(this.sentinelTarget)
     }
   }

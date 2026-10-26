@@ -35,7 +35,7 @@
   </div>
 
   <div data-supplier-contacts-cards class="min-w-0 pt-1">
-    <div class="max-h-[70vh] overflow-y-auto overscroll-contain pr-1" data-supplier-contacts-target="scroll" tabindex="0" aria-label="<%= t('admin.supplier_dossier.contact_cards.scroll_label') %>">
+    <div class="min-w-0" data-supplier-contacts-target="scroll" tabindex="0" aria-label="<%= t('admin.supplier_dossier.contact_cards.scroll_label') %>">
     <div class="grid grid-cols-1 items-start gap-3 md:grid-cols-2 md:gap-4" data-supplier-contacts-target="list">
       <%= render 'admin/suppliers/dossier_contact_cards', contacts: contacts_page.contacts, supplier: supplier, can_manage_contacts: can_manage_contacts %>
     </div>

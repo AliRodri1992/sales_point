@@ -86,6 +86,15 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(panel.at_css("form[action='#{admin_supplier_documents_path(supplier)}']")).to be_nil
   end
 
+  it 'uses the page scroll for contact and address grids, not nested scrolling panes' do
+    get admin_supplier_path(supplier)
+    %w[contacts addresses].each do |section|
+      container = dossier.at_css("section[data-section='#{section}'] [data-supplier-#{section}-target='scroll']")
+      expect(container).to be_present
+      expect(container['class']).not_to include('overflow-y-auto', 'max-h-[70vh]')
+    end
+  end
+
   it 'separates the calendar empty state from its management header' do
     get admin_supplier_path(supplier, tab: 'schedules')
 
