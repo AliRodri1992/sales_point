@@ -19,3 +19,6 @@ jobs:
 
       - name: Preserve isolated RSpec runner regression tests
         run: bash test/overcommit_rspec_test.sh
+
+      - name: Validate Sidekiq image repair flow without Docker daemon
+        run: bash test/repair_sidekiq_vips_test.sh

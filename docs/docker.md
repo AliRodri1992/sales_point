@@ -39,6 +39,30 @@ CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 
 ### Docker Compose (Desarrollo)
 
+### Reparar Sidekiq cuando ruby-vips no encuentra libvips.so.42
+
+Si `ruby-vips` existe en `Gemfile.lock`, el `Dockerfile.dev` instala `libvips42`
+y el build terminó sin errores, pero un `docker compose exec sidekiq`
+sigue sin encontrar `libvips.so.42`, la imagen reconstruida y el contenedor
+en ejecución no están sincronizados.
+
+Ejecuta desde la raíz de `sale_point`:
+
+```bash
+bash bin/repair-sidekiq-vips
+```
+
+Este comando comprueba **primero la imagen**, reconstruye únicamente Sidekiq
+si falta Vips, comprueba otra vez la imagen **antes de sustituir el contenedor**,
+recrea `sidekiq` con Compose y verifica el paquete y la gema **dentro del
+contenedor nuevo**. Termina con `[VIPS][OK]` solamente cuando funciona.
+No detiene `web`, `db` ni `redis`, ni elimina volúmenes.
+
+Si el proceso termina con error, conserva el diagnóstico en la terminal: será
+la comprobación específica que falló y no será necesario repetir comandos
+inconexos de Docker.
+
+
 **Si el servicio `assets` muestra `[watch] stopped automatically because stdin was closed`:**
 esbuild se había configurado con `--watch`, que finaliza en procesos sin entrada
 estándar interactiva. Foreman detecta que terminó `js.1` y envía `SIGTERM` a
