@@ -5,7 +5,9 @@ export default class extends Controller {
   static targets = [
     "categorySelect", "search", "status", "date", "card", "noResults",
     "uploadForm", "uploadInput", "uploadSelection", "uploadSubmit", "uploadNames",
-    "uploadCount", "uploadError", "dropzone",
+    "uploadCount", "uploadError", "dropzone", "queuedList", "queuedDialog",
+    "queuedClose", "queuedImage", "queuedFrame", "queuedText", "queuedUnsupported",
+    "queuedName",
     "range", "page", "previous", "next", "previewContent", "previewEmpty",
     "previewName", "previewType", "previewSize", "previewDate", "previewDescription",
     "previewFrame", "previewImage", "previewText", "unsupported", "previewError",
@@ -27,6 +29,9 @@ export default class extends Controller {
   }
 
   connect() {
+    this.queuedFiles = []
+    this.queuedPreviewTrigger = null
+    this.queuedDialogOverflow = null
     if (this.hasUploadInputTarget) this.filesChanged()
     if (!this.hasCardTarget) return
 
@@ -39,6 +44,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.closeQueuedPreview({ restoreFocus: false })
+    this.revokeQueuedUrls()
     this.closePreview({ restoreFocus: false })
     this.cancelPreview()
     if (this.filterTimer) clearTimeout(this.filterTimer)
@@ -104,10 +111,17 @@ export default class extends Controller {
   }
 
   filesChanged() {
+    this.closeQueuedPreview()
+    this.revokeQueuedUrls()
     const files = Array.from(this.uploadInputTarget.files || [])
+    this.queuedFiles = files.map((file) => ({ file, url: URL.createObjectURL(file) }))
+    this.renderQueuedFiles()
     this.uploadSelectionTarget.classList.toggle("hidden", files.length === 0)
     this.uploadErrorTarget.classList.add("hidden")
-    if (!files.length) return
+    if (!files.length) {
+      this.uploadSubmitTarget.disabled = true
+      return
+    }
 
     this.uploadCountTarget.textContent = this.filesSelectedValue.replace("%{count}", String(files.length))
     this.uploadNamesTarget.textContent = files.map((file) => file.name).join(" · ")
@@ -119,6 +133,98 @@ export default class extends Controller {
     this.uploadSubmitTarget.disabled = !valid
     this.uploadSubmitTarget.classList.toggle("opacity-40", !valid)
     if (!valid) this.showUploadError()
+  }
+
+  revokeQueuedUrls() {
+    this.queuedFiles?.forEach(({ url }) => URL.revokeObjectURL(url))
+    this.queuedFiles = []
+  }
+
+  renderQueuedFiles() {
+    if (!this.hasQueuedListTarget) return
+    this.queuedListTarget.replaceChildren()
+    this.queuedFiles.forEach(({ file, url }, index) => {
+      const tile = document.createElement("button")
+      tile.type = "button"
+      tile.dataset.queuedFile = String(index)
+      tile.className = "flex min-w-0 items-center gap-3 rounded-xl border border-emerald-200 bg-white p-2 text-left text-sm transition hover:border-emerald-500 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-600"
+      tile.setAttribute("aria-label", `${this.queuedListTarget.dataset.previewLabel}: ${file.name}`)
+      const thumbnail = document.createElement("span")
+      thumbnail.className = "flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-emerald-50 text-xs font-bold text-emerald-800"
+      if (file.type.startsWith("image/")) {
+        const image = document.createElement("img")
+        image.src = url
+        image.alt = ""
+        image.className = "size-full object-cover"
+        thumbnail.append(image)
+      } else {
+        thumbnail.textContent = file.name.split(".").pop().toUpperCase().slice(0, 5)
+      }
+      const name = document.createElement("span")
+      name.className = "min-w-0 flex-1 truncate text-xs font-semibold text-slate-700"
+      name.textContent = file.name
+      tile.append(thumbnail, name)
+      tile.addEventListener("click", () => this.openQueuedPreview(index, tile))
+      this.queuedListTarget.append(tile)
+    })
+  }
+
+  openQueuedPreview(index, trigger) {
+    if (!this.hasQueuedDialogTarget) return
+    const item = this.queuedFiles[index]
+    if (!item) return
+    this.queuedPreviewTrigger = trigger
+    this.queuedNameTarget.textContent = item.file.name
+    this.queuedImageTarget.classList.add("hidden")
+    this.queuedFrameTarget.classList.add("hidden")
+    this.queuedTextTarget.classList.add("hidden")
+    this.queuedUnsupportedTarget.classList.add("hidden")
+    this.queuedImageTarget.removeAttribute("src")
+    this.queuedFrameTarget.removeAttribute("src")
+    if (item.file.type.startsWith("image/")) {
+      this.queuedImageTarget.src = item.url
+      this.queuedImageTarget.classList.remove("hidden")
+    } else if (item.file.type === "application/pdf" || item.file.name.toLowerCase().endsWith(".pdf")) {
+      this.queuedFrameTarget.src = item.url
+      this.queuedFrameTarget.classList.remove("hidden")
+    } else if (item.file.type === "text/plain") {
+      this.queuedTextTarget.textContent = ""
+      this.queuedTextTarget.classList.remove("hidden")
+      item.file.text().then((content) => {
+        if (!this.queuedDialogTarget.classList.contains("hidden") &&
+          this.queuedPreviewTrigger === trigger) this.queuedTextTarget.textContent = content
+      })
+    } else {
+      this.queuedUnsupportedTarget.classList.remove("hidden")
+    }
+    this.queuedDialogOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    this.queuedDialogTarget.classList.remove("hidden")
+    this.queuedDialogTarget.setAttribute("aria-hidden", "false")
+    this.queuedCloseTarget.focus()
+  }
+
+  closeQueuedPreview({ restoreFocus = true } = {}) {
+    if (!this.hasQueuedDialogTarget || this.queuedDialogTarget.classList.contains("hidden")) return
+    this.queuedDialogTarget.classList.add("hidden")
+    this.queuedDialogTarget.setAttribute("aria-hidden", "true")
+    this.queuedFrameTarget.removeAttribute("src")
+    this.queuedImageTarget.removeAttribute("src")
+    document.body.style.overflow = this.queuedDialogOverflow || ""
+    if (restoreFocus && this.queuedPreviewTrigger?.isConnected) this.queuedPreviewTrigger.focus()
+    this.queuedPreviewTrigger = null
+  }
+
+  queuedKeydown(event) {
+    if (!this.hasQueuedDialogTarget || this.queuedDialogTarget.classList.contains("hidden")) return
+    if (event.key === "Escape") {
+      event.preventDefault()
+      this.closeQueuedPreview()
+    } else if (event.key === "Tab") {
+      // The dismiss control is the only action in the pending-file preview.
+      event.preventDefault()
+      this.queuedCloseTarget.focus()
+    }
   }
 
   showUploadError() {

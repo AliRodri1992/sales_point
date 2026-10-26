@@ -38,5 +38,33 @@
       <%= f.submit t("#{dictionary}.upload"), data: { supplier_documents_target: 'uploadSubmit' },
                    class: 'h-10 cursor-pointer rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800' %>
     </div>
+    <div data-supplier-documents-target="queuedList" data-preview-label="<%= t("#{dictionary}.preview") %>"
+         class="mt-4 grid gap-2 sm:grid-cols-2" aria-live="polite"></div>
+  </div>
+  <div data-supplier-documents-target="queuedDialog" aria-hidden="true"
+       data-action="keydown@window->supplier-documents#queuedKeydown"
+       class="fixed inset-0 z-[110] hidden">
+    <button type="button" data-action="supplier-documents#closeQueuedPreview"
+            class="absolute inset-0 size-full bg-slate-900/50"
+            aria-label="<%= t("#{dictionary}.close_preview") %>"></button>
+    <aside role="dialog" aria-modal="true" aria-labelledby="supplier-queued-preview-title"
+           class="absolute inset-y-0 right-0 flex w-full max-w-[42rem] flex-col overflow-y-auto bg-white p-5 shadow-2xl sm:p-6">
+      <header class="flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <h3 id="supplier-queued-preview-title" class="font-jakarta text-lg font-bold text-slate-900"><%= t("#{dictionary}.preview") %></h3>
+        <button type="button" data-supplier-documents-target="queuedClose"
+                data-action="supplier-documents#closeQueuedPreview"
+                class="flex size-10 items-center justify-center rounded-xl text-slate-600 hover:bg-emerald-50"
+                aria-label="<%= t("#{dictionary}.close_preview") %>">
+          <%= icon('x-mark', class: 'size-5') %>
+        </button>
+      </header>
+      <div class="mt-5 flex h-[60vh] min-h-64 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+        <img data-supplier-documents-target="queuedImage" class="hidden size-full object-contain" alt="<%= t("#{dictionary}.preview") %>">
+        <iframe data-supplier-documents-target="queuedFrame" class="hidden size-full border-0" title="<%= t("#{dictionary}.preview") %>"></iframe>
+        <pre data-supplier-documents-target="queuedText" class="hidden size-full overflow-auto whitespace-pre-wrap break-words p-4 text-xs"></pre>
+        <div data-supplier-documents-target="queuedUnsupported" class="hidden p-5 text-center text-sm text-slate-500"><%= t("#{dictionary}.unsupported_preview") %></div>
+      </div>
+      <p data-supplier-documents-target="queuedName" class="mt-4 break-all text-sm font-semibold text-slate-800"></p>
+    </aside>
   </div>
 <% end %>

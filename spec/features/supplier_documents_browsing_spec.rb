@@ -127,6 +127,25 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     end
   end
 
+  scenario 'previews selected PDF files before upload in a right drawer' do
+    visit admin_supplier_path(supplier, tab: 'documents')
+    page.execute_script(<<~JS)
+      const transfer = new DataTransfer()
+      transfer.items.add(new File(["%PDF-1.4 demo"], "pending-contract.pdf", { type: "application/pdf" }))
+      const input = document.querySelector('[data-supplier-documents-target="uploadInput"]')
+      input.files = transfer.files
+      input.dispatchEvent(new Event("change", { bubbles: true }))
+    JS
+
+    expect(page).to have_css('[data-queued-file="0"]', text: 'pending-contract.pdf')
+    find('[data-queued-file="0"]').click
+    expect(page).to have_css('[data-supplier-documents-target="queuedDialog"]:not(.hidden)')
+    expect(page).to have_css('[data-supplier-documents-target="queuedFrame"][src^="blob:"]', visible: :all)
+    expect(page).to have_css('[data-supplier-documents-target="queuedName"]', text: 'pending-contract.pdf')
+    find('[data-supplier-documents-target="queuedClose"]').click
+    expect(page).to have_css('[data-supplier-documents-target="queuedDialog"].hidden', visible: :all)
+  end
+
   scenario 'accepts files dropped directly on the upload area' do
     visit admin_supplier_path(supplier, tab: 'documents')
 
