@@ -406,6 +406,30 @@ servers:
 
 ---
 
+## Análisis de imágenes de Active Storage
+
+Si Sidekiq registra `Skipping image analysis because the ruby-vips gem isn't installed`,
+la gema puede existir en `Gemfile.lock` y aun así fallar al cargar por falta
+de la biblioteca nativa. En desarrollo, tanto `web` como `sidekiq`
+usan `Dockerfile.dev`, que debe instalar `libvips42`.
+
+Después de incorporar la corrección, reconstruye y recrea **ambos** servicios:
+
+```bash
+docker compose -f docker-compose.dev.yml build --no-cache web sidekiq
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate web sidekiq
+docker compose -f docker-compose.dev.yml exec sidekiq bundle exec ruby -e "require 'vips'; puts Vips::Image.black(1, 1).width"
+docker compose -f docker-compose.dev.yml logs --tail=80 sidekiq
+```
+
+El comando de comprobación debe mostrar `1` y salir sin error.
+El paso de compilación también comprueba que Ruby puede cargar Vips:
+un fallo real de la dependencia detendrá la compilación de Docker,
+en vez de llegar a Sidekiq sin soporte de imágenes.
+
+Estos comandos conservan los volúmenes de PostgreSQL y Redis.
+**No uses** `docker compose down -v` para reparar las dependencias de imágenes.
+
 ## 🚨 Solución de Problemas
 
 ### Error: Database connection failed

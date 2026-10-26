@@ -44,6 +44,8 @@ gem 'rails_icons'
 gem 'redis'
 gem 'roo'
 gem 'roo-xls'
+# Active Storage uses the system libvips shared library to analyze images.
+gem 'ruby-vips', '~> 2.3', require: false
 gem 'secure_headers'
 gem 'sidekiq'
 gem 'solid_cable'

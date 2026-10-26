@@ -706,6 +706,7 @@ DEPENDENCIES
   roo
   roo-xls
   rspec-rails
+  ruby-vips (~> 2.3)
   rubocop
   rubocop-performance
   rubocop-rails

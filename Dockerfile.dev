@@ -19,6 +19,7 @@ RUN apt-get update -qq && \
     curl \
     git \
     libpq-dev \
+    libvips42 \
     libyaml-dev \
     pkg-config \
     python-is-python3 \
@@ -49,6 +50,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
 # 🧩 Gems primero (cache optimizado)
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
+
+# Fail the Docker build if the Ruby binding cannot load libvips.
+# This image is used by both the Rails web server and Sidekiq.
+RUN bundle exec ruby -e "require 'vips'; abort('libvips unavailable') unless Vips::Image.black(1, 1).width == 1"
 
 # 📦 JS dependencies (Hotwire / Stimulus / Tailwind / esbuild)
 COPY package.json yarn.lock ./
