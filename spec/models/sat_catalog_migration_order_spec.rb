@@ -9,10 +9,10 @@ RSpec.describe 'SAT catalog migration chronology', type: :model do
   end
 
   it 'places all 28 SAT catalog migrations before the initial countries migration' do
-    versions = catalog_migrations.map { |path| path.basename.to_s.split('_').first.to_i }
+    versions = catalog_migrations.map { |path| path.basename.to_s.split('_').first }
 
     expect(versions.size).to eq(28)
-    expect(versions.max).to be < 20260415180630
+    expect(versions.max).to be < '20260415180630'
     expect(versions.uniq.size).to eq(versions.size)
   end
 
