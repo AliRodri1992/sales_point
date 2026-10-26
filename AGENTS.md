@@ -27,12 +27,12 @@ El hook de Overcommit se instala con `bundle exec overcommit --install` y se fir
 ## Pre-push y pruebas RSpec locales
 
 - `bin/overcommit-rspec` usa únicamente `docker compose -f docker-compose.dev.yml`. No añadir fallback de Rails ejecutado en el host: `db` solo se resuelve en la red Compose.
-- Si `web` está activo, ejecutar vía `exec -T`; si está detenido, `run --rm -T` debe iniciar las dependencias. Ambas rutas fuerzan `RAILS_ENV=test`, preparan la base de pruebas y eliminan `DATABASE_URL`.
+- El hook usa **siempre** `docker compose run --rm -T web` para ejecutar RSpec en un contenedor temporal aislado, incluso cuando `web` ya está activo. No usar `docker compose exec web` para la suite completa: los procesos de prueba y Chromium podrían agotar los recursos del servidor activo. Fuerza `RAILS_ENV=test`, prepara la base de pruebas y elimina `DATABASE_URL`.
 - Fallos del daemon, Compose, PostgreSQL o RSpec deben detener el push y propagarse; nunca utilizar `--no-verify` como solución.
-- Antes de cambiar el hook, ejecutar `bash test/overcommit_rspec_test.sh`, que simula las rutas con y sin contenedor y fallos de Docker sin conectarse a servicios externos. CI ejecuta este verificador en `.github/workflows/pre-push-hook-tests.yml`.
+- Si se modifica el hook, validar `bash test/overcommit_rspec_test.sh`, que simula la ejecución aislada y fallos de Docker sin conectarse a servicios externos. CI ejecuta este verificador en `.github/workflows/pre-push-hook-tests.yml`.
 - Tras actualizar el hook en una máquina local, revisar el script y volver a firmar con `bundle exec overcommit --sign pre-push` si Overcommit lo solicita.
 
 ## Verificaciones específicas del proyecto
-- Con contenedores activos: `docker compose -f docker-compose.dev.yml exec web bundle exec rspec`, `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
+- Para RSpec local usar `bin/overcommit-rspec` (contenedor temporal). Con contenedores activos, ejecutar RuboCop y Brakeman mediante `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
 - Ejecutar las pruebas/coberturas requeridas por la tarea; no afirmar porcentajes sin el reporte actual de SimpleCov.
 - Validar el estado final de los flujos de GitHub Actions de `feature/suppliers` tras cada push.

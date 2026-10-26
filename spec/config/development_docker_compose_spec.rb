@@ -37,6 +37,14 @@ RSpec.describe 'Development Docker Compose configuration' do
     expect(config.fetch('volumes').keys).to include('pgdata', 'redisdata')
   end
 
+  it 'runs pre-push browser specs in a disposable container instead of the live web server' do
+    runner = Rails.root.join('bin/overcommit-rspec').read
+
+    expect(runner).to include('run --rm -T')
+    expect(runner).not_to include('exec -T', 'ps --status running --quiet web')
+    expect(runner).to include('RAILS_ENV=test', 'unset DATABASE_URL')
+  end
+
   it 'keeps the test browser available in the web image' do
     expect(services.fetch('web').fetch('build').fetch('args').fetch('INSTALL_TEST_BROWSER')).to eq('true')
     expect(services.fetch('web').fetch('environment').fetch('CHROME_BINARY')).to eq('/usr/bin/chromium')
