@@ -38,22 +38,25 @@ module SatCatalogCsv
   BATCH_SIZE = 500
   RESERVED = %w[id created_at updated_at deleted_at].freeze
 
-  def self.seed!(directory: ENV.fetch('SAT_CATALOGS_DIR', Rails.root.join('db/seeds/data/sat').to_s))
+  def self.seed!(directory: ENV.fetch('SAT_CATALOGS_DIR', Rails.root.join('db/seeds/data/sat').to_s),
+                 required: ENV['SAT_CATALOGS_REQUIRED'] == 'true')
     missing, available = CATALOGS.partition { |table, _| !File.file?(File.join(directory, "#{table}.csv")) }
+    absent = missing.map(&:first)
+    report_missing(absent, 0, required:) if required && absent.any?
     count = available.sum do |table, (model, keys)|
       import_file(File.join(directory, "#{table}.csv"), model, keys)
     end
-    report_missing(missing.map(&:first), count)
+    report_missing(absent, count, required:)
     nil
   end
 
-  def self.report_missing(missing, imported)
+  def self.report_missing(missing, imported, required: false)
     $stdout.puts "[SEEDS][SAT][OK] #{imported} registros oficiales adicionales importados"
     return if missing.empty?
 
     $stdout.puts "[SEEDS][SAT][PENDIENTE] #{missing.size} catálogos sin CSV completo: #{missing.join(', ')}"
     $stdout.puts '[SEEDS][SAT][INFO] Consultar db/seeds/data/sat/README.md; las claves básicas no sustituyen al SAT.'
-    raise "Faltan #{missing.size} catálogos SAT oficiales" if ENV['SAT_CATALOGS_REQUIRED'] == 'true'
+    raise "Faltan #{missing.size} catálogos SAT oficiales" if required
   end
 
   def self.import_file(path, model, keys)

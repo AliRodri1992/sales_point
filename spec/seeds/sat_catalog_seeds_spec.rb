@@ -62,6 +62,19 @@ RSpec.describe 'SAT catalog seeds', type: :model do
     end
   end
 
+  it 'checks every required CSV exists before importing any official rows' do
+    Dir.mktmpdir do |directory|
+      File.write(File.join(directory, 'sat_voucher_types.csv'), <<~CSV)
+        code,description
+        I,Ingreso de ejemplo
+      CSV
+
+      expect { SatCatalogCsv.seed!(directory:, required: true) }
+        .to raise_error(RuntimeError, /Faltan/)
+      expect(SatVoucherType.where(code: 'I')).to be_empty
+    end
+  end
+
   it 'rejects unknown CSV columns instead of silently importing garbage' do
     Dir.mktmpdir do |directory|
       File.write(File.join(directory, 'sat_voucher_types.csv'), <<~CSV)

@@ -49,7 +49,7 @@ sin reemplazar la descripción por su valor verificado.
 
 No incluyas `id`, `created_at`, `updated_at` ni `deleted_at` en los CSV.
 El importador valida los encabezados, las claves y las columnas obligatorias.
-Inserta por lotes y omite claves ya existentes o archivadas para no modificar
+El seed importa primero los archivos oficiales disponibles y después rellena las claves básicas. Inserta por lotes y omite claves ya existentes o archivadas para no modificar
 descripciones editadas manualmente ni duplicar datos al repetir el seed.
 Las columnas `valid_from` y `valid_to` permiten conservar vigencias históricas.
 
@@ -69,7 +69,7 @@ docker compose -f docker-compose.dev.yml exec \
 La ruta indicada debe existir **dentro del contenedor**; bajo desarrollo,
 `db/seeds/data/sat` se comparte con `/rails`. Se informa la lista de
 catálogos sin CSV y el total de filas incorporadas, en lugar de declarar que
-todos están cargados. El modo estricto es opcional, no lo actives hasta tener
+todos están cargados. El modo estricto verifica que todos los archivos estén disponibles antes de cualquier importación; es opcional, no lo actives hasta tener
 el conjunto verificado y completo.
 
 **IMPORTANTE:** que los `seeds` terminen no prueba la vigencia fiscal del

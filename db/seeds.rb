@@ -484,8 +484,8 @@ end
 
 require_relative 'seeds/sat_catalogs'
 require_relative 'seeds/sat_catalog_csv'
-SatCatalogSeeds.seed!
 SeedConsole.track('CSV completos del SAT') { SatCatalogCsv.seed! }
+SatCatalogSeeds.seed!
 
 require_relative 'seeds/currencies'
 require_relative 'seeds/countries'
