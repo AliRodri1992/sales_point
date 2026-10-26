@@ -46,7 +46,7 @@ module Suppliers
       values = groups.sort.map { |code, amount| "#{yield(amount)} #{code}" }
       return values if values.any?
 
-      ["#{yield(0)} #{@supplier.currency.code}"]
+      ["#{yield(0)} #{@supplier.currency&.code || '—'}"]
     end
   end
 end
