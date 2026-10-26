@@ -298,8 +298,8 @@ export default class extends Controller {
     if (!this.hasSummaryTarget) return
     this.summaryTarget.replaceChildren()
 
-    // The summary only previews General and Fiscal. Other steps remain editable.
-    this.stepTargets.slice(0, 2).forEach((step) => {
+    // Review every editable step, not just General and Fiscal.
+    this.stepTargets.slice(0, -1).forEach((step) => {
       const title = step.querySelector("h2")?.textContent?.trim() || ""
       const fields = [...step.querySelectorAll("input, select, textarea")]
         .filter((field) => !field.closest("[data-supplier-nested-item]"))
@@ -329,7 +329,16 @@ export default class extends Controller {
     })
     this.tabTargets.forEach((tab, index) => {
       const active = index === this.indexValue
-      tab.setAttribute("aria-current", active ? "step" : "false")
+      if (active) tab.setAttribute("aria-current", "step")
+      else tab.removeAttribute("aria-current")
+      const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors')
+      const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
+        .filter((field) => !field.disabled && !field.closest('template'))
+      const complete = index < this.stepTargets.length - 1 && required.length > 0 &&
+        required.every((field) => field.checkValidity()) && !invalid
+      tab.dataset.stepState = invalid ? "error" : complete ? "complete" : "pending"
+      tab.classList.toggle("ring-1", !!invalid)
+      tab.classList.toggle("ring-rose-400", !!invalid)
       tab.classList.toggle("bg-emerald-50", active)
       tab.classList.toggle("text-emerald-800", active)
       tab.classList.toggle("border-emerald-500", active)

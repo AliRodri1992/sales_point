@@ -18,6 +18,14 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     Nokogiri::HTML(response.body)
   end
 
+  it 'marks the active dossier section for assistive navigation' do
+    get admin_supplier_path(supplier, tab: 'general')
+    expect(dossier.css('[data-supplier-dossier-target="tab"][aria-selected]')).to be_empty
+    expect(dossier.at_css('[data-section="general"][data-supplier-dossier-target="panel"]')).to be_present
+    expect(dossier.at_css('[data-supplier-dossier-initial-tab-value]')['data-supplier-dossier-initial-tab-value'])
+      .to eq('general')
+  end
+
   it 'renders the illustrated document empty state with an upload entry point' do
     get admin_supplier_path(supplier, tab: 'documents')
 

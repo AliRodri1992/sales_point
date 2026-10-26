@@ -1,16 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
+// The navigation is permission-aware; users may not have an Overview section.
 export default class extends Controller {
   static targets = ["tab", "panel", "mobileSelect"]
   static values = { initialTab: { type: String, default: "overview" } }
 
   connect() {
-    const requested = new URL(window.location.href).searchParams.get("tab") || this.initialTabValue
-    this.activateTab(requested === "finances" ? "statement" : requested, false)
-    this.onPopState = () => {
-      const section = new URL(window.location.href).searchParams.get("tab") || "overview"
-      this.activateTab(section === "finances" ? "statement" : section, false)
-    }
+    this.onPopState = () => this.activateTab(this.requestedTab(), false)
+    this.activateTab(this.requestedTab(), false)
     window.addEventListener("popstate", this.onPopState)
   }
 
@@ -18,17 +15,25 @@ export default class extends Controller {
     window.removeEventListener("popstate", this.onPopState)
   }
 
+  requestedTab() {
+    const section = new URL(window.location.href).searchParams.get("tab") || this.initialTabValue
+    return section === "finances" ? "statement" : section
+  }
+
   select(event) {
-    const section = event.currentTarget.dataset.section || event.currentTarget.value
-    this.activateTab(section)
+    this.activateTab(event.currentTarget.dataset.section || event.currentTarget.value)
   }
 
   activateTab(section, updateUrl = true) {
-    const selected = this.panelTargets.some((panel) => panel.dataset.section === section) ? section : "overview"
+    const available = this.panelTargets.map((panel) => panel.dataset.section)
+    // Never fall back to an inaccessible/absent Overview panel.
+    const selected = available.includes(section) ? section : available[0]
+    if (!selected) return
 
     this.tabTargets.forEach((tab) => {
       const active = tab.dataset.section === selected
-      tab.setAttribute("aria-selected", String(active))
+      if (active) tab.setAttribute("aria-current", "page")
+      else tab.removeAttribute("aria-current")
       tab.classList.toggle("border-emerald-700", active)
       tab.classList.toggle("border-transparent", !active)
       tab.classList.toggle("bg-emerald-50", active)
@@ -41,18 +46,18 @@ export default class extends Controller {
     if (this.hasMobileSelectTarget) this.mobileSelectTarget.value = selected
     this.panelTargets.forEach((panel) => {
       const active = panel.dataset.section === selected
+      panel.hidden = !active
       panel.classList.toggle("hidden", !active)
       panel.setAttribute("aria-hidden", String(!active))
     })
 
     if (updateUrl) {
       const url = new URL(window.location.href)
-      if (selected === "overview") {
-        url.searchParams.delete("tab")
-      } else {
-        url.searchParams.set("tab", selected)
+      if (selected === "overview") url.searchParams.delete("tab")
+      else url.searchParams.set("tab", selected)
+      if (url.toString() !== window.location.href) {
+        window.history.pushState(window.history.state, "", url)
       }
-      window.history.replaceState(window.history.state, "", url)
     }
   }
 }
