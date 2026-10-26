@@ -126,7 +126,9 @@ module SuppliersFormHelpers
   end
 
   def supplier_update_destination
-    return admin_supplier_path(@supplier, tab: 'general') if params[:return_to] == 'general'
+    section = params[:return_to].to_s
+    allowed_sections = %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
+    return admin_supplier_path(@supplier, tab: section) if allowed_sections.include?(section)
 
     admin_suppliers_path
   end

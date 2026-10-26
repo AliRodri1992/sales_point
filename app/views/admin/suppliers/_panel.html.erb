@@ -1,10 +1,4 @@
 <div class="mx-auto w-full max-w-7xl">
-  <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-sm text-slate-500">
-    <%= link_to t('admin.suppliers.index.title'), admin_suppliers_path, class: 'transition hover:text-emerald-700' %>
-    <span aria-hidden="true">/</span>
-    <span class="font-semibold text-slate-800"><%= supplier.persisted? ? t('admin.suppliers.edit.title', name: supplier.name) : t('admin.suppliers.new.title') %></span>
-  </nav>
-
   <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
     <div>
       <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
