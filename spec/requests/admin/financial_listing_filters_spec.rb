@@ -47,8 +47,7 @@ RSpec.describe 'Supplier financial listing filters', type: :request do
 
     get admin_supplier_payments_path, params: { q: 'nonexistent-value' }
     expect(page.css('[data-financial-table="payments"] tbody tr')).to be_empty
-    link = "a[href='#{admin_supplier_payments_path}'"
-    expect(page.at_css("#{link}]")).to be_present
+    expect(page.at_css("a[href='#{admin_supplier_payments_path}']")).to be_present
   end
 
   it 'shows currency codes and filters supplier credit notes' do

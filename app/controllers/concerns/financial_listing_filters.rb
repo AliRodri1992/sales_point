@@ -10,9 +10,9 @@ module FinancialListingFilters
     if @filter_query.present?
       escaped = ActiveRecord::Base.sanitize_sql_like(@filter_query)
       search = "%#{escaped}%"
-      reference = scope.klass.table_name
-      scope = scope.joins(:supplier)
-                   .where("#{reference}.#{reference_column} ILIKE :q OR suppliers.name ILIKE :q", q: search)
+      reference = scope.klass.arel_table[reference_column]
+      supplier_name = Supplier.arel_table[:name]
+      scope = scope.joins(:supplier).where(reference.matches(search).or(supplier_name.matches(search)))
     end
 
     scope = scope.where(status: @filter_status) unless @filter_status == 'all'

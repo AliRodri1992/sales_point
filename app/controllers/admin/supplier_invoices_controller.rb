@@ -2,17 +2,14 @@
 
 module Admin
   class SupplierInvoicesController < ApplicationController
-    include FinancialAccess
-    include FinancialPagination
-    include FinancialListingFilters
+    include FinancialAccess, FinancialPagination, FinancialListingFilters
 
     before_action :set_invoice, only: %i[show edit update post_invoice cancel download_xml download_pdf match_receipts]
 
     def index
       authorize current_organization.supplier_invoices.new, :index?
       scope = policy_scope(current_organization.supplier_invoices)
-      scope = filter_financial_listing(scope, statuses: SupplierInvoice.statuses.keys,
-                                            reference_column: 'folio')
+      scope = filter_financial_listing(scope, statuses: SupplierInvoice.statuses.keys, reference_column: 'folio')
       @invoices = paginate_financial(scope, includes: %i[supplier currency account_payable])
     end
 
