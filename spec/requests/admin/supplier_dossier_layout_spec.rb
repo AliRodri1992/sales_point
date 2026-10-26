@@ -25,7 +25,8 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     get edit_admin_supplier_path(supplier, return_to: 'fiscal')
     expect(dossier.css('nav[aria-label] ol').size).to eq(1)
     expect(dossier.at_css('input[name="return_to"]')['value']).to eq('fiscal')
-    expect(dossier.at_css('a[href="#{admin_supplier_path(supplier, tab: 'fiscal')}"]')).to be_present
+    fiscal_path = admin_supplier_path(supplier, tab: 'fiscal')
+    expect(dossier.at_css("a[href='#{fiscal_path}']")).to be_present
   end
 
   it 'marks the active dossier section for assistive navigation' do

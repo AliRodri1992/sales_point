@@ -127,7 +127,10 @@ module SuppliersFormHelpers
 
   def supplier_update_destination
     section = params[:return_to].to_s
-    allowed_sections = %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
+    allowed_sections = %w[
+      overview general fiscal commercial contacts addresses schedules
+      documents products bank_accounts statement
+    ]
     return admin_supplier_path(@supplier, tab: section) if allowed_sections.include?(section)
 
     admin_suppliers_path
