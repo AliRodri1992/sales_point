@@ -4,6 +4,10 @@ const SELECTOR = "select:not([multiple]):not([data-native-select]):not([data-del
 
 function eligible(select) {
   if (!select.isConnected || select.closest('[data-controller~="delta-select"]')) return false
+  // SweetAlert2 injects a hidden native <select> even for notifications without
+  // input fields. Enhancing it adds an unwanted visible dropdown to the toast.
+  // Leave all SweetAlert2-owned inputs to SweetAlert2 itself.
+  if (select.closest(".swal2-container")) return false
   if (select.size > 1 || select.closest('[data-select-enhancement="off"]')) return false
   return !select.matches(".tomselected, .choices__input, .select2-hidden-accessible")
 }

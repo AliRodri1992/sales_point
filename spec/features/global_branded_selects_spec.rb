@@ -75,6 +75,29 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
     expect(page).to have_current_path(/status=archived/)
   end
 
+  scenario 'does not add a dropdown to SweetAlert2 success notifications' do
+    visit new_admin_product_path
+    enhanced_select('product[tracking_mode]')
+
+    page.execute_script(<<~JS)
+      window.Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: 'Signed in successfully.',
+        position: 'top-end',
+        showConfirmButton: false
+      })
+    JS
+
+    expect(page).to have_css('.swal2-popup', text: 'Signed in successfully.')
+    expect(page).to have_css('.swal2-container select.swal2-select', visible: :all)
+    expect(page).to have_no_css('.swal2-container .delta-select-container', visible: :all)
+    expect(page).to have_no_css('.swal2-container button[aria-haspopup="listbox"]', visible: :all)
+
+    # The form's genuine single-choice selector remains enhanced.
+    enhanced_select('product[tracking_mode]')
+  end
+
   scenario 'upgrades dynamically inserted selects but skips multi-select controls' do
     visit new_admin_supplier_bank_account_path(supplier)
     page.execute_script(<<~JS)
