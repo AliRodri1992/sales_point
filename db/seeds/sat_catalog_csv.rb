@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'csv'
-require 'json'
 require 'set'
 
 # Imports normalized exports of SAT CFDI 4.0 catalogs, without inventing
@@ -41,19 +40,15 @@ module SatCatalogCsv
   RESERVED = %w[id created_at updated_at deleted_at].freeze
 
   def self.seed!(directory: ENV.fetch('SAT_CATALOGS_DIR', Rails.root.join('db/seeds/data/sat').to_s))
-    missing = []
-    imported = 0
-
-    CATALOGS.each do |table, (model, keys)|
-      source = File.join(directory, "#{table}.csv")
-      unless File.file?(source)
-        missing << table
-        next
-      end
-
-      imported += import_file(source, model, keys)
+    missing, available = CATALOGS.partition { |table, _| !File.file?(File.join(directory, "#{table}.csv")) }
+    count = available.sum do |table, (model, keys)|
+      import_file(File.join(directory, "#{table}.csv"), model, keys)
     end
+    report_missing(missing.map(&:first), count)
+    nil
+  end
 
+  def self.report_missing(missing, imported)
     $stdout.puts "[SEEDS][SAT][OK] #{imported} registros oficiales adicionales importados"
     return if missing.empty?
 
@@ -62,46 +57,54 @@ module SatCatalogCsv
     raise "Faltan #{missing.size} catálogos SAT oficiales" if ENV['SAT_CATALOGS_REQUIRED'] == 'true'
   end
 
-  def self.import_file(path, model, key_fields)
+  def self.import_file(path, model, keys)
     rows = CSV.foreach(path, headers: true, encoding: 'bom|utf-8')
-    headers = rows.first&.headers
-    raise ArgumentError, "#{path}: CSV sin encabezados ni registros" if headers.nil?
+    validate_headers!(rows.first&.headers, model, keys, path)
+    known = model.with_deleted.pluck(*keys).to_set { |values| Array(values) }
 
-    allowed = model.column_names - RESERVED
-    unknown = headers - allowed
-    required = key_fields + required_columns(model)
-    missing = required - headers
-    raise ArgumentError, "#{path}: columnas no admitidas: #{unknown.join(', ')}" if unknown.any?
-    raise ArgumentError, "#{path}: faltan columnas: #{missing.join(', ')}" if missing.any?
-    raise ArgumentError, "#{path}: encabezados duplicados" if headers.uniq.size != headers.size
-
-    seen = model.with_deleted.pluck(*key_fields).map { |value| Array(value) }.to_set
-    count = 0
-    buffer = []
-
-    model.transaction do
-      rows.each.with_index(2) do |row, line_number|
-        attributes = parse_row(model, row)
-        key = key_fields.map { |field| attributes.fetch(field) }
-        raise ArgumentError, "#{path}: clave vacía (fila #{line_number})" if key.any?(&:blank?)
-        next unless seen.add?(key)
-
-        buffer << attributes
-        next if buffer.length < BATCH_SIZE
-
-        model.insert_all(buffer, returning: false)
-        count += buffer.length
-        buffer.clear
-      end
-      if buffer.any?
-        model.insert_all(buffer, returning: false)
-        count += buffer.length
-      end
-    end
+    count = model.transaction { insert_missing_rows(rows, model, keys, known, path) }
     $stdout.puts "[SEEDS][SAT][OK] #{model.table_name}: #{count} filas añadidas"
     count
   rescue StandardError => e
     raise e.class, "#{path}: #{e.message}", e.backtrace
+  end
+
+  def self.validate_headers!(headers, model, keys, path)
+    raise ArgumentError, "#{path}: CSV sin encabezados ni registros" unless headers
+    raise ArgumentError, "#{path}: encabezados duplicados" if headers.uniq.size != headers.size
+
+    unknown = headers - (model.column_names - RESERVED)
+    missing = (keys + required_columns(model)) - headers
+    raise ArgumentError, "#{path}: columnas no admitidas: #{unknown.join(', ')}" if unknown.any?
+    raise ArgumentError, "#{path}: faltan columnas: #{missing.join(', ')}" if missing.any?
+  end
+
+  def self.insert_missing_rows(rows, model, keys, known, path)
+    batch = []
+    count = 0
+    rows.each.with_index(2) do |row, line|
+      attributes = parse_row(model, row)
+      key = keys.map { |field| attributes.fetch(field) }
+      raise ArgumentError, "#{path}: clave vacía (fila #{line})" if key.any?(&:blank?)
+      next unless known.add?(key)
+
+      batch << attributes
+      count += flush_batch(model, batch) if batch.length == BATCH_SIZE
+    end
+    count + flush_batch(model, batch)
+  end
+
+  def self.flush_batch(model, batch)
+    count = batch.length
+    return 0 if count.zero?
+
+    # SAT source is normalized; DB types and constraints validate each row.
+    # Bulk loading large postal/product/pediment catalogs must avoid N queries.
+    # rubocop:disable Rails/SkipsModelValidations
+    model.insert_all(batch, returning: false)
+    # rubocop:enable Rails/SkipsModelValidations
+    batch.clear
+    count
   end
 
   def self.parse_row(model, row)
@@ -126,5 +129,6 @@ module SatCatalogCsv
     end
   end
 
-  private_class_method :parse_row, :required_columns
+  private_class_method :parse_row, :required_columns, :flush_batch,
+                       :validate_headers!, :insert_missing_rows, :report_missing
 end

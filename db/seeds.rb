@@ -4,301 +4,305 @@ require_relative 'seeds/seed_console'
 
 SeedConsole.start_run!
 
-SYSTEM_ROLES = [
-  {
-    code: 'super_admin',
-    name: 'Superadministrador',
-    description: 'Acceso total al sistema y a todas las sucursales.',
-    role_type: :system
-  },
-  {
-    code: 'administrator',
-    name: 'Administrador',
-    description: 'Administra la configuración y operación general del sistema.',
-    role_type: :system
-  },
-  {
-    code: 'manager',
-    name: 'Gerente',
-    description: 'Administra operaciones y sucursales asignadas.',
-    role_type: :system
-  },
-  {
-    code: 'supervisor',
-    name: 'Supervisor',
-    description: 'Supervisa equipos de operación y producción.',
-    role_type: :system
-  },
-  {
-    code: 'cashier',
-    name: 'Cajero',
-    description: 'Opera la caja, cobros y cortes de caja.',
-    role_type: :system
-  },
-  {
-    code: 'salesman',
-    name: 'Vendedor',
-    description: 'Gestiona carteras, cotizaciones y ventas.',
-    role_type: :system
-  },
-  {
-    code: 'inventory',
-    name: 'Inventarios',
-    description: 'Administra existencias, productos y movimientos de inventario.',
-    role_type: :system
-  },
-  {
-    code: 'purchases',
-    name: 'Compras',
-    description: 'Administra órdenes de compra y proveedores.',
-    role_type: :system
-  },
-  {
-    code: 'finance',
-    name: 'Finanzas',
-    description: 'Consulta y administra información fiscal y financiera.',
-    role_type: :system
-  },
-  {
-    code: 'auditor',
-    name: 'Auditor',
-    description: 'Audita registros, movimientos y conciliaciones.',
-    role_type: :system
-  },
-  {
-    code: 'support',
-    name: 'Soporte',
-    description: 'Soporte técnico y resolución de incidencias.',
-    role_type: :system
-  }
-].freeze unless defined?(SYSTEM_ROLES)
+unless defined?(SYSTEM_ROLES)
+  SYSTEM_ROLES = [
+    {
+      code: 'super_admin',
+      name: 'Superadministrador',
+      description: 'Acceso total al sistema y a todas las sucursales.',
+      role_type: :system
+    },
+    {
+      code: 'administrator',
+      name: 'Administrador',
+      description: 'Administra la configuración y operación general del sistema.',
+      role_type: :system
+    },
+    {
+      code: 'manager',
+      name: 'Gerente',
+      description: 'Administra operaciones y sucursales asignadas.',
+      role_type: :system
+    },
+    {
+      code: 'supervisor',
+      name: 'Supervisor',
+      description: 'Supervisa equipos de operación y producción.',
+      role_type: :system
+    },
+    {
+      code: 'cashier',
+      name: 'Cajero',
+      description: 'Opera la caja, cobros y cortes de caja.',
+      role_type: :system
+    },
+    {
+      code: 'salesman',
+      name: 'Vendedor',
+      description: 'Gestiona carteras, cotizaciones y ventas.',
+      role_type: :system
+    },
+    {
+      code: 'inventory',
+      name: 'Inventarios',
+      description: 'Administra existencias, productos y movimientos de inventario.',
+      role_type: :system
+    },
+    {
+      code: 'purchases',
+      name: 'Compras',
+      description: 'Administra órdenes de compra y proveedores.',
+      role_type: :system
+    },
+    {
+      code: 'finance',
+      name: 'Finanzas',
+      description: 'Consulta y administra información fiscal y financiera.',
+      role_type: :system
+    },
+    {
+      code: 'auditor',
+      name: 'Auditor',
+      description: 'Audita registros, movimientos y conciliaciones.',
+      role_type: :system
+    },
+    {
+      code: 'support',
+      name: 'Soporte',
+      description: 'Soporte técnico y resolución de incidencias.',
+      role_type: :system
+    }
+  ].freeze
+end
 
-DEFAULT_PERMISSIONS = [
-  {
-    code: 'dashboard.access',
-    name: 'Acceso al dashboard',
-    module_name: 'Dashboard',
-    description: 'Permite acceder al panel principal.'
-  },
-  {
-    code: 'sales.access',
-    name: 'Acceso a ventas',
-    module_name: 'Ventas',
-    description: 'Permite acceder al módulo de ventas.'
-  },
-  {
-    code: 'cash_register.access',
-    name: 'Acceso a caja',
-    module_name: 'Caja',
-    description: 'Permite acceder al módulo de caja.'
-  },
-  {
-    code: 'inventory.access',
-    name: 'Acceso a inventario',
-    module_name: 'Inventario',
-    description: 'Permite acceder al módulo de inventario.'
-  },
-  {
-    code: 'customers.access',
-    name: 'Acceso a clientes',
-    module_name: 'Clientes',
-    description: 'Permite acceder al módulo de clientes.'
-  },
-  {
-    code: 'suppliers.access',
-    name: 'Acceso a proveedores',
-    module_name: 'Proveedores',
-    description: 'Permite acceder al módulo de proveedores.'
-  },
-  {
-    code: 'suppliers.view',
-    name: 'View suppliers',
-    module_name: 'Proveedores',
-    description: 'View suppliers.'
-  },
-  {
-    code: 'suppliers.create',
-    name: 'Create suppliers',
-    module_name: 'Proveedores',
-    description: 'Create suppliers.'
-  },
-  {
-    code: 'suppliers.update',
-    name: 'Update suppliers',
-    module_name: 'Proveedores',
-    description: 'Update suppliers.'
-  },
-  {
-    code: 'suppliers.destroy',
-    name: 'Delete suppliers',
-    module_name: 'Proveedores',
-    description: 'Delete suppliers.'
-  },
-  {
-    code: 'suppliers.export',
-    name: 'Export suppliers',
-    module_name: 'Proveedores',
-    description: 'Export suppliers.'
-  },
-  {
-    code: 'suppliers.contacts.view',
-    name: 'View supplier contacts',
-    module_name: 'Proveedores',
-    description: 'View supplier contacts.'
-  },
-  {
-    code: 'suppliers.contacts.manage',
-    name: 'Manage supplier contacts',
-    module_name: 'Proveedores',
-    description: 'Manage supplier contacts.'
-  },
-  {
-    code: 'suppliers.addresses.view',
-    name: 'View supplier addresses',
-    module_name: 'Proveedores',
-    description: 'View supplier addresses.'
-  },
-  {
-    code: 'suppliers.addresses.manage',
-    name: 'Manage supplier addresses',
-    module_name: 'Proveedores',
-    description: 'Manage supplier addresses.'
-  },
-  {
-    code: 'suppliers.schedules.view',
-    name: 'View supplier schedules',
-    module_name: 'Proveedores',
-    description: 'View supplier schedules.'
-  },
-  {
-    code: 'suppliers.schedules.manage',
-    name: 'Manage supplier schedules',
-    module_name: 'Proveedores',
-    description: 'Manage supplier schedules.'
-  },
-  {
-    code: 'suppliers.documents.view',
-    name: 'View supplier documents',
-    module_name: 'Proveedores',
-    description: 'View supplier documents.'
-  },
-  {
-    code: 'suppliers.documents.manage',
-    name: 'Manage supplier documents',
-    module_name: 'Proveedores',
-    description: 'Manage supplier documents.'
-  },
-  {
-    code: 'suppliers.fiscal.view',
-    name: 'View supplier fiscal information',
-    module_name: 'Proveedores',
-    description: 'View supplier fiscal information.'
-  },
-  {
-    code: 'suppliers.fiscal.manage',
-    name: 'Manage supplier fiscal information',
-    module_name: 'Proveedores',
-    description: 'Manage supplier fiscal information.'
-  },
-  {
-    code: 'suppliers.commercial.view',
-    name: 'View supplier commercial data',
-    module_name: 'Proveedores',
-    description: 'View supplier commercial data.'
-  },
-  {
-    code: 'suppliers.commercial.manage',
-    name: 'Manage supplier commercial data',
-    module_name: 'Proveedores',
-    description: 'Manage supplier commercial data.'
-  },
-  { code: 'suppliers.products.view', name: 'Ver productos de proveedores',
-    module_name: 'Proveedores', description: 'Consulta ofertas y precios por proveedor.' },
-  { code: 'suppliers.products.manage', name: 'Administrar productos de proveedores',
-    module_name: 'Proveedores', description: 'Edita ofertas de compra y presentaciones.' },
-  {
-    code: 'purchases.view',
-    name: 'View purchases',
-    module_name: 'Compras',
-    description: 'View purchases within the current organization.'
-  },
-  {
-    code: 'purchases.create',
-    name: 'Create purchase documents',
-    module_name: 'Compras',
-    description: 'Create purchase documents within the current organization.'
-  },
-  {
-    code: 'purchases.approve',
-    name: 'Approve purchases',
-    module_name: 'Compras',
-    description: 'Approve purchases within the current organization.'
-  },
-  {
-    code: 'purchases.receive',
-    name: 'Receive purchased merchandise',
-    module_name: 'Compras',
-    description: 'Receive purchased merchandise within the current organization.'
-  },
-  {
-    code: 'purchases.returns',
-    name: 'Process supplier returns',
-    module_name: 'Compras',
-    description: 'Process supplier returns within the current organization.'
-  },
-  {
-    code: 'employees.access',
-    name: 'Acceso a empleados',
-    module_name: 'Empleados',
-    description: 'Permite acceder al módulo de empleados.'
-  },
-  {
-    code: 'reports.access',
-    name: 'Acceso a reportes',
-    module_name: 'Reportes',
-    description: 'Permite acceder al módulo de reportes.'
-  },
-  {
-    code: 'products.access',
-    name: 'Acceso a productos',
-    module_name: 'Productos',
-    description: 'Permite acceder al catálogo de productos.'
-  },
-  {
-    code: 'categories.access',
-    name: 'Acceso a categorías',
-    module_name: 'Categorías',
-    description: 'Permite acceder al catálogo de categorías.'
-  },
-  {
-    code: 'branches.access',
-    name: 'Acceso a sucursales',
-    module_name: 'Sucursales',
-    description: 'Permite administrar las sucursales.'
-  },
-  {
-    code: 'languages.access',
-    name: 'Acceso a idiomas',
-    module_name: 'Idiomas',
-    description: 'Permite administrar los idiomas disponibles.'
-  },
-  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
-    description: 'Permite administrar roles y sus permisos.' },
-  { code: 'accounts_payable.view', name: 'View accounts payable', module_name: 'Cuentas por pagar',
-    description: 'View vendor invoices, outstanding balances and reconciliations.' },
-  { code: 'accounts_payable.manage', name: 'Manage invoices', module_name: 'Cuentas por pagar',
-    description: 'Create and edit vendor invoices, payments and credit notes.' },
-  { code: 'accounts_payable.approve', name: 'Approve invoices and credits', module_name: 'Cuentas por pagar',
-    description: 'Post and cancel vendor invoices and credit notes.' },
-  { code: 'accounts_payable.pay', name: 'Apply and reverse payments', module_name: 'Cuentas por pagar',
-    description: 'Post, allocate and reverse financial settlements.' },
-  { code: 'accounts_payable.banks.view', name: 'View vendor bank accounts', module_name: 'Cuentas por pagar',
-    description: 'View masked bank account information.' },
-  { code: 'accounts_payable.banks.manage', name: 'Manage vendor bank accounts', module_name: 'Cuentas por pagar',
-    description: 'Add, update and archive vendor bank accounts.' },
-  { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
-    description: 'Access full encrypted banking details with audit logging.' }
-].freeze unless defined?(DEFAULT_PERMISSIONS)
+unless defined?(DEFAULT_PERMISSIONS)
+  DEFAULT_PERMISSIONS = [
+    {
+      code: 'dashboard.access',
+      name: 'Acceso al dashboard',
+      module_name: 'Dashboard',
+      description: 'Permite acceder al panel principal.'
+    },
+    {
+      code: 'sales.access',
+      name: 'Acceso a ventas',
+      module_name: 'Ventas',
+      description: 'Permite acceder al módulo de ventas.'
+    },
+    {
+      code: 'cash_register.access',
+      name: 'Acceso a caja',
+      module_name: 'Caja',
+      description: 'Permite acceder al módulo de caja.'
+    },
+    {
+      code: 'inventory.access',
+      name: 'Acceso a inventario',
+      module_name: 'Inventario',
+      description: 'Permite acceder al módulo de inventario.'
+    },
+    {
+      code: 'customers.access',
+      name: 'Acceso a clientes',
+      module_name: 'Clientes',
+      description: 'Permite acceder al módulo de clientes.'
+    },
+    {
+      code: 'suppliers.access',
+      name: 'Acceso a proveedores',
+      module_name: 'Proveedores',
+      description: 'Permite acceder al módulo de proveedores.'
+    },
+    {
+      code: 'suppliers.view',
+      name: 'View suppliers',
+      module_name: 'Proveedores',
+      description: 'View suppliers.'
+    },
+    {
+      code: 'suppliers.create',
+      name: 'Create suppliers',
+      module_name: 'Proveedores',
+      description: 'Create suppliers.'
+    },
+    {
+      code: 'suppliers.update',
+      name: 'Update suppliers',
+      module_name: 'Proveedores',
+      description: 'Update suppliers.'
+    },
+    {
+      code: 'suppliers.destroy',
+      name: 'Delete suppliers',
+      module_name: 'Proveedores',
+      description: 'Delete suppliers.'
+    },
+    {
+      code: 'suppliers.export',
+      name: 'Export suppliers',
+      module_name: 'Proveedores',
+      description: 'Export suppliers.'
+    },
+    {
+      code: 'suppliers.contacts.view',
+      name: 'View supplier contacts',
+      module_name: 'Proveedores',
+      description: 'View supplier contacts.'
+    },
+    {
+      code: 'suppliers.contacts.manage',
+      name: 'Manage supplier contacts',
+      module_name: 'Proveedores',
+      description: 'Manage supplier contacts.'
+    },
+    {
+      code: 'suppliers.addresses.view',
+      name: 'View supplier addresses',
+      module_name: 'Proveedores',
+      description: 'View supplier addresses.'
+    },
+    {
+      code: 'suppliers.addresses.manage',
+      name: 'Manage supplier addresses',
+      module_name: 'Proveedores',
+      description: 'Manage supplier addresses.'
+    },
+    {
+      code: 'suppliers.schedules.view',
+      name: 'View supplier schedules',
+      module_name: 'Proveedores',
+      description: 'View supplier schedules.'
+    },
+    {
+      code: 'suppliers.schedules.manage',
+      name: 'Manage supplier schedules',
+      module_name: 'Proveedores',
+      description: 'Manage supplier schedules.'
+    },
+    {
+      code: 'suppliers.documents.view',
+      name: 'View supplier documents',
+      module_name: 'Proveedores',
+      description: 'View supplier documents.'
+    },
+    {
+      code: 'suppliers.documents.manage',
+      name: 'Manage supplier documents',
+      module_name: 'Proveedores',
+      description: 'Manage supplier documents.'
+    },
+    {
+      code: 'suppliers.fiscal.view',
+      name: 'View supplier fiscal information',
+      module_name: 'Proveedores',
+      description: 'View supplier fiscal information.'
+    },
+    {
+      code: 'suppliers.fiscal.manage',
+      name: 'Manage supplier fiscal information',
+      module_name: 'Proveedores',
+      description: 'Manage supplier fiscal information.'
+    },
+    {
+      code: 'suppliers.commercial.view',
+      name: 'View supplier commercial data',
+      module_name: 'Proveedores',
+      description: 'View supplier commercial data.'
+    },
+    {
+      code: 'suppliers.commercial.manage',
+      name: 'Manage supplier commercial data',
+      module_name: 'Proveedores',
+      description: 'Manage supplier commercial data.'
+    },
+    { code: 'suppliers.products.view', name: 'Ver productos de proveedores',
+      module_name: 'Proveedores', description: 'Consulta ofertas y precios por proveedor.' },
+    { code: 'suppliers.products.manage', name: 'Administrar productos de proveedores',
+      module_name: 'Proveedores', description: 'Edita ofertas de compra y presentaciones.' },
+    {
+      code: 'purchases.view',
+      name: 'View purchases',
+      module_name: 'Compras',
+      description: 'View purchases within the current organization.'
+    },
+    {
+      code: 'purchases.create',
+      name: 'Create purchase documents',
+      module_name: 'Compras',
+      description: 'Create purchase documents within the current organization.'
+    },
+    {
+      code: 'purchases.approve',
+      name: 'Approve purchases',
+      module_name: 'Compras',
+      description: 'Approve purchases within the current organization.'
+    },
+    {
+      code: 'purchases.receive',
+      name: 'Receive purchased merchandise',
+      module_name: 'Compras',
+      description: 'Receive purchased merchandise within the current organization.'
+    },
+    {
+      code: 'purchases.returns',
+      name: 'Process supplier returns',
+      module_name: 'Compras',
+      description: 'Process supplier returns within the current organization.'
+    },
+    {
+      code: 'employees.access',
+      name: 'Acceso a empleados',
+      module_name: 'Empleados',
+      description: 'Permite acceder al módulo de empleados.'
+    },
+    {
+      code: 'reports.access',
+      name: 'Acceso a reportes',
+      module_name: 'Reportes',
+      description: 'Permite acceder al módulo de reportes.'
+    },
+    {
+      code: 'products.access',
+      name: 'Acceso a productos',
+      module_name: 'Productos',
+      description: 'Permite acceder al catálogo de productos.'
+    },
+    {
+      code: 'categories.access',
+      name: 'Acceso a categorías',
+      module_name: 'Categorías',
+      description: 'Permite acceder al catálogo de categorías.'
+    },
+    {
+      code: 'branches.access',
+      name: 'Acceso a sucursales',
+      module_name: 'Sucursales',
+      description: 'Permite administrar las sucursales.'
+    },
+    {
+      code: 'languages.access',
+      name: 'Acceso a idiomas',
+      module_name: 'Idiomas',
+      description: 'Permite administrar los idiomas disponibles.'
+    },
+    { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
+      description: 'Permite administrar roles y sus permisos.' },
+    { code: 'accounts_payable.view', name: 'View accounts payable', module_name: 'Cuentas por pagar',
+      description: 'View vendor invoices, outstanding balances and reconciliations.' },
+    { code: 'accounts_payable.manage', name: 'Manage invoices', module_name: 'Cuentas por pagar',
+      description: 'Create and edit vendor invoices, payments and credit notes.' },
+    { code: 'accounts_payable.approve', name: 'Approve invoices and credits', module_name: 'Cuentas por pagar',
+      description: 'Post and cancel vendor invoices and credit notes.' },
+    { code: 'accounts_payable.pay', name: 'Apply and reverse payments', module_name: 'Cuentas por pagar',
+      description: 'Post, allocate and reverse financial settlements.' },
+    { code: 'accounts_payable.banks.view', name: 'View vendor bank accounts', module_name: 'Cuentas por pagar',
+      description: 'View masked bank account information.' },
+    { code: 'accounts_payable.banks.manage', name: 'Manage vendor bank accounts', module_name: 'Cuentas por pagar',
+      description: 'Add, update and archive vendor bank accounts.' },
+    { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
+      description: 'Access full encrypted banking details with audit logging.' }
+  ].freeze
+end
 
 def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
@@ -402,7 +406,11 @@ def assign_admin_role(user, administrator_role)
                "asignacion_id=#{assignment.id}"
 end
 
-USER_SEED_ROLES ||= %w[manager supervisor cashier salesman inventory purchases finance auditor support].freeze
+unless defined?(USER_SEED_ROLES)
+  USER_SEED_ROLES = %w[
+    manager supervisor cashier salesman inventory purchases finance auditor support
+  ].freeze
+end
 
 def seed_users(count = 15)
   roles = SystemRole.where(code: USER_SEED_ROLES).order(:id).to_a
