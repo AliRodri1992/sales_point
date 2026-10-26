@@ -1,6 +1,10 @@
 ko:
   admin:
     accounts_payable:
+      filter_placeholder: "공급업체 또는 문서 번호 검색"
+      filter_search: "검색"
+      filter_all_statuses: "모든 상태"
+      filter_clear: "필터 지우기"
       title: "매입채무"
       description: "공급업체 지급 의무 관리"
       payables: "매입채무"

@@ -1,0 +1,28 @@
+<%= form_with url: path, method: :get,
+              class: 'mb-5 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:p-4' do %>
+  <div class="relative min-w-[12rem] flex-1">
+    <label for="financial-listing-search" class="sr-only"><%= t('admin.accounts_payable.filter_search') %></label>
+    <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400') %>
+    <%= search_field_tag :q, @filter_query, id: 'financial-listing-search',
+                         placeholder: t('admin.accounts_payable.filter_placeholder'), maxlength: 100,
+                         class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+  </div>
+  <div class="min-w-[10rem] flex-1 sm:max-w-52">
+    <label for="financial-listing-status" class="sr-only"><%= t('admin.accounts_payable.status') %></label>
+    <%= select_tag :status,
+                   options_for_select([[t('admin.accounts_payable.filter_all_statuses'), 'all']] +
+                                      statuses.map { |status| [t("admin.accounts_payable.states.#{status}"), status] },
+                                      @filter_status),
+                   id: 'financial-listing-status',
+                   class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+  </div>
+  <%= button_tag type: :submit,
+                 class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800' do %>
+    <%= icon('magnifying-glass', class: 'size-4') %>
+    <%= t('admin.accounts_payable.filter_search') %>
+  <% end %>
+  <% if @filter_query.present? || @filter_status != 'all' %>
+    <%= link_to t('admin.accounts_payable.filter_clear'), path,
+                class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100' %>
+  <% end %>
+<% end %>

@@ -1,6 +1,10 @@
 es:
   admin:
     accounts_payable:
+      filter_placeholder: "Buscar por proveedor o folio/referencia"
+      filter_search: "Buscar"
+      filter_all_statuses: "Todos los estados"
+      filter_clear: "Limpiar filtros"
       title: "Cuentas por pagar"
       description: "Compromisos financieros con proveedores"
       payables: "Cuentas por pagar"

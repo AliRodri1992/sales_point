@@ -4,12 +4,15 @@ module Admin
   class SupplierPaymentsController < ApplicationController
     include FinancialAccess
     include FinancialPagination
+    include FinancialListingFilters
 
     before_action :set_payment, only: %i[show post_payment reverse]
 
     def index
       authorize current_organization.supplier_payments.new, :index?
       scope = policy_scope(current_organization.supplier_payments)
+      scope = filter_financial_listing(scope, statuses: SupplierPayment.statuses.keys,
+                                            reference_column: 'reference')
       @payments = paginate_financial(scope, includes: %i[supplier currency])
     end
 

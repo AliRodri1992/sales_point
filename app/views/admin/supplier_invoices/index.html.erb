@@ -6,6 +6,7 @@
       <%= link_to t('admin.accounts_payable.new_invoice'), new_admin_supplier_invoice_path, class: 'inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800' %>
     <% end %>
   </div>
+  <%= render 'admin/financials/filters', path: admin_supplier_invoices_path, statuses: SupplierInvoice.statuses.keys %>
   <div class="overflow-x-auto rounded-xl border border-slate-200"><table data-financial-table="invoices" class="w-full min-w-[760px] text-left text-sm">
     <thead class="bg-slate-50 text-slate-500"><tr><% %w[invoice supplier issued_on due_on amount status].each do |key| %>
       <th class="p-3"><%= t("admin.accounts_payable.#{key}") %></th><% end %></tr></thead>

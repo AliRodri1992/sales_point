@@ -1,6 +1,10 @@
 en:
   admin:
     accounts_payable:
+      filter_placeholder: "Search by supplier or folio/reference"
+      filter_search: "Search"
+      filter_all_statuses: "All statuses"
+      filter_clear: "Clear filters"
       title: "Accounts payable"
       description: "Vendor financial obligations"
       payables: "Accounts payable"
