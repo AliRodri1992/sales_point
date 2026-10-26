@@ -20,10 +20,10 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
   it 'uses the global breadcrumb only, without duplicate supplier navigation trails' do
     get admin_supplier_path(supplier)
-    expect(dossier.css('nav[aria-label="Breadcrumb"]').size).to eq(1)
+    expect(dossier.css('nav[aria-label] ol').size).to eq(1)
 
     get edit_admin_supplier_path(supplier, return_to: 'fiscal')
-    expect(dossier.css('nav[aria-label="Breadcrumb"]').size).to eq(1)
+    expect(dossier.css('nav[aria-label] ol').size).to eq(1)
     expect(dossier.at_css('input[name="return_to"]')['value']).to eq('fiscal')
     expect(dossier.at_css('a[href="#{admin_supplier_path(supplier, tab: 'fiscal')}"]')).to be_present
   end

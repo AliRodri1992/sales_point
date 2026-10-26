@@ -54,6 +54,8 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(summary).to have_text('5534037737')
     expect(summary).to have_css('dd', text: '45', exact_text: true)
     expect(page).to have_css('[data-supplier-form-target="tab"]', count: 7, visible: :all)
+    expect(page).to have_css('[data-step-indicator]', count: 6, visible: :all)
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-state]', count: 6, visible: :all)
     expect(page).to have_css('input[name$="[mobile_phone]"]', visible: :all)
     expect(page).to have_css('input[name="supplier[credit_days]"]', visible: :all)
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)

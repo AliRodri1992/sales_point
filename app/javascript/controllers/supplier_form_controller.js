@@ -20,6 +20,7 @@ export default class extends Controller {
         } else if (event.target.matches("input[required], select[required], textarea[required]")) {
           this.validateField(event.target)
         }
+        this.refreshStepIndicators()
       })
     }
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
@@ -322,6 +323,34 @@ export default class extends Controller {
     })
   }
 
+  refreshStepIndicators() {
+    this.tabTargets.forEach((tab, index) => {
+      if (index === this.stepTargets.length - 1) return
+      const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors, [data-server-field-error]')
+      const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
+        .filter((field) => !field.disabled && !field.closest("template"))
+      const complete = required.length > 0 && required.every((field) => field.checkValidity()) && !invalid
+      const state = invalid ? "error" : complete ? "complete" : "pending"
+      tab.dataset.stepState = state
+      tab.classList.toggle("ring-1", !!invalid)
+      tab.classList.toggle("ring-rose-400", !!invalid)
+      let indicator = tab.querySelector("[data-step-indicator]")
+      if (!indicator) {
+        indicator = document.createElement("span")
+        indicator.dataset.stepIndicator = "true"
+        indicator.className = "ml-auto shrink-0 rounded-md px-2 py-1 text-[10px] font-bold"
+        tab.append(indicator)
+      }
+      indicator.textContent = this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`]
+      indicator.classList.toggle("bg-emerald-100", state === "complete")
+      indicator.classList.toggle("text-emerald-800", state === "complete")
+      indicator.classList.toggle("bg-rose-100", state === "error")
+      indicator.classList.toggle("text-rose-800", state === "error")
+      indicator.classList.toggle("bg-slate-100", state === "pending")
+      indicator.classList.toggle("text-slate-600", state === "pending")
+    })
+  }
+
   render() {
     this.stepTargets.forEach((step, index) => {
       step.hidden = index !== this.indexValue
@@ -331,14 +360,6 @@ export default class extends Controller {
       const active = index === this.indexValue
       if (active) tab.setAttribute("aria-current", "step")
       else tab.removeAttribute("aria-current")
-      const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors')
-      const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
-        .filter((field) => !field.disabled && !field.closest('template'))
-      const complete = index < this.stepTargets.length - 1 && required.length > 0 &&
-        required.every((field) => field.checkValidity()) && !invalid
-      tab.dataset.stepState = invalid ? "error" : complete ? "complete" : "pending"
-      tab.classList.toggle("ring-1", !!invalid)
-      tab.classList.toggle("ring-rose-400", !!invalid)
       tab.classList.toggle("bg-emerald-50", active)
       tab.classList.toggle("text-emerald-800", active)
       tab.classList.toggle("border-emerald-500", active)
@@ -354,6 +375,7 @@ export default class extends Controller {
       circle.classList.toggle("border-slate-200", !active)
       circle.classList.toggle("text-slate-500", !active)
     })
+    this.refreshStepIndicators()
     if (this.indexValue === this.stepTargets.length - 1) this.updateSummary()
     if (this.hasSubmitTarget) this.submitTarget.hidden = this.indexValue !== this.stepTargets.length - 1
     if (this.hasPreviousTarget) this.previousTarget.hidden = this.indexValue === 0

@@ -89,6 +89,9 @@ en:
           status: "Status"
           actions: "Actions"
       onboarding:
+        progress_pending: "Pending"
+        progress_complete: "Complete"
+        progress_error: "Correct errors"
         required_field: "%{field} is required."
         invalid_format: "%{field} has an invalid format."
         contact_general: "Supplier contact details"

@@ -89,6 +89,9 @@ es:
           status: "Estado"
           actions: "Acciones"
       onboarding:
+        progress_pending: "Pendiente"
+        progress_complete: "Completo"
+        progress_error: "Con errores"
         required_field: "%{field} es obligatorio."
         invalid_format: "El formato de %{field} no es válido."
         contact_general: "Datos de contacto del proveedor"
