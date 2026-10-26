@@ -1,4 +1,5 @@
-# Lightweight local checks. Full RSpec and security scans run in GitHub Actions.
+# Local hooks must be fast, deterministic, and independent of Docker and PostgreSQL.
+# The full suite, RuboCop, Brakeman, BundlerAudit, and I18n run in GitHub Actions.
 gemfile: Gemfile
 
 PreCommit:

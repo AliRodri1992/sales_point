@@ -160,31 +160,37 @@ docker compose exec web bundle exec rspec
 
 ---
 
-## Pre-push: RSpec mediante Docker Compose
+## Overcommit local y pruebas completas en CI
 
-El hook `bin/overcommit-rspec` **nunca ejecuta Rails en macOS**. Comprueba que Docker
-Desktop y Docker Compose v2 estén disponibles y usa `docker-compose.dev.yml`:
+Los hooks de Overcommit se mantienen ligeros para que **commits y pushes no
+dependan de Docker, PostgreSQL ni de la duración de RSpec**:
 
-- Si `web` está ejecutándose: `docker compose -f docker-compose.dev.yml exec -T web`.
-- Si `web` está detenido: `docker compose -f docker-compose.dev.yml run --rm -T web`,
-  que inicia `db` y `redis` como dependencias.
-- Dentro del contenedor fuerza `RAILS_ENV=test`, `POSTGRES_HOST=db`, elimina
-  `DATABASE_URL`, ejecuta `bin/rails db:prepare` y después `bundle exec rspec`.
-- Si Docker, PostgreSQL o RSpec fallan, **se bloquea el push con un error visible**.
-  No hay ejecución alternativa en el Mac ni desactivación de verificaciones.
+- `pre-commit`: comprueba espacios en blanco sobrantes.
+- `pre-push`: no ejecuta RSpec, Brakeman, BundlerAudit ni otros procesos largos.
+- `GitHub Actions / CI`: ejecuta **toda la suite RSpec**, RuboCop, Brakeman,
+  BundlerAudit y las verificaciones de traducciones. Un error hace fallar CI.
 
-Para ejecutar o diagnosticar manualmente:
+Una comprobación de configuración protege este contrato en
+`.github/workflows/pre-push-hook-tests.yml`.
 
 ```bash
-bash test/overcommit_rspec_test.sh        # Pruebas aisladas del hook: no requieren Docker
-docker compose -f docker-compose.dev.yml ps
-docker compose -f docker-compose.dev.yml up -d db redis web
-docker compose -f docker-compose.dev.yml exec -T web env RAILS_ENV=test bin/rails db:prepare
-docker compose -f docker-compose.dev.yml exec -T web env RAILS_ENV=test bundle exec rspec
+bundle exec overcommit --install
+bundle exec overcommit --sign
+bundle exec overcommit --run pre-push
+ruby test/overcommit_configuration_test.rb
 ```
 
-Cuando Overcommit advierta que cambió el script, **revísalo** antes de ejecutar
-`bundle exec overcommit --sign pre-push`.
+La suite también puede ejecutarse de manera explícita, **fuera del push** y con
+la base de pruebas aislada del entorno de desarrollo:
+
+```bash
+bash bin/overcommit-rspec
+```
+
+Para impedir integrar cambios con CI rojo, configura como *required checks*
+los jobs **RSpec**, **RuboCop**, **Security scans** y **Rails I18n and YAML audit**
+en la protección de la rama de integración. El push solo publica el commit:
+no puede esperar el resultado completo de un CI que empieza después.
 
 ---
 

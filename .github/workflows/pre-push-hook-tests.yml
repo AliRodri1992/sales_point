@@ -1,4 +1,4 @@
-name: Pre-push hook tests
+name: Hook configuration
 
 on:
   push:
@@ -8,11 +8,14 @@ permissions:
   contents: read
 
 jobs:
-  pre-push-hook-tests:
-    name: Validate Docker-only RSpec pre-push hook
+  hook-configuration:
+    name: Verify fast local hooks and CI test enforcement
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Test Docker-only RSpec pre-push hook without Docker daemon
+      - name: Verify local hooks and full CI coverage
+        run: ruby test/overcommit_configuration_test.rb
+
+      - name: Preserve isolated RSpec runner regression tests
         run: bash test/overcommit_rspec_test.sh

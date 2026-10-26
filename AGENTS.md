@@ -24,15 +24,25 @@ El hook de Overcommit se instala con `bundle exec overcommit --install` y se fir
 - Conservar convenciones existentes, permisos/autorización, pruebas, accesibilidad, estilos e internacionalización.
 - Si un comando no pudo ejecutarse por limitaciones del entorno, informar qué falta verificar, sin declarar éxito ficticio.
 
-## Pre-push y pruebas RSpec locales
+## Contrato de Overcommit y validación completa
 
-- `bin/overcommit-rspec` usa únicamente `docker compose -f docker-compose.dev.yml`. No añadir fallback de Rails ejecutado en el host: `db` solo se resuelve en la red Compose.
-- El hook usa **siempre** `docker compose run --rm -T web` para ejecutar RSpec en un contenedor temporal aislado, incluso cuando `web` ya está activo. No usar `docker compose exec web` para la suite completa: los procesos de prueba y Chromium podrían agotar los recursos del servidor activo. Fuerza `RAILS_ENV=test`, prepara la base de pruebas y elimina `DATABASE_URL`.
-- Fallos del daemon, Compose, PostgreSQL o RSpec deben detener el push y propagarse; nunca utilizar `--no-verify` como solución.
-- Si se modifica el hook, validar `bash test/overcommit_rspec_test.sh`, que simula la ejecución aislada y fallos de Docker sin conectarse a servicios externos. CI ejecuta este verificador en `.github/workflows/pre-push-hook-tests.yml`.
-- Tras actualizar el hook en una máquina local, revisar el script y volver a firmar con `bundle exec overcommit --sign pre-push` si Overcommit lo solicita.
+- **PreCommit**: únicamente `TrailingWhitespace`; no ejecutar herramientas lentas.
+- **PrePush**: RSpec, Brakeman, BundlerAudit y BundleCheck están desactivados
+  localmente. Los pushes no deben invocar Docker ni bloquearse por la base test.
+- **CI** (`.github/workflows/ci.yml`): mantiene toda la suite RSpec, RuboCop,
+  Brakeman, BundlerAudit y auditoría I18n. Un fallo debe seguir marcando rojo.
+- `test/overcommit_configuration_test.rb` valida esta separación y se ejecuta
+  en el workflow de hooks junto con la prueba del runner manual.
+- El runner `bin/overcommit-rspec` queda disponible **solo para ejecución manual**,
+  y siempre usa un contenedor efímero vía `docker compose run --rm -T web`.
+  Nunca debe modificar la base de desarrollo ni recurrir al Rails del host.
+- No utilizar `--no-verify` ni desactivar comprobaciones del workflow CI.
+- Para prohibir integrar CI rojo, configurar los checks requeridos de la rama
+  en GitHub: esta restricción se aplica a los merges, no bloquea el push.
+- Tras un cambio, verificar los resultados del CI del SHA publicado antes de
+  afirmar que todas las pruebas pasaron.
 
 ## Verificaciones específicas del proyecto
-- Para RSpec local usar `bin/overcommit-rspec` (contenedor temporal). Con contenedores activos, ejecutar RuboCop y Brakeman mediante `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
+- Para RSpec local ejecutar manualmente `bash bin/overcommit-rspec` (contenedor temporal). Con contenedores activos, ejecutar RuboCop y Brakeman mediante `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
 - Ejecutar las pruebas/coberturas requeridas por la tarea; no afirmar porcentajes sin el reporte actual de SimpleCov.
 - Validar el estado final de los flujos de GitHub Actions de `feature/suppliers` tras cada push.
