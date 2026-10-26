@@ -5,7 +5,9 @@
     [t('admin.accounts_payable.payments'), admin_supplier_payments_path],
     [t('admin.accounts_payable.credits'), admin_supplier_credit_notes_path]
   ].each do |label, path| %>
-    <%= link_to label, path, class: 'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-emerald-300 hover:text-emerald-700' %>
+    <%= link_to label, path,
+                aria: { current: ('page' if current_page?(path)) },
+                class: "inline-flex min-h-10 items-center rounded-xl border px-4 py-2 text-sm font-semibold transition #{current_page?(path) ? 'border-emerald-600 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:text-emerald-700'}" %>
   <% end %>
 </nav>
 

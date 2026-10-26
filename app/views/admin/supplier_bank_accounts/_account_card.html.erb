@@ -42,13 +42,11 @@
           <span>Santander</span>
         </span>
       <% else %>
-        <span class="truncate text-xl tracking-normal"><%= bank_name %></span>
+        <span class="inline-flex size-10 items-center justify-center rounded-xl bg-white/15" aria-hidden="true"><%= icon('building-library', class: 'size-6') %></span>
+        <span class="sr-only"><%= bank_name %></span>
       <% end %>
     </div>
     <div class="relative z-10 flex shrink-0 items-center gap-1.5">
-      <span class="rounded-full px-2 py-1 text-[11px] font-bold <%= archived ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800' %>">
-        <%= t("admin.bank_cards.#{archived ? 'inactive' : 'active'}") %>
-      </span>
       <% if account.primary? && !archived %>
         <span class="flex size-8 items-center justify-center rounded-lg bg-white/20" title="<%= t('admin.accounts_payable.primary') %>" aria-label="<%= t('admin.accounts_payable.primary') %>">
           <svg viewBox="0 0 24 24" fill="currentColor" class="size-4 text-amber-300" aria-hidden="true">
@@ -86,12 +84,17 @@
 
   <div class="relative z-0 mt-8">
     <div class="font-jakarta text-xl font-bold tracking-[0.045em] tabular-nums sm:text-2xl"><%= account.card_display_number %></div>
-    <p class="mt-3 text-xs font-medium <%= muted %>">
+    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+    <p class="text-xs font-medium <%= muted %>">
       <% if account.card_expiration_label.present? %>
         <%= t('admin.bank_cards.expires', date: account.card_expiration_label) %>
       <% else %>
         <%= t('admin.bank_cards.no_expiration') %>
       <% end %>
     </p>
+    <span class="rounded-full px-2 py-1 text-[11px] font-bold <%= archived ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800' %>">
+        <%= t("admin.bank_cards.#{archived ? 'inactive' : 'active'}") %>
+      </span>
+    </div>
   </div>
 </article>
