@@ -8,6 +8,11 @@ services:
 
     container_name: rails_sale_point
 
+    # Keep Rails online even if a watcher or worker fails in its own service.
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 15s
+
     env_file:
       - .env.development
 
@@ -23,7 +28,30 @@ services:
     tty: true
 
     depends_on:
-      db:
+    
+  assets:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        INSTALL_TEST_BROWSER: "true"
+
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 15s
+
+    env_file:
+      - .env.development
+
+    volumes:
+      - .:/rails
+      - /rails/node_modules
+      - bundle_cache:/bundle
+
+    # Foreman manages only the asset watchers; Puma is independent.
+    command: bundle exec foreman start -f Procfile.assets.dev --env /dev/null
+
+  db:
         condition: service_healthy
       redis:
         condition: service_started
@@ -33,11 +61,13 @@ services:
       CHROME_BINARY: /usr/bin/chromium
       CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
-    command: bash -c "bin/rails db:prepare && bin/dev"
+    # Assets are watched by a separate service so their failures cannot stop Puma.
+    command: bash -lc "bin/rails db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
 
   db:
     image: postgres:16
     container_name: postgres_sale_point
+    restart: unless-stopped
 
     environment:
       POSTGRES_DB: sale_point_development
@@ -59,6 +89,7 @@ services:
   redis:
     image: redis:7.2.6-alpine
     container_name: redis_sale_point
+    restart: unless-stopped
 
     ports:
       - "6379:6379"
@@ -74,6 +105,10 @@ services:
       dockerfile: Dockerfile.dev
 
     container_name: sidekiq_sale_point
+
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 15s
 
     env_file:
       - .env.development
