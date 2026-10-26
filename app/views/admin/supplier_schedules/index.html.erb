@@ -56,7 +56,8 @@
         </div>
         <div>
           <%= form.label :supplier_schedule_id, t('admin.supplier_calendar.specific_schedule') %>
-          <%= form.collection_select :supplier_schedule_id, @schedules, :id, :id,
+          <%= form.collection_select :supplier_schedule_id, @schedules, :id,
+                                     ->(schedule) { "#{schedule.branch.name} · #{t('date.day_names')[schedule.weekday]} · #{schedule.starts_at.strftime('%H:%M')} · #{t("admin.supplier_dossier.kinds.#{schedule.kind}")}" },
                                      { include_blank: t('admin.supplier_calendar.all_schedules') },
                                      class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
         </div>

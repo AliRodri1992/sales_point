@@ -20,11 +20,13 @@
     </div>
   </header>
 
-  <nav class="flex flex-wrap gap-3 text-sm font-semibold" aria-label="Offers">
+  <nav class="flex flex-wrap gap-3 text-sm font-semibold" aria-label="<%= t('admin.procurement.title') %>">
     <%= link_to t('admin.supplier_archive.active'), admin_supplier_supplier_products_path(@supplier),
-                class: 'rounded-xl border border-emerald-200 bg-white px-4 py-2 text-emerald-800' %>
+                aria: { current: ('page' unless params[:archived] == '1') },
+                class: "rounded-xl border px-4 py-2 #{params[:archived] == '1' ? 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50' : 'border-emerald-600 bg-emerald-50 text-emerald-800'}" %>
     <%= link_to t('admin.supplier_archive.archived'), admin_supplier_supplier_products_path(@supplier, archived: '1'),
-                class: 'rounded-xl border border-slate-200 bg-white px-4 py-2 text-slate-700' %>
+                aria: { current: ('page' if params[:archived] == '1') },
+                class: "rounded-xl border px-4 py-2 #{params[:archived] == '1' ? 'border-emerald-600 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
   </nav>
   <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
     <%= form_with url: admin_supplier_supplier_products_path(@supplier), method: :get,

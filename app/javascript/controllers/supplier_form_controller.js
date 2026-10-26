@@ -268,7 +268,7 @@ export default class extends Controller {
       type: field.type
     })).filter(({ value }) => value !== null && value !== "")
 
-    if (!entries.length) return
+    if (!entries.length) entries.push({ label: '—', value: '—' })
 
     const group = document.createElement("section")
     group.className = "rounded-xl border border-slate-200 bg-slate-50/50 p-4"

@@ -134,6 +134,15 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     expect(dossier['data-supplier-dossier-initial-tab-value']).to eq('products')
   end
 
+  it 'marks the selected offer archive tab' do
+    get admin_supplier_supplier_products_path(supplier)
+    expect(document.at_css('nav[aria-label="Supplier products"] a[aria-current="page"]')).to be_present
+
+    get admin_supplier_supplier_products_path(supplier, archived: '1')
+    expect(document.at_css('nav[aria-label="Supplier products"] a[aria-current="page"]')['href'])
+      .to include('archived=1')
+  end
+
   it 'keeps every offer action in a three-dot menu' do
     offer = offer_for(product)
 

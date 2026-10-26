@@ -23,6 +23,7 @@ module Admin
     def load_suppliers
       load_supplier_stats
       @supplier_regimes = SatFiscalRegime.current.order(:code)
+      @supplier_currencies = Currency.active.order(:code)
       @suppliers = apply_filters(suppliers_list_scope.includes(:sat_fiscal_regime))
       @total_count = @suppliers.count
       @suppliers = paginate(apply_sorting(@suppliers))
