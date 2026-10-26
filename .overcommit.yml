@@ -1,28 +1,19 @@
-# frozen_string_literal: true
-
+# Lightweight local checks. Full RSpec and security scans run in GitHub Actions.
 gemfile: Gemfile
 
 PreCommit:
   TrailingWhitespace:
     enabled: true
 
-  RuboCop:
-    enabled: true
-    command: ['bundle', 'exec', 'rubocop', '--force-exclusion']
-    on_warn: fail
-
 PrePush:
   BundleCheck:
-    enabled: true
+    enabled: false
 
   Brakeman:
-    enabled: true
-    command: ['bundle', 'exec', 'brakeman', '--no-pager']
+    enabled: false
 
   BundlerAudit:
-    enabled: true
-    command: ['bin/overcommit-bundler-audit']
+    enabled: false
 
   RSpec:
-    enabled: true
-    command: ['bash', 'bin/overcommit-rspec']
+    enabled: false
