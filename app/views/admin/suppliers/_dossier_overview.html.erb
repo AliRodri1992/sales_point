@@ -51,9 +51,9 @@
     <% second_column = [
       [t('admin.supplier_dossier.fields.currency'), supplier.currency&.code],
       [t('admin.supplier_dossier.fields.credit_days'), supplier.credit_days],
-      [t('admin.supplier_dossier.fields.credit_limit'), supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit, unit: '') + ' ' + supplier.currency.code : nil],
+      [t('admin.supplier_dossier.fields.credit_limit'), supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit, unit: '') + ' ' + (supplier.currency&.code || '—') : nil],
       [t('admin.supplier_dossier.fields.discount_percent'), supplier.discount_percent.present? ? "#{supplier.discount_percent}%" : nil],
-      [t('admin.supplier_dossier.fields.minimum_order_amount'), supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount, unit: '') + ' ' + supplier.currency.code : nil],
+      [t('admin.supplier_dossier.fields.minimum_order_amount'), supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount, unit: '') + ' ' + (supplier.currency&.code || '—') : nil],
       [t('admin.supplier_dossier.notes'), supplier.notes]
     ] %>
     <div class="grid gap-6 pt-4 lg:grid-cols-2 lg:gap-8">
