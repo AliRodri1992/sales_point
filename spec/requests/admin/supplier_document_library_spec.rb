@@ -272,6 +272,42 @@ RSpec.describe 'Supplier document library', type: :request do
     end
   end
 
+  it 'returns HTTP 415 when a valid Office document cannot be converted to PDF' do
+    office = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(supplier)), filename: 'unconvertible.docx',
+      content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
+    )
+    supplier.documents.attach(office)
+    id = attachment.id
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(true)
+    converter = instance_double(Suppliers::OfficeDocumentPdf, call: nil)
+    allow(Suppliers::OfficeDocumentPdf).to receive(:new).and_return(converter)
+
+    get admin_supplier_document_preview_path(supplier, document_id: id)
+
+    expect(response).to have_http_status(:unsupported_media_type)
+    expect(supplier.supplier_documents.find_by!(attachment_id: id).preview_pdf).not_to be_attached
+  end
+
+  it 'returns HTTP 415 when a valid DOCX package has no visible text' do
+    empty_docx = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write(SupplierDemoDocumentOffice.docx_content_types)
+      zip.put_next_entry('word/document.xml')
+      zip.write('<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body/></w:document>')
+    end.string
+    office = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(empty_docx), filename: 'empty-text.docx',
+      content_type: Suppliers::DocumentContentPreview::DOCX_TYPE, identify: false
+    )
+    supplier.documents.attach(office)
+    allow(Suppliers::OfficeDocumentPdf).to receive(:available?).and_return(false)
+
+    get admin_supplier_document_preview_path(supplier, document_id: attachment.id)
+
+    expect(response).to have_http_status(:unsupported_media_type)
+  end
+
   it 'retains deleted documents in the recoverable trash with their owner and history' do
     post admin_supplier_documents_path(supplier), params: {
       document: { file: upload('signed.pdf'), category: 'contract' }

@@ -39,44 +39,38 @@ CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 
 ### Docker Compose (Desarrollo)
 
-```yaml
-# docker-compose.dev.yml
-version: '3.8'
-services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: sale_point
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: sale_point_development
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+La configuración real es `docker-compose.dev.yml`. En desarrollo separa los procesos:
 
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
+- `web`: ejecuta `db:prepare` y Puma en el puerto 3000, sin Foreman ni observadores de recursos.
+- `assets`: ejecuta Foreman únicamente para observar cambios de JavaScript y CSS; comparte los archivos del proyecto con `web`.
+- `sidekiq`: procesa trabajos en segundo plano.
+- `db` y `redis`: almacenan datos en volúmenes persistentes.
 
-  web:
-    build: .
-    command: bin/dev
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
-    environment:
-      POSTGRES_USER: sale_point
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: sale_point_development
-    depends_on:
-      - db
-      - redis
+Todos estos servicios usan `restart: unless-stopped`. Si un observador de assets falla, Compose reinicia `assets` **sin detener Rails**. Si Rails falla, Compose intenta reiniciar `web`, pero **eso no corrige la causa raíz**; hay que consultar su error.
 
-volumes:
-  db_data:
+Después de actualizar esta configuración:
+
+```bash
+docker compose -f docker-compose.dev.yml up -d --build
+docker compose -f docker-compose.dev.yml ps -a
+docker compose -f docker-compose.dev.yml logs --tail=150 web assets sidekiq
 ```
+
+Se puede detener el servicio `assets` mientras se investiga sin interrumpir el servidor: `docker compose -f docker-compose.dev.yml stop assets`. Los cambios en JS/CSS no se recompilarán hasta volver a iniciarlo.
+
+**Si `web` vuelve a detenerse**, tomar el diagnóstico antes de limpiar/recrear recursos:
+
+```bash
+docker inspect rails_sale_point --format='OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}} RestartCount={{.RestartCount}}'
+docker compose -f docker-compose.dev.yml logs --timestamps --tail=250 web assets
+docker stats --no-stream rails_sale_point sidekiq_sale_point
+```
+
+Un `OOMKilled=true` indica que Docker terminó el proceso por memoria; `OOMKilled=false` requiere examinar los logs, incluso cuando el código de salida no es cero. En Docker Desktop, confirma el límite de memoria asignado, especialmente al ejecutar RSpec, Chromium y Sidekiq a la vez. El hook pre-push puede iniciar un contenedor `web` temporal para las pruebas si el principal está detenido: esto no significa que el propio hook haya detenido el servicio.
+
+**Importante:** no ejecutar `docker compose down -v` ni `docker volume prune` para solucionar este problema; eso podría borrar la base de datos de desarrollo.
+
+---
 
 ---
 

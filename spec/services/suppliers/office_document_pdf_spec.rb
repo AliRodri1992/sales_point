@@ -43,6 +43,22 @@ RSpec.describe Suppliers::OfficeDocumentPdf do
     expect(described_class.new(blob).call).to be_nil
   end
 
+  it 'rejects a PDF conversion whose output exceeds the safety budget' do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(SupplierDemoDocumentOffice.docx_for(Struct.new(:code).new('SUP-0001'))),
+      filename: 'large-result.docx', content_type: described_class::CONTENT_TYPES.first, identify: false
+    )
+    allow(described_class).to receive(:available?).and_return(true)
+    allow(SupplierOfficeConverterProcess).to receive(:call) do |directory:, **|
+      File.binwrite(File.join(directory, 'document.pdf'), '%PDF-1.4 small placeholder')
+      true
+    end
+    allow(File).to receive(:size).and_call_original
+    allow(File).to receive(:size).with(/document\.pdf\z/).and_return(described_class::OUTPUT_LIMIT + 1)
+
+    expect(described_class.new(blob).call).to be_nil
+  end
+
   it 'does not use incomplete output when the conversion subprocess fails' do
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(SupplierDemoDocumentOffice.docx_for(Struct.new(:code).new('SUP-0001'))), filename: 'report.docx',

@@ -27,6 +27,21 @@ RSpec.describe DemoRequestReminderJob, type: :job do
     expect(demo_request.activities.where(action: 'reminder_sent')).to exist
   end
 
+  it 'ignores jobs carrying a stale schedule timestamp' do
+    record = demo_request
+    expect(DemoRequestMailer).not_to receive(:with)
+
+    described_class.perform_now(record.id, 'one_hour', record.scheduled_at.to_i - 60)
+    expect(record.reload.reminder_1h_sent_at).to be_nil
+  end
+
+  it 'ignores jobs for requests without a scheduled date' do
+    record = demo_request
+    allow(record).to receive(:scheduled_at).and_return(nil)
+
+    expect(described_class.new.send(:valid_reminder?, record, 0)).to be(false)
+  end
+
   it 'does not send a duplicate reminder' do
     demo_request.update!(reminder_1h_sent_at: Time.current)
     expect(DemoRequestMailer).not_to receive(:with)

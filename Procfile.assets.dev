@@ -1,0 +1,4 @@
+# Dedicated asset watchers for docker-compose.dev.yml.
+# They run separately from Rails so a failed watcher cannot stop Puma.
+js: yarn build:js:watch
+css: yarn build:css:watch

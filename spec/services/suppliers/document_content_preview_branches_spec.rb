@@ -72,6 +72,14 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(blob).call).to be_nil
   end
 
+  it 'returns blank text for a valid spreadsheet without any populated rows' do
+    xml = "<worksheet xmlns='#{excel_ns}'><sheetData/></worksheet>"
+    spreadsheet = office_blob(zipped('xl/worksheets/sheet1.xml' => xml),
+                              type: described_class::XLSX_TYPE, filename: 'blank.xlsx')
+
+    expect(described_class.new(spreadsheet).call).to eq('')
+  end
+
   it 'extracts inline and numeric XLSX cells even without a shared strings file' do
     xml = "<worksheet xmlns='#{excel_ns}'><sheetData><row>" \
           '<c t="inlineStr"><is><t>Widget</t></is></c><c><v>13</v></c>' \

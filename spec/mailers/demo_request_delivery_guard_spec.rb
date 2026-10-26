@@ -29,6 +29,13 @@ RSpec.describe DemoRequestDeliveryGuard do
     guarded_mailer.send(:suppress_deleted_demo_request_delivery)
   end
 
+  it 'ignores parameters that are not DemoRequest records' do
+    allow(guarded_mailer).to receive(:params).and_return(demo_request: 'invalid')
+    expect(message).not_to receive(:perform_deliveries=)
+
+    guarded_mailer.send(:suppress_deleted_demo_request_delivery)
+  end
+
   context 'with a live demo request' do
     let(:parameters) { { demo_request: build(:demo_request) } }
 
