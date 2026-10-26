@@ -65,6 +65,18 @@ RSpec.describe Suppliers::OfficeDocumentFormatValidator do
     expect(described_class.new(document).valid?).to be(false)
   end
 
+  it 'rejects an Office manifest that has no XML namespace' do
+    content = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write('<Types/>')
+      zip.put_next_entry('word/document.xml')
+      zip.write('<document/>')
+    end.string
+    document = blob(content, 'no-namespace.docx', Suppliers::DocumentContentPreview::DOCX_TYPE)
+
+    expect(described_class.new(document).valid?).to be(false)
+  end
+
   it 'rejects a ZIP with an incorrect Office manifest namespace' do
     content = Zip::OutputStream.write_buffer do |zip|
       zip.put_next_entry('[Content_Types].xml')

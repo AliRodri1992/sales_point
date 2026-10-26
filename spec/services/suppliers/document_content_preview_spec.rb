@@ -53,6 +53,18 @@ RSpec.describe Suppliers::DocumentContentPreview do
     expect(described_class.new(fake).call).to be_nil
   end
 
+  it 'returns a blank text result for a valid DOCX without visible paragraphs' do
+    content = Zip::OutputStream.write_buffer do |zip|
+      zip.put_next_entry('[Content_Types].xml')
+      zip.write(SupplierDemoDocumentOffice.docx_content_types)
+      zip.put_next_entry('word/document.xml')
+      zip.write('<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body/></w:document>')
+    end.string
+    document = blob(content, 'blank.docx', described_class::DOCX_TYPE)
+
+    expect(described_class.new(document).call).to eq('')
+  end
+
   it 'skips unrelated MIME types' do
     pdf = blob('%PDF-1.4', 'sample.pdf', 'application/pdf')
 
