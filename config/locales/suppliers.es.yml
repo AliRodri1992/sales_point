@@ -24,6 +24,8 @@ es:
         confirm_delete: "¿Seguro que quieres eliminar este proveedor?"
         card_title: "Proveedores registrados"
         total_count: "%{count} proveedores registrados"
+        search_error: "No se pudieron actualizar los proveedores. Comprueba la conexión e inténtalo de nuevo."
+        retry: "Reintentar"
         search_placeholder: "Buscar por código, nombre, correo, teléfono o RFC..."
         filters:
           all_statuses: "Todos los estados"

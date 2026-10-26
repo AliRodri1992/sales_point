@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["error"]
+
   connect() {
     this.pending = null
     this.request = null
@@ -59,7 +61,13 @@ export default class extends Controller {
     this.refresh()
   }
 
+  retry(event) {
+    event.preventDefault()
+    this.refresh()
+  }
+
   async refresh() {
+    this.errorTarget?.classList.add('hidden')
     this.request?.abort()
     this.request = new AbortController()
     const url = new URL(this.element.action)
@@ -78,8 +86,12 @@ export default class extends Controller {
       if (this.request.signal.aborted) return
       window.Turbo.renderStreamMessage(html)
       window.history.replaceState(window.history.state, "", url)
+      if (this.hasErrorTarget) this.errorTarget.classList.add("hidden")
     } catch (error) {
-      if (error.name !== "AbortError") console.error(error)
+      if (error.name !== "AbortError") {
+        if (this.hasErrorTarget) this.errorTarget.classList.remove("hidden")
+        console.error(error)
+      }
     }
   }
 }

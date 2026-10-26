@@ -75,6 +75,10 @@
   <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
     <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><%= t('admin.suppliers.index.advanced.title') %></h2>
   </div>
+  <div data-supplier-search-target="error" role="alert" class="mt-3 hidden rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+    <span><%= t('admin.suppliers.index.search_error') %></span>
+    <button type="button" data-action="supplier-search#retry" class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.suppliers.index.retry') %></button>
+  </div>
   <%= render "active_filters_frame" %>
   <% if current_user.admin? || current_user.permission?('suppliers.view') %>
   <details class="mt-4" data-advanced-filters>
