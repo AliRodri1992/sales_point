@@ -25,4 +25,4 @@ PrePush:
 
   RSpec:
     enabled: true
-    command: ['bin/overcommit-rspec']
+    command: ['bash', 'bin/overcommit-rspec']

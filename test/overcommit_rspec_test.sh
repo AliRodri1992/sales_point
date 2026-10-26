@@ -24,6 +24,9 @@ chmod +x "$fixture/mock-bin/docker"
 
 fail() { printf 'ERROR de prueba: %s\n' "$1" >&2; exit 1; }
 
+# Prevent future regressions where Git checks out the hook without its executable bit.
+[[ -x "$runner" ]] || fail 'bin/overcommit-rspec debe conservar permisos ejecutables (Git mode 100755).'
+
 check_invocation() {
   local mode="$1" expected_status="$2" expected_command="$3"
   shift 3
