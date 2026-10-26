@@ -43,10 +43,10 @@ module SatCatalogExtraData
   }.freeze
 
   UNITS = {
-    'H87' => ['Pieza', 'pza'],
+    'H87' => %w[Pieza pza],
     'E48' => ['Unidad de servicio', nil],
-    'KGM' => ['Kilogramo', 'kg'],
-    'LTR' => ['Litro', 'L'],
+    'KGM' => %w[Kilogramo kg],
+    'LTR' => %w[Litro L],
     'ACT' => ['Actividad', nil],
     'XBX' => ['Caja', nil]
   }.freeze
@@ -55,5 +55,4 @@ module SatCatalogExtraData
     'MEX' => 'México', 'USA' => 'Estados Unidos', 'CAN' => 'Canadá',
     'KOR' => 'Corea del Sur'
   }.freeze
-
 end

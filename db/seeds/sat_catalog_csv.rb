@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'csv'
-require 'set'
 
 # Imports normalized exports of SAT CFDI 4.0 catalogs, without inventing
 # entries or attempting a network download during db:seed.
@@ -100,9 +99,8 @@ module SatCatalogCsv
 
     # SAT source is normalized; DB types and constraints validate each row.
     # Bulk loading large postal/product/pediment catalogs must avoid N queries.
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next-line Rails/SkipsModelValidations
     model.insert_all(batch, returning: false)
-    # rubocop:enable Rails/SkipsModelValidations
     batch.clear
     count
   end

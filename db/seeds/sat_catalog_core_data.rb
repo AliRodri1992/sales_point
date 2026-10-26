@@ -65,5 +65,4 @@ module SatCatalogCoreData
       'CN01' => 'Nómina'
     }
   }.freeze
-
 end
