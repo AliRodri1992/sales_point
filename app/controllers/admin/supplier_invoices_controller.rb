@@ -10,7 +10,7 @@ module Admin
     def index
       authorize current_organization.supplier_invoices.new, :index?
       @invoices = paginate_filtered_financial(policy_scope(current_organization.supplier_invoices),
-                                             includes: %i[supplier currency account_payable], reference_column: :folio)
+                                              includes: %i[supplier currency account_payable], reference_column: :folio)
     end
 
     def show
