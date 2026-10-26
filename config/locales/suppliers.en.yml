@@ -36,6 +36,11 @@ en:
           inactive: "Inactive suppliers"
           credit: "With credit"
         advanced:
+          groups:
+            identity: "Identity"
+            fiscal: "Tax information"
+            commercial: "Commercial terms"
+            dates: "Dates"
           title: "Advanced filters"
           expand: "Show or hide filters"
           clear: "Clear filters"

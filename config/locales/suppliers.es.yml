@@ -36,6 +36,11 @@ es:
           inactive: "Proveedores inactivos"
           credit: "Con crédito"
         advanced:
+          groups:
+            identity: "Identificación"
+            fiscal: "Información fiscal"
+            commercial: "Condiciones comerciales"
+            dates: "Fechas"
           title: "Filtros avanzados"
           expand: "Mostrar u ocultar filtros"
           clear: "Limpiar filtros"

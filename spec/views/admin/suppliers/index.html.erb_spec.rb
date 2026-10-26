@@ -30,6 +30,8 @@ RSpec.describe 'admin/suppliers/index', type: :view do
     render
 
     expect(rendered).to include('No suppliers yet')
+    expect(rendered).to include('Identity', 'Tax information', 'Commercial terms', 'Dates')
+    expect(rendered.scan(/<fieldset/).size).to eq(4)
     expect(rendered).to include('Add your first supplier')
   end
 end

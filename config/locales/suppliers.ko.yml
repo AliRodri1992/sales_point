@@ -36,6 +36,11 @@ ko:
           inactive: "비활성 공급업체"
           credit: "신용 거래 업체"
         advanced:
+          groups:
+            identity: "기본 정보"
+            fiscal: "세금 정보"
+            commercial: "거래 조건"
+            dates: "날짜"
           title: "고급 필터"
           expand: "필터 표시 또는 숨기기"
           clear: "필터 초기화"
