@@ -39,12 +39,23 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(page).to have_current_path(/tab=contacts/)
   end
 
+  scenario 'supports vertical keyboard navigation between authorized sections' do
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    visit admin_supplier_path(supplier, tab: 'general')
+
+    current = find('[role="tab"][data-section="general"]')
+    current.send_keys(:arrow_down)
+    expect(page).to have_css('[role="tab"][data-section="fiscal"][aria-selected="true"]')
+    expect(page).to have_css('[role="tabpanel"][data-section="fiscal"]:not(.hidden)')
+    expect(page).to have_current_path(/tab=fiscal/)
+  end
+
   scenario 'marks only the visible desktop section as current and supports browser history' do
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit admin_supplier_path(supplier)
 
     find('[data-supplier-dossier-target="tab"][data-section="documents"]').click
-    expect(page).to have_css('[data-supplier-dossier-target="tab"][data-section="documents"][aria-current="page"]')
+    expect(page).to have_css('[data-supplier-dossier-target="tab"][data-section="documents"][aria-selected="true"]')
     expect(page).to have_css('[data-section="documents"][data-supplier-dossier-target="panel"]:not(.hidden)')
 
     find('[data-supplier-dossier-target="tab"][data-section="contacts"]').click

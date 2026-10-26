@@ -24,6 +24,19 @@ export default class extends Controller {
     this.activateTab(event.currentTarget.dataset.section || event.currentTarget.value)
   }
 
+  navigate(event) {
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
+    event.preventDefault()
+    const tabs = this.tabTargets
+    const current = tabs.indexOf(event.currentTarget)
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 :
+      (current + (event.key === "ArrowDown" ? 1 : -1) + tabs.length) % tabs.length
+    const next = tabs[nextIndex]
+    if (!next) return
+    this.activateTab(next.dataset.section)
+    next.focus()
+  }
+
   activateTab(section, updateUrl = true) {
     const available = this.panelTargets.map((panel) => panel.dataset.section)
     // Never fall back to an inaccessible/absent Overview panel.
@@ -32,8 +45,8 @@ export default class extends Controller {
 
     this.tabTargets.forEach((tab) => {
       const active = tab.dataset.section === selected
-      if (active) tab.setAttribute("aria-current", "page")
-      else tab.removeAttribute("aria-current")
+      tab.setAttribute("aria-selected", String(active))
+      tab.tabIndex = active ? 0 : -1
       tab.classList.toggle("border-emerald-700", active)
       tab.classList.toggle("border-transparent", !active)
       tab.classList.toggle("bg-emerald-50", active)

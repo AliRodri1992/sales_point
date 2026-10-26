@@ -9,7 +9,7 @@
 <% dictionary = 'admin.supplier_documents' %>
 <% initial = documents.first %>
 
-<section id="supplier-dossier-documents" data-supplier-dossier-target="panel" data-section="documents"
+<section id="supplier-dossier-documents" role="tabpanel" tabindex="0" aria-labelledby="supplier-dossier-tab-documents" data-supplier-dossier-target="panel" data-section="documents"
          data-controller="supplier-documents"
          data-supplier-documents-range-label-value="<%= t("#{dictionary}.range", from: '%{from}', to: '%{to}', total: '%{total}') %>"
          data-supplier-documents-files-selected-value="<%= t("#{dictionary}.files_selected", count: '%{count}') %>"
