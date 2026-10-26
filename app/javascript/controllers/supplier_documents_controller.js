@@ -105,14 +105,25 @@ export default class extends Controller {
       const parsed = new DOMParser().parseFromString(html, "text/html")
       const updated = parsed.querySelector('section[data-section="documents"][data-controller~="supplier-documents"]')
       if (!updated) throw new Error("Document section missing from response")
-      const visible = !this.element.hidden
-      updated.hidden = !visible
-      updated.classList.toggle("hidden", !visible)
-      updated.setAttribute("aria-hidden", String(!visible))
-      this.element.replaceWith(updated)
+      // Swap the document results only: never discard unsent files or the
+      // pending-file preview when applying filters or moving between pages.
+      const currentResults = this.element.querySelector('[data-supplier-documents-results]')
+      const nextResults = updated.querySelector('[data-supplier-documents-results]')
+      if (!currentResults || !nextResults) throw new Error("Document results missing from response")
+      this.closePreview({ restoreFocus: false })
+      currentResults.replaceWith(nextResults)
+      for (const key of ["server-page-value", "server-total-value", "server-filtered-value",
+        "previous-url-value", "next-url-value"]) {
+        const attribute = `data-supplier-documents-${key}`
+        if (updated.hasAttribute(attribute)) this.element.setAttribute(attribute, updated.getAttribute(attribute))
+        else this.element.removeAttribute(attribute)
+      }
+      this.pageNumber = this.hasServerPageValue ? this.serverPageValue : 1
+      this.selectedId = null
+      this.refresh()
       window.history.replaceState(window.history.state, "", url)
       if (keepFocus) {
-        const input = updated.querySelector('[data-supplier-documents-target="search"]')
+        const input = nextResults.querySelector('[data-supplier-documents-target="search"]')
         input?.focus()
         if (caret != null) input?.setSelectionRange(caret, caret)
       }

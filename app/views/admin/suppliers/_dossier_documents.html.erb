@@ -78,8 +78,10 @@
     <% end %>
 
     <% if documents.any? || supplier.supplier_documents.visible.exists? %>
-      <%= render 'dossier_documents_listing', supplier: supplier, documents: documents,
-                  categories: categories, can_manage_documents: can_manage_documents, dictionary: dictionary %>
+      <div data-supplier-documents-results>
+        <%= render 'dossier_documents_listing', supplier: supplier, documents: documents,
+                    categories: categories, can_manage_documents: can_manage_documents, dictionary: dictionary %>
+      </div>
 
         <div data-supplier-documents-target="dialog"
              class="fixed inset-0 z-[100] hidden"

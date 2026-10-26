@@ -196,6 +196,26 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-documents-target="dialog"]:not(.hidden)')
   end
 
+  scenario 'preserves unsent document uploads while filtering server-paginated results' do
+    10.times { |number| add_file("Persist #{number}.pdf") }
+    visit admin_supplier_path(supplier, tab: 'documents')
+    page.execute_script(<<~JS)
+      const transfer = new DataTransfer()
+      transfer.items.add(new File(["%PDF-1.4 draft"], "unsent-draft.pdf", { type: "application/pdf" }))
+      const input = document.querySelector('[data-supplier-documents-target="uploadInput"]')
+      input.files = transfer.files
+      input.dispatchEvent(new Event("change", { bubbles: true }))
+    JS
+
+    find('[data-supplier-documents-target="search"]').set('Persist 9')
+    expect(page).to have_css('[data-supplier-documents-server-total-value="1"]', wait: 10)
+    expect(page).to have_css('[data-queued-file="0"]', text: 'unsent-draft.pdf')
+    expect(page.evaluate_script(<<~JS)).to eq('unsent-draft.pdf')
+      document.querySelector('[data-supplier-documents-target="uploadInput"]').files[0]?.name
+    JS
+    expect(page).to have_css('[data-supplier-documents-target="card"]:not(.hidden)', count: 1)
+  end
+
   scenario 'updates server-backed document filters without a full page reload' do
     10.times { |number| add_file("Supplier file #{number}.pdf") }
     visit admin_supplier_path(supplier, tab: 'documents')
