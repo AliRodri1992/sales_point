@@ -21,6 +21,20 @@ RSpec.describe 'Development Docker Compose configuration' do
     expect(assets.fetch('volumes')).to include('.:/rails')
   end
 
+  it 'keeps the JavaScript watcher running when Compose closes stdin' do
+    package_json = JSON.parse(Rails.root.join('package.json').read)
+    scripts = package_json.fetch('scripts')
+
+    expect(scripts.fetch('build:js:watch')).to include('--watch=forever')
+    expect(scripts.fetch('build:js')).not_to include('--watch')
+    expect(scripts.fetch('build:css:watch')).to include('--watch')
+
+    %w[Procfile.assets.dev Procfile.dev].each do |file|
+      procfile = Rails.root.join(file).read
+      expect(procfile).to include('js: yarn build:js:watch')
+    end
+  end
+
   it 'restarts development services after an unexpected process exit' do
     %w[web assets sidekiq db redis].each do |name|
       expect(services.fetch(name).fetch('restart')).to eq('unless-stopped')

@@ -39,6 +39,22 @@ CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 
 ### Docker Compose (Desarrollo)
 
+**Si el servicio `assets` muestra `[watch] stopped automatically because stdin was closed`:**
+esbuild se había configurado con `--watch`, que finaliza en procesos sin entrada
+estándar interactiva. Foreman detecta que terminó `js.1` y envía `SIGTERM` a
+`css.1`; Docker reinicia `assets` y repite el ciclo. No es un fallo de Rails.
+
+El script `build:js:watch` usa ahora `--watch=forever`, por lo que esbuild
+permanece activo aunque Docker Compose ejecute el servicio en segundo plano,
+sin necesidad de habilitar una terminal interactiva. Los dos Procfile de desarrollo
+reutilizan ese comando. Para aplicar el ajuste tras actualizar la rama:
+
+```bash
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate assets
+docker compose -f docker-compose.dev.yml logs --tail=80 assets
+```
+
+
 La configuración real es `docker-compose.dev.yml`. En desarrollo separa los procesos:
 
 - `web`: ejecuta `db:prepare` y Puma en el puerto 3000, sin Foreman ni observadores de recursos.

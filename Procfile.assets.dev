@@ -1,4 +1,5 @@
 # Dedicated asset watchers for docker-compose.dev.yml.
 # They run separately from Rails so a failed watcher cannot stop Puma.
+# build:js:watch uses esbuild --watch=forever so closed Docker stdin cannot stop Foreman.
 js: yarn build:js:watch
 css: yarn build:css:watch
