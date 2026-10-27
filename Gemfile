@@ -29,6 +29,8 @@ gem 'kamal', require: false
 gem 'kredis'
 gem 'money'
 gem 'name_of_person'
+# Keep the transitive SSH client above the patched 7.3.6 security baseline.
+gem 'net-ssh', '~> 7.3', '>= 7.3.6', require: false
 gem 'noticed'
 gem 'paper_trail'
 gem 'paranoia'

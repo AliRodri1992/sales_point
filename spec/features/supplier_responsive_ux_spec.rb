@@ -39,6 +39,20 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(page).to have_current_path(/tab=contacts/)
   end
 
+  scenario 'keeps finance navigation and panels connected at tablet width' do
+    page.driver.browser.manage.window.resize_to(820, 1180)
+    visit admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    expect(page).to have_css('select[data-supplier-dossier-target="mobileSelect"]', visible: true)
+    mobile = find('select[data-supplier-dossier-target="mobileSelect"]', visible: :all)
+    expect(mobile.value).to eq('bank_accounts')
+    expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
+    expect(page).to have_css(
+      'button[data-section="bank_accounts"][aria-controls="supplier-dossier-bank-accounts"]',
+      visible: :all
+    )
+  end
+
   scenario 'supports vertical keyboard navigation between authorized sections' do
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit admin_supplier_path(supplier, tab: 'general')

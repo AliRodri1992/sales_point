@@ -17,7 +17,10 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     login_as(user, scope: :user)
   end
 
-  after { Warden.test_reset! }
+  after do
+    page.driver.browser.manage.window.resize_to(1400, 900)
+    Warden.test_reset!
+  end
 
   def account(name:, account_number:)
     SupplierBankAccount.create!(
@@ -69,6 +72,19 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     )
     expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
     expect(page).to have_css('#supplier-dossier-bank-accounts [data-supplier-bank-accounts-target="card"]', count: 1)
+  end
+
+  scenario 'moves keyboard focus from bank accounts to the financial statement' do
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    visit admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    bank_tab = find('[role="tab"][data-section="bank_accounts"]')
+    expect(bank_tab['aria-controls']).to eq('supplier-dossier-bank-accounts')
+    expect(bank_tab['aria-selected']).to eq('true')
+
+    bank_tab.send_keys(:arrow_down)
+    expect(page).to have_css('[role="tab"][data-section="statement"][aria-selected="true"]')
+    expect(page).to have_css('#supplier-dossier-statement:not(.hidden)', visible: true)
   end
 
   scenario 'does not offer new financial accounts when a supplier is inactive' do

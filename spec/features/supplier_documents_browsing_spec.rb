@@ -16,7 +16,10 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     login_as(user, scope: :user)
   end
 
-  after { Warden.test_reset! }
+  after do
+    page.driver.browser.manage.window.resize_to(1400, 900)
+    Warden.test_reset!
+  end
 
   def add_file(name, type: 'application/pdf', content: '%PDF-1.4 example')
     supplier.documents.attach(io: StringIO.new(content), filename: name, content_type: type)
@@ -58,6 +61,20 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-documents-target="card"] button[aria-pressed="true"]', count: 1)
     expect(page).to have_css('button[data-section="contacts"]', visible: :all)
     expect(page).to have_css('button[data-section="addresses"]', visible: :all)
+  end
+
+  scenario 'keeps document preview and dismissal usable on a narrow mobile screen' do
+    add_file('Mobile contract.pdf')
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_supplier_path(supplier, tab: 'documents')
+
+    expect(page).to have_css('[data-supplier-documents-target="card"]', count: 1)
+    select_document('Mobile contract.pdf')
+    expect(page).to have_css('[role="dialog"][aria-modal="true"]')
+    expect(page).to have_css('[data-supplier-documents-target="previewName"]', text: 'Mobile contract.pdf')
+
+    close_drawer
+    expect(page).to have_css('[data-supplier-documents-target="dialog"].hidden', visible: :all)
   end
 
   scenario 'previews a text document without injecting its contents into HTML' do
