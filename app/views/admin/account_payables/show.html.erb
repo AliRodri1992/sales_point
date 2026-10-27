@@ -4,7 +4,7 @@
     <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.accounts_payable.payable_detail') %> #<%= @payable.id %></h1>
     <%= link_to t('admin.accounts_payable.invoice'), admin_supplier_invoice_path(@payable.supplier_invoice), class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
   </div>
-  <p class="text-sm text-slate-600"><%= @payable.supplier.name %> · <%= l(@payable.due_on) %> · <%= @payable.supplier_invoice.currency.code %></p>
+  <p class="text-sm text-slate-600"><%= @payable.supplier.name %> · <%= l(@payable.due_on) %> · <span data-payable-currency><%= @payable.supplier_invoice.currency&.code || '—' %></span></p>
   <div class="grid gap-4 sm:grid-cols-4">
     <% [
       [t('admin.accounts_payable.original_amount'), @payable.amount],

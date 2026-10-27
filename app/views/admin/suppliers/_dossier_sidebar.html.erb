@@ -34,7 +34,7 @@
         <h2 class="px-3 pb-2 text-[11px] font-bold uppercase lg:px-6 tracking-[0.09em] text-slate-500"><%= t("admin.supplier_dossier.navigation.#{group}") %></h2>
         <div class="space-y-1">
           <% entries.each do |section, symbol, _category| %>
-            <button type="button" role="tab" id="supplier-dossier-tab-<%= section %>" tabindex="-1" aria-selected="false" data-supplier-dossier-target="tab" data-action="click->supplier-dossier#select keydown->supplier-dossier#navigate" data-section="<%= section %>" aria-controls="supplier-dossier-<%= section %>" class="group flex min-h-11 w-full items-center gap-3 rounded-lg border-l-[3px] border-transparent px-3 py-2.5 text-left lg:rounded-none lg:px-6 text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+            <button type="button" role="tab" id="supplier-dossier-tab-<%= section %>" tabindex="-1" aria-selected="false" data-supplier-dossier-target="tab" data-action="click->supplier-dossier#select keydown->supplier-dossier#navigate" data-section="<%= section %>" aria-controls="supplier-dossier-<%= section.tr('_', '-') %>" class="group flex min-h-11 w-full items-center gap-3 rounded-lg border-l-[3px] border-transparent px-3 py-2.5 text-left lg:rounded-none lg:px-6 text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
               <% navigation_icon = {
                 'layout-dashboard' => 'squares-2x2',
                 'building' => 'building-office-2',

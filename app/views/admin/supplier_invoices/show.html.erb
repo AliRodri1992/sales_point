@@ -18,7 +18,7 @@
       [t('admin.accounts_payable.issued_on'), @invoice.issued_on],
       [t('admin.accounts_payable.due_on'), @invoice.due_on],
       [t('admin.accounts_payable.amount'), number_to_currency(@invoice.total, unit: '')],
-      [t('admin.accounts_payable.currency'), @invoice.currency.code],
+      [t('admin.accounts_payable.currency'), @invoice.currency&.code],
       [t('admin.accounts_payable.source'), @invoice.source],
       [t('admin.accounts_payable.sat_status'), @invoice.sat_status || t('admin.accounts_payable.sat_not_verified')]
     ].each do |label, value| %>

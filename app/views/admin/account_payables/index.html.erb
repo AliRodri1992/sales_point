@@ -45,7 +45,7 @@
             <td class="px-4 py-3 font-medium text-slate-900"><%= payable.supplier.name %></td>
             <td class="px-4 py-3"><%= link_to payable.supplier_invoice.folio.presence || "##{payable.supplier_invoice.id}", admin_account_payable_path(payable), class: 'font-semibold text-emerald-700 hover:underline' %></td>
             <td class="px-4 py-3"><%= l(payable.due_on) %></td>
-            <td class="px-4 py-3"><%= number_to_currency(payable.amount, unit: '') %> <%= payable.supplier_invoice.currency.code %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.amount, unit: '') %> <%= payable.supplier_invoice.currency&.code || '—' %></td>
             <td class="px-4 py-3"><%= number_to_currency(payable.paid_amount, unit: '') %></td>
             <td class="px-4 py-3"><%= number_to_currency(payable.credited_amount, unit: '') %></td>
             <td class="px-4 py-3 font-semibold"><%= number_to_currency(payable.balance, unit: '') %></td>

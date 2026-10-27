@@ -43,6 +43,16 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
       .to eq('general')
   end
 
+  it 'connects the bank accounts tab to its accessible panel' do
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+
+    tab = dossier.at_css('[role="tab"][data-section="bank_accounts"]')
+    expect(tab['aria-controls']).to eq('supplier-dossier-bank-accounts')
+    panel = dossier.at_css("##{tab['aria-controls']}")
+    expect(panel).to be_present
+    expect(panel['aria-labelledby']).to eq(tab['id'])
+  end
+
   it 'shows only one bank status filter in the dossier' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
     panel = dossier.at_css('section[data-section="bank_accounts"]')

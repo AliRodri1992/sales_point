@@ -80,6 +80,22 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'keeps payable and invoice screens available when the currency association is missing' do
+    invoice = posted_invoice
+    allow_any_instance_of(SupplierInvoice).to receive(:currency).and_return(nil)
+
+    get admin_account_payable_path(invoice.account_payable)
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('[data-payable-currency]').text).to eq('—')
+
+    get admin_account_payables_path
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('table tbody').text).to include('—')
+
+    get admin_supplier_invoice_path(invoice)
+    expect(response).to have_http_status(:ok)
+  end
+
   it 'posts, applies and reverses a vendor payment' do
     invoice = posted_invoice
     payable = invoice.account_payable
