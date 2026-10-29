@@ -87,6 +87,16 @@ RSpec.describe User, type: :model do
       expect(user.initials).to eq('JD')
       expect(user.display_name).to eq('JD')
     end
+
+    it 'uses two characters for single-word usernames' do
+      expect(build(:user, username: 'ivan').initials).to eq('IV')
+    end
+
+    it 'supports accented names without changing the displayed username' do
+      user = build(:user, username: 'Álvaro Núñez')
+      expect(user.initials).to eq('ÁN')
+      expect(user.display_name).to eq('Álvaro Núñez')
+    end
   end
 
   describe 'email validation' do

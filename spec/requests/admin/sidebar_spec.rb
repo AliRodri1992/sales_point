@@ -41,8 +41,8 @@ RSpec.describe 'Admin sidebar', type: :request do
 
     doc = Nokogiri::HTML(response.body)
     expect(doc.css('#adminSidebar [aria-disabled="true"][tabindex="0"]')).to be_empty
-    expect(doc.css('#sidebarUserMenu a[href]').map { |link| link['href'] }).to include(admin_guide_path)
-    expect(doc.css('#userMenu a[href]').map { |link| link['href'] }).to include(admin_guide_path)
+    expect(doc.css('#sidebarUserMenu a[href]').pluck('href')).to include(admin_guide_path)
+    expect(doc.css('#userMenu a[href]').pluck('href')).to include(admin_guide_path)
   end
 
   describe 'topbar accessibility regressions' do

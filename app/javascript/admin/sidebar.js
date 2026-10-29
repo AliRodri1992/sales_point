@@ -42,7 +42,9 @@ const showSidebarTooltip = (event) => {
     const sidebar = document.getElementById("adminSidebar")
     if (!isCollapsedSidebar() || !sidebar) return
 
-    const target = event.target.closest("[data-tooltip]")
+    const target = event.target instanceof Element
+        ? event.target.closest("[data-tooltip]")
+        : null
     if (!target || !sidebar.contains(target)) return
 
     if (target.matches(".sidebar-catalog > summary")) {
@@ -67,7 +69,9 @@ const showSidebarTooltip = (event) => {
 
 const refreshSidebarTooltip = (event) => {
     const tooltip = sidebarTooltip()
-    const target = event.target.closest("[data-tooltip]")
+    const target = event.target instanceof Element
+        ? event.target.closest("[data-tooltip]")
+        : null
 
     if (tooltip && target) {
         positionSidebarTooltip(target)

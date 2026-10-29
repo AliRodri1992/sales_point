@@ -26,6 +26,8 @@ document.addEventListener("turbo:load", () => {
         document.addEventListener(type, handler, { ...options, signal: listeners.signal })
     const onWindow = (type, handler, options = {}) =>
         window.addEventListener(type, handler, { ...options, signal: listeners.signal })
+    const onElement = (element, type, handler) =>
+        element?.addEventListener(type, handler, { signal: listeners.signal })
     const javascriptTranslationsElement =
         document.getElementById(
             "javascriptTranslations"
@@ -365,7 +367,7 @@ document.addEventListener("turbo:load", () => {
     }
 
     const branchDetails = document.querySelector("[data-dashboard-selector] > details")
-    branchDetails?.querySelector("summary")?.addEventListener("click", () => {
+    onElement(branchDetails?.querySelector("summary"), "click", () => {
         closeAllDropdowns(branchDetails.querySelector("[data-dashboard-selector-menu]"))
     })
 
@@ -469,14 +471,14 @@ document.addEventListener("turbo:load", () => {
     })
 
     onDocument("keydown", trapMobileSidebarFocus)
-    sidebarCloseButton?.addEventListener("click", closeMobileSidebar)
+    onElement(sidebarCloseButton, "click", closeMobileSidebar)
 
     if (sidebar && sidebarToggle) {
         sidebarToggle.setAttribute(
             "aria-expanded",
             String(window.innerWidth >= 1024 && !sidebar.classList.contains("sidebar-collapsed"))
         )
-        sidebarToggle.addEventListener("click", () => {
+        onElement(sidebarToggle, "click", () => {
             const isMobile = window.innerWidth < 1024
 
             if (isMobile) {
@@ -536,9 +538,7 @@ document.addEventListener("turbo:load", () => {
     }
 
     if (sidebarOverlay) {
-        sidebarOverlay.addEventListener("click", () => {
-            closeMobileSidebar()
-        })
+        onElement(sidebarOverlay, "click", closeMobileSidebar)
     }
 
     /*
@@ -555,12 +555,12 @@ document.addEventListener("turbo:load", () => {
             "false"
         )
 
-        button.addEventListener("click", (event) => {
+        onElement(button, "click", (event) => {
             event.stopPropagation()
             toggleDropdown(button, menu)
         })
 
-        menu.addEventListener("click", (event) => {
+        onElement(menu, "click", (event) => {
             event.stopPropagation()
         })
     })

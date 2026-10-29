@@ -1490,3 +1490,9 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
     .admin-sidebar-flyout, #adminSidebar nav a,
     #adminSidebar nav details .sidebar-chevron { transition: none; }
 }
+
+/* Long translated labels and onboarding progress should wrap within tooltips. */
+#adminSidebarTooltip {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
