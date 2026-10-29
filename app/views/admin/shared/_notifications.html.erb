@@ -7,6 +7,7 @@
     class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
     aria-label="<%= t('admin.shared.notifications.toggle') %>"
     aria-expanded="false"
+    aria-controls="notificationsMenu"
   >
     <%= icon("bell", class: "size-5") %>
     <%= render "admin/shared/notifications_badge", user: current_user %>
@@ -15,7 +16,7 @@
   <div
     id="notificationsMenu"
     data-dashboard-selector-menu
-    class="absolute right-0 top-full z-50 mt-2 hidden w-80 rounded-xl border border-slate-200 bg-white shadow-lg"
+    class="absolute right-0 top-full z-50 mt-2 hidden w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-slate-200 bg-white shadow-lg"
   >
     <%= render "admin/shared/notifications_header", user: current_user %>
 
