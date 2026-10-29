@@ -18,6 +18,9 @@ export default class extends Controller {
         this.clearAddressFieldError(event.target)
       } else if (event.target.matches("input[required], select[required], textarea[required]")) {
         this.validateField(event.target)
+      } else if (event.target.matches("input, select, textarea") &&
+        (event.target.getAttribute("aria-invalid") === "true" || event.target.classList.contains("input-field-error"))) {
+        this.clearFieldError(event.target)
       }
       this.refreshStepIndicators()
     }
@@ -30,6 +33,7 @@ export default class extends Controller {
       }
     }
     document.addEventListener("click", this.onOutsideNavigationClick)
+    this.initializeServerFieldErrors()
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
@@ -46,17 +50,58 @@ export default class extends Controller {
     return field.closest("[data-controller='international-phone']")?.parentElement || field.closest(".grid > div") || field.parentElement
   }
 
+  visibleSelectButton(field) {
+    return field.closest('[data-controller~="delta-select"]')?.querySelector('button[aria-haspopup="listbox"]')
+  }
+
+  setFieldInvalid(field, invalid) {
+    if (invalid) field.setAttribute("aria-invalid", "true")
+    else field.removeAttribute("aria-invalid")
+    field.classList.toggle("input-field-error", invalid)
+    this.visibleSelectButton(field)?.setAttribute("aria-invalid", String(invalid))
+  }
+
+  describeFieldError(field, message) {
+    if (!message.id) message.id = `${field.id || "supplier-field"}-validation-error`
+    const controls = [field, this.visibleSelectButton(field)].filter(Boolean)
+    controls.forEach((control) => {
+      const ids = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean)
+      if (!ids.includes(message.id)) ids.push(message.id)
+      control.setAttribute("aria-describedby", ids.join(" "))
+    })
+  }
+
+  initializeServerFieldErrors() {
+    this.element.querySelectorAll("input:not([type='hidden']):not([type='checkbox']), select, textarea").forEach((field) => {
+      const wrapper = this.fieldWrapper(field)
+      const message = wrapper?.querySelector("[data-server-field-error]")
+      if (!message && !field.closest(".field_with_errors") && !field.classList.contains("input-field-error")) return
+      this.setFieldInvalid(field, true)
+      if (message) this.describeFieldError(field, message)
+    })
+  }
+
   clearFieldError(field) {
-    field.removeAttribute("aria-invalid")
+    const wrapper = this.fieldWrapper(field)
+    const messages = [...(wrapper?.querySelectorAll("[data-required-error], [data-server-field-error]") || [])]
+    const controls = [field, this.visibleSelectButton(field)].filter(Boolean)
+    controls.forEach((control) => {
+      const ids = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean)
+        .filter((id) => !messages.some((message) => message.id === id))
+      if (ids.length) control.setAttribute("aria-describedby", ids.join(" "))
+      else control.removeAttribute("aria-describedby")
+    })
+    messages.forEach((message) => message.remove())
+    this.setFieldInvalid(field, false)
     field.classList.remove("border-rose-500", "bg-rose-50")
-    this.fieldWrapper(field)?.querySelector("[data-required-error]")?.remove()
   }
 
   showFieldError(field, reason) {
     const wrapper = this.fieldWrapper(field)
     if (!wrapper) return
-    field.setAttribute("aria-invalid", "true")
+    this.setFieldInvalid(field, true)
     field.classList.add("border-rose-500", "bg-rose-50")
+    wrapper.querySelectorAll("[data-server-field-error]").forEach((message) => message.remove())
     let message = wrapper.querySelector("[data-required-error]")
     if (!message) {
       message = document.createElement("p")
@@ -67,6 +112,7 @@ export default class extends Controller {
     const label = field.labels?.[0]?.textContent?.replace(/\*/g, "").trim() || field.name
     const template = reason === "format" ? this.element.dataset.invalidFormatMessage : this.element.dataset.requiredMessage
     message.textContent = template.replace("%{field}", label)
+    this.describeFieldError(field, message)
   }
 
   validateField(field) {
@@ -94,11 +140,11 @@ export default class extends Controller {
     }
     const name = field.name?.split("[").pop()?.replace("]", "")
     const message = root.querySelector('[data-supplier-address-model-error="' + name + '"]')
-    if (!message) return
-    message.classList.add("hidden")
-    message.textContent = ""
-    field.removeAttribute("aria-invalid")
-    field.classList.remove("border-rose-500", "bg-rose-50")
+    if (message) {
+      message.classList.add("hidden")
+      message.textContent = ""
+    }
+    this.clearFieldError(field)
   }
 
   clearAddressErrors(root) {
@@ -107,8 +153,7 @@ export default class extends Controller {
       message.textContent = ""
     })
     root.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
-      field.removeAttribute("aria-invalid")
-      field.classList.remove("border-rose-500", "bg-rose-50")
+      this.clearFieldError(field)
     })
     if (this.hasAddressValidationErrorTarget) {
       this.addressValidationErrorTarget.textContent = ""
@@ -125,8 +170,9 @@ export default class extends Controller {
       message.classList.remove("hidden")
       const field = this.addressInput(root, name)
       if (!field) continue
-      field.setAttribute("aria-invalid", "true")
+      this.setFieldInvalid(field, true)
       field.classList.add("border-rose-500", "bg-rose-50")
+      this.describeFieldError(field, message)
       firstField ||= field
     }
     return firstField
