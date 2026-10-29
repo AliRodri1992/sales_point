@@ -74,6 +74,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
       '.sidebar-brand-mark',
       "nav a[href='/admin/dashboard'] svg",
       'nav .sidebar-disabled-option svg',
+      'nav svg[data-sidebar-icon="accounts-payable"]',
       'nav .sidebar-catalog > summary svg:first-child',
       '#sidebarUserMenuButton'
     ].each do |selector|

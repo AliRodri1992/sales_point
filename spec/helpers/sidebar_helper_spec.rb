@@ -13,6 +13,14 @@ RSpec.describe SidebarHelper, type: :helper do
     expect(icon['class']).to include('size-5')
   end
 
+  it 'preserves a stable identifier for an existing navigation item' do
+    markup = helper.sidebar_navigation_icon(:account_payables, identifier: 'accounts-payable')
+    svg = Nokogiri::HTML.fragment(markup).at_css('svg')
+
+    expect(svg['data-sidebar-icon']).to eq('accounts-payable')
+    expect(svg['aria-hidden']).to eq('true')
+  end
+
   it 'rejects unknown icon identifiers rather than silently showing the wrong symbol' do
     expect { helper.sidebar_navigation_icon(:unknown_module) }.to raise_error(KeyError)
   end

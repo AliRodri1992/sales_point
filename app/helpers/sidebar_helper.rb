@@ -25,11 +25,11 @@ module SidebarHelper
     suppliers: 'truck'
   }.freeze
 
-  def sidebar_navigation_icon(name, class_name: 'size-5')
+  def sidebar_navigation_icon(name, class_name: 'size-5', identifier: nil)
     icon(SIDEBAR_NAVIGATION_ICONS.fetch(name.to_sym),
          class: class_name,
          aria: { hidden: true },
-         data: { sidebar_icon: name.to_s.dasherize })
+         data: { sidebar_icon: identifier || name.to_s.dasherize })
   end
 
   DELTA_SIDEBAR_ICONS = {

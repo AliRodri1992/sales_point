@@ -87,7 +87,7 @@
              data-tooltip="<%= t('admin.accounts_payable.payables') %>" aria-label="<%= t('admin.accounts_payable.payables') %>"
              aria-current="<%= sidebar_item_active?('account_payables') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('account_payables') %>">
-            <%= sidebar_navigation_icon(:account_payables, class_name: 'size-5') %>
+            <%= sidebar_navigation_icon(:account_payables, class_name: 'size-5', identifier: 'accounts-payable') %>
             <span class="sidebar-label"><%= t('admin.accounts_payable.payables') %></span>
           </a>
         <% end %>

@@ -435,7 +435,11 @@ document.addEventListener("turbo:load", () => {
             sidebarOverlay.setAttribute("aria-hidden", "true")
         }
 
-        if (wasOpen && window.innerWidth < 1024) sidebarToggle?.focus()
+        if (wasOpen && window.innerWidth < 1024) {
+            sidebarToggle?.focus({ preventScroll: true })
+            // Chrome may move focus back to the hidden close button after its click.
+            queueMicrotask(() => sidebarToggle?.focus({ preventScroll: true }))
+        }
     }
 
     const trapMobileSidebarFocus = (event) => {

@@ -60,6 +60,17 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     expect(page).to have_no_css('#adminSidebarFlyout', visible: :all)
   end
 
+  scenario 'closes the mobile drawer from its overlay and restores focus' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_dashboard_path
+
+    find('#sidebarToggle').click
+    expect(page).to have_css('#adminSidebar.sidebar-open')
+    find('#sidebarOverlay').click
+    expect(page).to have_no_css('#adminSidebar.sidebar-open', visible: :all)
+    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+  end
+
   scenario 'keeps the selected dashboard link readable when keyboard focused' do
     page.driver.browser.manage.window.resize_to(1400, 900)
     visit admin_dashboard_path
