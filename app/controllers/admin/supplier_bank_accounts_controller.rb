@@ -8,7 +8,7 @@ module Admin
 
     before_action :set_supplier
     before_action :require_available_supplier, only: %i[new create]
-    before_action :set_account, only: %i[edit update destroy reveal restore]
+    before_action :set_account, only: %i[edit update destroy reveal restore review]
 
     def index
       authorize @supplier.supplier_bank_accounts.new(organization: current_organization), :index?
@@ -30,6 +30,7 @@ module Admin
       attributes = bank_params.except(:status, :blocked_reason)
       attributes[:organization] = current_organization
       attributes[:status] = 'active'
+      attributes[:verification_status] = 'pending'
       @account = @supplier.supplier_bank_accounts.new(attributes)
       authorize @account
       if save_account
@@ -49,6 +50,21 @@ module Admin
         load_banks
         render :edit, status: :unprocessable_content
       end
+    end
+
+    def review
+      authorize @account, :update?
+      decision = params[:decision].to_s
+      unless %w[verified rejected pending].include?(decision) && @account.status == 'active'
+        return redirect_to admin_supplier_bank_accounts_path(@supplier),
+                           alert: t('admin.supplier_bank_details.status')
+      end
+
+      @account.update!(verification_status: decision)
+      FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
+                                  event: 'bank_account.verification_reviewed', subject: @account,
+                                  details: { decision: decision })
+      redirect_to admin_supplier_bank_accounts_path(@supplier)
     end
 
     def destroy
@@ -94,7 +110,7 @@ module Admin
 
     def bank_params
       sensitive_fields = %i[sat_bank_code bank_name holder_name account_number clabe card_number]
-      status_fields = %i[currency_code primary account_type status verification_status blocked_reason]
+      status_fields = %i[currency_code primary account_type status blocked_reason]
       attributes = params.expect(supplier_bank_account: sensitive_fields + status_fields)
       attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
       attributes

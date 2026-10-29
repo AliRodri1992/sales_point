@@ -70,6 +70,16 @@
                           class: 'block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-50' do %>
                 <%= icon('pencil', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.edit') %>
               <% end %>
+              <% if account.status == 'active' %>
+                <% %w[verified rejected pending].each do |decision| %>
+                  <% next if account.verification_status == decision %>
+                  <%= button_to t("admin.supplier_bank_details.verification_states.#{decision}"),
+                                review_admin_supplier_bank_account_path(supplier, account),
+                                method: :patch, params: { decision: decision },
+                                form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
+                                class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
+                <% end %>
+              <% end %>
               <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
                             form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
                             class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
@@ -83,17 +93,22 @@
   </div>
 
   <div class="relative z-0 mt-8">
-    <div class="font-jakarta text-xl font-bold tracking-[0.045em] tabular-nums sm:text-2xl"><%= account.card_display_number %></div>
+    <div class="font-jakarta text-xl font-bold tracking-[0.045em] tabular-nums sm:text-2xl"><%= account.masked_number %></div>
     <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-    <p class="text-xs font-medium <%= muted %>">
-      <% if account.card_expiration_label.present? %>
-        <%= t('admin.bank_cards.expires', date: account.card_expiration_label) %>
-      <% else %>
-        <%= t('admin.bank_cards.no_expiration') %>
-      <% end %>
-    </p>
-    <span class="rounded-full px-2 py-1 text-[11px] font-bold <%= archived ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800' %>">
-        <%= t("admin.bank_cards.#{archived ? 'inactive' : 'active'}") %>
+    <p class="text-xs font-medium <%= muted %>"><%= t('admin.accounts_payable.clabe') %> · <%= account.masked_number %></p>
+    <% state = archived ? 'archived' : account.status %>
+    <% tone = { 'active' => 'bg-emerald-100 text-emerald-900', 'inactive' => 'bg-slate-100 text-slate-800',
+                'blocked' => 'bg-rose-100 text-rose-800', 'archived' => 'bg-slate-100 text-slate-800' }.fetch(state) %>
+    <span data-bank-operational-status="<%= state %>" class="rounded-full px-2 py-1 text-[11px] font-bold <%= tone %>">
+      <%= state == 'archived' ? t('admin.bank_cards.inactive') : t("admin.supplier_bank_details.statuses.#{state}") %>
+    </span>
+    </div>
+    <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <span class="<%= muted %>"><%= t('admin.supplier_bank_details.verification_status') %></span>
+      <% review_tone = account.verification_status == 'verified' ? 'bg-emerald-100 text-emerald-900' :
+                       account.verification_status == 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-white/20' %>
+      <span data-bank-verification-status="<%= account.verification_status %>" class="rounded-full px-2 py-1 font-semibold <%= review_tone %>">
+        <%= t("admin.supplier_bank_details.verification_states.#{account.verification_status}") %>
       </span>
     </div>
   </div>

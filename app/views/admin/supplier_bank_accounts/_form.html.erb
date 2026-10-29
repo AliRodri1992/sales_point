@@ -17,7 +17,7 @@
               data: {
                 controller: 'supplier-bank-clabe supplier-bank-form',
                 action: 'input->supplier-bank-form#refresh change->supplier-bank-form#refresh',
-                supplier_bank_form_existing_digits_value: @account.card_last_four.presence || @account.last_four.presence || '',
+                supplier_bank_form_existing_digits_value: @account.last_four.presence || '',
                 supplier_bank_form_bank_placeholder_value: t('admin.bank_cards.unknown_bank')
               } do |f| %>
   <div class="min-w-0 space-y-5">
@@ -49,7 +49,7 @@
           <%= f.label :clabe, t('admin.accounts_payable.clabe'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
           <%= f.password_field :clabe, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
                                placeholder: (editing ? @account.masked_number : t('admin.supplier_bank_details.clabe_placeholder')),
-                               data: { supplier_bank_clabe_target: 'clabe', action: 'input->supplier-bank-clabe#lookup' },
+                               data: { supplier_bank_clabe_target: 'clabe', supplier_bank_form_target: 'clabe', action: 'input->supplier-bank-clabe#lookup' },
                                class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200',
                                aria: { invalid: @account.errors[:clabe].any?,
                                    describedby: (@account.errors[:clabe].any? ? 'supplier-bank-clabe-errors' : nil) } %>
@@ -73,26 +73,6 @@
                                aria: { invalid: @account.errors[:bank_name].any?,
                                    describedby: (@account.errors[:bank_name].any? ? 'supplier-bank-bank_name-errors' : nil) } %>
           <%= render 'field_errors', record: @account, attribute: :bank_name %>
-        </div>
-        <div class="min-w-0">
-          <%= f.label :account_number, t('admin.accounts_payable.account_number'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.password_field :account_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
-                               placeholder: (editing ? @account.masked_number : t('admin.supplier_bank_form.account_placeholder')),
-                               data: { supplier_bank_form_target: 'accountNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200',
-                               aria: { invalid: @account.errors[:account_number].any?,
-                                   describedby: (@account.errors[:account_number].any? ? 'supplier-bank-account_number-errors' : nil) } %>
-          <%= render 'field_errors', record: @account, attribute: :account_number %>
-          <p class="mt-2 text-xs leading-5 text-slate-500"><%= editing ? t('admin.supplier_bank_form.keep_secret') : t('admin.supplier_bank_form.account_hint') %></p>
-        </div>
-        <div class="min-w-0">
-          <%= f.label :card_number, t('admin.supplier_bank_details.card_number'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.password_field :card_number, value: nil, autocomplete: 'new-password', inputmode: 'numeric',
-                               placeholder: (editing && @account.card_last_four.present? ? "•••• #{@account.card_last_four}" : t('admin.supplier_bank_form.card_placeholder')),
-                               data: { supplier_bank_form_target: 'cardNumber' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200',
-                               aria: { invalid: @account.errors[:card_number].any?,
-                                   describedby: (@account.errors[:card_number].any? ? 'supplier-bank-card_number-errors' : nil) } %>
-          <%= render 'field_errors', record: @account, attribute: :card_number %>
-          <p class="mt-2 text-xs leading-5 text-slate-500"><%= editing ? t('admin.supplier_bank_form.keep_secret') : t('admin.supplier_bank_details.card_hint') %></p>
         </div>
         <div class="min-w-0">
           <%= f.label :account_type, t('admin.supplier_bank_details.account_type'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
@@ -131,15 +111,12 @@
           </div>
         <% end %>
         <div class="min-w-0">
-          <%= f.label :verification_status, t('admin.supplier_bank_details.verification_status'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.select :verification_status,
-                       SupplierBankAccount::VERIFICATION_STATUSES.map { |status| [t("admin.supplier_bank_details.verification_states.#{status}"), status] },
-                       {}, { class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200', aria: { invalid: @account.errors[:verification_status].any?,
-                                   describedby: (@account.errors[:verification_status].any? ? 'supplier-bank-verification_status-errors' : nil) } } %>
-          <%= render 'field_errors', record: @account, attribute: :verification_status %>
+          <p class="mb-2 text-sm font-semibold text-slate-800"><%= t('admin.supplier_bank_details.verification_status') %></p>
+          <p data-bank-review-state="<%= @account.verification_status %>" class="inline-flex min-h-11 items-center rounded-xl bg-slate-50 px-4 text-sm font-semibold text-slate-700">
+            <%= t("admin.supplier_bank_details.verification_states.#{@account.verification_status}") %>
+          </p>
           <% if @account.verified_at.present? %>
-            <p class="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><%= icon('check-circle', class: 'size-4') %>
-              <%= t('admin.supplier_bank_details.verified_at', date: l(@account.verified_at, format: :short)) %></p>
+            <p class="mt-2 text-xs text-emerald-800"><%= t('admin.supplier_bank_details.verified_at', date: l(@account.verified_at, format: :short)) %></p>
           <% end %>
         </div>
       </div>
@@ -213,7 +190,7 @@
           <p data-supplier-bank-form-target="previewBank" class="min-w-0 break-words font-jakarta text-lg font-extrabold"><%= @account.sat_bank&.name.presence || @account.bank_name.presence || t('admin.bank_cards.unknown_bank') %></p>
           <span data-supplier-bank-form-target="previewPrimary" class="shrink-0 rounded-full bg-white/15 px-2 py-1 text-[10px] font-semibold <%= 'hidden' unless @account.primary? %>"><%= t('admin.accounts_payable.primary') %></span>
         </div>
-        <p data-supplier-bank-form-target="previewNumber" class="font-jakarta text-xl font-bold tracking-wider"><%= @account.card_display_number %></p>
+        <p data-supplier-bank-form-target="previewNumber" class="font-jakarta text-xl font-bold tracking-wider"><%= @account.masked_number %></p>
         <div class="grid grid-cols-2 gap-3 text-xs">
           <div class="min-w-0"><p class="text-[10px] uppercase tracking-wider text-emerald-100"><%= t('admin.accounts_payable.holder_name') %></p>
             <p data-supplier-bank-form-target="previewHolder" class="mt-1 break-words font-semibold"><%= @account.holder_name.presence || '—' %></p></div>

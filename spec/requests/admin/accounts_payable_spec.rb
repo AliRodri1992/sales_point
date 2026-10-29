@@ -96,6 +96,31 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'keeps the supplier statement available when an invoice currency association is missing' do
+    invoice = posted_invoice
+    allow_any_instance_of(SupplierInvoice).to receive(:currency).and_return(nil)
+
+    get admin_supplier_path(supplier, tab: 'statement')
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('[data-finance-payables]')).to be_present
+  end
+
+  it 'records explicit account review and refuses verification through ordinary updates' do
+    account = supplier.supplier_bank_accounts.create!(
+      organization:, holder_name: 'Vendor', bank_name: 'Demo',
+      clabe: '032180000118359719', currency_code: 'MXN'
+    )
+    patch admin_supplier_bank_account_path(supplier, account),
+          params: { supplier_bank_account: { holder_name: 'New Owner', verification_status: 'verified' } }
+    expect(account.reload.verification_status).to eq('pending')
+
+    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'verified' }
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(account.reload.verification_status).to eq('verified')
+    expect(account.verified_at).to be_present
+    expect(FinancialAuditEvent.where(event: 'bank_account.verification_reviewed', subject: account)).to exist
+  end
+
   it 'posts, applies and reverses a vendor payment' do
     invoice = posted_invoice
     payable = invoice.account_payable

@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // A visual-only bank card preview. Never copies complete protected values to text or HTML.
 export default class extends Controller {
   static targets = [
-    "holder", "bank", "bankName", "accountNumber", "cardNumber", "accountType",
+    "holder", "bank", "bankName", "clabe", "accountType",
     "primary", "status", "blockedReasonGroup", "previewBank", "previewNumber",
     "previewHolder", "previewType", "previewPrimary"
   ]
@@ -27,13 +27,9 @@ export default class extends Controller {
     this.previewTypeTarget.textContent = this.accountTypeTarget.value && type
       ? type.textContent.trim() : "—"
 
-    const cardDigits = this.cardNumberTarget.value.replace(/\D/g, "")
-    const accountDigits = this.accountNumberTarget.value.replace(/\D/g, "")
-    const newCardDigits = cardDigits.length >= 4 ? cardDigits.slice(-4) : ""
-    const newAccountDigits = accountDigits.length >= 4 ? accountDigits.slice(-4) : ""
-    // Prefer a newly entered card number, followed by the account, then masked saved digits.
-    const lastFour = newCardDigits || newAccountDigits || this.existingDigitsValue
-    this.previewNumberTarget.textContent = "•••• •••• •••• " + (lastFour || "••••")
+    const clabeDigits = this.clabeTarget.value.replace(/\D/g, "")
+    const digits = clabeDigits.length >= 4 ? clabeDigits.slice(-4) : this.existingDigitsValue
+    this.previewNumberTarget.textContent = "•••• " + (digits || "••••")
 
     const active = !this.hasStatusTarget || this.statusTarget.value === "active"
     this.previewPrimaryTarget.classList.toggle("hidden", !this.primaryTarget.checked || !active)

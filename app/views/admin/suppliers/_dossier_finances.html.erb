@@ -60,8 +60,8 @@
               </td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(invoice.issued_on) %></td>
               <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(payable.due_on) %></td>
-              <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700"><%= number_to_currency(payable.amount, unit: '') %> <%= invoice.currency.code %></td>
-              <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900"><%= number_to_currency(payable.balance, unit: '') %> <%= invoice.currency.code %></td>
+              <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700"><%= number_to_currency(payable.amount, unit: '') %> <%= invoice.currency&.code || '—' %></td>
+              <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900"><%= number_to_currency(payable.balance, unit: '') %> <%= invoice.currency&.code || '—' %></td>
               <td class="px-4 py-3"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= badge_style %>"><%= t("admin.supplier_dossier.finance.states.#{state}") %></span></td>
             </tr>
           <% end %>

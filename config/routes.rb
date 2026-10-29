@@ -115,6 +115,7 @@ Rails.application.routes.draw do
       end
       resources :bank_accounts, controller: 'supplier_bank_accounts', except: %i[show] do
         member do
+          patch :review
           post :reveal
           patch :restore
         end

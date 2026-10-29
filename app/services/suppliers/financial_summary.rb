@@ -37,13 +37,13 @@ module Suppliers
     end
 
     def grouped_balances(scope)
-      scope.joins(supplier_invoice: :currency)
+      scope.joins(:supplier_invoice).left_joins(supplier_invoice: :currency)
            .group('currencies.code')
            .sum(Arel.sql(AccountPayable.balance_sql))
     end
 
     def labels(groups)
-      values = groups.sort.map { |code, amount| "#{yield(amount)} #{code}" }
+      values = groups.sort.map { |code, amount| "#{yield(amount)} #{code.presence || '—'}" }
       return values if values.any?
 
       ["#{yield(0)} #{@supplier.currency&.code || '—'}"]

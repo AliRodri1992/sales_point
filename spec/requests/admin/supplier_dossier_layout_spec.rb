@@ -43,6 +43,20 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
       .to eq('general')
   end
 
+  it 'distinguishes a blocked bank account from an archived one' do
+    supplier.supplier_bank_accounts.create!(
+      organization:, bank_name: 'Demo', holder_name: 'Vendor',
+      account_number: '1234567890', currency_code: 'MXN', status: 'blocked',
+      blocked_reason: 'Manual review'
+    )
+
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+    card = dossier.at_css('[data-supplier-bank-accounts-target="card"]')
+    expect(card.at_css('[data-bank-operational-status]')['data-bank-operational-status']).to eq('blocked')
+    expect(card.at_css('[data-bank-verification-status]')['data-bank-verification-status']).to eq('pending')
+    expect(card.text).not_to include('No expiration')
+  end
+
   it 'connects the bank accounts tab to its accessible panel' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
 
