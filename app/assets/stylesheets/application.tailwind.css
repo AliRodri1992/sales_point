@@ -1518,3 +1518,20 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* Field validation is visible even when custom form controls override their base border. */
+input.input-field-error:not([type="checkbox"]),
+textarea.input-field-error,
+select.input-field-error,
+input[aria-invalid="true"]:not([type="checkbox"]),
+textarea[aria-invalid="true"],
+[data-controller~="delta-select"] > button[aria-invalid="true"] {
+    border-color: #e11d48 !important;
+    background-color: #fff1f2 !important;
+}
+input.input-field-error:focus,
+textarea.input-field-error:focus,
+[data-controller~="delta-select"] > button[aria-invalid="true"]:focus-visible {
+    border-color: #e11d48 !important;
+    box-shadow: 0 0 0 4px rgba(225, 29, 72, .14) !important;
+}

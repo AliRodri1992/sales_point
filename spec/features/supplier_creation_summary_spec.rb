@@ -35,6 +35,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_no_css('img[src*="supplier-delivery"]', visible: :all)
     expect(page).to have_css('form[data-controller="supplier-form"]')
     expect(page).to have_css('nav details[data-supplier-form-target="navigation"]')
+    expect(find('[data-supplier-form-target="activeLabel"]')['aria-live']).to eq('polite')
     expect(page).to have_css('nav details [data-supplier-form-target="tab"]', count: 7, visible: :all)
     expect(page).to have_no_css('nav .overflow-x-auto', visible: :all)
     expect(page).to have_no_css('nav[class*="sticky"]', visible: :all)
@@ -74,9 +75,11 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('details[data-supplier-form-target="navigation"] > summary', visible: true)
     expect(page).to have_css('[data-supplier-form-target="position"]', visible: true)
     expect(page.evaluate_script(<<~JS)).to be(true)
-      const nav = document.querySelector('nav[aria-label] details[data-supplier-form-target="navigation"]')
-      const bounds = nav.getBoundingClientRect()
-      bounds.left >= 0 && bounds.right <= window.innerWidth
+      (() => {
+        const nav = document.querySelector('nav[aria-label] details[data-supplier-form-target="navigation"]')
+        const bounds = nav.getBoundingClientRect()
+        return bounds.left >= 0 && bounds.right <= window.innerWidth
+      })()
     JS
   ensure
     page.driver.browser.manage.window.resize_to(1400, 900)
@@ -164,7 +167,8 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     visit edit_admin_supplier_path(supplier, return_to: 'fiscal')
 
     expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden)', count: 1)
-    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="step"][data-step-index="1"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="location"][data-step-index="1"]',
+                             visible: :all)
     expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
   end
 
@@ -172,17 +176,24 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     supplier = create(:supplier, organization:)
     visit edit_admin_supplier_path(supplier)
 
-    find('[data-supplier-form-target="tab"][data-step-index="1"]').click
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')
-    find('[data-supplier-form-target="tab"][data-step-index="3"]').click
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="3"][aria-current="step"]')
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    navigation.find('summary').click
+    navigation.find('[data-supplier-form-target="tab"][data-step-index="1"]').click
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="location"]',
+                             visible: :all)
+
+    navigation.find('summary').click
+    navigation.find('[data-supplier-form-target="tab"][data-step-index="3"]').click
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="3"][aria-current="location"]',
+                             visible: :all)
     expect(page).to have_button('Save changes')
   end
 
   scenario 'opens commercial editing directly from the dossier' do
     supplier = create(:supplier, organization:)
     visit edit_admin_supplier_path(supplier, return_to: 'commercial')
-    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="step"][data-step-index="3"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="location"][data-step-index="3"]',
+                             visible: :all)
     expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
   end
 

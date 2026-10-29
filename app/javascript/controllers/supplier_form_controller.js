@@ -58,7 +58,9 @@ export default class extends Controller {
     if (invalid) field.setAttribute("aria-invalid", "true")
     else field.removeAttribute("aria-invalid")
     field.classList.toggle("input-field-error", invalid)
-    this.visibleSelectButton(field)?.setAttribute("aria-invalid", String(invalid))
+    const trigger = this.visibleSelectButton(field)
+    if (invalid) trigger?.setAttribute("aria-invalid", "true")
+    else trigger?.removeAttribute("aria-invalid")
   }
 
   describeFieldError(field, message) {

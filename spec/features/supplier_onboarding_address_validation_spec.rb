@@ -55,7 +55,8 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
       expect(fiscal_field(field)).to have_css("[data-supplier-address-model-error='#{field}']:not(.hidden)")
       expect(fiscal_field(field)).to have_css('[aria-invalid="true"]', visible: :all)
     end
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]',
+                             visible: :all)
 
     {
       street: 'Avenida Reforma', exterior_number: '125', neighborhood: 'Centro',
@@ -67,11 +68,13 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
     fiscal_field('postal_code').find('input').set('1234')
     find('[data-action="supplier-form#next"]').click
     expect(fiscal_field('postal_code')).to have_css('[data-supplier-address-model-error="postal_code"]:not(.hidden)')
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]',
+                             visible: :all)
 
     fiscal_field('postal_code').find('input').set('06000')
     find('[data-action="supplier-form#next"]').click
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="2"][aria-current="step"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="2"][aria-current="step"]',
+                             visible: :all)
   end
 
   it 'highlights the country selector when no country has been chosen' do
@@ -81,7 +84,8 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
     expect(fiscal_field('country_id')).to have_css(
       '[data-supplier-address-model-error="country_id"]:not(.hidden)'
     )
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]',
+                             visible: :all)
   end
 
   it 'uses the same Address model to allow countries without postal codes' do
@@ -92,7 +96,8 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
     fiscal_field('city').find('input').set('Dubai')
     find('[data-action="supplier-form#next"]').click
 
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="2"][aria-current="step"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="2"][aria-current="step"]',
+                             visible: :all)
     expect(fiscal_field('postal_code')).to have_no_css(
       '[data-supplier-address-model-error="postal_code"]:not(.hidden)'
     )
