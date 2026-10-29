@@ -197,7 +197,7 @@ export default class extends Controller {
     this.validating = true
     try {
       if (!await this.validateThrough(this.stepTargets.length - 1)) return
-      if (this.indexValue !== this.stepTargets.length - 1) {
+      if (this.newRecordValue && this.indexValue !== this.stepTargets.length - 1) {
         this.indexValue = this.stepTargets.length - 1
         return
       }
@@ -329,7 +329,10 @@ export default class extends Controller {
       const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors, [data-server-field-error]')
       const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
         .filter((field) => !field.disabled && !field.closest("template"))
-      const complete = required.length > 0 && required.every((field) => field.checkValidity()) && !invalid
+      const editable = [...(this.stepTargets[index]?.querySelectorAll("input:not([type='hidden']), select, textarea") || [])]
+        .filter((field) => !field.disabled && !field.closest("template"))
+      const hasContent = editable.some((field) => field.type === "checkbox" ? field.checked : field.value.trim() !== "")
+      const complete = !invalid && (required.length > 0 ? required.every((field) => field.checkValidity()) : hasContent)
       const state = invalid ? "error" : complete ? "complete" : "pending"
       tab.dataset.stepState = state
       tab.classList.toggle("ring-1", !!invalid)
@@ -377,7 +380,7 @@ export default class extends Controller {
     })
     this.refreshStepIndicators()
     if (this.indexValue === this.stepTargets.length - 1) this.updateSummary()
-    if (this.hasSubmitTarget) this.submitTarget.hidden = this.indexValue !== this.stepTargets.length - 1
+    if (this.hasSubmitTarget) this.submitTarget.hidden = this.newRecordValue && this.indexValue !== this.stepTargets.length - 1
     if (this.hasPreviousTarget) this.previousTarget.hidden = this.indexValue === 0
     if (this.hasNextTarget) this.nextTarget.hidden = this.indexValue === this.stepTargets.length - 1
   }

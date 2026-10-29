@@ -110,7 +110,7 @@ en:
           step_3: "Contacts"
           step_4: "Addresses"
           step_5: "Commercial terms"
-          step_6: "Branch operations"
+          step_6: "Owner and tags"
           step_7: "Documents"
         subtitles:
           step_1: "Main details"
@@ -118,7 +118,7 @@ en:
           step_3: "Contact people"
           step_4: "Supplier addresses"
           step_5: "Credit and discounts"
-          step_6: "Visits and orders"
+          step_6: "Internal ownership and classification"
           step_7: "Files and notes"
         panel:
           eyebrow: "DELTA POS"

@@ -62,6 +62,15 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('textarea[name="supplier[notes]"]', visible: :all)
   end
 
+  scenario 'opens the fiscal editing section directly and keeps save available' do
+    supplier = create(:supplier, organization:)
+    visit edit_admin_supplier_path(supplier, return_to: 'fiscal')
+
+    expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden)', count: 1)
+    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="step"][data-step-index="1"]')
+    expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
+  end
+
   scenario 'summarizes all editable steps when editing a supplier' do
     supplier = create(:supplier, organization:, credit_days: 45, notes: 'Notas internas del proveedor')
     main_contact = supplier.contacts.create!(name: 'Contacto de ventas', primary: true)

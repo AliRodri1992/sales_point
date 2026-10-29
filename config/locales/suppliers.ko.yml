@@ -110,7 +110,7 @@ ko:
           step_3: "연락처"
           step_4: "주소"
           step_5: "거래 조건"
-          step_6: "지점 운영"
+          step_6: "담당자 및 태그"
           step_7: "문서"
         subtitles:
           step_1: "기본 정보"
@@ -118,7 +118,7 @@ ko:
           step_3: "담당자"
           step_4: "공급업체 주소"
           step_5: "신용 및 할인"
-          step_6: "방문 및 주문"
+          step_6: "내부 담당자와 분류"
           step_7: "파일 및 메모"
         panel:
           eyebrow: "DELTA POS"
