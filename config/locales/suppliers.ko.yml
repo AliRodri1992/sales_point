@@ -94,6 +94,13 @@ ko:
           status: "상태"
           actions: "작업"
       onboarding:
+        navigation_label: "양식 섹션"
+        change_step: "단계 보기"
+        change_section: "섹션 변경"
+        current_section: "현재 섹션"
+        step_counter: "%{total}단계 중 %{current}단계"
+        completed_sections: "총 %{total}개 섹션 중 %{count}개 완료"
+        progress_in_progress: "진행 중"
         progress_pending: "대기 중"
         progress_complete: "완료"
         progress_error: "오류 수정"
