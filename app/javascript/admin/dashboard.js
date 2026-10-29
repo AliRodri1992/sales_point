@@ -526,7 +526,7 @@ document.addEventListener("turbo:load", () => {
      */
 
     document.addEventListener("click", (event) => {
-        if (!event.target.closest?.("[data-dashboard-selector], #userMenuButton, #sidebarUserMenuButton")) closeAllDropdowns()
+        if (!event.target.closest?.("[data-dashboard-selector], #userMenuButton, #sidebarUserMenuButton, #userMenu, #sidebarUserMenu")) closeAllDropdowns()
     })
 
     document.addEventListener("keydown", (event) => {
