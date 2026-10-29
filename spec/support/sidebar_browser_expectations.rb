@@ -52,18 +52,33 @@ module SidebarBrowserExpectations
   end
 
   def expect_sidebar_collapsed
-    if page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
-      return if Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
-        page.evaluate_script(<<~JS)
-          Math.abs(document.getElementById('adminSidebar').getBoundingClientRect().width - 80) < 1
-        JS
-      end
+    unless page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
+      raise RSpec::Expectations::ExpectationNotMetError,
+            "Expected sidebar to collapse; browser state: #{sidebar_browser_state.inspect}"
     end
 
-    raise RSpec::Expectations::ExpectationNotMetError,
-          "Expected sidebar to collapse; browser state: #{sidebar_browser_state.inspect}"
+    Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+      page.evaluate_script(<<~JS)
+        Math.abs(document.getElementById('adminSidebar').getBoundingClientRect().width - 80) < 1
+      JS
+    end
   rescue Selenium::WebDriver::Error::TimeoutError
     raise RSpec::Expectations::ExpectationNotMetError,
           "Sidebar transition did not complete: #{sidebar_browser_state.inspect}"
+  end
+
+  def expect_sidebar_toggle_focused
+    Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+      page.evaluate_script("document.activeElement?.id === 'sidebarToggle'")
+    end
+  rescue Selenium::WebDriver::Error::TimeoutError
+    focused = page.evaluate_script(<<~JS)
+      (() => {
+        const element = document.activeElement
+        return { tag: element?.tagName, id: element?.id, inert: element?.inert }
+      })()
+    JS
+    raise RSpec::Expectations::ExpectationNotMetError,
+          "Drawer focus was not restored to the toggle: #{focused.inspect}"
   end
 end

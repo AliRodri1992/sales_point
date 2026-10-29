@@ -106,9 +106,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     Selenium::WebDriver::Wait.new(timeout: 3, interval: 0.05).until do
       page.evaluate_script("!document.getElementById('adminDashboardContent').inert")
     end
-    Selenium::WebDriver::Wait.new(timeout: 3, interval: 0.05).until do
-      page.evaluate_script('document.activeElement.id') == 'sidebarToggle'
-    end
+    expect_sidebar_toggle_focused
   ensure
     page.driver.browser.manage.window.resize_to(1400, 900)
   end

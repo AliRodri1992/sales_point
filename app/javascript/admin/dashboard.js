@@ -447,8 +447,14 @@ document.addEventListener("turbo:load", () => {
             // was lost, without stealing it from an intentional next action.
             setTimeout(() => {
                 const focused = document.activeElement
-                if (focused === document.body || sidebar.contains(focused)) {
-                    sidebarToggle?.focus({ preventScroll: true })
+                const focusLost = !focused ||
+                    focused === document.body ||
+                    focused === document.documentElement ||
+                    !focused.isConnected ||
+                    sidebar.contains(focused) ||
+                    sidebarOverlay?.contains(focused)
+                if (focusLost && sidebarToggle?.isConnected) {
+                    sidebarToggle.focus({ preventScroll: true })
                 }
             }, 350)
         }
