@@ -73,10 +73,10 @@
               <% if account.status == 'active' %>
                 <% %w[verified rejected pending].each do |decision| %>
                   <% next if account.verification_status == decision %>
-                  <%= button_to t("admin.supplier_bank_details.verification_states.#{decision}"),
+                  <%= button_to t("admin.supplier_bank_details.review_actions.#{decision}"),
                                 review_admin_supplier_bank_account_path(supplier, account),
                                 method: :patch, params: { decision: decision },
-                                form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
+                                form: { data: { turbo_confirm: t('admin.supplier_bank_details.review_confirm') } },
                                 class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
                 <% end %>
               <% end %>

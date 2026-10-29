@@ -20,7 +20,7 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
     page = described_class.new(supplier:).call
 
     expect(page.accounts.map(&:bank_name)).to eq(['BBVA México'])
-    expect(page.counts).to eq(all: 2, active: 1, archived: 1)
+    expect(page.counts).to eq(all: 2, active: 1, inactive: 0, blocked: 0, archived: 1)
     expect(page.banks).to eq(['BBVA México'])
     expect(page.status).to eq('active')
     expect(page.from).to eq(1)
@@ -83,7 +83,7 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
 
     unfiltered = described_class.new(supplier:, status: 'all').call
     expect(unfiltered.accounts.count).to eq(2)
-    expect(unfiltered.counts).to eq(all: 2, active: 1, archived: 1)
+    expect(unfiltered.counts).to eq(all: 2, active: 1, inactive: 0, blocked: 0, archived: 1)
   end
 
   it 'escapes wildcard characters in bank account searches' do

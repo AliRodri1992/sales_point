@@ -25,6 +25,11 @@ es:
         pending: "Pendiente"
         verified: "Verificada"
         rejected: "Rechazada"
+      review_actions:
+        pending: "Volver a pendiente"
+        verified: "Marcar como verificada"
+        rejected: "Rechazar verificación"
+      review_confirm: "¿Confirmas este cambio de verificación bancaria?"
       verified_at: "Verificada el %{date}"
       blocked_reason: "Motivo de bloqueo"
       blocked_reason_hint: "Obligatorio cuando el estado es Bloqueada"

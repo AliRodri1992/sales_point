@@ -25,6 +25,11 @@ ko:
         pending: "대기"
         verified: "확인됨"
         rejected: "거절됨"
+      review_actions:
+        pending: "대기 상태로 변경"
+        verified: "확인 완료 처리"
+        rejected: "확인 거절"
+      review_confirm: "은행 계좌 확인 상태를 변경하시겠습니까?"
       verified_at: "확인 일자: %{date}"
       blocked_reason: "차단 사유"
       blocked_reason_hint: "차단 상태일 때 필수"

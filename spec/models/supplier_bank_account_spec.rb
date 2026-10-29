@@ -29,6 +29,16 @@ RSpec.describe SupplierBankAccount do
     expect(account.bank_name).to be_nil
   end
 
+  it 'reports a CLABE field error when no bank identifier was provided' do
+    account = described_class.new(
+      organization: supplier.organization, supplier:, holder_name: 'Vendor',
+      bank_name: 'Demo Bank', currency_code: 'MXN'
+    )
+
+    expect(account).not_to be_valid
+    expect(account.errors[:clabe]).to be_present
+  end
+
   it 'rejects an invalid CLABE control digit' do
     account = described_class.new(
       organization: supplier.organization, supplier:, holder_name: 'Proveedor',

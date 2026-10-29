@@ -25,6 +25,11 @@ en:
         pending: "Pending"
         verified: "Verified"
         rejected: "Rejected"
+      review_actions:
+        pending: "Return to pending"
+        verified: "Mark as verified"
+        rejected: "Reject verification"
+      review_confirm: "Confirm this bank verification decision?"
       verified_at: "Verified on %{date}"
       blocked_reason: "Reason for blocking"
       blocked_reason_hint: "Required when the status is Blocked"
