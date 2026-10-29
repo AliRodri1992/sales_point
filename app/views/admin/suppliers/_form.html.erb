@@ -5,7 +5,7 @@
   <% end %>
   <div class="flex min-w-0 flex-1 flex-col gap-6">
     <nav class="relative min-w-0 border-b border-slate-200 pb-5" aria-label="<%= t('admin.suppliers.onboarding.navigation_label') %>">
-      <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0 flex-1 space-y-2">
           <% if supplier.new_record? %>
             <span class="text-xs font-bold uppercase tracking-wider text-emerald-700" data-supplier-form-target="position" aria-live="polite"><%= t('admin.suppliers.onboarding.step_counter', current: 1, total: 7) %></span>
@@ -16,10 +16,10 @@
           <% else %>
             <span class="text-xs font-bold uppercase tracking-wider text-slate-500"><%= t('admin.suppliers.onboarding.current_section') %></span>
           <% end %>
-          <p class="font-jakarta truncate text-base font-semibold text-slate-900 sm:text-lg" data-supplier-form-target="activeLabel"><%= t('admin.suppliers.onboarding.steps.step_1') %></p>
+          <p class="font-jakarta break-words text-base font-semibold text-slate-900 sm:text-lg" data-supplier-form-target="activeLabel"><%= t('admin.suppliers.onboarding.steps.step_1') %></p>
         </div>
-        <details class="group relative z-20 shrink-0" data-supplier-form-target="navigation" data-action="keydown->supplier-form#navigationKeydown">
-          <summary class="inline-flex min-h-11 cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
+        <details class="group relative z-20 w-full shrink-0 sm:w-auto" data-supplier-form-target="navigation" data-action="keydown->supplier-form#navigationKeydown">
+          <summary class="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:w-auto [&::-webkit-details-marker]:hidden">
             <span><%= t(supplier.new_record? ? 'admin.suppliers.onboarding.change_step' : 'admin.suppliers.onboarding.change_section') %></span>
             <svg xmlns="http://www.w3.org/2000/svg" class="size-4 shrink-0 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </summary>
