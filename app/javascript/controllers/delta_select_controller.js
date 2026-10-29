@@ -95,9 +95,14 @@ export default class extends Controller {
     }
     this.optionObserver = new MutationObserver(() => this.refresh())
     this.optionObserver.observe(this.select, { childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["disabled", "selected", "label", "hidden"] })
+      attributeFilter: ["disabled", "selected", "label", "hidden", "aria-invalid"] })
     this.onReset = () => setTimeout(() => this.refresh(), 0)
-    this.onInvalid = (event) => { event.preventDefault(); this.button.focus() }
+    this.onInvalid = (event) => {
+      event.preventDefault()
+      this.select.setAttribute("aria-invalid", "true")
+      this.refresh()
+      this.button.focus()
+    }
     this.button.addEventListener("pointerdown", this.onButtonPointerDown)
     this.button.addEventListener("click", this.onButtonClick)
     this.button.disabled = this.select.disabled
@@ -136,7 +141,8 @@ export default class extends Controller {
 
   refresh() {
     this.button.disabled = this.select.disabled
-    this.button.setAttribute("aria-invalid", String(!this.select.validity.valid))
+    this.button.setAttribute("aria-invalid", String(this.select.getAttribute("aria-invalid") === "true" ||
+      this.select.classList.contains("input-field-error")))
     const options = [...this.select.options]
     const signature = JSON.stringify(options.map((option) => [
       option.value, option.textContent, option.selected, option.disabled,
