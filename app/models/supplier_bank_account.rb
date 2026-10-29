@@ -104,9 +104,7 @@ class SupplierBankAccount < ApplicationRecord
     end
   end
 
-  def compact_number(value)
-    value.to_s.delete(" \t\n").presence
-  end
+  def compact_number(value) = value.to_s.delete(" \t\n").presence
 
   def valid_clabe
     return if clabe.blank?

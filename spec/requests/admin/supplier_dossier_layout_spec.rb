@@ -79,10 +79,10 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_fiscal?).and_return(false)
 
     get admin_supplier_path(supplier)
-    expect(dossier.at_css('section[data-section="contacts"] a[href="' +
-                          admin_supplier_contacts_path(supplier) + '"]')).to be_nil
-    expect(dossier.at_css('section[data-section="products"] a[href="' +
-                          admin_supplier_supplier_products_path(supplier) + '"]')).to be_nil
+    contacts_link = "section[data-section='contacts'] a[href='#{admin_supplier_contacts_path(supplier)}']"
+    products_link = "section[data-section='products'] a[href='#{admin_supplier_supplier_products_path(supplier)}']"
+    expect(dossier.at_css(contacts_link)).to be_nil
+    expect(dossier.at_css(products_link)).to be_nil
     expect(dossier.at_css('section[data-section="commercial"] a[href*="return_to=commercial"]')).to be_nil
     expect(dossier.at_css('section[data-section="fiscal"] a[href*="return_to=fiscal"]')).to be_nil
   end
@@ -91,6 +91,16 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     allow_any_instance_of(SupplierPolicy).to receive(:view_addresses?).and_return(false)
     get admin_supplier_path(supplier, tab: 'fiscal')
     expect(dossier.at_css('[data-fiscal-address] button[data-section="addresses"]')).to be_nil
+  end
+
+  it 'names bank account action menus with account context' do
+    supplier.supplier_bank_accounts.create!(
+      organization:, holder_name: 'Vendor', bank_name: 'Sample Bank',
+      account_number: '1234567890', currency_code: 'MXN'
+    )
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+    menu = dossier.at_css('[data-supplier-bank-accounts-target="card"] summary')
+    expect(menu['aria-label']).to include('Sample Bank', '7890')
   end
 
   it 'connects the bank accounts tab to its accessible panel' do
