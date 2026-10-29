@@ -75,12 +75,14 @@
       <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
       <% end %>
       <% if dossier_policy.view_fiscal? %>
-      <%= render 'dossier_fiscal', supplier: supplier, fiscal_address: fiscal_address, can_edit: can_edit,
+      <%= render 'dossier_fiscal', supplier: supplier, fiscal_address: fiscal_address,
+                   can_edit: (can_edit && dossier_policy.manage_fiscal?),
                    can_view_addresses: dossier_policy.view_addresses? %>
       <% end %>
 
     <% if dossier_policy.view_commercial? %>
-    <%= render 'dossier_commercial', supplier: supplier %>
+    <%= render 'dossier_commercial', supplier: supplier,
+                  can_edit: (can_edit && dossier_policy.manage_commercial?) %>
     <% end %>
 
     <% if dossier_policy.view_contacts? %>

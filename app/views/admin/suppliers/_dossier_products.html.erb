@@ -11,10 +11,12 @@
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.description') %></p>
         </div>
       </div>
+      <% if policy(supplier).manage_products? %>
       <%= link_to admin_supplier_supplier_products_path(supplier),
                   class: 'inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
         <%= icon('cube', class: 'size-4') %>
         <%= t('admin.supplier_dossier.product_empty.manage') %>
+      <% end %>
       <% end %>
     </header>
   </div>

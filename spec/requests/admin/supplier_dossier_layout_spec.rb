@@ -72,6 +72,21 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(dossier.css('[role="tab"][data-section="contacts"]')).to be_empty
   end
 
+  it 'does not expose management links without section permissions' do
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_contacts?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_commercial?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_fiscal?).and_return(false)
+
+    get admin_supplier_path(supplier)
+    expect(dossier.at_css('section[data-section="contacts"] a[href="' +
+                          admin_supplier_contacts_path(supplier) + '"]')).to be_nil
+    expect(dossier.at_css('section[data-section="products"] a[href="' +
+                          admin_supplier_supplier_products_path(supplier) + '"]')).to be_nil
+    expect(dossier.at_css('section[data-section="commercial"] a[href*="return_to=commercial"]')).to be_nil
+    expect(dossier.at_css('section[data-section="fiscal"] a[href*="return_to=fiscal"]')).to be_nil
+  end
+
   it 'hides the fiscal shortcut to addresses without address permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:view_addresses?).and_return(false)
     get admin_supplier_path(supplier, tab: 'fiscal')
@@ -173,7 +188,8 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(region['aria-label']).to be_present
 
     get admin_supplier_path(supplier, tab: 'bank_accounts')
-    filter = dossier.at_css('section[data-section="bank_accounts"] summary[aria-labelledby="supplier_banks_bank_label"]')
+    filter = dossier.at_css('section[data-section="bank_accounts"] ' \
+                            'summary[aria-labelledby="supplier_banks_bank_label"]')
     expect(filter).to be_present
   end
 

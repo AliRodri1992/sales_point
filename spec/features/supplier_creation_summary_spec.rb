@@ -71,6 +71,13 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
   end
 
+  scenario 'opens commercial editing directly from the dossier' do
+    supplier = create(:supplier, organization:)
+    visit edit_admin_supplier_path(supplier, return_to: 'commercial')
+    expect(page).to have_css('[data-supplier-form-target="tab"][aria-current="step"][data-step-index="3"]')
+    expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
+  end
+
   scenario 'summarizes all editable steps when editing a supplier' do
     supplier = create(:supplier, organization:, credit_days: 45, notes: 'Notas internas del proveedor')
     main_contact = supplier.contacts.create!(name: 'Contacto de ventas', primary: true)
