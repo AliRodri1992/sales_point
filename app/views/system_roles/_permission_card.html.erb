@@ -14,7 +14,8 @@
                       permission.id,
                       assigned_ids.include?(permission.id),
                       id: "permission_#{permission.id}",
-                      class: 'peer sr-only' %>
+                      class: 'peer sr-only',
+                      disabled: local_assigns.fetch(:read_only, false) %>
     <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"></span>
     <span class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5"></span>
   </span>

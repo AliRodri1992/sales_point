@@ -2,5 +2,7 @@
 ko:
   admin:
     system_roles:
+      show:
+        managed_permissions: 관리자 권한은 보호되며 자동으로 할당됩니다.
       update_permissions:
         success: 역할 권한이 성공적으로 업데이트되었습니다.

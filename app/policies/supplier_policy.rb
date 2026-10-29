@@ -11,6 +11,9 @@ class SupplierPolicy
     suppliers.export suppliers.create
   ].freeze
 
+  # List access does not grant access to sensitive dossier sections.
+  LIST_PERMISSIONS = (DOSSIER_PERMISSIONS + %w[suppliers.access suppliers.destroy]).freeze
+
   attr_reader :user, :supplier
 
   def initialize(user, supplier)
@@ -19,7 +22,7 @@ class SupplierPolicy
   end
 
   def index?
-    authorized_organization? && DOSSIER_PERMISSIONS.any? { |permission| allowed?(permission) }
+    authorized_organization? && LIST_PERMISSIONS.any? { |permission| allowed?(permission) }
   end
 
   def show? = authorized_record? && DOSSIER_PERMISSIONS.any? { |permission| allowed?(permission) }
@@ -107,7 +110,7 @@ class SupplierPolicy
 
     def resolve
       return @scope.none unless @user && (@user.admin? ||
-        DOSSIER_PERMISSIONS.any? { |permission| @user.permission?(permission) })
+        LIST_PERMISSIONS.any? { |permission| @user.permission?(permission) })
 
       memberships = @user.organization_memberships.where(status: :active)
                          .joins(:organization).merge(Organization.active_records)

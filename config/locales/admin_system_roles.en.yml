@@ -2,5 +2,7 @@
 en:
   admin:
     system_roles:
+      show:
+        managed_permissions: Administrator permissions are protected and assigned automatically.
       update_permissions:
         success: Role permissions were updated successfully.

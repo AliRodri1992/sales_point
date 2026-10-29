@@ -22,6 +22,23 @@ RSpec.describe SystemRolePolicy do
     end
   end
 
+  context 'when the role is a protected administrator' do
+    let(:user) { build(:user) }
+
+    before { allow(user).to receive(:admin?).and_return(true) }
+
+    it 'allows viewing but forbids deletion or modifying permissions' do
+      SystemRole::ADMINISTRATIVE_CODES.each do |code|
+        role = build(:system_role, :system, code:)
+        policy = described_class.new(user, role)
+        expect(policy.show?).to be(true)
+        expect(policy.update?).to be(false)
+        expect(policy.destroy?).to be(false)
+        expect(policy.update_permissions?).to be(false)
+      end
+    end
+  end
+
   context 'when the user is not an administrator' do
     let(:user) { build(:user) }
 

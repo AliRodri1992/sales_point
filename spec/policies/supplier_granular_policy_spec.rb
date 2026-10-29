@@ -63,6 +63,20 @@ RSpec.describe SupplierPolicy do
     end
   end
 
+  it 'allows access-only and delete-only roles to reach the directory without reading dossier data' do
+    %w[suppliers.access suppliers.destroy].each do |permission|
+      allow(user).to receive(:permission?) { |code| code == permission }
+      policy = described_class.new(user, supplier)
+
+      expect(policy.index?).to be(true)
+      expect(policy.show?).to be(false)
+      expect(policy.view_general?).to be(false)
+      expect(policy.view_fiscal?).to be(false)
+      expect(described_class::Scope.new(user, Supplier.all).resolve).to include(supplier)
+      expect(policy.destroy?).to eq(permission == 'suppliers.destroy')
+    end
+  end
+
   it 'rejects an unrelated organization even with the permission' do
     foreign_supplier = create(:supplier, organization: create(:organization))
     allow(user).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)

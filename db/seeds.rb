@@ -356,7 +356,7 @@ def seed_permissions
 end
 
 def assign_default_role_permissions
-  %w[super_admin administrator].each do |role_code|
+  SystemRole::ADMINISTRATIVE_CODES.each do |role_code|
     role = SystemRole.available.find_by!(code: role_code)
     AdministratorPermissionProvisioner.call(role:)
   end

@@ -67,8 +67,14 @@
           </p>
         </div>
 
-        <%= submit_tag t('admin.system_roles.show.save_permissions'),
-                       class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+        <% if policy(@system_role).update_permissions? %>
+          <%= submit_tag t('admin.system_roles.show.save_permissions'),
+                         class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800' %>
+        <% else %>
+          <span class="inline-flex items-center rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
+            <%= t('admin.system_roles.show.managed_permissions') %>
+          </span>
+        <% end %>
       </div>
 
       <div class="px-5 py-5 sm:px-6">
@@ -80,7 +86,7 @@
           <%= render partial: 'system_roles/permission_card',
                      collection: @permissions,
                      as: :permission,
-                     locals: { assigned_ids: @assigned_permission_ids } %>
+                     locals: { assigned_ids: @assigned_permission_ids, read_only: !policy(@system_role).update_permissions? } %>
         </div>
       </div>
     </div>

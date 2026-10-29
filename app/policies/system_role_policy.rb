@@ -14,18 +14,22 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def update?
-    admin?
+    admin? && !protected_role?
   end
 
   def destroy?
-    admin?
+    admin? && !protected_role?
   end
 
   def update_permissions?
-    admin?
+    admin? && !protected_role?
   end
 
   private
+
+  def protected_role?
+    record.is_a?(SystemRole) && record.protected_permissions?
+  end
 
   def admin?
     user&.admin?

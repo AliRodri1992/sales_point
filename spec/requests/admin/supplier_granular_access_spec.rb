@@ -33,6 +33,26 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     expect(page.at_css('[data-section="documents"]')).to be_nil
   end
 
+  it 'lists masked suppliers for access-only and delete-only users without opening dossiers' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    permission = create(:permission, code: 'suppliers.access', module_name: 'Proveedores')
+    role.permissions << permission
+
+    get admin_suppliers_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(supplier.name)
+    expect(response.body).not_to include(supplier.rfc, supplier.email)
+    get admin_supplier_path(supplier)
+    expect(response).to have_http_status(:forbidden)
+
+    permission.update!(code: 'suppliers.destroy')
+    get admin_suppliers_path
+    expect(response).to have_http_status(:ok)
+    expect(SupplierPolicy.new(user, supplier).destroy?).to be(true)
+    expect(SupplierPolicy.new(user, supplier).show?).to be(false)
+  end
+
   it 'allows contact management but denies address management independently' do
     get admin_supplier_contacts_path(supplier)
     expect(response).to have_http_status(:ok)

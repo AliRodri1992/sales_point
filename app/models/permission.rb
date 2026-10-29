@@ -20,4 +20,17 @@ class Permission < ApplicationRecord
   validates :status, presence: true
 
   scope :available, -> { where(status: 'active').order(:module_name, :name) }
+
+  after_create_commit :provision_administrators, if: :active?
+  after_update_commit :provision_administrators, if: :activated?
+
+  private
+
+  def activated?
+    active? && saved_change_to_status?
+  end
+
+  def provision_administrators
+    AdministratorPermissionProvisioner.call_for_permission(permission: self)
+  end
 end

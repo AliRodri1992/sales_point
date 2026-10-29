@@ -91,6 +91,38 @@ RSpec.describe 'SystemRoles', type: :request do
     end
   end
 
+  describe 'protected administrator permissions' do
+    it 'renders protected permissions as read-only without a save control' do
+      get system_role_path(admin_role)
+
+      page = Nokogiri::HTML(response.body)
+      expect(response).to have_http_status(:ok)
+      expect(page.at_css('input[type="submit"][value="Save permissions"]')).to be_nil
+      expect(page.css('input[name="permission_ids[]"]')).to all(
+        satisfy { |input| input.key?('disabled') }
+      )
+    end
+
+    it 'forbids removing administrator and super-administrator permissions' do
+      permission = create(:permission)
+      super_role = create(:system_role, :system, code: 'super_admin')
+
+      [admin_role, super_role].each do |role|
+        expect(role.permissions).to include(permission)
+        patch permissions_system_role_path(role), params: { permission_ids: [] }
+        expect(response).to have_http_status(:forbidden)
+        expect(role.permissions.reload).to include(permission)
+      end
+    end
+
+    it 'prevents deletion of protected administrative roles' do
+      delete system_role_path(admin_role)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(admin_role.reload).to be_active
+    end
+  end
+
   describe 'PATCH /system_roles/:id/permissions' do
     let!(:role) { create(:system_role, name: 'Cajero', code: 'cashier', role_type: :branch) }
     let!(:permission) { create(:permission) }
