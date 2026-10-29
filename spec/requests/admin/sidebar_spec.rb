@@ -28,6 +28,25 @@ RSpec.describe 'Admin sidebar', type: :request do
     end
   end
 
+  describe 'topbar accessibility regressions' do
+    it 'provides a controlled account and notifications dropdown' do
+      get admin_dashboard_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('aria-controls="userMenu"')
+      expect(response.body).to include('aria-controls="notificationsMenu"')
+
+    end
+
+    it 'removes the nonfunctional user settings button' do
+      get admin_dashboard_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('cog-6-tooth')
+      expect(response.body).to include(admin_profile_path)
+    end
+  end
+
   describe 'PATCH /admin/sidebar' do
     it 'collapses the sidebar when the parameter is true' do
       patch admin_sidebar_path, params: { sidebar_collapsed: 'true' }
