@@ -68,6 +68,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit admin_dashboard_path
 
+    expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
     axis = horizontal_center('#adminSidebar')
     [
       '.sidebar-brand-link > div:first-child',
@@ -81,6 +82,9 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
 
     expect(page).to have_css('#sidebarUserMenuButton .sidebar-avatar-initials', visible: true)
     expect(page).to have_no_css('#adminSidebar .sidebar-avatar', visible: true)
+    icon = find('#adminSidebar nav svg[data-sidebar-icon="suppliers"]')
+    icon.hover
+    expect(horizontal_center('#adminSidebar nav svg[data-sidebar-icon="suppliers"]')).to be_within(1).of(axis)
   end
 
   scenario 'keeps focus inside the mobile drawer and restores the main content on close' do

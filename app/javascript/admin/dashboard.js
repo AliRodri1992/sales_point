@@ -472,6 +472,10 @@ document.addEventListener("turbo:load", () => {
     sidebarCloseButton?.addEventListener("click", closeMobileSidebar)
 
     if (sidebar && sidebarToggle) {
+        sidebarToggle.setAttribute(
+            "aria-expanded",
+            String(window.innerWidth >= 1024 && !sidebar.classList.contains("sidebar-collapsed"))
+        )
         sidebarToggle.addEventListener("click", () => {
             const isMobile = window.innerWidth < 1024
 

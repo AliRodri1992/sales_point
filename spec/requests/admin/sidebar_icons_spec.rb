@@ -54,6 +54,7 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css('#adminSidebarNavigationLabel').text).to eq(
       I18n.t('admin.shared.sidebar.navigation', locale: :en)
     )
+    expect(sidebar.css('.sidebar-catalog > summary[aria-label]').length).to eq(2)
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('false')
     expect(sidebar.to_html).not_to include('data-tooltip="Low stock">8')
   end

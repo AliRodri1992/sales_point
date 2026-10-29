@@ -946,17 +946,9 @@ footer a {
 #adminSidebar nav a {
     transition:
             background-color 150ms ease,
-            color 150ms ease,
-            transform 150ms ease;
+            color 150ms ease;
 }
 
-#adminSidebar nav a:hover {
-    transform: translateX(1px);
-}
-
-#adminSidebar.sidebar-collapsed nav a:hover {
-    transform: none;
-}
 
 #adminSidebar nav a i {
     flex-shrink: 0;
