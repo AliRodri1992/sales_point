@@ -67,6 +67,21 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page.evaluate_script("document.activeElement.tagName")).to eq('SUMMARY')
   end
 
+  scenario 'keeps the compact navigation inside the viewport on mobile' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit new_admin_supplier_path
+
+    expect(page).to have_css('details[data-supplier-form-target="navigation"] > summary', visible: true)
+    expect(page).to have_css('[data-supplier-form-target="position"]', visible: true)
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      const nav = document.querySelector('nav[aria-label] details[data-supplier-form-target="navigation"]')
+      const bounds = nav.getBoundingClientRect()
+      bounds.left >= 0 && bounds.right <= window.innerWidth
+    JS
+  ensure
+    page.driver.browser.manage.window.resize_to(1400, 900)
+  end
+
   scenario 'summarizes all editable steps in the new supplier review' do
     visit new_admin_supplier_path
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
