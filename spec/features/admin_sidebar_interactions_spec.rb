@@ -48,6 +48,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     find('#adminSidebar .sidebar-catalog > summary', match: :first).click
     expect(page).to have_css('#adminSidebarFlyout.is-visible')
     expect(page).to have_css('#adminSidebarFlyout a[href]', minimum: 1)
+    expect(find('#adminSidebar .sidebar-catalog > summary', match: :first)['aria-expanded']).to eq('true')
 
     find('body').send_keys(:escape)
     expect(page).to have_no_css('#adminSidebarFlyout', visible: :all)

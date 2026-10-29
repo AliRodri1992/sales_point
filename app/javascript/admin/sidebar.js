@@ -2,6 +2,7 @@ const TOOLTIP_ID = "adminSidebarTooltip"
 const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
+let activeTooltipTarget = null
 let flyoutCloseTimer = null
 const cancelFlyoutClose = () => {
     if (flyoutCloseTimer !== null) clearTimeout(flyoutCloseTimer)
@@ -16,6 +17,10 @@ const isCollapsedSidebar = () =>
     document.getElementById("adminSidebar")?.classList.contains("sidebar-collapsed")
 
 const removeSidebarTooltip = () => {
+    if (activeTooltipTarget?.getAttribute("aria-describedby") === TOOLTIP_ID) {
+        activeTooltipTarget.removeAttribute("aria-describedby")
+    }
+    activeTooltipTarget = null
     sidebarTooltip()?.remove()
 }
 
@@ -62,6 +67,8 @@ const showSidebarTooltip = (event) => {
     tooltip.setAttribute("role", "tooltip")
     tooltip.textContent = message
     document.body.appendChild(tooltip)
+    activeTooltipTarget = target
+    if (!target.hasAttribute("aria-describedby")) target.setAttribute("aria-describedby", TOOLTIP_ID)
     positionSidebarTooltip(target)
 
     requestAnimationFrame(() => tooltip.classList.add("is-visible"))
@@ -312,6 +319,11 @@ document.addEventListener("focusin", (event) => {
 })
 
 document.addEventListener("turbo:before-cache", () => {
+    removeSidebarTooltip()
+    removeSidebarFlyout()
+})
+
+document.addEventListener("sidebar:state-changed", () => {
     removeSidebarTooltip()
     removeSidebarFlyout()
 })

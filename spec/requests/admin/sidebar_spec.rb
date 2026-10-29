@@ -34,6 +34,7 @@ RSpec.describe 'Admin sidebar', type: :request do
     doc = Nokogiri::HTML(response.body)
     expect(doc.at_css('#adminSidebar')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
     expect(doc.at_css('#adminSidebarNavigationLabel')).to be_present
+    expect(doc.at_css('#adminSidebar')['aria-label']).to be_present
   end
 
   it 'renders the official Delta POS favicon and sidebar brand' do

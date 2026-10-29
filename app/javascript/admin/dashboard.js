@@ -498,12 +498,14 @@ document.addEventListener("turbo:load", () => {
                 "sidebar-collapsed"
             )
             sidebarToggle.setAttribute("aria-expanded", String(!collapsed))
+            document.dispatchEvent(new Event("sidebar:state-changed"))
             persistSidebarState(collapsed)
         })
     }
 
     let sidebarSaveQueue = Promise.resolve()
     let sidebarSaveRevision = 0
+    let persistedSidebarCollapsed = sidebar?.classList.contains("sidebar-collapsed") ?? false
     const persistSidebarState = (collapsed) => {
         const revision = ++sidebarSaveRevision
         // Serialize saves so quick toggles cannot reach the server out of order.
@@ -521,11 +523,13 @@ document.addEventListener("turbo:load", () => {
                 body: JSON.stringify({ sidebar_collapsed: collapsed })
             })
             if (!response.ok) throw new Error(`Sidebar save failed: ${response.status}`)
+            persistedSidebarCollapsed = collapsed
         }).catch(() => {
             if (revision !== sidebarSaveRevision || !sidebar) return
 
-            sidebar.classList.toggle("sidebar-collapsed", !collapsed)
-            sidebarToggle?.setAttribute("aria-expanded", String(collapsed))
+            sidebar.classList.toggle("sidebar-collapsed", persistedSidebarCollapsed)
+            sidebarToggle?.setAttribute("aria-expanded", String(!persistedSidebarCollapsed))
+            document.dispatchEvent(new Event("sidebar:state-changed"))
             window.Swal?.fire({
                 toast: true,
                 position: "top-end",

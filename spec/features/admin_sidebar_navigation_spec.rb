@@ -71,7 +71,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
     axis = horizontal_center('#adminSidebar')
     [
-      '.sidebar-brand-link > div:first-child',
+      '.sidebar-brand-mark',
       "nav a[href='/admin/dashboard'] svg",
       'nav .sidebar-disabled-option svg',
       'nav .sidebar-catalog > summary svg:first-child',
