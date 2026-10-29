@@ -5,9 +5,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
   let!(:permission) { create(:permission, status: :active) }
   let!(:base_currency) { create(:currency, code: 'MXN') }
 
-  before do
-    create(:system_role_permission, system_role: administrator, permission:)
-  end
+  # Administrative permissions are provisioned automatically when created.
 
   let(:registration_params) do
     {
@@ -35,6 +33,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(response).to redirect_to(admin_dashboard_path)
     expect(User.find_by(email: 'owner@example.com').employee.organization).to be_present
     expect(Organization.count).to eq(1)
+    expect(administrator.permissions).to include(permission)
     expect(OrganizationMembership.count).to eq(1)
     expect(Branch.count).to eq(1)
     expect(Terminal.count).to eq(1)

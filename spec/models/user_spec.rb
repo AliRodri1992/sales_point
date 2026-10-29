@@ -55,19 +55,19 @@ RSpec.describe User, type: :model do
 
     before { create(:user_role, user:, system_role: role) }
 
-    it 'recognizes active permission' do
-      create(:system_role_permission, system_role: role, permission:)
+    it 'recognizes active permission automatically assigned to administrators' do
+      permission
 
       expect(user.permission?('categories.access')).to be(true)
+      expect(role.permissions).to include(permission)
     end
 
     it 'returns false without permission' do
       expect(user.permission?('categories.access')).to be(false)
     end
 
-    it 'rejects inactive permission' do
+    it 'rejects inactive permission even if the administrator was assigned previously' do
       permission.update!(status: :inactive)
-      create(:system_role_permission, system_role: role, permission:)
 
       expect(user.permission?('categories.access')).to be(false)
     end

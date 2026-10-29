@@ -84,6 +84,14 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")).to be_nil
   end
 
+  it 'automatically provisions a newly introduced supplier permission to the admin role' do
+    permission = create(:permission, code: 'suppliers.schedules.view')
+    role = user.system_roles.find_by!(code: 'administrator')
+
+    expect(role.permissions).to include(permission)
+    expect(user.permission?('suppliers.schedules.view')).to be(true)
+  end
+
   it 'keeps the catalog link consistent with the category access policy' do
     get admin_dashboard_path
 

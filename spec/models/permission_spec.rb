@@ -97,6 +97,16 @@ RSpec.describe Permission, type: :model do
     end
   end
 
+  describe 'automatic administrative provisioning' do
+    it 'assigns a newly created active permission to an existing administrator' do
+      role = create(:system_role, :system, code: 'administrator')
+      created = create(:permission, code: 'suppliers.view')
+
+      expect(role.permissions).to include(created)
+      expect(SystemRolePermission.where(system_role: role, permission: created).count).to eq(1)
+    end
+  end
+
   describe '.available' do
     it 'returns active permissions ordered by module and name' do
       inactive = create(:permission, module_name: 'Sales', name: 'Create', status: :inactive)
