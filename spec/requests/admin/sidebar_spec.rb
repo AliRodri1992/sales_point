@@ -28,6 +28,23 @@ RSpec.describe 'Admin sidebar', type: :request do
     end
   end
 
+  it 'renders the official Delta POS favicon and sidebar brand' do
+    get admin_dashboard_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('#adminSidebar .sidebar-brand-mark')['src']).to include('delta-pos-favicon')
+    expect(doc.at_css('link[rel="icon"]')['href']).to include('delta-pos-favicon')
+  end
+
+  it 'provides the same account actions in both menus without keyboard-trapping unavailable options' do
+    get admin_dashboard_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.css('#adminSidebar [aria-disabled="true"][tabindex="0"]')).to be_empty
+    expect(doc.css('#sidebarUserMenu a[href]').map { |link| link['href'] }).to include(admin_guide_path)
+    expect(doc.css('#userMenu a[href]').map { |link| link['href'] }).to include(admin_guide_path)
+  end
+
   describe 'topbar accessibility regressions' do
     it 'provides a controlled account and notifications dropdown' do
       get admin_dashboard_path

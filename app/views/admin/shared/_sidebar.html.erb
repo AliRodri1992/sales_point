@@ -6,14 +6,12 @@
 >
   <span id="adminSidebarNavigationLabel" class="sr-only"><%= t('admin.shared.sidebar.navigation') %></span>
   <div class="sidebar-header flex h-20 items-center justify-between border-b border-slate-200 px-5">
-    <a href="<%= admin_dashboard_path %>" aria-label="Delta POS" class="sidebar-brand-link flex items-center gap-3">
-      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-blue-600 text-white shadow-sm">
-        <%= icon("shopping-bag", variant: :solid, class: "size-5") %>
-      </div>
+    <a href="<%= admin_dashboard_path %>" aria-label="Delta POS" class="sidebar-brand-link flex items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-emerald-700">
+      <%= image_tag 'delta-pos-favicon.svg', alt: '', class: 'sidebar-brand-mark size-9 shrink-0', aria: { hidden: true } %>
 
       <div class="sidebar-brand">
         <p class="font-jakarta text-lg font-bold tracking-tight text-slate-900">
-          Delta <span class="text-blue-600">POS</span>
+          Delta <span class="text-emerald-700">POS</span>
         </p>
 
         <p class="-mt-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
@@ -96,7 +94,7 @@
           </a>
         <% end %>
 
-        <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
+        <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
           data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
           aria-label="<%= t('admin.shared.sidebar.cash_register') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
@@ -136,12 +134,12 @@
           aria-current="<%= sidebar_item_active?('suppliers') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('suppliers') %>"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="suppliers"><path d="M3 21V10l6 3V8l6 3V4h6v17H3Z"/><path d="M6.5 17h2M11.5 17h2M16.5 17h2"/></svg>
+          <%= icon('truck', class: 'size-5') %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.suppliers') %></span>
         </a>
         <% end %>
 
-        <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
+        <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
           data-tooltip="<%= t('admin.shared.sidebar.employees') %>"
           aria-label="<%= t('admin.shared.sidebar.employees') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
@@ -158,7 +156,7 @@
       </p>
 
       <div class="space-y-1">
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
+        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('languages', 'categories', 'products') %>"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             aria-label="<%= t('admin.shared.sidebar.catalogs') %>"
@@ -212,7 +210,7 @@
       </p>
 
       <div class="space-y-1">
-        <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
+        <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
           data-tooltip="<%= t('admin.shared.sidebar.reports') %>"
           aria-label="<%= t('admin.shared.sidebar.reports') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
@@ -222,7 +220,7 @@
         </span>
 
         <% if policy(SystemRole).index? || policy(Branch).index? || policy(User).index? %>
-        <details class="sidebar-catalog"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'users') %>>
+        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('system_roles', 'branches', 'users') %>"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'users') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             aria-label="<%= t('admin.shared.sidebar.settings') %>"
@@ -234,7 +232,7 @@
           </summary>
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-            <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
+            <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
               aria-label="<%= t('admin.shared.sidebar.general') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
               class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
             >
@@ -278,7 +276,7 @@
             </a>
             <% end %>
 
-            <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
+            <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
               aria-label="<%= t('admin.shared.sidebar.taxes') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
               class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
             >
@@ -295,7 +293,7 @@
   <div class="sidebar-footer border-t border-slate-100 p-4">
     <div class="relative" data-tooltip="<%= current_user.display_name %>">
       <div class="sidebar-user-row flex items-center gap-3 p-2">
-        <div class="sidebar-avatar flex h-9 w-9 min-w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
+        <div class="sidebar-avatar flex h-9 w-9 min-w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
           <%= current_user.initials %>
         </div>
 
@@ -336,44 +334,7 @@
           </p>
         </div>
 
-        <div class="py-1">
-          <%= link_to admin_profile_path,
-                      class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-slate-50 hover:text-emerald-800" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-slate-400" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M5 19a8 8 0 0 1 14 0"/></svg>
-            <span><%= t('admin.shared.user_menu.my_profile') %></span>
-          <% end %>
-
-          <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-            type="button"
-            class="cursor-not-allowed opacity-60 flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600   "
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-slate-400" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
-            <span><%= t('admin.shared.user_menu.preferences') %></span>
-          </span>
-
-          <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-            type="button"
-            class="cursor-not-allowed opacity-60 flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600   "
-          >
-            <%= icon("shield-check", class: "size-4 text-slate-400") %>
-            <span><%= t('admin.shared.user_menu.security') %></span>
-          </span>
-
-          <%= link_to admin_guide_path,
-                      class: 'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800' do %>
-            <%= icon('book-open', class: 'size-4 text-emerald-700') %>
-            <span><%= t('admin.supplier_closure.user_guide') %></span>
-          <% end %>
-        </div>
-
-        <div class="border-t border-slate-100 py-1">
-          <%= button_to destroy_user_session_path,
-                        method: :delete,
-                        class: "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-red-600 transition hover:bg-red-50" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-            <span><%= t('admin.shared.user_menu.sign_out') %></span>
-          <% end %>
-        </div>
+        <%= render 'admin/shared/account_menu_items' %>
       </div>
     </div>
   </div>

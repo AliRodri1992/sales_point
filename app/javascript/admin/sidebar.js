@@ -2,6 +2,11 @@ const TOOLTIP_ID = "adminSidebarTooltip"
 const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
+let flyoutCloseTimer = null
+const cancelFlyoutClose = () => {
+    if (flyoutCloseTimer !== null) clearTimeout(flyoutCloseTimer)
+    flyoutCloseTimer = null
+}
 
 const sidebarTooltip = () => document.getElementById(TOOLTIP_ID)
 const sidebarFlyout = () => document.getElementById(FLYOUT_ID)
@@ -15,6 +20,7 @@ const removeSidebarTooltip = () => {
 }
 
 const removeSidebarFlyout = () => {
+    cancelFlyoutClose()
     sidebarFlyout()?.remove()
     activeFlyoutTarget?.setAttribute("aria-expanded", "false")
     activeFlyoutTarget?.removeAttribute("aria-controls")
@@ -34,7 +40,7 @@ const positionSidebarTooltip = (target) => {
 
 const showSidebarTooltip = (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    if (!sidebar?.classList.contains("sidebar-collapsed")) return
+    if (!isCollapsedSidebar() || !sidebar) return
 
     const target = event.target.closest("[data-tooltip]")
     if (!target || !sidebar.contains(target)) return
@@ -149,7 +155,7 @@ const refreshSidebarFlyout = () => {
 
 const sidebarSummaryAtEvent = (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    if (!sidebar?.classList.contains("sidebar-collapsed")) return null
+    if (!isCollapsedSidebar() || !sidebar) return null
 
     const target = event.target instanceof Element
         ? event.target.closest(".sidebar-catalog > summary")
@@ -172,12 +178,13 @@ const syncFlyoutWithPointer = (event) => {
     const sidebar = document.getElementById("adminSidebar")
     const flyout = sidebarFlyout()
 
-    if (
-        activeFlyoutTarget &&
-        sidebar?.contains(event.target) &&
-        !flyout?.contains(event.target)
-    ) {
+    if (flyout?.contains(event.target)) {
+        cancelFlyoutClose()
+    } else if (activeFlyoutTarget && sidebar?.contains(event.target)) {
         removeSidebarFlyout()
+    } else if (activeFlyoutTarget && flyoutCloseTimer === null) {
+        // Allow the pointer to cross the small gap to the floating submenu.
+        flyoutCloseTimer = setTimeout(removeSidebarFlyout, 160)
     }
 }
 

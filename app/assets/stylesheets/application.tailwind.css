@@ -442,8 +442,8 @@ body.sidebar-drawer-open {
         height: 2.5rem;
         margin: 0;
         border-radius: 9999px;
-        background: #dbeafe;
-        color: #2563eb;
+        background: #d1fae5;
+        color: #047857;
         font-size: .875rem;
         font-weight: 700;
     }
@@ -1453,4 +1453,40 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
     #sidebarOverlay {
         transition-duration: 0ms;
     }
+}
+
+/* Delta Emerald sidebar: active links must stay legible on keyboard focus. */
+#adminSidebar nav a[aria-current="page"]:focus-visible,
+.admin-sidebar-flyout a[aria-current="page"]:focus-visible {
+    background-color: #065f46;
+    color: white;
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+}
+#adminSidebar nav .sidebar-catalog[data-section-active="true"] > summary {
+    background-color: #ecfdf5;
+    color: #065f46;
+    font-weight: 600;
+}
+#adminSidebar nav .sidebar-catalog[data-section-active="true"] > summary:hover,
+#adminSidebar nav .sidebar-catalog[data-section-active="true"] > summary:focus-visible {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+.admin-sidebar-flyout a[aria-current="page"] {
+    background-color: #047857;
+    color: white;
+    font-weight: 600;
+}
+.admin-sidebar-flyout a[aria-current="page"]:hover {
+    background-color: #065f46;
+    color: white;
+}
+#adminSidebar .sidebar-brand-mark { object-fit: contain; flex-shrink: 0; }
+@media (max-width: 1023px) {
+    #adminSidebar { height: 100dvh; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .admin-sidebar-flyout, #adminSidebar nav a,
+    #adminSidebar nav details .sidebar-chevron { transition: none; }
 }

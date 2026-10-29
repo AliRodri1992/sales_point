@@ -500,23 +500,39 @@ document.addEventListener("turbo:load", () => {
         })
     }
 
+    let sidebarSaveQueue = Promise.resolve()
+    let sidebarSaveRevision = 0
     const persistSidebarState = (collapsed) => {
-        const csrf = document.querySelector(
-            'meta[name="csrf-token"]'
-        )
-        if (!csrf) return
+        const revision = ++sidebarSaveRevision
+        // Serialize saves so quick toggles cannot reach the server out of order.
+        sidebarSaveQueue = sidebarSaveQueue.catch(() => {}).then(async () => {
+            const csrf = document.querySelector('meta[name="csrf-token"]')
+            if (!csrf) throw new Error("Missing CSRF token")
 
-        fetch("/admin/sidebar", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrf.content,
-                "X-Requested-With": "XMLHttpRequest"
-            },
-            body: JSON.stringify({
-                sidebar_collapsed: collapsed
+            const response = await fetch("/admin/sidebar", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrf.content,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: JSON.stringify({ sidebar_collapsed: collapsed })
             })
-        }).catch(() => {})
+            if (!response.ok) throw new Error(`Sidebar save failed: ${response.status}`)
+        }).catch(() => {
+            if (revision !== sidebarSaveRevision || !sidebar) return
+
+            sidebar.classList.toggle("sidebar-collapsed", !collapsed)
+            sidebarToggle?.setAttribute("aria-expanded", String(collapsed))
+            window.Swal?.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: "No se pudo guardar la preferencia del menú",
+                showConfirmButton: false,
+                timer: 3500
+            })
+        })
     }
 
     if (sidebarOverlay) {
