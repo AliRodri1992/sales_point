@@ -1,11 +1,18 @@
 <section id="supplier-dossier-overview" role="tabpanel" tabindex="0" aria-labelledby="supplier-dossier-tab-overview" data-supplier-dossier-target="panel" data-section="overview" class="w-full min-w-0 lg:flex-1 space-y-4">
-  <% overview_metrics = [
-    [t('admin.supplier_dossier.sections.products'), (can_view_products ? supplier.supplier_products.available.count : nil), t('admin.supplier_dossier.overview.registered_products'), 'box'],
-    [t('admin.supplier_dossier.sections.contacts'), contacts.size, t('admin.supplier_dossier.overview.active_contacts'), 'users'],
-    [t('admin.supplier_dossier.sections.addresses'), addresses.size, t('admin.supplier_dossier.overview.registered_addresses'), 'pin'],
-    [t('admin.supplier_dossier.sections.schedules'), schedules.size, t('admin.supplier_dossier.overview.weekly_schedules'), 'calendar']
-  ] %>
-  <% overview_metrics.reject! { |_label, value, _subtitle, symbol| symbol == 'box' && value.nil? } %>
+  <% overview_metrics = [] %>
+  <% if can_view_products %>
+    <% overview_metrics << [t('admin.supplier_dossier.sections.products'), supplier.supplier_products.available.count, t('admin.supplier_dossier.overview.registered_products'), 'box'] %>
+  <% end %>
+  <% if can_view_contacts %>
+    <% overview_metrics << [t('admin.supplier_dossier.sections.contacts'), contacts.size, t('admin.supplier_dossier.overview.active_contacts'), 'users'] %>
+  <% end %>
+  <% if can_view_addresses %>
+    <% overview_metrics << [t('admin.supplier_dossier.sections.addresses'), addresses.size, t('admin.supplier_dossier.overview.registered_addresses'), 'pin'] %>
+  <% end %>
+  <% if can_view_schedules %>
+    <% overview_metrics << [t('admin.supplier_dossier.sections.schedules'), schedules.size, t('admin.supplier_dossier.overview.weekly_schedules'), 'calendar'] %>
+  <% end %>
+  <% if overview_metrics.any? %>
   <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
     <% overview_metrics.each do |label, value, subtitle, symbol| %>
       <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -21,7 +28,9 @@
       </div>
     <% end %>
   </div>
+  <% end %>
 
+  <% if can_view_general || can_view_commercial %>
   <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
       <div class="flex items-center gap-3">
@@ -37,7 +46,7 @@
         <% end %>
       <% end %>
     </div>
-    <% first_column = [
+    <% first_column = can_view_general ? [
       [t('admin.supplier_dossier.general.code'), supplier.code],
       [t('admin.supplier_dossier.fields.legal_name'), supplier.legal_name],
       [t('admin.supplier_dossier.fields.trade_name'), supplier.trade_name],
@@ -46,18 +55,18 @@
       [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
       [t('admin.supplier_dossier.responsible'), supplier.responsible_user&.display_name],
       [t('admin.supplier_dossier.overview.phone'), supplier.phone],
-      [t('admin.supplier_dossier.overview.email'), supplier.email]
-    ] %>
-    <% second_column = [
+      [t('admin.supplier_dossier.overview.email'), supplier.email],
+      [t('admin.supplier_dossier.notes'), supplier.notes]
+    ] : [] %>
+    <% second_column = can_view_commercial ? [
       [t('admin.supplier_dossier.fields.currency'), supplier.currency&.code],
       [t('admin.supplier_dossier.fields.credit_days'), supplier.credit_days],
       [t('admin.supplier_dossier.fields.credit_limit'), supplier.credit_limit.present? ? number_to_currency(supplier.credit_limit, unit: '') + ' ' + (supplier.currency&.code || '—') : nil],
       [t('admin.supplier_dossier.fields.discount_percent'), supplier.discount_percent.present? ? "#{supplier.discount_percent}%" : nil],
-      [t('admin.supplier_dossier.fields.minimum_order_amount'), supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount, unit: '') + ' ' + (supplier.currency&.code || '—') : nil],
-      [t('admin.supplier_dossier.notes'), supplier.notes]
-    ] %>
+      [t('admin.supplier_dossier.fields.minimum_order_amount'), supplier.minimum_order_amount.present? ? number_to_currency(supplier.minimum_order_amount, unit: '') + ' ' + (supplier.currency&.code || '—') : nil]
+    ] : [] %>
     <div class="grid gap-6 pt-4 lg:grid-cols-2 lg:gap-8">
-      <% [first_column, second_column].each_with_index do |fields, index| %>
+      <% [first_column, second_column].reject(&:empty?).each_with_index do |fields, index| %>
         <dl class="space-y-3 <%= 'lg:border-l lg:border-slate-100 lg:pl-8' if index.positive? %>">
           <% fields.each do |label, value| %>
             <div class="grid gap-1 text-sm sm:grid-cols-[minmax(0,42%)_minmax(0,58%)] sm:gap-3">
@@ -70,7 +79,11 @@
     </div>
   </div>
 
+  <% end %>
+
+  <% if can_view_contacts || can_view_schedules %>
   <div class="grid gap-4 xl:grid-cols-2">
+    <% if can_view_contacts %>
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -110,6 +123,9 @@
       <% end %>
     </div>
 
+    <% end %>
+
+    <% if can_view_schedules %>
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -149,5 +165,7 @@
         <p class="py-8 text-center text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.no_schedules') %></p>
       <% end %>
     </div>
+    <% end %>
   </div>
+  <% end %>
 </section>

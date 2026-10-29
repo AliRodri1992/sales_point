@@ -57,6 +57,27 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(card.text).not_to include('No expiration')
   end
 
+  it 'does not reveal unauthorized overview sections or links' do
+    allow_any_instance_of(SupplierPolicy).to receive(:view_contacts?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:view_addresses?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:view_schedules?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:view_commercial?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:view_products?).and_return(false)
+
+    get admin_supplier_path(supplier, tab: 'overview')
+    overview = dossier.at_css('section[data-section="overview"]')
+    expect(overview).to be_present
+    expect(overview.text).not_to include('Primary contacts', 'Upcoming visits')
+    expect(overview.css('button[data-section="contacts"], button[data-section="schedules"]')).to be_empty
+    expect(dossier.css('[role="tab"][data-section="contacts"]')).to be_empty
+  end
+
+  it 'hides the fiscal shortcut to addresses without address permission' do
+    allow_any_instance_of(SupplierPolicy).to receive(:view_addresses?).and_return(false)
+    get admin_supplier_path(supplier, tab: 'fiscal')
+    expect(dossier.at_css('[data-fiscal-address] button[data-section="addresses"]')).to be_nil
+  end
+
   it 'connects the bank accounts tab to its accessible panel' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
 

@@ -9,10 +9,12 @@
         <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.general.address_description') %></p>
       </div>
     </div>
+    <% if can_view_addresses %>
     <button type="button" data-action="supplier-dossier#select" data-section="addresses" class="inline-flex min-h-10 items-center gap-2 rounded-lg border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50">
       <%= t('admin.supplier_dossier.general.view_addresses') %>
       <%= icon('arrow-right', class: 'size-4') %>
     </button>
+    <% end %>
   </div>
 
   <% if fiscal_address %>

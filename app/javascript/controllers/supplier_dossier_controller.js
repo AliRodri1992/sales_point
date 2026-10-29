@@ -21,7 +21,14 @@ export default class extends Controller {
   }
 
   select(event) {
-    this.activateTab(event.currentTarget.dataset.section || event.currentTarget.value)
+    const section = event.currentTarget.dataset.section || event.currentTarget.value
+    this.activateTab(section)
+    // Cross-panel buttons must not leave keyboard focus inside a hidden panel.
+    if (event.currentTarget.matches('[role="tab"]')) return
+    const tab = this.tabTargets.find((candidate) => candidate.dataset.section === section)
+    const panel = this.panelTargets.find((candidate) => candidate.dataset.section === section)
+    if (tab && tab.getClientRects().length > 0) tab.focus()
+    else panel?.focus()
   }
 
   navigate(event) {
