@@ -34,8 +34,37 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-form-target="tab"][data-step-state]', count: 6, visible: :all)
     expect(page).to have_no_css('img[src*="supplier-delivery"]', visible: :all)
     expect(page).to have_css('form[data-controller="supplier-form"]')
-    expect(page).to have_css('nav .overflow-x-auto [data-supplier-form-target="tab"]', count: 7)
+    expect(page).to have_css('nav details[data-supplier-form-target="navigation"]')
+    expect(page).to have_css('nav details [data-supplier-form-target="tab"]', count: 7, visible: :all)
+    expect(page).to have_no_css('nav .overflow-x-auto', visible: :all)
     expect(page).to have_no_css('nav[class*="sticky"]', visible: :all)
+  end
+
+  scenario 'lets editors switch sections from a compact menu without reloading' do
+    supplier = create(:supplier, organization:)
+    visit edit_admin_supplier_path(supplier)
+
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    navigation.find('summary').click
+    navigation.find('button[data-step-index="3"]').click
+
+    expect(page).to have_css('[data-supplier-form-target="activeLabel"]',
+                             text: I18n.t('admin.suppliers.onboarding.steps.step_5'))
+    expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden)', count: 1)
+    expect(page).to have_no_css('details[data-supplier-form-target="navigation"][open]', visible: :all)
+  end
+
+  scenario 'closes section picker on Escape and restores keyboard focus' do
+    visit new_admin_supplier_path
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    summary = navigation.find('summary')
+    summary.click
+    expect(navigation[:open]).to be_present
+
+    summary.send_keys(:escape)
+
+    expect(page).to have_no_css('details[data-supplier-form-target="navigation"][open]', visible: :all)
+    expect(page.evaluate_script("document.activeElement.tagName")).to eq('SUMMARY')
   end
 
   scenario 'summarizes all editable steps in the new supplier review' do
