@@ -537,7 +537,8 @@ body.sidebar-drawer-open {
 }
 
 .admin-sidebar-flyout a,
-.admin-sidebar-flyout summary {
+.admin-sidebar-flyout summary,
+.admin-sidebar-flyout span[aria-disabled="true"] {
     display: flex;
     width: 100%;
     align-items: center;

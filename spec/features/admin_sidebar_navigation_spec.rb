@@ -112,6 +112,33 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page.evaluate_script('document.activeElement.tagName')).to eq('SUMMARY')
   end
 
+  scenario 'keeps the sidebar drawer within the viewport across mobile and tablet sizes' do
+    [320, 375, 390, 768].each do |width|
+      page.driver.browser.manage.window.resize_to(width, 900)
+      visit admin_dashboard_path
+      find('#sidebarToggle').click
+
+      bounds = page.evaluate_script(<<~JS)
+        (function() {
+          const rect = document.getElementById('adminSidebar').getBoundingClientRect()
+          return { left: rect.left, right: rect.right, viewport: window.innerWidth }
+        })()
+      JS
+      expect(bounds['left']).to be_within(1).of(0)
+      expect(bounds['right']).to be <= bounds['viewport']
+      find('#sidebarCloseButton').click
+    end
+  end
+
+  scenario 'shows unavailable administrative functions inside the collapsed settings flyout' do
+    user.update!(sidebar_collapsed: true)
+    visit admin_dashboard_path
+
+    summaries = all('#adminSidebar .sidebar-catalog > summary', visible: :all)
+    summaries.last.send_keys(:enter)
+    expect(page).to have_css('#adminSidebarFlyout [aria-disabled="true"]', minimum: 1)
+  end
+
   scenario 'does not attach a second toggle listener after repeated Turbo visits' do
     user.update!(sidebar_collapsed: false)
     visit admin_dashboard_path
