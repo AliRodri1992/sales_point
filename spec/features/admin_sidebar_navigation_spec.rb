@@ -100,6 +100,16 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
   end
 
+  scenario 'does not shift the selected navigation item when hovering' do
+    user.update!(sidebar_collapsed: true)
+    visit admin_dashboard_path
+
+    link = find('#adminSidebar a[aria-current="page"]', match: :first)
+    start_x = horizontal_center('#adminSidebar a[aria-current="page"] svg')
+    link.hover
+    expect(horizontal_center('#adminSidebar a[aria-current="page"] svg')).to be_within(1).of(start_x)
+  end
+
   scenario 'opens the collapsed catalog with keyboard and restores focus after Escape' do
     user.update!(sidebar_collapsed: true)
     visit admin_dashboard_path

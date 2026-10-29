@@ -117,6 +117,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.customers') %></span>
         </a>
 
+        <% if policy(DemoRequest).index? %>
         <a
           href="<%= admin_demo_requests_path %>"
           data-tooltip="<%= t('admin.shared.sidebar.demo_requests') %>" aria-label="<%= t('admin.shared.sidebar.demo_requests') %>"
@@ -126,7 +127,9 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="demo-requests"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/><path d="m10 13 5 3-5 3v-6"/></svg>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.demo_requests') %></span>
         </a>
+        <% end %>
 
+        <% if current_organization && policy(Supplier).index? %>
         <a
           href="<%= admin_suppliers_path %>"
           data-tooltip="<%= t('admin.shared.sidebar.suppliers') %>" aria-label="<%= t('admin.shared.sidebar.suppliers') %>"
@@ -136,6 +139,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="suppliers"><path d="M3 21V10l6 3V8l6 3V4h6v17H3Z"/><path d="M6.5 17h2M11.5 17h2M16.5 17h2"/></svg>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.suppliers') %></span>
         </a>
+        <% end %>
 
         <span aria-disabled="true" role="link" tabindex="0" title="<%= t('admin.shared.sidebar.coming_soon') %>"
           data-tooltip="<%= t('admin.shared.sidebar.employees') %>"
@@ -186,7 +190,7 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
 
-            <% if (current_user.admin? || current_user.permission?('categories.access')) %>
+            <% if policy(Category).index? %>
               <a
                 href="<%= admin_categories_path %>"
                 data-tooltip="<%= t('admin.shared.sidebar.categories') %>" aria-label="<%= t('admin.shared.sidebar.categories') %>"

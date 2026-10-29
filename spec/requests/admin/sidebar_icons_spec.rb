@@ -80,6 +80,8 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css("a[href='#{system_roles_path}']")).to be_nil
     expect(sidebar.at_css("a[href='#{admin_users_path}']")).to be_nil
     expect(sidebar.at_css("a[href='#{admin_branches_path}']")).to be_present
+    expect(sidebar.at_css("a[href='#{admin_demo_requests_path}']")).to be_nil
+    expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")).to be_nil
   end
 
   it 'retains a single accessible account trigger for the collapsed sidebar' do
