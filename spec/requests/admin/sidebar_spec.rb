@@ -46,6 +46,15 @@ RSpec.describe 'Admin sidebar', type: :request do
     end
   end
 
+  it 'provides a stable main-content target for the mobile drawer' do
+    get admin_dashboard_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('#adminDashboardContent')).to be_present
+    expect(doc.at_css('#adminSidebar')).to be_present
+    expect(doc.at_css('#sidebarOverlay')).to be_present
+  end
+
   describe 'PATCH /admin/sidebar' do
     it 'collapses the sidebar when the parameter is true' do
       patch admin_sidebar_path, params: { sidebar_collapsed: 'true' }

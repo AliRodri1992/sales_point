@@ -92,11 +92,11 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     visit admin_dashboard_path
     find('#sidebarToggle').click
 
-    expect(find('#adminDashboardContent', visible: :all)['inert']).not_to be_nil
-    expect(find('#sidebarOverlay', visible: :all)['inert']).to be_nil
+    expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(true)
+    expect(page.evaluate_script("document.getElementById('sidebarOverlay').hasAttribute('inert')")).to be(false)
 
     find('#sidebarCloseButton').click
-    expect(find('#adminDashboardContent', visible: :all)['inert']).to be_nil
+    expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(false)
     expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
   end
 

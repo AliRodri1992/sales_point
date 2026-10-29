@@ -84,6 +84,14 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")).to be_nil
   end
 
+  it 'keeps the catalog link consistent with the category access policy' do
+    get admin_dashboard_path
+
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    visible = sidebar.at_css("a[href='#{admin_categories_path}']").present?
+    expect(visible).to eq(CategoryPolicy.new(user, Category).index?)
+  end
+
   it 'retains a single accessible account trigger for the collapsed sidebar' do
     user.update!(sidebar_collapsed: true)
     get admin_dashboard_path
