@@ -38,7 +38,7 @@
       <div class="space-y-1">
         <a
           href="<%= admin_dashboard_path %>"
-          data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.dashboard') %>" aria-label="<%= t('admin.shared.sidebar.dashboard') %>"
           aria-current="<%= sidebar_item_active?('dashboard') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('dashboard') %>"
         >
@@ -50,7 +50,7 @@
           <% onboarding_progress = onboarding_progress_for_current_user %>
           <a
             href="<%= admin_onboarding_path %>"
-            data-tooltip="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>"
+            data-tooltip="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>" aria-label="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>"
             class="mt-2 flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2.5 transition hover:border-emerald-200 hover:bg-emerald-100"
             aria-label="<%= t('admin.shared.sidebar.onboarding.progress', percentage: onboarding_progress[:percentage]) %>"
           >
@@ -78,7 +78,7 @@
 
       <div class="space-y-1">
 <% if current_organization && (current_user.admin? || current_user.permission?('purchases.view')) %>
-          <a href="<%= admin_purchase_orders_path %>" data-tooltip="<%= t('admin.purchases.orders') %>"
+          <a href="<%= admin_purchase_orders_path %>" data-tooltip="<%= t('admin.purchases.orders') %>" aria-label="<%= t('admin.purchases.orders') %>"
              aria-current="<%= sidebar_item_active?('purchase_orders') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('purchase_orders') %>">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="purchase-orders"><rect x="5" y="5" width="14" height="17" rx="2"/><path d="M9 5V3h6v2M9 11h6M9 15h6M9 19h6"/></svg>
@@ -88,7 +88,7 @@
 
 <% if current_organization && (current_user.admin? || current_user.permission?('accounts_payable.view')) %>
           <a href="<%= admin_account_payables_path %>"
-             data-tooltip="<%= t('admin.accounts_payable.payables') %>"
+             data-tooltip="<%= t('admin.accounts_payable.payables') %>" aria-label="<%= t('admin.accounts_payable.payables') %>"
              aria-current="<%= sidebar_item_active?('account_payables') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('account_payables') %>">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="accounts-payable"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h9"/><path d="M13 2v5h5M8 11h7M8 15h3"/><circle cx="17" cy="17" r="4"/><path d="M17 14.5V17l1.5 1"/></svg>
@@ -166,7 +166,7 @@
 
         <a
           href="<%= admin_clients_path %>"
-          data-tooltip="<%= t('admin.shared.sidebar.customers') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.customers') %>" aria-label="<%= t('admin.shared.sidebar.customers') %>"
           aria-current="<%= sidebar_item_active?('clients') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('clients') %>"
         >
@@ -176,7 +176,7 @@
 
         <a
           href="<%= admin_demo_requests_path %>"
-          data-tooltip="<%= t('admin.shared.sidebar.demo_requests') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.demo_requests') %>" aria-label="<%= t('admin.shared.sidebar.demo_requests') %>"
           aria-current="<%= sidebar_item_active?('demo_requests') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('demo_requests') %>"
         >
@@ -186,7 +186,7 @@
 
         <a
           href="<%= admin_suppliers_path %>"
-          data-tooltip="<%= t('admin.shared.sidebar.suppliers') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.suppliers') %>" aria-label="<%= t('admin.shared.sidebar.suppliers') %>"
           aria-current="<%= sidebar_item_active?('suppliers') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('suppliers') %>"
         >
@@ -223,7 +223,7 @@
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
             <a
               href="<%= admin_languages_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.languages') %>"
+              data-tooltip="<%= t('admin.shared.sidebar.languages') %>" aria-label="<%= t('admin.shared.sidebar.languages') %>"
               aria-current="<%= sidebar_item_active?('languages') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('languages', variant: :submenu) %>"
             >
@@ -233,7 +233,7 @@
 
             <a
               href="<%= admin_products_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.products') %>"
+              data-tooltip="<%= t('admin.shared.sidebar.products') %>" aria-label="<%= t('admin.shared.sidebar.products') %>"
               aria-current="<%= sidebar_item_active?('products') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('products', variant: :submenu) %>"
             >
@@ -244,7 +244,7 @@
             <% if current_user.permission?('categories.access') %>
               <a
                 href="<%= admin_categories_path %>"
-                data-tooltip="<%= t('admin.shared.sidebar.categories') %>"
+                data-tooltip="<%= t('admin.shared.sidebar.categories') %>" aria-label="<%= t('admin.shared.sidebar.categories') %>"
                 aria-current="<%= sidebar_item_active?('categories') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('categories', variant: :submenu) %>"
               >
@@ -291,7 +291,7 @@
 
             <a
               href="<%= system_roles_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.roles_permissions') %>"
+              data-tooltip="<%= t('admin.shared.sidebar.roles_permissions') %>" aria-label="<%= t('admin.shared.sidebar.roles_permissions') %>"
               aria-current="<%= sidebar_item_active?('system_roles') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('system_roles', variant: :submenu) %>"
             >
@@ -301,7 +301,7 @@
 
             <a
               href="<%= admin_branches_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.branches') %>"
+              data-tooltip="<%= t('admin.shared.sidebar.branches') %>" aria-label="<%= t('admin.shared.sidebar.branches') %>"
               aria-current="<%= sidebar_item_active?('branches') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('branches', variant: :submenu) %>"
             >
@@ -311,7 +311,7 @@
 
             <a
               href="<%= admin_users_path %>"
-              data-tooltip="<%= t('admin.shared.sidebar.users') %>"
+              data-tooltip="<%= t('admin.shared.sidebar.users') %>" aria-label="<%= t('admin.shared.sidebar.users') %>"
               aria-current="<%= sidebar_item_active?('users') ? 'page' : 'false' %>"
           class="<%= sidebar_link_classes('users', variant: :submenu) %>"
             >
