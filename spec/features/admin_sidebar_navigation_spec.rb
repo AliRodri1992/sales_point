@@ -104,6 +104,9 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     find('#sidebarCloseButton').click
     expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(false)
     expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    expect(page.evaluate_script("document.getElementById('adminSidebar').inert")).to be(false)
   end
 
   scenario 'does not shift the selected navigation item when hovering' do

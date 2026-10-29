@@ -171,6 +171,13 @@ jobs:
         run: |
           bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb
 
+      - name: Run focused sidebar and supplier validation browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/features/admin_sidebar_navigation_spec.rb spec/features/admin_sidebar_interactions_spec.rb spec/features/supplier_creation_summary_spec.rb
+
       - name: Run RSpec
         env:
           COVERAGE: true

@@ -1535,3 +1535,9 @@ textarea.input-field-error:focus,
     border-color: #e11d48 !important;
     box-shadow: 0 0 0 4px rgba(225, 29, 72, .14) !important;
 }
+
+/* Invalid fields must turn red immediately, without animating border color. */
+form[data-controller~="supplier-form"] :is(input, select, textarea)[aria-invalid="true"]:not([type="checkbox"]),
+form[data-controller~="supplier-form"] [data-controller~="delta-select"] > button[aria-invalid="true"] {
+    transition-property: background-color, box-shadow !important;
+}

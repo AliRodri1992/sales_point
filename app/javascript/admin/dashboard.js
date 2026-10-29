@@ -12,6 +12,7 @@ document.addEventListener("turbo:before-cache", () => {
     sidebar?.classList.remove("sidebar-open")
     sidebar?.removeAttribute("role")
     sidebar?.removeAttribute("aria-modal")
+    sidebar?.removeAttribute("inert")
     document.getElementById("sidebarOverlay")?.classList.remove("is-visible")
     document.body.classList.remove("sidebar-drawer-open")
     document.getElementById("sidebarToggle")?.removeAttribute("data-sidebar-ready")
@@ -464,6 +465,9 @@ document.addEventListener("turbo:load", () => {
 
     if (sidebar && window.innerWidth < 1024 && !sidebar.classList.contains("sidebar-open")) {
         sidebar.setAttribute("inert", "")
+    } else if (window.innerWidth >= 1024) {
+        // Turbo may restore a cached mobile drawer with an obsolete inert state.
+        sidebar?.removeAttribute("inert")
     }
 
     onWindow("resize", () => {
