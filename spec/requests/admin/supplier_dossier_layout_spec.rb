@@ -513,7 +513,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     sidebar = dossier.at_css('nav[role="tablist"][aria-orientation="vertical"]')
     expect(sidebar['class']).to include('lg:-mx-3')
     sidebar.css('button[data-supplier-dossier-target="tab"]').each do |tab|
-      expect(tab['class']).to include('w-full', 'lg:px-6')
+      expect(tab['class']).to include('w-full', 'lg:mx-3', 'lg:w-[calc(100%_-_1.5rem)]')
     end
   end
 

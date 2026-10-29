@@ -67,7 +67,6 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('page')
   end
 
-
   it 'hides administrative links from users limited to an assigned branch' do
     branch = create(:branch, organization:)
     user.user_roles.destroy_all

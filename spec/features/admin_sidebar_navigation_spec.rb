@@ -54,7 +54,6 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
   end
 
-
   def horizontal_center(selector)
     page.evaluate_script(<<~JS, selector)
       (function(query) {
