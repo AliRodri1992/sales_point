@@ -24,10 +24,9 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     visit admin_supplier_path(supplier, tab: 'schedules')
 
     expect(page).to have_css('[data-calendar-day-details]', visible: true)
-    agenda_order = page.evaluate_script(<<~JS)
-      const agenda = document.querySelector('[data-calendar-day-details]').closest('aside')
-      return agenda ? getComputedStyle(agenda).order : null
-    JS
+    agenda_order = page.evaluate_script(
+      "getComputedStyle(document.querySelector('[data-calendar-day-details]').closest('aside')).order"
+    )
     expect(agenda_order).to eq('1')
     expect(page).to have_css('[role="region"][tabindex="0"]', visible: true)
   ensure

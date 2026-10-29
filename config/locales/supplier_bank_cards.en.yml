@@ -1,6 +1,8 @@
 en:
   admin:
     bank_cards:
+      empty_filtered_title: "No matching bank accounts"
+      empty_filtered_description: "Try a different search or clear the filters to see the available accounts."
       all_label: "All"
       active_plural: "Active"
       inactive_plural: "Inactive"

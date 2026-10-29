@@ -1,6 +1,8 @@
 es:
   admin:
     bank_cards:
+      empty_filtered_title: "No se encontraron cuentas bancarias"
+      empty_filtered_description: "Prueba otra búsqueda o elimina los filtros para consultar las cuentas disponibles."
       all_label: "Todas"
       active_plural: "Activas"
       inactive_plural: "Inactivas"

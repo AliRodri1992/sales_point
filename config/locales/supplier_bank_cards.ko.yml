@@ -1,6 +1,8 @@
 ko:
   admin:
     bank_cards:
+      empty_filtered_title: "검색 조건에 맞는 은행 계좌가 없습니다"
+      empty_filtered_description: "검색어를 변경하거나 필터를 지우고 사용 가능한 계좌를 확인하세요."
       all_label: "전체"
       active_plural: "활성"
       inactive_plural: "비활성"

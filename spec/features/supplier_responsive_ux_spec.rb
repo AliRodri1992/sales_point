@@ -23,8 +23,8 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
 
   scenario 'labels the supplier catalog search for screen-reader users' do
     visit admin_suppliers_path
-    expect(page).to have_css('label[for="supplier-catalog-search"]')
-    expect(page).to have_css('input#supplier-catalog-search[type="search"]')
+    expect(page).to have_css('label[for="search"]')
+    expect(page).to have_css('input#search[type="search"]')
   end
 
   scenario 'keeps the active section accessible on a narrow screen' do
