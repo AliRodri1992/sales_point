@@ -133,6 +133,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     find('#adminSidebarFlyout a[href]', match: :first).send_keys(:escape)
     expect(page).to have_no_css('#adminSidebarFlyout')
     expect(page.evaluate_script('document.activeElement.tagName')).to eq('SUMMARY')
+    expect(page).to have_no_css('#adminSidebarFlyout', wait: 1)
   end
 
   scenario 'keeps the sidebar drawer within the viewport across mobile and tablet sizes' do

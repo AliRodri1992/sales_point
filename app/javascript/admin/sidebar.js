@@ -3,6 +3,7 @@ const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
 let activeTooltipTarget = null
+let suppressFlyoutOnFocusRestore = false
 let flyoutCloseTimer = null
 const cancelFlyoutClose = () => {
     if (flyoutCloseTimer !== null) clearTimeout(flyoutCloseTimer)
@@ -222,6 +223,8 @@ document.addEventListener("mouseout", (event) => {
 })
 
 document.addEventListener("focusin", (event) => {
+    if (suppressFlyoutOnFocusRestore) return
+
     const target = event.target instanceof Element
         ? event.target.closest(".sidebar-catalog > summary")
         : null
@@ -279,7 +282,13 @@ document.addEventListener("keydown", (event) => {
         const returnTarget = activeFlyoutTarget
         removeSidebarFlyout()
         removeSidebarTooltip()
-        if (returnTarget && isCollapsedSidebar()) returnTarget.focus()
+        if (returnTarget && isCollapsedSidebar()) {
+            // Escape returns focus to the trigger without reopening the flyout
+            // through its focusin handler.
+            suppressFlyoutOnFocusRestore = true
+            returnTarget.focus({ preventScroll: true })
+            queueMicrotask(() => { suppressFlyoutOnFocusRestore = false })
+        }
         return
     }
 

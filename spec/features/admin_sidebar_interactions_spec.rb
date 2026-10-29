@@ -65,6 +65,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
 
     find('body').send_keys(:escape)
     expect(page).to have_no_css('#adminSidebarFlyout', visible: :all)
+    expect(page).to have_no_css('#adminSidebarFlyout', wait: 1)
   end
 
   scenario 'closes the mobile drawer from its overlay and restores focus' do
