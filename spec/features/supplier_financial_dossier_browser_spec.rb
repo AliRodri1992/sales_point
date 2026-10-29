@@ -29,6 +29,25 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     )
   end
 
+  scenario 'shows blocked bank accounts distinctly from active and verified accounts' do
+    blocked = account(name: 'Blocked Bank', account_number: '1234567890')
+    verified = account(name: 'Verified Bank', account_number: '9876543210')
+    blocked.update!(status: 'blocked', blocked_reason: 'Review required')
+    verified.update!(verification_status: 'verified')
+    visit admin_supplier_bank_accounts_path(supplier)
+
+    expect(page).to have_css('[data-bank-operational-status="blocked"]', count: 1)
+    expect(page).to have_css('[data-bank-verification-status="verified"]', count: 1)
+    expect(page).to have_css('[data-bank-operational-status="active"]', count: 1)
+  end
+
+  scenario 'offers to clear restrictive filters after a bank search has no results' do
+    account(name: 'Existing Bank', account_number: '1234567890')
+    visit admin_supplier_bank_accounts_path(supplier, q: 'No Match')
+    expect(page).to have_css('[data-bank-accounts-empty]', visible: true)
+    expect(page).to have_link(href: admin_supplier_bank_accounts_path(supplier))
+  end
+
   scenario 'filters bank accounts without exposing the encrypted account number' do
     account(name: 'First Bank', account_number: '1234567890')
     account(name: 'Other Bank', account_number: '9876543210')

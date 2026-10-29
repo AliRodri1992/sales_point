@@ -21,6 +21,12 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     Warden.test_reset!
   end
 
+  scenario 'labels the supplier catalog search for screen-reader users' do
+    visit admin_suppliers_path
+    expect(page).to have_css('label[for="supplier-catalog-search"]')
+    expect(page).to have_css('input#supplier-catalog-search[type="search"]')
+  end
+
   scenario 'keeps the active section accessible on a narrow screen' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit admin_supplier_path(supplier, tab: 'addresses')

@@ -95,7 +95,7 @@
   <div class="relative z-0 mt-8">
     <div class="font-jakarta text-xl font-bold tracking-[0.045em] tabular-nums sm:text-2xl"><%= account.masked_number %></div>
     <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-    <p class="text-xs font-medium <%= muted %>"><%= t("admin.supplier_bank_details.verification_states.#{account.verification_status}") %></p>
+    <p class="text-xs font-medium <%= muted %>"><%= t('admin.accounts_payable.bank_accounts') %></p>
     <% state = archived ? 'archived' : account.status %>
     <% tone = { 'active' => 'bg-emerald-100 text-emerald-900', 'inactive' => 'bg-slate-100 text-slate-800',
                 'blocked' => 'bg-rose-100 text-rose-800', 'archived' => 'bg-slate-100 text-slate-800' }.fetch(state) %>
