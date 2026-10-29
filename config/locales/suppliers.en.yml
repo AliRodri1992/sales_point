@@ -94,6 +94,13 @@ en:
           status: "Status"
           actions: "Actions"
       onboarding:
+        navigation_label: "Form sections"
+        change_step: "View steps"
+        change_section: "Change section"
+        current_section: "Current section"
+        step_counter: "Step %{current} of %{total}"
+        completed_sections: "%{count} of %{total} sections complete"
+        progress_in_progress: "In progress"
         progress_pending: "Pending"
         progress_complete: "Complete"
         progress_error: "Correct errors"
