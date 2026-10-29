@@ -348,10 +348,11 @@ export default class extends Controller {
       if (!indicator) {
         indicator = document.createElement("span")
         indicator.dataset.stepIndicator = "true"
-        indicator.className = "ml-auto shrink-0 rounded-md px-2 py-1 text-[10px] font-bold"
+        indicator.className = "inline-flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold"
         tab.append(indicator)
       }
-      indicator.textContent = state === "progress" ? "…" : this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`]
+      indicator.textContent = { complete: "✓", error: "!", progress: "·", pending: "○" }[state]
+      indicator.setAttribute("aria-label", state === "progress" ? "In progress" : (this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`] || state))
       indicator.classList.toggle("bg-emerald-100", state === "complete")
       indicator.classList.toggle("text-emerald-800", state === "complete")
       indicator.classList.toggle("bg-rose-100", state === "error")
@@ -379,6 +380,8 @@ export default class extends Controller {
       tab.classList.toggle("bg-emerald-50", active)
       tab.classList.toggle("text-emerald-800", active)
       tab.classList.toggle("border-emerald-500", active)
+      tab.classList.toggle("ring-2", active)
+      tab.classList.toggle("ring-emerald-100", active)
       tab.classList.toggle("border-transparent", !active)
       tab.classList.toggle("bg-white", !active)
     })
@@ -394,7 +397,7 @@ export default class extends Controller {
     this.refreshStepIndicators()
     if (this.indexValue === this.stepTargets.length - 1) this.updateSummary()
     if (this.hasSubmitTarget) this.submitTarget.hidden = this.newRecordValue && this.indexValue !== this.stepTargets.length - 1
-    if (this.hasPreviousTarget) this.previousTarget.hidden = this.indexValue === 0
-    if (this.hasNextTarget) this.nextTarget.hidden = this.indexValue === this.stepTargets.length - 1
+    if (this.hasPreviousTarget) this.previousTarget.hidden = !this.newRecordValue || this.indexValue === 0
+    if (this.hasNextTarget) this.nextTarget.hidden = !this.newRecordValue || this.indexValue === this.stepTargets.length - 1
   }
 }
