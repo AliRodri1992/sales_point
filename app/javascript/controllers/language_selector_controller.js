@@ -84,6 +84,7 @@ export default class extends Controller {
             })
             .catch((error) => {
                 console.error("Language change error:", error)
+                window.Swal?.fire({ icon: "error", title: "Language update failed", text: "Please try again." })
             })
     }
 }
