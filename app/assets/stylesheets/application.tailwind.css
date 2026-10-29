@@ -1460,3 +1460,21 @@ select:focus-visible {
   outline: 2px solid #064e3b;
   outline-offset: -2px;
 }
+
+/* Sidebar: consistent keyboard focus and accessible reduced-motion navigation. */
+#adminSidebar nav a:focus-visible,
+#adminSidebar nav summary:focus-visible,
+#adminSidebar #sidebarUserMenuButton:focus-visible,
+.admin-sidebar-flyout a:focus-visible,
+.admin-sidebar-flyout summary:focus-visible {
+    outline: 2px solid var(--brand, #047857);
+    outline-offset: -2px;
+    background: #ecfdf5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #adminSidebar,
+    #sidebarOverlay {
+        transition-duration: 0ms;
+    }
+}
