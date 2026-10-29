@@ -163,6 +163,7 @@ es:
         cancel: "Cancelar"
         create: "Crear proveedor"
         save: "Guardar"
+        save_changes: "Guardar cambios"
         update: "Actualizar proveedor"
       show:
         title: "Detalles del proveedor"

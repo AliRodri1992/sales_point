@@ -163,6 +163,7 @@ en:
         cancel: "Cancel"
         create: "Create supplier"
         save: "Save"
+        save_changes: "Save changes"
         update: "Update supplier"
       show:
         title: "Supplier details"

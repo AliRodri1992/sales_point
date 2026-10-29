@@ -163,6 +163,7 @@ ko:
         cancel: "취소"
         create: "공급업체 생성"
         save: "저장"
+        save_changes: "변경 사항 저장"
         update: "공급업체 수정"
       show:
         title: "공급업체 상세"

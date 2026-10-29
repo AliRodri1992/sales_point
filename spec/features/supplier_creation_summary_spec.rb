@@ -71,6 +71,17 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
   end
 
+  scenario 'lets existing suppliers move between editing sections without onboarding validation' do
+    supplier = create(:supplier, organization:)
+    visit edit_admin_supplier_path(supplier)
+
+    find('[data-supplier-form-target="tab"][data-step-index="1"]').click
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="1"][aria-current="step"]')
+    find('[data-supplier-form-target="tab"][data-step-index="3"]').click
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-index="3"][aria-current="step"]')
+    expect(page).to have_button('Save changes')
+  end
+
   scenario 'opens commercial editing directly from the dossier' do
     supplier = create(:supplier, organization:)
     visit edit_admin_supplier_path(supplier, return_to: 'commercial')

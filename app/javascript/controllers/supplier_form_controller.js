@@ -169,7 +169,7 @@ export default class extends Controller {
     const destination = Number(event.currentTarget.dataset.stepIndex)
     this.validating = true
     try {
-      if (destination > this.indexValue && !await this.validateThrough(destination)) return
+      if (this.newRecordValue && destination > this.indexValue && !await this.validateThrough(destination)) return
       this.indexValue = destination
     } finally {
       this.validating = false
@@ -180,7 +180,7 @@ export default class extends Controller {
     if (this.validating) return
     this.validating = true
     try {
-      if (!await this.validateStep(this.indexValue)) return
+      if (this.newRecordValue && !await this.validateStep(this.indexValue)) return
       this.indexValue = Math.min(this.indexValue + 1, this.stepTargets.length - 1)
     } finally {
       this.validating = false
