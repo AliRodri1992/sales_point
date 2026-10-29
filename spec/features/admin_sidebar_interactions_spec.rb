@@ -23,6 +23,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   scenario 'opens the same account menu in expanded and collapsed modes' do
     page.driver.browser.manage.window.resize_to(1400, 900)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
 
     find('#sidebarUserMenuButton').click
     expect(page).to have_css('#sidebarUserMenu:not(.hidden)')
@@ -50,6 +51,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   scenario 'opens and closes catalog flyouts while collapsed' do
     page.driver.browser.manage.window.resize_to(1400, 900)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     expect(page.evaluate_script('window.innerWidth')).to be >= 1024
 
     find('#sidebarToggle').click

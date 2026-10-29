@@ -116,13 +116,14 @@ RSpec.describe 'Admin sidebar', type: :request do
       expect(user.reload.sidebar_collapsed).to be(false)
     end
 
-    it 'updates the preference even if another profile attribute is invalid' do
-      user.update_column(:theme, nil)
+    it 'returns an error when the model rejects a preference update' do
+      allow_any_instance_of(User).to receive(:update!).and_raise(
+        ActiveRecord::RecordInvalid.new(user)
+      )
 
       patch admin_sidebar_path, params: { sidebar_collapsed: 'true' }
 
-      expect(response).to have_http_status(:ok)
-      expect(user.reload.sidebar_collapsed).to be(true)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'requires authentication' do

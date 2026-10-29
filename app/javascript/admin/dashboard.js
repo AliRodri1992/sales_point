@@ -14,6 +14,7 @@ document.addEventListener("turbo:before-cache", () => {
     sidebar?.removeAttribute("aria-modal")
     document.getElementById("sidebarOverlay")?.classList.remove("is-visible")
     document.body.classList.remove("sidebar-drawer-open")
+    document.getElementById("sidebarToggle")?.removeAttribute("data-sidebar-ready")
     activeDashboardListeners?.abort()
     activeDashboardListeners = null
 })
@@ -49,6 +50,7 @@ document.addEventListener("turbo:load", () => {
     const sidebarContent = document.getElementById("adminDashboardContent")
     const sidebarOverlay =
         document.getElementById("sidebarOverlay")
+    sidebarToggle?.removeAttribute("data-sidebar-ready")
 
     const dropdowns = [
         {
@@ -505,6 +507,7 @@ document.addEventListener("turbo:load", () => {
             document.dispatchEvent(new Event("sidebar:state-changed"))
             persistSidebarState(collapsed)
         })
+        sidebarToggle.dataset.sidebarReady = "true"
     }
 
     let sidebarSaveQueue = Promise.resolve()

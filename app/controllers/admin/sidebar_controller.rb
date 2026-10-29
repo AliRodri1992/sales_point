@@ -3,9 +3,8 @@ module Admin
     before_action :authenticate_user!
 
     def update
-      # Saving a UI preference must not depend on unrelated profile validations.
-      current_user.update_column(
-        :sidebar_collapsed, ActiveModel::Type::Boolean.new.cast(params[:sidebar_collapsed])
+      current_user.update!(
+        sidebar_collapsed: ActiveModel::Type::Boolean.new.cast(params[:sidebar_collapsed])
       )
 
       head :ok

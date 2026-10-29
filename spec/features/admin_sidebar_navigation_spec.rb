@@ -24,6 +24,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
   scenario 'opens the mobile drawer as an accessible dialog and restores focus on close' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     find('#sidebarToggle').click
 
     expect(page).to have_css('#adminSidebar.sidebar-open')
@@ -47,6 +48,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
   scenario 'closes the mobile sidebar with Escape and restores background interaction' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     find('#sidebarToggle').click
     find('#sidebarCloseButton').send_keys(:escape)
 
@@ -92,6 +94,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
   scenario 'keeps focus inside the mobile drawer and restores the main content on close' do
     page.driver.browser.manage.window.resize_to(375, 812)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     find('#sidebarToggle').click
 
     expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(true)
@@ -148,6 +151,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
   scenario 'shows unavailable administrative functions inside the collapsed settings flyout' do
     user.update!(sidebar_collapsed: true)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
 
     summaries = all('#adminSidebar .sidebar-catalog > summary', visible: :all)
     summaries.last.send_keys(:enter)
@@ -160,6 +164,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     visit admin_dashboard_path
     visit admin_suppliers_path
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     find('#sidebarToggle').click
 
     expect(page).to have_css('#adminSidebar.sidebar-collapsed')
