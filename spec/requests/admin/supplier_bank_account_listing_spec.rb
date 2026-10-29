@@ -66,6 +66,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.text).to include(primary.masked_number)
     expect(document.at_css('[title="Primary"]')).to be_present
     expect(document.text).not_to include('123456789012', '9876543210')
+    expect(cards.first.css('.tabular-nums').size).to eq(1)
     expect(response.body).not_to include('123456789012', '9876543210')
     expect(document.css('a[href^="/admin/suppliers/"][href*="/bank_accounts/"][href$="/edit"]').size).to eq(2)
     expect(document.css("form[action$='/bank_accounts/#{primary.id}']").size).to eq(1)

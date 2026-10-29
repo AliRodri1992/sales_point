@@ -116,6 +116,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.length).to eq(1)
     expect(cards.first.text).to include('Delta Bank', bank.masked_number)
+    expect(cards.first.css('.tabular-nums').size).to eq(1)
     expect(cards.first.text).not_to include('MXN', 'Supplier')
     expect(panel('bank_accounts').text).not_to include('Archived Bank', '123456789012', '999987654321')
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil

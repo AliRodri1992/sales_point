@@ -35,7 +35,6 @@ RSpec.describe 'Admin sidebar', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('aria-controls="userMenu"')
       expect(response.body).to include('aria-controls="notificationsMenu"')
-
     end
 
     it 'removes the nonfunctional user settings button' do
