@@ -3,7 +3,7 @@
 module Suppliers
   class DossierBankAccountsPage
     PAGE_SIZE = 8
-    STATUSES = %w[all active archived].freeze
+    STATUSES = %w[all active inactive blocked archived].freeze
 
     attr_reader :status, :query, :bank, :page, :total_count, :total_pages, :accounts, :counts, :banks
 
@@ -38,7 +38,9 @@ module Suppliers
     def load_facets(scope)
       @counts = {
         all: scope.count,
-        active: scope.where(deleted_at: nil).count,
+        active: scope.where(deleted_at: nil, status: 'active').count,
+        inactive: scope.where(deleted_at: nil, status: 'inactive').count,
+        blocked: scope.where(deleted_at: nil, status: 'blocked').count,
         archived: scope.where.not(deleted_at: nil).count
       }
       bank_options = by_status(scope).includes(:sat_bank)
@@ -62,7 +64,9 @@ module Suppliers
 
     def by_status(scope)
       case status
-      when 'active' then scope.where(deleted_at: nil)
+      when 'active' then scope.where(deleted_at: nil, status: 'active')
+      when 'inactive' then scope.where(deleted_at: nil, status: 'inactive')
+      when 'blocked' then scope.where(deleted_at: nil, status: 'blocked')
       when 'archived' then scope.where.not(deleted_at: nil)
       else scope
       end

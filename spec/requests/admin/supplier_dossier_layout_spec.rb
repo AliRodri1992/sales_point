@@ -91,9 +91,28 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'shows only one bank status filter in the dossier' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
     panel = dossier.at_css('section[data-section="bank_accounts"]')
-    expect(panel.css('[data-finance-bank-status-tabs] a').size).to eq(3)
+    expect(panel.css('[data-finance-bank-status-tabs] a').size).to eq(5)
     expect(panel.css('select[name="banks_status"]')).to be_empty
     expect(panel.css('input[type="hidden"][name="banks_status"]').size).to eq(1)
+  end
+
+  it 'separates active, inactive, blocked and archived bank account filters' do
+    supplier.supplier_bank_accounts.create!(
+      organization:, holder_name: 'Vendor', bank_name: 'Bank',
+      account_number: '1234567890', currency_code: 'MXN', status: 'inactive'
+    )
+    supplier.supplier_bank_accounts.create!(
+      organization:, holder_name: 'Vendor', bank_name: 'Bank',
+      account_number: '1234567891', currency_code: 'MXN', status: 'blocked',
+      blocked_reason: 'Suspected fraud'
+    )
+
+    get admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: 'blocked')
+    expect(dossier.css('[data-supplier-bank-accounts-target="card"]').size).to eq(1)
+    expect(dossier.at_css('[data-bank-operational-status]')['data-bank-operational-status']).to eq('blocked')
+
+    get admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: 'active')
+    expect(dossier.css('[data-supplier-bank-accounts-target="card"]')).to be_empty
   end
 
   it 'uses ISO currency codes for supplier commercial amounts' do

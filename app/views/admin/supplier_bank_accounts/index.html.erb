@@ -39,7 +39,9 @@
                        options_for_select([
                          [t('admin.bank_cards.all_statuses'), 'all'],
                          [t('admin.bank_cards.active_plural'), 'active'],
-                         [t('admin.bank_cards.inactive_plural'), 'archived']
+                         [t('admin.bank_cards.inactive_plural'), 'inactive'],
+                         [t('admin.bank_cards.blocked_plural'), 'blocked'],
+                         [t('admin.bank_cards.archived_plural'), 'archived']
                        ], @status),
                        id: 'bank-account-status',
                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
@@ -53,7 +55,8 @@
 
     <nav class="mt-5 flex gap-2 overflow-x-auto border-b border-slate-200" aria-label="<%= t('admin.bank_cards.status_filter') %>">
       <% [
-        ['all', :all, 'all_label'], ['active', :active, 'active_plural'], ['archived', :archived, 'inactive_plural']
+        ['all', :all, 'all_label'], ['active', :active, 'active_plural'], ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
+        ['archived', :archived, 'archived_plural']
       ].each do |value, key, label| %>
         <%= link_to admin_supplier_bank_accounts_path(@supplier, status: value, q: params[:q], bank: params[:bank]),
                     class: "inline-flex shrink-0 items-center gap-1 border-b-[3px] px-4 py-3 text-sm font-semibold transition #{ @status == value ? 'border-emerald-600 text-emerald-800' : 'border-transparent text-slate-500 hover:text-slate-800' }",

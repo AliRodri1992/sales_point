@@ -4,6 +4,8 @@ en:
       all_label: "All"
       active_plural: "Active"
       inactive_plural: "Inactive"
+      blocked_plural: "Blocked"
+      archived_plural: "Archived"
       active: "Active"
       inactive: "Inactive"
       all_banks: "All banks"

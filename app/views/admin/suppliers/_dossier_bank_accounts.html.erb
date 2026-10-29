@@ -54,7 +54,8 @@
       <nav data-finance-bank-status-tabs class="mt-5 flex gap-2 overflow-x-auto border-b border-slate-200"
            aria-label="<%= t('admin.bank_cards.status_filter') %>">
         <% [['all', :all, 'all_label'], ['active', :active, 'active_plural'],
-            ['archived', :archived, 'inactive_plural']].each do |status, key, label| %>
+            ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
+            ['archived', :archived, 'archived_plural']].each do |status, key, label| %>
           <%= link_to admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: status,
                                           banks_q: bank_page.query.presence, banks_bank: bank_page.bank.presence),
                       aria: { current: ('page' if bank_page.status == status) },

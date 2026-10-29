@@ -4,6 +4,8 @@ ko:
       all_label: "전체"
       active_plural: "활성"
       inactive_plural: "비활성"
+      blocked_plural: "차단됨"
+      archived_plural: "보관됨"
       active: "활성"
       inactive: "비활성"
       all_banks: "전체 은행"

@@ -12,7 +12,7 @@ module SupplierBankAccountListing
   end
 
   def normalized_account_status
-    return params[:status] if %w[all active archived].include?(params[:status])
+    return params[:status] if %w[all active inactive blocked archived].include?(params[:status])
 
     params[:archived] == '1' ? 'archived' : 'all'
   end
@@ -20,7 +20,9 @@ module SupplierBankAccountListing
   def account_status_counts(scope)
     {
       all: scope.count,
-      active: scope.where(deleted_at: nil).count,
+      active: scope.where(deleted_at: nil, status: 'active').count,
+      inactive: scope.where(deleted_at: nil, status: 'inactive').count,
+      blocked: scope.where(deleted_at: nil, status: 'blocked').count,
       archived: scope.where.not(deleted_at: nil).count
     }
   end
@@ -38,7 +40,9 @@ module SupplierBankAccountListing
 
   def accounts_by_status(scope)
     case @status
-    when 'active' then scope.where(deleted_at: nil)
+    when 'active' then scope.where(deleted_at: nil, status: 'active')
+    when 'inactive' then scope.where(deleted_at: nil, status: 'inactive')
+    when 'blocked' then scope.where(deleted_at: nil, status: 'blocked')
     when 'archived' then scope.where.not(deleted_at: nil)
     else scope
     end
