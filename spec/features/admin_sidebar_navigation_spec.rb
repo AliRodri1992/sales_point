@@ -54,6 +54,71 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
   end
 
+
+  def horizontal_center(selector)
+    page.evaluate_script(<<~JS, selector)
+      (function(query) {
+        const bounds = document.querySelector(query).getBoundingClientRect()
+        return bounds.left + bounds.width / 2
+      })(arguments[0])
+    JS
+  end
+
+  scenario 'centers logo, navigation, disabled entries, settings and avatar on one axis' do
+    user.update!(sidebar_collapsed: true)
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    visit admin_dashboard_path
+
+    axis = horizontal_center('#adminSidebar')
+    [
+      '.sidebar-brand-link > div:first-child',
+      "nav a[href='/admin/dashboard'] svg",
+      'nav .sidebar-disabled-option svg',
+      'nav .sidebar-catalog > summary svg:first-child',
+      '#sidebarUserMenuButton'
+    ].each do |selector|
+      expect(horizontal_center("#adminSidebar #{selector}")).to be_within(1).of(axis)
+    end
+
+    expect(page).to have_css('#sidebarUserMenuButton .sidebar-avatar-initials', visible: true)
+    expect(page).to have_no_css('#adminSidebar .sidebar-avatar', visible: true)
+  end
+
+  scenario 'keeps focus inside the mobile drawer and restores the main content on close' do
+    page.driver.browser.manage.window.resize_to(375, 812)
+    visit admin_dashboard_path
+    find('#sidebarToggle').click
+
+    expect(find('#adminDashboardContent', visible: :all)['inert']).not_to be_nil
+    expect(find('#sidebarOverlay', visible: :all)['inert']).to be_nil
+
+    find('#sidebarCloseButton').click
+    expect(find('#adminDashboardContent', visible: :all)['inert']).to be_nil
+    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+  end
+
+  scenario 'opens the collapsed catalog with keyboard and restores focus after Escape' do
+    user.update!(sidebar_collapsed: true)
+    visit admin_dashboard_path
+
+    summary = find('#adminSidebar .sidebar-catalog > summary', match: :first)
+    summary.send_keys(:enter)
+    expect(page).to have_css('#adminSidebarFlyout.is-visible')
+    find('#adminSidebarFlyout a[href]', match: :first).send_keys(:escape)
+    expect(page).to have_no_css('#adminSidebarFlyout')
+    expect(page.evaluate_script('document.activeElement.tagName')).to eq('SUMMARY')
+  end
+
+  scenario 'does not attach a second toggle listener after repeated Turbo visits' do
+    user.update!(sidebar_collapsed: false)
+    visit admin_dashboard_path
+    visit admin_suppliers_path
+    visit admin_dashboard_path
+    find('#sidebarToggle').click
+
+    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
+  end
+
   scenario 'keeps the account menu usable on a collapsed desktop sidebar' do
     user.update!(sidebar_collapsed: true)
     visit admin_dashboard_path

@@ -17,6 +17,7 @@ const removeSidebarTooltip = () => {
 const removeSidebarFlyout = () => {
     sidebarFlyout()?.remove()
     activeFlyoutTarget?.setAttribute("aria-expanded", "false")
+    activeFlyoutTarget?.removeAttribute("aria-controls")
     activeFlyoutTarget = null
 }
 
@@ -27,8 +28,8 @@ const positionSidebarTooltip = (target) => {
     const rect = target.getBoundingClientRect()
     const gap = 12
 
-    tooltip.style.left = `${rect.right + gap}px`
-    tooltip.style.top = `${rect.top + rect.height / 2}px`
+    tooltip.style.left = `${Math.max(4, Math.min(rect.right + gap, window.innerWidth - tooltip.offsetWidth - 4))}px`
+    tooltip.style.top = `${Math.max(tooltip.offsetHeight / 2 + 4, Math.min(rect.top + rect.height / 2, window.innerHeight - tooltip.offsetHeight / 2 - 4))}px`
 }
 
 const showSidebarTooltip = (event) => {
@@ -71,7 +72,10 @@ const flyoutItemMarkup = (submenu) => {
     const fragment = document.createDocumentFragment()
 
     submenu.querySelectorAll(":scope > a, :scope > details").forEach((item) => {
-        fragment.appendChild(item.cloneNode(true))
+        const clone = item.cloneNode(true)
+        clone.removeAttribute("id")
+        clone.querySelectorAll("[id]").forEach((child) => child.removeAttribute("id"))
+        fragment.appendChild(clone)
     })
 
     return fragment

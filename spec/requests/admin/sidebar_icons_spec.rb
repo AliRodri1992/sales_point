@@ -67,6 +67,33 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('page')
   end
 
+
+  it 'hides administrative links from users limited to an assigned branch' do
+    branch = create(:branch, organization:)
+    user.user_roles.destroy_all
+    create(:user_role, user:, branch:, system_role: create(:system_role, :branch, code: 'employee'))
+
+    get admin_dashboard_path
+
+    expect(response).to have_http_status(:ok)
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    expect(sidebar.at_css("a[href='#{system_roles_path}']")).to be_nil
+    expect(sidebar.at_css("a[href='#{admin_users_path}']")).to be_nil
+    expect(sidebar.at_css("a[href='#{admin_branches_path}']")).to be_present
+  end
+
+  it 'retains a single accessible account trigger for the collapsed sidebar' do
+    user.update!(sidebar_collapsed: true)
+    get admin_dashboard_path
+
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    trigger = sidebar.at_css('#sidebarUserMenuButton')
+    expect(trigger['aria-controls']).to eq('sidebarUserMenu')
+    expect(trigger.at_css('.sidebar-avatar-initials')).to be_present
+    expect(sidebar.at_css('.sidebar-avatar')).to be_present
+    expect(sidebar.at_css('.sidebar-brand-link')).to be_present
+  end
+
   it 'keeps SVG navigation icons when the sidebar is collapsed' do
     user.update!(sidebar_collapsed: true)
 

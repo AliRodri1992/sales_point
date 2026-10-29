@@ -4,7 +4,28 @@
 import { GridStack } from "gridstack"
 import Swal from "sweetalert2"
 
+let activeDashboardListeners = null
+
+document.addEventListener("turbo:before-cache", () => {
+    document.getElementById("adminDashboardContent")?.removeAttribute("inert")
+    const sidebar = document.getElementById("adminSidebar")
+    sidebar?.classList.remove("sidebar-open")
+    sidebar?.removeAttribute("role")
+    sidebar?.removeAttribute("aria-modal")
+    document.getElementById("sidebarOverlay")?.classList.remove("is-visible")
+    document.body.classList.remove("sidebar-drawer-open")
+    activeDashboardListeners?.abort()
+    activeDashboardListeners = null
+})
+
 document.addEventListener("turbo:load", () => {
+    activeDashboardListeners?.abort()
+    const listeners = new AbortController()
+    activeDashboardListeners = listeners
+    const onDocument = (type, handler, options = {}) =>
+        document.addEventListener(type, handler, { ...options, signal: listeners.signal })
+    const onWindow = (type, handler, options = {}) =>
+        window.addEventListener(type, handler, { ...options, signal: listeners.signal })
     const javascriptTranslationsElement =
         document.getElementById(
             "javascriptTranslations"
@@ -23,7 +44,7 @@ document.addEventListener("turbo:load", () => {
     const sidebar = document.getElementById("adminSidebar")
     const sidebarToggle = document.getElementById("sidebarToggle")
     const sidebarCloseButton = document.getElementById("sidebarCloseButton")
-    const sidebarContent = sidebar?.nextElementSibling
+    const sidebarContent = document.getElementById("adminDashboardContent")
     const sidebarOverlay =
         document.getElementById("sidebarOverlay")
 
@@ -121,7 +142,7 @@ document.addEventListener("turbo:load", () => {
     }
 
     // Keep the KPI cells compact when crossing the stacking breakpoint.
-    window.addEventListener("resize", () => {
+    onWindow("resize", () => {
         if (!kpiGrid) return
 
         kpiGrid.cellHeight(kpiCellHeight())
@@ -437,7 +458,7 @@ document.addEventListener("turbo:load", () => {
         sidebar.setAttribute("inert", "")
     }
 
-    window.addEventListener("resize", () => {
+    onWindow("resize", () => {
         if (!sidebar) return
         if (window.innerWidth >= 1024) {
             if (sidebar.classList.contains("sidebar-open")) closeMobileSidebar()
@@ -447,7 +468,7 @@ document.addEventListener("turbo:load", () => {
         }
     })
 
-    document.addEventListener("keydown", trapMobileSidebarFocus)
+    onDocument("keydown", trapMobileSidebarFocus)
     sidebarCloseButton?.addEventListener("click", closeMobileSidebar)
 
     if (sidebar && sidebarToggle) {
@@ -530,11 +551,11 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    document.addEventListener("click", (event) => {
+    onDocument("click", (event) => {
         if (!event.target.closest?.("[data-dashboard-selector], #userMenuButton, #sidebarUserMenuButton, #userMenu, #sidebarUserMenu")) closeAllDropdowns()
     })
 
-    document.addEventListener("keydown", (event) => {
+    onDocument("keydown", (event) => {
         if (event.key !== "Escape") return
         const active = document.activeElement
         const openButton = dropdowns.find(({ menu }) => menu && !menu.classList.contains("hidden"))?.button
@@ -926,7 +947,7 @@ document.addEventListener("turbo:load", () => {
         // GridStack remaps its columns through a throttled
         // ResizeObserver, so the button state is re-checked once
         // the viewport has settled (e.g. after a rotation).
-        window.addEventListener("resize", () => {
+        onWindow("resize", () => {
             window.setTimeout(
                 syncCustomizationAvailability,
                 150
@@ -958,7 +979,7 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    document.addEventListener(
+    onDocument(
         "keydown",
         (event) => {
             if (event.key !== "Escape") return
@@ -992,7 +1013,7 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    window.addEventListener(
+    onWindow(
         "resize",
         () => {
             if (!sidebar) return

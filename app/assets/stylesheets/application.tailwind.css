@@ -276,8 +276,10 @@ select {
 }
 
 #adminSidebar nav [aria-disabled="true"] {
-    pointer-events: none;
+    cursor: not-allowed;
 }
+
+#adminSidebar .sidebar-avatar-initials { display: none; }
 
 body.sidebar-drawer-open {
     overflow: hidden;
@@ -364,136 +366,95 @@ body.sidebar-drawer-open {
 }
 
 @media (min-width: 1024px) {
-    #adminSidebar.sidebar-collapsed {
-        width: 5rem;
-    }
+    #adminSidebar.sidebar-collapsed { width: 5rem; }
 
-    #adminSidebar.sidebar-collapsed .sidebar-label {
-        display: none;
+    /* Every navigable or disabled item shares the sidebar's 40px centerline. */
+    #adminSidebar.sidebar-collapsed .sidebar-header {
+        justify-content: center;
+        padding-inline: 0;
     }
-
-    #adminSidebar.sidebar-collapsed .sidebar-brand,
-    #adminSidebar.sidebar-collapsed .sidebar-user {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
+    #adminSidebar.sidebar-collapsed .sidebar-brand-link {
+        width: 2.75rem;
+        height: 2.75rem;
+        justify-content: center;
+        gap: 0;
     }
-
-    #adminSidebar.sidebar-collapsed .sidebar-label {
-        display: none;
+    #adminSidebar.sidebar-collapsed .sidebar-brand { display: none; }
+    #adminSidebar.sidebar-collapsed .sidebar-brand-link > div:first-child {
+        flex: none;
     }
-
     #adminSidebar.sidebar-collapsed nav {
         min-height: 0;
-        padding-left: .75rem;
-        padding-right: .75rem;
+        padding-inline: .75rem;
         overflow-y: auto;
         overflow-x: hidden;
         scrollbar-width: none;
-        -ms-overflow-style: none;
     }
-
-    #adminSidebar.sidebar-collapsed nav::-webkit-scrollbar {
-        display: none;
-        width: 0;
-        height: 0;
+    #adminSidebar.sidebar-collapsed nav::-webkit-scrollbar { display: none; }
+    #adminSidebar.sidebar-collapsed nav > div { margin-bottom: .75rem; }
+    #adminSidebar.sidebar-collapsed nav > div > p { display: none; }
+    #adminSidebar.sidebar-collapsed nav .sidebar-catalog {
+        width: 2.75rem;
+        margin-inline: auto;
     }
-
-    #adminSidebar.sidebar-collapsed nav > div > p {
-        opacity: 0;
-        height: 0;
-        margin: 0;
-        overflow: hidden;
-    }
-
-    #adminSidebar.sidebar-collapsed nav a {
-        justify-content: center;
-        padding-left: .75rem;
-        padding-right: .75rem;
-    }
-
-    #adminSidebar.sidebar-collapsed nav a svg {
-        width: 1.25rem;
-        height: 1.25rem;
-        flex-shrink: 0;
-    }
-
-    #adminSidebar.sidebar-collapsed nav summary {
-        justify-content: center;
-        padding-left: .75rem;
-        padding-right: .75rem;
-    }
-
-    #adminSidebar.sidebar-collapsed nav summary svg {
-        width: 1.25rem;
-        height: 1.25rem;
-        flex-shrink: 0;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-chevron,
-    #adminSidebar.sidebar-collapsed .sidebar-submenu {
-        display: none;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-badge {
-        display: none;
-    }
-
-    #adminSidebar.sidebar-collapsed > div:last-child > div {
-        justify-content: center;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-user {
-        display: none;
-    }
-
-    #adminSidebar.sidebar-collapsed > div:last-child {
-        padding-left: .25rem;
-        padding-right: .25rem;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-user-row {
-        justify-content: center;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-user-row > div:first-child {
+    #adminSidebar.sidebar-collapsed nav a,
+    #adminSidebar.sidebar-collapsed nav .sidebar-disabled-option,
+    #adminSidebar.sidebar-collapsed nav .sidebar-catalog > summary {
         display: flex;
+        width: 2.75rem;
+        min-height: 2.75rem;
+        height: 2.75rem;
+        margin-inline: auto;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+        gap: 0;
+        transform: none;
     }
+    #adminSidebar.sidebar-collapsed nav a svg,
+    #adminSidebar.sidebar-collapsed nav .sidebar-disabled-option svg,
+    #adminSidebar.sidebar-collapsed nav .sidebar-catalog > summary svg:first-child {
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+    }
+    #adminSidebar.sidebar-collapsed nav .sidebar-label,
+    #adminSidebar.sidebar-collapsed nav .sidebar-chevron,
+    #adminSidebar.sidebar-collapsed nav .sidebar-submenu,
+    #adminSidebar.sidebar-collapsed nav .sidebar-badge { display: none; }
 
+    #adminSidebar.sidebar-collapsed .sidebar-footer {
+        padding: .75rem;
+    }
+    #adminSidebar.sidebar-collapsed .sidebar-footer > div { width: 100%; }
     #adminSidebar.sidebar-collapsed .sidebar-user-row {
-        gap: .25rem;
-        padding: .25rem;
+        justify-content: center;
+        padding: 0;
+        gap: 0;
     }
-
-    #adminSidebar.sidebar-collapsed #sidebarUserMenuButton {
-        width: 1.75rem;
-        min-width: 1.75rem;
-    }
-
+    #adminSidebar.sidebar-collapsed .sidebar-avatar,
+    #adminSidebar.sidebar-collapsed .sidebar-user,
+    #adminSidebar.sidebar-collapsed .sidebar-menu-ellipsis { display: none; }
     #adminSidebar.sidebar-collapsed #sidebarUserMenuButton {
         display: inline-flex;
-        margin: auto;
+        width: 2.5rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
+        margin: 0;
+        border-radius: 9999px;
+        background: #dbeafe;
+        color: #2563eb;
+        font-size: .875rem;
+        font-weight: 700;
     }
-
+    #adminSidebar.sidebar-collapsed .sidebar-avatar-initials { display: inline; }
     #adminSidebar.sidebar-collapsed #sidebarUserMenu {
-        left: 3.75rem;
+        left: calc(100% + .5rem);
         bottom: 0;
+        max-width: calc(100vw - 6rem);
     }
-
-    #adminSidebar.sidebar-collapsed nav a,
-    #adminSidebar.sidebar-collapsed > div:last-child > div,
-    #adminSidebar.sidebar-collapsed nav summary {
-        position: relative;
-        z-index: 999;
-    }
-
-    #adminSidebar.sidebar-collapsed [data-tooltip] {
-        cursor: pointer;
-    }
-
-    #adminSidebar.sidebar-collapsed .sidebar-catalog > summary {
-        cursor: pointer;
-    }
+    #adminSidebar.sidebar-collapsed [data-tooltip] { cursor: pointer; }
+    #adminSidebar.sidebar-collapsed [aria-disabled="true"][data-tooltip] { cursor: not-allowed; }
 }
 
 /* Collapsed sidebar tooltips */
@@ -993,6 +954,10 @@ footer a {
     transform: translateX(1px);
 }
 
+#adminSidebar.sidebar-collapsed nav a:hover {
+    transform: none;
+}
+
 #adminSidebar nav a i {
     flex-shrink: 0;
 }
@@ -1464,6 +1429,7 @@ select:focus-visible {
 /* Sidebar: consistent keyboard focus and accessible reduced-motion navigation. */
 #adminSidebar nav a:focus-visible,
 #adminSidebar nav summary:focus-visible,
+#adminSidebar nav [aria-disabled="true"]:focus-visible,
 #adminSidebar #sidebarUserMenuButton:focus-visible,
 .admin-sidebar-flyout a:focus-visible,
 .admin-sidebar-flyout summary:focus-visible {
