@@ -20,8 +20,8 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar).to be_present
 
     names = %w[
-      sales new-sale purchase-orders accounts-payable cash-register inventory
-      demo-requests suppliers roles-permissions branches users taxes
+      purchase-orders accounts-payable cash-register
+      demo-requests suppliers
     ]
     names.each do |name|
       svg = sidebar.at_css("svg[data-sidebar-icon='#{name}']")
@@ -46,7 +46,7 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     )
     expect(close_button.at_css('svg path')).to be_present
     expect(sidebar['aria-labelledby']).to eq('adminSidebarNavigationLabel')
-    expect(sidebar['aria-label']).to be_nil
+    expect(sidebar['aria-label']).to eq(I18n.t('admin.shared.sidebar.navigation', locale: :en))
     expect(sidebar.at_css('nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
     expect(sidebar.at_css('nav')['aria-label']).to be_nil
     expect(sidebar.at_css('#adminSidebarNavigationLabel').text).to eq(

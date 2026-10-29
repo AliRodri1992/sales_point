@@ -115,7 +115,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
 
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.length).to eq(1)
-    expect(cards.first.text).to include('Delta Bank', bank.card_display_number)
+    expect(cards.first.text).to include('Delta Bank', bank.masked_number)
     expect(cards.first.text).not_to include('MXN', 'Supplier')
     expect(panel('bank_accounts').text).not_to include('Archived Bank', '123456789012', '999987654321')
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
@@ -137,10 +137,10 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
 
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.size).to eq(1)
-    expect(cards.first.text).to include('BBVA', '•••• •••• •••• 1111')
+    expect(cards.first.text).to include('BBVA', bank.masked_number)
     expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '123456789012')
     expect(cards.first.at_css('[title="Primary"]')).to be_present
-    expect(cards.first.at_css('summary[aria-label="Bank account actions"]')).to be_present
+    expect(cards.first.at_css('summary[aria-label^="Bank account actions:"]')).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     expect(panel('bank_accounts').css('button[data-option-value="BBVA México"]').size).to eq(1)
   end

@@ -443,8 +443,8 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     get admin_supplier_path(supplier)
 
     expect(dossier.at_css('#adminSidebar')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
-    expect(dossier.at_css('#adminSidebar')['aria-label']).to be_nil
-    navigation = dossier.at_css('aside[aria-label]')
+    expect(dossier.at_css('#adminSidebar')['aria-label']).to eq('Sidebar navigation')
+    navigation = dossier.at_css('nav[role="tablist"][aria-orientation="vertical"]').parent
     expect(navigation['id']).not_to eq('adminSidebar')
     finance_group = navigation.css('nav > div').find do |group|
       group.at_css('h2')&.text&.strip == I18n.t('admin.supplier_dossier.navigation.finances', locale: :en)
@@ -510,7 +510,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
   it 'highlights the full width of the selected menu item, not only its label' do
     get admin_supplier_path(supplier)
 
-    sidebar = dossier.at_css('aside[aria-label] nav')
+    sidebar = dossier.at_css('nav[role="tablist"][aria-orientation="vertical"]')
     expect(sidebar['class']).to include('lg:-mx-3')
     sidebar.css('button[data-supplier-dossier-target="tab"]').each do |tab|
       expect(tab['class']).to include('w-full', 'lg:px-6')

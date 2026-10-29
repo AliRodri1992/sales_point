@@ -118,7 +118,8 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
     expect(account.reload.verification_status).to eq('verified')
     expect(account.verified_at).to be_present
-    expect(FinancialAuditEvent.where(event: 'bank_account.verification_reviewed', subject: account)).to exist
+    expect(FinancialAuditEvent.where(event: 'bank_account.verification_reviewed',
+                                     subject_type: 'SupplierBankAccount', subject_id: account.id)).to exist
   end
 
   it 'posts, applies and reverses a vendor payment' do

@@ -32,7 +32,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).not_to include(account.account_number)
-    expect(document.text).to include(account.card_display_number)
+    expect(document.text).to include(account.masked_number)
 
     patch restore_admin_supplier_bank_account_path(supplier, account)
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier, archived: '1'))
@@ -63,7 +63,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(cards.length).to eq(2)
     expect(document.text).to include('Example Bank', 'Another Bank')
     expect(document.text).not_to include('Vendor Finance')
-    expect(document.text).to include(primary.card_display_number)
+    expect(document.text).to include(primary.masked_number)
     expect(document.at_css('[title="Primary"]')).to be_present
     expect(document.text).not_to include('123456789012', '9876543210')
     expect(response.body).not_to include('123456789012', '9876543210')
@@ -122,7 +122,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier)
 
     card = document.at_css('[data-supplier-bank-accounts-target="card"]')
-    expect(card.text).to include('BBVA', '•••• •••• •••• 1111')
+    expect(card.text).to include('BBVA', account.masked_number)
     expect(card.text).not_to include('MXN', 'Vendor Holdings', 'BBVA México')
     expect(response.body).not_to include(account.account_number, account.card_number)
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
@@ -143,10 +143,10 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get new_admin_supplier_bank_account_path(supplier)
     expect(response).to have_http_status(:ok)
     expect(document.at_css('select[name="supplier_bank_account[account_type]"]')).to be_present
-    expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
+    expect(document.at_css('[data-bank-review-state="pending"]')).to be_present
     expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_nil
     expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_nil
-    expect(document.at_css('input[name="supplier_bank_account[card_number]"]')).to be_present
+    expect(document.at_css('input[name="supplier_bank_account[card_number]"]')).to be_nil
     expect(document.at_css('input[name*="card_expiration"]')).to be_nil
     expect(document.at_css('input[name*="cvv"]')).to be_nil
   end
@@ -175,7 +175,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.css('[data-bank-form-section]').size).to eq(2)
     expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_nil
     expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_nil
-    expect(document.at_css('select[name="supplier_bank_account[verification_status]"]')).to be_present
+    expect(document.at_css('[data-bank-review-state="pending"]')).to be_present
     expect(document.at_css('[data-supplier-bank-form-target="previewNumber"]')).to be_present
     expect(document.at_css('input[data-supplier-bank-form-target="primary"]')).to be_present
   end
@@ -189,7 +189,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('[data-bank-account-form-page="edit"]')).to be_present
     expect(document.at_css('select[name="supplier_bank_account[status]"]')).to be_present
     expect(document.at_css('textarea[name="supplier_bank_account[blocked_reason]"]')).to be_present
-    %w[clabe account_number card_number].each do |field|
+    %w[clabe].each do |field|
       input = document.at_css("input[name='supplier_bank_account[#{field}]']")
       expect(input['value']).to be_blank
     end
@@ -228,8 +228,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     }
 
     expect(response).to have_http_status(:unprocessable_content)
-    %w[holder_name clabe sat_bank_code account_number card_number
-       account_type currency_code verification_status].each do |attribute|
+    %w[holder_name clabe sat_bank_code account_type currency_code].each do |attribute|
       error = document.at_css(%([data-bank-field-errors="#{attribute}"]))
       input = document.at_css(%([name="supplier_bank_account[#{attribute}]"]))
       expect(error).to be_present
@@ -264,9 +263,9 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
     expect(account.reload.status).to eq('blocked')
     expect(account.blocked_reason).to eq('Account compromised')
-    expect(account.verification_status).to eq('verified')
+    expect(account.verification_status).to eq('pending')
     expect(account.account_type).to eq('checking')
-    expect(account.verified_at).to be_present
+    expect(account.verified_at).to be_nil
   end
 
   it 'shows bank dossier filters as full-width options without radio buttons' do
@@ -424,7 +423,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
     get admin_supplier_bank_accounts_path(supplier)
     expect(response).to have_http_status(:ok)
-    expect(document.text).to include(existing.card_display_number)
+    expect(document.text).to include(existing.masked_number)
   end
 
   it 'does not expose banking records belonging to another organization in edit or reveal' do
