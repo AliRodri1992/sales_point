@@ -80,6 +80,10 @@ class User < ApplicationRecord
     username.presence || initials
   end
 
+  def display_role_name
+    @display_role_name ||= system_roles.active.order(:name).pick(:name)
+  end
+
   def notifications
     notification_relation_for(Message)
       .or(notification_relation_for(Language))

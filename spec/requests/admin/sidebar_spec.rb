@@ -44,6 +44,16 @@ RSpec.describe 'Admin sidebar', type: :request do
     expect(doc.at_css('link[rel="icon"]')['href']).to include('delta-pos-favicon')
   end
 
+  it 'shows the actual active role in both account menus' do
+    role = create(:system_role, :system, name: 'Supervisor', code: 'supervisor')
+    create(:user_role, user:, system_role: role)
+    get admin_dashboard_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('#sidebarUserMenu').text).to include('Supervisor')
+    expect(doc.at_css('#userMenu').text).to include('Supervisor')
+  end
+
   it 'provides the same account actions in both menus without keyboard-trapping unavailable options' do
     get admin_dashboard_path
 

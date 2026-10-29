@@ -139,7 +139,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       create(:user_role, user:, system_role: role)
 
       expect(helper.sidebar_role_label(user)).to eq('Supervisor')
-      expect(helper.sidebar_role_label(user)).to eq('Supervisor')
+      expect(user.display_role_name).to eq('Supervisor')
     end
   end
 

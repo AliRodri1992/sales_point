@@ -103,6 +103,20 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#display_role_name' do
+    it 'returns nil without an active assigned role' do
+      expect(create(:user).display_role_name).to be_nil
+    end
+
+    it 'returns the name of an active assigned role' do
+      user = create(:user)
+      role = create(:system_role, :system, name: 'Supervisor', code: 'supervisor')
+      create(:user_role, user:, system_role: role)
+
+      expect(user.display_role_name).to eq('Supervisor')
+    end
+  end
+
   describe 'email validation' do
     subject(:user) { build(:user) }
 

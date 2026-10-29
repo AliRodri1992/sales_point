@@ -57,12 +57,7 @@ module ApplicationHelper
   end
 
   def sidebar_role_label(user)
-    @sidebar_role_labels ||= {}
-    @sidebar_role_labels[user.id] ||= sidebar_display_role(user)
-  end
-
-  def sidebar_display_role(user)
-    user.system_roles.active.order(:name).pick(:name).presence ||
+    user.display_role_name.presence ||
       t(user.admin? ? 'admin.shared.sidebar.role_admin' : 'admin.shared.sidebar.role_user')
   end
 
