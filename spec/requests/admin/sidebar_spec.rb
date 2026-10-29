@@ -7,6 +7,28 @@ RSpec.describe 'Admin sidebar', type: :request do
 
   before { sign_in user }
 
+
+  describe 'sidebar navigation accessibility' do
+    it 'renders the collapsed navigation with persistent accessible link names' do
+      user.update!(sidebar_collapsed: true)
+      get admin_dashboard_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('id="adminSidebar"')
+      expect(response.body).to include('sidebar-collapsed')
+      expect(response.body).to match(/href="[^"]*"[^>]*aria-label="[^"]+"/)
+    end
+
+    it 'does not offer inactive Sales and Inventory flyout groups' do
+      get admin_dashboard_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).not_to include('data-sidebar-icon="inventory"')
+      expect(response.body).not_to include('data-sidebar-icon="sales"')
+      expect(response.body).to include(admin_products_path)
+    end
+  end
+
   describe 'PATCH /admin/sidebar' do
     it 'collapses the sidebar when the parameter is true' do
       patch admin_sidebar_path, params: { sidebar_collapsed: 'true' }
