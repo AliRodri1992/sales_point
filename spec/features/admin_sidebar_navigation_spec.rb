@@ -165,6 +165,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     summaries = all('#adminSidebar .sidebar-catalog > summary', visible: :all)
     summaries.last.send_keys(:enter)
     expect(page).to have_css('#adminSidebarFlyout.is-visible')
+    expect_sidebar_flyout_links
     expect(page).to have_css('#adminSidebarFlyout [aria-disabled="true"]', minimum: 1)
   end
 

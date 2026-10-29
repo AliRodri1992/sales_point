@@ -442,6 +442,15 @@ document.addEventListener("turbo:load", () => {
             sidebarToggle?.focus({ preventScroll: true })
             // Restore focus after the click default action has settled.
             requestAnimationFrame(() => sidebarToggle?.focus({ preventScroll: true }))
+            // When the translated drawer completes its CSS transition, Chrome
+            // can blur the now offscreen close button; recover only if focus
+            // was lost, without stealing it from an intentional next action.
+            setTimeout(() => {
+                const focused = document.activeElement
+                if (focused === document.body || sidebar.contains(focused)) {
+                    sidebarToggle?.focus({ preventScroll: true })
+                }
+            }, 350)
         }
     }
 

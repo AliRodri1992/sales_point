@@ -21,6 +21,25 @@ module SidebarBrowserExpectations
     JS
   end
 
+  def expect_sidebar_flyout_links
+    return if page.has_css?('#adminSidebarFlyout a[href]', wait: 5)
+
+    details = page.evaluate_script(<<~JS)
+      (() => {
+        const menu = document.getElementById('adminSidebarFlyout')
+        const summary = document.querySelector('#adminSidebar .sidebar-catalog > summary')
+        return {
+          html: menu?.outerHTML?.slice(0, 1500),
+          links: menu?.querySelectorAll('a[href]')?.length,
+          visible: menu ? getComputedStyle(menu).visibility : null,
+          summaryExpanded: summary?.getAttribute('aria-expanded')
+        }
+      })()
+    JS
+    raise RSpec::Expectations::ExpectationNotMetError,
+          "Expected visible sidebar flyout links: #{details.inspect}"
+  end
+
   def expect_sidebar_desktop_ready
     Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
       page.evaluate_script(<<~JS)

@@ -301,11 +301,22 @@ document.addEventListener("keydown", (event) => {
 })
 
 document.addEventListener("scroll", (event) => {
-    if (event.target.closest?.("#adminSidebar nav")) {
-        removeSidebarTooltip()
-        // Programmatic scroll-to-focused-summary must not dismiss a keyboard flyout.
-        if (flyoutOpenedWithKeyboard) refreshSidebarFlyout()
-        else removeSidebarFlyout()
+    const nav = event.target.closest?.("#adminSidebar nav")
+    if (!nav) return
+
+    removeSidebarTooltip()
+    const flyout = sidebarFlyout()
+    const trigger = activeFlyoutTarget
+    if (!flyout || !trigger) return
+
+    // Scrolling the sidebar to an active trigger should reposition its menu,
+    // rather than instantly dismissing it after a click or keyboard activation.
+    const bounds = trigger.getBoundingClientRect()
+    const viewport = nav.getBoundingClientRect()
+    if (bounds.bottom >= viewport.top && bounds.top <= viewport.bottom) {
+        refreshSidebarFlyout()
+    } else {
+        removeSidebarFlyout()
     }
 }, true)
 
