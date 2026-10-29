@@ -59,7 +59,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     navigation = find('details[data-supplier-form-target="navigation"]')
     summary = navigation.find('summary')
     summary.click
-    expect(navigation[:open]).to be_present
+    expect(page).to have_css('details[data-supplier-form-target="navigation"][open]', visible: :all)
 
     summary.send_keys(:escape)
 
