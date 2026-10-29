@@ -28,14 +28,17 @@
       </div>
       <div>
         <label for="bank-account-bank" class="sr-only"><%= t('admin.bank_cards.bank_filter') %></label>
-        <%= select_tag :bank,
+        <div class="relative" data-controller="delta-select">
+<%= select_tag :bank,
                        options_for_select([[t('admin.bank_cards.all_banks'), '']] + @bank_options.map { |name| [name, name] }, params[:bank]),
                        id: 'bank-account-bank',
                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+</div>
       </div>
       <div>
         <label for="bank-account-status" class="sr-only"><%= t('admin.bank_cards.status_filter') %></label>
-        <%= select_tag :status,
+        <div class="relative" data-controller="delta-select">
+<%= select_tag :status,
                        options_for_select([
                          [t('admin.bank_cards.all_statuses'), 'all'],
                          [t('admin.bank_cards.active_plural'), 'active'],
@@ -45,6 +48,7 @@
                        ], @status),
                        id: 'bank-account-status',
                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+</div>
       </div>
       <%= button_tag type: :submit,
                      class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>

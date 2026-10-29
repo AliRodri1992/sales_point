@@ -54,15 +54,19 @@
       <%= hidden_field_tag :calendar_selected_day, calendar.selected_date.iso8601 %>
       <div>
         <%= form.label :calendar_branch, t('admin.supplier_dossier.branch'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
-        <%= form.select :calendar_branch, options_from_collection_for_select(branches, :id, :name, calendar.branch_id),
+        <div class="relative" data-controller="delta-select">
+<%= form.select :calendar_branch, options_from_collection_for_select(branches, :id, :name, calendar.branch_id),
                         { include_blank: t('admin.supplier_calendar.all_branches') },
                         class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm' %>
+</div>
       </div>
       <div>
         <%= form.label :calendar_kind, t('admin.supplier_dossier.kind'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
-        <%= form.select :calendar_kind, options_for_select(SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] }, calendar.kind),
+        <div class="relative" data-controller="delta-select">
+<%= form.select :calendar_kind, options_for_select(SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] }, calendar.kind),
                         { include_blank: t('admin.supplier_calendar.all_kinds') },
                         class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm' %>
+</div>
       </div>
       <%= form.submit t('admin.supplier_calendar.filter'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700' %>
     <% end %>

@@ -58,11 +58,13 @@
         </div>
         <div class="min-w-0">
           <%= f.label :sat_bank_code, t('admin.accounts_payable.bank'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.collection_select :sat_bank_code, @banks, :code, :display_name,
+          <div class="relative" data-controller="delta-select" data-searchable="true">
+<%= f.collection_select :sat_bank_code, @banks, :code, :display_name,
                                   { include_blank: t('admin.supplier_bank_details.select_bank') },
                                   { data: { supplier_bank_clabe_target: 'bank', supplier_bank_form_target: 'bank' },
                                     class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200', aria: { invalid: @account.errors[:sat_bank_code].any?,
                                    describedby: (@account.errors[:sat_bank_code].any? ? 'supplier-bank-sat_bank_code-errors' : nil) } } %>
+</div>
           <%= render 'field_errors', record: @account, attribute: :sat_bank_code %>
           <p class="mt-2 text-xs leading-5 text-slate-500"><%= t('admin.supplier_bank_details.bank_hint') %></p>
         </div>
@@ -76,11 +78,13 @@
         </div>
         <div class="min-w-0">
           <%= f.label :account_type, t('admin.supplier_bank_details.account_type'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-          <%= f.select :account_type,
+          <div class="relative" data-controller="delta-select">
+<%= f.select :account_type,
                        SupplierBankAccount::ACCOUNT_TYPES.map { |type| [t("admin.supplier_bank_details.account_types.#{type}"), type] },
                        { include_blank: t('admin.supplier_bank_details.select_type') },
                        { data: { supplier_bank_form_target: 'accountType' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200', aria: { invalid: @account.errors[:account_type].any?,
                                    describedby: (@account.errors[:account_type].any? ? 'supplier-bank-account_type-errors' : nil) } } %>
+</div>
           <%= render 'field_errors', record: @account, attribute: :account_type %>
         </div>
         <div class="min-w-0">
@@ -104,9 +108,11 @@
         <% if editing %>
           <div class="min-w-0">
             <%= f.label :status, t('admin.supplier_bank_details.status'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
-            <%= f.select :status, SupplierBankAccount::STATUSES.map { |status| [t("admin.supplier_bank_details.statuses.#{status}"), status] },
+            <div class="relative" data-controller="delta-select">
+<%= f.select :status, SupplierBankAccount::STATUSES.map { |status| [t("admin.supplier_bank_details.statuses.#{status}"), status] },
                          {}, { data: { supplier_bank_form_target: 'status' }, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 aria-[invalid=true]:border-rose-400 aria-[invalid=true]:bg-rose-50 aria-[invalid=true]:focus:ring-rose-200', aria: { invalid: @account.errors[:status].any?,
                                    describedby: (@account.errors[:status].any? ? 'supplier-bank-status-errors' : nil) } } %>
+</div>
           <%= render 'field_errors', record: @account, attribute: :status %>
           </div>
         <% end %>

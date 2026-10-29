@@ -5,8 +5,10 @@
   <div class="grid gap-5 md:grid-cols-2">
     <div>
       <%= form.label :product_id, t('admin.procurement.product'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.collection_select :product_id, @products, :id, :name, { include_blank: true },
+      <div class="relative" data-controller="delta-select" data-searchable="true">
+<%= form.collection_select :product_id, @products, :id, :name, { include_blank: true },
                                  { required: true, disabled: @offer.persisted?, class: 'w-full rounded-xl border border-slate-200 p-3' } %>
+</div>
     </div>
     <div>
       <%= form.label :supplier_sku, t('admin.procurement.supplier_sku'), class: 'mb-2 block text-sm font-semibold' %>
@@ -26,7 +28,9 @@
     </div>
     <div>
       <%= form.label :currency_id, t('admin.procurement.currency'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.collection_select :currency_id, @currencies, :id, :code, {}, { required: true, class: 'w-full rounded-xl border border-slate-200 p-3' } %>
+      <div class="relative" data-controller="delta-select">
+<%= form.collection_select :currency_id, @currencies, :id, :code, {}, { required: true, class: 'w-full rounded-xl border border-slate-200 p-3' } %>
+</div>
     </div>
     <% %i[discount_percent freight_amount nonrecoverable_tax minimum_quantity lead_time_days].each do |field| %>
       <div>

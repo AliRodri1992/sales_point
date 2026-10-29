@@ -7,11 +7,17 @@
                       'cfdi-preview-error-value': t('admin.accounts_payable.cfdi_preview_error') } do |f| %>
   <div class="grid gap-4 md:grid-cols-2">
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'cfdi-preview-target': 'supplier' }, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select" data-searchable="true">
+<%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'cfdi-preview-target': 'supplier' }, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+</div></div>
     <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+<%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+</div></div>
     <div><%= f.label :purchase_order_id, t('admin.accounts_payable.order'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :purchase_order_id, @orders, :id, :code, { include_blank: true }, { class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+<%= f.collection_select :purchase_order_id, @orders, :id, :code, { include_blank: true }, { class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+</div></div>
     <% %i[series folio].each do |field| %>
       <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
         <%= f.text_field field, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
