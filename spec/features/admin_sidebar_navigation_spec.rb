@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true do
   include Warden::Test::Helpers
+  include SidebarBrowserExpectations
 
   let(:organization) { create(:organization) }
   let(:user) { create(:user, :english) }
@@ -167,14 +168,14 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
     find('#sidebarToggle').click
 
-    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
+    expect_sidebar_collapsed
   end
 
   scenario 'keeps the account menu usable on a collapsed desktop sidebar' do
     user.update!(sidebar_collapsed: true)
     visit admin_dashboard_path
 
-    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
+    expect_sidebar_collapsed
     find('#sidebarUserMenuButton').click
     expect(page).to have_css('#sidebarUserMenu:not(.hidden)')
     expect(page).to have_link('My profile')

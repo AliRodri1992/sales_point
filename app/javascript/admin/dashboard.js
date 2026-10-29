@@ -515,6 +515,7 @@ document.addEventListener("turbo:load", () => {
     let persistedSidebarCollapsed = sidebar?.classList.contains("sidebar-collapsed") ?? false
     const persistSidebarState = (collapsed) => {
         const revision = ++sidebarSaveRevision
+        sidebarToggle?.setAttribute("data-sidebar-save-state", "pending")
         // Serialize saves so quick toggles cannot reach the server out of order.
         sidebarSaveQueue = sidebarSaveQueue.catch(() => {}).then(async () => {
             const csrf = document.querySelector('meta[name="csrf-token"]')
@@ -531,8 +532,12 @@ document.addEventListener("turbo:load", () => {
             })
             if (!response.ok) throw new Error(`Sidebar save failed: ${response.status}`)
             persistedSidebarCollapsed = collapsed
+            if (revision === sidebarSaveRevision) {
+                sidebarToggle?.setAttribute("data-sidebar-save-state", "saved")
+            }
         }).catch(() => {
             if (revision !== sidebarSaveRevision || !sidebar) return
+            sidebarToggle?.setAttribute("data-sidebar-save-state", "error")
 
             sidebar.classList.toggle("sidebar-collapsed", persistedSidebarCollapsed)
             sidebarToggle?.setAttribute("aria-expanded", String(!persistedSidebarCollapsed))

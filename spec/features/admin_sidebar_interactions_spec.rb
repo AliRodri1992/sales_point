@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   include Warden::Test::Helpers
+  include SidebarBrowserExpectations
 
   let(:organization) { create(:organization) }
   let(:user) { create(:user, :english) }
@@ -33,7 +34,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     expect(page.evaluate_script('window.innerWidth')).to be >= 1024
 
     find('#sidebarToggle').click
-    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
+    expect_sidebar_collapsed
     expect(page).to have_css('#sidebarUserMenuButton .sidebar-avatar-initials', visible: true)
     expect(page.evaluate_script(<<~JS)).to be(true)
       (() => {
@@ -55,7 +56,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     expect(page.evaluate_script('window.innerWidth')).to be >= 1024
 
     find('#sidebarToggle').click
-    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
+    expect_sidebar_collapsed
     find('#adminSidebar .sidebar-catalog > summary', match: :first).click
     expect(page).to have_css('#adminSidebarFlyout.is-visible')
     expect(page).to have_css('#adminSidebarFlyout a[href]', minimum: 1)

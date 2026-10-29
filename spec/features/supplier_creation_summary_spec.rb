@@ -17,6 +17,12 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
 
   after { Warden.test_reset! }
 
+  def await_border_color(element, expected)
+    Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+      page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', element) == expected
+    end
+  end
+
   def show_summary
     page.execute_script(<<~JS)
       const form = document.querySelector('form[data-controller="supplier-form"]')
@@ -94,21 +100,17 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(code['aria-invalid']).to eq('true')
     expect(code['class']).to include('input-field-error')
     expect(code['aria-invalid']).to eq('true')
-    expect(page.evaluate_script(<<~JS)).to eq('rgb(225, 29, 72)')
-      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
-    JS
+    await_border_color(code, 'rgb(225, 29, 72)')
 
     code.click
-    expect(page.evaluate_script(<<~JS)).to eq('rgb(225, 29, 72)')
-      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
-    JS
+    await_border_color(code, 'rgb(225, 29, 72)')
 
     code.fill_in with: 'SUP-VALID-01'
     expect(code['aria-invalid']).not_to eq('true')
     expect(code['class']).not_to include('input-field-error')
-    expect(page.evaluate_script(<<~JS)).not_to eq('rgb(225, 29, 72)')
-      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
-    JS
+    Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+      page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', code) != 'rgb(225, 29, 72)'
+    end
   end
 
   scenario 'shows the same error styling on the visible custom select trigger' do
@@ -124,7 +126,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(select['aria-invalid']).to eq('true')
     trigger = find('[data-controller~="delta-select"] button[aria-haspopup="listbox"][aria-invalid="true"]',
                    visible: true, match: :first)
-    expect(page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', trigger)).to eq('rgb(225, 29, 72)')
+    await_border_color(trigger, 'rgb(225, 29, 72)')
   end
 
   scenario 'summarizes all editable steps in the new supplier review' do
