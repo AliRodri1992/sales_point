@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
   static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary",
-    "addressValidationError", "progress"]
+    "addressValidationError", "progress", "progressBar", "activeLabel", "position", "navigation"]
   static values = {
     index: { type: Number, default: 0 },
     addressValidationUrl: String,
@@ -24,6 +24,12 @@ export default class extends Controller {
     for (const eventName of ["input", "change"]) {
       this.element.addEventListener(eventName, this.onFieldChange)
     }
+    this.onOutsideNavigationClick = (event) => {
+      if (this.hasNavigationTarget && !this.navigationTarget.contains(event.target)) {
+        this.navigationTarget.open = false
+      }
+    }
+    document.addEventListener("click", this.onOutsideNavigationClick)
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
@@ -33,6 +39,7 @@ export default class extends Controller {
     for (const eventName of ["input", "change"]) {
       this.element.removeEventListener(eventName, this.onFieldChange)
     }
+    document.removeEventListener("click", this.onOutsideNavigationClick)
   }
 
   fieldWrapper(field) {
@@ -171,8 +178,16 @@ export default class extends Controller {
     target?.focus()
   }
 
+  navigationKeydown(event) {
+    if (event.key !== "Escape" || !this.hasNavigationTarget || !this.navigationTarget.open) return
+    event.preventDefault()
+    this.navigationTarget.open = false
+    this.navigationTarget.querySelector("summary")?.focus()
+  }
+
   async select(event) {
     if (this.validating) return
+    if (this.hasNavigationTarget) this.navigationTarget.open = false
     const destination = Number(event.currentTarget.dataset.stepIndex)
     this.validating = true
     try {
@@ -352,7 +367,8 @@ export default class extends Controller {
         tab.append(indicator)
       }
       indicator.textContent = { complete: "✓", error: "!", progress: "·", pending: "○" }[state]
-      indicator.setAttribute("aria-label", state === "progress" ? "In progress" : (this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`] || state))
+      indicator.setAttribute("role", "img")
+      indicator.setAttribute("aria-label", state === "progress" ? this.element.dataset.supplierFormInProgressLabel : (this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`] || state))
       indicator.classList.toggle("bg-emerald-100", state === "complete")
       indicator.classList.toggle("text-emerald-800", state === "complete")
       indicator.classList.toggle("bg-rose-100", state === "error")
@@ -364,18 +380,32 @@ export default class extends Controller {
     })
     if (this.hasProgressTarget) {
       const count = this.tabTargets.slice(0, -1).filter((tab) => tab.dataset.stepState === "complete").length
-      this.progressTarget.textContent = `${count} / ${this.stepTargets.length - 1}`
+      const template = this.element.dataset.supplierFormProgressLabel || "%{count} / %{total}"
+      this.progressTarget.textContent = template.replace("%{count}", String(count))
+        .replace("%{total}", String(this.stepTargets.length - 1))
     }
   }
 
   render() {
+    const current = this.tabTargets[this.indexValue]
+    if (this.hasActiveLabelTarget && current) {
+      this.activeLabelTarget.textContent = current.querySelector("[data-supplier-form-step-label]")?.textContent?.trim() || ""
+    }
+    if (this.hasPositionTarget) {
+      const template = this.element.dataset.supplierFormStepCounterTemplate || "%{current} / %{total}"
+      this.positionTarget.textContent = template.replace("%{current}", String(this.indexValue + 1))
+        .replace("%{total}", String(this.stepTargets.length))
+    }
+    if (this.hasProgressBarTarget) {
+      this.progressBarTarget.style.width = `${((this.indexValue + 1) / this.stepTargets.length) * 100}%`
+    }
     this.stepTargets.forEach((step, index) => {
       step.hidden = index !== this.indexValue
       step.classList.toggle("hidden", index !== this.indexValue)
     })
     this.tabTargets.forEach((tab, index) => {
       const active = index === this.indexValue
-      if (active) tab.setAttribute("aria-current", "step")
+      if (active) tab.setAttribute("aria-current", this.newRecordValue ? "step" : "location")
       else tab.removeAttribute("aria-current")
       tab.classList.toggle("bg-emerald-50", active)
       tab.classList.toggle("text-emerald-800", active)
