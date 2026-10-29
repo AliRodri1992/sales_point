@@ -29,6 +29,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     expect(page).to have_link(href: admin_profile_path)
     find('#sidebarUserMenuButton').send_keys(:escape)
     expect(page).to have_css('#sidebarUserMenu.hidden', visible: :all)
+    expect(page.evaluate_script('window.innerWidth')).to be >= 1024
 
     find('#sidebarToggle').click
     expect(page).to have_css('#adminSidebar.sidebar-collapsed')
@@ -49,8 +50,10 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   scenario 'opens and closes catalog flyouts while collapsed' do
     page.driver.browser.manage.window.resize_to(1400, 900)
     visit admin_dashboard_path
+    expect(page.evaluate_script('window.innerWidth')).to be >= 1024
 
     find('#sidebarToggle').click
+    expect(page).to have_css('#adminSidebar.sidebar-collapsed')
     find('#adminSidebar .sidebar-catalog > summary', match: :first).click
     expect(page).to have_css('#adminSidebarFlyout.is-visible')
     expect(page).to have_css('#adminSidebarFlyout a[href]', minimum: 1)

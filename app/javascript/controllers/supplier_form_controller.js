@@ -61,6 +61,18 @@ export default class extends Controller {
     const trigger = this.visibleSelectButton(field)
     if (invalid) trigger?.setAttribute("aria-invalid", "true")
     else trigger?.removeAttribute("aria-invalid")
+
+    // Preserve a high-contrast border on native and custom controls even when
+    // CSS utility layers or browser focus styles override the base class.
+    for (const control of [field, trigger].filter(Boolean)) {
+      if (invalid) {
+        control.style.setProperty("border-color", "#e11d48", "important")
+        control.style.setProperty("background-color", "#fff1f2", "important")
+      } else {
+        control.style.removeProperty("border-color")
+        control.style.removeProperty("background-color")
+      }
+    }
   }
 
   describeFieldError(field, message) {

@@ -13,6 +13,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
     Warden.test_mode!
     login_as(user, scope: :user)
+    page.driver.browser.manage.window.resize_to(1440, 900)
   end
 
   after do

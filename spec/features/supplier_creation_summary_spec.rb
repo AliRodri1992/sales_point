@@ -93,6 +93,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     code = find('input[name="supplier[code]"]')
     expect(code['aria-invalid']).to eq('true')
     expect(code['class']).to include('input-field-error')
+    expect(code['aria-invalid']).to eq('true')
     expect(page.evaluate_script(<<~JS)).to eq('rgb(225, 29, 72)')
       getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
     JS
