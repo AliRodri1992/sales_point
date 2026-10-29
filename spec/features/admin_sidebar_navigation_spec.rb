@@ -110,7 +110,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     end
 
     page.driver.browser.manage.window.resize_to(1440, 900)
-    expect(page.evaluate_script("document.getElementById('adminSidebar').inert")).to be(false)
+    expect_sidebar_desktop_ready
   end
 
   scenario 'does not shift the selected navigation item when hovering' do

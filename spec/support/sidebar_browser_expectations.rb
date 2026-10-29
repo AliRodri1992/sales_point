@@ -21,6 +21,17 @@ module SidebarBrowserExpectations
     JS
   end
 
+  def expect_sidebar_desktop_ready
+    Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+      page.evaluate_script(<<~JS)
+        (() => {
+          const sidebar = document.getElementById('adminSidebar')
+          return window.innerWidth >= 1024 && sidebar && !sidebar.inert
+        })()
+      JS
+    end
+  end
+
   def expect_sidebar_collapsed
     return if page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
 

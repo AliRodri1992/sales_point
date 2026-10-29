@@ -3,6 +3,7 @@ const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
 let activeTooltipTarget = null
+let flyoutOpenedWithKeyboard = false
 let suppressFlyoutOnFocusRestore = false
 let flyoutCloseTimer = null
 const cancelFlyoutClose = () => {
@@ -28,6 +29,7 @@ const removeSidebarTooltip = () => {
 const removeSidebarFlyout = () => {
     cancelFlyoutClose()
     sidebarFlyout()?.remove()
+    flyoutOpenedWithKeyboard = false
     activeFlyoutTarget?.setAttribute("aria-expanded", "false")
     activeFlyoutTarget?.removeAttribute("aria-controls")
     activeFlyoutTarget = null
@@ -113,7 +115,7 @@ const positionSidebarFlyout = (target, flyout) => {
     flyout.style.top = `${Math.max(viewportPadding, Math.min(preferredTop, maxTop))}px`
 }
 
-const showSidebarFlyout = (target) => {
+const showSidebarFlyout = (target, { keyboard = false } = {}) => {
     if (!isCollapsedSidebar()) return
 
     const submenu = target.parentElement?.querySelector(":scope > .sidebar-submenu")
@@ -129,6 +131,7 @@ const showSidebarFlyout = (target) => {
     }
     removeSidebarFlyout()
     activeFlyoutTarget = target
+    flyoutOpenedWithKeyboard = keyboard
     target.setAttribute("aria-expanded", "true")
 
     const flyout = document.createElement("div")
@@ -192,6 +195,9 @@ const syncFlyoutWithPointer = (event) => {
 
     if (flyout?.contains(event.target)) {
         cancelFlyoutClose()
+    } else if (flyoutOpenedWithKeyboard) {
+        // Hover elsewhere must not dismiss a menu controlled by keyboard focus.
+        return
     } else if (activeFlyoutTarget && sidebar?.contains(event.target)) {
         removeSidebarFlyout()
     } else if (activeFlyoutTarget && flyoutCloseTimer === null) {
@@ -223,18 +229,8 @@ document.addEventListener("mouseout", (event) => {
 })
 
 document.addEventListener("focusin", (event) => {
-    if (suppressFlyoutOnFocusRestore) return
-
-    const target = event.target instanceof Element
-        ? event.target.closest(".sidebar-catalog > summary")
-        : null
-
-    if (target && document.getElementById("adminSidebar")?.contains(target)) {
-        if (!sidebarFlyout()) showSidebarFlyout(target)
-        return
-    }
-
-    showSidebarTooltip(event)
+    // Focusing a group is not activation. Keyboard users open it with Enter/Space.
+    if (!suppressFlyoutOnFocusRestore) showSidebarTooltip(event)
 })
 
 document.addEventListener("focusout", (event) => {
@@ -299,7 +295,7 @@ document.addEventListener("keydown", (event) => {
         if (!isCollapsedSidebar()) return
 
         event.preventDefault()
-        showSidebarFlyout(event.target)
+        showSidebarFlyout(event.target, { keyboard: true })
         sidebarFlyout()?.querySelector("a[href], summary")?.focus()
     }
 })
@@ -307,7 +303,9 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("scroll", (event) => {
     if (event.target.closest?.("#adminSidebar nav")) {
         removeSidebarTooltip()
-        removeSidebarFlyout()
+        // Programmatic scroll-to-focused-summary must not dismiss a keyboard flyout.
+        if (flyoutOpenedWithKeyboard) refreshSidebarFlyout()
+        else removeSidebarFlyout()
     }
 }, true)
 

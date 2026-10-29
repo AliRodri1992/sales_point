@@ -475,8 +475,14 @@ document.addEventListener("turbo:load", () => {
         if (window.innerWidth >= 1024) {
             if (sidebar.classList.contains("sidebar-open")) closeMobileSidebar()
             sidebar.removeAttribute("inert")
+            sidebarContent?.removeAttribute("inert")
+            sidebarToggle?.setAttribute(
+                "aria-expanded",
+                String(!sidebar.classList.contains("sidebar-collapsed"))
+            )
         } else if (!sidebar.classList.contains("sidebar-open")) {
             sidebar.setAttribute("inert", "")
+            sidebarToggle?.setAttribute("aria-expanded", "false")
         }
     })
 
