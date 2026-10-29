@@ -1541,3 +1541,8 @@ form[data-controller~="supplier-form"] :is(input, select, textarea)[aria-invalid
 form[data-controller~="supplier-form"] [data-controller~="delta-select"] > button[aria-invalid="true"] {
     transition-property: background-color, box-shadow !important;
 }
+
+/* Respect reduced-motion settings for the sidebar width and drawer transition. */
+@media (prefers-reduced-motion: reduce) {
+    #adminSidebar { transition: none; }
+}

@@ -3,7 +3,7 @@ const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
 let activeTooltipTarget = null
-let flyoutOpenedWithKeyboard = false
+let flyoutPinned = false
 let suppressFlyoutOnFocusRestore = false
 let flyoutCloseTimer = null
 const cancelFlyoutClose = () => {
@@ -29,7 +29,7 @@ const removeSidebarTooltip = () => {
 const removeSidebarFlyout = () => {
     cancelFlyoutClose()
     sidebarFlyout()?.remove()
-    flyoutOpenedWithKeyboard = false
+    flyoutPinned = false
     activeFlyoutTarget?.setAttribute("aria-expanded", "false")
     activeFlyoutTarget?.removeAttribute("aria-controls")
     activeFlyoutTarget = null
@@ -115,7 +115,7 @@ const positionSidebarFlyout = (target, flyout) => {
     flyout.style.top = `${Math.max(viewportPadding, Math.min(preferredTop, maxTop))}px`
 }
 
-const showSidebarFlyout = (target, { keyboard = false } = {}) => {
+const showSidebarFlyout = (target, { pinned = false } = {}) => {
     if (!isCollapsedSidebar()) return
 
     const submenu = target.parentElement?.querySelector(":scope > .sidebar-submenu")
@@ -126,12 +126,14 @@ const showSidebarFlyout = (target, { keyboard = false } = {}) => {
 
     removeSidebarTooltip()
     if (activeFlyoutTarget === target && sidebarFlyout()) {
+        flyoutPinned = flyoutPinned || pinned
+        cancelFlyoutClose()
         refreshSidebarFlyout()
         return
     }
     removeSidebarFlyout()
     activeFlyoutTarget = target
-    flyoutOpenedWithKeyboard = keyboard
+    flyoutPinned = pinned
     target.setAttribute("aria-expanded", "true")
 
     const flyout = document.createElement("div")
@@ -195,8 +197,8 @@ const syncFlyoutWithPointer = (event) => {
 
     if (flyout?.contains(event.target)) {
         cancelFlyoutClose()
-    } else if (flyoutOpenedWithKeyboard) {
-        // Hover elsewhere must not dismiss a menu controlled by keyboard focus.
+    } else if (flyoutPinned) {
+        // Explicit click or keyboard activation pins the menu until dismissal.
         return
     } else if (activeFlyoutTarget && sidebar?.contains(event.target)) {
         removeSidebarFlyout()
@@ -261,7 +263,7 @@ document.addEventListener("click", (event) => {
         sidebar.classList.contains("sidebar-collapsed")
     ) {
         event.preventDefault()
-        showSidebarFlyout(target)
+        showSidebarFlyout(target, { pinned: true })
         return
     }
 
@@ -295,7 +297,7 @@ document.addEventListener("keydown", (event) => {
         if (!isCollapsedSidebar()) return
 
         event.preventDefault()
-        showSidebarFlyout(event.target, { keyboard: true })
+        showSidebarFlyout(event.target, { pinned: true })
         sidebarFlyout()?.querySelector("a[href], summary")?.focus()
     }
 })

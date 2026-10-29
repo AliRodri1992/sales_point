@@ -52,9 +52,18 @@ module SidebarBrowserExpectations
   end
 
   def expect_sidebar_collapsed
-    return if page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
+    if page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
+      return if Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
+        page.evaluate_script(<<~JS)
+          Math.abs(document.getElementById('adminSidebar').getBoundingClientRect().width - 80) < 1
+        JS
+      end
+    end
 
     raise RSpec::Expectations::ExpectationNotMetError,
           "Expected sidebar to collapse; browser state: #{sidebar_browser_state.inspect}"
+  rescue Selenium::WebDriver::Error::TimeoutError
+    raise RSpec::Expectations::ExpectationNotMetError,
+          "Sidebar transition did not complete: #{sidebar_browser_state.inspect}"
   end
 end
