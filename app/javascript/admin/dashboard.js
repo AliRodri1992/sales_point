@@ -333,7 +333,7 @@ document.addEventListener("turbo:load", () => {
             const menu = container.querySelector("[data-dashboard-selector-menu]")
             if (menu === except) return
             container.querySelectorAll("details").forEach((details) => { details.open = false })
-            menu?.classList.add("hidden")
+            if (!container.querySelector("details")) menu?.classList.add("hidden")
             container.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", "false")
         })
         dropdowns.forEach(({ button, menu }) => {
@@ -342,6 +342,11 @@ document.addEventListener("turbo:load", () => {
             button.setAttribute("aria-expanded", "false")
         })
     }
+
+    const branchDetails = document.querySelector("[data-dashboard-selector] > details")
+    branchDetails?.querySelector("summary")?.addEventListener("click", () => {
+        closeAllDropdowns(branchDetails.querySelector("[data-dashboard-selector-menu]"))
+    })
 
     const toggleDropdown = (button, menu) => {
         if (!button || !menu) return
