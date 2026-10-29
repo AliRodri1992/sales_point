@@ -82,7 +82,7 @@ const positionSidebarFlyout = (target, flyout) => {
     const gap = 10
     const viewportPadding = 12
 
-    flyout.style.left = `${rect.right + gap}px`
+    flyout.style.left = `${Math.min(rect.right + gap, Math.max(12, window.innerWidth - flyout.offsetWidth - 12))}px`
 
     const flyoutHeight = flyout.offsetHeight
     const preferredTop = rect.top
@@ -113,6 +113,7 @@ const showSidebarFlyout = (target) => {
     flyout.id = FLYOUT_ID
     flyout.className = "admin-sidebar-flyout"
     flyout.setAttribute("role", "navigation")
+    target.setAttribute("aria-controls", FLYOUT_ID)
     flyout.setAttribute(
         "aria-label",
         target.querySelector(".sidebar-label")?.textContent?.trim() || ""
@@ -216,11 +217,12 @@ document.addEventListener("focusout", (event) => {
         ? event.target.closest(".sidebar-catalog > summary")
         : null
 
-    if (
-        target &&
-        !event.relatedTarget?.closest?.("#adminSidebarTooltip, #adminSidebarFlyout")
-    ) {
-        removeSidebarFlyout()
+    if (target && !event.relatedTarget?.closest?.("#adminSidebarFlyout")) {
+        // Defer dismissal until focus settles; clicking through the flyout must remain possible.
+        queueMicrotask(() => {
+            const focused = document.activeElement
+            if (!sidebarFlyout()?.contains(focused) && focused !== activeFlyoutTarget) removeSidebarFlyout()
+        })
     }
 
     removeSidebarTooltip()
@@ -287,4 +289,14 @@ document.addEventListener("mousemove", (event) => {
     syncFlyoutWithPointer(event)
     refreshSidebarTooltip(event)
     refreshSidebarFlyout()
+})
+
+// Keep focus in the expanded menu when tabbing into cloned flyout links.
+document.addEventListener("focusin", (event) => {
+    if (sidebarFlyout()?.contains(event.target)) removeSidebarTooltip()
+})
+
+document.addEventListener("turbo:before-cache", () => {
+    removeSidebarTooltip()
+    removeSidebarFlyout()
 })
