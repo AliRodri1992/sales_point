@@ -86,6 +86,8 @@ en:
         load_more: "Load more"
         scroll_label: "Address list with automatic loading"
       contact_cards:
+        no_results_title: "No contacts match your filters"
+        no_results_description: "Try another search or adjust the filters."
         phone_not_registered: "Phone not registered"
         email_not_registered: "Email not registered"
         subtitle: "Supplier contact people"

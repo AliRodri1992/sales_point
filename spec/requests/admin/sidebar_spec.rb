@@ -7,7 +7,6 @@ RSpec.describe 'Admin sidebar', type: :request do
 
   before { sign_in user }
 
-
   describe 'sidebar navigation accessibility' do
     it 'renders the collapsed navigation with persistent accessible link names' do
       user.update!(sidebar_collapsed: true)

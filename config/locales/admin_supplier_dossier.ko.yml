@@ -86,6 +86,8 @@ ko:
         load_more: "더 불러오기"
         scroll_label: "자동으로 추가 항목을 불러오는 주소 목록"
       contact_cards:
+        no_results_title: "필터에 맞는 연락처가 없습니다"
+        no_results_description: "다른 검색어를 사용하거나 필터를 변경하세요."
         phone_not_registered: "등록된 전화번호 없음"
         email_not_registered: "등록된 이메일 없음"
         subtitle: "공급업체 담당자"

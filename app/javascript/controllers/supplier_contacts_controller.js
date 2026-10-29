@@ -3,11 +3,16 @@ import { Controller } from "@hotwired/stimulus"
 // Loads one server-rendered page at a time inside the supplier's contact list.
 // Search and filters run on the server; no duplicate full-list download is needed.
 export default class extends Controller {
-  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty", "loading", "error", "loadMore"]
+  static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty",
+    "emptyTitle", "emptyText", "emptyAction", "loading", "error", "loadMore"]
   static values = {
     url: String,
     nextPage: Number,
-    filter: { type: String, default: "all" }
+    filter: { type: String, default: "all" },
+    noResultsTitle: String,
+    noResultsDescription: String,
+    emptyTitle: String,
+    emptyDescription: String
   }
 
   connect() {
@@ -16,6 +21,7 @@ export default class extends Controller {
     this.request = null
     this.searchTimer = null
     this.updateLoadMore()
+    this.updateEmptyMessage()
 
     if (this.hasScrollTarget && this.hasSentinelTarget && "IntersectionObserver" in window) {
       this.observer = new IntersectionObserver((entries) => {
@@ -72,11 +78,23 @@ export default class extends Controller {
     this.refresh()
   }
 
+  updateEmptyMessage() {
+    const searching = this.searchTarget.value.trim() !== "" || this.filterValue !== "all"
+    if (this.hasEmptyTitleTarget) {
+      this.emptyTitleTarget.textContent = searching ? this.noResultsTitleValue : this.emptyTitleValue
+    }
+    if (this.hasEmptyTextTarget) {
+      this.emptyTextTarget.textContent = searching ? this.noResultsDescriptionValue : this.emptyDescriptionValue
+    }
+    if (this.hasEmptyActionTarget) this.emptyActionTarget.classList.toggle("hidden", searching)
+  }
+
   refresh() {
     this.abortRequest()
     this.listTarget.replaceChildren()
     this.nextPageValue = 1
     this.countTarget.textContent = "0"
+    this.updateEmptyMessage()
     this.emptyTarget.classList.add("hidden")
     this.errorTarget.classList.add("hidden")
     this.scrollTarget.scrollTop = 0
@@ -132,6 +150,7 @@ export default class extends Controller {
       this.filterCountTargets.forEach((badge) => {
         badge.textContent = String(counts[badge.dataset.filter] ?? 0)
       })
+      this.updateEmptyMessage()
       this.emptyTarget.classList.toggle("hidden", total > 0)
     } catch (error) {
       if (error.name !== "AbortError" && this.request === controller) {

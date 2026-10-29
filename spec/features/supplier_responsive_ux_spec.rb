@@ -39,6 +39,14 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(page).to have_current_path(/tab=contacts/)
   end
 
+  scenario 'explains filtered contact empty states without offering an unrelated create action' do
+    visit admin_supplier_path(supplier, tab: 'contacts')
+    find('[data-supplier-contacts-target="search"]').fill_in with: 'nonexistent contact name'
+    expect(page).to have_css('[data-supplier-contacts-target="empty"]', visible: true)
+    expect(page).to have_text('No contacts match your filters')
+    expect(page).to have_no_css('[data-supplier-contacts-target="emptyAction"]', visible: true)
+  end
+
   scenario 'keeps finance navigation and panels connected at tablet width' do
     page.driver.browser.manage.window.resize_to(820, 1180)
     visit admin_supplier_path(supplier, tab: 'bank_accounts')

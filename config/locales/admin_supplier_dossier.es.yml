@@ -86,6 +86,8 @@ es:
         load_more: "Cargar más"
         scroll_label: "Lista de direcciones con carga automática"
       contact_cards:
+        no_results_title: "No hay contactos que coincidan"
+        no_results_description: "Prueba otra búsqueda o modifica los filtros."
         phone_not_registered: "Teléfono no registrado"
         email_not_registered: "Correo electrónico no registrado"
         subtitle: "Personas de contacto del proveedor"

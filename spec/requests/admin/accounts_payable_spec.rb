@@ -97,7 +97,7 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
   end
 
   it 'keeps the supplier statement available when an invoice currency association is missing' do
-    invoice = posted_invoice
+    posted_invoice
     allow_any_instance_of(SupplierInvoice).to receive(:currency).and_return(nil)
 
     get admin_supplier_path(supplier, tab: 'statement')
