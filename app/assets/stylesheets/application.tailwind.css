@@ -1511,3 +1511,10 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+/* Keep the user role and account name within the available sidebar width. */
+#adminSidebar .sidebar-user p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

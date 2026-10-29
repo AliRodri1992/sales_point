@@ -128,10 +128,18 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.sidebar_link_classes('products')).not_to include('text-slate-900}')
     end
 
-    it 'shows a generic role for non-administrators' do
-      allow(helper).to receive(:t).and_call_original
-      expect(helper.sidebar_role_label(double(admin?: false))).to eq(I18n.t('admin.shared.sidebar.role_user'))
-      expect(helper.sidebar_role_label(double(admin?: true))).to eq(I18n.t('admin.shared.sidebar.role_admin'))
+    it 'shows a generic role when a user has no assigned roles' do
+      user = create(:user)
+      expect(helper.sidebar_role_label(user)).to eq(I18n.t('admin.shared.sidebar.role_user'))
+    end
+
+    it 'shows the actual active role name in the account menu' do
+      user = create(:user)
+      role = create(:system_role, :system, name: 'Supervisor', code: 'supervisor')
+      create(:user_role, user:, system_role: role)
+
+      expect(helper.sidebar_role_label(user)).to eq('Supervisor')
+      expect(helper.sidebar_role_label(user)).to eq('Supervisor')
     end
   end
 
