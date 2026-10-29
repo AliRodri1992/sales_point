@@ -1,13 +1,15 @@
 <% current = current_language %>
 
 <% if current %>
-  <div class="relative" data-controller="language-selector" data-dashboard-selector>
+  <div class="relative" data-controller="language-selector" data-action="keydown->language-selector#keydown" data-dashboard-selector>
     <button
       id="languageSelectorButton"
       type="button"
       data-action="click->language-selector#toggle"
       class="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-700"
       aria-label="<%= t('admin.shared.language_selector.toggle') %>"
+      aria-expanded="false"
+      aria-controls="languageSelectorMenu"
     >
       <%= icon("language", class: "size-5 text-slate-500 transition-colors") %>
       <span class="hidden sm:inline">
