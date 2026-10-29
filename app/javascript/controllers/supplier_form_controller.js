@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
   static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary",
-    "addressValidationError"]
+    "addressValidationError", "progress"]
   static values = {
     index: { type: Number, default: 0 },
     addressValidationUrl: String,
@@ -339,8 +339,8 @@ export default class extends Controller {
       const editable = [...(this.stepTargets[index]?.querySelectorAll("input:not([type='hidden']), select, textarea") || [])]
         .filter((field) => !field.disabled && !field.closest("template"))
       const hasContent = editable.some((field) => field.type === "checkbox" ? field.checked : field.value.trim() !== "")
-      const complete = !invalid && (required.length > 0 ? required.every((field) => field.checkValidity()) : hasContent)
-      const state = invalid ? "error" : complete ? "complete" : "pending"
+      const complete = !invalid && (required.length > 0 ? required.every((field) => field.value.trim() !== "" && field.checkValidity()) : true)
+      const state = invalid ? "error" : complete ? "complete" : hasContent ? "progress" : "pending"
       tab.dataset.stepState = state
       tab.classList.toggle("ring-1", !!invalid)
       tab.classList.toggle("ring-rose-400", !!invalid)
@@ -351,14 +351,20 @@ export default class extends Controller {
         indicator.className = "ml-auto shrink-0 rounded-md px-2 py-1 text-[10px] font-bold"
         tab.append(indicator)
       }
-      indicator.textContent = this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`]
+      indicator.textContent = state === "progress" ? "…" : this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`]
       indicator.classList.toggle("bg-emerald-100", state === "complete")
       indicator.classList.toggle("text-emerald-800", state === "complete")
       indicator.classList.toggle("bg-rose-100", state === "error")
       indicator.classList.toggle("text-rose-800", state === "error")
+      indicator.classList.toggle("bg-amber-100", state === "progress")
+      indicator.classList.toggle("text-amber-800", state === "progress")
       indicator.classList.toggle("bg-slate-100", state === "pending")
       indicator.classList.toggle("text-slate-600", state === "pending")
     })
+    if (this.hasProgressTarget) {
+      const count = this.tabTargets.slice(0, -1).filter((tab) => tab.dataset.stepState === "complete").length
+      this.progressTarget.textContent = `${count} / ${this.stepTargets.length - 1}`
+    }
   }
 
   render() {
