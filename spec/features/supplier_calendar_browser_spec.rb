@@ -19,6 +19,21 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
 
   after { Warden.test_reset! }
 
+  scenario 'places the selected day agenda before the scrollable month grid on mobile' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_supplier_path(supplier, tab: 'schedules')
+
+    expect(page).to have_css('[data-calendar-day-details]', visible: true)
+    agenda_order = page.evaluate_script(<<~JS)
+      const agenda = document.querySelector('[data-calendar-day-details]').closest('aside')
+      return agenda ? getComputedStyle(agenda).order : null
+    JS
+    expect(agenda_order).to eq('1')
+    expect(page).to have_css('[role="region"][tabindex="0"]', visible: true)
+  ensure
+    page.driver.browser.manage.window.resize_to(1400, 900)
+  end
+
   scenario 'creates and edits a dated event in the accessible side drawer' do
     branch
     calendar_params = { tab: 'schedules', calendar_month: '2026-10',

@@ -68,6 +68,14 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     )
   end
 
+  scenario 'highlights the entire selected section without a left accent border' do
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    visit admin_supplier_path(supplier, tab: 'contacts')
+    tab = find('[role="tab"][data-section="contacts"]')
+    expect(tab['class']).to include('bg-emerald-50')
+    expect(tab['class']).not_to include('border-l-[3px]')
+  end
+
   scenario 'supports vertical keyboard navigation between authorized sections' do
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit admin_supplier_path(supplier, tab: 'general')

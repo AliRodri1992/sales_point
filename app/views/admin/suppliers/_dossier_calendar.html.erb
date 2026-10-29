@@ -72,7 +72,7 @@
     <% if calendar.view == 'day' %>
       <%= render 'dossier_calendar_day', supplier: supplier, calendar: calendar, can_manage: can_manage %>
     <% else %>
-    <div class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="order-2 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm 2xl:order-1">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-4 sm:px-5">
         <div class="flex items-center gap-2">
           <%= link_to admin_supplier_path(supplier, { tab: 'schedules' }.merge(calendar.next_navigation(-1), calendar.filtered_params)),
@@ -157,7 +157,7 @@
     </div>
 
     <% end %>
-    <aside class="space-y-4">
+    <aside class="order-1 space-y-4 2xl:order-2">
       <% unless calendar.view == 'day' %>
         <%= render 'dossier_calendar_day', supplier: supplier, calendar: calendar, can_manage: can_manage %>
       <% end %>

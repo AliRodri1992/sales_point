@@ -54,8 +54,6 @@ export default class extends Controller {
       const active = tab.dataset.section === selected
       tab.setAttribute("aria-selected", String(active))
       tab.tabIndex = active ? 0 : -1
-      tab.classList.toggle("border-emerald-700", active)
-      tab.classList.toggle("border-transparent", !active)
       tab.classList.toggle("bg-emerald-50", active)
       tab.classList.toggle("text-emerald-800", active)
       tab.classList.toggle("font-semibold", active)
