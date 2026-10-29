@@ -27,6 +27,15 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     find('[data-supplier-form-target="summary"]')
   end
 
+  scenario 'uses the available width and exposes section progress without a promotional panel' do
+    visit new_admin_supplier_path
+
+    expect(page).to have_css('[data-supplier-form-target="progress"]')
+    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-state]', count: 6, visible: :all)
+    expect(page).to have_no_css('img[src*="supplier-delivery"]', visible: :all)
+    expect(page).to have_css('form[data-controller="supplier-form"]')
+  end
+
   scenario 'summarizes all editable steps in the new supplier review' do
     visit new_admin_supplier_path
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
