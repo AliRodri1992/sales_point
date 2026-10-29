@@ -102,8 +102,12 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page.evaluate_script("document.getElementById('sidebarOverlay').hasAttribute('inert')")).to be(false)
 
     find('#sidebarCloseButton').click
-    expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(false)
-    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+    Selenium::WebDriver::Wait.new(timeout: 3, interval: 0.05).until do
+      page.evaluate_script("!document.getElementById('adminDashboardContent').inert")
+    end
+    Selenium::WebDriver::Wait.new(timeout: 3, interval: 0.05).until do
+      page.evaluate_script('document.activeElement.id') == 'sidebarToggle'
+    end
 
     page.driver.browser.manage.window.resize_to(1440, 900)
     expect(page.evaluate_script("document.getElementById('adminSidebar').inert")).to be(false)

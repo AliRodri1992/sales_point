@@ -440,8 +440,8 @@ document.addEventListener("turbo:load", () => {
 
         if (wasOpen && window.innerWidth < 1024) {
             sidebarToggle?.focus({ preventScroll: true })
-            // Chrome may move focus back to the hidden close button after its click.
-            queueMicrotask(() => sidebarToggle?.focus({ preventScroll: true }))
+            // Restore focus after the click default action has settled.
+            requestAnimationFrame(() => sidebarToggle?.focus({ preventScroll: true }))
         }
     }
 
@@ -534,14 +534,17 @@ document.addEventListener("turbo:load", () => {
                 },
                 body: JSON.stringify({ sidebar_collapsed: collapsed })
             })
-            if (!response.ok) throw new Error(`Sidebar save failed: ${response.status}`)
+            if (!response.ok) {
+                throw new Error(`Sidebar save failed: ${response.status}`)
+            }
             persistedSidebarCollapsed = collapsed
             if (revision === sidebarSaveRevision) {
                 sidebarToggle?.setAttribute("data-sidebar-save-state", "saved")
             }
-        }).catch(() => {
+        }).catch((error) => {
             if (revision !== sidebarSaveRevision || !sidebar) return
             sidebarToggle?.setAttribute("data-sidebar-save-state", "error")
+            sidebarToggle?.setAttribute("data-sidebar-save-error", error.message)
 
             sidebar.classList.toggle("sidebar-collapsed", persistedSidebarCollapsed)
             sidebarToggle?.setAttribute("aria-expanded", String(!persistedSidebarCollapsed))

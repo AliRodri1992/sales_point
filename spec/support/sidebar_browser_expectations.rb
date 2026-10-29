@@ -12,6 +12,7 @@ module SidebarBrowserExpectations
           classes: sidebar?.className,
           ready: toggle?.dataset.sidebarReady,
           save: toggle?.dataset.sidebarSaveState,
+          saveError: toggle?.dataset.sidebarSaveError,
           expanded: toggle?.getAttribute("aria-expanded"),
           viewport: window.innerWidth,
           alert: document.querySelector(".swal2-popup")?.textContent?.trim()

@@ -100,7 +100,8 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(code['aria-invalid']).to eq('true')
     expect(code['class']).to include('input-field-error')
     expect(code['aria-invalid']).to eq('true')
-    expect(page.evaluate_script('getComputedStyle(arguments[0]).transitionProperty', code)).not_to include('border-color')
+    transition = page.evaluate_script('getComputedStyle(arguments[0]).transitionProperty', code)
+    expect(transition).not_to include('border-color')
     await_border_color(code, 'rgb(225, 29, 72)')
 
     code.click
