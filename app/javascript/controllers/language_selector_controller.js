@@ -4,6 +4,10 @@ import { closeDashboardSelectors, openDashboardSelector } from "./selector_coord
 export default class extends Controller {
     static targets = ["dropdown"]
 
+    connect() {
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "false")
+    }
+
     toggle(event) {
         event.preventDefault()
 
@@ -16,11 +20,21 @@ export default class extends Controller {
 
         openDashboardSelector(this.element)
         this.dropdownTarget.classList.remove("hidden")
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "true")
         this.refreshDropdownContent()
     }
 
     close() {
         this.dropdownTarget.classList.add("hidden")
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "false")
+    }
+
+    keydown(event) {
+        if (event.key === "Escape" && !this.dropdownTarget.classList.contains("hidden")) {
+            event.preventDefault()
+            this.close()
+            this.element.querySelector("#languageSelectorButton")?.focus()
+        }
     }
 
     async refreshDropdownContent() {
@@ -52,6 +66,7 @@ export default class extends Controller {
         event.stopPropagation()
 
         const language = event.currentTarget.dataset.language
+        if (!language) return
         const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
 
         fetch("/language", {
@@ -62,7 +77,8 @@ export default class extends Controller {
             },
             body: JSON.stringify({ language })
         })
-            .then(() => {
+            .then((response) => {
+                if (!response.ok) throw new Error(`Language update failed: HTTP ${response.status}`)
                 closeDashboardSelectors()
                 window.location.reload()
             })
