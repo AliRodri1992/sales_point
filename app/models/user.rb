@@ -69,8 +69,9 @@ class User < ApplicationRecord
   end
 
   def initials
-    base = username.presence || email.to_s.split('@').first
+    base = username.presence || email.to_s.split('@').first.to_s
     parts = base.scan(/[[:alnum:]]+/)
+    return 'U' if parts.empty?
     return parts.first.to_s.first(2).upcase if parts.one?
 
     parts.first(2).pluck(0).join.upcase

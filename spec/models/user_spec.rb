@@ -101,6 +101,13 @@ RSpec.describe User, type: :model do
     it 'uses two characters for single-part email aliases' do
       expect(build(:user, username: nil, email: 'ivan@example.com').initials).to eq('IV')
     end
+
+    it 'returns a safe placeholder when a draft user has no name or email' do
+      user = build(:user, username: nil, email: nil)
+
+      expect(user.initials).to eq('U')
+      expect(user.display_name).to eq('U')
+    end
   end
 
   describe '#display_role_name' do

@@ -28,6 +28,7 @@ module SidebarHelper
   def sidebar_navigation_icon(name, class_name: 'size-5')
     icon(SIDEBAR_NAVIGATION_ICONS.fetch(name.to_sym),
          class: class_name,
+         aria: { hidden: true },
          data: { sidebar_icon: name.to_s.dasherize })
   end
 

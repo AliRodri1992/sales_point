@@ -5,14 +5,20 @@ require 'rails_helper'
 RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   include Warden::Test::Helpers
 
+  let(:organization) { create(:organization) }
   let(:user) { create(:user, :english) }
 
   before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
     Warden.test_mode!
     login_as(user, scope: :user)
   end
 
-  after { Warden.test_reset! }
+  after do
+    page.driver.browser.manage.window.resize_to(1400, 900)
+    Warden.test_reset!
+  end
 
   scenario 'opens the same account menu in expanded and collapsed modes' do
     page.driver.browser.manage.window.resize_to(1400, 900)

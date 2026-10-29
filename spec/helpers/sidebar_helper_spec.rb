@@ -9,6 +9,7 @@ RSpec.describe SidebarHelper, type: :helper do
 
     expect(icon).to be_present
     expect(icon['data-sidebar-icon']).to eq('dashboard')
+    expect(icon['aria-hidden']).to eq('true')
     expect(icon['class']).to include('size-5')
   end
 
