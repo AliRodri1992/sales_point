@@ -1387,6 +1387,23 @@ select:focus-visible {
 @media (prefers-reduced-motion: reduce) { .demo-request-page .success-state { animation: none; } }
 
 
+/* Supplier forms: invalid state must remain visible on focus, including custom selects. */
+form[data-controller~="supplier-form"] :is(input, select, textarea).input-field-error:not([type="checkbox"]),
+form[data-controller~="supplier-form"] :is(input, select, textarea)[aria-invalid="true"]:not([type="checkbox"]),
+form[data-controller~="supplier-form"] [data-controller~="delta-select"] > button[aria-invalid="true"] {
+  border-color: #e11d48 !important;
+  background-color: #fff1f2 !important;
+}
+
+form[data-controller~="supplier-form"] :is(input, select, textarea).input-field-error:focus:not([type="checkbox"]),
+form[data-controller~="supplier-form"] :is(input, select, textarea)[aria-invalid="true"]:focus:not([type="checkbox"]),
+form[data-controller~="supplier-form"] [data-controller~="delta-select"] > button[aria-invalid="true"]:focus-visible {
+  border-color: #e11d48 !important;
+  outline-color: #e11d48;
+  box-shadow: 0 0 0 4px rgba(225, 29, 72, .14) !important;
+  background-color: #fff1f2 !important;
+}
+
 /* Delta POS selects: an unselected hover is subtle; selected is solid emerald. */
 .delta-select-open { z-index: 60; }
 [data-controller~="delta-select"] .delta-select-native {
