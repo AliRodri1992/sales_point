@@ -64,7 +64,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     summary.send_keys(:escape)
 
     expect(page).to have_no_css('details[data-supplier-form-target="navigation"][open]', visible: :all)
-    expect(page.evaluate_script("document.activeElement.tagName")).to eq('SUMMARY')
+    expect(page.evaluate_script('document.activeElement.tagName')).to eq('SUMMARY')
   end
 
   scenario 'keeps the compact navigation inside the viewport on mobile' do

@@ -32,8 +32,8 @@ class SystemRole < ApplicationRecord
   validates :name, uniqueness: { scope: :role_type }
 
   before_validation :generate_code
-  after_create_commit :provision_administrative_permissions, if: :administrative_role_ready?
-  after_update_commit :provision_administrative_permissions, if: :administrative_role_activated?
+  after_commit :provision_administrative_permissions,
+               on: %i[create update], if: :administrative_role_activated?
 
   scope :system_roles, -> { where(role_type: 'system') }
   scope :branch_roles, -> { where(role_type: 'branch') }
@@ -54,7 +54,7 @@ class SystemRole < ApplicationRecord
 
   def administrative_role_activated?
     administrative_role_ready? &&
-      (saved_change_to_code? || saved_change_to_status? || saved_change_to_deleted_at?)
+      (saved_change_to_id? || saved_change_to_code? || saved_change_to_status? || saved_change_to_deleted_at?)
   end
 
   def provision_administrative_permissions

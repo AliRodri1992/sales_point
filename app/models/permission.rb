@@ -21,13 +21,12 @@ class Permission < ApplicationRecord
 
   scope :available, -> { where(status: 'active').order(:module_name, :name) }
 
-  after_create_commit :provision_administrators, if: :active?
-  after_update_commit :provision_administrators, if: :activated?
+  after_commit :provision_administrators, on: %i[create update], if: :requires_provisioning?
 
   private
 
-  def activated?
-    active? && saved_change_to_status?
+  def requires_provisioning?
+    active? && (saved_change_to_id? || saved_change_to_status?)
   end
 
   def provision_administrators

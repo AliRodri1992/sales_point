@@ -76,7 +76,9 @@ module ApplicationHelper
   end
 
   def form_state_classes(object, attribute)
-    object.errors[attribute].any? ? 'input-field-error border border-rose-500 bg-rose-50' : 'border border-slate-200 bg-slate-50'
+    return 'input-field-error border border-rose-500 bg-rose-50' if object.errors[attribute].any?
+
+    'border border-slate-200 bg-slate-50'
   end
 
   def error_message_for(object, attribute)
