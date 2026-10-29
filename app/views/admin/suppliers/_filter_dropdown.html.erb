@@ -1,7 +1,8 @@
 <% current_value = selected.to_s %>
 <% selected_option = options.find { |_, value| value.to_s == current_value } %>
 <details class="group relative w-full" data-controller="supplier-dropdown">
-  <summary class="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 [&::-webkit-details-marker]:hidden">
+  <summary aria-label="<%= local_assigns[:aria_label] || name.to_s.humanize %>"
+            aria-labelledby="supplier_<%= name %>_label" class="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 [&::-webkit-details-marker]:hidden">
     <span data-supplier-dropdown-target="label"><%= selected_option&.first || options.first&.first %></span>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-slate-500 transition group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
   </summary>

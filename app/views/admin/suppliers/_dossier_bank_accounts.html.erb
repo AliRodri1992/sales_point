@@ -38,7 +38,7 @@
         </div>
         <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto]">
           <div>
-            <span class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.bank_filter') %></span>
+            <span id="supplier_banks_bank_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.bank_filter') %></span>
             <%= render 'admin/suppliers/filter_dropdown', name: 'banks_bank', selected: bank_page.bank,
                        options: [[t('admin.bank_cards.all_banks'), '']] + bank_page.banks.map { |bank| [bank, bank] },
                        plain_options: true %>

@@ -166,6 +166,17 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     end
   end
 
+  it 'provides a keyboard-accessible calendar grid and descriptive bank filter label' do
+    get admin_supplier_path(supplier, tab: 'schedules')
+    region = dossier.at_css('section[data-section="schedules"] [role="region"][tabindex="0"]')
+    expect(region).to be_present
+    expect(region['aria-label']).to be_present
+
+    get admin_supplier_path(supplier, tab: 'bank_accounts')
+    filter = dossier.at_css('section[data-section="bank_accounts"] summary[aria-labelledby="supplier_banks_bank_label"]')
+    expect(filter).to be_present
+  end
+
   it 'separates the calendar empty state from its management header' do
     get admin_supplier_path(supplier, tab: 'schedules')
 

@@ -111,8 +111,9 @@
           <span class="inline-flex items-center gap-2"><span class="size-2.5 rounded-full <%= tone %>"></span><%= t("admin.supplier_calendar.kinds.#{kind}") %></span>
         <% end %>
       </div>
-      <div class="overflow-x-auto">
-        <div class="min-w-[665px]">
+      <div class="overflow-x-auto" role="region" tabindex="0"
+           aria-label="<%= t('admin.supplier_calendar.title') %>">
+        <div class="min-w-[620px]">
           <div class="grid grid-cols-7 border-b border-slate-100 bg-slate-50 text-center text-xs font-bold uppercase tracking-wide text-slate-500">
             <% (0..6).each do |offset| %>
               <div class="py-3"><%= t('date.day_names')[(offset + 1) % 7].to_s.first(3) %></div>
@@ -131,7 +132,7 @@
                     <% items.first(3).each do |item| %>
                       <% tone = { 'visit' => 'border-sky-200 bg-sky-50 text-sky-900', 'order' => 'border-amber-200 bg-amber-50 text-amber-900', 'delivery' => 'border-emerald-200 bg-emerald-50 text-emerald-900', 'other' => 'border-violet-200 bg-violet-50 text-violet-900' }.fetch(item[:kind]) %>
                       <%= link_to admin_supplier_path(supplier, tab: 'schedules', **calendar.day_navigation(date)),
-                                  class: "block truncate rounded-md border px-1.5 py-1 text-[10px] font-semibold #{tone}",
+                                  class: "block truncate rounded-md border px-1.5 py-1 text-xs font-semibold #{tone}",
                                   title: "#{item[:time]} · #{item[:title]} · #{item[:branch]}" do %>
                         <%= item[:time] %> · <%= item[:title] %>
                       <% end %>
@@ -139,10 +140,10 @@
                     <% if items.length > 3 %>
                       <%= link_to t('admin.supplier_calendar.more', count: items.length - 3),
                                   admin_supplier_path(supplier, tab: 'schedules', **calendar.day_navigation(date)),
-                                  class: 'block text-[10px] font-semibold text-emerald-700 hover:underline' %>
+                                  class: 'block text-xs font-semibold text-emerald-700 hover:underline' %>
                     <% end %>
                     <% if exceptions.any? %>
-                      <span class="block truncate rounded-md bg-rose-50 px-1.5 py-1 text-[10px] font-semibold text-rose-700" title="<%= t('admin.supplier_calendar.exceptions') %>">
+                      <span class="block truncate rounded-md bg-rose-50 px-1.5 py-1 text-xs font-semibold text-rose-700" title="<%= t('admin.supplier_calendar.exceptions') %>">
                         <%= t('admin.supplier_calendar.exception_note') %>
                       </span>
                     <% end %>
