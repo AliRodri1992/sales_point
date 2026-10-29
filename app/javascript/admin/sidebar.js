@@ -71,7 +71,7 @@ const refreshSidebarTooltip = (event) => {
 const flyoutItemMarkup = (submenu) => {
     const fragment = document.createDocumentFragment()
 
-    [...submenu.children].filter((item) => item.matches("a, details, [aria-disabled]")).forEach((item) => {
+    Array.from(submenu.children).filter((item) => item.matches("a, details, [aria-disabled]")).forEach((item) => {
         const clone = item.cloneNode(true)
         clone.removeAttribute("id")
         clone.querySelectorAll("[id]").forEach((child) => child.removeAttribute("id"))
