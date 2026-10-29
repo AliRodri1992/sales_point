@@ -42,8 +42,21 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     expect(page).to have_css('#adminSidebarFlyout.is-visible')
     expect(page).to have_css('#adminSidebarFlyout a[href]', minimum: 1)
 
-    page.send_keys(:escape)
+    find('body').send_keys(:escape)
     expect(page).to have_no_css('#adminSidebarFlyout', visible: :all)
+  end
+
+  scenario 'keeps the selected dashboard link readable when keyboard focused' do
+    page.driver.browser.manage.window.resize_to(1400, 900)
+    visit admin_dashboard_path
+
+    active_link = find('#adminSidebar nav a[aria-current="page"]', match: :first)
+    active_link.send_keys(:tab)
+    page.execute_script('arguments[0].focus()', active_link.native)
+
+    expect(page.evaluate_script(<<~JS)).to eq('rgb(255, 255, 255)')
+      getComputedStyle(document.querySelector('#adminSidebar nav a[aria-current="page"]')).color
+    JS
   end
 
   scenario 'opens a modal drawer on mobile and restores focus on close' do

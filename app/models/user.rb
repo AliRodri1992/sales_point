@@ -73,7 +73,7 @@ class User < ApplicationRecord
     parts = base.scan(/[[:alnum:]]+/)
     return parts.first.to_s.first(2).upcase if parts.one?
 
-    parts.first(2).map { |part| part[0] }.join.upcase
+    parts.first(2).pluck(0).join.upcase
   end
 
   def display_name

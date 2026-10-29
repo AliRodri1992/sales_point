@@ -313,7 +313,7 @@
           aria-expanded="false"
           aria-controls="sidebarUserMenu"
           aria-label="<%= t('admin.shared.user_menu.toggle') %>"
-          class="user-menu-button flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          class="user-menu-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-600"
         >
           <span class="sidebar-avatar-initials" aria-hidden="true"><%= current_user.initials %></span>
           <%= icon("ellipsis-vertical", class: "sidebar-menu-ellipsis size-5") %>

@@ -97,6 +97,10 @@ RSpec.describe User, type: :model do
       expect(user.initials).to eq('ÁN')
       expect(user.display_name).to eq('Álvaro Núñez')
     end
+
+    it 'uses two characters for single-part email aliases' do
+      expect(build(:user, username: nil, email: 'ivan@example.com').initials).to eq('IV')
+    end
   end
 
   describe 'email validation' do
