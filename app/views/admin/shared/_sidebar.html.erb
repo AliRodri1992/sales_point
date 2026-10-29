@@ -1,11 +1,12 @@
 <aside
   id="adminSidebar"
+  aria-label="<%= t('admin.shared.sidebar.navigation') %>"
   aria-labelledby="adminSidebarNavigationLabel"
   class="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300<%= current_user.sidebar_collapsed? ? " sidebar-collapsed" : "" %>"
 >
   <span id="adminSidebarNavigationLabel" class="sr-only"><%= t('admin.shared.sidebar.navigation') %></span>
   <div class="flex h-20 items-center justify-between border-b border-slate-200 px-5">
-    <a href="<%= admin_dashboard_path %>" class="flex items-center gap-3">
+    <a href="<%= admin_dashboard_path %>" aria-label="Delta POS" class="flex items-center gap-3">
       <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-blue-600 text-white shadow-sm">
         <%= icon("shopping-bag", variant: :solid, class: "size-5") %>
       </div>
@@ -183,7 +184,7 @@
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
 
-            <% if current_user.permission?('categories.access') %>
+            <% if (current_user.admin? || current_user.permission?('categories.access')) %>
               <a
                 href="<%= admin_categories_path %>"
                 data-tooltip="<%= t('admin.shared.sidebar.categories') %>" aria-label="<%= t('admin.shared.sidebar.categories') %>"
