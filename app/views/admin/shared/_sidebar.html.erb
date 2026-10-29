@@ -104,65 +104,7 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.cash_register') %></span>
         </span>
 
-        <details class="sidebar-catalog">
-          <summary
-            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-            data-tooltip="<%= t('admin.shared.sidebar.inventory') %>"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true" data-sidebar-icon="inventory"><path d="M3 3v18M21 3v18M3 9h18M3 16h18M3 21h18"/><rect x="6" y="4" width="5" height="5" rx=".5"/><rect x="14" y="4" width="4" height="5" rx=".5"/><rect x="7" y="11" width="5" height="5" rx=".5"/><rect x="15" y="11" width="3" height="5" rx=".5"/></svg>
-            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.inventory') %></span>
-            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
-          </summary>
-
-          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-            <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5ZM3 7v10l9 5 9-5V7M12 12v10M7.5 4.5l9 5"/></svg>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
-            </span>
-
-            <details class="sidebar-catalog">
-              <summary
-                class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13M3 11h18M7 21v-7h10v7M7 17h10"/></svg>
-                <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.stock') %></span>
-                <%= icon("chevron-down", class: "sidebar-chevron size-3.5 text-slate-400") %>
-              </summary>
-
-              <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-                <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M3 10V21h18V10M2 7l2-4h16l2 4v3a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V7M9 21v-7h6v7"/></svg>
-                  <span class="sidebar-label"><%= t('admin.shared.sidebar.by_branch') %></span>
-                </span>
-
-                <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>
-                  <span class="sidebar-label"><%= t('admin.shared.sidebar.movements') %></span>
-                </span>
-
-                <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-                  class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
-                  <span class="sidebar-label"><%= t('admin.shared.sidebar.adjustments') %></span>
-                </span>
-              </div>
-            </details>
-
-            <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><rect x="4" y="4" width="16" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 12h7M9 16h7M7 12h.01M7 16h.01"/></svg>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.kardex') %></span>
-            </span>
-          </div>
-        </details>
+        
 
         <a
           href="<%= admin_clients_path %>"
