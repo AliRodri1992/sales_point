@@ -380,6 +380,7 @@ document.addEventListener("turbo:load", () => {
         if (!sidebar) return
 
         sidebar.classList.add("sidebar-open")
+        sidebar.removeAttribute("inert")
         sidebar.setAttribute("role", "dialog")
         sidebar.setAttribute("aria-modal", "true")
         sidebarToggle?.setAttribute("aria-expanded", "true")
@@ -398,6 +399,7 @@ document.addEventListener("turbo:load", () => {
 
         const wasOpen = sidebar.classList.contains("sidebar-open")
         sidebar.classList.remove("sidebar-open")
+        if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
         sidebar.removeAttribute("role")
         sidebar.removeAttribute("aria-modal")
         sidebarToggle?.setAttribute("aria-expanded", "false")
@@ -429,6 +431,20 @@ document.addEventListener("turbo:load", () => {
             first.focus()
         }
     }
+
+    if (sidebar && window.innerWidth < 1024 && !sidebar.classList.contains("sidebar-open")) {
+        sidebar.setAttribute("inert", "")
+    }
+
+    window.addEventListener("resize", () => {
+        if (!sidebar) return
+        if (window.innerWidth >= 1024) {
+            if (sidebar.classList.contains("sidebar-open")) closeMobileSidebar()
+            sidebar.removeAttribute("inert")
+        } else if (!sidebar.classList.contains("sidebar-open")) {
+            sidebar.setAttribute("inert", "")
+        }
+    })
 
     document.addEventListener("keydown", trapMobileSidebarFocus)
     sidebarCloseButton?.addEventListener("click", closeMobileSidebar)
