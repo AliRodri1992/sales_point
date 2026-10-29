@@ -128,6 +128,9 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
       visit admin_dashboard_path
       find('#sidebarToggle').click
 
+      Selenium::WebDriver::Wait.new(timeout: 3, interval: 0.05).until do
+        page.evaluate_script("Math.abs(document.getElementById('adminSidebar').getBoundingClientRect().left) < 1")
+      end
       bounds = page.evaluate_script(<<~JS)
         (function() {
           const rect = document.getElementById('adminSidebar').getBoundingClientRect()
@@ -146,6 +149,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
 
     summaries = all('#adminSidebar .sidebar-catalog > summary', visible: :all)
     summaries.last.send_keys(:enter)
+    expect(page).to have_css('#adminSidebarFlyout.is-visible')
     expect(page).to have_css('#adminSidebarFlyout [aria-disabled="true"]', minimum: 1)
   end
 
