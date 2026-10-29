@@ -35,6 +35,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
 
     find('#sidebarToggle').click
     expect_sidebar_collapsed
+    expect(page).to have_css('#sidebarToggle[data-sidebar-save-state="saved"]')
     expect(page).to have_css('#sidebarUserMenuButton .sidebar-avatar-initials', visible: true)
     expect(page.evaluate_script(<<~JS)).to be(true)
       (() => {

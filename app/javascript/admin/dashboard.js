@@ -522,16 +522,19 @@ document.addEventListener("turbo:load", () => {
         sidebarToggle?.setAttribute("data-sidebar-save-state", "pending")
         // Serialize saves so quick toggles cannot reach the server out of order.
         sidebarSaveQueue = sidebarSaveQueue.catch(() => {}).then(async () => {
-            const csrf = document.querySelector('meta[name="csrf-token"]')
-            if (!csrf) throw new Error("Missing CSRF token")
+            // Rails omits the CSRF meta tag when forgery protection is disabled
+            // (for example, in browser specs). In protected environments Rails
+            // validates the token; never send a fabricated or empty value.
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+            const headers = {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            }
+            if (csrf) headers["X-CSRF-Token"] = csrf
 
             const response = await fetch("/admin/sidebar", {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-Token": csrf.content,
-                    "X-Requested-With": "XMLHttpRequest"
-                },
+                headers,
                 body: JSON.stringify({ sidebar_collapsed: collapsed })
             })
             if (!response.ok) {

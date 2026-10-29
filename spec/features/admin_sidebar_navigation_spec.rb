@@ -176,6 +176,8 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     find('#sidebarToggle').click
 
     expect_sidebar_collapsed
+    expect(page).to have_css('#sidebarToggle[data-sidebar-save-state="saved"]')
+    expect(user.reload.sidebar_collapsed).to be(true)
   end
 
   scenario 'keeps the account menu usable on a collapsed desktop sidebar' do

@@ -107,6 +107,14 @@ RSpec.describe 'Admin sidebar', type: :request do
       expect(user.reload.sidebar_collapsed).to be(true)
     end
 
+    it 'persists a preference even without a CSRF token in the test environment' do
+      patch admin_sidebar_path, params: { sidebar_collapsed: 'true' },
+                                headers: { 'Content-Type' => 'application/json' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.sidebar_collapsed).to be(true)
+    end
+
     it 'expands the sidebar when the parameter is false' do
       user.update!(sidebar_collapsed: true)
 
