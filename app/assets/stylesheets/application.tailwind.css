@@ -335,11 +335,15 @@ body.sidebar-drawer-open {
         z-index: 50;
         height: 100vh;
         transform: translateX(-100%);
+        visibility: hidden;
+        pointer-events: none;
         box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
     }
 
     #adminSidebar.sidebar-open {
         transform: translateX(0);
+        visibility: visible;
+        pointer-events: auto;
     }
 
     #adminSidebar .sidebar-mobile-close {
@@ -453,7 +457,17 @@ body.sidebar-drawer-open {
     }
 
     #adminSidebar.sidebar-collapsed .sidebar-user-row > div:first-child {
-        display: none;
+        display: flex;
+    }
+
+    #adminSidebar.sidebar-collapsed .sidebar-user-row {
+        gap: .25rem;
+        padding: .25rem;
+    }
+
+    #adminSidebar.sidebar-collapsed #sidebarUserMenuButton {
+        width: 1.75rem;
+        min-width: 1.75rem;
     }
 
     #adminSidebar.sidebar-collapsed #sidebarUserMenuButton {
