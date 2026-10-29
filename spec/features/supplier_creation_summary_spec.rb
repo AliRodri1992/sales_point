@@ -82,6 +82,47 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     page.driver.browser.manage.window.resize_to(1400, 900)
   end
 
+  scenario 'marks invalid required fields with red borders and restores them after correction' do
+    visit new_admin_supplier_path
+
+    find('[data-supplier-form-target="next"]').click
+
+    code = find('input[name="supplier[code]"]')
+    expect(code['aria-invalid']).to eq('true')
+    expect(code['class']).to include('input-field-error')
+    expect(page.evaluate_script(<<~JS)).to eq('rgb(225, 29, 72)')
+      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
+    JS
+
+    code.click
+    expect(page.evaluate_script(<<~JS)).to eq('rgb(225, 29, 72)')
+      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
+    JS
+
+    code.fill_in with: 'SUP-VALID-01'
+    expect(code['aria-invalid']).not_to eq('true')
+    expect(code['class']).not_to include('input-field-error')
+    expect(page.evaluate_script(<<~JS)).not_to eq('rgb(225, 29, 72)')
+      getComputedStyle(document.querySelector('input[name="supplier[code]"]')).borderTopColor
+    JS
+  end
+
+  scenario 'shows the same error styling on the visible custom select trigger' do
+    visit new_admin_supplier_path
+
+    page.execute_script(<<~JS)
+      const form = document.querySelector('form[data-controller="supplier-form"]')
+      window.Stimulus.getControllerForElementAndIdentifier(form, 'supplier-form').indexValue = 1
+    JS
+
+    find('[data-supplier-form-target="next"]').click
+    select = find('select[name="supplier[person_type]"]', visible: :all)
+    expect(select['aria-invalid']).to eq('true')
+    trigger = find('[data-controller~="delta-select"] button[aria-haspopup="listbox"][aria-invalid="true"]',
+                   visible: true, match: :first)
+    expect(page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', trigger)).to eq('rgb(225, 29, 72)')
+  end
+
   scenario 'summarizes all editable steps in the new supplier review' do
     visit new_admin_supplier_path
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
