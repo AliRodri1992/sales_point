@@ -45,6 +45,7 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(page).to have_css('[data-supplier-contacts-target="empty"]', visible: true)
     expect(page).to have_text('No contacts match your filters')
     expect(page).to have_no_css('[data-supplier-contacts-target="emptyAction"]', visible: true)
+    expect(find('[data-supplier-contacts-target="emptyText"]', visible: true)['aria-live']).to eq('polite')
   end
 
   scenario 'keeps finance navigation and panels connected at tablet width' do

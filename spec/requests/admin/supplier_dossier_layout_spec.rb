@@ -50,7 +50,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
       blocked_reason: 'Manual review'
     )
 
-    get admin_supplier_path(supplier, tab: 'bank_accounts')
+    get admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: 'blocked')
     card = dossier.at_css('[data-supplier-bank-accounts-target="card"]')
     expect(card.at_css('[data-bank-operational-status]')['data-bank-operational-status']).to eq('blocked')
     expect(card.at_css('[data-bank-verification-status]')['data-bank-verification-status']).to eq('pending')

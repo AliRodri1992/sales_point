@@ -68,7 +68,7 @@ RSpec.describe 'Global branded select dropdowns', type: :feature, js: true do
 
     wrapper = enhanced_select('status')
     wrapper.find('button[aria-haspopup="listbox"]').click
-    archived = wrapper.find('[role="option"]', text: 'Inactive', exact_text: true)
+    archived = wrapper.find('[role="option"]', text: 'Archived', exact_text: true)
     archived.click
     expect(find('select[name="status"]', visible: :all).value).to eq('archived')
     click_button 'Search'

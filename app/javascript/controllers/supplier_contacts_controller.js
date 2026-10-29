@@ -86,7 +86,10 @@ export default class extends Controller {
     if (this.hasEmptyTextTarget) {
       this.emptyTextTarget.textContent = searching ? this.noResultsDescriptionValue : this.emptyDescriptionValue
     }
-    if (this.hasEmptyActionTarget) this.emptyActionTarget.classList.toggle("hidden", searching)
+    if (this.hasEmptyActionTarget) {
+      this.emptyActionTarget.classList.toggle("!hidden", searching)
+      this.emptyActionTarget.hidden = searching
+    }
   }
 
   refresh() {
