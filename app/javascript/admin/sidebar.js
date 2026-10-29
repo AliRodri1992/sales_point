@@ -16,6 +16,7 @@ const removeSidebarTooltip = () => {
 
 const removeSidebarFlyout = () => {
     sidebarFlyout()?.remove()
+    activeFlyoutTarget?.setAttribute("aria-expanded", "false")
     activeFlyoutTarget = null
 }
 
@@ -106,6 +107,7 @@ const showSidebarFlyout = (target) => {
     }
     removeSidebarFlyout()
     activeFlyoutTarget = target
+    target.setAttribute("aria-expanded", "true")
 
     const flyout = document.createElement("div")
     flyout.id = FLYOUT_ID
@@ -202,7 +204,7 @@ document.addEventListener("focusin", (event) => {
         : null
 
     if (target && document.getElementById("adminSidebar")?.contains(target)) {
-        showSidebarFlyout(target)
+        if (!sidebarFlyout()) showSidebarFlyout(target)
         return
     }
 
@@ -265,6 +267,7 @@ document.addEventListener("keydown", (event) => {
 
         event.preventDefault()
         showSidebarFlyout(event.target)
+        sidebarFlyout()?.querySelector("a[href], summary")?.focus()
     }
 })
 
