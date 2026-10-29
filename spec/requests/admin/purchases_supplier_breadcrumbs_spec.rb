@@ -43,6 +43,15 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
     end
   end
 
+  it 'forbids purchase navigation after an organization membership is deactivated' do
+    membership = user.organization_memberships.find_by!(organization:)
+    membership.update!(status: :inactive)
+
+    get admin_purchase_orders_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'preserves the accessible breadcrumb landmark independently of the sidebar' do
     get admin_purchase_orders_path
 

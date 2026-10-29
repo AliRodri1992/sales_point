@@ -21,7 +21,7 @@ module SidebarBrowserExpectations
   end
 
   def expect_sidebar_collapsed
-    return if page.has_css?("#adminSidebar.sidebar-collapsed", wait: 5)
+    return if page.has_css?('#adminSidebar.sidebar-collapsed', wait: 5)
 
     raise RSpec::Expectations::ExpectationNotMetError,
           "Expected sidebar to collapse; browser state: #{sidebar_browser_state.inspect}"
