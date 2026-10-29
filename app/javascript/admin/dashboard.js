@@ -329,19 +329,15 @@ document.addEventListener("turbo:load", () => {
      */
 
     const closeAllDropdowns = (except = null) => {
-        const branchSelector = document.querySelector("[data-dashboard-selector] details")
-
-    if (branchSelector) {
-        const branchMenu = branchSelector.querySelector("[data-dashboard-selector-menu]")
-
-        branchSelector.querySelector("summary")?.addEventListener("click", () => {
-            closeAllDropdowns(branchMenu)
+        document.querySelectorAll("[data-dashboard-selector]").forEach((container) => {
+            const menu = container.querySelector("[data-dashboard-selector-menu]")
+            if (menu === except) return
+            container.querySelectorAll("details").forEach((details) => { details.open = false })
+            menu?.classList.add("hidden")
+            container.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", "false")
         })
-    }
-
-    dropdowns.forEach(({ button, menu }) => {
+        dropdowns.forEach(({ button, menu }) => {
             if (!button || !menu || menu === except) return
-
             menu.classList.add("hidden")
             button.setAttribute("aria-expanded", "false")
         })
@@ -529,8 +525,18 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    document.addEventListener("click", () => {
+    document.addEventListener("click", (event) => {
+        if (!event.target.closest?.("[data-dashboard-selector], #userMenuButton, #sidebarUserMenuButton")) closeAllDropdowns()
+    })
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return
+        const active = document.activeElement
+        const openButton = dropdowns.find(({ menu }) => menu && !menu.classList.contains("hidden"))?.button
+        const openDetails = document.querySelector("[data-dashboard-selector] details[open] summary")
         closeAllDropdowns()
+        if (openButton || openDetails) (openButton || openDetails).focus()
+        else if (active?.matches?.("[data-dashboard-selector] button")) active.focus()
     })
 
     /*
