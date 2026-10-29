@@ -1504,3 +1504,10 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
     outline: 2px solid #047857;
     outline-offset: 2px;
 }
+
+/* Normalize optical center and stroke style across the sidebar icon family. */
+#adminSidebar nav svg[data-sidebar-icon] {
+    flex-shrink: 0;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}

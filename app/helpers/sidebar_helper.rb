@@ -1,6 +1,36 @@
 # frozen_string_literal: true
 
 module SidebarHelper
+  SIDEBAR_NAVIGATION_ICONS = {
+    close: 'x-mark',
+    dashboard: 'squares-2x2',
+    onboarding: 'list-bullet',
+    purchase_orders: 'clipboard-document-list',
+    account_payables: 'document-text',
+    cash_register: 'banknotes',
+    clients: 'users',
+    demo_requests: 'calendar-days',
+    employees: 'identification',
+    catalogs: 'rectangle-stack',
+    languages: 'language',
+    products: 'cube',
+    categories: 'tag',
+    reports: 'chart-bar',
+    settings: 'cog-6-tooth',
+    general: 'adjustments-horizontal',
+    roles_permissions: 'shield-check',
+    branches: 'building-storefront',
+    users: 'user-group',
+    taxes: 'calculator',
+    suppliers: 'truck'
+  }.freeze
+
+  def sidebar_navigation_icon(name, class_name: 'size-5')
+    icon(SIDEBAR_NAVIGATION_ICONS.fetch(name.to_sym),
+         class: class_name,
+         data: { sidebar_icon: name.to_s.dasherize })
+  end
+
   DELTA_SIDEBAR_ICONS = {
     dashboard: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
     cash_register: 'M4 3h16v18H4zM8 7h8M8 11h3M8 15h3M15 11v5',

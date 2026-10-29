@@ -27,6 +27,11 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
     find('#sidebarToggle').click
     expect(page).to have_css('#adminSidebar.sidebar-collapsed')
     expect(page).to have_css('#sidebarUserMenuButton .sidebar-avatar-initials', visible: true)
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      const sidebar = document.getElementById('adminSidebar').getBoundingClientRect()
+      const dashboard = document.querySelector('#adminSidebar nav a[href]').getBoundingClientRect()
+      Math.abs((sidebar.left + sidebar.width / 2) - (dashboard.left + dashboard.width / 2)) < 1
+    JS
     expect(page).to have_css('#adminSidebar .sidebar-avatar', visible: :hidden)
 
     find('#sidebarUserMenuButton').click

@@ -45,6 +45,14 @@ RSpec.describe 'Admin sidebar', type: :request do
     expect(doc.css('#userMenu a[href]').pluck('href')).to include(admin_guide_path)
   end
 
+  it 'uses one normalized icon family for navigation' do
+    get admin_dashboard_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('#adminSidebar nav svg[data-sidebar-icon="dashboard"]')).to be_present
+    expect(doc.at_css('#adminSidebar nav svg[data-sidebar-icon="catalogs"]')).to be_present
+  end
+
   describe 'topbar accessibility regressions' do
     it 'provides a controlled account and notifications dropdown' do
       get admin_dashboard_path
