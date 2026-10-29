@@ -30,6 +30,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
   scenario 'summarizes all editable steps in the new supplier review' do
     visit new_admin_supplier_path
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
+    expect(page).to have_css('input[type="submit"][value="Create supplier"]', visible: :all)
 
     page.execute_script(<<~JS)
       const form = document.querySelector('form[data-controller="supplier-form"]')

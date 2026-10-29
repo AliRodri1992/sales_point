@@ -128,7 +128,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   end
 
   it 'reuses the bank card design, hiding bank names when a logo exists' do
-    SupplierBankAccount.create!(
+    bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'BBVA México', holder_name: 'Secret Account Holder',
       account_number: '123456789012', currency_code: 'MXN', primary: true,
       card_number: '4111111111111111'

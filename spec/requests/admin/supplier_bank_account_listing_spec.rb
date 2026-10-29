@@ -255,7 +255,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(account.reload.status).to eq('active')
   end
 
-  it 'accepts a verified, blocked account with an explicit reason and server-created verified timestamp' do
+  it 'ignores forged verification state while recording a valid account block' do
     account = bank_account
     patch admin_supplier_bank_account_path(supplier, account), params: {
       supplier_bank_account: { status: 'blocked', blocked_reason: 'Account compromised',

@@ -53,6 +53,7 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     foreign_supplier = create(:supplier, organization: create(:organization))
     foreign_contact = create(:contact, contactable: foreign_supplier)
     foreign_address = create(:address, addressable: foreign_supplier)
+    original_deleted_at = foreign_address.deleted_at
 
     get admin_supplier_contacts_path(foreign_supplier)
     expect(response).to have_http_status(:not_found)
@@ -65,7 +66,7 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     sign_in user
     delete admin_supplier_address_path(foreign_supplier, foreign_address)
     expect(response).to have_http_status(:not_found)
-    expect(foreign_address.reload.deleted_at).to be_nil
+    expect(Address.with_deleted.find(foreign_address.id).deleted_at).to eq(original_deleted_at)
   end
   it 'restores a deleted primary contact without losing its designation' do
     contact = create(:contact, contactable: supplier, primary: true)

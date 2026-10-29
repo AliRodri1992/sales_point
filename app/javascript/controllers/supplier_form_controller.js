@@ -13,19 +13,26 @@ export default class extends Controller {
   connect() {
     this.validating = false
     this.allowSubmit = false
+    this.onFieldChange = (event) => {
+      if (event.target.closest("[data-supplier-address-validation]")) {
+        this.clearAddressFieldError(event.target)
+      } else if (event.target.matches("input[required], select[required], textarea[required]")) {
+        this.validateField(event.target)
+      }
+      this.refreshStepIndicators()
+    }
     for (const eventName of ["input", "change"]) {
-      this.element.addEventListener(eventName, (event) => {
-        if (event.target.closest("[data-supplier-address-validation]")) {
-          this.clearAddressFieldError(event.target)
-        } else if (event.target.matches("input[required], select[required], textarea[required]")) {
-          this.validateField(event.target)
-        }
-        this.refreshStepIndicators()
-      })
+      this.element.addEventListener(eventName, this.onFieldChange)
     }
     const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
     if (invalid >= 0) this.indexValue = invalid
     this.render()
+  }
+
+  disconnect() {
+    for (const eventName of ["input", "change"]) {
+      this.element.removeEventListener(eventName, this.onFieldChange)
+    }
   }
 
   fieldWrapper(field) {
