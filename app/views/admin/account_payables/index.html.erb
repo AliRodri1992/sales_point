@@ -61,7 +61,17 @@
     <% if @payables.empty? %><p class="p-8 text-center text-sm text-slate-500"><%= t('admin.accounts_payable.empty') %></p><% end %>
   </div>
   <nav class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600" aria-label="Payables pages">
-    <span><%= @total_payables %> · <%= @page %> / <%= @pages %></span>
+    <div class="flex flex-wrap items-center gap-3">
+      <% if @total_payables.positive? %>
+        <label for="payables-per-page"><%= t('admin.general_settings.unit') %></label>
+        <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                       id: 'payables-per-page',
+                       data: { controller: 'table-page-size', table_page_size_key_value: 'account_payables',
+                               action: 'change->table-page-size#apply' },
+                       class: 'min-h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-700' %>
+      <% end %>
+      <span><%= @total_payables %> · <%= @page %> / <%= @pages %></span>
+    </div>
     <div class="flex gap-2">
       <% if @page > 1 %>
         <%= link_to '‹', admin_account_payables_path(supplier_id: params[:supplier_id], page: @page - 1),
