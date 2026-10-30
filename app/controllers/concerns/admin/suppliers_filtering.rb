@@ -15,8 +15,6 @@ module Admin
     private
 
     def apply_filters(scope)
-      return limited_filters(scope) unless current_user.admin? || current_user.permission?('suppliers.view')
-
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
       scope = apply_currency_filter(scope) if supplier_commercial_visible?
@@ -24,11 +22,6 @@ module Admin
       scope = apply_credit_filter(scope) if supplier_commercial_visible?
       scope = apply_numeric_filters(scope) if supplier_commercial_visible?
       apply_date_filters(scope)
-    end
-
-    def limited_filters(scope)
-      result = apply_search_filter(scope)
-      %w[active inactive].include?(params[:status]) ? result.with_status(params[:status]) : result
     end
 
     def supplier_fiscal_visible?
@@ -61,6 +54,7 @@ module Admin
       scope = scope.with_status(params[:status]) if %w[active inactive].include?(params[:status])
       FILTER_VALUES.each do |field, values|
         next if field == :person_type && !supplier_fiscal_visible?
+        next if field == :classification && !supplier_general_visible?
 
         scope = scope.where(field => params[field]) if values.include?(params[field])
       end
@@ -78,7 +72,9 @@ module Admin
       if supplier_fiscal_visible? && valid_regime_filter?
         scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id])
       end
-      scope = scope.where(responsible_user_id: params[:responsible_user_id]) if valid_responsible_filter?
+      if supplier_general_visible? && valid_responsible_filter?
+        scope = scope.where(responsible_user_id: params[:responsible_user_id])
+      end
       scope
     end
 
