@@ -3,13 +3,14 @@
 module Admin
   class PurchaseOrdersController < ApplicationController
     include PurchasesAccess
+    include TableListingPagination
 
     before_action :set_order, only: %i[show edit update submit approve reject send_order cancel close]
 
     def index
       authorize new_record, :index?
-      @orders = policy_scope(current_organization.purchase_orders)
-                .includes(:branch, :supplier).order(created_at: :desc)
+      @orders = paginate_table_listing(policy_scope(current_organization.purchase_orders)
+                .includes(:branch, :supplier).order(created_at: :desc), table_key: 'purchase_orders')
     end
 
     def show
