@@ -5,30 +5,15 @@
 <% can_view_general = current_user.admin? || current_user.permission?('suppliers.view') ||
                       current_user.permission?('suppliers.update') %>
 
-<div id="supplier-page-size-loader"
-     class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 px-4 backdrop-blur-[3px]"
-     hidden aria-hidden="true">
-  <div class="flex w-full max-w-sm flex-col items-center rounded-[28px] border border-emerald-100 bg-white px-6 py-7 text-center shadow-2xl sm:px-8"
-       role="status" aria-live="polite" aria-label="Actualizando registros">
-    <div class="deltin-tail-loader mb-3" aria-hidden="true">
-      <div class="deltin-tail-loader__track"></div>
-      <div class="deltin-tail-loader__runner">
-        <%= image_tag 'deltin/waving.svg', alt: '',
-                      class: 'deltin-tail-loader__running-art', draggable: false %>
-      </div>
-      <div class="deltin-tail-loader__dizzy">
-        <%= image_tag 'deltin/waving.svg', alt: '',
-                      class: 'deltin-tail-loader__dizzy-art', draggable: false %>
-        <div class="deltin-tail-loader__stars">
-          <% 5.times do %><span class="deltin-tail-loader__star">✦</span><% end %>
-        </div>
-      </div>
+<div id="supplier-page-size-loader" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/35 px-4 backdrop-blur-[2px]" hidden aria-hidden="true">
+  <div class="flex w-full max-w-xs flex-col items-center rounded-2xl border border-emerald-100 bg-white px-8 py-7 text-center shadow-2xl" role="status" aria-live="polite" aria-label="Actualizando registros">
+    <div class="relative mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-emerald-50">
+      <span class="absolute inset-2 animate-ping rounded-full border border-emerald-200 opacity-50 motion-reduce:animate-none" aria-hidden="true"></span>
+      <%= image_tag 'deltin/waving.svg', alt: '', class: 'relative h-24 w-24 animate-pulse object-contain motion-reduce:animate-none' %>
     </div>
     <p class="font-jakarta text-base font-bold text-slate-900">Actualizando registros</p>
-    <p class="mt-1 max-w-[17rem] text-sm leading-6 text-slate-500">
-      Deltin está persiguiendo su cola mientras prepara la tabla…
-    </p>
-    <span class="sr-only">Cargando registros, por favor espera.</span>
+    <p class="mt-1 text-sm leading-6 text-slate-500">Deltin está preparando los datos de la tabla…</p>
+    <span class="sr-only">Cargando, por favor espera.</span>
   </div>
 </div>
 
