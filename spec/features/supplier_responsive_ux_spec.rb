@@ -35,11 +35,12 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
   end
 
   scenario 'keeps floating row action menu visible above table clipping' do
+    supplier
     visit admin_suppliers_path
     menu = find('details[data-supplier-floating-menu="true"]', match: :first)
     menu.find('summary').click
 
-    expect(menu).to have_css('[data-supplier-floating-panel]', visible: true)
+    expect(menu).to have_css('[data-supplier-floating-panel][style*="position: fixed"]', visible: true)
     expect(page.evaluate_script(<<~JS)).to eq('fixed')
       getComputedStyle(document.querySelector('[data-supplier-floating-panel]')).position
     JS
