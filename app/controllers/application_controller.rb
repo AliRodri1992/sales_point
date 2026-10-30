@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
   include OrganizationTimeZone
+  include TablePageSizing
 
   allow_browser versions: :modern
 
