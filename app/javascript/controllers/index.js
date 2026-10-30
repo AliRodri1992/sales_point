@@ -95,6 +95,9 @@ application.register("supplier-country-fields", SupplierCountryFieldsController)
 import SupplierSearchController from "./supplier_search_controller"
 application.register("supplier-search", SupplierSearchController)
 
+import SupplierPageSizeController from "./supplier_page_size_controller"
+application.register("supplier-page-size", SupplierPageSizeController)
+
 import SupplierDropdownController from "./supplier_dropdown_controller"
 application.register("supplier-dropdown", SupplierDropdownController)
 
