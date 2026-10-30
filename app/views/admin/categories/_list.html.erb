@@ -82,18 +82,19 @@
       </table>
     </div>
 
-    <% if total_pages && total_pages > 1 %>
+    <% if total_count > 0 %>
       <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
-                data-controller="categories">
+>
         <div class="flex items-center gap-2 text-sm text-slate-600">
           <span><%= t('admin.categories.index.pagination.per_page_label') %>:</span>
           <%= select_tag :per_page,
-                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
-                data: { action: "change->categories#perPageChanged" },
+                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+                data: { controller: 'table-page-size', table_page_size_key_value: 'categories',
+                        action: 'change->table-page-size#apply' },
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'categories_list') %>
+          <%= pagination_links(total_pages, frame: 'categories_list') if total_pages > 1 %>
         </div>
       </div>
     <% end %>
