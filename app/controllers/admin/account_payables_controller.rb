@@ -20,10 +20,11 @@ module Admin
 
     def paginate_financial_records(scope)
       @total_payables = scope.count
-      @pages = [(@total_payables.to_f / 20).ceil, 1].max
+      @per_page = table_page_size_for('account_payables')
+      @pages = [(@total_payables.to_f / @per_page).ceil, 1].max
       @page = params[:page].to_i.clamp(1, @pages)
       @payables = scope.includes(:supplier, supplier_invoice: :currency)
-                       .order(due_on: :asc, id: :asc).limit(20).offset((@page - 1) * 20)
+                       .order(due_on: :asc, id: :asc).limit(@per_page).offset((@page - 1) * @per_page)
     end
 
     def load_supplier_filter
