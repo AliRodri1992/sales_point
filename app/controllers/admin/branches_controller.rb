@@ -112,7 +112,7 @@ module Admin
       scope.order(sort_column => sort_direction)
     end
 
-    def per_page_param(total_count)
+    def per_page_param(_total_count)
       table_page_size_for('branches')
     end
 
