@@ -2,11 +2,12 @@
 
 module DemoRequests
   class Filters
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
 
-    def initialize(params, current_user)
+    def initialize(params, current_user, per_page: TablePagePreference::DEFAULT)
       @params = params
       @current_user = current_user
+      @per_page = per_page
     end
 
     def call
@@ -30,8 +31,7 @@ module DemoRequests
       }
     end
 
-    def pagination_info
-      scope = policy_scope
+    def pagination_info(scope = policy_scope)
       total_count = scope.count
       per_page = per_page_param
       total_pages = [(total_count / per_page.to_f).ceil, 1].max
@@ -111,7 +111,7 @@ module DemoRequests
     end
 
     def apply_pagination(scope)
-      pagination = pagination_info
+      pagination = pagination_info(scope)
 
       scope = apply_ordering(scope)
       scope.limit(pagination[:per_page]).offset((pagination[:current_page] - 1) * pagination[:per_page])
@@ -124,8 +124,7 @@ module DemoRequests
     end
 
     def per_page_param
-      value = @params[:per_page].to_i
-      PER_PAGE_OPTIONS.include?(value) ? value : 10
+      @per_page
     end
 
     def overdue_follow_ups_count(scope)
