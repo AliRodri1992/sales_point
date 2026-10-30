@@ -1132,8 +1132,8 @@ select:focus-visible {
     }
 
     #onlineUsersButton {
-        right: 5rem;
-        bottom: 1rem;
+        right: 5.875rem;
+        bottom: 1.25rem;
     }
 }
 
