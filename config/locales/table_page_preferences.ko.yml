@@ -1,0 +1,28 @@
+ko:
+  admin:
+    general_settings:
+      page_title: "일반 설정"
+      title: "일반 환경설정"
+      subtitle: "조직의 표에서 표시할 데이터 개수를 설정합니다."
+      table_section: "표 표시 설정"
+      table_heading: "페이지당 기본 항목 수"
+      table_description: "사용자가 해당 표의 항목 수를 변경하지 않았다면 이 설정을 적용합니다."
+      field_label: "기본 항목 수"
+      unit: "페이지당 항목 수"
+      explanation_title: "적용 방법"
+      organization_rule: "개별 표 설정을 저장하지 않은 조직 사용자에게 적용됩니다."
+      user_rule: "사용자는 각 표에서 다른 항목 수를 선택할 수 있으며 선택값은 표마다 별도로 저장됩니다."
+      precedence: "우선순위: 현재 표 선택 → 저장된 사용자 설정 → 조직 기본값."
+      save: "환경설정 저장"
+      saved: "기본 항목 수가 업데이트되었습니다."
+      preview_title: "미리보기"
+      preview_subtitle: "설정한 항목 수를 표의 초기 값으로 사용합니다."
+      example_table: "예시 목록"
+      example_column: "항목"
+      example_status: "상태"
+      example_active: "활성"
+      example_rows: "페이지당 %{count}개 항목을 기본으로 표시합니다."
+  activerecord:
+    attributes:
+      organization_setting:
+        default_table_page_size: "페이지당 기본 항목 수"
