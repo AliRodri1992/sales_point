@@ -60,13 +60,15 @@ module Admin
     def apply_select_filters(scope)
       scope = scope.with_status(params[:status]) if %w[active inactive].include?(params[:status])
       FILTER_VALUES.each do |field, values|
+        next if field == :person_type && !supplier_fiscal_visible?
+
         scope = scope.where(field => params[field]) if values.include?(params[field])
       end
       scope
     end
 
     def apply_currency_filter(scope)
-      return scope if params[:currency].blank?
+      return scope if params[:currency].blank? || params[:currency] == 'all'
 
       currency = Currency.active.find_by(code: params[:currency].to_s.upcase)
       currency ? scope.where(currency_id: currency.id) : scope.none
