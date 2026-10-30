@@ -16,8 +16,12 @@
         <thead class="bg-slate-50">
           <tr class="border-y border-slate-200 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
             <th scope="col" class="px-4 py-3 text-left"><%= sort_link('name', t('admin.suppliers.index.columns.name'), frame: '_top') %></th>
-            <th scope="col" class="px-4 py-3 text-left"><%= sort_link('rfc', t('admin.suppliers.index.columns.rfc'), frame: '_top') %></th>
-            <th scope="col" class="px-4 py-3 text-left"><%= sort_link('email', t('admin.suppliers.index.columns.email'), frame: '_top') %></th>
+            <% if can_view_fiscal %>
+              <th scope="col" class="px-4 py-3 text-left"><%= sort_link('rfc', t('admin.suppliers.index.columns.rfc'), frame: '_top') %></th>
+            <% end %>
+            <% if can_view_general %>
+              <th scope="col" class="px-4 py-3 text-left"><%= sort_link('email', t('admin.suppliers.index.columns.email'), frame: '_top') %></th>
+            <% end %>
             <th scope="col" class="px-4 py-3 text-center"><%= sort_link('status', t('admin.suppliers.index.columns.status'), frame: '_top') %></th>
             <th scope="col" class="px-4 py-3 text-center"><%= t('admin.suppliers.index.columns.actions') %></th>
           </tr>
@@ -38,8 +42,12 @@
                   </div>
                 </div>
               </td>
-              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= can_view_fiscal ? supplier.rfc.presence || '—' : '—' %></td>
-              <td class="px-4 py-3 text-slate-600"><%= can_view_general ? supplier.email.presence || '—' : '—' %></td>
+              <% if can_view_fiscal %>
+                <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= supplier.rfc.presence || '—' %></td>
+              <% end %>
+              <% if can_view_general %>
+                <td class="px-4 py-3 text-slate-600"><%= supplier.email.presence || '—' %></td>
+              <% end %>
               <td class="px-4 py-3 text-center">
                 <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
               </td>
@@ -95,7 +103,7 @@
             <% end %>
             <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
             <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
-            <div class="relative w-20" data-controller="delta-select">
+            <div class="relative w-24" data-controller="delta-select">
               <%= select_tag :per_page, options_for_select(Admin::SuppliersListing::PER_PAGE_OPTIONS,
                                                            @per_page || 10),
                              id: 'supplier-page-size',
