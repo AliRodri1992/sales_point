@@ -4,19 +4,11 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     this.onPageShow = () => this.hideLoader()
-    this.onBeforeCache = () => this.hideLoader()
-    this.onSubmitEnd = (event) => {
-      if (event.target === this.element && !event.detail?.success) this.hideLoader()
-    }
     window.addEventListener("pageshow", this.onPageShow)
-    document.addEventListener("turbo:before-cache", this.onBeforeCache)
-    this.element.addEventListener("turbo:submit-end", this.onSubmitEnd)
   }
 
   disconnect() {
     window.removeEventListener("pageshow", this.onPageShow)
-    document.removeEventListener("turbo:before-cache", this.onBeforeCache)
-    this.element.removeEventListener("turbo:submit-end", this.onSubmitEnd)
   }
 
   apply(event) {
