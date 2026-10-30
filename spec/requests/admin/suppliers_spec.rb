@@ -215,6 +215,26 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
   end
 
+  it 'renders the animated Deltin page-size loader with the selector at the far left' do
+    create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    document = Nokogiri::HTML(response.body)
+    loader = document.at_css('#supplier-page-size-loader')
+    expect(loader).to be_present
+    expect(loader['aria-hidden']).to eq('true')
+    expect(loader.at_css('.deltin-tail-loader__runner img')).to be_present
+    expect(loader.at_css('.deltin-tail-loader__dizzy img')).to be_present
+    expect(loader.css('.deltin-tail-loader__star').size).to eq(5)
+
+    form = document.at_css('#supplier-pagination-form')
+    footer_left = form.parent
+    range = footer_left.at_css('p[aria-live="polite"]')
+    expect(range).to be_present
+    expect(footer_left.element_children.index(form)).to be < footer_left.element_children.index(range)
+  end
+
   it 'shows 25 or 50 suppliers when requested' do
     create_list(:supplier, 26, organization:)
 
