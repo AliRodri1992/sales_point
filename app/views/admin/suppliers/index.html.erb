@@ -85,7 +85,7 @@
     <button type="button" data-action="supplier-search#retry" class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.suppliers.index.retry') %></button>
   </div>
   <%= render "active_filters_frame" %>
-  <% if current_user.admin? || current_user.permission?('suppliers.view') %>
+  <% if policy(Supplier).index? %>
   <details class="mt-4" data-advanced-filters>
     <summary class="cursor-pointer text-sm font-semibold text-emerald-700"><%= t('admin.suppliers.index.advanced.expand') %></summary>
     <div class="mt-4 space-y-4">
@@ -93,12 +93,18 @@
         <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.identity') %></legend>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div><span id="supplier_status_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.status') %></span><%= render 'filter_dropdown', name: :status, options: ['all','active','inactive'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:status] || 'all' %></div>
+          <% if current_user.admin? || current_user.permission?('suppliers.view') ||
+                current_user.permission?('suppliers.update') %>
           <div><span id="supplier_classification_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.classification') %></span><%= render 'filter_dropdown', name: :classification, options: ['all','manufacturer','distributor','wholesaler','service','other'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:classification] || 'all' %></div>
+          <% end %>
           <% if current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
                 current_user.permission?('suppliers.fiscal.manage') %>
           <div><span id="supplier_person_type_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.person_type') %></span><%= render 'filter_dropdown', name: :person_type, options: ['all','individual','company'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:person_type] || 'all' %></div>
           <% end %>
+          <% if current_user.admin? || current_user.permission?('suppliers.view') ||
+                current_user.permission?('suppliers.update') %>
           <div><span id="supplier_responsible_user_id_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.responsible') %></span><%= render 'filter_dropdown', name: :responsible_user_id, options: [[t('admin.suppliers.index.advanced.options.all'), '']] + current_organization.users.order(:id).map { |user| [user.email, user.id] }, selected: params[:responsible_user_id] || '' %></div>
+          <% end %>
         </div>
       </fieldset>
       <% if current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
@@ -117,8 +123,8 @@
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div><span id="supplier_currency_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.currency') %></span><%= render 'filter_dropdown', name: :currency, options: [[t('admin.suppliers.index.advanced.options.all'), 'all']] + Array(@supplier_currencies).map { |currency| [currency.code, currency.code] }, selected: params[:currency] || 'all' %></div>
           <div><span id="supplier_credit_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit') %></span><%= render 'filter_dropdown', name: :credit, options: ['all','yes','no'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:credit] || 'all' %></div>
-          <div><label for="supplier_credit_days_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_min') %></label><%= number_field_tag :credit_days_min, params[:credit_days_min], id: 'supplier_credit_days_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
-          <div><label for="supplier_credit_days_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_max') %></label><%= number_field_tag :credit_days_max, params[:credit_days_max], id: 'supplier_credit_days_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_credit_days_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_min') %></label><%= number_field_tag :credit_days_min, params[:credit_days_min], id: 'supplier_credit_days_min', min: 0, step: 1, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_credit_days_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_max') %></label><%= number_field_tag :credit_days_max, params[:credit_days_max], id: 'supplier_credit_days_max', min: 0, step: 1, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
           <div><label for="supplier_credit_limit_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_min') %></label><%= number_field_tag :credit_limit_min, params[:credit_limit_min], id: 'supplier_credit_limit_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
           <div><label for="supplier_credit_limit_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_max') %></label><%= number_field_tag :credit_limit_max, params[:credit_limit_max], id: 'supplier_credit_limit_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
           <div><label for="supplier_minimum_order_amount_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.minimum_order_amount_min') %></label><%= number_field_tag :minimum_order_amount_min, params[:minimum_order_amount_min], id: 'supplier_minimum_order_amount_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
