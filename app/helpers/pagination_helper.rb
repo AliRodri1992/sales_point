@@ -1,8 +1,8 @@
 module PaginationHelper
   def pagination_links(total_pages, frame: nil, window: nil)
-    current_page = (params[:page] || 1).to_i.clamp(1, total_pages)
-
     return '' if total_pages <= 1
+
+    current_page = (params[:page] || 1).to_i.clamp(1, total_pages)
 
     links = []
     links << prev_link(current_page, frame:) if current_page > 1
