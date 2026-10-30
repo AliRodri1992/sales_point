@@ -72,7 +72,7 @@
       </table>
     </div>
 
-    <% if total_pages > 1 %>
+    <% if total_count > 0 %>
       <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-6 py-4">
         <%= form_with url: admin_clients_path, method: :get, id: 'client-pagination-form',
                       data: { turbo_frame: 'clients_list' },
@@ -83,7 +83,9 @@
           <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
           <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
           <%= select_tag :per_page,
-                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
+                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+                data: { controller: 'table-page-size', table_page_size_key_value: 'clients',
+                        action: 'change->table-page-size#apply' },
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700' %>
           <%= button_tag t('admin.pagination.apply'), type: 'submit',
                 class: 'rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-50' %>
