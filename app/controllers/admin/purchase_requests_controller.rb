@@ -9,7 +9,8 @@ module Admin
 
     def index
       authorize new_record, :index?
-      @requests = paginate_table_listing(policy_scope(current_organization.purchase_requests).includes(:branch).order(created_at: :desc), table_key: 'purchase_requests')
+      scope = policy_scope(current_organization.purchase_requests).includes(:branch).order(created_at: :desc)
+      @requests = paginate_table_listing(scope, table_key: 'purchase_requests')
     end
 
     def show
