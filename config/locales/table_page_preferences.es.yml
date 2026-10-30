@@ -22,3 +22,7 @@ es:
       example_status: "Estado"
       example_active: "Activo"
       example_rows: "Mostrando %{count} registros por página de forma predeterminada."
+  activerecord:
+    attributes:
+      organization_setting:
+        default_table_page_size: "Cantidad de registros predeterminada"
