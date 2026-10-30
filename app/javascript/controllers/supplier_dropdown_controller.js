@@ -54,7 +54,9 @@ export default class extends Controller {
     Object.assign(menu.style, {
       position: "fixed",
       left: `${left}px`,
+      right: "auto",
       top: `${Math.max(8, top)}px`,
+      width: `${width}px`,
       zIndex: "100"
     })
   }
