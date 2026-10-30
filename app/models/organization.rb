@@ -24,6 +24,7 @@ class Organization < ApplicationRecord
   has_many :employees, dependent: :restrict_with_exception
   has_many :branches, dependent: :restrict_with_exception
   has_many :organization_settings, dependent: :destroy
+  has_many :table_page_preferences, dependent: :destroy
   has_many :payment_integrations, dependent: :restrict_with_exception
   has_many :organization_migrations, dependent: :restrict_with_exception
   has_many :onboarding_audits, dependent: :restrict_with_exception
