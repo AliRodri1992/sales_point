@@ -19,6 +19,22 @@ RSpec.describe Admin::DashboardController, type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'renders compact and closely spaced chat and AI launchers' do
+    get admin_dashboard_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    chat = document.at_css('#onlineUsersButton')
+    assistant = document.at_css('[data-deltin-assistant-target="launcher"]')
+
+    expect(chat).to be_present
+    expect(assistant).to be_present
+    expect(chat['class']).to include('size-16', 'right-[94px]', 'bottom-5')
+    expect(assistant['class']).to include('size-16', 'right-5', 'bottom-5')
+    expect(chat.at_css('svg')).to be_present
+    expect(assistant.at_css('img.deltin-avatar')).to be_present
+  end
+
   it 'returns success when saving dashboard preferences' do
     post '/admin/dashboard/preferences', params: {
       widgets: [
