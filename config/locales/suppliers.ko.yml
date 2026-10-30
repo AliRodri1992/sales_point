@@ -15,6 +15,7 @@ ko:
         active: "활성"
         inactive: "비활성"
       index:
+        archived_title: "보관된 공급업체"
         title: "공급업체"
         subtitle: "비즈니스 공급업체를 관리합니다."
         new: "새 공급업체"
