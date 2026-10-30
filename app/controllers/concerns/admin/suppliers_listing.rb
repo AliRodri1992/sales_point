@@ -5,7 +5,7 @@ module Admin
     include SuppliersFiltering
 
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = [5, 10, 15, 25, 50].freeze
 
     SORTABLE_COLUMNS = {
       'code' => 'suppliers.code',
@@ -64,6 +64,8 @@ module Admin
       @total_pages = [(@total_count / per_page.to_f).ceil, 1].max
       page = @total_pages if page > @total_pages
 
+      @current_page = page
+      @per_page = per_page
       scope.limit(per_page).offset((page - 1) * per_page)
     end
 
