@@ -28,6 +28,13 @@ export default class extends Controller {
       await saveTablePagePreference("suppliers", event.target.value)
     } catch (error) {
       console.warn("Supplier page size was not saved", error)
+      this.hideLoader()
+      const english = document.documentElement.lang?.toLowerCase().startsWith("en")
+      const title = english ? "Could not save your preference" : "No se pudo guardar tu preferencia"
+      const message = english ? "Please try again." : "Intenta nuevamente."
+      if (window.Swal) window.Swal.fire({ icon: "error", title, text: message })
+      else window.alert(`${title}. ${message}`)
+      return
     }
     this.element.requestSubmit()
   }
