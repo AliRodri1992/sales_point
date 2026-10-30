@@ -1,12 +1,13 @@
 module PaginationHelper
-  def pagination_links(total_pages, frame: nil)
-    current_page = (params[:page] || 1).to_i
+  def pagination_links(total_pages, frame: nil, window: nil)
+    current_page = (params[:page] || 1).to_i.clamp(1, total_pages)
 
     return '' if total_pages <= 1
 
     links = []
     links << prev_link(current_page, frame:) if current_page > 1
-    links.concat(page_links(current_page, total_pages, frame:))
+    links.concat(window ? windowed_page_links(current_page, total_pages, frame:, window:) :
+                           page_links(current_page, total_pages, frame:))
     links << next_link(current_page, total_pages, frame:) if current_page < total_pages
 
     safe_join(links, ' ')
@@ -30,6 +31,18 @@ module PaginationHelper
         pagination_link(page.to_s, page, false, frame:)
       end
     end
+  end
+
+  def windowed_page_links(current_page, total_pages, frame:, window:)
+    pages = ([1, total_pages] + ((current_page - window)..(current_page + window)).to_a)
+            .select { |page| page.between?(1, total_pages) }.uniq.sort
+    pages.each_with_object([]) do |page, result|
+      if result.any? && page > result.last[:page] + 1
+        result << { page: page - 1, html: tag.span('…', class: 'px-1 text-slate-400', aria: { hidden: true }) }
+      end
+      item = page == current_page ? active_link(page.to_s) : pagination_link(page.to_s, page, false, frame:)
+      result << { page:, html: item }
+    end.pluck(:html)
   end
 
   def active_link(label)
