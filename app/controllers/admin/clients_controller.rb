@@ -7,7 +7,7 @@ module Admin
     before_action :set_client, only: %i[show edit update destroy]
 
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
 
     def index
       load_clients
@@ -93,6 +93,7 @@ module Admin
       page = params[:page].to_i
       page = 1 if page < 1
       per_page = per_page_param
+      @per_page = per_page
       @total_pages = [(@total_count / per_page.to_f).ceil, 1].max
       page = @total_pages if page > @total_pages
 
@@ -100,8 +101,7 @@ module Admin
     end
 
     def per_page_param
-      value = params[:per_page].to_i
-      PER_PAGE_OPTIONS.include?(value) ? value : PER_PAGE
+      table_page_size_for('clients')
     end
 
     def render_duplicate_error(template = :new)
