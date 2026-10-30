@@ -71,7 +71,7 @@
   <%= hidden_field_tag :archived, '1' if params[:archived] == '1' %>
   <div class="relative">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-    <label for="search" class="sr-only"><%= t('admin.suppliers.index.search_placeholder') %></label>
+    <label for="search" class="sr-only"><%= t('admin.suppliers.index.search_label') %></label>
     <%= search_field_tag :search, params[:search],
                          placeholder: t('admin.suppliers.index.search_placeholder' +
                            ((current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
