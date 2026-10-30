@@ -161,14 +161,8 @@ export default class extends Controller {
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
       item.dataset.searchText = `${option.textContent} ${option.dataset.countryCode || ""}`
-      item.className = "delta-select-option flex min-h-11 w-full min-w-0 items-center justify-between gap-3 rounded-none px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none"
+      item.className = "delta-select-option flex min-h-11 w-full min-w-0 items-center gap-3 rounded-none px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none"
       item.append(this.optionContent(option))
-      if (option.selected) {
-        const check = document.createElement("span")
-        check.className = "ml-2 shrink-0 font-bold text-current"
-        check.textContent = "✓"
-        item.append(check)
-      }
       item.addEventListener("click", () => this.choose(index))
       item.addEventListener("keydown", (event) => {
         const items = [...this.optionsContainer.querySelectorAll("[role='option']:not([disabled]):not([hidden])")]
