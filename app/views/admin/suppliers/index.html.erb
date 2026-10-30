@@ -86,8 +86,8 @@
   </div>
   <%= render "active_filters_frame" %>
   <% if policy(Supplier).index? %>
-  <details class="mt-4" data-advanced-filters>
-    <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden"><%= t('admin.suppliers.index.advanced.expand') %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+  <details class="group mt-4" data-advanced-filters>
+    <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden"><%= t('admin.suppliers.index.advanced.expand') %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
     <div class="mt-4 space-y-4">
       <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
         <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.identity') %></legend>
