@@ -98,9 +98,6 @@
       <% last_record = [first_record + (@per_page || 10) - 1, total_count].min %>
       <div class="flex flex-col gap-4 border-t border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div class="flex flex-wrap items-center gap-4">
-          <p class="text-xs font-medium text-slate-600" aria-live="polite">
-            <%= t('admin.suppliers.index.pagination.range', first: first_record, last: last_record, total: total_count) %>
-          </p>
           <%= form_with url: admin_suppliers_path, method: :get, id: 'supplier-pagination-form',
                         data: { controller: 'supplier-page-size', turbo_frame: '_top', action: 'change->supplier-page-size#apply' },
                         class: 'flex items-center gap-2 text-sm text-slate-600' do %>
@@ -123,6 +120,9 @@
             </div>
             <span><%= t('admin.suppliers.index.pagination.per_page_suffix') %></span>
           <% end %>
+          <p class="text-xs font-medium text-slate-600" aria-live="polite">
+            <%= t('admin.suppliers.index.pagination.range', first: first_record, last: last_record, total: total_count) %>
+          </p>
         </div>
         <% if total_pages > 1 %>
           <nav class="flex flex-wrap items-center gap-1 sm:justify-end" aria-label="<%= t('admin.suppliers.index.pagination.navigation') %>">
