@@ -4,6 +4,8 @@
 <% can_view_commercial_filters = current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
                                  current_user.permission?('suppliers.commercial.manage') %>
 <% filter_keys -= %w[sat_fiscal_regime_id person_type] unless can_view_fiscal_filters %>
+<% filter_keys -= %w[classification responsible_user_id] unless current_user.admin? ||
+                      current_user.permission?('suppliers.view') || current_user.permission?('suppliers.update') %>
 <% filter_keys -= %w[currency credit credit_days_min credit_days_max credit_limit_min credit_limit_max
                     minimum_order_amount_min minimum_order_amount_max discount_percent_min discount_percent_max] unless can_view_commercial_filters %>
 <% active_filters = filter_keys.filter_map do |key|
