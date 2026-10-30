@@ -9,6 +9,7 @@ ko:
       table_description: "사용자가 해당 표의 항목 수를 변경하지 않았다면 이 설정을 적용합니다."
       field_label: "기본 항목 수"
       unit: "페이지당 항목 수"
+      option_label: "%{count}개 항목"
       explanation_title: "적용 방법"
       organization_rule: "개별 표 설정을 저장하지 않은 조직 사용자에게 적용됩니다."
       user_rule: "사용자는 각 표에서 다른 항목 수를 선택할 수 있으며 선택값은 표마다 별도로 저장됩니다."
