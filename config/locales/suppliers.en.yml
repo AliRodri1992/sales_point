@@ -15,6 +15,7 @@ en:
         active: "Active"
         inactive: "Inactive"
       index:
+        archived_title: "Archived suppliers"
         title: "Suppliers"
         subtitle: "Manage your business suppliers."
         new: "New supplier"
