@@ -217,8 +217,8 @@
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
         </span>
 
-        <% if policy(SystemRole).index? || policy(Branch).index? || policy(User).index? %>
-        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('system_roles', 'branches', 'users') %>"<%= ' open' if sidebar_section_open?('system_roles', 'branches', 'users') %>>
+        <% if current_user.admin? || policy(SystemRole).index? || policy(Branch).index? || policy(User).index? %>
+        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users') %>"<%= ' open' if sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             aria-label="<%= t('admin.shared.sidebar.settings') %>"
@@ -230,13 +230,16 @@
           </summary>
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
-            <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-              aria-label="<%= t('admin.shared.sidebar.general') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
-              class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
-            >
-              <%= sidebar_navigation_icon(:general, class_name: 'size-4') %>
-              <span class="sidebar-label"><%= t('admin.shared.sidebar.general') %></span>
-            </span>
+            <% if current_user.admin? && current_organization %>
+              <%= link_to admin_general_settings_path,
+                          data: { tooltip: t('admin.shared.sidebar.general') },
+                          aria: { current: sidebar_item_active?('general_settings') ? 'page' : 'false',
+                                  label: t('admin.shared.sidebar.general') },
+                          class: sidebar_link_classes('general_settings', variant: :submenu) do %>
+                <%= sidebar_navigation_icon(:general, class_name: 'size-4') %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.general') %></span>
+              <% end %>
+            <% end %>
 
             <% if policy(SystemRole).index? %>
             <a
