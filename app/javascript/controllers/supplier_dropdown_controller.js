@@ -12,11 +12,49 @@ export default class extends Controller {
     }
     document.addEventListener("click", this.onOutsideClick)
     document.addEventListener("keydown", this.onEscape)
+    if (this.element.dataset.supplierFloatingMenu === "true") {
+      this.onFloatingScroll = () => this.positionFloatingMenu()
+      this.onToggle = () => {
+        if (this.element.open) {
+          this.positionFloatingMenu()
+          document.addEventListener("scroll", this.onFloatingScroll, true)
+          window.addEventListener("resize", this.onFloatingScroll)
+        } else {
+          document.removeEventListener("scroll", this.onFloatingScroll, true)
+          window.removeEventListener("resize", this.onFloatingScroll)
+        }
+      }
+      this.element.addEventListener("toggle", this.onToggle)
+      if (this.element.open) this.onToggle()
+    }
   }
 
   disconnect() {
     document.removeEventListener("click", this.onOutsideClick)
     document.removeEventListener("keydown", this.onEscape)
+    if (this.onToggle) this.element.removeEventListener("toggle", this.onToggle)
+    document.removeEventListener("scroll", this.onFloatingScroll, true)
+    window.removeEventListener("resize", this.onFloatingScroll)
+  }
+
+  positionFloatingMenu() {
+    const menu = this.element.querySelector("[data-supplier-floating-panel]")
+    const trigger = this.element.querySelector("summary")
+    if (!this.element.open || !menu || !trigger) return
+
+    // Escape scrolling/overflow table ancestors using viewport positioning.
+    const rect = trigger.getBoundingClientRect()
+    const width = Math.max(176, menu.offsetWidth)
+    const height = menu.offsetHeight
+    const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8))
+    const showAbove = rect.bottom + height + 8 > window.innerHeight && rect.top > height + 8
+    const top = showAbove ? rect.top - height - 6 : rect.bottom + 6
+    Object.assign(menu.style, {
+      position: "fixed",
+      left: `${left}px`,
+      top: `${Math.max(8, top)}px`,
+      zIndex: "100"
+    })
   }
 
   choose(event) {
@@ -61,6 +99,8 @@ export default class extends Controller {
 
   close(refocus = false) {
     this.element.open = false
+    document.removeEventListener("scroll", this.onFloatingScroll, true)
+    window.removeEventListener("resize", this.onFloatingScroll)
     if (refocus) this.element.querySelector("summary")?.focus()
   }
 }
