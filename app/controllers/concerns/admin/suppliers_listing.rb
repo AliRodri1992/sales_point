@@ -53,9 +53,11 @@ module Admin
     end
 
     def restricted_sort?(column)
-      return false if current_user.admin? || current_user.permission?('suppliers.view')
+      return false if current_user.admin?
+      return !supplier_fiscal_visible? if column == 'suppliers.rfc'
+      return !supplier_general_visible? if column.in?(%w[suppliers.email suppliers.phone])
 
-      !column.in?(%w[suppliers.name suppliers.code suppliers.status])
+      false
     end
 
     def paginate(scope)
