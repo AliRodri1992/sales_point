@@ -33,8 +33,10 @@ export default class extends Controller {
     document.removeEventListener("click", this.onOutsideClick)
     document.removeEventListener("keydown", this.onEscape)
     if (this.onToggle) this.element.removeEventListener("toggle", this.onToggle)
-    document.removeEventListener("scroll", this.onFloatingScroll, true)
-    window.removeEventListener("resize", this.onFloatingScroll)
+    if (this.onFloatingScroll) {
+      document.removeEventListener("scroll", this.onFloatingScroll, true)
+      window.removeEventListener("resize", this.onFloatingScroll)
+    }
   }
 
   positionFloatingMenu() {
@@ -99,8 +101,10 @@ export default class extends Controller {
 
   close(refocus = false) {
     this.element.open = false
-    document.removeEventListener("scroll", this.onFloatingScroll, true)
-    window.removeEventListener("resize", this.onFloatingScroll)
+    if (this.onFloatingScroll) {
+      document.removeEventListener("scroll", this.onFloatingScroll, true)
+      window.removeEventListener("resize", this.onFloatingScroll)
+    }
     if (refocus) this.element.querySelector("summary")?.focus()
   }
 }
