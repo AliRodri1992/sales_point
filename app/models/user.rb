@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :user_roles, dependent: :destroy
   has_many :system_roles, through: :user_roles
   has_many :dashboard_preferences, dependent: :destroy
+  has_many :table_page_preferences, dependent: :destroy
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
