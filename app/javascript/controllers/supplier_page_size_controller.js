@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { saveTablePagePreference } from "../lib/table_page_preferences"
 
 // Keep the size selector responsive and display progress while Turbo navigates.
 export default class extends Controller {
@@ -11,7 +12,7 @@ export default class extends Controller {
     window.removeEventListener("pageshow", this.onPageShow)
   }
 
-  apply(event) {
+  async apply(event) {
     if (!event.target.matches('select[name="per_page"]')) return
     if (this.submitting) return
 
@@ -23,6 +24,11 @@ export default class extends Controller {
       loader.setAttribute("aria-hidden", "false")
     }
 
+    try {
+      await saveTablePagePreference("suppliers", event.target.value)
+    } catch (error) {
+      console.warn("Supplier page size was not saved", error)
+    }
     this.element.requestSubmit()
   }
 
