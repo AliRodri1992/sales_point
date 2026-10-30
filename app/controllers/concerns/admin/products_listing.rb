@@ -1,7 +1,7 @@
 module Admin
   module ProductsListing
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
     SORT_DIRECTIONS = %w[asc desc].freeze
 
     SORTABLE_COLUMNS = %w[
@@ -72,6 +72,7 @@ module Admin
       page = (params[:page] || 1).to_i
       page = 1 if page < 1
       per_page = per_page_param
+      @per_page = per_page
 
       @total_pages = (scope.count / per_page.to_f).ceil
       @total_pages = 1 if @total_pages < 1
@@ -81,8 +82,7 @@ module Admin
     end
 
     def per_page_param
-      per_page = params[:per_page]&.to_i
-      PER_PAGE_OPTIONS.include?(per_page) ? per_page : PER_PAGE
+      table_page_size_for('products')
     end
   end
 end
