@@ -27,3 +27,4 @@
   </table>
   <% if @orders.empty? %><p class="p-6 text-sm text-slate-500"><%= t('admin.purchases.empty') %></p><% end %>
 </div>
+<%= render 'admin/shared/table_pagination', table_key: 'purchase_orders' %>
