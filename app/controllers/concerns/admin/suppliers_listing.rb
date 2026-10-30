@@ -5,7 +5,7 @@ module Admin
     include SuppliersFiltering
 
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15, 25, 50].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
 
     SORTABLE_COLUMNS = {
       'code' => 'suppliers.code',
@@ -72,8 +72,7 @@ module Admin
     end
 
     def per_page_param
-      value = params[:per_page].to_i
-      PER_PAGE_OPTIONS.include?(value) ? value : PER_PAGE
+      table_page_size_for('suppliers')
     end
 
     def broadcast_suppliers_update
