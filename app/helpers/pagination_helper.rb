@@ -42,7 +42,7 @@ module PaginationHelper
       end
       item = page == current_page ? active_link(page.to_s) : pagination_link(page.to_s, page, false, frame:)
       result << { page:, html: item }
-    end.pluck(:html)
+    end.map { |entry| entry[:html] }
   end
 
   def active_link(label)
