@@ -95,13 +95,8 @@ module Admin
     # so changes are visible in real-time across devices (not just the
     # requesting client that receives the HTTP turbo_stream response).
     def broadcast_categories_update
-      total_count = Category.not_deleted.count
-      categories = Category.not_deleted.order(:name).limit(PER_PAGE)
-      total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
-      html = render_to_string(partial: 'admin/categories/list', formats: [:html],
-                              locals: { categories:, total_count:, total_pages: })
-      Turbo::StreamsChannel.broadcast_update_to('categories_catalog',
-                                                target: 'categories_list', html: html)
+      # Each browser refreshes its own URL, keeping the user's saved page size.
+      Turbo::StreamsChannel.broadcast_refresh_to('categories_catalog')
     end
 
     def load_categories
