@@ -9,6 +9,7 @@ en:
       table_description: "This amount is used when a table is opened for the first time, unless the user has selected a different amount for that table."
       field_label: "Default amount"
       unit: "records per page"
+      option_label: "%{count} records"
       explanation_title: "How does it work?"
       organization_rule: "Applies to users in this organization who have not personalized a particular table."
       user_rule: "Each user can select a different page size in a table. That choice is remembered separately for each table."
