@@ -22,3 +22,7 @@ en:
       example_status: "Status"
       example_active: "Active"
       example_rows: "Showing %{count} records per page by default."
+  activerecord:
+    attributes:
+      organization_setting:
+        default_table_page_size: "Default records per page"
