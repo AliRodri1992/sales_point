@@ -25,6 +25,10 @@ class OrganizationSetting < ApplicationRecord
             presence: true,
             inclusion: { in: ONBOARDING_TIMEZONES },
             on: %i[create update]
+  validates :default_table_page_size,
+            inclusion: { in: TablePagePreference::OPTIONS },
+            on: %i[create update]
+
   validates :payment_method,
             presence: true,
             inclusion: { in: payment_methods.keys },
