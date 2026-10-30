@@ -21,6 +21,30 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     Warden.test_reset!
   end
 
+  scenario 'automatically updates the list when selecting records per page' do
+    create_list(:supplier, 26, organization:)
+    visit admin_suppliers_path
+
+    selector = find('#supplier-pagination-form [data-controller="delta-select"]')
+    selector.find('button[aria-haspopup="listbox"]').click
+    selector.find('[role="option"]', text: '25').click
+
+    expect(page).to have_current_path(/per_page=25/)
+    expect(page).to have_css('tbody tr', count: 25)
+    expect(page).to have_no_css('#supplier-pagination-form button[type="submit"]')
+  end
+
+  scenario 'keeps floating row action menu visible above table clipping' do
+    visit admin_suppliers_path
+    menu = find('details[data-supplier-floating-menu="true"]', match: :first)
+    menu.find('summary').click
+
+    expect(menu).to have_css('[data-supplier-floating-panel]', visible: true)
+    expect(page.evaluate_script(<<~JS)).to eq('fixed')
+      getComputedStyle(document.querySelector('[data-supplier-floating-panel]')).position
+    JS
+  end
+
   scenario 'labels the supplier catalog search for screen-reader users' do
     visit admin_suppliers_path
     expect(page).to have_css('label[for="search"]')
