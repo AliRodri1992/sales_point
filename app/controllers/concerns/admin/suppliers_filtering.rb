@@ -19,10 +19,10 @@ module Admin
 
       scope = apply_search_filter(scope)
       scope = apply_select_filters(scope)
-      scope = apply_currency_filter(scope)
+      scope = apply_currency_filter(scope) if supplier_commercial_visible?
       scope = apply_reference_filters(scope)
-      scope = apply_credit_filter(scope)
-      scope = apply_numeric_filters(scope)
+      scope = apply_credit_filter(scope) if supplier_commercial_visible?
+      scope = apply_numeric_filters(scope) if supplier_commercial_visible?
       apply_date_filters(scope)
     end
 
@@ -31,13 +31,30 @@ module Admin
       %w[active inactive].include?(params[:status]) ? result.with_status(params[:status]) : result
     end
 
+    def supplier_fiscal_visible?
+      current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+        current_user.permission?('suppliers.fiscal.manage')
+    end
+
+    def supplier_commercial_visible?
+      current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
+        current_user.permission?('suppliers.commercial.manage')
+    end
+
+    def supplier_general_visible?
+      current_user.admin? || current_user.permission?('suppliers.view') ||
+        current_user.permission?('suppliers.update')
+    end
+
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      return scope.search(params[:search]) if current_user.admin? || current_user.permission?('suppliers.view')
-
+      fields = %w[code name]
+      fields.concat(%w[email phone]) if supplier_general_visible?
+      fields << 'rfc' if supplier_fiscal_visible?
+      expression = fields.map { |field| "suppliers.#{field} ILIKE :term" }.join(' OR ')
       term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
-      scope.where('suppliers.code ILIKE :term OR suppliers.name ILIKE :term', term:)
+      scope.where(expression, term:)
     end
 
     def apply_select_filters(scope)
@@ -56,7 +73,9 @@ module Admin
     end
 
     def apply_reference_filters(scope)
-      scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id]) if valid_regime_filter?
+      if supplier_fiscal_visible? && valid_regime_filter?
+        scope = scope.where(sat_fiscal_regime_id: params[:sat_fiscal_regime_id])
+      end
       scope = scope.where(responsible_user_id: params[:responsible_user_id]) if valid_responsible_filter?
       scope
     end
