@@ -44,6 +44,7 @@
   </div>
 </div>
 
+<p class="mb-2 text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics_scope') %></p>
 <div class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
   <div class="flex min-w-0 items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
     <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M5 7V4h8v3"/></svg></span>
@@ -71,7 +72,10 @@
   <div class="relative">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
     <label for="search" class="sr-only"><%= t('admin.suppliers.index.search_placeholder') %></label>
-    <%= search_field_tag :search, params[:search], placeholder: t('admin.suppliers.index.search_placeholder'), autocomplete: 'off', data: { supplier_search_target: 'input' }, class: 'w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %>
+    <%= search_field_tag :search, params[:search],
+                         placeholder: t('admin.suppliers.index.search_placeholder' +
+                           ((current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+                             current_user.permission?('suppliers.fiscal.manage')) ? '' : '_limited')), autocomplete: 'off', data: { supplier_search_target: 'input' }, class: 'w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %>
   </div>
   <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
     <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><%= t('admin.suppliers.index.advanced.title') %></h2>
@@ -94,12 +98,17 @@
           <div><span id="supplier_responsible_user_id_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.responsible') %></span><%= render 'filter_dropdown', name: :responsible_user_id, options: [[t('admin.suppliers.index.advanced.options.all'), '']] + current_organization.users.order(:id).map { |user| [user.email, user.id] }, selected: params[:responsible_user_id] || '' %></div>
         </div>
       </fieldset>
+      <% if current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+            current_user.permission?('suppliers.fiscal.manage') %>
       <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
         <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.fiscal') %></legend>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div><span id="supplier_sat_fiscal_regime_id_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.fiscal_regime') %></span><%= render 'filter_dropdown', name: :sat_fiscal_regime_id, options: [[t('admin.suppliers.index.advanced.options.all'), '']] + @supplier_regimes.map { |regime| ["#{regime.code}", regime.id] }, selected: params[:sat_fiscal_regime_id] || '' %></div>
         </div>
       </fieldset>
+      <% end %>
+      <% if current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
+            current_user.permission?('suppliers.commercial.manage') %>
       <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
         <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.commercial') %></legend>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -115,6 +124,7 @@
           <div><label for="supplier_discount_percent_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.discount_percent_max') %></label><%= number_field_tag :discount_percent_max, params[:discount_percent_max], id: 'supplier_discount_percent_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
         </div>
       </fieldset>
+      <% end %>
       <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
         <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.dates') %></legend>
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
