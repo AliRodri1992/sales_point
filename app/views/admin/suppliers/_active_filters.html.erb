@@ -1,15 +1,23 @@
 <% filter_keys = %w[status classification person_type currency credit sat_fiscal_regime_id responsible_user_id credit_days_min credit_days_max credit_limit_min credit_limit_max minimum_order_amount_min minimum_order_amount_max discount_percent_min discount_percent_max created_at_from created_at_to updated_at_from updated_at_to] %>
+<% can_view_fiscal_filters = current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+                             current_user.permission?('suppliers.fiscal.manage') %>
+<% can_view_commercial_filters = current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
+                                 current_user.permission?('suppliers.commercial.manage') %>
+<% filter_keys -= %w[sat_fiscal_regime_id] unless can_view_fiscal_filters %>
+<% filter_keys -= %w[currency credit credit_days_min credit_days_max credit_limit_min credit_limit_max
+                    minimum_order_amount_min minimum_order_amount_max discount_percent_min discount_percent_max] unless can_view_commercial_filters %>
 <% active_filters = filter_keys.filter_map do |key|
      value = params[key].to_s
      next if value.blank? || value == 'all'
-     allowed = { 'status' => %w[active inactive], 'classification' => %w[manufacturer distributor wholesaler service other], 'person_type' => %w[individual company], 'currency' => %w[MXN USD EUR], 'credit' => %w[yes no] }
+     allowed = { 'status' => %w[active inactive], 'classification' => %w[manufacturer distributor wholesaler service other], 'person_type' => %w[individual company], 'currency' => Array(@supplier_currencies).map(&:code), 'credit' => %w[yes no] }
      next if allowed.key?(key) && !allowed.fetch(key).include?(value)
      next if key == 'sat_fiscal_regime_id' && @supplier_regimes.none? { |regime| regime.id.to_s == value }
      next if key == 'responsible_user_id' && !current_organization.users.exists?(id: value)
      next if key.match?(/_(min|max)\z/) && !value.match?(/\A\d{1,12}(?:\.\d{1,2})?\z/)
      next if key.match?(/_at_(from|to)\z/) && !value.match?(/\A\d{4}-\d{2}-\d{2}\z/)
 
-     label = t("admin.suppliers.index.advanced.#{key}", default: key.humanize)
+     name_key = { 'sat_fiscal_regime_id' => 'fiscal_regime', 'responsible_user_id' => 'responsible' }.fetch(key, key)
+     label = t("admin.suppliers.index.advanced.#{name_key}", default: key.humanize)
      display = case key
                when 'status', 'classification', 'person_type', 'credit'
                  t("admin.suppliers.index.advanced.options.#{value}", default: value)
