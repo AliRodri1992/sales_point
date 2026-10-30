@@ -9,6 +9,7 @@ es:
       table_description: "Esta cantidad se utiliza al abrir una tabla por primera vez, a menos que el usuario haya elegido una cantidad diferente para esa tabla."
       field_label: "Cantidad predeterminada"
       unit: "registros por página"
+      option_label: "%{count} registros"
       explanation_title: "¿Cómo funciona?"
       organization_rule: "Se aplica a todos los usuarios de esta organización que no hayan personalizado esa tabla."
       user_rule: "Cada usuario puede cambiar la cantidad desde la tabla. Su elección se recuerda de manera independiente para cada tabla."
