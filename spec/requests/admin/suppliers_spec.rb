@@ -195,6 +195,68 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(rows.map { |row| row.at_css('td:first-child p.font-semibold')&.text&.strip }).to eq(['Alpha Supplier'])
   end
 
+  it 'changes page size without an Apply button and keeps filtering and ordering parameters' do
+    create(:supplier, organization:, name: 'Alpha Page Size')
+
+    get admin_suppliers_path, params: {
+      search: 'Alpha', status: 'active', sort: 'name', direction: 'desc', per_page: 25
+    }
+
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css('#supplier-pagination-form')
+    expect(form).to be_present
+    expect(form['data-controller']).to eq('supplier-page-size')
+    expect(form['data-action']).to include('change->supplier-page-size#apply')
+    expect(form['data-turbo-frame']).to eq('_top')
+    expect(form.at_css('select[name="per_page"] option[value="25"][selected]')).to be_present
+    expect(form.at_css('button[type="submit"]')).to be_nil
+    expect(form.at_css('input[name="search"]')['value']).to eq('Alpha')
+    expect(form.at_css('input[name="sort"]')['value']).to eq('name')
+    expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
+  end
+
+  it 'shows 25 or 50 suppliers when requested' do
+    create_list(:supplier, 26, organization:)
+
+    get admin_suppliers_path, params: { per_page: 25 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(25)
+
+    get admin_suppliers_path, params: { per_page: 50 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(26)
+  end
+
+  it 'preserves archive mode when clearing one active filter' do
+    get admin_suppliers_path, params: { archived: '1', status: 'inactive', per_page: 25 }
+
+    document = Nokogiri::HTML(response.body)
+    links = document.css('#supplier_active_filters a[href]')
+    expect(links.any? { |link| link['href'].include?('archived=1') }).to be(true)
+  end
+
+  it 'distinguishes empty catalog, filtered results and empty archives' do
+    get admin_suppliers_path
+    expect(response.body).to include('No suppliers yet')
+
+    get admin_suppliers_path, params: { search: 'NothingMatchedThisSupplier' }
+    expect(response.body).to include('No matching suppliers')
+
+    get admin_suppliers_path, params: { archived: '1' }
+    expect(response.body).to include('No archived suppliers')
+  end
+
+  it 'uses top-level navigation and a compact page window for large supplier lists' do
+    create_list(:supplier, 55, organization:)
+
+    get admin_suppliers_path, params: { per_page: 5, page: 6 }
+
+    document = Nokogiri::HTML(response.body)
+    nav = document.at_css('nav[aria-label="Supplier pagination"]')
+    expect(nav).to be_present
+    expect(nav.css('a[data-turbo-frame="_top"]')).not_to be_empty
+    expect(nav.css('a').size).to be <= 9
+    expect(nav.text).to include('…')
+  end
+
   it 'does not paginate 10 or fewer and paginates 11+' do
     create_list(:supplier, 10, organization:)
     get admin_suppliers_path
