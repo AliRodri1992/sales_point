@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_30_053000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -636,6 +636,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
   end
 
   create_table "organization_settings", force: :cascade do |t|
+    t.integer "default_table_page_size", default: 10, null: false
     t.bigint "base_currency_id", null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -647,6 +648,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
+    t.check_constraint "default_table_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_organization_settings_table_page_size"
     t.check_constraint "payment_method::text = ANY (ARRAY['cash'::character varying, 'card'::character varying, 'qr'::character varying]::text[])", name: "check_organization_settings_payment_method"
   end
 
@@ -1837,6 +1839,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'deprecated'::character varying]::text[])", name: "check_system_roles_status"
   end
 
+  create_table "table_page_preferences", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "organization_id", null: false
+    t.integer "per_page", null: false
+    t.string "table_key", limit: 70, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["organization_id"], name: "index_table_page_preferences_on_organization_id"
+    t.index ["user_id", "organization_id", "table_key"], name: "idx_table_page_preferences_owner_and_table", unique: true
+    t.index ["user_id"], name: "index_table_page_preferences_on_user_id"
+    t.check_constraint "per_page = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_table_page_preferences_per_page"
+  end
+
   create_table "terminals", force: :cascade do |t|
     t.bigint "branch_id", null: false
     t.string "code", limit: 40, null: false
@@ -2091,6 +2106,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_24_010000) do
   add_foreign_key "suppliers", "users", column: "responsible_user_id"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
+  add_foreign_key "table_page_preferences", "organizations"
+  add_foreign_key "table_page_preferences", "users"
   add_foreign_key "terminals", "branches"
   add_foreign_key "translates", "languages"
   add_foreign_key "user_roles", "branches"
