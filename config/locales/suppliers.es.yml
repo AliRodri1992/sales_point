@@ -15,6 +15,7 @@ es:
         active: "Activo"
         inactive: "Inactivo"
       index:
+        archived_title: "Proveedores archivados"
         title: "Proveedores"
         subtitle: "Administra los proveedores de tu negocio."
         new: "Nuevo proveedor"
