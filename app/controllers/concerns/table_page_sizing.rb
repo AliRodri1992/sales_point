@@ -11,9 +11,11 @@ module TablePageSizing
       return explicit.to_i
     end
 
-    saved = current_user.table_page_preferences.find_by(
-      organization: current_organization, table_key: table_key
-    )&.per_page
+    saved = if current_user && current_organization
+              current_user.table_page_preferences.find_by(
+                organization: current_organization, table_key: table_key
+              )&.per_page
+            end
     saved || organization_default_table_page_size
   end
 
