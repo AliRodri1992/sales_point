@@ -215,7 +215,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
   end
 
-  it 'renders the animated Deltin page-size loader with the selector at the far left' do
+  it 'renders the original Deltin page-size loader and keeps the selector at the far left' do
     create(:supplier, organization:)
 
     get admin_suppliers_path
@@ -224,9 +224,8 @@ RSpec.describe 'Admin suppliers', type: :request do
     loader = document.at_css('#supplier-page-size-loader')
     expect(loader).to be_present
     expect(loader['aria-hidden']).to eq('true')
-    expect(loader.at_css('.deltin-tail-loader__runner img')).to be_present
-    expect(loader.at_css('.deltin-tail-loader__dizzy img')).to be_present
-    expect(loader.css('.deltin-tail-loader__star').size).to eq(5)
+    expect(loader.at_css('img.animate-pulse')).to be_present
+    expect(loader.css('.deltin-tail-loader__runner, .deltin-tail-loader__dizzy')).to be_empty
 
     form = document.at_css('#supplier-pagination-form')
     footer_left = form.parent
