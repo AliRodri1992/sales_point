@@ -25,7 +25,7 @@ es:
         card_title: "Proveedores registrados"
         total_count: "%{count} proveedores registrados"
         filtered_count: "%{count} resultados"
-        metrics_scope: "Resumen del catálogo de proveedores (no cambia con los filtros)"
+        metrics_scope: "Resumen de proveedores no archivados (independiente de los filtros)"
         search_placeholder_limited: "Buscar por código, nombre, correo o teléfono..."
         no_results_title: "No hay proveedores que coincidan"
         no_results_subtitle: "Prueba otros términos o elimina los filtros para volver a ver registros."
@@ -34,6 +34,7 @@ es:
         search_error: "No se pudieron actualizar los proveedores. Comprueba la conexión e inténtalo de nuevo."
         retry: "Reintentar"
         search_placeholder: "Buscar por código, nombre, correo, teléfono o RFC..."
+        search_label: "Buscar proveedores"
         filters:
           all_statuses: "Todos los estados"
           apply: "Aplicar"
