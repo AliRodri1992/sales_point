@@ -1127,7 +1127,7 @@ select:focus-visible {
     #onlineUsersPanel,
     #conversationPanel {
         right: 1rem;
-        bottom: 5.5rem;
+        bottom: 6.25rem;
         width: calc(100vw - 2rem);
     }
 
