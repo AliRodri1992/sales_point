@@ -7,7 +7,9 @@ module TablePageSizing
   # Saved overrides belong to both the user and their current organization.
   def table_page_size_for(table_key)
     explicit = params[:per_page].to_s
-    return explicit.to_i if TablePagePreference::OPTIONS.include?(explicit.to_i) && explicit == explicit.to_i.to_s
+    if TablePagePreference::OPTIONS.include?(explicit.to_i) && explicit == explicit.to_i.to_s
+      return explicit.to_i
+    end
 
     saved = current_user.table_page_preferences.find_by(
       organization: current_organization, table_key: table_key
