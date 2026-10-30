@@ -146,13 +146,14 @@
       <% end %>
     </div>
 
-    <% if @total_count > @per_page %>
+    <% if @total_count > 0 %>
       <div class="flex flex-col gap-4 border-t border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="flex items-center gap-2 text-sm text-slate-600">
           <span><%= t('admin.demo_requests.index.total', count: @total_count) %></span>
           <%= select_tag :per_page,
                          options_for_select(Admin::DemoRequestsController::PER_PAGE_OPTIONS, @per_page),
-                         onchange: "window.location = '#{admin_demo_requests_path(request.query_parameters.except('page').merge(per_page: ''))}' + this.value",
+                         data: { controller: 'table-page-size', table_page_size_key_value: 'demo_requests',
+                                 action: 'change->table-page-size#apply' },
                          class: 'rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-700' %>
         </div>
 
