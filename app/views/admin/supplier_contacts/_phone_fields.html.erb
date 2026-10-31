@@ -6,11 +6,15 @@
   <div data-phone-fields class="flex min-w-0 flex-1 flex-col">
     <div class="mb-4 flex min-w-0 items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
       <div class="flex min-w-0 items-center gap-2.5">
-        <span aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-700 ring-1 ring-slate-200">
-          <%= delta_icon('phone', class: 'size-4') %>
+        <span data-phone-kind-icon aria-hidden="true" class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-700 ring-1 ring-slate-200">
+          <% %w[mobile landline other].each do |kind| %>
+            <span data-phone-kind-icon-variant="<%= kind %>" class="<%= 'hidden' unless (form.object.kind.presence || 'mobile') == kind %>">
+              <%= delta_icon(supplier_phone_icon_name(kind), class: 'size-4') %>
+            </span>
+          <% end %>
         </span>
-        <h3 class="min-w-0 text-sm font-bold text-slate-900">
-          <%= t(form.object.persisted? ? 'admin.supplier_details.contact_form.saved_phone_title' : 'admin.supplier_details.contact_form.new_phone_title') %>
+        <h3 data-phone-kind-title class="min-w-0 text-sm font-bold text-slate-900">
+          <%= t("admin.phones.#{form.object.kind.presence || 'mobile'}", default: t('admin.phones.other')) %>
         </h3>
       </div>
       <button type="button" data-action="nested-phones#remove"
