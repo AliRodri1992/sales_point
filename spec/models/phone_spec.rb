@@ -30,8 +30,9 @@ RSpec.describe Phone, type: :model do
   end
 
   it 'prevents assignment to a different organization' do
-    phone = contact.phones.build(number: '55 1234 5678', kind: 'mobile',
-                                  organization: create(:organization))
+    phone = contact.phones.build(
+      number: '55 1234 5678', kind: 'mobile', organization: create(:organization)
+    )
 
     expect(phone).not_to be_valid
     expect(phone.errors.attribute_names).to include(:organization)
