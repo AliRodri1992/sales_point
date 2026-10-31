@@ -92,6 +92,21 @@ RSpec.describe 'Supplier contact integration', type: :request do
     expect(picker.at_css('button[data-phone-label-value="Sales"]')['aria-pressed']).to eq('true')
   end
 
+  it 'shows descriptive phone labels in the management list and dossier cards' do
+    contact = create(:contact, contactable: supplier, name: 'Office coordinator')
+    contact.phones.create!(number: '5512345678', kind: 'landline', primary: true, label: 'Reception')
+
+    get admin_supplier_contacts_path(supplier)
+
+    listing = Nokogiri::HTML(response.body)
+    expect(listing.css('span').map(&:text)).to include('Reception')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    dossier = Nokogiri::HTML(response.body)
+    expect(dossier.at_css("[data-supplier-contact-id='#{contact.id}']").text).to include('Reception')
+  end
+
   it 'finds contacts by active phone number in the management list' do
     contact = create(:contact, contactable: supplier, name: 'Telephone contact')
     contact.phones.create!(
