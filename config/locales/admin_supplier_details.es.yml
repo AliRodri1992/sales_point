@@ -79,6 +79,12 @@ es:
         commercial: "Comercial"
         delivery: "Entrega"
       contact_form:
+        validation_title: "Revisa los datos del contacto"
+        validation_description: "Corrige los campos señalados antes de guardar. Tu información permanece en el formulario."
+        phones_title: "Teléfonos"
+        saved_phone_title: "Teléfono registrado"
+        new_phone_title: "Nuevo teléfono"
+        phone_row_description: "Puedes configurar un número principal para cada tipo de teléfono."
         new_title: "Nuevo contacto"
         new_description: "Registra una persona de contacto para gestionar la comunicación con este proveedor."
         edit_description: "Actualiza la información del contacto y sus preferencias de comunicación."
