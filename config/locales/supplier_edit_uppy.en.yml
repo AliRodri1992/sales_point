@@ -1,0 +1,19 @@
+en:
+  admin:
+    supplier_edit_upload:
+      title: "Document upload center"
+      description: "Attach contracts, tax certificates, catalogs and other files. Track each file's progress before continuing."
+      limits: "Up to 10 files · 10 MB each"
+      category: "Document category"
+      description_label: "Description (optional)"
+      description_placeholder: "e.g., Current contract, tax certificate..."
+      dropzone: "Drop or choose documents to upload"
+      loading: "Preparing document uploader..."
+      ready: "PDF, images, Word, Excel, CSV, XML and TXT · 10 MB per file"
+      upload: "Upload documents"
+      success: "%{count} documents uploaded successfully. They are saved in the supplier record."
+      failed: "The upload could not be completed. Check your files or connection and retry."
+      invalid: "Choose 1–10 supported files, no larger than 10 MB each."
+      fallback: "The advanced uploader is unavailable. You can still use the file selector."
+      immediate_notice: "Documents are saved to the supplier record as soon as upload finishes, even if you do not click Save changes. Other supplier fields are saved separately."
+      no_permission: "You do not have permission to manage this supplier's documents."
