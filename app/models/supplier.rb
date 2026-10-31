@@ -68,7 +68,12 @@ class Supplier < ApplicationRecord
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { not_deleted.where(status: :active) }
   scope :search, lambda { |term|
-    where('code ILIKE :q OR name ILIKE :q OR email ILIKE :q OR phone ILIKE :q OR rfc ILIKE :q', q: "%#{term}%")
+    where(<<~SQL.squish, q: "%#{term}%")
+      code ILIKE :q OR name ILIKE :q OR email ILIKE :q OR rfc ILIKE :q OR
+      EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier'
+              AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL
+              AND phones.number ILIKE :q)
+    SQL
   }
   scope :with_status, ->(status) { where(status: status) }
   scope :sorted, ->(column, direction) { order(column => direction) }
