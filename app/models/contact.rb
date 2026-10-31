@@ -31,9 +31,7 @@ class Contact < ApplicationRecord
   validates :position, length: { maximum: 100 }, allow_blank: true
   validates :email, length: { maximum: 150 },
                     format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validates :phone, :mobile_phone, length: { maximum: 30 }, allow_blank: true
   validate :single_active_primary
-  validate :phone_numbers_must_be_valid
 
   before_validation :normalize_fields
 
@@ -43,8 +41,6 @@ class Contact < ApplicationRecord
     self.name = normalize_string(name)
     self.position = normalize_optional(position)
     self.email = normalize_string(email, downcase: true)
-    self.phone = normalize_phone(phone)
-    self.mobile_phone = normalize_phone(mobile_phone)
     self.notes = normalize_optional(notes)
   end
 
@@ -56,20 +52,6 @@ class Contact < ApplicationRecord
 
   def normalize_optional(value)
     value.to_s.strip.presence
-  end
-
-  def normalize_phone(value)
-    return if value.blank?
-
-    parsed = Phonelib.parse(value.to_s.strip, 'MX')
-    parsed.valid? ? parsed.e164 : value.to_s.strip
-  end
-
-  def phone_numbers_must_be_valid
-    %i[phone mobile_phone].each do |field|
-      value = public_send(field)
-      errors.add(field, :invalid) if value.present? && !Phonelib.parse(value, 'MX').valid?
-    end
   end
 
   def single_active_primary
