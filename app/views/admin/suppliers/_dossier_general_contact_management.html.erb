@@ -7,10 +7,11 @@
   <dl class="grid gap-5 p-5 md:grid-cols-2">
     <div>
       <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.phone') %></dt>
-      <% if supplier.phone.present? %>
+      <% office_phone = supplier.phones.active.find_by(kind: 'landline', primary: true) %>
+      <% if office_phone.present? %>
         <dd class="flex items-center gap-2 break-all text-sm font-semibold text-slate-900">
-          <%= supplier.phone %>
-          <%= link_to "tel:#{supplier.phone}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= delta_icon('phone', class: 'size-4') %><% end %>
+          <%= office_phone.number %>
+          <%= link_to "tel:#{office_phone.number}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= delta_icon('phone', class: 'size-4') %><% end %>
         </dd>
       <% else %>
         <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.phone_missing') %></dd>
