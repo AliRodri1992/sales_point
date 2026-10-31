@@ -67,7 +67,7 @@ end %>
                             class: 'inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
             <% elsif supplier.deleted_at.nil? && policy(supplier).destroy? %>
               <%= button_to admin_supplier_path(supplier), method: :delete,
-                            form: { data: { turbo_confirm: t('admin.suppliers.index.confirm_delete') } },
+                            form: { data: { turbo_confirm: t('admin.suppliers.index.confirm_delete'), confirm_record: supplier.name } },
                             class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-rose-200 px-4 text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
                 <%= delta_icon('archive-box', class: 'size-4') %><%= t('admin.suppliers.index.delete') %>
               <% end %>
