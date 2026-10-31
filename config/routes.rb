@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resource :general_settings, only: %i[show update]
     patch 'table_page_preferences/:table_key', to: 'table_page_preferences#update',
-                                           as: :table_page_preference
+                                               as: :table_page_preference
     post 'dashboard/preferences', to: 'dashboard#save_preferences'
     get '/dashboard', to: 'dashboard#index', as: :dashboard
     get '/', to: 'dashboard#index', as: :root
