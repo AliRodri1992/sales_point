@@ -9,6 +9,7 @@ module Admin
     include SuppliersListing
     include SuppliersExporting
     include SuppliersFormHelpers
+    include SupplierParameters
     include SupplierEditUploadSecurity
     include SupplierContactsPagination
     include SupplierAddressesPagination
@@ -117,26 +118,6 @@ module Admin
       @supplier = policy_scope(
         current_organization.suppliers.not_deleted.includes(:sat_fiscal_regime)
       ).find(params[:id])
-    end
-
-    def supplier_params
-      params.expect(
-        supplier: [
-          *supplier_scalar_attributes,
-          {
-            contacts_attributes: [
-              %i[id name position email primary active notes _destroy],
-              { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy] }
-            ],
-            phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy],
-            addresses_attributes: [%i[
-              id street exterior_number interior_number neighborhood city state country_id postal_code
-              purpose primary _destroy
-            ]],
-            documents: []
-          }
-        ]
-      )
     end
 
     def user_not_authorized
