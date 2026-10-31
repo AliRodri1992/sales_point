@@ -7,6 +7,7 @@ RSpec.describe Admin::SuppliersFiltering do
   let(:filtering) do
     Class.new do
       include Admin::SuppliersFiltering
+
       attr_accessor :params, :current_user
     end.new
   end
@@ -59,6 +60,7 @@ RSpec.describe Admin::SuppliersFiltering do
   it 'restricts sorting on hidden fiscal fields' do
     listing = Class.new do
       include Admin::SuppliersListing
+
       attr_accessor :current_user
     end.new
     listing.current_user = actor
