@@ -64,12 +64,12 @@ RSpec.describe 'Remaining finance and supplier model branch paths' do
     end
 
     it 'rejects an invalid telephone number' do
-      supplier.phone = 'invalid'
+      contact = supplier.contacts.build(name: 'Compras', primary: true)
+      contact.phones.build(number: 'invalid', kind: 'mobile', primary: true)
       expect(supplier).not_to be_valid
     end
 
     it 'keeps absent optional telephone fields valid' do
-      supplier.phone = nil
       expect(supplier).to be_valid
     end
 
