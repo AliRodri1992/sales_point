@@ -5,4 +5,4 @@ en:
       show:
         managed_permissions: Administrator permissions are protected and assigned automatically.
       update_permissions:
-        success: Role permissions were updated successfully.
+        success: "The role permissions were saved. Users assigned to this role will have the updated access allowed by authorization rules."
