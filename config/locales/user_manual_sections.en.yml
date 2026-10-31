@@ -307,7 +307,226 @@ en:
         suppliers:
           title: "Suppliers and their records"
           description: "Register suppliers and manage contacts, addresses, offers, documents, and schedules."
-          topics: []
+          topics:
+            -
+              id: "suppliers"
+              title: "Supplier catalog"
+              description: "Create, view, update, archive, and restore suppliers."
+              before: "An organization and the appropriate supplier permissions are required."
+              tasks:
+                -
+                  title: "Register a supplier"
+                  steps:
+                    - "Open “Suppliers” from the sidebar and choose “New supplier”."
+                    - "Enter the legal name, trading name, alias, and classification where applicable."
+                    - "Under tax details, select the mandatory person type, tax regime, and RFC; also enter the main tax address."
+                    - "During creation, capture one primary contact and one main tax address."
+                    - "Set the supplier currency and any available business terms."
+                    - "Save, return to the list, and open “View supplier” to complete the record."
+                  result: "The supplier is created under the organization and its detail tabs become available."
+                -
+                  title: "Edit or archive a supplier"
+                  steps:
+                    - "Search by name or use catalog filters."
+                    - "Select “View” to review tabs or “Edit” to update general information."
+                    - "Before archiving, check for open orders, invoices, or outstanding balances."
+                    - "Choose the archive action and review the result."
+                -
+                  title: "Restore a supplier"
+                  steps:
+                    - "Open the list of archived or deleted suppliers."
+                    - "Find the exact record and select “Restore”."
+                    - "Open the record again and check its status; restoration does not automatically reactivate the supplier."
+              note: "Archiving may be blocked while commitments are outstanding. Do not delete historical invoices or orders merely to force archiving."
+            -
+              id: "supplier_fiscal"
+              title: "Supplier tax information"
+              description: "Tax details and primary fiscal address."
+              tasks:
+                -
+                  title: "Enter or correct tax details"
+                  steps:
+                    - "From “Suppliers”, open the record and select “Tax details”."
+                    - "Select the correct person type and tax regime where applicable."
+                    - "Enter the RFC and other requested tax information."
+                    - "Edit the main fiscal address; use its postal code rather than duplicating one on the supplier."
+                    - "Save and verify the information in the tax tab."
+              note: "The fiscal address and postal code belong to the primary address record with fiscal purpose."
+            -
+              id: "supplier_contacts"
+              title: "Supplier contacts"
+              description: "People responsible for orders, deliveries, or administration."
+              tasks:
+                -
+                  title: "Add a contact"
+                  steps:
+                    - "Open “View supplier” → “Contacts”, then go to contact management."
+                    - "Choose “Add contact” and enter the name, position, email, and phone numbers."
+                    - "Check the country dialing prefix when entering an international number."
+                    - "Mark the primary contact when appropriate, then save."
+                -
+                  title: "Edit, delete, or restore contacts"
+                  steps:
+                    - "Use search in the contact list to find a person."
+                    - "Choose “Edit” to update details or change the primary contact."
+                    - "Choose “Delete” to archive; use the deleted contacts tab to select “Restore”."
+                    - "Return to “View supplier” and confirm the Contacts tab is retained."
+              note: "The initial supplier form does not create unlimited contacts; manage additional contacts later within the supplier record."
+            -
+              id: "supplier_addresses"
+              title: "Addresses and geolocation"
+              description: "Purpose-specific locations with primary addresses and a map view."
+              tasks:
+                -
+                  title: "Add an address"
+                  steps:
+                    - "From “View supplier” → “Addresses”, open address management."
+                    - "Choose “Add address”, its purpose, and country."
+                    - "Enter applicable address fields, such as street, exterior number, neighborhood, city, state, and postal code."
+                    - "Review the suggested map location and confirm the pin is correct."
+                    - "Select “Primary” if it should replace the primary address for the same purpose."
+                    - "Save and check the address card."
+                -
+                  title: "Edit or change the primary address"
+                  steps:
+                    - "Find the address among active records and select “Edit”."
+                    - "Update the details; if the location has changed, check the suggested map position."
+                    - "Choose “Set as primary” when this should be the main address for its purpose."
+                    - "Confirm the previous address is no longer marked primary for the same purpose."
+                -
+                  title: "Delete and restore addresses"
+                  steps:
+                    - "Among active address cards, choose the address no longer needed."
+                    - "Select “Delete” and confirm."
+                    - "Open deleted addresses and choose “Restore” where appropriate."
+              note: "Suggested geocoding may be inaccurate; verify the location before using it in operations."
+            -
+              id: "supplier_commercial"
+              title: "Commercial terms"
+              description: "Currency, credit, discounts, and internal account owner."
+              tasks:
+                -
+                  title: "Update business agreements"
+                  steps:
+                    - "Open “Commercial details” in the supplier record."
+                    - "Check purchase currency, credit terms, discounts, and minimum order requirements where applicable."
+                    - "Assign an internal owner and add available tags or notes."
+                    - "Save and review the terms summary in the supplier record."
+              note: "The supplier currency does not necessarily match the organization's base currency."
+            -
+              id: "supplier_products"
+              title: "Supplier products and offers"
+              description: "Link products, record prices, and choose preferred supplier offers."
+              before: "The product must first exist under Catalogs → Products."
+              tasks:
+                -
+                  title: "Link a product to a supplier"
+                  steps:
+                    - "From “View supplier” → “Products”, open offer management."
+                    - "Select “Add product” and choose an existing product from your organization's catalog."
+                    - "Enter the supplier SKU, presentation, units per pack, purchase price, currency, and discounts."
+                    - "Complete minimum quantity, additional costs, and lead time where applicable."
+                    - "Save and verify the new offer in the list."
+                -
+                  title: "Compare prices and mark preferred"
+                  steps:
+                    - "Open the offers and choose the relevant product comparison."
+                    - "Compare prices, additional costs, delivery times, and terms."
+                    - "Mark only an available supplier and offer as preferred."
+                    - "Review price history before changing the terms."
+                -
+                  title: "Edit or archive an offer"
+                  steps:
+                    - "Find the supplier offer and select “Edit”."
+                    - "Update allowed fields and save."
+                    - "If it should no longer be used, choose “Delete” and verify it is absent from available offers."
+              note: "Do not use inactive offers for new orders; review price history whenever conditions change."
+            -
+              id: "supplier_documents"
+              title: "Document library"
+              description: "Contracts, tax certificates, files, and document versions."
+              tasks:
+                -
+                  title: "Upload documents"
+                  steps:
+                    - "Open “Documents” in “View supplier”."
+                    - "Drag files into the upload area or click to select them from your device."
+                    - "Choose a category and provide a description where appropriate."
+                    - "Confirm the upload and verify that new cards appear in the document library."
+                  result: "Files are linked to the supplier record."
+                -
+                  title: "Preview and download"
+                  steps:
+                    - "Use search or filters to locate the document."
+                    - "Select “Preview” on its card to open the side panel."
+                    - "Review content when supported; Office files may require an available converter."
+                    - "Select “Download” to obtain the original file."
+                -
+                  title: "Versions, archiving, and restoration"
+                  steps:
+                    - "Use the replace option to upload an updated file version."
+                    - "Open “History” to review and, if needed, download earlier revisions."
+                    - "Archive a document through its actions and restore it from the deleted documents view."
+              note: "Upload 1–10 files per operation. Each file must be of an allowed type and at most 10 MB."
+            -
+              id: "supplier_calendar"
+              title: "Calendars, schedules, and exceptions"
+              description: "Plan visits, orders, and deliveries by branch."
+              tasks:
+                -
+                  title: "Create a weekly schedule"
+                  steps:
+                    - "Open “Calendars” in the supplier record, then schedule management."
+                    - "Select “New schedule”, a branch, activity type, and weekday."
+                    - "Enter start and end times, and notes if needed."
+                    - "Save and ensure the interval does not overlap incompatible schedules."
+                -
+                  title: "Create and edit dated events"
+                  steps:
+                    - "Choose a date in the calendar or select “New event”."
+                    - "Enter title, type, branch, date, and time."
+                    - "Save and verify the event in the monthly or daily view."
+                    - "Use event actions to edit, archive, or restore it."
+                -
+                  title: "Add and manage exceptions"
+                  steps:
+                    - "Select “Add exception” in the exceptions area."
+                    - "Enter start and end dates, reason, branch, and notes."
+                    - "Save and review the affected period."
+                    - "To archive or restore multiple exceptions, use bulk selection for up to 100 records."
+              note: "Overlapping intervals are not allowed for the same scheduling combination; review any displayed conflicts."
+            -
+              id: "supplier_banks"
+              title: "Supplier bank accounts"
+              description: "Protect CLABE and account numbers and manage authorized accounts."
+              tasks:
+                -
+                  title: "Register an account"
+                  steps:
+                    - "Open the supplier record and go to bank accounts."
+                    - "Select “New account”."
+                    - "Enter the bank, account holder, account or CLABE, currency, and whether it is primary."
+                    - "Save and find the record in the account list."
+                -
+                  title: "Edit, reveal protected details, or archive"
+                  steps:
+                    - "Find the account by bank or account holder and filter by currency if needed."
+                    - "Select “Edit” to update permitted details."
+                    - "Use “Reveal” only when authorized and necessary for the task."
+                    - "Archive accounts that must no longer be used for future payments."
+              note: "Do not share complete account numbers in screenshots; revealing sensitive details is audited and permission-controlled."
+            -
+              id: "supplier_export"
+              title: "Supplier exports"
+              description: "Review authorized supplier lists outside the application."
+              tasks:
+                -
+                  title: "Generate an export"
+                  steps:
+                    - "Open the “Suppliers” catalog and apply search or filters."
+                    - "Select “Export” if your permissions make that action available."
+                    - "Review the generated file before sharing it or using it for reconciliation."
+              note: "Export permission is separate from permission to edit suppliers."
         purchasing:
           title: "Purchases and receiving"
           description: "Manage purchasing requests, quotations, orders, receiving, and returns."
