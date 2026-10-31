@@ -65,6 +65,7 @@ module DeltaIconShapes
     'exclamation-triangle' => 'M12 3 2 21h20z|M12 9v5|M12 17v.3',
     'eye' => 'M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z|c:12,12,3',
     'funnel' => 'M3 5h18l-7 8v6l-4 2v-8z',
+    'home' => 'M3 11 12 3l9 8|M5 10v11h14V10|M9 21v-7h6v7',
     'identification' => 'r:3,4,18,16,2|c:9,10,2|M6 16c0-3 6-3 6 0|M15 9h4|M15 13h4',
     'inbox' => 'M5 4h14l3 11v5H2v-5z|M2 15h6l2 3h4l2-3h6',
     'information-circle' => 'c:12,12,9|M12 11v5|M12 7.5v.5',
