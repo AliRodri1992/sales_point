@@ -5,7 +5,110 @@ en:
         startup:
           title: "Initial setup and branches"
           description: "Set up your organization, onboarding, branches, dashboard, and personal preferences."
-          topics: []
+          topics:
+            -
+              id: "onboarding"
+              title: "Initial setup"
+              description: "A five-step wizard that prepares your organization."
+              before: "You need an organization and an administrator account."
+              tasks:
+                -
+                  title: "Complete the wizard"
+                  steps:
+                    - "Sign in as an administrator and open “Initial setup” if it is still pending."
+                    - "Step 1: check the company name, RFC, business sector, base currency, and time zone; save and continue."
+                    - "Step 2: register the main branch, phone number, and address; verify the country and postal code."
+                    - "Step 3: name the first terminal or cash register so it can be distinguished from others."
+                    - "Step 4: choose the payment method requested by the wizard."
+                    - "Step 5: review the summary and finish; the system returns to the main dashboard."
+                  result: "Your organization's setup is saved and its progress is recorded."
+                -
+                  title: "Get ready for operations"
+                  steps:
+                    - "Check the active branch in the top navigation selector."
+                    - "Create categories before products so you can classify them."
+                    - "Register suppliers, link their product offers, and configure business details."
+                    - "Set roles and permissions for staff responsible for purchasing, inventory, and finances."
+              note: "The wizard closes once completed; you can manage those details in their respective modules."
+            -
+              id: "dashboard"
+              title: "Main dashboard and widgets"
+              description: "Review indicators and customize your workspace."
+              tasks:
+                -
+                  title: "View the dashboard"
+                  steps:
+                    - "Open “Dashboard” from the sidebar."
+                    - "Review the indicators and any outstanding initial-setup card."
+                    - "Open the source module to verify information before making decisions."
+                -
+                  title: "Arrange widgets"
+                  steps:
+                    - "Move or resize widgets that support interaction."
+                    - "Confirm or save the layout when that option is available."
+                    - "Return to the dashboard to check that your preferences were retained."
+              note: "Available widgets depend on the installed version."
+            -
+              id: "profile"
+              title: "My profile and preferences"
+              description: "Update your details without changing your account permissions."
+              tasks:
+                -
+                  title: "Update your profile"
+                  steps:
+                    - "Open the user menu beside your avatar and select “My profile”."
+                    - "Review your username, email, language, and appearance theme."
+                    - "Make changes and select “Save”."
+                    - "Check the confirmation, then reopen your profile to verify the updates."
+                -
+                  title: "Change language"
+                  steps:
+                    - "In “My profile”, select Spanish, English, or Korean from the supported languages."
+                    - "Save and verify the text on the following screen."
+              note: "Roles and permissions are managed separately; editing your profile does not grant additional access."
+            -
+              id: "branches"
+              title: "Branches and active-branch selection"
+              description: "Create operating locations and choose where transactions are recorded."
+              tasks:
+                -
+                  title: "Create a branch"
+                  steps:
+                    - "Open “Settings” → “Branches” and select “New branch”."
+                    - "Enter a name, phone number, and address, including the country."
+                    - "Fill in the required fields and review the status."
+                    - "Save and locate the branch in the list."
+                -
+                  title: "Edit or delete a branch"
+                  steps:
+                    - "Find the branch and open its actions."
+                    - "Select “Edit”, update the details, and save."
+                    - "To deactivate it, choose “Delete” and confirm. This is a soft deletion, not permanent removal."
+                -
+                  title: "Change the active branch"
+                  steps:
+                    - "Open the branch selector in the interface."
+                    - "Choose an active branch and confirm your selection."
+                    - "Before checking inventory, verify that the correct branch is active."
+              note: "Inventory and several other operations depend on the selected branch."
+            -
+              id: "organization_contacts"
+              title: "Organization contacts"
+              description: "Maintain your business's official contact details."
+              before: "Requires administrative access and an active organization."
+              tasks:
+                -
+                  title: "Create or update a contact"
+                  steps:
+                    - "Open “Organization contacts” from the administration area."
+                    - "Select “New contact” and complete the required fields."
+                    - "Save and confirm the contact appears in the list."
+                    - "To correct a contact, select its “Edit” action and save."
+                -
+                  title: "Delete a contact"
+                  steps:
+                    - "Find the contact that should no longer be used."
+                    - "Choose the delete action and confirm before leaving the page."
         security:
           title: "Users, roles, and permissions"
           description: "Create user accounts and manage roles, access, and language preferences."
