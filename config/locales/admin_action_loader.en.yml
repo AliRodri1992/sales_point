@@ -4,6 +4,7 @@ en:
       title: "Deltín is working"
       processing: "Preparing your information…"
       opening: "Opening the supplier record…"
+      returning: "Returning to the previous screen…"
       editing: "Preparing the edit form…"
       creating: "Preparing a new supplier…"
       saving: "Saving supplier details…"
