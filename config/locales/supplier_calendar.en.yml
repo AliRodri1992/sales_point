@@ -29,8 +29,8 @@ en:
       weekly: Recurring
       single: Event
       no_schedules: There are no recurring schedules yet.
-      no_events: No one-time events in this period.
-      no_activities: No activities configured.
+      no_events: "No events were found for the selected period. Choose another date or select «New event» to add one."
+      no_activities: "This supplier has no scheduled activities yet. Add a weekly schedule or create an event to get started."
       more: "%{count} more"
       new_schedule: New schedule
       edit: Edit
@@ -64,4 +64,4 @@ en:
         created: "The event was added to the supplier calendar. Check its date and time in the schedule."
         updated: "The event changes were saved. Review its updated date and time in the schedule."
         deleted: "The event was removed from the supplier's active schedule. Check archived events if you need to restore it."
-        restored: Event restored successfully.
+        restored: "The event was restored and will appear in the supplier calendar on its scheduled date."
