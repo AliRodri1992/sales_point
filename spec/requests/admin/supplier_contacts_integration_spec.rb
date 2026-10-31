@@ -17,8 +17,9 @@ RSpec.describe 'Supplier contact integration', type: :request do
     post admin_supplier_contacts_path(supplier),
          params: { contact: {
            name: 'Operations', email: 'OPS@EXAMPLE.COM',
-           phones_attributes: [{ number: '5512345678', country_code: 'MX',
-                                  kind: 'mobile', primary: true }]
+           phones_attributes: [
+             { number: '5512345678', country_code: 'MX', kind: 'mobile', primary: true }
+           ]
          } }
 
     expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
