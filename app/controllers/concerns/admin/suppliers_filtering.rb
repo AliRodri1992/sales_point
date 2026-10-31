@@ -3,6 +3,7 @@
 module Admin
   module SuppliersFiltering
     include SuppliersPhoneSearch
+
     FILTER_VALUES = {
       classification: %w[manufacturer distributor wholesaler service other],
       person_type: %w[individual company]
