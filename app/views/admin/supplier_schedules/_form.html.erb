@@ -5,19 +5,19 @@
   </div>
 <%= form_with model: @schedule, url: @schedule.persisted? ? admin_supplier_schedule_path(@supplier, @schedule) : admin_supplier_schedules_path(@supplier), data: { turbo: false, loading_message: t('admin.action_loader.saving') }, class: 'grid gap-x-6 gap-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 sm:p-7' do |form| %>
   <%= hidden_field_tag :return_to, 'dossier' if params[:return_to] == 'dossier' %>
-  <div class="min-w-0"><div data-controller="delta-select" class="relative">
+  <div class="min-w-0"><div class="min-w-0"><div data-controller="delta-select" class="relative">
     <%= form.label :branch_id, t('admin.supplier_dossier.branch'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
     <%= form.collection_select :branch_id, @branches, :id, :name, { include_blank: true }, required: true, class: "min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 #{form_state_classes(@schedule, :branch)}" %>
     </div>
     <%= error_message_for(@schedule, :branch) %>
   </div>
-  <div data-controller="delta-select" class="relative">
+  <div class="min-w-0"><div data-controller="delta-select" class="relative">
     <%= form.label :kind, t('admin.supplier_dossier.kind'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
     <%= form.select :kind, SupplierSchedule::KINDS.map { |kind| [t("admin.supplier_dossier.kinds.#{kind}"), kind] }, {}, class: "min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 #{form_state_classes(@schedule, :kind)}" %>
     </div>
     <%= error_message_for(@schedule, :kind) %>
   </div>
-  <div data-controller="delta-select" class="relative">
+  <div class="min-w-0"><div data-controller="delta-select" class="relative">
     <%= form.label :weekday, t('admin.supplier_dossier.weekday'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
     <%= form.select :weekday, (0..6).map { |day| [t('date.day_names')[day], day] }, {}, class: "min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 #{form_state_classes(@schedule, :weekday)}" %>
     </div>
