@@ -227,6 +227,9 @@ RSpec.describe 'Admin supplier procurement', type: :request do
   it 'keeps supplier preference commands protected by manage-products permission' do
     offer = offer_for(product)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+    %i[create_products? update_products? destroy_products? restore_products? prefer_products?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_supplier_products_path(supplier)
     expect(document.css("form[action='#{set_preferred_admin_supplier_supplier_product_path(supplier, offer)}']"))
@@ -267,6 +270,9 @@ RSpec.describe 'Admin supplier procurement', type: :request do
   it 'does not show creation, editing, or deletion actions without management permission' do
     offer_for(product)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+    %i[create_products? update_products? destroy_products? restore_products? prefer_products?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_supplier_products_path(supplier)
 
