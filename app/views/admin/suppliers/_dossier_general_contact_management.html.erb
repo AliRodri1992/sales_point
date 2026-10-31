@@ -43,7 +43,7 @@
               <dd class="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-900">
                 <span class="min-w-0 break-all"><%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %></span>
                 <%= link_to "tel:#{phone.number}#{';ext=' + phone.extension if phone.extension.present?}", aria: { label: "#{t('admin.supplier_general_layout.call')}: #{label}" }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %>
-                  <%= delta_icon('phone', class: 'size-4') %>
+                  <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'size-4') %>
                 <% end %>
               </dd>
             <% else %>
