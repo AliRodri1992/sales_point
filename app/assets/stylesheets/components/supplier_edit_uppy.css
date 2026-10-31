@@ -57,6 +57,8 @@
   }
 }
 
+.supplier-edit-upload [data-supplier-edit-uppy-target="placeholder"][hidden] { display: none !important; }
+
 /* The uploader owns its progress while uploading; the completion message sits
    below it rather than on top of the Dashboard spinner or StatusBar. */
 .supplier-edit-upload__feedback[hidden] { display: none !important; }
