@@ -1,6 +1,8 @@
 <div class="mx-auto max-w-6xl space-y-5" data-supplier-management-form-page>
   <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
-             title: t('admin.supplier_details.edit_contact'), subtitle: t('admin.supplier_details.contact_form.edit_description'),
-             icon: 'user', back_path: admin_supplier_contacts_path(@supplier) %>
+             title: t('admin.supplier_details.edit_contact'),
+             subtitle: "#{@contact.name} · #{t('admin.supplier_details.contact_form.edit_description')}",
+             icon: 'user',
+             back_path: (params[:return_to] == 'dossier' ? admin_supplier_path(@supplier, tab: 'contacts') : admin_supplier_contacts_path(@supplier)) %>
   <%= render 'form' %>
 </div>
