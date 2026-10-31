@@ -41,9 +41,9 @@
     </div>
   </div>
 
-  <div data-supplier-edit-uppy-target="dashboard" class="min-h-56 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/20 p-2 sm:p-3" aria-label="<%= t('admin.supplier_edit_upload.dropzone') %>">
-    <div class="flex min-h-48 flex-col items-center justify-center gap-2 p-5 text-center" data-supplier-edit-uppy-target="placeholder">
-      <%= delta_icon('document-arrow-up', class: 'size-10 text-emerald-600') %>
+  <div data-supplier-edit-uppy-target="dashboard" class="min-h-56" aria-label="<%= t('admin.supplier_edit_upload.dropzone') %>">
+    <div class="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center" data-supplier-edit-uppy-target="placeholder" role="status">
+      <span class="flex size-12 items-center justify-center rounded-full bg-emerald-100"><%= delta_icon('loader-circle', class: 'size-6 animate-spin text-emerald-700 motion-reduce:animate-none') %></span>
       <p class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_edit_upload.loading') %></p>
     </div>
   </div>
