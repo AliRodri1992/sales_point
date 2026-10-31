@@ -6,7 +6,7 @@ module SupplierFormAuthorization
   def authorize_nested_sections!(attributes)
     authorize @supplier, :manage_contacts? if attributes.key?(:contacts_attributes)
     authorize @supplier, :manage_addresses? if attributes.key?(:addresses_attributes)
-    authorize @supplier, :manage_documents? if attributes.key?(:documents)
+    authorize @supplier, :create_documents? if attributes.key?(:documents)
   end
 
   def authorize_sensitive_fields!(attributes)
