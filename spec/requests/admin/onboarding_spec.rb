@@ -52,7 +52,7 @@ RSpec.describe 'Admin onboarding', type: :request do
     patch admin_onboarding_path(step: 2), params: {
       branch: {
         name: 'Sucursal Centro',
-        phone: '5551234567',
+        phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
         address_attributes: {
           id: branch.address.id,
           street: 'Av. Reforma',
