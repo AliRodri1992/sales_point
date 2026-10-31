@@ -28,11 +28,6 @@ class Branch < ApplicationRecord
               conditions: -> { where(deleted_at: nil) }
             },
             on: %i[create update]
-  validates :phone,
-            format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
-            length: { in: 7..20 },
-            allow_blank: true,
-            on: %i[create update]
   validates :status, inclusion: { in: [true, false] }, on: %i[create update]
 
   validates :name,
@@ -43,10 +38,5 @@ class Branch < ApplicationRecord
               case_sensitive: false,
               conditions: -> { where(deleted_at: nil) }
             },
-            on: :onboardingstep2
-  validates :phone,
-            format: { with: /\A[0-9+\-\s()]{7,20}\z/ },
-            length: { in: 7..20 },
-            allow_blank: true,
             on: :onboardingstep2
 end
