@@ -29,7 +29,7 @@
           </div>
         </div>
         <% if policy(supplier).update_contacts? %>
-          <%= link_to edit_admin_supplier_contact_path(supplier, contact),
+          <%= link_to edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier'),
                       data: { turbo_frame: '_top', tooltip: t('admin.supplier_details.edit') },
                       aria: { label: "#{t('admin.supplier_details.edit')}: #{contact.name}" },
                       class: 'inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
