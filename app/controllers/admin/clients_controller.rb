@@ -79,8 +79,9 @@ module Admin
     def client_params
       params.expect(
         client: [
-          %i[code name email rfc sat_fiscal_regime_id postal_code credit_limit status notes],
-          { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy] }
+          :code, :name, :email, :rfc, :sat_fiscal_regime_id, :postal_code,
+          :credit_limit, :status, :notes,
+          { phones_attributes: [%i[id number country_code kind label extension primary whatsapp_enabled _destroy]] }
         ]
       )
     end
