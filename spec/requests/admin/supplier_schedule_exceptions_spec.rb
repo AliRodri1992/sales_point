@@ -96,4 +96,40 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     expect(response).to redirect_to(admin_supplier_schedules_path(supplier))
     expect(exception.class.exists?(exception.id)).to be(false)
   end
+  it 'preserves invalid exception edits in the form with field-specific errors' do
+    exception = supplier.supplier_schedule_exceptions.create!(
+      starts_on: Date.current, reason: 'holiday'
+    )
+
+    patch admin_supplier_schedule_exception_path(supplier, exception), params: {
+      supplier_schedule_exception: {
+        starts_on: Date.current, ends_on: Date.current - 1.day, reason: 'suspension'
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('input[name="supplier_schedule_exception[ends_on]"]')).to be_present
+    expect(document.at_css('select[name="supplier_schedule_exception[reason]"]')).to be_present
+    expect(response.body).to include('data-server-field-error')
+    expect(exception.reload.reason).to eq('holiday')
+  end
+
+  it 'shows descriptive schedule labels rather than numeric IDs when editing an exception' do
+    branch = create(:branch, organization:)
+    schedule = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: Date.current.wday,
+      starts_at: '09:00', ends_at: '11:00'
+    )
+    exception = supplier.supplier_schedule_exceptions.create!(
+      starts_on: Date.current, reason: 'holiday', supplier_schedule: schedule
+    )
+
+    get edit_admin_supplier_schedule_exception_path(supplier, exception)
+
+    options = Nokogiri::HTML(response.body)
+                     .css('select[name="supplier_schedule_exception[supplier_schedule_id]"] option')
+    expect(options.map(&:text).join(' ')).to include(branch.name, '09:00')
+  end
+
 end
