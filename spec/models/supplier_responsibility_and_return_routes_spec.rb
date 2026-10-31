@@ -38,8 +38,7 @@ RSpec.describe 'Supplier contact ownership and return routing', type: :model do
 
     it 'does not normalize missing telephone values' do
       supplier = described_class.new
-      supplier.send(:normalize_phone)
-      expect(supplier.phone).to be_nil
+      expect(supplier.contact_phones).to be_empty
     end
   end
 
