@@ -34,10 +34,16 @@ export default class extends Controller {
 
       const language = document.documentElement.lang?.toLowerCase() || "es"
       const uploaderCopy = language.startsWith("ko")
-        ? { dropPasteFiles: "파일을 드래그하거나 %{browseFiles}", browseFiles: "찾아보기" }
+        ? {
+            dropPasteFiles: "파일을 드래그하거나 %{browseFiles}", browseFiles: "찾아보기",
+            uploadXFiles: "파일 %{smart_count}개 업로드", uploadXFiles_plural: "파일 %{smart_count}개 업로드"
+          }
         : language.startsWith("en")
           ? { dropPasteFiles: "Drop files here or %{browseFiles}", browseFiles: "browse" }
-          : { dropPasteFiles: "Arrastra tus archivos aquí o %{browseFiles}", browseFiles: "selecciónalos" }
+          : {
+              dropPasteFiles: "Arrastra tus archivos aquí o %{browseFiles}", browseFiles: "selecciónalos",
+              uploadXFiles: "Subir %{smart_count} archivo", uploadXFiles_plural: "Subir %{smart_count} archivos"
+            }
 
       this.uppy = new Uppy({
         autoProceed: false,
