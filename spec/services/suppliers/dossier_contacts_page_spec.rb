@@ -47,7 +47,11 @@ RSpec.describe Suppliers::DossierContactsPage do
   it 'searches name, position, email and both phone numbers without wildcard surprises' do
     attributes = {
       name: 'Patricia González', position: 'Purchasing',
-      email: 'patricia@contacts.example', phone: '5512345678', mobile_phone: '5587654321'
+      email: 'patricia@contacts.example',
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+      ]
     }
     target = create(:contact, contactable: supplier, **attributes)
     create(:contact, contactable: supplier, name: 'Another Person')
