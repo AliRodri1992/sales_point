@@ -79,6 +79,9 @@ ko:
         commercial: "상업"
         delivery: "배송"
       contact_form:
+        primary_contact_label: "대표 연락처"
+        phone_primary_label: "대표 번호"
+        no_phones_hint: "등록된 전화번호가 없습니다. 휴대전화 또는 사무실 번호를 추가하세요."
         validation_title: "연락처 정보를 확인하세요"
         validation_description: "저장하기 전에 표시된 항목을 수정하세요. 입력한 내용은 유지됩니다."
         phones_title: "전화번호"
