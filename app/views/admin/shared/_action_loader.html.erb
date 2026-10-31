@@ -1,0 +1,29 @@
+<%# Reusable progress indicator for confirmed admin actions; uses the existing Deltín SVG. %>
+<div id="admin-action-loader"
+     data-controller="admin-action-loader"
+     data-admin-action-loader-default-message-value="<%= t('admin.action_loader.processing') %>"
+     class="deltin-action-overlay fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/35 px-4 backdrop-blur-[2px]"
+     role="status" aria-live="polite" aria-atomic="true" hidden>
+  <div class="deltin-action-card relative w-full max-w-[320px] overflow-hidden rounded-3xl border border-emerald-100 bg-white px-7 pb-7 pt-8 text-center shadow-2xl">
+    <div class="deltin-action-stage relative mx-auto mb-4 flex size-36 items-center justify-center" aria-hidden="true">
+      <span class="deltin-action-halo absolute inset-3 rounded-full"></span>
+      <span class="deltin-action-orbit absolute inset-1 rounded-full"></span>
+      <span class="deltin-action-mascot relative z-10 flex size-28 items-center justify-center rounded-full bg-gradient-to-b from-white to-emerald-50">
+        <%= image_tag 'deltin/waving.svg', alt: '', width: 112, height: 112,
+                      class: 'size-28 object-contain', draggable: false %>
+      </span>
+      <span class="deltin-action-spark deltin-action-spark--one absolute size-2.5 rounded-full bg-emerald-400"></span>
+      <span class="deltin-action-spark deltin-action-spark--two absolute size-2 rounded-full bg-teal-300"></span>
+    </div>
+    <h2 class="font-jakarta text-lg font-bold tracking-tight text-slate-900">
+      <%= t('admin.action_loader.title') %>
+    </h2>
+    <p data-admin-action-loader-target="message"
+       class="mt-2 min-h-10 text-sm leading-5 text-slate-600">
+      <%= t('admin.action_loader.processing') %>
+    </p>
+    <div class="deltin-action-progress mt-5 h-1.5 overflow-hidden rounded-full bg-emerald-100" aria-hidden="true">
+      <span class="deltin-action-progress__indicator block h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"></span>
+    </div>
+  </div>
+</div>
