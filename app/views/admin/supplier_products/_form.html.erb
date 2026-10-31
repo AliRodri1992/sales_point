@@ -1,4 +1,5 @@
-<%= form_with model: [:admin, @supplier, @offer], class: 'space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm' do |form| %>
+<%= form_with model: [:admin, @supplier, @offer], class: 'space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm',
+              data: { loading_message: t('admin.action_loader.saving') } do |form| %>
   <% if @offer.errors.any? %>
     <div class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700"><%= @offer.errors.full_messages.to_sentence %></div>
   <% end %>
@@ -47,6 +48,7 @@
   <div class="flex gap-3">
     <%= form.submit t('admin.procurement.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
     <%= link_to t('admin.procurement.back'), admin_supplier_supplier_products_path(@supplier),
+                data: { loading_message: t('admin.action_loader.returning') },
                 class: 'rounded-xl border border-slate-200 px-5 py-3 font-semibold' %>
   </div>
 <% end %>
