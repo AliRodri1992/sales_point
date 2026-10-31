@@ -11,7 +11,7 @@
       <% end %>
     </div>
   </header>
-  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+  <div class="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
     <% @schedules.each do |schedule| %>
       <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div class="flex items-center justify-between gap-3">
@@ -25,7 +25,7 @@
         <% if policy(@supplier).manage_schedules? %>
           <div class="mt-5 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4">
             <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule), class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
-            <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'text-sm font-semibold text-rose-600 hover:underline' %>
+            <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center rounded-lg border border-rose-200 px-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50' %>
           </div>
         <% end %>
       </article>
@@ -83,27 +83,30 @@
     </div>
     <% if @exceptions.any? %>
       <%= form_with url: bulk_update_admin_supplier_schedule_exceptions_path(@supplier),
-                    method: :patch, class: 'space-y-3' do %>
+                    method: :patch, class: 'space-y-3', data: { controller: 'supplier-bulk-select' } do %>
         <% if policy(@supplier).manage_schedules? %>
         <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3">
           <label class="flex items-center gap-2 text-sm text-slate-700">
-            <input type="checkbox" onchange="this.closest('form').querySelectorAll('[name=\u0022exception_ids[]\u0022]').forEach(element => element.checked = this.checked)">
+            <input type="checkbox" data-supplier-bulk-select-target="all" data-action="change->supplier-bulk-select#toggleAll" aria-label="<%= t('admin.supplier_closure.select_all') %>" class="size-5 cursor-pointer rounded border-slate-300 text-emerald-700 focus:ring-emerald-500">
             <%= t('admin.supplier_closure.select_all') %>
           </label>
+          <span data-supplier-bulk-select-target="count" data-template="<%= t('admin.supplier_ui.selection_count', count: '%{count}') %>" role="status" aria-live="polite" class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_ui.selection_count', count: 0) %></span>
           <%= hidden_field_tag :operation, @archived_exceptions ? 'restore' : 'archive' %>
           <%= submit_tag t(@archived_exceptions ? 'admin.supplier_closure.bulk_restore' :
                            'admin.supplier_closure.bulk_archive'), name: nil,
-                         class: 'cursor-pointer rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white' %>
+                         data: { supplier_bulk_select_target: 'submit' }, disabled: true,
+                         class: 'min-h-10 cursor-pointer rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50' %>
         </div>
         <% end %>
         <% @exceptions.each do |exception| %>
-          <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4">
+          <label class="flex min-w-0 items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200">
             <% if policy(@supplier).manage_schedules? %>
               <%= check_box_tag 'exception_ids[]', exception.id, false,
-                                class: 'size-4 rounded border-slate-300 text-emerald-700' %>
+                                data: { supplier_bulk_select_target: 'item', action: 'change->supplier-bulk-select#refresh' },
+                                class: 'size-5 shrink-0 cursor-pointer rounded border-slate-300 text-emerald-700' %>
             <% end %>
-            <span class="text-sm text-slate-700">
-              <%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %>
+            <span class="min-w-0 break-words text-sm text-slate-700">
+              <span class="font-semibold text-slate-900"><%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %></span>
               · <%= l(exception.starts_on) %>
               <% if exception.ends_on.present? %>–<%= l(exception.ends_on) %><% end %>
               · <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
@@ -118,16 +121,16 @@
         <% end %>
       <% end %>
     <% end %>
-    <nav class="flex items-center justify-between text-sm text-slate-600">
+    <nav class="flex items-center justify-between text-sm text-slate-600" aria-label="<%= t('admin.supplier_ui.exception_pages') %>">
       <span><%= @exceptions_page %> / <%= @exceptions_pages %></span>
       <div class="flex gap-2">
         <% if @exceptions_page > 1 %>
-          <%= link_to '‹', admin_supplier_schedules_path(@supplier, archived: params[:archived],
+          <%= link_to t('admin.supplier_ui.previous'), admin_supplier_schedules_path(@supplier, archived: params[:archived],
                                                          page: @exceptions_page - 1),
                       class: 'rounded-lg border border-slate-200 px-4 py-2' %>
         <% end %>
         <% if @exceptions_page < @exceptions_pages %>
-          <%= link_to '›', admin_supplier_schedules_path(@supplier, archived: params[:archived],
+          <%= link_to t('admin.supplier_ui.next'), admin_supplier_schedules_path(@supplier, archived: params[:archived],
                                                          page: @exceptions_page + 1),
                       class: 'rounded-lg border border-slate-200 px-4 py-2' %>
         <% end %>
@@ -135,9 +138,8 @@
     </nav>
   </section>
   <% if @schedules.empty? %>
-    <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-500">—</div>
+    <div class="flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center"><span class="flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><%= delta_icon('calendar-days', class: 'size-7') %></span><p class="mt-4 font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_ui.empty_schedules_title') %></p><p class="mt-2 max-w-md text-sm leading-6 text-slate-500"><%= t('admin.supplier_ui.empty_schedules_description') %></p></div>
   <% end %>
-</div>
   <% deleted_schedules = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).includes(:branch) %>
   <% if deleted_schedules.any? %>
     <section class="space-y-3">
@@ -153,3 +155,4 @@
       <% end %>
     </section>
   <% end %>
+</div>

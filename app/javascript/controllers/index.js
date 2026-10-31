@@ -113,6 +113,9 @@ application.register("supplier-form", SupplierFormController)
 import SupplierTagsController from "./supplier_tags_controller"
 application.register("supplier-tags", SupplierTagsController)
 
+import SupplierBulkSelectController from "./supplier_bulk_select_controller"
+application.register("supplier-bulk-select", SupplierBulkSelectController)
+
 import DeltaSelectController from "./delta_select_controller"
 application.register("delta-select", DeltaSelectController)
 

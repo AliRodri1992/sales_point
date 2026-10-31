@@ -1,0 +1,9 @@
+en:
+  admin:
+    supplier_ui:
+      selection_count: "%{count} selected"
+      exception_pages: "Exception pages"
+      previous: "Previous"
+      next: "Next"
+      empty_schedules_title: "No schedules yet"
+      empty_schedules_description: "Create recurring schedules by branch to plan visits, orders and deliveries."

@@ -1,0 +1,9 @@
+es:
+  admin:
+    supplier_ui:
+      selection_count: "%{count} seleccionados"
+      exception_pages: "Páginas de excepciones"
+      previous: "Anterior"
+      next: "Siguiente"
+      empty_schedules_title: "Aún no hay horarios registrados"
+      empty_schedules_description: "Configura horarios recurrentes por sucursal para planificar visitas, pedidos y entregas."
