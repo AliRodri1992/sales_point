@@ -5,7 +5,7 @@ export default class extends Controller {
   static targets = ["items", "template"]
 
   add() {
-    const key = `new_${Date.now()}_${Math.floor(Math.random() * 100000)}`
+    const key = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`
     const fragment = this.templateTarget.content.cloneNode(true)
     fragment.querySelectorAll("[name], [id], [for]").forEach((node) => {
       for (const attribute of ["name", "id", "for"]) {
