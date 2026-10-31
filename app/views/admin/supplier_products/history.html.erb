@@ -1,29 +1,45 @@
-<div class="space-y-5">
-  <%= link_to t('admin.procurement.back'), admin_supplier_supplier_products_path(@supplier),
-              class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
-  <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.procurement.history') %></h1>
-    <p class="mt-1 text-slate-500"><%= @offer.product.name %> · <%= @supplier.name %></p>
-  </div>
-  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-    <table class="min-w-full divide-y divide-slate-100 text-left text-sm">
-      <thead><tr>
-        <% %w[effective_on purchase_price presentation units_per_package currency recorded_by].each do |key| %>
-          <th class="p-4 font-semibold"><%= t("admin.procurement.#{key}") %></th>
-        <% end %>
-      </tr></thead>
-      <tbody>
-        <% @price_history.each do |price| %>
-          <tr class="border-t border-slate-100">
-            <td class="p-4"><%= l(price.effective_on) %></td>
-            <td class="p-4"><%= price.purchase_price %></td>
-            <td class="p-4"><%= price.presentation_name %></td>
-            <td class="p-4"><%= price.units_per_package %></td>
-            <td class="p-4"><%= price.currency.code %></td>
-            <td class="p-4"><%= price.recorded_by&.display_name || '—' %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<div class="mx-auto max-w-6xl space-y-5" data-supplier-offer-history>
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.procurement.history'), subtitle: @offer.product.name,
+             icon: 'cube', back_path: admin_supplier_supplier_products_path(@supplier) %>
+  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <% if @price_history.any? %>
+      <div class="max-w-full overflow-x-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+           role="region" tabindex="0" aria-label="<%= t('admin.procurement.history') %>">
+        <table class="w-full min-w-[760px] text-left text-sm">
+          <thead class="border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600">
+            <tr>
+              <% %w[effective_on purchase_price presentation units_per_package currency recorded_by].each do |key| %>
+                <th scope="col" class="whitespace-nowrap px-4 py-3"><%= t("admin.procurement.#{key}") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @price_history.each do |price| %>
+              <tr class="transition hover:bg-emerald-50/30">
+                <td class="whitespace-nowrap px-4 py-4 font-medium text-slate-700"><%= l(price.effective_on) %></td>
+                <td class="whitespace-nowrap px-4 py-4 font-semibold tabular-nums text-slate-900">
+                  <%= number_to_currency(price.purchase_price, unit: '') %>
+                </td>
+                <td class="max-w-[16rem] break-words px-4 py-4 text-slate-700"><%= price.presentation_name %></td>
+                <td class="whitespace-nowrap px-4 py-4 tabular-nums text-slate-700">
+                  <%= number_with_precision(price.units_per_package, precision: 4, strip_insignificant_zeros: true) %>
+                </td>
+                <td class="whitespace-nowrap px-4 py-4 text-slate-700"><%= price.currency.code %></td>
+                <td class="px-4 py-4 text-slate-700"><%= price.recorded_by&.display_name || '—' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center justify-center px-5 py-12 text-center">
+        <span class="flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+          <%= delta_icon('clock', class: 'size-7') %>
+        </span>
+        <h2 class="mt-4 font-jakarta text-lg font-bold text-slate-900"><%= t('admin.procurement.history') %></h2>
+        <p class="mt-2 text-sm text-slate-500"><%= t('admin.procurement.empty') %></p>
+      </div>
+    <% end %>
+  </section>
 </div>
