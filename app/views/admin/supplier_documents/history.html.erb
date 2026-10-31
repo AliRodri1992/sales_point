@@ -23,6 +23,7 @@
             </div>
             <%= link_to t('admin.supplier_documents.download'),
                         admin_supplier_document_version_download_path(@supplier, document_id: version.attachment_id),
+                        aria: { label: "#{t('admin.supplier_documents.download')}: #{version.attachment.blob.filename}, v#{version.revision_number}" },
                         class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
           </li>
         <% end %>
