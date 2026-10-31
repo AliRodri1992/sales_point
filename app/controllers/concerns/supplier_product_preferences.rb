@@ -3,12 +3,12 @@
 # Preference commands stay separate from CRUD for individual supplier presentations.
 module SupplierProductPreferences
   def set_preferred
-    authorize @supplier, :manage_products?
+    authorize @supplier, :prefer_products?
     update_preference(@supplier)
   end
 
   def clear_preferred
-    authorize @supplier, :manage_products?
+    authorize @supplier, :prefer_products?
     raise Suppliers::PreferredSupplier::Conflict unless @offer.preferred?
 
     update_preference(nil)
