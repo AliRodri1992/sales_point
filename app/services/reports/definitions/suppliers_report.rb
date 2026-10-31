@@ -36,6 +36,8 @@ module Reports
       end
 
       def primary_office_number(supplier)
+        return '' unless SupplierPolicy.new(user, supplier).view_contacts?
+
         contact = supplier.contacts.not_deleted.find_by(primary: true, active: true)
         return '' unless contact
 
