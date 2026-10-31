@@ -9,3 +9,6 @@ en:
       empty_schedules_description: "Create recurring schedules by branch to plan visits, orders and deliveries."
       all_day_hint: "The selected date range is kept; the event lasts all day."
       archived_status: "Archived"
+      contact_pages: "Contact pages"
+      empty_contacts_description: "Add contact people to coordinate communication and follow-up with this supplier."
+      confirm_action: "Confirm"
