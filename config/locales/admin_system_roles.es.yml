@@ -5,4 +5,4 @@ es:
       show:
         managed_permissions: Permisos administrativos protegidos y asignados automáticamente.
       update_permissions:
-        success: Los permisos del rol se actualizaron correctamente.
+        success: "Los permisos del rol se guardaron. Los usuarios con ese rol tendrán los accesos actualizados según las reglas de autorización."
