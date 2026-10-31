@@ -322,6 +322,7 @@ export default class extends Controller {
   }
 
   summaryLabel(field) {
+    if (field.dataset.summaryLabel) return field.dataset.summaryLabel
     const explicit = field.labels?.[0]?.textContent?.replace(/\\*/g, "").trim()
     if (explicit) return explicit
     const id = field.id
@@ -342,7 +343,8 @@ export default class extends Controller {
 
   appendSummaryGroup(title, fields) {
     const entries = fields.filter((field) =>
-      field.name && !field.disabled && !["hidden", "submit", "button"].includes(field.type) &&
+      field.name && !field.disabled && !["submit", "button"].includes(field.type) &&
+      (field.type !== "hidden" || field.dataset.supplierTagsTarget === "value") &&
       !field.name.endsWith("[_destroy]") && !field.closest("template") &&
       !field.closest("[data-supplier-nested-item]")?.querySelector("[data-supplier-nested-destroy]:checked")
     ).map((field) => ({
