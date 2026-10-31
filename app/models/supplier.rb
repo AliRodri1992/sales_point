@@ -85,7 +85,7 @@ class Supplier < ApplicationRecord
   end
 
   def latest_generated_code_number
-    codes = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
+    codes = Supplier.unscoped.where(organization_id: organization.id).where('code LIKE ?', 'PROV-%').pluck(:code)
     values = codes.filter_map do |value|
       digits = value.delete_prefix('PROV-')
       digits.to_i if digits.match?(/\A[0-9]+\z/)

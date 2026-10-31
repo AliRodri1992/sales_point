@@ -207,7 +207,7 @@ RSpec.describe 'Supplier documents browsing', type: :feature, js: true do
     JS
     expect(sizes.pluck('height').uniq.size).to eq(1)
     expect(sizes.pluck('width').uniq.size).to eq(1)
-    expect(sizes.first['height']).to eq(144)
+    expect(sizes.first['height']).to eq(160)
 
     select_document('Short.pdf')
     expect(page).to have_css('[data-supplier-documents-target="dialog"]:not(.hidden)')

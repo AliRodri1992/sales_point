@@ -8,8 +8,12 @@ RSpec.describe Admin::ProductsListing do
   let(:host_class) do
     Class.new do
       include Admin::ProductsListing
+      include TablePageSizing
 
       attr_accessor :params
+
+      def current_user = nil
+      def current_organization = nil
     end
   end
   let(:scope) { Product.none }

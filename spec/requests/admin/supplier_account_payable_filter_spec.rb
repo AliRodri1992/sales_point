@@ -52,10 +52,13 @@ RSpec.describe 'Supplier-filtered accounts payable', type: :request do
     22.times { |index| payable_for(supplier, "PAGE-#{index}") }
 
     get admin_account_payables_path(page: 1)
-    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(20)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
     expect(response.body).to include('22')
 
     get admin_account_payables_path(page: 2)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+
+    get admin_account_payables_path(page: 3)
     expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(2)
   end
 

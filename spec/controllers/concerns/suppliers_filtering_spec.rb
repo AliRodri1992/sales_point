@@ -21,7 +21,7 @@ RSpec.describe Admin::SuppliersFiltering do
     handler.organization = organization
     handler.params = ActionController::Parameters.new
     allow(actor).to receive(:admin?).and_return(false)
-    allow(actor).to receive(:permission?).with('suppliers.view').and_return(false)
+    allow(actor).to receive(:permission?).and_return(false)
   end
 
   it 'restricts basic status filtering without full supplier view permission' do

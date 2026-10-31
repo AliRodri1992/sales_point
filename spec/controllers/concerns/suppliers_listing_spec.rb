@@ -7,10 +7,12 @@ RSpec.describe Admin::SuppliersListing do
   let(:query) do
     Class.new do
       include Admin::SuppliersListing
+      include TablePageSizing
 
       attr_accessor :params, :actor
 
       def current_user = actor
+      def current_organization = nil
     end.new
   end
 
@@ -18,7 +20,7 @@ RSpec.describe Admin::SuppliersListing do
     query.params = ActionController::Parameters.new
     query.actor = actor
     allow(actor).to receive(:admin?).and_return(false)
-    allow(actor).to receive(:permission?).with('suppliers.view').and_return(false)
+    allow(actor).to receive(:permission?).and_return(false)
   end
 
   it 'restricts sensitive sort keys to full-view users' do
@@ -28,7 +30,7 @@ RSpec.describe Admin::SuppliersListing do
   end
 
   it 'permits full-view users to sort using fiscal columns' do
-    allow(actor).to receive(:permission?).with('suppliers.view').and_return(true)
+    allow(actor).to receive(:permission?).with('suppliers.fiscal.view').and_return(true)
 
     expect(query.send(:restricted_sort?, 'suppliers.rfc')).to be(false)
   end

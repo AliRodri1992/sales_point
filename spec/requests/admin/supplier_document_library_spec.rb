@@ -48,7 +48,7 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('md:grid-cols-2')
     cards = panel.css('article[data-supplier-documents-target="card"]')
     expect(cards.size).to eq(2)
-    expect(cards.pluck('class')).to all(include('min-h-36'))
+    expect(cards.pluck('class')).to all(include('min-h-40'))
     expect(cards.pluck('class')).to all(include('p-3'))
     expect(panel.at_css('[data-supplier-documents-target="list"]')['class']).to include('auto-rows-fr')
     expect(cards.map { |card| card.at_css('button span[title]') }).to all(be_present)
