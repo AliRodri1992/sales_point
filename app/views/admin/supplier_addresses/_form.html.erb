@@ -2,6 +2,7 @@
               class: 'space-y-4',
               html: { novalidate: true },
               data: {
+                loading_message: t('admin.action_loader.saving'),
                 controller: 'supplier-address-preview supplier-address-location',
                 action: 'input->supplier-address-preview#refresh change->supplier-address-preview#refresh input->supplier-address-location#changed change->supplier-address-location#changed',
                 supplier_address_preview_placeholder_value: t('admin.supplier_details.address_form.preview_pending'),
@@ -336,6 +337,7 @@
     <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.address_form.required_legend') %> <span class="font-semibold text-rose-600">*</span></p>
     <div class="ml-auto flex flex-wrap items-center gap-3">
       <%= link_to t('admin.supplier_details.address_form.cancel'), (params[:source] == 'dossier' ? admin_supplier_path(@supplier, tab: 'addresses') : admin_supplier_addresses_path(@supplier)),
+                  data: { loading_message: t('admin.action_loader.returning') },
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
       <%= form.button type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
         <%= icon('check', class: 'size-4') %>
