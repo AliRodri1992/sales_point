@@ -30,11 +30,11 @@ RSpec.describe 'Delta POS user guide', type: :request do
     get admin_guide_path
 
     page = Nokogiri::HTML(response.body)
-    expect(page.at_css('#guide-products').text).to include('Dar de alta un producto')
-    expect(page.at_css('#guide-products').text).to include('Eliminar un producto')
-    expect(page.at_css('#guide-categories').text).to include('Dar de alta una categoría')
-    expect(page.at_css('#guide-categories').text).to include('Eliminar una categoría')
-    expect(page.at_css('#guide-onboarding').text).to include('Paso 5:')
+    expect(page.at_css('#guide-products').text).to include('Create a product')
+    expect(page.at_css('#guide-products').text).to include('Delete a product')
+    expect(page.at_css('#guide-categories').text).to include('Create a category')
+    expect(page.at_css('#guide-categories').text).to include('Delete a category')
+    expect(page.at_css('#guide-onboarding').text).to include('Step 5:')
     expect(page.at_css('#guide-supplier_invoices').text).to include('CFDI')
     expect(page.at_css('#guide-coming_soon').css('a')).to be_empty
   end
@@ -53,7 +53,7 @@ RSpec.describe 'Delta POS user guide', type: :request do
     expect(ids.uniq).to eq(ids)
   end
 
-  it 'keeps all detailed Spanish procedures available under English and Korean chapter headings' do
+  it 'provides complete localized procedures for English and Korean chapters' do
     %i[en ko].each do |locale|
       I18n.with_locale(locale) do
         Admin::GuideController::SECTION_ORDER.each do |section|
@@ -61,8 +61,10 @@ RSpec.describe 'Delta POS user guide', type: :request do
           translated = I18n.t("admin.user_manual.sections.#{section}", locale:)
           expect(translated[:title]).to be_present
           expect(translated[:description]).to be_present
-          expect(translated[:topics]).to eq([])
-          expect(spanish[:topics]).not_to be_empty
+          expect(translated[:topics].size).to eq(spanish[:topics].size)
+          expect(translated[:topics].map { |topic| topic[:id] })
+            .to eq(spanish[:topics].map { |topic| topic[:id] })
+          expect(translated[:topics].flat_map { |topic| topic[:tasks] }).not_to be_empty
         end
       end
     end
