@@ -43,7 +43,7 @@ export default class extends Controller {
 
   async initialize() {
     this.loading = true
-    this.setStatus(this.messagesValue.loading)
+    this.setStatus("")
     try {
       // A fresh URL lets the user retry a failed browser module fetch.
       const moduleUrl = this.retryAttempt ? `${UPPY_MODULE}?retry=${this.retryAttempt}` : UPPY_MODULE
@@ -129,7 +129,7 @@ export default class extends Controller {
         this.placeholderTarget.hidden = false
         this.placeholderMessageTarget.textContent = this.messagesValue.unavailable
         this.retryButtonTarget.hidden = false
-        this.setStatus(this.messagesValue.unavailable, true)
+        this.setStatus("")
       }
     } finally {
       this.loading = false
