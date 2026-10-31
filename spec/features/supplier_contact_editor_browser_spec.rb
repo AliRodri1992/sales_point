@@ -58,6 +58,28 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     expect(created.phones.active.first.kind).to eq('mobile')
   end
 
+  scenario 'adds and saves an additional number while editing a contact' do
+    contact = create(
+      :contact, contactable: supplier, name: 'Existing contact',
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }
+      ]
+    )
+    visit edit_admin_supplier_contact_path(supplier, contact)
+
+    expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)
+    find('button[data-action="nested-phones#add"]').click
+    expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 2)
+
+    cards = page.all('[data-nested-phones-target="items"] > [data-phone-item]')
+    cards.last.find('input[name$="[number]"]').set('5587654321')
+    find('input[type="submit"][value="Save changes"]').click
+
+    expect(page).to have_current_path(admin_supplier_contacts_path(supplier), wait: 10)
+    expect(contact.reload.phones.active.count).to eq(2)
+    expect(contact.phones.active.pluck(:kind)).to contain_exactly('landline', 'mobile')
+  end
+
   scenario 'removes and restores an existing number before saving' do
     contact = create(
       :contact, contactable: supplier, name: 'Purchasing contact',
