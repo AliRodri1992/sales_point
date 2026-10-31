@@ -49,6 +49,22 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(persisted).to have_attributes(name: original_name, deleted_at: nil)
   end
 
+  it 'renders the shared mascot loader and enables it for supplier actions' do
+    create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    loader = document.at_css('#admin-action-loader[data-controller="admin-action-loader"]')
+    expect(loader).to be_present
+    expect(loader['hidden']).not_to be_nil
+    expect(loader.at_css('img[src*="deltin/waving"]')).to be_present
+    expect(document.at_css('thead[data-loading-scope="true"]')).to be_present
+    expect(document.at_css('a[data-loading-message][href*="/suppliers/"]')).to be_present
+    expect(document.at_css('form[data-loading-message]')).to be_present
+  end
+
   it 'subscribes the supplier list to organization-specific Turbo updates' do
     get admin_suppliers_path
 
