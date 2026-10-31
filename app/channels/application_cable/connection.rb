@@ -32,14 +32,15 @@ module ApplicationCable
 
     def broadcast_presence
       online_ids = online_users.members.map(&:to_i)
-      users = User.where(id: online_ids).where(status: :active)
-
-      Turbo::StreamsChannel.broadcast_replace_to(
-        'presence',
-        target: 'online_users_list',
-        partial: 'admin/shared/online_users_list',
-        locals: { users: users }
-      )
+      users = User.where(id: online_ids, status: :active)
+      users.find_each do |viewer|
+        Turbo::StreamsChannel.broadcast_replace_to(
+          "presence_#{viewer.id}",
+          target: 'online_users_list',
+          partial: 'admin/shared/online_users_list',
+          locals: { users: users, viewer: viewer }
+        )
+      end
     end
   end
 end
