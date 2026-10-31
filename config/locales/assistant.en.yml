@@ -31,7 +31,7 @@ en:
       found: "I found the procedure «%{title}» in the guide. Follow these steps:"
       not_found: "I couldn't find a matching procedure, or you don't have access. Try a module name or open the guide."
       invalid_question: "Enter a question between 1 and 500 characters."
-      request_failed: "I couldn't search the guide. Please try again."
+      request_failed: "The guide could not return an answer right now. Check your connection and try again, or open the user manual."
       notice: "Answers are based on the Delta POS guide. I don't change your data."
       question_product: "Dar de alta un producto"
       question_supplier: "Dar de alta un proveedor"
