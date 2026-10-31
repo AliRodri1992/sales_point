@@ -77,11 +77,20 @@ class Supplier < ApplicationRecord
   private
 
   def assign_generated_code
-    return if code.present? || organization.blank?
+    return if code.present? || organization.blank? || !organization.persisted?
 
     organization.with_lock do
-      prefix = 'PROV-'
-      last_number = organization.suppliers.where("code ~ ?", '^PROV-[0-9]+
+      existing = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
+      last_number = existing.filter_map do |value|
+        number = value.delete_prefix('PROV-')
+        number.to_i if number.match?(/\\A[0-9]+\\z/)
+      end.max || 0
+
+      self.code = format('PROV-%06d', last_number + 1)
+    end
+  end
+
+  def responsible_user_in_organization
     return if responsible_user.blank?
 
     memberships = organization&.organization_memberships&.active
