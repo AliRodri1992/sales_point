@@ -433,6 +433,7 @@ es:
         title: Detalles del idioma
       statuses:
         active: Activo
+        inactive: Inactivo
     onboarding:
       active: Activa
       back: Atrás
