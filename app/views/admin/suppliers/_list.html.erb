@@ -11,7 +11,66 @@
   </div>
 
   <% if suppliers.any? %>
-    <div class="overflow-x-auto">
+    <div data-supplier-mobile-cards class="grid gap-3 px-4 pb-4 md:hidden">
+      <% suppliers.each do |supplier| %>
+        <article class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" data-supplier-mobile-card="<%= supplier.id %>">
+          <div class="flex min-w-0 items-start gap-3">
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+              <%= delta_icon('building-office-2', class: 'size-5') %>
+            </span>
+            <div class="min-w-0 flex-1">
+              <p class="break-words font-jakarta text-sm font-bold text-slate-900"><%= supplier.name %></p>
+              <p class="mt-1 break-words text-xs font-medium text-slate-500"><%= supplier.code %></p>
+              <% if can_view_general && supplier.trade_name.present? && supplier.trade_name != supplier.name %>
+                <p class="mt-1 break-words text-xs text-slate-600"><%= supplier.trade_name %></p>
+              <% end %>
+            </div>
+            <span class="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800' %>">
+              <%= t("admin.suppliers.statuses.#{supplier.status}") %>
+            </span>
+          </div>
+          <% if can_view_fiscal || can_view_general %>
+            <dl class="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-xs sm:grid-cols-2">
+              <% if can_view_fiscal %>
+                <div class="min-w-0">
+                  <dt class="font-semibold text-slate-500"><%= t('admin.suppliers.index.columns.rfc') %></dt>
+                  <dd class="mt-1 break-all font-medium text-slate-800"><%= supplier.rfc.presence || '—' %></dd>
+                </div>
+              <% end %>
+              <% if can_view_general %>
+                <div class="min-w-0">
+                  <dt class="font-semibold text-slate-500"><%= t('admin.suppliers.index.columns.email') %></dt>
+                  <dd class="mt-1 break-all font-medium text-slate-800"><%= supplier.email.presence || '—' %></dd>
+                </div>
+              <% end %>
+            </dl>
+          <% end %>
+          <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+            <% if supplier.deleted_at.nil? && policy(supplier).show? %>
+              <%= link_to admin_supplier_path(supplier), class: 'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+                <%= delta_icon('eye', class: 'size-4') %><%= t('admin.suppliers.index.show') %>
+              <% end %>
+            <% end %>
+            <% if supplier.deleted_at.nil? && policy(supplier).edit? %>
+              <%= link_to edit_admin_supplier_path(supplier), class: 'inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 text-sm font-semibold text-emerald-800 hover:bg-emerald-100' do %>
+                <%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.suppliers.index.edit') %>
+              <% end %>
+            <% end %>
+            <% if supplier.deleted_at.present? && policy(supplier).restore? %>
+              <%= button_to t('admin.suppliers.lifecycle.restore'), restore_admin_supplier_path(supplier), method: :patch,
+                            class: 'inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
+            <% elsif supplier.deleted_at.nil? && policy(supplier).destroy? %>
+              <%= button_to admin_supplier_path(supplier), method: :delete,
+                            form: { data: { turbo_confirm: t('admin.suppliers.index.confirm_delete') } },
+                            class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-rose-200 px-4 text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
+                <%= delta_icon('archive-box', class: 'size-4') %><%= t('admin.suppliers.index.delete') %>
+              <% end %>
+            <% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+    <div class="hidden overflow-x-auto md:block">
       <table class="w-full min-w-[760px] text-sm">
         <thead class="bg-slate-50" data-loading-scope="true">
           <tr class="border-y border-slate-200 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
