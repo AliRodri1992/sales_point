@@ -117,8 +117,8 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
   it 'shows only one bank status filter in the dossier' do
     get admin_supplier_path(supplier, tab: 'bank_accounts')
     panel = dossier.at_css('section[data-section="bank_accounts"]')
-    expect(panel.css('[data-finance-bank-status-tabs] a').size).to eq(5)
-    expect(panel.css('select[name="banks_status"]')).to be_empty
+    expect(panel.css('[role="listbox"][aria-labelledby="supplier_banks_status_label"] button[role="option"]').size).to eq(5)
+    expect(panel.css('input[type="radio"]')).to be_empty
     expect(panel.css('input[type="hidden"][name="banks_status"]').size).to eq(1)
   end
 
