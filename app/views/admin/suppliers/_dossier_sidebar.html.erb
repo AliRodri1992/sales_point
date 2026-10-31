@@ -13,7 +13,7 @@
 <% sections.select! { |section, _icon, _group| allowed_sections.include?(section) } %>
 <% sidebar_groups = sections.group_by(&:last) %>
 
-<aside class="min-w-0 w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:h-full lg:w-full" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
+<aside class="min-w-0 w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:self-start lg:h-auto lg:w-full" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
   <div class="lg:hidden">
     <label for="supplier-dossier-section" class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_dossier.navigation.label') %></label>
     <select id="supplier-dossier-section" data-supplier-dossier-target="mobileSelect" data-action="change->supplier-dossier#select" class="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 focus:border-emerald-600 focus:ring-emerald-600">
