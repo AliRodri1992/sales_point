@@ -7,7 +7,6 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
       t.string :code, null: false, limit: 30
       t.string :name, null: false, limit: 150
       t.string :email, limit: 150
-      t.string :phone, limit: 30
       t.string :rfc, limit: 13
       t.references :sat_fiscal_regime, foreign_key: true
       t.string :status, null: false, limit: 20, default: 'active'
@@ -30,7 +29,6 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
               where: 'deleted_at IS NULL',
               name: 'idx_suppliers_org_status_name_active'
     add_index :suppliers, :email
-    add_index :suppliers, :phone
     add_index :suppliers, :status
     add_index :suppliers, :deleted_at
 
