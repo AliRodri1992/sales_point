@@ -290,7 +290,7 @@
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div class="sm:col-span-2">
       <% if supplier.persisted? %>
-        <% if policy(supplier).manage_documents? %>
+        <% if policy(supplier).create_documents? %>
           <%= render 'edit_document_uploader', supplier: supplier %>
         <% else %>
           <p class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"><%= t('admin.supplier_edit_upload.no_permission') %></p>
