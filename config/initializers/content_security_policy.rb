@@ -10,8 +10,16 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.img_src(
     :self,
-    :data
+    :data,
+    :blob
   )
+
+  # Inline Uppy thumbnails and its local thumbnail worker use blob URLs.
+  policy.worker_src :self, :blob
+
+  # Turbo navigations retain the CSP of the page they started on, so this
+  # pinned CDN host must be permitted on all admin pages, not just edit.
+  policy.connect_src :self, 'https://releases.transloadit.com'
 
   policy.script_src(
     :self,
@@ -20,7 +28,8 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.style_src(
     :self,
-    :unsafe_inline
+    :unsafe_inline,
+    'https://releases.transloadit.com'
   )
 
   policy.object_src :none
