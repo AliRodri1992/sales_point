@@ -14,6 +14,10 @@ export default class extends Controller {
       const link = event.target.closest("a[data-loading-message], [data-loading-scope] a[href]")
       if (!link || link.hasAttribute("download") || link.target === "_blank" ||
           link.dataset.turbo === "false" || !link.href) return
+      // This listener runs during capture, before Stimulus can preventDefault().
+      // Drawer links are client-side actions, not navigations; showing the
+      // full-screen loader here would cover the editor and block its buttons.
+      if (link.matches('a[data-action~="supplier-calendar#edit"]')) return
       const url = new URL(link.href, window.location.href)
       if (url.origin !== window.location.origin ||
           (url.pathname === window.location.pathname && url.search === window.location.search &&
