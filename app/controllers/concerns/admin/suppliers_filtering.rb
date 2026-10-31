@@ -25,18 +25,15 @@ module Admin
     end
 
     def supplier_fiscal_visible?
-      current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
-        current_user.permission?('suppliers.fiscal.manage')
+      current_user.admin? || %w[suppliers.fiscal.view suppliers.fiscal.manage].any? { |key| current_user.permission?(key) }
     end
 
     def supplier_commercial_visible?
-      current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
-        current_user.permission?('suppliers.commercial.manage')
+      current_user.admin? || %w[suppliers.commercial.view suppliers.commercial.manage].any? { |key| current_user.permission?(key) }
     end
 
     def supplier_general_visible?
-      current_user.admin? || current_user.permission?('suppliers.view') ||
-        current_user.permission?('suppliers.update')
+      current_user.admin? || %w[suppliers.view suppliers.update].any? { |key| current_user.permission?(key) }
     end
 
     def apply_search_filter(scope)
