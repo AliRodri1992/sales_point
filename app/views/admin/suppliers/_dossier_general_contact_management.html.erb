@@ -1,45 +1,70 @@
+<% primary_contact = supplier.contacts.available.find_by(primary: true) %>
+<% office_phone = primary_contact&.phones&.active&.where(kind: 'landline')&.order(primary: :desc, id: :asc)&.first %>
+<% mobile_phone = primary_contact&.phones&.active&.where(kind: 'mobile')&.order(primary: :desc, id: :asc)&.first %>
+<% contact_email = primary_contact&.email.presence || supplier.email.presence %>
+
 <div data-supplier-general-area="contact_management" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <h3 class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 font-jakarta text-base font-bold text-slate-900">
-
     <%= delta_icon('users', class: 'size-5 text-emerald-700') %>
     <%= t('admin.supplier_general_layout.contact_management') %>
   </h3>
-  <dl class="grid gap-5 p-5 md:grid-cols-2">
-    <div>
-      <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.phone') %></dt>
-      <% primary_contact = supplier.contacts.not_deleted.find_by(primary: true, active: true) %>
-      <% office_phone = primary_contact&.phones&.active&.find_by(kind: 'landline', primary: true) %>
-      <% if office_phone.present? %>
-        <dd class="flex items-center gap-2 break-all text-sm font-semibold text-slate-900">
-          <%= office_phone.number %>
-          <%= link_to "tel:#{office_phone.number}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= delta_icon('phone', class: 'size-4') %><% end %>
-        </dd>
-      <% else %>
-        <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.phone_missing') %></dd>
-      <% end %>
+
+  <div class="grid gap-5 p-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+    <div class="min-w-0 rounded-xl border border-slate-100 p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <%= delta_icon('user', class: 'size-4 text-emerald-700') %>
+        <h4 class="font-jakarta text-sm font-bold text-slate-900">Contacto principal</h4>
+      </div>
+      <dl class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+        <div class="min-w-0">
+          <dt class="mb-1 text-xs font-medium text-slate-500">Nombre del contacto</dt>
+          <dd class="break-words text-sm font-semibold text-slate-900"><%= primary_contact&.name.presence || '—' %></dd>
+        </div>
+        <div class="min-w-0">
+          <dt class="mb-1 text-xs font-medium text-slate-500">Cargo</dt>
+          <dd class="break-words text-sm font-semibold text-slate-900"><%= primary_contact&.position.presence || '—' %></dd>
+        </div>
+        <div class="min-w-0 sm:col-span-2">
+          <dt class="mb-1 text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.overview.email') %></dt>
+          <% if contact_email.present? %>
+            <dd class="flex min-w-0 items-center gap-2 text-sm font-semibold">
+              <%= mail_to contact_email, contact_email, class: 'min-w-0 break-all text-emerald-700 hover:underline' %>
+              <%= mail_to contact_email, delta_icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
+            </dd>
+          <% else %>
+            <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>
+          <% end %>
+        </div>
+        <% { 'Teléfono de oficina' => office_phone, 'Teléfono celular' => mobile_phone }.each do |label, phone| %>
+          <div class="min-w-0">
+            <dt class="mb-1 text-xs font-medium text-slate-500"><%= label %></dt>
+            <% if phone.present? %>
+              <dd class="flex min-w-0 items-center gap-2 text-sm font-semibold text-slate-900">
+                <span class="min-w-0 break-all"><%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %></span>
+                <%= link_to "tel:#{phone.number}#{';ext=' + phone.extension if phone.extension.present?}", aria: { label: "#{t('admin.supplier_general_layout.call')}: #{label}" }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %>
+                  <%= delta_icon('phone', class: 'size-4') %>
+                <% end %>
+              </dd>
+            <% else %>
+              <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.phone_missing') %></dd>
+            <% end %>
+          </div>
+        <% end %>
+      </dl>
     </div>
-    <div class="md:row-span-2">
-      <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.responsible') %></dt>
+    <div class="min-w-0 rounded-xl border border-slate-100 p-4">
+      <div class="mb-4 flex items-center gap-2">
+        <%= delta_icon('user-circle', class: 'size-4 text-emerald-700') %>
+        <h4 class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.supplier_dossier.responsible') %></h4>
+      </div>
       <% if supplier.responsible_user.present? %>
-        <dd class="flex items-center gap-3">
+        <div class="flex items-center gap-3">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800"><%= supplier.responsible_user.display_name.split.map { |part| part.first }.first(2).join.upcase %></span>
-          <span class="break-words text-sm font-semibold text-slate-900"><%= supplier.responsible_user.display_name %></span>
-        </dd>
+          <span class="min-w-0 break-words text-sm font-semibold text-slate-900"><%= supplier.responsible_user.display_name %></span>
+        </div>
       <% else %>
-        <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.responsible_missing') %></dd>
+        <p class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.responsible_missing') %></p>
       <% end %>
     </div>
-    <div>
-      <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.email') %></dt>
-      <% contact_email = primary_contact&.email.presence || supplier.email.presence %>
-      <% if contact_email.present? %>
-        <dd class="flex items-center gap-2 break-all text-sm font-semibold">
-          <%= mail_to contact_email, contact_email, class: 'text-emerald-700 hover:underline' %>
-          <%= mail_to contact_email, delta_icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
-        </dd>
-      <% else %>
-        <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>
-      <% end %>
-    </div>
-  </dl>
+  </div>
 </div>
