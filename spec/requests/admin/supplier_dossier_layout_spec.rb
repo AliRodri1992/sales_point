@@ -513,7 +513,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
     expect(layout).to be_present
     expect(layout['class']).to include('w-full', 'flex-col')
     expect(dossier.at_css('[data-supplier-dossier-content]').parent['class'])
-      .to include('lg:grid', 'lg:items-stretch')
+      .to include('lg:grid', 'lg:items-start')
 
     sections = %w[
       general fiscal commercial contacts addresses schedules documents bank_accounts products statement
