@@ -64,7 +64,6 @@ module SupplierExamples
       else
         fill_missing_details(supplier, attributes)
       end
-      create_supplier_phones(supplier, number)
       create_contact(supplier, number)
     end
 
@@ -110,23 +109,19 @@ module SupplierExamples
       supplier.save! if supplier.changed?
     end
 
-    def create_supplier_phones(supplier, number)
-      return if supplier.phones.active.exists?
-
-      %w[landline mobile].each do |kind|
-        supplier.phones.create!(
-          organization: supplier.organization,
-          number: format('551234%04d', number), country_code: 'MX',
-          kind:, primary: true
-        )
-      end
-    end
-
     def create_contact(supplier, number)
       # A manually renamed or archived primary contact must not be recreated.
-      return if supplier.contacts.with_deleted.exists?
+      contact = supplier.contacts.not_deleted.find_by(primary: true)
+      if contact
+        %w[landline mobile].each do |kind|
+          next if contact.phones.active.where(kind:, primary: true).exists?
 
-      create_new_contact(supplier, number, "contacto#{number}@example.com")
+          contact.phones.create!(organization: supplier.organization, kind:, primary: true,
+                                country_code: 'MX', number: format('551234%04d', number))
+        end
+      elsif !supplier.contacts.with_deleted.exists?
+        create_new_contact(supplier, number, "contacto#{number}@example.com")
+      end
     end
 
     def create_new_contact(supplier, number, email)
@@ -134,8 +129,10 @@ module SupplierExamples
         name: "Contacto #{number}",
         email: email,
         position: 'Ventas',
-        phones_attributes: [{ number: format('551234%04d', number), kind: 'mobile', primary: true,
-                              country_code: 'MX', organization: supplier.organization }],
+        phones_attributes: %w[landline mobile].map do |kind|
+          { number: format('551234%04d', number), kind:, primary: true,
+            country_code: 'MX', organization: supplier.organization }
+        end,
         notes: 'Contacto ficticio para demostración.',
         primary: true,
         active: true,
