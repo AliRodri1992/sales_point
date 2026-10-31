@@ -15,11 +15,21 @@
   <% if @credit.posted? && @credit.available_amount.positive? && policy(@credit).apply? %>
     <%= form_with url: apply_admin_supplier_credit_note_path(@credit), class: 'space-y-4 rounded-xl bg-slate-50 p-5' do %>
       <h2 class="font-semibold"><%= t('admin.accounts_payable.apply_credit') %></h2>
-      <%= select_tag :account_payable_id, options_from_collection_for_select(@payables.select { |p| p.supplier_invoice.currency_id == @credit.currency_id }, :id, :id),
-                     prompt: t('admin.accounts_payable.select_payable'), required: true,
-                     class: 'w-full rounded-xl border border-slate-300 p-3' %>
-      <%= number_field_tag :amount, @credit.available_amount, min: '0.01', max: @credit.available_amount, step: '0.01', required: true,
-                           class: 'w-full rounded-xl border border-slate-300 p-3' %>
+      <div>
+        <%= label_tag :account_payable_id, t('admin.accounts_payable.select_payable'),
+                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :account_payable_id, options_from_collection_for_select(@payables.select { |p| p.supplier_invoice.currency_id == @credit.currency_id }, :id, :id),
+                         prompt: t('admin.accounts_payable.select_payable'), required: true,
+                         class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+        </div>
+      </div>
+      <div>
+        <%= label_tag :amount, t('admin.accounts_payable.amount'),
+                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= number_field_tag :amount, @credit.available_amount, min: '0.01', max: @credit.available_amount, step: '0.01', required: true,
+                             class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+      </div>
       <%= submit_tag t('admin.accounts_payable.apply'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
     <% end %>
   <% end %>
