@@ -9,10 +9,14 @@ export default class extends Controller {
   }
 
   filter() {
+    if (!this.hasSupplierTarget || !this.hasCurrencyTarget || !this.hasAccountTarget) return
+
     const supplierId = this.supplierTarget.value
     const currencyCode = this.currencyTarget.selectedOptions[0]?.textContent?.trim()
+    const account = this.accountTarget
+    const previousValue = account.value
 
-    for (const option of this.accountTarget.options) {
+    for (const option of account.options) {
       if (!option.value) continue
 
       const allowed = option.dataset.supplierId === supplierId &&
@@ -20,7 +24,15 @@ export default class extends Controller {
 
       option.hidden = !allowed
       option.disabled = !allowed
-      if (!allowed && option.selected) this.accountTarget.value = ""
+    }
+
+    const selected = account.selectedOptions[0]
+    if (selected?.disabled || selected?.hidden) account.value = ""
+
+    // Changing a native select programmatically does not emit "change".
+    // Notify the branded dropdown and any other dependent form controls.
+    if (account.value !== previousValue) {
+      account.dispatchEvent(new Event("change", { bubbles: true }))
     }
   }
 }
