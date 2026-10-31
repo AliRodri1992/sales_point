@@ -17,7 +17,7 @@
     </header>
     <%= form_with model: supplier.supplier_events.new, url: admin_supplier_events_path(supplier),
                   data: { turbo: false, supplier_calendar_target: 'form',
-                          create_url: admin_supplier_events_path(supplier) },
+                          create_url: admin_supplier_events_path(supplier), controller: 'supplier-event-fields', all_day_hint: t('admin.supplier_ui.all_day_hint') },
                   class: 'flex flex-1 flex-col px-6 py-6' do |form| %>
       <%= hidden_field_tag :_method, '', data: { supplier_calendar_target: 'method' } %>
       <div class="flex-1 space-y-5">
@@ -29,31 +29,32 @@
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <%= form.label :kind, t('admin.supplier_dossier.kind'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= form.select :kind, SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] },
-                            {}, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
+            <div class="relative" data-controller="delta-select"><%= form.select :kind, SupplierEvent::KINDS.map { |kind| [t("admin.supplier_calendar.kinds.#{kind}"), kind] },
+                            {}, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %></div>
           </div>
           <div>
             <%= form.label :branch_id, t('admin.supplier_dossier.branch'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= form.collection_select :branch_id, branches, :id, :name, { include_blank: t('admin.supplier_calendar.select_branch') },
-                                       required: true, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
+            <div class="relative" data-controller="delta-select"><%= form.collection_select :branch_id, branches, :id, :name, { include_blank: t('admin.supplier_calendar.select_branch') },
+                                       required: true, class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %></div>
           </div>
           <div>
             <%= form.label :starts_at, t('admin.supplier_calendar.fields.starts_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= form.datetime_local_field :starts_at, required: true, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
+            <%= form.datetime_local_field :starts_at, required: true, data: { supplier_event_fields_target: 'start', action: 'change->supplier-event-fields#refresh' }, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
           </div>
           <div>
             <%= form.label :ends_at, t('admin.supplier_calendar.fields.ends_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= form.datetime_local_field :ends_at, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
+            <%= form.datetime_local_field :ends_at, data: { supplier_event_fields_target: 'end', action: 'change->supplier-event-fields#refresh' }, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm' %>
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-4 rounded-xl border border-slate-100 p-3">
-          <%= form.check_box :all_day, class: 'size-4 rounded border-slate-300 text-emerald-600' %>
-          <%= form.label :all_day, t('admin.supplier_calendar.all_day'), class: 'text-sm font-semibold text-slate-700' %>
+          <%= form.check_box :all_day, data: { supplier_event_fields_target: 'allDay', action: 'change->supplier-event-fields#refresh' }, class: 'size-5 rounded border-slate-300 text-emerald-600' %>
+          <%= form.label :all_day, t('admin.supplier_calendar.all_day'), class: 'cursor-pointer text-sm font-semibold text-slate-700' %>
+          <span data-supplier-event-fields-target="hint" role="status" aria-live="polite" class="ml-auto text-xs font-medium text-emerald-800"></span>
         </div>
         <div>
           <%= form.label :status, t('admin.supplier_calendar.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.select :status, SupplierEvent::STATUSES.map { |value| [t("admin.supplier_calendar.statuses.#{value}"), value] },
-                          {}, class: 'w-full rounded-xl border border-slate-200 px-3 py-3 text-sm' %>
+          <div class="relative" data-controller="delta-select"><%= form.select :status, SupplierEvent::STATUSES.map { |value| [t("admin.supplier_calendar.statuses.#{value}"), value] },
+                          {}, class: 'min-h-12 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm' %></div>
         </div>
         <div>
           <%= form.label :notes, t('admin.supplier_dossier.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>

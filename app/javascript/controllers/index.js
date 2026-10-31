@@ -145,3 +145,6 @@ application.register("admin-action-loader", AdminActionLoaderController)
 
 import DeltinAssistantController from "./deltin_assistant_controller"
 application.register("deltin-assistant", DeltinAssistantController)
+
+import SupplierEventFieldsController from "./supplier_event_fields_controller"
+application.register("supplier-event-fields", SupplierEventFieldsController)

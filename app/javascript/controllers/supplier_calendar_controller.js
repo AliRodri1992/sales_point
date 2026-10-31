@@ -53,6 +53,7 @@ export default class extends Controller {
     if (input) {
       if (input.type === "checkbox") input.checked = Boolean(value)
       else input.value = value || ""
+      input.dispatchEvent(new Event("change", { bubbles: true }))
     }
   }
 
