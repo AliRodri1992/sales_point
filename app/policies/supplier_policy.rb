@@ -15,6 +15,8 @@ class SupplierPolicy
     suppliers.addresses.create suppliers.addresses.update suppliers.addresses.destroy suppliers.addresses.restore
     suppliers.addresses.set_primary suppliers.addresses.geocode
     suppliers.schedules.create suppliers.schedules.update suppliers.schedules.destroy suppliers.schedules.restore
+    suppliers.documents.create suppliers.documents.update suppliers.documents.destroy suppliers.documents.restore
+    suppliers.products.create suppliers.products.update suppliers.products.destroy suppliers.products.restore
   ].freeze
 
   # List access does not grant access to sensitive dossier sections.
@@ -79,10 +81,15 @@ class SupplierPolicy
   def restore_schedules? = section_action?('schedules', 'restore')
 
   def view_documents?
-    authorized_record? && (allowed?('suppliers.documents.view') || allowed?('suppliers.documents.manage'))
+    authorized_record? && (allowed?('suppliers.documents.view') ||
+                           section_any_action?('documents', %w[create update destroy restore]))
   end
 
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')
+  def create_documents? = section_action?('documents', 'create')
+  def update_documents? = section_action?('documents', 'update')
+  def destroy_documents? = section_action?('documents', 'destroy')
+  def restore_documents? = section_action?('documents', 'restore')
 
   def view_fiscal?
     authorized_record? && (allowed?('suppliers.fiscal.view') || allowed?('suppliers.fiscal.manage'))
@@ -97,10 +104,15 @@ class SupplierPolicy
   def manage_commercial? = authorized_record? && allowed?('suppliers.commercial.manage')
 
   def view_products?
-    authorized_record? && (allowed?('suppliers.products.view') || allowed?('suppliers.products.manage'))
+    authorized_record? && (allowed?('suppliers.products.view') ||
+                           section_any_action?('products', %w[create update destroy restore]))
   end
 
   def manage_products? = authorized_record? && allowed?('suppliers.products.manage')
+  def create_products? = section_action?('products', 'create')
+  def update_products? = section_action?('products', 'update')
+  def destroy_products? = section_action?('products', 'destroy')
+  def restore_products? = section_action?('products', 'restore')
   def export? = authorized_organization? && allowed?('suppliers.export')
 
   private
