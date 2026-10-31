@@ -26,7 +26,7 @@ RSpec.describe DeltaIconsHelper, type: :helper do
   it 'defines an original illustration for every literal icon used in the application' do
     sources = Rails.root.glob('app/{views,components,helpers}/**/*.{erb,rb}')
     names = sources.flat_map do |file|
-      file.read.scan(/(?<![\w])delta_icon\(\s*['"]([^'"]+)['"]/).flatten
+      file.read.scan(/(?<!\w)delta_icon\(\s*['"]([^'"]+)['"]/).flatten
     end.uniq
     unresolved = names.reject do |name|
       key = described_class::ICON_ALIASES.fetch(name, name)
@@ -42,7 +42,7 @@ RSpec.describe DeltaIconsHelper, type: :helper do
       next if file.basename.to_s == 'delta_icons_helper.rb'
 
       content = file.read
-      next unless content.match?(/(?<![\w])icon\(|helpers\.icon\b|(?:RailsIcons|heroicons)/i)
+      next unless content.match?(/(?<!\w)icon\(|helpers\.icon\b|(?:RailsIcons|heroicons)/i)
 
       file.relative_path_from(Rails.root).to_s
     end
