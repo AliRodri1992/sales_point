@@ -7,8 +7,6 @@ class CreateContacts < ActiveRecord::Migration[8.1]
       t.string :name, limit: 150, null: false
       t.string :position, limit: 100
       t.string :email, limit: 150
-      t.string :phone, limit: 30
-      t.string :mobile_phone, limit: 30
       t.boolean :primary, default: false, null: false
       t.boolean :active, default: true, null: false
       t.text :notes
