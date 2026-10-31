@@ -28,8 +28,16 @@ export default class extends Controller {
   }
 
   remove(event) {
-    const item = event.target.closest("[data-phone-item]")
+    const item = event.currentTarget.closest("[data-phone-item]")
     if (!item) return
+
+    // Unsaved phone rows can disappear immediately; persisted records need an undo option.
+    const savedId = item.querySelector('input[type="hidden"][name$="[id]"]')?.value
+    if (!savedId) {
+      item.remove()
+      this.updateEmptyState()
+      return
+    }
 
     const destroy = item.querySelector('input[name$="[_destroy]"]')
     const fields = item.querySelector("[data-phone-fields]")
