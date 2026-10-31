@@ -95,3 +95,126 @@ ko:
         accounts_payable_banks_reveal:
           name: "은행 계좌 전체 번호 조회"
           description: "감사 기록을 남기고 암호화된 계좌 정보를 확인할 수 있습니다."
+        dashboard_access:
+          name: "대시보드 접근"
+          description: "접근 권한을 부여합니다: 대시보드"
+        sales_access:
+          name: "판매 접근"
+          description: "접근 권한을 부여합니다: 판매"
+        cash_register_access:
+          name: "금전 등록기 접근"
+          description: "접근 권한을 부여합니다: 금전 등록기"
+        inventory_access:
+          name: "재고 접근"
+          description: "접근 권한을 부여합니다: 재고"
+        customers_access:
+          name: "고객 접근"
+          description: "접근 권한을 부여합니다: 고객"
+        suppliers_access:
+          name: "공급업체 접근"
+          description: "접근 권한을 부여합니다: 공급업체"
+        suppliers_contacts_create:
+          name: "공급업체 연락처 등록"
+          description: "등록할 수 있습니다: 공급업체 연락처"
+        suppliers_contacts_update:
+          name: "공급업체 연락처 수정"
+          description: "수정할 수 있습니다: 공급업체 연락처"
+        suppliers_contacts_destroy:
+          name: "공급업체 연락처 보관"
+          description: "보관할 수 있습니다: 공급업체 연락처"
+        suppliers_contacts_restore:
+          name: "공급업체 연락처 복원"
+          description: "복원할 수 있습니다: 공급업체 연락처"
+        suppliers_addresses_create:
+          name: "공급업체 주소 등록"
+          description: "등록할 수 있습니다: 공급업체 주소"
+        suppliers_addresses_update:
+          name: "공급업체 주소 수정"
+          description: "수정할 수 있습니다: 공급업체 주소"
+        suppliers_addresses_destroy:
+          name: "공급업체 주소 보관"
+          description: "보관할 수 있습니다: 공급업체 주소"
+        suppliers_addresses_restore:
+          name: "공급업체 주소 복원"
+          description: "복원할 수 있습니다: 공급업체 주소"
+        suppliers_schedules_create:
+          name: "공급업체 일정 등록"
+          description: "등록할 수 있습니다: 공급업체 일정"
+        suppliers_schedules_update:
+          name: "공급업체 일정 수정"
+          description: "수정할 수 있습니다: 공급업체 일정"
+        suppliers_schedules_destroy:
+          name: "공급업체 일정 보관"
+          description: "보관할 수 있습니다: 공급업체 일정"
+        suppliers_schedules_restore:
+          name: "공급업체 일정 복원"
+          description: "복원할 수 있습니다: 공급업체 일정"
+        suppliers_addresses_set_primary:
+          name: "공급업체 주소 대표 주소 설정"
+          description: "대표 주소를 설정할 수 있습니다: 공급업체 주소"
+        suppliers_addresses_geocode:
+          name: "공급업체 주소 위치 좌표 갱신"
+          description: "지도 위치를 갱신할 수 있습니다: 공급업체 주소"
+        suppliers_documents_create:
+          name: "공급업체 문서 등록"
+          description: "등록할 수 있습니다: 공급업체 문서"
+        suppliers_documents_update:
+          name: "공급업체 문서 수정"
+          description: "수정할 수 있습니다: 공급업체 문서"
+        suppliers_documents_destroy:
+          name: "공급업체 문서 보관"
+          description: "보관할 수 있습니다: 공급업체 문서"
+        suppliers_documents_restore:
+          name: "공급업체 문서 복원"
+          description: "복원할 수 있습니다: 공급업체 문서"
+        suppliers_products_create:
+          name: "상품 등록"
+          description: "등록할 수 있습니다: 상품"
+        suppliers_products_update:
+          name: "상품 수정"
+          description: "수정할 수 있습니다: 상품"
+        suppliers_products_destroy:
+          name: "상품 보관"
+          description: "보관할 수 있습니다: 상품"
+        suppliers_products_restore:
+          name: "상품 복원"
+          description: "복원할 수 있습니다: 상품"
+        suppliers_products_prefer:
+          name: "상품 우선 공급업체 선택"
+          description: "우선 공급업체 상품을 선택할 수 있습니다: 상품"
+        employees_access:
+          name: "직원 접근"
+          description: "접근 권한을 부여합니다: 직원"
+        reports_access:
+          name: "보고서 접근"
+          description: "접근 권한을 부여합니다: 보고서"
+        products_access:
+          name: "상품 접근"
+          description: "접근 권한을 부여합니다: 상품"
+        categories_access:
+          name: "카테고리 접근"
+          description: "접근 권한을 부여합니다: 카테고리"
+        branches_access:
+          name: "지점 접근"
+          description: "접근 권한을 부여합니다: 지점"
+        languages_access:
+          name: "언어 접근"
+          description: "접근 권한을 부여합니다: 언어"
+        roles_access:
+          name: "역할 접근"
+          description: "접근 권한을 부여합니다: 역할"
+        accounts_payable_banks_create:
+          name: "공급업체 은행 계좌 등록"
+          description: "등록할 수 있습니다: 공급업체 은행 계좌"
+        accounts_payable_banks_update:
+          name: "공급업체 은행 계좌 수정"
+          description: "수정할 수 있습니다: 공급업체 은행 계좌"
+        accounts_payable_banks_destroy:
+          name: "공급업체 은행 계좌 보관"
+          description: "보관할 수 있습니다: 공급업체 은행 계좌"
+        accounts_payable_banks_restore:
+          name: "공급업체 은행 계좌 복원"
+          description: "복원할 수 있습니다: 공급업체 은행 계좌"
+        accounts_payable_banks_review:
+          name: "공급업체 은행 계좌 검증"
+          description: "검증 여부를 결정할 수 있습니다: 공급업체 은행 계좌"

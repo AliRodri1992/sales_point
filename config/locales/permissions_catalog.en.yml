@@ -95,3 +95,126 @@ en:
         accounts_payable_banks_reveal:
           name: "Reveal bank account numbers"
           description: "View complete encrypted bank details with auditing."
+        dashboard_access:
+          name: "Access dashboard"
+          description: "Allows access to dashboard."
+        sales_access:
+          name: "Access sales"
+          description: "Allows access to sales."
+        cash_register_access:
+          name: "Access cash register"
+          description: "Allows access to cash register."
+        inventory_access:
+          name: "Access inventory"
+          description: "Allows access to inventory."
+        customers_access:
+          name: "Access customers"
+          description: "Allows access to customers."
+        suppliers_access:
+          name: "Access suppliers"
+          description: "Allows access to suppliers."
+        suppliers_contacts_create:
+          name: "Create supplier contacts"
+          description: "Allows creating supplier contacts."
+        suppliers_contacts_update:
+          name: "Edit supplier contacts"
+          description: "Allows updating supplier contacts."
+        suppliers_contacts_destroy:
+          name: "Archive supplier contacts"
+          description: "Allows archiving supplier contacts."
+        suppliers_contacts_restore:
+          name: "Restore supplier contacts"
+          description: "Allows restoring supplier contacts."
+        suppliers_addresses_create:
+          name: "Create supplier addresses"
+          description: "Allows creating supplier addresses."
+        suppliers_addresses_update:
+          name: "Edit supplier addresses"
+          description: "Allows updating supplier addresses."
+        suppliers_addresses_destroy:
+          name: "Archive supplier addresses"
+          description: "Allows archiving supplier addresses."
+        suppliers_addresses_restore:
+          name: "Restore supplier addresses"
+          description: "Allows restoring supplier addresses."
+        suppliers_schedules_create:
+          name: "Create supplier calendars"
+          description: "Allows creating supplier calendars."
+        suppliers_schedules_update:
+          name: "Edit supplier calendars"
+          description: "Allows updating supplier calendars."
+        suppliers_schedules_destroy:
+          name: "Archive supplier calendars"
+          description: "Allows archiving supplier calendars."
+        suppliers_schedules_restore:
+          name: "Restore supplier calendars"
+          description: "Allows restoring supplier calendars."
+        suppliers_addresses_set_primary:
+          name: "Set primary address for supplier addresses"
+          description: "Allows setting the primary address for supplier addresses."
+        suppliers_addresses_geocode:
+          name: "Geocode supplier addresses"
+          description: "Allows updating map locations for supplier addresses."
+        suppliers_documents_create:
+          name: "Create supplier documents"
+          description: "Allows creating supplier documents."
+        suppliers_documents_update:
+          name: "Edit supplier documents"
+          description: "Allows updating supplier documents."
+        suppliers_documents_destroy:
+          name: "Archive supplier documents"
+          description: "Allows archiving supplier documents."
+        suppliers_documents_restore:
+          name: "Restore supplier documents"
+          description: "Allows restoring supplier documents."
+        suppliers_products_create:
+          name: "Create products"
+          description: "Allows creating products."
+        suppliers_products_update:
+          name: "Edit products"
+          description: "Allows updating products."
+        suppliers_products_destroy:
+          name: "Archive products"
+          description: "Allows archiving products."
+        suppliers_products_restore:
+          name: "Restore products"
+          description: "Allows restoring products."
+        suppliers_products_prefer:
+          name: "Select preferred offers for products"
+          description: "Allows choosing preferred offers for products."
+        employees_access:
+          name: "Access employees"
+          description: "Allows access to employees."
+        reports_access:
+          name: "Access reports"
+          description: "Allows access to reports."
+        products_access:
+          name: "Access products"
+          description: "Allows access to products."
+        categories_access:
+          name: "Access categories"
+          description: "Allows access to categories."
+        branches_access:
+          name: "Access branches"
+          description: "Allows access to branches."
+        languages_access:
+          name: "Access languages"
+          description: "Allows access to languages."
+        roles_access:
+          name: "Access roles"
+          description: "Allows access to roles."
+        accounts_payable_banks_create:
+          name: "Create supplier bank accounts"
+          description: "Allows creating supplier bank accounts."
+        accounts_payable_banks_update:
+          name: "Edit supplier bank accounts"
+          description: "Allows updating supplier bank accounts."
+        accounts_payable_banks_destroy:
+          name: "Archive supplier bank accounts"
+          description: "Allows archiving supplier bank accounts."
+        accounts_payable_banks_restore:
+          name: "Restore supplier bank accounts"
+          description: "Allows restoring supplier bank accounts."
+        accounts_payable_banks_review:
+          name: "Verify supplier bank accounts"
+          description: "Allows verifying or rejecting supplier bank accounts."

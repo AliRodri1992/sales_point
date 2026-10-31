@@ -95,3 +95,126 @@ es:
         accounts_payable_banks_reveal:
           name: "Revelar datos bancarios de proveedores"
           description: "Permite consultar los números de cuenta completos con auditoría."
+        dashboard_access:
+          name: "Acceder a panel principal"
+          description: "Permite abrir panel principal."
+        sales_access:
+          name: "Acceder a ventas"
+          description: "Permite abrir ventas."
+        cash_register_access:
+          name: "Acceder a caja"
+          description: "Permite abrir caja."
+        inventory_access:
+          name: "Acceder a inventario"
+          description: "Permite abrir inventario."
+        customers_access:
+          name: "Acceder a clientes"
+          description: "Permite abrir clientes."
+        suppliers_access:
+          name: "Acceder a proveedores"
+          description: "Permite abrir proveedores."
+        suppliers_contacts_create:
+          name: "Crear contactos del proveedor"
+          description: "Permite registrar contactos del proveedor."
+        suppliers_contacts_update:
+          name: "Editar contactos del proveedor"
+          description: "Permite actualizar contactos del proveedor."
+        suppliers_contacts_destroy:
+          name: "Archivar contactos del proveedor"
+          description: "Permite archivar contactos del proveedor."
+        suppliers_contacts_restore:
+          name: "Restaurar contactos del proveedor"
+          description: "Permite recuperar contactos del proveedor."
+        suppliers_addresses_create:
+          name: "Crear direcciones del proveedor"
+          description: "Permite registrar direcciones del proveedor."
+        suppliers_addresses_update:
+          name: "Editar direcciones del proveedor"
+          description: "Permite actualizar direcciones del proveedor."
+        suppliers_addresses_destroy:
+          name: "Archivar direcciones del proveedor"
+          description: "Permite archivar direcciones del proveedor."
+        suppliers_addresses_restore:
+          name: "Restaurar direcciones del proveedor"
+          description: "Permite recuperar direcciones del proveedor."
+        suppliers_schedules_create:
+          name: "Crear calendarios del proveedor"
+          description: "Permite registrar calendarios del proveedor."
+        suppliers_schedules_update:
+          name: "Editar calendarios del proveedor"
+          description: "Permite actualizar calendarios del proveedor."
+        suppliers_schedules_destroy:
+          name: "Archivar calendarios del proveedor"
+          description: "Permite archivar calendarios del proveedor."
+        suppliers_schedules_restore:
+          name: "Restaurar calendarios del proveedor"
+          description: "Permite recuperar calendarios del proveedor."
+        suppliers_addresses_set_primary:
+          name: "Establecer dirección principal de direcciones del proveedor"
+          description: "Permite definir la dirección principal de direcciones del proveedor."
+        suppliers_addresses_geocode:
+          name: "Geocodificar direcciones del proveedor"
+          description: "Permite actualizar la ubicación geográfica de direcciones del proveedor."
+        suppliers_documents_create:
+          name: "Crear documentos del proveedor"
+          description: "Permite registrar documentos del proveedor."
+        suppliers_documents_update:
+          name: "Editar documentos del proveedor"
+          description: "Permite actualizar documentos del proveedor."
+        suppliers_documents_destroy:
+          name: "Archivar documentos del proveedor"
+          description: "Permite archivar documentos del proveedor."
+        suppliers_documents_restore:
+          name: "Restaurar documentos del proveedor"
+          description: "Permite recuperar documentos del proveedor."
+        suppliers_products_create:
+          name: "Crear productos"
+          description: "Permite registrar productos."
+        suppliers_products_update:
+          name: "Editar productos"
+          description: "Permite actualizar productos."
+        suppliers_products_destroy:
+          name: "Archivar productos"
+          description: "Permite archivar productos."
+        suppliers_products_restore:
+          name: "Restaurar productos"
+          description: "Permite recuperar productos."
+        suppliers_products_prefer:
+          name: "Elegir oferta preferente de productos"
+          description: "Permite seleccionar la oferta preferente de productos."
+        employees_access:
+          name: "Acceder a empleados"
+          description: "Permite abrir empleados."
+        reports_access:
+          name: "Acceder a reportes"
+          description: "Permite abrir reportes."
+        products_access:
+          name: "Acceder a productos"
+          description: "Permite abrir productos."
+        categories_access:
+          name: "Acceder a categorías"
+          description: "Permite abrir categorías."
+        branches_access:
+          name: "Acceder a sucursales"
+          description: "Permite abrir sucursales."
+        languages_access:
+          name: "Acceder a idiomas"
+          description: "Permite abrir idiomas."
+        roles_access:
+          name: "Acceder a roles"
+          description: "Permite abrir roles."
+        accounts_payable_banks_create:
+          name: "Crear cuentas bancarias del proveedor"
+          description: "Permite registrar cuentas bancarias del proveedor."
+        accounts_payable_banks_update:
+          name: "Editar cuentas bancarias del proveedor"
+          description: "Permite actualizar cuentas bancarias del proveedor."
+        accounts_payable_banks_destroy:
+          name: "Archivar cuentas bancarias del proveedor"
+          description: "Permite archivar cuentas bancarias del proveedor."
+        accounts_payable_banks_restore:
+          name: "Restaurar cuentas bancarias del proveedor"
+          description: "Permite recuperar cuentas bancarias del proveedor."
+        accounts_payable_banks_review:
+          name: "Verificar cuentas bancarias del proveedor"
+          description: "Permite aprobar o rechazar la verificación de cuentas bancarias del proveedor."

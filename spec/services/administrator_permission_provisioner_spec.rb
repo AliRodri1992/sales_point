@@ -18,7 +18,8 @@ RSpec.describe AdministratorPermissionProvisioner, type: :service do
     definitions = seeds.split('DEFAULT_PERMISSIONS = [', 2).last.split('].freeze', 2).first
     codes = definitions.scan(/code: '(suppliers\.[a-z_.]+)'/).flatten
 
-    expect(codes.size).to eq(20)
+    expect(codes.size).to be >= 40
+    expect(codes).to include('suppliers.products.prefer', 'suppliers.addresses.set_primary')
     codes.each { |code| create(:permission, code:, module_name: 'Proveedores') }
 
     roles.each do |role|
