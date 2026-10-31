@@ -56,3 +56,25 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* The uploader owns its progress while uploading; the completion message sits
+   below it rather than on top of the Dashboard spinner or StatusBar. */
+.supplier-edit-upload__feedback[hidden] { display: none !important; }
+.supplier-edit-upload__feedback[data-state="success"] {
+  border: 1px solid #a7f3d0;
+  background: #ecfdf5;
+  color: #065f46;
+}
+.supplier-edit-upload__feedback[data-state="error"] {
+  border: 1px solid #fecdd3;
+  background: #fff1f2;
+  color: #9f1239;
+}
+.supplier-edit-upload__feedback-success,
+.supplier-edit-upload__feedback-error { display: none; }
+.supplier-edit-upload__feedback[data-state="success"] .supplier-edit-upload__feedback-success {
+  display: inline-flex;
+}
+.supplier-edit-upload__feedback[data-state="error"] .supplier-edit-upload__feedback-error {
+  display: inline-flex;
+}
