@@ -101,22 +101,35 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :feature, js: true 
         const panel = document.querySelector('.supplier-edit-upload [data-supplier-edit-uppy-target="dashboard"]')
         const card = panel.querySelector('.uppy-Dashboard-FileCard')
         const header = document.getElementById('adminTopbar')
+        const initialHost = panel.getBoundingClientRect()
+        window.scrollTo({ top: window.scrollY + initialHost.top - 35, behavior: 'instant' })
         const host = panel.getBoundingClientRect()
         const preview = card.getBoundingClientRect()
-        window.scrollTo(0, window.scrollY + host.top - 35)
         const navbar = header.getBoundingClientRect()
-        const point = document.elementFromPoint(navbar.left + navbar.width / 2, navbar.top + 20)
+        const overlap = {
+          left: Math.max(navbar.left, preview.left),
+          right: Math.min(navbar.right, preview.right),
+          top: Math.max(navbar.top, preview.top),
+          bottom: Math.min(navbar.bottom, preview.bottom)
+        }
+        const intersection = overlap.right > overlap.left && overlap.bottom > overlap.top
+        const overlaidElement = intersection
+          ? document.elementFromPoint((overlap.left + overlap.right) / 2,
+                                      (overlap.top + overlap.bottom) / 2)
+          : null
         return {
           contained: preview.left >= host.left - 1 && preview.right <= host.right + 1,
           isolated: getComputedStyle(panel).isolation === 'isolate',
           clipped: getComputedStyle(panel).contain.includes('paint'),
-          navbarOnTop: header.contains(point)
+          overlapsNavbar: intersection,
+          navbarOnTop: header.contains(overlaidElement)
         }
       })()
     JS
 
     expect(geometry).to eq(
-      'contained' => true, 'isolated' => true, 'clipped' => true, 'navbarOnTop' => true
+      'contained' => true, 'isolated' => true, 'clipped' => true,
+      'overlapsNavbar' => true, 'navbarOnTop' => true
     )
   end
 
