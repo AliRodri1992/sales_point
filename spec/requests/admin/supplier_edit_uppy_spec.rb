@@ -53,14 +53,14 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     document = Nokogiri::HTML(response.body)
     editor = document.at_css('[data-controller="supplier-edit-uppy"]')
     dashboard = editor.at_css('[data-supplier-edit-uppy-target="dashboard"]')
-    fallback = editor.at_css('[data-supplier-edit-uppy-target="fallback"]')
+    retry_button = editor.at_css('[data-supplier-edit-uppy-target="retryButton"]')
 
     expect(editor.css('[data-supplier-edit-uppy-target="dashboard"]').size).to eq(1)
     expect(dashboard['class']).not_to include('border-dashed')
     expect(dashboard.at_css('[data-supplier-edit-uppy-target="placeholder"]')['class']).not_to include('border-dashed')
-    expect(fallback['hidden']).not_to be_nil
-    expect(editor.css('input[type="file"]').size).to eq(1)
-    expect(editor.css('input[type="file"]')).to all(satisfy { |input| input.ancestors.include?(fallback) })
+    expect(retry_button['hidden']).not_to be_nil
+    expect(editor.css('input[type="file"]')).to be_empty
+    expect(editor.css('[data-supplier-edit-uppy-target="fallback"]')).to be_empty
   end
 
   it 'preserves the original new supplier file input' do
