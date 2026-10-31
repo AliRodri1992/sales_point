@@ -103,6 +103,26 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(find('[data-supplier-contacts-target="emptyText"]', visible: true)['aria-live']).to eq('polite')
   end
 
+  scenario 'updates the custom mobile section label when browser history changes tabs' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_supplier_path(supplier, tab: 'contacts')
+
+    picker = find('select[data-supplier-dossier-target="mobileSelect"]', visible: :all)
+    label = find('[data-controller="delta-select"] button[aria-haspopup="listbox"]', match: :first)
+    expect(label.text).to include(I18n.t('admin.supplier_dossier.sections.contacts', locale: :en))
+
+    page.execute_script(<<~JS)
+      const picker = document.querySelector('select[data-supplier-dossier-target="mobileSelect"]')
+      picker.value = 'addresses'
+      picker.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+    expect(picker.value).to eq('addresses')
+    page.go_back
+
+    expect(picker.value).to eq('contacts')
+    expect(label.text).to include(I18n.t('admin.supplier_dossier.sections.contacts', locale: :en))
+  end
+
   scenario 'keeps finance navigation and panels connected at tablet width' do
     page.driver.browser.manage.window.resize_to(820, 1180)
     visit admin_supplier_path(supplier, tab: 'bank_accounts')
