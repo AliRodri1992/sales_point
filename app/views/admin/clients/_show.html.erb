@@ -23,7 +23,7 @@
       ['code', @client.code],
       ['name', @client.name],
       ['email', @client.email.presence || '—'],
-      ['phone', @client.phone.presence || '—'],
+      ['phone', @client.phones.active.find_by(kind: 'mobile', primary: true)&.number || '—'],
       ['rfc', @client.rfc.presence || '—'],
       ['fiscal_regime', @client.sat_fiscal_regime ? "#{@client.sat_fiscal_regime.code} — #{@client.sat_fiscal_regime.description}" : '—'],
       ['postal_code', @client.postal_code.presence || '—'],
