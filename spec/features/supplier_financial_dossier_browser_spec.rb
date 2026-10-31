@@ -29,6 +29,47 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     )
   end
 
+  scenario 'clears the visible bank selection when a payment switches suppliers' do
+    other_supplier = create(:supplier, organization:)
+    bank = account(name: 'Original Bank', account_number: '1234567890')
+    SupplierBankAccount.create!(
+      supplier: other_supplier, organization:, bank_name: 'New Bank',
+      holder_name: 'Other Vendor', account_number: '9876543210',
+      currency_code: supplier.currency.code
+    )
+    bank.update!(currency_code: supplier.currency.code)
+
+    visit new_admin_supplier_payment_path
+
+    page.execute_script(<<~JS)
+      const form = document.querySelector('[data-controller="supplier-payment-bank"]')
+      const supplier = form.querySelector('[name="supplier_payment[supplier_id]"]')
+      const currency = form.querySelector('[name="supplier_payment[currency_id]"]')
+      supplier.value = '#{supplier.id}'
+      supplier.dispatchEvent(new Event('change', { bubbles: true }))
+      currency.value = '#{supplier.currency.id}'
+      currency.dispatchEvent(new Event('change', { bubbles: true }))
+      const bank = form.querySelector('[name="supplier_payment[supplier_bank_account_id]"]')
+      bank.value = '#{bank.id}'
+      bank.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    selected = find('select[name="supplier_payment[supplier_bank_account_id]"]', visible: :all)
+    bank_picker = selected.find(:xpath, '..').find('button[aria-haspopup="listbox"]')
+    expect(selected.value).to eq(bank.id.to_s)
+    expect(bank_picker.text).to include('Original Bank')
+
+    page.execute_script(<<~JS)
+      const supplier = document.querySelector('[name="supplier_payment[supplier_id]"]')
+      supplier.value = '#{other_supplier.id}'
+      supplier.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(selected.value).to be_blank
+    expect(bank_picker.text).not_to include('Original Bank')
+    expect(bank_picker['aria-expanded']).to eq('false')
+  end
+
   scenario 'shows blocked bank accounts distinctly from active and verified accounts' do
     blocked = account(name: 'Blocked Bank', account_number: '1234567890')
     verified = account(name: 'Verified Bank', account_number: '9876543210')
