@@ -184,6 +184,30 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it 'provides compact mobile supplier cards without exposing hidden fiscal fields' do
+    supplier = create(:supplier, organization:, name: 'Mobile Supplier')
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    card = page.at_css("[data-supplier-mobile-card='#{supplier.id}']")
+    expect(card).to be_present
+    expect(card.text).to include('Mobile Supplier', supplier.code)
+    expect(page.at_css('div.hidden.overflow-x-auto.md\\:block table')).to be_present
+    expect(card.at_css("a[href='#{admin_supplier_path(supplier)}']")).to be_present
+  end
+
+  it 'uses six capture steps and does not render an extra summary stage' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('[data-supplier-form-target="step"]').size).to eq(6)
+    expect(page.css('[data-supplier-form-target="tab"]').size).to eq(6)
+    expect(page.at_css('[data-supplier-form-target="summary"]')).to be_nil
+  end
+
   it 'renders the new supplier form' do
     get new_admin_supplier_path
 
