@@ -58,5 +58,15 @@
     <%= delta_icon('information-circle', class: 'mt-0.5 size-4 shrink-0 text-slate-500') %>
     <p><%= t('admin.supplier_edit_upload.immediate_notice') %></p>
   </div>
-  <p data-supplier-edit-uppy-target="status" class="text-sm text-slate-600" role="status" aria-live="polite"></p>
+  <div data-supplier-edit-uppy-target="status" data-state="success" hidden
+       class="supplier-edit-upload__feedback flex items-start gap-3 rounded-xl px-4 py-3 text-sm leading-6"
+       role="status" aria-live="polite" aria-atomic="true">
+    <span class="supplier-edit-upload__feedback-success mt-0.5 shrink-0" aria-hidden="true">
+      <%= delta_icon('check-circle', class: 'size-5') %>
+    </span>
+    <span class="supplier-edit-upload__feedback-error mt-0.5 shrink-0" aria-hidden="true">
+      <%= delta_icon('exclamation-circle', class: 'size-5') %>
+    </span>
+    <span data-supplier-edit-uppy-target="statusMessage" class="min-w-0 flex-1"></span>
+  </div>
 </div>
