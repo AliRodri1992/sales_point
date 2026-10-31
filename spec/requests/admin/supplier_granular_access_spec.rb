@@ -53,6 +53,32 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     expect(SupplierPolicy.new(user, supplier).show?).to be(false)
   end
 
+  it 'does not reveal contact details through search to access-only users' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.access', module_name: 'Proveedores')
+    create(:contact, contactable: supplier, primary: true, email: 'hidden@vendor.example')
+
+    get admin_suppliers_path, params: { search: 'hidden@vendor.example' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include(supplier.name)
+  end
+
+  it 'limits general-only contact search to the active primary contact' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.view', module_name: 'Proveedores')
+    create(:contact, contactable: supplier, primary: true, email: 'main@vendor.example')
+    create(:contact, contactable: supplier, primary: false, email: 'secondary@vendor.example')
+
+    get admin_suppliers_path, params: { search: 'secondary@vendor.example' }
+    expect(response.body).not_to include(supplier.name)
+
+    get admin_suppliers_path, params: { search: 'main@vendor.example' }
+    expect(response.body).to include(supplier.name)
+  end
+
   it 'allows contact management but denies address management independently' do
     get admin_supplier_contacts_path(supplier)
     expect(response).to have_http_status(:ok)
