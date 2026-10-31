@@ -80,7 +80,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
 
   it 'shows both missing-contact labels when neither phone nor email is registered' do
     contact = create(:contact, contactable: supplier, name: 'No Communication',
-                               phone: nil, mobile_phone: nil, email: nil)
+                               email: nil)
 
     get admin_supplier_path(supplier, tab: 'contacts')
 
@@ -106,7 +106,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
 
   it 'shows the missing-phone label but preserves the mail link if an email exists' do
     create(:contact, contactable: supplier, name: 'Email Only',
-                     phone: nil, mobile_phone: nil, email: 'only@example.com')
+                     email: 'only@example.com')
 
     get admin_supplier_path(supplier, tab: 'contacts')
 
@@ -123,7 +123,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
       language = Language.find_by(code: locale.to_s) ||
                  create(:language, code: locale.to_s, name: locale.to_s, flag_iso: 'mx')
       user.update!(language:)
-      create(:contact, contactable: supplier, phone: nil, mobile_phone: nil, email: nil) if locale == :es
+      create(:contact, contactable: supplier, email: nil) if locale == :es
 
       get admin_supplier_path(supplier, tab: 'contacts')
 
