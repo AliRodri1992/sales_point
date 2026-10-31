@@ -11,8 +11,7 @@ module Admin
 
     def edit
       @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
-      @branches = current_organization.branches.not_deleted.order(:name)
-      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
+      load_form_catalogs
     end
 
     def create
@@ -27,13 +26,13 @@ module Admin
     end
 
     def update
-      exception = @supplier.supplier_schedule_exceptions.find(params[:id])
-      if exception.update(exception_params)
+      @exception = @supplier.supplier_schedule_exceptions.find(params[:id])
+      if @exception.update(exception_params)
         redirect_to admin_supplier_schedules_path(@supplier),
-                    notice: t('admin.supplier_schedule_exceptions.saved')
+                    flash: { swal_message: t('admin.supplier_schedule_exceptions.saved') }
       else
-        redirect_to edit_admin_supplier_schedule_exception_path(@supplier, exception),
-                    alert: exception.errors.full_messages.to_sentence
+        load_form_catalogs
+        render :edit, status: :unprocessable_content
       end
     end
 
@@ -101,6 +100,11 @@ module Admin
                      params[:operation] == 'restore' ? :restore_schedules? : :destroy_schedules?
                    end
       authorize @supplier, permission
+    end
+
+    def load_form_catalogs
+      @branches = current_organization.branches.not_deleted.order(:name)
+      @schedules = @supplier.supplier_schedules.not_deleted.includes(:branch).order(:weekday, :starts_at)
     end
 
     def exception_params
