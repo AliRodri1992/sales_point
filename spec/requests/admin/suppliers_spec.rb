@@ -361,17 +361,16 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
   end
 
-  it 'renders the original Deltin page-size loader and keeps the selector at the far left' do
+  it 'uses the global Deltin page-size loader and keeps the selector at the far left' do
     create(:supplier, organization:)
 
     get admin_suppliers_path
 
     document = Nokogiri::HTML(response.body)
-    loader = document.at_css('#supplier-page-size-loader')
+    loader = document.at_css('#admin-action-loader')
     expect(loader).to be_present
-    expect(loader['aria-hidden']).to eq('true')
-    expect(loader.at_css('img.animate-pulse')).to be_present
-    expect(loader.css('.deltin-tail-loader__runner, .deltin-tail-loader__dizzy')).to be_empty
+    expect(loader['hidden']).to be_present
+    expect(loader.at_css('img[src*="deltin/waving"]')).to be_present
 
     form = document.at_css('#supplier-pagination-form')
     footer_left = form.parent
@@ -470,7 +469,7 @@ RSpec.describe 'Admin suppliers', type: :request do
                                    .and change { user.notifications.count }.by(1)
 
     expect(response).to redirect_to(admin_suppliers_path)
-    expect(flash[:swal_message]).to eq('Supplier created successfully')
+    expect(flash[:swal_message]).to eq(I18n.t('admin.suppliers.created', locale: :en))
 
     supplier = Supplier.order(:id).last
 
@@ -479,7 +478,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     end.to change { user.notifications.count }.by(1)
 
     expect(response).to redirect_to(admin_suppliers_path)
-    expect(flash[:swal_message]).to eq('Supplier updated successfully')
+    expect(flash[:swal_message]).to eq(I18n.t('admin.suppliers.updated', locale: :en))
     expect(supplier.reload.name).to eq('Updated Supplier')
 
     expect do
