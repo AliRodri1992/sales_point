@@ -12,3 +12,6 @@ es:
       contact_pages: "Páginas de contactos"
       empty_contacts_description: "Registra personas de contacto para facilitar la comunicación y el seguimiento con este proveedor."
       confirm_action: "Confirmar"
+      scheduled_count: "Horarios recurrentes"
+      branches_count: "Sucursales"
+      exceptions_count: "Excepciones"
