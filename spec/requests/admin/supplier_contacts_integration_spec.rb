@@ -67,6 +67,31 @@ RSpec.describe 'Supplier contact integration', type: :request do
     expect(response.body).to include('Operations')
   end
 
+  it 'provides preset and custom phone labels without radio controls' do
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    picker = page.at_css('[data-phone-label-picker]')
+    expect(picker).to be_present
+    expect(picker.css('button[data-action="phone-label#select"]').size).to eq(7)
+    expect(picker.css('input[name$="[label]"]').size).to eq(1)
+    expect(picker.css('input[type="radio"]')).to be_empty
+    expect(picker.at_css('[data-phone-label-target="input"]')['maxlength']).to eq('60')
+  end
+
+  it 'highlights the saved phone label when editing a supplier contact' do
+    contact = create(:contact, contactable: supplier, name: 'Purchasing')
+    contact.phones.create!(number: '5512345678', kind: 'mobile', primary: true, label: 'Sales')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    page = Nokogiri::HTML(response.body)
+    picker = page.at_css('[data-phone-label-picker]')
+    expect(picker.at_css('input[name$="[label]"]')['value']).to eq('Sales')
+    expect(picker.at_css('button[data-phone-label-value="Sales"]')['aria-pressed']).to eq('true')
+  end
+
   it 'finds contacts by active phone number in the management list' do
     contact = create(:contact, contactable: supplier, name: 'Telephone contact')
     contact.phones.create!(
