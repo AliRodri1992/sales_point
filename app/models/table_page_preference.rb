@@ -13,6 +13,7 @@ class TablePagePreference < ApplicationRecord
   belongs_to :organization
 
   validates :table_key, presence: true, inclusion: { in: TABLE_KEYS },
-                        uniqueness: { scope: %i[user_id organization_id] }
+                        uniqueness: { scope: %i[user_id organization_id],
+                                      conditions: -> { where(deleted_at: nil) } }
   validates :per_page, inclusion: { in: OPTIONS }
 end
