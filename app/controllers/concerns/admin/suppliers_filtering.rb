@@ -42,18 +42,15 @@ module Admin
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      fields = %w[code name]
-      fields << 'email' if supplier_general_visible?
-      fields << 'rfc' if supplier_fiscal_visible?
-      conditions = fields.map { |field| "suppliers.#{field} ILIKE :term" }
-      if supplier_general_visible?
-        conditions << "EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier' " \
-                      "AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL " \
-                      'AND phones.number ILIKE :term)'
-      end
-      expression = conditions.join(' OR ')
       term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
-      scope.where(expression, term:)
+      scope.where(<<~SQL.squish, term:, can_general: supplier_general_visible?, can_fiscal: supplier_fiscal_visible?)
+        suppliers.code ILIKE :term OR suppliers.name ILIKE :term
+        OR (:can_general AND (suppliers.email ILIKE :term OR
+          EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier'
+                  AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL
+                  AND phones.number ILIKE :term)))
+        OR (:can_fiscal AND suppliers.rfc ILIKE :term)
+      SQL
     end
 
     def apply_select_filters(scope)
