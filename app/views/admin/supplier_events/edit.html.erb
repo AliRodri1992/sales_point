@@ -1,6 +1,6 @@
 <div class="mx-auto max-w-3xl space-y-5">
   <nav class="flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="<%= t('admin.supplier_dossier.navigation.breadcrumbs') %>">
-    <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, class: 'hover:text-emerald-700' %>
+    <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, data: { loading_message: t('admin.action_loader.returning') }, class: 'hover:text-emerald-700' %>
     <%= icon('chevron-right', class: 'size-4') %>
     <%= link_to @supplier.name, admin_supplier_path(@supplier, tab: 'schedules'), class: 'hover:text-emerald-700' %>
     <%= icon('chevron-right', class: 'size-4') %>
