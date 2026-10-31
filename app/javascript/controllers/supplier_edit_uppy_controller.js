@@ -92,7 +92,10 @@ export default class extends Controller {
         target: this.dashboardTarget,
         inline: true,
         width: "100%",
-        height: 320,
+        height: 400,
+        // Keep a single file inside the inline upload panel rather than
+        // letting its preview expand over the sticky admin navigation.
+        singleFileFullScreen: false,
         showProgressDetails: true,
         // The completed StatusBar otherwise covers the Dashboard loading/progress area.
         // Keep live upload progress and display completion only in our separate feedback row.
