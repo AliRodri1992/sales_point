@@ -50,34 +50,38 @@
         </p>
       <% end %>
     </div>
-    <% if can_manage_addresses %>
+    <% if policy(@supplier).update_addresses? || policy(@supplier).destroy_addresses? || policy(@supplier).restore_addresses? || policy(@supplier).set_primary_address? || policy(@supplier).geocode_address? %>
       <div class="flex min-h-14 flex-wrap items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
-        <% if archived %>
+        <% if archived && policy(@supplier).restore_addresses? %>
           <%= button_to restore_admin_supplier_address_path(@supplier, address), method: :patch,
                         class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50' do %>
             <%= delta_icon('arrow-path', class: 'size-4') %><%= t('admin.supplier_details.restore_address') %>
           <% end %>
-        <% else %>
-          <% if address.geocoding_status == 'failed' %>
+        <% elsif !archived %>
+          <% if address.geocoding_status == 'failed' && policy(@supplier).geocode_address? %>
             <%= button_to t('admin.supplier_details.retry_geocoding'),
                           retry_geocoding_admin_supplier_address_path(@supplier, address), method: :post,
                           class: 'min-h-10 rounded-xl border border-amber-200 px-3 text-sm text-amber-800' %>
           <% end %>
-          <% unless address.primary? %>
+          <% if !address.primary? && policy(@supplier).set_primary_address? %>
             <%= button_to set_primary_admin_supplier_address_path(@supplier, address), method: :patch,
                           form: { data: { turbo_confirm: t('admin.supplier_details.address_primary_confirm') } },
                           class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50' do %>
               <%= delta_icon('star', class: 'size-4') %><%= t('admin.supplier_details.set_primary_address') %>
             <% end %>
           <% end %>
+          <% if policy(@supplier).update_addresses? %>
           <%= link_to edit_admin_supplier_address_path(@supplier, address),
                       class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100' do %>
             <%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
           <% end %>
+          <% end %>
+          <% if policy(@supplier).destroy_addresses? %>
           <%= button_to admin_supplier_address_path(@supplier, address), method: :delete,
                         form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
                         class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-50' do %>
             <%= delta_icon('trash', class: 'size-4') %><%= t('admin.supplier_details.delete') %>
+          <% end %>
           <% end %>
         <% end %>
       </div>

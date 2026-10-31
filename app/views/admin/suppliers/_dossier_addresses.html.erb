@@ -54,7 +54,7 @@
         <%= image_tag 'saddresses.png', alt: '', loading: 'lazy', class: 'mx-auto h-auto w-full max-w-[260px] sm:max-w-[300px]' %>
         <h3 data-supplier-addresses-target="emptyTitle" class="mt-3 font-jakarta text-lg font-bold text-slate-900 sm:text-xl"><%= t('admin.supplier_dossier.address_cards.empty_title') %></h3>
         <p data-supplier-addresses-target="emptyText" class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500"><%= t('admin.supplier_dossier.address_cards.empty_description') %></p>
-        <% if can_manage_addresses %>
+        <% if policy(supplier).create_addresses? %>
           <%= link_to new_admin_supplier_address_path(supplier, source: 'dossier'), data: { supplier_addresses_target: 'emptyAction' }, class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
             <%= delta_icon('plus', class: 'size-4') %>
             <%= t('admin.supplier_dossier.address_cards.add_first') %>

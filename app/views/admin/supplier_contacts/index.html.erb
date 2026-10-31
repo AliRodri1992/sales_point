@@ -1,8 +1,7 @@
 <% deleted_contacts = @supplier.contacts.with_deleted.where.not(deleted_at: nil).order(deleted_at: :desc) %>
 <% showing_deleted = params[:status] == 'deleted' %>
 <% query = params[:q].to_s.strip.downcase %>
-<% listed_contacts = showing_deleted ? deleted_contacts : @contacts %>
-<% listed_contacts = listed_contacts.select { |contact| [contact.name, contact.position, contact.email].any? { |value| value.to_s.downcase.include?(query) } } if query.present? %>
+<% listed_contacts = @listed_contacts %>
 <div class="space-y-6" data-loading-scope="true" data-controller="swal-confirm">
   <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
     <div class="flex flex-wrap items-start justify-between gap-4">
@@ -13,7 +12,7 @@
       </div>
       <div class="flex flex-wrap gap-2">
         <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'contacts'), class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
-        <% if policy(@supplier).manage_contacts? %>
+        <% if policy(@supplier).create_contacts? %>
           <%= link_to new_admin_supplier_contact_path(@supplier), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' do %>
             <%= delta_icon('plus', class: 'size-4') %>
             <%= t('admin.supplier_details.add_contact') %>
@@ -78,18 +77,22 @@
             <% if showing_deleted %><p class="text-xs text-slate-500"><%= t('admin.supplier_details.deleted_on', date: l(contact.deleted_at.to_date, format: :long)) %></p><% end %>
           </div>
         </div>
-        <% if policy(@supplier).manage_contacts? %>
+        <% if policy(@supplier).update_contacts? || policy(@supplier).destroy_contacts? || policy(@supplier).restore_contacts? %>
           <div class="flex min-h-16 items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-5 py-3">
-            <% if showing_deleted %>
+            <% if showing_deleted && policy(@supplier).restore_contacts? %>
               <%= button_to restore_admin_supplier_contact_path(@supplier, contact), method: :patch, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' do %>
                 <%= delta_icon('arrow-path', class: 'size-4') %><%= t('admin.supplier_details.restore_contact') %>
               <% end %>
-            <% else %>
+            <% elsif !showing_deleted %>
+              <% if policy(@supplier).update_contacts? %>
               <%= link_to edit_admin_supplier_contact_path(@supplier, contact), class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100' do %>
                 <%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
               <% end %>
+              <% end %>
+              <% if policy(@supplier).destroy_contacts? %>
               <%= button_to admin_supplier_contact_path(@supplier, contact), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
                 <%= delta_icon('trash', class: 'size-4') %><%= t('admin.supplier_details.delete') %>
+              <% end %>
               <% end %>
             <% end %>
           </div>
@@ -97,6 +100,22 @@
       </article>
     <% end %>
   </div>
+  <% if @contacts_pages > 1 %>
+    <nav class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm" aria-label="<%= t('admin.supplier_ui.contact_pages') %>">
+      <span><%= t('admin.bank_cards.range', from: (@contacts_page - 1) * 12 + 1, to: [@contacts_page * 12, @contacts_total].min, total: @contacts_total) %></span>
+      <div class="flex items-center gap-2">
+        <% if @contacts_page > 1 %>
+          <%= link_to t('admin.supplier_ui.previous'), admin_supplier_contacts_path(@supplier, status: params[:status], q: params[:q], page: @contacts_page - 1),
+                      class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 px-4 font-semibold text-emerald-800 hover:bg-emerald-50' %>
+        <% end %>
+        <span class="inline-flex size-10 items-center justify-center rounded-xl bg-emerald-700 font-semibold tabular-nums text-white"><%= @contacts_page %></span>
+        <% if @contacts_page < @contacts_pages %>
+          <%= link_to t('admin.supplier_ui.next'), admin_supplier_contacts_path(@supplier, status: params[:status], q: params[:q], page: @contacts_page + 1),
+                      class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 px-4 font-semibold text-emerald-800 hover:bg-emerald-50' %>
+        <% end %>
+      </div>
+    </nav>
+  <% end %>
   <% if listed_contacts.empty? %>
     <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
       <%= delta_icon('users', class: 'mx-auto size-9 text-slate-400') %>

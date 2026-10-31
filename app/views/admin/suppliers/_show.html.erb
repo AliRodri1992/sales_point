@@ -86,17 +86,17 @@
     <% end %>
 
     <% if dossier_policy.view_contacts? %>
-    <%= render 'dossier_contacts', supplier: supplier, contacts_page: @dossier_contacts_page, can_manage_contacts: dossier_policy.manage_contacts? %>
+    <%= render 'dossier_contacts', supplier: supplier, contacts_page: @dossier_contacts_page, can_manage_contacts: (dossier_policy.create_contacts? || dossier_policy.update_contacts? || dossier_policy.destroy_contacts? || dossier_policy.restore_contacts?) %>
     <% end %>
 
     <% if dossier_policy.view_addresses? %>
-    <%= render 'dossier_addresses', supplier: supplier, addresses_page: @dossier_addresses_page, can_manage_addresses: dossier_policy.manage_addresses? %>
+    <%= render 'dossier_addresses', supplier: supplier, addresses_page: @dossier_addresses_page, can_manage_addresses: (dossier_policy.create_addresses? || dossier_policy.update_addresses? || dossier_policy.destroy_addresses? || dossier_policy.restore_addresses? || dossier_policy.set_primary_address? || dossier_policy.geocode_address?) %>
     <% end %>
 
     <% if dossier_policy.view_schedules? %>
     <%= render 'dossier_calendar', supplier: supplier, calendar: @supplier_calendar,
                branches: @calendar_branches, archived_events: @calendar_archived_events,
-               can_manage: dossier_policy.manage_schedules? %>
+               can_manage: (dossier_policy.create_schedules? || dossier_policy.update_schedules? || dossier_policy.destroy_schedules? || dossier_policy.restore_schedules?) %>
     <% end %>
 
     <% if policy(supplier).view_products? %>

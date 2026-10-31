@@ -14,7 +14,7 @@
         <p class="mt-0.5 break-words text-xs text-slate-500 sm:text-sm"><%= contact.position.presence || '—' %></p>
       </div>
       <div class="flex shrink-0 items-center gap-1">
-        <% if can_manage_contacts %>
+        <% if policy(supplier).update_contacts? %>
           <details class="group relative">
             <summary aria-label="<%= "#{t('admin.supplier_details.actions')}: #{contact.name}" %>" class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
               <%= delta_icon('ellipsis-vertical', class: 'size-5') %>

@@ -35,7 +35,7 @@
         </span>
       </div>
       <div class="flex shrink-0 items-center gap-1">
-        <% if can_manage_addresses && !address.primary? %>
+        <% if policy(supplier).set_primary_address? && !address.primary? %>
           <details class="group relative">
             <summary aria-label="<%= "#{t('admin.supplier_details.actions')}: #{street_line}" %>" class="flex size-9 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
               <%= delta_icon('ellipsis-vertical', class: 'size-5') %>
@@ -70,7 +70,7 @@
                          target: '_blank', rel: 'noopener noreferrer',
                          class: 'text-xs font-semibold text-emerald-700 underline' %></p>
         <% end %>
-        <% if can_manage_addresses && address.geocoding_status == 'failed' %>
+        <% if policy(supplier).geocode_address? && address.geocoding_status == 'failed' %>
           <%= button_to t('admin.supplier_details.retry_geocoding'),
                         retry_geocoding_admin_supplier_address_path(supplier, address, source: 'dossier'),
                         method: :post, class: 'text-xs font-semibold text-amber-700 underline' %>
