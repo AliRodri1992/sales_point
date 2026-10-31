@@ -11,7 +11,6 @@ module Admin
       'code' => 'suppliers.code',
       'name' => 'suppliers.name',
       'email' => 'suppliers.email',
-      'phone' => 'suppliers.phone',
       'rfc' => 'suppliers.rfc',
       'status' => 'suppliers.status',
       'created_at' => 'suppliers.created_at'
@@ -55,7 +54,7 @@ module Admin
     def restricted_sort?(column)
       return false if current_user.admin?
       return !supplier_fiscal_visible? if column == 'suppliers.rfc'
-      return !supplier_general_visible? if column.in?(%w[suppliers.email suppliers.phone])
+      return !supplier_general_visible? if column == 'suppliers.email'
 
       false
     end
