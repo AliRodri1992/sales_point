@@ -1,0 +1,86 @@
+import { Controller } from "@hotwired/stimulus"
+
+// Opt-in progress overlay for navigation and confirmed submissions.
+// A short delay avoids flashing during fast operations. No artificial percentage.
+export default class extends Controller {
+  static targets = ["message"]
+  static values = { defaultMessage: String }
+
+  connect() {
+    this.onClick = (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey ||
+          event.shiftKey || event.altKey) return
+
+      const link = event.target.closest("a[data-loading-message], [data-loading-scope] a[href]")
+      if (!link || link.hasAttribute("download") || link.target === "_blank" ||
+          link.dataset.turbo === "false" || !link.href) return
+      const url = new URL(link.href, window.location.href)
+      if (url.origin !== window.location.origin ||
+          (url.pathname === window.location.pathname && url.search === window.location.search &&
+           url.hash)) return
+
+      this.start(link.dataset.loadingMessage || this.defaultMessageValue)
+    }
+    this.onSubmit = (event) => {
+      // Supplier creation has asynchronous client-side validation: don't show a
+      // loading screen on the first, prevented submit event.
+      if (event.defaultPrevented || !event.target.matches("form[data-loading-message]")) return
+      if (event.target.dataset.turbo === "false") {
+        this.start(event.target.dataset.loadingMessage)
+      }
+    }
+    this.onTurboSubmitStart = (event) => {
+      const form = event.target.matches("form") ? event.target : event.detail?.formSubmission?.formElement
+      if (form?.dataset.loadingMessage) this.start(form.dataset.loadingMessage)
+    }
+    this.onExternal = (event) => {
+      if (event.detail?.active === false) this.stop()
+      else this.start(event.detail?.message || this.defaultMessageValue)
+    }
+    this.onStop = () => this.stop()
+
+    document.addEventListener("click", this.onClick)
+    document.addEventListener("submit", this.onSubmit)
+    document.addEventListener("turbo:submit-start", this.onTurboSubmitStart)
+    document.addEventListener("turbo:submit-end", this.onStop)
+    document.addEventListener("turbo:before-render", this.onStop)
+    document.addEventListener("turbo:before-cache", this.onStop)
+    document.addEventListener("turbo:load", this.onStop)
+    document.addEventListener("turbo:frame-load", this.onStop)
+    document.addEventListener("turbo:fetch-request-error", this.onStop)
+    document.addEventListener("admin:action-loading", this.onExternal)
+    window.addEventListener("pageshow", this.onStop)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.onClick)
+    document.removeEventListener("submit", this.onSubmit)
+    document.removeEventListener("turbo:submit-start", this.onTurboSubmitStart)
+    document.removeEventListener("turbo:submit-end", this.onStop)
+    document.removeEventListener("turbo:before-render", this.onStop)
+    document.removeEventListener("turbo:before-cache", this.onStop)
+    document.removeEventListener("turbo:load", this.onStop)
+    document.removeEventListener("turbo:frame-load", this.onStop)
+    document.removeEventListener("turbo:fetch-request-error", this.onStop)
+    document.removeEventListener("admin:action-loading", this.onExternal)
+    window.removeEventListener("pageshow", this.onStop)
+    this.stop()
+  }
+
+  start(message) {
+    window.clearTimeout(this.showDelay)
+    window.clearTimeout(this.safetyTimeout)
+    if (this.hasMessageTarget) this.messageTarget.textContent = message || this.defaultMessageValue
+    this.showDelay = window.setTimeout(() => {
+      this.element.hidden = false
+    }, 160)
+    // Unexpected response/network failures must never leave an unusable screen.
+    this.safetyTimeout = window.setTimeout(() => this.stop(), 30000)
+  }
+
+  stop() {
+    window.clearTimeout(this.showDelay)
+    window.clearTimeout(this.safetyTimeout)
+    this.element.hidden = true
+  }
+}
