@@ -1,6 +1,9 @@
 en:
   admin:
     phones:
+      mobile: "Mobile"
+      landline: "Office / landline"
+      other: "Other"
       kind: "Type"
       number: "Phone number"
       extension: "Extension"
