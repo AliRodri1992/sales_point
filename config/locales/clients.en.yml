@@ -3,8 +3,8 @@ en:
     breadcrumbs:
       clients: "Customers"
     clients:
-      created: "Customer created successfully"
-      updated: "Customer updated successfully"
+      created: "The customer was registered and is now available in the customer catalog."
+      updated: "The customer details were saved. Open the customer record to review the changes."
       destroyed: "Customer deleted successfully"
       errors:
         duplicate: "The customer code or tax ID is already registered."
