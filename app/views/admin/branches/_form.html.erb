@@ -24,14 +24,7 @@
         <%= error_message_for(@branch, :name) %>
       </div>
 
-      <div>
-        <%= form.label :phone,
-                       t('admin.branches.form.fields.phone'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.telephone_field :phone,
-                                 class: "input-field w-full rounded-xl #{form_state_classes(@branch, :phone)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
-        <%= error_message_for(@branch, :phone) %>
-      </div>
+      <%= render 'admin/shared/primary_mobile_field', form: form, record: @branch %>
 
       <%= form.fields_for :address do |address_form| %>
         <div class="border-t border-slate-100 pt-6">
