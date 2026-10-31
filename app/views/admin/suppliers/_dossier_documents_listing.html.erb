@@ -8,14 +8,14 @@
       <input type="search" name="documents_q" value="<%= params[:documents_q] %>"
              data-supplier-documents-target="search"
              data-action="input->supplier-documents#filter" placeholder="<%= t("#{dictionary}.search") %>"
-             class="h-10 w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-emerald-600 focus:ring-emerald-600">
+             class="min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm focus:border-emerald-600 focus:ring-emerald-600">
     </span>
   </label>
   <label class="block min-w-0">
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.document_type") %></span>
     <select name="documents_category" data-supplier-documents-target="categorySelect"
             data-action="change->supplier-documents#filter"
-            class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
+            class="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <% categories.each do |category| %>
         <option value="<%= category == 'all' ? '' : category %>" <%= 'selected' if params[:documents_category].to_s == (category == 'all' ? '' : category) %>><%= t("#{dictionary}.categories.#{category}") %></option>
       <% end %>
@@ -25,7 +25,7 @@
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.status") %></span>
     <select name="documents_status" data-supplier-documents-target="status"
             data-action="change->supplier-documents#filter"
-            class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
+            class="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <option value=""><%= t("#{dictionary}.all") %></option>
       <% %w[active inactive].each do |status| %>
         <option value="<%= status %>" <%= 'selected' if params[:documents_status] == status %>><%= t("#{dictionary}.statuses.#{status}") %></option>
@@ -36,7 +36,7 @@
     <span class="mb-1 block h-4 text-xs font-semibold text-slate-700"><%= t("#{dictionary}.date") %></span>
     <select name="documents_days" data-supplier-documents-target="date"
             data-action="change->supplier-documents#filter"
-            class="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
+            class="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-600 focus:ring-emerald-600">
       <option value=""><%= t("#{dictionary}.all") %></option>
       <option value="30" <%= 'selected' if params[:documents_days] == '30' %>><%= t("#{dictionary}.last_30_days") %></option>
       <option value="365" <%= 'selected' if params[:documents_days] == '365' %>><%= t("#{dictionary}.last_year") %></option>
@@ -64,7 +64,7 @@
                        data-date="<%= l(attachment.created_at, format: '%d %b %Y %H:%M') %>"
                        data-download-url="<%= download_url %>" data-preview-url="<%= preview_url %>"
                        data-update-url="<%= update_url %>" data-preview-kind="<%= document.preview_kind %>"
-                       class="relative min-h-36 min-w-0 rounded-xl border border-slate-200 bg-white p-3 transition hover:border-emerald-200 hover:shadow-sm">
+                       class="relative min-h-40 min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-md focus-within:border-emerald-400">
                 <div class="flex h-full min-h-0 items-start gap-3">
                   <button type="button" data-action="supplier-documents#select" aria-pressed="false"
                           aria-controls="supplier-document-preview"
@@ -89,15 +89,15 @@
                     <summary class="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 [&::-webkit-details-marker]:hidden" aria-label="<%= "#{t("#{dictionary}.actions")}: #{document.filename}" %>">
                       <%= delta_icon('ellipsis-vertical', class: 'size-5') %>
                     </summary>
-                    <div class="absolute right-0 z-20 mt-1 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-lg">
+                    <div class="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
                       <%= link_to t('admin.supplier_document_history.versions'),
                                   admin_supplier_document_history_path(supplier, document_id: attachment.id),
-                                  class: 'block rounded px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50' %>
-                      <%= link_to t("#{dictionary}.download"), download_url, class: 'block rounded px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50' %>
+                                  class: 'flex min-h-10 items-center rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50' %>
+                      <%= link_to t("#{dictionary}.download"), download_url, class: 'flex min-h-10 items-center rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50' %>
                       <% if can_manage_documents %>
                         <%= button_to t("#{dictionary}.delete"), admin_supplier_document_path(supplier, document_id: attachment.id),
                                       method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
-                                      class: 'w-full rounded px-3 py-2 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50' %>
+                                      class: 'flex min-h-10 w-full items-center rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-600 hover:bg-rose-50' %>
                       <% end %>
                     </div>
                   </details>
@@ -106,7 +106,7 @@
             <% end %>
           </div>
 </div>
-<div data-supplier-documents-target="noResults" class="mt-3 hidden rounded-xl border border-slate-200 p-7 text-center text-sm text-slate-500">
+<div data-supplier-documents-target="noResults" class="mt-4 hidden rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-10 text-center text-sm leading-6 text-slate-600">
   <%= t("#{dictionary}.no_results") %>
 </div>
 <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -114,14 +114,14 @@
   <div class="flex items-center gap-2">
     <button type="button" data-action="supplier-documents#previous" data-supplier-documents-target="previous"
             aria-label="<%= t("#{dictionary}.previous") %>"
-            class="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-emerald-50">
+            class="flex size-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
       <%= delta_icon('chevron-left', class: 'size-4') %>
     </button>
     <span data-supplier-documents-target="page"
-          class="flex size-9 items-center justify-center rounded-lg border border-emerald-600 bg-emerald-50 text-xs font-semibold text-emerald-800">1</span>
+          class="flex size-11 items-center justify-center rounded-xl border border-emerald-600 bg-emerald-50 text-sm font-semibold text-emerald-800">1</span>
     <button type="button" data-action="supplier-documents#next" data-supplier-documents-target="next"
             aria-label="<%= t("#{dictionary}.next") %>"
-            class="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-emerald-50">
+            class="flex size-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
       <%= delta_icon('chevron-right', class: 'size-4') %>
     </button>
   </div>
