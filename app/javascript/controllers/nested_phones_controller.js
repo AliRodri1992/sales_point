@@ -93,8 +93,19 @@ export default class extends Controller {
   }
 
   kindChanged(event) {
-    const item = event.target.closest("[data-phone-item]")
-    const checkbox = item?.querySelector('input[type="checkbox"][name$="[primary]"]')
+    const select = event.target
+    const item = select.closest("[data-phone-item]")
+    if (!item) return
+
+    const kind = ["mobile", "landline"].includes(select.value) ? select.value : "other"
+    item.querySelectorAll("[data-phone-kind-icon-variant]").forEach((icon) => {
+      icon.classList.toggle("hidden", icon.dataset.phoneKindIconVariant !== kind)
+    })
+
+    const title = item.querySelector("[data-phone-kind-title]")
+    if (title) title.textContent = select.selectedOptions[0]?.textContent?.trim() || ""
+
+    const checkbox = item.querySelector('input[type="checkbox"][name$="[primary]"]')
     if (checkbox?.checked) this.primaryChanged({ target: checkbox })
   }
 
