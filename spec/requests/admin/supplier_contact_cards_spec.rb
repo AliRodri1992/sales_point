@@ -93,8 +93,9 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
   end
 
   it 'shows a registered mobile number instead of the missing-phone label' do
-    create(:contact, contactable: supplier, name: 'Mobile Only',
-                     phone: nil, mobile_phone: '5512345678', email: nil)
+    create(:contact, contactable: supplier, name: 'Mobile Only', email: nil,
+                     phones_attributes: [{ number: '5512345678', country_code: 'MX',
+                                           kind: 'mobile', primary: true }])
 
     get admin_supplier_path(supplier, tab: 'contacts')
 
