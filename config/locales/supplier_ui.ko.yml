@@ -9,3 +9,6 @@ ko:
       empty_schedules_description: "지점별 정기 일정을 설정해 방문, 주문 및 배송을 계획하세요."
       all_day_hint: "선택한 날짜 범위가 유지되며 종일 일정으로 표시됩니다."
       archived_status: "보관됨"
+      contact_pages: "연락처 페이지"
+      empty_contacts_description: "공급업체와의 소통 및 업무 관리를 위해 담당자를 추가하세요."
+      confirm_action: "확인"
