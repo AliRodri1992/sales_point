@@ -105,6 +105,18 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(unresolved).to be_empty
   end
 
+  it 'resolves dashboard KPI icon names passed through component parameters' do
+    source = Rails.root.join('app/views/admin/dashboard/_kpi_grid.html.erb').read
+    names = source.scan(/icon_name:\s*['"]([^'"]+)['"]/).flatten
+    unresolved = names.reject do |name|
+      key = described_class::ICON_ALIASES.fetch(name, name)
+      described_class::ICON_SHAPES.key?(key)
+    end
+
+    expect(names).not_to be_empty
+    expect(unresolved).to be_empty
+  end
+
   it 'never loads obsolete Heroicons template calls' do
     sources = Rails.root.glob('app/{views,components,helpers}/**/*.{erb,rb}')
     violations = sources.filter_map do |file|
