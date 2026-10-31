@@ -36,6 +36,22 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     expect(document.at_css('link[href*="uppy.min.css"]')).to be_present
   end
 
+  it 'presents a single dropzone without an extra dashed upload shell' do
+    get edit_admin_supplier_path(supplier)
+
+    document = Nokogiri::HTML(response.body)
+    editor = document.at_css('[data-controller="supplier-edit-uppy"]')
+    dashboard = editor.at_css('[data-supplier-edit-uppy-target="dashboard"]')
+    fallback = editor.at_css('[data-supplier-edit-uppy-target="fallback"]')
+
+    expect(editor.css('[data-supplier-edit-uppy-target="dashboard"]').size).to eq(1)
+    expect(dashboard['class']).not_to include('border-dashed')
+    expect(dashboard.at_css('[data-supplier-edit-uppy-target="placeholder"]')['class']).not_to include('border-dashed')
+    expect(fallback['hidden']).not_to be_nil
+    expect(editor.css('input[type="file"]').size).to eq(1)
+    expect(editor.css('input[type="file"]')).to all(satisfy { |input| input.ancestors.include?(fallback) })
+  end
+
   it 'preserves the original new supplier file input' do
     get new_admin_supplier_path
 
