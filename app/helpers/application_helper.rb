@@ -45,6 +45,14 @@ module ApplicationHelper
     progress[:sections].find { |item| item[:key].to_sym == section.to_sym }&.fetch(:percentage, 100) == 100
   end
 
+  def supplier_phone_icon_name(kind)
+    case kind.to_s
+    when 'mobile' then 'phone-mobile'
+    when 'landline' then 'phone-landline'
+    else 'phone'
+    end
+  end
+
   SIDEBAR_CONTROLLER_GROUPS = {
     'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
                       supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
