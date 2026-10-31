@@ -88,7 +88,11 @@ module DeltaIconShapes
     'phone' => 'M7 3 4 6c0 7 7 14 14 14l3-3-5-4-3 3c-3-1-5-3-6-6l3-3z',
     'plus' => 'M12 4v16|M4 12h16',
     'plus-circle' => 'c:12,12,9|M12 7v10|M7 12h10',
+    'presentation-chart-line' => 'r:3,3,18,13,1|M12 16v5|M8 21h8|M6 12l3-3 3 1 5-4',
     'rectangle-stack' => 'r:5,7,16,13,2|M3 17V5h15|M7 3h13',
+    'receipt-percent' => [
+      'M6 3h12v18l-3-2-3 2-3-2-3 2V3z|c:9.5,9,1|c:14.5,15,1|M9 16l6-8'
+    ].join,
     'shield-check' => 'M12 2 4 5v7c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z|M8 12l3 3 5-6',
     'finger-print' => 'M6 11a6 6 0 0 1 12 0|M9 14v-3a3 3 0 0 1 6 0v3|M12 10v8|M6 15v2|M18 15v2|M8 19l2 2',
     'sparkles' => [
