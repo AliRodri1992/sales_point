@@ -15,6 +15,22 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(node.at_css('path')).to be_present
   end
 
+  it 'draws distinct SVGs for document search and attachments' do
+    search = Nokogiri::HTML.fragment(helper.delta_icon('document-magnifying-glass')).at_css('svg')
+    attachment = Nokogiri::HTML.fragment(helper.delta_icon('paper-clip')).at_css('svg')
+    information = Nokogiri::HTML.fragment(helper.delta_icon('information-circle')).at_css('svg')
+
+    expect(search.at_css('circle')).to be_present
+    expect(attachment.css('path').size).to eq(1)
+    expect(search.to_html).not_to eq(information.to_html)
+    expect(attachment.to_html).not_to eq(information.to_html)
+  end
+
+  it 'rejects an undefined icon rather than showing an unrelated information symbol' do
+    expect { helper.delta_icon('not-a-defined-delta-icon') }
+      .to raise_error(ArgumentError, /Delta POS SVG icon not defined/)
+  end
+
   it 'supports semantic icon aliases, stimulus attributes, and custom dimensions' do
     result = helper.delta_icon('cog-6-tooth', class: 'size-6', data: { sidebar_icon: 'settings' })
     node = Nokogiri::HTML.fragment(result).at_css('svg')
