@@ -188,7 +188,101 @@ en:
         purchasing:
           title: "Purchases and receiving"
           description: "Manage purchasing requests, quotations, orders, receiving, and returns."
-          topics: []
+          topics:
+            -
+              id: "purchase_requests"
+              title: "Purchase requests"
+              description: "Specify items needed by a branch."
+              tasks:
+                -
+                  title: "Create a request"
+                  steps:
+                    - "Open “Purchase requests” and select “New request”."
+                    - "Select a branch, the required date, and any notes."
+                    - "Add each product and quantity; ensure no line items are missing."
+                    - "Save as a draft and review its details."
+                -
+                  title: "Submit and decide"
+                  steps:
+                    - "Open the draft and select “Submit”."
+                    - "An authorized user reviews the details and selects “Approve” or “Reject”."
+                    - "If it remains a draft and is no longer needed, select “Cancel”."
+                    - "Check the current status before starting a quotation."
+              note: "An approved request does not mean goods have been received or a liability has been paid."
+            -
+              id: "purchase_quotations"
+              title: "Purchase quotations"
+              description: "Record supplier proposals and verify their validity."
+              tasks:
+                -
+                  title: "Create a quotation"
+                  steps:
+                    - "Open “Purchase quotations” and select “New quotation”, or start from a purchase request."
+                    - "Enter the supplier, currency, expiration date, and notes."
+                    - "Add products, quantities, units per pack, costs, discounts, and delivery days."
+                    - "Save the draft and check every detail."
+                -
+                  title: "Submit, accept, or reject"
+                  steps:
+                    - "Open a draft quotation and select “Submit”."
+                    - "After the supplier confirms, choose “Accept” or “Reject” as appropriate."
+                    - "Before accepting, make sure the proposal has not expired."
+                    - "A submitted quotation cannot be edited as though it were still a draft."
+              note: "An accepted quotation may be used to create a purchase order."
+            -
+              id: "purchase_orders"
+              title: "Purchase orders"
+              description: "Formalize an order and manage its approval and dispatch."
+              tasks:
+                -
+                  title: "Create an order"
+                  steps:
+                    - "Open “Purchase orders” and select “New order”, or start from an accepted quotation."
+                    - "Enter the branch, supplier, currency, and estimated delivery date."
+                    - "Add products, quantities, unit prices, discounts, freight, insurance, and applicable taxes."
+                    - "Save as a draft and validate the calculated totals."
+                -
+                  title: "Approve and send to the supplier"
+                  steps:
+                    - "From the order details, select “Submit” to request approval."
+                    - "An authorized person selects “Approve” or “Reject”."
+                    - "If the order is approved and the supplier remains available, select “Send order” or the dispatch action."
+                    - "Check its status before recording goods receipts."
+                -
+                  title: "Cancel or close an order"
+                  steps:
+                    - "Review the current status and related deliveries."
+                    - "Use “Cancel” only if it is allowed at the current workflow stage."
+                    - "When all commitments are resolved, select “Close” according to the current rules."
+              note: "An inactive or archived supplier may prevent new orders and dispatches; historical obligations must still be resolved."
+            -
+              id: "goods_receipts"
+              title: "Goods receipts"
+              description: "Confirm the quantities actually delivered."
+              tasks:
+                -
+                  title: "Record a receipt"
+                  steps:
+                    - "Open a purchase order that allows receipts and select “Receipts”."
+                    - "Select “New receipt” and review the branch, pending items, and ordered quantities."
+                    - "Enter quantities actually received and batch details where required."
+                    - "Save and open the receipt confirmation."
+                    - "Check the inventory movements for the branch."
+              note: "A partial receipt does not automatically clear all pending items on the order."
+            -
+              id: "purchase_returns"
+              title: "Supplier returns"
+              description: "Return received products with an accurate audit trail."
+              tasks:
+                -
+                  title: "Create a return"
+                  steps:
+                    - "Open the original goods receipt."
+                    - "Select “New return” and choose the relevant products and quantities."
+                    - "Provide a reason and notes when requested."
+                    - "Save, then choose “Process return” with the required authorization."
+                    - "Review the status, inventory records, and related documents."
+              note: "A supplier return originates from a goods receipt, not a new sale."
         finances:
           title: "Supplier invoices and accounts payable"
           description: "Register invoices and apply payments and credits while reconciling balances."
