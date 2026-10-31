@@ -1,10 +1,12 @@
 <div class="mx-auto max-w-2xl space-y-5">
   <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_schedules_path(@supplier),
+              data: { loading_message: t('admin.action_loader.returning') },
               class: 'text-sm font-semibold text-emerald-700' %>
   <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
     <h1 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_calendar.edit_exception') %></h1>
     <%= form_with model: @exception, url: admin_supplier_schedule_exception_path(@supplier, @exception),
-                  class: 'mt-5 grid gap-4 sm:grid-cols-2' do |form| %>
+                  class: 'mt-5 grid gap-4 sm:grid-cols-2',
+                  data: { loading_message: t('admin.action_loader.saving') } do |form| %>
       <div>
         <%= form.label :starts_on, t('admin.supplier_schedule_exceptions.starts_on') %>
         <%= form.date_field :starts_on, required: true, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
