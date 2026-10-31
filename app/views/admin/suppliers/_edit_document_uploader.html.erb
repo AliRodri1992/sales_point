@@ -11,7 +11,7 @@
   <div class="flex flex-col gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/40 px-5 py-5 sm:flex-row sm:items-start sm:justify-between">
     <div class="flex min-w-0 items-start gap-3">
       <span class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-white text-emerald-700 shadow-sm" aria-hidden="true">
-        <%= icon('cloud-arrow-up', class: 'size-6') %>
+        <%= delta_icon('cloud-arrow-up', class: 'size-6') %>
       </span>
       <div class="min-w-0">
         <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_edit_upload.title') %></h3>
@@ -43,7 +43,7 @@
 
   <div data-supplier-edit-uppy-target="dashboard" class="min-h-56 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/20 p-2 sm:p-3" aria-label="<%= t('admin.supplier_edit_upload.dropzone') %>">
     <div class="flex min-h-48 flex-col items-center justify-center gap-2 p-5 text-center" data-supplier-edit-uppy-target="placeholder">
-      <%= icon('document-arrow-up', class: 'size-10 text-emerald-600') %>
+      <%= delta_icon('document-arrow-up', class: 'size-10 text-emerald-600') %>
       <p class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_edit_upload.loading') %></p>
     </div>
   </div>
@@ -61,7 +61,7 @@
   </div>
 
   <div class="flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
-    <%= icon('information-circle', class: 'mt-0.5 size-4 shrink-0 text-slate-500') %>
+    <%= delta_icon('information-circle', class: 'mt-0.5 size-4 shrink-0 text-slate-500') %>
     <p><%= t('admin.supplier_edit_upload.immediate_notice') %></p>
   </div>
   <p data-supplier-edit-uppy-target="status" class="text-sm text-slate-600" role="status" aria-live="polite"></p>
