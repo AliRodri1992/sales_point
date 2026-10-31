@@ -17,6 +17,100 @@ RSpec.describe 'Admin suppliers', type: :request do
     sign_in user
   end
 
+  it 'renders the redesigned supplier contact editor with accessible settings and multiple phones' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact, contactable: supplier, name: 'Mariana Cruz', position: 'Purchasing Manager',
+      email: 'mariana@example.com', primary: true,
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+      ]
+    )
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('#supplier-contact-identity')).to be_present
+    expect(editor.at_css('#supplier-contact-communication')).to be_present
+    expect(editor.at_css('[data-supplier-contact-actions]')).to be_present
+    expect(editor.at_css('input[name="contact[name]"]')['value']).to eq('Mariana Cruz')
+    expect(editor.at_css('input[name="contact[position]"]')['value']).to eq('Purchasing Manager')
+    expect(editor.at_css('input[name="contact[email]"]')['value']).to eq('mariana@example.com')
+
+    phones = editor.css('[data-nested-phones-target="items"] > [data-phone-item]')
+    expect(phones.size).to eq(2)
+    expect(phones.map { |item| item.at_css('select[name$="[kind]"]')['value'] }).to contain_exactly('mobile', 'landline')
+    expect(phones.all? { |item| item.at_css('[data-controller="delta-select"]') }).to be(true)
+    expect(phones.all? { |item| item.at_css('input[name$="[country_code]"]') ||
+                                  item.at_css('[data-controller="international-phone"]') }).to be(true)
+    expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
+    expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
+
+    expect(editor.at_css('[data-supplier-contact-primary-toggle] input[type="checkbox"]')).to be_present
+    expect(editor.at_css('[data-supplier-contact-active-toggle] input[type="checkbox"]')).to be_present
+    expect(editor.css('input[type="radio"]')).to be_empty
+    expect(editor.at_css('textarea[name="contact[notes]"]')).to be_present
+  end
+
+  it 'keeps invalid contact changes visible in the redesigned edit form' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Valid Contact', email: 'valid@example.com')
+
+    patch admin_supplier_contact_path(supplier, contact),
+          params: { contact: { name: '', email: 'not-an-email', position: 'Purchasing' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('input[name="contact[email]"]')['value']).to eq('not-an-email')
+    expect(editor.at_css('input[name="contact[position]"]')['value']).to eq('Purchasing')
+    expect(editor.css('[data-server-field-error]')).not_to be_empty
+    expect(contact.reload.name).to eq('Valid Contact')
+    expect(contact.email).to eq('valid@example.com')
+  end
+
+  it 'keeps the same nested phone records when editing a contact' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact, contactable: supplier, name: 'Telephone Contact',
+      phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }]
+    )
+    phone = contact.phones.first
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: {
+        name: 'Telephone Contact', phones_attributes: {
+          '0' => { id: phone.id, kind: 'landline', number: '5587654321',
+                   country_code: 'MX', primary: '1' }
+        }
+      }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    expect(contact.reload.phones.active.count).to eq(1)
+    expect(phone.reload.number).to eq('+525587654321')
+  end
+
+  it 'preserves the new-contact editor without exposing the active toggle' do
+    supplier = create(:supplier, organization:)
+
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('[data-supplier-contact-primary-toggle]')).to be_present
+    expect(editor.at_css('[data-supplier-contact-active-toggle]')).to be_nil
+    expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
+    expect(editor.css('input[type="radio"]')).to be_empty
+  end
+
   it 'shows redesigned contact cards without repeating the primary label or job title' do
     supplier = create(:supplier, organization:)
     contact = create(
