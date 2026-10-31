@@ -210,7 +210,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       post admin_branches_path, params: {
         branch: {
           name: '',
-          phone: '5551234567',
+          phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
           status: true,
           address_attributes: {
             street: 'Av. Reforma',
@@ -233,7 +233,7 @@ RSpec.describe 'Admin::Branches', type: :request do
         post admin_branches_path, params: {
           branch: {
             name: 'Sucursal Centro',
-            phone: '5551234567',
+            phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
             status: true,
             address_attributes: {
               street: 'Av. Reforma',
