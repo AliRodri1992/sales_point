@@ -7,7 +7,8 @@
   <dl class="grid gap-5 p-5 md:grid-cols-2">
     <div>
       <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.phone') %></dt>
-      <% office_phone = supplier.phones.active.find_by(kind: 'landline', primary: true) %>
+      <% primary_contact = supplier.contacts.not_deleted.find_by(primary: true, active: true) %>
+      <% office_phone = primary_contact&.phones&.active&.find_by(kind: 'landline', primary: true) %>
       <% if office_phone.present? %>
         <dd class="flex items-center gap-2 break-all text-sm font-semibold text-slate-900">
           <%= office_phone.number %>
