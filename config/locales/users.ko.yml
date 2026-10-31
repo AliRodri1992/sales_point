@@ -13,8 +13,8 @@ ko:
           destroyed: "사용자 '%{name}'을(를) %{user}님이 삭제했습니다"
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
-      created: "사용자가 성공적으로 생성되었습니다."
-      updated: "사용자가 성공적으로 수정되었습니다."
+      created: "사용자가 등록되어 목록에 표시됩니다. 시스템 사용을 시작하기 전에 역할과 권한을 확인하세요."
+      updated: "사용자 정보가 저장되었습니다. 계정과 부여된 접근 권한을 확인하세요."
       destroyed: "사용자가 성공적으로 삭제되었습니다."
       cannot_delete_self: "자신의 계정은 삭제할 수 없습니다."
       confirm_delete: "%{name} 사용자를 삭제하시겠습니까?"
@@ -123,7 +123,7 @@ ko:
           language_placeholder: 언어를 선택하세요
           theme: 테마
         save: 변경 사항 저장
-        success: 프로필이 성공적으로 업데이트되었습니다
+        success: "프로필 변경 사항이 저장되었습니다. 프로필을 다시 열어 환경설정과 개인 정보를 확인하세요."
         never: 없음
         roles:
           title: 역할
