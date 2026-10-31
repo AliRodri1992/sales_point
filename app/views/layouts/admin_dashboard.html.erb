@@ -13,6 +13,9 @@
   <%= favicon_link_tag 'delta-pos-favicon.svg', rel: 'icon', type: 'image/svg+xml' %>
   <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
   <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+  <% if controller_name == 'suppliers' && %w[edit update].include?(action_name) %>
+    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/v6.0.5/uppy.min.css">
+  <% end %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 </head>
 
