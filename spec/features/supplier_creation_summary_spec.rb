@@ -149,7 +149,9 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_no_css('[data-supplier-form-target="summary"]', visible: :all)
     expect(page).to have_no_css('[data-step-index="6"]', visible: :all)
     expect(page).to have_css('input[name="supplier[code]"]', visible: :all)
-    expect(page).to have_css('input[name^="supplier[contacts_attributes]"][name*="[phones_attributes]"][name$="[number]"]', count: 2, visible: :all)
+    contact_phone_selector = 'input[name^="supplier[contacts_attributes]"]' \
+                             '[name*="[phones_attributes]"][name$="[number]"]'
+    expect(page).to have_css(contact_phone_selector, count: 2, visible: :all)
     expect(page).to have_no_css('input[name^="supplier[phones_attributes]"]', visible: :all)
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
     expect(page).to have_css('textarea[name="supplier[notes]"]', visible: :all)
