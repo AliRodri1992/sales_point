@@ -27,7 +27,6 @@ RSpec.describe 'Supplier onboarding fiscal address validation', type: :feature, 
 
   def open_fiscal_step
     visit new_admin_supplier_path
-    find('input[name="supplier[code]"]').set('SUP-FISCAL-01')
     find('input[name="supplier[name]"]').set('Supplier Fiscal Validation')
     find('[data-action="supplier-form#next"]').click
 
