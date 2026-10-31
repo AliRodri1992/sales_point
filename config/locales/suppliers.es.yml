@@ -164,6 +164,8 @@ es:
       form:
         code: "Código"
         code_placeholder: "ej. SUP-0001"
+        code_automatic: "Se asignará al guardar"
+        code_help: "Delta POS asigna un código único automáticamente. No se puede modificar."
         name: "Nombre"
         name_placeholder: "Nombre completo o razón social"
         email: "Correo electrónico"
