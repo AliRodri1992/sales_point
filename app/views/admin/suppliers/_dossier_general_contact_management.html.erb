@@ -13,15 +13,15 @@
     <div class="min-w-0 rounded-xl border border-slate-100 p-4">
       <div class="mb-4 flex items-center gap-2">
         <%= delta_icon('user', class: 'size-4 text-emerald-700') %>
-        <h4 class="font-jakarta text-sm font-bold text-slate-900">Contacto principal</h4>
+        <h4 class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.primary_contact_label') %></h4>
       </div>
       <dl class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
         <div class="min-w-0">
-          <dt class="mb-1 text-xs font-medium text-slate-500">Nombre del contacto</dt>
+          <dt class="mb-1 text-xs font-medium text-slate-500"><%= t('admin.supplier_details.contact_fields.name') %></dt>
           <dd class="break-words text-sm font-semibold text-slate-900"><%= primary_contact&.name.presence || '—' %></dd>
         </div>
         <div class="min-w-0">
-          <dt class="mb-1 text-xs font-medium text-slate-500">Cargo</dt>
+          <dt class="mb-1 text-xs font-medium text-slate-500"><%= t('admin.supplier_details.contact_fields.position') %></dt>
           <dd class="break-words text-sm font-semibold text-slate-900"><%= primary_contact&.position.presence || '—' %></dd>
         </div>
         <div class="min-w-0 sm:col-span-2">
@@ -35,7 +35,8 @@
             <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>
           <% end %>
         </div>
-        <% { 'Teléfono de oficina' => office_phone, 'Teléfono celular' => mobile_phone }.each do |label, phone| %>
+        <% { t('admin.supplier_details.contact_fields.office_phone') => office_phone,
+             t('admin.supplier_details.contact_fields.mobile_phone') => mobile_phone }.each do |label, phone| %>
           <div class="min-w-0">
             <dt class="mb-1 text-xs font-medium text-slate-500"><%= label %></dt>
             <% if phone.present? %>
