@@ -39,7 +39,7 @@ export default class extends Controller {
     }
     this.onStop = () => this.stop()
 
-    document.addEventListener("click", this.onClick)
+    document.addEventListener("click", this.onClick, true)
     document.addEventListener("submit", this.onSubmit)
     document.addEventListener("turbo:submit-start", this.onTurboSubmitStart)
     document.addEventListener("turbo:submit-end", this.onStop)
@@ -53,7 +53,7 @@ export default class extends Controller {
   }
 
   disconnect() {
-    document.removeEventListener("click", this.onClick)
+    document.removeEventListener("click", this.onClick, true)
     document.removeEventListener("submit", this.onSubmit)
     document.removeEventListener("turbo:submit-start", this.onTurboSubmitStart)
     document.removeEventListener("turbo:submit-end", this.onStop)
