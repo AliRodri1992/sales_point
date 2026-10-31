@@ -8,7 +8,7 @@ module SuppliersFormHelpers
   def supplier_scalar_attributes
     %i[
       name legal_name trade_name alias_name classification person_type
-      email phone rfc foreign_tax_id sat_fiscal_regime_id status notes
+      email rfc foreign_tax_id sat_fiscal_regime_id status notes
       currency_id credit_days credit_limit discount_percent minimum_order_amount
       responsible_user_id tags_text
     ]
