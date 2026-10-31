@@ -369,7 +369,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     document = Nokogiri::HTML(response.body)
     loader = document.at_css('#admin-action-loader')
     expect(loader).to be_present
-    expect(loader['hidden']).to be_present
+    expect(loader.attribute_nodes.map(&:name)).to include('hidden')
     expect(loader.at_css('img[src*="deltin/waving"]')).to be_present
 
     form = document.at_css('#supplier-pagination-form')
