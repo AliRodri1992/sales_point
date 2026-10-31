@@ -3,8 +3,8 @@ es:
     breadcrumbs:
       suppliers: "Proveedores"
     suppliers:
-      created: "Proveedor creado correctamente"
-      updated: "Proveedor actualizado correctamente"
+      created: "El proveedor se registró y su expediente ya está disponible para completar contactos, direcciones y documentos."
+      updated: "Los cambios del proveedor se guardaron en su expediente. Revisa los datos actualizados antes de continuar."
       destroyed: "Proveedor eliminado correctamente"
       errors:
         duplicate: "El código o RFC del proveedor ya está registrado."
