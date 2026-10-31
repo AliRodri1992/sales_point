@@ -9,8 +9,10 @@ export default class extends Controller {
     this.inputTarget.dataset.valid = "false"
     this.inputTarget.setAttribute("aria-invalid", "false")
 
+    const storedCountry = this.inputTarget.dataset.countryCode?.toLowerCase()
+    const initialCountry = /^[a-z]{2}$/.test(storedCountry || "") ? storedCountry : "mx"
     this.iti = intlTelInput(this.inputTarget, {
-      initialCountry: "mx",
+      initialCountry,
       separateDialCode: true,
       showFlags: true,
       countrySelectorMode: "AUTO",
