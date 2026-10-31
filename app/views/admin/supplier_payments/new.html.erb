@@ -5,14 +5,20 @@
   <%= form_with model: [:admin, @payment], class: 'grid min-w-0 gap-5 md:grid-cols-2',
                 data: { controller: 'supplier-payment-bank' } do |f| %>
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'supplier', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select" data-searchable="true">
+        <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'supplier', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'currency', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+        <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'currency', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <div class="md:col-span-2"><%= f.label :supplier_bank_account_id, t('admin.accounts_payable.bank_accounts'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.select :supplier_bank_account_id,
+      <div class="relative" data-controller="delta-select">
+        <%= f.select :supplier_bank_account_id,
                    options_for_select(@bank_accounts.map { |account| ["#{account.bank_name.presence || account.sat_bank_code} · #{account.masked_number}", account.id, { data: { supplier_id: account.supplier_id, currency_code: account.currency_code } }] }),
                    { include_blank: true },
                    { data: { 'supplier-payment-bank-target': 'account' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div>
     </div>
     <% %i[amount paid_on reference].each do |field| %>
       <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
@@ -22,7 +28,7 @@
     <% end %>
     <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <%= f.text_area :notes, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
-    <div class="flex gap-3 md:col-span-2">
+    <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end md:col-span-2">
       <%= f.submit t('admin.accounts_payable.save'), class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-800' %>
       <%= link_to t('admin.accounts_payable.back'), admin_supplier_payments_path, class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
     </div>
