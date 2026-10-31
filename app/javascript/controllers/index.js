@@ -131,5 +131,8 @@ application.register("products-search", ProductsSearchController)
 import UserGuideController from "./user_guide_controller"
 application.register("user-guide", UserGuideController)
 
+import AdminActionLoaderController from "./admin_action_loader_controller"
+application.register("admin-action-loader", AdminActionLoaderController)
+
 import DeltinAssistantController from "./deltin_assistant_controller"
 application.register("deltin-assistant", DeltinAssistantController)
