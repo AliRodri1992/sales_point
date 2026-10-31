@@ -88,7 +88,7 @@ class Supplier < ApplicationRecord
     codes = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
     values = codes.filter_map do |value|
       digits = value.delete_prefix('PROV-')
-      digits.to_i if digits.match?(/\\A[0-9]+\\z/)
+      digits.to_i if digits.match?(/\A[0-9]+\z/)
     end
     values.max || 0
   end
