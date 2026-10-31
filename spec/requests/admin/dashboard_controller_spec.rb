@@ -40,8 +40,8 @@ RSpec.describe Admin::DashboardController, type: :request do
 
     expect(chat).to be_present
     expect(assistant).to be_present
-    expect(chat['class']).to include('size-16', 'right-[94px]', 'bottom-5')
-    expect(assistant['class']).to include('size-16', 'right-5', 'bottom-5')
+    expect(chat['class']).to include('size-12', 'right-[94px]', 'bottom-5')
+    expect(assistant['class']).to include('size-12', 'right-5', 'bottom-5')
     expect(chat.at_css('svg')).to be_present
     expect(assistant.at_css('img.deltin-avatar')).to be_present
   end
