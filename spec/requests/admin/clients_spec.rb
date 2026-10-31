@@ -223,7 +223,7 @@ RSpec.describe 'Admin clients', type: :request do
 
     it 'renders the edit form when the update hits a unique index' do
       client = create(:client)
-      allow_any_instance_of(Client).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+      allow_any_instance_of(Client).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
 
       patch admin_client_path(client), params: { client: { name: 'Conflicting Client' } }
 
