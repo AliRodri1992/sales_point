@@ -42,6 +42,16 @@ RSpec.describe 'Supplier general dossier sections', type: :request do
     expect(areas.last.text).to include(I18n.t('admin.supplier_dossier.notes'))
   end
 
+  it 'uses localized primary-contact headings and phone labels in the general dossier' do
+    get admin_supplier_path(supplier, tab: 'general')
+
+    details = general_panel.at_css('[data-supplier-general-area="contact_management"]').text
+    expect(details).to include(I18n.t('admin.supplier_details.contact_form.primary_contact_label'))
+    expect(details).to include(I18n.t('admin.supplier_details.contact_fields.name'))
+    expect(details).to include(I18n.t('admin.supplier_details.contact_fields.office_phone'))
+    expect(details).not_to include('Contacto principal')
+  end
+
   it 'retains the edit entry point in the independent general header' do
     get admin_supplier_path(supplier, tab: 'general')
 
