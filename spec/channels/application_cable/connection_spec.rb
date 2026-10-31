@@ -5,66 +5,63 @@ require 'rails_helper'
 RSpec.describe ApplicationCable::Connection do
   subject(:connection) { described_class.allocate }
 
-  describe '#connect' do
-    let(:user) { build_stubbed(:user, id: 27) }
-    let(:online_users) { double('online users', add: true, members: []) }
+  let(:user) { build_stubbed(:user, id: 27) }
 
+  before do
+    allow(connection).to receive(:broadcast_presence)
+  end
+
+  describe '#connect' do
     before do
       allow(connection).to receive(:cookies).and_return(double(signed: { user_id: user.id }))
       allow(User).to receive(:find_by).with(id: user.id).and_return(user)
-      allow(Kredis).to receive(:set).with(User::ONLINE_USERS_KEY).and_return(online_users)
-      allow(online_users).to receive(:members).and_return([user.id.to_s])
-      allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
+      allow(User).to receive(:track_online_connection)
     end
 
-    it 'identifies the user, records presence and broadcasts it' do
-      allow(connection).to receive(:broadcast_presence)
-
+    it 'tracks a unique connection and broadcasts presence' do
       connection.connect
 
       expect(connection.current_user).to eq(user)
-      expect(online_users).to have_received(:add).with(user.id)
+      expect(User).to have_received(:track_online_connection).with(user.id, an_instance_of(String))
       expect(connection).to have_received(:broadcast_presence)
     end
 
-    it 'does not record presence when no signed user id is provided' do
+    it 'does not track unauthenticated connections' do
       allow(connection).to receive(:cookies).and_return(double(signed: {}))
 
       connection.connect
 
       expect(connection.current_user).to be_nil
-      expect(online_users).not_to have_received(:add)
+      expect(User).not_to have_received(:track_online_connection)
     end
 
     it 'rejects an unknown signed user id' do
       allow(User).to receive(:find_by).with(id: user.id).and_return(nil)
-      allow(connection).to receive(:reject_unauthorized_connection).and_raise(ActionCable::Connection::Authorization::UnauthorizedError)
+      allow(connection).to receive(:reject_unauthorized_connection)
+        .and_raise(ActionCable::Connection::Authorization::UnauthorizedError)
 
       expect { connection.connect }.to raise_error(ActionCable::Connection::Authorization::UnauthorizedError)
     end
   end
 
   describe '#disconnect' do
-    let(:user) { build_stubbed(:user, id: 27) }
-    let(:online_users) { double('online users', remove: true, members: []) }
-
-    it 'removes an identified user from presence and broadcasts the change' do
+    it 'removes only the current connection, not other browser tabs' do
       connection.current_user = user
-      allow(connection).to receive(:online_users).and_return(online_users)
-      allow(connection).to receive(:broadcast_presence)
+      connection.instance_variable_set(:@presence_token, 'socket-123')
+      allow(User).to receive(:untrack_online_connection)
 
       connection.disconnect
 
-      expect(online_users).to have_received(:remove).with(user.id)
+      expect(User).to have_received(:untrack_online_connection).with(user.id, 'socket-123')
       expect(connection).to have_received(:broadcast_presence)
     end
 
-    it 'does nothing when no user is identified' do
-      allow(connection).to receive(:online_users)
+    it 'does nothing without an identified user' do
+      allow(User).to receive(:untrack_online_connection)
 
       connection.disconnect
 
-      expect(connection).not_to have_received(:online_users)
+      expect(User).not_to have_received(:untrack_online_connection)
     end
   end
 end
