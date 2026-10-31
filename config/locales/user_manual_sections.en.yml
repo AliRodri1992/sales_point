@@ -180,7 +180,130 @@ en:
         catalogs:
           title: "Catalogs, inventory, and customers"
           description: "Manage product categories, products, stock by branch, and customer records."
-          topics: []
+          topics:
+            -
+              id: "categories"
+              title: "Product categories"
+              description: "Organize products into families using recognizable codes."
+              before: "You need permission to access Categories."
+              tasks:
+                -
+                  title: "Create a category"
+                  steps:
+                    - "Open “Catalogs” → “Categories” from the sidebar."
+                    - "Select “New category” and enter a name that identifies the product family."
+                    - "Enter a unique code and select the appropriate status."
+                    - "Select “Save” and check the confirmation."
+                    - "Return to the list and use search to find the category."
+                  result: "The new category can be used to classify products."
+                -
+                  title: "Edit a category"
+                  steps:
+                    - "Find the category by name or code."
+                    - "Select “Edit” and update the name, code, or status."
+                    - "Save and verify the displayed information has changed."
+                -
+                  title: "Delete a category"
+                  steps:
+                    - "Find the exact category and check whether it is used to organize products."
+                    - "Select “Delete” from the actions menu."
+                    - "Confirm. The system performs a soft deletion and removes it from active categories."
+                  result: "The category becomes inactive without permanently removing its record."
+                -
+                  title: "Find and sort categories"
+                  steps:
+                    - "Enter part of the name or code in search."
+                    - "Use status filters and ascending or descending sorting."
+                    - "Choose the available page size to display more or fewer results."
+              note: "Duplicate codes are not allowed. Resolve any form validation errors before saving."
+            -
+              id: "products"
+              title: "Products"
+              description: "Manage prices, costs, categories, tax information, and the product life cycle."
+              before: "Create categories before registering products whenever possible."
+              tasks:
+                -
+                  title: "Create a product"
+                  steps:
+                    - "Open “Catalogs” → “Products” and select “New product”."
+                    - "Enter the code, name, description, SKU, and barcode if applicable."
+                    - "Choose an existing category and complete the SAT unit, taxes, and tracking method."
+                    - "Enter the cost and selling price and attach an image when appropriate."
+                    - "Review the status and save the product."
+                    - "Find the item in the list to confirm it was created."
+                  result: "The product belongs to the active organization."
+                -
+                  title: "Edit product details or price"
+                  steps:
+                    - "Locate the product by name, code, or SKU."
+                    - "Open its details and select “Edit”."
+                    - "Update the category, cost, price, description, or other required information."
+                    - "Save and return to the catalog to confirm the change."
+                -
+                  title: "Delete a product"
+                  steps:
+                    - "Find exactly the item that should no longer be offered."
+                    - "Check whether it has inventory, purchase orders, or other related transactions."
+                    - "Select “Delete” in its actions and confirm."
+                    - "Verify it is no longer in the active catalog; historical records are retained."
+                  result: "The system records a soft-deletion timestamp."
+                -
+                  title: "Search for products"
+                  steps:
+                    - "Open the “Products” list and use search."
+                    - "Apply available filters and sorting to narrow the results."
+                    - "Check the name, SKU, and price before selecting an item."
+              note: "If a SKU already exists, the form displays an error. Do not delete a product simply to change its price."
+            -
+              id: "inventory"
+              title: "Inventory by branch"
+              description: "Manage location-specific stock, minimums, maximums, and adjustments."
+              before: "Create at least one branch and one product first."
+              tasks:
+                -
+                  title: "View inventory"
+                  steps:
+                    - "Open “Settings” → “Branches” and choose the branch to review."
+                    - "Open that branch's inventory area."
+                    - "Find the product, check stock and minimum/maximum quantities, and review batches if available."
+                -
+                  title: "Create or configure inventory"
+                  steps:
+                    - "Open the branch inventory and choose the available create action."
+                    - "Select an active product and define minimum and maximum stock levels."
+                    - "Save and confirm the product appears in that branch's inventory."
+                -
+                  title: "Adjust inventory"
+                  steps:
+                    - "Select the inventory item and choose “Adjust”."
+                    - "Enter the quantity and reason using the form options."
+                    - "Confirm and review the updated balance and related movements."
+              note: "The product catalog is shared by the organization, but inventory is tracked separately for each branch."
+            -
+              id: "clients"
+              title: "Customers"
+              description: "Maintain contact, billing, and credit details."
+              tasks:
+                -
+                  title: "Create a customer"
+                  steps:
+                    - "Open “Customers” and select “New customer”."
+                    - "Enter the code, name, email address, and phone number."
+                    - "If invoicing is needed, add the RFC, tax regime, and postal code."
+                    - "Review the credit limit, status, and notes; then save."
+                -
+                  title: "Edit a customer"
+                  steps:
+                    - "Find the customer in the list using search and filters."
+                    - "Select “Edit”, update the relevant fields, and save."
+                    - "Check the confirmation and updated details."
+                -
+                  title: "Delete a customer"
+                  steps:
+                    - "Find the correct record and review its details before proceeding."
+                    - "Select “Delete” and confirm."
+                    - "Verify it was removed from the active list without assuming historical records were permanently deleted."
+              note: "Before issuing invoices, verify that the RFC and tax details match the customer receiving the invoice."
         suppliers:
           title: "Suppliers and their records"
           description: "Register suppliers and manage contacts, addresses, offers, documents, and schedules."
