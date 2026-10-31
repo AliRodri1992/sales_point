@@ -4,32 +4,46 @@ export default class extends Controller {
   static targets = ["menu", "label", "value"]
 
   connect() {
+    this.floatingPanel = this.element.dataset.supplierFloatingMenu === "true"
+      ? this.element.querySelector("[data-supplier-floating-panel]")
+      : null
+    this.trigger = this.floatingPanel ? this.element.querySelector("summary") : null
+
     this.onOutsideClick = (event) => {
-      if (!this.element.contains(event.target)) this.close()
+      if (this.element.contains(event.target) || this.floatingPanel?.contains(event.target)) return
+
+      this.close()
     }
     this.onEscape = (event) => {
-      if (event.key === "Escape") this.close()
+      if (event.key === "Escape" && this.element.open) this.close(true)
     }
     document.addEventListener("click", this.onOutsideClick)
     document.addEventListener("keydown", this.onEscape)
+
     this.onValueChange = () => this.sync()
     if (this.hasValueTarget) {
       this.valueTarget.addEventListener("change", this.onValueChange)
       this.sync()
     }
-    if (this.element.dataset.supplierFloatingMenu === "true") {
+
+    if (this.floatingPanel) {
+      this.trigger?.setAttribute("aria-expanded", String(this.element.open))
       this.onFloatingScroll = () => this.positionFloatingMenu()
+      this.onBeforeCache = () => this.close()
       this.onToggle = () => {
+        this.trigger?.setAttribute("aria-expanded", String(this.element.open))
         if (this.element.open) {
+          this.mountFloatingMenu()
           this.positionFloatingMenu()
           document.addEventListener("scroll", this.onFloatingScroll, true)
           window.addEventListener("resize", this.onFloatingScroll)
         } else {
-          document.removeEventListener("scroll", this.onFloatingScroll, true)
-          window.removeEventListener("resize", this.onFloatingScroll)
+          this.stopFloatingTracking()
+          this.restoreFloatingMenu()
         }
       }
       this.element.addEventListener("toggle", this.onToggle)
+      document.addEventListener("turbo:before-cache", this.onBeforeCache)
       if (this.element.open) this.onToggle()
     }
   }
@@ -39,31 +53,68 @@ export default class extends Controller {
     document.removeEventListener("keydown", this.onEscape)
     if (this.hasValueTarget) this.valueTarget.removeEventListener("change", this.onValueChange)
     if (this.onToggle) this.element.removeEventListener("toggle", this.onToggle)
-    if (this.onFloatingScroll) {
-      document.removeEventListener("scroll", this.onFloatingScroll, true)
-      window.removeEventListener("resize", this.onFloatingScroll)
+    if (this.onBeforeCache) document.removeEventListener("turbo:before-cache", this.onBeforeCache)
+    this.stopFloatingTracking()
+    this.restoreFloatingMenu()
+  }
+
+  mountFloatingMenu() {
+    if (this.floatingPanel?.parentElement !== document.body) {
+      document.body.appendChild(this.floatingPanel)
     }
   }
 
+  restoreFloatingMenu() {
+    const menu = this.floatingPanel
+    if (!menu || menu.parentElement === this.element) return
+
+    for (const property of ["position", "left", "right", "top", "width",
+                             "max-width", "max-height", "overflow-y", "margin-top", "z-index"]) {
+      menu.style.removeProperty(property)
+    }
+    this.element.appendChild(menu)
+  }
+
+  stopFloatingTracking() {
+    if (!this.onFloatingScroll) return
+
+    document.removeEventListener("scroll", this.onFloatingScroll, true)
+    window.removeEventListener("resize", this.onFloatingScroll)
+  }
+
   positionFloatingMenu() {
-    const menu = this.element.querySelector("[data-supplier-floating-panel]")
-    const trigger = this.element.querySelector("summary")
+    const menu = this.floatingPanel
+    const trigger = this.trigger
     if (!this.element.open || !menu || !trigger) return
 
-    // Escape scrolling/overflow table ancestors using viewport positioning.
+    // Fixed positioning alone cannot escape overflow-x-auto: portal into body.
     const rect = trigger.getBoundingClientRect()
-    const width = Math.max(176, menu.offsetWidth)
-    const height = menu.offsetHeight
-    const left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8))
-    const showAbove = rect.bottom + height + 8 > window.innerHeight && rect.top > height + 8
-    const top = showAbove ? rect.top - height - 6 : rect.bottom + 6
+    const margin = 8
+    const gap = 6
+    const width = Math.min(Math.max(176, menu.offsetWidth), window.innerWidth - margin * 2)
+    const height = menu.scrollHeight
+    const below = window.innerHeight - rect.bottom - gap - margin
+    const above = rect.top - gap - margin
+    const showAbove = height > below && above > below
+    const available = Math.max(0, showAbove ? above : below)
+    const visibleHeight = Math.min(height, available)
+    const top = showAbove ? rect.top - gap - visibleHeight : rect.bottom + gap
+    const left = Math.min(
+      Math.max(margin, rect.right - width),
+      window.innerWidth - margin - width
+    )
+
     Object.assign(menu.style, {
       position: "fixed",
       left: `${left}px`,
       right: "auto",
-      top: `${Math.max(8, top)}px`,
+      top: `${Math.max(margin, top)}px`,
       width: `${width}px`,
-      zIndex: "100"
+      maxWidth: `calc(100vw - ${margin * 2}px)`,
+      maxHeight: `${visibleHeight}px`,
+      overflowY: "auto",
+      marginTop: "0",
+      zIndex: "1000"
     })
   }
 
@@ -112,10 +163,9 @@ export default class extends Controller {
 
   close(refocus = false) {
     this.element.open = false
-    if (this.onFloatingScroll) {
-      document.removeEventListener("scroll", this.onFloatingScroll, true)
-      window.removeEventListener("resize", this.onFloatingScroll)
-    }
+    this.trigger?.setAttribute("aria-expanded", "false")
+    this.stopFloatingTracking()
+    this.restoreFloatingMenu()
     if (refocus) this.element.querySelector("summary")?.focus()
   }
 }
