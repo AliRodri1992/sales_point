@@ -349,6 +349,7 @@ RSpec.describe 'Supplier document library', type: :request do
 
   it 'blocks document modifications without manage permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_documents?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:create_documents?).and_return(false)
     post admin_supplier_documents_path(supplier), params: { document: { file: upload } }
     expect(response).to have_http_status(:forbidden).or redirect_to(admin_suppliers_path)
     expect(supplier.documents.attachments).to be_empty
