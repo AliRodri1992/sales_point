@@ -1,0 +1,19 @@
+ko:
+  admin:
+    supplier_edit_upload:
+      title: "문서 업로드 센터"
+      description: "계약서, 세금 증명서, 카탈로그 등 파일을 첨부하고 각 파일의 진행률을 확인하세요."
+      limits: "최대 10개 · 파일당 10MB"
+      category: "문서 분류"
+      description_label: "설명 (선택)"
+      description_placeholder: "예: 유효한 계약서, 세금 증명서..."
+      dropzone: "여기에 문서를 끌어오거나 선택하세요"
+      loading: "문서 업로더를 준비하는 중..."
+      ready: "PDF, 이미지, Word, Excel, CSV, XML, TXT · 파일당 10MB"
+      upload: "문서 업로드"
+      success: "문서 %{count}개가 공급업체 기록에 저장되었습니다."
+      failed: "업로드에 실패했습니다. 파일 또는 네트워크를 확인하고 다시 시도하세요."
+      invalid: "지원되는 파일을 1~10개 선택하세요. 각 파일의 크기는 10MB 이하여야 합니다."
+      fallback: "고급 업로더를 사용할 수 없어 기본 파일 선택기를 제공합니다."
+      immediate_notice: "업로드가 완료되면 문서가 즉시 저장됩니다. 변경 사항 저장을 누르지 않아도 문서는 유지됩니다. 다른 공급업체 정보는 별도로 저장됩니다."
+      no_permission: "이 공급업체의 문서를 관리할 권한이 없습니다."
