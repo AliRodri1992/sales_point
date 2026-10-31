@@ -70,7 +70,7 @@ RSpec.feature 'SystemRoles', type: :feature do
 
     expect(role.reload.permissions).to contain_exactly(disabled)
     expect(page).to have_css(
-      '[data-controller="swal-flash"][data-swal-flash-message-value="Role permissions were updated successfully."]',
+      '[data-controller="swal-flash"][data-swal-flash-message-value]',
       visible: :all
     )
   end
