@@ -57,6 +57,15 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     end)
   end
 
+  it 'renders original icons for the supplier contact and responsible panels' do
+    %w[user-circle user star].each do |name|
+      icon = Nokogiri::HTML.fragment(helper.delta_icon(name, class: 'size-4')).at_css('svg')
+      expect(icon).to be_present
+      expect(icon.at_css('path, circle')).to be_present
+      expect(icon['aria-hidden']).to eq('true')
+    end
+  end
+
   it 'rejects an undefined icon rather than showing an unrelated information symbol' do
     expect { helper.delta_icon('not-a-defined-delta-icon') }
       .to raise_error(ArgumentError, /Delta POS SVG icon not defined/)
