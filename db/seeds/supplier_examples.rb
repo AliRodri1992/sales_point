@@ -114,8 +114,13 @@ module SupplierExamples
       return if supplier.phones.active.exists?
 
       %w[landline mobile].each do |kind|
-        supplier.phones.create!(organization: supplier.organization, number: format('551234%04d', number),
-                               country_code: 'MX', kind:, primary: true)
+        supplier.phones.create!(
+          organization: supplier.organization,
+          number: format('551234%04d', number),
+          country_code: 'MX',
+          kind:,
+          primary: true
+        )
       end
     end
 
