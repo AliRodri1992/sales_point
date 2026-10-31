@@ -29,6 +29,17 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
     expect(dossier.at_css("a[href='#{fiscal_path}']")).to be_present
   end
 
+  it 'keeps the dossier sidebar at its own content height' do
+    get admin_supplier_path(supplier, tab: 'general')
+
+    expect(response).to have_http_status(:ok)
+    sidebar = dossier.at_css('aside[aria-label]')
+    expect(sidebar).to be_present
+    expect(sidebar['class']).to include('lg:self-start', 'lg:h-auto')
+    expect(sidebar['class']).not_to include('lg:h-full')
+    expect(sidebar.parent['class']).to include('lg:items-start')
+  end
+
   it 'marks the active dossier section for assistive navigation' do
     get admin_supplier_path(supplier, tab: 'general')
     expect(dossier.css('[role="tablist"] [role="tab"]')).not_to be_empty
