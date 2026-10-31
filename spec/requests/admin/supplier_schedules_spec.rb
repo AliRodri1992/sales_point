@@ -29,6 +29,18 @@ RSpec.describe 'Admin supplier schedules', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'renders one accessible heading and custom selectors on schedule forms' do
+    get new_admin_supplier_schedule_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('h1').any? { |heading| heading.text.include?(supplier.name) }).to be(false)
+    expect(page.at_css('[data-supplier-subpage-header] h1')).to be_present
+    form = page.at_css('form[action]')
+    expect(form.css('[data-controller="delta-select"] select').size).to eq(3)
+    expect(form.at_css('#supplier-schedule-timing')).to be_present
+    expect(form.at_css('a[href="' + admin_supplier_schedules_path(supplier) + '"]')).to be_present
+  end
+
   it 'blocks new recurring schedules when the supplier is inactive' do
     supplier.update!(status: :inactive)
 
