@@ -28,7 +28,7 @@ module Suppliers
     private
 
     def load_contacts_page(relation)
-      rows = relation.order(primary: :desc, name: :asc, id: :asc)
+      rows = relation.includes(:phones).order(primary: :desc, name: :asc, id: :asc)
                      .offset((page - 1) * PAGE_SIZE)
                      .limit(PAGE_SIZE + 1).to_a
       @contacts = rows.first(PAGE_SIZE)
