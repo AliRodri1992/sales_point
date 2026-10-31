@@ -64,6 +64,7 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-controller~="supplier-calendar"][data-supplier-calendar-ready="true"]')
     find('[data-calendar-event] a[data-action="supplier-calendar#edit"]').click
     expect(page).to have_css('[data-supplier-calendar-target="heading"]', text: 'Edit event')
+    expect(page).to have_css('#admin-action-loader[hidden]', visible: :all)
     expect(find('[name="supplier_event[title]"]').value).to eq('Special delivery')
     find('[name="supplier_event[title]"]').set('Updated delivery')
     find('[data-supplier-calendar-target="submit"]').click
