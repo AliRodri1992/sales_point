@@ -16,6 +16,5 @@ module Admin
 
     attr_reader :title, :value, :change, :status, :icon_name
 
-    delegate :icon, to: :helpers
   end
 end
