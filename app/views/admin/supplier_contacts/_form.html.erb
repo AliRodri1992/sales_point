@@ -4,6 +4,7 @@
 
 <%= form_with model: [:admin, @supplier, @contact], class: 'space-y-5',
               data: { supplier_contact_form: true, loading_message: t('admin.action_loader.saving') } do |form| %>
+  <%= hidden_field_tag :return_to, 'dossier' if editing && params[:return_to] == 'dossier' %>
   <% if @contact.errors.any? %>
     <div role="alert" class="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-rose-800 sm:px-5">
       <%= delta_icon('exclamation-circle', class: 'mt-0.5 size-5 shrink-0') %>
@@ -168,7 +169,8 @@
   <div class="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6" data-supplier-contact-actions>
     <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.required_hint') %></p>
     <div class="flex flex-wrap items-center gap-3">
-      <%= link_to t('admin.supplier_details.contact_form.cancel'), admin_supplier_contacts_path(@supplier),
+      <%= link_to t('admin.supplier_details.contact_form.cancel'),
+                  (editing && params[:return_to] == 'dossier' ? admin_supplier_path(@supplier, tab: 'contacts') : admin_supplier_contacts_path(@supplier)),
                   data: { loading_message: t('admin.action_loader.returning') },
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50' %>
       <%= form.submit t(editing ? 'admin.supplier_details.contact_form.update' : 'admin.supplier_details.contact_form.create'),
