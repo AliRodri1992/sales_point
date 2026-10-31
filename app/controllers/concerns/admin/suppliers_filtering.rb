@@ -25,11 +25,13 @@ module Admin
     end
 
     def supplier_fiscal_visible?
-      current_user.admin? || %w[suppliers.fiscal.view suppliers.fiscal.manage].any? { |key| current_user.permission?(key) }
+      current_user.admin? ||
+        %w[suppliers.fiscal.view suppliers.fiscal.manage].any? { |key| current_user.permission?(key) }
     end
 
     def supplier_commercial_visible?
-      current_user.admin? || %w[suppliers.commercial.view suppliers.commercial.manage].any? { |key| current_user.permission?(key) }
+      current_user.admin? ||
+        %w[suppliers.commercial.view suppliers.commercial.manage].any? { |key| current_user.permission?(key) }
     end
 
     def supplier_general_visible?
