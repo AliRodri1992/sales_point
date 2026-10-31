@@ -7,7 +7,6 @@ class CreateEmployees < ActiveRecord::Migration[8.1]
       t.string :first_name, null: false, limit: 80
       t.string :last_name, null: false, limit: 120
       t.string :email, null: false
-      t.string :phone, limit: 30
       t.string :status, null: false, default: 'active', limit: 20
       t.timestamps
       t.timestamp :deleted_at
