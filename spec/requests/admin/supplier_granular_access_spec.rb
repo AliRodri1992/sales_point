@@ -99,7 +99,10 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     role = user.user_roles.first.system_role
     role.permissions.clear
     role.permissions << create(:permission, code: 'suppliers.schedules.create', module_name: 'Proveedores')
-    schedule = create(:supplier_schedule, supplier:, branch: create(:branch, organization:))
+    schedule = supplier.supplier_schedules.create!(
+      branch: create(:branch, organization:), kind: 'visit', weekday: 2,
+      starts_at: Time.zone.parse('09:00'), ends_at: Time.zone.parse('10:00')
+    )
 
     get new_admin_supplier_schedule_path(supplier)
     expect(response).to have_http_status(:ok)
