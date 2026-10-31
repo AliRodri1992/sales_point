@@ -37,6 +37,12 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(card.text).to include('Ana Lopez', 'Purchasing Manager', 'ana@example.com')
     expect(card.css('[data-contact-primary-badge]').size).to eq(1)
     expect(card.at_css('[data-contact-primary-badge] svg[aria-hidden="true"]')).to be_present
+    meta = card.at_css('[data-contact-meta-row]')
+    expect(meta).to be_present
+    expect(meta['class']).to include('whitespace-nowrap')
+    expect(meta.at_css('[data-contact-primary-badge]')).to be_present
+    expect(meta.at_css('[data-contact-position]').text).to eq('Purchasing Manager')
+    expect(meta.text).to include(I18n.t('admin.supplier_details.contact_statuses.active', locale: :en))
     expect(card.text.scan(I18n.t('admin.supplier_details.primary', locale: :en)).size).to eq(1)
     expect(card.css('a[href^="tel:"]').size).to eq(3)
 
