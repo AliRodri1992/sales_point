@@ -101,6 +101,11 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :feature, js: true 
         const panel = document.querySelector('.supplier-edit-upload [data-supplier-edit-uppy-target="dashboard"]')
         const card = panel.querySelector('.uppy-Dashboard-FileCard')
         const header = document.getElementById('adminTopbar')
+        // Allow a realistic scroll even in a short fixture form/viewport.
+        const spacer = document.createElement('div')
+        spacer.style.height = '1200px'
+        spacer.setAttribute('data-uppy-preview-test-spacer', '')
+        document.body.appendChild(spacer)
         const initialHost = panel.getBoundingClientRect()
         window.scrollTo({ top: window.scrollY + initialHost.top - 35, behavior: 'instant' })
         const host = panel.getBoundingClientRect()
