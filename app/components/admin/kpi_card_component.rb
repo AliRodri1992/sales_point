@@ -15,6 +15,5 @@ module Admin
     private
 
     attr_reader :title, :value, :change, :status, :icon_name
-
   end
 end
