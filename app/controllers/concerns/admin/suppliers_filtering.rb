@@ -43,7 +43,7 @@ module Admin
       return scope if params[:search].blank?
 
       fields = %w[code name]
-      fields.concat(%w[email phone]) if supplier_general_visible?
+      fields.push('email', 'phone') if supplier_general_visible?
       fields << 'rfc' if supplier_fiscal_visible?
       expression = fields.map { |field| "suppliers.#{field} ILIKE :term" }.join(' OR ')
       term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
@@ -148,12 +148,8 @@ module Admin
       nil
     end
 
-    def valid_id?(key)
-      params[key].to_s.match?(/\A[1-9]\d*\z/)
-    end
+    def valid_id?(key) = params[key].to_s.match?(/\A[1-9]\d*\z/)
 
-    def valid_nonnegative_number?(key)
-      params[key].to_s.match?(/\A\d{1,12}(?:\.\d{1,2})?\z/)
-    end
+    def valid_nonnegative_number?(key) = params[key].to_s.match?(/\A\d{1,12}(?:\.\d{1,2})?\z/)
   end
 end
