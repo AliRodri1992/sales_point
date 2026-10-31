@@ -28,9 +28,9 @@ es:
       exceptions: Excepciones
       weekly: Recurrente
       single: Evento
-      no_schedules: Todavía no hay horarios recurrentes.
-      no_events: No hay eventos puntuales en este periodo.
-      no_activities: No hay actividades configuradas.
+      no_schedules: "Aún no hay horarios semanales para este proveedor. Selecciona «Nuevo horario» para programar visitas, pedidos o entregas."
+      no_events: "No hay eventos en el periodo seleccionado. Cambia de fecha o selecciona «Nuevo evento» para agregar uno."
+      no_activities: "Este proveedor aún no tiene actividades programadas. Agrega un horario semanal o registra un evento para comenzar."
       more: "%{count} más"
       new_schedule: Nuevo horario
       edit: Editar
@@ -64,4 +64,4 @@ es:
         created: "El evento se agregó al calendario del proveedor. Revisa su fecha y horario en la agenda."
         updated: "Los cambios del evento se guardaron. Revisa la fecha y el horario actualizados en la agenda."
         deleted: "El evento se retiró de la agenda activa del proveedor. Consulta los eventos archivados si necesitas recuperarlo."
-        restored: Evento recuperado correctamente.
+        restored: "El evento se recuperó y vuelve a aparecer en la agenda del proveedor, según su fecha programada."
