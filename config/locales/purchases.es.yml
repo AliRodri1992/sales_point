@@ -77,7 +77,7 @@ es:
       process_return: "Procesar devolución"
       reason: "Motivo"
       history: "Historial y movimientos"
-      empty: "Sin registros disponibles"
+      empty: "No hay documentos de compra para mostrar. Ajusta los filtros o registra una nueva operación desde el módulo correspondiente."
       total: "Total"
       idempotency: "Identificador de operación"
       received: "Recibido"
