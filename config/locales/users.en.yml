@@ -13,8 +13,8 @@ en:
           destroyed: "User '%{name}' was deleted by %{user}"
           updated: "User '%{name}' was updated by %{user}"
     users:
-      created: "User created successfully."
-      updated: "User updated successfully."
+      created: "The user was registered and is now listed. Review their roles and permissions before they start using the system."
+      updated: "The user details were saved. Review the account and assigned access to confirm the changes."
       destroyed: "User deleted successfully."
       cannot_delete_self: "You cannot delete your own account."
       confirm_delete: "Are you sure you want to delete the user %{name}?"
@@ -123,7 +123,7 @@ en:
           language_placeholder: Select a language
           theme: Theme
         save: Save changes
-        success: Profile updated successfully
+        success: "Your profile changes were saved. Reopen your profile to verify your preferences and personal details."
         never: Never
         roles:
           title: Roles
