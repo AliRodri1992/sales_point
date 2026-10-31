@@ -63,6 +63,23 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     expect(editor.css('[data-supplier-edit-uppy-target="fallback"]')).to be_empty
   end
 
+  it 'keeps upload completion feedback below the only Uppy dashboard' do
+    get edit_admin_supplier_path(supplier)
+
+    document = Nokogiri::HTML(response.body)
+    editor = document.at_css('[data-controller="supplier-edit-uppy"]')
+    dashboard = editor.at_css('[data-supplier-edit-uppy-target="dashboard"]')
+    feedback = editor.at_css('[data-supplier-edit-uppy-target="status"]')
+
+    expect(feedback).to be_present
+    expect(feedback['hidden']).not_to be_nil
+    expect(feedback['role']).to eq('status')
+    expect(feedback.at_css('[data-supplier-edit-uppy-target="statusMessage"]')).to be_present
+    expect(feedback.ancestors).not_to include(dashboard)
+    expect(dashboard.next_element).not_to eq(feedback)
+    expect(editor.css('[data-supplier-edit-uppy-target="dashboard"]').length).to eq(1)
+  end
+
   it 'preserves the original new supplier file input' do
     get new_admin_supplier_path
 
