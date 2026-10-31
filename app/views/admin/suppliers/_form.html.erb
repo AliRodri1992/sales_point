@@ -14,9 +14,8 @@
             </div>
             <p class="text-xs text-slate-500" data-supplier-form-target="progress" aria-live="polite"></p>
           <% else %>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-500"><%= t('admin.suppliers.onboarding.current_section') %></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-500"><%= t('admin.suppliers.onboarding.navigation_label') %></span>
           <% end %>
-          <p class="font-jakarta break-words text-base font-semibold text-slate-900 sm:text-lg" data-supplier-form-target="activeLabel" aria-live="polite"><%= t('admin.suppliers.onboarding.steps.step_1') %></p>
         </div>
         <details class="group relative z-20 w-full shrink-0 sm:w-auto" data-supplier-form-target="navigation" data-action="keydown->supplier-form#navigationKeydown">
           <summary class="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:w-auto [&::-webkit-details-marker]:hidden">
