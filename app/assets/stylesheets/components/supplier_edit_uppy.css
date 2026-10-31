@@ -1,0 +1,58 @@
+/* Supplier edit only: brand the Uppy dashboard without affecting the show-page file library. */
+.supplier-edit-upload .uppy-Dashboard-inner {
+  width: 100% !important;
+  max-width: 100%;
+  border: 1px solid #bbf7d0;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(15, 118, 110, .05);
+}
+.supplier-edit-upload .uppy-Dashboard-innerWrap {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.supplier-edit-upload .uppy-Dashboard-dropFilesHereHint,
+.supplier-edit-upload .uppy-Dashboard-browse {
+  color: #047857;
+}
+.supplier-edit-upload .uppy-Dashboard-AddFiles {
+  border-radius: .875rem;
+  border-color: #a7f3d0;
+}
+.supplier-edit-upload .uppy-Dashboard-AddFiles-title {
+  color: #0f172a;
+  font-weight: 600;
+}
+.supplier-edit-upload .uppy-Dashboard-AddFiles-info {
+  color: #64748b;
+}
+.supplier-edit-upload .uppy-c-btn-primary,
+.supplier-edit-upload .uppy-StatusBar-actionBtn--upload {
+  border-radius: .65rem;
+  background: #047857;
+  color: white;
+}
+.supplier-edit-upload .uppy-c-btn-primary:hover,
+.supplier-edit-upload .uppy-StatusBar-actionBtn--upload:hover {
+  background: #065f46;
+}
+.supplier-edit-upload .uppy-StatusBar-progressIndicator {
+  color: #059669;
+}
+.supplier-edit-upload .uppy-StatusBar-progress,
+.supplier-edit-upload .uppy-ProgressBar-inner {
+  background: #10b981;
+}
+.supplier-edit-upload .uppy-Dashboard-Item {
+  border-radius: .75rem;
+}
+.supplier-edit-upload :is(button, a):focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .supplier-edit-upload .uppy-Dashboard-inner * {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
