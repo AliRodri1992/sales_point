@@ -54,7 +54,7 @@
              aria-labelledby="supplier-address-location-heading" class="min-w-0 h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div class="mb-6 flex items-center gap-3">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-          <%= icon('map-pin', class: 'size-5') %>
+          <%= delta_icon('map-pin', class: 'size-5') %>
         </span>
         <div>
           <h2 id="supplier-address-location-heading" class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.address_form.location_heading') %></h2>
@@ -163,7 +163,7 @@
 
     <section aria-labelledby="supplier-address-classification-heading" class="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div class="mb-6 flex items-center gap-3">
-          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('document-text', class: 'size-5') %></span>
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('document-text', class: 'size-5') %></span>
           <div>
             <h2 id="supplier-address-classification-heading" class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.address_form.classification_heading') %></h2>
             <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.address_form.classification_description') %></p>
@@ -178,7 +178,7 @@
           <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <% %w[fiscal commercial delivery general].each do |purpose| %>
               <label class="flex min-h-28 min-w-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-3 text-center text-xs font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 has-checked:border-emerald-600 has-checked:bg-emerald-50 has-checked:text-emerald-800 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-emerald-600">
-                <%= icon(purpose_icons.fetch(purpose), class: 'size-6') %>
+                <%= delta_icon(purpose_icons.fetch(purpose), class: 'size-6') %>
                 <span><%= t("admin.supplier_details.address_purposes.#{purpose}") %></span>
                 <%= form.radio_button :purpose, purpose,
                                       data: { label: t("admin.supplier_details.address_purposes.#{purpose}") },
@@ -214,7 +214,7 @@
 
   <section aria-labelledby="supplier-address-preview-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div class="mb-4 flex items-center gap-3">
-          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('map-pin', class: 'size-5') %></span>
+          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('map-pin', class: 'size-5') %></span>
           <div>
             <h2 id="supplier-address-preview-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_form.summary_heading', default: 'Resumen de la dirección') %></h2>
             <p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.address_form.preview_description') %></p>
@@ -233,7 +233,7 @@
                     class="absolute inset-0 z-10 hidden size-full cursor-crosshair touch-none focus-visible:ring-2 focus-visible:ring-emerald-500"></button>
             <div data-supplier-address-location-target="pin"
                  class="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-full rounded-full bg-white/90 p-1 text-emerald-700 shadow-lg">
-              <%= icon('map-pin', class: 'size-6') %>
+              <%= delta_icon('map-pin', class: 'size-6') %>
             </div>
           </div>
 
@@ -251,19 +251,19 @@
           <% end %>
           <button type="button" data-action="supplier-address-location#lookup" data-supplier-address-location-target="lookupButton"
                   class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700">
-            <%= icon('magnifying-glass', class: 'size-4') %>
+            <%= delta_icon('magnifying-glass', class: 'size-4') %>
             <%= t('admin.supplier_details.address_form.location_search') %>
           </button>
           <button type="button" data-action="supplier-address-location#confirm" data-supplier-address-location-target="confirmButton"
                   class="hidden min-h-10 items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 disabled:cursor-default disabled:bg-emerald-100 disabled:text-emerald-900">
-            <span data-supplier-address-location-target="confirmButtonIcon" class="hidden"><%= icon('check-circle', class: 'size-4') %></span>
+            <span data-supplier-address-location-target="confirmButtonIcon" class="hidden"><%= delta_icon('check-circle', class: 'size-4') %></span>
             <span data-supplier-address-location-target="confirmButtonLabel"><%= t('admin.supplier_details.address_form.location_confirm') %></span>
           </button>
         </div>
         <div data-supplier-address-location-target="statusPanel" role="status" aria-live="polite"
              class="mt-3 flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-5 text-slate-700">
           <span data-supplier-address-location-target="statusIcon" class="hidden shrink-0 text-emerald-700">
-            <%= icon('check-circle', class: 'size-5') %>
+            <%= delta_icon('check-circle', class: 'size-5') %>
           </span>
           <div class="min-w-0">
             <p data-supplier-address-location-target="status"><%= t('admin.supplier_details.address_form.location_optional') %></p>
@@ -302,7 +302,7 @@
         </div>
     <div class="min-w-0 border-t border-slate-100 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-labelledby="supplier-address-summary-heading">
       <div class="mb-3 flex items-center gap-2">
-        <span class="flex size-9 items-center justify-center rounded-lg bg-sky-50 text-sky-700"><%= icon('document-text', class: 'size-5') %></span>
+        <span class="flex size-9 items-center justify-center rounded-lg bg-sky-50 text-sky-700"><%= delta_icon('document-text', class: 'size-5') %></span>
         <h3 id="supplier-address-summary-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.supplier_details.address_form.preview_address') %></h3>
       </div>
     <dl class="grid min-w-0 gap-x-5 gap-y-4 bg-white text-sm sm:grid-cols-2">
@@ -340,7 +340,7 @@
                   data: { loading_message: t('admin.action_loader.returning') },
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
       <%= form.button type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-        <%= icon('check', class: 'size-4') %>
+        <%= delta_icon('check', class: 'size-4') %>
         <%= t("admin.supplier_details.address_form.#{@address.persisted? ? 'save_changes' : 'save_address'}") %>
       <% end %>
     </div>

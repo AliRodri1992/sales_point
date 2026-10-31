@@ -42,7 +42,7 @@
           <span>Santander</span>
         </span>
       <% else %>
-        <span class="inline-flex size-10 items-center justify-center rounded-xl bg-white/15" aria-hidden="true"><%= icon('building-library', class: 'size-6') %></span>
+        <span class="inline-flex size-10 items-center justify-center rounded-xl bg-white/15" aria-hidden="true"><%= delta_icon('building-library', class: 'size-6') %></span>
         <span class="sr-only"><%= bank_name %></span>
       <% end %>
     </div>
@@ -58,7 +58,7 @@
         <details class="group/menu relative">
           <summary aria-label="<%= "#{t('admin.accounts_payable.bank_list.actions')}: #{bank_name} #{account.last_four}" %>"
                    class="flex size-8 cursor-pointer list-none items-center justify-center rounded-lg bg-white/20 outline-offset-2 transition hover:bg-white/30 focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
-            <%= icon('ellipsis-vertical', class: 'size-5') %>
+            <%= delta_icon('ellipsis-vertical', class: 'size-5') %>
           </summary>
           <div class="absolute right-0 top-full z-30 mt-1 min-w-40 rounded-xl border border-slate-200 bg-white p-1 text-slate-700 shadow-xl">
             <% if archived %>
@@ -68,7 +68,7 @@
             <% else %>
               <%= link_to edit_admin_supplier_bank_account_path(supplier, account),
                           class: 'block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-50' do %>
-                <%= icon('pencil', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.edit') %>
+                <%= delta_icon('pencil', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.edit') %>
               <% end %>
               <% if account.status == 'active' %>
                 <% %w[verified rejected pending].each do |decision| %>
@@ -83,7 +83,7 @@
               <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
                             form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
                             class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
-                <%= icon('archive-box', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.archive') %>
+                <%= delta_icon('archive-box', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.archive') %>
               <% end %>
             <% end %>
           </div>

@@ -162,7 +162,7 @@
           >
             <%= sidebar_navigation_icon(:catalogs, class_name: 'size-5') %>
             <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.catalogs') %></span>
-            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+            <%= delta_icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
           </summary>
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
@@ -226,7 +226,7 @@
           >
             <%= sidebar_navigation_icon(:settings, class_name: 'size-5') %>
             <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.settings') %></span>
-            <%= icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
+            <%= delta_icon("chevron-down", class: "sidebar-chevron size-4 text-slate-400") %>
           </summary>
 
           <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
@@ -317,7 +317,7 @@
           class="user-menu-button flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-600"
         >
           <span class="sidebar-avatar-initials" aria-hidden="true"><%= current_user.initials %></span>
-          <%= icon("ellipsis-vertical", class: "sidebar-menu-ellipsis size-5") %>
+          <%= delta_icon("ellipsis-vertical", class: "sidebar-menu-ellipsis size-5") %>
         </button>
       </div>
 
