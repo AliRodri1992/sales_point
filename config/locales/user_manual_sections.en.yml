@@ -286,7 +286,105 @@ en:
         finances:
           title: "Supplier invoices and accounts payable"
           description: "Register invoices and apply payments and credits while reconciling balances."
-          topics: []
+          topics:
+            -
+              id: "supplier_invoices"
+              title: "Supplier invoices and CFDI"
+              description: "Capture documents, import XML, and record accounting obligations."
+              tasks:
+                -
+                  title: "Create a draft invoice"
+                  steps:
+                    - "Open “Supplier invoices” and select “New invoice”."
+                    - "Choose an active supplier, currency, and related purchase order if applicable."
+                    - "Enter series, invoice number, issue date, receipt date, due date, subtotal, discounts, and taxes."
+                    - "Attach the CFDI XML and PDF files when available; use “CFDI preview” before saving."
+                    - "Verify amounts and tax details, then save the draft."
+                -
+                  title: "Match receipts and post the invoice"
+                  steps:
+                    - "Open the invoice details and use “Match receipts” where applicable."
+                    - "Choose records for goods actually received."
+                    - "Check differences in quantities, totals, and due dates."
+                    - "Once the information is correct, select “Post” using the appropriate permission."
+                    - "Open the generated payable to confirm its balance."
+                -
+                  title: "Cancel an invoice"
+                  steps:
+                    - "Open the invoice details and check its status."
+                    - "If the workflow allows, choose “Cancel” and confirm."
+                    - "Review the effect on payables and related documents."
+              note: "A posted invoice must not be edited like a draft. CFDI validation requires fiscal review; a preview alone does not prove validity with the SAT."
+            -
+              id: "payables"
+              title: "Accounts payable and due dates"
+              description: "Review unpaid invoices, payments, and outstanding balances."
+              tasks:
+                -
+                  title: "Review liabilities"
+                  steps:
+                    - "Open “Accounts payable” from the sidebar."
+                    - "Use filters and pagination, when available, to find a supplier or due date."
+                    - "Open the payable and check the invoice, original amount, payments, credit notes, and balance."
+                    - "Prioritize upcoming and overdue accounts using the displayed due dates."
+                -
+                  title: "Reconcile a balance"
+                  steps:
+                    - "After posting a payment or applying a credit note, reopen the payable."
+                    - "Compare the previous balance, the amount applied, and the remaining amount."
+                    - "If values differ, inspect the source documents and their allocations before creating another transaction."
+              note: "Draft invoices should not be treated as posted liabilities."
+            -
+              id: "supplier_payments"
+              title: "Supplier payments"
+              description: "Record full or partial payments and allocate amounts across liabilities."
+              tasks:
+                -
+                  title: "Record a payment"
+                  steps:
+                    - "Open “Supplier payments” and select “New payment”."
+                    - "Select a supplier, currency, payment date, reference, and amount."
+                    - "Choose an authorized supplier bank account if required."
+                    - "Save and open the payment details."
+                -
+                  title: "Allocate and post the payment"
+                  steps:
+                    - "In the details, choose payables belonging to that same supplier."
+                    - "Allocate the amount across one or more invoices without exceeding their outstanding balances."
+                    - "Select “Post payment” and confirm."
+                    - "Verify the credits and updated balances in the payables."
+                -
+                  title: "Reverse a payment"
+                  steps:
+                    - "Find the payment and open its details."
+                    - "Check where it was allocated, and use “Reverse” only if authorized."
+                    - "Verify that the original balances are restored consistently."
+              note: "Do not record a duplicate payment just to correct an allocation; use the authorized reversal process."
+            -
+              id: "supplier_credits"
+              title: "Credit notes"
+              description: "Record credits and apply them to unpaid invoices."
+              tasks:
+                -
+                  title: "Record a credit note"
+                  steps:
+                    - "Open “Credit notes” and select “New note”."
+                    - "Choose a supplier, currency, related invoice or return, document number, and date."
+                    - "Enter the amount and attach the CFDI XML when available."
+                    - "Save the draft, review the details, and select “Post” when appropriate."
+                -
+                  title: "Apply credit to a payable"
+                  steps:
+                    - "Open a posted note and select a payable for the same supplier."
+                    - "Enter an amount no greater than the available credit or outstanding payable."
+                    - "Confirm and check the remaining credit and new liability balance."
+                -
+                  title: "Cancel a credit note"
+                  steps:
+                    - "Check the note status and whether allocations already exist."
+                    - "Select “Cancel” only when the current rules allow it."
+                    - "If allocations exist, resolve related transactions first; direct cancellation is blocked."
+              note: "Payments and credit notes change financial balances: verify the supplier and amounts before confirming."
         communication:
           title: "Communication and module status"
           description: "Review notifications, messaging, demo requests, and upcoming features."
