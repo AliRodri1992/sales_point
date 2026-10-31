@@ -12,3 +12,6 @@ en:
       contact_pages: "Contact pages"
       empty_contacts_description: "Add contact people to coordinate communication and follow-up with this supplier."
       confirm_action: "Confirm"
+      scheduled_count: "Recurring schedules"
+      branches_count: "Branches"
+      exceptions_count: "Exceptions"
