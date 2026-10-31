@@ -57,6 +57,6 @@ es:
       invalid_file: "El archivo no es válido o supera el límite de 10 MB."
       messages:
         uploaded: "Documento agregado correctamente."
-        updated: "Información del documento actualizada correctamente."
+        updated: "Los datos del documento se actualizaron en el expediente del proveedor. Abre su ficha para revisar los cambios."
         replaced: "Documento reemplazado correctamente."
-        deleted: "Documento eliminado correctamente."
+        deleted: "El documento se retiró de la biblioteca activa del proveedor. Puedes revisar su historial y recuperarlo si tienes permiso."
