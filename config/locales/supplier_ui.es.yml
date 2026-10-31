@@ -15,3 +15,8 @@ es:
       scheduled_count: "Horarios recurrentes"
       branches_count: "Sucursales"
       exceptions_count: "Excepciones"
+      offer_identity_title: "Identificación de la oferta"
+      offer_identity_description: "Selecciona el producto y define cómo lo suministra este proveedor."
+      offer_terms_title: "Precios y condiciones"
+      offer_terms_description: "Configura costos, cantidades y tiempos de entrega."
+      offer_settings_title: "Disponibilidad"
