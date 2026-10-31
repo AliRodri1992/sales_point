@@ -17,4 +17,5 @@ ko:
           address_deleted: "주소가 삭제되었습니다."
           address_restored: "주소가 복원되었습니다."
       online_users:
-        empty: 비어 있음
+        empty: "현재 접속 중인 다른 사용자가 없습니다"
+        empty_description: "다른 사용자가 접속하면 이곳에 표시되며 대화를 시작할 수 있습니다."
