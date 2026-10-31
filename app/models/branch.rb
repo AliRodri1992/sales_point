@@ -2,8 +2,9 @@
 
 class Branch < ApplicationRecord
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
-  accepts_nested_attributes_for :phones, allow_destroy: true,
-                                        reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
+  accepts_nested_attributes_for :phones,
+                                allow_destroy: true,
+                                reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
   belongs_to :organization, optional: true
   has_one :address, as: :addressable, dependent: :destroy
   accepts_nested_attributes_for :address
