@@ -55,6 +55,8 @@ module DeltaIconShapes
     'device-phone-mobile' => 'r:7,2,10,20,2|M10 5h4|M11 19h2',
     'document-arrow-up' => 'M6 3h8l4 4v5|M14 3v4h4|M6 3v18h12v-4|M12 21v-9|M8.5 15.5 12 12l3.5 3.5',
     'document-text' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 11h6|M9 15h6|M9 19h4',
+    'document-magnifying-glass' => 'M6 3h8l4 4v6|M14 3v4h4|M6 3v18h8|M9 11h5|c:17,16.5,3|M19.2 18.7 22 21.5',
+    'paper-clip' => 'M9 12.5l5.7-5.7a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a5 5 0 0 1-7-7l8.7-8.7',
     'document-check' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 14l2 2 4-5',
     'ellipsis-horizontal' => 'c:5,12,1|c:12,12,1|c:19,12,1',
     'ellipsis-vertical' => 'c:12,5,1|c:12,12,1|c:12,19,1',
