@@ -43,7 +43,8 @@ RSpec.describe 'Admin suppliers', type: :request do
 
     phones = editor.css('[data-nested-phones-target="items"] > [data-phone-item]')
     expect(phones.size).to eq(2)
-    expect(phones.map { |item| item.at_css('select[name$="[kind]"]')['value'] }).to contain_exactly('mobile', 'landline')
+    expect(phones.map { |item| item.at_css('select[name$="[kind]"] option[selected]')&.[]('value') })
+      .to contain_exactly('mobile', 'landline')
     expect(phones.all? { |item| item.at_css('[data-controller="delta-select"]') }).to be(true)
     expect(phones.all? { |item| item.at_css('input[name$="[country_code]"]') ||
                                   item.at_css('[data-controller="international-phone"]') }).to be(true)
