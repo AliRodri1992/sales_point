@@ -12,7 +12,7 @@
         class: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-700",
         aria: { label: t("admin.shared.conversation.send") },
         data: { "conversation-form-target": "button" } do %>
-    <%= icon("paper-airplane", variant: :solid, class: "size-4") %>
+    <%= delta_icon("paper-airplane", variant: :solid, class: "size-4") %>
   <% end %>
 <% end %>
 <% if message.errors[:body].any? %>
