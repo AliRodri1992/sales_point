@@ -1,4 +1,4 @@
-<%= form_with model: @event, url: @event.persisted? ? admin_supplier_event_path(@supplier, @event) : admin_supplier_events_path(@supplier), data: { turbo: false }, class: 'space-y-5' do |form| %>
+<%= form_with model: @event, url: @event.persisted? ? admin_supplier_event_path(@supplier, @event) : admin_supplier_events_path(@supplier), data: { turbo: false, loading_message: t('admin.action_loader.saving') }, class: 'space-y-5' do |form| %>
   <div>
     <%= form.label :title, t('admin.supplier_calendar.fields.title'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
     <%= form.text_field :title, required: true, maxlength: 150, placeholder: t('admin.supplier_calendar.title_placeholder'), class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-emerald-100' %>
@@ -41,7 +41,7 @@
     <%= error_message_for(@event, :notes) %>
   </div>
   <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
-    <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_path(@supplier, tab: 'schedules'), class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+    <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_path(@supplier, tab: 'schedules'), data: { loading_message: t('admin.action_loader.returning') }, class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
     <%= form.submit t("admin.supplier_calendar.#{@event.persisted? ? 'save_changes' : 'create_event'}"), class: 'cursor-pointer rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700' %>
   </div>
 <% end %>
