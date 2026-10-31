@@ -157,6 +157,12 @@ jobs:
           echo
           echo "__SCHEMA_END__"
 
+      - name: Verify edit-only Uppy uploader and Active Storage integration
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: bundle exec rspec spec/requests/admin/supplier_edit_uppy_spec.rb spec/features/supplier_edit_uppy_browser_spec.rb
+
       - name: Run focused supplier branch-coverage regressions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
