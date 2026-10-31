@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'supplier_organization_examples'
+require_relative 'supplier_phone_examples'
 
 # Sample tenant and suppliers for a fresh development database.
 # Codes and RFCs are deterministic so db:seed can be run repeatedly.
@@ -118,22 +119,11 @@ module SupplierExamples
 
           contact.phones.create!(
             organization: supplier.organization, kind:, primary: true,
-            country_code: 'MX', number: seeded_phone_number(number, kind)
+            country_code: 'MX', number: SupplierPhoneExamples.number(number, kind)
           )
         end
       elsif !supplier.contacts.with_deleted.exists?
         create_new_contact(supplier, number, "contacto#{number}@example.com")
-      end
-    end
-
-    def seeded_phone_number(number, kind)
-      format(kind == 'landline' ? '552234%04d' : '551234%04d', number)
-    end
-
-    def seeded_contact_phones(supplier, number)
-      %w[landline mobile].map do |kind|
-        { number: seeded_phone_number(number, kind), kind:, primary: true,
-          country_code: 'MX', organization: supplier.organization }
       end
     end
 
@@ -142,7 +132,7 @@ module SupplierExamples
         name: "Contacto #{number}",
         email: email,
         position: 'Ventas',
-        phones_attributes: seeded_contact_phones(supplier, number),
+        phones_attributes: SupplierPhoneExamples.attributes(supplier, number),
         notes: 'Contacto ficticio para demostración.',
         primary: true,
         active: true,
