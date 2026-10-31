@@ -27,10 +27,7 @@ class CreatePhones < ActiveRecord::Migration[8.1]
                          name: 'chk_phones_kind'
     add_check_constraint :phones, "number ~ '^\\+[1-9][0-9]{1,14}$'",
                          name: 'chk_phones_e164'
-    add_check_constraint :phones, "country_code ~ '^[A-Z]{2}
-  end
-end
-",
+    add_check_constraint :phones, "country_code ~ '^[A-Z]{2}$'",
                          name: 'chk_phones_country'
     add_check_constraint :phones,
                          %(phoneable_type NOT IN ('Client', 'Branch', 'Employee') OR
