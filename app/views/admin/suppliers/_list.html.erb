@@ -87,7 +87,7 @@
       <div class="flex flex-col gap-4 border-t border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div class="flex flex-wrap items-center gap-4">
           <%= form_with url: admin_suppliers_path, method: :get, id: 'supplier-pagination-form',
-                        data: { controller: 'supplier-page-size', turbo_frame: '_top', action: 'change->supplier-page-size#apply' },
+                        data: { controller: 'supplier-page-size', loading_message: t('admin.action_loader.updating'), turbo_frame: '_top', action: 'change->supplier-page-size#apply' },
                         class: 'flex items-center gap-2 text-sm text-slate-600' do %>
             <label for="supplier-page-size"><%= t('admin.suppliers.index.pagination.per_page_label') %></label>
             <%= hidden_field_tag :archived, '1' if params[:archived] == '1' %>
