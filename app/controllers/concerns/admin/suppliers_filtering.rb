@@ -43,9 +43,15 @@ module Admin
       return scope if params[:search].blank?
 
       fields = %w[code name]
-      fields.push('email', 'phone') if supplier_general_visible?
+      fields << 'email' if supplier_general_visible?
       fields << 'rfc' if supplier_fiscal_visible?
-      expression = fields.map { |field| "suppliers.#{field} ILIKE :term" }.join(' OR ')
+      conditions = fields.map { |field| "suppliers.#{field} ILIKE :term" }
+      if supplier_general_visible?
+        conditions << "EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier' " \
+                      "AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL " \
+                      'AND phones.number ILIKE :term)'
+      end
+      expression = conditions.join(' OR ')
       term = "%#{ActiveRecord::Base.sanitize_sql_like(params[:search].to_s)}%"
       scope.where(expression, term:)
     end
