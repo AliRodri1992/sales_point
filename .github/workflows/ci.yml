@@ -169,7 +169,7 @@ jobs:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: |
-          bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb
+          bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb spec/features/supplier_row_actions_dropdown_spec.rb
 
       - name: Run focused sidebar and supplier validation browser regressions
         env:
