@@ -26,6 +26,17 @@ RSpec.describe Suppliers::DossierContactsPage do
     expect((first.contacts + second.contacts + third.contacts).map(&:id).uniq.size).to eq(19)
   end
 
+  it 'preloads phone associations for rendered contact cards' do
+    contact = create(:contact, contactable: supplier, name: 'Direct Contact')
+    create(:phone, phoneable: contact, organization: supplier.organization, kind: 'mobile', primary: true,
+                   number: '5512345678', country_code: 'MX')
+
+    result = page
+
+    expect(result.contacts.first.association(:phones)).to be_loaded
+    expect(result.contacts.first.phones.first.kind).to eq('mobile')
+  end
+
   it 'lists primary contacts before other contacts' do
     create(:contact, contactable: supplier, name: 'Regular Contact')
     primary = create(:contact, contactable: supplier, name: 'Primary Contact', primary: true)
