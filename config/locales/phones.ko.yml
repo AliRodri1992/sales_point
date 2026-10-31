@@ -1,6 +1,9 @@
 ko:
   admin:
     phones:
+      mobile: "휴대전화"
+      landline: "사무실 / 유선전화"
+      other: "기타"
       kind: "유형"
       number: "전화번호"
       extension: "내선번호"
