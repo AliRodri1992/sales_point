@@ -2,6 +2,7 @@
 
 class Phone < ApplicationRecord
   KINDS = %w[mobile landline other].freeze
+  PHONEABLE_TYPES = %w[Contact Client Branch Employee].freeze
 
   belongs_to :organization
   belongs_to :phoneable, polymorphic: true
@@ -9,6 +10,7 @@ class Phone < ApplicationRecord
   scope :active, -> { where(deleted_at: nil) }
 
   validates :kind, inclusion: { in: KINDS }
+  validates :phoneable_type, inclusion: { in: PHONEABLE_TYPES }
   validates :country_code, presence: true, format: { with: /\A[A-Z]{2}\z/ }
   validates :label, length: { maximum: 60 }, allow_blank: true
   validates :extension, length: { maximum: 10 }, allow_blank: true
@@ -16,6 +18,7 @@ class Phone < ApplicationRecord
   validate :number_must_be_valid
   validate :same_organization_as_owner
   validate :unique_primary_per_kind
+  validate :unique_active_number
 
   before_validation :assign_organization
   before_validation :normalize_number
@@ -67,6 +70,13 @@ class Phone < ApplicationRecord
     return unless primary? && deleted_at.nil? && phoneable&.persisted?
 
     errors.add(:primary, :taken) if conflicting_primary_phone?
+  end
+
+  def unique_active_number
+    return if deleted_at.present? || phoneable.blank? || number.blank? || !phoneable.persisted?
+
+    duplicates = Phone.active.where(phoneable:, number:, extension:).where.not(id: id)
+    errors.add(:number, :taken) if duplicates.exists?
   end
 
   def conflicting_primary_phone?
