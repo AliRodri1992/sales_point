@@ -1,5 +1,5 @@
 <div class="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-200 pt-2">
-  <% if supplier.active? %>
+  <% if supplier.active? && policy(supplier).update_schedules? %>
   <%= link_to t('admin.supplier_calendar.edit'), edit_admin_supplier_event_path(supplier, event),
               data: {
                 action: 'supplier-calendar#edit', event_url: admin_supplier_event_path(supplier, event),
@@ -9,7 +9,9 @@
                 event_notes: event.notes, event_all_day: event.all_day?, event_status: event.status
               }, class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
   <% end %>
+  <% if policy(supplier).destroy_schedules? %>
   <%= button_to t('admin.supplier_calendar.delete'), admin_supplier_event_path(supplier, event),
                 method: :delete, form: { data: { turbo_confirm: t('admin.supplier_calendar.delete_confirm') } },
-                class: 'text-xs font-semibold text-rose-700 hover:underline' %>
+                class: 'inline-flex min-h-9 items-center rounded-lg px-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50' %>
+  <% end %>
 </div>
