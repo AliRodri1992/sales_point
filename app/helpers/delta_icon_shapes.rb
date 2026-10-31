@@ -86,6 +86,11 @@ module DeltaIconShapes
       'l3-.6L21 6a2 2 0 0 0-3-3l-8.4 9z'
     ].join,
     'phone' => 'M7 3 4 6c0 7 7 14 14 14l3-3-5-4-3 3c-3-1-5-3-6-6l3-3z',
+    'phone-mobile' => 'r:7.5,2,9,20,2.2|M10.5 5h3|M11 19h2|M10 8.5h4',
+    'phone-landline' => [
+      'M4 7.8a2.7 2.7 0 0 1 2.7-2.7h10.6A2.7 2.7 0 0 1 20 7.8v1.6H4z|',
+      'M7 9.4v2.4l-2 4.1v3h14v-3l-2-4.1V9.4|M10 14h4|M10 16.5h4'
+    ].join,
     'plus' => 'M12 4v16|M4 12h16',
     'plus-circle' => 'c:12,12,9|M12 7v10|M7 12h10',
     'presentation-chart-line' => 'r:3,3,18,13,1|M12 16v5|M8 21h8|M6 12l3-3 3 1 5-4',
