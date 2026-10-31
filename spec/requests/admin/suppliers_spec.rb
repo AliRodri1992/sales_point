@@ -72,6 +72,27 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('data-controller="supplier-search"')
   end
 
+  it 'renders supplier filter dropdowns without radio buttons' do
+    get admin_suppliers_path, params: { status: 'active' }
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    dropdowns = document.css('details[data-controller~="supplier-dropdown"]').select do |dropdown|
+      dropdown.at_css('input[data-supplier-dropdown-target="value"]')
+    end
+
+    expect(dropdowns).not_to be_empty
+    dropdowns.each do |dropdown|
+      expect(dropdown.css('input[type="radio"]')).to be_empty
+      expect(dropdown.at_css('input[type="hidden"][data-supplier-dropdown-target="value"]')).to be_present
+      expect(dropdown.css('[role="listbox"] button[role="option"]')).not_to be_empty
+    end
+
+    status = dropdowns.find { |dropdown| dropdown.at_css('input[name="status"]') }
+    expect(status.at_css('input[name="status"]')['value']).to eq('active')
+    expect(status.at_css('button[data-option-value="active"]')['aria-selected']).to eq('true')
+  end
+
   it 'broadcasts a refresh after a supplier is created' do
     expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
       .with("suppliers_catalog_#{organization.id}")
