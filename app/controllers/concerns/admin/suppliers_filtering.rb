@@ -38,6 +38,14 @@ module Admin
       supplier_any_permission?('suppliers.view', 'suppliers.update')
     end
 
+    def supplier_contacts_visible?
+      supplier_any_permission?(
+        'suppliers.contacts.view', 'suppliers.contacts.manage',
+        'suppliers.contacts.create', 'suppliers.contacts.update',
+        'suppliers.contacts.destroy', 'suppliers.contacts.restore'
+      )
+    end
+
     def supplier_any_permission?(*keys)
       current_user.admin? || keys.any? { |key| current_user.permission?(key) }
     end
