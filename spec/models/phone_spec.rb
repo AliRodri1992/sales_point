@@ -90,4 +90,35 @@ RSpec.describe Phone, type: :model do
     expect(phone).not_to be_valid
     expect(phone.errors.attribute_names).to include(:phoneable, :number)
   end
+
+  it 'stores both supplier onboarding numbers on its primary contact' do
+    new_supplier = build(:supplier, organization:)
+    main_contact = new_supplier.contacts.build(
+      name: 'Compras', primary: true,
+      phones_attributes: [
+        { kind: 'landline', number: '55 2234 5678', primary: true },
+        { kind: 'mobile', number: '55 1234 5678', primary: true }
+      ]
+    )
+
+    expect(new_supplier.save).to be(true)
+    expect(main_contact.reload.phones.active.pluck(:kind)).to match_array(%w[landline mobile])
+    expect(new_supplier).not_to respond_to(:phones)
+  end
+
+  it 'forbids directly assigning supplier as the polymorphic phone owner' do
+    phone = described_class.new(phoneable: supplier, organization:, number: '55 1234 5678',
+                                kind: 'mobile', primary: true)
+
+    expect(phone).not_to be_valid
+    expect(phone.errors.attribute_names).to include(:phoneable_type)
+  end
+
+  it 'rejects a duplicate number even for another type with no extension' do
+    contact.phones.create!(number: '55 1234 5678', kind: 'landline', primary: true)
+    duplicate = contact.phones.build(number: '55 1234 5678', kind: 'mobile', primary: true)
+
+    expect(duplicate).not_to be_valid
+    expect(duplicate.errors.attribute_names).to include(:number)
+  end
 end
