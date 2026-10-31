@@ -124,8 +124,27 @@ class User < ApplicationRecord
     self.class.online_user_ids.include?(id)
   end
 
+  # Each open Action Cable connection has its own heartbeat entry. Expired
+  # entries are removed so a disconnected browser cannot remain online forever.
+  PRESENCE_TIMEOUT = 60
+
+  def self.presence_redis
+    Redis.new(url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'))
+  end
+
+  def self.track_online_connection(user_id, token)
+    presence_redis.zadd(ONLINE_USERS_KEY, Time.current.to_i, "#{user_id}:#{token}")
+  end
+
+  def self.untrack_online_connection(user_id, token)
+    presence_redis.zrem(ONLINE_USERS_KEY, "#{user_id}:#{token}")
+  end
+
   def self.online_user_ids
-    Kredis.set(ONLINE_USERS_KEY).members.map(&:to_i)
+    redis = presence_redis
+    cutoff = Time.current.to_i - PRESENCE_TIMEOUT
+    redis.zremrangebyscore(ONLINE_USERS_KEY, '-inf', cutoff)
+    redis.zrange(ONLINE_USERS_KEY, 0, -1).map { |member| member.to_s.split(':', 2).first.to_i }.uniq
   end
 
   private
