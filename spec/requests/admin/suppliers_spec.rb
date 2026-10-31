@@ -52,6 +52,8 @@ RSpec.describe 'Admin suppliers', type: :request do
       .to be(true)
     expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
     expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
+    expect(phones.all? { |item| item.at_css('[data-phone-fields]') }).to be(true)
+    expect(phones.all? { |item| item.at_css('[data-phone-removed-message] button[data-action="nested-phones#undoRemove"]') }).to be(true)
 
     expect(editor.at_css('[data-supplier-contact-primary-toggle] input[type="checkbox"]')).to be_present
     expect(editor.at_css('[data-supplier-contact-active-toggle] input[type="checkbox"]')).to be_present
@@ -97,6 +99,26 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response).to have_http_status(:redirect)
     expect(contact.reload.phones.active.count).to eq(1)
     expect(phone.reload.number).to eq('+525587654321')
+  end
+
+  it 'removes a phone only after saving the contact edit request' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Operations',
+                     phones_attributes: [
+                       { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+                       { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+                     ])
+    office_phone = contact.phones.find_by!(kind: 'landline')
+    mobile_phone = contact.phones.find_by!(kind: 'mobile')
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: { phones_attributes: {
+        '0' => { id: office_phone.id, _destroy: '1' }
+      } }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    expect(contact.reload.phones.active.pluck(:id)).to eq([mobile_phone.id])
   end
 
   it 'preserves the new-contact editor without exposing the active toggle' do
