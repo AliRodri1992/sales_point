@@ -13,6 +13,8 @@ module DeltaIconShapes
     'arrow-right' => 'M4 12h16|M13 5l7 7-7 7',
     'arrow-right-start-on-rectangle' => 'M12 12H3|M7 8l-4 4 4 4|M12 4h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6',
     'arrow-top-right-on-square' => 'M12 5h7v7|M19 5l-9 9|M17 15v4H5V7h4',
+    'arrow-trending-up' => 'M4 17l6-6 4 3 6-7|M15 7h5v5',
+    'arrow-trending-down' => 'M4 7l6 6 4-3 6 7|M15 17h5v-5',
     'arrow-up' => 'M12 20V4|M5 11l7-7 7 7',
     'arrow-up-right' => 'M5 19 19 5|M9 5h10v10',
     'arrow-up-tray' => 'M12 16V4|M7 9l5-5 5 5|M4 16v4h16v-4',
