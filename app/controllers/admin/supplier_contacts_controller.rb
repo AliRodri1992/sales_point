@@ -17,23 +17,9 @@ module Admin
 
     def index
       @contact = @supplier.contacts.new
-      @contacts = @supplier.contacts.not_deleted.order(primary: :desc, name: :asc)
+      @contacts_count = @supplier.contacts.not_deleted.count
+      @deleted_contacts_count = @supplier.contacts.with_deleted.where.not(deleted_at: nil).count
       load_contact_listing
-    end
-
-    def load_contact_listing
-      scope = params[:status] == 'deleted' ?
-        @supplier.contacts.with_deleted.where.not(deleted_at: nil) : @supplier.contacts.not_deleted
-      query = params[:q].to_s.strip.first(100)
-      if query.present?
-        term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
-        scope = scope.where('name ILIKE :q OR position ILIKE :q OR email ILIKE :q', q: term)
-      end
-      @contacts_total = scope.count
-      @contacts_pages = [(@contacts_total.to_f / 12).ceil, 1].max
-      @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
-      @listed_contacts = scope.order(primary: :desc, name: :asc, id: :asc)
-                              .limit(12).offset((@contacts_page - 1) * 12)
     end
 
     def new
@@ -105,6 +91,21 @@ module Admin
     def redirect_success(action)
       redirect_to admin_supplier_contacts_path(@supplier),
                   flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
+    end
+
+    def load_contact_listing
+      scope = params[:status] == 'deleted' ?
+        @supplier.contacts.with_deleted.where.not(deleted_at: nil) : @supplier.contacts.not_deleted
+      query = params[:q].to_s.strip.first(100)
+      if query.present?
+        term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
+        scope = scope.where('name ILIKE :q OR position ILIKE :q OR email ILIKE :q', q: term)
+      end
+      @contacts_total = scope.count
+      @contacts_pages = [(@contacts_total.to_f / 12).ceil, 1].max
+      @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
+      @listed_contacts = scope.order(primary: :desc, name: :asc, id: :asc)
+                              .limit(12).offset((@contacts_page - 1) * 12)
     end
 
     def contact_params
