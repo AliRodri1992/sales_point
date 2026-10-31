@@ -117,7 +117,7 @@ module SupplierExamples
           next if contact.phones.active.where(kind:, primary: true).exists?
 
           contact.phones.create!(organization: supplier.organization, kind:, primary: true,
-                                country_code: 'MX', number: format('551234%04d', number))
+                                country_code: 'MX', number: format(kind == 'landline' ? '552234%04d' : '551234%04d', number))
         end
       elsif !supplier.contacts.with_deleted.exists?
         create_new_contact(supplier, number, "contacto#{number}@example.com")
@@ -130,7 +130,7 @@ module SupplierExamples
         email: email,
         position: 'Ventas',
         phones_attributes: %w[landline mobile].map do |kind|
-          { number: format('551234%04d', number), kind:, primary: true,
+          { number: format(kind == 'landline' ? '552234%04d' : '551234%04d', number), kind:, primary: true,
             country_code: 'MX', organization: supplier.organization }
         end,
         notes: 'Contacto ficticio para demostración.',
