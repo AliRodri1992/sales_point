@@ -6,7 +6,8 @@
        failed: t('admin.supplier_edit_upload.failed'),
        loading: t('admin.supplier_edit_upload.loading'),
        ready: t('admin.supplier_edit_upload.ready'),
-       invalid: t('admin.supplier_edit_upload.invalid')
+       invalid: t('admin.supplier_edit_upload.invalid'),
+       unavailable: t('admin.supplier_edit_upload.unavailable')
      }.to_json %>">
   <div class="flex flex-col gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/40 px-5 py-5 sm:flex-row sm:items-start sm:justify-between">
     <div class="flex min-w-0 items-start gap-3">
@@ -44,20 +45,13 @@
   <div data-supplier-edit-uppy-target="dashboard" class="min-h-56" aria-label="<%= t('admin.supplier_edit_upload.dropzone') %>">
     <div class="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center" data-supplier-edit-uppy-target="placeholder" role="status">
       <span class="flex size-12 items-center justify-center rounded-full bg-emerald-100"><%= delta_icon('arrow-path', class: 'size-6 animate-spin text-emerald-700 motion-reduce:animate-none') %></span>
-      <p class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_edit_upload.loading') %></p>
+      <p data-supplier-edit-uppy-target="placeholderMessage" class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_edit_upload.loading') %></p>
+      <button type="button" hidden data-supplier-edit-uppy-target="retryButton"
+              data-action="click->supplier-edit-uppy#retry"
+              class="mt-1 rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+        <%= t('admin.supplier_edit_upload.retry') %>
+      </button>
     </div>
-  </div>
-
-  <div data-supplier-edit-uppy-target="fallback" hidden
-       class="rounded-xl border border-amber-200 bg-amber-50 p-4">
-    <p class="mb-3 text-sm font-medium text-amber-900"><%= t('admin.supplier_edit_upload.fallback') %></p>
-    <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.txt,.doc,.docx,.xls,.xlsx,.csv,.xml"
-           data-supplier-edit-uppy-target="fallbackInput"
-           class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-700 file:px-4 file:py-2 file:font-semibold file:text-white">
-    <button type="button" data-action="supplier-edit-uppy#fallbackUpload"
-            class="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800">
-      <%= t('admin.supplier_edit_upload.upload') %>
-    </button>
   </div>
 
   <div class="flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
