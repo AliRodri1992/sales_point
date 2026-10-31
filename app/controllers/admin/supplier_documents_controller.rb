@@ -16,7 +16,7 @@ module Admin
     before_action :authenticate_user!
 
     def create
-      supplier = authorized_supplier(:manage_documents?)
+      supplier = authorized_supplier(:create_documents?)
       files = document_files
       return reject_file(supplier) unless files.size.between?(1, 10) && files.all? { |file| valid_file?(file) }
 
@@ -29,7 +29,7 @@ module Admin
     end
 
     def update
-      supplier = authorized_supplier(:manage_documents?)
+      supplier = authorized_supplier(:update_documents?)
       document = current_document(supplier)
       return replace_document(supplier, document) if document_file.present?
 
@@ -66,7 +66,7 @@ module Admin
     end
 
     def destroy
-      supplier = authorized_supplier(:manage_documents?)
+      supplier = authorized_supplier(:destroy_documents?)
       document = current_document(supplier)
       document.update!(deleted_at: Time.current, deleted_by: current_user)
       notify_document_deleted(supplier, document.attachment_id)
@@ -74,7 +74,7 @@ module Admin
     end
 
     def restore
-      supplier = authorized_supplier(:manage_documents?)
+      supplier = authorized_supplier(:restore_documents?)
       document = supplier.supplier_documents.trashed.find_by!(attachment_id: params[:document_id])
       document.update!(deleted_at: nil, deleted_by: nil, updated_by: current_user)
       redirect_documents(supplier, :updated)
