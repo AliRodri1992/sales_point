@@ -36,6 +36,17 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     expect(document.at_css('link[href*="uppy.min.css"]')).to be_present
   end
 
+  it 'renders the edit uploader entirely with original SVG icons' do
+    get edit_admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    uploader = document.at_css('[data-controller="supplier-edit-uppy"]')
+    expect(uploader.css('svg').size).to be >= 3
+    expect(uploader.at_css('svg circle')).to be_present
+    expect(uploader.css('[data-rails-icons]')).to be_empty
+  end
+
   it 'presents a single dropzone without an extra dashed upload shell' do
     get edit_admin_supplier_path(supplier)
 
