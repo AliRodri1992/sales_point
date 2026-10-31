@@ -1,2 +1,6 @@
-<h1 class="mb-5 font-jakarta text-2xl font-bold"><%= t('admin.procurement.edit') %></h1>
-<%= render 'form' %>
+<div class="mx-auto max-w-6xl space-y-5" data-supplier-management-form-page>
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.procurement.edit'), subtitle: t('admin.supplier_ui.offer_identity_description'),
+             icon: 'pencil', back_path: admin_supplier_supplier_products_path(@supplier) %>
+  <%= render 'form' %>
+</div>
