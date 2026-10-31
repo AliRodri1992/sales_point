@@ -57,6 +57,6 @@ en:
       invalid_file: "The file is invalid or exceeds the 10 MB limit."
       messages:
         uploaded: "Document uploaded successfully."
-        updated: "Document information updated successfully."
+        updated: "The document details were updated in the supplier record. Open the document to review the changes."
         replaced: "Document replaced successfully."
-        deleted: "Document deleted successfully."
+        deleted: "The document was removed from the supplier's active library. You can review its history and restore it if authorized."
