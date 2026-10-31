@@ -13,9 +13,9 @@ module SupplierParameters
         :id, :name, :position, :email, :primary, :active, :notes, :_destroy,
         { phones_attributes: [phone_field_params] }
       ]],
-      addresses_attributes: [[
-        :id, :street, :exterior_number, :interior_number, :neighborhood, :city,
-        :state, :country_id, :postal_code, :purpose, :primary, :_destroy
+      addresses_attributes: [%i[
+        id street exterior_number interior_number neighborhood city state country_id postal_code
+        purpose primary _destroy
       ]],
       documents: []
     }
