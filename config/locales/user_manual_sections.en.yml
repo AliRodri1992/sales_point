@@ -29,4 +29,55 @@ en:
         communication:
           title: "Communication and module status"
           description: "Review notifications, messaging, demo requests, and upcoming features."
-          topics: []
+      topics:
+        -
+          id: "notifications"
+          title: "Notification center"
+          description: "Review recent events and mark notifications as read."
+          tasks:
+            -
+              title: "Review notifications"
+              steps:
+                - "Select the notifications icon in the top bar."
+                - "Read notices about relevant operations and open the source record when a link is available."
+                - "Select “Mark all as read” to clear unread notifications."
+          note: "A notification does not replace checking the original receipt or balance."
+        -
+          id: "messages"
+          title: "Internal messaging"
+          description: "Send messages to other users through the available chat."
+          tasks:
+            -
+              title: "Send a message"
+              steps:
+                - "Open the chat panel integrated into the system."
+                - "Choose a conversation, or start a new one if the option is enabled."
+                - "Enter your message and select Send."
+                - "Confirm that the message appears in the correct conversation."
+          note: "Visible conversations depend on accounts and configured access."
+        -
+          id: "demo_requests"
+          title: "Demo requests"
+          description: "Follow up with people interested in Delta POS."
+          before: "Administrative access is required."
+          tasks:
+            -
+              title: "Handle a demo request"
+              steps:
+                - "Open “Demo requests” from the administration menu."
+                - "Search or filter requests, then open the relevant details."
+                - "Review the information submitted by the prospective customer."
+                - "Update the status or available follow-up details, then save."
+          note: "This process manages product inquiries; it does not record a point-of-sale transaction."
+        -
+          id: "coming_soon"
+          title: "Features under development"
+          description: "Recognize navigation entries that are not operational yet."
+          tasks:
+            -
+              title: "Identify unavailable sections"
+              steps:
+                - "The menu may display “New sale”, “Sales history”, “Sales returns”, “Cash register”, “Employees”, “Kardex”, “Taxes” or “Reports” as demonstration links."
+                - "A link whose destination is only “#” does not open a working page or save data."
+                - "Ask an administrator about future releases; do not assume those features already have a usable workflow."
+          note: "This manual documents working routes and does not invent workflows for unfinished screens."
