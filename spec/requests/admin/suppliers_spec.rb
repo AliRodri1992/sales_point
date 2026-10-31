@@ -46,8 +46,10 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(phones.map { |item| item.at_css('select[name$="[kind]"] option[selected]')&.[]('value') })
       .to contain_exactly('mobile', 'landline')
     expect(phones.all? { |item| item.at_css('[data-controller="delta-select"]') }).to be(true)
-    expect(phones.all? { |item| item.at_css('input[name$="[country_code]"]') ||
-                                  item.at_css('[data-controller="international-phone"]') }).to be(true)
+    expect(phones.all? { |item| item.at_css('input[type="hidden"][name$="[country_code]"]')&.[]('value') == 'MX' })
+      .to be(true)
+    expect(phones.all? { |item| item.at_css('input[data-international-phone-target="input"][data-country-code="MX"]') })
+      .to be(true)
     expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
     expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
 
@@ -110,6 +112,69 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(editor.at_css('[data-supplier-contact-active-toggle]')).to be_nil
     expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
     expect(editor.css('input[type="radio"]')).to be_empty
+  end
+
+  it 'returns to the supplier dossier after editing a contact opened from its card' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Supplier Representative')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    card = page.at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    editor_link = card.at_css("a[href*='return_to=dossier']")
+    expect(editor_link).to be_present
+
+    get edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier')
+    expect(response).to have_http_status(:ok)
+    editor = Nokogiri::HTML(response.body)
+    expect(editor.at_css('input[name="return_to"]')['value']).to eq('dossier')
+    expect(editor.at_css("[data-supplier-contact-actions] a[href='#{admin_supplier_path(supplier, tab: 'contacts')}']"))
+      .to be_present
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      return_to: 'dossier',
+      contact: { name: 'Updated Representative' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'contacts'))
+    expect(contact.reload.name).to eq('Updated Representative')
+  end
+
+  it 'keeps default contact-management navigation when no dossier origin is supplied' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Managed Representative')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('input[name="return_to"]')).to be_nil
+    expect(page.at_css("[data-supplier-contact-actions] a[href='#{admin_supplier_contacts_path(supplier)}']"))
+      .to be_present
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: { name: 'Managed Representative Updated' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
+  end
+
+  it 'shows a phone empty state and differentiates contact priority from phone priority' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'No Phone Contact')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(form.at_css('[data-nested-phones-target="empty"]')).to be_present
+    expect(form.at_css('[data-supplier-contact-primary-toggle]').text)
+      .to include(I18n.t('admin.supplier_details.contact_form.primary_contact_label', locale: :en))
+    template = form.at_css('template[data-nested-phones-target="template"]')
+    expect(template.text).to include(I18n.t('admin.supplier_details.contact_form.phone_primary_label', locale: :en))
+    expect(form.at_css('[data-controller="nested-phones"]')).to be_present
   end
 
   it 'shows redesigned contact cards without repeating the primary label or job title' do
