@@ -1,0 +1,12 @@
+ko:
+  admin:
+    suppliers:
+      tag_editor:
+        add: "추가"
+        input_placeholder: "태그 입력"
+        help: "Enter 또는 쉼표로 추가하고, 빈 입력에서 Backspace로 마지막 태그를 삭제할 수 있습니다."
+        assigned: "지정된 태그"
+        suggested: "최근 사용한 태그"
+        remove: "%{tag} 태그 삭제"
+        duplicate: "이미 추가된 태그입니다."
+        limit: "태그는 최대 20개까지 추가할 수 있습니다."
