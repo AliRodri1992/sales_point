@@ -24,6 +24,7 @@ export default class extends Controller {
 
     this.iti.promise.then(() => {
       this.ready = true
+      this.syncCountryCode()
       this.updateValidity()
     })
 
@@ -49,7 +50,26 @@ export default class extends Controller {
   }
 
   handleCountryChange = () => {
+    this.syncCountryCode()
     this.updateValidity()
+  }
+
+  syncCountryCode = () => {
+    const name = this.inputTarget.name.replace(/\[number\]$/, "[country_code]")
+    if (name === this.inputTarget.name) return
+
+    const selectedCode = this.iti.getSelectedCountryData()?.iso2?.toUpperCase()
+    if (!selectedCode) return
+
+    let field = Array.from(this.form?.querySelectorAll('input[name]') || [])
+      .find((input) => input.name === name)
+    if (!field) {
+      field = document.createElement("input")
+      field.type = "hidden"
+      field.name = name
+      this.element.append(field)
+    }
+    field.value = selectedCode
   }
 
   updateValidity = () => {
