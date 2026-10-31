@@ -28,36 +28,37 @@ export default class extends Controller {
     this.refresh()
   }
 
+  resetDropdown(dropdown) {
+    const value = dropdown.querySelector('[data-supplier-dropdown-target="value"]')
+    if (!value) return
+
+    value.value = dropdown.dataset.supplierDropdownDefaultValue ?? ""
+    const options = Array.from(dropdown.querySelectorAll('button[data-option-value]'))
+    const selected = options.find((option) => option.dataset.optionValue === value.value) || options[0]
+    options.forEach((option) => option.setAttribute("aria-selected", String(option === selected)))
+    const label = dropdown.querySelector('[data-supplier-dropdown-target="label"]')
+    if (label && selected) label.textContent = selected.querySelector("[data-option-label]")?.textContent.trim() || ""
+    dropdown.open = false
+  }
+
   removeFilter(event) {
     event.preventDefault()
     const key = event.currentTarget.dataset.filterKey
-    const fields = this.element.querySelectorAll(`[name="${key}"]`)
-    fields.forEach((field) => {
-      if (field.type === "radio") {
-        field.checked = field.value === "all" || field.value === ""
-      } else {
-        field.value = ""
-      }
+    this.element.querySelectorAll(`[name="${key}"]`).forEach((field) => {
+      const dropdown = field.closest('[data-controller~="supplier-dropdown"]')
+      if (dropdown) this.resetDropdown(dropdown)
+      else field.value = ""
     })
-    const dropdown = fields[0]?.closest('[data-controller~="supplier-dropdown"]')
-    if (dropdown) {
-      const selected = dropdown.querySelector("input:checked")
-      const label = selected?.closest("label")?.querySelector("[data-option-label]")
-      if (label) dropdown.querySelector('[data-supplier-dropdown-target="label"]').textContent = label.textContent.trim()
-    }
     this.refresh()
   }
 
   clearFilters(event) {
     event.preventDefault()
     this.element.reset()
-    this.element.querySelectorAll('input[type="number"], input[type="date"], input[type="search"]').forEach((field) => { field.value = "" })
-    this.element.querySelectorAll('input[type="radio"]').forEach((field) => { field.checked = field.value === "all" || field.value === "" })
-    this.element.querySelectorAll('[data-controller~="supplier-dropdown"]').forEach((dropdown) => {
-      const selected = dropdown.querySelector("input:checked")
-      const label = selected?.closest("label")?.querySelector("[data-option-label]")
-      if (label) dropdown.querySelector('[data-supplier-dropdown-target="label"]').textContent = label.textContent.trim()
-    })
+    this.element.querySelectorAll('input[type="number"], input[type="date"], input[type="search"]')
+      .forEach((field) => { field.value = "" })
+    this.element.querySelectorAll('[data-controller~="supplier-dropdown"]')
+      .forEach((dropdown) => this.resetDropdown(dropdown))
     this.refresh()
   }
 
