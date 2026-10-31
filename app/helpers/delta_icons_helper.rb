@@ -7,16 +7,16 @@ module DeltaIconsHelper
 
   # Former icon aliases and semantic variants. All resolve to an original Delta shape.
   ICON_ALIASES = {
-    'info' => 'information-circle', 
+    'info' => 'information-circle',
     'cog-6-tooth' => 'cog', 'cog-8-tooth' => 'cog', 'adjustments-vertical' => 'adjustments-horizontal',
     'calendar' => 'calendar-days', 'calendar-date-range' => 'calendar-days',
-    'document' => 'document-text', 
+    'document' => 'document-text',
         'archive-box-x-mark' => 'archive-box',
-    'cube-transparent' => 'cube', 
+    'cube-transparent' => 'cube',
     'globe-alt' => 'language', 'globe-americas' => 'language',
     'building-office' => 'building-office-2',
     'check-badge' => 'check-circle', 'shield-exclamation' => 'shield-check',
-    
+
     'arrow-long-left' => 'arrow-left',
     'arrow-long-right' => 'arrow-right', 'bars-2' => 'bars-3',
     'ellipsis' => 'ellipsis-horizontal', 'arrow-uturn-left' => 'arrow-left',
