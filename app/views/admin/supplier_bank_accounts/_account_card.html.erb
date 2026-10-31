@@ -54,23 +54,25 @@
           </svg>
         </span>
       <% end %>
-      <% if policy(account).update? %>
+      <% if policy(account).update? || policy(account).destroy? || policy(account).review? || (archived && policy(account).restore?) %>
         <details class="group/menu relative">
           <summary aria-label="<%= "#{t('admin.accounts_payable.bank_list.actions')}: #{bank_name} #{account.last_four}" %>"
                    class="flex size-8 cursor-pointer list-none items-center justify-center rounded-lg bg-white/20 outline-offset-2 transition hover:bg-white/30 focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
             <%= delta_icon('ellipsis-vertical', class: 'size-5') %>
           </summary>
           <div class="absolute right-0 top-full z-30 mt-1 min-w-40 rounded-xl border border-slate-200 bg-white p-1 text-slate-700 shadow-xl">
-            <% if archived %>
+            <% if archived && policy(account).restore? %>
               <%= button_to t('admin.supplier_archive.restore'),
                             restore_admin_supplier_bank_account_path(supplier, account), method: :patch,
                             class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-emerald-700 hover:bg-emerald-50' %>
-            <% else %>
+            <% elsif !archived %>
+              <% if policy(account).update? %>
               <%= link_to edit_admin_supplier_bank_account_path(supplier, account),
                           class: 'block rounded-lg px-3 py-2 text-sm font-semibold hover:bg-slate-50' do %>
                 <%= delta_icon('pencil', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.edit') %>
               <% end %>
-              <% if account.status == 'active' %>
+              <% end %>
+              <% if account.status == 'active' && policy(account).review? %>
                 <% %w[verified rejected pending].each do |decision| %>
                   <% next if account.verification_status == decision %>
                   <%= button_to t("admin.supplier_bank_details.review_actions.#{decision}"),
@@ -80,10 +82,12 @@
                                 class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
                 <% end %>
               <% end %>
+              <% if policy(account).destroy? %>
               <%= button_to admin_supplier_bank_account_path(supplier, account), method: :delete,
                             form: { data: { turbo_confirm: t('admin.accounts_payable.confirm') } },
                             class: 'w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
                 <%= delta_icon('archive-box', class: 'mr-1 inline size-4') %> <%= t('admin.accounts_payable.archive') %>
+              <% end %>
               <% end %>
             <% end %>
           </div>
@@ -100,7 +104,7 @@
     <% tone = { 'active' => 'bg-emerald-100 text-emerald-900', 'inactive' => 'bg-slate-100 text-slate-800',
                 'blocked' => 'bg-rose-100 text-rose-800', 'archived' => 'bg-slate-100 text-slate-800' }.fetch(state) %>
     <span data-bank-operational-status="<%= state %>" class="rounded-full px-2 py-1 text-[11px] font-bold <%= tone %>">
-      <%= state == 'archived' ? t('admin.bank_cards.inactive') : t("admin.supplier_bank_details.statuses.#{state}") %>
+      <%= state == 'archived' ? t('admin.supplier_ui.archived_status') : t("admin.supplier_bank_details.statuses.#{state}") %>
     </span>
     </div>
     <div class="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">

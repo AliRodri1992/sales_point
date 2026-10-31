@@ -8,3 +8,4 @@ en:
       empty_schedules_title: "No schedules yet"
       empty_schedules_description: "Create recurring schedules by branch to plan visits, orders and deliveries."
       all_day_hint: "The selected date range is kept; the event lasts all day."
+      archived_status: "Archived"

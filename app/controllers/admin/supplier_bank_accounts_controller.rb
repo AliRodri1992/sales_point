@@ -53,7 +53,7 @@ module Admin
     end
 
     def review
-      authorize @account, :update?
+      authorize @account, :review?
       decision = params[:decision].to_s
       unless %w[verified rejected pending].include?(decision) && @account.status == 'active'
         return redirect_to admin_supplier_bank_accounts_path(@supplier),
@@ -76,7 +76,7 @@ module Admin
     end
 
     def restore
-      authorize @account, :update?
+      authorize @account, :restore?
       @supplier.with_lock { @account.update!(deleted_at: nil, primary: false) }
       FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
                                   event: 'bank_account.restored', subject: @account)

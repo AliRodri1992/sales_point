@@ -299,6 +299,16 @@ unless defined?(DEFAULT_PERMISSIONS)
       description: 'View masked bank account information.' },
     { code: 'accounts_payable.banks.manage', name: 'Manage vendor bank accounts', module_name: 'Cuentas por pagar',
       description: 'Add, update and archive vendor bank accounts.' },
+    { code: 'accounts_payable.banks.create', name: 'Crear cuentas bancarias de proveedores', module_name: 'Cuentas por pagar',
+      description: 'Registrar cuentas bancarias nuevas.' },
+    { code: 'accounts_payable.banks.update', name: 'Editar cuentas bancarias de proveedores', module_name: 'Cuentas por pagar',
+      description: 'Actualizar datos y estados operativos de cuentas bancarias.' },
+    { code: 'accounts_payable.banks.destroy', name: 'Archivar cuentas bancarias de proveedores', module_name: 'Cuentas por pagar',
+      description: 'Archivar cuentas bancarias sin eliminarlas físicamente.' },
+    { code: 'accounts_payable.banks.restore', name: 'Restaurar cuentas bancarias de proveedores', module_name: 'Cuentas por pagar',
+      description: 'Recuperar cuentas bancarias archivadas.' },
+    { code: 'accounts_payable.banks.review', name: 'Verificar cuentas bancarias de proveedores', module_name: 'Cuentas por pagar',
+      description: 'Aprobar, rechazar o revertir verificaciones bancarias.' },
     { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
       description: 'Access full encrypted banking details with audit logging.' }
   ].freeze

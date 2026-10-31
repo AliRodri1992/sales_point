@@ -8,3 +8,4 @@ es:
       empty_schedules_title: "Aún no hay horarios registrados"
       empty_schedules_description: "Configura horarios recurrentes por sucursal para planificar visitas, pedidos y entregas."
       all_day_hint: "Se conservarán las fechas; el evento abarca el día completo."
+      archived_status: "Archivada"
