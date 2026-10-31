@@ -14,6 +14,8 @@ es:
       success: "Se subieron %{count} documentos correctamente. Ya están guardados en el expediente."
       failed: "No se pudo completar la carga. Revisa los archivos o la conexión e inténtalo de nuevo."
       invalid: "Selecciona entre 1 y 10 archivos válidos de máximo 10 MB cada uno."
+      retry: "Reintentar cargar Uppy"
+      unavailable: "No se pudo iniciar Uppy. Comprueba tu conexión y vuelve a intentarlo."
       fallback: "El cargador avanzado no está disponible. Puedes subir tus documentos con el selector de archivos."
       immediate_notice: "Los documentos se guardan en el expediente en cuanto termina su carga, aunque no pulses «Guardar cambios» en este formulario. Los demás datos del proveedor se guardan por separado."
       no_permission: "No tienes permisos para administrar documentos de este proveedor."
