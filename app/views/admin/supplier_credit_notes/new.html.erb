@@ -4,15 +4,23 @@
   <%= render 'admin/financials/errors', record: @credit %>
   <%= form_with model: [:admin, @credit], class: 'grid min-w-0 gap-5 md:grid-cols-2' do |f| %>
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select" data-searchable="true">
+        <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+        <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <div><%= f.label :supplier_invoice_id, t('admin.accounts_payable.invoice'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :supplier_invoice_id, @invoices, :id,
-                             ->(invoice) { invoice.folio.presence || "##{invoice.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+        <%= f.collection_select :supplier_invoice_id, @invoices, :id,
+                             ->(invoice) { invoice.folio.presence || "##{invoice.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <div><%= f.label :purchase_return_id, t('admin.accounts_payable.return'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-      <%= f.collection_select :purchase_return_id, @returns, :id,
-                             ->(item) { "#{item.goods_receipt.purchase_order.code} · ##{item.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %></div>
+      <div class="relative" data-controller="delta-select">
+        <%= f.collection_select :purchase_return_id, @returns, :id,
+                             ->(item) { "#{item.goods_receipt.purchase_order.code} · ##{item.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
+      </div></div>
     <% %i[folio uuid issued_on total].each do |field| %>
       <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
         <% if field == :issued_on %><%= f.date_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
@@ -23,7 +31,7 @@
       <%= f.file_field :xml_document, accept: '.xml,application/xml,text/xml', class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
     <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <%= f.text_area :notes, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
-    <div class="flex gap-3 md:col-span-2">
+    <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end md:col-span-2">
       <%= f.submit t('admin.accounts_payable.save'), class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-800' %>
       <%= link_to t('admin.accounts_payable.back'), admin_supplier_credit_notes_path, class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
     </div>
