@@ -28,7 +28,7 @@ en:
       exceptions: Exceptions
       weekly: Recurring
       single: Event
-      no_schedules: There are no recurring schedules yet.
+      no_schedules: "No weekly schedules have been set for this supplier. Select “New schedule” to plan visits, orders, or deliveries."
       no_events: "No events were found for the selected period. Choose another date or select «New event» to add one."
       no_activities: "This supplier has no scheduled activities yet. Add a weekly schedule or create an event to get started."
       more: "%{count} more"
