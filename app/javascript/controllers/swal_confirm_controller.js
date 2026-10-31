@@ -3,7 +3,7 @@ import { Turbo } from "@hotwired/turbo-rails"
 
 // Unified, compact confirmation for every data-turbo-confirm action in Delta POS.
 // Keep text-only data separate from trusted icon markup (no user HTML injection).
-const REMOVE_MESSAGE = /^(¿Quieres retirar este registro\?\s*Revisa su información antes de confirmar\.|Do you want to remove this record\?\s*Review its information before confirming\.|이 기록을 목록에서 제외하시겠습니까\?\s*확인하기 전에 정보를 검토하세요\.)$/i
+const REMOVE_MESSAGE = /^(¿Quieres retirar este registro\?|Do you want to remove this record\?|이 기록을 목록에서 제외하시겠습니까\?)/i
 
 const ICONS = {
   danger: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v7m4-7v7"/></svg>',
