@@ -23,16 +23,6 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     end
   end
 
-  def show_summary
-    page.execute_script(<<~JS)
-      const form = document.querySelector('form[data-controller="supplier-form"]')
-      const controller = window.Stimulus.getControllerForElementAndIdentifier(form, 'supplier-form')
-      controller.indexValue = controller.stepTargets.length - 1
-    JS
-
-    find('[data-supplier-form-target="summary"]')
-  end
-
   scenario 'uses the available width and exposes section progress without a promotional panel' do
     visit new_admin_supplier_path
 
@@ -42,7 +32,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('form[data-controller="supplier-form"]')
     expect(page).to have_css('nav details[data-supplier-form-target="navigation"]')
     expect(page).to have_no_css('[data-supplier-form-target="activeLabel"]', visible: :all)
-    expect(page).to have_css('nav details [data-supplier-form-target="tab"]', count: 7, visible: :all)
+    expect(page).to have_css('nav details [data-supplier-form-target="tab"]', count: 6, visible: :all)
     expect(page).to have_no_css('nav .overflow-x-auto', visible: :all)
     expect(page).to have_no_css('nav[class*="sticky"]', visible: :all)
   end
@@ -149,38 +139,17 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     await_border_color(trigger, 'rgb(225, 29, 72)')
   end
 
-  scenario 'summarizes all editable steps in the new supplier review' do
+  scenario 'offers six real capture sections without a duplicate summary panel' do
     visit new_admin_supplier_path
+
     expect(page).to have_css('form[data-supplier-form-new-record-value="true"]', visible: :all)
-    expect(page).to have_css('input[type="submit"][value="Create supplier"]', visible: :all)
-
-    page.execute_script(<<~JS)
-      const form = document.querySelector('form[data-controller="supplier-form"]')
-      form.querySelector('input[name="supplier[code]"]').value = 'SUP-SUMMARY-01'
-      form.querySelector('input[name="supplier[rfc]"]').value = 'XAXX010101000'
-      form.querySelector('input[name$="[street]"]').value = 'Avenida Reforma'
-      form.querySelector('input[name$="[mobile_phone]"]').value = '5534037737'
-      form.querySelector('input[name="supplier[credit_days]"]').value = '45'
-      form.querySelector('textarea[name="supplier[notes]"]').value = 'Notas del proveedor'
-    JS
-
-    summary = show_summary
-    headings = summary.all('h3').map(&:text)
-    %w[step_1 step_2 step_3 step_5 step_6 step_7].each do |step|
-      label = I18n.t("admin.suppliers.onboarding.steps.#{step}")
-      expect(headings.any? { |heading| heading.start_with?(label) }).to be(true)
-    end
-    expect(summary).to have_text('SUP-SUMMARY-01')
-    expect(summary).to have_text('XAXX010101000')
-    expect(summary).to have_text('Avenida Reforma')
-    expect(summary).to have_text('Notas del proveedor')
-    expect(summary).to have_text('5534037737')
-    expect(summary).to have_css('dd', text: '45', exact_text: true)
-    expect(page).to have_css('[data-supplier-form-target="tab"]', count: 7, visible: :all)
+    expect(page).to have_css('[data-supplier-form-target="step"]', count: 6, visible: :all)
+    expect(page).to have_css('[data-supplier-form-target="tab"]', count: 6, visible: :all)
     expect(page).to have_css('[data-step-indicator]', count: 6, visible: :all)
-    expect(page).to have_css('[data-supplier-form-target="tab"][data-step-state]', count: 6, visible: :all)
+    expect(page).to have_no_css('[data-supplier-form-target="summary"]', visible: :all)
+    expect(page).to have_no_css('[data-step-index="6"]', visible: :all)
+    expect(page).to have_css('input[name="supplier[code]"]', visible: :all)
     expect(page).to have_css('input[name$="[mobile_phone]"]', visible: :all)
-    expect(page).to have_css('input[name="supplier[credit_days]"]', visible: :all)
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
     expect(page).to have_css('textarea[name="supplier[notes]"]', visible: :all)
   end
@@ -220,7 +189,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-form-target="submit"]', visible: true)
   end
 
-  scenario 'summarizes all editable steps when editing a supplier' do
+  scenario 'keeps supplier details available in the six editable sections' do
     supplier = create(:supplier, organization:, credit_days: 45, notes: 'Notas internas del proveedor')
     main_contact = supplier.contacts.create!(name: 'Contacto de ventas', primary: true)
     country = Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
@@ -232,22 +201,9 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     visit edit_admin_supplier_path(supplier)
 
     expect(page).to have_css('form[data-supplier-form-new-record-value="false"]', visible: :all)
-    summary = show_summary
-    headings = summary.all('h3').map(&:text)
-
-    %w[step_1 step_2 step_3 step_5 step_6 step_7].each do |step|
-      label = I18n.t("admin.suppliers.onboarding.steps.#{step}")
-      expect(headings.any? { |heading| heading.start_with?(label) }).to be(true)
-    end
-    expect(summary).to have_text(supplier.code)
-    expect(summary).to have_text(supplier.rfc)
-    expect(summary).to have_text('Avenida Reforma')
-    expect(summary).to have_text('Contacto de ventas')
-    expect(summary).to have_css('dd', text: '45', exact_text: true)
-    expect(summary).to have_text('Notas internas del proveedor')
-
-    # All data and all editable tabs remain available before saving.
-    expect(page).to have_css('[data-supplier-form-target="tab"]', count: 7, visible: :all)
+    expect(page).to have_css('[data-supplier-form-target="tab"]', count: 6, visible: :all)
+    expect(page).to have_css('[data-supplier-form-target="step"]', count: 6, visible: :all)
+    expect(page).to have_no_css('[data-supplier-form-target="summary"]', visible: :all)
     expect(page).to have_css("input[name$='[name]'][value='Contacto de ventas']", visible: :all)
     expect(page).to have_css('input[name="supplier[credit_days]"][value="45"]', visible: :all)
     expect(page).to have_css('textarea[name="supplier[notes]"]',
@@ -255,4 +211,5 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
     expect(main_contact.reload.name).to eq('Contacto de ventas')
   end
+
 end
