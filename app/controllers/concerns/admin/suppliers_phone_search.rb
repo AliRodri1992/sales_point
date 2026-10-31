@@ -10,11 +10,12 @@ module Admin
       fields = ['suppliers.code ILIKE :term', 'suppliers.name ILIKE :term']
       fields << 'suppliers.email ILIKE :term' if supplier_general_visible?
       if supplier_contacts_visible? || supplier_general_visible?
+        scope_filter = supplier_contacts_visible? ? '' : 'AND contacts.primary = TRUE AND contacts.active = TRUE'
         fields << <<~SQL.squish
           EXISTS (SELECT 1 FROM contacts
                   WHERE contacts.contactable_type = 'Supplier'
                     AND contacts.contactable_id = suppliers.id
-                    AND contacts.deleted_at IS NULL
+                    AND contacts.deleted_at IS NULL #{scope_filter}
                     AND (contacts.name ILIKE :term OR contacts.email ILIKE :term
                          OR contacts.position ILIKE :term))
         SQL
