@@ -49,8 +49,8 @@ export default class extends Controller {
                 focusCancel: true,
                 confirmButtonColor: "#dc2626",
                 cancelButtonColor: "#64748b",
-                confirmButtonText: this.element.dataset.swalConfirmText || "Confirm",
-                cancelButtonText: this.element.dataset.swalCancelText || "Cancel"
+                confirmButtonText: document.body?.dataset.swalConfirmText || this.element.dataset.swalConfirmText || "Confirm",
+                cancelButtonText: document.body?.dataset.swalCancelText || this.element.dataset.swalCancelText || "Cancel"
             }).then((result) => result.isConfirmed)
     }
 }
