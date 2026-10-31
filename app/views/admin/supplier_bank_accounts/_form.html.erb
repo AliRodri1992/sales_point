@@ -23,7 +23,7 @@
               } do |f| %>
   <div class="min-w-0 space-y-5">
     <div role="note" class="flex gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50 p-4 sm:p-5">
-      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700 shadow-sm"><%= icon('lock-closed', class: 'size-5') %></span>
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700 shadow-sm"><%= delta_icon('lock-closed', class: 'size-5') %></span>
       <div><p class="font-jakarta text-sm font-bold text-emerald-950"><%= t('admin.supplier_bank_form.secure_title') %></p>
         <p class="mt-1 text-xs leading-5 text-emerald-800"><%= t("admin.supplier_bank_form.#{editing ? 'secure_edit' : 'secure_new'}") %></p>
       </div>
@@ -31,7 +31,7 @@
 
     <section data-bank-form-section="information" class="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <header class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
-        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('building-library', class: 'size-5') %></span>
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('building-library', class: 'size-5') %></span>
         <div><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_bank_form.information_title') %></h2>
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_bank_form.information_description') %></p></div>
       </header>
@@ -101,7 +101,7 @@
 
     <section data-bank-form-section="configuration" class="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <header class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
-        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('shield-check', class: 'size-5') %></span>
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-5') %></span>
         <div><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_bank_form.configuration_title') %></h2>
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_bank_form.configuration_description') %></p></div>
       </header>
@@ -139,7 +139,7 @@
       <% end %>
       <div class="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
         <div class="flex min-w-0 flex-1 items-center gap-3">
-          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700"><%= icon('star', class: 'size-5') %></span>
+          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700"><%= delta_icon('star', class: 'size-5') %></span>
           <div><p class="text-sm font-semibold text-slate-900"><%= t('admin.accounts_payable.primary') %></p>
             <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.supplier_bank_form.primary_hint') %></p></div>
         </div>
@@ -154,7 +154,7 @@
     </section>
 
     <footer data-bank-form-actions class="flex flex-col gap-4 rounded-[22px] border border-emerald-100 bg-white p-4 shadow-sm sm:p-5">
-      <div class="flex items-start gap-3"><%= icon('information-circle', class: 'mt-0.5 size-5 shrink-0 text-emerald-700') %>
+      <div class="flex items-start gap-3"><%= delta_icon('information-circle', class: 'mt-0.5 size-5 shrink-0 text-emerald-700') %>
         <div><p class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_bank_form.action_title') %></p>
           <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.supplier_bank_form.action_description') %></p></div>
       </div>
@@ -164,7 +164,7 @@
                     class: 'inline-flex min-h-14 w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-center text-sm font-bold text-slate-800 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
         <%= f.button type: :submit,
                      class: 'inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 text-sm font-bold text-white shadow-md shadow-emerald-950/10 transition hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-          <%= icon('check-circle', class: 'size-5') %><%= t("admin.supplier_bank_form.#{editing ? 'update_button' : 'create_button'}") %>
+          <%= delta_icon('check-circle', class: 'size-5') %><%= t("admin.supplier_bank_form.#{editing ? 'update_button' : 'create_button'}") %>
         <% end %>
       </div>
     </footer>
@@ -182,7 +182,7 @@
       </div>
       <ul class="space-y-3 p-5 text-sm text-slate-700">
         <% %w[encrypted restricted no_cvv].each do |item| %>
-          <li class="flex items-start gap-2"><%= icon('check-circle', class: 'mt-0.5 size-4 shrink-0 text-emerald-700') %>
+          <li class="flex items-start gap-2"><%= delta_icon('check-circle', class: 'mt-0.5 size-4 shrink-0 text-emerald-700') %>
             <span><%= t("admin.supplier_bank_form.#{item}") %></span></li>
         <% end %>
       </ul>
@@ -210,7 +210,7 @@
     </section>
     <section class="rounded-[22px] border border-slate-200 bg-white p-5 shadow-sm">
       <h2 class="mb-4 flex items-center gap-2 font-jakarta text-base font-bold text-slate-900">
-        <%= icon('light-bulb', class: 'size-5 text-emerald-700') %><%= t('admin.supplier_bank_form.tips_title') %>
+        <%= delta_icon('light-bulb', class: 'size-5 text-emerald-700') %><%= t('admin.supplier_bank_form.tips_title') %>
       </h2>
       <ol class="space-y-4">
         <% %w[tip_bank tip_clabe tip_primary].each_with_index do |key, index| %>

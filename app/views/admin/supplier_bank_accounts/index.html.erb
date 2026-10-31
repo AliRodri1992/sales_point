@@ -2,7 +2,7 @@
   <header class="flex flex-wrap items-center justify-between gap-3">
     <div class="flex min-w-0 items-center gap-3">
       <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-        <%= icon('building-library', class: 'size-6') %>
+        <%= delta_icon('building-library', class: 'size-6') %>
       </span>
       <div>
         <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.accounts_payable.bank_accounts') %></h1>
@@ -11,7 +11,7 @@
     </div>
     <%= link_to admin_supplier_path(@supplier, tab: 'bank_accounts'),
                 class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-800' do %>
-      <%= icon('arrow-left', class: 'size-4') %>
+      <%= delta_icon('arrow-left', class: 'size-4') %>
       <%= t('admin.accounts_payable.bank_list.back_to_supplier') %>
     <% end %>
   </header>
@@ -21,7 +21,7 @@
                   class: 'grid items-end gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(11rem,14rem)_minmax(11rem,14rem)_auto]' do %>
       <div class="relative min-w-0">
         <label for="bank-account-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
-        <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+        <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
         <input id="bank-account-search" name="q" type="search" maxlength="100" autocomplete="off"
                value="<%= params[:q] %>" placeholder="<%= t('admin.accounts_payable.bank_list.search_placeholder') %>"
                class="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100">
@@ -52,7 +52,7 @@
       </div>
       <%= button_tag type: :submit,
                      class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-        <%= icon('magnifying-glass', class: 'size-4') %>
+        <%= delta_icon('magnifying-glass', class: 'size-4') %>
         <%= t('admin.accounts_payable.bank_list.search') %>
       <% end %>
     <% end %>
@@ -81,7 +81,7 @@
                     data: { bank_accounts_add_tile: true },
                     class: 'flex min-h-[214px] min-w-0 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/30 p-5 text-center transition hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
           <span class="mb-3 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-            <%= icon('plus', class: 'size-7') %>
+            <%= delta_icon('plus', class: 'size-7') %>
           </span>
           <span class="font-jakarta text-base font-bold text-emerald-800"><%= t('admin.accounts_payable.new_bank') %></span>
           <span class="mt-1 max-w-56 text-xs leading-5 text-slate-500"><%= t('admin.bank_cards.add_hint') %></span>
