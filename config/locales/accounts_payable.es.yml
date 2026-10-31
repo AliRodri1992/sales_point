@@ -73,7 +73,7 @@ es:
       archive: "Archivar"
       confirm: "¿Confirmar esta operación?"
       back: "Volver"
-      empty: "No hay registros"
+      empty: "No hay cuentas por pagar para mostrar. Ajusta los filtros o consulta las facturas contabilizadas del proveedor."
       validation_errors: "Revisa los campos del formulario"
       bank_list:
         description: "Consulta y administra las cuentas bancarias registradas para este proveedor."
