@@ -1,0 +1,11 @@
+es:
+  admin:
+    action_loader:
+      title: "Deltín está trabajando"
+      processing: "Estamos preparando tu información…"
+      opening: "Abriendo el expediente del proveedor…"
+      editing: "Preparando el formulario de edición…"
+      creating: "Preparando un nuevo proveedor…"
+      saving: "Guardando los datos del proveedor…"
+      updating: "Actualizando la lista de proveedores…"
+      archiving: "Procesando la acción del proveedor…"
