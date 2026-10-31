@@ -24,27 +24,32 @@ if (!Turbo.StreamActions.swal) {
             timer: 2600,
             showConfirmButton: false,
             timerProgressBar: true,
-            html: message.trim()
+            text: message.trim()
         })
     }
 }
 
-let confirmConfigured = false
-
 export default class extends Controller {
     connect() {
-        if (confirmConfigured) return
-        confirmConfigured = true
-
         Turbo.config.forms.confirm = (message) =>
             window.Swal.fire({
                 icon: "warning",
                 title: message,
+                width: "min(32rem, calc(100vw - 2rem))",
+                padding: "1.5rem",
+                customClass: {
+                    popup: "rounded-2xl",
+                    title: "font-jakarta text-lg font-bold leading-snug",
+                    actions: "flex flex-wrap gap-2",
+                    confirmButton: "min-h-11 rounded-xl px-5 font-semibold",
+                    cancelButton: "min-h-11 rounded-xl px-5 font-semibold"
+                },
                 showCancelButton: true,
                 reverseButtons: true,
                 focusCancel: true,
                 confirmButtonColor: "#dc2626",
                 cancelButtonColor: "#64748b",
+                confirmButtonText: this.element.dataset.swalConfirmText || "Confirm",
                 cancelButtonText: this.element.dataset.swalCancelText || "Cancel"
             }).then((result) => result.isConfirmed)
     }
