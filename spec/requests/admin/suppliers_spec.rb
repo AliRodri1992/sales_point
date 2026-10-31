@@ -65,6 +65,36 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(document.at_css('form[data-loading-message]')).to be_present
   end
 
+  it 'uses the short back label and the existing loader on supplier navigation' do
+    supplier = create(:supplier, organization:)
+    expect(I18n.t('admin.suppliers.show.back', locale: :es)).to eq('Volver')
+
+    get new_admin_supplier_path
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    back = document.at_css("a[href='#{admin_suppliers_path}'][data-loading-message]")
+    expect(back).to be_present
+    expect(back['data-loading-message']).to eq(I18n.t('admin.action_loader.returning'))
+
+    get admin_supplier_path(supplier)
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="supplier-dossier"][data-loading-scope="true"]')).to be_present
+    expect(document.at_css("a[href='#{admin_suppliers_path}'][data-loading-message]")).to be_present
+    expect(document.at_css("a[href='#{edit_admin_supplier_path(supplier)}'][data-loading-message]")).to be_present
+  end
+
+  it 'makes the supplier page-size and row actions available with the Deltin loader' do
+    create(:supplier, organization:)
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#admin-action-loader[data-controller="admin-action-loader"]')).to be_present
+    expect(document.at_css('a[data-loading-message][href*="/suppliers/"]')).to be_present
+    expect(document.at_css('form[data-loading-message]')).to be_present
+  end
+
   it 'subscribes the supplier list to organization-specific Turbo updates' do
     get admin_suppliers_path
 
