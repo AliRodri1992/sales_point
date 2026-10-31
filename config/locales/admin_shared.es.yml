@@ -8,14 +8,14 @@ es:
         terms: Términos
       notifications:
         supplier_activity:
-          contact_created: "Se creó un contacto."
-          contact_updated: "Se editó un contacto."
-          contact_deleted: "Se eliminó un contacto."
-          contact_restored: "Se recuperó un contacto."
-          address_created: "Se creó una dirección."
-          address_updated: "Se editó una dirección."
-          address_deleted: "Se eliminó una dirección."
-          address_restored: "Se recuperó una dirección."
+          contact_created: "El contacto se agregó al expediente del proveedor y ya está disponible en su lista de contactos."
+          contact_updated: "Los cambios del contacto se guardaron y están disponibles en el expediente del proveedor."
+          contact_deleted: "El contacto se archivó y ya no aparece entre los contactos activos del proveedor."
+          contact_restored: "El contacto se recuperó y vuelve a estar disponible en el expediente del proveedor."
+          address_created: "La dirección se agregó al expediente del proveedor y ya puede consultarse."
+          address_updated: "Los cambios de la dirección se guardaron en el expediente del proveedor."
+          address_deleted: "La dirección se archivó y dejó de aparecer entre las direcciones activas del proveedor."
+          address_restored: "La dirección se recuperó y vuelve a estar disponible en el expediente del proveedor."
       online_users:
         empty: "No hay otros usuarios conectados"
         empty_description: "Cuando alguien se conecte, aparecerá aquí para que puedas iniciar una conversación."
