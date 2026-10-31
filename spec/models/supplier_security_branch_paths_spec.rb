@@ -7,12 +7,15 @@ RSpec.describe 'Supplier fiscal data, contact and document safeguards' do
 
   it 'normalizes whitespace in identity and business fields' do
     supplier = build(:supplier, organization:, code: '  SUP-X33  ', name: '  Store  ',
-                                email: '  OWNER@EXAMPLE.COM ', phone: '5512345678')
+                                email: '  OWNER@EXAMPLE.COM ')
     supplier.valid?
     expect(supplier).to have_attributes(
       code: 'SUP-X33', name: 'Store', email: 'owner@example.com'
     )
-    expect(supplier.phone).to start_with('+52')
+    contact = supplier.contacts.build(name: 'Compras', primary: true)
+    phone = contact.phones.build(number: '5512345678', kind: 'mobile', primary: true)
+    contact.valid?
+    expect(phone.number).to start_with('+52')
   end
 
   it 'normalizes unique supplier tags and rejects duplicate descriptions' do
@@ -79,15 +82,17 @@ RSpec.describe 'Supplier fiscal data, contact and document safeguards' do
   end
 
   it 'rejects invalid business contact numbers' do
-    supplier = build(:supplier, organization:, phone: 'X12')
+    supplier = build(:supplier, organization:)
+    contact = supplier.contacts.build(name: 'Compras', primary: true)
+    phone = contact.phones.build(number: 'X12', kind: 'mobile', primary: true)
     supplier.valid?
-    expect(supplier.errors[:phone]).to be_present
+    expect(phone.errors[:number]).to be_present
   end
 
   it 'allows optional supplier phone numbers to be left blank' do
-    supplier = build(:supplier, organization:, phone: nil)
+    supplier = build(:supplier, organization:)
     supplier.valid?
-    expect(supplier.errors[:phone]).to be_empty
+    expect(supplier.contact_phones).to be_empty
   end
 
   it 'blocks potentially unsafe uploaded document MIME types' do
