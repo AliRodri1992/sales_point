@@ -237,7 +237,20 @@
         <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold tabular-nums text-slate-500" data-supplier-tags-target="count">0 / 20</span>
       </div>
       <div class="rounded-2xl border border-slate-200 bg-slate-50/60 p-3 transition focus-within:border-emerald-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-100">
-        <div data-supplier-tags-target="chips" role="group" aria-label="<%= t('admin.suppliers.tag_editor.assigned') %>" class="mb-2 flex flex-wrap gap-2 empty:hidden"></div>
+        <div data-supplier-tags-target="chips" role="group" aria-label="<%= t('admin.suppliers.tag_editor.assigned') %>" class="mb-2 flex flex-wrap gap-2 empty:hidden">
+          <% supplier.tags.first(20).each_with_index do |tag, index| %>
+            <span class="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-800">
+              <span class="min-w-0 break-all"><%= tag %></span>
+              <button type="button" data-index="<%= index %>" data-action="supplier-tags#remove"
+                      aria-label="<%= t('admin.suppliers.tag_editor.remove', tag:) %>"
+                      class="inline-flex size-5 shrink-0 items-center justify-center rounded-md text-emerald-600 transition hover:bg-emerald-200 hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </span>
+          <% end %>
+        </div>
         <div class="flex min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
           <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M3 4v8l8.6 8.6a2 2 0 0 0 2.8 0l6.2-6.2a2 2 0 0 0 0-2.8L12 3H4a1 1 0 0 0-1 1Z"/><circle cx="7.5" cy="7.5" r="1.5"/>
