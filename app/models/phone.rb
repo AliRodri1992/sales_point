@@ -23,9 +23,19 @@ class Phone < ApplicationRecord
 
   private
 
+  def phone_owner
+    phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
+  end
+
+  def owner_organization
+    owner = phone_owner
+    return owner if owner.is_a?(Organization)
+
+    owner.organization if owner.respond_to?(:organization)
+  end
+
   def assign_organization
-    owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
-    self.organization ||= owner.is_a?(Organization) ? owner : owner.organization if owner&.respond_to?(:organization) || owner.is_a?(Organization)
+    self.organization ||= owner_organization
   end
 
   def normalize_number
@@ -48,17 +58,18 @@ class Phone < ApplicationRecord
   end
 
   def same_organization_as_owner
-    return if phoneable.blank? || organization.blank?
-    owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
-    owner_id = owner.is_a?(Organization) ? owner.id : owner.organization_id if owner.respond_to?(:organization_id) || owner.is_a?(Organization)
-    errors.add(:organization, :invalid) if owner_id.present? && owner_id != organization_id
+    return if organization.blank? || owner_organization.blank?
+
+    errors.add(:organization, :invalid) if organization_id != owner_organization.id
   end
 
   def unique_primary_per_kind
     return unless primary? && deleted_at.nil? && phoneable&.persisted?
 
-    others = Phone.active.where(phoneable_type: phoneable.class.base_class.name,
-                                phoneable_id: phoneable.id, kind:, primary: true)
-    errors.add(:primary, :taken) if others.where.not(id: id).exists?
+    errors.add(:primary, :taken) if conflicting_primary_phone?
+  end
+
+  def conflicting_primary_phone?
+    Phone.active.where(phoneable:, kind:, primary: true).where.not(id: id).exists?
   end
 end
