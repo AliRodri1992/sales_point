@@ -1,0 +1,12 @@
+ko:
+  admin:
+    phones:
+      kind: "유형"
+      number: "전화번호"
+      extension: "내선번호"
+      label: "레이블"
+      primary: "대표 번호"
+      remove: "전화번호 삭제"
+      add: "전화번호 추가"
+      primary_mobile: "대표 휴대전화"
+      primary_office: "대표 사무실 전화"
