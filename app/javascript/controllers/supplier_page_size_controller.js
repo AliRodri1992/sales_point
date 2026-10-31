@@ -1,10 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 import { saveTablePagePreference } from "../lib/table_page_preferences"
 
-// Keep the size selector responsive and display progress while Turbo navigates.
+// Preference persistence and table navigation share the branded Deltín loader.
 export default class extends Controller {
   connect() {
-    this.onPageShow = () => this.hideLoader()
+    this.onPageShow = () => { this.submitting = false }
     window.addEventListener("pageshow", this.onPageShow)
   }
 
@@ -13,22 +13,21 @@ export default class extends Controller {
   }
 
   async apply(event) {
-    if (!event.target.matches('select[name="per_page"]')) return
-    if (this.submitting) return
+    if (!event.target.matches('select[name="per_page"]') || this.submitting) return
 
     this.submitting = true
-    const loader = document.getElementById("supplier-page-size-loader")
-    if (loader) {
-      loader.hidden = false
-      loader.classList.remove("hidden")
-      loader.setAttribute("aria-hidden", "false")
-    }
+    document.dispatchEvent(new CustomEvent("admin:action-loading", {
+      detail: { message: this.element.dataset.loadingMessage }
+    }))
 
     try {
       await saveTablePagePreference("suppliers", event.target.value)
     } catch (error) {
       console.warn("Supplier page size was not saved", error)
-      this.hideLoader()
+      document.dispatchEvent(new CustomEvent("admin:action-loading", {
+        detail: { active: false }
+      }))
+      this.submitting = false
       const english = document.documentElement.lang?.toLowerCase().startsWith("en")
       const title = english ? "Could not save your preference" : "No se pudo guardar tu preferencia"
       const message = english ? "Please try again." : "Intenta nuevamente."
@@ -36,16 +35,7 @@ export default class extends Controller {
       else window.alert(`${title}. ${message}`)
       return
     }
-    this.element.requestSubmit()
-  }
 
-  hideLoader() {
-    const loader = document.getElementById("supplier-page-size-loader")
-    if (loader) {
-      loader.hidden = true
-      loader.classList.add("hidden")
-      loader.setAttribute("aria-hidden", "true")
-    }
-    this.submitting = false
+    this.element.requestSubmit()
   }
 }
