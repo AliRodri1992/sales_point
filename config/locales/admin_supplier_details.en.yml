@@ -79,6 +79,9 @@ en:
         commercial: "Commercial"
         delivery: "Delivery"
       contact_form:
+        primary_contact_label: "Primary contact"
+        phone_primary_label: "Primary number"
+        no_phones_hint: "This contact has no phone numbers yet. Add a mobile or office number."
         validation_title: "Review the contact details"
         validation_description: "Correct the highlighted fields before saving. Your entries are preserved."
         phones_title: "Phone numbers"
