@@ -95,6 +95,16 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(offenders).to be_empty
   end
 
+  it 'resolves all permission module icons rendered through dynamic helper calls' do
+    names = SystemRolesHelper::MODULE_ICONS.values.uniq + [SystemRolesHelper::DEFAULT_MODULE_ICON]
+    unresolved = names.reject do |name|
+      key = described_class::ICON_ALIASES.fetch(name, name)
+      described_class::ICON_SHAPES.key?(key)
+    end
+
+    expect(unresolved).to be_empty
+  end
+
   it 'never loads obsolete Heroicons template calls' do
     sources = Rails.root.glob('app/{views,components,helpers}/**/*.{erb,rb}')
     violations = sources.filter_map do |file|
