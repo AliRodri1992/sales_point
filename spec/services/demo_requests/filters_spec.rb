@@ -159,7 +159,7 @@ RSpec.describe DemoRequests::Filters do
     before { create_list(:demo_request, 12) }
 
     it 'uses supported page sizes and clamps the page to the available range' do
-      result = described_class.new(params.merge(per_page: '5', page: '99'), create(:user)).pagination_info
+      result = described_class.new(params.merge(page: '99'), create(:user), per_page: 5).pagination_info
 
       expect(result).to include(per_page: 5, total_count: 12, total_pages: 3, current_page: 3)
     end

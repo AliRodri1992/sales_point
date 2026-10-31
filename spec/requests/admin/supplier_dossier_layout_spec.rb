@@ -33,7 +33,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
     get admin_supplier_path(supplier, tab: 'general')
 
     expect(response).to have_http_status(:ok)
-    sidebar = dossier.at_css('aside[aria-label]')
+    sidebar = dossier.at_css('aside:has(nav[role="tablist"])')
     expect(sidebar).to be_present
     expect(sidebar['class']).to include('lg:self-start', 'lg:h-auto')
     expect(sidebar['class']).not_to include('lg:h-full')

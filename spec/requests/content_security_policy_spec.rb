@@ -11,9 +11,11 @@ RSpec.describe 'Content Security Policy', type: :request do
       expected_csp = [
         "default-src 'self';",
         "font-src 'self' data:;",
-        "img-src 'self' data:;",
+        "img-src 'self' data: blob:;",
+        "worker-src 'self' blob:;",
+        "connect-src 'self' https://releases.transloadit.com;",
         "script-src 'self' https:;",
-        "style-src 'self' 'unsafe-inline';",
+        "style-src 'self' 'unsafe-inline' https://releases.transloadit.com;",
         "object-src 'none'"
       ].join(' ')
 
