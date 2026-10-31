@@ -66,6 +66,17 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     end
   end
 
+  it 'renders two original and visually different SVGs for mobile and office phones' do
+    mobile = Nokogiri::HTML.fragment(helper.delta_icon('phone-mobile')).at_css('svg')
+    landline = Nokogiri::HTML.fragment(helper.delta_icon('phone-landline')).at_css('svg')
+
+    expect(mobile).to be_present
+    expect(landline).to be_present
+    expect(mobile.at_css('rect')).to be_present
+    expect(landline.css('path').size).to be >= 2
+    expect(mobile.to_html).not_to eq(landline.to_html)
+  end
+
   it 'rejects an undefined icon rather than showing an unrelated information symbol' do
     expect { helper.delta_icon('not-a-defined-delta-icon') }
       .to raise_error(ArgumentError, /Delta POS SVG icon not defined/)
