@@ -220,6 +220,9 @@ jobs:
       - name: Audit locale YAML files
         run: I18N_STRICT_PARITY=1 python script/audit_i18n.py
 
+      - name: Audit clarity of user-facing messages (advisory)
+        run: python script/audit_ux_messages.py
+
       - name: Validate Rails I18n loading
         run: |
           bin/rails runner 'I18n.available_locales.each { |locale| I18n.backend.send(:init_translations); I18n.backend.send(:translations)[locale] }'
