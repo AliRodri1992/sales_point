@@ -19,6 +19,7 @@ class Phone < ApplicationRecord
   validate :same_organization_as_owner
   validate :unique_primary_per_kind
   validate :unique_active_number
+  validate :mobile_primary_only_for_limited_owner
 
   before_validation :assign_organization
   before_validation :normalize_number
@@ -84,6 +85,19 @@ class Phone < ApplicationRecord
 
   def conflicting_active_number?
     Phone.active.where(phoneable:, number:, extension:).where.not(id: id).exists?
+  end
+
+  def mobile_primary_only_for_limited_owner
+    return unless limited_to_primary_mobile?
+
+    errors.add(:kind, :invalid) unless kind == 'mobile'
+    errors.add(:primary, :invalid) unless primary?
+  end
+
+  def limited_to_primary_mobile?
+    return true if phoneable.is_a?(Client) || phoneable.is_a?(Branch) || phoneable.is_a?(Employee)
+
+    phoneable.is_a?(Contact) && !phoneable.contactable.is_a?(Supplier)
   end
 
   def conflicting_primary_phone?
