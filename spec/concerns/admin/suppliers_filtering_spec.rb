@@ -71,4 +71,24 @@ RSpec.describe Admin::SuppliersFiltering do
     allow(actor).to receive(:permission?).with('suppliers.fiscal.view').and_return(true)
     expect(listing.send(:restricted_sort?, 'suppliers.rfc')).to be(false)
   end
+
+  it 'does not expose contact phone matches with only general supplier access' do
+    allow(actor).to receive(:permission?).with('suppliers.view').and_return(true)
+    filtering.params = ActionController::Parameters.new(search: '5512345678')
+
+    sql = filtering.send(:apply_search_filter, Supplier.all).to_sql
+
+    expect(sql).to include('suppliers.email ILIKE')
+    expect(sql).not_to include('phoneable_type')
+  end
+
+  it 'searches contact numbers only with the contact dossier permission' do
+    allow(actor).to receive(:permission?).with('suppliers.contacts.view').and_return(true)
+    filtering.params = ActionController::Parameters.new(search: '5512345678')
+
+    sql = filtering.send(:apply_search_filter, Supplier.all).to_sql
+
+    expect(sql).to include("phones.phoneable_type = 'Contact'")
+    expect(sql).not_to include("phones.phoneable_type = 'Supplier'")
+  end
 end
