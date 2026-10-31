@@ -13,11 +13,11 @@
       </div>
     <% end %>
     <% # Only the two primary contact numbers are edited from the supplier dossier. %>
-    <% %w[landline mobile].each do |kind| %>
+    <% %w[landline mobile].each_with_index do |kind, index| %>
       <% phone = form.object.phones.find { |entry| entry.kind == kind && entry.primary? && entry.deleted_at.nil? && !entry.marked_for_destruction? } %>
       <% phone ||= form.object.phones.build(kind: kind, primary: true, country_code: 'MX') %>
       <div>
-        <%= form.fields_for :phones, phone, child_index: kind do |phone_form| %>
+        <%= form.fields_for :phones, phone, child_index: index do |phone_form| %>
           <%= phone_form.hidden_field :id if phone_form.object.persisted? %>
           <%= phone_form.hidden_field :kind, value: kind %>
           <%= phone_form.hidden_field :primary, value: '1' %>
