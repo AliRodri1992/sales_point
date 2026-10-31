@@ -107,7 +107,7 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     page.driver.browser.manage.window.resize_to(820, 1180)
     visit admin_supplier_path(supplier, tab: 'bank_accounts')
 
-    expect(page).to have_css('select[data-supplier-dossier-target="mobileSelect"]', visible: true)
+    expect(page).to have_css('[data-controller="delta-select"] button[aria-haspopup="listbox"]', visible: true)
     mobile = find('select[data-supplier-dossier-target="mobileSelect"]', visible: :all)
     expect(mobile.value).to eq('bank_accounts')
     expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
