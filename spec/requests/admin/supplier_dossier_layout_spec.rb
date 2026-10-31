@@ -72,6 +72,9 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
 
   it 'does not expose management links without section permissions' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_contacts?).and_return(false)
+    %i[create_contacts? update_contacts? destroy_contacts? restore_contacts?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_commercial?).and_return(false)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_fiscal?).and_return(false)
