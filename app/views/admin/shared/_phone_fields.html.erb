@@ -1,0 +1,41 @@
+<div data-phone-item class="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+  <%= form.hidden_field :id if form.object.persisted? %>
+  <%= form.hidden_field :_destroy, value: '0' %>
+  <div class="grid gap-3 sm:grid-cols-2">
+    <div>
+      <%= form.label :kind, t('admin.phones.kind'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+      <%= form.select :kind, [['Celular', 'mobile'], ['Oficina / fijo', 'landline'], ['Otro', 'other']], {},
+                      class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+    </div>
+    <div>
+      <%= form.label :number, t('admin.phones.number'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+      <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
+        <%= form.telephone_field :number, data: { international_phone_target: 'input' },
+                                 class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm',
+                                 placeholder: '55 1234 5678' %>
+      </div>
+      <%= error_message_for(form.object, :number) %>
+    </div>
+    <div>
+      <%= form.label :extension, t('admin.phones.extension'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :extension, maxlength: 10, class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+    </div>
+    <div>
+      <%= form.label :label, t('admin.phones.label'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :label, maxlength: 60, class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+    </div>
+  </div>
+  <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+      <%= form.check_box :primary, class: 'size-4 rounded border-slate-300' %>
+      <%= t('admin.phones.primary') %>
+    </label>
+    <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+      <%= form.check_box :whatsapp_enabled, class: 'size-4 rounded border-slate-300' %>
+      WhatsApp
+    </label>
+    <% if local_assigns.fetch(:removable, true) %>
+      <button type="button" data-action="nested-phones#remove" class="text-sm font-semibold text-rose-700"><%= t('admin.phones.remove') %></button>
+    <% end %>
+  </div>
+</div>
