@@ -1,0 +1,68 @@
+<%# Edit-only uploader. The supplier show/document library uses its own unchanged flow. %>
+<div class="supplier-edit-upload space-y-4" data-controller="supplier-edit-uppy"
+     data-supplier-edit-uppy-url-value="<%= admin_supplier_documents_path(supplier) %>"
+     data-supplier-edit-uppy-messages-value="<%= {
+       success: t('admin.supplier_edit_upload.success'),
+       failed: t('admin.supplier_edit_upload.failed'),
+       loading: t('admin.supplier_edit_upload.loading'),
+       ready: t('admin.supplier_edit_upload.ready'),
+       invalid: t('admin.supplier_edit_upload.invalid')
+     }.to_json %>">
+  <div class="flex flex-col gap-3 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/40 px-5 py-5 sm:flex-row sm:items-start sm:justify-between">
+    <div class="flex min-w-0 items-start gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-200 bg-white text-emerald-700 shadow-sm" aria-hidden="true">
+        <%= icon('cloud-arrow-up', class: 'size-6') %>
+      </span>
+      <div class="min-w-0">
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_edit_upload.title') %></h3>
+        <p class="mt-1 max-w-xl text-sm leading-6 text-slate-600"><%= t('admin.supplier_edit_upload.description') %></p>
+      </div>
+    </div>
+    <span class="w-fit shrink-0 rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800"><%= t('admin.supplier_edit_upload.limits') %></span>
+  </div>
+
+  <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+    <div class="min-w-0">
+      <label for="supplier-edit-upload-category" class="mb-2 block text-sm font-semibold text-slate-700"><%= t('admin.supplier_edit_upload.category') %></label>
+      <select id="supplier-edit-upload-category" data-supplier-edit-uppy-target="category"
+              data-action="change->supplier-edit-uppy#updateMetadata"
+              class="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800">
+        <% SupplierDocument::CATEGORIES.each do |category| %>
+          <option value="<%= category %>"><%= t("admin.supplier_documents.categories.#{category}") %></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="min-w-0">
+      <label for="supplier-edit-upload-description" class="mb-2 block text-sm font-semibold text-slate-700"><%= t('admin.supplier_edit_upload.description_label') %></label>
+      <input id="supplier-edit-upload-description" type="text" maxlength="300"
+             data-supplier-edit-uppy-target="description" data-action="input->supplier-edit-uppy#updateMetadata"
+             placeholder="<%= t('admin.supplier_edit_upload.description_placeholder') %>"
+             class="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 placeholder:text-slate-400">
+    </div>
+  </div>
+
+  <div data-supplier-edit-uppy-target="dashboard" class="min-h-56 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/20 p-2 sm:p-3" aria-label="<%= t('admin.supplier_edit_upload.dropzone') %>">
+    <div class="flex min-h-48 flex-col items-center justify-center gap-2 p-5 text-center" data-supplier-edit-uppy-target="placeholder">
+      <%= icon('document-arrow-up', class: 'size-10 text-emerald-600') %>
+      <p class="text-sm font-semibold text-slate-800"><%= t('admin.supplier_edit_upload.loading') %></p>
+    </div>
+  </div>
+
+  <div data-supplier-edit-uppy-target="fallback" hidden
+       class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+    <p class="mb-3 text-sm font-medium text-amber-900"><%= t('admin.supplier_edit_upload.fallback') %></p>
+    <input type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.txt,.doc,.docx,.xls,.xlsx,.csv,.xml"
+           data-supplier-edit-uppy-target="fallbackInput"
+           class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-700 file:px-4 file:py-2 file:font-semibold file:text-white">
+    <button type="button" data-action="supplier-edit-uppy#fallbackUpload"
+            class="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800">
+      <%= t('admin.supplier_edit_upload.upload') %>
+    </button>
+  </div>
+
+  <div class="flex items-start gap-2 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
+    <%= icon('info', class: 'mt-0.5 size-4 shrink-0 text-slate-500') %>
+    <p><%= t('admin.supplier_edit_upload.immediate_notice') %></p>
+  </div>
+  <p data-supplier-edit-uppy-target="status" class="text-sm text-slate-600" role="status" aria-live="polite"></p>
+</div>
