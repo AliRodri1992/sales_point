@@ -12,6 +12,11 @@ export default class extends Controller {
     }
     document.addEventListener("click", this.onOutsideClick)
     document.addEventListener("keydown", this.onEscape)
+    this.onValueChange = () => this.sync()
+    if (this.hasValueTarget) {
+      this.valueTarget.addEventListener("change", this.onValueChange)
+      this.sync()
+    }
     if (this.element.dataset.supplierFloatingMenu === "true") {
       this.onFloatingScroll = () => this.positionFloatingMenu()
       this.onToggle = () => {
@@ -32,6 +37,7 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("click", this.onOutsideClick)
     document.removeEventListener("keydown", this.onEscape)
+    if (this.hasValueTarget) this.valueTarget.removeEventListener("change", this.onValueChange)
     if (this.onToggle) this.element.removeEventListener("toggle", this.onToggle)
     if (this.onFloatingScroll) {
       document.removeEventListener("scroll", this.onFloatingScroll, true)
@@ -63,25 +69,28 @@ export default class extends Controller {
 
   choose(event) {
     const option = event.currentTarget
-    if (this.hasValueTarget && option.matches("button[data-option-value]")) {
-      this.valueTarget.value = option.dataset.optionValue
-      this.valueTarget.dispatchEvent(new Event("change", { bubbles: true }))
-      this.labelTarget.textContent = option.querySelector("[data-option-label]").textContent.trim()
-      this.element.querySelectorAll("button[data-option-value]").forEach((button) => {
-        button.setAttribute("aria-selected", String(button === option))
-      })
-      this.close(true)
-      return
-    }
+    if (!this.hasValueTarget || !option.matches("button[data-option-value]")) return
 
-    const input = option.closest("label")?.querySelector("input")
-    if (!input) return
+    this.valueTarget.value = option.dataset.optionValue
+    this.sync()
+    this.close(true)
+    this.valueTarget.dispatchEvent(new Event("change", { bubbles: true }))
+  }
 
-    event.preventDefault()
-    input.checked = true
-    input.dispatchEvent(new Event("change", { bubbles: true }))
-    this.labelTarget.textContent = option.querySelector("[data-option-label]").textContent.trim()
-    this.close()
+  sync() {
+    if (!this.hasValueTarget || !this.hasLabelTarget) return
+    const options = Array.from(this.element.querySelectorAll("button[data-option-value]"))
+    const selected = options.find((option) => option.dataset.optionValue === this.valueTarget.value) || options[0]
+    if (!selected) return
+
+    this.labelTarget.textContent = selected.querySelector("[data-option-label]")?.textContent.trim() || ""
+    options.forEach((option) => option.setAttribute("aria-selected", String(option === selected)))
+  }
+
+  reset() {
+    if (!this.hasValueTarget) return
+    this.valueTarget.value = this.element.dataset.supplierDropdownDefaultValue ?? ""
+    this.sync()
   }
 
   navigate(event) {
