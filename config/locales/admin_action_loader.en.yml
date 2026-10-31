@@ -1,0 +1,11 @@
+en:
+  admin:
+    action_loader:
+      title: "Deltín is working"
+      processing: "Preparing your information…"
+      opening: "Opening the supplier record…"
+      editing: "Preparing the edit form…"
+      creating: "Preparing a new supplier…"
+      saving: "Saving supplier details…"
+      updating: "Updating the supplier list…"
+      archiving: "Processing the supplier action…"
