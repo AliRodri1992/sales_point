@@ -103,7 +103,7 @@ module Admin
       @contacts_total = scope.count
       @contacts_pages = [(@contacts_total.to_f / 12).ceil, 1].max
       @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
-      @listed_contacts = scope.order(primary: :desc, name: :asc, id: :asc)
+      @listed_contacts = scope.includes(:phones).order(primary: :desc, name: :asc, id: :asc)
                               .limit(12).offset((@contacts_page - 1) * 12)
     end
 
