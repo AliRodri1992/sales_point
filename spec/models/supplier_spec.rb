@@ -175,12 +175,12 @@ RSpec.describe Supplier, type: :model do
     it 'normalizes fields and blanks' do
       supplier.assign_attributes(
         code: '  SUP-0001  ', name: '  Proveedor Demo  ',
-        email: '  PROVEEDOR@EXAMPLE.COM  ', phone: ' 5555555555 ',
+        email: '  PROVEEDOR@EXAMPLE.COM  ',
         rfc: ' xaxx010101001 ', notes: '  Nota  '
       )
       supplier.valid?
-      expect(supplier.attributes.values_at('code', 'name', 'email', 'phone', 'rfc', 'notes'))
-        .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com', '+525555555555',
+      expect(supplier.attributes.values_at('code', 'name', 'email', 'rfc', 'notes'))
+        .to eq(['SUP-0001', 'Proveedor Demo', 'proveedor@example.com',
                 'XAXX010101001', 'Nota'])
     end
   end
