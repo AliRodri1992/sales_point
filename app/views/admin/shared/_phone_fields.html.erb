@@ -19,7 +19,7 @@
       </div>
       <%= error_message_for(form.object, :number) %>
     </div>
-    <div>
+    <div data-phone-extension class="<%= 'hidden' if (form.object.kind.presence || 'mobile') == 'mobile' %>">
       <%= form.label :extension, t('admin.phones.extension'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :extension, maxlength: 10, class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
     </div>

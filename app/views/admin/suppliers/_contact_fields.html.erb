@@ -22,6 +22,8 @@
           <%= phone_form.hidden_field :kind, value: kind %>
           <%= phone_form.hidden_field :primary, value: '1' %>
           <%= phone_form.hidden_field :country_code, value: phone_form.object.country_code.presence || 'MX' %>
+          <div class="grid min-w-0 gap-3 <%= 'sm:grid-cols-[minmax(0,1fr)_8rem]' if kind == 'landline' %>">
+            <div class="min-w-0">
           <%= phone_form.label :number, t(kind == 'mobile' ? 'admin.phones.primary_mobile' : 'admin.phones.primary_office'),
                                class: 'mb-2 block text-sm font-semibold text-slate-700' %>
           <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
@@ -30,6 +32,16 @@
                    placeholder: '55 1234 5678' %>
           </div>
           <%= error_message_for(phone_form.object, :number) %>
+            </div>
+            <% if kind == 'landline' %>
+              <div class="min-w-0">
+                <%= phone_form.label :extension, t('admin.phones.extension'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+                <%= phone_form.text_field :extension, maxlength: 10, inputmode: 'numeric', autocomplete: 'off',
+                     placeholder: '123', class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 text-sm' %>
+                <%= error_message_for(phone_form.object, :extension) %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </div>
     <% end %>

@@ -78,6 +78,24 @@ RSpec.describe Phone, type: :model do
     expect(phone).to have_attributes(country_code: 'MX', label: 'Oficina', extension: '123')
   end
 
+  it 'does not store an extension on a mobile number' do
+    phone = contact.phones.create!(
+      number: '55 1234 5678', kind: 'mobile', primary: true, extension: ' 123 '
+    )
+
+    expect(phone.extension).to be_nil
+  end
+
+  it 'clears the office extension when a number changes to mobile' do
+    phone = contact.phones.create!(
+      number: '55 1234 5678', kind: 'landline', primary: true, extension: '123'
+    )
+
+    phone.update!(kind: 'mobile')
+
+    expect(phone.reload.extension).to be_nil
+  end
+
   it 'rejects an invalid country code even with a valid Mexican number' do
     phone = contact.phones.build(number: '+525512345678', country_code: 'X', kind: 'mobile')
 

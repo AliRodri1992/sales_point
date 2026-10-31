@@ -68,6 +68,32 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     expect(item).to have_css('[data-phone-kind-title]', text: 'Other')
   end
 
+  scenario 'shows office extensions only and clears them when switching to mobile' do
+    visit new_admin_supplier_contact_path(supplier)
+    item = find('[data-nested-phones-target="items"] > [data-phone-item]')
+
+    expect(item).to have_css('[data-phone-extension].hidden', visible: :all)
+
+    page.execute_script(<<~JS)
+      const kind = document.querySelector('[data-phone-item] select[name$="[kind]"]')
+      kind.value = 'landline'
+      kind.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(item).to have_css('[data-phone-extension]:not(.hidden)')
+    extension = item.find('input[name$="[extension]"]')
+    extension.set('123')
+
+    page.execute_script(<<~JS)
+      const kind = document.querySelector('[data-phone-item] select[name$="[kind]"]')
+      kind.value = 'mobile'
+      kind.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(item).to have_css('[data-phone-extension].hidden', visible: :all)
+    expect(extension.value).to be_empty
+  end
+
   scenario 'removes an unsaved phone immediately and allows adding it again' do
     visit new_admin_supplier_contact_path(supplier)
     expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)

@@ -4,6 +4,9 @@ export default class extends Controller {
   static targets = ["items", "template", "empty"]
 
   connect() {
+    this.itemsTarget.querySelectorAll("[data-phone-item]").forEach((item) => {
+      this.syncExtensionVisibility(item)
+    })
     this.updateEmptyState()
   }
 
@@ -24,6 +27,7 @@ export default class extends Controller {
     this.updateEmptyState()
 
     const phone = this.itemsTarget.querySelector("[data-phone-item]:last-child")
+    this.syncExtensionVisibility(phone)
     phone?.querySelector('input[name$="[number]"]')?.focus()
   }
 
@@ -92,6 +96,19 @@ export default class extends Controller {
     })
   }
 
+  syncExtensionVisibility(item) {
+    if (!item) return
+
+    const kind = item.querySelector('select[name$="[kind]"]')?.value
+    const wrapper = item.querySelector("[data-phone-extension]")
+    const input = wrapper?.querySelector('input[name$="[extension]"]')
+    if (!wrapper || !input) return
+
+    const mobile = kind === "mobile"
+    wrapper.classList.toggle("hidden", mobile)
+    if (mobile) input.value = ""
+  }
+
   kindChanged(event) {
     const select = event.target
     const item = select.closest("[data-phone-item]")
@@ -101,6 +118,8 @@ export default class extends Controller {
     item.querySelectorAll("[data-phone-kind-icon-variant]").forEach((icon) => {
       icon.classList.toggle("hidden", icon.dataset.phoneKindIconVariant !== kind)
     })
+
+    this.syncExtensionVisibility(item)
 
     const title = item.querySelector("[data-phone-kind-title]")
     if (title) title.textContent = select.selectedOptions[0]?.textContent?.trim() || ""

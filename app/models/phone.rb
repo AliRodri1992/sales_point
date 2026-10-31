@@ -52,7 +52,8 @@ class Phone < ApplicationRecord
   def normalize_metadata
     self.country_code = country_code.to_s.upcase.presence || 'MX'
     self.label = label.to_s.strip.presence
-    self.extension = extension.to_s.strip.presence
+    # A mobile number has no PBX extension, including when an office phone is changed to mobile.
+    self.extension = kind == 'mobile' ? nil : extension.to_s.strip.presence
   end
 
   def number_must_be_valid

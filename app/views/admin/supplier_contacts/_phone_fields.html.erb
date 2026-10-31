@@ -47,7 +47,7 @@
         </div>
         <%= error_message_for(form.object, :number) %>
       </div>
-      <div class="min-w-0 max-w-48">
+      <div data-phone-extension class="min-w-0 max-w-48 <%= 'hidden' if (form.object.kind.presence || 'mobile') == 'mobile' %>">
         <%= form.label :extension, t('admin.phones.extension'), class: 'mb-1.5 block text-xs font-semibold text-slate-700' %>
         <%= form.text_field :extension, maxlength: 10,
                             class: "min-h-11 w-full rounded-xl border bg-white px-3 text-sm #{form_state_classes(form.object, :extension)}" %>
