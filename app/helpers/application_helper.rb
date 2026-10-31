@@ -116,7 +116,7 @@ module ApplicationHelper
     active = params[:sort] == column
     css = active ? 'size-3 text-slate-800' : 'size-3 text-slate-300 opacity-50'
 
-    icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
+    delta_icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
   end
 
   def user_status_badge(status)
