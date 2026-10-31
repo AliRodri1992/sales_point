@@ -31,10 +31,11 @@
     </div>
     <div>
       <dt class="mb-2 text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.email') %></dt>
-      <% if supplier.email.present? %>
+      <% contact_email = primary_contact&.email.presence || supplier.email.presence %>
+      <% if contact_email.present? %>
         <dd class="flex items-center gap-2 break-all text-sm font-semibold">
-          <%= mail_to supplier.email, supplier.email, class: 'text-emerald-700 hover:underline' %>
-          <%= mail_to supplier.email, delta_icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
+          <%= mail_to contact_email, contact_email, class: 'text-emerald-700 hover:underline' %>
+          <%= mail_to contact_email, delta_icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
         </dd>
       <% else %>
         <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>
