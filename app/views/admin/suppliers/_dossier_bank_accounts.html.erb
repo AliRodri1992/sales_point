@@ -6,7 +6,7 @@
       <div data-finance-banks-heading-row class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex min-w-0 items-center gap-3">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-            <%= icon('building-library', class: 'size-5') %>
+            <%= delta_icon('building-library', class: 'size-5') %>
           </span>
           <div>
             <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.bank_accounts') %></h2>
@@ -24,7 +24,7 @@
         <div data-finance-banks-search-row class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div class="relative min-w-0 flex-1">
             <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
-            <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+            <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
             <%= search_field_tag :banks_q, bank_page.query, id: 'dossier-banks-search', maxlength: 100,
                                  placeholder: t('admin.accounts_payable.bank_list.search_placeholder'),
                                  class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
@@ -32,7 +32,7 @@
           <%= link_to admin_supplier_bank_accounts_path(supplier),
                       aria: { label: t('admin.supplier_dossier.finance.manage_banks') },
                       class: 'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 sm:w-auto sm:shrink-0' do %>
-            <%= icon('arrow-top-right-on-square', class: 'size-4') %>
+            <%= delta_icon('arrow-top-right-on-square', class: 'size-4') %>
             <%= t('admin.supplier_dossier.finance.manage_banks') %>
           <% end %>
         </div>
@@ -45,7 +45,7 @@
           </div>
           <%= button_tag type: :submit,
                          class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
-            <%= icon('magnifying-glass', class: 'size-4') %>
+            <%= delta_icon('magnifying-glass', class: 'size-4') %>
             <%= t('admin.accounts_payable.bank_list.search') %>
           <% end %>
         </div>
