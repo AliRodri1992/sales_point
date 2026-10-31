@@ -19,7 +19,9 @@
   <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 </head>
 
-<body class="min-h-full bg-slate-100 text-slate-900 antialiased" data-controller="swal-confirm">
+<body class="min-h-full bg-slate-100 text-slate-900 antialiased" data-controller="swal-confirm"
+      data-swal-confirm-text="<%= t('admin.supplier_ui.confirm_action') %>"
+      data-swal-cancel-text="<%= t('admin.suppliers.confirm.cancel') %>">
 <script
   id="javascriptTranslations" type="application/json">
   <%= raw javascript_dashboard_translations %>
