@@ -7,8 +7,8 @@
         <%= delta_icon('phone', class: 'size-4') %>
       </span>
       <div class="min-w-0">
-        <p class="text-sm font-bold text-slate-900"><%= form.object.persisted? ? t('admin.phones.number') : t('admin.phones.add') %></p>
-        <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.phone_hint') %></p>
+        <p class="text-sm font-bold text-slate-900"><%= t(form.object.persisted? ? 'admin.supplier_details.contact_form.saved_phone_title' : 'admin.supplier_details.contact_form.new_phone_title') %></p>
+        <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.phone_row_description') %></p>
       </div>
     </div>
     <button type="button" data-action="nested-phones#remove"
