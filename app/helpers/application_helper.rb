@@ -1,6 +1,7 @@
 module ApplicationHelper
   include BreadcrumbsHelper
   include PaginationHelper
+  include DeltaIconsHelper
 
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
