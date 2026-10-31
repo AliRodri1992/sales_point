@@ -11,7 +11,7 @@
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.description') %></p>
         </div>
       </div>
-      <% if policy(supplier).manage_products? %>
+      <% if policy(supplier).create_products? %>
       <%= link_to admin_supplier_supplier_products_path(supplier),
                   class: 'inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
         <%= delta_icon('cube', class: 'size-4') %>
@@ -123,7 +123,7 @@
         <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
           <%= t('admin.supplier_dossier.product_empty.description') %>
         </p>
-        <% if policy(supplier).manage_products? %>
+        <% if policy(supplier).create_products? %>
           <%= link_to new_admin_supplier_supplier_product_path(supplier),
                       class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
             <%= delta_icon('plus', class: 'size-4') %>
