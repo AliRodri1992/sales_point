@@ -8,14 +8,14 @@ ko:
         terms: 서비스 이용약관
       notifications:
         supplier_activity:
-          contact_created: "연락처가 생성되었습니다."
-          contact_updated: "연락처가 수정되었습니다."
-          contact_deleted: "연락처가 삭제되었습니다."
-          contact_restored: "연락처가 복원되었습니다."
-          address_created: "주소가 생성되었습니다."
-          address_updated: "주소가 수정되었습니다."
-          address_deleted: "주소가 삭제되었습니다."
-          address_restored: "주소가 복원되었습니다."
+          contact_created: "연락처가 공급업체 상세 정보에 추가되어 연락처 목록에서 확인할 수 있습니다."
+          contact_updated: "연락처의 변경 사항이 공급업체 상세 정보에 저장되었습니다."
+          contact_deleted: "연락처가 보관 처리되어 공급업체의 활성 연락처 목록에 표시되지 않습니다."
+          contact_restored: "연락처가 복구되어 공급업체 상세 정보에서 다시 확인할 수 있습니다."
+          address_created: "주소가 공급업체 상세 정보에 추가되어 조회할 수 있습니다."
+          address_updated: "주소 변경 사항이 공급업체 상세 정보에 저장되었습니다."
+          address_deleted: "주소가 보관 처리되어 공급업체의 활성 주소 목록에 표시되지 않습니다."
+          address_restored: "주소가 복구되어 공급업체 상세 정보에서 다시 확인할 수 있습니다."
       online_users:
         empty: "현재 접속 중인 다른 사용자가 없습니다"
         empty_description: "다른 사용자가 접속하면 이곳에 표시되며 대화를 시작할 수 있습니다."
