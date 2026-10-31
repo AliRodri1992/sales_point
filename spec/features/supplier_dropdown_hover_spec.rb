@@ -67,6 +67,21 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
     expect_full_width_option_hover('supplier[sat_fiscal_regime_id]')
   end
 
+  scenario 'excludes options hidden by a dependent select without changing form values' do
+    visit new_admin_supplier_path
+
+    dropdown = find('select[name="supplier[person_type]"]', visible: :all).find(:xpath, '..')
+    page.execute_script(<<~JS)
+      const select = document.querySelector('select[name="supplier[person_type]"]')
+      select.querySelector('option[value="company"]').hidden = true
+    JS
+
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    hidden_option = dropdown.find('[role="option"]', text: 'Company', visible: :all)
+    expect(hidden_option[:hidden]).to be_present
+    expect(hidden_option).not_to be_visible
+  end
+
   scenario 'highlights a whole country row without losing its flag or search' do
     Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
     visit new_admin_supplier_address_path(supplier)
