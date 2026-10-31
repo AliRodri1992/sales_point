@@ -9,7 +9,7 @@ RSpec.describe Supplier, type: :model do
       first = create(:supplier, organization:, code: nil)
       second = create(:supplier, organization:, code: nil)
 
-      expect(first.code).to match(/\\APROV-\\d{6,}\\z/)
+      expect(first.code).to match(/\APROV-\d{6,}\z/)
       expect(second.code.delete_prefix('PROV-').to_i).to eq(first.code.delete_prefix('PROV-').to_i + 1)
     end
 
