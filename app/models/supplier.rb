@@ -81,10 +81,11 @@ class Supplier < ApplicationRecord
 
     organization.with_lock do
       existing = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
-      last_number = existing.filter_map do |value|
-        number = value.delete_prefix('PROV-')
-        number.to_i if number.match?(/\A[0-9]+\z/)
-      end.max || 0
+      numbers = existing.filter_map do |value|
+        digits = value.delete_prefix('PROV-')
+        digits.to_i if digits.match?(/\\A[0-9]+\\z/)
+      end
+      last_number = numbers.max || 0
 
       self.code = format('PROV-%06d', last_number + 1)
     end
