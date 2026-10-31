@@ -101,7 +101,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.datetime "deleted_at", precision: nil
     t.string "name"
     t.bigint "organization_id"
-    t.string "phone"
     t.boolean "status"
     t.datetime "updated_at", null: false
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
@@ -130,7 +129,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.string "email", limit: 150
     t.string "name", limit: 150, null: false
     t.text "notes"
-    t.string "phone", limit: 30
     t.string "postal_code", limit: 5
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
@@ -139,7 +137,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.index ["code"], name: "index_clients_on_code", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_clients_on_deleted_at"
     t.index ["email"], name: "index_clients_on_email"
-    t.index ["phone"], name: "index_clients_on_phone"
     t.index ["rfc"], name: "index_clients_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
     t.index ["sat_fiscal_regime_id"], name: "index_clients_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_clients_on_status"
@@ -158,10 +155,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "email", limit: 150
-    t.string "mobile_phone", limit: 30
     t.string "name", limit: 150, null: false
     t.text "notes"
-    t.string "phone", limit: 30
     t.string "position", limit: 100
     t.boolean "primary", default: false, null: false
     t.datetime "updated_at", null: false
@@ -327,7 +322,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.string "first_name", limit: 80, null: false
     t.string "last_name", limit: 120, null: false
     t.bigint "organization_id", null: false
-    t.string "phone", limit: 30
     t.string "status", limit: 20, default: "active", null: false
     t.datetime "updated_at", null: false
     t.index "organization_id, lower((email)::text)", name: "idx_employees_org_email_active", unique: true, where: "(deleted_at IS NULL)"
@@ -1803,7 +1797,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.text "notes"
     t.bigint "organization_id", null: false
     t.string "person_type", limit: 20
-    t.string "phone", limit: 30
     t.bigint "responsible_user_id"
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
@@ -1819,7 +1812,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_070000) do
     t.index ["organization_id", "rfc"], name: "idx_suppliers_organization_rfc_active", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
     t.index ["organization_id", "status", "name"], name: "idx_suppliers_org_status_name_active", where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_suppliers_on_organization_id"
-    t.index ["phone"], name: "index_suppliers_on_phone"
     t.index ["responsible_user_id"], name: "index_suppliers_on_responsible_user_id"
     t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_suppliers_on_status"
