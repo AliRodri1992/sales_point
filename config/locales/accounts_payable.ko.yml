@@ -73,7 +73,7 @@ ko:
       archive: "보관"
       confirm: "이 작업을 진행하시겠습니까?"
       back: "뒤로"
-      empty: "기록 없음"
+      empty: "표시할 미지급금 계정이 없습니다. 필터를 조정하거나 공급업체의 회계 반영된 송장을 확인하세요."
       validation_errors: "양식 오류를 확인하세요"
       bank_list:
         description: "이 공급업체에 등록된 은행 계좌를 조회하고 관리하세요."
