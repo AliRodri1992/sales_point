@@ -37,8 +37,25 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
                       .map { |input| input['name'] }
     expect(phone_names.uniq.length).to eq(2)
     expect(phone_names).to all(include('[phones_attributes]'))
-    expect(phone_names).to all(exclude('NEW_PHONE'))
+    expect(phone_names.any? { |name| name.include?('NEW_PHONE') }).to be(false)
     expect(page).to have_no_css('[data-nested-phones-target="empty"]:not(.hidden)', visible: :all)
+  end
+
+  scenario 'persists a phone added interactively to a new supplier contact' do
+    visit new_admin_supplier_contact_path(supplier)
+
+    find('input[name="contact[name]"]').set('New telephone contact')
+    find('button[data-action="nested-phones#add"]').click
+    expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 2)
+
+    cards = page.all('[data-nested-phones-target="items"] > [data-phone-item]')
+    cards.last.find('input[name$="[number]"]').set('5512345678')
+    find('input[type="submit"][value="Create contact"]').click
+
+    expect(page).to have_current_path(admin_supplier_contacts_path(supplier), wait: 10)
+    created = supplier.contacts.find_by!(name: 'New telephone contact')
+    expect(created.phones.active.count).to eq(1)
+    expect(created.phones.active.first.kind).to eq('mobile')
   end
 
   scenario 'removes and restores an existing number before saving' do
