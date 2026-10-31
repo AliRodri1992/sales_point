@@ -80,15 +80,17 @@ class Supplier < ApplicationRecord
     return if code.present? || organization.blank? || !organization.persisted?
 
     organization.with_lock do
-      existing = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
-      numbers = existing.filter_map do |value|
-        digits = value.delete_prefix('PROV-')
-        digits.to_i if digits.match?(/\\A[0-9]+\\z/)
-      end
-      last_number = numbers.max || 0
-
-      self.code = format('PROV-%06d', last_number + 1)
+      self.code = format('PROV-%06d', latest_generated_code_number + 1)
     end
+  end
+
+  def latest_generated_code_number
+    codes = organization.suppliers.where('code LIKE ?', 'PROV-%').pluck(:code)
+    values = codes.filter_map do |value|
+      digits = value.delete_prefix('PROV-')
+      digits.to_i if digits.match?(/\\A[0-9]+\\z/)
+    end
+    values.max || 0
   end
 
   def responsible_user_in_organization
