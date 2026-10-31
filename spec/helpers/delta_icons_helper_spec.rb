@@ -36,6 +36,18 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(unresolved).to be_empty
   end
 
+  it 'calls the view helper explicitly inside ViewComponent templates' do
+    components = Rails.root.glob('app/components/**/*.html.erb')
+    offenders = components.filter_map do |file|
+      source = file.read
+      next unless source.match?(/(?<!helpers\\.)\\bdelta_icon\\s*\\(?/)
+
+      file.relative_path_from(Rails.root).to_s
+    end
+
+    expect(offenders).to be_empty
+  end
+
   it 'never loads obsolete Heroicons template calls' do
     sources = Rails.root.glob('app/{views,components,helpers}/**/*.{erb,rb}')
     violations = sources.filter_map do |file|
