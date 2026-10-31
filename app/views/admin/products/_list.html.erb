@@ -64,7 +64,7 @@
                 <%= product.category&.name || '-' %>
               </td>
               <td class="px-6 py-4 text-center">
-                <%= icon('star', class: 'size-4 text-amber-500') if product.featured? %>
+                <%= delta_icon('star', class: 'size-4 text-amber-500') if product.featured? %>
               </td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
@@ -78,13 +78,13 @@
                               data: { tooltip: t('admin.products.show.title'), turbo_frame: '_top' },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.products.show.title') } do %>
-                    <%= icon('eye', class: 'size-4') %>
+                    <%= delta_icon('eye', class: 'size-4') %>
                   <% end %>
                   <%= link_to edit_admin_product_path(product),
                               data: { tooltip: t('admin.products.index.edit'), turbo_frame: '_top' },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.products.index.edit') } do %>
-                    <%= icon('pencil-square', class: 'size-4') %>
+                    <%= delta_icon('pencil-square', class: 'size-4') %>
                   <% end %>
                   <%= button_to admin_product_path(product),
                                 method: :delete,
@@ -96,7 +96,7 @@
                                   turbo_frame: '_top'
                                 },
                                 aria: { label: t('admin.products.index.delete') } do %>
-                    <%= icon('trash', class: 'size-4') %>
+                    <%= delta_icon('trash', class: 'size-4') %>
                   <% end %>
                 </div>
               </td>
@@ -124,7 +124,7 @@
     <% end %>
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= icon('cube', class: 'size-8 text-slate-300') %>
+      <%= delta_icon('cube', class: 'size-8 text-slate-300') %>
       <p class="text-sm font-semibold text-slate-500">
         <%= t('admin.products.index.empty_title') %>
       </p>
