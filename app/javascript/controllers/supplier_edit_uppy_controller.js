@@ -96,12 +96,19 @@ export default class extends Controller {
           this.setStatus(this.messagesValue.success.replace("%{count}", String(successful.length)))
         }
       })
-      this.placeholderTarget.remove()
+      if (this.hasPlaceholderTarget) this.placeholderTarget.remove()
+      this.dashboardTarget.hidden = false
+      this.fallbackTarget.hidden = true
       this.setStatus("")
     } catch (error) {
       console.error("Uppy could not be initialized for supplier editing", error)
       if (!this.disconnected) {
-        if (this.hasPlaceholderTarget) this.placeholderTarget.hidden = true
+        // A partially mounted Dashboard must never appear alongside fallback.
+        try { this.uppy?.destroy() } catch (cleanupError) {
+          console.warn("Unable to dispose Uppy after initialization error", cleanupError)
+        }
+        this.uppy = null
+        this.dashboardTarget.hidden = true
         this.fallbackTarget.hidden = false
         this.setStatus(this.messagesValue.failed, true)
       }
