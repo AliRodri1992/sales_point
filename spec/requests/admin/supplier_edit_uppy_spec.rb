@@ -99,7 +99,7 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
          headers: { 'ACCEPT' => 'application/json' }
 
     expect(response).to have_http_status(:created)
-    attachment_id = supplier.documents.attachments.last.id
+    attachment_id = supplier.reload.supplier_documents.visible.last.attachment_id
 
     patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated company name' } }
 
