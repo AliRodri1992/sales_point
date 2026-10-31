@@ -56,6 +56,8 @@ export default class extends Controller {
     notice.classList.add("hidden")
     notice.classList.remove("flex")
     fields.querySelector("input:not([type=hidden]), select")?.focus()
+    const primary = item.querySelector('input[type="checkbox"][name$="[primary]"]')
+    if (primary?.checked) this.primaryChanged({ target: primary })
     this.updateEmptyState()
   }
 
