@@ -36,6 +36,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(card).to be_present
     expect(card.text).to include('Ana Lopez', 'Purchasing Manager', 'ana@example.com')
     expect(card.css('[data-contact-primary-badge]').size).to eq(1)
+    expect(card.at_css('[data-contact-primary-badge] svg[aria-hidden="true"]')).to be_present
     expect(card.text.scan(I18n.t('admin.supplier_details.primary', locale: :en)).size).to eq(1)
     expect(card.css('a[href^="tel:"]').size).to eq(3)
 
@@ -46,6 +47,18 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(details.text).not_to include('Purchasing Manager')
     expect(details.css('dt').map(&:text)).not_to include(I18n.t('admin.supplier_details.contact_fields.primary', locale: :en))
     expect(card.at_css('button[aria-controls]')['aria-expanded']).to eq('false')
+  end
+
+  it 'renders the primary contact and internal responsible panels without undefined icons' do
+    supplier = create(:supplier, organization:)
+    create(:contact, contactable: supplier, name: 'Principal Contact', primary: true)
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    expect(response).to have_http_status(:ok)
+    section = Nokogiri::HTML(response.body).at_css('[data-supplier-general-area="contact_management"]')
+    expect(section).to be_present
+    expect(section.css('svg').size).to be >= 2
   end
 
   it 'renders missing contact data without an unnecessary details expander' do
