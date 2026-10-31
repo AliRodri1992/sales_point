@@ -14,10 +14,17 @@ export default class extends Controller {
     this.emptyTarget.classList.toggle("hidden", visible)
   }
 
-  add() {
+  add(event) {
+    event?.preventDefault()
+    if (!this.hasItemsTarget || !this.hasTemplateTarget) return
+
     const id = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`
-    this.itemsTarget.insertAdjacentHTML("beforeend", this.templateTarget.innerHTML.replaceAll("NEW_PHONE", id))
+    const markup = this.templateTarget.innerHTML.replaceAll("NEW_PHONE", id)
+    this.itemsTarget.insertAdjacentHTML("beforeend", markup)
     this.updateEmptyState()
+
+    const phone = this.itemsTarget.querySelector("[data-phone-item]:last-child")
+    phone?.querySelector('input[name$="[number]"]')?.focus()
   }
 
   remove(event) {
