@@ -76,6 +76,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
       allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
     end
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:create_products?).and_return(false)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_commercial?).and_return(false)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_fiscal?).and_return(false)
 
@@ -175,6 +176,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
 
   it 'does not offer document upload without document management permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_documents?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:create_documents?).and_return(false)
 
     get admin_supplier_path(supplier, tab: 'documents')
 
@@ -318,6 +320,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
 
   it 'does not show product creation without management permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_products?).and_return(false)
+    allow_any_instance_of(SupplierPolicy).to receive(:create_products?).and_return(false)
 
     get admin_supplier_path(supplier, tab: 'products')
 
