@@ -51,7 +51,7 @@
                               title: t('admin.branches.index.title'),
                               aria: { label: t('admin.branches.index.title') },
                               class: 'rounded-lg p-2 text-slate-600 transition hover:bg-slate-100' do %>
-                    <%= icon('eye', class: 'size-5') %>
+                    <%= delta_icon('eye', class: 'size-5') %>
                   <% end %>
                   <% if can_manage_branches %>
                     <%= link_to edit_admin_branch_path(branch),
@@ -59,7 +59,7 @@
                                 title: t('admin.branches.actions.edit'),
                                 aria: { label: t('admin.branches.actions.edit') },
                                 class: 'rounded-lg p-2 text-blue-600 transition hover:bg-blue-50' do %>
-                      <%= icon('pencil-square', class: 'size-5') %>
+                      <%= delta_icon('pencil-square', class: 'size-5') %>
                     <% end %>
                     <%= button_to admin_branch_path(branch),
                                   method: :delete,
@@ -74,7 +74,7 @@
                                     }
                                   },
                                   class: 'rounded-lg p-2 text-red-600 transition hover:bg-red-50' do %>
-                      <%= icon('trash', class: 'size-5') %>
+                      <%= delta_icon('trash', class: 'size-5') %>
                     <% end %>
                   <% end %>
                 </div>
@@ -118,7 +118,7 @@
                         title: t('admin.branches.index.title'),
                         aria: { label: t('admin.branches.index.title') },
                         class: 'rounded-lg p-2 text-slate-600 transition hover:bg-slate-100' do %>
-              <%= icon('eye', class: 'size-5') %>
+              <%= delta_icon('eye', class: 'size-5') %>
             <% end %>
             <% if can_manage_branches %>
               <%= link_to edit_admin_branch_path(branch),
@@ -126,7 +126,7 @@
                           title: t('admin.branches.actions.edit'),
                           aria: { label: t('admin.branches.actions.edit') },
                           class: 'rounded-lg p-2 text-blue-600 transition hover:bg-blue-50' do %>
-                <%= icon('pencil-square', class: 'size-5') %>
+                <%= delta_icon('pencil-square', class: 'size-5') %>
               <% end %>
               <%= button_to admin_branch_path(branch),
                             method: :delete,
@@ -141,7 +141,7 @@
                               }
                             },
                             class: 'rounded-lg p-2 text-red-600 transition hover:bg-red-50' do %>
-                <%= icon('trash', class: 'size-5') %>
+                <%= delta_icon('trash', class: 'size-5') %>
               <% end %>
             <% end %>
           </div>
@@ -191,14 +191,14 @@
   <% else %>
     <div class="px-6 py-14 text-center">
       <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-        <%= icon('building-office-2', class: 'size-6') %>
+        <%= delta_icon('building-office-2', class: 'size-6') %>
       </div>
       <h2 class="mt-4 text-base font-semibold text-slate-900"><%= t('admin.branches.empty.title') %></h2>
       <p class="mt-1 text-sm text-slate-500"><%= t('admin.branches.empty.subtitle') %></p>
       <% if can_manage_branches %>
         <%= link_to new_admin_branch_path,
                     class: 'mt-5 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700' do %>
-          <%= icon('plus', class: 'size-4') %>
+          <%= delta_icon('plus', class: 'size-4') %>
           <%= t('admin.branches.index.new') %>
         <% end %>
       <% end %>
