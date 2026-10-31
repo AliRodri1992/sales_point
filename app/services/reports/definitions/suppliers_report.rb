@@ -24,6 +24,8 @@ module Reports
         case key
         when :status
           I18n.t("admin.suppliers.statuses.#{supplier.status}", locale:)
+        when :phone
+          supplier.contacts.not_deleted.find_by(primary: true, active: true)&.phones&.active&.find_by(kind: 'landline', primary: true)&.number.to_s
         when :classification
           return '' if supplier.classification.blank?
 
