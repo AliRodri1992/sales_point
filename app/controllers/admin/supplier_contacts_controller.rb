@@ -89,7 +89,12 @@ module Admin
     end
 
     def redirect_success(action)
-      redirect_to admin_supplier_contacts_path(@supplier),
+      destination = if action == 'contact_updated' && params[:return_to] == 'dossier'
+                      admin_supplier_path(@supplier, tab: 'contacts')
+                    else
+                      admin_supplier_contacts_path(@supplier)
+                    end
+      redirect_to destination,
                   flash: { swal_message: t("admin.supplier_details.#{action}", name: @supplier.name) }
     end
 
