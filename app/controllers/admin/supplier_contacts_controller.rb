@@ -89,7 +89,7 @@ module Admin
     end
 
     def redirect_success(action)
-      destination = if action == 'contact_updated' && params[:return_to] == 'dossier'
+      destination = if action.in?(%w[contact_created contact_updated]) && params[:return_to] == 'dossier'
                       admin_supplier_path(@supplier, tab: 'contacts')
                     else
                       admin_supplier_contacts_path(@supplier)
