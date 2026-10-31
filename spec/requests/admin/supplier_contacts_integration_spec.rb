@@ -23,6 +23,32 @@ RSpec.describe 'Supplier contact integration', type: :request do
       .to be_present
   end
 
+  it 'returns new contacts to the dossier when created from its empty state' do
+    get new_admin_supplier_contact_path(supplier, return_to: 'dossier')
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('input[name="return_to"]')['value']).to eq('dossier')
+    expect(page.at_css("[data-supplier-subpage-header] a[href='#{admin_supplier_path(supplier, tab: 'contacts')}']"))
+      .to be_present
+
+    post admin_supplier_contacts_path(supplier), params: {
+      return_to: 'dossier', contact: { name: 'New dossier contact', email: 'new@example.com' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'contacts'))
+    expect(supplier.contacts.find_by!(name: 'New dossier contact').email).to eq('new@example.com')
+  end
+
+  it 'explains a filtered empty result without implying the supplier has no contacts' do
+    create(:contact, contactable: supplier, name: 'Present person')
+
+    get admin_supplier_contacts_path(supplier, q: 'missing-example')
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.text).to include(I18n.t('admin.supplier_dossier.contact_cards.no_results_title'))
+    expect(page.text).not_to include('Present person')
+  end
+
   it 'creates, normalizes and displays a supplier contact' do
     post admin_supplier_contacts_path(supplier),
          params: { contact: {
