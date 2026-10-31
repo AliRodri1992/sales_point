@@ -34,7 +34,9 @@ module Onboarding
       return {} unless branch
 
       {
-        'branch' => branch.attributes.slice('name', 'phone'),
+        'branch' => branch.attributes.slice('name').merge(
+          'mobile_phone' => branch.phones.active.find_by(kind: 'mobile', primary: true)&.number
+        ),
         'address' => branch.address&.attributes&.slice('street', 'exterior_number', 'interior_number', 'neighborhood',
                                                        'city', 'state', 'country', 'postal_code')
       }
