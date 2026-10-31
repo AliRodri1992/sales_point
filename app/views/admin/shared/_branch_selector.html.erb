@@ -7,13 +7,13 @@
       class="group flex cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
       aria-label="<%= t('admin.shared.branch_selector.label') %>"
     >
-      <%= icon("building-storefront", variant: :solid, class: "size-4 text-slate-500 transition-colors group-hover:text-slate-700") %>
+      <%= delta_icon("building-storefront", variant: :solid, class: "size-4 text-slate-500 transition-colors group-hover:text-slate-700") %>
 
       <span class="hidden max-w-36 truncate sm:inline">
         <%= selected_branch&.name || t('admin.shared.branch_selector.no_branch') %>
       </span>
 
-      <%= icon("chevron-down", class: "size-3 text-slate-400 transition-colors group-hover:text-slate-700 group-open:rotate-180") %>
+      <%= delta_icon("chevron-down", class: "size-3 text-slate-400 transition-colors group-hover:text-slate-700 group-open:rotate-180") %>
     </summary>
 
     <div
@@ -29,10 +29,10 @@
           <%= button_to select_admin_branch_path(branch),
                         method: :patch,
                         class: "group/branch flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-emerald-600 #{branch.id == selected_branch&.id ? 'bg-gradient-to-r from-emerald-700 to-teal-700 text-white hover:from-emerald-800 hover:to-teal-800' : 'text-slate-700 hover:bg-emerald-100 hover:text-emerald-900'}" do %>
-            <%= icon("building-storefront", class: "size-4 shrink-0 text-current transition-colors") %>
+            <%= delta_icon("building-storefront", class: "size-4 shrink-0 text-current transition-colors") %>
             <span class="min-w-0 flex-1 truncate" title="<%= branch.name %>"><%= branch.name %></span>
             <% if branch.id == selected_branch&.id %>
-              <%= icon("check", variant: :solid, class: "size-3 shrink-0") %>
+              <%= delta_icon("check", variant: :solid, class: "size-3 shrink-0") %>
             <% end %>
           <% end %>
         <% end %>

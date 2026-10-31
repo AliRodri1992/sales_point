@@ -11,12 +11,12 @@
       aria-expanded="false"
       aria-controls="languageSelectorMenu"
     >
-      <%= icon("language", class: "size-5 text-slate-500 transition-colors") %>
+      <%= delta_icon("language", class: "size-5 text-slate-500 transition-colors") %>
       <span class="hidden sm:inline">
         <%= current.code.upcase %>
       </span>
 
-      <%= icon("chevron-down", class: "size-3 text-slate-400") %>
+      <%= delta_icon("chevron-down", class: "size-3 text-slate-400") %>
     </button>
 
     <div
@@ -48,7 +48,7 @@
               </span>
 
               <% if language.id == current.id %>
-                <%= icon("check", variant: :solid, class: "size-3") %>
+                <%= delta_icon("check", variant: :solid, class: "size-3") %>
               <% end %>
             </button>
           <% end %>
