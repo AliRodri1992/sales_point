@@ -4,6 +4,7 @@
 /* Components */
 @import "./components/themes.css";
 @import "./components/deltin.css";
+@import "./components/delta_confirm.css";
 @import "./components/supplier_edit_uppy.css";
 
 @theme {
