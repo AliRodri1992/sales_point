@@ -164,6 +164,8 @@ ko:
       form:
         code: "코드"
         code_placeholder: "예. SUP-0001"
+        code_automatic: "저장 시 자동 발급"
+        code_help: "Delta POS에서 고유 코드를 자동 발급합니다. 수정할 수 없습니다."
         name: "이름"
         name_placeholder: "전체 이름 또는 법인명"
         email: "이메일"
