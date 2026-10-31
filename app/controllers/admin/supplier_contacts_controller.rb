@@ -121,7 +121,16 @@ module Admin
       return scope if query.blank?
 
       term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
-      scope.where('name ILIKE :q OR position ILIKE :q OR email ILIKE :q', q: term)
+      scope.where(
+        <<~SQL.squish, q: term
+          contacts.name ILIKE :q OR contacts.position ILIKE :q OR contacts.email ILIKE :q
+          OR EXISTS (SELECT 1 FROM phones
+                     WHERE phones.phoneable_type = 'Contact'
+                       AND phones.phoneable_id = contacts.id
+                       AND phones.deleted_at IS NULL
+                       AND phones.number ILIKE :q)
+        SQL
+      )
     end
 
     def contact_params
