@@ -64,7 +64,8 @@ RSpec.describe SupplierExamples do
     expect(supplier.tags).to include('demostracion')
     expect(supplier.responsible_user).to eq(administrator)
     expect(supplier.sat_fiscal_regime.code).to eq('601')
-    expect(supplier.contacts.first.mobile_phone).to be_present
+    primary_contact = supplier.contacts.find_by!(primary: true)
+    expect(primary_contact.phones.active.where(primary: true).pluck(:kind)).to match_array(%w[landline mobile])
     expect(supplier.organization_id).to eq(organization.id)
   end
 
@@ -72,16 +73,19 @@ RSpec.describe SupplierExamples do
     described_class.seed!
 
     supplier = Supplier.find_by!(code: 'SUP-0002')
-    supplier.update!(email: nil, phone: nil, notes: nil)
+    supplier.update!(email: nil, notes: nil)
+    contact = supplier.contacts.find_by!(primary: true)
+    contact.phones.active.find_by!(kind: 'mobile', primary: true).update!(deleted_at: Time.current)
     supplier.update!(legal_name: 'Razón social ajustada')
 
     described_class.seed!
 
     expect(supplier.reload).to have_attributes(
       legal_name: 'Razón social ajustada',
-      email: 'proveedor2@example.com', phone: '+525500000002',
+      email: 'proveedor2@example.com',
       notes: 'Proveedor de demostración 2 para Delta POS.'
     )
+    expect(contact.phones.active.where(kind: 'mobile', primary: true)).to exist
   end
 
   it 'backfills missing commercial fields but preserves deliberate zero amounts' do
