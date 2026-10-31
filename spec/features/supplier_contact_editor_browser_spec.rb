@@ -41,6 +41,33 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     expect(page).to have_no_css('[data-nested-phones-target="empty"]:not(.hidden)', visible: :all)
   end
 
+  scenario 'shows original mobile and office SVGs when the phone type changes' do
+    visit new_admin_supplier_contact_path(supplier)
+    item = find('[data-nested-phones-target="items"] > [data-phone-item]')
+
+    expect(item).to have_css('[data-phone-kind-icon-variant="mobile"]:not(.hidden) svg')
+    expect(item).to have_css('[data-phone-kind-title]', text: 'Mobile')
+
+    page.execute_script(<<~JS)
+      const type = document.querySelector('[data-phone-item] select[name$="[kind]"]')
+      type.value = 'landline'
+      type.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(item).to have_css('[data-phone-kind-icon-variant="landline"]:not(.hidden) svg')
+    expect(item).to have_css('[data-phone-kind-icon-variant="mobile"].hidden', visible: :all)
+    expect(item).to have_css('[data-phone-kind-title]', text: 'Office / landline')
+
+    page.execute_script(<<~JS)
+      const type = document.querySelector('[data-phone-item] select[name$="[kind]"]')
+      type.value = 'other'
+      type.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(item).to have_css('[data-phone-kind-icon-variant="other"]:not(.hidden) svg')
+    expect(item).to have_css('[data-phone-kind-title]', text: 'Other')
+  end
+
   scenario 'removes an unsaved phone immediately and allows adding it again' do
     visit new_admin_supplier_contact_path(supplier)
     expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)
