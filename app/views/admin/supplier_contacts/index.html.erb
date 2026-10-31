@@ -101,7 +101,7 @@
               <% end %>
               <% end %>
               <% if policy(@supplier).destroy_contacts? %>
-              <%= button_to admin_supplier_contact_path(@supplier, contact), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
+              <%= button_to admin_supplier_contact_path(@supplier, contact), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm'), confirm_record: contact.name } }, class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50' do %>
                 <%= delta_icon('trash', class: 'size-4') %><%= t('admin.supplier_details.delete') %>
               <% end %>
               <% end %>
