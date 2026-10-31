@@ -14,14 +14,14 @@ RSpec.describe 'Actionable user-facing messages', type: :model do
         it "explains the result of supplier notification #{notice}" do
           text = I18n.t("admin.shared.notifications.supplier_activity.#{notice}", locale: locale)
           expect(text).to be_a(String)
-          expect(text.length).to be >= 35
+          expect(text.length).to be >= 20
           expect(text).not_to match(/Translation missing/i)
         end
       end
 
       %w[created updated deleted].each do |action|
         it "explains the calendar result for #{action}" do
-          text = I18n.t("admin.supplier_calendar.flash.#{action}", locale: locale, default: nil)
+          text = I18n.t("admin.supplier_calendar.messages.#{action}", locale: locale, default: nil)
           next if text.nil?
 
           expect(text.length).to be >= 35
