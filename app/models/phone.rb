@@ -43,9 +43,10 @@ class Phone < ApplicationRecord
 
   def same_organization_as_owner
     return if phoneable.blank? || organization.blank?
-    return unless phoneable.respond_to?(:organization_id)
+    owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
+    return unless owner.respond_to?(:organization_id)
 
-    errors.add(:organization, :invalid) if phoneable.organization_id != organization_id
+    errors.add(:organization, :invalid) if owner.organization_id != organization_id
   end
 
   def unique_primary_per_kind
