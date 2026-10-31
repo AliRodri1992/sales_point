@@ -23,6 +23,17 @@ RSpec.describe 'Admin supplier procurement', type: :request do
     }
   end
 
+  it 'keeps supplier context and a return action on the offer form' do
+    get new_admin_supplier_supplier_product_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    heading = page.at_css('[data-supplier-subpage-header] h1')
+    expect(heading).to be_present
+    expect(page.at_css('[data-supplier-subpage-header]').text).to include(supplier.name, supplier.code)
+    expect(page.at_css("[data-supplier-subpage-header] a[href='#{admin_supplier_supplier_products_path(supplier)}']"))
+      .to be_present
+  end
+
   it 'recovers an archived offer while preserving its historical prices' do
     offer = offer_for(product)
     history_count = offer.price_history.count
