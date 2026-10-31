@@ -187,7 +187,7 @@ ko:
       show:
         title: "공급업체 상세"
         subtitle: "등록된 공급업체 정보를 확인합니다."
-        back: "공급업체로 돌아가기"
+        back: "뒤로"
         fields:
           code: "코드"
           name: "이름"
