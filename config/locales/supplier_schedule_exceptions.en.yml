@@ -7,8 +7,8 @@ en:
       reason: "Reason"
       notes: "Notes"
       all_branches: "All branches"
-      saved: "Calendar exception saved."
-      deleted: "Calendar exception removed."
+      saved: "The exception was saved in the supplier calendar. Review its dates and the affected schedule."
+      deleted: "The exception was removed from the supplier's active calendar. Review the usual schedule to confirm the change."
       reasons:
         holiday: "Holiday"
         suspension: "Temporary suspension"
