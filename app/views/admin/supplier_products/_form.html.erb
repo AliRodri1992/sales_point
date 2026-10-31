@@ -1,54 +1,103 @@
-<%= form_with model: [:admin, @supplier, @offer], class: 'space-y-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm',
+<%= form_with model: [:admin, @supplier, @offer],
+              class: 'min-w-0 space-y-5', html: { novalidate: true },
               data: { loading_message: t('admin.action_loader.saving') } do |form| %>
-  <% if @offer.errors.any? %>
-    <div class="rounded-lg bg-rose-50 p-3 text-sm text-rose-700"><%= @offer.errors.full_messages.to_sentence %></div>
+  <% field_class = 'min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100' %>
+  <% if @offer.errors[:base].any? %>
+    <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-800">
+      <%= @offer.errors.full_messages_for(:base).to_sentence %>
+    </div>
   <% end %>
-  <div class="grid gap-5 md:grid-cols-2">
-    <div>
-      <%= form.label :product_id, t('admin.procurement.product'), class: 'mb-2 block text-sm font-semibold' %>
-      <div class="relative" data-controller="delta-select" data-searchable="true">
-<%= form.collection_select :product_id, @products, :id, :name, { include_blank: true },
-                                 { required: true, disabled: @offer.persisted?, class: 'w-full rounded-xl border border-slate-200 p-3' } %>
-</div>
-    </div>
-    <div>
-      <%= form.label :supplier_sku, t('admin.procurement.supplier_sku'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.text_field :supplier_sku, class: 'w-full rounded-xl border border-slate-200 p-3' %>
-    </div>
-    <div>
-      <%= form.label :presentation_name, t('admin.procurement.presentation'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.text_field :presentation_name, required: true, class: 'w-full rounded-xl border border-slate-200 p-3' %>
-    </div>
-    <div>
-      <%= form.label :units_per_package, t('admin.procurement.units_per_package'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.number_field :units_per_package, min: 0.0001, step: 0.0001, required: true, class: 'w-full rounded-xl border border-slate-200 p-3' %>
-    </div>
-    <div>
-      <%= form.label :purchase_price, t('admin.procurement.purchase_price'), class: 'mb-2 block text-sm font-semibold' %>
-      <%= form.number_field :purchase_price, min: 0, step: 0.0001, required: true, class: 'w-full rounded-xl border border-slate-200 p-3' %>
-    </div>
-    <div>
-      <%= form.label :currency_id, t('admin.procurement.currency'), class: 'mb-2 block text-sm font-semibold' %>
-      <div class="relative" data-controller="delta-select">
-<%= form.collection_select :currency_id, @currencies, :id, :code, {}, { required: true, class: 'w-full rounded-xl border border-slate-200 p-3' } %>
-</div>
-    </div>
-    <% %i[discount_percent freight_amount nonrecoverable_tax minimum_quantity lead_time_days].each do |field| %>
-      <div>
-        <%= form.label field, t("admin.procurement.#{field}"), class: 'mb-2 block text-sm font-semibold' %>
-        <%= form.number_field field, min: 0, step: field == :lead_time_days ? 1 : 0.001,
-                              class: 'w-full rounded-xl border border-slate-200 p-3' %>
+
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <header class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('cube', class: 'size-5') %></span>
+      <div class="min-w-0">
+        <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_ui.offer_identity_title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_ui.offer_identity_description') %></p>
       </div>
-    <% end %>
-  </div>
-  <p class="text-sm text-slate-500"><%= t('admin.procurement.preferred_form_hint') %></p>
-  <div class="flex flex-wrap gap-5">
-    <label class="flex items-center gap-2"><%= form.check_box :active %><%= t('admin.procurement.active') %></label>
-  </div>
-  <div class="flex gap-3">
-    <%= form.submit t('admin.procurement.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+    </header>
+    <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+      <div class="min-w-0 md:col-span-2">
+        <%= form.label :product_id, t('admin.procurement.product'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <div class="relative" data-controller="delta-select" data-searchable="true">
+          <%= form.collection_select :product_id, @products, :id, :name, { include_blank: true },
+                                     { disabled: @offer.persisted?, class: field_class } %>
+        </div>
+        <%= error_message_for(@offer, :product) %>
+        <%= error_message_for(@offer, :product_id) %>
+      </div>
+      <div class="min-w-0">
+        <%= form.label :supplier_sku, t('admin.procurement.supplier_sku'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <%= form.text_field :supplier_sku, class: field_class %>
+        <%= error_message_for(@offer, :supplier_sku) %>
+      </div>
+      <div class="min-w-0">
+        <%= form.label :presentation_name, t('admin.procurement.presentation'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <%= form.text_field :presentation_name, class: field_class %>
+        <%= error_message_for(@offer, :presentation_name) %>
+      </div>
+      <div class="min-w-0">
+        <%= form.label :units_per_package, t('admin.procurement.units_per_package'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <%= form.number_field :units_per_package, min: 0.0001, step: 0.0001, class: field_class %>
+        <%= error_message_for(@offer, :units_per_package) %>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <header class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700"><%= delta_icon('banknotes', class: 'size-5') %></span>
+      <div class="min-w-0">
+        <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_ui.offer_terms_title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_ui.offer_terms_description') %></p>
+      </div>
+    </header>
+    <div class="grid gap-x-5 gap-y-5 md:grid-cols-2">
+      <div class="min-w-0">
+        <%= form.label :purchase_price, t('admin.procurement.purchase_price'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <%= form.number_field :purchase_price, min: 0, step: 0.0001, class: field_class %>
+        <%= error_message_for(@offer, :purchase_price) %>
+      </div>
+      <div class="min-w-0">
+        <%= form.label :currency_id, t('admin.procurement.currency'), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.collection_select :currency_id, @currencies, :id, :code, {}, { class: field_class } %>
+        </div>
+        <%= error_message_for(@offer, :currency) %>
+        <%= error_message_for(@offer, :currency_id) %>
+      </div>
+      <% %i[discount_percent freight_amount nonrecoverable_tax minimum_quantity lead_time_days].each do |field| %>
+        <div class="min-w-0">
+          <%= form.label field, t("admin.procurement.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-800' %>
+          <%= form.number_field field, min: 0, step: field == :lead_time_days ? 1 : 0.001, class: field_class %>
+          <%= error_message_for(@offer, field) %>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <header class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-5') %></span>
+      <div class="min-w-0">
+        <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_ui.offer_settings_title') %></h2>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.procurement.preferred_form_hint') %></p>
+      </div>
+    </header>
+    <label class="flex min-h-16 cursor-pointer flex-wrap items-center justify-between gap-4 rounded-xl border border-emerald-100 bg-emerald-50/40 p-4">
+      <span class="text-sm font-semibold text-slate-900"><%= t('admin.procurement.active') %></span>
+      <%= form.check_box :active, class: 'size-5 cursor-pointer rounded border-slate-300 accent-emerald-700 focus:ring-emerald-500' %>
+    </label>
+    <%= error_message_for(@offer, :active) %>
+  </section>
+
+  <footer class="flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
     <%= link_to t('admin.procurement.back'), admin_supplier_supplier_products_path(@supplier),
                 data: { loading_message: t('admin.action_loader.returning') },
-                class: 'rounded-xl border border-slate-200 px-5 py-3 font-semibold' %>
-  </div>
+                class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
+    <%= form.button type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
+      <%= delta_icon('check-circle', class: 'size-4') %>
+      <%= t('admin.procurement.save') %>
+    <% end %>
+  </footer>
 <% end %>
