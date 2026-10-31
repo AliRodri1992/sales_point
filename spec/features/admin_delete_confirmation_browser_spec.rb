@@ -50,6 +50,7 @@ RSpec.describe 'Delta POS confirmation dialog', type: :feature, js: true do
   end
 
   scenario 'uses the same dialog when deleting a supplier from the listing' do
+    supplier
     visit admin_suppliers_path
 
     row = find('tbody tr', text: supplier.name)
