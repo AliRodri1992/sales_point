@@ -61,7 +61,7 @@ en:
         delivery: Delivery
         other: Other activity
       messages:
-        created: Event created successfully.
-        updated: Event updated successfully.
-        deleted: Event deleted successfully.
+        created: "The event was added to the supplier calendar. Check its date and time in the schedule."
+        updated: "The event changes were saved. Review its updated date and time in the schedule."
+        deleted: "The event was removed from the supplier's active schedule. Check archived events if you need to restore it."
         restored: Event restored successfully.
