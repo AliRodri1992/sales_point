@@ -9,7 +9,71 @@ en:
         security:
           title: "Users, roles, and permissions"
           description: "Create user accounts and manage roles, access, and language preferences."
-          topics: []
+          topics:
+            -
+              id: "users"
+              title: "User management"
+              description: "Create accounts and update user details or status."
+              before: "An administrator role is required."
+              tasks:
+                -
+                  title: "Create a user"
+                  steps:
+                    - "Open “Settings” → “Users” and select “New user”."
+                    - "Enter the username, email address, user type, and any requested access settings."
+                    - "Assign an available role or authorization options, and verify the initial status."
+                    - "Save, then find the user in the list to confirm the account was created."
+                -
+                  title: "Edit a user"
+                  steps:
+                    - "Find the user by name or email in the table."
+                    - "Select “View” or “Edit” and update the permitted fields."
+                    - "Save and check the confirmation."
+                -
+                  title: "Delete a user"
+                  steps:
+                    - "Verify that you selected the correct account, then choose “Delete”."
+                    - "Confirm the action and check the updated list."
+                    - "You cannot delete your own account this way; use an authorized administrative process."
+              note: "Deletion is soft; avoid sharing the same user account between people."
+            -
+              id: "roles"
+              title: "Roles and permissions"
+              description: "Apply least-privilege access according to responsibilities."
+              tasks:
+                -
+                  title: "Create or edit a role"
+                  steps:
+                    - "Open “Settings” → “Roles and permissions”."
+                    - "Select an existing role or create one with its own name and code."
+                    - "Review permissions by module, including view, create, edit, archive, export, or financial operations where available."
+                    - "Save, then verify the result with a user assigned to the role."
+                -
+                  title: "Resolve access denied"
+                  steps:
+                    - "Identify the action the user cannot perform."
+                    - "Check the active organization, role, and specific permission."
+                    - "Grant the appropriate permission only if the person needs that operation."
+                    - "Ask the user to reopen the module and confirm access."
+              note: "Hiding a button does not replace server-side authorization checks; both are required."
+            -
+              id: "languages"
+              title: "Language catalog"
+              description: "Manage the language options displayed by the application."
+              tasks:
+                -
+                  title: "Add a language"
+                  steps:
+                    - "Open “Catalogs” → “Languages”."
+                    - "Select “New language” and enter a name, code, ISO flag, and status."
+                    - "Save and verify the language appears in the table."
+                -
+                  title: "Edit or deactivate a language"
+                  steps:
+                    - "Find the language using search or filters."
+                    - "Select “Edit”, update its details, and save."
+                    - "Use “Delete” to archive a language that should no longer be available."
+              note: "Adding a catalog language does not automatically translate screens or generate translation files."
         catalogs:
           title: "Catalogs, inventory, and customers"
           description: "Manage product categories, products, stock by branch, and customer records."
