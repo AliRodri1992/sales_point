@@ -41,6 +41,19 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     expect(page).to have_no_css('[data-nested-phones-target="empty"]:not(.hidden)', visible: :all)
   end
 
+  scenario 'removes an unsaved phone immediately and allows adding it again' do
+    visit new_admin_supplier_contact_path(supplier)
+    expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)
+
+    find('[data-phone-item] button[data-action="nested-phones#remove"]').click
+    expect(page).to have_no_css('[data-nested-phones-target="items"] > [data-phone-item]')
+    expect(page).to have_css('[data-nested-phones-target="empty"]:not(.hidden)')
+
+    find('button[data-action="nested-phones#add"]').click
+    expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)
+    expect(page).to have_no_css('[data-nested-phones-target="empty"]:not(.hidden)', visible: :all)
+  end
+
   scenario 'persists a phone added interactively to a new supplier contact' do
     visit new_admin_supplier_contact_path(supplier)
 
