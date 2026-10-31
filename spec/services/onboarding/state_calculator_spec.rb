@@ -43,7 +43,7 @@ RSpec.describe Onboarding::StateCalculator, type: :service do
 
       state = described_class.new(organization, 2).call
 
-      expect(state['branch']).to include('name' => branch.name, 'phone' => branch.phone)
+      expect(state['branch']).to include('name' => branch.name, 'mobile_phone' => nil)
       expect(state['address']).to be_nil
     end
 
