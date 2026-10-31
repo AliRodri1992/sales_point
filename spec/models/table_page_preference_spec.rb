@@ -34,7 +34,7 @@ RSpec.describe TablePagePreference, type: :model do
     original = create(:table_page_preference, user:, organization:, per_page: 5)
     original.destroy!
 
-    expect(original.reload.deleted_at).to be_present
+    expect(described_class.with_deleted.find(original.id).deleted_at).to be_present
     expect(described_class.where(id: original.id)).to be_empty
 
     replacement = build(:table_page_preference, user:, organization:, per_page: 25)
