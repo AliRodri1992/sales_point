@@ -4,6 +4,40 @@ RSpec.describe Supplier, type: :model do
   let(:organization) { create(:organization) }
   subject(:supplier) { build(:supplier, organization:) }
 
+  describe 'automatic code assignment' do
+    it 'generates a sequential code for a new supplier without a code' do
+      first = create(:supplier, organization:, code: nil)
+      second = create(:supplier, organization:, code: nil)
+
+      expect(first.code).to match(/\\APROV-\\d{6,}\\z/)
+      expect(second.code.delete_prefix('PROV-').to_i).to eq(first.code.delete_prefix('PROV-').to_i + 1)
+    end
+
+    it 'preserves codes of existing suppliers' do
+      saved = create(:supplier, organization:, code: nil)
+      old_code = saved.code
+
+      saved.update!(name: 'Updated supplier')
+
+      expect(saved.reload.code).to eq(old_code)
+    end
+
+    it 'does not reuse the highest code of an archived supplier' do
+      archived = create(:supplier, organization:, code: nil)
+      archived.update!(deleted_at: Time.current)
+      other = create(:supplier, organization:, code: nil)
+
+      expect(other.code).not_to eq(archived.code)
+    end
+
+    it 'uses independent sequences for separate organizations' do
+      first = create(:supplier, organization:, code: nil)
+      second = create(:supplier, organization: create(:organization), code: nil)
+
+      expect(first.code).to eq(second.code)
+    end
+  end
+
   describe 'validations' do
     it 'is valid with valid attributes' do
       expect(supplier).to be_valid
