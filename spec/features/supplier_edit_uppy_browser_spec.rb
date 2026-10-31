@@ -33,5 +33,45 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :feature, js: true 
                                 visible: :all)
     expect(page).to have_css('.supplier-edit-upload [data-supplier-edit-uppy-target="dashboard"]',
                              count: 1)
+
+    dashboard_configuration = page.evaluate_script(<<~JS)
+      (() => {
+        const element = document.querySelector('.supplier-edit-upload')
+        const controller = window.Stimulus.getControllerForElementAndIdentifier(element, 'supplier-edit-uppy')
+        const dashboard = controller.uppy.getPlugin('Dashboard')
+        return { hideAfterFinish: dashboard.opts.hideProgressAfterFinish,
+                 doneButton: dashboard.opts.doneButtonHandler }
+      })()
+    JS
+    expect(dashboard_configuration).to eq('hideAfterFinish' => true, 'doneButton' => nil)
+  end
+
+  scenario 'shows completion underneath the dashboard without covering the loader' do
+    visit edit_admin_supplier_path(supplier)
+
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    navigation.find('summary').click
+    navigation.find('button[data-step-index="5"]').click
+    expect(page).to have_css('.supplier-edit-upload .uppy-Dashboard-inner', wait: 20)
+
+    page.execute_script(<<~JS)
+      const element = document.querySelector('.supplier-edit-upload')
+      const controller = window.Stimulus.getControllerForElementAndIdentifier(element, 'supplier-edit-uppy')
+      controller.setStatus('Document uploaded successfully')
+    JS
+
+    expect(page).to have_css('.supplier-edit-upload__feedback[data-state="success"]',
+                             text: 'Document uploaded successfully', visible: true)
+    layout = page.evaluate_script(<<~JS)
+      (() => {
+        const dashboard = document.querySelector('.supplier-edit-upload .uppy-Dashboard-inner')
+        const feedback = document.querySelector('.supplier-edit-upload__feedback')
+        return {
+          below: feedback.getBoundingClientRect().top >= dashboard.getBoundingClientRect().bottom,
+          globalLoaderHidden: document.querySelector('#admin-action-loader').hidden
+        }
+      })()
+    JS
+    expect(layout).to eq('below' => true, 'globalLoaderHidden' => true)
   end
 end
