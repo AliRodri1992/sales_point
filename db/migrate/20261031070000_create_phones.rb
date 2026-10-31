@@ -20,7 +20,7 @@ class CreatePhones < ActiveRecord::Migration[8.1]
               unique: true, where: 'deleted_at IS NULL AND "primary" = TRUE',
               name: 'idx_phones_one_primary_per_kind'
     add_index :phones, %i[phoneable_type phoneable_id number extension],
-              unique: true, where: 'deleted_at IS NULL',
+              unique: true, nulls_not_distinct: true, where: 'deleted_at IS NULL',
               name: 'idx_phones_unique_active_number'
     add_index :phones, :deleted_at
     add_check_constraint :phones, "kind IN ('mobile', 'landline', 'other')",
