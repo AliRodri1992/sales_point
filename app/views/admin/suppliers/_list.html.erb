@@ -5,18 +5,6 @@
 <% can_view_general = current_user.admin? || current_user.permission?('suppliers.view') ||
                       current_user.permission?('suppliers.update') %>
 
-<div id="supplier-page-size-loader" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/35 px-4 backdrop-blur-[2px]" hidden aria-hidden="true">
-  <div class="flex w-full max-w-xs flex-col items-center rounded-2xl border border-emerald-100 bg-white px-8 py-7 text-center shadow-2xl" role="status" aria-live="polite" aria-label="Actualizando registros">
-    <div class="relative mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-emerald-50">
-      <span class="absolute inset-2 animate-ping rounded-full border border-emerald-200 opacity-50 motion-reduce:animate-none" aria-hidden="true"></span>
-      <%= image_tag 'deltin/waving.svg', alt: '', class: 'relative h-24 w-24 animate-pulse object-contain motion-reduce:animate-none' %>
-    </div>
-    <p class="font-jakarta text-base font-bold text-slate-900">Actualizando registros</p>
-    <p class="mt-1 text-sm leading-6 text-slate-500">Deltin está preparando los datos de la tabla…</p>
-    <span class="sr-only">Cargando, por favor espera.</span>
-  </div>
-</div>
-
 <div class="rounded-2xl border border-slate-200 bg-white">
   <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-2xl px-5 py-3">
     <p class="text-xs text-slate-600"><%= t('admin.suppliers.index.filtered_count', count: total_count) %></p>
@@ -25,7 +13,7 @@
   <% if suppliers.any? %>
     <div class="overflow-x-auto">
       <table class="w-full min-w-[760px] text-sm">
-        <thead class="bg-slate-50">
+        <thead class="bg-slate-50" data-loading-scope="true">
           <tr class="border-y border-slate-200 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
             <th scope="col" class="px-4 py-3 text-left"><%= sort_link('name', t('admin.suppliers.index.columns.name'), frame: '_top') %></th>
             <% if can_view_fiscal %>
@@ -66,10 +54,10 @@
               <td class="sticky right-0 z-10 border-l border-slate-100 bg-white px-4 py-3 transition-colors group-hover:bg-emerald-50">
                 <div class="flex items-center justify-center gap-2">
                   <% if supplier.deleted_at.nil? && policy(supplier).show? %>
-                    <%= link_to admin_supplier_path(supplier), data: { tooltip: t('admin.suppliers.index.show'), turbo_frame: '_top' }, class: 'inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-600 transition hover:border-slate-300 hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500', aria: { label: t('admin.suppliers.index.show') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg><% end %>
+                    <%= link_to admin_supplier_path(supplier), data: { tooltip: t('admin.suppliers.index.show'), turbo_frame: '_top', loading_message: t('admin.action_loader.opening') }, class: 'inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-600 transition hover:border-slate-300 hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500', aria: { label: t('admin.suppliers.index.show') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="3"/></svg><% end %>
                   <% end %>
                   <% if supplier.deleted_at.nil? && policy(supplier).edit? %>
-                    <%= link_to edit_admin_supplier_path(supplier), data: { tooltip: t('admin.suppliers.index.edit'), turbo_frame: '_top' }, class: 'inline-flex size-10 items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600', aria: { label: t('admin.suppliers.index.edit') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.12 2.12 0 0 0-3-3l-11 11L4 20Z"/></svg><% end %>
+                    <%= link_to edit_admin_supplier_path(supplier), data: { tooltip: t('admin.suppliers.index.edit'), turbo_frame: '_top', loading_message: t('admin.action_loader.editing') }, class: 'inline-flex size-10 items-center justify-center rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600', aria: { label: t('admin.suppliers.index.edit') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1 11-11a2.12 2.12 0 0 0-3-3l-11 11L4 20Z"/></svg><% end %>
                   <% end %>
                   <% if (supplier.deleted_at.present? && policy(supplier).restore?) ||
                           (supplier.deleted_at.nil? && policy(supplier).destroy?) %>
@@ -78,9 +66,9 @@
                       <div data-supplier-floating-panel class="absolute right-0 z-50 mt-1 min-w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
                         <% if supplier.deleted_at.present? && policy(supplier).restore? %>
                           <%= button_to t('admin.suppliers.lifecycle.restore'), restore_admin_supplier_path(supplier),
-                                        method: :patch, class: 'w-full rounded px-3 py-2 text-left text-xs font-semibold text-emerald-800 hover:bg-emerald-50' %>
+                                        method: :patch, form: { data: { loading_message: t('admin.action_loader.archiving') } }, class: 'w-full rounded px-3 py-2 text-left text-xs font-semibold text-emerald-800 hover:bg-emerald-50' %>
                         <% elsif policy(supplier).destroy? %>
-                          <%= button_to admin_supplier_path(supplier), method: :delete, class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-rose-700 hover:bg-rose-50', data: { controller: 'swal-confirm', turbo_frame: '_top', turbo_confirm: t('admin.suppliers.index.confirm_delete'), swal_cancel_text: t('admin.suppliers.confirm.cancel') }, aria: { label: t('admin.suppliers.index.delete') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M4 7h16M10 11v7M14 11v7M6 7l1 14h10l1-14M9 7V4h6v3"/></svg><%= t('admin.suppliers.index.delete') %><% end %>
+                          <%= button_to admin_supplier_path(supplier), method: :delete, form: { data: { loading_message: t('admin.action_loader.archiving') } }, class: 'flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs text-rose-700 hover:bg-rose-50', data: { controller: 'swal-confirm', turbo_frame: '_top', turbo_confirm: t('admin.suppliers.index.confirm_delete'), swal_cancel_text: t('admin.suppliers.confirm.cancel') }, aria: { label: t('admin.suppliers.index.delete') } do %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M4 7h16M10 11v7M14 11v7M6 7l1 14h10l1-14M9 7V4h6v3"/></svg><%= t('admin.suppliers.index.delete') %><% end %>
                         <% end %>
                       </div>
                     </details>
@@ -125,7 +113,7 @@
           </p>
         </div>
         <% if total_pages > 1 %>
-          <nav class="flex flex-wrap items-center gap-1 sm:justify-end" aria-label="<%= t('admin.suppliers.index.pagination.navigation') %>">
+          <nav class="flex flex-wrap items-center gap-1 sm:justify-end" data-loading-scope="true" aria-label="<%= t('admin.suppliers.index.pagination.navigation') %>">
               <%= pagination_links(total_pages, frame: '_top', window: 2) %>
           </nav>
         <% end %>
@@ -148,10 +136,11 @@
       <% if has_filters %>
         <%= link_to t('admin.suppliers.index.advanced.clear'),
                     admin_suppliers_path(archived: (params[:archived] == '1' ? '1' : nil), per_page: params[:per_page]),
-                    data: { turbo_frame: '_top' },
+                    data: { turbo_frame: '_top', loading_message: t('admin.action_loader.updating') },
                     class: 'mt-2 inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
       <% elsif params[:archived] != '1' && policy(Supplier.new).new? %>
         <%= link_to t('admin.suppliers.index.new'), new_admin_supplier_path,
+                    data: { loading_message: t('admin.action_loader.creating') },
                     class: 'mt-2 inline-flex min-h-10 items-center rounded-lg bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800' %>
       <% end %>
     </div>
