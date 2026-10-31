@@ -53,7 +53,9 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
     expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
     expect(phones.all? { |item| item.at_css('[data-phone-fields]') }).to be(true)
-    expect(phones.all? { |item| item.at_css('[data-phone-removed-message] button[data-action="nested-phones#undoRemove"]') }).to be(true)
+    expect(phones.all? do |item|
+      item.at_css('[data-phone-removed-message] button[data-action="nested-phones#undoRemove"]')
+    end).to be(true)
 
     expect(editor.at_css('[data-supplier-contact-primary-toggle] input[type="checkbox"]')).to be_present
     expect(editor.at_css('[data-supplier-contact-active-toggle] input[type="checkbox"]')).to be_present
