@@ -11,9 +11,11 @@ module Admin
       if supplier_general_visible?
         fields << 'suppliers.email ILIKE :term'
         fields << <<~SQL.squish
-          EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier'
-                  AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL
-                  AND phones.number ILIKE :term)
+          EXISTS (SELECT 1 FROM contacts
+                  INNER JOIN phones ON phones.phoneable_type = 'Contact'
+                    AND phones.phoneable_id = contacts.id AND phones.deleted_at IS NULL
+                  WHERE contacts.contactable_type = 'Supplier' AND contacts.contactable_id = suppliers.id
+                    AND contacts.deleted_at IS NULL AND phones.number ILIKE :term)
         SQL
       end
       fields << 'suppliers.rfc ILIKE :term' if supplier_fiscal_visible?
