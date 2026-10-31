@@ -34,10 +34,11 @@
     </div>
 
     <div class="mt-3 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 pl-0 sm:pl-14">
-      <% if contact.phone.present? || contact.mobile_phone.present? %>
-        <a href="tel:<%= contact.phone.presence || contact.mobile_phone %>" class="inline-flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-emerald-800 sm:text-sm">
+      <% preferred_phone = contact.phones.active.order(primary: :desc).first %>
+      <% if preferred_phone %>
+        <a href="tel:<%= preferred_phone.number %>" class="inline-flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-emerald-800 sm:text-sm">
           <%= delta_icon('phone', class: 'size-4 shrink-0 text-emerald-700') %>
-          <%= contact.phone.presence || contact.mobile_phone %>
+          <%= preferred_phone.number %>
         </a>
       <% else %>
         <span class="inline-flex items-center gap-2 text-xs font-medium text-slate-400 sm:text-sm">
@@ -66,7 +67,7 @@
         </div>
         <div>
           <dt class="text-slate-500"><%= t('admin.supplier_details.contact_fields.mobile_phone') %></dt>
-          <dd class="mt-1 break-words font-semibold text-slate-800"><%= contact.mobile_phone.presence || '—' %></dd>
+          <dd class="mt-1 break-words font-semibold text-slate-800"><%= contact.phones.active.where(kind: 'mobile').order(primary: :desc).pluck(:number).join(', ').presence || '—' %></dd>
         </div>
         <div>
           <dt class="text-slate-500"><%= t('admin.supplier_details.contact_fields.primary') %></dt>
