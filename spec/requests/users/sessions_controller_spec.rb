@@ -10,6 +10,11 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.cookies['terminal_language']).to eq('en')
     expect(response.cookies['terminal_theme']).to eq('theme-material-red')
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="language-selector"] button svg')).to be_present
+    expect(document.at_css('[data-terminal-target="themeDropdown"]')).to be_present
+    expect(document.css('svg')).not_to be_empty
   end
 
   it 'renders validation errors when credentials are incomplete' do
