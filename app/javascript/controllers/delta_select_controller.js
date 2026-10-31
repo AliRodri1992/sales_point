@@ -160,6 +160,8 @@ export default class extends Controller {
       item.setAttribute("role", "option")
       item.setAttribute("aria-selected", String(option.selected))
       item.disabled = option.disabled
+      item.hidden = option.hidden
+      item.dataset.nativeHidden = String(option.hidden)
       item.dataset.searchText = `${option.textContent} ${option.dataset.countryCode || ""}`
       item.className = "delta-select-option flex min-h-11 w-full min-w-0 items-center gap-3 rounded-none px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none"
       item.append(this.optionContent(option))
@@ -187,7 +189,8 @@ export default class extends Controller {
   filterOptions() {
     const query = this.normalizeSearch(this.searchInput.value)
     this.optionsContainer.querySelectorAll("[role='option']").forEach((item) => {
-      item.hidden = query.length > 0 && !this.normalizeSearch(item.dataset.searchText).includes(query)
+      item.hidden = item.dataset.nativeHidden === "true" ||
+        (query.length > 0 && !this.normalizeSearch(item.dataset.searchText).includes(query))
     })
   }
 
