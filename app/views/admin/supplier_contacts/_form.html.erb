@@ -1,4 +1,5 @@
-<%= form_with model: [:admin, @supplier, @contact], class: 'space-y-5' do |form| %>
+<%= form_with model: [:admin, @supplier, @contact], class: 'space-y-5',
+              data: { loading_message: t('admin.action_loader.saving') } do |form| %>
   <% field_classes = 'block w-full min-h-11 rounded-xl border px-4 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
   <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
     <div class="flex items-center gap-3">
@@ -88,7 +89,7 @@
   <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
     <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.required_hint') %></p>
     <div class="flex flex-wrap gap-2">
-      <%= link_to t('admin.supplier_details.contact_form.cancel'), admin_supplier_contacts_path(@supplier), class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+      <%= link_to t('admin.supplier_details.contact_form.cancel'), admin_supplier_contacts_path(@supplier), data: { loading_message: t('admin.action_loader.returning') }, class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
       <%= form.submit t(@contact.persisted? ? 'admin.supplier_details.contact_form.update' : 'admin.supplier_details.contact_form.create'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
     </div>
   </div>
