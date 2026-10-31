@@ -27,3 +27,54 @@
 body:has([data-supplier-calendar-target="drawer"][aria-hidden="false"]) .deltin-launcher {
   display: none !important;
 }
+
+/* Shared action progress: branded, indeterminate and motion-accessible. */
+.deltin-action-overlay[hidden] { display: none !important; }
+.deltin-action-card { animation: deltin-action-enter 220ms ease-out both; }
+.deltin-action-halo {
+  background: radial-gradient(circle, #effcf6 20%, #d1fae5 72%, rgba(209, 250, 229, 0) 73%);
+  animation: deltin-action-breathe 2.2s ease-in-out infinite;
+}
+.deltin-action-orbit {
+  border: 3px solid transparent;
+  border-top-color: #059669;
+  border-right-color: #6ee7b7;
+  border-radius: 9999px;
+  animation: deltin-action-spin 1.8s linear infinite;
+}
+.deltin-action-mascot { animation: deltin-action-bob 1.6s ease-in-out infinite; }
+.deltin-action-spark--one { top: 10px; right: 21px; animation: deltin-action-spark 1.6s ease-in-out infinite; }
+.deltin-action-spark--two { bottom: 15px; left: 17px; animation: deltin-action-spark 1.6s ease-in-out .6s infinite; }
+.deltin-action-progress__indicator {
+  width: 42%;
+  animation: deltin-action-travel 1.5s ease-in-out infinite;
+}
+@keyframes deltin-action-enter {
+  from { opacity: 0; transform: translateY(8px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes deltin-action-spin { to { transform: rotate(360deg); } }
+@keyframes deltin-action-breathe {
+  0%, 100% { transform: scale(.94); opacity: .72; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+@keyframes deltin-action-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+@keyframes deltin-action-spark {
+  0%, 100% { opacity: .35; transform: scale(.75); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes deltin-action-travel {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(350%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .deltin-action-card, .deltin-action-halo, .deltin-action-orbit,
+  .deltin-action-mascot, .deltin-action-spark, .deltin-action-progress__indicator {
+    animation: none !important;
+  }
+  .deltin-action-orbit { border-color: #6ee7b7; }
+  .deltin-action-progress__indicator { width: 100%; opacity: .55; transform: none; }
+}
