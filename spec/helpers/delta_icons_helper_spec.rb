@@ -40,7 +40,7 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     components = Rails.root.glob('app/components/**/*.html.erb')
     offenders = components.filter_map do |file|
       source = file.read
-      next unless source.match?(/(?<!helpers\\.)\\bdelta_icon\\s*\\(?/)
+      next unless source.match?(/(?<!helpers\.)\bdelta_icon\s*\(?/)
 
       file.relative_path_from(Rails.root).to_s
     end
