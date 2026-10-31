@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
   static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary",
-    "addressValidationError", "progress", "progressBar", "activeLabel", "position", "navigation"]
+    "addressValidationError", "progress", "progressBar", "position", "navigation"]
   static values = {
     index: { type: Number, default: 0 },
     addressValidationUrl: String,
@@ -447,10 +447,6 @@ export default class extends Controller {
   }
 
   render() {
-    const current = this.tabTargets[this.indexValue]
-    if (this.hasActiveLabelTarget && current) {
-      this.activeLabelTarget.textContent = current.querySelector("[data-supplier-form-step-label]")?.textContent?.trim() || ""
-    }
     if (this.hasPositionTarget) {
       const template = this.element.dataset.supplierFormStepCounterTemplate || "%{current} / %{total}"
       this.positionTarget.textContent = template.replace("%{current}", String(this.indexValue + 1))
