@@ -15,3 +15,8 @@ en:
       scheduled_count: "Recurring schedules"
       branches_count: "Branches"
       exceptions_count: "Exceptions"
+      offer_identity_title: "Offer identification"
+      offer_identity_description: "Choose the product and how this supplier provides it."
+      offer_terms_title: "Prices and terms"
+      offer_terms_description: "Set costs, quantities and delivery lead times."
+      offer_settings_title: "Availability"
