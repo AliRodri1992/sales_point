@@ -20,8 +20,6 @@ class Client < ApplicationRecord
             format: { with: URI::MailTo::EMAIL_REGEXP },
             allow_blank: true
 
-  validates :phone, length: { maximum: 30 }, allow_blank: true
-
   validates :rfc,
             length: { in: 12..13 },
             uniqueness: { conditions: -> { where(deleted_at: nil) } },
@@ -51,7 +49,6 @@ class Client < ApplicationRecord
   end
 
   def normalize_contact_info
-    self.phone = phone.to_s.strip.presence
     self.postal_code = postal_code.to_s.strip.presence
   end
 
