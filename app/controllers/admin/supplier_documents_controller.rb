@@ -21,7 +21,11 @@ module Admin
       return reject_file(supplier) unless files.size.between?(1, 10) && files.all? { |file| valid_file?(file) }
 
       persist_uploaded_documents(supplier, files)
-      redirect_documents(supplier, :uploaded)
+      if request.format.json?
+        render json: { uploaded: files.size, status: 'ok' }, status: :created
+      else
+        redirect_documents(supplier, :uploaded)
+      end
     end
 
     def update
@@ -133,8 +137,12 @@ module Admin
     end
 
     def reject_file(supplier)
-      redirect_to admin_supplier_path(supplier, tab: 'documents'),
-                  alert: t('admin.supplier_documents.invalid_file')
+      if request.format.json?
+        render json: { error: t('admin.supplier_documents.invalid_file') }, status: :unprocessable_content
+      else
+        redirect_to admin_supplier_path(supplier, tab: 'documents'),
+                    alert: t('admin.supplier_documents.invalid_file')
+      end
     end
 
     def redirect_documents(supplier, action)
