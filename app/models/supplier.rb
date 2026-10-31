@@ -60,9 +60,6 @@ class Supplier < ApplicationRecord
             format: { with: URI::MailTo::EMAIL_REGEXP },
             allow_blank: true
 
-  validates :phone, length: { maximum: 30 }, allow_blank: true
-  validate :phone_must_be_valid
-
   validates :notes, length: { maximum: 1000 }, allow_blank: true
 
   enum :status, { active: 'active', inactive: 'inactive' }, validate: true, default: :active
@@ -114,7 +111,6 @@ class Supplier < ApplicationRecord
     normalize_text_field(:name, &:strip)
     %i[legal_name trade_name alias_name].each { |field| normalize_text_field(field, &:strip) }
     normalize_email
-    normalize_phone
     normalize_rfc
     normalize_text_field(:notes, &:strip)
   end
@@ -128,19 +124,6 @@ class Supplier < ApplicationRecord
   end
 
   def normalize_email = (self.email = email.to_s.strip.downcase.presence)
-
-  def normalize_phone
-    return if phone.blank?
-
-    parsed = Phonelib.parse(phone.to_s.strip, 'MX')
-    self.phone = parsed.e164 if parsed.valid?
-  end
-
-  def phone_must_be_valid
-    return if phone.blank?
-
-    errors.add(:phone, :invalid) unless Phonelib.parse(phone, 'MX').valid?
-  end
 
   def normalize_rfc
     rfc_value = rfc.to_s.strip.upcase
