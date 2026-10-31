@@ -26,6 +26,7 @@ module Admin
 
     def create
       @client = Client.new(client_params)
+      assign_phone_organization(@client)
 
       if @client.save
         notify_client(current_user, @client, 'created')
@@ -39,7 +40,9 @@ module Admin
     end
 
     def update
-      if @client.update(client_params)
+      @client.assign_attributes(client_params)
+      assign_phone_organization(@client)
+      if @client.save
         notify_client(current_user, @client, 'updated')
         redirect_to admin_clients_path, flash: { swal_message: t('admin.clients.updated') }
       else
@@ -75,11 +78,17 @@ module Admin
 
     def client_params
       params.expect(
-        client: %i[
-          code name email phone rfc sat_fiscal_regime_id
-          postal_code credit_limit status notes
+        client: [
+          %i[code name email rfc sat_fiscal_regime_id postal_code credit_limit status notes],
+          { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy] }
         ]
       )
+    end
+
+    def assign_phone_organization(client)
+      client.phones.each do |phone|
+        phone.organization ||= current_organization
+      end
     end
 
     def load_clients
