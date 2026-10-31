@@ -7,10 +7,6 @@ class Supplier < ApplicationRecord
 
   has_paper_trail
 
-  has_many :phones, as: :phoneable, dependent: :restrict_with_exception
-  accepts_nested_attributes_for :phones,
-                                allow_destroy: true,
-                                reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
   belongs_to :organization
   has_many :supplier_products, dependent: :restrict_with_exception
   has_many :purchase_quotations, dependent: :restrict_with_exception
@@ -21,6 +17,7 @@ class Supplier < ApplicationRecord
 
   belongs_to :currency
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
+  has_many :contact_phones, through: :contacts, source: :phones
   accepts_nested_attributes_for :contacts, allow_destroy: true, reject_if: :all_blank
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :addresses, allow_destroy: true, reject_if: :all_blank
@@ -69,9 +66,11 @@ class Supplier < ApplicationRecord
   scope :search, lambda { |term|
     where(<<~SQL.squish, q: "%#{term}%")
       code ILIKE :q OR name ILIKE :q OR email ILIKE :q OR rfc ILIKE :q OR
-      EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Supplier'
-              AND phones.phoneable_id = suppliers.id AND phones.deleted_at IS NULL
-              AND phones.number ILIKE :q)
+      EXISTS (SELECT 1 FROM contacts
+              INNER JOIN phones ON phones.phoneable_type = 'Contact'
+                AND phones.phoneable_id = contacts.id AND phones.deleted_at IS NULL
+              WHERE contacts.contactable_type = 'Supplier' AND contacts.contactable_id = suppliers.id
+                AND contacts.deleted_at IS NULL AND phones.number ILIKE :q)
     SQL
   }
   scope :with_status, ->(status) { where(status: status) }
