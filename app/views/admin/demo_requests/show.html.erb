@@ -7,7 +7,7 @@
   </div>
   <%= link_to admin_demo_requests_path,
               class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
-    <%= icon('arrow-left', class: 'size-4') %>
+    <%= delta_icon('arrow-left', class: 'size-4') %>
     <%= t('admin.demo_requests.show.back') %>
   <% end %>
 </div>
@@ -147,7 +147,7 @@
         <% @activities.each do |activity| %>
           <div class="flex gap-3 px-6 py-4">
             <div class="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-              <%= icon('clock', class: 'size-4') %>
+              <%= delta_icon('clock', class: 'size-4') %>
             </div>
             <div class="min-w-0">
               <p class="text-sm font-medium text-slate-800">

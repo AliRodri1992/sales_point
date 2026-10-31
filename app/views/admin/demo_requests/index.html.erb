@@ -29,7 +29,7 @@
                    class: 'rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500' %>
     <%= button_tag type: 'submit',
                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800' do %>
-      <%= icon('funnel', class: 'size-4') %>
+      <%= delta_icon('funnel', class: 'size-4') %>
       <%= t('admin.demo_requests.filters.apply') %>
     <% end %>
   <% end %>
@@ -47,7 +47,7 @@
       <div class="flex items-center justify-between">
         <span class="text-sm font-medium text-slate-500"><%= t("admin.demo_requests.metrics.#{key}") %></span>
         <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
-          <%= icon(icon_name, class: 'size-5') %>
+          <%= delta_icon(icon_name, class: 'size-5') %>
         </span>
       </div>
       <p class="mt-3 text-2xl font-bold text-slate-900"><%= key == 'conversion_rate' ? "#{@metrics[key.to_sym]}%" : @metrics[key.to_sym] %></p>
@@ -108,7 +108,7 @@
               <td class="px-6 py-4 text-right">
                 <%= link_to admin_demo_request_path(demo_request),
                             class: 'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50' do %>
-                  <%= icon('eye', class: 'size-4') %>
+                  <%= delta_icon('eye', class: 'size-4') %>
                   <%= t('admin.demo_requests.index.view') %>
                 <% end %>
               </td>
@@ -139,7 +139,7 @@
           </p>
           <%= link_to admin_demo_request_path(demo_request),
                       class: 'mt-4 inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700' do %>
-            <%= icon('eye', class: 'size-4') %>
+            <%= delta_icon('eye', class: 'size-4') %>
             <%= t('admin.demo_requests.index.view') %>
           <% end %>
         </article>
@@ -185,7 +185,7 @@
   <% else %>
     <div class="px-6 py-14 text-center">
       <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
-        <%= icon('inbox', class: 'size-6') %>
+        <%= delta_icon('inbox', class: 'size-6') %>
       </div>
       <h2 class="mt-4 text-base font-semibold text-slate-900"><%= t('admin.demo_requests.index.empty_title') %></h2>
       <p class="mt-1 text-sm text-slate-500"><%= t('admin.demo_requests.index.empty_subtitle') %></p>
