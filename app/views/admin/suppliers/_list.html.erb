@@ -4,6 +4,12 @@
                      current_user.permission?('suppliers.fiscal.manage') %>
 <% can_view_general = current_user.admin? || current_user.permission?('suppliers.view') ||
                       current_user.permission?('suppliers.update') %>
+<% contact_emails_by_supplier = if can_view_general && suppliers.any?
+  Contact.available.where(contactable_type: 'Supplier', contactable_id: suppliers.map(&:id), primary: true)
+         .where.not(email: [nil, '']).pluck(:contactable_id, :email).to_h
+else
+  {}
+end %>
 
 <div class="rounded-2xl border border-slate-200 bg-white">
   <div class="flex flex-wrap items-center justify-between gap-3 rounded-t-2xl px-5 py-3">
@@ -40,7 +46,7 @@
               <% if can_view_general %>
                 <div class="min-w-0">
                   <dt class="font-semibold text-slate-500"><%= t('admin.suppliers.index.columns.email') %></dt>
-                  <dd class="mt-1 break-all font-medium text-slate-800"><%= supplier.email.presence || '—' %></dd>
+                  <dd class="mt-1 break-all font-medium text-slate-800"><%= contact_emails_by_supplier[supplier.id].presence || supplier.email.presence || '—' %></dd>
                 </div>
               <% end %>
             </dl>
@@ -105,7 +111,7 @@
                 <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= supplier.rfc.presence || '—' %></td>
               <% end %>
               <% if can_view_general %>
-                <td class="px-4 py-3 text-slate-600"><%= supplier.email.presence || '—' %></td>
+                <td class="px-4 py-3 text-slate-600"><%= contact_emails_by_supplier[supplier.id].presence || supplier.email.presence || '—' %></td>
               <% end %>
               <td class="px-4 py-3 text-center">
                 <span class="inline-flex rounded-lg px-3 py-1 text-xs font-semibold <%= supplier.active? ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
