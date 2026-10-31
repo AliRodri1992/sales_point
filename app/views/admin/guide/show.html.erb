@@ -64,7 +64,7 @@
                     <span class="mt-1 block text-sm leading-6 text-slate-600"><%= topic[:description] %></span>
                     <span class="mt-2 block text-xs font-semibold text-emerald-700"><%= Array(topic[:tasks]).size %> <%= t('admin.user_manual.procedures') %></span>
                   </span>
-                  <%= icon('chevron-down', class: 'size-5 shrink-0 text-emerald-700 transition group-open:rotate-180') %>
+                  <%= delta_icon('chevron-down', class: 'size-5 shrink-0 text-emerald-700 transition group-open:rotate-180') %>
                 </summary>
                 <div class="space-y-6 border-t border-slate-100 px-5 py-5 sm:px-6">
                   <% if topic[:before].present? %>
@@ -89,7 +89,7 @@
                           </button>
                           <figcaption class="flex items-center justify-between gap-3 border-t border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-600">
                             <span><%= t('admin.user_manual.diagram_caption') %></span>
-                            <span class="inline-flex shrink-0 items-center gap-1 font-semibold text-emerald-700"><%= icon('arrow-up-right', class: 'size-3.5') %><%= t('admin.user_manual.zoom') %></span>
+                            <span class="inline-flex shrink-0 items-center gap-1 font-semibold text-emerald-700"><%= delta_icon('arrow-up-right', class: 'size-3.5') %><%= t('admin.user_manual.zoom') %></span>
                           </figcaption>
                         </figure>
                         <div class="min-w-0">
@@ -118,7 +118,7 @@
                   <% if (destination = guide_module_path(topic[:id])) %>
                     <%= link_to destination, class: 'inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
                       <%= t('admin.supplier_closure.open_module') %>
-                      <%= icon('arrow-up-right', class: 'size-4') %>
+                      <%= delta_icon('arrow-up-right', class: 'size-4') %>
                     <% end %>
                   <% end %>
                 </div>

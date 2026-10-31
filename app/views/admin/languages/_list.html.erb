@@ -66,13 +66,13 @@
                               data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.show.title') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.languages.show.title') } do %>
-                    <%= icon('eye', class: 'size-4') %>
+                    <%= delta_icon('eye', class: 'size-4') %>
                   <% end %>
                   <%= link_to edit_admin_language_path(language),
                               data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.index.edit') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.languages.index.edit') } do %>
-                    <%= icon('pencil-square', class: 'size-4') %>
+                    <%= delta_icon('pencil-square', class: 'size-4') %>
                   <% end %>
                   <%= button_to admin_language_path(language),
                                 method: :delete,
@@ -84,7 +84,7 @@
                                   swal_cancel_text: t('admin.languages.confirm.cancel')
                                 },
                                 aria: { label: t('admin.languages.index.delete') } do %>
-                    <%= icon('trash', class: 'size-4') %>
+                    <%= delta_icon('trash', class: 'size-4') %>
                   <% end %>
                 </div>
               </td>
@@ -112,7 +112,7 @@
     <% end %>
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= icon('language', class: 'size-8 text-slate-300') %>
+      <%= delta_icon('language', class: 'size-8 text-slate-300') %>
       <p class="text-sm font-semibold text-slate-500">
         <%= t('admin.languages.index.empty_title') %>
       </p>
