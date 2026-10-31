@@ -57,8 +57,12 @@ module Suppliers
     def apply_search(relation)
       term = "%#{ActiveRecord::Base.sanitize_sql_like(@query)}%"
       relation.where(
-        'contacts.name ILIKE :term OR contacts.position ILIKE :term OR ' \
-        'contacts.email ILIKE :term OR contacts.phone ILIKE :term OR contacts.mobile_phone ILIKE :term',
+        <<~SQL.squish,
+          contacts.name ILIKE :term OR contacts.position ILIKE :term OR contacts.email ILIKE :term
+          OR EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Contact'
+                     AND phones.phoneable_id = contacts.id AND phones.deleted_at IS NULL
+                     AND phones.number ILIKE :term)
+        SQL
         term:
       )
     end
