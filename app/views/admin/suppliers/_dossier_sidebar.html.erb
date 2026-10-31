@@ -47,7 +47,7 @@
                 'wallet' => 'banknotes',
                 'bank' => 'building-library'
               }.fetch(symbol) %>
-              <%= icon(navigation_icon, class: 'size-5 shrink-0') %>
+              <%= delta_icon(navigation_icon, class: 'size-5 shrink-0') %>
               <span class="min-w-0 break-words"><%= t("admin.supplier_dossier.sections.#{section}") %></span>
             </button>
           <% end %>

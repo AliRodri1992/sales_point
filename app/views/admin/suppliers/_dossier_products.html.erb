@@ -4,7 +4,7 @@
     <header class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex min-w-0 items-center gap-3">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-          <%= icon('cube', class: 'size-5') %>
+          <%= delta_icon('cube', class: 'size-5') %>
         </span>
         <div class="min-w-0">
           <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.procurement.title') %></h2>
@@ -14,7 +14,7 @@
       <% if policy(supplier).manage_products? %>
       <%= link_to admin_supplier_supplier_products_path(supplier),
                   class: 'inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50' do %>
-        <%= icon('cube', class: 'size-4') %>
+        <%= delta_icon('cube', class: 'size-4') %>
         <%= t('admin.supplier_dossier.product_empty.manage') %>
       <% end %>
       <% end %>
@@ -49,7 +49,7 @@
                 </p>
                 <% if offer.preferred? %>
                   <span class="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800">
-                    <%= icon('star', class: 'size-3.5') %>
+                    <%= delta_icon('star', class: 'size-3.5') %>
                     <%= t('admin.supplier_dossier.product_cards.preferred') %>
                   </span>
                 <% end %>
@@ -95,7 +95,7 @@
               <%= link_to admin_supplier_path(supplier, tab: 'products', products_page: products_page.page - 1),
                           aria: { label: t('admin.procurement.previous') },
                           class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800' do %>
-                <%= icon('chevron-left', class: 'size-4') %>
+                <%= delta_icon('chevron-left', class: 'size-4') %>
               <% end %>
             <% end %>
             <% products_page.visible_pages.each do |number| %>
@@ -107,7 +107,7 @@
               <%= link_to admin_supplier_path(supplier, tab: 'products', products_page: products_page.page + 1),
                           aria: { label: t('admin.procurement.next') },
                           class: 'inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800' do %>
-                <%= icon('chevron-right', class: 'size-4') %>
+                <%= delta_icon('chevron-right', class: 'size-4') %>
               <% end %>
             <% end %>
           </nav>
@@ -126,7 +126,7 @@
         <% if policy(supplier).manage_products? %>
           <%= link_to new_admin_supplier_supplier_product_path(supplier),
                       class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
-            <%= icon('plus', class: 'size-4') %>
+            <%= delta_icon('plus', class: 'size-4') %>
             <%= t('admin.supplier_dossier.product_empty.add_first') %>
           <% end %>
         <% end %>

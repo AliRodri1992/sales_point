@@ -1,7 +1,7 @@
 <div data-supplier-general-area="contact_management" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <h3 class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 font-jakarta text-base font-bold text-slate-900">
 
-    <%= icon('users', class: 'size-5 text-emerald-700') %>
+    <%= delta_icon('users', class: 'size-5 text-emerald-700') %>
     <%= t('admin.supplier_general_layout.contact_management') %>
   </h3>
   <dl class="grid gap-5 p-5 md:grid-cols-2">
@@ -10,7 +10,7 @@
       <% if supplier.phone.present? %>
         <dd class="flex items-center gap-2 break-all text-sm font-semibold text-slate-900">
           <%= supplier.phone %>
-          <%= link_to "tel:#{supplier.phone}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= icon('phone', class: 'size-4') %><% end %>
+          <%= link_to "tel:#{supplier.phone}", aria: { label: t('admin.supplier_general_layout.call') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %><%= delta_icon('phone', class: 'size-4') %><% end %>
         </dd>
       <% else %>
         <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.phone_missing') %></dd>
@@ -32,7 +32,7 @@
       <% if supplier.email.present? %>
         <dd class="flex items-center gap-2 break-all text-sm font-semibold">
           <%= mail_to supplier.email, supplier.email, class: 'text-emerald-700 hover:underline' %>
-          <%= mail_to supplier.email, icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
+          <%= mail_to supplier.email, delta_icon('envelope', class: 'size-4'), aria: { label: t('admin.supplier_general_layout.email_action') }, class: 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100' %>
         </dd>
       <% else %>
         <dd class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.email_missing') %></dd>

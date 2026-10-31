@@ -18,7 +18,7 @@
       <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
           <% metric_icon = { 'users' => 'users', 'pin' => 'map-pin', 'calendar' => 'calendar-days' }.fetch(symbol, 'cube') %>
-          <%= icon(metric_icon, class: 'size-5') %>
+          <%= delta_icon(metric_icon, class: 'size-5') %>
         </span>
         <div>
           <p class="text-sm font-medium text-slate-500"><%= label %></p>
@@ -34,7 +34,7 @@
   <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
       <div class="flex items-center gap-3">
-        <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('building-office-2', class: 'size-5') %></span>
+        <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('building-office-2', class: 'size-5') %></span>
         <div>
           <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.overview.main_information') %></h2>
           <p class="text-sm text-slate-500"><%= t('admin.supplier_dossier.overview.main_description') %></p>
@@ -42,7 +42,7 @@
       </div>
       <% if can_edit %>
         <%= link_to edit_admin_supplier_path(supplier, return_to: 'overview'), class: 'inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
-          <%= icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
+          <%= delta_icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
         <% end %>
       <% end %>
     </div>
@@ -87,13 +87,13 @@
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('users', class: 'size-5') %></span>
+          <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('users', class: 'size-5') %></span>
           <div>
             <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_dossier.overview.primary_contacts') %></h3>
             <p class="text-xs text-slate-500"><%= t('admin.supplier_dossier.overview.contacts_subtitle') %></p>
           </div>
         </div>
-        <button type="button" data-action="supplier-dossier#select" data-section="contacts" class="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-50"><%= t('admin.supplier_dossier.overview.view_all') %><%= icon('arrow-right', class: 'size-4') %></button>
+        <button type="button" data-action="supplier-dossier#select" data-section="contacts" class="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-50"><%= t('admin.supplier_dossier.overview.view_all') %><%= delta_icon('arrow-right', class: 'size-4') %></button>
       </div>
       <% if contacts.any? %>
         <div class="overflow-x-auto">
@@ -129,13 +129,13 @@
     <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('calendar-days', class: 'size-5') %></span>
+          <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('calendar-days', class: 'size-5') %></span>
           <div>
             <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_dossier.overview.upcoming_visits') %></h3>
             <p class="text-xs text-slate-500"><%= t('admin.supplier_dossier.overview.schedule_subtitle') %></p>
           </div>
         </div>
-        <button type="button" data-action="supplier-dossier#select" data-section="schedules" class="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-50"><%= t('admin.supplier_dossier.overview.view_calendar') %><%= icon('arrow-right', class: 'size-4') %></button>
+        <button type="button" data-action="supplier-dossier#select" data-section="schedules" class="inline-flex min-h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-50"><%= t('admin.supplier_dossier.overview.view_calendar') %><%= delta_icon('arrow-right', class: 'size-4') %></button>
       </div>
       <% if schedules.any? %>
         <% upcoming = schedules.sort_by { |schedule| [supplier_dossier_next_occurrence(schedule), schedule.starts_at] }.first(3) %>
