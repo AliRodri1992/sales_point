@@ -8,8 +8,8 @@
     <div role="alert" class="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-4 text-rose-800 sm:px-5">
       <%= delta_icon('exclamation-circle', class: 'mt-0.5 size-5 shrink-0') %>
       <div class="min-w-0">
-        <p class="text-sm font-bold">Revisa los datos del contacto</p>
-        <p class="mt-1 text-xs leading-5">Corrige los campos señalados antes de guardar. Tu información permanece en el formulario.</p>
+        <p class="text-sm font-bold"><%= t('admin.supplier_details.contact_form.validation_title') %></p>
+        <p class="mt-1 text-xs leading-5"><%= t('admin.supplier_details.contact_form.validation_description') %></p>
       </div>
     </div>
   <% end %>
@@ -73,7 +73,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
               <div class="flex items-center gap-2">
                 <%= delta_icon('phone', class: 'size-4 text-emerald-700') %>
-                <h3 class="text-sm font-bold text-slate-900"><%= t('admin.phones.number') %></h3>
+                <h3 class="text-sm font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.phones_title') %></h3>
               </div>
               <button type="button" data-action="nested-phones#add"
                       class="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
@@ -113,7 +113,7 @@
               <span class="min-w-0">
                 <span class="flex items-center gap-2 text-sm font-bold text-slate-900">
                   <%= delta_icon('star', class: 'size-4 shrink-0 text-emerald-700') %>
-                  <%= t('admin.supplier_details.primary_option') %>
+                  <%= t('admin.supplier_details.contact_fields.primary') %>
                 </span>
                 <span class="mt-1.5 block text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.primary_hint') %></span>
               </span>
