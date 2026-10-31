@@ -15,3 +15,8 @@ ko:
       scheduled_count: "정기 일정"
       branches_count: "지점"
       exceptions_count: "예외"
+      offer_identity_title: "공급 품목 정보"
+      offer_identity_description: "공급업체가 제공하는 제품과 포장 단위를 설정하세요."
+      offer_terms_title: "가격 및 조건"
+      offer_terms_description: "비용, 수량, 납기를 설정하세요."
+      offer_settings_title: "사용 가능 여부"
