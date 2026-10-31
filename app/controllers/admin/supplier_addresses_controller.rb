@@ -7,10 +7,10 @@ module Admin
     include SupplierAddressResults
 
     ACTION_POLICY = {
-      'index' => :view_addresses?, 'new' => :manage_addresses?, 'create' => :manage_addresses?,
-      'edit' => :manage_addresses?, 'update' => :manage_addresses?,
-      'destroy' => :manage_addresses?, 'restore' => :manage_addresses?,
-      'set_primary' => :manage_addresses?, 'retry_geocoding' => :manage_addresses?
+      'index' => :view_addresses?, 'new' => :create_addresses?, 'create' => :create_addresses?,
+      'edit' => :update_addresses?, 'update' => :update_addresses?,
+      'destroy' => :destroy_addresses?, 'restore' => :restore_addresses?,
+      'set_primary' => :set_primary_address?, 'retry_geocoding' => :geocode_address?
     }.freeze
 
     layout 'admin_dashboard'

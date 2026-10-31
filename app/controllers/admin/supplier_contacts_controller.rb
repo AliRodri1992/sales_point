@@ -5,9 +5,9 @@ module Admin
     include SupplierAuditTrail
 
     ACTION_POLICY = {
-      'index' => :view_contacts?, 'new' => :manage_contacts?, 'create' => :manage_contacts?,
-      'edit' => :manage_contacts?, 'update' => :manage_contacts?,
-      'destroy' => :manage_contacts?, 'restore' => :manage_contacts?
+      'index' => :view_contacts?, 'new' => :create_contacts?, 'create' => :create_contacts?,
+      'edit' => :update_contacts?, 'update' => :update_contacts?,
+      'destroy' => :destroy_contacts?, 'restore' => :restore_contacts?
     }.freeze
 
     layout 'admin_dashboard'

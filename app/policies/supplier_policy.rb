@@ -9,6 +9,10 @@ class SupplierPolicy
     suppliers.commercial.manage suppliers.products.view suppliers.products.manage
     accounts_payable.view accounts_payable.banks.view accounts_payable.banks.manage
     suppliers.export suppliers.create
+    suppliers.contacts.create suppliers.contacts.update suppliers.contacts.destroy suppliers.contacts.restore
+    suppliers.addresses.create suppliers.addresses.update suppliers.addresses.destroy suppliers.addresses.restore
+    suppliers.addresses.set_primary suppliers.addresses.geocode
+    suppliers.schedules.create suppliers.schedules.update suppliers.schedules.destroy suppliers.schedules.restore
   ].freeze
 
   # List access does not grant access to sensitive dossier sections.
@@ -35,22 +39,42 @@ class SupplierPolicy
   def view_general? = authorized_record? && (allowed?('suppliers.view') || allowed?('suppliers.update'))
 
   def view_contacts?
-    authorized_record? && (allowed?('suppliers.contacts.view') || allowed?('suppliers.contacts.manage'))
+    authorized_record? && (allowed?('suppliers.contacts.view') || contacts_any_action?)
   end
 
   def manage_contacts? = authorized_record? && allowed?('suppliers.contacts.manage')
 
   def view_addresses?
-    authorized_record? && (allowed?('suppliers.addresses.view') || allowed?('suppliers.addresses.manage'))
+    authorized_record? && (allowed?('suppliers.addresses.view') || addresses_any_action?)
   end
 
   def manage_addresses? = authorized_record? && allowed?('suppliers.addresses.manage')
 
   def view_schedules?
-    authorized_record? && (allowed?('suppliers.schedules.view') || allowed?('suppliers.schedules.manage'))
+    authorized_record? && (allowed?('suppliers.schedules.view') || schedules_any_action?)
   end
 
   def manage_schedules? = authorized_record? && allowed?('suppliers.schedules.manage')
+
+  # Independent permissions supplement the legacy *.manage grants.
+  # Existing roles remain operational while administrators can assign only
+  # the individual CRUD actions needed for a workflow.
+  def create_contacts? = section_action?('contacts', 'create')
+  def update_contacts? = section_action?('contacts', 'update')
+  def destroy_contacts? = section_action?('contacts', 'destroy')
+  def restore_contacts? = section_action?('contacts', 'restore')
+
+  def create_addresses? = section_action?('addresses', 'create')
+  def update_addresses? = section_action?('addresses', 'update')
+  def destroy_addresses? = section_action?('addresses', 'destroy')
+  def restore_addresses? = section_action?('addresses', 'restore')
+  def set_primary_address? = section_action?('addresses', 'set_primary')
+  def geocode_address? = section_action?('addresses', 'geocode')
+
+  def create_schedules? = section_action?('schedules', 'create')
+  def update_schedules? = section_action?('schedules', 'update')
+  def destroy_schedules? = section_action?('schedules', 'destroy')
+  def restore_schedules? = section_action?('schedules', 'restore')
 
   def view_documents?
     authorized_record? && (allowed?('suppliers.documents.view') || allowed?('suppliers.documents.manage'))
@@ -78,6 +102,20 @@ class SupplierPolicy
   def export? = authorized_organization? && allowed?('suppliers.export')
 
   private
+
+  def section_action?(section, action)
+    authorized_record? && (allowed?("suppliers.#{section}.#{action}") ||
+                           allowed?("suppliers.#{section}.manage"))
+  end
+
+  def contacts_any_action? = section_any_action?('contacts', %w[create update destroy restore])
+  def addresses_any_action? = section_any_action?('addresses', %w[create update destroy restore set_primary geocode])
+  def schedules_any_action? = section_any_action?('schedules', %w[create update destroy restore])
+
+  def section_any_action?(section, actions)
+    allowed?("suppliers.#{section}.manage") ||
+      actions.any? { |action| allowed?("suppliers.#{section}.#{action}") }
+  end
 
   def allowed?(permission)
     user.admin? || user.permission?(permission)

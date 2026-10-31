@@ -93,7 +93,14 @@ module Admin
       return head :forbidden unless current_organization
 
       @supplier = policy_scope(current_organization.suppliers.not_deleted).find(params[:supplier_id])
-      authorize @supplier, :manage_schedules?
+      permission = case action_name
+                   when 'create' then :create_schedules?
+                   when 'edit', 'update' then :update_schedules?
+                   when 'destroy' then :destroy_schedules?
+                   when 'bulk_update'
+                     params[:operation] == 'restore' ? :restore_schedules? : :destroy_schedules?
+                   end
+      authorize @supplier, permission
     end
 
     def exception_params
