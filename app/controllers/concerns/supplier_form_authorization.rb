@@ -4,9 +4,19 @@ module SupplierFormAuthorization
   private
 
   def authorize_nested_sections!(attributes)
-    authorize @supplier, :manage_contacts? if attributes.key?(:contacts_attributes)
-    authorize @supplier, :manage_addresses? if attributes.key?(:addresses_attributes)
+    %i[contacts addresses].each do |section|
+      key = :"#{section}_attributes"
+      next unless attributes.key?(key)
+
+      authorize @supplier, nested_section_permission(attributes[key], section)
+    end
     authorize @supplier, :create_documents? if attributes.key?(:documents)
+  end
+
+  def nested_section_permission(nested, section)
+    records = nested.respond_to?(:values) ? nested.values : Array(nested)
+    action = records.any? { |record| record[:id].present? } ? 'update' : 'create'
+    :"#{action}_#{section}?"
   end
 
   def authorize_sensitive_fields!(attributes)
