@@ -57,6 +57,7 @@ RSpec.describe 'Supplier address exceptional lifecycle paths', type: :request do
 
     expect(response).to redirect_to(admin_supplier_addresses_path(supplier))
     expect(record.reload).to be_primary
+    expect(flash[:swal_message]).to be_blank
   end
 
   it 'rejects restoring an archived primary address over an active primary' do
