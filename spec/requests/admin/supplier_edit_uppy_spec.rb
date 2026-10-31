@@ -22,6 +22,21 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     Rack::Test::UploadedFile.new(@upload_file.path, content_type, original_filename: filename)
   end
 
+  it 'allows Uppy stylesheet and source-map requests before and after a Turbo edit visit' do
+    [admin_suppliers_path, edit_admin_supplier_path(supplier)].each do |path|
+      get path
+
+      expect(response).to have_http_status(:ok)
+      policy = response.headers.fetch('Content-Security-Policy')
+      expect(policy).to include("style-src 'self' 'unsafe-inline' https://releases.transloadit.com")
+      expect(policy).to include("connect-src 'self' https://releases.transloadit.com")
+      expect(policy).to include("img-src 'self' data: blob:")
+      expect(policy).to include("worker-src 'self' blob:")
+      expect(policy).to include("default-src 'self'")
+      expect(policy).to include("object-src 'none'")
+    end
+  end
+
   it 'shows the branded Uppy upload component only when editing a provider' do
     get edit_admin_supplier_path(supplier)
 
