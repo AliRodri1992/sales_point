@@ -8,29 +8,50 @@ const MAX_SIZE = 10 * 1024 * 1024
 const MAX_FILES = 10
 
 export default class extends Controller {
-  static targets = ["dashboard", "placeholder", "fallback", "fallbackInput", "category", "description", "status"]
+  static targets = ["dashboard", "placeholder", "placeholderMessage", "retryButton", "category", "description", "status"]
   static values = { url: String, messages: Object }
 
   connect() {
     this.disconnected = false
+    this.initialized = false
+    this.loading = false
+    this.retryAttempt = 0
     this.section = this.element.closest('[data-supplier-form-target="step"]')
     this.visibilityObserver = new MutationObserver(() => this.initializeWhenVisible())
-    if (this.section) this.visibilityObserver.observe(this.section, { attributes: true, attributeFilter: ["hidden", "class"] })
+    if (this.section) {
+      this.visibilityObserver.observe(this.section, {
+        attributes: true, attributeFilter: ["hidden", "class"]
+      })
+    }
     this.initializeWhenVisible()
   }
 
   initializeWhenVisible() {
-    if (this.initialized || this.section?.hidden || this.section?.classList.contains("hidden")) return
-    this.initialized = true
+    if (this.initialized || this.loading || this.section?.hidden ||
+        this.section?.classList.contains("hidden")) return
     this.visibilityObserver?.disconnect()
     this.initialize()
   }
 
+  retry() {
+    if (this.loading || this.disconnected) return
+    this.retryAttempt += 1
+    this.retryButtonTarget.hidden = true
+    this.placeholderMessageTarget.textContent = this.messagesValue.loading
+    this.initialize()
+  }
+
   async initialize() {
+    this.loading = true
     this.setStatus(this.messagesValue.loading)
     try {
-      const { Uppy, Dashboard, XHRUpload } = await import(UPPY_MODULE)
+      // A fresh URL lets the user retry a failed browser module fetch.
+      const moduleUrl = this.retryAttempt ? `${UPPY_MODULE}?retry=${this.retryAttempt}` : UPPY_MODULE
+      const { Uppy, Dashboard, XHRUpload } = await import(moduleUrl)
       if (this.disconnected) return
+      if (![Uppy, Dashboard, XHRUpload].every((plugin) => typeof plugin === "function")) {
+        throw new Error("The Uppy CDN bundle is missing the required plugins")
+      }
 
       const language = document.documentElement.lang?.toLowerCase() || "es"
       const uploaderCopy = language.startsWith("ko")
@@ -81,8 +102,9 @@ export default class extends Controller {
           "Accept": "application/json"
         },
         withCredentials: true,
-        getResponseData: (responseText) => {
-          try { return JSON.parse(responseText) } catch (_error) { return {} }
+        getResponseData: (response) => {
+          const body = typeof response === "string" ? response : response?.responseText
+          try { return JSON.parse(body) } catch (_error) { return {} }
         }
       })
       this.updateMetadata()
@@ -96,22 +118,25 @@ export default class extends Controller {
           this.setStatus(this.messagesValue.success.replace("%{count}", String(successful.length)))
         }
       })
+      this.initialized = true
       if (this.hasPlaceholderTarget) this.placeholderTarget.remove()
-      this.dashboardTarget.hidden = false
-      this.fallbackTarget.hidden = true
       this.setStatus("")
     } catch (error) {
       console.error("Uppy could not be initialized for supplier editing", error)
       if (!this.disconnected) {
-        // A partially mounted Dashboard must never appear alongside fallback.
         try { this.uppy?.destroy() } catch (cleanupError) {
           console.warn("Unable to dispose Uppy after initialization error", cleanupError)
         }
         this.uppy = null
-        this.dashboardTarget.hidden = true
-        this.fallbackTarget.hidden = false
-        this.setStatus(this.messagesValue.failed, true)
+        // One surface only: keep Uppy’s host, with a retry action inside it.
+        this.dashboardTarget.replaceChildren(this.placeholderTarget)
+        this.placeholderTarget.hidden = false
+        this.placeholderMessageTarget.textContent = this.messagesValue.unavailable
+        this.retryButtonTarget.hidden = false
+        this.setStatus(this.messagesValue.unavailable, true)
       }
+    } finally {
+      this.loading = false
     }
   }
 
@@ -131,42 +156,6 @@ export default class extends Controller {
       "document[category]": this.categoryTarget.value,
       "document[description]": this.descriptionTarget.value.trim().slice(0, 300)
     })
-  }
-
-  async fallbackUpload(event) {
-    const files = Array.from(this.fallbackInputTarget.files)
-    const valid = files.length > 0 && files.length <= MAX_FILES && files.every((file) => {
-      const ext = `.${file.name.split(".").pop().toLowerCase()}`
-      return file.size > 0 && file.size <= MAX_SIZE && ALLOWED_EXTENSIONS.includes(ext)
-    })
-    if (!valid) return this.setStatus(this.messagesValue.invalid, true)
-
-    const button = event.currentTarget
-    button.disabled = true
-    this.setStatus(this.messagesValue.loading)
-
-    try {
-      for (const file of files) {
-        const body = new FormData()
-        body.append("document[file]", file)
-        body.append("document[category]", this.categoryTarget.value)
-        body.append("document[description]", this.descriptionTarget.value.trim().slice(0, 300))
-        const response = await fetch(this.urlValue, {
-          method: "POST",
-          body,
-          credentials: "same-origin",
-          headers: { "X-CSRF-Token": this.csrfToken(), Accept: "application/json" }
-        })
-        if (!response.ok) throw new Error(`Upload failed: ${response.status}`)
-      }
-      this.fallbackInputTarget.value = ""
-      this.setStatus(this.messagesValue.success.replace("%{count}", String(files.length)))
-    } catch (error) {
-      console.error(error)
-      this.setStatus(this.messagesValue.failed, true)
-    } finally {
-      button.disabled = false
-    }
   }
 
   setStatus(message, error = false) {
