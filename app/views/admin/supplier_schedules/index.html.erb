@@ -11,6 +11,21 @@
       <% end %>
     </div>
   </header>
+  <div class="grid gap-3 sm:grid-cols-3">
+    <% [
+      [t('admin.supplier_ui.scheduled_count'), @schedules.size, 'calendar-days', 'bg-emerald-50 text-emerald-700'],
+      [t('admin.supplier_ui.branches_count'), @schedules.map(&:branch_id).uniq.size, 'building-office-2', 'bg-sky-50 text-sky-700'],
+      [t('admin.supplier_ui.exceptions_count'), @exceptions_total, 'exclamation-circle', 'bg-amber-50 text-amber-800']
+    ].each do |label, count, icon, tone| %>
+      <div class="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl <%= tone %>"><%= delta_icon(icon, class: 'size-5') %></span>
+        <div class="min-w-0">
+          <p class="text-xs font-semibold text-slate-500"><%= label %></p>
+          <p class="mt-0.5 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= count %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
   <div class="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
     <% @schedules.each do |schedule| %>
       <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
