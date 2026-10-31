@@ -4,9 +4,11 @@
   <div class="grid gap-3 sm:grid-cols-2">
     <div>
       <%= form.label :kind, t('admin.phones.kind'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
-      <%= form.select :kind, %w[mobile landline other].map { |kind| [t("admin.phones.#{kind}"), kind] }, {},
-                      data: { action: 'change->nested-phones#kindChanged' },
-                      class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+      <div class="relative" data-controller="delta-select">
+        <%= form.select :kind, %w[mobile landline other].map { |kind| [t("admin.phones.#{kind}"), kind] }, {},
+                        data: { action: 'change->nested-phones#kindChanged' },
+                        class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm' %>
+      </div>
     </div>
     <div>
       <%= form.label :number, t('admin.phones.number'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
@@ -21,9 +23,8 @@
       <%= form.label :extension, t('admin.phones.extension'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :extension, maxlength: 10, class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
     </div>
-    <div>
-      <%= form.label :label, t('admin.phones.label'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :label, maxlength: 60, class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+    <div class="min-w-0 sm:col-span-2">
+      <%= render 'admin/shared/phone_label_picker', form: form %>
     </div>
   </div>
   <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
