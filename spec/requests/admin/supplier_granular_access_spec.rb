@@ -112,4 +112,38 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     expect(schedule.reload.deleted_at).to be_nil
   end
 
+  it 'allows document upload without granting document removal or metadata editing' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.documents.create', module_name: 'Proveedores')
+
+    policy = SupplierPolicy.new(user, supplier)
+    expect(policy.view_documents?).to be(true)
+    expect(policy.create_documents?).to be(true)
+    expect(policy.update_documents?).to be(false)
+    expect(policy.destroy_documents?).to be(false)
+    expect(policy.restore_documents?).to be(false)
+
+    get admin_supplier_path(supplier, tab: 'documents')
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('name="supplier_product[product_id]"')
+  end
+
+  it 'separates product offer creation from editing and preferred selection' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.products.create', module_name: 'Proveedores')
+
+    policy = SupplierPolicy.new(user, supplier)
+    expect(policy.view_products?).to be(true)
+    expect(policy.create_products?).to be(true)
+    expect(policy.update_products?).to be(false)
+    expect(policy.destroy_products?).to be(false)
+    expect(policy.restore_products?).to be(false)
+    expect(policy.prefer_products?).to be(false)
+
+    get admin_supplier_supplier_products_path(supplier)
+    expect(response).to have_http_status(:ok)
+  end
+
 end
