@@ -165,7 +165,7 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     get new_admin_supplier_path
 
     document = Nokogiri::HTML(response.body)
-    names = document.css('input[name$="[number]"]').map { |input| input['name'] }
+    names = document.css('input[name$="[number]"]').pluck('name')
     contact_phone_names = names.grep(/\Asupplier\[contacts_attributes\]/)
     expect(contact_phone_names.size).to eq(2)
     expect(contact_phone_names).to all(match(/\[phones_attributes\]\[\d+\]\[number\]\z/))
