@@ -31,7 +31,7 @@ es:
       found: "Encontré en la guía el procedimiento «%{title}». Sigue estos pasos:"
       not_found: "No encontré un procedimiento específico para esa pregunta o no tienes acceso a él. Prueba con el nombre de un módulo o abre la guía."
       invalid_question: "Escribe una pregunta de entre 1 y 500 caracteres."
-      request_failed: "No pude consultar la guía. Inténtalo de nuevo."
+      request_failed: "No fue posible obtener una respuesta de la guía en este momento. Revisa tu conexión e inténtalo nuevamente; también puedes abrir el manual de usuario."
       notice: "Respuestas basadas en la guía de Delta POS. No realizo cambios en tus datos."
       question_product: "Dar de alta un producto"
       question_supplier: "Dar de alta un proveedor"
