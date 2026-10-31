@@ -35,18 +35,18 @@
           <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.document_empty.subtitle') %></p>
         </div>
       </div>
-      <% if can_manage_documents %>
+      <% if policy(supplier).create_documents? %>
         <button type="button" data-action="supplier-documents#pickFiles"
                 class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800">
           <%= delta_icon('arrow-up-tray', class: 'size-4') %> <%= t("#{dictionary}.upload") %>
         </button>
       <% end %>
     </div>
-    <% if can_manage_documents %>
+    <% if policy(supplier).create_documents? %>
       <%= render 'dossier_documents_upload', supplier: supplier, categories: categories, dictionary: dictionary %>
     <% end %>
 
-    <% if can_manage_documents && deleted_documents.any? %>
+    <% if policy(supplier).restore_documents? && deleted_documents.any? %>
       <details class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
         <summary class="cursor-pointer text-sm font-semibold text-slate-800">
           <%= t('admin.supplier_document_history.trash') %> (<%= trash_total %>)
@@ -80,7 +80,7 @@
     <% if documents.any? || supplier.supplier_documents.visible.exists? %>
       <div data-supplier-documents-results>
         <%= render 'dossier_documents_listing', supplier: supplier, documents: documents,
-                    categories: categories, can_manage_documents: can_manage_documents, dictionary: dictionary %>
+                    categories: categories, can_manage_documents: policy(supplier).destroy_documents?, dictionary: dictionary %>
       </div>
 
         <div data-supplier-documents-target="dialog"
@@ -124,7 +124,7 @@
               <a data-supplier-documents-target="open" href="#" target="_blank" rel="noopener noreferrer"
                  class="flex min-h-10 items-center justify-center gap-1 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 hover:bg-emerald-50"><%= delta_icon('arrow-top-right-on-square', class: 'size-4') %><%= t("#{dictionary}.open") %></a>
             </div>
-            <% if can_manage_documents %>
+            <% if policy(supplier).update_documents? %>
               <details data-supplier-documents-target="replaceDetails" class="mt-2">
                 <summary class="flex min-h-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-emerald-50 [&::-webkit-details-marker]:hidden"><%= t("#{dictionary}.replace") %></summary>
                 <%= form_with url: admin_supplier_document_update_path(supplier, document_id: initial&.attachment&.id || 0), scope: :document, method: :patch, multipart: true,
@@ -158,7 +158,7 @@
         <%= image_tag 'sdocuments.png', alt: '', loading: 'lazy', class: 'mx-auto w-full max-w-[250px]' %>
         <h3 class="mt-3 font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.document_empty.title') %></h3>
         <p class="mx-auto mt-2 max-w-lg text-sm text-slate-500"><%= t('admin.supplier_dossier.document_empty.description') %></p>
-        <% if can_manage_documents %>
+        <% if policy(supplier).create_documents? %>
           <p class="mt-3 text-sm font-semibold text-emerald-700"><%= t("#{dictionary}.upload_hint") %></p>
         <% end %>
       </div>
