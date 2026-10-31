@@ -10,13 +10,7 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.img_src(
     :self,
-    :data,
-    :blob
-  )
-
-  policy.worker_src(
-    :self,
-    :blob
+    :data
   )
 
   policy.script_src(
@@ -26,8 +20,7 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.style_src(
     :self,
-    :unsafe_inline,
-    "https://releases.transloadit.com"
+    :unsafe_inline
   )
 
   policy.object_src :none
