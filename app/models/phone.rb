@@ -17,10 +17,16 @@ class Phone < ApplicationRecord
   validate :same_organization_as_owner
   validate :unique_primary_per_kind
 
+  before_validation :assign_organization
   before_validation :normalize_number
   before_validation :normalize_metadata
 
   private
+
+  def assign_organization
+    owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
+    self.organization ||= owner.organization if owner&.respond_to?(:organization)
+  end
 
   def normalize_number
     return if number.blank?
