@@ -12,6 +12,13 @@ export default class extends Controller {
   static values = { url: String, messages: Object }
 
   connect() {
+    // Stimulus can reconnect a Turbo-cached edit form. Invalidate any earlier
+    // asynchronous import and dispose of a previous or cached Uppy instance.
+    this.mountVersion = (this.mountVersion || 0) + 1
+    this.uppy?.destroy()
+    this.uppy = null
+    this.dashboardTarget.querySelectorAll(".uppy-Dashboard").forEach((node) => node.remove())
+    if (this.hasPlaceholderTarget) this.placeholderTarget.hidden = false
     this.disconnected = false
     this.initialized = false
     this.loading = false
@@ -42,13 +49,14 @@ export default class extends Controller {
   }
 
   async initialize() {
+    const version = this.mountVersion
     this.loading = true
     this.setStatus("")
     try {
       // A fresh URL lets the user retry a failed browser module fetch.
       const moduleUrl = this.retryAttempt ? `${UPPY_MODULE}?retry=${this.retryAttempt}` : UPPY_MODULE
       const { Uppy, Dashboard, XHRUpload } = await import(moduleUrl)
-      if (this.disconnected) return
+      if (this.disconnected || version !== this.mountVersion) return
       if (![Uppy, Dashboard, XHRUpload].every((plugin) => typeof plugin === "function")) {
         throw new Error("The Uppy CDN bundle is missing the required plugins")
       }
@@ -122,11 +130,11 @@ export default class extends Controller {
         }
       })
       this.initialized = true
-      if (this.hasPlaceholderTarget) this.placeholderTarget.remove()
+      if (this.hasPlaceholderTarget) this.placeholderTarget.hidden = true
       this.setStatus("")
     } catch (error) {
       console.error("Uppy could not be initialized for supplier editing", error)
-      if (!this.disconnected) {
+      if (!this.disconnected && version === this.mountVersion) {
         try { this.uppy?.destroy() } catch (cleanupError) {
           console.warn("Unable to dispose Uppy after initialization error", cleanupError)
         }
@@ -139,12 +147,13 @@ export default class extends Controller {
         this.setStatus("")
       }
     } finally {
-      this.loading = false
+      if (version === this.mountVersion) this.loading = false
     }
   }
 
   disconnect() {
     this.disconnected = true
+    this.mountVersion += 1
     this.visibilityObserver?.disconnect()
     this.uppy?.destroy()
     this.uppy = null
