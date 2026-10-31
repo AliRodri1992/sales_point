@@ -82,7 +82,7 @@ es:
         no: "No"
         postal_abbreviation: "C. P."
         loading: "Cargando más direcciones..."
-        load_error: "No se pudieron cargar las direcciones. Inténtalo nuevamente."
+        load_error: "No se cargaron más direcciones de este proveedor. Comprueba tu conexión y vuelve a intentarlo; las direcciones anteriores siguen disponibles."
         load_more: "Cargar más"
         scroll_label: "Lista de direcciones con carga automática"
       contact_cards:
@@ -103,7 +103,7 @@ es:
         yes: "Sí"
         no: "No"
         loading: "Cargando más contactos..."
-        load_error: "No se pudieron cargar los contactos. Inténtalo nuevamente."
+        load_error: "No se cargaron más contactos de este proveedor. Comprueba tu conexión y vuelve a intentarlo; los contactos anteriores siguen disponibles."
         load_more: "Cargar más"
         scroll_label: "Lista de contactos con carga automática"
       navigation:
