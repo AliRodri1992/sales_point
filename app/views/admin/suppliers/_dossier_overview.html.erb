@@ -54,7 +54,7 @@
       [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil],
       [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
       [t('admin.supplier_dossier.responsible'), supplier.responsible_user&.display_name],
-      [t('admin.supplier_dossier.overview.phone'), supplier.phones.active.find_by(kind: 'landline', primary: true)&.number],
+      [t('admin.supplier_dossier.overview.phone'), supplier.contacts.not_deleted.find_by(primary: true, active: true)&.phones&.active&.find_by(kind: 'landline', primary: true)&.number],
       [t('admin.supplier_dossier.overview.email'), supplier.email],
       [t('admin.supplier_dossier.notes'), supplier.notes]
     ] : [] %>
