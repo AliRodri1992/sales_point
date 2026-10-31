@@ -8,9 +8,9 @@
       <div class="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0 flex-1 space-y-2">
           <% if supplier.new_record? %>
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700" data-supplier-form-target="position" aria-live="polite"><%= t('admin.suppliers.onboarding.step_counter', current: 1, total: 7) %></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700" data-supplier-form-target="position" aria-live="polite"><%= t('admin.suppliers.onboarding.step_counter', current: 1, total: 6) %></span>
             <div class="h-1.5 max-w-xl overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
-              <div data-supplier-form-target="progressBar" class="h-full rounded-full bg-emerald-500 transition-[width] duration-200 motion-reduce:transition-none" style="width: 14.2857%"></div>
+              <div data-supplier-form-target="progressBar" class="h-full rounded-full bg-emerald-500 transition-[width] duration-200 motion-reduce:transition-none" style="width: 16.6667%"></div>
             </div>
             <p class="text-xs text-slate-500" data-supplier-form-target="progress" aria-live="polite"></p>
           <% else %>
@@ -66,13 +66,7 @@
               <span data-supplier-form-step-label class="min-w-0"><%= t('admin.suppliers.onboarding.steps.step_7') %></span>
             </span>
           </button>
-          <button type="button" data-supplier-form-target="tab" data-step-index="6" data-action="supplier-form#select"
-                  class="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
-            <span class="flex min-w-0 items-center gap-3">
-              <span class="flex size-7 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-600">7</span>
-              <span data-supplier-form-step-label class="min-w-0"><%= t('admin.suppliers.onboarding.summary.title') %></span>
-            </span>
-          </button>
+
             </div>
           </div>
         </details>
@@ -268,7 +262,7 @@
           </button>
         </div>
       </div>
-      <%= form.hidden_field :tags_text, data: { supplier_tags_target: 'value', summary_label: t('admin.supplier_dossier.tags') } %>
+      <%= form.hidden_field :tags_text, data: { supplier_tags_target: 'value' } %>
       <noscript><%= form.text_field :tags_text, placeholder: t('admin.supplier_placeholders.tags_text'), class: 'mt-2 input-field block min-h-12 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %></noscript>
       <p data-supplier-tags-target="notice" role="status" aria-live="polite" class="mt-2 text-xs font-medium text-amber-700 empty:hidden"></p>
       <p id="<%= "#{form.object_name}_tag_editor_help" %>" class="mt-2 text-xs leading-relaxed text-slate-500"><%= t('admin.suppliers.tag_editor.help') %></p>
@@ -316,10 +310,7 @@
     </div>
         </div>
       </section>
-      <section data-supplier-form-target="step" hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.summary.title') %>">
-        <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.summary.title') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.summary.description') %></p></div>
-        <div data-supplier-form-target="summary" class="space-y-4 pr-1" aria-live="polite"></div>
-      </section>
+
       </div>
       <div class="mt-auto grid w-full min-w-0 grid-cols-1 gap-4 border-t border-slate-200 pt-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <p class="flex items-center gap-2 text-xs text-slate-500"><svg xmlns="http://www.w3.org/2000/svg" class="size-4 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v5M12 7h.01"/></svg><%= t('admin.suppliers.onboarding.required') %></p>
