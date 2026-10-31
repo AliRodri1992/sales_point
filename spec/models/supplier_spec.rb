@@ -151,6 +151,22 @@ RSpec.describe Supplier, type: :model do
     end
   end
 
+  describe 'tags_text' do
+    it 'normalizes and preserves the comma-separated tags used by the chip editor' do
+      supplier.tags_text = '  Local, Prioritario, Local, , Servicios  '
+
+      expect(supplier.tags).to eq(%w[Local Prioritario Servicios])
+      expect(supplier.tags_text).to eq('Local, Prioritario, Servicios')
+    end
+
+    it 'enforces the existing maximum of 20 tags on the server' do
+      supplier.tags_text = (1..25).map { |number| "Etiqueta #{number}" }.join(', ')
+
+      expect(supplier.tags.length).to eq(20)
+      expect(supplier.tags.last).to eq('Etiqueta 20')
+    end
+  end
+
   describe 'scopes' do
     it 'excludes deleted records from not_deleted and inactive/deleted from available' do
       active = create(:supplier, status: :active)
