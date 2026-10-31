@@ -27,13 +27,13 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     visit admin_suppliers_path
 
     find('[data-advanced-filters] > summary').click
-    status = find('details[data-controller="supplier-dropdown"]', match: :first)
+    status = find('[data-advanced-filters] details[data-controller="supplier-dropdown"]', match: :first)
     expect(status).to have_no_css('input[type="radio"]', visible: :all)
 
     status.find('summary').click
     status.find('button[role="option"][data-option-value="inactive"]').click
 
-    expect(status).to have_css('input[name="status"][value="inactive"]', visible: :all)
+    expect(status.find('input[name="status"]', visible: :all).value).to eq('inactive')
     expect(status).to have_css('button[data-option-value="inactive"][aria-selected="true"]', visible: :all)
     expect(page).to have_current_path(/status=inactive/)
     expect(page).to have_text('Inactive Filter Supplier')
@@ -41,7 +41,7 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     find('#supplier_active_filters a[data-filter-key="status"]').click
 
     expect(status).to have_css('button[data-option-value="all"][aria-selected="true"]', visible: :all)
-    expect(status).to have_css('input[name="status"][value="all"]', visible: :all)
+    expect(status.find('input[name="status"]', visible: :all).value).to eq('all')
     expect(page).to have_no_css('details[data-controller="supplier-dropdown"] input[type="radio"]', visible: :all)
   end
 
