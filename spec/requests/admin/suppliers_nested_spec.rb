@@ -133,6 +133,44 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     expect(response.body).to include('data-server-field-error')
   end
 
+  it 'persists the primary contact email and both phone numbers on supplier creation' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: {
+        '0' => {
+          name: 'Purchasing', position: 'Manager', email: 'BUYER@EXAMPLE.COM', primary: '1',
+          phones_attributes: {
+            '0' => { number: '55 2234 5678', country_code: 'MX', kind: 'landline', primary: '1' },
+            '1' => { number: '55 1234 5678', country_code: 'MX', kind: 'mobile', primary: '1' }
+          }
+        }
+      },
+      addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    saved = Supplier.order(:id).last
+    contact = saved.contacts.find_by!(name: 'Purchasing')
+    expect(contact).to have_attributes(position: 'Manager', email: 'buyer@example.com', primary: true)
+    expect(contact.phones.active.pluck(:kind, :number)).to contain_exactly(
+      ['landline', '+525522345678'], ['mobile', '+525512345678']
+    )
+
+    get admin_supplier_path(saved, tab: 'contacts')
+    expect(response.body).to include('buyer@example.com')
+    expect(response.body).to include('+525522345678', '+525512345678')
+  end
+
+  it 'renders numeric nested names for the main contact phone inputs' do
+    get new_admin_supplier_path
+
+    document = Nokogiri::HTML(response.body)
+    names = document.css('input[name$="[number]"]').map { |input| input['name'] }
+    contact_phone_names = names.grep(/\Asupplier\[contacts_attributes\]/)
+    expect(contact_phone_names.size).to eq(2)
+    expect(contact_phone_names).to all(match(/\[phones_attributes\]\[\d+\]\[number\]\z/))
+  end
+
   it 'updates existing nested records without replacing their identifiers' do
     supplier = create(:supplier, organization:)
     contact = supplier.contacts.create!(name: 'Original', primary: true)
