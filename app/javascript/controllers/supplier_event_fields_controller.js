@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Keep date and time fields available for multi-day events, while explaining
-// the all-day convention. This controller never adds radio controls to selects.
+// A whole-day event spans midnight to the last minute of the chosen end date.
+// Keep the original dates and never introduce radio controls inside dropdowns.
 export default class extends Controller {
   static targets = ["allDay", "start", "end", "hint"]
 
@@ -9,21 +9,19 @@ export default class extends Controller {
 
   refresh() {
     if (!this.hasAllDayTarget) return
+
     const allDay = this.allDayTarget.checked
-    if (this.hasHintTarget) this.hintTarget.textContent = allDay ? this.element.dataset.allDayHint || "" : ""
+    if (this.hasHintTarget) {
+      this.hintTarget.textContent = allDay ? this.element.dataset.allDayHint || "" : ""
+    }
     if (!allDay || !this.hasStartTarget || !this.hasEndTarget) return
 
-    const start = this.startTarget.value
-    const end = this.endTarget.value
-    if (!start) return
+    const startDate = this.startTarget.value.slice(0, 10)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) return
 
-    // Preserve the selected date range rather than forcing a single day.
-    const startDate = start.slice(0, 10)
-    const endDate = end ? end.slice(0, 10) : startDate
-    const endTime = end ? end.slice(11, 16) : ""
-    if (!end || endTime === "00:00") {
-      this.endTarget.value = `${endDate}T23:59`
-      this.endTarget.dispatchEvent(new Event("input", { bubbles: true }))
-    }
+    const endDateInput = this.endTarget.value.slice(0, 10)
+    const endDate = endDateInput && endDateInput >= startDate ? endDateInput : startDate
+    this.startTarget.value = `${startDate}T00:00`
+    this.endTarget.value = `${endDate}T23:59`
   }
 }
