@@ -25,6 +25,7 @@ RSpec.describe 'UI components', type: :component do
                                ))
 
       expect(rendered.css('a')).to be_present
+      expect(rendered.css('a svg')).to be_present
       expect(rendered.to_html).to include('Save', 'w-full', 'opacity-50', 'cursor-not-allowed')
     end
 
