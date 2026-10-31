@@ -11,14 +11,13 @@ module DeltaIconsHelper
     'cog-6-tooth' => 'cog', 'cog-8-tooth' => 'cog', 'adjustments-vertical' => 'adjustments-horizontal',
     'calendar' => 'calendar-days', 'calendar-date-range' => 'calendar-days',
     'document' => 'document-text', 
-    'document-magnifying-glass' => 'magnifying-glass',
-    'archive-box-x-mark' => 'archive-box',
+        'archive-box-x-mark' => 'archive-box',
     'cube-transparent' => 'cube', 
     'globe-alt' => 'language', 'globe-americas' => 'language',
     'building-office' => 'building-office-2',
     'check-badge' => 'check-circle', 'shield-exclamation' => 'shield-check',
     
-    'paper-clip' => 'document-text', 'arrow-long-left' => 'arrow-left',
+    'arrow-long-left' => 'arrow-left',
     'arrow-long-right' => 'arrow-right', 'bars-2' => 'bars-3',
     'ellipsis' => 'ellipsis-horizontal', 'arrow-uturn-left' => 'arrow-left',
     'arrow-up-on-square' => 'arrow-up-tray', 'arrow-down-on-square' => 'arrow-down-tray',
@@ -39,8 +38,7 @@ module DeltaIconsHelper
     shapes = ICON_SHAPES[key]
     return shapes if shapes
 
-    Rails.logger.warn("Delta POS SVG icon not defined: #{key}")
-    ICON_SHAPES.fetch('information-circle')
+    raise ArgumentError, "Delta POS SVG icon not defined: #{key}"
   end
 
   def delta_icon_attributes(css, stroke_width, options)
