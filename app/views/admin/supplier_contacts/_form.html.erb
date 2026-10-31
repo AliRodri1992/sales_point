@@ -33,6 +33,7 @@
               <%= t('admin.supplier_details.contact_fields.name') %> <span aria-hidden="true" class="text-rose-600">*</span>
             <% end %>
             <%= form.text_field :name, maxlength: 150, autocomplete: 'name',
+                                aria: { required: true, invalid: @contact.errors[:name].any? },
                                 class: "#{input_classes} #{form_state_classes(@contact, :name)}",
                                 placeholder: t('admin.supplier_details.contact_form.name_placeholder') %>
             <%= error_message_for(@contact, :name) %>
@@ -40,6 +41,7 @@
           <div class="min-w-0">
             <%= form.label :position, t('admin.supplier_details.contact_fields.position'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
             <%= form.text_field :position, maxlength: 100,
+                                aria: { invalid: @contact.errors[:position].any? },
                                 class: "#{input_classes} #{form_state_classes(@contact, :position)}",
                                 placeholder: t('admin.supplier_details.contact_form.position_placeholder') %>
             <%= error_message_for(@contact, :position) %>
@@ -64,6 +66,7 @@
             <div class="relative">
               <%= delta_icon('envelope', class: 'pointer-events-none absolute left-3.5 top-3.5 size-4 text-slate-400') %>
               <%= form.email_field :email, maxlength: 150, autocomplete: 'email',
+                                   aria: { invalid: @contact.errors[:email].any? },
                                    class: "#{input_classes} pl-10 #{form_state_classes(@contact, :email)}",
                                    placeholder: 'contacto@proveedor.com' %>
             </div>
