@@ -20,7 +20,6 @@
       <%= form_with url: admin_supplier_path(supplier), method: :get,
                     class: 'space-y-3' do %>
         <%= hidden_field_tag :tab, 'bank_accounts' %>
-        <%= hidden_field_tag :banks_status, bank_page.status %>
         <div data-finance-banks-search-row class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div class="relative min-w-0 flex-1">
             <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
@@ -36,11 +35,20 @@
             <%= t('admin.supplier_dossier.finance.manage_banks') %>
           <% end %>
         </div>
-        <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
           <div>
             <span id="supplier_banks_bank_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.bank_filter') %></span>
             <%= render 'admin/suppliers/filter_dropdown', name: 'banks_bank', selected: bank_page.bank,
                        options: [[t('admin.bank_cards.all_banks'), '']] + bank_page.banks.map { |bank| [bank, bank] },
+                       plain_options: true %>
+          </div>
+          <div>
+            <span id="supplier_banks_status_label" class="mb-2 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.status_filter') %></span>
+            <% statuses = [['all', :all, 'all_label'], ['active', :active, 'active_plural'],
+                           ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
+                           ['archived', :archived, 'archived_plural']] %>
+            <%= render 'admin/suppliers/filter_dropdown', name: 'banks_status', selected: bank_page.status,
+                       options: statuses.map { |value, key, label| ["#{t("admin.bank_cards.#{label}")} (#{bank_page.counts.fetch(key)})", value] },
                        plain_options: true %>
           </div>
           <%= button_tag type: :submit,
@@ -51,20 +59,6 @@
         </div>
       <% end %>
 
-      <nav data-finance-bank-status-tabs class="mt-5 flex gap-2 overflow-x-auto border-b border-slate-200"
-           aria-label="<%= t('admin.bank_cards.status_filter') %>">
-        <% [['all', :all, 'all_label'], ['active', :active, 'active_plural'],
-            ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
-            ['archived', :archived, 'archived_plural']].each do |status, key, label| %>
-          <%= link_to admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: status,
-                                          banks_q: bank_page.query.presence, banks_bank: bank_page.bank.presence),
-                      aria: { current: ('page' if bank_page.status == status) },
-                      class: "inline-flex shrink-0 items-center gap-1 border-b-[3px] px-4 py-3 text-sm font-semibold transition #{bank_page.status == status ? 'border-emerald-600 text-emerald-800' : 'border-transparent text-slate-500 hover:text-slate-800'}" do %>
-            <%= t("admin.bank_cards.#{label}") %>
-            <span class="text-xs tabular-nums">(<%= bank_page.counts.fetch(key) %>)</span>
-          <% end %>
-        <% end %>
-      </nav>
 
       <div data-finance-bank-cards class="mt-5 grid min-w-0 gap-4 md:grid-cols-2 2xl:grid-cols-3">
         <%= render partial: 'admin/supplier_bank_accounts/account_card', collection: bank_page.accounts,
@@ -73,8 +67,9 @@
       </div>
 
       <% if bank_page.total_count.zero? %>
-        <div data-finance-empty-banks class="mt-5 rounded-xl bg-slate-50 px-4 py-5 text-center text-sm text-slate-600">
-          <p class="font-jakarta font-bold text-slate-800"><%= t('admin.accounts_payable.bank_list.empty_title') %></p>
+        <div data-finance-empty-banks class="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-5 py-10 text-center text-sm text-slate-600">
+          <span class="mb-3 flex size-14 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm"><%= delta_icon('building-library', class: 'size-7') %></span>
+          <p class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.accounts_payable.bank_list.empty_title') %></p>
           <p class="mt-1"><%= t('admin.accounts_payable.bank_list.empty_description') %></p>
         </div>
       <% end %>
