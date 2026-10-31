@@ -517,7 +517,7 @@ RSpec.describe 'Admin suppliers', type: :request do
   end
 
   it 'renders grouped general information and informative empty states' do
-    supplier = create(:supplier, organization:, email: nil, phone: nil, responsible_user: nil, notes: nil)
+    supplier = create(:supplier, organization:, email: nil, responsible_user: nil, notes: nil)
 
     get admin_supplier_path(supplier, tab: 'general')
 
