@@ -8,6 +8,8 @@ class SupplierPolicy
     suppliers.fiscal.view suppliers.fiscal.manage suppliers.commercial.view
     suppliers.commercial.manage suppliers.products.view suppliers.products.manage
     accounts_payable.view accounts_payable.banks.view accounts_payable.banks.manage
+    accounts_payable.banks.create accounts_payable.banks.update accounts_payable.banks.destroy
+    accounts_payable.banks.restore accounts_payable.banks.review
     suppliers.export suppliers.create
     suppliers.contacts.create suppliers.contacts.update suppliers.contacts.destroy suppliers.contacts.restore
     suppliers.addresses.create suppliers.addresses.update suppliers.addresses.destroy suppliers.addresses.restore

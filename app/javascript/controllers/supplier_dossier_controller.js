@@ -1,9 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 
-// The navigation is permission-aware; users may not have an Overview section.
+// The dossier opens directly in General; the navigation is permission-aware.
 export default class extends Controller {
   static targets = ["tab", "panel", "mobileSelect"]
-  static values = { initialTab: { type: String, default: "overview" } }
+  static values = { initialTab: { type: String, default: "general" } }
 
   connect() {
     this.onPopState = () => this.activateTab(this.requestedTab(), false)
@@ -17,7 +17,7 @@ export default class extends Controller {
 
   requestedTab() {
     const section = new URL(window.location.href).searchParams.get("tab") || this.initialTabValue
-    return section === "finances" ? "statement" : section
+    return section === "finances" ? "statement" : section === "overview" ? "general" : section
   }
 
   select(event) {
@@ -46,7 +46,7 @@ export default class extends Controller {
 
   activateTab(section, updateUrl = true) {
     const available = this.panelTargets.map((panel) => panel.dataset.section)
-    // Never fall back to an inaccessible/absent Overview panel.
+    // Choose only existing sections and never assume access to General.
     const selected = available.includes(section) ? section : available[0]
     if (!selected) return
 
@@ -71,7 +71,7 @@ export default class extends Controller {
 
     if (updateUrl) {
       const url = new URL(window.location.href)
-      if (selected === "overview") url.searchParams.delete("tab")
+      if (selected === "general") url.searchParams.delete("tab")
       else url.searchParams.set("tab", selected)
       if (url.toString() !== window.location.href) {
         window.history.pushState(window.history.state, "", url)

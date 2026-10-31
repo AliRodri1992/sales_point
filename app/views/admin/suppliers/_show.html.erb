@@ -1,17 +1,10 @@
 <% dossier_policy = policy(supplier) %>
 <% can_view_general = dossier_policy.view_general? %>
-<% can_view_overview = %i[general contacts addresses schedules commercial products].any? do |section|
-     dossier_policy.public_send("view_#{section}?")
-   end %>
-<% contacts = dossier_policy.view_contacts? ? supplier.contacts.not_deleted.order(primary: :desc, name: :asc) : [] %>
-<% addresses = dossier_policy.view_addresses? ? supplier.addresses.not_deleted : [] %>
 <% fiscal_address = dossier_policy.view_fiscal? ? supplier.addresses.not_deleted.where(purpose: 'fiscal', primary: true).includes(:country).first : nil %>
-<% schedules = dossier_policy.view_schedules? ? supplier.supplier_schedules.not_deleted.includes(:branch).order(weekday: :asc, starts_at: :asc) : [] %>
 <% can_edit = policy(supplier).update? %>
 <% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
 <% can_view_bank_accounts = @dossier_bank_accounts_page.present? %>
 <% dossier_sections = [] %>
-<% dossier_sections << 'overview' if can_view_overview %>
 <% dossier_sections << 'general' if can_view_general %>
 <% %w[fiscal commercial contacts addresses schedules documents products].each do |section| %>
   <% dossier_sections << section if dossier_policy.public_send("view_#{section}?") %>
@@ -65,12 +58,6 @@
   <div class="flex flex-col gap-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-stretch lg:gap-5 xl:grid-cols-[16rem_minmax(0,1fr)]">
     <%= render 'dossier_sidebar', allowed_sections: dossier_sections %>
     <div class="flex min-w-0 w-full flex-1 flex-col gap-4" data-supplier-dossier-content aria-label="<%= t('admin.supplier_dossier.navigation.content') %>">
-      <% if can_view_overview %>
-      <%= render 'dossier_overview', supplier: supplier, contacts: contacts, addresses: addresses, schedules: schedules, can_edit: can_edit, can_view_general: can_view_general,
-                    can_view_contacts: dossier_policy.view_contacts?, can_view_addresses: dossier_policy.view_addresses?,
-                    can_view_schedules: dossier_policy.view_schedules?, can_view_commercial: dossier_policy.view_commercial?,
-                    can_view_products: dossier_policy.view_products? %>
-      <% end %>
       <% if can_view_general %>
       <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
       <% end %>

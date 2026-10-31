@@ -131,6 +131,7 @@ module SuppliersFormHelpers
       overview general fiscal commercial contacts addresses schedules
       documents products bank_accounts statement
     ]
+    return admin_supplier_path(@supplier, tab: 'general') if section == 'overview'
     return admin_supplier_path(@supplier, tab: section) if allowed_sections.include?(section)
 
     admin_suppliers_path

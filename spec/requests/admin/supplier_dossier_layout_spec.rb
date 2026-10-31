@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Supplier dossier navigation and overview', type: :request do
+RSpec.describe 'Supplier dossier navigation', type: :request do
   let(:user) { create(:user, :english) }
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:, name: 'Verifiable Supplier') }
@@ -64,12 +64,10 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     allow_any_instance_of(SupplierPolicy).to receive(:view_commercial?).and_return(false)
     allow_any_instance_of(SupplierPolicy).to receive(:view_products?).and_return(false)
 
-    get admin_supplier_path(supplier, tab: 'overview')
-    overview = dossier.at_css('section[data-section="overview"]')
-    expect(overview).to be_present
-    expect(overview.text).not_to include('Primary contacts', 'Upcoming visits')
-    expect(overview.css('button[data-section="contacts"], button[data-section="schedules"]')).to be_empty
+    get admin_supplier_path(supplier, tab: 'general')
+    expect(dossier.at_css('section[data-section="overview"]')).to be_nil
     expect(dossier.css('[role="tab"][data-section="contacts"]')).to be_empty
+    expect(dossier.css('[role="tab"][data-section="schedules"]')).to be_empty
   end
 
   it 'does not expose management links without section permissions' do
@@ -422,7 +420,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(dossier.text).not_to include('Restricted Product')
     expect(dossier.css('button[data-section="products"]')).to be_empty
     expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
-      .to eq('overview')
+      .to eq('general')
   end
 
   it 'shows the new responsive navigation with only existing supplier features' do
@@ -430,11 +428,11 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(dossier.css('button[data-supplier-dossier-target="tab"]').pluck('data-section')).to eq(
-      %w[overview general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
+      %w[general fiscal commercial contacts addresses schedules documents products bank_accounts statement]
     )
     expect(dossier.at_css('select[data-supplier-dossier-target="mobileSelect"]')).to be_present
-    expect(dossier.at_css('#supplier-dossier-overview')).to be_present
-    expect(dossier.at_css('#supplier-dossier-overview')['class']).not_to include('hidden')
+    expect(dossier.at_css('#supplier-dossier-overview')).to be_nil
+    expect(dossier.at_css('#supplier-dossier-general')['class']).not_to include('hidden')
     expect(dossier.at_css('#supplier-dossier-fiscal')['class']).to include('hidden')
     expect(response.body).not_to include('data-section="reconciliation"')
   end
@@ -499,7 +497,7 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
       .to include('lg:grid', 'lg:items-stretch')
 
     sections = %w[
-      overview general fiscal commercial contacts addresses schedules documents bank_accounts products statement
+      general fiscal commercial contacts addresses schedules documents bank_accounts products statement
     ]
     expect(layout.css('[data-supplier-dossier-target="panel"]').pluck('data-section')).to match_array(sections)
     layout.css('[data-supplier-dossier-target="panel"]').each do |panel|
@@ -528,14 +526,15 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
     expect(fiscal.text).not_to include('Credit limit')
   end
 
-  it 'shows actual registered contact counts in the overview' do
+  it 'opens directly in general information without a duplicate overview panel' do
     create(:contact, contactable: supplier, name: 'Operations Contact', primary: true)
 
     get admin_supplier_path(supplier)
 
-    summary = dossier.at_css('#supplier-dossier-overview')
-    expect(summary.text).to include('Operations Contact')
-    expect(summary.text).to include('Registered contacts')
+    expect(dossier.at_css('#supplier-dossier-overview')).to be_nil
+    expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
+      .to eq('general')
+    expect(dossier.at_css('#supplier-dossier-general')).to be_present
   end
 
   it 'allows direct links to fiscal or contacts sections' do
@@ -548,10 +547,10 @@ RSpec.describe 'Supplier dossier navigation and overview', type: :request do
       .to eq('contacts')
   end
 
-  it 'falls back to the overview for unknown sections' do
+  it 'falls back to general for unknown sections' do
     get admin_supplier_path(supplier, tab: 'reconciliation')
     expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
-      .to eq('overview')
+      .to eq('general')
   end
 
   it 'preserves the supplier edit and all existing management links' do
