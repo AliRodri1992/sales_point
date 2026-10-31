@@ -14,7 +14,7 @@
     </div>
   <% end %>
 
-  <div class="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,20rem)]">
+  <div class="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(17rem,19rem)]">
     <div class="min-w-0 space-y-5">
       <section id="supplier-contact-identity" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="supplier-contact-identity-title">
         <div class="flex items-start gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
@@ -81,6 +81,8 @@
                 <%= t('admin.phones.add') %>
               </button>
             </div>
+            <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.phone_hint') %></p>
+            <div data-nested-phones-target="empty" role="status" class="hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-center text-sm text-slate-600"><%= t('admin.supplier_details.contact_form.no_phones_hint') %></div>
             <div data-nested-phones-target="items" class="min-w-0 space-y-3">
               <%= form.fields_for :phones, @contact.phones.reject { |phone| phone.deleted_at.present? } do |phone_form| %>
                 <%= render 'admin/supplier_contacts/phone_fields', form: phone_form %>
@@ -113,7 +115,7 @@
               <span class="min-w-0">
                 <span class="flex items-center gap-2 text-sm font-bold text-slate-900">
                   <%= delta_icon('star', class: 'size-4 shrink-0 text-emerald-700') %>
-                  <%= t('admin.supplier_details.contact_fields.primary') %>
+                  <%= t('admin.supplier_details.contact_form.primary_contact_label') %>
                 </span>
                 <span class="mt-1.5 block text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.primary_hint') %></span>
               </span>
