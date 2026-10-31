@@ -27,9 +27,10 @@ RSpec.describe Suppliers::DossierContactsPage do
   end
 
   it 'preloads phone associations for rendered contact cards' do
-    contact = create(:contact, contactable: supplier, name: 'Direct Contact')
-    create(:phone, phoneable: contact, organization: supplier.organization, kind: 'mobile', primary: true,
-                   number: '5512345678', country_code: 'MX')
+    create(:contact, contactable: supplier, name: 'Direct Contact',
+                     phones_attributes: [
+                       { kind: 'mobile', primary: true, number: '5512345678', country_code: 'MX' }
+                     ])
 
     result = page
 
