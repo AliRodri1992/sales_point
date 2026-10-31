@@ -71,9 +71,67 @@ class Supplier < ApplicationRecord
   scope :with_status, ->(status) { where(status: status) }
   scope :sorted, ->(column, direction) { order(column => direction) }
 
+  before_validation :assign_generated_code, on: :create
   before_validation :normalize_fields
 
   private
+
+  def assign_generated_code
+    return if code.present? || organization.blank?
+
+    organization.with_lock do
+      prefix = 'PROV-'
+      last_number = organization.suppliers.where("code ~ ?", '^PROV-[0-9]+
+    return if responsible_user.blank?
+
+    memberships = organization&.organization_memberships&.active
+    errors.add(:responsible_user, :invalid) unless memberships&.exists?(user_id: responsible_user_id)
+  end
+
+  def normalize_fields
+    normalize_text_field(:code, &:strip)
+    normalize_text_field(:name, &:strip)
+    %i[legal_name trade_name alias_name].each { |field| normalize_text_field(field, &:strip) }
+    normalize_email
+    normalize_phone
+    normalize_rfc
+    normalize_text_field(:notes, &:strip)
+  end
+
+  def normalize_text_field(field, &normalization)
+    value = send(field)
+    return if value.blank?
+
+    value = value.strip if normalization
+    send("#{field}=", value)
+  end
+
+  def normalize_email = (self.email = email.to_s.strip.downcase.presence)
+
+  def normalize_phone
+    return if phone.blank?
+
+    parsed = Phonelib.parse(phone.to_s.strip, 'MX')
+    self.phone = parsed.e164 if parsed.valid?
+  end
+
+  def phone_must_be_valid
+    return if phone.blank?
+
+    errors.add(:phone, :invalid) unless Phonelib.parse(phone, 'MX').valid?
+  end
+
+  def normalize_rfc
+    rfc_value = rfc.to_s.strip.upcase
+    self.rfc = rfc_value.presence
+  end
+end
+)
+                                .pluck(:code).filter_map { |value| value.delete_prefix(prefix).to_i }
+                                .max || 0
+      self.code = format('PROV-%06d', last_number + 1)
+    end
+  end
 
   def responsible_user_in_organization
     return if responsible_user.blank?
