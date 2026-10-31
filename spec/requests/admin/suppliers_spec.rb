@@ -45,7 +45,9 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(details['class']).to include('hidden')
     expect(details.text).to include('Prefer email during business hours')
     expect(details.text).not_to include('Purchasing Manager')
-    expect(details.css('dt').map(&:text)).not_to include(I18n.t('admin.supplier_details.contact_fields.primary', locale: :en))
+    expect(details.css('dt').map(&:text)).not_to include(
+      I18n.t('admin.supplier_details.contact_fields.primary', locale: :en)
+    )
     expect(card.at_css('button[aria-controls]')['aria-expanded']).to eq('false')
   end
 
