@@ -66,6 +66,22 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :request do
     expect(uploaded.attachment.blob.filename.to_s).to eq('agreement.pdf')
   end
 
+  it 'preserves Uppy uploads when the remaining supplier edits are saved' do
+    post admin_supplier_documents_path(supplier),
+         params: { document: { file: document_file, category: 'contract' } },
+         headers: { 'ACCEPT' => 'application/json' }
+
+    expect(response).to have_http_status(:created)
+    attachment_id = supplier.documents.attachments.last.id
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated company name' } }
+
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.reload.name).to eq('Updated company name')
+    expect(supplier.documents.attachments.pluck(:id)).to include(attachment_id)
+    expect(supplier.supplier_documents.visible.pluck(:attachment_id)).to include(attachment_id)
+  end
+
   it 'returns a structured validation error when a document is unsupported' do
     post admin_supplier_documents_path(supplier),
          params: { document: { file: document_file('not-a-pdf.pdf', 'text/html') } },
