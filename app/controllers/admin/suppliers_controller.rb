@@ -9,6 +9,7 @@ module Admin
     include SuppliersListing
     include SuppliersExporting
     include SuppliersFormHelpers
+    include SupplierEditUploadSecurity
     include SupplierContactsPagination
     include SupplierAddressesPagination
     include SupplierDossierLoading
@@ -17,11 +18,6 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :require_supplier_organization!
-    content_security_policy(only: %i[edit update]) do |policy|
-      policy.style_src :self, :unsafe_inline, 'https://releases.transloadit.com'
-      policy.img_src :self, :data, :blob
-      policy.worker_src :self, :blob
-    end
     before_action :set_supplier, only: %i[show contacts_page addresses_page edit update destroy]
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
