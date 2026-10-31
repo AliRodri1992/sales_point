@@ -41,6 +41,31 @@ RSpec.describe 'Supplier contact integration', type: :request do
     expect(response.body).to include('Operations')
   end
 
+  it 'finds contacts by active phone number in the management list' do
+    contact = create(:contact, contactable: supplier, name: 'Telephone contact')
+    contact.phones.create!(
+      number: '5512345678', country_code: 'MX', kind: 'mobile', primary: true
+    )
+
+    get admin_supplier_contacts_path(supplier, q: '5512345678')
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).text).to include('Telephone contact')
+  end
+
+  it 'excludes archived phone numbers from contact search results' do
+    contact = create(:contact, contactable: supplier, name: 'Archived number contact')
+    contact.phones.create!(
+      number: '5587654321', country_code: 'MX', kind: 'mobile',
+      primary: true, deleted_at: Time.current
+    )
+
+    get admin_supplier_contacts_path(supplier, q: '5587654321')
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).text).not_to include('Archived number contact')
+  end
+
   it 'hides active status on new contact and forces active on creation' do
     get new_admin_supplier_contact_path(supplier)
 
