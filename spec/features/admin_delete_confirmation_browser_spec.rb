@@ -49,6 +49,20 @@ RSpec.describe 'Delta POS confirmation dialog', type: :feature, js: true do
     expect(contact.reload.deleted_at).to be_present
   end
 
+  scenario 'uses the same dialog when deleting a supplier from the listing' do
+    visit admin_suppliers_path
+
+    row = find('tbody tr', text: supplier.name)
+    row.find('form button[type="submit"]', match: :first).click
+
+    expect(page).to have_css('.swal2-popup.delta-confirm-popup.delta-confirm-danger')
+    popup = find('.swal2-popup.delta-confirm-popup')
+    expect(popup).to have_css('.delta-confirm-description', text: supplier.name)
+    popup.find('.delta-confirm-cancel').click
+
+    expect(supplier.reload.deleted_at).to be_nil
+  end
+
   scenario 'uses a neutral design for non-destructive confirmations' do
     visit admin_supplier_contacts_path(supplier)
 
