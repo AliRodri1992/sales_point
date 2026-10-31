@@ -35,9 +35,11 @@ class ClientFilter
       'clients.code ILIKE :q',
       'clients.name ILIKE :q',
       'clients.email ILIKE :q',
-      "EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Client' " \
-        "AND phones.phoneable_id = clients.id AND phones.deleted_at IS NULL " \
-        'AND phones.number ILIKE :q)',
+      <<~SQL.squish,
+        EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Client'
+                AND phones.phoneable_id = clients.id AND phones.deleted_at IS NULL
+                AND phones.number ILIKE :q)
+      SQL
       'clients.rfc ILIKE :q'
     ].join(' OR ')
 
