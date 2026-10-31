@@ -30,6 +30,7 @@ RSpec.describe TablePagePreference, type: :model do
     expect(build(:table_page_preference, user: create(:user), organization:,
                                          table_key: 'suppliers')).to be_valid
   end
+
   it 'soft-deletes a preference and allows the same table to be configured again' do
     original = create(:table_page_preference, user:, organization:, per_page: 5)
     original.destroy!
@@ -44,5 +45,4 @@ RSpec.describe TablePagePreference, type: :model do
     expect(described_class.where(user:, organization:, table_key: 'suppliers').count).to eq(1)
     expect(described_class.with_deleted.where(user:, organization:, table_key: 'suppliers').count).to eq(2)
   end
-
 end
