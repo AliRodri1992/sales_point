@@ -61,7 +61,6 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
     create(:sat_fiscal_regime, code: '997', description: 'Fiscal regime with a long description',
                                valid_from: Date.yesterday, valid_to: Date.tomorrow)
     visit new_admin_supplier_path
-    find('input[name="supplier[code]"]').set('SUP-DROPDOWN-HOVER')
     find('input[name="supplier[name]"]').set('Supplier dropdown hover')
     find('[data-action="supplier-form#next"]').click
 
