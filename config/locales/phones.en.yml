@@ -1,0 +1,12 @@
+en:
+  admin:
+    phones:
+      kind: "Type"
+      number: "Phone number"
+      extension: "Extension"
+      label: "Label"
+      primary: "Primary"
+      remove: "Remove phone"
+      add: "Add another phone"
+      primary_mobile: "Primary mobile phone"
+      primary_office: "Primary office phone"
