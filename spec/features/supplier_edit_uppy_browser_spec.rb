@@ -137,5 +137,4 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :feature, js: true 
       'overlapsNavbar' => true, 'navbarOnTop' => true
     )
   end
-
 end
