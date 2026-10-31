@@ -11,8 +11,22 @@ export default class extends Controller {
   static targets = ["dashboard", "placeholder", "fallback", "fallbackInput", "category", "description", "status"]
   static values = { url: String, messages: Object }
 
-  async connect() {
+  connect() {
     this.disconnected = false
+    this.section = this.element.closest('[data-supplier-form-target="step"]')
+    this.visibilityObserver = new MutationObserver(() => this.initializeWhenVisible())
+    if (this.section) this.visibilityObserver.observe(this.section, { attributes: true, attributeFilter: ["hidden", "class"] })
+    this.initializeWhenVisible()
+  }
+
+  initializeWhenVisible() {
+    if (this.initialized || this.section?.hidden || this.section?.classList.contains("hidden")) return
+    this.initialized = true
+    this.visibilityObserver?.disconnect()
+    this.initialize()
+  }
+
+  async initialize() {
     this.setStatus(this.messagesValue.loading)
     try {
       const { Uppy, Dashboard, XHRUpload } = await import(UPPY_MODULE)
@@ -85,6 +99,7 @@ export default class extends Controller {
 
   disconnect() {
     this.disconnected = true
+    this.visibilityObserver?.disconnect()
     this.uppy?.destroy()
     this.uppy = null
   }
