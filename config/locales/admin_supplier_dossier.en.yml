@@ -82,7 +82,7 @@ en:
         no: "No"
         postal_abbreviation: "ZIP"
         loading: "Loading more addresses..."
-        load_error: "Addresses could not be loaded. Please try again."
+        load_error: "Additional supplier addresses could not be loaded. Check your connection and try again; previously loaded addresses are still available."
         load_more: "Load more"
         scroll_label: "Address list with automatic loading"
       contact_cards:
@@ -103,7 +103,7 @@ en:
         yes: "Yes"
         no: "No"
         loading: "Loading more contacts..."
-        load_error: "Contacts could not be loaded. Please try again."
+        load_error: "Additional supplier contacts could not be loaded. Check your connection and try again; previously loaded contacts are still available."
         load_more: "Load more"
         scroll_label: "Contact list with automatic loading"
       navigation:
