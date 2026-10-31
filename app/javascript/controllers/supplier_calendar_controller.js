@@ -4,11 +4,13 @@ export default class extends Controller {
   static targets = ["drawer", "form", "method", "heading", "submit"]
 
   connect() {
+    this.element.dataset.supplierCalendarReady = "true"
     this.handleKeydown = (event) => this.onKeydown(event)
     document.addEventListener("keydown", this.handleKeydown)
   }
 
   disconnect() {
+    delete this.element.dataset.supplierCalendarReady
     document.removeEventListener("keydown", this.handleKeydown)
     if (this.hasDrawerTarget && !this.drawerTarget.classList.contains("hidden")) {
       document.body.style.overflow = this.previousOverflow || ""
