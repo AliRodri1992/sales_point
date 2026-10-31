@@ -18,9 +18,27 @@ Se amplió `script/audit_i18n.py` para consolidar todos los catálogos YAML, com
   Una clave EXTRA no significa necesariamente que la traducción sea errónea: debe investigarse si se requiere añadirla en `es` o eliminarla.
 - El auditor no notificó claves ausentes respecto de las hojas `es`, interpolaciones distintas ni cadenas vacías en estas reglas concretas.
 
-## Bloqueador principal: manual de usuario
+## Adecuaciones publicadas
 
-El español ofrece 35 temas repartidos en siete capítulos: configuración inicial (5), seguridad (3), catálogos (4), proveedores (10), compras (5), finanzas (4) y comunicación (4). Los archivos `user_manual_sections.en.yml` y `user_manual_sections.ko.yml` incluyen esos mismos capítulos con `topics: []` y **sin procedimientos traducidos**. Se necesitan traducciones profesionales completas que conserven los procedimientos, pasos, advertencias y resultados originales. No es aceptable copiar la versión española dentro de los archivos de otros idiomas.
+Se completó la traducción de los **35 temas y sus procedimientos** en los siete capítulos de la guía para inglés y coreano. Se mantuvieron los identificadores y las cantidades de procedimientos y pasos que ya existían en español:
+
+- Configuración inicial: 5 temas.
+- Seguridad, roles e idiomas: 3 temas.
+- Catálogos, inventario y clientes: 4 temas.
+- Proveedores y su expediente: 10 temas.
+- Compras y recepción: 5 temas.
+- Finanzas: 4 temas.
+- Comunicación: 4 temas.
+
+Se eliminaron los mensajes del centro de aprendizaje que aseguraban que las instrucciones detalladas solo estaban en español.
+
+Se resolvieron las diferencias de claves detectadas inicialmente: `admin.languages.statuses.inactive` se incorporó en `es`; `admin.onboarding.completed.icon` se incorporó donde faltaba; se alinearon los indicadores de resultado del asistente; y se retiró `admin.users.form.fields.invalid_message` de `ko`, ya que era una entrada mal ubicada con un error tipográfico.
+
+Se reforzó `script/audit_i18n.py` para verificar no solo la presencia de capítulos, sino también los identificadores de los temas, el número de procedimientos y la cantidad de pasos y campos requeridos. El job de I18n en GitHub Actions ahora usa `I18N_STRICT_PARITY=1`, de modo que los hallazgos de paridad bloquean el CI. **La confirmación definitiva depende del resultado del job para el commit más reciente.**
+
+### Comprobación independiente de estructura
+
+Se compararon los 35 temas españoles con ambos archivos traducidos en la rama. Los 35 identificadores coinciden y no se encontraron diferencias en cantidades de procedimientos o pasos.
 
 ## Límites de esta auditoría automática
 
