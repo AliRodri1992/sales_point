@@ -130,7 +130,7 @@
                     class="group relative flex w-full cursor-pointer appearance-none items-start space-x-3 rounded-xl border-2 border-slate-100 bg-white p-3.5 text-left shadow-sm transition-all duration-200 hover:border-emerald-600"
                     aria-pressed="false">
                     <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-transform group-hover:scale-105">
-                      <%= icon icon_name, variant: :outline, class: "h-4 w-4" %>
+                      <%= delta_icon icon_name, class: "h-4 w-4" %>
                     </span>
                     <span class="min-w-0 flex-1">
                       <span class="block text-xs font-bold leading-none text-slate-900"><%= t(".#{title_key}") %></span>
@@ -168,7 +168,7 @@
                   <div class="relative mt-1">
                     <%= f.password_field :password, autocomplete: "new-password", placeholder: "••••••••", class: "appearance-none block w-full rounded-xl border border-slate-200 px-3 py-1.5 pr-10 text-xs text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500", data: { registration_wizard_target: "password" } %>
                     <button type="button" data-action="click->registration-wizard#togglePassword" class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1 text-slate-400" aria-label="<%= t(".step_two.toggle_password") %>">
-                      <%= icon "eye", variant: :outline, class: "h-4 w-4" %>
+                      <%= delta_icon "eye", class: "h-4 w-4" %>
                     </button>
                   </div>
                   <% if @minimum_password_length %><p class="mt-1 text-[10px] text-slate-400"><%= t(".step_two.password_minimum", count: @minimum_password_length) %></p><% end %>
@@ -209,7 +209,7 @@
                 <label for="business-sector" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.business_sector") %></label>
                 <button type="button" id="business-sector" data-registration-wizard-target="dropdown" data-dropdown-name="business-sector" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.select_sector") %></span>
-                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                  <%= delta_icon "chevron-down", class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
                 <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="business-sector" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["grocery", ".step_four.sectors.grocery"], ["fashion", ".step_four.sectors.fashion"], ["restaurant", ".step_four.sectors.restaurant"], ["pharmacy", ".step_four.sectors.pharmacy"]].each do |value, label_key| %>
@@ -251,7 +251,7 @@
                   <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.currency") %></label>
                   <button type="button" id="currency" data-registration-wizard-target="dropdown" data-dropdown-name="currency" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                     <span data-registration-wizard-target="dropdownLabel"><%= params[:currency].presence || "MXN" %></span>
-                    <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                    <%= delta_icon "chevron-down", class: "h-4 w-4 shrink-0 text-slate-400" %>
                   </button>
                   <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="currency" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                     <% @currencies.each do |currency| %>
@@ -274,7 +274,7 @@
                 <label for="terminals" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.terminals") %></label>
                 <button type="button" id="terminals" data-registration-wizard-target="dropdown" data-dropdown-name="terminals" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.terminal_options.one") %></span>
-                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                  <%= delta_icon "chevron-down", class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
                 <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="terminals" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["1", ".step_five.terminal_options.one"], ["2", ".step_five.terminal_options.two"], ["3_5", ".step_five.terminal_options.three_five"], ["over_5", ".step_five.terminal_options.over_five"]].each do |value, label_key| %>
@@ -289,7 +289,7 @@
                 <label for="payment-integration" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.payments") %></label>
                 <button type="button" id="payment-integration" data-registration-wizard-target="dropdown" data-dropdown-name="payment-integration" data-action="click->registration-wizard#toggleDropdown" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.payment_options.cash") %></span>
-                  <%= icon "chevron-down", variant: :outline, class: "h-4 w-4 shrink-0 text-slate-400" %>
+                  <%= delta_icon "chevron-down", class: "h-4 w-4 shrink-0 text-slate-400" %>
                 </button>
                 <div data-registration-wizard-target="dropdownMenu" data-dropdown-name="payment-integration" class="absolute left-0 right-0 z-40 mt-1 hidden w-full overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl focus:outline-none">
                   <% [["cash", ".step_five.payment_options.cash"], ["card", ".step_five.payment_options.card"], ["qr", ".step_five.payment_options.qr"]].each do |value, label_key| %>
