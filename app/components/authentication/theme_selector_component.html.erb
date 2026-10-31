@@ -5,10 +5,10 @@
     class="inline-flex h-10 w-24 items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
     aria-label="<%= t('authentication.theme_selector.toggle', default: 'Select theme') %>">
     <span class="flex items-center gap-1.5">
-      <%= helpers.icon "swatch", variant: :outline, class: "h-3.5 w-3.5 text-slate-400" %>
+      <%= helpers.delta_icon "swatch", variant: :outline, class: "h-3.5 w-3.5 text-slate-400" %>
       <span><%= t("authentication.theme_selector.label", default: "Tema") %></span>
     </span>
-    <%= helpers.icon "chevron-down", variant: :outline, class: "h-3 w-3 text-slate-400" %>
+    <%= helpers.delta_icon "chevron-down", variant: :outline, class: "h-3 w-3 text-slate-400" %>
   </button>
 
   <div
