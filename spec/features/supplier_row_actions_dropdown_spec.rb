@@ -31,18 +31,21 @@ RSpec.describe 'Supplier row actions dropdown', type: :feature, js: true do
   end
 
   def expect_floating_panel_visible
-    expect(page.evaluate_script(<<~JS)).to be(true)
-      (() => {
-        const menu = document.querySelector('body > [data-supplier-floating-panel]')
-        if (!menu) return false
-        const rect = menu.getBoundingClientRect()
-        return rect.width >= 176 &&
-               rect.height > 0 &&
-               rect.left >= 0 && rect.top >= 0 &&
-               rect.right <= window.innerWidth &&
-               rect.bottom <= window.innerHeight
-      })()
-    JS
+    expect(page).to have_css('body > [data-supplier-floating-panel]', visible: true)
+    Selenium::WebDriver::Wait.new(timeout: 5, interval: 0.05).until do
+      page.evaluate_script(<<~JS)
+        (() => {
+          const menu = document.querySelector('body > [data-supplier-floating-panel]')
+          if (!menu) return false
+          const rect = menu.getBoundingClientRect()
+          return rect.width >= 176 &&
+                 rect.height > 0 &&
+                 rect.left >= 0 && rect.top >= 0 &&
+                 rect.right <= window.innerWidth &&
+                 rect.bottom <= window.innerHeight
+        })()
+      JS
+    end
   end
 
   scenario 'shows last-row actions outside the clipped table on compact screens' do
