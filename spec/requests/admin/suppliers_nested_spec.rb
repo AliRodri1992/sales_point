@@ -24,8 +24,14 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     attributes = attributes_for(:supplier).merge(
       currency_id: currency.id,
       contacts_attributes: {
-        '0' => { name: 'Primary', email: 'PRIMARY@EXAMPLE.COM', phones_attributes: [{ number: '5512345678', kind: 'mobile', primary: true }], primary: true },
-        '1' => { name: 'Secondary', phones_attributes: [{ number: '5512345679', kind: 'mobile', primary: true }], primary: false }
+        '0' => {
+          name: 'Primary', email: 'PRIMARY@EXAMPLE.COM', primary: true,
+          phones_attributes: [{ number: '5512345678', kind: 'mobile', primary: true }]
+        },
+        '1' => {
+          name: 'Secondary', primary: false,
+          phones_attributes: [{ number: '5512345679', kind: 'mobile', primary: true }]
+        }
       },
       addresses_attributes: { '0' => address_attributes }
     )
