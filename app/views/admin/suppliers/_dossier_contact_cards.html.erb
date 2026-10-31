@@ -60,7 +60,15 @@
           [t('admin.supplier_details.contact_fields.mobile_phone'), mobile_phone]
         ].each do |label, phone| %>
           <div class="min-w-0 rounded-xl border border-slate-200/80 bg-white px-3 py-2.5">
-            <p class="mb-1 text-[11px] font-semibold text-slate-500"><%= label %></p>
+            <div class="mb-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
+              <p class="text-[11px] font-semibold text-slate-500"><%= label %></p>
+              <% if phone&.label.present? %>
+                <span class="inline-flex min-w-0 items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
+                  <%= delta_icon('tag', class: 'size-3 shrink-0') %>
+                  <span class="truncate" title="<%= phone.label %>"><%= phone.label %></span>
+                </span>
+              <% end %>
+            </div>
             <% if phone.present? %>
               <%= link_to "tel:#{phone.number}#{";ext=#{phone.extension}" if phone.extension.present?}",
                           aria: { label: "#{t('admin.supplier_general_layout.call')}: #{label}" },
