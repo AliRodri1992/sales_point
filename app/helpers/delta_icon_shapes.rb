@@ -5,6 +5,7 @@ module DeltaIconShapes
   ICON_SHAPES = {
     'adjustments-horizontal' => 'M4 7h16|M4 17h16|c:9,7,2|c:16,17,2',
     'archive-box' => 'r:4,8,16,12,2|M3 5h18v4H3z|M10 13h4',
+    'archive-box-arrow-down' => 'r:4,9,16,12,2|M3 7h18|M12 2v11|M9 10l3 3 3-3',
     'arrow-down' => 'M12 4v16|M5 13l7 7 7-7',
     'arrow-down-tray' => 'M12 3v12|M7 10l5 5 5-5|M4 17v3h16v-3',
     'arrow-left' => 'M20 12H4|M11 5l-7 7 7 7',
@@ -29,6 +30,7 @@ module DeltaIconShapes
     'calculator' => 'r:5,2,14,20,2|M8 7h8|M8 11h1|M12 11h1|M16 11h1|M8 15h1|M12 15h1|M16 15h1|M8 19h1|M12 19h5',
     'calendar-days' => 'r:3,5,18,16,2|M7 3v4|M17 3v4|M3 10h18|M8 14h2|M14 14h2|M8 18h2|M14 18h2',
     'chart-bar' => 'M4 20V4|M4 20h17|r:8,11,3,9,0|r:14,6,3,14,0|M20 20V9',
+    'chart-pie' => 'c:12,12,9|M12 3v9h9|M9 4v9h9',
     'chat-bubble-left-right' => [
       'M5 5h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 3v-3a3 3 0 0 1-2-3V8a',
       '3 3 0 0 1 3-3z|M7 10h10|M7 14h6'
@@ -53,10 +55,12 @@ module DeltaIconShapes
     'device-phone-mobile' => 'r:7,2,10,20,2|M10 5h4|M11 19h2',
     'document-arrow-up' => 'M6 3h8l4 4v5|M14 3v4h4|M6 3v18h12v-4|M12 21v-9|M8.5 15.5 12 12l3.5 3.5',
     'document-text' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 11h6|M9 15h6|M9 19h4',
+    'document-check' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 14l2 2 4-5',
     'ellipsis-horizontal' => 'c:5,12,1|c:12,12,1|c:19,12,1',
     'ellipsis-vertical' => 'c:12,5,1|c:12,12,1|c:12,19,1',
     'envelope' => 'r:3,5,18,14,2|M3 7l9 7 9-7',
     'exclamation-circle' => 'c:12,12,9|M12 7v6|M12 17v.5',
+    'exclamation-triangle' => 'M12 3 2 21h20z|M12 9v5|M12 17v.3',
     'eye' => 'M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z|c:12,12,3',
     'funnel' => 'M3 5h18l-7 8v6l-4 2v-8z',
     'identification' => 'r:3,4,18,16,2|c:9,10,2|M6 16c0-3 6-3 6 0|M15 9h4|M15 13h4',
@@ -67,6 +71,7 @@ module DeltaIconShapes
     'light-bulb' => 'M9 17c-.3-2-3-3-3-7a6 6 0 0 1 12 0c0 4-2.7 5-3 7z|M9 20h6|M10 22h4',
     'list-bullet' => 'M4 6h1|M9 6h12|M4 12h1|M9 12h12|M4 18h1|M9 18h12',
     'lock-closed' => 'r:5,10,14,11,2|M8 10V7a4 4 0 0 1 8 0v3|M12 15v2',
+    'lock-open' => 'r:5,10,14,11,2|M8 10V7a4 4 0 0 1 8-1|M12 15v2',
     'magnifying-glass' => 'c:10.5,10.5,6.5|M15.5 15.5 21 21',
     'map-pin' => 'M12 22s-8-7-8-12a8 8 0 0 1 16 0c0 5-8 12-8 12z|c:12,10,3',
     'paper-airplane' => 'M22 2 2 11l9 2 2 9z|M11 13 22 2',
@@ -80,6 +85,7 @@ module DeltaIconShapes
     'plus-circle' => 'c:12,12,9|M12 7v10|M7 12h10',
     'rectangle-stack' => 'r:5,7,16,13,2|M3 17V5h15|M7 3h13',
     'shield-check' => 'M12 2 4 5v7c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z|M8 12l3 3 5-6',
+    'finger-print' => 'M6 11a6 6 0 0 1 12 0|M9 14v-3a3 3 0 0 1 6 0v3|M12 10v8|M6 15v2|M18 15v2|M8 19l2 2',
     'sparkles' => [
       'M12 2l2.3 6.7L21 11l-6.7 2.3L12 20l-2.3-6.7L3 11l6.7-2.3z|M20 17',
       'l.8 1.7L22 19l-1.2.3L20 21l-.8-1.7L18 19l1.2-.3z'
