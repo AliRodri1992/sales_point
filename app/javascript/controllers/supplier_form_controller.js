@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Accessible supplier dossier navigation; one Rails form, one submission.
 export default class extends Controller {
-  static targets = ["step", "tab", "circle", "previous", "next", "submit", "summary",
+  static targets = ["step", "tab", "circle", "previous", "next", "submit",
     "addressValidationError", "progress", "progressBar", "position", "navigation"]
   static values = {
     index: { type: Number, default: 0 },
@@ -279,6 +279,7 @@ export default class extends Controller {
     this.validating = true
     try {
       if (!await this.validateThrough(this.stepTargets.length - 1)) return
+      if (!await this.validateStep(this.stepTargets.length - 1)) return
       if (this.newRecordValue && this.indexValue !== this.stepTargets.length - 1) {
         this.indexValue = this.stepTargets.length - 1
         return
@@ -321,95 +322,8 @@ export default class extends Controller {
     return false
   }
 
-  summaryLabel(field) {
-    if (field.dataset.summaryLabel) return field.dataset.summaryLabel
-    const explicit = field.labels?.[0]?.textContent?.replace(/\\*/g, "").trim()
-    if (explicit) return explicit
-    const id = field.id
-    const matching = id ? this.element.querySelector(`label[for="${CSS.escape(id)}"]`) : null
-    if (matching) return matching.textContent.replace(/\\*/g, "").trim()
-    return field.name.split("[").pop().replace("]", "").replace(/_/g, " ")
-  }
-
-  summaryValue(field) {
-    if (field.type === "file") return [...field.files].map((file) => file.name).join(", ")
-    if (field.type === "checkbox") return field.checked ? "✓" : "—"
-    if (field.type === "radio") return field.checked ? field.value : null
-    if (field.tagName === "SELECT") {
-      return [...field.selectedOptions].map((option) => option.textContent.trim()).filter(Boolean).join(", ")
-    }
-    return field.value.trim()
-  }
-
-  appendSummaryGroup(title, fields) {
-    const entries = fields.filter((field) =>
-      field.name && !field.disabled && !["submit", "button"].includes(field.type) &&
-      (field.type !== "hidden" || field.dataset.supplierTagsTarget === "value") &&
-      !field.name.endsWith("[_destroy]") && !field.closest("template") &&
-      !field.closest("[data-supplier-nested-item]")?.querySelector("[data-supplier-nested-destroy]:checked")
-    ).map((field) => ({
-      label: this.summaryLabel(field),
-      value: this.summaryValue(field),
-      type: field.type
-    })).filter(({ value }) => value !== null && value !== "")
-
-    if (!entries.length) entries.push({ label: '—', value: '—' })
-
-    const group = document.createElement("section")
-    group.className = "rounded-xl border border-slate-200 bg-slate-50/50 p-4"
-    const heading = document.createElement("h3")
-    heading.className = "mb-3 text-sm font-bold text-slate-900"
-    heading.textContent = title
-    group.append(heading)
-
-    const list = document.createElement("dl")
-    list.className = "grid gap-3 sm:grid-cols-2"
-    entries.forEach(({ label, value }) => {
-      const item = document.createElement("div")
-      const term = document.createElement("dt")
-      term.className = "text-xs font-semibold text-slate-500"
-      term.textContent = label
-      const description = document.createElement("dd")
-      description.className = "mt-1 break-words whitespace-pre-wrap text-sm text-slate-900"
-      description.textContent = value
-      item.append(term, description)
-      list.append(item)
-    })
-    group.append(list)
-    this.summaryTarget.append(group)
-  }
-
-  updateSummary() {
-    if (!this.hasSummaryTarget) return
-    this.summaryTarget.replaceChildren()
-
-    // Review every editable step, not just General and Fiscal.
-    this.stepTargets.slice(0, -1).forEach((step) => {
-      const title = step.querySelector("h2")?.textContent?.trim() || ""
-      const fields = [...step.querySelectorAll("input, select, textarea")]
-        .filter((field) => !field.closest("[data-supplier-nested-item]"))
-      const nestedItems = [...step.querySelectorAll("[data-supplier-nested-item]")]
-        .filter((item) => item.querySelector("[data-supplier-nested-destroy]")?.value !== "1")
-
-      // Fiscal information and its single fiscal address belong in one summary card.
-      if (step === this.stepTargets[1] && nestedItems.length === 1) {
-        this.appendSummaryGroup(title, [
-          ...fields,
-          ...nestedItems[0].querySelectorAll("input, select, textarea")
-        ])
-        return
-      }
-
-      this.appendSummaryGroup(title, fields)
-      nestedItems.forEach((item, index) => {
-        this.appendSummaryGroup(`${title} · ${index + 1}`, [...item.querySelectorAll("input, select, textarea")])
-      })
-    })
-  }
-
   refreshStepIndicators() {
     this.tabTargets.forEach((tab, index) => {
-      if (index === this.stepTargets.length - 1) return
       const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors, [data-server-field-error]')
       const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
         .filter((field) => !field.disabled && !field.closest("template"))
@@ -441,10 +355,10 @@ export default class extends Controller {
       indicator.classList.toggle("text-slate-600", state === "pending")
     })
     if (this.hasProgressTarget) {
-      const count = this.tabTargets.slice(0, -1).filter((tab) => tab.dataset.stepState === "complete").length
+      const count = this.tabTargets.filter((tab) => tab.dataset.stepState === "complete").length
       const template = this.element.dataset.supplierFormProgressLabel || "%{count} / %{total}"
       this.progressTarget.textContent = template.replace("%{count}", String(count))
-        .replace("%{total}", String(this.stepTargets.length - 1))
+        .replace("%{total}", String(this.stepTargets.length))
     }
   }
 
@@ -483,7 +397,6 @@ export default class extends Controller {
       circle.classList.toggle("text-slate-500", !active)
     })
     this.refreshStepIndicators()
-    if (this.indexValue === this.stepTargets.length - 1) this.updateSummary()
     if (this.hasSubmitTarget) this.submitTarget.hidden = this.newRecordValue && this.indexValue !== this.stepTargets.length - 1
     if (this.hasPreviousTarget) this.previousTarget.hidden = !this.newRecordValue || this.indexValue === 0
     if (this.hasNextTarget) this.nextTarget.hidden = !this.newRecordValue || this.indexValue === this.stepTargets.length - 1
