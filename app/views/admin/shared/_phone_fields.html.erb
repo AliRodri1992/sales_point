@@ -4,7 +4,7 @@
   <div class="grid gap-3 sm:grid-cols-2">
     <div>
       <%= form.label :kind, t('admin.phones.kind'), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
-      <%= form.select :kind, [['Celular', 'mobile'], ['Oficina / fijo', 'landline'], ['Otro', 'other']], {},
+      <%= form.select :kind, %w[mobile landline other].map { |kind| [t("admin.phones.#{kind}"), kind] }, {},
                       class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
     </div>
     <div>
