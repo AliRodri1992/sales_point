@@ -112,25 +112,7 @@
       <div class="relative" data-controller="delta-select"><%= form.select :classification, %w[manufacturer distributor wholesaler service other].map { |v| [t("admin.supplier_dossier.options.#{v}"), v] }, { include_blank: t('admin.supplier_placeholders.classification') }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :classification)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :classification) %>
     </div>
-          <% %w[landline mobile].each do |kind| %>
-      <% phone = supplier.phones.find { |entry| entry.kind == kind && entry.primary? && entry.deleted_at.nil? } %>
-      <% phone ||= supplier.phones.build(kind: kind, primary: true) %>
-      <%= form.fields_for :phones, [phone] do |phone_form| %>
-        <div>
-          <%= phone_form.hidden_field :id if phone_form.object.persisted? %>
-          <%= phone_form.hidden_field :kind, value: kind %>
-          <%= phone_form.hidden_field :primary, value: '1' %>
-          <%= phone_form.label :number, t(kind == 'mobile' ? 'admin.phones.primary_mobile' : 'admin.phones.primary_office'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
-            <%= phone_form.telephone_field :number, data: { international_phone_target: 'input' },
-                  class: 'min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 text-sm',
-                  placeholder: '55 1234 5678' %>
-          </div>
-          <%= error_message_for(phone_form.object, :number) %>
-        </div>
-      <% end %>
-    <% end %>
-    <% unless supplier.new_record? %>
+          <% unless supplier.new_record? %>
           <div class="sm:col-span-2"><%= form.label :status, t('admin.suppliers.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %><div class="relative" data-controller="delta-select"><%= form.select :status, options_for_select(Supplier.statuses.keys.map { |status| [t("admin.suppliers.statuses.#{status}"), status] }, supplier.status || 'active'), {}, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 #{form_state_classes(supplier, :status)} px-4 py-3 text-sm appearance-none pr-11 cursor-pointer" %></div><%= error_message_for(supplier, :status) %></div>
           <% end %>
         </div>
