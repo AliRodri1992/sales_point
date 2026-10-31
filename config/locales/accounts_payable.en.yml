@@ -73,7 +73,7 @@ en:
       archive: "Archive"
       confirm: "Confirm this operation?"
       back: "Back"
-      empty: "No records"
+      empty: "There are no payable accounts to display. Adjust the filters or review the supplier's posted invoices."
       validation_errors: "Please correct the form errors"
       bank_list:
         description: "View and manage the bank accounts registered for this supplier."
