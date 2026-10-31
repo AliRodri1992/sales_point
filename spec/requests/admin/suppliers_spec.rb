@@ -194,7 +194,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     card = page.at_css("[data-supplier-mobile-card='#{supplier.id}']")
     expect(card).to be_present
     expect(card.text).to include('Mobile Supplier', supplier.code)
-    expect(page.at_css('div.hidden.overflow-x-auto.md\\:block table')).to be_present
+    expect(page.at_css('table').parent['class']).to include('hidden', 'md:block')
     expect(card.at_css("a[href='#{admin_supplier_path(supplier)}']")).to be_present
   end
 
