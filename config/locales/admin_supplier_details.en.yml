@@ -79,6 +79,12 @@ en:
         commercial: "Commercial"
         delivery: "Delivery"
       contact_form:
+        validation_title: "Review the contact details"
+        validation_description: "Correct the highlighted fields before saving. Your entries are preserved."
+        phones_title: "Phone numbers"
+        saved_phone_title: "Registered phone"
+        new_phone_title: "New phone"
+        phone_row_description: "You can set one primary phone number for each type."
         new_title: "New contact"
         new_description: "Register a contact person to communicate with this supplier."
         edit_description: "Update contact details and communication preferences."
