@@ -2,15 +2,15 @@
   id="onlineUsersPanel"
   data-controller="online-users"
   data-online-users-current-user-id-value="<%= current_user.id %>"
-  class="panel-hidden fixed bottom-[100px] right-4 z-50 sm:right-[94px] w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+  class="panel-hidden fixed bottom-[104px] right-4 z-50 w-[calc(100vw-2rem)] max-w-[390px] overflow-hidden rounded-[26px] border border-slate-200/80 bg-white shadow-[0_24px_75px_-25px_rgba(15,23,42,.35)] sm:right-[94px]"
 >
-  <div class="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-4 py-3">
+  <div class="flex items-center justify-between bg-gradient-to-r from-slate-950 to-slate-800 px-5 py-5">
     <div class="flex items-center gap-3">
-      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white">
+      <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-400/20">
         <%= delta_icon("users", variant: :solid, class: "size-5") %>
       </div>
       <div>
-        <p class="text-sm font-semibold text-white">
+        <p class="font-jakarta text-base font-bold text-white">
           <%= t("admin.shared.online_users.title") %>
         </p>
         <div class="flex items-center gap-1.5">
@@ -24,7 +24,7 @@
     <button
       id="onlineUsersCloseButton"
       type="button"
-      class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white"
+      class="flex h-9 w-9 items-center justify-center rounded-xl text-slate-300 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
       aria-label="<%= t('admin.shared.online_users.close') %>"
     >
       <%= delta_icon("x-mark", class: "size-4") %>
@@ -39,7 +39,7 @@
 
 <div
   id="conversationPanel"
-  class="panel-hidden fixed bottom-[100px] right-4 z-50 sm:right-[94px] w-[calc(100vw-3rem)] max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+  class="panel-hidden fixed bottom-[104px] right-4 z-50 w-[calc(100vw-2rem)] max-w-[390px] overflow-hidden rounded-[26px] border border-slate-200/80 bg-white shadow-[0_24px_75px_-25px_rgba(15,23,42,.35)] sm:right-[94px]"
 >
   <turbo-frame id="conversation_panel">
     <div class="flex h-80 items-center justify-center p-8">
@@ -53,8 +53,8 @@
 <button
   id="onlineUsersButton"
   type="button"
-  class="fixed bottom-5 right-[94px] z-40 flex size-16 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg"
+  class="fixed bottom-5 right-[94px] z-40 flex size-12 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-700/20 transition hover:-translate-y-0.5 hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
   aria-label="<%= t('admin.shared.online_users.open') %>"
 >
-  <%= delta_icon("users", variant: :solid, class: "size-7") %>
+  <%= delta_icon("users", variant: :solid, class: "size-5") %>
 </button>
