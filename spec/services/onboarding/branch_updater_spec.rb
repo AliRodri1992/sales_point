@@ -21,8 +21,9 @@ RSpec.describe Onboarding::BranchUpdater, type: :service do
       params = ActionController::Parameters.new(
         branch: {
           name: 'Sucursal Actualizada',
-          phones_attributes: [{ number: '55 5987 6543', country_code: 'MX',
-                               kind: 'mobile', primary: true }],
+          phones_attributes: [
+            { number: '55 5987 6543', country_code: 'MX', kind: 'mobile', primary: true }
+          ],
           address_attributes: {
             id: branch.address.id,
             street: 'Av. Insurgentes',
