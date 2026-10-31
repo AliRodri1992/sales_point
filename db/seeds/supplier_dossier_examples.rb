@@ -72,12 +72,17 @@ module SupplierDossierExamples
         name: "Contacto demo #{index}",
         position: %w[Compras Ventas Logística Facturación][index % 4],
         email: email,
-        phones_attributes: index.even? ? [{ number: format('553456%04d', index),
-                                            country_code: 'MX', kind: 'mobile', primary: true }] : [],
+        phones_attributes: contact_phone_attributes(index),
         primary: false,
         active: (index % 4 != 0),
         notes: reference
       }
+    end
+
+    def contact_phone_attributes(index)
+      return [] if index.odd?
+
+      [{ number: format('553456%04d', index), country_code: 'MX', kind: 'mobile', primary: true }]
     end
 
     def seed_addresses(supplier, country, count)
