@@ -79,6 +79,8 @@ es:
         commercial: "Comercial"
         delivery: "Entrega"
       contact_form:
+        phone_removed_pending: "El teléfono se quitará al guardar los cambios."
+        undo_phone_removal: "Deshacer"
         primary_contact_label: "Contacto principal"
         phone_primary_label: "Número principal"
         no_phones_hint: "Este contacto todavía no tiene teléfonos. Agrega un celular o un número de oficina."
