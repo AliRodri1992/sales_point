@@ -108,7 +108,7 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     visit admin_supplier_path(supplier, tab: 'contacts')
 
     picker = find('select[data-supplier-dossier-target="mobileSelect"]', visible: :all)
-    label = find('[data-controller="delta-select"] button[aria-haspopup="listbox"]', match: :first)
+    label = picker.find(:xpath, '..').find('button[aria-haspopup="listbox"]')
     expect(label.text).to include(I18n.t('admin.supplier_dossier.sections.contacts', locale: :en))
 
     page.execute_script(<<~JS)
