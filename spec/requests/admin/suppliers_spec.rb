@@ -17,6 +17,51 @@ RSpec.describe 'Admin suppliers', type: :request do
     sign_in user
   end
 
+  it 'shows redesigned contact cards without repeating the primary label or job title' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact, contactable: supplier, name: 'Ana Lopez', position: 'Purchasing Manager',
+      email: 'ana@example.com', primary: true, notes: 'Prefer email during business hours',
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true },
+        { number: '5598765432', country_code: 'MX', kind: 'other', primary: false }
+      ]
+    )
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(response).to have_http_status(:ok)
+    card = Nokogiri::HTML(response.body).at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    expect(card.text).to include('Ana Lopez', 'Purchasing Manager', 'ana@example.com')
+    expect(card.css('[data-contact-primary-badge]').size).to eq(1)
+    expect(card.text.scan(I18n.t('admin.supplier_details.primary', locale: :en)).size).to eq(1)
+    expect(card.css('a[href^="tel:"]').size).to eq(3)
+
+    details = card.at_css('[data-contact-detail]')
+    expect(details).to be_present
+    expect(details['class']).to include('hidden')
+    expect(details.text).to include('Prefer email during business hours')
+    expect(details.text).not_to include('Purchasing Manager')
+    expect(details.css('dt').map(&:text)).not_to include(I18n.t('admin.supplier_details.contact_fields.primary', locale: :en))
+    expect(card.at_css('button[aria-controls]')['aria-expanded']).to eq('false')
+  end
+
+  it 'renders missing contact data without an unnecessary details expander' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Simple Contact', notes: nil, email: nil)
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(response).to have_http_status(:ok)
+    card = Nokogiri::HTML(response.body).at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    expect(card.at_css('[data-contact-detail]')).to be_nil
+    expect(card.at_css('button[data-action="supplier-contacts#toggleCard"]')).to be_nil
+    expect(card.css('a[href^="tel:"]')).to be_empty
+  end
+
   it 'does not expose another organization suppliers' do
     foreign_supplier = create(:supplier, organization: create(:organization), name: 'Foreign Supplier')
     get admin_suppliers_path
