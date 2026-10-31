@@ -68,6 +68,9 @@ application.register("international-phone", InternationalPhoneController)
 import NestedPhonesController from "./nested_phones_controller"
 application.register("nested-phones", NestedPhonesController)
 
+import PhoneLabelController from "./phone_label_controller"
+application.register("phone-label", PhoneLabelController)
+
 import SupplierCalendarController from "./supplier_calendar_controller"
 application.register("supplier-calendar", SupplierCalendarController)
 
