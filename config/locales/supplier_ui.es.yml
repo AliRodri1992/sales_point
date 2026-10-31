@@ -9,3 +9,6 @@ es:
       empty_schedules_description: "Configura horarios recurrentes por sucursal para planificar visitas, pedidos y entregas."
       all_day_hint: "Se conservarán las fechas; el evento abarca el día completo."
       archived_status: "Archivada"
+      contact_pages: "Páginas de contactos"
+      empty_contacts_description: "Registra personas de contacto para facilitar la comunicación y el seguimiento con este proveedor."
+      confirm_action: "Confirmar"
