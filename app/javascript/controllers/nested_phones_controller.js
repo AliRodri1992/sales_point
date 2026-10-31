@@ -1,11 +1,23 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["items", "template"]
+  static targets = ["items", "template", "empty"]
+
+  connect() {
+    this.updateEmptyState()
+  }
+
+  updateEmptyState() {
+    if (!this.hasEmptyTarget) return
+    const visible = [...this.itemsTarget.querySelectorAll("[data-phone-item]")]
+      .some((item) => !item.hidden)
+    this.emptyTarget.classList.toggle("hidden", visible)
+  }
 
   add() {
     const id = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`
     this.itemsTarget.insertAdjacentHTML("beforeend", this.templateTarget.innerHTML.replaceAll("NEW_PHONE", id))
+    this.updateEmptyState()
   }
 
   remove(event) {
@@ -19,7 +31,9 @@ export default class extends Controller {
     } else {
       item.remove()
     }
+    this.updateEmptyState()
   }
+
   primaryChanged(event) {
     if (!event.target.checked) return
 
