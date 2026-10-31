@@ -1,31 +1,23 @@
 <% current_value = selected.to_s %>
 <% selected_option = options.find { |_, value| value.to_s == current_value } %>
-<details class="group relative w-full" data-controller="supplier-dropdown">
+<details class="group relative w-full" data-controller="supplier-dropdown"
+         data-supplier-dropdown-default-value="<%= options.first&.last %>">
   <summary aria-label="<%= local_assigns[:aria_label] || name.to_s.humanize %>"
-            aria-labelledby="supplier_<%= name %>_label" class="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 [&::-webkit-details-marker]:hidden">
+           aria-labelledby="supplier_<%= name %>_label"
+           class="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500 [&::-webkit-details-marker]:hidden">
     <span data-supplier-dropdown-target="label"><%= selected_option&.first || options.first&.first %></span>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-slate-500 transition group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 text-slate-500 transition group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
   </summary>
-  <% if local_assigns[:plain_options] %>
-    <%= hidden_field_tag name, current_value, data: { supplier_dropdown_target: 'value' } %>
-  <% end %>
-  <div role="<%= local_assigns[:plain_options] ? 'listbox' : 'group' %>"
-       data-action="<%= local_assigns[:plain_options] ? 'keydown->supplier-dropdown#navigate' : '' %>"
-       class="absolute left-0 right-0 top-full z-30 mt-1 max-h-56 overflow-x-hidden overflow-y-auto rounded-xl border border-slate-200 bg-white <%= local_assigns[:plain_options] ? '' : 'p-1' %> shadow-xl">
+  <%= hidden_field_tag name, current_value, data: { supplier_dropdown_target: 'value' } %>
+  <div role="listbox" aria-labelledby="supplier_<%= name %>_label"
+       data-action="keydown->supplier-dropdown#navigate"
+       class="absolute left-0 right-0 top-full z-30 mt-1 max-h-56 overflow-x-hidden overflow-y-auto rounded-xl border border-slate-200 bg-white p-1 shadow-xl">
     <% options.each do |label, value| %>
-      <% option_id = "supplier_#{name}_#{value.to_s.parameterize.presence || 'all'}" %>
-      <% if local_assigns[:plain_options] %>
-        <button type="button" role="option" data-action="click->supplier-dropdown#choose"
-                data-option-value="<%= value %>" aria-selected="<%= current_value == value.to_s %>"
-                class="block min-h-11 w-full cursor-pointer px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-100 hover:text-emerald-900 focus-visible:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-700 aria-selected:font-bold aria-selected:text-white aria-selected:hover:bg-emerald-800 aria-selected:hover:text-white">
-          <span data-option-label><%= label %></span>
-        </button>
-      <% else %>
-        <label for="<%= option_id %>" data-action="click->supplier-dropdown#choose" class="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition hover:bg-emerald-100 has-[:checked]:bg-emerald-700 has-[:checked]:font-bold has-[:checked]:text-white has-[:checked]:hover:bg-emerald-800">
-          <%= radio_button_tag name, value, current_value == value.to_s, id: option_id, class: 'size-4 accent-emerald-600' %>
-          <span data-option-label><%= label %></span>
-        </label>
-      <% end %>
+      <button type="button" role="option" data-action="click->supplier-dropdown#choose"
+              data-option-value="<%= value %>" aria-selected="<%= current_value == value.to_s %>"
+              class="block min-h-11 w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 transition hover:bg-emerald-100 hover:text-emerald-900 focus-visible:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-emerald-500 aria-selected:bg-emerald-700 aria-selected:font-bold aria-selected:text-white aria-selected:hover:bg-emerald-800 aria-selected:hover:text-white">
+        <span data-option-label><%= label %></span>
+      </button>
     <% end %>
   </div>
 </details>
