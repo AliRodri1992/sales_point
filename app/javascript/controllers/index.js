@@ -65,6 +65,9 @@ application.register("demo-request-wizard", DemoRequestWizardController)
 import InternationalPhoneController from "./international_phone_controller"
 application.register("international-phone", InternationalPhoneController)
 
+import NestedPhonesController from "./nested_phones_controller"
+application.register("nested-phones", NestedPhonesController)
+
 import SupplierCalendarController from "./supplier_calendar_controller"
 application.register("supplier-calendar", SupplierCalendarController)
 
