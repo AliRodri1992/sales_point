@@ -142,6 +142,41 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 1)
   end
 
+  scenario 'selects a phone label suggestion and saves it with the contact' do
+    visit new_admin_supplier_contact_path(supplier)
+
+    find('input[name="contact[name]"]').set('Sales office contact')
+    card = find('[data-phone-item]')
+    card.find('input[name$="[number]"]').set('5512345678')
+
+    card.find('button[data-phone-label-value="Sales"]').click
+
+    expect(card.find('input[name$="[label]"]').value).to eq('Sales')
+    expect(card.find('button[data-phone-label-value="Sales"]')['aria-pressed']).to eq('true')
+
+    find('input[type="submit"][value="Create contact"]').click
+
+    expect(page).to have_current_path(admin_supplier_contacts_path(supplier), wait: 10)
+    contact = supplier.contacts.find_by!(name: 'Sales office contact')
+    expect(contact.phones.active.find_by!(kind: 'mobile').label).to eq('Sales')
+  end
+
+  scenario 'keeps custom labels and initializes the picker on dynamically added numbers' do
+    visit new_admin_supplier_contact_path(supplier)
+    find('button[data-action="nested-phones#add"]').click
+
+    card = all('[data-phone-item]').last
+    card.find('button[data-phone-label-value="Support"]').click
+    expect(card.find('input[name$="[label]"]').value).to eq('Support')
+
+    card.find('input[name$="[label]"]').set('After-hours help desk')
+    expect(card.find('input[name$="[label]"]').value).to eq('After-hours help desk')
+    expect(card.all('button[data-phone-label-target="choice"][aria-pressed="true"]')).to be_empty
+
+    card.find('button[data-action="phone-label#clear"]').click
+    expect(card.find('input[name$="[label]"]').value).to be_empty
+  end
+
   scenario 'keeps the unified form inside a mobile viewport' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit new_admin_supplier_contact_path(supplier)
