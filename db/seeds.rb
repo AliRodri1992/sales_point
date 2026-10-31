@@ -581,9 +581,7 @@ SeedConsole.track('Clientes', Client) do
       name: "Cliente de ejemplo #{number}",
       email: "cliente#{number}@example.com",
       phones_attributes: [{ number: format('551234%04d', number), country_code: 'MX',
-
                            kind: 'mobile', primary: true,
-
                            organization: Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID) }],
       rfc: format('CDE260101%03d', number),
       postal_code: '06000',
@@ -645,7 +643,6 @@ SeedConsole.track('Sucursales', Branch) do
       organization:,
       name:,
       phones_attributes: [{ number: format('551234%04d', 100 + number), country_code: 'MX',
-
                            kind: 'mobile', primary: true, organization: }],
       status: number % 5 != 0,
       address_attributes: {
