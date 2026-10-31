@@ -25,7 +25,7 @@ class Phone < ApplicationRecord
 
   def assign_organization
     owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
-    self.organization ||= owner.organization if owner&.respond_to?(:organization)
+    self.organization ||= owner.is_a?(Organization) ? owner : owner.organization if owner&.respond_to?(:organization) || owner.is_a?(Organization)
   end
 
   def normalize_number
@@ -50,9 +50,8 @@ class Phone < ApplicationRecord
   def same_organization_as_owner
     return if phoneable.blank? || organization.blank?
     owner = phoneable.is_a?(Contact) ? phoneable.contactable : phoneable
-    return unless owner.respond_to?(:organization_id)
-
-    errors.add(:organization, :invalid) if owner.organization_id != organization_id
+    owner_id = owner.is_a?(Organization) ? owner.id : owner.organization_id if owner.respond_to?(:organization_id) || owner.is_a?(Organization)
+    errors.add(:organization, :invalid) if owner_id.present? && owner_id != organization_id
   end
 
   def unique_primary_per_kind
