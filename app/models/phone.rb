@@ -73,10 +73,17 @@ class Phone < ApplicationRecord
   end
 
   def unique_active_number
-    return if deleted_at.present? || phoneable.blank? || number.blank? || !phoneable.persisted?
+    return unless duplicate_check_applicable?
 
-    duplicates = Phone.active.where(phoneable:, number:, extension:).where.not(id: id)
-    errors.add(:number, :taken) if duplicates.exists?
+    errors.add(:number, :taken) if conflicting_active_number?
+  end
+
+  def duplicate_check_applicable?
+    deleted_at.nil? && phoneable.present? && number.present? && phoneable.persisted?
+  end
+
+  def conflicting_active_number?
+    Phone.active.where(phoneable:, number:, extension:).where.not(id: id).exists?
   end
 
   def conflicting_primary_phone?
