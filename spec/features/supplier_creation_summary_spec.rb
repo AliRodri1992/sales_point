@@ -41,7 +41,7 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_no_css('img[src*="supplier-delivery"]', visible: :all)
     expect(page).to have_css('form[data-controller="supplier-form"]')
     expect(page).to have_css('nav details[data-supplier-form-target="navigation"]')
-    expect(find('[data-supplier-form-target="activeLabel"]')['aria-live']).to eq('polite')
+    expect(page).to have_no_css('[data-supplier-form-target="activeLabel"]', visible: :all)
     expect(page).to have_css('nav details [data-supplier-form-target="tab"]', count: 7, visible: :all)
     expect(page).to have_no_css('nav .overflow-x-auto', visible: :all)
     expect(page).to have_no_css('nav[class*="sticky"]', visible: :all)
@@ -55,10 +55,28 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     navigation.find('summary').click
     navigation.find('button[data-step-index="3"]').click
 
-    expect(page).to have_css('[data-supplier-form-target="activeLabel"]',
+    expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden) h2',
                              text: I18n.t('admin.suppliers.onboarding.steps.step_5'))
+    expect(page).to have_no_css('[data-supplier-form-target="activeLabel"]', visible: :all)
     expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden)', count: 1)
     expect(page).to have_no_css('details[data-supplier-form-target="navigation"][open]', visible: :all)
+  end
+
+  scenario 'shows the active heading only once when editing a supplier' do
+    supplier = create(:supplier, organization:)
+    visit edit_admin_supplier_path(supplier)
+
+    expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden) h2',
+                             text: I18n.t('admin.suppliers.onboarding.steps.step_1'), count: 1)
+    expect(page).to have_no_css('[data-supplier-form-target="activeLabel"]', visible: :all)
+    expect(page).to have_css('nav details[data-supplier-form-target="navigation"]')
+
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    navigation.find('summary').click
+    navigation.find('button[data-step-index="1"]').click
+
+    expect(page).to have_css('[data-supplier-form-target="step"]:not(.hidden) h2',
+                             text: I18n.t('admin.suppliers.onboarding.steps.step_2'), count: 1)
   end
 
   scenario 'closes section picker on Escape and restores keyboard focus' do
