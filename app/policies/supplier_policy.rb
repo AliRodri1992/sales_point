@@ -17,6 +17,7 @@ class SupplierPolicy
     suppliers.schedules.create suppliers.schedules.update suppliers.schedules.destroy suppliers.schedules.restore
     suppliers.documents.create suppliers.documents.update suppliers.documents.destroy suppliers.documents.restore
     suppliers.products.create suppliers.products.update suppliers.products.destroy suppliers.products.restore
+    suppliers.products.prefer
   ].freeze
 
   # List access does not grant access to sensitive dossier sections.
@@ -105,7 +106,7 @@ class SupplierPolicy
 
   def view_products?
     authorized_record? && (allowed?('suppliers.products.view') ||
-                           section_any_action?('products', %w[create update destroy restore]))
+                           section_any_action?('products', %w[create update destroy restore prefer]))
   end
 
   def manage_products? = authorized_record? && allowed?('suppliers.products.manage')
@@ -113,6 +114,7 @@ class SupplierPolicy
   def update_products? = section_action?('products', 'update')
   def destroy_products? = section_action?('products', 'destroy')
   def restore_products? = section_action?('products', 'restore')
+  def prefer_products? = section_action?('products', 'prefer')
   def export? = authorized_organization? && allowed?('suppliers.export')
 
   private
