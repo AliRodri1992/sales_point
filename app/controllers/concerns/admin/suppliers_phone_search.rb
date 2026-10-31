@@ -8,8 +8,8 @@ module Admin
       return scope if params[:search].blank?
 
       fields = ['suppliers.code ILIKE :term', 'suppliers.name ILIKE :term']
-      if supplier_general_visible?
-        fields << 'suppliers.email ILIKE :term'
+      fields << 'suppliers.email ILIKE :term' if supplier_general_visible?
+      if supplier_contacts_visible?
         fields << <<~SQL.squish
           EXISTS (SELECT 1 FROM contacts
                   INNER JOIN phones ON phones.phoneable_type = 'Contact'
