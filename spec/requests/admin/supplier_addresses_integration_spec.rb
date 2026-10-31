@@ -420,6 +420,10 @@ RSpec.describe 'Supplier address integration', type: :request do
   it 'rejects the primary action when management permission is denied' do
     target = create(:address, :fiscal, addressable: supplier)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     patch set_primary_admin_supplier_address_path(supplier, target)
 
@@ -454,6 +458,10 @@ RSpec.describe 'Supplier address integration', type: :request do
   it 'hides administration actions without management permission' do
     create(:address, :fiscal, addressable: supplier)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_addresses_path(supplier)
 
@@ -526,6 +534,10 @@ RSpec.describe 'Supplier address integration', type: :request do
 
   it 'does not show the create action to users without address management permission' do
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_addresses_path(supplier)
 

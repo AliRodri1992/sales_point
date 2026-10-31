@@ -71,7 +71,7 @@ RSpec.describe 'Supplier calendar validation paths', type: :request do
           params: { supplier_schedule_exception: {
             starts_on: Date.current, ends_on: Date.yesterday, reason: 'holiday'
           } }
-    expect(response).to redirect_to(edit_admin_supplier_schedule_exception_path(supplier, exception))
+    expect(response).to have_http_status(:unprocessable_content)
     expect(exception.reload.ends_on).to be_nil
   end
 

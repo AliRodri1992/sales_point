@@ -450,7 +450,8 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
     )
     expect(dossier.at_css('select[data-supplier-dossier-target="mobileSelect"]')).to be_present
     expect(dossier.at_css('#supplier-dossier-overview')).to be_nil
-    expect(dossier.at_css('#supplier-dossier-general')['class']).not_to include('hidden')
+    expect(dossier.at_css('[data-controller="supplier-dossier"]')['data-supplier-dossier-initial-tab-value'])
+      .to eq('general')
     expect(dossier.at_css('#supplier-dossier-fiscal')['class']).to include('hidden')
     expect(response.body).not_to include('data-section="reconciliation"')
   end

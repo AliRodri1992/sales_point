@@ -563,6 +563,10 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'hides the address management actions when the user has only viewing access' do
     supplier = create(:supplier, organization:)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_path(supplier, tab: 'addresses')
 

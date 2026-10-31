@@ -212,6 +212,10 @@ RSpec.describe 'Supplier address cards and progressive loading', type: :request 
   it 'does not expose Edit when address management is denied' do
     create(:address, :fiscal, addressable: supplier)
     allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_path(supplier, tab: 'addresses')
     expect(cards.size).to eq(1)

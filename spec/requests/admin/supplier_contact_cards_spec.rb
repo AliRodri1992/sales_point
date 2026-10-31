@@ -238,6 +238,9 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
   it 'hides card edit options for users without contact management permission' do
     create(:contact, contactable: supplier, name: 'Read Only Contact')
     allow_any_instance_of(SupplierPolicy).to receive(:manage_contacts?).and_return(false)
+    %i[create_contacts? update_contacts? destroy_contacts? restore_contacts?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
 
     get admin_supplier_path(supplier, tab: 'contacts')
 

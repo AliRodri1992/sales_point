@@ -50,7 +50,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(panel('bank_accounts').at_css("a[href='#{admin_supplier_bank_accounts_path(supplier)}']")).to be_present
     expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_status"][value="active"]')).to be_present
     expect(panel('bank_accounts').at_css('input[type="hidden"][name="banks_bank"]')).to be_present
-    expect(panel('bank_accounts').at_css('[data-finance-bank-status-tabs] a[aria-current="page"]')).to be_present
+    expect(panel('bank_accounts').css('button[data-option-value]')).not_to be_empty
     expect(panel('bank_accounts').css('input[type="radio"]')).to be_empty
     expect(panel('bank_accounts').at_css('[data-finance-payables]')).to be_nil
   end
@@ -158,7 +158,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     get admin_supplier_path(supplier, tab: 'bank_accounts', banks_status: 'archived')
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.size).to eq(1)
-    expect(cards.first.text).to include('Archived Bank', 'Inactive')
+    expect(cards.first.text).to include('Archived Bank', 'Archived')
     expect(cards.first.at_css("form[action$='/bank_accounts/#{original.id}/restore']")).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     expect(panel('bank_accounts').text).not_to include('999987654321')
