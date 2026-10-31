@@ -145,5 +145,4 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     get admin_supplier_supplier_products_path(supplier)
     expect(response).to have_http_status(:ok)
   end
-
 end
