@@ -1,0 +1,141 @@
+# frozen_string_literal: true
+
+# Delta POS original icon system. Each semantic icon is an authored 24x24 SVG,
+# not an external library, glyph font, or a copied Heroicon asset.
+module DeltaIconsHelper
+  ICON_SHAPES = {
+    'adjustments-horizontal' => 'M4 7h16|M4 17h16|c:9,7,2|c:16,17,2',
+    'archive-box' => 'r:4,8,16,12,2|M3 5h18v4H3z|M10 13h4',
+    'arrow-down' => 'M12 4v16|M5 13l7 7 7-7',
+    'arrow-down-tray' => 'M12 3v12|M7 10l5 5 5-5|M4 17v3h16v-3',
+    'arrow-left' => 'M20 12H4|M11 5l-7 7 7 7',
+    'arrow-path' => 'M19 8a8 8 0 0 0-14-2l-2 2|M3 3v5h5|M5 16a8 8 0 0 0 14 2l2-2|M21 21v-5h-5',
+    'arrow-right' => 'M4 12h16|M13 5l7 7-7 7',
+    'arrow-right-start-on-rectangle' => 'M12 12H3|M7 8l-4 4 4 4|M12 4h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6',
+    'arrow-top-right-on-square' => 'M12 5h7v7|M19 5l-9 9|M17 15v4H5V7h4',
+    'arrow-up' => 'M12 20V4|M5 11l7-7 7 7',
+    'arrow-up-right' => 'M5 19 19 5|M9 5h10v10',
+    'arrow-up-tray' => 'M12 16V4|M7 9l5-5 5 5|M4 16v4h16v-4',
+    'at-symbol' => 'c:12,12,4|M16 12v2a2.5 2.5 0 0 0 5-1V12a9 9 0 1 0-4 7',
+    'banknotes' => 'r:3,6,18,12,2|c:12,12,3|M6 9h1|M17 15h1',
+    'bars-3' => 'M4 6h16|M4 12h16|M4 18h16',
+    'bell' => 'M7 17V10a5 5 0 0 1 10 0v7l2 2H5l2-2|M10 21h4',
+    'book-open' => 'M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1|M12 5c3-2 6-2 9-1v15c-3-1-6-1-9 1|M12 5v15',
+    'building-library' => 'M3 9l9-6 9 6|M4 10h16|M6 10v9|M10 10v9|M14 10v9|M18 10v9|M3 20h18',
+    'building-office-2' => 'r:4,3,12,18,2|M16 9h4v12|M8 7h1|M12 7h1|M8 11h1|M12 11h1|M8 15h1|M12 15h1|M9 21v-3h3v3',
+    'building-storefront' => 'M4 9V5h16v4|M3 9h18l-1 4a3 3 0 0 1-4 1 3 3 0 0 1-4 0 3 3 0 0 1-4 0 3 3 0 0 1-4-1z|M5 15v6h14v-6|M9 21v-5h6v5',
+    'calculator' => 'r:5,2,14,20,2|M8 7h8|M8 11h1|M12 11h1|M16 11h1|M8 15h1|M12 15h1|M16 15h1|M8 19h1|M12 19h5',
+    'calendar-days' => 'r:3,5,18,16,2|M7 3v4|M17 3v4|M3 10h18|M8 14h2|M14 14h2|M8 18h2|M14 18h2',
+    'chart-bar' => 'M4 20V4|M4 20h17|r:8,11,3,9,0|r:14,6,3,14,0|M20 20V9',
+    'chat-bubble-left-right' => 'M5 5h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 3v-3a3 3 0 0 1-2-3V8a3 3 0 0 1 3-3z|M7 10h10|M7 14h6',
+    'check' => 'M4 12l5 5L20 6',
+    'check-circle' => 'c:12,12,9|M7.5 12l3 3L17 8.5',
+    'chevron-down' => 'M5 9l7 7 7-7',
+    'chevron-left' => 'M15 5l-7 7 7 7',
+    'chevron-right' => 'M9 5l7 7-7 7',
+    'chevron-up' => 'M5 15l7-7 7 7',
+    'clipboard-document-list' => 'r:5,5,14,17,2|r:9,2,6,5,1|M9 11h6|M9 15h6|M9 19h4',
+    'clock' => 'c:12,12,9|M12 6v6l4 2',
+    'cloud-arrow-up' => 'M7 18H6a4 4 0 0 1-1-8 7 7 0 0 1 13 1h1a3.5 3.5 0 0 1 0 7h-2|M12 21V11|M8.5 14.5 12 11l3.5 3.5',
+    'cog' => 'c:12,12,3|M10 2h4l.5 3 2 .8 2.5-1.4 2.2 3.5-2.2 2 .1 2.3 2.1 2-2.2 3.5-2.5-1.2-2 1-.5 2.8h-4l-.5-2.8-2-1-2.5 1.2-2.2-3.5 2.1-2v-2.3l-2.1-2L5 4.4l2.5 1.4 2-.8z',
+    'computer-desktop' => 'r:3,4,18,13,2|M12 17v4|M8 21h8',
+    'credit-card' => 'r:2,5,20,14,2|M2 10h20|M6 15h5',
+    'cube' => 'M12 2 3 7l9 5 9-5-9-5z|M3 7v10l9 5 9-5V7|M12 12v10',
+    'device-phone-mobile' => 'r:7,2,10,20,2|M10 5h4|M11 19h2',
+    'document-arrow-up' => 'M6 3h8l4 4v5|M14 3v4h4|M6 3v18h12v-4|M12 21v-9|M8.5 15.5 12 12l3.5 3.5',
+    'document-text' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 11h6|M9 15h6|M9 19h4',
+    'ellipsis-horizontal' => 'c:5,12,1|c:12,12,1|c:19,12,1',
+    'ellipsis-vertical' => 'c:12,5,1|c:12,12,1|c:12,19,1',
+    'envelope' => 'r:3,5,18,14,2|M3 7l9 7 9-7',
+    'exclamation-circle' => 'c:12,12,9|M12 7v6|M12 17v.5',
+    'eye' => 'M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z|c:12,12,3',
+    'funnel' => 'M3 5h18l-7 8v6l-4 2v-8z',
+    'identification' => 'r:3,4,18,16,2|c:9,10,2|M6 16c0-3 6-3 6 0|M15 9h4|M15 13h4',
+    'inbox' => 'M5 4h14l3 11v5H2v-5z|M2 15h6l2 3h4l2-3h6',
+    'information-circle' => 'c:12,12,9|M12 11v5|M12 7.5v.5',
+    'key' => 'c:8,10,5|M12 13l9 9|M16 17l2-2|M18 19l2-2',
+    'language' => 'c:12,12,9|M3 12h18|M12 3c-5 5-5 13 0 18|M12 3c5 5 5 13 0 18|M5 7h14|M5 17h14',
+    'light-bulb' => 'M9 17c-.3-2-3-3-3-7a6 6 0 0 1 12 0c0 4-2.7 5-3 7z|M9 20h6|M10 22h4',
+    'list-bullet' => 'M4 6h1|M9 6h12|M4 12h1|M9 12h12|M4 18h1|M9 18h12',
+    'lock-closed' => 'r:5,10,14,11,2|M8 10V7a4 4 0 0 1 8 0v3|M12 15v2',
+    'magnifying-glass' => 'c:10.5,10.5,6.5|M15.5 15.5 21 21',
+    'map-pin' => 'M12 22s-8-7-8-12a8 8 0 0 1 16 0c0 5-8 12-8 12z|c:12,10,3',
+    'paper-airplane' => 'M22 2 2 11l9 2 2 9z|M11 13 22 2',
+    'pencil' => 'M4 20l4.5-1 11-11a2 2 0 0 0-3-3l-11 11z|M14.5 7.5l3 3',
+    'pencil-square' => 'M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7|M9 15l3-.6L21 6a2 2 0 0 0-3-3l-8.4 9z',
+    'phone' => 'M7 3 4 6c0 7 7 14 14 14l3-3-5-4-3 3c-3-1-5-3-6-6l3-3z',
+    'plus' => 'M12 4v16|M4 12h16',
+    'plus-circle' => 'c:12,12,9|M12 7v10|M7 12h10',
+    'rectangle-stack' => 'r:5,7,16,13,2|M3 17V5h15|M7 3h13',
+    'shield-check' => 'M12 2 4 5v7c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z|M8 12l3 3 5-6',
+    'sparkles' => 'M12 2l2.3 6.7L21 11l-6.7 2.3L12 20l-2.3-6.7L3 11l6.7-2.3z|M20 17l.8 1.7L22 19l-1.2.3L20 21l-.8-1.7L18 19l1.2-.3z',
+    'squares-2x2' => 'r:3,3,8,8,2|r:13,3,8,8,2|r:3,13,8,8,2|r:13,13,8,8,2',
+    'star' => 'M12 2.5 15 9l7 1-5.2 5 1.3 7-6.1-3.4-6.1 3.4 1.3-7L2 10l7-1z',
+    'swatch' => 'M5 3h7v16a3.5 3.5 0 0 1-7 0z|M12 7l5-3 4 6-9 6|M8 21h12',
+    'tag' => 'M3 4h10l8 8-9 9-9-9z|c:8,9,1',
+    'trash' => 'M4 7h16|M9 7V4h6v3|M6 7l1 14h10l1-14|M10 11v7|M14 11v7',
+    'truck' => 'r:2,5,12,12,1|M14 9h4l4 5v3h-8|c:7,18,2|c:18,18,2',
+    'user' => 'c:12,8,4|M4 21v-2a8 8 0 0 1 16 0v2',
+    'user-group' => 'c:9,8,3|M2 20v-2a7 7 0 0 1 14 0v2|M16 5a3 3 0 0 1 0 6|M19 14a6 6 0 0 1 3 6',
+    'user-plus' => 'c:9,8,4|M2 21v-2a7 7 0 0 1 14 0v2|M19 7v8|M15 11h8',
+    'users' => 'c:9,8,3|M2 20v-2a7 7 0 0 1 14 0v2|M16 5a3 3 0 0 1 0 6|M19 14a6 6 0 0 1 3 6',
+    'view-columns' => 'r:3,4,18,16,2|M9 4v16|M15 4v16',
+    'x-mark' => 'M5 5l14 14|M19 5 5 19'
+  }.freeze
+
+  # Former icon aliases and semantic variants. All resolve to an original Delta shape.
+  ICON_ALIASES = {
+    'info' => 'information-circle', 'exclamation-triangle' => 'exclamation-circle',
+    'cog-6-tooth' => 'cog', 'cog-8-tooth' => 'cog', 'adjustments-vertical' => 'adjustments-horizontal',
+    'calendar' => 'calendar-days', 'calendar-date-range' => 'calendar-days',
+    'document' => 'document-text', 'document-check' => 'check-circle',
+    'document-magnifying-glass' => 'magnifying-glass',
+    'archive-box-arrow-down' => 'archive-box', 'archive-box-x-mark' => 'archive-box',
+    'cube-transparent' => 'cube', 'chart-pie' => 'chart-bar',
+    'globe-alt' => 'language', 'globe-americas' => 'language',
+    'building-office' => 'building-office-2',
+    'check-badge' => 'check-circle', 'shield-exclamation' => 'shield-check',
+    'finger-print' => 'shield-check', 'lock-open' => 'lock-closed',
+    'paper-clip' => 'document-text', 'arrow-long-left' => 'arrow-left',
+    'arrow-long-right' => 'arrow-right', 'bars-2' => 'bars-3',
+    'ellipsis' => 'ellipsis-horizontal', 'arrow-uturn-left' => 'arrow-left',
+    'arrow-up-on-square' => 'arrow-up-tray', 'arrow-down-on-square' => 'arrow-down-tray',
+    'shopping-bag' => 'building-storefront', 'currency-dollar' => 'banknotes'
+  }.freeze
+
+  def delta_icon(name, css: nil, variant: nil, library: nil, stroke_width: 1.8, **options)
+    key = name.to_s.tr('_', '-')
+    key = ICON_ALIASES.fetch(key, key)
+    shapes = ICON_SHAPES[key]
+    unless shapes
+      Rails.logger.warn("Delta POS SVG icon not defined: #{key}")
+      shapes = ICON_SHAPES.fetch('information-circle')
+    end
+
+    classes = options.delete(:class) || css || 'size-5'
+    attrs = {
+      viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+      stroke_width:, stroke_linecap: 'round', stroke_linejoin: 'round',
+      class: classes
+    }
+    attrs[:aria] = options.key?(:aria) ? options.delete(:aria) : { hidden: true }
+    attrs.merge!(options.except(:size))
+    tag.svg(**attrs) { safe_join(shapes.split('|').map { |part| delta_icon_shape(part) }) }
+  end
+
+  private
+
+  def delta_icon_shape(spec)
+    type, *values = spec.split(':', 2)
+    case type
+    when 'c'
+      x, y, r = values.first.split(',')
+      tag.circle(cx: x, cy: y, r: r)
+    when 'r'
+      x, y, width, height, radius = values.first.split(',')
+      tag.rect(x:, y:, width:, height:, rx: radius)
+    else
+      tag.path(d: spec)
+    end
+  end
+end
