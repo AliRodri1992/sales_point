@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 class SupplierProductPolicy < SupplierPolicy
-  def index? = authorized_record? && allowed?('suppliers.products.view')
+  def index? = view_products?
   def show? = index?
-  def create? = authorized_record? && allowed?('suppliers.products.manage')
+  def create? = create_products?
   def new? = create?
-  def edit? = create?
-  def update? = create?
-  def destroy? = create?
+  def edit? = update_products?
+  def update? = update_products?
+  def destroy? = destroy_products?
+  def restore? = restore_products?
 
   class Scope < SupplierPolicy::Scope
   end
