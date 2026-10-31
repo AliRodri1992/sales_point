@@ -25,6 +25,23 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     Nokogiri::HTML(response.body)
   end
 
+  it 'separates bank verification rights from editing and archiving rights' do
+    account = bank_account
+    reviewer = create(:user)
+    create(:organization_membership, user: reviewer, organization:)
+    role = create(:system_role, role_type: :system, code: 'bank_reviewer')
+    role.permissions << create(:permission, code: 'accounts_payable.banks.review',
+                                            module_name: 'Cuentas por pagar')
+    create(:user_role, user: reviewer, system_role: role)
+
+    policy = SupplierBankAccountPolicy.new(reviewer, account)
+    expect(policy.index?).to be(true)
+    expect(policy.review?).to be(true)
+    expect(policy.update?).to be(false)
+    expect(policy.destroy?).to be(false)
+    expect(policy.restore?).to be(false)
+  end
+
   it 'shows deleted account details masked and restores the same record' do
     account = bank_account
     delete admin_supplier_bank_account_path(supplier, account)
