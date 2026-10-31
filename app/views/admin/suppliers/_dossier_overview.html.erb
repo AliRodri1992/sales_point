@@ -54,7 +54,7 @@
       [t('admin.supplier_dossier.fields.classification'), supplier.classification.present? ? t("admin.supplier_dossier.options.#{supplier.classification}") : nil],
       [t('admin.supplier_dossier.general.status'), t("admin.suppliers.statuses.#{supplier.status}")],
       [t('admin.supplier_dossier.responsible'), supplier.responsible_user&.display_name],
-      [t('admin.supplier_dossier.overview.phone'), supplier.phone],
+      [t('admin.supplier_dossier.overview.phone'), supplier.phones.active.find_by(kind: 'landline', primary: true)&.number],
       [t('admin.supplier_dossier.overview.email'), supplier.email],
       [t('admin.supplier_dossier.notes'), supplier.notes]
     ] : [] %>
@@ -111,7 +111,7 @@
                 <tr>
                   <td class="px-3 py-3 font-semibold text-slate-900"><%= contact.name %></td>
                   <td class="px-3 py-3"><%= contact.position.presence || '—' %></td>
-                  <td class="whitespace-nowrap px-3 py-3"><%= contact.phone.presence || contact.mobile_phone.presence || '—' %></td>
+                  <td class="whitespace-nowrap px-3 py-3"><%= contact.phones.active.order(primary: :desc).first&.number || '—' %></td>
                   <td class="max-w-40 truncate px-3 py-3" title="<%= contact.email %>"><%= contact.email.presence || '—' %></td>
                 </tr>
               <% end %>
