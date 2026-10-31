@@ -77,7 +77,7 @@ ko:
       process_return: "반품 처리"
       reason: "사유"
       history: "이력 및 이동"
-      empty: "기록이 없습니다"
+      empty: "표시할 구매 문서가 없습니다. 필터를 변경하거나 해당 모듈에서 새 거래를 등록하세요."
       total: "합계"
       idempotency: "작업 식별자"
       received: "입고됨"
