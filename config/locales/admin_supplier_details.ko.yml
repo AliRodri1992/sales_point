@@ -79,6 +79,8 @@ ko:
         commercial: "상업"
         delivery: "배송"
       contact_form:
+        phone_removed_pending: "변경 사항을 저장하면 이 전화번호가 삭제됩니다."
+        undo_phone_removal: "되돌리기"
         primary_contact_label: "대표 연락처"
         phone_primary_label: "대표 번호"
         no_phones_hint: "등록된 전화번호가 없습니다. 휴대전화 또는 사무실 번호를 추가하세요."
