@@ -95,11 +95,12 @@ module Admin
     end
 
     def set_primary
-      if Suppliers::SetPrimaryAddress.new(supplier: @supplier, address: @address).call
-        @address.reload
-        notify_address('address_updated')
+      unless Suppliers::SetPrimaryAddress.new(supplier: @supplier, address: @address).call
+        return redirect_to primary_redirect_path
       end
 
+      @address.reload
+      notify_address('address_updated')
       redirect_to primary_redirect_path, flash: {
         swal_message: t('admin.supplier_details.address_primary_updated')
       }
