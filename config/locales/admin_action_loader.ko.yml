@@ -1,0 +1,11 @@
+ko:
+  admin:
+    action_loader:
+      title: "델틴이 작업 중입니다"
+      processing: "정보를 준비하고 있습니다…"
+      opening: "공급업체 정보를 불러오는 중…"
+      editing: "수정 양식을 준비하는 중…"
+      creating: "새 공급업체 양식을 준비하는 중…"
+      saving: "공급업체 정보를 저장하는 중…"
+      updating: "공급업체 목록을 갱신하는 중…"
+      archiving: "공급업체 작업을 처리하는 중…"
