@@ -98,10 +98,8 @@
               <%= render "admin/onboarding/field_errors", object: @branch, attribute: :name %>
             </div>
               <div>
-              <%= branch_fields.label :phone, t("admin.onboarding.fields.phone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-              <%= branch_fields.telephone_field :phone, class: "w-full rounded-xl border #{@branch.errors[:phone].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
-              <%= render "admin/onboarding/field_errors", object: @branch, attribute: :phone %>
-            </div>
+                <%= render 'admin/shared/primary_mobile_field', form: branch_fields, record: @branch %>
+              </div>
             </div>
             <%= branch_fields.fields_for :address do |address_fields| %>
               <div class="grid gap-5 pt-2 md:grid-cols-2">
@@ -235,7 +233,7 @@
                   <% if @branch %>
                     <div class="grid gap-4 sm:grid-cols-2">
                       <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.branch_name"), value: @branch.name %>
-                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.phone"), value: @branch.phone %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.phone"), value: @branch.phones.active.find_by(kind: "mobile", primary: true)&.number %>
                       <% if @branch.address %>
                         <% address = @branch.address %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.street"), value: [address.street, address.exterior_number, address.interior_number].compact_blank.join(" ") %>
