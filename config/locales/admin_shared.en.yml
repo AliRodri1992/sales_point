@@ -17,4 +17,5 @@ en:
           address_deleted: "An address was deleted."
           address_restored: "An address was restored."
       online_users:
-        empty: Empty
+        empty: "No other users are online"
+        empty_description: "When someone connects, they'll appear here so you can start a conversation."
