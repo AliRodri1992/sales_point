@@ -13,6 +13,16 @@ RSpec.describe 'Supplier contact integration', type: :request do
     sign_in user
   end
 
+  it 'keeps a consistent supplier heading and back navigation when creating a contact' do
+    get new_admin_supplier_contact_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-supplier-subpage-header] h1')).to be_present
+    expect(page.at_css('[data-supplier-subpage-header]').text).to include(supplier.name)
+    expect(page.at_css("[data-supplier-subpage-header] a[href='#{admin_supplier_contacts_path(supplier)}']"))
+      .to be_present
+  end
+
   it 'creates, normalizes and displays a supplier contact' do
     post admin_supplier_contacts_path(supplier),
          params: { contact: {
