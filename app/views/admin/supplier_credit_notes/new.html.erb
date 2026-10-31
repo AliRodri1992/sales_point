@@ -6,26 +6,26 @@
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <div class="relative" data-controller="delta-select" data-searchable="true">
         <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
-      </div></div>
+      </div><%= error_message_for(@credit, :supplier_id) %></div>
     <div><%= f.label :currency_id, t('admin.accounts_payable.currency'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <div class="relative" data-controller="delta-select">
         <%= f.collection_select :currency_id, @currencies, :id, :code, { prompt: true }, { required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
-      </div></div>
+      </div><%= error_message_for(@credit, :currency_id) %></div>
     <div><%= f.label :supplier_invoice_id, t('admin.accounts_payable.invoice'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <div class="relative" data-controller="delta-select">
         <%= f.collection_select :supplier_invoice_id, @invoices, :id,
                              ->(invoice) { invoice.folio.presence || "##{invoice.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
-      </div></div>
+      </div><%= error_message_for(@credit, :supplier_invoice_id) %></div>
     <div><%= f.label :purchase_return_id, t('admin.accounts_payable.return'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <div class="relative" data-controller="delta-select">
         <%= f.collection_select :purchase_return_id, @returns, :id,
                              ->(item) { "#{item.goods_receipt.purchase_order.code} · ##{item.id}" }, { include_blank: true }, { class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
-      </div></div>
+      </div><%= error_message_for(@credit, :purchase_return_id) %></div>
     <% %i[folio uuid issued_on total].each do |field| %>
       <div><%= f.label field, t("admin.accounts_payable.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
         <% if field == :issued_on %><%= f.date_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
         <% elsif field == :total %><%= f.number_field field, min: '0.01', step: '0.01', class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
-        <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %><% end %></div>
+        <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %><% end %><%= error_message_for(@credit, field) %></div>
     <% end %>
     <div class="md:col-span-2"><%= f.label :xml_document, t('admin.accounts_payable.cfdi_xml'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <%= f.file_field :xml_document, accept: '.xml,application/xml,text/xml', class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
