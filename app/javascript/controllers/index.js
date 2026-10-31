@@ -71,6 +71,9 @@ application.register("supplier-calendar", SupplierCalendarController)
 import SupplierDossierController from "./supplier_dossier_controller"
 application.register("supplier-dossier", SupplierDossierController)
 
+import SupplierEditUppyController from "./supplier_edit_uppy_controller"
+application.register("supplier-edit-uppy", SupplierEditUppyController)
+
 import SupplierDocumentsController from "./supplier_documents_controller"
 application.register("supplier-documents", SupplierDocumentsController)
 
