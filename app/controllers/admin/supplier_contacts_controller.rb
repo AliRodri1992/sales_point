@@ -94,8 +94,7 @@ module Admin
     end
 
     def load_contact_listing
-      scope = params[:status] == 'deleted' ?
-        @supplier.contacts.with_deleted.where.not(deleted_at: nil) : @supplier.contacts.not_deleted
+      scope = contact_scope
       query = params[:q].to_s.strip.first(100)
       if query.present?
         term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
@@ -106,6 +105,14 @@ module Admin
       @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
       @listed_contacts = scope.order(primary: :desc, name: :asc, id: :asc)
                               .limit(12).offset((@contacts_page - 1) * 12)
+    end
+
+    def contact_scope
+      if params[:status] == 'deleted'
+        @supplier.contacts.with_deleted.where.not(deleted_at: nil)
+      else
+        @supplier.contacts.not_deleted
+      end
     end
 
     def contact_params
