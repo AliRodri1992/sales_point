@@ -49,6 +49,7 @@ module Admin
 
     def create
       @branch = Branch.new(branch_params)
+      @branch.organization ||= current_organization
       authorize @branch
 
       if @branch.save
@@ -120,9 +121,9 @@ module Admin
       params.expect(
         branch: [
           :name,
-          :phone,
           :status,
-          { address_attributes: %i[
+          { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy],
+            address_attributes: %i[
             id street exterior_number interior_number neighborhood city state country_id postal_code
           ] }
         ]
