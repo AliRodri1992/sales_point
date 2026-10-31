@@ -28,18 +28,18 @@ module Admin
     end
 
     def new
-      authorize @supplier, :manage_products?
+      authorize @supplier, :create_products?
       @offer = @supplier.supplier_products.new(currency: @supplier.currency, organization: current_organization)
       load_catalogs
     end
 
     def edit
-      authorize @supplier, :manage_products?
+      authorize @supplier, :update_products?
       load_catalogs
     end
 
     def create
-      authorize @supplier, :manage_products?
+      authorize @supplier, :create_products?
       @offer = @supplier.supplier_products.new(offer_params)
       @offer.organization = current_organization
       @offer.product = organization_products.find(offer_params[:product_id])
@@ -54,7 +54,7 @@ module Admin
     end
 
     def update
-      authorize @supplier, :manage_products?
+      authorize @supplier, :update_products?
       if @offer.update(offer_params.except(:product_id))
         redirect_to admin_supplier_supplier_products_path(@supplier), notice: t('admin.procurement.saved')
       else
@@ -66,13 +66,13 @@ module Admin
     end
 
     def destroy
-      authorize @supplier, :manage_products?
+      authorize @supplier, :destroy_products?
       @offer.update!(deleted_at: Time.current, active: false)
       redirect_to admin_supplier_supplier_products_path(@supplier), notice: t('admin.procurement.deleted')
     end
 
     def restore
-      authorize @supplier, :manage_products?
+      authorize @supplier, :restore_products?
       @supplier.with_lock { @offer.update!(deleted_at: nil, active: true) }
       redirect_to admin_supplier_supplier_products_path(@supplier, archived: '1'),
                   notice: t('admin.supplier_archive.restored_offer')
