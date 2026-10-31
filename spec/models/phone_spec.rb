@@ -122,4 +122,22 @@ RSpec.describe Phone, type: :model do
     expect(duplicate).not_to be_valid
     expect(duplicate.errors.attribute_names).to include(:number)
   end
+
+  it 'limits client, branch and employee phones to the primary mobile' do
+    [build(:client), build(:branch, organization:), build(:employee, organization:)].each do |owner|
+      phone = owner.phones.build(number: '55 1234 5678', organization:, kind: 'landline', primary: true)
+      expect(phone).not_to be_valid
+      expect(phone.errors.attribute_names).to include(:kind)
+    end
+  end
+
+  it 'rejects secondary mobiles for organization contacts' do
+    organization_contact = build(:contact, contactable: organization)
+    secondary = organization_contact.phones.build(
+      number: '55 1234 5678', organization:, kind: 'mobile', primary: false
+    )
+
+    expect(secondary).not_to be_valid
+    expect(secondary.errors.attribute_names).to include(:primary)
+  end
 end
