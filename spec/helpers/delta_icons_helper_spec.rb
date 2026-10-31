@@ -35,6 +35,28 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(up.to_html).not_to eq(down.to_html)
   end
 
+  it 'renders original receipt and chart illustrations used by dashboard KPIs' do
+    icons = %w[arrow-trending-up receipt-percent presentation-chart-line banknotes]
+    rendered = icons.map do |name|
+      Nokogiri::HTML.fragment(helper.delta_icon(name, class: 'size-5')).at_css('svg')
+    end
+
+    expect(rendered).to all(be_present)
+    expect(rendered.map { |svg| svg.at_css('path, circle, rect') }).to all(be_present)
+    expect(rendered.map(&:to_html).uniq.length).to eq(icons.length)
+  end
+
+  it 'defines every icon configured by the dashboard KPI cards' do
+    source = Rails.root.join('app/views/admin/dashboard/_kpi_grid.html.erb').read
+    names = source.scan(/icon_name:\s*['"]([^'"]+)['"]/).flatten
+
+    expect(names).to include('receipt-percent', 'presentation-chart-line')
+    expect(names).to all(satisfy do |name|
+      key = described_class::ICON_ALIASES.fetch(name, name)
+      described_class::ICON_SHAPES.key?(key)
+    end)
+  end
+
   it 'rejects an undefined icon rather than showing an unrelated information symbol' do
     expect { helper.delta_icon('not-a-defined-delta-icon') }
       .to raise_error(ArgumentError, /Delta POS SVG icon not defined/)
