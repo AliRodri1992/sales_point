@@ -21,11 +21,11 @@ module Reports
       private
 
       def column_value(supplier, key)
+        return primary_office_number(supplier) if key == :phone
+
         case key
         when :status
           I18n.t("admin.suppliers.statuses.#{supplier.status}", locale:)
-        when :phone
-          supplier.contacts.not_deleted.find_by(primary: true, active: true)&.phones&.active&.find_by(kind: 'landline', primary: true)&.number.to_s
         when :classification
           return '' if supplier.classification.blank?
 
@@ -33,6 +33,13 @@ module Reports
         else
           supplier.public_send(key).to_s
         end
+      end
+
+      def primary_office_number(supplier)
+        contact = supplier.contacts.not_deleted.find_by(primary: true, active: true)
+        return '' unless contact
+
+        contact.phones.active.find_by(kind: 'landline', primary: true)&.number.to_s
       end
     end
   end
