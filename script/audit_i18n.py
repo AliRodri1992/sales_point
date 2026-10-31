@@ -100,6 +100,79 @@ def load_locale(path: pathlib.Path):
     return locale, parsed
 
 
+
+def deep_merge(target, source):
+    """Mirror Rails locale merging without discarding unrelated scopes."""
+    for key, value in source.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            deep_merge(target[key], value)
+        else:
+            target[key] = value
+
+
+def leaf_map(value, prefix=()):
+    """Keep arrays as values: empty lists must not silently count as translated topics."""
+    if isinstance(value, dict):
+        result = {}
+        for key, child in value.items():
+            result.update(leaf_map(child, prefix + (str(key),)))
+        return result
+    return {".".join(prefix): value}
+
+
+def audit_full_locale_parity(parsed):
+    """Report full file-catalog coverage; opt-in strict mode gates outstanding debt."""
+    import os
+
+    merged = {locale: {} for locale in REQUIRED_LOCALES}
+    for locale, data in parsed.values():
+        if locale in merged:
+            deep_merge(merged[locale], data[locale])
+
+    leaves = {locale: leaf_map(tree) for locale, tree in merged.items()}
+    reference = leaves["es"]
+    issues = []
+    for locale in ("en", "ko"):
+        current = leaves[locale]
+        for key, value in sorted(reference.items()):
+            if key not in current:
+                issues.append(f"{locale}: MISSING {key}")
+                continue
+            translated = current[key]
+            if isinstance(value, str) and isinstance(translated, str):
+                base_vars = sorted(INTERPOLATION_RE.findall(value))
+                target_vars = sorted(INTERPOLATION_RE.findall(translated))
+                if base_vars != target_vars:
+                    issues.append(f"{locale}: INTERPOLATION {key}: {base_vars} != {target_vars}")
+            if isinstance(translated, str) and not translated.strip() and str(value).strip():
+                issues.append(f"{locale}: EMPTY {key}")
+            if isinstance(value, list) and isinstance(translated, list):
+                if len(translated) < len(value):
+                    issues.append(f"{locale}: SHORT_LIST {key}: {len(translated)}/{len(value)}")
+        for key in sorted(set(current) - set(reference)):
+            issues.append(f"{locale}: EXTRA {key}")
+
+    for locale in REQUIRED_LOCALES:
+        sections = merged[locale].get("admin", {}).get("user_manual", {}).get("sections", {})
+        if isinstance(sections, dict):
+            for section, content in sections.items():
+                if isinstance(content, dict) and not content.get("topics"):
+                    issues.append(f"{locale}: EMPTY_MANUAL {section}")
+
+    print("FULL_LOCALE_PARITY")
+    for locale in REQUIRED_LOCALES:
+        print(f"  {locale}: {len(leaves[locale])} leaf paths")
+    print(f"  findings: {len(issues)}")
+    for issue in issues[:200]:
+        print(f"  - {issue}")
+    if len(issues) > 200:
+        print(f"  ... {len(issues) - 200} additional findings omitted")
+    if issues and os.environ.get("I18N_STRICT_PARITY") == "1":
+        return 1
+    if issues:
+        print("WARN: translation coverage is incomplete; use I18N_STRICT_PARITY=1 to fail CI.")
+    return 0
+
 def main() -> int:
     paths = sorted(LOCALES_DIR.rglob("*.yml")) + sorted(LOCALES_DIR.rglob("*.yaml"))
     if not paths:
@@ -186,8 +259,9 @@ def main() -> int:
                     f"en={variables}, {locale}={registration_interpolations[locale].get(path)}"
                 )
 
+    parity_result = audit_full_locale_parity(parsed)
     print(f"PASS: audited {len(paths)} locale files with strict duplicate-key detection.")
-    return 0
+    return parity_result
 
 
 if __name__ == "__main__":
