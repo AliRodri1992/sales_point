@@ -211,5 +211,4 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     expect(page).to have_css('select[name="supplier[responsible_user_id]"]', visible: :all)
     expect(main_contact.reload.name).to eq('Contacto de ventas')
   end
-
 end
