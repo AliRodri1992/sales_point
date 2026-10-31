@@ -30,7 +30,7 @@ ko:
       single: 이벤트
       no_schedules: 등록된 반복 일정이 없습니다.
       no_events: 이 기간에 등록된 단일 이벤트가 없습니다.
-      no_activities: 등록된 활동이 없습니다.
+      no_activities: "이 공급업체에는 아직 예정된 활동이 없습니다. 주간 일정을 추가하거나 이벤트를 등록하세요."
       more: "%{count}개 더보기"
       new_schedule: 새 일정
       edit: 수정
