@@ -10,7 +10,7 @@ module SupplierParameters
   def supplier_nested_params
     {
       contacts_attributes: [
-        *%i[id name position email primary active notes _destroy],
+        :id, :name, :position, :email, :primary, :active, :notes, :_destroy,
         { phones_attributes: phone_field_params }
       ],
       phones_attributes: phone_field_params,
