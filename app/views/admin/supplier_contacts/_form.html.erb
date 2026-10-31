@@ -30,16 +30,22 @@
         <%= form.email_field :email, class: "#{field_classes} #{form_state_classes(@contact, :email)}", placeholder: 'contacto@proveedor.com' %>
         <%= error_message_for(@contact, :email) %>
       </div>
-      <div class="grid gap-4 md:grid-cols-2">
-        <% %i[phone mobile_phone].each do |field| %>
-          <div class="min-w-0">
-            <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-            <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
-              <%= form.telephone_field field, data: { international_phone_target: 'input' }, class: "#{field_classes} #{form_state_classes(@contact, field)}", placeholder: '55 1234 5678' %>
-            </div>
-            <%= error_message_for(@contact, field) %>
-          </div>
-        <% end %>
+      <div data-controller="nested-phones" class="space-y-3">
+        <div data-nested-phones-target="items" class="space-y-3">
+          <% @contact.phones.build(kind: 'mobile', primary: true) if @contact.phones.empty? %>
+          <%= form.fields_for :phones do |phone_form| %>
+            <%= render 'admin/shared/phone_fields', form: phone_form %>
+          <% end %>
+        </div>
+        <template data-nested-phones-target="template">
+          <%= form.fields_for :phones, Phone.new(kind: 'mobile'), child_index: 'NEW_PHONE' do |phone_form| %>
+            <%= render 'admin/shared/phone_fields', form: phone_form %>
+          <% end %>
+        </template>
+        <button type="button" data-action="nested-phones#add"
+                class="inline-flex min-h-10 items-center gap-2 rounded-lg border border-emerald-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50">
+          <%= delta_icon('plus', class: 'size-4') %> <%= t('admin.phones.add') %>
+        </button>
       </div>
       <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.phone_hint') %></p>
     </div>
