@@ -32,6 +32,13 @@ export default class extends Controller {
       const { Uppy, Dashboard, XHRUpload } = await import(UPPY_MODULE)
       if (this.disconnected) return
 
+      const language = document.documentElement.lang?.toLowerCase() || "es"
+      const uploaderCopy = language.startsWith("ko")
+        ? { dropPasteFiles: "파일을 드래그하거나 %{browseFiles}", browseFiles: "찾아보기" }
+        : language.startsWith("en")
+          ? { dropPasteFiles: "Drop files here or %{browseFiles}", browseFiles: "browse" }
+          : { dropPasteFiles: "Arrastra tus archivos aquí o %{browseFiles}", browseFiles: "selecciónalos" }
+
       this.uppy = new Uppy({
         autoProceed: false,
         restrictions: {
@@ -42,10 +49,7 @@ export default class extends Controller {
         },
         locale: {
           strings: {
-            dropPasteFiles: "Arrastra tus archivos aquí o %{browseFiles}",
-            browseFiles: "selecciónalos",
-            uploadXFiles: "Subir %{smart_count} archivo",
-            uploadXFiles_plural: "Subir %{smart_count} archivos"
+            ...uploaderCopy
           }
         }
       })
@@ -91,6 +95,7 @@ export default class extends Controller {
     } catch (error) {
       console.error("Uppy could not be initialized for supplier editing", error)
       if (!this.disconnected) {
+        if (this.hasPlaceholderTarget) this.placeholderTarget.hidden = true
         this.fallbackTarget.hidden = false
         this.setStatus(this.messagesValue.failed, true)
       }
