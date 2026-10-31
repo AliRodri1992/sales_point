@@ -226,3 +226,59 @@ jobs:
       - name: Validate Rails I18n loading
         run: |
           bin/rails runner 'I18n.available_locales.each { |locale| I18n.backend.send(:init_translations); I18n.backend.send(:translations)[locale] }'
+
+
+  fresh_database:
+    name: Fresh migrations and seed data
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: development
+      POSTGRES_DB: sale_point_fresh_ci
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_fresh_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_fresh_ci"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+
+      - name: Recreate the database and load all seeds
+        run: bin/rails db:drop db:create db:migrate db:seed
+
+      - name: Assert legacy phone columns are absent
+        run: |
+          bin/rails runner '
+            tables = %w[suppliers contacts clients branches employees]
+            invalid = tables.flat_map do |table|
+              (ActiveRecord::Base.connection.columns(table).map(&:name) & %w[phone mobile_phone])
+                .map { |column| "#{table}.#{column}" }
+            end
+            abort("Legacy telephone columns still exist: #{invalid.join(", ")}") if invalid.any?
+            abort("Polymorphic phones table missing") unless ActiveRecord::Base.connection.data_source_exists?("phones")
+            puts "Fresh schema contains only polymorphic phone records for managed entities."
+          '
