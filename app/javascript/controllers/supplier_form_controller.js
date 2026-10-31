@@ -329,8 +329,12 @@ export default class extends Controller {
         .filter((field) => !field.disabled && !field.closest("template"))
       const editable = [...(this.stepTargets[index]?.querySelectorAll("input:not([type='hidden']), select, textarea") || [])]
         .filter((field) => !field.disabled && !field.closest("template"))
-      const hasContent = editable.some((field) => field.type === "checkbox" ? field.checked : field.value.trim() !== "")
-      const complete = !invalid && (required.length > 0 ? required.every((field) => field.value.trim() !== "" && field.checkValidity()) : true)
+      // A preselected checkbox is not evidence that the user has completed a section.
+      // In particular, the primary contact checkbox must not mark an empty contact complete.
+      const hasContent = editable.some((field) =>
+        !["checkbox", "radio"].includes(field.type) && field.value.trim() !== "")
+      const requiredComplete = required.every((field) => field.value.trim() !== "" && field.checkValidity())
+      const complete = !invalid && hasContent && requiredComplete
       const state = invalid ? "error" : complete ? "complete" : hasContent ? "progress" : "pending"
       tab.dataset.stepState = state
       tab.classList.toggle("ring-1", !!invalid)
