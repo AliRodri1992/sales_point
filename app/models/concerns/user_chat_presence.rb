@@ -10,17 +10,17 @@ module UserChatPresence
   end
 
   def track_online_connection(user_id, token)
-    presence_redis.zadd(ONLINE_USERS_KEY, Time.current.to_i, "#{user_id}:#{token}")
+    presence_redis.zadd(User::ONLINE_USERS_KEY, Time.current.to_i, "#{user_id}:#{token}")
   end
 
   def untrack_online_connection(user_id, token)
-    presence_redis.zrem(ONLINE_USERS_KEY, "#{user_id}:#{token}")
+    presence_redis.zrem(User::ONLINE_USERS_KEY, "#{user_id}:#{token}")
   end
 
   def online_user_ids
     redis = presence_redis
     cutoff = Time.current.to_i - UserChatPresence::PRESENCE_TIMEOUT
-    redis.zremrangebyscore(ONLINE_USERS_KEY, '-inf', cutoff)
-    redis.zrange(ONLINE_USERS_KEY, 0, -1).map { |member| member.to_s.split(':', 2).first.to_i }.uniq
+    redis.zremrangebyscore(User::ONLINE_USERS_KEY, '-inf', cutoff)
+    redis.zrange(User::ONLINE_USERS_KEY, 0, -1).map { |member| member.to_s.split(':', 2).first.to_i }.uniq
   end
 end
