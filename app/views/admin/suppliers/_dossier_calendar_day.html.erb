@@ -6,7 +6,7 @@
         <%= l(calendar.selected_date, format: :long) %>
       </h3>
     </div>
-    <% if can_manage && supplier.active? %>
+    <% if policy(supplier).create_schedules? && supplier.active? %>
       <button type="button" data-action="supplier-calendar#open"
               data-date="<%= calendar.selected_date.iso8601 %>"
               class="inline-flex min-h-9 items-center gap-1 rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700">
@@ -32,7 +32,7 @@
         <% if can_manage %>
           <% if item[:type] == :event %>
             <%= render 'dossier_calendar_event_actions', supplier: supplier, event: item[:record] %>
-          <% elsif supplier.active? %>
+          <% elsif supplier.active? && policy(supplier).update_schedules? %>
             <%= link_to t('admin.supplier_calendar.edit'),
                         edit_admin_supplier_schedule_path(supplier, item[:record], return_to: 'dossier'),
                         class: 'mt-2 inline-block text-xs font-semibold text-emerald-700 hover:underline' %>
