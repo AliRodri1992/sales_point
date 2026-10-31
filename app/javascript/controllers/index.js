@@ -110,6 +110,9 @@ application.register("supplier-dropdown", SupplierDropdownController)
 import SupplierFormController from "./supplier_form_controller"
 application.register("supplier-form", SupplierFormController)
 
+import SupplierTagsController from "./supplier_tags_controller"
+application.register("supplier-tags", SupplierTagsController)
+
 import DeltaSelectController from "./delta_select_controller"
 application.register("delta-select", DeltaSelectController)
 
