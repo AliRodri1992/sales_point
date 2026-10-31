@@ -94,12 +94,7 @@ module Admin
     end
 
     def load_contact_listing
-      scope = contact_scope
-      query = params[:q].to_s.strip.first(100)
-      if query.present?
-        term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
-        scope = scope.where('name ILIKE :q OR position ILIKE :q OR email ILIKE :q', q: term)
-      end
+      scope = filtered_contact_scope
       @contacts_total = scope.count
       @contacts_pages = [(@contacts_total.to_f / 12).ceil, 1].max
       @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
@@ -113,6 +108,15 @@ module Admin
       else
         @supplier.contacts.not_deleted
       end
+    end
+
+    def filtered_contact_scope
+      scope = contact_scope
+      query = params[:q].to_s.strip.first(100)
+      return scope if query.blank?
+
+      term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
+      scope.where('name ILIKE :q OR position ILIKE :q OR email ILIKE :q', q: term)
     end
 
     def contact_params
