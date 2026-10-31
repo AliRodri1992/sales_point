@@ -19,7 +19,7 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :onboarding_audits, dependent: :restrict_with_exception
 
-  ONLINE_USERS_KEY = 'online_users'.freeze
+  ONLINE_USERS_KEY = 'online_user_connections'.freeze
 
   enum :user_type,
        {
