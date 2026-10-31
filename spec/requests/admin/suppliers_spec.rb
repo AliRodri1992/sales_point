@@ -241,6 +241,61 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(response.body).to include('Supplier to Edit')
   end
 
+  it 'renders the same tag editor for new and existing suppliers' do
+    get new_admin_supplier_path
+
+    new_editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(new_editor).to be_present
+    expect(new_editor.at_css('input[name="supplier[tags_text]"][type="hidden"]')['value']).to be_blank
+
+    supplier = create(:supplier, organization:, tags: %w[Priority Regional])
+    get edit_admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    edit_editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(edit_editor).to be_present
+    expect(edit_editor.at_css('input[name="supplier[tags_text]"][type="hidden"]')['value'])
+      .to eq('Priority, Regional')
+    expect(edit_editor.at_css('[data-supplier-tags-target="chips"]').text.squish)
+      .to include('Priority', 'Regional')
+    expect(edit_editor.css('button[data-action="supplier-tags#remove"]').size).to eq(2)
+    expect(edit_editor.at_css('[data-supplier-tags-target="input"]')).to be_present
+    expect(edit_editor.at_css('[data-action="supplier-tags#add"]')).to be_present
+  end
+
+  it 'saves added and removed tags through the edit supplier form' do
+    supplier = create(:supplier, organization:, tags: %w[Original])
+
+    patch admin_supplier_path(supplier),
+          params: { supplier: { tags_text: 'Original, Regional, Urgente' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.reload.tags).to eq(%w[Original Regional Urgente])
+
+    get edit_admin_supplier_path(supplier)
+    editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(editor.at_css('input[name="supplier[tags_text]"]')['value']).to eq('Original, Regional, Urgente')
+    expect(editor.css('button[data-action="supplier-tags#remove"]').size).to eq(3)
+
+    patch admin_supplier_path(supplier), params: { supplier: { tags_text: 'Regional' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.reload.tags).to eq(['Regional'])
+  end
+
+  it 'keeps unsaved tag changes visible if editing fails validation' do
+    supplier = create(:supplier, organization:, tags: %w[Original])
+
+    patch admin_supplier_path(supplier),
+          params: { supplier: { name: '', tags_text: 'Original, Pendiente' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(editor.at_css('input[name="supplier[tags_text]"]')['value']).to eq('Original, Pendiente')
+    expect(editor.css('button[data-action="supplier-tags#remove"]').size).to eq(2)
+    expect(supplier.reload.tags).to eq(['Original'])
+  end
+
   it 'lists, filters and excludes deleted suppliers' do
     create(:supplier, organization:, name: 'Visible Supplier')
     create(:supplier, :deleted, organization:, name: 'Deleted Supplier')
