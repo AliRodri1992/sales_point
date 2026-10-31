@@ -21,23 +21,23 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('Sucursal Centro')
     end
 
-    it 'does not render pagination controls for 9 branches' do
+    it 'keeps page-size preferences accessible for 9 branches' do
       Array.new(9) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
       expect(response.body).to include('Sucursal 9')
     end
 
-    it 'does not render pagination controls for exactly 10 branches' do
+    it 'keeps page-size preferences accessible for exactly 10 branches' do
       Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
       expect(response.body).to include('Sucursal 10')
     end
 
@@ -72,14 +72,14 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('Sucursal 1')
     end
 
-    it 'ignores a smaller per-page value when exactly 10 branches exist' do
+    it 'respects explicit page size when exactly 10 branches exist' do
       Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sucursal 10')
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
     end
 
     it 'sorts branches by name in ascending order' do

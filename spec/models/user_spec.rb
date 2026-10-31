@@ -143,8 +143,10 @@ RSpec.describe User, type: :model do
 
   describe '.online_user_ids and #online?' do
     it 'converts ids to integers' do
-      kredis_set = instance_double('KredisSet', members: %w[1 2])
-      allow(Kredis).to receive(:set).with(User::ONLINE_USERS_KEY).and_return(kredis_set)
+      redis = instance_double(Redis)
+      allow(User).to receive(:presence_redis).and_return(redis)
+      allow(redis).to receive(:zremrangebyscore)
+      allow(redis).to receive(:zrange).and_return(%w[1:tab-a 2:tab-b])
 
       expect(User.online_user_ids).to eq([1, 2])
     end

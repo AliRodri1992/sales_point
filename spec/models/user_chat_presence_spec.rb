@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe User, 'chat presence' do
+  include ActiveSupport::Testing::TimeHelpers
   let(:redis) { instance_double(Redis) }
 
   before do

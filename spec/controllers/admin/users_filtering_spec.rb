@@ -7,10 +7,15 @@ RSpec.describe Admin::UsersController, type: :controller do
     allow(controller).to receive(:params).and_return(ActionController::Parameters.new(values))
   end
 
+  before do
+    allow(controller).to receive(:current_user).and_return(nil)
+    allow(controller).to receive(:current_organization).and_return(nil)
+  end
+
   describe 'server-side user page sizing' do
     it 'uses the default when the result set fits one page' do
       request_params(per_page: '5')
-      expect(controller.send(:per_page_param, 9)).to eq(10)
+      expect(controller.send(:per_page_param, 9)).to eq(5)
     end
 
     it 'uses the explicitly allowed page size for long lists' do

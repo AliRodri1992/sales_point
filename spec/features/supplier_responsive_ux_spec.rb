@@ -62,6 +62,7 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     supplier
     visit admin_suppliers_path
     menu = find('details[data-supplier-floating-menu="true"]', match: :first)
+    expect(page).to have_css('[data-controller="supplier-dropdown"]')
     menu.find('summary').click
 
     expect(menu).to have_css('[data-supplier-floating-panel][style*="position: fixed"]', visible: true)
