@@ -27,6 +27,18 @@ RSpec.describe 'Supplier and organization catalog controller paths', type: :requ
       .merge(organization:, supplier:, product:, currency: supplier.currency))
   end
 
+  it 'finds a supplier using its saved contact email or name' do
+    create(:contact, contactable: supplier, primary: true, name: 'Purchasing Agent',
+                     email: 'buyer@supplier.example')
+
+    %w[buyer@supplier.example Purchasing].each do |term|
+      get admin_suppliers_path, params: { search: term }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(supplier.name)
+    end
+  end
+
   it 'renders the supplier product offer creation form' do
     get new_admin_supplier_supplier_product_path(supplier)
     expect(response).to have_http_status(:ok)
