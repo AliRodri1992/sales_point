@@ -3,4 +3,4 @@ es:
   admin:
     profiles:
       update:
-        success: Perfil actualizado correctamente
+        success: "Tu perfil se actualizó. Los cambios de nombre, idioma o preferencias guardados ya están disponibles en tu cuenta."
