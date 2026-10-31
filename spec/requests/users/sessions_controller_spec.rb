@@ -3,6 +3,7 @@
 RSpec.describe Users::SessionsController, type: :request do
   let(:password) { 'password123' }
   let!(:user) { create(:user, password:) }
+  let!(:english_language) { create(:language, :english) }
 
   it 'renders the sign-in form and stores terminal defaults' do
     get new_user_session_path
