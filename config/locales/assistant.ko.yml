@@ -31,7 +31,7 @@ ko:
       found: "안내서에서 «%{title}» 절차를 찾았습니다. 다음 단계를 따르세요."
       not_found: "해당 절차를 찾지 못했거나 접근 권한이 없습니다. 모듈명을 입력하거나 안내서를 열어보세요."
       invalid_question: "1~500자 사이의 질문을 입력하세요."
-      request_failed: "안내서를 검색하지 못했습니다. 다시 시도하세요."
+      request_failed: "현재 안내서에서 답변을 가져오지 못했습니다. 연결 상태를 확인하고 다시 시도하거나 사용자 설명서를 열어보세요."
       notice: "답변은 Delta POS 안내서를 기반으로 하며 데이터를 변경하지 않습니다."
       question_product: "Dar de alta un producto"
       question_supplier: "Dar de alta un proveedor"
