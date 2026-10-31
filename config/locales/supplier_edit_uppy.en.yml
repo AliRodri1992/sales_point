@@ -14,6 +14,8 @@ en:
       success: "%{count} documents uploaded successfully. They are saved in the supplier record."
       failed: "The upload could not be completed. Check your files or connection and retry."
       invalid: "Choose 1–10 supported files, no larger than 10 MB each."
+      retry: "Retry loading Uppy"
+      unavailable: "Uppy could not start. Check your connection and try again."
       fallback: "The advanced uploader is unavailable. You can still use the file selector."
       immediate_notice: "Documents are saved to the supplier record as soon as upload finishes, even if you do not click Save changes. Other supplier fields are saved separately."
       no_permission: "You do not have permission to manage this supplier's documents."
