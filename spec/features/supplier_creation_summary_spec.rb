@@ -104,22 +104,22 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
 
     find('[data-supplier-form-target="next"]').click
 
-    code = find('input[name="supplier[code]"]')
-    expect(code['aria-invalid']).to eq('true')
-    expect(code['class']).to include('input-field-error')
-    expect(code['aria-invalid']).to eq('true')
-    transition = page.evaluate_script('getComputedStyle(arguments[0]).transitionProperty', code)
+    name = find('input[name="supplier[name]"]')
+    expect(name['aria-invalid']).to eq('true')
+    expect(name['class']).to include('input-field-error')
+    expect(name['aria-invalid']).to eq('true')
+    transition = page.evaluate_script('getComputedStyle(arguments[0]).transitionProperty', name)
     expect(transition).not_to include('border-color')
-    await_border_color(code, 'rgb(225, 29, 72)')
+    await_border_color(name, 'rgb(225, 29, 72)')
 
-    code.click
-    await_border_color(code, 'rgb(225, 29, 72)')
+    name.click
+    await_border_color(name, 'rgb(225, 29, 72)')
 
-    code.fill_in with: 'SUP-VALID-01'
-    expect(code['aria-invalid']).not_to eq('true')
-    expect(code['class']).not_to include('input-field-error')
+    name.fill_in with: 'Proveedor válido'
+    expect(name['aria-invalid']).not_to eq('true')
+    expect(name['class']).not_to include('input-field-error')
     Selenium::WebDriver::Wait.new(timeout: 4, interval: 0.05).until do
-      page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', code) != 'rgb(225, 29, 72)'
+      page.evaluate_script('getComputedStyle(arguments[0]).borderTopColor', name) != 'rgb(225, 29, 72)'
     end
   end
 
