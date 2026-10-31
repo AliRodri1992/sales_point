@@ -59,6 +59,9 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-calendar-event]', text: 'Special delivery')
     expect(page).to have_css('[data-calendar-day-details]', text: 'Special delivery')
 
+    # The event appears after the redirect; wait for Stimulus to reattach
+    # before activating its enhanced edit link.
+    expect(page).to have_css('[data-controller~="supplier-calendar"][data-supplier-calendar-ready="true"]')
     find('[data-calendar-event] a[data-action="supplier-calendar#edit"]').click
     expect(page).to have_css('[data-supplier-calendar-target="heading"]', text: 'Edit event')
     expect(find('[name="supplier_event[title]"]').value).to eq('Special delivery')
