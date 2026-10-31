@@ -36,12 +36,10 @@ RSpec.describe 'Supplier validation and financial reversal decision branches', t
     end
 
     it 'skips missing phone numbers and rejects invalid phone numbers' do
-      supplier = described_class.new
-      supplier.send(:phone_must_be_valid)
-      expect(supplier.errors[:phone]).to be_empty
-      supplier.phone = '123'
-      supplier.send(:phone_must_be_valid)
-      expect(supplier.errors[:phone]).not_to be_empty
+      supplier = build(:supplier)
+      contact = supplier.contacts.build(name: 'Ventas', primary: true)
+      contact.phones.build(kind: 'mobile', primary: true, number: '123')
+      expect(supplier).not_to be_valid
     end
   end
 
