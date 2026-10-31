@@ -19,6 +19,17 @@ RSpec.describe Admin::DashboardController, type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'renders all four dashboard KPI cards with their original Delta SVG icons' do
+    get admin_dashboard_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    widgets = document.css('#kpiGrid .grid-stack-item')
+
+    expect(widgets.size).to eq(4)
+    expect(widgets.map { |widget| widget.at_css('svg') }).to all(be_present)
+  end
+
   it 'renders compact and closely spaced chat and AI launchers' do
     get admin_dashboard_path
 
