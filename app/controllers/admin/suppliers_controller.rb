@@ -124,7 +124,11 @@ module Admin
         supplier: [
           *supplier_scalar_attributes,
           {
-            contacts_attributes: [%i[id name position email phone mobile_phone primary active notes _destroy]],
+            contacts_attributes: [
+              %i[id name position email primary active notes _destroy],
+              { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy] }
+            ],
+            phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy],
             addresses_attributes: [%i[
               id street exterior_number interior_number neighborhood city state country_id postal_code
               purpose primary _destroy
