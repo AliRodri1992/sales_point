@@ -4,6 +4,7 @@
 /* Components */
 @import "./components/themes.css";
 @import "./components/deltin.css";
+@import "./components/supplier_edit_uppy.css";
 
 @theme {
     --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
