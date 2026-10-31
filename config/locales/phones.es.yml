@@ -1,0 +1,12 @@
+es:
+  admin:
+    phones:
+      kind: "Tipo"
+      number: "Número telefónico"
+      extension: "Extensión"
+      label: "Etiqueta"
+      primary: "Principal"
+      remove: "Quitar teléfono"
+      add: "Agregar otro teléfono"
+      primary_mobile: "Celular principal"
+      primary_office: "Teléfono de oficina principal"
