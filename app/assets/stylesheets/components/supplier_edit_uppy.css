@@ -1,3 +1,26 @@
+/* Editing only: isolate Uppy previews in the upload panel.
+   The admin navbar is sticky (z-30); FileCard and thumbnail layers must never
+   escape their local stacking context or cover the navbar while scrolling. */
+.supplier-edit-upload [data-supplier-edit-uppy-target="dashboard"] {
+  position: relative;
+  isolation: isolate;
+  contain: paint;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.supplier-edit-upload .uppy-Dashboard--inline,
+.supplier-edit-upload .uppy-Dashboard-inner {
+  position: relative;
+  max-width: 100%;
+}
+.supplier-edit-upload .uppy-Dashboard-inner {
+  overflow: hidden;
+}
+.supplier-edit-upload .uppy-DashboardFileCard,
+.supplier-edit-upload .uppy-DashboardContent-panel {
+  max-height: 100%;
+}
+
 /* Supplier edit only: brand the Uppy dashboard without affecting the show-page file library. */
 .supplier-edit-upload .uppy-Dashboard-inner {
   width: 100% !important;
