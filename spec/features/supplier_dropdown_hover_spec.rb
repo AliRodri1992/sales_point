@@ -76,8 +76,11 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
       select.querySelector('option[value="company"]').hidden = true
     JS
 
+    hidden_label = page.evaluate_script(<<~JS)
+      document.querySelector('select[name="supplier[person_type]"] option[value="company"]').textContent.trim()
+    JS
     dropdown.find('button[aria-haspopup="listbox"]').click
-    hidden_option = dropdown.find('[role="option"]', text: 'Company', visible: :all)
+    hidden_option = dropdown.find('[role="option"]', text: hidden_label, visible: :all)
     expect(hidden_option[:hidden]).to be_present
     expect(hidden_option).not_to be_visible
   end
