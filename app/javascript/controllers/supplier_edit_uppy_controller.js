@@ -8,7 +8,7 @@ const MAX_SIZE = 10 * 1024 * 1024
 const MAX_FILES = 10
 
 export default class extends Controller {
-  static targets = ["dashboard", "placeholder", "placeholderMessage", "retryButton", "category", "description", "status"]
+  static targets = ["dashboard", "placeholder", "placeholderMessage", "retryButton", "category", "description", "status", "statusMessage"]
   static values = { url: String, messages: Object }
 
   connect() {
@@ -86,6 +86,10 @@ export default class extends Controller {
         width: "100%",
         height: 320,
         showProgressDetails: true,
+        // The completed StatusBar otherwise covers the Dashboard loading/progress area.
+        // Keep live upload progress and display completion only in our separate feedback row.
+        hideProgressAfterFinish: true,
+        doneButtonHandler: null,
         showRemoveButtonAfterComplete: false,
         proudlyDisplayPoweredByUppy: false,
         note: this.messagesValue.ready
@@ -104,7 +108,10 @@ export default class extends Controller {
         withCredentials: true
       })
       this.updateMetadata()
-      this.uppy.on("upload", () => this.updateMetadata())
+      this.uppy.on("upload", () => {
+        this.setStatus("")
+        this.updateMetadata()
+      })
       this.uppy.on("restriction-failed", (_file, error) => this.setStatus(error.message, true))
       this.uppy.on("upload-error", (_file, error) => this.setStatus(error.message || this.messagesValue.failed, true))
       this.uppy.on("complete", ({ successful, failed }) => {
@@ -156,8 +163,8 @@ export default class extends Controller {
 
   setStatus(message, error = false) {
     if (!this.hasStatusTarget) return
-    this.statusTarget.textContent = message || ""
-    this.statusTarget.classList.toggle("text-rose-700", error)
-    this.statusTarget.classList.toggle("text-emerald-700", !error && Boolean(message))
+    this.statusTarget.hidden = !message
+    this.statusTarget.dataset.state = error ? "error" : "success"
+    if (this.hasStatusMessageTarget) this.statusMessageTarget.textContent = message || ""
   }
 }
