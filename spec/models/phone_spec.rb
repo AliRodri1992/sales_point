@@ -50,4 +50,43 @@ RSpec.describe Phone, type: :model do
 
     expect(phone).to be_persisted
   end
+
+  it 'inherits the tenant from a nested supplier contact' do
+    contact = create(:contact, contactable: supplier)
+    phone = contact.phones.create!(number: '55 1234 5678', kind: 'mobile', primary: true)
+
+    expect(phone.organization).to eq(organization)
+    expect(phone.phoneable).to eq(contact)
+  end
+
+  it 'allows secondary numbers of a kind that already has a primary' do
+    supplier.phones.create!(number: '55 1234 5678', kind: 'mobile', primary: true)
+    secondary = supplier.phones.create!(number: '55 8765 4321', kind: 'mobile', primary: false)
+
+    expect(secondary).to be_persisted
+    expect(secondary).not_to be_primary
+  end
+
+  it 'normalizes optional labels and extensions' do
+    phone = supplier.phones.create!(
+      number: '55 1234 5678', kind: 'landline', label: ' Oficina ',
+      extension: ' 123 '
+    )
+
+    expect(phone).to have_attributes(country_code: 'MX', label: 'Oficina', extension: '123')
+  end
+
+  it 'rejects an invalid country code even with a valid Mexican number' do
+    phone = supplier.phones.build(number: '+525512345678', country_code: 'X', kind: 'mobile')
+
+    expect(phone).not_to be_valid
+    expect(phone.errors.attribute_names).to include(:country_code)
+  end
+
+  it 'requires a phone owner and a number' do
+    phone = described_class.new(organization:, kind: 'mobile')
+
+    expect(phone).not_to be_valid
+    expect(phone.errors.attribute_names).to include(:phoneable, :number)
+  end
 end
