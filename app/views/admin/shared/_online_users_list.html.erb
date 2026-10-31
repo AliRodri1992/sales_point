@@ -1,4 +1,4 @@
-<% visible_users = users.where.not(id: current_user.id).distinct.order(:username, :id) %>
+<% visible_users = users.where.not(id: viewer.id).distinct.order(:username, :id) %>
 <div id="online_users_list" class="max-h-[min(26rem,60vh)] overflow-y-auto px-4 py-4">
   <div class="mb-3 flex items-center justify-between">
     <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t("admin.shared.online_users.title") %></p>
