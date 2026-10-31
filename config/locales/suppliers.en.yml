@@ -3,8 +3,8 @@ en:
     breadcrumbs:
       suppliers: "Suppliers"
     suppliers:
-      created: "Supplier created successfully"
-      updated: "Supplier updated successfully"
+      created: "The supplier was registered. Its record is ready for contacts, addresses, and documents."
+      updated: "The supplier changes were saved to its record. Review the updated details before continuing."
       destroyed: "Supplier deleted successfully"
       errors:
         duplicate: "The supplier code or RFC is already registered."
