@@ -77,7 +77,7 @@ en:
       process_return: "Process return"
       reason: "Reason"
       history: "History and movements"
-      empty: "No records available"
+      empty: "There are no purchase documents to display. Adjust the filters or create a new transaction in the appropriate module."
       total: "Total"
       idempotency: "Operation identifier"
       received: "Received"
