@@ -34,7 +34,7 @@ RSpec.feature 'SystemRoles', type: :feature do
 
     visit system_role_path(role)
 
-    expect(page).to have_content('Sales access')
+    expect(page).to have_content(I18n.t('admin.system_roles.permissions.sales_access.name', locale: :en))
     expect(page).to have_field("permission_#{permission.id}", checked: true)
   end
 
