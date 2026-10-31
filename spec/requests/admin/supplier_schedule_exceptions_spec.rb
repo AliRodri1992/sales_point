@@ -128,7 +128,7 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     get edit_admin_supplier_schedule_exception_path(supplier, exception)
 
     options = Nokogiri::HTML(response.body)
-                        .css('select[name="supplier_schedule_exception[supplier_schedule_id]"] option')
+                      .css('select[name="supplier_schedule_exception[supplier_schedule_id]"] option')
     expect(options.map(&:text).join(' ')).to include(branch.name, '09:00')
   end
 end
