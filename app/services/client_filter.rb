@@ -5,7 +5,6 @@ class ClientFilter
     'code' => 'clients.code',
     'name' => 'clients.name',
     'email' => 'clients.email',
-    'phone' => 'clients.phone',
     'rfc' => 'clients.rfc',
     'credit_limit' => 'clients.credit_limit',
     'status' => 'clients.status',
@@ -36,7 +35,9 @@ class ClientFilter
       'clients.code ILIKE :q',
       'clients.name ILIKE :q',
       'clients.email ILIKE :q',
-      'clients.phone ILIKE :q',
+      "EXISTS (SELECT 1 FROM phones WHERE phones.phoneable_type = 'Client' " \
+        "AND phones.phoneable_id = clients.id AND phones.deleted_at IS NULL " \
+        'AND phones.number ILIKE :q)',
       'clients.rfc ILIKE :q'
     ].join(' OR ')
 
