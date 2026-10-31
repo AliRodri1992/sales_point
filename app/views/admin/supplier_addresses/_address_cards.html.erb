@@ -78,7 +78,8 @@
           <% end %>
           <% if policy(@supplier).destroy_addresses? %>
           <%= button_to admin_supplier_address_path(@supplier, address), method: :delete,
-                        form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } },
+                        form: { data: { turbo_confirm: t('admin.supplier_details.confirm'),
+                                        confirm_record: [address.street, address.exterior_number].reject(&:blank?).join(' ') } },
                         class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-50' do %>
             <%= delta_icon('trash', class: 'size-4') %><%= t('admin.supplier_details.delete') %>
           <% end %>
