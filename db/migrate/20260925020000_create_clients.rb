@@ -4,7 +4,6 @@ class CreateClients < ActiveRecord::Migration[8.1]
       t.string :code, null: false, limit: 30
       t.string :name, null: false, limit: 150
       t.string :email, limit: 150
-      t.string :phone, limit: 30
       t.string :rfc, limit: 13
       t.references :sat_fiscal_regime, foreign_key: true
       t.string :postal_code, limit: 5
@@ -19,7 +18,6 @@ class CreateClients < ActiveRecord::Migration[8.1]
     add_index :clients, :code, unique: true, where: 'deleted_at IS NULL'
     add_index :clients, :rfc, unique: true, where: "rfc IS NOT NULL AND rfc <> '' AND deleted_at IS NULL"
     add_index :clients, :email
-    add_index :clients, :phone
     add_index :clients, :status
     add_index :clients, :deleted_at
   end
