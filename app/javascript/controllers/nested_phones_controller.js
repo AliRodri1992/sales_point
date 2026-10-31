@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = ["items", "template"]
 
   add() {
-    const id = `${Date.now()}_${Math.floor(Math.random() * 100000)}`
+    const id = `${Date.now()}${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`
     this.itemsTarget.insertAdjacentHTML("beforeend", this.templateTarget.innerHTML.replaceAll("NEW_PHONE", id))
   }
 
