@@ -139,6 +139,13 @@ RSpec.describe 'Supplier creation summary', type: :feature, js: true do
     await_border_color(trigger, 'rgb(225, 29, 72)')
   end
 
+  scenario 'does not mark a blank primary-contact step as complete' do
+    visit new_admin_supplier_path
+
+    contact_step = find('[data-supplier-form-target="tab"][data-step-index="2"]', visible: :all)
+    expect(contact_step['data-step-state']).to eq('pending')
+  end
+
   scenario 'offers six real capture sections without a duplicate summary panel' do
     visit new_admin_supplier_path
 
