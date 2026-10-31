@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   extend UserChatPresence
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :session_limitable,
@@ -124,7 +125,6 @@ class User < ApplicationRecord
   def online?
     self.class.online_user_ids.include?(id)
   end
-
 
   private
 
