@@ -5,4 +5,4 @@ ko:
       show:
         managed_permissions: 관리자 권한은 보호되며 자동으로 할당됩니다.
       update_permissions:
-        success: 역할 권한이 성공적으로 업데이트되었습니다.
+        success: "역할 권한이 저장되었습니다. 해당 역할의 사용자는 권한 규칙에 따라 변경된 접근 권한을 적용받습니다."
