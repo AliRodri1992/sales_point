@@ -26,6 +26,15 @@ RSpec.describe DeltaIconsHelper, type: :helper do
     expect(attachment.to_html).not_to eq(information.to_html)
   end
 
+  it 'renders distinct trend icons used by the dashboard' do
+    up = Nokogiri::HTML.fragment(helper.delta_icon('arrow-trending-up')).at_css('svg')
+    down = Nokogiri::HTML.fragment(helper.delta_icon('arrow-trending-down')).at_css('svg')
+
+    expect(up.at_css('path')['d']).to include('M4 17')
+    expect(down.at_css('path')['d']).to include('M4 7')
+    expect(up.to_html).not_to eq(down.to_html)
+  end
+
   it 'rejects an undefined icon rather than showing an unrelated information symbol' do
     expect { helper.delta_icon('not-a-defined-delta-icon') }
       .to raise_error(ArgumentError, /Delta POS SVG icon not defined/)
