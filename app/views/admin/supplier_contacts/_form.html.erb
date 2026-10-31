@@ -4,7 +4,7 @@
 
 <%= form_with model: [:admin, @supplier, @contact], class: 'space-y-4',
               data: { supplier_contact_form: true, loading_message: t('admin.action_loader.saving') } do |form| %>
-  <%= hidden_field_tag :return_to, 'dossier' if editing && params[:return_to] == 'dossier' %>
+  <%= hidden_field_tag :return_to, 'dossier' if params[:return_to] == 'dossier' %>
   <% if @contact.errors.any? %>
     <div role="alert" class="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-rose-800">
       <%= delta_icon('exclamation-circle', class: 'mt-0.5 size-5 shrink-0') %>
