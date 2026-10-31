@@ -90,8 +90,8 @@ RSpec.describe 'Deltín floating assistant', type: :feature, js: true do
       })()
     JS
 
-    expect(positions.fetch('puppy')).to eq(76)
-    expect(positions.fetch('people')).to eq(76)
-    expect(positions.fetch('gap')).to eq(32)
+    expect(positions.fetch('puppy')).to eq(48)
+    expect(positions.fetch('people')).to eq(48)
+    expect(positions.fetch('gap')).to eq(26)
   end
 end
