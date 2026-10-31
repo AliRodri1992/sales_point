@@ -74,4 +74,50 @@ RSpec.describe 'Supplier edit Uppy document uploader', type: :feature, js: true 
     JS
     expect(layout).to eq('below' => true, 'globalLoaderHidden' => true)
   end
+  scenario 'keeps the document preview below the sticky navbar while scrolling' do
+    visit edit_admin_supplier_path(supplier)
+
+    navigation = find('details[data-supplier-form-target="navigation"]')
+    navigation.find('summary').click
+    navigation.find('button[data-step-index="5"]').click
+
+    expect(page).to have_css('.supplier-edit-upload .uppy-Dashboard-inner', wait: 20, count: 1)
+
+    page.execute_script(<<~JS)
+      const root = document.querySelector('.supplier-edit-upload')
+      const controller = window.Stimulus.getControllerForElementAndIdentifier(root, 'supplier-edit-uppy')
+      const data = new File(['%PDF-1.4 preview'], 'supplier-contract.pdf', { type: 'application/pdf' })
+      controller.uppy.addFile({
+        name: data.name, type: data.type, data, source: 'Local'
+      })
+      const file = controller.uppy.getFiles()[0]
+      controller.uppy.getPlugin('Dashboard').toggleFileCard(true, file.id)
+    JS
+
+    expect(page).to have_css('.supplier-edit-upload .uppy-Dashboard-FileCard', visible: true)
+
+    geometry = page.evaluate_script(<<~JS)
+      (() => {
+        const panel = document.querySelector('.supplier-edit-upload [data-supplier-edit-uppy-target="dashboard"]')
+        const card = panel.querySelector('.uppy-Dashboard-FileCard')
+        const header = document.getElementById('adminTopbar')
+        const host = panel.getBoundingClientRect()
+        const preview = card.getBoundingClientRect()
+        window.scrollTo(0, window.scrollY + host.top - 35)
+        const navbar = header.getBoundingClientRect()
+        const point = document.elementFromPoint(navbar.left + navbar.width / 2, navbar.top + 20)
+        return {
+          contained: preview.left >= host.left - 1 && preview.right <= host.right + 1,
+          isolated: getComputedStyle(panel).isolation === 'isolate',
+          clipped: getComputedStyle(panel).contain.includes('paint'),
+          navbarOnTop: header.contains(point)
+        }
+      })()
+    JS
+
+    expect(geometry).to eq(
+      'contained' => true, 'isolated' => true, 'clipped' => true, 'navbarOnTop' => true
+    )
+  end
+
 end
