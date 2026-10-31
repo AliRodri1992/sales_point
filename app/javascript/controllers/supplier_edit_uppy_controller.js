@@ -101,11 +101,7 @@ export default class extends Controller {
           "X-CSRF-Token": this.csrfToken(),
           "Accept": "application/json"
         },
-        withCredentials: true,
-        getResponseData: (response) => {
-          const body = typeof response === "string" ? response : response?.responseText
-          try { return JSON.parse(body) } catch (_error) { return {} }
-        }
+        withCredentials: true
       })
       this.updateMetadata()
       this.uppy.on("upload", () => this.updateMetadata())
