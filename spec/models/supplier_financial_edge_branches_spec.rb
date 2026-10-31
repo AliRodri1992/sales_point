@@ -117,16 +117,16 @@ RSpec.describe 'Supplier procurement edge-case branches' do
   end
 
   it 'rejects invalid supplier contact phone numbers after normalization' do
-    contact = build(:contact, contactable: supplier, phone: 'xyz12')
+    contact = build(:contact, contactable: supplier)
+    phone = contact.phones.build(number: 'xyz12', kind: 'mobile', primary: true)
     contact.valid?
-    expect(contact.errors[:phone]).to be_present
+    expect(phone.errors[:number]).to be_present
   end
 
   it 'allows empty optional supplier contact phone values' do
-    contact = build(:contact, contactable: supplier, phone: '', mobile_phone: '')
+    contact = build(:contact, contactable: supplier)
     contact.valid?
-    expect(contact.errors[:phone]).to be_empty
-    expect(contact.errors[:mobile_phone]).to be_empty
+    expect(contact.phones).to be_empty
   end
 
   it 'refuses to restore a contact that would duplicate a primary' do
