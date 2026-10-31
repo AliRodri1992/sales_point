@@ -60,4 +60,53 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     get admin_supplier_addresses_path(supplier)
     expect(response).to have_http_status(:forbidden)
   end
+  it 'permits contact creation without granting contact updates or deletion' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.contacts.create', module_name: 'Proveedores')
+    contact = create(:contact, contactable: supplier)
+
+    get new_admin_supplier_contact_path(supplier)
+    expect(response).to have_http_status(:ok)
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+    expect(response).to have_http_status(:forbidden)
+
+    delete admin_supplier_contact_path(supplier, contact)
+    expect(response).to have_http_status(:forbidden)
+    expect(contact.reload.deleted_at).to be_nil
+
+    get admin_supplier_contacts_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(contact.name)
+    expect(response.body).not_to include(edit_admin_supplier_contact_path(supplier, contact))
+  end
+
+  it 'grants address updates without allowing a new address' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.addresses.update', module_name: 'Proveedores')
+    address = create(:address, addressable: supplier)
+
+    get edit_admin_supplier_address_path(supplier, address)
+    expect(response).to have_http_status(:ok)
+
+    get new_admin_supplier_address_path(supplier)
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'permits new schedules without permitting existing schedule deletion' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.schedules.create', module_name: 'Proveedores')
+    schedule = create(:supplier_schedule, supplier:, branch: create(:branch, organization:))
+
+    get new_admin_supplier_schedule_path(supplier)
+    expect(response).to have_http_status(:ok)
+
+    delete admin_supplier_schedule_path(supplier, schedule)
+    expect(response).to have_http_status(:forbidden)
+    expect(schedule.reload.deleted_at).to be_nil
+  end
+
 end
