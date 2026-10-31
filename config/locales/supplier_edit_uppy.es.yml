@@ -1,0 +1,19 @@
+es:
+  admin:
+    supplier_edit_upload:
+      title: "Centro de carga de documentos"
+      description: "Adjunta contratos, constancias fiscales, catálogos y otros archivos. Consulta el progreso de cada documento antes de continuar."
+      limits: "Hasta 10 archivos · 10 MB c/u"
+      category: "Categoría de los documentos"
+      description_label: "Descripción (opcional)"
+      description_placeholder: "Ej. Contrato vigente, constancia fiscal..."
+      dropzone: "Arrastra o selecciona documentos para subirlos"
+      loading: "Preparando el cargador de documentos..."
+      ready: "PDF, imágenes, Word, Excel, CSV, XML y TXT · 10 MB por archivo"
+      upload: "Subir documentos"
+      success: "Se subieron %{count} documentos correctamente. Ya están guardados en el expediente."
+      failed: "No se pudo completar la carga. Revisa los archivos o la conexión e inténtalo de nuevo."
+      invalid: "Selecciona entre 1 y 10 archivos válidos de máximo 10 MB cada uno."
+      fallback: "El cargador avanzado no está disponible. Puedes subir tus documentos con el selector de archivos."
+      immediate_notice: "Los documentos se guardan en el expediente en cuanto termina su carga, aunque no pulses «Guardar cambios» en este formulario. Los demás datos del proveedor se guardan por separado."
+      no_permission: "No tienes permisos para administrar documentos de este proveedor."
