@@ -80,7 +80,7 @@
     </nav>
     <div class="flex min-w-0 flex-col">
       <div class="min-w-0 min-h-0">
-      <section data-supplier-form-target="step"  class="" aria-label="<%= t('admin.suppliers.onboarding.steps.step_1') %>">
+      <section data-supplier-form-target="step" class="pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_1') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_1') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_1') %></p></div>
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div>
@@ -122,7 +122,7 @@
           <% end %>
         </div>
       </section>
-      <section data-supplier-form-target="step" data-controller="supplier-tax-residency" data-action="change->supplier-tax-residency#update" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
+      <section data-supplier-form-target="step" data-controller="supplier-tax-residency" data-action="change->supplier-tax-residency#update" hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_2') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_2') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_2') %></p></div>
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div>
@@ -172,7 +172,7 @@
           <% end %>
         </div>
       </section>
-      <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
+      <section data-supplier-form-target="step" hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_3') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_3') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_3') %></p></div>
         <div data-controller="supplier-nested" class="space-y-4">
           <% primary_contacts = supplier.persisted? ? supplier.contacts.to_a.select { |contact| contact.primary? && contact.deleted_at.nil? } : supplier.contacts.to_a %>
@@ -189,7 +189,7 @@
           <% end %>
         </div>
       </section>
-      <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_5') %>">
+      <section data-supplier-form-target="step"  hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_5') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_5') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_5') %></p></div>
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div>
@@ -219,7 +219,7 @@
     </div>
         </div>
       </section>
-      <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_6') %>">
+      <section data-supplier-form-target="step"  hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_6') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_6') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_6') %></p></div>
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div>
@@ -227,14 +227,58 @@
       <div class="relative" data-controller="delta-select"><%= form.collection_select :responsible_user_id, current_organization.users, :id, :email, { include_blank: t('admin.supplier_dossier.placeholders.responsible') }, class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :responsible_user)} appearance-none pr-11 cursor-pointer" %></div>
       <%= error_message_for(supplier, :responsible_user) %>
     </div>
-    <div>
-      <%= form.label :tags_text, t('admin.supplier_dossier.tags'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :tags_text, placeholder: t('admin.supplier_placeholders.tags_text'), class: "input-field block min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100 px-4 py-3 text-sm #{form_state_classes(supplier, :tags)}" %>
+    <div class="md:col-span-2" data-controller="supplier-tags"
+         data-supplier-tags-limit-value="20"
+         data-supplier-tags-remove-label-value="<%= t('admin.suppliers.tag_editor.remove', tag: '%{tag}') %>"
+         data-supplier-tags-duplicate-message-value="<%= t('admin.suppliers.tag_editor.duplicate') %>"
+         data-supplier-tags-limit-message-value="<%= t('admin.suppliers.tag_editor.limit') %>">
+      <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <%= label_tag "#{form.object_name}_tag_entry", t('admin.supplier_dossier.tags'), class: 'block text-sm font-semibold text-slate-700' %>
+        <span class="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold tabular-nums text-slate-500" data-supplier-tags-target="count">0 / 20</span>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-slate-50/60 p-3 transition focus-within:border-emerald-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-emerald-100">
+        <div data-supplier-tags-target="chips" role="group" aria-label="<%= t('admin.suppliers.tag_editor.assigned') %>" class="mb-2 flex flex-wrap gap-2 empty:hidden"></div>
+        <div class="flex min-w-0 flex-wrap items-center gap-2 sm:flex-nowrap">
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 4v8l8.6 8.6a2 2 0 0 0 2.8 0l6.2-6.2a2 2 0 0 0 0-2.8L12 3H4a1 1 0 0 0-1 1Z"/><circle cx="7.5" cy="7.5" r="1.5"/>
+          </svg>
+          <input id="<%= "#{form.object_name}_tag_entry" %>" type="text" autocomplete="off"
+                 data-supplier-tags-target="input"
+                 data-action="keydown->supplier-tags#keydown paste->supplier-tags#paste blur->supplier-tags#blur"
+                 aria-describedby="<%= "#{form.object_name}_tag_editor_help" %>"
+                 placeholder="<%= t('admin.suppliers.tag_editor.input_placeholder') %>"
+                 class="min-h-10 min-w-0 w-full flex-1 border-0 bg-transparent px-1 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:ring-0" />
+          <button type="button" data-action="supplier-tags#add"
+                  class="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <%= t('admin.suppliers.tag_editor.add') %>
+          </button>
+        </div>
+      </div>
+      <%= form.hidden_field :tags_text, data: { supplier_tags_target: 'value', summary_label: t('admin.supplier_dossier.tags') } %>
+      <noscript><%= form.text_field :tags_text, placeholder: t('admin.supplier_placeholders.tags_text'), class: 'mt-2 input-field block min-h-12 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %></noscript>
+      <p data-supplier-tags-target="notice" role="status" aria-live="polite" class="mt-2 text-xs font-medium text-amber-700 empty:hidden"></p>
+      <p id="<%= "#{form.object_name}_tag_editor_help" %>" class="mt-2 text-xs leading-relaxed text-slate-500"><%= t('admin.suppliers.tag_editor.help') %></p>
+      <% tag_suggestions = current_organization.suppliers.not_deleted.where.not(tags: []).order(updated_at: :desc).limit(60).pluck(:tags).flatten.compact.map(&:strip).reject(&:blank?).uniq.first(6) %>
+      <% if tag_suggestions.any? %>
+        <div class="mt-4" data-supplier-tags-target="suggestions">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.suppliers.tag_editor.suggested') %></p>
+          <div class="flex flex-wrap gap-2">
+            <% tag_suggestions.each do |tag| %>
+              <button type="button" data-action="supplier-tags#suggest" data-tag="<%= tag %>"
+                      class="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                <%= tag %>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
       <%= error_message_for(supplier, :tags) %>
     </div>
         </div>
       </section>
-      <section data-supplier-form-target="step"  hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.steps.step_7') %>">
+      <section data-supplier-form-target="step"  hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.steps.step_7') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.steps.step_7') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.subtitles.step_7') %></p></div>
         <div class="grid gap-x-6 gap-y-6 md:grid-cols-2">
     <div class="sm:col-span-2">
@@ -259,7 +303,7 @@
     </div>
         </div>
       </section>
-      <section data-supplier-form-target="step" hidden class="hidden" aria-label="<%= t('admin.suppliers.onboarding.summary.title') %>">
+      <section data-supplier-form-target="step" hidden class="hidden pb-8 sm:pb-10" aria-label="<%= t('admin.suppliers.onboarding.summary.title') %>">
         <div class="mb-6 border-b border-slate-100 pb-4"><h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.suppliers.onboarding.summary.title') %></h2><p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.onboarding.summary.description') %></p></div>
         <div data-supplier-form-target="summary" class="space-y-4 pr-1" aria-live="polite"></div>
       </section>
