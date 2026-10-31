@@ -235,6 +235,8 @@ unless defined?(DEFAULT_PERMISSIONS)
       module_name: 'Proveedores', description: 'Allow destroy action for supplier products.' },
     { code: 'suppliers.products.restore', name: 'restore supplier products',
       module_name: 'Proveedores', description: 'Allow restore action for supplier products.' },
+    { code: 'suppliers.products.prefer', name: 'Select preferred supplier',
+      module_name: 'Proveedores', description: 'Manage preferred supplier selection.' },
     {
       code: 'suppliers.fiscal.view',
       name: 'View supplier fiscal information',
