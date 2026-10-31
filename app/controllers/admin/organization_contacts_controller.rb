@@ -68,7 +68,15 @@ module Admin
     end
 
     def contact_params
-      params.expect(contact: [%i[name position email notes primary active], { phones_attributes: %i[id number country_code kind label extension primary whatsapp_enabled _destroy] }])
+      params.expect(
+        contact: [
+          %i[name position email notes primary active],
+          { phones_attributes: %i[
+            id number country_code kind label extension primary whatsapp_enabled _destroy
+          ] }
+        ]
+      )
+
     end
   end
 end
