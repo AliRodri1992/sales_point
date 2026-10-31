@@ -72,7 +72,8 @@ module SupplierDossierExamples
         name: "Contacto demo #{index}",
         position: %w[Compras Ventas Logística Facturación][index % 4],
         email: email,
-        phone: index.even? ? '5512345678' : nil,
+        phones_attributes: index.even? ? [{ number: format('553456%04d', index),
+                                            country_code: 'MX', kind: 'mobile', primary: true }] : [],
         primary: false,
         active: (index % 4 != 0),
         notes: reference
