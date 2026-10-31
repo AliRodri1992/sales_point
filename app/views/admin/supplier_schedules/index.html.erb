@@ -151,7 +151,7 @@
       <% deleted_schedules.each do |schedule| %>
         <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
           <p class="text-sm text-slate-600"><%= schedule.branch.name %> · <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %></p>
-          <% if policy(@supplier).manage_schedules? %>
+          <% if policy(@supplier).restore_schedules? %>
             <%= button_to t('admin.supplier_details.restore'), restore_admin_supplier_schedule_path(@supplier, schedule),
                           method: :patch, class: 'rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700' %>
           <% end %>
