@@ -120,6 +120,76 @@ def leaf_map(value, prefix=()):
     return {".".join(prefix): value}
 
 
+
+def compare_manual_structure(base_sections, other_sections, locale):
+    """Validate every manual topic, task and step against the Spanish reference."""
+    issues = []
+    for section_name, base_section in base_sections.items():
+        translated_section = other_sections.get(section_name, {})
+        if not isinstance(translated_section, dict):
+            issues.append(f"{locale}: MANUAL_SECTION_MISSING {section_name}")
+            continue
+        base_topics = base_section.get("topics", [])
+        translated_topics = translated_section.get("topics", [])
+        if not isinstance(translated_topics, list):
+            issues.append(f"{locale}: MANUAL_TOPICS_NOT_LIST {section_name}")
+            continue
+        if len(base_topics) != len(translated_topics):
+            issues.append(
+                f"{locale}: MANUAL_TOPIC_COUNT {section_name}: "
+                f"{len(translated_topics)}/{len(base_topics)}"
+            )
+        for index, base_topic in enumerate(base_topics):
+            if index >= len(translated_topics):
+                break
+            topic = translated_topics[index]
+            if not isinstance(topic, dict):
+                issues.append(f"{locale}: MANUAL_TOPIC_NOT_MAPPING {section_name}[{index}]")
+                continue
+            prefix = f"{section_name}[{index}]"
+            if topic.get("id") != base_topic.get("id"):
+                issues.append(f"{locale}: MANUAL_TOPIC_ID {prefix}: {topic.get('id')!r}")
+            for field in ("title", "description", "before", "note"):
+                if field in base_topic and not str(topic.get(field, "")).strip():
+                    issues.append(f"{locale}: MANUAL_MISSING_FIELD {prefix}.{field}")
+            base_tasks = base_topic.get("tasks", [])
+            translated_tasks = topic.get("tasks", [])
+            if not isinstance(translated_tasks, list):
+                issues.append(f"{locale}: MANUAL_TASKS_NOT_LIST {prefix}")
+                continue
+            if len(base_tasks) != len(translated_tasks):
+                issues.append(
+                    f"{locale}: MANUAL_TASK_COUNT {prefix}: "
+                    f"{len(translated_tasks)}/{len(base_tasks)}"
+                )
+            for task_index, base_task in enumerate(base_tasks):
+                if task_index >= len(translated_tasks):
+                    break
+                task = translated_tasks[task_index]
+                task_prefix = f"{prefix}.tasks[{task_index}]"
+                if not isinstance(task, dict):
+                    issues.append(f"{locale}: MANUAL_TASK_NOT_MAPPING {task_prefix}")
+                    continue
+                for field in ("title", "result"):
+                    if field in base_task and not str(task.get(field, "")).strip():
+                        issues.append(f"{locale}: MANUAL_MISSING_FIELD {task_prefix}.{field}")
+                steps = task.get("steps", [])
+                base_steps = base_task.get("steps", [])
+                if not isinstance(steps, list):
+                    issues.append(f"{locale}: MANUAL_STEPS_NOT_LIST {task_prefix}")
+                    continue
+                if len(steps) != len(base_steps):
+                    issues.append(
+                        f"{locale}: MANUAL_STEP_COUNT {task_prefix}: "
+                        f"{len(steps)}/{len(base_steps)}"
+                    )
+                for step_index, step in enumerate(steps):
+                    if not isinstance(step, str) or not step.strip():
+                        issues.append(
+                            f"{locale}: MANUAL_EMPTY_STEP {task_prefix}.steps[{step_index}]"
+                        )
+    return issues
+
 def audit_full_locale_parity(parsed):
     """Report full file-catalog coverage; opt-in strict mode gates outstanding debt."""
     import os
@@ -158,6 +228,11 @@ def audit_full_locale_parity(parsed):
             for section, content in sections.items():
                 if isinstance(content, dict) and not content.get("topics"):
                     issues.append(f"{locale}: EMPTY_MANUAL {section}")
+
+    reference_sections = merged["es"].get("admin", {}).get("user_manual", {}).get("sections", {})
+    for locale in ("en", "ko"):
+        translated_sections = merged[locale].get("admin", {}).get("user_manual", {}).get("sections", {})
+        issues.extend(compare_manual_structure(reference_sections, translated_sections, locale))
 
     print("FULL_LOCALE_PARITY")
     for locale in REQUIRED_LOCALES:
