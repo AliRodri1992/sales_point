@@ -31,10 +31,10 @@
     </button>
   </div>
 
-  <%= turbo_stream_from "presence" %>
+  <%= turbo_stream_from "presence_#{current_user.id}" %>
 
   <%= render "admin/shared/online_users_list",
-        users: User.where(id: User.online_user_ids, status: :active) %>
+        users: User.where(id: User.online_user_ids, status: :active), viewer: current_user %>
 </div>
 
 <div
