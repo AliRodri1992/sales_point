@@ -21,7 +21,8 @@ RSpec.describe Onboarding::BranchUpdater, type: :service do
       params = ActionController::Parameters.new(
         branch: {
           name: 'Sucursal Actualizada',
-          phone: '5559876543',
+          phones_attributes: [{ number: '55 5987 6543', country_code: 'MX',
+                               kind: 'mobile', primary: true }],
           address_attributes: {
             id: branch.address.id,
             street: 'Av. Insurgentes',
@@ -34,7 +35,7 @@ RSpec.describe Onboarding::BranchUpdater, type: :service do
 
       expect(result).to be(true)
       expect(branch.reload.name).to eq('Sucursal Actualizada')
-      expect(branch.phone).to eq('5559876543')
+      expect(branch.phones.active.find_by(kind: 'mobile', primary: true)&.number).to eq('+525559876543')
       expect(branch.address.reload).to have_attributes(
         street: 'Av. Insurgentes',
         city: 'Tlalnepantla'
