@@ -33,6 +33,7 @@
       <%= form.label :number, t('admin.phones.number'), class: 'mb-1.5 block text-xs font-bold text-slate-700' %>
       <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
         <%= form.telephone_field :number, data: { international_phone_target: 'input', country_code: form.object.country_code.presence || 'MX' }, autocomplete: 'tel',
+                                 aria: { invalid: form.object.errors[:number].any? },
                                  class: "min-h-11 w-full rounded-xl border bg-white px-3 text-sm #{form_state_classes(form.object, :number)}",
                                  placeholder: '55 1234 5678' %>
       </div>
