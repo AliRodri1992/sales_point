@@ -27,12 +27,18 @@ RSpec.describe 'Supplier dated events', type: :request do
   it 'renders the new and edit forms for authorized supplier activities' do
     get new_admin_supplier_event_path(supplier)
     expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-supplier-event-form-page="new"] [data-supplier-subpage-header]')).to be_present
+    expect(page.at_css('[data-supplier-event-form-page="new"] nav')).to be_nil
 
     event = supplier.supplier_events.create!(
       branch:, title: 'Visit', kind: 'visit', starts_at: Time.zone.now
     )
     get edit_admin_supplier_event_path(supplier, event)
     expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css(
+      '[data-supplier-event-form-page="edit"] [data-supplier-subpage-header]'
+    )).to be_present
   end
 
   it 'blocks editing a future event after supplier deactivation' do
