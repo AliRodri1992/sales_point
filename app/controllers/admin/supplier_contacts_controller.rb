@@ -123,9 +123,9 @@ module Admin
       params.expect(
         contact: [
           :name, :position, :email, :notes, :primary, :active,
-          { phones_attributes: %i[
+          { phones_attributes: [%i[
             id number country_code kind label extension primary whatsapp_enabled _destroy
-          ] }
+          ]] }
         ]
       )
     end
