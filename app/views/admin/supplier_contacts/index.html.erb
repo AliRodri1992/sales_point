@@ -70,7 +70,20 @@
           </div>
           <div class="mt-5 space-y-3 border-t border-slate-100 pt-4">
             <% if contact.email.present? %><div class="flex items-start gap-3 text-sm text-slate-600"><%= delta_icon('envelope', class: 'mt-0.5 size-4 shrink-0 text-slate-400') %><span class="min-w-0 break-all"><%= contact.email %></span></div><% end %>
-            <% contact.phones.select { |phone| phone.deleted_at.nil? }.each do |phone| %><div class="flex items-start gap-3 text-sm text-slate-600"><%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'mt-0.5 size-4 shrink-0 text-slate-400') %><span><%= phone.number %> · <%= t("admin.phones.#{phone.kind}", default: phone.kind) %></span></div><% end %>
+            <% contact.phones.select { |phone| phone.deleted_at.nil? }.each do |phone| %>
+              <div class="flex min-w-0 items-start gap-3 text-sm text-slate-600">
+                <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'mt-0.5 size-4 shrink-0 text-slate-400') %>
+                <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                  <span class="break-all"><%= phone.number %> · <%= t("admin.phones.#{phone.kind}", default: phone.kind) %></span>
+                  <% if phone.label.present? %>
+                    <span class="inline-flex max-w-full items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-800">
+                      <%= delta_icon('tag', class: 'size-3 shrink-0') %>
+                      <span class="truncate" title="<%= phone.label %>"><%= phone.label %></span>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
 
             <% if showing_deleted %><p class="text-xs text-slate-500"><%= t('admin.supplier_details.deleted_on', date: l(contact.deleted_at.to_date, format: :long)) %></p><% end %>
           </div>
