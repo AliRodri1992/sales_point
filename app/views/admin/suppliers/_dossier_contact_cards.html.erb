@@ -65,7 +65,7 @@
               <%= link_to "tel:#{phone.number}#{";ext=#{phone.extension}" if phone.extension.present?}",
                           aria: { label: "#{t('admin.supplier_general_layout.call')}: #{label}" },
                           class: 'inline-flex min-w-0 max-w-full items-center gap-2 text-sm font-semibold text-slate-800 hover:text-emerald-800 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-                <%= delta_icon('phone', class: 'size-4 shrink-0 text-emerald-700') %>
+                <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'size-4 shrink-0 text-emerald-700') %>
                 <span class="min-w-0 break-all"><%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %></span>
               <% end %>
             <% else %>
@@ -97,6 +97,7 @@
                     <% phone_label = phone.label.presence || (phone.kind == 'mobile' ? t('admin.supplier_details.contact_fields.mobile_phone') : phone.kind == 'landline' ? t('admin.supplier_details.contact_fields.office_phone', default: 'Teléfono de oficina') : t('admin.supplier_dossier.overview.phone')) %>
                     <div class="flex min-w-0 flex-wrap items-center gap-2">
                       <span class="text-xs font-medium text-slate-500"><%= phone_label %>:</span>
+                      <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'size-4 shrink-0 text-emerald-700') %>
                       <%= link_to "tel:#{phone.number}#{";ext=#{phone.extension}" if phone.extension.present?}", class: 'break-all font-semibold text-emerald-800 hover:underline' do %>
                         <%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %>
                       <% end %>
