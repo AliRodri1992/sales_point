@@ -61,7 +61,13 @@ export default class extends Controller {
       tab.classList.toggle("font-medium", !active)
     })
 
-    if (this.hasMobileSelectTarget) this.mobileSelectTarget.value = selected
+    if (this.hasMobileSelectTarget) {
+      this.mobileSelectTarget.value = selected
+      // The native value changes without a change event during desktop tab
+      // navigation and browser history; update the visible Delta dropdown too.
+      const dropdown = this.mobileSelectTarget.closest('[data-controller~="delta-select"]')
+      if (dropdown) this.application.getControllerForElementAndIdentifier(dropdown, "delta-select")?.refresh()
+    }
     this.panelTargets.forEach((panel) => {
       const active = panel.dataset.section === selected
       panel.hidden = !active
