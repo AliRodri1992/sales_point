@@ -12,7 +12,6 @@ module Admin
     PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
     SORTABLE_COLUMNS = %w[
       branches.name
-      branches.phone
       addresses.street
       branches.status
     ].freeze
