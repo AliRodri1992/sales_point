@@ -16,9 +16,10 @@
 .supplier-edit-upload .uppy-Dashboard-inner {
   overflow: hidden;
 }
-.supplier-edit-upload .uppy-DashboardFileCard,
+.supplier-edit-upload .uppy-Dashboard-FileCard,
 .supplier-edit-upload .uppy-DashboardContent-panel {
   max-height: 100%;
+  overflow: auto;
 }
 
 /* Supplier edit only: brand the Uppy dashboard without affecting the show-page file library. */
