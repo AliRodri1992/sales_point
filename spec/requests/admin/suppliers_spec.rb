@@ -17,6 +17,13 @@ RSpec.describe 'Admin suppliers', type: :request do
     sign_in user
   end
 
+  it 'registers the nested-phones Stimulus controller used by the add-phone action' do
+    manifest = Rails.root.join('app/javascript/controllers/index.js').read
+
+    expect(manifest).to include('import NestedPhonesController from "./nested_phones_controller"')
+    expect(manifest).to include('application.register("nested-phones", NestedPhonesController)')
+  end
+
   it 'renders the redesigned supplier contact editor with accessible settings and multiple phones' do
     supplier = create(:supplier, organization:)
     contact = create(
@@ -34,8 +41,11 @@ RSpec.describe 'Admin suppliers', type: :request do
     page = Nokogiri::HTML(response.body)
     editor = page.at_css('form[data-supplier-contact-form="true"]')
     expect(editor).to be_present
+    expect(editor.at_css('[data-supplier-contact-editor]')).to be_present
     expect(editor.at_css('#supplier-contact-identity')).to be_present
     expect(editor.at_css('#supplier-contact-communication')).to be_present
+    expect(editor.at_css('#supplier-contact-preferences')).to be_present
+    expect(editor.css('aside')).to be_empty
     expect(editor.at_css('[data-supplier-contact-actions]')).to be_present
     expect(editor.at_css('input[name="contact[name]"]')['value']).to eq('Mariana Cruz')
     expect(editor.at_css('input[name="contact[position]"]')['value']).to eq('Purchasing Manager')
@@ -52,6 +62,7 @@ RSpec.describe 'Admin suppliers', type: :request do
       .to be(true)
     expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
     expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
+    expect(editor.at_css('[data-nested-phones-target="items"]')['class']).to include('lg:grid-cols-2')
     expect(phones.all? { |item| item.at_css('[data-phone-fields]') }).to be(true)
     expect(phones.all? do |item|
       item.at_css('[data-phone-removed-message] button[data-action="nested-phones#undoRemove"]')
