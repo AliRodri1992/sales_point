@@ -61,7 +61,7 @@ RSpec.describe 'Admin supplier schedules', type: :request do
 
     get admin_supplier_path(supplier, tab: 'schedules')
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include(branch.name, 'Weekly visit')
+    expect(response.body).to include(branch.name, I18n.t('admin.supplier_calendar.kinds.visit', locale: :en))
   end
 
   it 'returns to supplier calendars after creating a schedule from the dossier' do
