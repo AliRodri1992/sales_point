@@ -15,12 +15,16 @@ RSpec.describe 'Supplier contact integration', type: :request do
 
   it 'creates, normalizes and displays a supplier contact' do
     post admin_supplier_contacts_path(supplier),
-         params: { contact: { name: 'Operations', email: 'OPS@EXAMPLE.COM', phone: '5512345678' } }
+         params: { contact: {
+           name: 'Operations', email: 'OPS@EXAMPLE.COM',
+           phones_attributes: [{ number: '5512345678', country_code: 'MX',
+                                  kind: 'mobile', primary: true }]
+         } }
 
     expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
     contact = supplier.contacts.last
     expect(contact.email).to eq('ops@example.com')
-    expect(contact.phone).to start_with('+52')
+    expect(contact.phones.active.find_by!(kind: 'mobile').number).to start_with('+52')
 
     get admin_supplier_path(supplier, tab: 'contacts')
     expect(response.body).to include('Operations')
