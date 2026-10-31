@@ -1,0 +1,12 @@
+es:
+  admin:
+    suppliers:
+      tag_editor:
+        add: "Agregar"
+        input_placeholder: "Escribe una etiqueta"
+        help: "Presiona Enter o coma para agregar. Retroceso elimina la última etiqueta."
+        assigned: "Etiquetas asignadas"
+        suggested: "Etiquetas utilizadas recientemente"
+        remove: "Quitar etiqueta %{tag}"
+        duplicate: "Esta etiqueta ya está agregada."
+        limit: "Puedes agregar hasta 20 etiquetas."
