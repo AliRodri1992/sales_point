@@ -5,6 +5,7 @@ require 'stringio'
 require_relative 'supplier_demo_documents'
 require_relative 'supplier_dossier_uniqueness'
 require_relative 'supplier_calendar_events'
+require_relative 'supplier_phone_examples'
 
 # Repeatable demo records for supplier tabs and progressive lists.
 # Never calls external geocoding or overwrites existing user-entered records.
@@ -72,17 +73,11 @@ module SupplierDossierExamples
         name: "Contacto demo #{index}",
         position: %w[Compras Ventas Logística Facturación][index % 4],
         email: email,
-        phones_attributes: contact_phone_attributes(index),
+        phones_attributes: SupplierPhoneExamples.demo_contact_phone_attributes(index),
         primary: false,
         active: (index % 4 != 0),
         notes: reference
       }
-    end
-
-    def contact_phone_attributes(index)
-      return [] if index.odd?
-
-      [{ number: format('553456%04d', index), country_code: 'MX', kind: 'mobile', primary: true }]
     end
 
     def seed_addresses(supplier, country, count)
