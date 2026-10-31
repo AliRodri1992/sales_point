@@ -64,6 +64,7 @@ module SupplierExamples
       else
         fill_missing_details(supplier, attributes)
       end
+      create_supplier_phones(supplier, number)
       create_contact(supplier, number)
     end
 
@@ -80,7 +81,6 @@ module SupplierExamples
         classification: %w[manufacturer distributor wholesaler][number % 3],
         person_type: :company,
         email: "proveedor#{number}@example.com",
-        phone: format('55%08d', number),
         rfc: format('DPE260101%03d', number),
         status: (number % 5).zero? ? :inactive : :active,
         deleted_at: nil
@@ -103,11 +103,20 @@ module SupplierExamples
 
     def fill_missing_details(supplier, attributes)
       fields = %i[legal_name trade_name alias_name classification person_type
-                  responsible_user sat_fiscal_regime email phone notes
+                  responsible_user sat_fiscal_regime email notes
                   currency credit_days credit_limit discount_percent minimum_order_amount]
       fields.each { |field| supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank? }
       supplier.tags = attributes[:tags] if supplier.tags.blank?
       supplier.save! if supplier.changed?
+    end
+
+    def create_supplier_phones(supplier, number)
+      return if supplier.phones.active.exists?
+
+      %w[landline mobile].each do |kind|
+        supplier.phones.create!(organization: supplier.organization, number: format('551234%04d', number),
+                               country_code: 'MX', kind:, primary: true)
+      end
     end
 
     def create_contact(supplier, number)
@@ -122,8 +131,8 @@ module SupplierExamples
         name: "Contacto #{number}",
         email: email,
         position: 'Ventas',
-        phone: supplier.phone,
-        mobile_phone: supplier.phone,
+        phones_attributes: [{ number: format('551234%04d', number), kind: 'mobile', primary: true,
+                              country_code: 'MX', organization: supplier.organization }],
         notes: 'Contacto ficticio para demostración.',
         primary: true,
         active: true,
