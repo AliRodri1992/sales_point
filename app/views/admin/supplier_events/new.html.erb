@@ -1,14 +1,14 @@
 <div class="mx-auto max-w-3xl space-y-5">
   <nav class="flex flex-wrap items-center gap-2 text-sm text-slate-500" aria-label="<%= t('admin.supplier_dossier.navigation.breadcrumbs') %>">
     <%= link_to t('admin.supplier_dossier.navigation.suppliers'), admin_suppliers_path, data: { loading_message: t('admin.action_loader.returning') }, class: 'hover:text-emerald-700' %>
-    <%= icon('chevron-right', class: 'size-4') %>
+    <%= delta_icon('chevron-right', class: 'size-4') %>
     <%= link_to @supplier.name, admin_supplier_path(@supplier, tab: 'schedules'), class: 'hover:text-emerald-700' %>
-    <%= icon('chevron-right', class: 'size-4') %>
+    <%= delta_icon('chevron-right', class: 'size-4') %>
     <span class="font-semibold text-slate-900"><%= t("admin.supplier_calendar.#{@event.persisted? ? 'edit_event' : 'new_event'}") %></span>
   </nav>
   <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
     <div class="mb-6 flex items-center gap-3 border-b border-slate-100 pb-5">
-      <span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= icon('calendar-days', class: 'size-6') %></span>
+      <span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= delta_icon('calendar-days', class: 'size-6') %></span>
       <div>
         <h1 class="font-jakarta text-xl font-bold text-slate-900"><%= t("admin.supplier_calendar.#{@event.persisted? ? 'edit_event' : 'new_event'}") %></h1>
         <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_calendar.event_help') %></p>
