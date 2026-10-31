@@ -6,7 +6,7 @@
   <div data-supplier-contacts-header class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
   <div class="flex flex-wrap items-center justify-between gap-4">
     <div class="flex items-center gap-3">
-      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= icon('users', class: 'size-5') %></span>
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('users', class: 'size-5') %></span>
       <div>
         <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_details.contacts') %></h2>
         <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.contact_cards.subtitle') %></p>
@@ -16,7 +16,7 @@
       <span class="text-sm font-medium text-slate-500" aria-live="polite"><span data-supplier-contacts-target="count"><%= contacts_page.total_count %></span> <%= t('admin.supplier_details.contacts') %></span>
       <label class="relative block min-w-0 sm:w-72">
         <span class="sr-only"><%= t('admin.supplier_details.search_contacts') %></span>
-        <%= icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400') %>
+        <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400') %>
         <input type="search" data-supplier-contacts-target="search" data-action="input->supplier-contacts#search" placeholder="<%= t('admin.supplier_dossier.contact_cards.search_placeholder') %>" class="min-h-10 w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500">
       </label>
     </div>
@@ -33,7 +33,7 @@
     </div>
     <% if can_manage_contacts %>
     <%= link_to admin_supplier_contacts_path(supplier), class: 'inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 sm:ml-auto' do %>
-      <%= icon('users', class: 'size-4') %>
+      <%= delta_icon('users', class: 'size-4') %>
       <%= t('admin.supplier_details.manage_contacts') %>
     <% end %>
     <% end %>
@@ -51,7 +51,7 @@
       <p data-supplier-contacts-target="emptyText" aria-live="polite" class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500"><%= t('admin.supplier_dossier.contact_cards.subtitle') %></p>
       <% if can_manage_contacts %>
         <%= link_to new_admin_supplier_contact_path(supplier), data: { supplier_contacts_target: 'emptyAction' }, class: 'mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-          <%= icon('plus', class: 'size-4') %>
+          <%= delta_icon('plus', class: 'size-4') %>
           <%= t('admin.supplier_details.add_contact', default: t('admin.supplier_details.manage_contacts')) %>
         <% end %>
       <% end %>

@@ -6,13 +6,13 @@
 <% if can_edit %>
   <%= link_to edit_admin_supplier_path(supplier, return_to: 'commercial'),
               class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' do %>
-    <%= icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
+    <%= delta_icon('pencil', class: 'size-4') %><%= t('admin.supplier_details.edit') %>
   <% end %>
 <% end %>
 </div></div>
 <div class="grid gap-5 lg:grid-cols-2">
 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-<div class="mb-4 flex items-center gap-3 border-b border-slate-100 pb-4"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= icon('credit-card', class: 'size-6') %></span><h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.payment') %></h3></div>
+<div class="mb-4 flex items-center gap-3 border-b border-slate-100 pb-4"><span class="rounded-xl bg-emerald-50 p-3 text-emerald-700"><%= delta_icon('credit-card', class: 'size-6') %></span><h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.commercial.payment') %></h3></div>
 <dl>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.currency') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.currency&.code || '—' %></dd></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 py-4 last:border-0"><dt class="text-sm text-slate-500"><%= t('admin.supplier_dossier.fields.credit_days') %></dt><dd class="text-right font-semibold text-slate-900"><%= supplier.credit_days.present? ? supplier.credit_days : '—' %></dd></div>

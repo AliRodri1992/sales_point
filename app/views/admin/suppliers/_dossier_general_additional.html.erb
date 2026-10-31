@@ -1,7 +1,7 @@
 <div data-supplier-general-area="additional" class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <h3 class="flex items-center gap-3 border-b border-slate-100 bg-slate-50 px-5 py-4 font-jakarta text-base font-bold text-slate-900">
 
-    <%= icon('document-text', class: 'size-5 text-emerald-700') %>
+    <%= delta_icon('document-text', class: 'size-5 text-emerald-700') %>
     <%= t('admin.supplier_general_layout.additional') %>
   </h3>
   <dl class="space-y-5 p-5">
@@ -11,7 +11,7 @@
         <% if supplier.tags.any? %>
           <% tones = %w[bg-sky-100\ text-sky-800 bg-emerald-100\ text-emerald-800 bg-violet-100\ text-violet-800 bg-amber-100\ text-amber-800] %>
           <% supplier.tags.each_with_index do |tag, index| %>
-            <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold <%= tones[index % tones.length] %>"><%= icon('tag', class: 'size-3.5') %><%= tag %></span>
+            <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold <%= tones[index % tones.length] %>"><%= delta_icon('tag', class: 'size-3.5') %><%= tag %></span>
           <% end %>
         <% else %>
           <span class="text-sm text-slate-500"><%= t('admin.supplier_general_layout.tags_missing') %></span>

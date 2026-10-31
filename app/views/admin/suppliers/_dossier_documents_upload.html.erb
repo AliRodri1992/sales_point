@@ -5,7 +5,7 @@
   <div data-supplier-documents-target="dropzone"
        data-action="dragenter->supplier-documents#dragOver dragover->supplier-documents#dragOver dragleave->supplier-documents#dragLeave drop->supplier-documents#dropFiles"
        class="flex min-h-36 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/70 px-4 py-5 text-center transition-colors">
-    <%= icon('cloud-arrow-up', class: 'mb-2 size-9 text-emerald-600') %>
+    <%= delta_icon('cloud-arrow-up', class: 'mb-2 size-9 text-emerald-600') %>
     <button type="button" data-action="supplier-documents#pickFiles"
             class="rounded-md text-sm font-semibold text-slate-900 underline-offset-2 hover:text-emerald-700 hover:underline focus-visible:outline-2 focus-visible:outline-emerald-600">
       <%= t("#{dictionary}.drop_title") %>
@@ -55,7 +55,7 @@
                 data-action="supplier-documents#closeQueuedPreview"
                 class="flex size-10 items-center justify-center rounded-xl text-slate-600 hover:bg-emerald-50"
                 aria-label="<%= t("#{dictionary}.close_preview") %>">
-          <%= icon('x-mark', class: 'size-5') %>
+          <%= delta_icon('x-mark', class: 'size-5') %>
         </button>
       </header>
       <div class="mt-5 flex h-[60vh] min-h-64 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">

@@ -12,7 +12,7 @@
       </div>
       <button type="button" data-action="supplier-calendar#close" aria-label="<%= t('admin.supplier_calendar.cancel') %>"
               class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50">
-        <%= icon('x-mark', class: 'size-5') %>
+        <%= delta_icon('x-mark', class: 'size-5') %>
       </button>
     </header>
     <%= form_with model: supplier.supplier_events.new, url: admin_supplier_events_path(supplier),
