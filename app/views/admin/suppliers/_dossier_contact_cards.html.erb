@@ -13,18 +13,16 @@
           <%= contact.name.to_s.split.first(2).map { |part| part.first.upcase }.join %>
         </span>
         <div class="min-w-0 flex-1">
-          <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5">
-            <h3 class="min-w-0 break-words font-jakarta text-base font-bold leading-6 text-slate-900"><%= contact.name %></h3>
+          <h3 class="min-w-0 break-words font-jakarta text-base font-bold leading-6 text-slate-900"><%= contact.name %></h3>
+          <div data-contact-meta-row class="mt-2 flex min-w-0 items-center gap-2 whitespace-nowrap">
             <% if contact.primary? %>
               <span data-contact-primary-badge class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold leading-4 text-emerald-800 ring-1 ring-inset ring-emerald-200">
                 <%= delta_icon('star', class: 'size-3.5 shrink-0', stroke_width: 2) %>
                 <%= t('admin.supplier_details.primary') %>
               </span>
             <% end %>
-          </div>
-          <p class="mt-1 break-words text-sm text-slate-500"><%= contact.position.presence || '—' %></p>
-          <div class="mt-2 flex flex-wrap items-center gap-1.5">
-            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset <%= contact.active? ? 'bg-sky-50 text-sky-800 ring-sky-200' : 'bg-slate-100 text-slate-600 ring-slate-200' %>">
+            <span data-contact-position class="min-w-0 flex-1 truncate text-xs font-medium text-slate-600" title="<%= contact.position %>"><%= contact.position.presence || '—' %></span>
+            <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset <%= contact.active? ? 'bg-sky-50 text-sky-800 ring-sky-200' : 'bg-slate-100 text-slate-600 ring-slate-200' %>">
               <span aria-hidden="true" class="size-1.5 rounded-full <%= contact.active? ? 'bg-sky-600' : 'bg-slate-400' %>"></span>
               <%= t("admin.supplier_details.contact_statuses.#{contact.active? ? 'active' : 'inactive'}") %>
             </span>
