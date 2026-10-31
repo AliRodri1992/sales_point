@@ -10,7 +10,13 @@ Rails.application.config.content_security_policy do |policy|
 
   policy.img_src(
     :self,
-    :data
+    :data,
+    :blob
+  )
+
+  policy.worker_src(
+    :self,
+    :blob
   )
 
   policy.script_src(
