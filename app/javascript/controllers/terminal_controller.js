@@ -5,7 +5,7 @@ export default class extends Controller {
 
   connect() {
     this.onDocumentClick = (event) => {
-      if (!this.element.contains(event.target)) this.closeDropdowns()
+      if (!event.target.closest("[data-theme-toggle], #terminal-theme-dropdown")) this.closeDropdowns()
     }
     this.onDocumentKeydown = (event) => {
       if (event.key !== "Escape" || !this.hasThemeDropdownTarget || this.themeDropdownTarget.classList.contains("hidden")) return
