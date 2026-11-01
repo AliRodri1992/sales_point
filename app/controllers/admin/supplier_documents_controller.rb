@@ -146,11 +146,8 @@ module Admin
     end
 
     def redirect_documents(supplier, action)
-      destination = if action == :uploaded && !policy(supplier).view_documents?
-                      admin_suppliers_path
-                    else
-                      admin_supplier_path(supplier, tab: 'documents')
-                    end
+      destination = admin_supplier_path(supplier, tab: 'documents')
+      destination = admin_suppliers_path if action == :uploaded && !policy(supplier).view_documents?
       redirect_to destination, notice: t("admin.supplier_documents.messages.#{action}")
     end
 

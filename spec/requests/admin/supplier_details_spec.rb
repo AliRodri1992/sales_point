@@ -64,10 +64,10 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     expect(foreign_contact.reload.name).not_to eq('Changed')
 
     sign_in user
-    expect do
-      delete admin_supplier_address_path(foreign_supplier, foreign_address)
-    end.not_to change { Address.unscoped.where(id: foreign_address.id).pluck(:deleted_at) }
+    deleted_at_before = Address.unscoped.where(id: foreign_address.id).pluck(:deleted_at)
+    delete admin_supplier_address_path(foreign_supplier, foreign_address)
     expect(response).to have_http_status(:not_found)
+    expect(Address.unscoped.where(id: foreign_address.id).pluck(:deleted_at)).to eq(deleted_at_before)
     expect(Address.unscoped.exists?(foreign_address.id)).to be(true)
   end
   it 'restores a deleted primary contact without losing its designation' do

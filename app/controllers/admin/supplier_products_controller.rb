@@ -44,12 +44,7 @@ module Admin
       @offer.organization = current_organization
       @offer.product = organization_products.find(offer_params[:product_id])
       if @offer.save
-        destination = if policy(@supplier).view_products?
-                        admin_supplier_supplier_products_path(@supplier)
-                      else
-                        admin_suppliers_path
-                      end
-        redirect_to destination, notice: t('admin.procurement.saved')
+        redirect_to created_offer_destination, notice: t('admin.procurement.saved')
       else
         load_catalogs
         render :new, status: :unprocessable_content
@@ -87,6 +82,12 @@ module Admin
     end
 
     private
+
+    def created_offer_destination
+      return admin_supplier_supplier_products_path(@supplier) if policy(@supplier).view_products?
+
+      admin_suppliers_path
+    end
 
     def paginate_offers(scope)
       @total_offers = scope.count
