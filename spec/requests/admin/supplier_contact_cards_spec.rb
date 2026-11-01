@@ -75,7 +75,8 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     expect(card.at_css('button[aria-expanded="false"]')).to be_present
     expect(card.at_css("[id='supplier-contact-detail-#{contact.id}']")['class']).to include('hidden')
     expect(card.text).to include('Call before delivery')
-    expect(card.at_css("a[href='#{edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier')}']")).to be_present
+    edit_path = edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier')
+    expect(card.at_css("a[href='#{edit_path}']")).to be_present
   end
 
   it 'shows both missing-contact labels when neither phone nor email is registered' do

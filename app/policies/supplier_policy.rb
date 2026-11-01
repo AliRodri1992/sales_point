@@ -44,7 +44,7 @@ class SupplierPolicy
   def view_general? = authorized_record? && (allowed?('suppliers.view') || allowed?('suppliers.update'))
 
   def view_contacts?
-    authorized_record? && (allowed?('suppliers.contacts.view') || allowed?('suppliers.contacts.manage'))
+    authorized_record? && (allowed?('suppliers.contacts.view') || contacts_any_action?)
   end
 
   def manage_contacts? = authorized_record? && allowed?('suppliers.contacts.manage')
@@ -83,7 +83,7 @@ class SupplierPolicy
 
   def view_documents?
     authorized_record? && (allowed?('suppliers.documents.view') ||
-                           allowed?('suppliers.documents.manage'))
+                           section_any_action?('documents', %w[create update destroy restore]))
   end
 
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')

@@ -114,7 +114,8 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
           params: { supplier_bank_account: { holder_name: 'New Owner', verification_status: 'verified' } }
     expect(account.reload.verification_status).to eq('pending')
 
-    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'verified', verified_on: Date.current.iso8601 }
+    patch review_admin_supplier_bank_account_path(supplier, account),
+          params: { decision: 'verified', verified_on: Date.current.iso8601 }
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
     expect(account.reload.verification_status).to eq('verified')
     expect(account.verified_at).to be_present

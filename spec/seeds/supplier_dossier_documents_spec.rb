@@ -34,7 +34,7 @@ RSpec.describe SupplierDossierExamples, type: :model do
   it 'repairs missing supplier document metadata when seeds are rerun' do
     seed_supplier_documents
     attachment_ids = supplier.documents.attachments.pluck(:id)
-    supplier.supplier_documents.delete_all
+    SupplierDocument.where(supplier_id: supplier.id).delete_all
 
     expect(supplier.documents.attachments.count).to eq(3)
     expect(Suppliers::DossierDocumentsPage.new(supplier:).call.total_count).to eq(0)
