@@ -74,51 +74,83 @@ module MembershipCatalogExamples
   MEMBERSHIP_PLAN_CONFIGURATION = {
     'starter' => {
       enabled: %w[pos customers products cash_registers reports],
-      limits: { 'max_users' => 3, 'max_branches' => 1, 'max_products' => 500, 'max_clients' => 500, 'max_suppliers' => 25, 'max_warehouses' => 1, 'max_pos_terminals' => 1 }
+      limits: {
+        'max_users' => 3, 'max_branches' => 1, 'max_products' => 500,
+        'max_clients' => 500, 'max_suppliers' => 25, 'max_warehouses' => 1,
+        'max_pos_terminals' => 1
+      }
     },
     'professional' => {
       enabled: %w[pos customers suppliers products inventory cash_registers reports multi_branch expenses exports],
-      limits: { 'max_users' => 10, 'max_branches' => 3, 'max_products' => 5000, 'max_clients' => 5000, 'max_suppliers' => 500, 'max_warehouses' => 3, 'max_pos_terminals' => 5 }
+      limits: {
+        'max_users' => 10, 'max_branches' => 3, 'max_products' => 5000,
+        'max_clients' => 5000, 'max_suppliers' => 500, 'max_warehouses' => 3,
+        'max_pos_terminals' => 5
+      }
     },
     'business' => {
-      enabled: %w[pos customers suppliers products inventory advanced_inventory cash_registers reports advanced_reports multi_branch expenses exports],
-      limits: { 'max_users' => 30, 'max_branches' => 10, 'max_products' => nil, 'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => 10, 'max_pos_terminals' => 20 }
+      enabled: %w[
+        pos customers suppliers products inventory advanced_inventory cash_registers
+        reports advanced_reports multi_branch expenses exports
+      ],
+      limits: {
+        'max_users' => 30, 'max_branches' => 10, 'max_products' => nil,
+        'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => 10,
+        'max_pos_terminals' => 20
+      }
     },
     'enterprise' => {
-      enabled: %w[pos customers suppliers products inventory advanced_inventory cash_registers reports advanced_reports multi_branch expenses api exports],
-      limits: { 'max_users' => nil, 'max_branches' => nil, 'max_products' => nil, 'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => nil, 'max_pos_terminals' => nil }
+      enabled: %w[
+        pos customers suppliers products inventory advanced_inventory cash_registers
+        reports advanced_reports multi_branch expenses api exports
+      ],
+      limits: {
+        'max_users' => nil, 'max_branches' => nil, 'max_products' => nil,
+        'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => nil,
+        'max_pos_terminals' => nil
+      }
     }
   }.freeze
 
   def self.seed!
+    seed_features!
+    seed_plans!
+  end
+
+  def self.seed_features!
     MEMBERSHIP_FEATURES.each do |attributes|
       feature = MembershipFeature.find_or_initialize_by(key: attributes[:key])
       feature.assign_attributes(attributes.merge(active: true))
       feature.save!
     end
+  end
 
+  def self.seed_plans!
     MEMBERSHIP_PLANS.each do |attributes|
       plan = MembershipPlan.find_or_initialize_by(slug: attributes[:slug])
       plan.assign_attributes(attributes)
       plan.save!
 
       configuration = MEMBERSHIP_PLAN_CONFIGURATION.fetch(plan.slug)
-
       MembershipFeature.where(deleted_at: nil).find_each do |feature|
-        plan_feature = MembershipPlanFeature.find_or_initialize_by(
-          membership_plan: plan,
-          membership_feature: feature
-        )
-        plan_feature.assign_attributes(
-          enabled: configuration[:enabled].include?(feature.key),
-          limit: configuration[:limits][feature.key],
-          value: configuration[:limits].key?(feature.key) && configuration[:limits][feature.key].nil? ? 'unlimited' : nil,
-          position: feature.position,
-          deleted_at: nil
-        )
-        plan_feature.value = 'true' if feature.value_type == 'boolean' && plan_feature.enabled?
-        plan_feature.save!
+        seed_plan_feature!(plan, feature, configuration)
       end
     end
+  end
+
+  def self.seed_plan_feature!(plan, feature, configuration)
+    assignment = MembershipPlanFeature.find_or_initialize_by(membership_plan: plan, membership_feature: feature)
+    limit = configuration[:limits][feature.key]
+    unlimited = configuration[:limits].key?(feature.key) && limit.nil?
+
+    assignment.assign_attributes(
+      enabled: configuration[:enabled].include?(feature.key),
+      limit: limit,
+      value: unlimited ? 'unlimited' : nil,
+      position: feature.position,
+      deleted_at: nil
+    )
+    assignment.value = 'true' if feature.value_type == 'boolean' && assignment.enabled?
+    assignment.save!
   end
 end
