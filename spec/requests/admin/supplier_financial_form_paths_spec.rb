@@ -101,7 +101,7 @@ RSpec.describe 'Financial credit and banking form paths', type: :request do
   def bank_params(overrides = {})
     {
       bank_name: 'Local Bank', holder_name: 'Supplier One',
-      account_number: '1234567890', currency_code: currency.code
+      clabe: '032180000118359719', currency_code: currency.code
     }.merge(overrides)
   end
 
@@ -123,15 +123,15 @@ RSpec.describe 'Financial credit and banking form paths', type: :request do
     get edit_admin_supplier_bank_account_path(supplier, record)
     expect(response).to have_http_status(:ok)
     patch admin_supplier_bank_account_path(supplier, record), params: {
-      supplier_bank_account: { bank_name: 'Changed Bank', account_number: '' }
+      supplier_bank_account: { bank_name: 'Changed Bank', clabe: '' }
     }
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
-    expect(record.reload).to have_attributes(bank_name: 'Changed Bank', account_number: '1234567890')
+    expect(record.reload).to have_attributes(bank_name: 'Changed Bank', clabe: '032180000118359719')
   end
 
   it 'rejects invalid bank accounts on create' do
     post admin_supplier_bank_accounts_path(supplier), params: {
-      supplier_bank_account: bank_params(account_number: 'INVALID')
+      supplier_bank_account: bank_params(clabe: 'INVALID')
     }
     expect(response).to have_http_status(:unprocessable_content)
   end
@@ -139,9 +139,9 @@ RSpec.describe 'Financial credit and banking form paths', type: :request do
   it 'rejects invalid bank accounts on update' do
     record = SupplierBankAccount.create!(bank_params.merge(organization:, supplier:))
     patch admin_supplier_bank_account_path(supplier, record), params: {
-      supplier_bank_account: { account_number: 'not-numeric' }
+      supplier_bank_account: { clabe: 'not-numeric' }
     }
     expect(response).to have_http_status(:unprocessable_content)
-    expect(record.reload.account_number).to eq('1234567890')
+    expect(record.reload.clabe).to eq('032180000118359719')
   end
 end
