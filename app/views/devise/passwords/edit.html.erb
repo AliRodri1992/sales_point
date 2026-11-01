@@ -7,7 +7,13 @@
     <p class="mt-2 text-sm leading-relaxed text-slate-600"><%= t('authentication.login.reset_instructions') %></p>
 
     <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'mt-7 space-y-5' }) do |f| %>
-      <%= render 'devise/shared/error_messages', resource: resource %>
+      <% if resource.errors.any? %>
+        <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          <% resource.errors.full_messages.each do |message| %>
+            <p><%= message %></p>
+          <% end %>
+        </div>
+      <% end %>
       <%= f.hidden_field :reset_password_token %>
       <div>
         <%= f.label :password, t('devise.passwords.edit.new_password'), class: 'block text-sm font-semibold text-slate-700' %>
