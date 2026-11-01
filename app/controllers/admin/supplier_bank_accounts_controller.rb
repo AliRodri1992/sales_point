@@ -71,7 +71,7 @@ module Admin
       @account.update!(attributes)
       FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
                                   event: 'bank_account.verification_reviewed', subject: @account,
-                                  details: { decision: decision })
+                                  details: { decision: decision, verified_on: verification_date&.iso8601 })
       redirect_to admin_supplier_bank_accounts_path(@supplier)
     end
 
@@ -103,7 +103,8 @@ module Admin
     private
 
     def verified_bank_date
-      Date.iso8601(params[:verified_on].to_s)
+      date = Date.iso8601(params[:verified_on].to_s)
+      date unless date.future?
     rescue Date::Error
       nil
     end
