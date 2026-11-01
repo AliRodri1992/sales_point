@@ -12,8 +12,15 @@ RSpec.describe SuppliersFormHelpers do
     handler.send(:valid_primary_records?, records, :contacts, creating:)
   end
 
-  it 'accepts omitted nested contact records' do
+  it 'requires an existing primary contact if the nested update omits contacts' do
+    expect(valid_records?(nil)).to be(false)
+    supplier.contacts.create!(name: 'Principal', primary: true)
     expect(valid_records?(nil)).to be(true)
+  end
+
+  it 'requires a new primary contact during supplier onboarding' do
+    expect(valid_records?(nil, creating: true)).to be(false)
+    expect(valid_records?([{ name: 'Principal' }], creating: true)).to be(true)
   end
 
   it 'rejects an attempt to submit multiple primary contacts' do
