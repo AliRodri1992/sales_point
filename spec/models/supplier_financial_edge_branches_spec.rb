@@ -146,17 +146,17 @@ RSpec.describe 'Supplier procurement edge-case branches' do
   it 'standardizes bank account currency and whitespace' do
     account = SupplierBankAccount.new(
       organization:, supplier:, bank_name: 'Local bank', holder_name: 'Vendor',
-      account_number: ' 1234 5678 ', currency_code: 'mxn'
+      clabe: '032 180 000 118 359 719', currency_code: 'mxn'
     )
     account.valid?
-    expect(account).to have_attributes(account_number: '12345678', currency_code: 'MXN')
-    expect(account.masked_number).to include('5678')
+    expect(account).to have_attributes(clabe: '032180000118359719', currency_code: 'MXN')
+    expect(account.masked_number).to include('9719')
   end
 
   it 'rejects bank account with invalid currency length' do
     account = SupplierBankAccount.new(
       organization:, supplier:, bank_name: 'Local bank', holder_name: 'Vendor',
-      account_number: '12345678', currency_code: 'PESO'
+      clabe: '032180000118359719', currency_code: 'PESO'
     )
     account.valid?
     expect(account.errors[:currency_code]).to be_present
