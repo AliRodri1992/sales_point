@@ -12,7 +12,7 @@ class SupplierBankAccount < ApplicationRecord
   has_many :supplier_payments, dependent: :restrict_with_exception
 
   # Paranoia is inherited from ApplicationRecord: deleted_at is a timestamp.
-  encrypts :account_number, :clabe, :card_number
+  encrypts :clabe
   validates :holder_name, presence: true, length: { maximum: 180 }
   validates :bank_name, presence: true, unless: -> { sat_bank_code.present? }
   validates :bank_name, length: { maximum: 120 }, allow_blank: true
@@ -26,8 +26,6 @@ class SupplierBankAccount < ApplicationRecord
   validate :same_organization
   validate :supplier_available_for_creation, on: :create
   validate :valid_clabe
-  validate :valid_account_number
-  validate :valid_card_number
   validate :consistent_bank_code
   validate :sat_bank_code_exists
 
@@ -54,7 +52,7 @@ class SupplierBankAccount < ApplicationRecord
     raise Pundit::NotAuthorizedError unless Pundit.policy(actor, self)&.reveal?
 
     FinancialAuditEvent.record!(organization:, actor:, event: 'bank_account.revealed', subject: self)
-    { account_number: account_number, clabe: clabe }
+    { clabe: clabe }
   end
 
   private
@@ -75,13 +73,10 @@ class SupplierBankAccount < ApplicationRecord
 
   def normalize_sensitive_numbers
     self.clabe = compact_number(clabe)
-    self.account_number = compact_number(account_number)
-    self.card_number = compact_number(card_number)
   end
 
   def normalize_display_fields
-    self.last_four = (clabe.presence || account_number).to_s.last(4).presence
-    self.card_last_four = card_number.to_s.last(4).presence
+    self.last_four = clabe.to_s.last(4).presence
     self.currency_code = currency_code.to_s.upcase
   end
 
