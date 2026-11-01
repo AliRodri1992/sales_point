@@ -32,6 +32,7 @@ module Admin
       @subscription = Subscription.new(subscription_params)
       authorize @subscription
       @subscription.starts_at ||= Time.current
+      return head :forbidden unless subscription_organization_allowed?
 
       apply_trial_state
 
@@ -123,11 +124,16 @@ module Admin
     end
 
     def load_form_options
-      @organizations = Organization.active.order(:name)
+      @organizations = policy_scope(Organization).active_records.order(:name)
       @membership_plans = MembershipPlan.where(deleted_at: nil).order(:position, :name)
     end
 
-    def apply_trial_state
+    def subscription_organization_allowed?
+    current_user.role?('super_admin') ||
+      current_user.organization_memberships.active.exists?(organization_id: @subscription.organization_id)
+  end
+
+  def apply_trial_state
       return if @subscription.membership_plan.blank?
       return unless @subscription.membership_plan.trial_days.positive?
 

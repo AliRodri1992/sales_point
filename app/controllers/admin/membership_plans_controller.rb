@@ -98,7 +98,9 @@ module Admin
       limits = params[:feature_limits] || {}
       enabled = Array(params[:feature_ids]).compact_blank.map(&:to_i)
 
-      @membership_plan.membership_plan_features.where.not(membership_feature_id: selected_ids).update_all(deleted_at: Time.current)
+      @membership_plan.membership_plan_features.where.not(membership_feature_id: selected_ids).find_each do |assignment|
+        assignment.update!(deleted_at: Time.current)
+      end
 
       selected_ids.each_with_index do |feature_id, index|
         plan_feature = @membership_plan.membership_plan_features

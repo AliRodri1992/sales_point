@@ -20,7 +20,7 @@ module Admin
     end
 
     def new
-      @organization = Organization.new(status: 'active')
+      @organization = Organization.new(status: 'active', business_sector: 'grocery')
       authorize @organization
     end
 
@@ -61,7 +61,7 @@ module Admin
 
     def organization_params
       params.expect(
-        organization: %i[name code legal_name tax_id email phone status]
+        organization: %i[name tax_id business_sector status]
       )
     end
 

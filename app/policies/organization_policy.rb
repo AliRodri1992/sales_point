@@ -10,7 +10,7 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def create?
-    admin?
+    user&.role?('super_admin')
   end
 
   def update?
@@ -23,7 +23,8 @@ class OrganizationPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      return scope.not_deleted if user&.admin?
+      return scope.not_deleted if user&.role?('super_admin')
+      return scope.not_deleted.where(id: user.organization_memberships.active.select(:organization_id)) if user&.admin?
 
       scope.none
     end
