@@ -34,7 +34,7 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
 
     expect(page).to have_css('[data-nested-phones-target="items"] > [data-phone-item]', count: 2)
     phone_names = page.all('[data-nested-phones-target="items"] input[name$="[number]"]', visible: :all)
-                      .map { |input| input['name'] }
+                      .pluck('name')
     expect(phone_names.uniq.length).to eq(2)
     expect(phone_names).to all(include('[phones_attributes]'))
     expect(phone_names.any? { |name| name.include?('NEW_PHONE') }).to be(false)

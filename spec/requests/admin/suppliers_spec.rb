@@ -377,7 +377,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
     expect(actions).to be_present
     expect(actions.element_children.map(&:name)).to eq(%w[a a form])
-    expect(actions.css('a').map { |link| link['href'] })
+    expect(actions.css('a').pluck('href'))
       .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
 
     delete_form = actions.at_css("form[action='#{admin_supplier_path(supplier)}']")
@@ -414,7 +414,7 @@ RSpec.describe 'Admin suppliers', type: :request do
     actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
     expect(actions).to be_present
     expect(actions.css("form[action='#{admin_supplier_path(supplier)}']")).to be_empty
-    expect(actions.css('a').map { |link| link['href'] })
+    expect(actions.css('a').pluck('href'))
       .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
   end
 

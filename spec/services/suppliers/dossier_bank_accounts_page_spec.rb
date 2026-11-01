@@ -8,8 +8,9 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
 
   def valid_clabe(value)
     digits = format('032%014d', value.to_i)
-    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * [3, 7, 1][index % 3]) % 10 }
-    "#{digits}#{(10 - checksum % 10) % 10}"
+    weights = [3, 7, 1]
+    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * weights[index % 3]) % 10 }
+    "#{digits}#{(10 - (checksum % 10)) % 10}"
   end
 
   def create_account(name:, digits:, deleted_at: nil)

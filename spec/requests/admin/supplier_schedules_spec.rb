@@ -38,7 +38,7 @@ RSpec.describe 'Admin supplier schedules', type: :request do
     form = page.at_css('input[name="supplier_schedule[starts_at]"]').ancestors('form').first
     expect(form.css('[data-controller="delta-select"] select').size).to eq(3)
     expect(form.at_css('#supplier-schedule-timing')).to be_present
-    expect(form.at_css('a[href="' + admin_supplier_schedules_path(supplier) + '"]')).to be_present
+    expect(form.at_css("a[href=\"#{admin_supplier_schedules_path(supplier)}\"]")).to be_present
   end
 
   it 'blocks new recurring schedules when the supplier is inactive' do
