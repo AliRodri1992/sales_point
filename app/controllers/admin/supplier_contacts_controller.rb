@@ -3,6 +3,7 @@
 module Admin
   class SupplierContactsController < ApplicationController
     include SupplierAuditTrail
+    include SupplierContactSearch
 
     ACTION_POLICY = {
       'index' => :view_contacts?, 'new' => :create_contacts?, 'create' => :create_contacts?,
@@ -105,32 +106,6 @@ module Admin
       @contacts_page = params[:page].to_i.clamp(1, @contacts_pages)
       @listed_contacts = scope.includes(:phones).order(primary: :desc, name: :asc, id: :asc)
                               .limit(12).offset((@contacts_page - 1) * 12)
-    end
-
-    def contact_scope
-      if params[:status] == 'deleted'
-        @supplier.contacts.with_deleted.where.not(deleted_at: nil)
-      else
-        @supplier.contacts.not_deleted
-      end
-    end
-
-    def filtered_contact_scope
-      scope = contact_scope
-      query = params[:q].to_s.strip.first(100)
-      return scope if query.blank?
-
-      term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
-      scope.where(
-        <<~SQL.squish, q: term
-          contacts.name ILIKE :q OR contacts.position ILIKE :q OR contacts.email ILIKE :q
-          OR EXISTS (SELECT 1 FROM phones
-                     WHERE phones.phoneable_type = 'Contact'
-                       AND phones.phoneable_id = contacts.id
-                       AND phones.deleted_at IS NULL
-                       AND phones.number ILIKE :q)
-        SQL
-      )
     end
 
     def contact_params

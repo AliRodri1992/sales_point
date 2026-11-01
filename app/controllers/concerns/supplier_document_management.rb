@@ -26,15 +26,19 @@ module SupplierDocumentManagement
   end
 
   def persist_replacement(supplier, document)
-    existing_ids = supplier.documents.attachments.pluck(:id)
-    supplier.documents.attach(document_file)
-    attachment = new_document_attachments(supplier, existing_ids).last
+    attachment = attach_replacement_document(supplier)
     raise ActiveRecord::RecordInvalid, supplier unless attachment
 
     document.update!(current_version: false, updated_by: current_user)
     replacement = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
     replacement.assign_attributes(replacement_document_metadata(document))
     replacement.save!
+  end
+
+  def attach_replacement_document(supplier)
+    existing_ids = supplier.documents.attachments.pluck(:id)
+    supplier.documents.attach(document_file)
+    new_document_attachments(supplier, existing_ids).last
   end
 
   def new_document_attachments(supplier, existing_ids)
