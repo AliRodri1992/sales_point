@@ -27,7 +27,7 @@ module SupplierDossierLoading
   end
 
   def archived_calendar_events
-    return [] unless policy(@supplier).manage_schedules?
+    return [] unless policy(@supplier).restore_schedules?
 
     @supplier.supplier_events.with_deleted.where.not(deleted_at: nil).includes(:branch)
              .order(deleted_at: :desc).limit(8)
