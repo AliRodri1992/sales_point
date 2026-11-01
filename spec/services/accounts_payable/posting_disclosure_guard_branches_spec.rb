@@ -70,7 +70,7 @@ RSpec.describe 'Invoice posting and supplier bank disclosure boundaries', type: 
       actor = double('Actor')
       allow(Pundit).to receive(:policy).and_return(double(reveal?: true))
       allow(FinancialAuditEvent).to receive(:record!)
-      expect(account.reveal!(actor:)).to include(account_number: nil, clabe: nil)
+      expect(account.reveal!(actor:)).to eq(clabe: nil)
       expect(FinancialAuditEvent).to have_received(:record!).with(
         hash_including(event: 'bank_account.revealed', actor:)
       )

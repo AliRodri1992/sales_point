@@ -55,7 +55,7 @@ RSpec.describe 'Supplier archived financial records', type: :feature, js: true d
       click_button I18n.t('admin.supplier_archive.restore', locale: :en)
     end
 
-    expect(page).to have_no_css('[data-supplier-bank-accounts-target="card"]', text: '7890')
+    expect(page).to have_no_css('[data-supplier-bank-accounts-target="card"]', text: '9719')
     expect(account.reload.deleted_at).to be_nil
     expect(page).to have_current_path(admin_supplier_bank_accounts_path(supplier, archived: '1'))
   end

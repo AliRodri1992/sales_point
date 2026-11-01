@@ -58,16 +58,15 @@ RSpec.describe 'Supplier responsive dossier navigation', type: :feature, js: tru
     expect(page).to have_no_css('#supplier-pagination-form button[type="submit"]')
   end
 
-  scenario 'keeps floating row action menu visible above table clipping' do
+  scenario 'keeps direct supplier actions accessible without a clipped floating menu' do
     supplier
     visit admin_suppliers_path
-    menu = find('details[data-supplier-floating-menu="true"]', match: :first)
-    menu.find('summary').click
 
-    expect(page).to have_css('body > [data-supplier-floating-panel][style*="position: fixed"]', visible: true)
-    expect(page.evaluate_script(<<~JS)).to eq('fixed')
-      getComputedStyle(document.querySelector('[data-supplier-floating-panel]')).position
-    JS
+    actions = find('tbody tr:first-child td:last-child > div')
+    actions.scroll_to(:center)
+    expect(actions).to have_css('a[aria-label]', minimum: 2)
+    expect(actions).to have_css('form button[aria-label]', minimum: 1)
+    expect(actions).to have_no_css('details[data-supplier-floating-menu]', visible: :all)
   end
 
   scenario 'labels the supplier catalog search for screen-reader users' do
