@@ -368,6 +368,56 @@ RSpec.describe 'Admin suppliers', type: :request do
     expect(document.at_css('form[data-loading-message]')).to be_present
   end
 
+  it 'shows supplier deletion beside show and edit, with its confirmation, instead of in an overflow menu' do
+    supplier = create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.element_children.map(&:name)).to eq(%w[a a form])
+    expect(actions.css('a').map { |link| link['href'] })
+      .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
+
+    delete_form = actions.at_css("form[action='#{admin_supplier_path(supplier)}']")
+    expect(delete_form.at_css('input[name="_method"]')['value']).to eq('delete')
+    delete_button = delete_form.at_css('button[data-controller~="swal-confirm"]')
+    expect(delete_button['data-turbo-confirm']).to be_present
+    expect(delete_button['data-confirm-record']).to eq(supplier.name)
+    expect(delete_button['aria-label']).to be_present
+    expect(actions.css('details')).to be_empty
+  end
+
+  it 'shows restore directly for archived suppliers without an overflow menu' do
+    supplier = create(:supplier, :deleted, organization:)
+
+    get admin_suppliers_path, params: { archived: '1' }
+
+    expect(response).to have_http_status(:ok)
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.element_children.map(&:name)).to eq(['form'])
+    restore_form = actions.at_css("form[action='#{restore_admin_supplier_path(supplier)}']")
+    expect(restore_form).to be_present
+    expect(restore_form.at_css('input[name="_method"]')['value']).to eq('patch')
+    expect(restore_form.at_css('button[aria-label]')).to be_present
+    expect(actions.css('details')).to be_empty
+  end
+
+  it 'hides the supplier delete action when deletion is not permitted' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(SupplierPolicy).to receive(:destroy?).and_return(false)
+
+    get admin_suppliers_path
+
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.css("form[action='#{admin_supplier_path(supplier)}']")).to be_empty
+    expect(actions.css('a').map { |link| link['href'] })
+      .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
+  end
+
   it 'subscribes the supplier list to organization-specific Turbo updates' do
     get admin_suppliers_path
 
