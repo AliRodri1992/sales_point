@@ -64,39 +64,6 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       .to be_present
   end
 
-# frozen_string_literal: true
-
-require 'rails_helper'
-
-RSpec.describe 'Supplier bank accounts list', type: :request do
-  let(:organization) { create(:organization) }
-  let(:supplier) { create(:supplier, organization:) }
-  let(:user) { create(:user, :english) }
-
-  before do
-    create(:organization_membership, user:, organization:)
-    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
-    sign_in user
-  end
-
-  def valid_clabe(value)
-    digits = format('032%014d', value.to_i)
-    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * [3, 7, 1][index % 3]) % 10 }
-    "#{digits}#{(10 - checksum % 10) % 10}"
-  end
-
-  def bank_account(attributes = {})
-    SupplierBankAccount.create!({
-      organization:, supplier:, bank_name: 'Example Bank',
-      holder_name: 'Vendor Holdings', clabe: valid_clabe(3456789012),
-      currency_code: 'MXN'
-    }.merge(attributes))
-  end
-
-  def document
-    Nokogiri::HTML(response.body)
-  end
-
   it 'separates bank verification rights from editing and archiving rights' do
     account = bank_account
     reviewer = create(:user)
