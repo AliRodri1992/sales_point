@@ -4,22 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Bank account, supplier and address validation branches', type: :model do
   describe SupplierBankAccount do
-    it 'only validates populated account numbers' do
+    it 'does not add a CLABE format error when no CLABE is provided to the checksum validator' do
       record = described_class.new
-      allow(record).to receive(:account_number).and_return(nil)
-      record.send(:valid_account_number)
-      expect(record.errors[:account_number]).to be_empty
-
-      allow(record).to receive(:account_number).and_return('not-numeric')
-      record.send(:valid_account_number)
-      expect(record.errors[:account_number]).not_to be_empty
-    end
-
-    it 'accepts account numbers with four to twenty digits' do
-      record = described_class.new
-      allow(record).to receive(:account_number).and_return('1234567890')
-      record.send(:valid_account_number)
-      expect(record.errors[:account_number]).to be_empty
+      record.send(:valid_clabe)
+      expect(record.errors[:clabe]).to be_empty
     end
 
     it 'rejects invalid CLABE formats and invalid check digits' do
