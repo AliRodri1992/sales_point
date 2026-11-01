@@ -8,15 +8,26 @@ module SupplierFormAuthorization
       key = :"#{section}_attributes"
       next unless attributes.key?(key)
 
-      authorize @supplier, nested_section_permission(attributes[key], section)
+      nested_section_permissions(attributes[key], section).each do |permission|
+        authorize @supplier, permission
+      end
     end
     authorize @supplier, :create_documents? if attributes.key?(:documents)
   end
 
-  def nested_section_permission(nested, section)
+  def nested_section_permissions(nested, section)
     records = nested.respond_to?(:values) ? nested.values : Array(nested)
-    action = records.any? { |record| record[:id].present? } ? 'update' : 'create'
-    :"#{action}_#{section}?"
+    records.filter_map do |record|
+      next unless record.respond_to?(:[]) && record.respond_to?(:key?)
+
+      destroy = ActiveModel::Type::Boolean.new.cast(record[:_destroy])
+      action = if destroy
+                 record[:id].present? ? 'destroy' : nil
+               else
+                 record[:id].present? ? 'update' : 'create'
+               end
+      :"#{action}_#{section}?" if action
+    end.uniq
   end
 
   def authorize_sensitive_fields!(attributes)
