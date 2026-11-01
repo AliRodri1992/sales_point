@@ -126,9 +126,7 @@ module Admin
       Array(document_params[:files]).compact_blank.presence || Array(document_file).compact_blank
     end
 
-    def document_file
-      document_params[:file]
-    end
+    def document_file = document_params[:file]
 
     def valid_file?(file)
       file.respond_to?(:content_type) && file.respond_to?(:size) &&
