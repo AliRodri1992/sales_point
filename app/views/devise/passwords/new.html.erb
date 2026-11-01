@@ -6,18 +6,20 @@
     <h1 id="password-recovery-title" class="font-jakarta text-2xl font-bold text-slate-900"><%= t('devise.passwords.new.title') %></h1>
     <p class="mt-2 text-sm leading-relaxed text-slate-600"><%= t('authentication.login.recovery_instructions') %></p>
 
-    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'mt-7 space-y-5' }) do |f| %>
-      <% if resource.errors.any? %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'mt-7 space-y-5', novalidate: true }) do |f| %>
+      <% if resource.errors[:base].any? %>
         <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-          <% resource.errors.full_messages.each do |message| %>
+          <% resource.errors.full_messages_for(:base).each do |message| %>
             <p><%= message %></p>
           <% end %>
         </div>
       <% end %>
       <div>
         <%= f.label :email, t('devise.sessions.new.email'), class: 'block text-sm font-semibold text-slate-700' %>
-        <%= f.email_field :email, required: true, autofocus: true, autocomplete: 'email',
+        <%= f.email_field :email, required: true, autofocus: true, autocomplete: 'email', 'aria-invalid': resource.errors[:email].any?,
+                          'aria-describedby': (resource.errors[:email].any? ? 'recovery-email-error' : nil),
                           class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20' %>
+        <%= authentication_field_message(resource, :email, id: 'recovery-email-error') %>
       </div>
       <%= f.submit t('devise.passwords.new.submit'),
                    class: 'min-h-12 w-full cursor-pointer rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
