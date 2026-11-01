@@ -49,12 +49,15 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
       supplier.dispatchEvent(new Event('change', { bubbles: true }))
       currency.value = '#{supplier.currency.id}'
       currency.dispatchEvent(new Event('change', { bubbles: true }))
-      const bank = form.querySelector('[name="supplier_payment[supplier_bank_account_id]"]')
-      bank.value = '#{bank.id}'
-      bank.dispatchEvent(new Event('change', { bubbles: true }))
     JS
 
     selected = find('select[name="supplier_payment[supplier_bank_account_id]"]', visible: :all)
+    expect(selected).to have_css("option[value='#{bank.id}']", visible: :all)
+    page.execute_script(<<~JS)
+      const bank = document.querySelector('[name="supplier_payment[supplier_bank_account_id]"]')
+      bank.value = '#{bank.id}'
+      bank.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
     bank_picker = selected.find(:xpath, '..').find('button[aria-haspopup="listbox"]')
     expect(selected.value).to eq(bank.id.to_s)
     expect(bank_picker.text).to include('Original Bank')
