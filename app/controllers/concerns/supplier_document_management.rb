@@ -4,12 +4,17 @@ module SupplierDocumentManagement
   private
 
   def persist_uploaded_documents(supplier, files)
-    supplier.documents.attach(files)
-    ActiveStorage::Attachment.where(record: supplier, name: 'documents')
-                             .order(id: :desc).limit(files.size).each do |attachment|
-      document = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
-      document.assign_attributes(uploaded_by: current_user, **metadata_attributes)
-      document.save!
+    supplier.with_lock do
+      existing_ids = supplier.documents.attachments.pluck(:id)
+      supplier.documents.attach(files)
+      attachments = supplier.documents.attachments.where.not(id: existing_ids).order(:id).to_a
+      raise ActiveRecord::RecordInvalid, supplier unless attachments.size == files.size
+
+      attachments.each do |attachment|
+        document = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
+        document.assign_attributes(uploaded_by: current_user, **metadata_attributes)
+        document.save!
+      end
     end
   end
 
@@ -21,8 +26,11 @@ module SupplierDocumentManagement
   end
 
   def persist_replacement(supplier, document)
+    existing_ids = supplier.documents.attachments.pluck(:id)
     supplier.documents.attach(document_file)
-    attachment = ActiveStorage::Attachment.where(record: supplier, name: 'documents').order(:id).last
+    attachment = supplier.documents.attachments.where.not(id: existing_ids).order(:id).last
+    raise ActiveRecord::RecordInvalid, supplier unless attachment
+
     document.update!(current_version: false, updated_by: current_user)
     replacement = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
     replacement.assign_attributes(
