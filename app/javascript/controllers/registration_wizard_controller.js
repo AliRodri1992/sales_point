@@ -223,16 +223,22 @@ export default class extends Controller {
       valid = false
     }
     const email = this.element.querySelector('input[name="user[email]"]')
-    if (!email || !EMAIL_FORMAT.test(email.value.trim())) {
+    if (!email?.value.trim()) {
+      this.setFieldError(email, this.wrapperTarget.dataset.validationModelEmailBlank)
+      valid = false
+    } else if (!EMAIL_FORMAT.test(email.value.trim())) {
       this.setFieldError(email, this.message("email"))
       valid = false
     }
-    if (this.passwordTarget.value.length < 6) {
+    if (!this.passwordTarget.value) {
+      this.setFieldError(this.passwordTarget, this.wrapperTarget.dataset.validationModelPasswordBlank)
+      valid = false
+    } else if (this.passwordTarget.value.length < 6) {
       this.setFieldError(this.passwordTarget, this.message("passwordLength"))
       valid = false
     }
     if (!this.confirmationTarget.value || this.passwordTarget.value !== this.confirmationTarget.value) {
-      this.setFieldError(this.confirmationTarget, this.message("passwordMatch"))
+      this.setFieldError(this.confirmationTarget, this.wrapperTarget.dataset.validationModelConfirmation)
       valid = false
     }
     return valid
