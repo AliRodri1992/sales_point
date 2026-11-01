@@ -1,5 +1,5 @@
 <div class="max-w-4xl rounded-xl border border-slate-200 bg-white shadow-sm">
-  <%= form_with model: @subscription, class: 'space-y-6 p-6 lg:p-8' do |form| %>
+  <%= form_with model: [:admin, @subscription], class: 'space-y-6 p-6 lg:p-8' do |form| %>
     <div>
       <%= form.label :organization_id, class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.collection_select :organization_id, @organizations, :id, :name, { prompt: 'Selecciona una organización' }, class: "input-field w-full rounded-xl #{form_state_classes(@subscription, :organization)} border px-4 py-3 text-sm" %>
