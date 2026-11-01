@@ -30,6 +30,7 @@ RSpec.describe 'Supplier row actions', type: :feature, js: true do
     page.driver.browser.manage.window.resize_to(880, 530)
 
     actions = last_row_actions
+    actions.scroll_to(:center)
     expect(actions).to have_css('a', count: 2)
     expect(actions).to have_css('form button[data-controller~="swal-confirm"]', visible: true)
     expect(actions).to have_no_css('details[data-supplier-floating-menu]', visible: :all)
