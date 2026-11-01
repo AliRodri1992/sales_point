@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" class="h-full bg-slate-50">
    <head>
-      <title><%= content_for?(:title) ? yield(:title) : "Post - Terminal" %></title>
+      <title><%= content_for?(:title) ? yield(:title) : t("app.name") %></title>
       <meta name="viewport" content="width=device-width,initial-scale=1">
       <meta name="apple-mobile-web-app-capable" content="yes">
       <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
@@ -16,14 +16,12 @@
       <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
     </head>
 
-    <body class="min-h-screen overflow-x-hidden bg-slate-900 font-sans text-slate-600 antialiased <%= "theme-#{current_terminal_theme}" %>" data-controller="terminal">
-      <div data-terminal-target="wrapper">
-        <div
-          data-controller="swal-flash"
-          data-swal-flash-message-value="<%= flash[:alert] || flash[:notice] || '' %>"
-          data-swal-flash-icon-value="<%= flash[:alert].present? ? 'error' : 'success' %>">
-          <%= yield %>
-        </div>
-      </div>
+    <body class="min-h-screen overflow-x-hidden bg-slate-900 font-sans text-slate-600 antialiased <%= current_terminal_theme %>">
+      <% if flash[:alert].present? || flash[:notice].present? %>
+        <div data-controller="swal-flash"
+             data-swal-flash-message-value="<%= flash[:alert] || flash[:notice] %>"
+             data-swal-flash-icon-value="<%= flash[:alert].present? ? 'error' : 'success' %>"></div>
+      <% end %>
+      <%= yield %>
     </body>
 </html>

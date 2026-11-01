@@ -1,0 +1,15 @@
+en:
+  authentication:
+    rate_limited: "Too many attempts. Please wait a moment and try again."
+    login:
+      show_password: "Show password"
+      hide_password: "Hide password"
+    theme_selector:
+      label: "Theme"
+      title: "Choose a color theme"
+      toggle: "Choose color theme"
+      option: "Theme: %{name}"
+    language_selector:
+      toggle: "Choose language"
+      update_error_title: "Unable to change language"
+      update_error_message: "Please try again."

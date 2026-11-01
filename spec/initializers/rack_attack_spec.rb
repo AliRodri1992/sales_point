@@ -61,6 +61,27 @@ RSpec.describe Rack::Attack do
     expect(request('/users/sign_in', method: :post)).to eq(429)
   end
 
+  it 'throttles normalized email addresses across different IPs' do
+    20.times do |index|
+      response = client.request(:post, '/users/sign_in',
+                                'REMOTE_ADDR' => "203.0.113.#{index + 20}",
+                                params: { user: { email: '  TEST@EXAMPLE.COM ' } })
+      expect(response.status).to eq(200)
+    end
+
+    response = client.request(:post, '/users/sign_in',
+                              'REMOTE_ADDR' => '203.0.113.99',
+                              params: { user: { email: 'test@example.com' } })
+    expect(response.status).to eq(429)
+  end
+
+  it 'does not crash on malformed sign-in parameters' do
+    response = client.request(:post, '/users/sign_in',
+                              'REMOTE_ADDR' => ip,
+                              params: { user: 'not-a-hash' })
+    expect(response.status).to eq(200)
+  end
+
   it 'retains a global rate limit of 1,200 requests per IP within five minutes' do
     1_200.times { expect(request('/up')).to eq(200) }
 

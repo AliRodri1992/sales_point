@@ -20,7 +20,8 @@ class Rack::Attack
   # A second limit protects accounts across multiple source IP addresses.
   throttle('login attempts by email', limit: 20, period: 5.minutes) do |request|
     if request.path == '/users/sign_in' && request.post?
-      email = request.params.dig('user', 'email').to_s.strip.downcase
+      credentials = request.params['user']
+      email = credentials.is_a?(Hash) ? credentials['email'].to_s.strip.downcase : ''
       email if email.present?
     end
   end
@@ -43,7 +44,10 @@ class Rack::Attack
     admin_discriminator(request) if request.path.start_with?('/admin')
   end
 
-  self.throttled_responder = lambda do |_request|
-    [429, { 'Content-Type' => 'text/plain; charset=utf-8' }, ['Too many requests. Try again later.']]
+  self.throttled_responder = lambda do |request|
+    locale = request.cookies['terminal_language'].to_s.downcase.to_sym
+    locale = I18n.default_locale unless I18n.available_locales.include?(locale)
+    message = I18n.t('authentication.rate_limited', locale:)
+    [429, { 'Content-Type' => 'text/plain; charset=utf-8', 'Retry-After' => '60' }, [message]]
   end
 end

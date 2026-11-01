@@ -22,11 +22,14 @@ RSpec.describe Users::SessionsController, type: :request do
     post user_session_path, params: { user: { email: '', password: '' } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(flash[:alert]).to eq(I18n.t('devise.failure.invalid'))
+    expect(flash[:alert]).to eq(I18n.t('devise.failure.user.invalid'))
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('#user_email')['class']).to include('input-field-error')
     expect(page.at_css('#user_password')['class']).to include('input-field-error')
     expect(page.text).not_to include('Password confirmation')
+    expect(page.at_css('form[action="/users/sign_in"]')).to be_present
+    expect(page.at_css('[data-controller="swal-flash"]')).to be_present
+    expect(page.at_css('[data-controller="swal-flash"] form')).to be_nil
   end
 
   it 'keeps the remember-me selection when credentials are incomplete' do

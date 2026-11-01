@@ -45,7 +45,7 @@ module Users
       build_resource_with_params
       resource.errors.add(:email, :blank) if resource.email.blank?
       resource.errors.add(:password, :blank) if resource.password.blank?
-      flash.now[:alert] = t('devise.failure.invalid')
+      flash.now[:alert] = t('devise.failure.user.invalid')
 
       render :new, status: :unprocessable_content
     end
