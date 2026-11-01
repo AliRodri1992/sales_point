@@ -148,7 +148,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     card = document.at_css('[data-supplier-bank-accounts-target="card"]')
     expect(card.text).to include('BBVA', account.masked_number)
     expect(card.text).not_to include('MXN', 'Vendor Holdings', 'BBVA México')
-    expect(response.body).not_to include(account.clabe, account.clabe)
+    expect(response.body).not_to include(account.clabe)
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
   end
 
@@ -217,7 +217,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       input = document.at_css("input[name='supplier_bank_account[#{field}]']")
       expect(input['value']).to be_blank
     end
-    expect(response.body).not_to include(account.clabe, account.clabe, account.clabe)
+    expect(response.body).not_to include(account.clabe)
   end
 
   it 'forces new accounts active even when a forged request submits another status' do
@@ -245,7 +245,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
         holder_name: '', clabe: 'invalid', sat_bank_code: '999',
-        bank_name: '', clabe: valid_clabe(12),
+        bank_name: '',
         account_type: 'unknown', currency_code: 'US',
         verification_status: 'invalid'
       }
