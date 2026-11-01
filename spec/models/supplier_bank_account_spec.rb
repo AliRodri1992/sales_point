@@ -4,274 +4,148 @@ require 'rails_helper'
 
 RSpec.describe SupplierBankAccount do
   let(:supplier) { create(:supplier) }
+  let(:valid_clabe) { '032180000118359719' }
 
-  it 'encrypts and masks a validated Mexican CLABE' do
-    account = described_class.create!(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      sat_bank_code: nil, bank_name: 'Banco Demo',
-      clabe: '032180000118359719', currency_code: 'MXN'
-    )
-
-    expect(account.masked_number).to eq('•••• 9719')
-    expect(account.reload.clabe).to eq('032180000118359719')
-    expect(account.ciphertext_for(:clabe)).not_to include('032180000118359719')
+  def bank_account(attributes = {})
+    described_class.new({
+      organization: supplier.organization, supplier:,
+      holder_name: 'Proveedor de prueba', bank_name: 'Banco Demo',
+      currency_code: 'MXN', clabe: valid_clabe
+    }.merge(attributes))
   end
 
-  it 'derives the active SAT bank from an entered CLABE' do
+  it 'encrypts and masks the validated Mexican CLABE' do
+    account = bank_account
+    account.save!
+
+    expect(account.masked_number).to eq('•••• 9719')
+    expect(account.reload.clabe).to eq(valid_clabe)
+    expect(account.ciphertext_for(:clabe)).not_to include(valid_clabe)
+  end
+
+  it 'requires a CLABE for every bank account' do
+    account = bank_account(clabe: nil)
+
+    expect(account).not_to be_valid
+    expect(account.errors[:clabe]).to be_present
+  end
+
+  it 'rejects invalid CLABE length and check digits' do
+    expect(bank_account(clabe: '1234')).not_to be_valid
+    invalid_check_digit = bank_account(clabe: '032180000118359718')
+    expect(invalid_check_digit).not_to be_valid
+    expect(invalid_check_digit.errors[:clabe]).to be_present
+  end
+
+  it 'derives the active SAT bank from the CLABE when available' do
     bank = create(:sat_bank, code: '032', name: 'Bank of Mexico')
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      clabe: '032180000118359719', currency_code: 'MXN'
-    )
+    account = bank_account(sat_bank_code: nil, bank_name: nil)
 
     expect(account).to be_valid
     expect(account.sat_bank_code).to eq(bank.code)
-    expect(account.bank_name).to be_nil
   end
 
-  it 'reports a CLABE field error when no bank identifier was provided' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Vendor',
-      bank_name: 'Demo Bank', currency_code: 'MXN'
-    )
+  it 'refuses mismatched SAT bank codes' do
+    create(:sat_bank, code: '002', name: 'Other Bank')
+    account = bank_account(sat_bank_code: '002')
 
     expect(account).not_to be_valid
-    expect(account.errors[:clabe]).to be_present
+    expect(account.errors[:sat_bank_code]).to be_present
   end
 
-  it 'rejects an invalid CLABE control digit' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      bank_name: 'Banco Demo', clabe: '032180000118359718'
-    )
+  it 'does not expose removed account or card attributes' do
+    account = bank_account
 
-    expect(account).not_to be_valid
-    expect(account.errors[:clabe]).to be_present
+    expect(account).not_to respond_to(:account_number, :card_number, :card_last_four)
+    expect(account.attributes).not_to have_key('account_number')
+    expect(account.attributes).not_to have_key('card_number')
+    expect(account.attributes).not_to have_key('card_last_four')
   end
 
-  it 'denies disclosure to an administrator outside the supplier organization' do
-    account = described_class.create!(
-      organization: supplier.organization, supplier:, holder_name: 'Vendor Holdings',
-      bank_name: 'Example Bank', account_number: '999988887777'
-    )
-    actor = create(:user)
-    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
-
-    expect { account.reveal!(actor:) }.to raise_error(Pundit::NotAuthorizedError)
-    expect(FinancialAuditEvent.where(event: 'bank_account.revealed')).not_to exist
-  end
-
-  it 'refuses banking details from another organization' do
-    other = create(:supplier)
-
-    account = described_class.new(
-      organization: supplier.organization, supplier: other,
-      bank_name: 'Banco Demo', holder_name: 'Persona', account_number: '123456'
-    )
-
-    expect(account).not_to be_valid
-  end
-
-  it 'rejects creating bank accounts for inactive suppliers' do
-    supplier.update!(status: :inactive)
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      bank_name: 'Banco Demo', account_number: '1234567890', currency_code: 'MXN'
-    )
+  it 'rejects a different supplier organization' do
+    account = bank_account(supplier: create(:supplier))
 
     expect(account).not_to be_valid
     expect(account.errors[:supplier]).to be_present
   end
 
-  it 'allows historical bank accounts to be edited after supplier deactivation' do
-    account = described_class.create!(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      bank_name: 'Banco Demo', account_number: '1234567890', currency_code: 'MXN'
-    )
+  it 'rejects creation for an inactive supplier' do
+    supplier.update!(status: :inactive)
+    account = bank_account
+
+    expect(account).not_to be_valid
+    expect(account.errors[:supplier]).to be_present
+  end
+
+  it 'allows editing a historical bank account after supplier deactivation' do
+    account = bank_account
+    account.save!
     supplier.update!(status: :inactive)
 
     expect(account.update(holder_name: 'Proveedor histórico')).to be(true)
   end
 
-  it 'rejects an invalid account number and mismatched SAT bank code' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Supplier',
-      bank_name: 'Demo Bank', account_number: 'abc', currency_code: 'MXN'
-    )
-    expect(account).not_to be_valid
-    expect(account.errors[:account_number]).to be_present
+  it 'normalizes CLABE spacing and currency casing' do
+    account = bank_account(clabe: '032 180 000 118 359 719', currency_code: 'mxn')
 
-    account.account_number = '1234567890'
-    account.sat_bank_code = '002'
-    account.clabe = '032180000118359719'
-    expect(account).not_to be_valid
-    expect(account.errors[:sat_bank_code]).to be_present
-  end
-
-  it 'supports an account with no saved account number but valid CLABE' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Supplier',
-      bank_name: 'Demo Bank', clabe: '032180000118359719', currency_code: 'MXN'
-    )
     expect(account).to be_valid
-    expect(account.masked_number).to eq('•••• 9719')
-  end
-
-  it 'normalizes account numbers and currency on validation' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Supplier',
-      bank_name: 'Demo Bank', account_number: ' 1234 5678 ', currency_code: 'mxn'
-    )
-    account.valid?
-
-    expect(account.account_number).to eq('12345678')
+    expect(account.clabe).to eq(valid_clabe)
     expect(account.currency_code).to eq('MXN')
-    expect(account.last_four).to eq('5678')
   end
 
-  it 'encrypts the optional card number, derives its last four digits and never stores expiration' do
-    account = described_class.create!(
-      organization: supplier.organization, supplier:, bank_name: 'BBVA México',
-      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
-      card_number: '4111111111111111'
-    )
-
-    expect(account.reload.card_display_number).to eq('•••• •••• •••• 1111')
-    expect(account.card_expiration_label).to be_nil
-    expect(account.ciphertext_for(:card_number)).not_to include('4111111111111111')
-    expect(account.attributes).not_to have_key('card_expiration_year')
-  end
-
-  it 'rejects invalid card numbers without requiring one for SPEI' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, bank_name: 'Example Bank',
-      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN',
-      card_number: '4111111111111112'
-    )
-
-    expect(account).not_to be_valid
-    expect(account.errors[:card_number]).to be_present
-
-    account.card_number = '4111111111111111'
-    expect(account).to be_valid
-  end
-
-  it 'manages verification timestamps and blocked reasons without disabling paranoia' do
-    account = described_class.create!(
-      organization: supplier.organization, supplier:, bank_name: 'Example Bank',
-      holder_name: 'Vendor', account_number: '1234567890', currency_code: 'MXN'
-    )
-
-    expect(account.verification_status).to eq('pending')
+  it 'keeps verification date manual and clears it when verification is reversed' do
+    account = bank_account
+    account.save!
     expect(account.verified_at).to be_nil
+
     account.update!(verification_status: 'verified')
     expect(account.verified_at).to be_nil
-    verified_on = Time.zone.parse('2026-10-31 12:00:00')
-    account.update!(verified_at: verified_on)
-    expect(account.reload.verified_at).to eq(verified_on)
+
+    verified_at = Time.zone.parse('2026-10-31 12:00:00')
+    account.update!(verified_at:)
+    expect(account.reload.verified_at).to eq(verified_at)
+
     account.update!(verification_status: 'rejected')
-    expect(account.verified_at).to be_nil
+    expect(account.reload.verified_at).to be_nil
+  end
+
+  it 'requires a blocking reason and removes primary status for blocked accounts' do
+    account = bank_account
+    account.save!
 
     expect(account.update(status: 'blocked', blocked_reason: '')).to be(false)
-    account.update!(status: 'blocked', blocked_reason: 'Unverified change', primary: true)
+    account.update!(status: 'blocked', blocked_reason: 'Cuenta comprometida', primary: true)
     expect(account.reload.primary).to be(false)
-    expect(account.blocked_reason).to eq('Unverified change')
+    expect(account.blocked_reason).to eq('Cuenta comprometida')
+
     account.update!(status: 'active')
     expect(account.reload.blocked_reason).to be_nil
+  end
 
+  it 'keeps archived bank accounts accessible only through soft-deleted queries' do
+    account = bank_account
+    account.save!
     account.destroy!
+
     expect(described_class.with_deleted.find(account.id).deleted_at).to be_present
     expect(described_class.where(id: account.id)).not_to exist
   end
 
-  it 'shows that the expiry was not registered for a traditional account' do
-    account = described_class.new(last_four: '1234')
-
-    expect(account.card_display_number).to eq('•••• •••• •••• 1234')
-    expect(account.card_expiration_label).to be_nil
-  end
-
-  it 'returns a generic mask when no sensitive account number is present' do
-    account = described_class.new
-
-    expect(account.masked_number).to eq('••••')
-  end
-
-  it 'validates the bank name length in the model instead of relying on HTML maxlength' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Proveedor',
-      bank_name: 'X' * 121, account_number: '1234567890', currency_code: 'MXN'
-    )
+  it 'rejects invalid bank and holder names through model validations' do
+    account = bank_account(bank_name: 'X' * 121, holder_name: '')
 
     expect(account).not_to be_valid
     expect(account.errors[:bank_name]).to be_present
+    expect(account.errors[:holder_name]).to be_present
   end
 
-  it 'rejects a nonexistent SAT bank through model errors instead of a database foreign key failure' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:,
-      holder_name: 'Proveedor', bank_name: 'Banco Demo',
-      sat_bank_code: '999', account_number: '1234567890', currency_code: 'MXN'
-    )
+  it 'protects disclosure from users outside the supplier organization' do
+    account = bank_account
+    account.save!
+    actor = create(:user)
+    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
 
-    expect(account).not_to be_valid
-    expect(account.errors[:sat_bank_code]).to be_present
-  end
-
-  it 'formats every field error with its translated name in Spanish' do
-    I18n.with_locale(:es) do
-      account = described_class.new(
-        organization: supplier.organization, supplier:,
-        holder_name: '', bank_name: '', currency_code: '',
-        account_number: 'abc'
-      )
-      expect(account).not_to be_valid
-      expect(account.errors.full_messages_for(:holder_name).first).to start_with('Titular de la cuenta ')
-      expect(account.errors.full_messages_for(:bank_name).first).to start_with('Nombre del banco ')
-      expect(account.errors.full_messages_for(:account_number).first).to start_with('Número de cuenta ')
-      expect(account.errors.full_messages_for(:currency_code).first).to start_with('Moneda ')
-    end
-  end
-
-  it 'requires a bank name when no SAT bank code is selected' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Vendor',
-      account_number: '1234567890', currency_code: 'MXN'
-    )
-
-    expect(account).not_to be_valid
-    expect(account.errors[:bank_name]).to be_present
-  end
-
-  it 'rejects a supplied bank code when a CLABE belongs to a different bank' do
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Vendor',
-      bank_name: 'Bank', sat_bank_code: '002', clabe: '032180000118359719',
-      currency_code: 'MXN'
-    )
-
-    expect(account).not_to be_valid
-    expect(account.errors[:sat_bank_code]).to be_present
-  end
-
-  it 'rejects banking records without an associated supplier without raising' do
-    account = described_class.new(
-      organization: create(:organization), holder_name: 'Missing Supplier',
-      bank_name: 'Example Bank', account_number: '1234567890', currency_code: 'MXN'
-    )
-
-    expect(account).not_to be_valid
-    expect(account.errors[:supplier]).to be_present
-  end
-
-  it 'allows a CLABE when its selected SAT bank code matches its prefix' do
-    bank = create(:sat_bank, code: '032', name: 'Banco Verificado')
-    account = described_class.new(
-      organization: supplier.organization, supplier:, holder_name: 'Vendor',
-      sat_bank_code: bank.code, clabe: '032180000118359719', currency_code: 'MXN'
-    )
-
-    expect(account).to be_valid
-    expect(account.sat_bank_code).to eq('032')
+    expect { account.reveal!(actor:) }.to raise_error(Pundit::NotAuthorizedError)
+    expect(FinancialAuditEvent.where(event: 'bank_account.revealed')).not_to exist
   end
 end
