@@ -10,7 +10,7 @@ module SupplierFiscalAddressValidation
   def validate_fiscal_address
     @supplier = current_organization.suppliers.new
     authorize @supplier, :new?
-    authorize @supplier, :manage_addresses?
+    authorize @supplier, :create_addresses?
 
     address = @supplier.addresses.build(fiscal_address_attributes)
     return render json: { valid: true } if address.valid?
