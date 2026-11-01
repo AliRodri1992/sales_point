@@ -44,7 +44,12 @@ module Admin
       @offer.organization = current_organization
       @offer.product = organization_products.find(offer_params[:product_id])
       if @offer.save
-        redirect_to admin_supplier_supplier_products_path(@supplier), notice: t('admin.procurement.saved')
+        destination = if policy(@supplier).view_products?
+                        admin_supplier_supplier_products_path(@supplier)
+                      else
+                        admin_suppliers_path
+                      end
+        redirect_to destination, notice: t('admin.procurement.saved')
       else
         load_catalogs
         render :new, status: :unprocessable_content

@@ -146,8 +146,12 @@ module Admin
     end
 
     def redirect_documents(supplier, action)
-      redirect_to admin_supplier_path(supplier, tab: 'documents'),
-                  notice: t("admin.supplier_documents.messages.#{action}")
+      destination = if action == :uploaded && !policy(supplier).view_documents?
+                      admin_suppliers_path
+                    else
+                      admin_supplier_path(supplier, tab: 'documents')
+                    end
+      redirect_to destination, notice: t("admin.supplier_documents.messages.#{action}")
     end
 
     def notify_document_deleted(supplier, document_id)

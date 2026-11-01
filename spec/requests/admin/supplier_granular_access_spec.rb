@@ -103,9 +103,11 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     expect(contact.reload.deleted_at).to be_nil
 
     get admin_supplier_contacts_path(supplier)
-    expect(response).to have_http_status(:ok)
-    expect(response.body).to include(contact.name)
-    expect(response.body).not_to include(edit_admin_supplier_contact_path(supplier, contact))
+    expect(response).to have_http_status(:forbidden)
+
+    post admin_supplier_contacts_path(supplier), params: { contact: { name: 'Creation only contact' } }
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.contacts.not_deleted.find_by(name: 'Creation only contact')).to be_present
   end
 
   it 'grants address updates without allowing a new address' do
@@ -144,7 +146,8 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     role.permissions << create(:permission, code: 'suppliers.documents.create', module_name: 'Proveedores')
 
     policy = SupplierPolicy.new(user, supplier)
-    expect(policy.view_documents?).to be(true)
+    expect(policy.view_documents?).to be(false)
+    expect(policy.read_documents?).to be(false)
     expect(policy.create_documents?).to be(true)
     expect(policy.update_documents?).to be(false)
     expect(policy.destroy_documents?).to be(false)
@@ -152,7 +155,7 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
 
     get admin_supplier_path(supplier, tab: 'documents')
     expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include('name="supplier_product[product_id]"')
+    expect(response.body).not_to include('data-section="documents"')
   end
 
   it 'separates product offer creation from editing and preferred selection' do
@@ -161,7 +164,7 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     role.permissions << create(:permission, code: 'suppliers.products.create', module_name: 'Proveedores')
 
     policy = SupplierPolicy.new(user, supplier)
-    expect(policy.view_products?).to be(true)
+    expect(policy.view_products?).to be(false)
     expect(policy.create_products?).to be(true)
     expect(policy.update_products?).to be(false)
     expect(policy.destroy_products?).to be(false)
@@ -169,6 +172,9 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     expect(policy.prefer_products?).to be(false)
 
     get admin_supplier_supplier_products_path(supplier)
+    expect(response).to have_http_status(:forbidden)
+
+    get new_admin_supplier_supplier_product_path(supplier)
     expect(response).to have_http_status(:ok)
   end
 end

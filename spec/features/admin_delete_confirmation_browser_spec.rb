@@ -95,7 +95,7 @@ RSpec.describe 'Delta POS confirmation dialog', type: :feature, js: true do
           if (!dialog) return false
           const box = dialog.getBoundingClientRect()
           return box.left >= -1 && box.right <= window.innerWidth + 1 &&
-            dialog.querySelectorAll('.swal2-actions button').length === 2
+            dialog.querySelectorAll('.delta-confirm-accept, .delta-confirm-cancel').length === 2
         })()
       JS
     end
