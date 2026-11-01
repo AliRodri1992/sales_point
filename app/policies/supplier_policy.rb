@@ -126,7 +126,6 @@ class SupplierPolicy
                            allowed?("suppliers.#{section}.manage"))
   end
 
-
   def section_any_action?(section, actions)
     allowed?("suppliers.#{section}.manage") ||
       actions.any? { |action| allowed?("suppliers.#{section}.#{action}") }
