@@ -91,6 +91,9 @@ Rails.application.routes.draw do
       end
     end
     resources :supplier_payments, only: %i[index show new create] do
+      collection do
+        get :bank_accounts
+      end
       member do
         post :post_payment
         post :reverse
