@@ -717,7 +717,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_003000) do
     t.index ["phoneable_type", "phoneable_id", "kind"], name: "idx_phones_one_primary_per_kind", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["phoneable_type", "phoneable_id", "number", "extension"], name: "idx_phones_unique_active_number", unique: true, where: "(deleted_at IS NULL)", nulls_not_distinct: true
     t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
-    t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying::text, 'Branch'::character varying::text, 'Employee'::character varying::text])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
+    t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying, 'Branch'::character varying, 'Employee'::character varying]::text[])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
     t.check_constraint "country_code::text ~ '^[A-Z]{2}$'::text", name: "chk_phones_country"
     t.check_constraint "kind::text = ANY (ARRAY['mobile'::character varying::text, 'landline'::character varying::text, 'other'::character varying::text])", name: "chk_phones_kind"
     t.check_constraint "number::text ~ '^\\+[1-9][0-9]{1,14}$'::text", name: "chk_phones_e164"
