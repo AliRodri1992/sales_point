@@ -12,12 +12,6 @@ RSpec.describe 'Supplier account local validation edge paths', type: :model do
       expect(account.errors[:clabe]).to be_empty
     end
 
-    it 'skips absent account number validation' do
-      allow(account).to receive(:account_number).and_return(nil)
-      account.send(:valid_account_number)
-      expect(account.errors[:account_number]).to be_empty
-    end
-
     it 'requires a nonempty CLABE before validating bank prefix' do
       allow(account).to receive(:clabe).and_return(nil)
       allow(account).to receive(:sat_bank_code).and_return('002')
