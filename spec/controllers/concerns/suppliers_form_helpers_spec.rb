@@ -111,4 +111,31 @@ RSpec.describe SuppliersFormHelpers do
 
     expect(GeocodeAddressJob).not_to have_received(:perform_later)
   end
+
+  it 'redirects updates from the overview to the general dossier' do
+    allow(handler).to receive(:params).and_return(ActionController::Parameters.new(return_to: 'overview'))
+    allow(handler).to receive(:admin_supplier_path).with(supplier, tab: 'general')
+                                                    .and_return('/supplier/general')
+
+    expect(handler.send(:supplier_update_destination)).to eq('/supplier/general')
+  end
+
+  it 'retains newly uploaded attachments when editing a supplier' do
+    allow(handler).to receive(:supplier_params).and_return({ documents: ['uploaded-document'] })
+
+    attributes = handler.send(:supplier_update_attributes)
+
+    expect(attributes[:documents]).to eq(['uploaded-document'])
+  end
+
+  it 'enqueues location validation for a newly persisted unconfirmed address' do
+    address = create(:address, addressable: supplier, purpose: 'delivery')
+    supplier.addresses.target << address unless supplier.addresses.target.include?(address)
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    handler.send(:enqueue_nested_address_geocoding)
+
+    expect(GeocodeAddressJob).to have_received(:perform_later)
+      .with(address.id, address.geocoding_fingerprint)
+  end
 end

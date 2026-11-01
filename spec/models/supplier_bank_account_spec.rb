@@ -148,4 +148,11 @@ RSpec.describe SupplierBankAccount do
     expect { account.reveal!(actor:) }.to raise_error(Pundit::NotAuthorizedError)
     expect(FinancialAuditEvent.where(event: 'bank_account.revealed')).not_to exist
   end
+
+  it 'rejects a bank account that is not assigned to a supplier' do
+    account = bank_account(supplier: nil)
+
+    expect(account).not_to be_valid
+    expect(account.errors[:supplier]).to be_present
+  end
 end

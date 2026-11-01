@@ -177,4 +177,22 @@ RSpec.describe 'Supplier dossier granular access', type: :request do
     get new_admin_supplier_supplier_product_path(supplier)
     expect(response).to have_http_status(:ok)
   end
+
+  it 'creates a product offer without exposing the restricted offer listing' do
+    role = user.user_roles.first.system_role
+    role.permissions.clear
+    role.permissions << create(:permission, code: 'suppliers.products.create', module_name: 'Proveedores')
+    item = create(:product, organization:)
+
+    post admin_supplier_supplier_products_path(supplier), params: {
+      supplier_product: {
+        product_id: item.id, currency_id: supplier.currency.id, presentation_name: 'Box',
+        units_per_package: 12, purchase_price: 120, minimum_quantity: 1,
+        discount_percent: 0, freight_amount: 0, nonrecoverable_tax: 0, lead_time_days: 3
+      }
+    }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.supplier_products.find_by(product: item)).to be_present
+  end
 end

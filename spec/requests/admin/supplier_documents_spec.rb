@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'tempfile'
 
 RSpec.describe 'Supplier document authorization', type: :request do
   let(:organization) { create(:organization) }
@@ -113,5 +114,26 @@ RSpec.describe 'Supplier document authorization', type: :request do
     get admin_supplier_document_download_path(supplier, document_id: attachment.id)
 
     expect(response).to have_http_status(:not_found)
+  end
+
+  it 'redirects a create-only uploader to the masked supplier list instead of the document dossier' do
+    limited_user = create(:user)
+    create(:organization_membership, user: limited_user, organization:)
+    limited_role = create(:system_role, :system, code: 'supplier_docs_upload_only')
+    limited_role.permissions << create(:permission, code: 'suppliers.documents.create',
+                                                      module_name: 'Proveedores')
+    create(:user_role, user: limited_user, system_role: limited_role)
+    sign_in limited_user
+
+    Tempfile.create(['supplier-upload', '.pdf']) do |tempfile|
+      tempfile.write('%PDF-1.4 supplier document')
+      tempfile.flush
+      upload = Rack::Test::UploadedFile.new(tempfile.path, 'application/pdf')
+
+      post admin_supplier_documents_path(supplier), params: { document: { file: upload } }
+    end
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.supplier_documents.visible.count).to eq(1)
   end
 end

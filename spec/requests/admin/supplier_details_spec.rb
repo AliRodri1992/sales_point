@@ -101,4 +101,14 @@ RSpec.describe 'Supplier contacts and addresses', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(contact.reload.deleted_at).to be_present
   end
+
+  it 'lists archived supplier contacts only in the deleted contacts view' do
+    archived = create(:contact, contactable: supplier, name: 'Archived supplier contact',
+                                deleted_at: Time.current)
+
+    get admin_supplier_contacts_path(supplier, status: 'deleted')
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(archived.name)
+  end
 end

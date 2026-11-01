@@ -135,4 +135,12 @@ RSpec.describe 'Admin supplier schedules', type: :request do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it 'denies recurring schedules when the user has no active organization membership' do
+    user.organization_memberships.find_each { |membership| membership.update!(status: :inactive) }
+
+    get admin_supplier_schedules_path(supplier)
+
+    expect(response).to have_http_status(:forbidden)
+  end
 end
