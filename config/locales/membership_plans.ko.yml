@@ -6,19 +6,71 @@ ko:
       membership_feature: 멤버십 기능
       subscription: 구독
       subscription_event: 구독 이벤트
+    attributes:
+      organization:
+        name: 이름
+        code: 코드
+        legal_name: 법적 명칭
+        tax_id: 사업자 등록번호
+        email: 이메일
+        phone: 전화번호
+        status: 상태
+      membership_plan:
+        name: 이름
+        slug: 코드
+        description: 설명
+        price: 가격
+        currency: 통화
+        billing_interval: 결제 주기
+        trial_days: 체험 일수
+        position: 순서
+      subscription:
+        organization: 조직
+        membership_plan: 멤버십 플랜
+        status: 상태
+        starts_at: 시작
+        ends_at: 종료
+        trial_ends_at: 체험 종료
+  errors:
+    attributes:
+      name: 이름
+      code: 코드
+      legal_name: 법적 명칭
+      tax_id: 사업자 등록번호
+      email: 이메일
+      phone: 전화번호
+      price: 가격
+      slug: 코드
+      starts_at: 시작
+      membership_plan: 멤버십 플랜
+      organization: 조직
   admin:
     shared:
       sidebar:
         organizations: 조직
         membership_plans: 멤버십 플랜
         subscriptions: 구독
-      breadcrumbs:
-        organizations: 조직
-        membership_plans: 멤버십 플랜
-        subscriptions: 구독
+      notifications:
+        organization:
+          created: "조직 '%{name}'을(를) %{user}님이 생성했습니다"
+          updated: "조직 '%{name}'을(를) %{user}님이 수정했습니다"
+        membership_plan:
+          created: "플랜 '%{name}'을(를) %{user}님이 생성했습니다"
+          updated: "플랜 '%{name}'을(를) %{user}님이 수정했습니다"
+        subscription:
+          created: "'%{organization}' 구독을 %{user}님이 생성했습니다"
+          updated: "'%{organization}' 구독을 %{user}님이 수정했습니다"
+          plan_changed: "'%{organization}' 구독 플랜을 %{user}님이 변경했습니다"
+          canceled: "'%{organization}' 구독을 %{user}님이 취소했습니다"
+          paused: "'%{organization}' 구독을 %{user}님이 일시 중지했습니다"
+          resumed: "'%{organization}' 구독을 %{user}님이 재개했습니다"
+    breadcrumbs:
+      organizations: 조직
+      membership_plans: 멤버십 플랜
+      subscriptions: 구독
     organizations:
       index:
-        page_title: 조직 | Nexo POS
+        page_title: 조직 | Delta POS
         title: 조직
         subtitle: Delta POS에 등록된 사업자를 관리합니다.
         new: 새 조직
@@ -56,7 +108,7 @@ ko:
       updated: 조직이 수정되었습니다.
     membership_plans:
       index:
-        page_title: 멤버십 플랜 | Nexo POS
+        page_title: 멤버십 플랜 | Delta POS
         title: 멤버십 플랜
         subtitle: Delta POS의 기능과 사용 한도를 관리합니다.
         new: 새 플랜
@@ -94,7 +146,7 @@ ko:
       updated: 멤버십 플랜이 수정되었습니다.
     subscriptions:
       index:
-        page_title: 구독 | Nexo POS
+        page_title: 구독 | Delta POS
         title: 구독
         subtitle: 조직의 구독을 관리합니다.
         new: 새 구독

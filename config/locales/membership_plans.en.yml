@@ -31,6 +31,19 @@ en:
         starts_at: Start
         ends_at: End
         trial_ends_at: Trial end
+  errors:
+    attributes:
+      name: Name
+      code: Code
+      legal_name: Legal name
+      tax_id: Tax ID
+      email: Email
+      phone: Phone
+      price: Price
+      slug: Code
+      starts_at: Start
+      membership_plan: Membership plan
+      organization: Organization
   admin:
     shared:
       sidebar:
@@ -57,7 +70,7 @@ en:
       subscriptions: Subscriptions
     organizations:
       index:
-        page_title: Organizations | Nexo POS
+        page_title: Organizations | Delta POS
         title: Organizations
         subtitle: Manage businesses registered in Delta POS.
         new: New organization
@@ -95,7 +108,7 @@ en:
       updated: Organization updated successfully.
     membership_plans:
       index:
-        page_title: Membership plans | Nexo POS
+        page_title: Membership plans | Delta POS
         title: Membership plans
         subtitle: Configure Delta POS commercial capabilities and limits.
         new: New plan
@@ -133,7 +146,7 @@ en:
       updated: Membership plan updated successfully.
     subscriptions:
       index:
-        page_title: Subscriptions | Nexo POS
+        page_title: Subscriptions | Delta POS
         title: Subscriptions
         subtitle: Manage organization subscriptions.
         new: New subscription
