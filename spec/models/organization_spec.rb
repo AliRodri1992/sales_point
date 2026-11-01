@@ -62,6 +62,10 @@ RSpec.describe Organization, type: :model do
     expect(organization.onboarding_completed_at).to be_present
   end
 
+  it 'keeps subscriptions associated with the organization' do
+    expect(organization).to respond_to(:subscriptions, :current_subscription)
+  end
+
   it 'soft deletes and restores' do
     organization = create(:organization)
     organization.destroy!

@@ -11,6 +11,7 @@ RSpec.describe 'Subscription lifecycle administration', type: :request do
   let!(:subscription) { create(:subscription, organization:, membership_plan: plan, status: :active) }
 
   before do
+    create(:organization_membership, user: admin, organization:)
     create(:user_role, user: admin, system_role: role)
     sign_in admin
   end

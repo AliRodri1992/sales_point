@@ -15,7 +15,7 @@ RSpec.describe 'Membership policies', type: :policy do
     policy = OrganizationPolicy.new(admin, Organization.new)
 
     expect(policy.index?).to be(true)
-    expect(policy.create?).to be(true)
+    expect(policy.create?).to be(false) # Only system super-administrators may create organizations.
     expect(policy.update?).to be(true)
   end
 

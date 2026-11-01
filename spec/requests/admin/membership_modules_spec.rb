@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Membership administration', type: :request do
-  let!(:role) { create(:system_role, :system, code: 'administrator') }
+  let!(:role) { create(:system_role, :system, code: 'super_admin') }
   let!(:admin) { create(:user) }
 
   before do
@@ -29,16 +29,13 @@ RSpec.describe 'Membership administration', type: :request do
          params: {
            organization: {
              name: 'Delta Demo',
-             code: 'DELTA-DEMO-2',
-             legal_name: 'Delta Demo S.A. de C.V.',
-             tax_id: 'AAA010101AAA',
-             email: 'demo2@delta.com',
-             phone: '5555555555',
+             tax_id: 'ABC010101AB1',
+             business_sector: 'grocery',
              status: 'active'
            }
          }
 
-    expect(response).to redirect_to(admin_organization_path(Organization.find_by!(code: 'DELTA-DEMO-2')))
+    expect(response).to redirect_to(admin_organization_path(Organization.find_by!(tax_id: 'ABC010101AB1')))
     expect(flash[:swal_message]).to eq(I18n.t('admin.organizations.created'))
   end
 
