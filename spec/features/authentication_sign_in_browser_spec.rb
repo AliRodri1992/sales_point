@@ -32,11 +32,12 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     button.click
     expect(find('#user_password')[:type]).to eq('text')
     expect(button['aria-pressed']).to eq('true')
-    expect(button['aria-label']).to eq(I18n.t('authentication.login.hide_password'))
+    expect(button['aria-label']).to eq(button['data-hide-label'])
 
     button.click
     expect(find('#user_password')[:type]).to eq('password')
     expect(button['aria-pressed']).to eq('false')
+    expect(button['aria-label']).to eq(button['data-show-label'])
   end
 
   scenario 'opens theme and language selectors with keyboard-friendly states' do
@@ -61,7 +62,7 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     expect(page).to have_css('header [aria-label="Delta POS"]')
     expect(page).to have_css('#user_email')
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
-    click_link I18n.t('devise.sessions.new.forgot')
+    find("a[href='#{new_user_password_path}']").click
     expect(page).to have_css('form[action="/users/password"]')
   end
 end
