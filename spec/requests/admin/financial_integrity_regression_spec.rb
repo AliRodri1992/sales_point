@@ -56,7 +56,7 @@ RSpec.describe 'Financial integrity regression', type: :request do
   it 'lets a cashier choose a masked supplier bank account in the payment form' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Test bank',
-      holder_name: 'Vendor', account_number: '12345678', currency_code: currency.code
+      holder_name: 'Vendor', clabe: '032180000118359719', currency_code: currency.code
     )
 
     get new_admin_supplier_payment_path
@@ -64,13 +64,13 @@ RSpec.describe 'Financial integrity regression', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('data-controller="supplier-payment-bank"')
     expect(response.body).to include(bank.masked_number)
-    expect(response.body).not_to include('12345678')
+    expect(response.body).not_to include('032180000118359719')
   end
 
   it 'rejects posting a payment using an archived bank account' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Test bank',
-      holder_name: 'Vendor', account_number: '12345678', currency_code: currency.code
+      holder_name: 'Vendor', clabe: '032180000118359719', currency_code: currency.code
     )
     bank.update!(deleted_at: Time.current)
     expect(bank.reload.deleted_at).to be_present
@@ -96,7 +96,7 @@ RSpec.describe 'Financial integrity regression', type: :request do
   it 'rejects supplier bank account in another currency' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Test bank',
-      holder_name: 'Vendor', account_number: '12345678', currency_code: 'USD'
+      holder_name: 'Vendor', clabe: '032180000118359719', currency_code: 'USD'
     )
     post admin_supplier_payments_path, params: {
       supplier_payment: {
