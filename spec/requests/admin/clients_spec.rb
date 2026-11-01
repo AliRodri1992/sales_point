@@ -128,7 +128,7 @@ RSpec.describe 'Admin clients', type: :request do
       get edit_admin_client_path(client)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Conflicting Client')
+      expect(response.body).to include(client.name)
     end
   end
 
