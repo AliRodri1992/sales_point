@@ -3,3 +3,14 @@ en:
   registration:
     initial_branch_name: "Main Branch"
     initial_terminal_name: "POS Terminal %{number}"
+    validation:
+      setup_type: "Select a valid setup type."
+      business_sector: "Select a valid business sector."
+      currency: "Select an active currency."
+      timezone: "Select a valid time zone."
+      branches: "Registration creates one initial branch; add more in Administration."
+      terminals: "Select 1 to 6 terminals."
+      payment_integration: "Select a valid payment method."
+      migration_volume: "Select the catalog migration volume."
+      migration_priority: "Select the migration priority."
+      terms: "Accept the terms before continuing."

@@ -14,7 +14,7 @@ module Users
 
       return complete_sign_up if result.success?
 
-      render_registration_error
+      render_registration_error(result)
     end
 
     private
@@ -43,7 +43,9 @@ module Users
       respond_with resource, location: after_sign_up_path_for(resource)
     end
 
-    def render_registration_error
+    def render_registration_error(result)
+      @registration_error_step = result.step
+      @registration_values = registration_params
       clean_up_passwords resource
       set_minimum_password_length
       respond_with resource, status: :unprocessable_content

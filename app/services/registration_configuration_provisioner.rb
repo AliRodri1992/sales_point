@@ -24,7 +24,7 @@ class RegistrationConfigurationProvisioner
     OrganizationSetting.create!(
       organization: @organization,
       base_currency: Currency.active.find_by!(code: parameter(:currency).upcase),
-      timezone: 'UTC',
+      timezone: @params[:timezone].presence || 'America/Mexico_City',
       payment_method: parameter(:payment_integration)
     )
   end
@@ -68,7 +68,7 @@ class RegistrationConfigurationProvisioner
   end
 
   def terminal_count
-    { '1' => 1, '2' => 2, '3_5' => 3, 'over_5' => 6 }.fetch(@params[:terminals].to_s, 1)
+    { '3_5' => 3, 'over_5' => 6 }.fetch(@params[:terminals].to_s) { @params[:terminals].to_i.clamp(1, 6) }
   end
 
   def migration_setup?

@@ -1222,6 +1222,7 @@ en:
         benefit_two_title: Universal POS Compatibility
         brand_alt: Delta POS logo symbol
         brand_tagline: Point of Sale
+        error_banner_title: "We couldn't complete your registration"
         client_validation_branches: The number of branches must be at least 1.
         client_validation_password_match: The passwords do not match.
         client_validation_required: Complete the required information before continuing.
@@ -1250,9 +1251,11 @@ en:
           subtitle: Define how many touch-enabled registers will operate and your
             integrated payment methods.
           terminal_options:
+            four: "4 registers"
+            five: "5 registers"
             one: 1 Main Register (Standard)
-            over_five: More than 5 Registers (Corporate)
-            three_five: 3 to 5 Registers (High Demand)
+            over_five: 6 registers
+            three_five: 3 registers
             two: 2 Registers on Local Network
           terminals: Active Touch Cash Registers
           terms: I accept Delta POS Terms of Service and Privacy Policy.
@@ -1284,9 +1287,28 @@ en:
           subtitle: Configure the environment according to your operation.
           title: Business Environment
           volumes:
-            '5005000': 500 to 5,000 products
+            '500_5000': 500 to 5,000 products
             over_5000: More than 5,000 products
             under_500: Fewer than 500 products
+        step_names:
+          one: "Start"
+          two: "Administrator"
+          three: "Business"
+          four: "Settings"
+          five: "Finish"
+        registration_summary: "Configuration summary"
+        registration_summary_hint: "Review the information before creating the account."
+        no_script: "Enable JavaScript to complete registration."
+        terms_hint: "Accept the terms and privacy policy to continue."
+        branch_hint: "One main branch will be created. You can add more later."
+        payment_hint: "Card and QR integrations will require additional setup."
+        migration_hint: "Migration will be scheduled after registration; no data is imported automatically."
+        timezone_label: "Time zone"
+        client_validation_email: "Enter a valid email address."
+        client_validation_password_length: "Your password must contain at least 6 characters."
+        client_validation_field_required: "Complete this field to continue."
+        client_validation_tax_format: "Enter a valid 12- or 13-character tax ID."
+        saving: "Creating your account…"
         step_label: Registration progress
         step_one:
           migration_description: Safely migrate your current catalog and operational

@@ -56,4 +56,40 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(User.find_by(email: 'owner@example.com')).to be_nil
     expect(Organization.count).to eq(0)
   end
+  it 'keeps entered business information and returns to the administrator step when a user is invalid' do
+    post user_registration_path, params: registration_params.merge(
+      user: registration_params[:user].merge(email: 'invalid-address'),
+      company_name: 'My Shop'
+    )
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-registration-wizard-target="wrapper"]')['data-initial-step']).to eq('2')
+    expect(document.at_css('input[name="company_name"]')['value']).to eq('My Shop')
+    expect(Organization.count).to eq(0)
+  end
+
+  it 'rejects an unavailable currency without a server error' do
+    post user_registration_path, params: registration_params.merge(currency: 'ZZZ')
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Organization.count).to eq(0)
+    expect(response.body).to include(I18n.t('registration.validation.currency'))
+  end
+
+  it 'rejects incomplete migration setup before provisioning' do
+    post user_registration_path, params: registration_params.merge(setup_type: 'migration')
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Organization.count).to eq(0)
+  end
+
+  it 'renders five labeled steps and a mobile-accessible heading' do
+    get new_user_registration_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('main h1')).to be_present
+    expect(document.css('[data-registration-wizard-target="node"]').size).to eq(5)
+    expect(document.css('[data-step-label]').size).to eq(5)
+  end
 end

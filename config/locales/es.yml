@@ -1230,6 +1230,7 @@ es:
         benefit_two_title: Compatibilidad Universal POS
         brand_alt: Isotipo de Delta POS
         brand_tagline: Punto de Venta
+        error_banner_title: "No pudimos completar tu registro"
         client_validation_branches: El número de sucursales debe ser al menos 1.
         client_validation_password_match: Las contraseñas no coinciden.
         client_validation_required: Completa la información requerida antes de continuar.
@@ -1259,9 +1260,11 @@ es:
           subtitle: Define cuántas cajas operarán en modo táctil y tus métodos de
             cobro integrados.
           terminal_options:
+            four: "4 cajas"
+            five: "5 cajas"
             one: 1 Caja Principal (Estándar)
-            over_five: Más de 5 Cajas (Corporativo)
-            three_five: 3 a 5 Cajas (Alta Demanda)
+            over_five: 6 cajas
+            three_five: 3 cajas
             two: 2 Cajas en Red Local
           terminals: Número de Cajas Táctiles Activas
           terms: Acepto los términos de servicio y la política de privacidad de Delta
@@ -1294,9 +1297,28 @@ es:
           subtitle: Configura el entorno de acuerdo con tu operación.
           title: Entorno comercial
           volumes:
-            '5005000': 500 a 5,000 productos
+            '500_5000': 500 a 5,000 productos
             over_5000: Más de 5,000 productos
             under_500: Menos de 500 productos
+        step_names:
+          one: "Inicio"
+          two: "Administrador"
+          three: "Empresa"
+          four: "Entorno"
+          five: "Finalizar"
+        registration_summary: "Resumen de configuración"
+        registration_summary_hint: "Confirma los datos antes de crear la cuenta."
+        no_script: "Activa JavaScript para completar el registro."
+        terms_hint: "Para continuar debes aceptar los términos y la política de privacidad."
+        branch_hint: "Se creará una sucursal principal. Podrás agregar otras después."
+        payment_hint: "Las integraciones con tarjeta y QR quedarán pendientes de configuración."
+        migration_hint: "La migración se programará después del registro; tus datos no se importarán automáticamente."
+        timezone_label: "Zona horaria"
+        client_validation_email: "Introduce un correo electrónico válido."
+        client_validation_password_length: "La contraseña debe tener al menos 6 caracteres."
+        client_validation_field_required: "Completa este campo para continuar."
+        client_validation_tax_format: "Introduce un RFC válido de 12 o 13 caracteres."
+        saving: "Creando tu cuenta…"
         step_label: Progreso del registro
         step_one:
           migration_description: Migra tu catálogo e información operativa actual

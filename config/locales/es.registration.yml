@@ -3,3 +3,14 @@ es:
   registration:
     initial_branch_name: "Sucursal Principal"
     initial_terminal_name: "Terminal POS %{number}"
+    validation:
+      setup_type: "Elige un tipo de configuración válido."
+      business_sector: "Selecciona un sector empresarial válido."
+      currency: "Selecciona una moneda activa."
+      timezone: "Selecciona una zona horaria válida."
+      branches: "Se creará una sucursal inicial. Podrás agregar otras en Administración."
+      terminals: "Selecciona de 1 a 6 cajas."
+      payment_integration: "Selecciona un método de cobro válido."
+      migration_volume: "Selecciona el volumen del catálogo a migrar."
+      migration_priority: "Selecciona la prioridad de la migración."
+      terms: "Debes aceptar los términos antes de continuar."

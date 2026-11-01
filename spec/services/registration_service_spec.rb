@@ -92,4 +92,25 @@ RSpec.describe RegistrationService, type: :service do
     expect(result).not_to be_success
     expect(Organization.count).to eq(0)
   end
+  it 'rejects unsupported setup and payment values before provisioning' do
+    %i[setup_type payment_integration terminals timezone].each do |field|
+      invalid_value = field == :terminals ? '100' : 'invalid'
+      invalid_user = build(:user, email: "bad-#{field}@example.com",
+                                  password: 'password123', password_confirmation: 'password123')
+      result = described_class.call(resource: invalid_user, params: params.merge(field => invalid_value))
+
+      expect(result).not_to be_success
+      expect(result.step).to be_between(1, 5)
+    end
+    expect(Organization.count).to eq(0)
+  end
+
+  it 'supports an exact initial terminal count and a configured timezone' do
+    result = described_class.call(resource: user,
+      params: params.merge(terminals: '4', timezone: 'America/Mexico_City'))
+
+    expect(result).to be_success
+    expect(result.organization.branches.first.terminals.count).to eq(4)
+    expect(result.organization.organization_settings.first.timezone).to eq('America/Mexico_City')
+  end
 end
