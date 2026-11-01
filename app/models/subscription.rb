@@ -69,6 +69,7 @@ class Subscription < ApplicationRecord
     limit = limit_for(key)
     limit.present? && current_count >= limit
   end
+
   private
 
   def only_one_current_subscription_per_organization
@@ -80,3 +81,5 @@ class Subscription < ApplicationRecord
 
     errors.add(:organization, 'already has an active subscription') if relation.exists?
   end
+
+end
