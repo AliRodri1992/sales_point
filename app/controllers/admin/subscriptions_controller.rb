@@ -2,6 +2,7 @@
 
 module Admin
   class SubscriptionsController < ApplicationController
+    include MembershipSubscriptionFormHelpers
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_subscription, only: %i[show edit update change_plan pause resume cancel]
@@ -17,13 +18,18 @@ module Admin
 
     def show
       authorize @subscription
-      @events = @subscription.subscription_events
-                              .includes(:performed_by, :from_membership_plan, :to_membership_plan)
-                              .order(created_at: :desc)
+      events = @subscription.subscription_events
+      @events = events.includes(:performed_by, :from_membership_plan, :to_membership_plan)
+                      .order(created_at: :desc)
     end
 
     def new
       @subscription = Subscription.new(starts_at: Time.current)
+      authorize @subscription
+      load_form_options
+    end
+
+    def edit
       authorize @subscription
       load_form_options
     end
@@ -36,16 +42,7 @@ module Admin
 
       apply_trial_state
 
-      Subscription.transaction do
-        @subscription.save!
-        @subscription.subscription_events.create!(
-          event_type: @subscription.trialing? ? 'trial_started' : 'subscription_created',
-          membership_plan: @subscription.membership_plan,
-          performed_by: current_user,
-          to_status: @subscription.status,
-          description: 'Subscription created.'
-        )
-      end
+      persist_new_subscription!
 
       notify_subscription('created')
       redirect_to admin_subscription_path(@subscription),
@@ -55,18 +52,13 @@ module Admin
       render :new, status: :unprocessable_content
     end
 
-    def edit
-      authorize @subscription
-      load_form_options
-    end
-
     def update
       authorize @subscription
       previous_plan = @subscription.membership_plan
 
       if @subscription.update(subscription_params)
         record_update_event(previous_plan)
-        notify_subscription(previous_plan != @subscription.membership_plan ? 'plan_changed' : 'updated')
+        notify_subscription(previous_plan == @subscription.membership_plan ? 'updated' : 'plan_changed')
         redirect_to admin_subscription_path(@subscription),
                     flash: { swal_message: t('admin.subscriptions.updated') }
       else
@@ -126,37 +118,6 @@ module Admin
     def load_form_options
       @organizations = policy_scope(Organization).active_records.order(:name)
       @membership_plans = MembershipPlan.where(deleted_at: nil).order(:position, :name)
-    end
-
-    def subscription_organization_allowed?
-    current_user.role?('super_admin') ||
-      current_user.organization_memberships.active.exists?(organization_id: @subscription.organization_id)
-  end
-
-  def apply_trial_state
-      return if @subscription.membership_plan.blank?
-      return unless @subscription.membership_plan.trial_days.positive?
-
-      @subscription.status = 'trialing'
-      @subscription.trial_ends_at ||= @subscription.starts_at + @subscription.membership_plan.trial_days.days
-    end
-
-    def record_update_event(previous_plan)
-      @subscription.subscription_events.create!(
-        event_type: previous_plan != @subscription.membership_plan ? 'plan_changed' : 'subscription_updated',
-        membership_plan: @subscription.membership_plan,
-        performed_by: current_user,
-        from_membership_plan_id: previous_plan.id,
-        to_membership_plan_id: @subscription.membership_plan_id,
-        to_status: @subscription.status,
-        description: 'Subscription updated.'
-      )
-    end
-
-    def notify_subscription(action)
-      SubscriptionNotification.with(action:, record: @subscription, user: current_user)
-                              .deliver(current_user, enqueue_job: false)
-      current_user.broadcast_notifications_refresh
     end
 
     def forbidden
