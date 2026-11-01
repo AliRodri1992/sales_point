@@ -1,7 +1,7 @@
 <% content_for :title, t('.page_title') %>
 
 <div
-  class="min-h-screen w-full bg-slate-900 <%= "theme-#{current_terminal_theme}" %> <%= "theme-selected" if terminal_theme_selected? %>"
+  class="min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal"
   data-terminal-target="wrapper">
 
@@ -92,9 +92,11 @@
     <!-- RIGHT PANEL: AUTHENTICATION -->
     <main class="relative flex min-h-screen w-full flex-col bg-white lg:w-[58%]">
 
-      <div class="absolute left-6 top-6 z-30 flex items-center gap-2 lg:hidden" aria-label="Delta POS"><span class="font-jakarta text-lg font-extrabold tracking-tight text-slate-900">DELTA <span class="text-emerald-600">POS</span></span></div>
-
-      <div class="absolute right-6 top-6 z-30 flex items-center gap-2">
+      <header class="relative z-30 flex flex-col gap-4 px-6 pt-5 sm:flex-row sm:items-center sm:justify-between sm:px-12 lg:justify-end lg:px-16">
+        <div class="lg:hidden" aria-label="Delta POS">
+          <span class="font-jakarta text-lg font-extrabold tracking-tight text-slate-900">DELTA <span class="text-emerald-600">POS</span></span>
+        </div>
+        <div class="flex items-center gap-2">
         <%= render Authentication::ThemeSelectorComponent.new(
           themes: terminal_themes,
           current_theme: current_terminal_theme
@@ -104,9 +106,10 @@
           current_language: current_language,
           languages: terminal_languages
         ) %>
-      </div>
+        </div>
+      </header>
 
-      <div class="flex min-h-screen w-full items-center justify-center overflow-y-auto px-6 py-24 sm:px-12 lg:px-16 lg:py-16">
+      <div class="flex w-full flex-1 items-center justify-center px-6 py-12 sm:px-12 lg:px-16 lg:py-12">
         <div class="my-auto w-full max-w-md space-y-6">
 
           <section data-terminal-target="loginCard" class="space-y-5">
@@ -114,7 +117,7 @@
               <h2 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900">
                 <%= t(".title") %>
               </h2>
-              <p class="text-xs text-slate-500">
+              <p class="text-sm leading-relaxed text-slate-500">
                 <%= t(".subtitle") %>
               </p>
             </div>
@@ -125,16 +128,16 @@
               url: session_path(resource_name),
               html: {
                 class: "space-y-5",
-                data: { action: "submit->terminal#submitLogin" }
+                data: { action: "submit->terminal#submitLogin turbo:submit-end->terminal#finishLogin" }
               }
             ) do |f| %>
 
-              <div>
+              <div data-login-field>
                 <% email_has_error = resource.errors[:email].present? %>
                 <%= f.label(
                   :email,
                   t(".email"),
-                  class: "block font-jakarta text-xs font-medium text-slate-700"
+                  class: "block font-jakarta text-sm font-medium text-slate-700"
                 ) %>
 
                 <div class="relative mt-1 rounded-xl shadow-sm">
@@ -145,6 +148,8 @@
                   <%= f.email_field(
                     :email,
                     required: true,
+                    'aria-invalid': email_has_error,
+                    'aria-describedby': (email_has_error ? 'login-email-error' : nil),
                     autocomplete: "email",
                     placeholder: t(".email_placeholder"),
                     class: "input-field block w-full appearance-none rounded-xl border bg-white py-3 pl-9 pr-3 text-base text-slate-800 shadow-sm transition-all placeholder:text-slate-400 #{email_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
@@ -154,15 +159,15 @@
                     }
                   ) %>
                 </div>
-                <%= error_message_for(resource, :email) %>
+                <div id="login-email-error"><%= error_message_for(resource, :email) %></div>
               </div>
 
-              <div>
+              <div data-login-field>
                 <% password_has_error = resource.errors[:password].present? %>
                 <%= f.label(
                   :password,
                   t(".password"),
-                  class: "block font-jakarta text-xs font-medium text-slate-700"
+                  class: "block font-jakarta text-sm font-medium text-slate-700"
                 ) %>
 
                 <div class="relative mt-1 rounded-xl shadow-sm">
@@ -173,9 +178,11 @@
                   <%= f.password_field(
                     :password,
                     required: true,
+                    'aria-invalid': password_has_error,
+                    'aria-describedby': (password_has_error ? 'login-password-error' : nil),
                     autocomplete: "current-password",
                     placeholder: "••••••••",
-                    class: "input-field block w-full appearance-none rounded-xl border bg-white py-2 pl-9 pr-10 text-base text-slate-900 shadow-sm transition-all #{password_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
+                    class: "input-field block w-full appearance-none rounded-xl border bg-white py-3 pl-9 pr-12 text-base text-slate-900 shadow-sm transition-all #{password_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
                     data: {
                       terminal_target: "input password",
                       action: "input->terminal#clearErrors"
@@ -185,27 +192,35 @@
                   <button
                     type="button"
                     data-action="click->terminal#togglePassword"
+                    data-show-label="<%= t('authentication.login.show_password') %>"
+                    data-hide-label="<%= t('authentication.login.hide_password') %>"
                     class="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-500 transition hover:text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600"
                     aria-pressed="false"
-                    aria-label="<%= t(".toggle_password") %>">
-                    <%= delta_icon "eye", variant: :outline, class: "h-4 w-4" %>
+                    aria-label="<%= t('authentication.login.show_password') %>">
+                    <span data-password-show-icon><%= delta_icon "eye", variant: :outline, class: "h-4 w-4" %></span>
+                    <span data-password-hide-icon class="hidden" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                        <path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                        <path d="M9.8 5.3A10.6 10.6 0 0 1 12 5c5 0 9 4 10 7a12.8 12.8 0 0 1-3.3 4.4M6.6 6.6C4.5 7.9 3 10 2 12c1 3 5 7 10 7 1.2 0 2.3-.2 3.3-.6" />
+                      </svg>
+                    </span>
                   </button>
                 </div>
-                <%= error_message_for(resource, :password) %>
+                <div id="login-password-error"><%= error_message_for(resource, :password) %></div>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <label class="inline-flex cursor-pointer items-center">
                   <%= f.check_box(
                     :remember_me,
-                    class: "theme-control h-4 w-4 rounded-md border-slate-300 focus:ring-[var(--brand)]"
+                    class: "theme-control h-5 w-5 rounded-md border-slate-300 focus:ring-[var(--brand)]"
                   ) %>
-                  <span class="ml-2 text-[11px] theme-text"><%= t(".remember_me") %></span>
+                  <span class="ml-2 text-sm theme-text"><%= t(".remember_me") %></span>
                 </label>
                 <%= link_to(
                   t(".forgot"),
                   new_password_path(resource_name),
-                  class: "text-xs font-medium theme-text transition hover:opacity-80"
+                  class: "text-sm font-medium theme-text transition hover:opacity-80 focus-visible:underline"
                 ) %>
               </div>
 
@@ -220,7 +235,7 @@
             <% end %>
 
             <div class="border-t border-slate-100 pt-4 text-center">
-              <p class="text-xs text-slate-500">
+              <p class="text-sm text-slate-500">
                 <%= t(".register_prompt") %>
                 <%= link_to(
                   t(".register"),

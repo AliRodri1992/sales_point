@@ -1,7 +1,7 @@
 <div class="relative">
   <button
     type="button"
-    data-action="click->terminal#toggleThemeDropdown keydown.esc->terminal#closeDropdowns"
+    data-action="click->terminal#toggleThemeDropdown"
     data-theme-toggle
     aria-expanded="false"
     aria-controls="terminal-theme-dropdown"
@@ -17,7 +17,7 @@
   <div
     id="terminal-theme-dropdown"
     data-terminal-target="themeDropdown"
-    class="absolute right-0 mt-2 hidden w-52 origin-top-right rounded-2xl border border-slate-100 bg-white p-4 opacity-0 scale-95 shadow-2xl transition-all">
+    class="absolute right-0 z-50 mt-2 hidden w-60 origin-top-right rounded-2xl border border-slate-100 bg-white p-4 opacity-0 scale-95 shadow-2xl transition-all">
     <p class="mb-3 text-[9px] font-bold uppercase tracking-wider text-slate-400">
       <%= t('authentication.theme_selector.title') %>
     </p>
@@ -29,10 +29,11 @@
           data-terminal-target="themeOption"
           data-theme="<%= theme[:id] %>"
           data-action="click->terminal#selectTheme"
-          title="<%= theme[:id].humanize %>"
-          aria-label="<%= theme[:id].humanize %>"
+          title="<%= theme[:id].delete_prefix('theme-').humanize %>"
+          aria-label="<%= t('authentication.theme_selector.option', name: theme[:id].delete_prefix('theme-').humanize) %>"
+          aria-pressed="<%= theme[:id] == current_theme %>"
           class="<%= class_names(
-            'flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg border border-slate-200/50 shadow-sm transition focus:outline-none hover:scale-105 active:scale-90',
+            'flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-slate-200/50 shadow-sm transition focus:outline-none hover:scale-105 active:scale-90',
             theme[:id] == current_theme && 'rounded-full'
           ) %>"
           style="background:<%= theme[:color] %>">
