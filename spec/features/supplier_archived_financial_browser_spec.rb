@@ -42,13 +42,13 @@ RSpec.describe 'Supplier archived financial records', type: :feature, js: true d
   scenario 'restores an archived bank account while masking its number' do
     account = SupplierBankAccount.create!(
       organization:, supplier:, holder_name: 'Acme Supply',
-      bank_name: 'Demo Bank', account_number: '1234567890', currency_code: 'MXN'
+      bank_name: 'Demo Bank', clabe: '032180000118359719', currency_code: 'MXN'
     )
     account.update!(deleted_at: Time.current)
 
     visit admin_supplier_bank_accounts_path(supplier, archived: '1')
-    expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', text: '7890')
-    expect(page).to have_no_content('1234567890')
+    expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', text: '9719')
+    expect(page).to have_no_content('032180000118359719')
 
     within('[data-supplier-bank-accounts-target="card"]') do
       find('summary').click
