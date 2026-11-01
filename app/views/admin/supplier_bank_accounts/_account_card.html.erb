@@ -82,7 +82,7 @@
                       <%= label_tag "verified-on-#{account.id}",
                                     t('admin.supplier_bank_details.verification_date'),
                                     class: 'block text-xs font-semibold text-slate-700' %>
-                      <%= date_field_tag :verified_on, account.verified_at&.to_date || Date.current,
+                      <%= date_field_tag :verified_on, account.verified_at&.to_date,
                                          id: "verified-on-#{account.id}",
                                          class: 'min-h-10 w-full rounded-lg border border-slate-200 bg-white px-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none' %>
                       <%= button_tag t('admin.supplier_bank_details.review_actions.verified'),
