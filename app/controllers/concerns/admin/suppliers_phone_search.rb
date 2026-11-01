@@ -48,7 +48,9 @@ module Admin
     end
 
     def contact_search_scope(scope, term)
-      return scope.where(CONTACT_SEARCH_SQL, term:).or(scope.where(PHONE_SEARCH_SQL, term:)) if supplier_contacts_visible?
+      if supplier_contacts_visible?
+        return scope.where(CONTACT_SEARCH_SQL, term:).or(scope.where(PHONE_SEARCH_SQL, term:))
+      end
       return scope.where(PRIMARY_CONTACT_SEARCH_SQL, term:) if supplier_general_visible?
 
       scope.none

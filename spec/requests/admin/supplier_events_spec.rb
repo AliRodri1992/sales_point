@@ -36,8 +36,8 @@ RSpec.describe 'Supplier dated events', type: :request do
     )
     get edit_admin_supplier_event_path(supplier, event)
     expect(response).to have_http_status(:ok)
-    edited_header = Nokogiri::HTML(response.body)
-                                    .at_css('[data-supplier-event-form-page="edit"] [data-supplier-subpage-header]')
+    page = Nokogiri::HTML(response.body)
+    edited_header = page.at_css('[data-supplier-event-form-page="edit"] [data-supplier-subpage-header]')
     expect(edited_header).to be_present
   end
 
