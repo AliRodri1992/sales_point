@@ -8,8 +8,10 @@ module Reports
       end
 
       def columns(format: :pdf)
-        keys = %i[code name rfc email phone classification status]
-        keys += %i[credit_days credit_limit] if format.to_sym == :xlsx
+        keys = %i[code name classification status]
+        keys += %i[rfc] if field_allowed?(:view_fiscal?)
+        keys += %i[email phone] if field_allowed?(:view_contacts?)
+        keys += %i[credit_days credit_limit] if format.to_sym == :xlsx && field_allowed?(:view_commercial?)
         keys.map do |key|
           {
             label: I18n.t("reports.suppliers.columns.#{key}", locale:),
@@ -19,6 +21,11 @@ module Reports
       end
 
       private
+
+      def field_allowed?(permission)
+        policy = SupplierPolicy.new(user, scope.klass.new(organization: organization))
+        policy.public_send(permission)
+      end
 
       def column_value(supplier, key)
         return primary_office_number(supplier) if key == :phone
