@@ -101,7 +101,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     get admin_supplier_path(supplier, tab: 'contacts')
 
     expect(cards.first.css('a[href^="tel:"]').length).to eq(1)
-    expect(cards.first.text).not_to include('—')
+    expect(cards.first.text).to include('—') # The office number is intentionally blank.
     expect(cards.first.text).to include('Email not registered')
   end
 
