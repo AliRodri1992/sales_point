@@ -104,11 +104,11 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   it 'keeps sensitive bank data masked and hides archived accounts' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Delta Bank', holder_name: 'Supplier',
-      account_number: '123456789012', currency_code: 'MXN', primary: true
+      clabe: '032180000118359719', currency_code: 'MXN', primary: true
     )
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Archived Bank', holder_name: 'Supplier',
-      account_number: '999987654321', currency_code: 'MXN', deleted_at: Time.current
+      clabe: '012180001234567899', currency_code: 'MXN', deleted_at: Time.current
     )
 
     get admin_supplier_path(supplier, tab: 'bank_accounts')
@@ -118,7 +118,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(cards.first.text).to include('Delta Bank', bank.masked_number)
     expect(cards.first.css('.tabular-nums').size).to eq(1)
     expect(cards.first.text).not_to include('MXN', 'Supplier')
-    expect(panel('bank_accounts').text).not_to include('Archived Bank', '123456789012', '999987654321')
+    expect(panel('bank_accounts').text).not_to include('Archived Bank', '032180000118359719', '012180001234567899')
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
     heading_row = panel('bank_accounts').at_css('[data-finance-banks-heading-row]')
     expect(heading_row.at_css('h2')).to be_present
@@ -130,8 +130,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   it 'reuses the bank card design, hiding bank names when a logo exists' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'BBVA México', holder_name: 'Secret Account Holder',
-      account_number: '123456789012', currency_code: 'MXN', primary: true,
-      card_number: '4111111111111111'
+      clabe: '032180000118359719', currency_code: 'MXN', primary: true
     )
 
     get admin_supplier_path(supplier, tab: 'bank_accounts')
@@ -139,7 +138,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     cards = panel('bank_accounts').css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.size).to eq(1)
     expect(cards.first.text).to include('BBVA', bank.masked_number)
-    expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '123456789012')
+    expect(cards.first.text).not_to include('BBVA México', 'Secret Account Holder', 'MXN', '032180000118359719')
     expect(cards.first.at_css('[title="Primary"]')).to be_present
     expect(cards.first.at_css('summary[aria-label^="Bank account actions:"]')).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
@@ -149,7 +148,7 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
   it 'shows archived accounts only on their status tab and permits their recovery' do
     original = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Archived Bank', holder_name: 'Supplier',
-      account_number: '999987654321', currency_code: 'MXN', deleted_at: Time.current
+      clabe: '012180001234567899', currency_code: 'MXN', deleted_at: Time.current
     )
 
     get admin_supplier_path(supplier, tab: 'bank_accounts')
@@ -161,17 +160,17 @@ RSpec.describe 'Supplier financial statement and bank accounts', type: :request 
     expect(cards.first.text).to include('Archived Bank', 'Archived')
     expect(cards.first.at_css("form[action$='/bank_accounts/#{original.id}/restore']")).to be_present
     expect(panel('bank_accounts').at_css('[data-finance-bank-add-tile]')).to be_nil
-    expect(panel('bank_accounts').text).not_to include('999987654321')
+    expect(panel('bank_accounts').text).not_to include('012180001234567899')
   end
 
   it 'filters bank cards within the supplier and keeps the dossier tab selected' do
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'BBVA México', holder_name: 'Supplier',
-      account_number: '112233440001', currency_code: 'MXN'
+      clabe: '032180000118359719', currency_code: 'MXN'
     )
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Santander', holder_name: 'Supplier',
-      account_number: '998877660002', currency_code: 'MXN'
+      clabe: '012180001234567899', currency_code: 'MXN'
     )
 
     get admin_supplier_path(supplier, tab: 'bank_accounts', banks_bank: 'BBVA México')
