@@ -17,6 +17,10 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     page.evaluate_script('document.querySelector("[data-registration-form-card] form").getBoundingClientRect().height')
   end
 
+  def aside_top
+    page.evaluate_script('document.querySelector(".registration-page aside").getBoundingClientRect().top')
+  end
+
   def visit_administrator_step
     visit new_user_registration_path
     find('[data-setup-type="new"]').click
@@ -29,12 +33,12 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     visit_administrator_step
 
     height_before = form_height
-    aside_top_before = page.evaluate_script('document.querySelector(".registration-page aside").getBoundingClientRect().top')
+    aside_top_before = aside_top
     find('[data-registration-wizard-target="next"]').click
 
     expect(page).to have_css('[data-registration-field-error]', minimum: 3)
     expect(form_height).to be_within(1).of(height_before)
-    aside_top_after = page.evaluate_script('document.querySelector(".registration-page aside").getBoundingClientRect().top')
+    aside_top_after = aside_top
     expect(aside_top_after).to be_within(1).of(aside_top_before)
   end
 
