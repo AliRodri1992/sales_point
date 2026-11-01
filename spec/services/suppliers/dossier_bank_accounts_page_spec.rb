@@ -6,10 +6,16 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
 
+  def valid_clabe(value)
+    digits = format('032%014d', value.to_i)
+    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * [3, 7, 1][index % 3]) % 10 }
+    "#{digits}#{(10 - checksum % 10) % 10}"
+  end
+
   def create_account(name:, digits:, deleted_at: nil)
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: name, holder_name: 'Supplier',
-      account_number: "12345678#{digits}", currency_code: 'MXN', deleted_at:
+      clabe: valid_clabe(digits), currency_code: 'MXN', deleted_at:
     )
   end
 
@@ -28,15 +34,15 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
   end
 
   it 'filters by bank and searches the final four digits within the supplier' do
-    create_account(name: 'BBVA México', digits: '1100')
+    preferred = create_account(name: 'BBVA México', digits: '1100')
     create_account(name: 'Santander', digits: '2200')
     other = create(:supplier, organization:)
     SupplierBankAccount.create!(
       organization:, supplier: other, bank_name: 'BBVA México', holder_name: 'Other',
-      account_number: '555599991100', currency_code: 'MXN'
+      clabe: valid_clabe(1100), currency_code: 'MXN'
     )
 
-    page = described_class.new(supplier:, bank: 'BBVA México', query: '1100').call
+    page = described_class.new(supplier:, bank: 'BBVA México', query: preferred.last_four).call
 
     expect(page.accounts.map(&:bank_name)).to eq(['BBVA México'])
     expect(page.total_count).to eq(1)
@@ -72,7 +78,7 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
     bank = create(:sat_bank, code: '032', name: 'Banco SAT')
     SupplierBankAccount.create!(
       organization:, supplier:, sat_bank_code: bank.code, holder_name: 'Supplier',
-      account_number: '1234567890', currency_code: 'MXN'
+      clabe: valid_clabe(1234), currency_code: 'MXN'
     )
     create_account(name: 'Archived Bank', digits: '1234', deleted_at: Time.current)
 
