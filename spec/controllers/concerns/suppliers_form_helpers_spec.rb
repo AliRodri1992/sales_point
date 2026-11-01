@@ -113,15 +113,14 @@ RSpec.describe SuppliersFormHelpers do
   end
 
   it 'redirects updates from the overview to the general dossier' do
-    allow(handler).to receive(:params).and_return(ActionController::Parameters.new(return_to: 'overview'))
-    allow(handler).to receive(:admin_supplier_path).with(supplier, tab: 'general')
-                                                    .and_return('/supplier/general')
+    handler.define_singleton_method(:params) { ActionController::Parameters.new(return_to: 'overview') }
+    handler.define_singleton_method(:admin_supplier_path) { |_record, tab:| "/supplier/#{tab}" }
 
     expect(handler.send(:supplier_update_destination)).to eq('/supplier/general')
   end
 
   it 'retains newly uploaded attachments when editing a supplier' do
-    allow(handler).to receive(:supplier_params).and_return({ documents: ['uploaded-document'] })
+    handler.define_singleton_method(:supplier_params) { { documents: ['uploaded-document'] } }
 
     attributes = handler.send(:supplier_update_attributes)
 

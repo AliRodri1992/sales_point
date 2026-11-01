@@ -446,7 +446,8 @@ document.addEventListener("turbo:load", () => {
             // can blur the now offscreen close button; recover only if focus
             // was lost, without stealing it from an intentional next action.
             const recoverFocusIfLost = () => {
-                if (!sidebarToggle?.isConnected || sidebar.classList.contains("sidebar-open")) return
+                if (!sidebarToggle?.isConnected || sidebar.classList.contains("sidebar-open") ||
+                    window.innerWidth >= 1024) return
                 const focused = document.activeElement
                 const focusLost = !focused ||
                     focused === document.body ||
@@ -456,10 +457,12 @@ document.addEventListener("turbo:load", () => {
                     sidebarOverlay?.contains(focused)
                 if (focusLost) sidebarToggle.focus({ preventScroll: true })
             }
-            setTimeout(recoverFocusIfLost, 350)
-            // The drawer can finish its transform after the first focus check
-            // under an overloaded browser; do not strand keyboard focus on BODY.
-            setTimeout(recoverFocusIfLost, 700)
+            // Deferring restoration across the CSS transform keeps focus
+            // out of BODY even if Chrome blurs the removed, inert close button
+            // during a busy Turbo navigation. Never override a user's focus.
+            for (const delay of [0, 100, 350, 700, 1500, 3000]) {
+                setTimeout(recoverFocusIfLost, delay)
+            }
         }
     }
 

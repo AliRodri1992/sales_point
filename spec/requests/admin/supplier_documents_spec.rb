@@ -120,8 +120,7 @@ RSpec.describe 'Supplier document authorization', type: :request do
     limited_user = create(:user)
     create(:organization_membership, user: limited_user, organization:)
     limited_role = create(:system_role, :system, code: 'supplier_docs_upload_only')
-    limited_role.permissions << create(:permission, code: 'suppliers.documents.create',
-                                                      module_name: 'Proveedores')
+    limited_role.permissions << create(:permission, code: 'suppliers.documents.create', module_name: 'Proveedores')
     create(:user_role, user: limited_user, system_role: limited_role)
     sign_in limited_user
 
