@@ -13,10 +13,16 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     sign_in user
   end
 
+  def valid_clabe(value)
+    digits = format('032%014d', value.to_i)
+    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * [3, 7, 1][index % 3]) % 10 }
+    "#{digits}#{(10 - checksum % 10) % 10}"
+  end
+
   def bank_account(attributes = {})
     SupplierBankAccount.create!({
       organization:, supplier:, bank_name: 'Example Bank',
-      holder_name: 'Vendor Holdings', account_number: '123456789012',
+      holder_name: 'Vendor Holdings', clabe: valid_clabe(3456789012),
       currency_code: 'MXN'
     }.merge(attributes))
   end
@@ -48,7 +54,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     get admin_supplier_bank_accounts_path(supplier, archived: '1')
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include(account.account_number)
+    expect(response.body).not_to include(account.clabe)
     expect(document.text).to include(account.masked_number)
 
     patch restore_admin_supplier_bank_account_path(supplier, account)
@@ -70,7 +76,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   it 'renders three-column bank cards with masked data and permission-protected actions' do
     primary = bank_account(primary: true)
     bank_account(bank_name: 'Another Bank', holder_name: 'Vendor Finance',
-                 account_number: '9876543210', currency_code: 'USD')
+                 clabe: valid_clabe(9876543210), currency_code: 'USD')
 
     get admin_supplier_bank_accounts_path(supplier)
 
@@ -108,7 +114,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
   it 'provides server-side search, bank filtering, and pagination controls' do
     bank_account(currency_code: 'MXN')
-    bank_account(bank_name: 'USD Bank', currency_code: 'USD', account_number: '999900001234')
+    bank_account(bank_name: 'USD Bank', currency_code: 'USD', clabe: valid_clabe(9900001234))
 
     get admin_supplier_bank_accounts_path(supplier)
 
@@ -124,7 +130,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
   it 'paginates and filters more than eight supplier bank accounts' do
     10.times do |index|
-      bank_account(bank_name: "Bank #{index}", account_number: format('%012d', index + 1))
+      bank_account(bank_name: "Bank #{index}", clabe: valid_clabe(index + 1))
     end
     get admin_supplier_bank_accounts_path(supplier)
     expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(8)
@@ -134,15 +140,15 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.css('[data-supplier-bank-accounts-target="card"]').size).to eq(1)
   end
 
-  it 'retains the existing card design while masking the encrypted optional card number' do
-    account = bank_account(bank_name: 'BBVA México', card_number: '4111111111111111')
+  it 'retains the bank card design while hiding the encrypted CLABE' do
+    account = bank_account(bank_name: 'BBVA México')
 
     get admin_supplier_bank_accounts_path(supplier)
 
     card = document.at_css('[data-supplier-bank-accounts-target="card"]')
     expect(card.text).to include('BBVA', account.masked_number)
     expect(card.text).not_to include('MXN', 'Vendor Holdings', 'BBVA México')
-    expect(response.body).not_to include(account.account_number, account.card_number)
+    expect(response.body).not_to include(account.clabe, account.clabe)
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
   end
 
@@ -154,7 +160,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('form[data-controller~="supplier-bank-clabe"]')).to be_present
     expect(document.at_css('input[data-supplier-bank-clabe-target="clabe"]')).to be_present
     expect(document.at_css('select[data-supplier-bank-clabe-target="bank"]')).to be_present
-    expect(response.body).not_to include(account.account_number)
+    expect(response.body).not_to include(account.clabe)
   end
 
   it 'provides account type, blocked reason and verification state without collecting expiry or CVV' do
@@ -199,7 +205,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   end
 
   it 'renders the edit controls and keeps every encrypted input blank' do
-    account = bank_account(clabe: '012180001234567899', card_number: '4111111111111111')
+    account = bank_account(clabe: '012180001234567899')
 
     get edit_admin_supplier_bank_account_path(supplier, account)
 
@@ -211,14 +217,14 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
       input = document.at_css("input[name='supplier_bank_account[#{field}]']")
       expect(input['value']).to be_blank
     end
-    expect(response.body).not_to include(account.account_number, account.clabe, account.card_number)
+    expect(response.body).not_to include(account.clabe, account.clabe, account.clabe)
   end
 
   it 'forces new accounts active even when a forged request submits another status' do
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
         bank_name: 'Sample Bank', holder_name: 'Vendor Holdings',
-        account_number: '123456789012', currency_code: 'MXN',
+        clabe: valid_clabe(3456789012), currency_code: 'MXN',
         status: 'blocked', blocked_reason: 'Forged'
       }
     }
@@ -239,7 +245,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
         holder_name: '', clabe: 'invalid', sat_bank_code: '999',
-        bank_name: '', account_number: '12', card_number: '123',
+        bank_name: '', clabe: valid_clabe(12),
         account_type: 'unknown', currency_code: 'US',
         verification_status: 'invalid'
       }
@@ -364,7 +370,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   it 'accepts a blank SAT bank when registering a manual bank account' do
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: { sat_bank_code: '', bank_name: 'Manual Bank',
-                               holder_name: 'Vendor Holdings', account_number: '123456789012',
+                               holder_name: 'Vendor Holdings', clabe: valid_clabe(3456789012),
                                currency_code: 'MXN' }
     }
 
@@ -374,7 +380,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
   it 'atomically switches the primary bank account for a supplier' do
     original = bank_account(primary: true)
-    other = bank_account(bank_name: 'Backup bank', account_number: '999900001234')
+    other = bank_account(bank_name: 'Backup bank', clabe: valid_clabe(9900001234))
 
     patch admin_supplier_bank_account_path(supplier, other), params: {
       supplier_bank_account: { primary: '1' }
@@ -388,7 +394,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
 
   it 'does not demote a valid primary account when a blocked account attempts to become primary' do
     original = bank_account(primary: true)
-    other = bank_account(bank_name: 'Backup bank', account_number: '999900001234')
+    other = bank_account(bank_name: 'Backup bank', clabe: valid_clabe(9900001234))
 
     patch admin_supplier_bank_account_path(supplier, other), params: {
       supplier_bank_account: { primary: '1', status: 'blocked', blocked_reason: 'Cuenta comprometida' }
@@ -403,7 +409,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   it 'rolls back the previous primary bank demotion when the replacement is invalid' do
     original = bank_account(primary: true)
     post admin_supplier_bank_accounts_path(supplier), params: {
-      supplier_bank_account: { bank_name: 'Backup', account_number: '123456789',
+      supplier_bank_account: { bank_name: 'Backup', clabe: valid_clabe(123456789),
                                holder_name: '', currency_code: 'MXN', primary: '1' }
     }
 
@@ -434,7 +440,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect do
       post admin_supplier_bank_accounts_path(supplier), params: {
         supplier_bank_account: { bank_name: 'Not allowed', holder_name: 'New',
-                                 account_number: '55554444', currency_code: 'MXN' }
+                                 clabe: valid_clabe(55554444), currency_code: 'MXN' }
       }
     end.not_to change(SupplierBankAccount, :count)
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
