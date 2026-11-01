@@ -105,5 +105,4 @@ RSpec.describe 'Supplier report definitions' do
     expect(report.columns.find { |column| column[:label] == I18n.t('reports.suppliers.columns.phone', locale: :es) }
                  .fetch(:value).call(supplier)).to eq(phone.reload.number)
   end
-
 end
