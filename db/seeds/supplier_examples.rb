@@ -2,6 +2,7 @@
 
 require_relative 'supplier_organization_examples'
 require_relative 'supplier_phone_examples'
+require_relative 'supplier_primary_dossier_examples'
 
 # Sample tenant and suppliers for a fresh development database.
 # Codes and RFCs are deterministic so db:seed can be run repeatedly.
@@ -19,6 +20,8 @@ module SupplierExamples
   end
 
   class << self
+    include SupplierPrimaryDossierExamples
+
     private
 
     def seed_demo_fiscal_regime
@@ -67,21 +70,6 @@ module SupplierExamples
         fill_missing_details(supplier, attributes)
       end
       create_contact(supplier, number)
-    end
-
-    def build_primary_dossier(supplier, number)
-      country = Country.find_by!(iso_alpha2: 'MX')
-      supplier.contacts.build(
-        name: "Contacto #{number}", email: "contacto#{number}@example.com",
-        position: 'Ventas', primary: true, active: true,
-        notes: 'Contacto ficticio para demostración.'
-      )
-      supplier.addresses.build(
-        purpose: 'fiscal', primary: true, country:,
-        street: "Avenida Ejemplo #{number}", exterior_number: (100 + number).to_s,
-        neighborhood: 'Centro', city: 'Cuautitlán Izcalli',
-        state: 'Estado de México', postal_code: '54700'
-      )
     end
 
     def supplier_attributes(number, organization)

@@ -2,6 +2,7 @@ module ApplicationHelper
   include BreadcrumbsHelper
   include PaginationHelper
   include DeltaIconsHelper
+  include SupplierPhoneIconHelper
 
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
@@ -43,14 +44,6 @@ module ApplicationHelper
     return true unless progress
 
     progress[:sections].find { |item| item[:key].to_sym == section.to_sym }&.fetch(:percentage, 100) == 100
-  end
-
-  def supplier_phone_icon_name(kind)
-    case kind.to_s
-    when 'mobile' then 'phone-mobile'
-    when 'landline' then 'phone-landline'
-    else 'phone'
-    end
   end
 
   SIDEBAR_CONTROLLER_GROUPS = {

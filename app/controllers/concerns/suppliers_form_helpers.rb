@@ -2,6 +2,7 @@
 
 module SuppliersFormHelpers
   include SupplierFormAuthorization
+  include SupplierFormCatalogs
 
   private
 
@@ -95,15 +96,6 @@ module SuppliersFormHelpers
 
       GeocodeAddressJob.perform_later(address.id, address.geocoding_fingerprint)
     end
-  end
-
-  def load_fiscal_regimes
-    @fiscal_regimes = SatFiscalRegime.current.order(:code)
-  end
-
-  def load_reference_catalogs
-    @currencies = Currency.active.order(:code)
-    @countries = Country.active.ordered
   end
 
   def build_new_supplier
