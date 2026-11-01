@@ -40,6 +40,9 @@ module SupplierDossierExamples
       seed_addresses(supplier, country, featured ? ADDRESSES_PER_FEATURED_SUPPLIER : 3)
       seed_documents(supplier, featured ? DOCUMENTS_PER_FEATURED_SUPPLIER : 2)
       SupplierDemoDocuments.seed!(supplier:, featured:)
+      # Dossier pages use SupplierDocument metadata, not the raw Active Storage attachments.
+      # Reconcile explicitly so a missing callback cannot leave seeded files invisible.
+      SupplierDocument.import_existing!(supplier)
       seed_schedules(supplier, branches, featured ? SCHEDULES_PER_FEATURED_SUPPLIER : 2)
       SupplierCalendarEvents.seed!(supplier:, branches:) if featured
       report_supplier(supplier)
@@ -48,7 +51,8 @@ module SupplierDossierExamples
     def report_supplier(supplier)
       $stdout.puts "[SEEDS][EXPEDIENTE][OK] #{supplier.code}: contactos=#{supplier.contacts.not_deleted.count} " \
                    "direcciones=#{supplier.addresses.not_deleted.count} " \
-                   "documentos=#{supplier.documents.attachments.count} " \
+                   "adjuntos=#{supplier.documents.attachments.count} " \
+                   "documentos_visibles=#{supplier.supplier_documents.visible.count} " \
                    "calendarios=#{supplier.supplier_schedules.not_deleted.count}"
     end
 
