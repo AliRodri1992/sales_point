@@ -97,11 +97,7 @@ class SupplierBankAccount < ApplicationRecord
     self.primary = false if status.in?(%w[inactive blocked])
     self.blocked_reason = blocked_reason.to_s.strip.presence if status == 'blocked'
     self.blocked_reason = nil unless status == 'blocked'
-    if verification_status == 'verified'
-      self.verified_at ||= Time.current
-    else
-      self.verified_at = nil
-    end
+    self.verified_at = nil unless verification_status == 'verified'
   end
 
   def compact_number(value) = value.to_s.delete(" \t\n").presence
