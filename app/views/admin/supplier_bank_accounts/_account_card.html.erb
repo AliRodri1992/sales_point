@@ -18,9 +18,9 @@
 <% muted = brand == :santander ? 'text-slate-600' : 'text-white/80' %>
 <% archived = account.deleted_at.present? %>
 <article data-supplier-bank-accounts-target="card"
-         data-search="<%= [bank_name, account.holder_name, account.last_four, account.card_last_four].compact.join(' ').downcase %>"
+         data-search="<%= [bank_name, account.holder_name, account.last_four].compact.join(' ').downcase %>"
          class="group relative isolate z-0 flex min-h-[214px] min-w-0 flex-col justify-between rounded-2xl border border-white/10 p-5 shadow-sm transition hover:z-20 hover:-translate-y-0.5 hover:shadow-lg focus-within:z-20 <%= card_style %>"
-         aria-label="<%= t('admin.bank_cards.account_accessible', bank: bank_name, digits: account.card_last_four.presence || account.last_four.presence || '----') %>">
+         aria-label="<%= t('admin.bank_cards.account_accessible', bank: bank_name, digits: account.last_four.presence || '----') %>">
   <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-2xl">
     <div class="absolute -bottom-20 -right-20 size-52 rounded-full border-[32px] border-current opacity-[0.06]"></div>
     <div class="absolute -right-8 top-12 h-44 w-28 rotate-30 bg-current opacity-[0.05]"></div>
