@@ -38,6 +38,24 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(settings.reload.default_table_page_size).to eq(10)
   end
 
+  it 'returns not found when the organization settings have been archived' do
+    settings.update_column(:deleted_at, Time.current)
+
+    get admin_general_settings_path
+    expect(response).to have_http_status(:not_found)
+
+    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'denies a system administrator without an active organization membership' do
+    user.organization_memberships.update_all(status: 'inactive')
+
+    get admin_general_settings_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'prevents non-administrators from reading or changing general settings' do
     user.user_roles.delete_all
     get admin_general_settings_path

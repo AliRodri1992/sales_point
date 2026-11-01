@@ -364,6 +364,34 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_nil
   end
 
+  it 'keeps inactive and blocked bank accounts in their own status filters' do
+    inactive = bank_account(status: 'inactive', bank_name: 'Inactive Account', clabe: valid_clabe(4_001))
+    blocked = bank_account(status: 'blocked', blocked_reason: 'Security hold',
+                           bank_name: 'Blocked Account', clabe: valid_clabe(4_002))
+
+    get admin_supplier_bank_accounts_path(supplier, status: 'inactive')
+    cards = document.css('[data-supplier-bank-accounts-target="card"]')
+    expect(cards.size).to eq(1)
+    expect(cards.first['data-search']).to include(inactive.last_four)
+
+    get admin_supplier_bank_accounts_path(supplier, status: 'blocked')
+    cards = document.css('[data-supplier-bank-accounts-target="card"]')
+    expect(cards.size).to eq(1)
+    expect(cards.first['data-search']).to include(blocked.last_four)
+
+    get admin_supplier_bank_accounts_path(supplier, status: 'active')
+    expect(document.css('[data-supplier-bank-accounts-target="card"]')).to be_empty
+  end
+
+  it 'prefers the recognized SAT bank name in account cards and filters' do
+    create(:sat_bank, code: '032', name: 'Banco SAT')
+    bank_account(bank_name: 'Manual Bank', clabe: valid_clabe(4_003))
+
+    get admin_supplier_bank_accounts_path(supplier)
+
+    expect(document.text).to include('Banco SAT')
+  end
+
   it 'returns to the bank accounts tab of the supplier dossier' do
     bank_account
 
