@@ -92,7 +92,7 @@ RSpec.describe SupplierCommercialExamples do
     account = manual.supplier_bank_accounts.create!(
       organization:, holder_name: 'Cuenta administrada manualmente',
       bank_name: 'Banco configurado por usuario', currency_code: 'MXN',
-      account_number: '9876543210'
+      clabe: '032180000118359719'
     )
 
     2.times { described_class.seed_bank_accounts! }
