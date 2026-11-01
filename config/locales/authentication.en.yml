@@ -16,3 +16,15 @@ en:
       toggle: "Choose language"
       update_error_title: "Unable to change language"
       update_error_message: "Please try again."
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "can't be blank"
+            password:
+              blank: "can't be blank"
+            password_confirmation:
+              confirmation: "doesn't match the password"

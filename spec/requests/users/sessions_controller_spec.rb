@@ -22,14 +22,26 @@ RSpec.describe Users::SessionsController, type: :request do
     post user_session_path, params: { user: { email: '', password: '' } }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(flash[:alert]).to eq(I18n.t('devise.failure.user.invalid'))
+    expect(flash[:alert]).to be_nil
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('#user_email')['class']).to include('input-field-error')
     expect(page.at_css('#user_password')['class']).to include('input-field-error')
     expect(page.text).not_to include('Password confirmation')
     expect(page.at_css('form[action="/users/sign_in"]')).to be_present
-    expect(page.at_css('[data-controller="swal-flash"]')).to be_present
+    expect(page.at_css('[data-controller="swal-flash"]')).to be_nil
     expect(page.at_css('[data-controller="swal-flash"] form')).to be_nil
+  end
+
+  it 'shows model-derived field messages below their inputs, without browser-native validation' do
+    post user_session_path, params: { user: { email: '', password: '' } }
+
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css('form[action="/users/sign_in"]')
+    expect(form['novalidate']).to be_present
+    expect(document.at_css('#login-email-error').text).to include(User.human_attribute_name(:email))
+    expect(document.at_css('#login-password-error').text).to include(User.human_attribute_name(:password))
+    expect(document.at_css('#login-email-error')['class']).to include('h-10')
+    expect(document.at_css('#user_email')['data-auth-blank-message']).to include(User.human_attribute_name(:email))
   end
 
   it 'keeps the remember-me selection when credentials are incomplete' do
@@ -53,7 +65,7 @@ RSpec.describe Users::SessionsController, type: :request do
     post user_session_path, params: { user: { email: '', password: '' } }
 
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('[data-controller="swal-flash"]')).to be_present
+    expect(document.at_css('[data-controller="swal-flash"]')).to be_nil
     expect(document.at_css('[data-controller="swal-flash"] form')).to be_nil
     expect(document.at_css('form[action="/users/sign_in"]')).to be_present
   end

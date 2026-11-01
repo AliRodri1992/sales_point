@@ -104,9 +104,15 @@ export default class extends Controller {
 
   submitLogin(event) {
     if (!this.hasLoginSubmitTarget) return
-    if (!event.target.checkValidity()) {
+    let firstInvalid = null
+    this.inputTargets.forEach((input) => {
+      if (input.value.trim()) return
+      this.showFieldError(input, input.dataset.authBlankMessage)
+      firstInvalid ||= input
+    })
+    if (firstInvalid) {
       event.preventDefault()
-      event.target.reportValidity()
+      firstInvalid.focus()
       return
     }
     if (this.loginSubmitTarget.disabled) {
@@ -130,19 +136,32 @@ export default class extends Controller {
     if (label && this.originalLabel) label.textContent = this.originalLabel
   }
 
+  showFieldError(input, message) {
+    const slot = input.closest("[data-login-field]")?.querySelector('[role="status"]')
+    if (!slot || !message) return
+    slot.replaceChildren()
+    const line = document.createElement("p")
+    line.className = "font-medium"
+    line.dataset.serverFieldError = "true"
+    line.textContent = message
+    slot.appendChild(line)
+    input.setAttribute("aria-invalid", "true")
+    input.setAttribute("aria-describedby", slot.id)
+    input.classList.add("input-field-error", "border-rose-500", "bg-rose-50")
+    input.classList.remove("border-slate-200")
+  }
+
   clearErrors(event) {
-    if (this.bannerTimeout) clearTimeout(this.bannerTimeout)
     const input = event?.target
-    if (input?.matches("input")) {
-      input.style.removeProperty("box-shadow")
-      input.style.removeProperty("border-color")
-      input.classList.remove("input-field-error", "border-rose-500", "bg-rose-50")
-      input.classList.add("border-slate-200")
-      input.setAttribute("aria-invalid", "false")
-      input.removeAttribute("aria-describedby")
-      input.closest("[data-login-field]")?.querySelector("[data-server-field-error]")?.remove()
-    }
-    if (this.hasErrorBannerTarget) this.errorBannerTarget.classList.add("hidden", "translate-y-2", "opacity-0")
+    if (!input?.matches("input") || !input.closest("[data-login-field]")) return
+    const slot = input.closest("[data-login-field]").querySelector('[role="status"]')
+    slot?.replaceChildren()
+    input.style.removeProperty("box-shadow")
+    input.style.removeProperty("border-color")
+    input.classList.remove("input-field-error", "border-rose-500", "bg-rose-50")
+    input.classList.add("border-slate-200")
+    input.setAttribute("aria-invalid", "false")
+    input.removeAttribute("aria-describedby")
   }
 
   showErrors() {

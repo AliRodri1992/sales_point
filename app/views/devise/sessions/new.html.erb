@@ -128,6 +128,7 @@
               url: session_path(resource_name),
               html: {
                 class: "space-y-5",
+                novalidate: true,
                 data: { action: "submit->terminal#submitLogin turbo:submit-end->terminal#finishLogin" }
               }
             ) do |f| %>
@@ -155,11 +156,12 @@
                     class: "input-field block w-full appearance-none rounded-xl border bg-white py-3 pl-9 pr-3 text-base text-slate-800 shadow-sm transition-all placeholder:text-slate-400 #{email_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
                     data: {
                       terminal_target: "input",
+                      auth_blank_message: authentication_blank_message(resource, :email),
                       action: "input->terminal#clearErrors"
                     }
                   ) %>
                 </div>
-                <div id="login-email-error"><%= error_message_for(resource, :email) %></div>
+                <%= authentication_field_message(resource, :email, id: "login-email-error") %>
               </div>
 
               <div data-login-field>
@@ -185,6 +187,7 @@
                     class: "input-field block w-full appearance-none rounded-xl border bg-white py-3 pl-9 pr-12 text-base text-slate-900 shadow-sm transition-all #{password_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
                     data: {
                       terminal_target: "input password",
+                      auth_blank_message: authentication_blank_message(resource, :password),
                       action: "input->terminal#clearErrors"
                     }
                   ) %>
@@ -206,7 +209,7 @@
                     </span>
                   </button>
                 </div>
-                <div id="login-password-error"><%= error_message_for(resource, :password) %></div>
+                <%= authentication_field_message(resource, :password, id: "login-password-error") %>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-3">

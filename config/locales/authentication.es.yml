@@ -16,3 +16,15 @@ es:
       toggle: "Elegir idioma"
       update_error_title: "No se pudo cambiar el idioma"
       update_error_message: "Inténtalo nuevamente."
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "no puede estar vacío"
+            password:
+              blank: "no puede estar vacía"
+            password_confirmation:
+              confirmation: "no coincide con la contraseña"

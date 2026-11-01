@@ -17,12 +17,12 @@ module Authentication
       # Don't show banner if SweetAlert2 is handling the error
       return false if view_context.flash[:swal_message].present?
 
-      resource.errors.any? || view_context.flash[:alert].present?
+      resource.errors[:base].any? || view_context.flash[:alert].present?
     end
 
     def message
       view_context.flash[:alert].presence ||
-        resource.errors.full_messages.to_sentence
+        resource.errors.full_messages_for(:base).to_sentence
     end
   end
 end
