@@ -1,38 +1,66 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Only show bank accounts owned by the chosen supplier in the chosen currency.
+// Fetch only bank accounts for the selected supplier and currency.
+// Other suppliers' financial data must never be embedded in the form markup.
 export default class extends Controller {
   static targets = ["supplier", "currency", "account"]
+  static values = { url: String }
 
   connect() {
+    this.requestVersion = 0
+    this.pendingRequest = null
     this.filter()
   }
 
-  filter() {
+  disconnect() {
+    this.pendingRequest?.abort()
+  }
+
+  async filter() {
     if (!this.hasSupplierTarget || !this.hasCurrencyTarget || !this.hasAccountTarget) return
 
     const supplierId = this.supplierTarget.value
-    const currencyCode = this.currencyTarget.selectedOptions[0]?.textContent?.trim()
+    const currencyId = this.currencyTarget.value
     const account = this.accountTarget
     const previousValue = account.value
+    const version = ++this.requestVersion
 
-    for (const option of account.options) {
-      if (!option.value) continue
+    this.pendingRequest?.abort()
+    this.pendingRequest = null
+    this.replaceOptions([], previousValue)
 
-      const allowed = option.dataset.supplierId === supplierId &&
-        option.dataset.currencyCode === currencyCode
+    if (!supplierId || !currencyId || !this.hasUrlValue) return
 
-      option.hidden = !allowed
-      option.disabled = !allowed
+    const controller = new AbortController()
+    this.pendingRequest = controller
+    const url = new URL(this.urlValue, window.location.origin)
+    url.searchParams.set("supplier_id", supplierId)
+    url.searchParams.set("currency_id", currencyId)
+
+    try {
+      const response = await fetch(url.toString(), {
+        headers: { Accept: "application/json" },
+        credentials: "same-origin",
+        signal: controller.signal
+      })
+      if (!response.ok) throw new Error("Unable to load bank accounts")
+      const data = await response.json()
+      if (version !== this.requestVersion) return
+      this.replaceOptions(data.accounts || [], previousValue)
+    } catch (error) {
+      if (error.name !== "AbortError" && version === this.requestVersion) {
+        this.replaceOptions([], previousValue)
+      }
     }
+  }
 
-    const selected = account.selectedOptions[0]
-    if (selected?.disabled || selected?.hidden) account.value = ""
-
-    // Changing a native select programmatically does not emit "change".
-    // Notify the branded dropdown and any other dependent form controls.
-    if (account.value !== previousValue) {
-      account.dispatchEvent(new Event("change", { bubbles: true }))
-    }
+  replaceOptions(options, previousValue) {
+    const account = this.accountTarget
+    const blank = new Option("", "")
+    const entries = options.map(({ id, label }) => new Option(label, String(id)))
+    account.replaceChildren(blank, ...entries)
+    if (entries.some((entry) => entry.value === previousValue)) account.value = previousValue
+    else account.value = ""
+    account.dispatchEvent(new Event("change", { bubbles: true }))
   }
 }
