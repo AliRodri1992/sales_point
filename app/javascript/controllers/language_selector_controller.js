@@ -21,7 +21,7 @@ export default class extends Controller {
         openDashboardSelector(this.element)
         this.dropdownTarget.classList.remove("hidden")
         this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "true")
-        this.refreshDropdownContent()
+        if (!window.location.pathname.startsWith("/users/")) this.refreshDropdownContent()
     }
 
     close() {

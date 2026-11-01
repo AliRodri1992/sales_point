@@ -144,6 +144,7 @@
 
                   <%= f.email_field(
                     :email,
+                    required: true,
                     autocomplete: "email",
                     placeholder: t(".email_placeholder"),
                     class: "input-field block w-full appearance-none rounded-xl border bg-white py-3 pl-9 pr-3 text-base text-slate-800 shadow-sm transition-all placeholder:text-slate-400 #{email_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",
@@ -171,6 +172,7 @@
 
                   <%= f.password_field(
                     :password,
+                    required: true,
                     autocomplete: "current-password",
                     placeholder: "••••••••",
                     class: "input-field block w-full appearance-none rounded-xl border bg-white py-2 pl-9 pr-10 text-base text-slate-900 shadow-sm transition-all #{password_has_error ? 'input-field-error border-rose-500 bg-rose-50' : 'border-slate-200'}",

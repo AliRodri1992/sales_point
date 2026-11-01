@@ -100,7 +100,12 @@ export default class extends Controller {
 
 
     submitLogin(event) {
-        if (!this.hasLoginSubmitTarget || !event.target.checkValidity()) return
+        if (!this.hasLoginSubmitTarget) return
+        if (!event.target.checkValidity()) {
+            event.preventDefault()
+            event.target.reportValidity()
+            return
+        }
 
         if (this.loginSubmitTarget.disabled) {
             event.preventDefault()

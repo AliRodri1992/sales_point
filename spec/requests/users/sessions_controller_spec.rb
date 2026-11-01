@@ -23,6 +23,27 @@ RSpec.describe Users::SessionsController, type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(flash[:alert]).to eq(I18n.t('devise.failure.invalid'))
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#user_email')['class']).to include('input-field-error')
+    expect(page.at_css('#user_password')['class']).to include('input-field-error')
+    expect(page.text).not_to include('Password confirmation')
+  end
+
+  it 'keeps the remember-me selection when credentials are incomplete' do
+    post user_session_path, params: { user: { email: '', password: '', remember_me: '1' } }
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#user_remember_me')['checked']).to be_present
+  end
+
+  it 'exposes accessible password and theme controls' do
+    get new_user_session_path
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-action*="terminal#togglePassword"]')['aria-pressed']).to eq('false')
+    expect(page.at_css('[data-theme-toggle]')['aria-expanded']).to eq('false')
+    expect(page.at_css('#user_email')['required']).to be_present
+    expect(page.at_css('#user_password')['required']).to be_present
   end
 
   it 'signs in successfully and stores the SweetAlert session message' do
