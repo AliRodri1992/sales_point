@@ -8,13 +8,13 @@ RSpec.describe 'Financial security validation' do
   let(:currency) { supplier.currency }
   let(:user) { create(:user) }
 
-  it 'rejects invalid supplier account numbers' do
+  it 'rejects invalid supplier CLABE numbers' do
     account = SupplierBankAccount.new(
       organization:, supplier:, bank_name: 'Demo', holder_name: 'Owner',
-      account_number: 'abc123', currency_code: currency.code
+      clabe: 'abc123', currency_code: currency.code
     )
     expect(account).not_to be_valid
-    expect(account.errors[:account_number]).to be_present
+    expect(account.errors[:clabe]).to be_present
   end
 
   it 'rejects a CLABE that belongs to another bank code' do
@@ -45,7 +45,7 @@ RSpec.describe 'Financial security validation' do
     foreign = create(:supplier, organization:)
     account = SupplierBankAccount.create!(
       organization:, supplier: foreign, bank_name: 'Demo',
-      holder_name: 'Owner', account_number: '12345678', currency_code: currency.code
+      holder_name: 'Owner', clabe: '032180000118359719', currency_code: currency.code
     )
     payment = SupplierPayment.new(
       organization:, supplier:, currency:, created_by: user,
