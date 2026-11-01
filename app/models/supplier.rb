@@ -90,43 +90,12 @@ class Supplier < ApplicationRecord
   end
 
   def latest_generated_code_number
-    Supplier.unscoped.where(organization_id: organization.id)
-            .where("code ~ ?", '^PROV-[0-9]+
-  end
-
-  def responsible_user_in_organization
-    return if responsible_user.blank?
-
-    memberships = organization&.organization_memberships&.active
-    errors.add(:responsible_user, :invalid) unless memberships&.exists?(user_id: responsible_user_id)
-  end
-
-  def normalize_fields
-    normalize_text_field(:code, &:strip)
-    normalize_text_field(:name, &:strip)
-    %i[legal_name trade_name alias_name].each { |field| normalize_text_field(field, &:strip) }
-    normalize_email
-    normalize_rfc
-    normalize_text_field(:notes, &:strip)
-  end
-
-  def normalize_text_field(field, &normalization)
-    value = send(field)
-    return if value.blank?
-
-    value = value.strip if normalization
-    send("#{field}=", value)
-  end
-
-  def normalize_email = (self.email = email.to_s.strip.downcase.presence)
-
-  def normalize_rfc
-    rfc_value = rfc.to_s.strip.upcase
-    self.rfc = rfc_value.presence
-  end
-end
-)
-            .maximum(Arel.sql("CAST(SUBSTRING(code FROM 6) AS bigint)")) || 0
+    codes = Supplier.unscoped.where(organization_id: organization.id)
+                    .where('code LIKE ?', 'PROV-%').pluck(:code)
+    codes.filter_map do |value|
+      digits = value.delete_prefix('PROV-')
+      digits.to_i if digits.match?(/\A[0-9]+\z/)
+    end.max || 0
   end
 
   def responsible_user_in_organization
