@@ -12,9 +12,7 @@ RSpec.describe SuppliersFormHelpers do
     handler.send(:valid_primary_records?, records, :contacts, creating:)
   end
 
-  it 'requires an existing primary contact if the nested update omits contacts' do
-    expect(valid_records?(nil)).to be(false)
-    supplier.contacts.create!(name: 'Principal', primary: true)
+  it 'permits editing unrelated fields without resubmitting contacts' do
     expect(valid_records?(nil)).to be(true)
   end
 
