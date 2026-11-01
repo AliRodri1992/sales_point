@@ -6,8 +6,8 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
 
-  def valid_clabe(value)
-    digits = format('032%014d', value.to_i)
+  def valid_clabe(value, bank_code: '032')
+    digits = format('%s%014d', bank_code, value.to_i)
     weights = [3, 7, 1]
     checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * weights[index % 3]) % 10 }
     "#{digits}#{(10 - (checksum % 10)) % 10}"
@@ -81,7 +81,10 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
       organization:, supplier:, sat_bank_code: bank.code, holder_name: 'Supplier',
       clabe: valid_clabe(1234), currency_code: 'MXN'
     )
-    create_account(name: 'Archived Bank', digits: '1234', deleted_at: Time.current)
+    SupplierBankAccount.create!(
+      organization:, supplier:, bank_name: 'Archived Bank', holder_name: 'Supplier',
+      clabe: valid_clabe(1234, bank_code: '999'), currency_code: 'MXN', deleted_at: Time.current
+    )
 
     page = described_class.new(supplier:, status: 'all', bank: 'Banco SAT').call
     expect(page.banks).to include('Banco SAT', 'Archived Bank')
