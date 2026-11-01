@@ -4,6 +4,9 @@ es:
     login:
       show_password: "Mostrar contraseña"
       hide_password: "Ocultar contraseña"
+      back_to_sign_in: "Volver al inicio de sesión"
+      recovery_instructions: "Escribe tu correo y te enviaremos un enlace para recuperar el acceso."
+      reset_instructions: "Establece una contraseña segura para volver a ingresar."
     theme_selector:
       label: "Tema"
       title: "Elige un tema de color"

@@ -82,6 +82,18 @@ RSpec.describe Rack::Attack do
     expect(response.status).to eq(200)
   end
 
+  it 'localizes throttle feedback using the terminal language cookie' do
+    6.times do
+      response = client.request(:post, '/users/sign_in',
+                                'REMOTE_ADDR' => ip,
+                                'HTTP_COOKIE' => 'terminal_language=es')
+      next unless response.status == 429
+
+      expect(response.body).to include('Demasiados intentos')
+      expect(response['Retry-After']).to eq('60')
+    end
+  end
+
   it 'retains a global rate limit of 1,200 requests per IP within five minutes' do
     1_200.times { expect(request('/up')).to eq(200) }
 

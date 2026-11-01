@@ -1,25 +1,32 @@
-<h2><%= t('devise.passwords.edit.title') %></h2>
+<% content_for :title, t('devise.passwords.edit.title') %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+<main class="flex min-h-screen items-center justify-center bg-slate-900 px-4 py-12 sm:px-6">
+  <section class="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl sm:p-10" aria-labelledby="password-reset-title">
+    <p class="mb-8 font-jakarta text-xl font-extrabold tracking-tight text-slate-900">DELTA <span class="text-emerald-600">POS</span></p>
+    <h1 id="password-reset-title" class="font-jakarta text-2xl font-bold text-slate-900"><%= t('devise.passwords.edit.title') %></h1>
+    <p class="mt-2 text-sm leading-relaxed text-slate-600"><%= t('authentication.login.reset_instructions') %></p>
 
-  <div class="field">
-    <p><%= f.label :password, t('devise.passwords.edit.new_password') %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= t('devise.passwords.edit.minimum', count: @minimum_password_length) %>)</em></p>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'mt-7 space-y-5' }) do |f| %>
+      <%= render 'devise/shared/error_messages', resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+      <div>
+        <%= f.label :password, t('devise.passwords.edit.new_password'), class: 'block text-sm font-semibold text-slate-700' %>
+        <% if @minimum_password_length %>
+          <p class="mt-1 text-xs text-slate-500"><%= t('devise.passwords.edit.minimum', count: @minimum_password_length) %></p>
+        <% end %>
+        <%= f.password_field :password, required: true, autofocus: true, autocomplete: 'new-password',
+                             minlength: @minimum_password_length,
+                             class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20' %>
+      </div>
+      <div>
+        <%= f.label :password_confirmation, t('devise.passwords.edit.confirm_password'), class: 'block text-sm font-semibold text-slate-700' %>
+        <%= f.password_field :password_confirmation, required: true, autocomplete: 'new-password',
+                             class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20' %>
+      </div>
+      <%= f.submit t('devise.passwords.edit.submit'),
+                   class: 'min-h-12 w-full cursor-pointer rounded-xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
     <% end %>
-    <p><%= f.password_field :password, autofocus: true, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation, t('devise.passwords.edit.confirm_password') %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit t('devise.passwords.edit.submit') %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+    <%= link_to t('authentication.login.back_to_sign_in'), new_user_session_path,
+                class: 'mt-6 inline-flex text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:underline' %>
+  </section>
+</main>

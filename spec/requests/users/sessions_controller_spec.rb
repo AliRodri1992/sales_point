@@ -49,6 +49,25 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(page.at_css('#user_password')['required']).to be_present
   end
 
+  it 'renders a standalone flash alert outside the authentication form' do
+    post user_session_path, params: { user: { email: '', password: '' } }
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="swal-flash"]')).to be_present
+    expect(document.at_css('[data-controller="swal-flash"] form')).to be_nil
+    expect(document.at_css('form[action="/users/sign_in"]')).to be_present
+  end
+
+  it 'exposes accessible field validation and localized password controls' do
+    post user_session_path, params: { user: { email: '', password: '' } }
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#user_email')['aria-invalid']).to eq('true')
+    expect(document.at_css('#user_password')['aria-invalid']).to eq('true')
+    expect(document.at_css('#login-email-error [data-server-field-error]')).to be_present
+    expect(document.at_css('[data-show-label]')['data-show-label']).to eq(I18n.t('authentication.login.show_password'))
+  end
+
   it 'signs in successfully and stores the SweetAlert session message' do
     post user_session_path, params: {
       user: { email: user.email, password: }
