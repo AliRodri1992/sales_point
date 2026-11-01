@@ -120,6 +120,7 @@ es:
         position: "Cargo"
         email: "Correo electrónico"
         phone: "Teléfono"
+        office_phone: "Teléfono de oficina"
         mobile_phone: "Celular"
         notes: "Notas"
         primary: "Principal"

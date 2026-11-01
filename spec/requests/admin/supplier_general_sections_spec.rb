@@ -49,7 +49,7 @@ RSpec.describe 'Supplier general dossier sections', type: :request do
     expect(details).to include(I18n.t('admin.supplier_details.contact_form.primary_contact_label'))
     expect(details).to include(I18n.t('admin.supplier_details.contact_fields.name'))
     expect(details).to include(I18n.t('admin.supplier_details.contact_fields.office_phone'))
-    expect(details).not_to include('Contacto principal')
+    expect(details).to include(I18n.t('admin.supplier_details.contact_fields.mobile_phone'))
   end
 
   it 'retains the edit entry point in the independent general header' do

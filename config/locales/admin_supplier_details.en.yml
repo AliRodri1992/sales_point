@@ -120,6 +120,7 @@ en:
         position: "Position"
         email: "Email"
         phone: "Phone"
+        office_phone: "Office phone"
         mobile_phone: "Mobile phone"
         notes: "Notes"
         primary: "Primary"

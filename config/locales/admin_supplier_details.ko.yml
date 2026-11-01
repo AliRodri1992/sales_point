@@ -120,6 +120,7 @@ ko:
         position: "직책"
         email: "이메일"
         phone: "전화번호"
+        office_phone: "사무실 전화"
         mobile_phone: "휴대전화"
         notes: "메모"
         primary: "대표"
