@@ -94,12 +94,9 @@ class Supplier < ApplicationRecord
   end
 
   def latest_generated_code_number
-    codes = Supplier.unscoped.where(organization_id: organization.id)
-                    .where('code LIKE ?', 'PROV-%').pluck(:code)
-    codes.filter_map do |value|
-      digits = value.delete_prefix('PROV-')
-      digits.to_i if digits.match?(/\A[0-9]+\z/)
-    end.max || 0
+    Supplier.unscoped.where(organization_id: organization.id)
+            .where('code ~ ?', '^PROV-[0-9]+$')
+            .maximum(Arel.sql("CAST(SUBSTRING(code FROM 6) AS bigint)")) || 0
   end
 
   def primary_dossier_required
