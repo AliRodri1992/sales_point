@@ -17,10 +17,8 @@ module Admin
 
     def show
       authorize @membership_plan
-      @plan_features = @membership_plan.membership_plan_features
-                                        .where(deleted_at: nil)
-                                        .includes(:membership_feature)
-                                        .order(:position)
+      assignments = @membership_plan.membership_plan_features
+      @plan_features = assignments.where(deleted_at: nil).includes(:membership_feature).order(:position)
     end
 
     def new
@@ -31,6 +29,11 @@ module Admin
         trial_days: 14,
         position: 0
       )
+      authorize @membership_plan
+      load_features
+    end
+
+    def edit
       authorize @membership_plan
       load_features
     end
@@ -50,11 +53,6 @@ module Admin
     rescue ActiveRecord::RecordInvalid
       load_features
       render :new, status: :unprocessable_content
-    end
-
-    def edit
-      authorize @membership_plan
-      load_features
     end
 
     def update
@@ -93,32 +91,16 @@ module Admin
     end
 
     def sync_features!
-      selected_ids = Array(params[:feature_ids]).compact_blank.map(&:to_i)
-      values = params[:feature_values] || {}
-      limits = params[:feature_limits] || {}
-      enabled = Array(params[:feature_ids]).compact_blank.map(&:to_i)
-
-      @membership_plan.membership_plan_features.where.not(membership_feature_id: selected_ids).find_each do |assignment|
-        assignment.update!(deleted_at: Time.current)
-      end
-
-      selected_ids.each_with_index do |feature_id, index|
-        plan_feature = @membership_plan.membership_plan_features
-                                       .find_or_initialize_by(membership_feature_id: feature_id)
-        plan_feature.assign_attributes(
-          enabled: enabled.include?(feature_id),
-          value: values[feature_id.to_s],
-          limit: limits[feature_id.to_s].presence,
-          position: index,
-          deleted_at: nil
-        )
-        plan_feature.save!
-      end
+      Membership::PlanFeatureSync.new(@membership_plan).call(
+        selected_ids: params[:feature_ids],
+        values: params[:feature_values],
+        limits: params[:feature_limits]
+      )
     end
 
     def notify_plan(action)
-      MembershipPlanNotification.with(action:, record: @membership_plan, user: current_user)
-                                 .deliver(current_user, enqueue_job: false)
+      event = MembershipPlanNotification.with(action:, record: @membership_plan, user: current_user)
+      event.deliver(current_user, enqueue_job: false)
       current_user.broadcast_notifications_refresh
     end
 

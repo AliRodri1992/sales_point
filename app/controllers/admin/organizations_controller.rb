@@ -24,6 +24,10 @@ module Admin
       authorize @organization
     end
 
+    def edit
+      authorize @organization
+    end
+
     def create
       @organization = Organization.new(organization_params)
       authorize @organization
@@ -35,10 +39,6 @@ module Admin
       else
         render :new, status: :unprocessable_content
       end
-    end
-
-    def edit
-      authorize @organization
     end
 
     def update
