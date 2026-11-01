@@ -5,10 +5,10 @@ module SupplierContactSearch
 
   def contact_scope
     if params[:status] == 'deleted'
-        @supplier.contacts.with_deleted.where.not(deleted_at: nil)
+      @supplier.contacts.with_deleted.where.not(deleted_at: nil)
     else
-        @supplier.contacts.not_deleted
-  end
+      @supplier.contacts.not_deleted
+    end
   end
 
   def filtered_contact_scope
@@ -18,14 +18,14 @@ module SupplierContactSearch
 
     term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
     scope.where(
-        <<~SQL.squish, q: term
+      <<~SQL.squish, q: term
           contacts.name ILIKE :q OR contacts.position ILIKE :q OR contacts.email ILIKE :q
           OR EXISTS (SELECT 1 FROM phones
                      WHERE phones.phoneable_type = 'Contact'
                        AND phones.phoneable_id = contacts.id
                        AND phones.deleted_at IS NULL
                        AND phones.number ILIKE :q)
-        SQL
+      SQL
     )
   end
 end

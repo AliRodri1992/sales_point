@@ -128,9 +128,7 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     contact = create(
       :contact,
       contactable: supplier, name: 'Existing contact',
-      phones_attributes: [
-        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }
-      ]
+      phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }]
     )
     visit edit_admin_supplier_contact_path(supplier, contact)
 
@@ -151,9 +149,7 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
     contact = create(
       :contact,
       contactable: supplier, name: 'Purchasing contact',
-      phones_attributes: [
-        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }
-      ]
+      phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }]
     )
     visit edit_admin_supplier_contact_path(supplier, contact)
 

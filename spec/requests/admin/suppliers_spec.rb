@@ -134,8 +134,8 @@ RSpec.describe 'Admin suppliers', type: :request do
       :contact,
       contactable: supplier, name: 'Operations',
       phones_attributes: [
-                       { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
-                       { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
       ]
     )
     office_phone = contact.phones.find_by!(kind: 'landline')
