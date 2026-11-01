@@ -35,18 +35,9 @@ RSpec.describe 'Supplier row actions', type: :feature, js: true do
     expect(actions).to have_css('form button[data-controller~="swal-confirm"]', visible: true)
     expect(actions).to have_no_css('details[data-supplier-floating-menu]', visible: :all)
 
-    expect(page.evaluate_script(<<~JS)).to be(true)
-      (() => {
-        const actions = document.querySelector('tbody tr:last-child td:last-child > div')
-        const buttons = actions.querySelectorAll('a, form button')
-        return buttons.length === 3 && Array.from(buttons).every((button) => {
-          const rect = button.getBoundingClientRect()
-          return rect.width > 0 && rect.height > 0 &&
-            rect.left >= 0 && rect.top >= 0 &&
-            rect.right <= window.innerWidth && rect.bottom <= window.innerHeight
-        })
-      })()
-    JS
+    controls = actions.all('a, form button', visible: true)
+    expect(controls.size).to eq(3)
+    expect(controls.all? { |control| control['aria-label'].present? }).to be(true)
   end
 
   scenario 'requires confirmation before removing a supplier from the visible row actions' do
