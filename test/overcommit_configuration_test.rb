@@ -26,7 +26,7 @@ verify(workflow.include?('run: bin/bundler-audit'), 'BundlerAudit runs in CI')
 verify(workflow.include?('python script/audit_i18n.py'), 'I18n audit runs in CI')
 
 hooks_workflow = File.read(File.join(root, '.github/workflows/pre-push-hook-tests.yml'))
-verify(!workflow.lines.include?("      - feature/suppliers\n"),
+verify(workflow.lines.exclude?("      - feature/suppliers\n"),
        'supplier pushes do not duplicate the pull-request CI run')
 verify(hooks_workflow.include?("branches-ignore:\n      - feature/suppliers"),
        'supplier pushes do not duplicate the pull-request hook run')
