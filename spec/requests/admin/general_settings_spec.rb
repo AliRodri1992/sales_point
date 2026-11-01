@@ -39,7 +39,7 @@ RSpec.describe 'Admin general settings', type: :request do
   end
 
   it 'returns not found when the organization settings have been archived' do
-    settings.update_column(:deleted_at, Time.current)
+    settings.update!(deleted_at: Time.current)
 
     get admin_general_settings_path
     expect(response).to have_http_status(:not_found)
@@ -49,7 +49,7 @@ RSpec.describe 'Admin general settings', type: :request do
   end
 
   it 'denies a system administrator without an active organization membership' do
-    user.organization_memberships.update_all(status: 'inactive')
+    user.organization_memberships.find_each { |membership| membership.update!(status: :inactive) }
 
     get admin_general_settings_path
 
