@@ -63,8 +63,16 @@ RSpec.describe 'Financial integrity regression', type: :request do
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('data-controller="supplier-payment-bank"')
-    expect(response.body).to include(bank.masked_number)
-    expect(response.body).not_to include('032180000118359719')
+    expect(response.body).not_to include(bank.masked_number, bank.clabe)
+
+    get bank_accounts_admin_supplier_payments_path, params: {
+      supplier_id: supplier.id, currency_id: currency.id
+    }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body.fetch('accounts').map { |item| item.fetch('id') }).to include(bank.id)
+    expect(response.parsed_body.to_s).to include(bank.masked_number)
+    expect(response.parsed_body.to_s).not_to include(bank.clabe)
   end
 
   it 'rejects posting a payment using an archived bank account' do
