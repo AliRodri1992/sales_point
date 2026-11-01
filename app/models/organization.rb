@@ -20,8 +20,8 @@ class Organization < ApplicationRecord
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception
   has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   has_many :subscriptions, dependent: :restrict_with_exception
-  has_one :current_subscription, -> { current }, class_name: 'Subscription',
-                                dependent: :restrict_with_exception, inverse_of: :organization
+  has_one :current_subscription, -> { current },
+          class_name: 'Subscription', dependent: :restrict_with_exception, inverse_of: :organization
   has_many :organization_memberships, dependent: :restrict_with_exception
   has_many :users, through: :organization_memberships
   has_many :employees, dependent: :restrict_with_exception

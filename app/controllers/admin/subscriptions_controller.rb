@@ -3,6 +3,7 @@
 module Admin
   class SubscriptionsController < ApplicationController
     include MembershipSubscriptionFormHelpers
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_subscription, only: %i[show edit update change_plan pause resume cancel]

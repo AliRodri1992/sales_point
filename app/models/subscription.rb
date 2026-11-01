@@ -81,5 +81,4 @@ class Subscription < ApplicationRecord
 
     errors.add(:organization, 'already has an active subscription') if relation.exists?
   end
-
 end
