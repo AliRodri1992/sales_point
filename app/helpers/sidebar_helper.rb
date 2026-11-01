@@ -22,7 +22,10 @@ module SidebarHelper
     branches: 'building-storefront',
     users: 'user-group',
     taxes: 'calculator',
-    suppliers: 'truck'
+    suppliers: 'truck',
+    organizations: 'building-office-2',
+    membership_plans: 'rectangle-stack',
+    subscriptions: 'credit-card'
   }.freeze
 
   def sidebar_navigation_icon(name, class_name: 'size-5', identifier: nil)

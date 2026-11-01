@@ -13,6 +13,16 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    resources :organizations, only: %i[index show new create edit update]
+    resources :membership_plans, only: %i[index show new create edit update]
+    resources :subscriptions, only: %i[index show new create edit update] do
+      member do
+        patch :change_plan
+        patch :pause
+        patch :resume
+        patch :cancel
+      end
+    end
     resource :general_settings, only: %i[show update]
     patch 'table_page_preferences/:table_key', to: 'table_page_preferences#update',
                                                as: :table_page_preference

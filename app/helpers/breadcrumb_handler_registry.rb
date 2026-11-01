@@ -26,6 +26,9 @@ module BreadcrumbHandlerRegistry
     'admin/supplier_invoices' => :supplier_invoice_breadcrumb_items,
     'admin/supplier_payments' => :supplier_payment_breadcrumb_items,
     'admin/supplier_credit_notes' => :supplier_credit_note_breadcrumb_items,
-    'admin/users' => :user_breadcrumb_items
+    'admin/users' => :user_breadcrumb_items,
+    'admin/organizations' => :default_breadcrumb_items,
+    'admin/membership_plans' => :default_breadcrumb_items,
+    'admin/subscriptions' => :default_breadcrumb_items
   }.freeze
 end

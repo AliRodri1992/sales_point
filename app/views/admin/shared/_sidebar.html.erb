@@ -277,6 +277,23 @@
             </a>
             <% end %>
 
+            <% if current_user.admin? %>
+            <% [
+              [:organizations, admin_organizations_path],
+              [:membership_plans, admin_membership_plans_path],
+              [:subscriptions, admin_subscriptions_path]
+            ].each do |key, destination| %>
+              <%= link_to destination,
+                          data: { tooltip: t("admin.shared.sidebar.#{key}") },
+                          aria: { current: sidebar_item_active?(key.to_s) ? 'page' : 'false',
+                                  label: t("admin.shared.sidebar.#{key}") },
+                          class: sidebar_link_classes(key.to_s, variant: :submenu) do %>
+                <%= sidebar_navigation_icon(key, class_name: 'size-4') %>
+                <span class="sidebar-label"><%= t("admin.shared.sidebar.#{key}") %></span>
+              <% end %>
+            <% end %>
+            <% end %>
+
             <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
               aria-label="<%= t('admin.shared.sidebar.taxes') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
               class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-500    cursor-not-allowed opacity-60"
