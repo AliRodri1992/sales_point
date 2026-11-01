@@ -1,24 +1,48 @@
+
 <% content_for :title, t('.page_title') %>
 
-<%= render Landing::NavbarComponent.new %>
+<main class="demo-request-page h-screen overflow-hidden bg-slate-900 font-inter text-slate-600 antialiased">
+  <div class="flex h-full w-full flex-col lg:flex-row">
+    <section class="relative hidden h-full bg-delta-dark p-12 text-white lg:flex lg:w-[42%]" aria-labelledby="demo-request-title">
+      <div class="pointer-events-none absolute inset-0 z-0 bg-grid-pattern"></div>
+      <div class="pointer-events-none absolute inset-0 z-0 bg-gradient-to-br from-emerald-600/10 via-transparent to-transparent"></div>
+      <%= render DemoRequests::BenefitsComponent.new %>
+    </section>
 
-<main class="overflow-x-hidden bg-white text-slate-900">
-  <section class="bg-slate-50 pb-12 pt-4 sm:pb-16 sm:pt-6 lg:pb-20 lg:pt-8">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <%= link_to root_path, class: "mb-8 inline-flex items-center gap-2 font-semibold text-blue-600 transition hover:text-blue-800" do %>
-        <%= icon "arrow-left", class: "h-5 w-5" %>
-        <%= t('.back') %>
-      <% end %>
+    <section class="relative flex h-full w-full flex-col justify-center overflow-y-auto bg-white p-6 sm:p-12 lg:w-[58%] lg:overflow-hidden lg:p-16">
+      <div class="absolute right-6 top-6 z-30 flex items-center gap-3">
+        <div class="relative w-24" data-controller="demo-request-wizard" data-demo-request-wizard-palette-only-value="true">
+          <button type="button" data-action="click->demo-request-wizard#toggleTheme" class="inline-flex w-full items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200">
+            <span class="flex items-center gap-1.5"><%= render Ui::IconComponent.new(name: 'swatch', size: :xs, color: :gray) %><%= t('demo_requests.new.theme') %></span>
+            <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :gray) %>
+          </button>
+          <div data-demo-request-wizard-target="themeDropdown" class="absolute right-0 mt-1 hidden w-48 rounded-xl border border-slate-100/80 bg-white p-3 shadow-2xl">
+            <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400"><%= t('demo_requests.new.brand_color') %></p>
+            <div class="grid grid-cols-5 gap-2">
+              <% DemoRequests::FormComponent::THEMES.each_with_index do |(_name, start, finish), loop_index| %>
+                <button type="button" title="<%= t('demo_requests.new.theme_option', number: loop_index + 1) %>" aria-label="<%= t('demo_requests.new.theme_option', number: loop_index + 1) %>" data-action="click->demo-request-wizard#selectTheme" data-start="<%= start %>" data-end="<%= finish %>" class="h-6 w-6 rounded-full border border-slate-200/50 shadow-sm transition active:scale-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400" style="background: linear-gradient(135deg, <%= start %> 0%, <%= finish %> 100%);"></button>
+              <% end %>
+            </div>
+          </div>
+        </div>
 
-      <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
-        <%= render DemoRequests::BenefitsComponent.new %>
-        <%= render DemoRequests::FormComponent.new(
-          demo_request: @demo_request,
-          notice: flash[:notice]
-        ) %>
+        <div class="relative w-24" data-controller="language-selector">
+          <button type="button" data-action="click->language-selector#toggle" class="inline-flex w-full items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200" aria-haspopup="true" aria-expanded="false">
+            <span class="flex items-center gap-1.5"><%= render Ui::IconComponent.new(name: 'language', size: :xs, color: :gray) %><%= current_language.code.upcase %></span>
+            <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :gray) %>
+          </button>
+          <div data-language-selector-target="dropdown" class="absolute right-0 mt-1 hidden w-24 overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl">
+            <% Language.available.order(:code).each do |language| %>
+              <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-semibold transition <%= language.code == current_language.code ? 'bg-emerald-700 text-white' : 'text-slate-600 hover:bg-emerald-700 hover:text-white' %>">
+                <img src="<%= language_flag_path(language) %>" width="16" height="12" class="h-3 w-4 shrink-0 rounded-sm object-cover" alt="<%= language.name %>">
+                <span><%= language.code.upcase %></span>
+              </button>
+            <% end %>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
-</main>
 
-<%= render Landing::FooterComponent.new %>
+      <%= render DemoRequests::FormComponent.new(demo_request: @demo_request, notice: flash[:notice]) %>
+    </section>
+  </div>
+</main>

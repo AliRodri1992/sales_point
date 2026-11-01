@@ -1,14 +1,9 @@
-<section id="features" class="bg-white py-16 sm:py-28">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6">
-    <%= render Ui::SectionTitleComponent.new(badge: t('landing.navbar.features'), title: title, subtitle: subtitle) %>
-    <div class="mt-12 grid gap-6 sm:mt-20 sm:gap-8 md:grid-cols-2 xl:grid-cols-3">
+<section id="caracteristicas" class="bg-white py-12 lg:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= title %></h2><p class="mt-3 text-sm leading-6 text-slate-500"><%= subtitle %></p></div>
+    <div class="grid gap-8 md:grid-cols-3">
       <% features.each do |feature| %>
-        <%= render Landing::FeatureCardComponent.new(
-          icon: feature.icon,
-          title: feature.title,
-          description: feature.description,
-          color: feature.color
-        ) %>
+        <%= render Landing::FeatureCardComponent.new(icon: feature.icon, title: feature.title, description: feature.description, color: feature.color) %>
       <% end %>
     </div>
   </div>

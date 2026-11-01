@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  extend UserChatPresence
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :session_limitable,
@@ -6,14 +8,20 @@ class User < ApplicationRecord
 
   belongs_to :language,
              optional: true
+  belongs_to :employee, optional: true
+
+  has_many :organization_memberships, dependent: :destroy
+  has_many :organizations, through: :organization_memberships
   has_many :user_roles, dependent: :destroy
   has_many :system_roles, through: :user_roles
   has_many :dashboard_preferences, dependent: :destroy
+  has_many :table_page_preferences, dependent: :destroy
   has_many :conversation_participants, dependent: :destroy
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
+  has_many :onboarding_audits, dependent: :restrict_with_exception
 
-  ONLINE_USERS_KEY = 'online_users'.freeze
+  ONLINE_USERS_KEY = 'online_user_connections'.freeze
 
   enum :user_type,
        {
@@ -34,7 +42,8 @@ class User < ApplicationRecord
 
   validates :email,
             presence: true,
-            uniqueness: { case_sensitive: false }
+            uniqueness: { case_sensitive: false },
+            'valid_email_2/email': true
 
   validates :user_type,
             presence: true
@@ -63,12 +72,20 @@ class User < ApplicationRecord
   end
 
   def initials
-    base = username.presence || email.to_s
-    base.scan(/\b\w/).first(2).join.upcase
+    base = username.presence || email.to_s.split('@').first.to_s
+    parts = base.scan(/[[:alnum:]]+/)
+    return 'U' if parts.empty?
+    return parts.first.to_s.first(2).upcase if parts.one?
+
+    parts.first(2).pluck(0).join.upcase
   end
 
   def display_name
     username.presence || initials
+  end
+
+  def display_role_name
+    @display_role_name ||= system_roles.active.order(:name).pick(:name)
   end
 
   def notifications
@@ -79,6 +96,8 @@ class User < ApplicationRecord
       .or(notification_relation_for(Branch))
       .or(notification_relation_for(Client))
       .or(notification_relation_for(SystemRole))
+      .or(notification_relation_for(Supplier))
+      .or(notification_relation_for(AccountPayable))
       .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 
@@ -105,10 +124,6 @@ class User < ApplicationRecord
 
   def online?
     self.class.online_user_ids.include?(id)
-  end
-
-  def self.online_user_ids
-    Kredis.set(ONLINE_USERS_KEY).members.map(&:to_i)
   end
 
   private

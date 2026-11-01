@@ -2,22 +2,40 @@ module LandingPage
   module Plans
     def self.all
       [
-        plan(:starter, 19, false, %i[branch_users sales_inventory basic_reports email_support]),
-        plan(:professional, 39, true, %i[branch_users purchases cash_returns advanced_reports priority_support]),
-        plan(:enterprise, 79, false, %i[unlimited roles accounting implementation support])
+        starter_plan,
+        professional_plan
       ]
     end
 
-    def self.plan(key, price, featured, feature_keys)
+    def self.starter_plan
       Plan.new(
-        name: I18n.t("landing.plan_items.#{key}.name"),
-        price: price,
-        description: I18n.t("landing.plan_items.#{key}.description"),
-        featured: featured,
-        features: feature_keys.map do |feature|
-          I18n.t("landing.plan_items.#{key}.features.#{feature}")
-        end
+        name: I18n.t('landing.plan_items.starter.name'),
+        price: 29,
+        description: I18n.t('landing.plan_items.starter.description'),
+        features: [
+          I18n.t('landing.plan_items.starter.features.branch_users'),
+          I18n.t('landing.plan_items.starter.features.sales_inventory')
+        ],
+        featured: false
       )
     end
+
+    def self.professional_plan
+      Plan.new(
+        name: I18n.t('landing.plan_items.professional.name'),
+        price: 59,
+        description: I18n.t('landing.plan_items.professional.description'),
+        features: [
+          I18n.t('landing.plan_items.professional.features.branch_users'),
+          I18n.t('landing.plan_items.professional.features.purchases'),
+          I18n.t('landing.plan_items.professional.features.cash_returns'),
+          I18n.t('landing.plan_items.professional.features.advanced_reports'),
+          I18n.t('landing.plan_items.professional.features.priority_support')
+        ],
+        featured: true
+      )
+    end
+
+    private_class_method :starter_plan, :professional_plan
   end
 end

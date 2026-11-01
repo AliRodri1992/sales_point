@@ -72,6 +72,13 @@ RSpec.describe SystemRole, type: :model do
     end
   end
 
+  it 'automatically provisions active permissions for newly created administrators' do
+    permission = create(:permission, code: 'suppliers.documents.view')
+    role = create(:system_role, :system, code: 'administrator')
+
+    expect(role.permissions).to include(permission)
+  end
+
   # =========================
   # FAKER REALISTIC TEST
   # =========================

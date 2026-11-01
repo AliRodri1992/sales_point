@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
 module TerminalHelper
+  include CountryFlagsHelper
+
   def terminal_themes
     Theme.all
   end
 
   def current_terminal_theme
-    session[:theme].presence || Theme::DEFAULT
+    cookies[:terminal_theme].presence || Theme::DEFAULT
+  end
+
+  def terminal_theme_selected?
+    cookies[:terminal_theme_selected].present?
   end
 
   def terminal_languages
@@ -29,11 +35,7 @@ module TerminalHelper
     current_language
   end
 
-  def flag_url(language, size = '64x48')
-    language.flag_url(size)
-  end
-
-  def flag_srcset(language)
-    language.flag_srcset
+  def language_flag_path(language)
+    country_flag_asset_path(language.flag_iso) || image_path('flags/unknown.svg')
   end
 end

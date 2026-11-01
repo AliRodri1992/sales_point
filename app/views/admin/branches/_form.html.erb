@@ -6,7 +6,7 @@
     </div>
     <%= link_to admin_branches_path,
                 class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
-      <%= icon('arrow-left', class: 'size-4') %>
+      <%= delta_icon('arrow-left', class: 'size-4') %>
       <%= t('admin.branches.form.buttons.back') %>
     <% end %>
   </div>
@@ -24,14 +24,7 @@
         <%= error_message_for(@branch, :name) %>
       </div>
 
-      <div>
-        <%= form.label :phone,
-                       t('admin.branches.form.fields.phone'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.telephone_field :phone,
-                                 class: "input-field w-full rounded-xl #{form_state_classes(@branch, :phone)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
-        <%= error_message_for(@branch, :phone) %>
-      </div>
+      <%= render 'admin/shared/primary_mobile_field', form: form, record: @branch %>
 
       <%= form.fields_for :address do |address_form| %>
         <div class="border-t border-slate-100 pt-6">
@@ -49,8 +42,7 @@
               neighborhood: 'neighborhood',
               postal_code: 'postal_code',
               city: 'city',
-              state: 'state',
-              country: 'country'
+              state: 'state'
             }.each do |attribute, translation_key| %>
               <div class="<%= attribute == :street ? 'sm:col-span-2' : '' %>">
                 <%= address_form.label attribute,
@@ -61,6 +53,21 @@
                 <%= error_message_for(address_form.object, attribute) %>
               </div>
             <% end %>
+            <div>
+              <%= address_form.label :country_id, t('admin.branches.form.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+              <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
+                <%= address_form.select :country_id,
+                                        options_for_select(
+                                          Country.active.ordered.map do |country|
+                                            [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }]
+                                          end,
+                                          address_form.object.country_id
+                                        ),
+                                        { include_blank: t('admin.supplier_placeholders.country') },
+                                        class: 'input-field w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
+              </div>
+              <%= error_message_for(address_form.object, :country) %>
+            </div>
           </div>
         </div>
       <% end %>

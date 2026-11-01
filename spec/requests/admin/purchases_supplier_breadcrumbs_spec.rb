@@ -1,0 +1,115 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
+  let(:organization) { create(:organization) }
+  let(:user) { create(:user, :english) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:dossier_sections) do
+    %w[general commercial contacts addresses schedules documents bank_accounts products statement]
+  end
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    sign_in user
+  end
+
+  def current_crumb
+    Nokogiri::HTML(response.body).at_css('nav[aria-label] [aria-current="page"]')&.text&.strip
+  end
+
+  def previous_crumb
+    Nokogiri::HTML(response.body).css('nav[aria-label] ol li a').last&.text&.strip
+  end
+
+  %i[es en ko].each do |locale|
+    it "translates purchasing module breadcrumb labels in #{locale}" do
+      language = Language.find_by(code: locale) || create(:language, code: locale, name: locale, flag_iso: 'mx')
+      user.update!(language:)
+
+      {
+        admin_purchase_orders_path => 'orders',
+        admin_purchase_requests_path => 'requests',
+        admin_purchase_quotations_path => 'quotations',
+        admin_purchase_returns_path => 'returns'
+      }.each do |path, key|
+        get path
+
+        expect(response).to have_http_status(:ok)
+        expect(current_crumb).to eq(I18n.t("admin.purchases.#{key}", locale:))
+      end
+    end
+  end
+
+  it 'forbids purchase navigation after an organization membership is deactivated' do
+    membership = user.organization_memberships.find_by!(organization:)
+    membership.update!(status: :inactive)
+
+    get admin_purchase_orders_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'preserves the accessible breadcrumb landmark independently of the sidebar' do
+    get admin_purchase_orders_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('nav[aria-label]').pluck('aria-label')).to include(
+      I18n.t('admin.breadcrumbs.label', locale: :en)
+    )
+    expect(document.at_css('#adminSidebar nav')['aria-labelledby']).to eq('adminSidebarNavigationLabel')
+    expect(current_crumb).to eq(I18n.t('admin.purchases.orders', locale: :en))
+  end
+
+  it 'uses translated breadcrumb labels when creating and viewing a purchase request' do
+    branch = create(:branch, organization:)
+    request = PurchaseRequest.create!(organization:, branch:, requested_by: user)
+
+    get new_admin_purchase_request_path
+    expect(response).to have_http_status(:ok)
+    expect(previous_crumb).to eq(I18n.t('admin.purchases.requests', locale: :en))
+    expect(current_crumb).to eq(I18n.t('admin.purchases.new_request', locale: :en))
+
+    get admin_purchase_request_path(request)
+    expect(response).to have_http_status(:ok)
+    expect(previous_crumb).to eq(I18n.t('admin.purchases.requests', locale: :en))
+    expect(current_crumb).to eq(request.code)
+  end
+
+  it 'translates supplier product and bank account breadcrumbs' do
+    get admin_supplier_supplier_products_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(current_crumb).to eq(I18n.t('admin.procurement.title', locale: :en))
+
+    get admin_supplier_bank_accounts_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(current_crumb).to eq(I18n.t('admin.accounts_payable.bank_accounts', locale: :en))
+  end
+
+  %i[es en ko].each do |locale|
+    it "renders every supplier dossier tab in #{locale} without missing translations" do
+      language = Language.find_by(code: locale) || create(:language, code: locale, name: locale, flag_iso: 'mx')
+      user.update!(language:)
+
+      get admin_supplier_path(supplier)
+
+      expect(response).to have_http_status(:ok)
+      dossier_sections.each do |section|
+        expect(response.body).to include(I18n.t("admin.supplier_dossier.sections.#{section}", locale:))
+      end
+      expect(response.body).not_to include('Translation missing')
+    end
+  end
+
+  it 'keeps translated supplier contact and address breadcrumb labels' do
+    get admin_supplier_contacts_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(current_crumb).to eq(I18n.t('admin.supplier_details.contacts', locale: :en))
+
+    get admin_supplier_addresses_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(current_crumb).to eq(I18n.t('admin.supplier_details.addresses', locale: :en))
+  end
+end

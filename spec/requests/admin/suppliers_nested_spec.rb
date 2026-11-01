@@ -1,0 +1,192 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Supplier nested dossier', type: :request do
+  let(:user) { create(:user, :english) }
+  let(:organization) { create(:organization) }
+  let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
+  let(:currency) { create(:currency) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: admin_role)
+    sign_in user
+  end
+
+  def address_attributes
+    { street: 'Main Street', exterior_number: '12', neighborhood: 'Centro',
+      city: 'Mexico City', state: 'CDMX', country_id: create(:country, iso_alpha2: 'MX').id,
+      postal_code: '06000', purpose: 'fiscal', primary: true }
+  end
+
+  it 'rejects multiple contacts in one creation request' do
+    attributes = attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: {
+        '0' => {
+          name: 'Primary', email: 'PRIMARY@EXAMPLE.COM', primary: true,
+          phones_attributes: [{ number: '5512345678', kind: 'mobile', primary: true }]
+        },
+        '1' => {
+          name: 'Secondary', primary: false,
+          phones_attributes: [{ number: '5512345679', kind: 'mobile', primary: true }]
+        }
+      },
+      addresses_attributes: { '0' => address_attributes }
+    )
+
+    before_count = Supplier.count
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    errors = Nokogiri::HTML(response.body).css('[data-server-field-error]').map(&:text).join(' | ')
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Supplier.count).to eq(before_count), errors
+  end
+
+  it 'creates exactly one primary contact and fiscal address' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Primary', primary: true } },
+      addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to have_http_status(:redirect)
+    saved = Supplier.order(:id).last
+    expect(saved.contacts.first).to be_primary
+    expect(saved.addresses.first).to have_attributes(primary: true, purpose: 'fiscal')
+  end
+
+  it 'enforces primary contact and fiscal address when flags are omitted' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Main contact' } },
+      addresses_attributes: { '0' => address_attributes.except(:purpose, :primary) }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    saved = Supplier.order(:id).last
+    expect(saved.contacts.first).to be_primary
+    expect(saved.addresses.first).to have_attributes(purpose: 'fiscal', primary: true)
+  end
+
+  it 'geocodes the newly registered supplier fiscal address using the complete address' do
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Primary contact', primary: true } },
+      addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    address = Supplier.order(:id).last.addresses.first
+    expect(GeocodeAddressJob).to have_received(:perform_later).with(
+      address.id, address.geocoding_fingerprint
+    ).once
+  end
+
+  it 'geocodes a changed fiscal address when edited through the main supplier form' do
+    supplier = create(:supplier, organization:)
+    address = supplier.addresses.create!(address_attributes)
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    patch admin_supplier_path(supplier), params: { supplier: {
+      addresses_attributes: { '0' => { id: address.id, street: 'Changed street' } }
+    } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(GeocodeAddressJob).to have_received(:perform_later).with(
+      address.id, address.reload.geocoding_fingerprint
+    ).once
+  end
+
+  it 'does not enqueue geocoding when an update has no address changes' do
+    supplier = create(:supplier, organization:)
+    supplier.addresses.create!(address_attributes)
+    allow(GeocodeAddressJob).to receive(:perform_later)
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated supplier name' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(GeocodeAddressJob).not_to have_received(:perform_later)
+  end
+
+  it 'rejects an explicit nonfiscal address in the supplier registration payload' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      addresses_attributes: { '0' => address_attributes.merge(purpose: 'delivery') }
+    ) }
+
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
+  it 'retains invalid nested address and contact values in the response' do
+    post admin_suppliers_path, params: {
+      supplier: attributes_for(:supplier).merge(
+        currency_id: currency.id,
+        contacts_attributes: { '0' => { name: 'Invalid contact', email: 'not-an-email' } },
+        addresses_attributes: { '0' => address_attributes.merge(postal_code: 'INVALID') }
+      )
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('not-an-email', 'INVALID')
+    expect(response.body).to include('data-server-field-error')
+  end
+
+  it 'persists the primary contact email and both phone numbers on supplier creation' do
+    post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: {
+        '0' => {
+          name: 'Purchasing', position: 'Manager', email: 'BUYER@EXAMPLE.COM', primary: '1',
+          phones_attributes: {
+            '0' => { number: '55 2234 5678', country_code: 'MX', kind: 'landline', primary: '1' },
+            '1' => { number: '55 1234 5678', country_code: 'MX', kind: 'mobile', primary: '1' }
+          }
+        }
+      },
+      addresses_attributes: { '0' => address_attributes }
+    ) }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    saved = Supplier.order(:id).last
+    contact = saved.contacts.find_by!(name: 'Purchasing')
+    expect(contact).to have_attributes(position: 'Manager', email: 'buyer@example.com', primary: true)
+    expect(contact.phones.active.pluck(:kind, :number)).to contain_exactly(
+      ['landline', '+525522345678'], ['mobile', '+525512345678']
+    )
+
+    get admin_supplier_path(saved, tab: 'contacts')
+    expect(response.body).to include('buyer@example.com')
+    expect(response.body).to include('+525522345678', '+525512345678')
+  end
+
+  it 'renders numeric nested names for the main contact phone inputs' do
+    get new_admin_supplier_path
+
+    document = Nokogiri::HTML(response.body)
+    names = document.css('input[name$="[number]"]').pluck('name')
+    contact_phone_names = names.grep(/\Asupplier\[contacts_attributes\]/)
+    expect(contact_phone_names.size).to eq(2)
+    expect(contact_phone_names).to all(match(/\[phones_attributes\]\[\d+\]\[number\]\z/))
+  end
+
+  it 'updates existing nested records without replacing their identifiers' do
+    supplier = create(:supplier, organization:)
+    contact = supplier.contacts.create!(name: 'Original', primary: true)
+    address = supplier.addresses.create!(address_attributes)
+
+    patch admin_supplier_path(supplier), params: {
+      supplier: {
+        contacts_attributes: { '0' => { id: contact.id, name: 'Updated' } },
+        addresses_attributes: { '0' => { id: address.id, street: 'Updated Street' } }
+      }
+    }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(contact.reload.name).to eq('Updated')
+    expect(address.reload.street).to eq('Updated Street')
+  end
+end

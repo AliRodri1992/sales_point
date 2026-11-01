@@ -1,0 +1,7 @@
+en:
+  admin:
+    supplier_details:
+      address_form:
+        location_confirmed_button: "Location confirmed"
+        location_confirmed_save_hint: "To save this location, use the save button at the bottom of the form."
+        location_changed: "The address changed. Look up and confirm the location again."

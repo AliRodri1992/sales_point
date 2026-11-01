@@ -22,7 +22,7 @@
       class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
       aria-label="<%= t('admin.categories.show.close') %>"
     >
-      <%= icon('x-mark', class: 'size-5') %>
+      <%= delta_icon('x-mark', class: 'size-5') %>
     </button>
   </div>
 
@@ -60,7 +60,7 @@
     <%= link_to edit_admin_category_path(category),
                 data: { turbo_frame: 'category_modal' },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
-      <%= icon('pencil-square', class: 'size-4') %>
+      <%= delta_icon('pencil-square', class: 'size-4') %>
       <%= t('admin.categories.index.edit') %>
     <% end %>
   </div>

@@ -16,17 +16,18 @@ end
 Capybara.register_driver :selenium_chrome_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
 
+  options.binary = ENV.fetch('CHROME_BINARY') if ENV['CHROME_BINARY'].present?
   options.add_argument('--headless=new')
   options.add_argument('--disable-gpu')
   options.add_argument('--no-sandbox')
   options.add_argument('--disable-dev-shm-usage')
   options.add_argument('--window-size=1400,1400')
 
-  Capybara::Selenium::Driver.new(
-    app,
-    browser: :chrome,
-    options: options
-  )
+  settings = { browser: :chrome, options: }
+  if ENV['CHROMEDRIVER_PATH'].present?
+    settings[:service] = Selenium::WebDriver::Chrome::Service.new(path: ENV.fetch('CHROMEDRIVER_PATH'))
+  end
+  Capybara::Selenium::Driver.new(app, **settings)
 end
 
 # ─────────────────────────────

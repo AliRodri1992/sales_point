@@ -1,0 +1,88 @@
+<%# SQL aggregation avoids loading the entire financial history. %>
+<% summary = Suppliers::FinancialSummary.new(supplier).call %>
+<% payables = summary.recent %>
+<% balance_labels = summary.balance_labels { |amount| number_to_currency(amount, unit: '') } %>
+<% overdue_labels = summary.overdue_labels { |amount| number_to_currency(amount, unit: '') } %>
+<% next_due = summary.next_due %>
+<% has_payable_records = summary.has_payable_records %>
+
+<section id="supplier-dossier-statement" role="tabpanel" tabindex="0" aria-labelledby="supplier-dossier-tab-statement" data-supplier-dossier-target="panel" data-section="statement" class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <div data-finance-payables class="min-w-0 space-y-0">
+    <div data-finance-payables-header class="flex flex-wrap items-center justify-between gap-4 rounded-t-2xl rounded-b-none border border-slate-200 bg-white p-4 sm:p-6">
+      <div class="flex min-w-0 items-center gap-3">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('document-text', class: 'size-5') %></span>
+        <div>
+          <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.supplier_dossier.sections.statement') %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.payables_description') %></p>
+        </div>
+      </div>
+    </div>
+
+    <% if has_payable_records %>
+      <div data-finance-payables-content class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-xl border border-slate-200 p-4">
+            <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.outstanding_balance') %></p>
+            <p data-finance-metric="balance" class="mt-2 break-words font-jakarta text-lg font-bold tabular-nums text-emerald-800"><%= balance_labels.join(' · ') %></p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-4">
+            <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.overdue_balance') %></p>
+            <p data-finance-metric="overdue_balance" class="mt-2 break-words font-jakarta text-lg font-bold tabular-nums text-rose-700"><%= overdue_labels.join(' · ') %></p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-4">
+            <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.pending_invoices') %></p>
+            <p data-finance-metric="pending_invoices" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= summary.pending_count %></p>
+          </div>
+          <div class="rounded-xl border border-slate-200 p-4">
+            <p class="text-xs font-medium text-slate-500"><%= t('admin.supplier_dossier.finance.next_due') %></p>
+            <p data-finance-metric="next_due" class="mt-2 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= next_due ? l(next_due) : '—' %></p>
+          </div>
+        </div>
+
+    <h3 class="mt-5 mb-3 font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_dossier.finance.recent_invoices') %></h3>
+    <div class="overflow-x-auto rounded-xl border border-slate-200">
+      <table class="min-w-[700px] w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold text-slate-600">
+          <tr>
+            <% %w[folio issued_on due_on amount balance status].each do |column| %>
+              <th scope="col" class="px-4 py-3"><%= t("admin.supplier_dossier.finance.columns.#{column}") %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% payables.each do |payable| %>
+            <% invoice = payable.supplier_invoice %>
+            <% state = payable.overdue? ? 'overdue' : (payable.paid_amount.positive? || payable.credited_amount.positive? ? 'partial' : 'pending') %>
+            <% badge_style = state == 'overdue' ? 'bg-rose-50 text-rose-700' : state == 'partial' ? 'bg-amber-50 text-amber-800' : 'bg-emerald-50 text-emerald-800' %>
+            <tr class="hover:bg-slate-50/70">
+              <td class="px-4 py-3 font-semibold">
+                <%= link_to invoice.folio.presence || "##{invoice.id}", admin_account_payable_path(payable), class: 'text-emerald-800 hover:underline' %>
+              </td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(invoice.issued_on) %></td>
+              <td class="whitespace-nowrap px-4 py-3 text-slate-600"><%= l(payable.due_on) %></td>
+              <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700"><%= number_to_currency(payable.amount, unit: '') %> <%= invoice.currency&.code || '—' %></td>
+              <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900"><%= number_to_currency(payable.balance, unit: '') %> <%= invoice.currency&.code || '—' %></td>
+              <td class="px-4 py-3"><span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= badge_style %>"><%= t("admin.supplier_dossier.finance.states.#{state}") %></span></td>
+            </tr>
+          <% end %>
+          <% if payables.empty? %>
+            <tr><td colspan="6" class="px-4 py-10 text-center text-sm text-slate-500"><%= t('admin.supplier_dossier.finance.no_payables') %></td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+      </div>
+    <% else %>
+      <div data-finance-empty-payables class="rounded-t-none rounded-b-2xl border border-t-0 border-slate-200 bg-white px-5 py-7 shadow-sm sm:px-8 sm:py-8">
+        <div class="mx-auto flex max-w-3xl flex-col items-center justify-center gap-4 sm:flex-row sm:gap-8">
+          <%= image_tag 'saccountspayable.png', alt: '', loading: 'lazy', class: 'h-auto w-44 shrink-0 sm:w-56' %>
+          <div class="min-w-0 text-center sm:text-left">
+            <h3 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_dossier.finance.empty_payables_title') %></h3>
+            <p class="mt-2 max-w-lg text-sm leading-6 text-slate-600"><%= t('admin.supplier_dossier.finance.empty_payables_description') %></p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+</section>

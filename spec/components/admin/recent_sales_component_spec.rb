@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::RecentSalesComponent, type: :component do
+  around { |example| I18n.with_locale(:en, &example) }
+
   it 'renders the header and view all link' do
     render_inline(described_class.new)
 
     expect(page).to have_text('Recent sales')
-    expect(page).to have_text('Latest registered transactions')
+    expect(page).to have_text('Latest transactions recorded in the system.')
     expect(page).to have_link('View all')
   end
 
@@ -16,7 +18,7 @@ RSpec.describe Admin::RecentSalesComponent, type: :component do
 
     expect(page).to have_text('Folio')
     expect(page).to have_text('Customer')
-    expect(page).to have_text('Method')
+    expect(page).to have_text('Payment method')
     expect(page).to have_text('Total')
     expect(page).to have_text('Status')
   end
@@ -41,7 +43,7 @@ RSpec.describe Admin::RecentSalesComponent, type: :component do
 
     expect(page).to have_text('Card')
     expect(page).to have_text('Cash', count: 2)
-    expect(page).to have_text('Transfer')
+    expect(page).to have_text('Bank transfer')
   end
 
   it 'renders translated statuses' do

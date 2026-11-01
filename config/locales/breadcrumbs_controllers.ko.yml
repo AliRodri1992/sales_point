@@ -1,0 +1,12 @@
+ko:
+  admin:
+    breadcrumbs:
+      controllers:
+        inventories: "재고 관리"
+        inventory_lots: "재고 로트"
+        organization_contacts: "조직 연락처"
+        supplier_documents: "공급업체 문서"
+        supplier_products: "공급업체 상품"
+        supplier_product_comparisons: "비용 비교"
+        supplier_bank_accounts: "은행 계좌"
+        demo_requests: "데모 요청"

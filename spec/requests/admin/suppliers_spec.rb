@@ -1,0 +1,961 @@
+require 'rails_helper'
+
+RSpec.describe 'Admin suppliers', type: :request do
+  let(:user) { create(:user, :english) }
+  let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
+
+  let(:organization) { create(:organization) }
+  let(:currency) { create(:currency) }
+
+  def supplier_attributes
+    country = Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
+    attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Contacto principal', primary: '1' } },
+      addresses_attributes: {
+        '0' => {
+          street: 'Avenida Central', exterior_number: '100', neighborhood: 'Centro',
+          city: 'Cuautitlán', state: 'Estado de México',
+          postal_code: '54800', country_id: country.id,
+          purpose: 'fiscal', primary: '1'
+        }
+      }
+    )
+  end
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: admin_role)
+    sign_in user
+  end
+
+  it 'registers the nested-phones Stimulus controller used by the add-phone action' do
+    manifest = Rails.root.join('app/javascript/controllers/index.js').read
+
+    expect(manifest).to include('import NestedPhonesController from "./nested_phones_controller"')
+    expect(manifest).to include('application.register("nested-phones", NestedPhonesController)')
+  end
+
+  it 'renders the redesigned supplier contact editor with accessible settings and multiple phones' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact,
+      contactable: supplier, name: 'Mariana Cruz', position: 'Purchasing Manager',
+      email: 'mariana@example.com', primary: true,
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+      ]
+    )
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('[data-supplier-contact-editor]')).to be_present
+    expect(editor.at_css('#supplier-contact-identity')).to be_present
+    expect(editor.at_css('#supplier-contact-communication')).to be_present
+    expect(editor.at_css('#supplier-contact-preferences')).to be_present
+    expect(editor.css('aside')).to be_empty
+    expect(editor.at_css('[data-supplier-contact-actions]')).to be_present
+    expect(editor.at_css('input[name="contact[name]"]')['value']).to eq('Mariana Cruz')
+    expect(editor.at_css('input[name="contact[position]"]')['value']).to eq('Purchasing Manager')
+    expect(editor.at_css('input[name="contact[email]"]')['value']).to eq('mariana@example.com')
+
+    phones = editor.css('[data-nested-phones-target="items"] > [data-phone-item]')
+    expect(phones.size).to eq(2)
+    expect(phones.map { |item| item.at_css('select[name$="[kind]"] option[selected]')&.[]('value') })
+      .to contain_exactly('mobile', 'landline')
+    expect(phones.all? { |item| item.at_css('[data-controller="delta-select"]') }).to be(true)
+    expect(phones.all? { |item| item.at_css('input[type="hidden"][name$="[country_code]"]')&.[]('value') == 'MX' })
+      .to be(true)
+    expect(phones.all? { |item| item.at_css('input[data-international-phone-target="input"][data-country-code="MX"]') })
+      .to be(true)
+    expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
+    expect(editor.at_css('button[data-action="nested-phones#add"]')).to be_present
+    expect(editor.at_css('[data-nested-phones-target="items"]')['class']).to include('lg:grid-cols-2')
+    expect(phones.all? { |item| item.at_css('[data-phone-fields]') }).to be(true)
+    expect(phones.all? do |item|
+      item.at_css('[data-phone-removed-message] button[data-action="nested-phones#undoRemove"]')
+    end).to be(true)
+
+    expect(editor.at_css('[data-supplier-contact-primary-toggle] input[type="checkbox"]')).to be_present
+    expect(editor.at_css('[data-supplier-contact-active-toggle] input[type="checkbox"]')).to be_present
+    expect(editor.css('input[type="radio"]')).to be_empty
+    expect(editor.at_css('textarea[name="contact[notes]"]')).to be_present
+  end
+
+  it 'keeps invalid contact changes visible in the redesigned edit form' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Valid Contact', email: 'valid@example.com')
+
+    patch admin_supplier_contact_path(supplier, contact),
+          params: { contact: { name: '', email: 'not-an-email', position: 'Purchasing' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('input[name="contact[email]"]')['value']).to eq('not-an-email')
+    expect(editor.at_css('input[name="contact[position]"]')['value']).to eq('Purchasing')
+    expect(editor.css('[data-server-field-error]')).not_to be_empty
+    expect(contact.reload.name).to eq('Valid Contact')
+    expect(contact.email).to eq('valid@example.com')
+  end
+
+  it 'keeps the same nested phone records when editing a contact' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact,
+      contactable: supplier, name: 'Telephone Contact',
+      phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }]
+    )
+    phone = contact.phones.first
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: {
+        name: 'Telephone Contact', phones_attributes: {
+          '0' => { id: phone.id, kind: 'landline', number: '5587654321',
+                   country_code: 'MX', primary: '1' }
+        }
+      }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    expect(contact.reload.phones.active.count).to eq(1)
+    expect(phone.reload.number).to eq('+525587654321')
+  end
+
+  it 'removes a phone only after saving the contact edit request' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact,
+      contactable: supplier, name: 'Operations',
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
+      ]
+    )
+    office_phone = contact.phones.find_by!(kind: 'landline')
+    mobile_phone = contact.phones.find_by!(kind: 'mobile')
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: { phones_attributes: {
+        '0' => { id: office_phone.id, _destroy: '1' }
+      } }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    expect(contact.reload.phones.active.pluck(:id)).to eq([mobile_phone.id])
+  end
+
+  it 'preserves the new-contact editor without exposing the active toggle' do
+    supplier = create(:supplier, organization:)
+
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    editor = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(editor).to be_present
+    expect(editor.at_css('[data-supplier-contact-primary-toggle]')).to be_present
+    expect(editor.at_css('[data-supplier-contact-active-toggle]')).to be_nil
+    expect(editor.at_css('template[data-nested-phones-target="template"]')).to be_present
+    expect(editor.css('input[type="radio"]')).to be_empty
+  end
+
+  it 'returns to the supplier dossier after editing a contact opened from its card' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Supplier Representative')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    card = page.at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    editor_link = card.at_css("a[href*='return_to=dossier']")
+    expect(editor_link).to be_present
+
+    get edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier')
+    expect(response).to have_http_status(:ok)
+    editor = Nokogiri::HTML(response.body)
+    expect(editor.at_css('input[name="return_to"]')['value']).to eq('dossier')
+    expect(editor.at_css("[data-supplier-contact-actions] a[href='#{admin_supplier_path(supplier, tab: 'contacts')}']"))
+      .to be_present
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      return_to: 'dossier',
+      contact: { name: 'Updated Representative' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'contacts'))
+    expect(contact.reload.name).to eq('Updated Representative')
+  end
+
+  it 'keeps default contact-management navigation when no dossier origin is supplied' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Managed Representative')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('input[name="return_to"]')).to be_nil
+    expect(page.at_css("[data-supplier-contact-actions] a[href='#{admin_supplier_contacts_path(supplier)}']"))
+      .to be_present
+
+    patch admin_supplier_contact_path(supplier, contact), params: {
+      contact: { name: 'Managed Representative Updated' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
+  end
+
+  it 'shows a phone empty state and differentiates contact priority from phone priority' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'No Phone Contact')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-supplier-contact-form="true"]')
+    expect(form.at_css('[data-nested-phones-target="empty"]')).to be_present
+    expect(form.at_css('[data-supplier-contact-primary-toggle]').text)
+      .to include(I18n.t('admin.supplier_details.contact_form.primary_contact_label', locale: :en))
+    template = form.at_css('template[data-nested-phones-target="template"]')
+    expect(template.text).to include(I18n.t('admin.supplier_details.contact_form.phone_primary_label', locale: :en))
+    expect(form.at_css('[data-controller="nested-phones"]')).to be_present
+  end
+
+  it 'shows redesigned contact cards without repeating the primary label or job title' do
+    supplier = create(:supplier, organization:)
+    contact = create(
+      :contact,
+      contactable: supplier, name: 'Ana Lopez', position: 'Purchasing Manager',
+      email: 'ana@example.com', primary: true, notes: 'Prefer email during business hours',
+      phones_attributes: [
+        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
+        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true },
+        { number: '5598765432', country_code: 'MX', kind: 'other', primary: false }
+      ]
+    )
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(response).to have_http_status(:ok)
+    card = Nokogiri::HTML(response.body).at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    expect(card.text).to include('Ana Lopez', 'Purchasing Manager', 'ana@example.com')
+    expect(card.css('[data-contact-primary-badge]').size).to eq(1)
+    expect(card.at_css('[data-contact-primary-badge] svg[aria-hidden="true"]')).to be_present
+    meta = card.at_css('[data-contact-meta-row]')
+    expect(meta).to be_present
+    expect(meta['class']).to include('whitespace-nowrap')
+    expect(meta.at_css('[data-contact-primary-badge]')).to be_present
+    expect(meta.at_css('[data-contact-position]').text).to eq('Purchasing Manager')
+    expect(meta.text).to include(I18n.t('admin.supplier_details.contact_statuses.active', locale: :en))
+    expect(card.text.scan(I18n.t('admin.supplier_details.primary', locale: :en)).size).to eq(1)
+    expect(card.css('a[href^="tel:"]').size).to eq(3)
+
+    details = card.at_css('[data-contact-detail]')
+    expect(details).to be_present
+    expect(details['class']).to include('hidden')
+    expect(details.text).to include('Prefer email during business hours')
+    expect(details.text).not_to include('Purchasing Manager')
+    expect(details.css('dt').map(&:text)).not_to include(
+      I18n.t('admin.supplier_details.contact_fields.primary', locale: :en)
+    )
+    expect(card.at_css('button[aria-controls]')['aria-expanded']).to eq('false')
+  end
+
+  it 'renders the primary contact and internal responsible panels without undefined icons' do
+    supplier = create(:supplier, organization:)
+    create(:contact, contactable: supplier, name: 'Principal Contact', primary: true)
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    expect(response).to have_http_status(:ok)
+    section = Nokogiri::HTML(response.body).at_css('[data-supplier-general-area="contact_management"]')
+    expect(section).to be_present
+    expect(section.css('svg').size).to be >= 2
+  end
+
+  it 'renders missing contact data without an unnecessary details expander' do
+    supplier = create(:supplier, organization:)
+    contact = create(:contact, contactable: supplier, name: 'Simple Contact', notes: nil, email: nil)
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(response).to have_http_status(:ok)
+    card = Nokogiri::HTML(response.body).at_css("[data-supplier-contact-id='#{contact.id}']")
+    expect(card).to be_present
+    expect(card.at_css('[data-contact-detail]')).to be_nil
+    expect(card.at_css('button[data-action="supplier-contacts#toggleCard"]')).to be_nil
+    expect(card.css('a[href^="tel:"]')).to be_empty
+  end
+
+  it 'does not expose another organization suppliers' do
+    foreign_supplier = create(:supplier, organization: create(:organization), name: 'Foreign Supplier')
+    get admin_suppliers_path
+    expect(response.body).not_to include('Foreign Supplier')
+
+    get admin_supplier_path(foreign_supplier)
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'assigns the organization on creation regardless of submitted ownership' do
+    foreign_organization = create(:organization)
+    post admin_suppliers_path,
+         params: { supplier: supplier_attributes.merge(organization_id: foreign_organization.id) }
+
+    expect(Supplier.order(:id).last.organization).to eq(organization)
+  end
+
+  it 'rejects changes to suppliers owned by another organization' do
+    foreign_supplier = create(:supplier, organization: create(:organization))
+    original_name = foreign_supplier.name
+
+    patch admin_supplier_path(foreign_supplier), params: { supplier: { name: 'Unauthorized' } }
+    expect(response).to have_http_status(:not_found)
+    expect(Supplier.with_deleted.find(foreign_supplier.id).name).to eq(original_name)
+
+    sign_in user
+    delete admin_supplier_path(foreign_supplier)
+    expect(response).to have_http_status(:not_found)
+    persisted = Supplier.with_deleted.find(foreign_supplier.id)
+    expect(persisted).to have_attributes(name: original_name, deleted_at: nil)
+  end
+
+  it 'renders the shared mascot loader and enables it for supplier actions' do
+    create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    loader = document.at_css('#admin-action-loader[data-controller="admin-action-loader"]')
+    expect(loader).to be_present
+    expect(loader['hidden']).not_to be_nil
+    expect(loader.at_css('img[src*="deltin/waving"]')).to be_present
+    expect(document.at_css('thead[data-loading-scope="true"]')).to be_present
+    expect(document.at_css('a[data-loading-message][href*="/suppliers/"]')).to be_present
+    expect(document.at_css('form[data-loading-message]')).to be_present
+  end
+
+  it 'uses the short back label and the existing loader on supplier navigation' do
+    supplier = create(:supplier, organization:)
+    expect(I18n.t('admin.suppliers.show.back', locale: :es)).to eq('Volver')
+
+    get new_admin_supplier_path
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    back = document.at_css("a[href='#{admin_suppliers_path}'][data-loading-message]")
+    expect(back).to be_present
+    expect(back['data-loading-message']).to eq(I18n.t('admin.action_loader.returning'))
+
+    get admin_supplier_path(supplier)
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="supplier-dossier"][data-loading-scope="true"]')).to be_present
+    expect(document.at_css("a[href='#{admin_suppliers_path}'][data-loading-message]")).to be_present
+    expect(document.at_css("a[href='#{edit_admin_supplier_path(supplier)}'][data-loading-message]")).to be_present
+  end
+
+  it 'makes the supplier page-size and row actions available with the Deltin loader' do
+    create(:supplier, organization:)
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#admin-action-loader[data-controller="admin-action-loader"]')).to be_present
+    expect(document.at_css('a[data-loading-message][href*="/suppliers/"]')).to be_present
+    expect(document.at_css('form[data-loading-message]')).to be_present
+  end
+
+  it 'shows supplier deletion beside show and edit, with its confirmation, instead of in an overflow menu' do
+    supplier = create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.element_children.map(&:name)).to eq(%w[a a form])
+    expect(actions.css('a').pluck('href'))
+      .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
+
+    delete_form = actions.at_css("form[action='#{admin_supplier_path(supplier)}']")
+    expect(delete_form.at_css('input[name="_method"]')['value']).to eq('delete')
+    delete_button = delete_form.at_css('button[data-controller~="swal-confirm"]')
+    expect(delete_button['data-turbo-confirm']).to be_present
+    expect(delete_button['data-confirm-record']).to eq(supplier.name)
+    expect(delete_button['aria-label']).to be_present
+    expect(actions.css('details')).to be_empty
+  end
+
+  it 'shows restore directly for archived suppliers without an overflow menu' do
+    supplier = create(:supplier, :deleted, organization:)
+
+    get admin_suppliers_path, params: { archived: '1' }
+
+    expect(response).to have_http_status(:ok)
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.element_children.map(&:name)).to eq(['form'])
+    restore_form = actions.at_css("form[action='#{restore_admin_supplier_path(supplier)}']")
+    expect(restore_form).to be_present
+    expect(restore_form.at_css('input[name="_method"]')['value']).to eq('patch')
+    expect(restore_form.at_css('button[aria-label]')).to be_present
+    expect(actions.css('details')).to be_empty
+  end
+
+  it 'hides the supplier delete action when deletion is not permitted' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(SupplierPolicy).to receive(:destroy?).and_return(false)
+
+    get admin_suppliers_path
+
+    actions = Nokogiri::HTML(response.body).at_css('tbody tr td:last-child > div')
+    expect(actions).to be_present
+    expect(actions.css("form[action='#{admin_supplier_path(supplier)}']")).to be_empty
+    expect(actions.css('a').pluck('href'))
+      .to eq([admin_supplier_path(supplier), edit_admin_supplier_path(supplier)])
+  end
+
+  it 'subscribes the supplier list to organization-specific Turbo updates' do
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    stream = document.at_css('turbo-cable-stream-source[signed-stream-name]')
+    expected_stream = Turbo::StreamsChannel.signed_stream_name("suppliers_catalog_#{organization.id}")
+
+    expect(document.css('turbo-cable-stream-source').pluck('signed-stream-name'))
+      .to include(expected_stream)
+    expect(stream).to be_present
+  end
+
+  it 'keeps sort and page-size parameters in the supplier filter form' do
+    get admin_suppliers_path, params: { sort: 'name', direction: 'desc', per_page: 5 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('name="sort"')
+    expect(response.body).to include('name="direction"')
+    expect(response.body).to include('name="per_page"')
+    expect(response.body).to include('data-controller="supplier-search"')
+  end
+
+  it 'renders supplier filter dropdowns without radio buttons' do
+    get admin_suppliers_path, params: { status: 'active' }
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    dropdowns = document.css('details[data-controller~="supplier-dropdown"]').select do |dropdown|
+      dropdown.at_css('input[data-supplier-dropdown-target="value"]')
+    end
+
+    expect(dropdowns).not_to be_empty
+    dropdowns.each do |dropdown|
+      expect(dropdown.css('input[type="radio"]')).to be_empty
+      expect(dropdown.at_css('input[type="hidden"][data-supplier-dropdown-target="value"]')).to be_present
+      expect(dropdown.css('[role="listbox"] button[role="option"]')).not_to be_empty
+    end
+
+    status = dropdowns.find { |dropdown| dropdown.at_css('input[name="status"]') }
+    expect(status.at_css('input[name="status"]')['value']).to eq('active')
+    expect(status.at_css('button[data-option-value="active"]')['aria-selected']).to eq('true')
+  end
+
+  it 'broadcasts a refresh after a supplier is created' do
+    expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+      .with("suppliers_catalog_#{organization.id}")
+
+    post admin_suppliers_path, params: { supplier: supplier_attributes }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+  end
+
+  it 'archives and restores a supplier as inactive without deleting its records' do
+    supplier = create(:supplier, organization:)
+    contact = supplier.contacts.create!(name: 'Keep me', primary: true)
+    delete admin_supplier_path(supplier)
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.reload.deleted_at).to be_present
+
+    patch restore_admin_supplier_path(supplier)
+    expect(response).to have_http_status(:redirect)
+    expect(supplier.reload).to be_inactive
+    expect(supplier.deleted_at).to be_nil
+    expect(contact.reload.name).to eq('Keep me')
+  end
+
+  it 'refuses archiving while a purchase order remains open' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(Supplier).to receive(:archivable?).and_return(false)
+    delete admin_supplier_path(supplier)
+
+    expect(response).to redirect_to(admin_supplier_path(supplier))
+    expect(supplier.reload.deleted_at).to be_nil
+  end
+
+  it 'requires authentication' do
+    sign_out user
+    get admin_suppliers_path
+    expect(response).to redirect_to(new_user_session_path)
+  end
+
+  it 'denies authenticated non-administrators' do
+    sign_out user
+    sign_in create(:user)
+    get admin_suppliers_path
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'provides compact mobile supplier cards without exposing hidden fiscal fields' do
+    supplier = create(:supplier, organization:, name: 'Mobile Supplier')
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    card = page.at_css("[data-supplier-mobile-card='#{supplier.id}']")
+    expect(card).to be_present
+    expect(card.text).to include('Mobile Supplier', supplier.code)
+    expect(page.at_css('table').parent['class']).to include('hidden', 'md:block')
+    expect(card.at_css("a[href='#{admin_supplier_path(supplier)}']")).to be_present
+  end
+
+  it 'uses six capture steps and does not render an extra summary stage' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('[data-supplier-form-target="step"]').size).to eq(6)
+    expect(page.css('[data-supplier-form-target="tab"]').size).to eq(6)
+    expect(page.at_css('[data-supplier-form-target="summary"]')).to be_nil
+  end
+
+  it 'renders the new supplier form' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.suppliers.new.title', locale: :en))
+  end
+
+  it 'hides status on creation and always creates an active supplier' do
+    get new_admin_supplier_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('name="supplier[status]"')
+
+    post admin_suppliers_path, params: { supplier: supplier_attributes.merge(status: 'inactive') }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(Supplier.order(:id).last).to be_active
+  end
+
+  it 'creates nested supplier contacts as active regardless of submitted status' do
+    attributes = supplier_attributes.merge(
+      contacts_attributes: { '0' => { name: 'Operations', active: '0' } }
+    )
+
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(Supplier.order(:id).last.contacts.first).to be_active
+  end
+
+  it 'accepts currency and country references for a supplier and its fiscal address' do
+    country = create(:country, iso_alpha2: 'MX')
+    address_attributes = attributes_for(:address).except(:country).merge(
+      country_id: country.id, purpose: 'fiscal'
+    )
+    attributes = supplier_attributes.merge(
+      currency_id: currency.id,
+      addresses_attributes: { '0' => address_attributes }
+    )
+
+    post admin_suppliers_path, params: { supplier: attributes }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    created = Supplier.order(:id).last
+    expect(created.currency).to eq(currency)
+    expect(created.addresses.first.country).to eq(country)
+  end
+
+  it 'renders the edit form for an existing supplier' do
+    supplier = create(:supplier, organization:, name: 'Supplier to Edit')
+
+    get edit_admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Supplier to Edit')
+  end
+
+  it 'renders the same tag editor for new and existing suppliers' do
+    get new_admin_supplier_path
+
+    new_editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(new_editor).to be_present
+    expect(new_editor.at_css('input[name="supplier[tags_text]"][type="hidden"]')['value']).to be_blank
+
+    supplier = create(:supplier, organization:, tags: %w[Priority Regional])
+    get edit_admin_supplier_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    edit_editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(edit_editor).to be_present
+    expect(edit_editor.at_css('input[name="supplier[tags_text]"][type="hidden"]')['value'])
+      .to eq('Priority, Regional')
+    expect(edit_editor.at_css('[data-supplier-tags-target="chips"]').text.squish)
+      .to include('Priority', 'Regional')
+    expect(edit_editor.css('button[data-action="supplier-tags#remove"]').size).to eq(2)
+    expect(edit_editor.at_css('[data-supplier-tags-target="input"]')).to be_present
+    expect(edit_editor.at_css('[data-action="supplier-tags#add"]')).to be_present
+  end
+
+  it 'saves added and removed tags through the edit supplier form' do
+    supplier = create(:supplier, organization:, tags: %w[Original])
+
+    patch admin_supplier_path(supplier),
+          params: { supplier: { tags_text: 'Original, Regional, Urgente' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.reload.tags).to eq(%w[Original Regional Urgente])
+
+    get edit_admin_supplier_path(supplier)
+    editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(editor.at_css('input[name="supplier[tags_text]"]')['value']).to eq('Original, Regional, Urgente')
+    expect(editor.css('button[data-action="supplier-tags#remove"]').size).to eq(3)
+
+    patch admin_supplier_path(supplier), params: { supplier: { tags_text: 'Regional' } }
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(supplier.reload.tags).to eq(['Regional'])
+  end
+
+  it 'keeps unsaved tag changes visible if editing fails validation' do
+    supplier = create(:supplier, organization:, tags: %w[Original])
+
+    patch admin_supplier_path(supplier),
+          params: { supplier: { name: '', tags_text: 'Original, Pendiente' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    editor = Nokogiri::HTML(response.body).at_css('[data-controller="supplier-tags"]')
+    expect(editor.at_css('input[name="supplier[tags_text]"]')['value']).to eq('Original, Pendiente')
+    expect(editor.css('button[data-action="supplier-tags#remove"]').size).to eq(2)
+    expect(supplier.reload.tags).to eq(['Original'])
+  end
+
+  it 'lists, filters and excludes deleted suppliers' do
+    create(:supplier, organization:, name: 'Visible Supplier')
+    create(:supplier, :deleted, organization:, name: 'Deleted Supplier')
+
+    get admin_suppliers_path, params: { search: 'Visible' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Visible Supplier')
+    expect(response.body).not_to include('Deleted Supplier')
+  end
+
+  it 'filters by status and sorts by name' do
+    create(:supplier, organization:, name: 'Zulu Supplier', status: :inactive)
+    create(:supplier, organization:, name: 'Alpha Supplier', status: :active)
+
+    get admin_suppliers_path, params: { status: 'active', sort: 'name', direction: 'asc' }
+
+    rows = Nokogiri::HTML(response.body).css('tbody tr')
+    expect(rows.map { |row| row.at_css('td:first-child p.font-semibold')&.text&.strip }).to eq(['Alpha Supplier'])
+  end
+
+  it 'changes page size without an Apply button and keeps filtering and ordering parameters' do
+    create(:supplier, organization:, name: 'Alpha Page Size')
+
+    get admin_suppliers_path, params: {
+      search: 'Alpha', status: 'active', sort: 'name', direction: 'desc', per_page: 25
+    }
+
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css('#supplier-pagination-form')
+    expect(form).to be_present
+    expect(form['data-controller']).to eq('supplier-page-size')
+    expect(form['data-action']).to include('change->supplier-page-size#apply')
+    expect(form['data-turbo-frame']).to eq('_top')
+    expect(form.at_css('select[name="per_page"] option[value="25"][selected]')).to be_present
+    expect(form.at_css('button[type="submit"]')).to be_nil
+    expect(form.at_css('input[name="search"]')['value']).to eq('Alpha')
+    expect(form.at_css('input[name="sort"]')['value']).to eq('name')
+    expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
+  end
+
+  it 'uses the global Deltin page-size loader and keeps the selector at the far left' do
+    create(:supplier, organization:)
+
+    get admin_suppliers_path
+
+    document = Nokogiri::HTML(response.body)
+    loader = document.at_css('#admin-action-loader')
+    expect(loader).to be_present
+    expect(loader.attribute_nodes.map(&:name)).to include('hidden')
+    expect(loader.at_css('img[src*="deltin/waving"]')).to be_present
+
+    form = document.at_css('#supplier-pagination-form')
+    footer_left = form.parent
+    range = footer_left.at_css('p[aria-live="polite"]')
+    expect(range).to be_present
+    expect(footer_left.element_children.index(form)).to be < footer_left.element_children.index(range)
+  end
+
+  it 'shows 25 or 50 suppliers when requested' do
+    create_list(:supplier, 26, organization:)
+
+    get admin_suppliers_path, params: { per_page: 25 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(25)
+
+    get admin_suppliers_path, params: { per_page: 50 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(26)
+  end
+
+  it 'preserves archive mode when clearing one active filter' do
+    get admin_suppliers_path, params: { archived: '1', status: 'inactive', per_page: 25 }
+
+    document = Nokogiri::HTML(response.body)
+    links = document.css('#supplier_active_filters a[href]')
+    expect(links.any? { |link| link['href'].include?('archived=1') }).to be(true)
+  end
+
+  it 'distinguishes empty catalog, filtered results and empty archives' do
+    get admin_suppliers_path
+    expect(response.body).to include('No suppliers yet')
+
+    get admin_suppliers_path, params: { search: 'NothingMatchedThisSupplier' }
+    expect(response.body).to include('No matching suppliers')
+
+    get admin_suppliers_path, params: { archived: '1' }
+    expect(response.body).to include('No archived suppliers')
+  end
+
+  it 'uses top-level navigation and a compact page window for large supplier lists' do
+    create_list(:supplier, 55, organization:)
+
+    get admin_suppliers_path, params: { per_page: 5, page: 6 }
+
+    document = Nokogiri::HTML(response.body)
+    nav = document.at_css('nav[aria-label="Supplier pagination"]')
+    expect(nav).to be_present
+    expect(nav.css('a[data-turbo-frame="_top"]')).not_to be_empty
+    expect(nav.css('a').size).to be <= 9
+    expect(nav.text).to include('…')
+  end
+
+  it 'does not paginate 10 or fewer and paginates 11+' do
+    create_list(:supplier, 10, organization:)
+    get admin_suppliers_path
+    expect(response.body).not_to include('aria-label="Pagination"')
+
+    create(:supplier, organization:)
+    get admin_suppliers_path, params: { per_page: 5 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(5)
+    expect(response.body).to include('supplier-pagination-form')
+  end
+
+  it 'rounds up the page count for supplier broadcasts' do
+    create_list(:supplier, 11, organization:)
+
+    get admin_suppliers_path
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    expect(response.body).to include('supplier-pagination-form')
+  end
+
+  it 'supports 10 and 15 records per page' do
+    create_list(:supplier, 16, organization:)
+    get admin_suppliers_path, params: { per_page: 10 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+
+    get admin_suppliers_path, params: { per_page: 15 }
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(15)
+  end
+
+  it 'shows a supplier and rejects deleted records' do
+    supplier = create(:supplier, organization:, name: 'Supplier Details')
+    get admin_supplier_path(supplier)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Supplier Details')
+
+    deleted = create(:supplier, :deleted, organization:)
+    get admin_supplier_path(deleted)
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'creates, updates and soft deletes with SweetAlert feedback and Noticed' do
+    expect do
+      post admin_suppliers_path, params: { supplier: supplier_attributes }
+    end.to change(Supplier, :count).by(1)
+                                   .and change { user.notifications.count }.by(1)
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.suppliers.created', locale: :en))
+
+    supplier = Supplier.order(:id).last
+
+    expect do
+      patch admin_supplier_path(supplier), params: { supplier: { name: 'Updated Supplier' } }
+    end.to change { user.notifications.count }.by(1)
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.suppliers.updated', locale: :en))
+    expect(supplier.reload.name).to eq('Updated Supplier')
+
+    expect do
+      delete admin_supplier_path(supplier)
+    end.to change { user.notifications.count }.by(1)
+
+    expect(response).to redirect_to(admin_suppliers_path)
+    expect(flash[:swal_message]).to eq('Supplier deleted successfully')
+    expect(supplier.reload.deleted_at).to be_present
+  end
+
+  it 'returns to the general dossier tab when updated from general information' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'general')
+    expect(response.body).to include('return_to=general')
+
+    get edit_admin_supplier_path(supplier, return_to: 'general')
+    expect(response.body).to include('name="return_to"')
+    expect(response.body).to include('value="general"')
+    expect(response.body).to include(admin_supplier_path(supplier, tab: 'general'))
+
+    patch admin_supplier_path(supplier), params: { return_to: 'general', supplier: { name: 'Updated from dossier' } }
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'general'))
+    expect(supplier.reload.name).to eq('Updated from dossier')
+  end
+
+  it 'preserves the general dossier origin after an invalid update' do
+    supplier = create(:supplier, organization:)
+
+    patch admin_supplier_path(supplier), params: { return_to: 'general', supplier: { name: '' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('name="return_to"')
+    expect(response.body).to include('value="general"')
+  end
+
+  it 'renders grouped general information and informative empty states' do
+    supplier = create(:supplier, organization:, email: nil, responsible_user: nil, notes: nil)
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    panel = document.at_css('#supplier-dossier-general')
+    expect(panel.css('h3').size).to eq(3)
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.phone_missing', locale: :en))
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.email_missing', locale: :en))
+    expect(panel.text).to include(I18n.t('admin.supplier_general_layout.responsible_missing', locale: :en))
+  end
+
+  it 'renders supplier tags as individual chips' do
+    supplier = create(:supplier, organization:, tags: %w[Priority Distribution])
+
+    get admin_supplier_path(supplier, tab: 'general')
+
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-general')
+    expect(panel.css('span.rounded-full').map { |chip| chip.text.squish }).to include('Priority', 'Distribution')
+  end
+
+  it 'places the address management link beside the heading and the search below the filters' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    section = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    title_row = section.at_css('[data-supplier-addresses-title-row]')
+    toolbar = section.at_css('[data-supplier-addresses-toolbar]')
+    filters = toolbar.at_css('[data-supplier-addresses-filters]')
+    search_row = toolbar.at_css('[data-supplier-addresses-search-row]')
+
+    expect(title_row.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_present
+    expect(title_row.at_css('input[type="search"]')).to be_nil
+    expect(filters.css('[data-supplier-addresses-target="filter"]')).not_to be_empty
+    expect(filters.next_element).to eq(search_row)
+    expect(search_row.at_css('input[data-supplier-addresses-target="search"]')).to be_present
+    expect(search_row.at_css('input')&.[]('data-action')).to eq('input->supplier-addresses#search')
+  end
+
+  it 'hides the address management actions when the user has only viewing access' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(SupplierPolicy).to receive(:manage_addresses?).and_return(false)
+    %i[create_addresses? update_addresses? destroy_addresses? restore_addresses?
+       set_primary_address? geocode_address?].each do |action|
+      allow_any_instance_of(SupplierPolicy).to receive(action).and_return(false)
+    end
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    expect(panel.at_css("a[href='#{admin_supplier_addresses_path(supplier)}']")).to be_nil
+    expect(panel.css('[data-supplier-addresses-target="emptyAction"]')).to be_empty
+    expect(panel.at_css('input[data-supplier-addresses-target="search"]')).to be_present
+  end
+
+  it 'provides a distinct address search empty state with translated title and description' do
+    supplier = create(:supplier, organization:)
+
+    get admin_supplier_path(supplier, tab: 'addresses')
+
+    expect(response).to have_http_status(:ok)
+    panel = Nokogiri::HTML(response.body).at_css('#supplier-dossier-addresses')
+    expect(panel['data-supplier-addresses-empty-title-no-results-value'])
+      .to eq(I18n.t('admin.supplier_dossier.address_cards.no_results_title', locale: :en))
+    expect(panel['data-supplier-addresses-empty-no-results-value'])
+      .to eq(I18n.t('admin.supplier_dossier.address_cards.no_results_description', locale: :en))
+    expect(panel.at_css('[data-supplier-addresses-target="emptyTitle"]')).to be_present
+    expect(panel.at_css('[data-supplier-addresses-target="emptyText"]')).to be_present
+    expect(panel.at_css('[data-supplier-addresses-target="emptyAction"]')).to be_present
+  end
+
+  it 'renders validation errors when creating an invalid supplier' do
+    post admin_suppliers_path, params: { supplier: { code: '', name: '' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('name')
+  end
+
+  it 'renders the duplicate error when the database rejects a create' do
+    allow_any_instance_of(Supplier).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+    post admin_suppliers_path, params: { supplier: supplier_attributes }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.suppliers.errors.duplicate', locale: :en))
+  end
+
+  it 'renders the duplicate error when the database rejects an update' do
+    supplier = create(:supplier, organization:)
+    allow_any_instance_of(Supplier).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: 'Conflicting Supplier' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.suppliers.errors.duplicate', locale: :en))
+    expect(supplier.reload.name).not_to eq('Conflicting Supplier')
+  end
+
+  it 're-renders the edit form when an update fails validation' do
+    supplier = create(:supplier, organization:, name: 'Unchanged Supplier')
+
+    patch admin_supplier_path(supplier), params: { supplier: { name: '' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    assert_select 'input[name="supplier[name]"]'
+    expect(response.body).to include('rose-500')
+    expect(supplier.reload.name).to eq('Unchanged Supplier')
+  end
+end

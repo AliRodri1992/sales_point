@@ -1,0 +1,5 @@
+---
+es:
+  registration:
+    initial_branch_name: "Sucursal Principal"
+    initial_terminal_name: "Terminal POS %{number}"

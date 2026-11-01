@@ -4,20 +4,24 @@
   <title><%= content_for?(:title) ? yield(:title) : t('admin.dashboard.index.title') %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Nexo POS">
+  <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">
   <meta name="mobile-web-app-capable" content="yes">
 
   <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
   <%= yield :head %>
 
-  <%= favicon_link_tag 'favicon.ico', rel: 'icon', sizes: 'any' %>
+  <%= favicon_link_tag 'delta-pos-favicon.svg', rel: 'icon', type: 'image/svg+xml' %>
   <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png', sizes: '180x180' %>
   <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+  <% if controller_name == 'suppliers' && %w[edit update].include?(action_name) %>
+    <link rel="stylesheet" href="https://releases.transloadit.com/uppy/v6.0.5/uppy.min.css">
+  <% end %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 </head>
 
-<body class="min-h-full bg-slate-100 text-slate-900 antialiased">
+<body class="min-h-full bg-slate-100 text-slate-900 antialiased" data-controller="swal-confirm"
+      data-swal-confirm-text="<%= t('admin.supplier_ui.confirm_action') %>"
+      data-swal-cancel-text="<%= t('admin.suppliers.confirm.cancel') %>">
 <script
   id="javascriptTranslations" type="application/json">
   <%= raw javascript_dashboard_translations %>
@@ -26,21 +30,13 @@
 <div class="flex min-h-screen">
   <%= render "admin/shared/sidebar" %>
 
-  <div class="flex min-w-0 flex-1 flex-col">
+  <div id="adminDashboardContent" class="flex min-w-0 flex-1 flex-col">
     <%= render "admin/shared/topbar" %>
-
     <%= render "admin/shared/breadcrumbs" %>
 
     <main class="flex-1 px-4 py-6 lg:px-6">
       <%= turbo_frame_tag "flash" do %>
         <%= render "admin/shared/flash" %>
-      <% end %>
-
-      <% if flash[:swal_message].present? %>
-        <div data-controller="swal-flash"
-             data-swal-flash-message-value="<%= flash[:swal_message] %>"
-             data-swal-flash-icon-value="success"
-             class="hidden"></div>
       <% end %>
 
       <%= yield %>
@@ -50,7 +46,8 @@
   </div>
 </div>
 
-<%= render "admin/shared/chat" %>
+<%= render "admin/shared/action_loader" %>
+<%= render "admin/shared/assistant" %>
 <%= render "admin/shared/online_users" %>
 
 <%= turbo_frame_tag "language_modal",

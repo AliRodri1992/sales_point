@@ -40,6 +40,9 @@ application.register("languages", LanguagesController)
 import LanguagesSearchController from "./languages_search_controller"
 application.register("languages-search", LanguagesSearchController)
 
+import TestimonialsCarouselController from "./testimonials_carousel_controller"
+application.register("testimonials-carousel", TestimonialsCarouselController)
+
 import CategoriesController from "./categories_controller"
 application.register("categories", CategoriesController)
 
@@ -49,3 +52,105 @@ application.register("categories-search", CategoriesSearchController)
 
 import BranchesPaginationController from "./branches_pagination_controller"
 application.register("branches-pagination", BranchesPaginationController)
+
+import UsersPaginationController from "./users_pagination_controller"
+application.register("users-pagination", UsersPaginationController)
+
+import RegistrationWizardController from "./registration_wizard_controller"
+application.register("registration-wizard", RegistrationWizardController)
+
+import DemoRequestWizardController from "./demo_request_wizard_controller"
+application.register("demo-request-wizard", DemoRequestWizardController)
+
+import InternationalPhoneController from "./international_phone_controller"
+application.register("international-phone", InternationalPhoneController)
+
+import NestedPhonesController from "./nested_phones_controller"
+application.register("nested-phones", NestedPhonesController)
+
+import PhoneLabelController from "./phone_label_controller"
+application.register("phone-label", PhoneLabelController)
+
+import SupplierCalendarController from "./supplier_calendar_controller"
+application.register("supplier-calendar", SupplierCalendarController)
+
+import SupplierDossierController from "./supplier_dossier_controller"
+application.register("supplier-dossier", SupplierDossierController)
+
+import SupplierEditUppyController from "./supplier_edit_uppy_controller"
+application.register("supplier-edit-uppy", SupplierEditUppyController)
+
+import SupplierDocumentsController from "./supplier_documents_controller"
+application.register("supplier-documents", SupplierDocumentsController)
+
+import SupplierContactsController from "./supplier_contacts_controller"
+application.register("supplier-contacts", SupplierContactsController)
+
+import SupplierAddressesController from "./supplier_addresses_controller"
+application.register("supplier-addresses", SupplierAddressesController)
+
+import SupplierAddressPreviewController from "./supplier_address_preview_controller"
+application.register("supplier-address-preview", SupplierAddressPreviewController)
+
+import SupplierAddressLocationController from "./supplier_address_location_controller"
+application.register("supplier-address-location", SupplierAddressLocationController)
+
+import SupplierPostalAssistController from "./supplier_postal_assist_controller"
+application.register("supplier-postal-assist", SupplierPostalAssistController)
+
+import SupplierCountryFieldsController from "./supplier_country_fields_controller"
+application.register("supplier-country-fields", SupplierCountryFieldsController)
+
+import SupplierSearchController from "./supplier_search_controller"
+application.register("supplier-search", SupplierSearchController)
+
+import SupplierPageSizeController from "./supplier_page_size_controller"
+application.register("supplier-page-size", SupplierPageSizeController)
+
+import TablePageSizeController from "./table_page_size_controller"
+application.register("table-page-size", TablePageSizeController)
+
+import SupplierDropdownController from "./supplier_dropdown_controller"
+application.register("supplier-dropdown", SupplierDropdownController)
+
+import SupplierFormController from "./supplier_form_controller"
+application.register("supplier-form", SupplierFormController)
+
+import SupplierTagsController from "./supplier_tags_controller"
+application.register("supplier-tags", SupplierTagsController)
+
+import SupplierBulkSelectController from "./supplier_bulk_select_controller"
+application.register("supplier-bulk-select", SupplierBulkSelectController)
+
+import DeltaSelectController from "./delta_select_controller"
+application.register("delta-select", DeltaSelectController)
+
+import SupplierNestedController from "./supplier_nested_controller"
+application.register("supplier-nested", SupplierNestedController)
+
+import SupplierPaymentBankController from "./supplier_payment_bank_controller"
+application.register("supplier-payment-bank", SupplierPaymentBankController)
+
+import CfdiPreviewController from "./cfdi_preview_controller"
+application.register("cfdi-preview", CfdiPreviewController)
+
+import SupplierBankAccountsController from "./supplier_bank_accounts_controller"
+application.register("supplier-bank-accounts", SupplierBankAccountsController)
+
+import SupplierBankClabeController from "./supplier_bank_clabe_controller"
+application.register("supplier-bank-clabe", SupplierBankClabeController)
+
+import ProductsSearchController from "./products_search_controller"
+application.register("products-search", ProductsSearchController)
+
+import UserGuideController from "./user_guide_controller"
+application.register("user-guide", UserGuideController)
+
+import AdminActionLoaderController from "./admin_action_loader_controller"
+application.register("admin-action-loader", AdminActionLoaderController)
+
+import DeltinAssistantController from "./deltin_assistant_controller"
+application.register("deltin-assistant", DeltinAssistantController)
+
+import SupplierEventFieldsController from "./supplier_event_fields_controller"
+application.register("supplier-event-fields", SupplierEventFieldsController)

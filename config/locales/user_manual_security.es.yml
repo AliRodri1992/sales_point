@@ -1,0 +1,96 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        security:
+          title: "Usuarios, acceso e idiomas"
+          description: "Gestiona a las personas que usan el sistema y controla lo que pueden hacer."
+          topics:
+            -
+              id: "users"
+              title: "Administración de usuarios"
+              description: "Crea cuentas y modifica sus datos o estado."
+              before: "Necesitas un rol con privilegios de administración."
+              tasks:
+                -
+                  title: "Registrar un usuario"
+                  steps:
+                    -
+                      "Entra a «Configuración» → «Usuarios» y pulsa «Nuevo usuario»."
+                    -
+                      "Completa nombre de usuario, correo, tipo de usuario y las opciones de acceso que pida el formulario."
+                    -
+                      "Asigna el rol o las opciones de autorización disponibles; verifica el estado inicial."
+                    -
+                      "Guarda y busca el usuario en el listado para comprobar el alta."
+                -
+                  title: "Editar usuario"
+                  steps:
+                    -
+                      "En la tabla localiza al usuario por nombre o correo."
+                    -
+                      "Entra a «Ver» o «Editar» y actualiza los datos permitidos."
+                    -
+                      "Guarda y verifica la confirmación."
+                -
+                  title: "Eliminar un usuario"
+                  steps:
+                    -
+                      "Comprueba la cuenta exacta y selecciona «Eliminar»."
+                    -
+                      "Confirma la operación y revisa el listado actualizado."
+                    -
+                      "No puedes eliminar tu propia cuenta mediante esta acción; utiliza la administración autorizada."
+              note: "La eliminación es lógica; evita compartir una misma cuenta entre personas."
+            -
+              id: "roles"
+              title: "Roles y permisos"
+              description: "Aplica privilegios mínimos según las responsabilidades."
+              tasks:
+                -
+                  title: "Crear o editar un rol"
+                  steps:
+                    -
+                      "Abre «Configuración» → «Roles y permisos»."
+                    -
+                      "Selecciona un rol existente o crea uno con nombre y código propios."
+                    -
+                      "Revisa los permisos por módulo: consultar, crear, editar, archivar, exportar u operaciones financieras, según estén disponibles."
+                    -
+                      "Guarda los cambios y verifica el resultado con un usuario que tenga asignado ese rol."
+                -
+                  title: "Corregir un acceso denegado"
+                  steps:
+                    -
+                      "Identifica la operación que el usuario no puede ejecutar."
+                    -
+                      "Verifica su organización activa, rol y permiso específico."
+                    -
+                      "Asigna el permiso adecuado solo si la persona debe realizar la operación."
+                    -
+                      "Pide que el usuario vuelva a abrir el módulo para comprobar el acceso."
+              note: "Ocultar un botón no sustituye las validaciones del servidor; ambas protegen las operaciones."
+            -
+              id: "languages"
+              title: "Catálogo de idiomas"
+              description: "Administra las opciones de idioma que aparecen en el sistema."
+              tasks:
+                -
+                  title: "Agregar un idioma"
+                  steps:
+                    -
+                      "Abre «Catálogos» → «Idiomas»."
+                    -
+                      "Selecciona «Nuevo idioma» e indica nombre, código, bandera ISO y estado."
+                    -
+                      "Guarda y comprueba que aparezca en la tabla."
+                -
+                  title: "Editar o dar de baja"
+                  steps:
+                    -
+                      "Localiza el idioma con la búsqueda o filtros."
+                    -
+                      "Selecciona «Editar» para corregir sus datos y guarda."
+                    -
+                      "Utiliza «Eliminar» para archivar un idioma que no deba seguir disponible."
+              note: "Crear un idioma en el catálogo no traduce automáticamente todas las pantallas ni genera archivos de traducciones."

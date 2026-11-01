@@ -1,4 +1,4 @@
-<% content_for :title, t(".title", default: "Admin Dashboard | Nexo POS") %>
+<% content_for :title, t("admin.dashboard.index.title") %>
 
 <script
   id="dashboardPreferences" type="application/json">
@@ -7,12 +7,14 @@
 
 <%= render "admin/dashboard/page_header" %>
 
+<%= render "admin/dashboard/onboarding_card" %>
+
 <%= render "admin/dashboard/kpi_grid" %>
 
 <div id="mainDashboardGrid" class="grid-stack dashboard-grid gs-12 grid-stack-animate" data-grid-type="main">
   <%= render Admin::SalesChartComponent.new %>
 
-  <%= render Admin::QuickActionsComponent.new %>
+  <%= render Admin::QuickActionsComponent.new(onboarding_progress: @onboarding_progress, sales_requirements: @sales_requirements) %>
 
   <%= render Admin::RecentSalesComponent.new %>
 

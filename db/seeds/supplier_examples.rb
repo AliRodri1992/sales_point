@@ -1,0 +1,147 @@
+# frozen_string_literal: true
+
+require_relative 'supplier_organization_examples'
+require_relative 'supplier_phone_examples'
+require_relative 'supplier_primary_dossier_examples'
+
+# Sample tenant and suppliers for a fresh development database.
+# Codes and RFCs are deterministic so db:seed can be run repeatedly.
+module SupplierExamples
+  COUNT = 20
+  ORGANIZATION_TAX_ID = 'DPO260101AB1'
+  ORGANIZATION_NAME = 'Delta POS'
+
+  def self.seed!
+    seed_demo_fiscal_regime
+    organization = create_organization
+    create_membership(organization)
+    create_suppliers_for(organization)
+    Rails.logger.info "Seeded #{COUNT} suppliers for organization #{organization.id}"
+  end
+
+  class << self
+    include SupplierPrimaryDossierExamples
+
+    private
+
+    def seed_demo_fiscal_regime
+      scope = SatFiscalRegime.where(code: '601', person_type: 'M')
+      regime = scope.active.first || scope.order(updated_at: :desc, id: :desc).first || scope.new
+      return if regime.persisted? && regime.deleted_at.nil?
+
+      regime.update!(deleted_at: nil, description: regime.description.presence || 'General de Ley Personas Morales')
+    end
+
+    def create_organization
+      organization = Organization.find_or_initialize_by(tax_id: ORGANIZATION_TAX_ID)
+      if organization.new_record?
+        organization.assign_attributes(name: ORGANIZATION_NAME, business_sector: 'grocery', status: :active)
+        organization.save!
+      end
+      $stdout.puts "[SEEDS][ORGANIZACION][OK] id=#{organization.id} nombre=#{organization.name}"
+      SupplierOrganizationExamples.configure!(organization)
+      organization
+    end
+
+    def create_membership(organization)
+      admin = User.find_by!(email: 'administrador@delta.com')
+      membership = OrganizationMembership.find_or_initialize_by(organization:, user: admin)
+      if membership.new_record?
+        membership.assign_attributes(status: :active, deleted_at: nil)
+        membership.save!
+      end
+      $stdout.puts "[SEEDS][MEMBRESIA][OK] usuario_id=#{admin.id} " \
+                   "organizacion_id=#{organization.id} estado=#{membership.status}"
+    end
+
+    def create_suppliers_for(organization)
+      COUNT.times { |index| create_supplier(organization, index + 1) }
+    end
+
+    def create_supplier(organization, number)
+      code = format('SUP-%04d', number)
+      supplier = Supplier.find_or_initialize_by(organization:, code:)
+      attributes = supplier_attributes(number, organization)
+      if supplier.new_record?
+        supplier.assign_attributes(attributes)
+        build_primary_dossier(supplier, number)
+        supplier.save!
+      else
+        fill_missing_details(supplier, attributes)
+      end
+      create_contact(supplier, number)
+    end
+
+    def supplier_attributes(number, organization)
+      supplier_identity_attributes(number).merge(supplier_commercial_attributes(number, organization))
+    end
+
+    def supplier_identity_attributes(number)
+      {
+        name: "Proveedor de ejemplo #{number}",
+        legal_name: "Comercializadora Demo #{number}, S.A. de C.V.",
+        trade_name: "Distribuidora Demo #{number}",
+        alias_name: "Demo #{number}",
+        classification: %w[manufacturer distributor wholesaler][number % 3],
+        person_type: :company,
+        email: "proveedor#{number}@example.com",
+        rfc: format('DPE260101%03d', number),
+        status: (number % 5).zero? ? :inactive : :active,
+        deleted_at: nil
+      }
+    end
+
+    def supplier_commercial_attributes(number, organization)
+      {
+        currency: Currency.active.find_by!(code: 'MXN'),
+        credit_days: number.even? ? 30 : 15,
+        credit_limit: number * 10_000,
+        discount_percent: (number % 4),
+        minimum_order_amount: 500 + (number * 100),
+        tags: %w[demostracion compras],
+        responsible_user: organization.users.find_by(email: 'administrador@delta.com'),
+        sat_fiscal_regime: SatFiscalRegime.find_by!(code: '601', person_type: 'M', deleted_at: nil),
+        notes: "Proveedor de demostración #{number} para Delta POS."
+      }
+    end
+
+    def fill_missing_details(supplier, attributes)
+      fields = %i[legal_name trade_name alias_name classification person_type
+                  responsible_user sat_fiscal_regime email notes
+                  currency credit_days credit_limit discount_percent minimum_order_amount]
+      fields.each { |field| supplier.public_send("#{field}=", attributes[field]) if supplier.public_send(field).blank? }
+      supplier.tags = attributes[:tags] if supplier.tags.blank?
+      supplier.save! if supplier.changed?
+    end
+
+    def create_contact(supplier, number)
+      # A manually renamed or archived primary contact must not be recreated.
+      contact = supplier.contacts.not_deleted.find_by(primary: true)
+      if contact
+        %w[landline mobile].each do |kind|
+          next if contact.phones.active.exists?(kind:, primary: true)
+
+          contact.phones.create!(
+            organization: supplier.organization, kind:, primary: true,
+            country_code: 'MX', number: SupplierPhoneExamples.number(number, kind)
+          )
+        end
+      elsif !supplier.contacts.with_deleted.exists?
+        create_new_contact(supplier, number, "contacto#{number}@example.com")
+      end
+    end
+
+    def create_new_contact(supplier, number, email)
+      supplier.contacts.create!(
+        name: "Contacto #{number}",
+        email: email,
+        position: 'Ventas',
+        phones_attributes: SupplierPhoneExamples.attributes(supplier, number),
+        notes: 'Contacto ficticio para demostración.',
+        primary: true,
+        active: true,
+        deleted_at: nil
+      )
+    end
+  end
+end

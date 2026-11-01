@@ -1,0 +1,105 @@
+<% dossier_policy = policy(supplier) %>
+<% can_view_general = dossier_policy.view_general? %>
+<% fiscal_address = dossier_policy.view_fiscal? ? supplier.addresses.not_deleted.where(purpose: 'fiscal', primary: true).includes(:country).first : nil %>
+<% can_edit = policy(supplier).update? %>
+<% can_view_finances = current_user.admin? || current_user.permission?('accounts_payable.view') %>
+<% can_view_bank_accounts = @dossier_bank_accounts_page.present? %>
+<% dossier_sections = [] %>
+<% dossier_sections << 'general' if can_view_general %>
+<% %w[fiscal commercial contacts addresses schedules documents products].each do |section| %>
+  <% dossier_sections << section if dossier_policy.public_send("view_#{section}?") %>
+<% end %>
+<% dossier_sections << 'bank_accounts' if can_view_bank_accounts %>
+<% dossier_sections << 'statement' if can_view_finances %>
+
+<div class="space-y-5" data-loading-scope="true" data-controller="supplier-dossier" data-supplier-dossier-initial-tab-value="<%= dossier_sections.include?(params[:tab] == 'finances' ? 'statement' : params[:tab]) ? (params[:tab] == 'finances' ? 'statement' : params[:tab]) : dossier_sections.first %>">
+  <header class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-5">
+    <div class="flex min-w-0 items-center gap-4">
+      <span class="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-800 sm:size-[76px]">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="size-9" aria-hidden="true">
+          <path d="M3 21h18M5 21V5l8-2v18M13 9l6 2v10M8 8h2M8 12h2M8 16h2M16 14h1M16 17h1"/>
+        </svg>
+      </span>
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= supplier.name %></h1>
+          <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold <%= supplier.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' %>"><%= t("admin.suppliers.statuses.#{supplier.status}") %></span>
+        </div>
+        <p class="mt-1 text-sm text-slate-500">
+          <%= supplier.code %>
+          <% if can_view_general && supplier.classification.present? %>
+            <span class="mx-2 text-slate-300">·</span>
+            <%= t("admin.supplier_dossier.options.#{supplier.classification}") %>
+          <% end %>
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <%= link_to admin_suppliers_path, data: { turbo_frame: '_top', loading_message: t('admin.action_loader.returning') }, class: 'inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('arrow-left', class: 'size-4') %>
+        <%= t('admin.supplier_dossier.back') %>
+      <% end %>
+      <% if can_edit %>
+        <details class="group relative">
+          <summary class="inline-flex size-10 cursor-pointer list-none items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden" aria-label="<%= t('admin.supplier_dossier.more_actions') %>">
+            <%= delta_icon('ellipsis-horizontal', class: 'size-5') %>
+          </summary>
+          <div class="absolute right-0 z-20 mt-2 min-w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+            <%= link_to edit_admin_supplier_path(supplier), data: { turbo_frame: '_top', loading_message: t('admin.action_loader.editing') }, class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+              <%= delta_icon('pencil', class: 'size-4 text-emerald-700') %>
+              <%= t('admin.supplier_details.edit') %>
+            <% end %>
+          </div>
+        </details>
+      <% end %>
+    </div>
+  </header>
+
+  <div class="flex flex-col gap-4 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-5 xl:grid-cols-[16rem_minmax(0,1fr)]">
+    <%= render 'dossier_sidebar', allowed_sections: dossier_sections %>
+    <div class="flex min-w-0 w-full flex-1 flex-col gap-4" data-supplier-dossier-content aria-label="<%= t('admin.supplier_dossier.navigation.content') %>">
+      <% if can_view_general %>
+      <%= render 'dossier_general', supplier: supplier, can_edit: can_edit %>
+      <% end %>
+      <% if dossier_policy.view_fiscal? %>
+      <%= render 'dossier_fiscal', supplier: supplier, fiscal_address: fiscal_address,
+                   can_edit: (can_edit && dossier_policy.manage_fiscal?),
+                   can_view_addresses: dossier_policy.view_addresses? %>
+      <% end %>
+
+    <% if dossier_policy.view_commercial? %>
+    <%= render 'dossier_commercial', supplier: supplier,
+                  can_edit: (can_edit && dossier_policy.manage_commercial?) %>
+    <% end %>
+
+    <% if dossier_policy.view_contacts? %>
+    <%= render 'dossier_contacts', supplier: supplier, contacts_page: @dossier_contacts_page, can_manage_contacts: (dossier_policy.create_contacts? || dossier_policy.update_contacts? || dossier_policy.destroy_contacts? || dossier_policy.restore_contacts?) %>
+    <% end %>
+
+    <% if dossier_policy.view_addresses? %>
+    <%= render 'dossier_addresses', supplier: supplier, addresses_page: @dossier_addresses_page, can_manage_addresses: (dossier_policy.create_addresses? || dossier_policy.update_addresses? || dossier_policy.destroy_addresses? || dossier_policy.restore_addresses? || dossier_policy.set_primary_address? || dossier_policy.geocode_address?) %>
+    <% end %>
+
+    <% if dossier_policy.view_schedules? %>
+    <%= render 'dossier_calendar', supplier: supplier, calendar: @supplier_calendar,
+               branches: @calendar_branches, archived_events: @calendar_archived_events,
+               can_manage: (dossier_policy.create_schedules? || dossier_policy.update_schedules? || dossier_policy.destroy_schedules? || dossier_policy.restore_schedules?) %>
+    <% end %>
+
+    <% if policy(supplier).view_products? %>
+      <%= render 'dossier_products', supplier:, products_page: @dossier_products_page %>
+    <% end %>
+
+    <% if can_view_bank_accounts %>
+      <%= render 'dossier_bank_accounts', supplier: supplier %>
+    <% end %>
+    <% if can_view_finances %>
+      <%= render 'dossier_finances', supplier: supplier %>
+    <% end %>
+
+    <% if dossier_policy.view_documents? %>
+    <%= render 'dossier_documents', supplier: supplier, can_manage_documents: dossier_policy.manage_documents? %>
+    <% end %>
+    </div>
+  </div>
+</div>

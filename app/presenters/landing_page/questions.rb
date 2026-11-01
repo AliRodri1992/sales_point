@@ -1,16 +1,14 @@
 module LandingPage
   module Questions
-    def self.all
-      %i[install offline migration commitment trial].map do |key|
-        question(key)
-      end
-    end
+    KEYS = %w[install offline migration commitment trial].freeze
 
-    def self.question(key)
-      Question.new(
-        question: I18n.t("landing.questions.#{key}.question"),
-        answer: I18n.t("landing.questions.#{key}.answer")
-      )
+    def self.all
+      KEYS.map do |key|
+        Question.new(
+          question: I18n.t("landing.questions.#{key}.question"),
+          answer: I18n.t("landing.questions.#{key}.answer")
+        )
+      end
     end
   end
 end

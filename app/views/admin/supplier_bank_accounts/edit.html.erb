@@ -1,0 +1,24 @@
+<% content_for :title, t('admin.accounts_payable.edit_bank') %>
+<section data-bank-account-form-page="edit" class="mx-auto max-w-[1560px] space-y-6">
+  <header class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="min-w-0">
+        <p class="mb-2 text-xs font-bold uppercase tracking-wider text-emerald-700"><%= @supplier.name %></p>
+        <h1 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.accounts_payable.edit_bank') %></h1>
+        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500"><%= t('admin.supplier_bank_form.edit_description') %></p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <%= link_to admin_supplier_bank_accounts_path(@supplier),
+                    data: { loading_message: t('admin.action_loader.returning') },
+                    class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+          <%= delta_icon('arrow-left', class: 'size-4') %>
+          <%= t('admin.supplier_details.back') %>
+        <% end %>
+        <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-2 text-xs font-bold text-amber-800">
+        <%= delta_icon('pencil', class: 'size-4') %><%= t('admin.supplier_bank_form.editing_badge') %>
+        </span>
+      </div>
+    </div>
+  </header>
+  <%= render 'form' %>
+</section>

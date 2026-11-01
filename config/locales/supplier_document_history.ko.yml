@@ -1,0 +1,6 @@
+ko:
+  admin:
+    supplier_document_history:
+      versions: "버전 기록"
+      trash: "휴지통"
+      restore: "복구"

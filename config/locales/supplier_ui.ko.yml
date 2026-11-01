@@ -1,0 +1,22 @@
+ko:
+  admin:
+    supplier_ui:
+      selection_count: "%{count}개 선택됨"
+      exception_pages: "예외 페이지"
+      previous: "이전"
+      next: "다음"
+      empty_schedules_title: "등록된 일정이 없습니다"
+      empty_schedules_description: "지점별 정기 일정을 설정해 방문, 주문 및 배송을 계획하세요."
+      all_day_hint: "선택한 날짜 범위가 유지되며 종일 일정으로 표시됩니다."
+      archived_status: "보관됨"
+      contact_pages: "연락처 페이지"
+      empty_contacts_description: "공급업체와의 소통 및 업무 관리를 위해 담당자를 추가하세요."
+      confirm_action: "확인"
+      scheduled_count: "정기 일정"
+      branches_count: "지점"
+      exceptions_count: "예외"
+      offer_identity_title: "공급 품목 정보"
+      offer_identity_description: "공급업체가 제공하는 제품과 포장 단위를 설정하세요."
+      offer_terms_title: "가격 및 조건"
+      offer_terms_description: "비용, 수량, 납기를 설정하세요."
+      offer_settings_title: "사용 가능 여부"

@@ -1,0 +1,5 @@
+en:
+  admin:
+    suppliers:
+      lifecycle:
+        draft_invoices: "The supplier cannot be archived while draft invoices remain."

@@ -1,0 +1,5 @@
+es:
+  admin:
+    suppliers:
+      onboarding:
+        address_validation_unavailable: "No fue posible validar la dirección fiscal. Inténtalo nuevamente."

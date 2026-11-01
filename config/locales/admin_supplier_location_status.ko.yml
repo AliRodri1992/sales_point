@@ -1,0 +1,7 @@
+ko:
+  admin:
+    supplier_details:
+      address_form:
+        location_confirmed_button: "위치 확인됨"
+        location_confirmed_save_hint: "이 위치를 저장하려면 양식 하단의 저장 버튼을 누르세요."
+        location_changed: "주소가 변경되었습니다. 위치를 다시 검색하고 확인하세요."

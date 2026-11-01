@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :membership_plan do
-    sequence(:name) { |n| "Plan #{n}" }
+    sequence(:name) { |n| "Plan #{Faker::Commerce.product_name} #{n}" }
     sequence(:slug) { |n| "plan-#{n}" }
-    description { 'Test membership plan' }
-    price { 299.00 }
+    description { Faker::Lorem.sentence(word_count: 10) }
+    price { Faker::Number.decimal(l_digits: 3, r_digits: 2) }
     currency { 'MXN' }
     billing_interval { :monthly }
-    trial_days { 14 }
-    position { 1 }
+    trial_days { 0 }
+    position { 0 }
     active { true }
+    deleted_at { nil }
   end
 end

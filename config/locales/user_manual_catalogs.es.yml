@@ -1,0 +1,181 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        catalogs:
+          title: "Catálogos, inventario y clientes"
+          description: "Alta, consulta, edición, archivo y seguimiento de los registros que se utilizan en el negocio."
+          topics:
+            -
+              id: "categories"
+              title: "Categorías de productos"
+              description: "Ordena los productos por familias y usa códigos reconocibles."
+              before: "Necesitas el permiso para acceder a Categorías."
+              tasks:
+                -
+                  title: "Dar de alta una categoría"
+                  steps:
+                    -
+                      "Abre «Catálogos» → «Categorías» desde el menú lateral."
+                    -
+                      "Selecciona «Nueva categoría» y escribe un nombre que identifique a la familia de productos."
+                    -
+                      "Captura un código único y selecciona el estado correspondiente."
+                    -
+                      "Presiona «Guardar» y espera el mensaje de confirmación."
+                    -
+                      "Vuelve al listado y utiliza la búsqueda para localizarla."
+                  result: "La nueva categoría estará disponible para clasificar productos."
+                -
+                  title: "Editar una categoría"
+                  steps:
+                    -
+                      "Busca la categoría por nombre o código."
+                    -
+                      "Selecciona «Editar» y cambia el nombre, código o estado."
+                    -
+                      "Guarda y verifica que se actualicen los datos mostrados."
+                -
+                  title: "Eliminar una categoría"
+                  steps:
+                    -
+                      "Busca la categoría exacta y comprueba si se utiliza para organizar productos."
+                    -
+                      "En el menú de acciones selecciona «Eliminar»."
+                    -
+                      "Confirma la acción; el sistema registra una baja lógica y deja de mostrarla entre las categorías activas."
+                  result: "La categoría deja de estar activa sin borrar físicamente su registro."
+                -
+                  title: "Buscar y ordenar categorías"
+                  steps:
+                    -
+                      "Escribe parte del nombre o código en el campo de búsqueda."
+                    -
+                      "Utiliza los filtros de estado y las opciones de orden ascendente o descendente."
+                    -
+                      "Selecciona el tamaño de página disponible para ver más o menos resultados."
+              note: "No se permiten códigos duplicados; corrige los errores marcados por el formulario antes de guardar."
+            -
+              id: "products"
+              title: "Productos"
+              description: "Captura precios, costos, categorías y datos fiscales; administra el ciclo de vida del producto."
+              before: "Es recomendable crear categorías antes de registrar productos."
+              tasks:
+                -
+                  title: "Dar de alta un producto"
+                  steps:
+                    -
+                      "Abre «Catálogos» → «Productos» y selecciona «Nuevo producto»."
+                    -
+                      "Captura código, nombre, descripción, SKU y código de barras si aplica."
+                    -
+                      "Elige una categoría creada previamente y completa unidad SAT, impuestos y modo de seguimiento."
+                    -
+                      "Indica costo y precio de venta; adjunta imagen cuando corresponda."
+                    -
+                      "Revisa el estado y guarda el producto."
+                    -
+                      "Localiza el artículo en el listado para confirmar que se registró."
+                  result: "El producto queda asociado a la organización activa."
+                -
+                  title: "Editar datos o precio"
+                  steps:
+                    -
+                      "Localiza el producto mediante nombre, código o SKU."
+                    -
+                      "Abre el detalle y selecciona «Editar»."
+                    -
+                      "Corrige categoría, costo, precio, descripción o los datos necesarios."
+                    -
+                      "Guarda y vuelve al catálogo para comprobar el cambio."
+                -
+                  title: "Eliminar un producto"
+                  steps:
+                    -
+                      "Ubica exactamente el artículo que dejará de ofrecerse."
+                    -
+                      "Revisa si tiene inventario, órdenes de compra u otras operaciones relacionadas."
+                    -
+                      "En sus acciones pulsa «Eliminar» y confirma."
+                    -
+                      "Comprueba que ya no figure en el catálogo activo; el historial no se elimina físicamente."
+                  result: "El sistema establece la fecha de eliminación lógica."
+                -
+                  title: "Buscar productos"
+                  steps:
+                    -
+                      "Entra al listado de «Productos» y utiliza el buscador."
+                    -
+                      "Aplica filtros y ordenamiento disponibles para acotar resultados."
+                    -
+                      "Comprueba el nombre, SKU y precio antes de seleccionar el artículo."
+              note: "Si un SKU ya existe, el formulario mostrará un error. No elimines un producto para modificar únicamente su precio."
+            -
+              id: "inventory"
+              title: "Inventario por sucursal"
+              description: "Registra existencias por ubicación, mínimos, máximos y ajustes."
+              before: "Primero registra al menos una sucursal y un producto."
+              tasks:
+                -
+                  title: "Consultar inventario"
+                  steps:
+                    -
+                      "En «Configuración» → «Sucursales» abre la sucursal que quieras revisar."
+                    -
+                      "Entra al apartado de inventarios de esa sucursal."
+                    -
+                      "Localiza el producto y verifica existencias, stock mínimo y máximo; consulta los lotes cuando estén disponibles."
+                -
+                  title: "Crear o configurar un registro de inventario"
+                  steps:
+                    -
+                      "Dentro de la sucursal abre su inventario y selecciona el alta disponible."
+                    -
+                      "Elige un producto activo y establece los niveles mínimo y máximo."
+                    -
+                      "Guarda y confirma que el producto aparezca en el inventario de esa sucursal."
+                -
+                  title: "Realizar un ajuste"
+                  steps:
+                    -
+                      "Selecciona el producto de inventario y usa «Ajustar»."
+                    -
+                      "Indica la cantidad y el motivo conforme a las opciones del formulario."
+                    -
+                      "Confirma y revisa el saldo actualizado y los movimientos relacionados."
+              note: "El catálogo de productos es global para tu empresa, pero las existencias se registran por sucursal."
+            -
+              id: "clients"
+              title: "Clientes"
+              description: "Registra información de contacto, facturación y crédito."
+              tasks:
+                -
+                  title: "Dar de alta un cliente"
+                  steps:
+                    -
+                      "Abre «Clientes» y pulsa «Nuevo cliente»."
+                    -
+                      "Captura código, nombre, correo electrónico y teléfono."
+                    -
+                      "Si requiere facturación, registra RFC, régimen fiscal y código postal."
+                    -
+                      "Revisa límite de crédito, estado y notas; guarda el formulario."
+                -
+                  title: "Editar un cliente"
+                  steps:
+                    -
+                      "Localiza al cliente en el listado mediante el buscador y los filtros."
+                    -
+                      "Abre «Editar», modifica los campos correspondientes y guarda."
+                    -
+                      "Comprueba el mensaje de confirmación y los datos actualizados."
+                -
+                  title: "Eliminar un cliente"
+                  steps:
+                    -
+                      "Busca el registro correcto y revisa sus datos antes de proceder."
+                    -
+                      "Selecciona «Eliminar» y confirma."
+                    -
+                      "Verifica que haya salido del listado activo sin asumir que los registros históricos fueron borrados."
+              note: "Antes de emitir comprobantes, confirma que el RFC y los datos fiscales correspondan al receptor."

@@ -1,0 +1,6 @@
+---
+es:
+  admin:
+    profiles:
+      update:
+        success: "Tu perfil se actualizó. Los cambios de nombre, idioma o preferencias guardados ya están disponibles en tu cuenta."

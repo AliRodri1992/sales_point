@@ -5,6 +5,8 @@ RSpec.describe 'Admin::Branches', type: :request do
   let(:branch_role) { create(:system_role, :branch) }
   let(:admin_user) { create(:user, system_roles: [system_admin_role]) }
 
+  let(:country) { create(:country, iso_alpha2: 'MX') }
+
   before { sign_in admin_user }
 
   describe 'GET /admin/branches' do
@@ -19,23 +21,23 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('Sucursal Centro')
     end
 
-    it 'does not render pagination controls for 9 branches' do
+    it 'keeps page-size preferences accessible for 9 branches' do
       Array.new(9) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
       expect(response.body).to include('Sucursal 9')
     end
 
-    it 'does not render pagination controls for exactly 10 branches' do
+    it 'keeps page-size preferences accessible for exactly 10 branches' do
       Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
       expect(response.body).to include('Sucursal 10')
     end
 
@@ -70,14 +72,14 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include('Sucursal 1')
     end
 
-    it 'ignores a smaller per-page value when exactly 10 branches exist' do
+    it 'respects explicit page size when exactly 10 branches exist' do
       Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sucursal 10')
-      expect(response.body).not_to include('branches-per-page')
+      expect(response.body).to include('branches-per-page')
     end
 
     it 'sorts branches by name in ascending order' do
@@ -126,6 +128,28 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sucursal Asignada')
       expect(response.body).not_to include('Sucursal Restringida')
+    end
+  end
+
+  describe 'PATCH /admin/branches/:id/select' do
+    it 'selects an active branch belonging to the current organization' do
+      organization = create(:organization)
+      create(:organization_membership, organization:, user: admin_user)
+      branch = create(:branch, organization:, status: true)
+
+      patch select_admin_branch_path(branch)
+
+      expect(response).to redirect_to(admin_dashboard_path)
+    end
+
+    it 'does not select a branch outside the current organization' do
+      organization = create(:organization)
+      create(:organization_membership, organization:, user: admin_user)
+      branch = create(:branch, organization: create(:organization), status: true)
+
+      patch select_admin_branch_path(branch)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -186,14 +210,14 @@ RSpec.describe 'Admin::Branches', type: :request do
       post admin_branches_path, params: {
         branch: {
           name: '',
-          phone: '5551234567',
+          phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
           status: true,
           address_attributes: {
             street: 'Av. Reforma',
             exterior_number: '100',
             city: 'Cuautitlán',
             state: 'Estado de México',
-            country: 'MX',
+            country_id: country.id,
             postal_code: ''
           }
         }
@@ -205,11 +229,15 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'creates a branch, address and notification' do
+      # New phones inherit the branch organization and require an active one.
+      organization = create(:organization)
+      create(:organization_membership, user: admin_user, organization:)
+
       expect do
         post admin_branches_path, params: {
           branch: {
             name: 'Sucursal Centro',
-            phone: '5551234567',
+            phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
             status: true,
             address_attributes: {
               street: 'Av. Reforma',
@@ -217,7 +245,7 @@ RSpec.describe 'Admin::Branches', type: :request do
               neighborhood: 'Centro',
               city: 'Cuautitlán',
               state: 'Estado de México',
-              country: 'MX',
+              country_id: country.id,
               postal_code: '54800'
             }
           }
@@ -259,7 +287,6 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Editar sucursal')
       expect(response.body).to include('href="/admin/branches"')
-      expect(response.body).to include("href=\"/admin/branches/#{branch.id}\"")
       expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
       expect(response.body).not_to include('data-branches-target="modal"')
     end
@@ -365,6 +392,30 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:forbidden)
       expect(branch.reload.deleted_at).to be_nil
+    end
+  end
+
+  describe 'PATCH /admin/branches/:id validation failures' do
+    it 're-renders the edit form and preserves the branch when validation fails' do
+      branch = create(:branch, name: 'Unchanged Branch')
+
+      patch admin_branch_path(branch), params: { branch: { name: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Editar sucursal')
+      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
+      expect(branch.reload.name).to eq('Unchanged Branch')
+    end
+
+    it 'builds an address when an invalid update targets a branch without one' do
+      branch = create(:branch, :without_address)
+
+      patch admin_branch_path(branch), params: { branch: { name: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('Editar sucursal')
+      expect(response.body).to include('address_attributes')
+      expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
     end
   end
 end

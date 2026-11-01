@@ -2,6 +2,7 @@ class SatMonth < ApplicationRecord
   MONTH_CODES = %w[
     01 02 03 04 05 06
     07 08 09 10 11 12
+    13 14 15 16 17 18
   ].freeze
 
   scope :not_deleted, -> { where(deleted_at: nil) }
@@ -34,7 +35,7 @@ class SatMonth < ApplicationRecord
             numericality: {
               only_integer: true,
               greater_than_or_equal_to: 1,
-              less_than_or_equal_to: 12
+              less_than_or_equal_to: 18
             }
 
   validate :valid_date_range
@@ -52,7 +53,7 @@ class SatMonth < ApplicationRecord
   end
 
   def month_name
-    Date::MONTHNAMES[month_number]
+    month_number > 12 ? description : Date::MONTHNAMES[month_number]
   end
 
   def to_label

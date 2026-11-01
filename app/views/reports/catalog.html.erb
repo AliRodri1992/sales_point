@@ -1,0 +1,38 @@
+<header class="report-header">
+  <div class="report-brand">
+    <% if organization_logo.present? %>
+      <img class="organization-logo" src="<%= organization_logo %>" alt="">
+    <% else %>
+      <div class="default-logo">
+        <img class="delta-logo" src="<%= delta_logo %>" alt="">
+        <span class="brand">DELTA <span>POS</span></span>
+      </div>
+    <% end %>
+    <div class="report-type"><%= report.title %></div>
+  </div>
+  <div class="report-meta">
+    <strong><%= report.organization.name %></strong>
+    <div><%= I18n.l(Time.current, format: :long) %></div>
+  </div>
+</header>
+
+<section class="report-content">
+  <table>
+    <thead>
+      <tr>
+        <% report.columns.each do |column| %>
+          <th scope="col"><%= column.fetch(:label) %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% report.each_row do |record| %>
+        <tr>
+          <% report.columns.each do |column| %>
+            <td><%= column.fetch(:value).call(record) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</section>

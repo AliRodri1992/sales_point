@@ -13,9 +13,7 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
     post admin_languages_path(format: :turbo_stream),
          params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
 
-    puts '=== CREATE RESPONSE BODY ==='
-    puts response.body
-    puts '=== END ==='
+    expect(response).to have_http_status(:ok)
     expect(response.body).to include('action="swal"')
   end
 
@@ -24,20 +22,16 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
          params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
 
     notification = Noticed::Notification.last
-    puts '=== CREATE PARAMS ==='
-    puts "action: #{notification.params[:action].inspect}"
-    puts "user: #{notification.params[:user].inspect}"
-    puts "user class: #{notification.params[:user]&.class}"
-    puts '=== END ==='
+
+    expect(notification.params[:action]).to eq('created')
+    expect(notification.params[:user]).to eq(user)
   end
 
   it 'destroy response body contains swal toast' do
     language = create(:language, name: 'ToDelete', code: 'td', flag_iso: 'td')
     delete admin_language_path(language, format: :turbo_stream)
 
-    puts '=== DESTROY RESPONSE BODY ==='
-    puts response.body
-    puts '=== END ==='
+    expect(response).to have_http_status(:ok)
     expect(response.body).to include('action="swal"')
   end
 
@@ -46,12 +40,8 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
     delete admin_language_path(language, format: :turbo_stream)
 
     notification = Noticed::Notification.last
-    puts '=== DESTROY PARAMS ==='
-    puts "action: #{notification.params[:action].inspect}"
-    puts "user: #{notification.params[:user].inspect}"
-    puts "user class: #{notification.params[:user]&.class}"
-    puts "record: #{notification.record.inspect}"
-    puts "record class: #{notification.record&.class}"
-    puts '=== END ==='
+
+    expect(notification.params[:action]).to eq('destroyed')
+    expect(notification.params[:user]).to eq(user)
   end
 end

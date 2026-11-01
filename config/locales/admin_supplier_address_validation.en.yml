@@ -1,0 +1,5 @@
+en:
+  admin:
+    suppliers:
+      onboarding:
+        address_validation_unavailable: "The fiscal address could not be validated. Please try again."

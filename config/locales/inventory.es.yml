@@ -1,0 +1,13 @@
+es:
+  admin:
+    inventory:
+      title: "Inventario por sucursal"
+      description: "Existencias independientes para esta sucursal."
+      product: "Producto"
+      stock: "Existencias"
+      min_stock: "Mínimo"
+      max_stock: "Máximo"
+      movements: "Movimientos"
+      add: "Añadir"
+      quantity: "Cantidad (+ entrada / - salida)"
+      adjust: "Ajustar"

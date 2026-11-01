@@ -1,0 +1,19 @@
+---
+en:
+  admin:
+    shared:
+      topbar:
+        toggle_sidebar: "Toggle sidebar"
+        morning_greeting: "Good morning, %{name}"
+      branch_selector:
+        branch_center: "Central Branch"
+        branch_north: "North Branch"
+        branch_south: "South Branch"
+      language_selector:
+        toggle: "Change language"
+      notifications:
+        toggle: "Open notifications"
+        title: "Notifications"
+        mark_all_read: "Mark all as read"
+      user_menu:
+        settings: "Settings"

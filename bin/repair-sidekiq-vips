@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Repair a stale Sidekiq runtime without touching PostgreSQL or Redis volumes.
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+error() {
+  printf '[VIPS][ERROR] %s\n' "$1" >&2
+  exit 1
+}
+
+command -v docker >/dev/null 2>&1 || error 'Docker no está disponible.'
+docker info >/dev/null 2>&1 || error 'Docker Desktop no está iniciado.'
+docker compose version >/dev/null 2>&1 || error 'Docker Compose v2 no está disponible.'
+
+compose=(docker compose -f docker-compose.dev.yml)
+vips_check="dpkg-query -W libvips42 >/dev/null && bundle exec ruby -rvips -e 'abort \"libvips no disponible\" unless Vips::Image.black(1, 1).width == 1; puts \"VIPS_OK\"'"
+
+printf '[VIPS] Comprobando la imagen configurada para Sidekiq, sin detener el servicio activo...\n'
+if ! "${compose[@]}" run --rm -T --no-deps --entrypoint sh sidekiq -lc "$vips_check" >/dev/null 2>&1; then
+  printf '[VIPS] La imagen no incluye libvips funcional. Reconstruyendo únicamente Sidekiq...\n'
+  "${compose[@]}" build --no-cache sidekiq ||
+    error 'Falló la construcción de la imagen Sidekiq. No se modificó el contenedor activo.'
+
+  printf '[VIPS] Verificando la nueva imagen antes de sustituir el contenedor...\n'
+  "${compose[@]}" run --rm -T --no-deps --entrypoint sh sidekiq -lc "$vips_check" ||
+    error 'La imagen reconstruida sigue sin cargar libvips. No se sustituyó el contenedor activo.'
+else
+  printf '[VIPS] La imagen ya contiene libvips. No hace falta reconstruirla.\n'
+fi
+
+printf '[VIPS] Recreando únicamente el contenedor Sidekiq con la imagen comprobada...\n'
+"${compose[@]}" up -d --no-deps --force-recreate sidekiq ||
+  error 'Docker Compose no pudo recrear el contenedor Sidekiq.'
+
+printf '[VIPS] Comprobando libvips dentro del contenedor en ejecución...\n'
+"${compose[@]}" exec -T sidekiq sh -lc "$vips_check" ||
+  error 'La imagen funciona pero el contenedor no: comprueba el proyecto Compose y su imagen asociada.'
+
+printf '[VIPS][OK] Sidekiq está ejecutándose con libvips disponible.\n'

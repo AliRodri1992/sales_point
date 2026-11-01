@@ -1,0 +1,26 @@
+require 'rails_helper'
+
+RSpec.describe 'Content Security Policy', type: :request do
+  describe 'GET /up' do
+    it 'serves a single Rails CSP allowing local images without FlagCDN' do
+      get rails_health_check_path
+
+      expect(response).to have_http_status(:ok)
+
+      csp = response.headers.fetch('Content-Security-Policy')
+      expected_csp = [
+        "default-src 'self';",
+        "font-src 'self' data:;",
+        "img-src 'self' data: blob:;",
+        "worker-src 'self' blob:;",
+        "connect-src 'self' https://releases.transloadit.com;",
+        "script-src 'self' https:;",
+        "style-src 'self' 'unsafe-inline' https://releases.transloadit.com;",
+        "object-src 'none'"
+      ].join(' ')
+
+      expect(csp).to eq(expected_csp)
+      expect(response.headers['Content-Security-Policy-Report-Only']).to be_nil
+    end
+  end
+end

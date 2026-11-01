@@ -1,132 +1,75 @@
 <%= render Landing::NavbarComponent.new %>
 
 <main class="overflow-x-hidden">
-
   <%= render Landing::HeroComponent.new(
     badge: t('landing.hero.badge'),
     title: t('landing.hero.title'),
     highlighted: t('landing.hero.highlighted'),
     description: t('landing.hero.description'),
-    image: "logo.png",
-    primary_button: Ui::ButtonComponent.new(
-      text: t('landing.buttons.start_free'),
-      href: new_user_registration_path,
-      icon: :rocket_launch,
-      size: :lg,
-      variant: :primary
-    ),
-    secondary_button: Ui::ButtonComponent.new(
-      text: t('landing.buttons.view_demo'),
-      href: "#demo",
-      icon: :play_circle,
-      size: :lg,
-      variant: :outline
-    ),
-    statistics: [
-      Ui::StatisticComponent.new(
-        number: "+25K",
-        label: t('landing.statistics.daily_sales'),
-        icon: :shopping_cart
-      ),
-      Ui::StatisticComponent.new(
-        number: "99.9%",
-        label: t('landing.statistics.availability'),
-        icon: :server
-      ),
-      Ui::StatisticComponent.new(
-        number: "24/7",
-        label: t('landing.statistics.support'),
-        icon: :lifebuoy
-      )
-    ]
+    primary_button_text: t('landing.buttons.start'),
+    primary_button_href: new_user_registration_path,
+    secondary_button_text: t('landing.buttons.request_demo'),
+    secondary_button_href: new_demo_request_path
   ) %>
 
-  <%= render Landing::FeaturesComponent.new(
-    title: t('landing.features.title'),
-    subtitle: t('landing.features.subtitle'),
-    features: @features
-  ) %>
-
-  <%= render Landing::ModulesComponent.new(
-    title: t('landing.modules.title'),
-    subtitle: t('landing.modules.subtitle'),
-    modules: @modules
-  ) %>
-
-  <%= render Landing::ScreenshotComponent.new(
-    title: t('landing.screenshot.title'),
-    description: t('landing.screenshot.description'),
-    image: "logo.png"
-  ) %>
-
-  <section class="bg-slate-50 py-16 sm:py-24">
-
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-
-      <%= render Ui::SectionTitleComponent.new(
-        badge: t('landing.testimonials.badge'),
-        title: t('landing.testimonials.title'),
-        subtitle: t('landing.testimonials.subtitle')
-      ) %>
-
-      <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
-
-        <% @testimonials.each do |testimonial| %>
-
-          <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
-
-        <% end %>
-
+  <section id="solucion" class="border-y border-slate-200/50 bg-slate-100/60 py-12 lg:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto mb-12 max-w-3xl text-center">
+        <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= t('landing.hero.problem_title') %></h2>
+        <p class="mt-4 text-base text-slate-500 sm:text-lg"><%= t('landing.hero.old_model_intro') %></p>
       </div>
-
+      <div class="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
+        <article class="space-y-4 rounded-2xl border border-rose-100 bg-rose-50/50 p-8">
+          <h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-rose-800"><span aria-hidden="true">❌</span><%= t('landing.hero.old_model_title') %></h3>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><span aria-hidden="true">👉</span> <%= t('home.old_model.item_1') %></li>
+            <li><span aria-hidden="true">👉</span> <%= t('home.old_model.item_2') %></li>
+            <li><span aria-hidden="true">👉</span> <%= t('home.old_model.item_3') %></li>
+          </ul>
+        </article>
+        <article class="space-y-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-8">
+          <h3 class="flex items-center gap-2 font-jakarta text-xl font-bold text-emerald-600"><span aria-hidden="true">🚀</span><%= t('landing.hero.new_model_title') %></h3>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li><span aria-hidden="true">✅</span> <%= t('home.new_model.item_1') %></li>
+            <li><span aria-hidden="true">✅</span> <%= t('home.new_model.item_2') %></li>
+            <li><span aria-hidden="true">✅</span> <%= t('home.new_model.item_3') %></li>
+          </ul>
+        </article>
+      </div>
     </div>
-
   </section>
 
-  <section
-    id="pricing"
-    class="bg-white py-16 sm:py-28">
+  <%= render Landing::FeaturesComponent.new(title: t('landing.features.title'), subtitle: t('landing.features.subtitle'), features: @features) %>
 
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-
-      <%= render Ui::SectionTitleComponent.new(
-        badge: t('landing.pricing.badge'),
-        title: t('landing.pricing.title'),
-        subtitle: t('landing.pricing.subtitle')
-      ) %>
-
-      <div class="mt-10 grid gap-6 sm:mt-16 sm:gap-8 lg:grid-cols-3">
-
-        <% @plans.each do |plan| %>
-
-          <%= render Landing::PricingCardComponent.new(**plan.to_h) %>
-
-        <% end %>
-
+  <section class="relative min-h-[460px] overflow-hidden border-t border-slate-100 bg-gradient-to-b from-white to-slate-50 py-12 lg:py-16" data-controller="testimonials-carousel">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto mb-8 max-w-2xl text-center">
+        <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900"><%= t('landing.hero.testimonials_title') %></h2>
       </div>
 
+      <div class="overflow-hidden" data-testimonials-carousel-target="viewport" aria-label="<%= t('landing.testimonials.title') %>">
+        <div class="flex transition-transform duration-700 ease-in-out" data-testimonials-carousel-target="track">
+          <% @testimonials.each_slice(3) do |testimonials| %>
+            <div class="grid w-full shrink-0 grid-cols-1 gap-8 md:grid-cols-3">
+              <% testimonials.each do |testimonial| %>
+                <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-
   </section>
 
-  <%= render Landing::FaqComponent.new(
-    title: t('landing.faq.title'),
-    subtitle: t('landing.faq.subtitle'),
-    questions: @questions
-  ) %>
+  <section id="precios" class="border-t border-slate-200/60 bg-slate-100/50 py-12 lg:py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto mb-12 max-w-2xl text-center"><h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl"><%= t('landing.hero.prices_title') %></h2></div>
+      <div class="mx-auto grid max-w-4xl items-stretch gap-8 md:grid-cols-2"><% @plans.first(2).each do |plan| %><%= render Landing::PricingCardComponent.new(**plan.to_h) %><% end %></div>
+    </div>
+  </section>
 
-  <%= render Landing::CtaComponent.new(
-    title: t('landing.cta.title'),
-    description: t('landing.cta.description'),
-    button: Ui::ButtonComponent.new(
-      text: t('landing.buttons.create_account'),
-      href: new_user_registration_path,
-      icon: :rocket_launch,
-      size: :lg,
-      variant: :secondary
-    )
-  ) %>
-
+  <%= render Landing::FaqComponent.new(title: t('landing.faq.title'), subtitle: t('landing.faq.subtitle'), questions: @questions) %>
+  <%= render Landing::CtaComponent.new(title: t('landing.hero.cta_title'), description: t('landing.hero.cta_description'), button_text: t('landing.buttons.start'), button_href: new_user_registration_path) %>
 </main>
 
 <%= render Landing::FooterComponent.new %>

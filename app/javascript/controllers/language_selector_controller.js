@@ -1,33 +1,44 @@
 import { Controller } from "@hotwired/stimulus"
+import { closeDashboardSelectors, openDashboardSelector } from "./selector_coordinator"
 
 export default class extends Controller {
-    static targets = ["dropdown", "flag", "languageCode"]
+    static targets = ["dropdown"]
 
-    connect(){
-        this.boundCloseOnClickOutside = this.closeOnClickOutside.bind(this)
-        this.boundCloseOnEscape = this.closeOnEscape.bind(this)
-
-        document.addEventListener("click", this.boundCloseOnClickOutside)
-        document.addEventListener("keydown", this.boundCloseOnEscape)
+    connect() {
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "false")
     }
 
-    disconnect(){
-        document.removeEventListener("click", this.boundCloseOnClickOutside)
-        document.removeEventListener("keydown", this.boundCloseOnEscape)
-    }
+    toggle(event) {
+        event.preventDefault()
 
-    toggle(event){
-        event.stopPropagation()
-        const dropdown = this.dropdownTarget
+        const willOpen = this.dropdownTarget.classList.contains("hidden")
 
-        // Show dropdown and refresh content
-        dropdown.classList.remove("hidden")
+        if (!willOpen) {
+            this.close()
+            return
+        }
+
+        openDashboardSelector(this.element)
+        this.dropdownTarget.classList.remove("hidden")
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "true")
         this.refreshDropdownContent()
     }
 
-    async refreshDropdownContent(){
+    close() {
+        this.dropdownTarget.classList.add("hidden")
+        this.element.querySelector("#languageSelectorButton")?.setAttribute("aria-expanded", "false")
+    }
+
+    keydown(event) {
+        if (event.key === "Escape" && !this.dropdownTarget.classList.contains("hidden")) {
+            event.preventDefault()
+            this.close()
+            this.element.querySelector("#languageSelectorButton")?.focus()
+        }
+    }
+
+    async refreshDropdownContent() {
         try {
-            // Fetch the updated dropdown content from the server
             const response = await fetch("/admin/languages/content", {
                 method: "GET",
                 headers: {
@@ -35,60 +46,45 @@ export default class extends Controller {
                 }
             })
 
-            if (response.ok) {
-                const html = await response.text()
+            if (!response.ok) return
 
-                // Parse the response and extract dropdown content
-                const parser = new DOMParser()
-                const doc = parser.parseFromString(html, "text/html")
+            const html = await response.text()
+            const parser = new DOMParser()
+            const newContent = parser.parseFromString(html, "text/html")
+                .getElementById("language_selector_content")
+            const currentContent = document.getElementById("language_selector_content")
 
-                // Find the dropdown content element
-                const newContent = doc.getElementById("language_selector_content")
-                const currentContent = document.getElementById("language_selector_content")
-
-                if (newContent && currentContent) {
-                    currentContent.innerHTML = newContent.innerHTML
-                }
+            if (newContent && currentContent) {
+                currentContent.innerHTML = newContent.innerHTML
             }
         } catch (error) {
             console.error("Error refreshing language dropdown:", error)
         }
     }
 
-    closeOnClickOutside(event){
-        if (this.dropdownTarget.classList.contains("hidden")) return
-        if (this.element.contains(event.target)) return
-
-        this.dropdownTarget.classList.add("hidden")
-    }
-
-    closeOnEscape(event){
-        if (event.key !== "Escape") return
-
-        this.dropdownTarget.classList.add("hidden")
-    }
-
-    select(event){
+    select(event) {
         event.stopPropagation()
 
-        const button = event.currentTarget
-        const language = button.dataset.language
+        const language = event.currentTarget.dataset.language
+        if (!language) return
+        const csrfToken = document.querySelector("meta[name='csrf-token']")?.content
 
         fetch("/language", {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+                "X-CSRF-Token": csrfToken
             },
-            body: JSON.stringify({ language: language })
+            body: JSON.stringify({ language })
         })
-            .then(() => {
-                // Close dropdown and reload page to apply language
-                this.dropdownTarget.classList.add("hidden")
+            .then((response) => {
+                if (!response.ok) throw new Error(`Language update failed: HTTP ${response.status}`)
+                closeDashboardSelectors()
                 window.location.reload()
             })
             .catch((error) => {
                 console.error("Language change error:", error)
+                window.Swal?.fire({ icon: "error", title: "Language update failed", text: "Please try again." })
             })
     }
 }

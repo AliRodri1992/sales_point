@@ -29,7 +29,7 @@
               <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'admin_products_list') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.stock', t('admin.products.index.columns.stock'), frame: 'admin_products_list') %>
+              <%= t('admin.products.index.columns.stock') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
               <%= t('admin.products.index.columns.category') %>
@@ -58,13 +58,13 @@
                 <%= number_to_currency(product.price) %>
               </td>
               <td class="px-6 py-4 text-right">
-                <%= number_with_precision(product.stock, strip_insignificant_zeros: true, precision: 3) %>
+                <%= number_with_precision(product.inventories.sum(:stock), strip_insignificant_zeros: true, precision: 3) %>
               </td>
               <td class="px-6 py-4">
                 <%= product.category&.name || '-' %>
               </td>
               <td class="px-6 py-4 text-center">
-                <%= icon('star', class: 'size-4 text-amber-500') if product.featured? %>
+                <%= delta_icon('star', class: 'size-4 text-amber-500') if product.featured? %>
               </td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
@@ -78,13 +78,13 @@
                               data: { tooltip: t('admin.products.show.title'), turbo_frame: '_top' },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.products.show.title') } do %>
-                    <%= icon('eye', class: 'size-4') %>
+                    <%= delta_icon('eye', class: 'size-4') %>
                   <% end %>
                   <%= link_to edit_admin_product_path(product),
                               data: { tooltip: t('admin.products.index.edit'), turbo_frame: '_top' },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.products.index.edit') } do %>
-                    <%= icon('pencil-square', class: 'size-4') %>
+                    <%= delta_icon('pencil-square', class: 'size-4') %>
                   <% end %>
                   <%= button_to admin_product_path(product),
                                 method: :delete,
@@ -96,7 +96,7 @@
                                   turbo_frame: '_top'
                                 },
                                 aria: { label: t('admin.products.index.delete') } do %>
-                    <%= icon('trash', class: 'size-4') %>
+                    <%= delta_icon('trash', class: 'size-4') %>
                   <% end %>
                 </div>
               </td>
@@ -106,24 +106,25 @@
       </table>
     </div>
 
-    <% if total_pages && total_pages > 1 %>
+    <% if total_count > 0 %>
       <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
-                data-controller="products">
+>
         <div class="flex items-center gap-2 text-sm text-slate-600">
           <span><%= t('admin.products.index.pagination.per_page_label') %>:</span>
           <%= select_tag :per_page,
-                options_for_select([5, 10, 15], params[:per_page]&.to_i || 10),
-                data: { action: "change->products#perPageChanged" },
+                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+                data: { controller: 'table-page-size', table_page_size_key_value: 'products',
+                        action: 'change->table-page-size#apply' },
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'admin_products_list') %>
+          <%= pagination_links(total_pages, frame: 'admin_products_list') if total_pages > 1 %>
         </div>
       </div>
     <% end %>
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= icon('cube', class: 'size-8 text-slate-300') %>
+      <%= delta_icon('cube', class: 'size-8 text-slate-300') %>
       <p class="text-sm font-semibold text-slate-500">
         <%= t('admin.products.index.empty_title') %>
       </p>

@@ -2,6 +2,12 @@
 
 A modern **Point of Sale (POS)** system built with **Ruby on Rails 8**, designed for inventory management, sales tracking, and user administration for small to medium-sized businesses.
 
+## Política de commits
+
+Los commits pueden incluir **uno o más archivos**, según lo requiera el cambio. No se impone un número mínimo ni una excepción exclusiva para `db/schema.rb`. Consulta [AGENTS.md](AGENTS.md) para las pautas de revisión y calidad.
+
+Overcommit y GitHub Actions mantienen las comprobaciones de código y seguridad, sin bloquear commits por su cantidad de archivos.
+
 ---
 
 ## 🚀 Features
@@ -151,6 +157,40 @@ docker compose exec web bin/rails db:create db:migrate db:seed
 ```bash
 docker compose exec web bundle exec rspec
 ```
+
+---
+
+## Overcommit local y pruebas completas en CI
+
+Los hooks de Overcommit se mantienen ligeros para que **commits y pushes no
+dependan de Docker, PostgreSQL ni de la duración de RSpec**:
+
+- `pre-commit`: comprueba espacios en blanco sobrantes.
+- `pre-push`: no ejecuta RSpec, Brakeman, BundlerAudit ni otros procesos largos.
+- `GitHub Actions / CI`: ejecuta **toda la suite RSpec**, RuboCop, Brakeman,
+  BundlerAudit y las verificaciones de traducciones. Un error hace fallar CI.
+
+Una comprobación de configuración protege este contrato en
+`.github/workflows/pre-push-hook-tests.yml`.
+
+```bash
+bundle exec overcommit --install
+bundle exec overcommit --sign
+bundle exec overcommit --run pre-push
+ruby test/overcommit_configuration_test.rb
+```
+
+La suite también puede ejecutarse de manera explícita, **fuera del push** y con
+la base de pruebas aislada del entorno de desarrollo:
+
+```bash
+bash bin/overcommit-rspec
+```
+
+Para impedir integrar cambios con CI rojo, configura como *required checks*
+los jobs **RSpec**, **RuboCop**, **Security scans** y **Rails I18n and YAML audit**
+en la protección de la rama de integración. El push solo publica el commit:
+no puede esperar el resultado completo de un CI que empieza después.
 
 ---
 

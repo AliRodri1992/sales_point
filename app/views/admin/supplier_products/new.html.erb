@@ -1,0 +1,6 @@
+<div class="mx-auto max-w-6xl space-y-5" data-supplier-management-form-page>
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.procurement.add'), subtitle: t('admin.supplier_ui.offer_identity_description'),
+             icon: 'cube', back_path: admin_supplier_supplier_products_path(@supplier) %>
+  <%= render 'form' %>
+</div>

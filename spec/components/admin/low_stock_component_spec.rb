@@ -3,11 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Admin::LowStockComponent, type: :component do
+  around { |example| I18n.with_locale(:en, &example) }
+
   it 'renders the header' do
     render_inline(described_class.new)
 
-    expect(page).to have_text('Inventory')
-    expect(page).to have_text('Products that need attention')
+    expect(page).to have_text('Low stock')
+    expect(page).to have_text('Products that need your attention.')
   end
 
   it 'renders the translated alert count' do
@@ -22,11 +24,9 @@ RSpec.describe Admin::LowStockComponent, type: :component do
     expect(page).to have_text('Cafe Americano 500g')
     expect(page).to have_text('SKU: CAF-500')
     expect(page).to have_text('2 units')
-
     expect(page).to have_text('Leche Entera 1L')
     expect(page).to have_text('SKU: LEC-001')
     expect(page).to have_text('5 units')
-
     expect(page).to have_text('Azucar 1kg')
     expect(page).to have_text('SKU: AZU-001')
     expect(page).to have_text('7 units')

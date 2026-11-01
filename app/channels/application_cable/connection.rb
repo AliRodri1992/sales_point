@@ -6,15 +6,22 @@ module ApplicationCable
       self.current_user = find_verified_user
       return unless current_user
 
-      online_users.add(current_user.id)
+      @presence_token = SecureRandom.uuid
+      User.track_online_connection(current_user.id, @presence_token)
       broadcast_presence
     end
 
     def disconnect
       return unless current_user
 
-      online_users.remove(current_user.id)
+      User.untrack_online_connection(current_user.id, @presence_token) if @presence_token
       broadcast_presence
+    end
+
+    # Action Cable invokes beat periodically while the socket stays connected.
+    def beat
+      User.track_online_connection(current_user.id, @presence_token) if current_user && @presence_token
+      super
     end
 
     private
@@ -26,20 +33,17 @@ module ApplicationCable
       User.find_by(id: user_id) || reject_unauthorized_connection
     end
 
-    def online_users
-      Kredis.set(User::ONLINE_USERS_KEY)
-    end
-
     def broadcast_presence
-      online_ids = online_users.members.map(&:to_i)
-      users = User.where(id: online_ids).where(status: :active)
-
-      Turbo::StreamsChannel.broadcast_replace_to(
-        'presence',
-        target: 'online_users_list',
-        partial: 'admin/shared/online_users_list',
-        locals: { users: users }
-      )
+      online_ids = User.online_user_ids
+      users = User.where(id: online_ids, status: :active)
+      users.find_each do |viewer|
+        Turbo::StreamsChannel.broadcast_replace_to(
+          "presence_#{viewer.id}",
+          target: 'online_users_list',
+          partial: 'admin/shared/online_users_list',
+          locals: { users: users, viewer: viewer }
+        )
+      end
     end
   end
 end

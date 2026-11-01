@@ -1,0 +1,9 @@
+<div class="mx-auto max-w-5xl space-y-5" data-supplier-event-form-page="new">
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.supplier_calendar.new_event'),
+             subtitle: t('admin.supplier_calendar.event_help'),
+             icon: 'calendar-days', back_path: admin_supplier_path(@supplier, tab: 'schedules') %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <%= render 'form' %>
+  </section>
+</div>

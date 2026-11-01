@@ -1,0 +1,21 @@
+---
+en:
+  admin:
+    shared:
+      footer:
+        copyright: "© %{year} Delta POS Inc. All rights reserved."
+        privacy: Privacy
+        terms: Terms
+      notifications:
+        supplier_activity:
+          contact_created: "The contact was added to the supplier record and is now available in its contact list."
+          contact_updated: "The contact changes were saved to the supplier record."
+          contact_deleted: "The contact was archived and is no longer listed among the supplier’s active contacts."
+          contact_restored: "The contact was restored and is available again in the supplier record."
+          address_created: "The address was added to the supplier record and can now be viewed."
+          address_updated: "The address changes were saved to the supplier record."
+          address_deleted: "The address was archived and is no longer listed among the supplier’s active addresses."
+          address_restored: "The address was restored and is available again in the supplier record."
+      online_users:
+        empty: "No other users are online"
+        empty_description: "When someone connects, they'll appear here so you can start a conversation."

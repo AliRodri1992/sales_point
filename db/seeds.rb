@@ -1,126 +1,369 @@
 # frozen_string_literal: true
 
-SYSTEM_ROLES = [
-  {
-    code: 'super_admin',
-    name: 'Super administrador',
-    description: 'Acceso total al sistema y a todas las sucursales.',
-    role_type: :system
-  },
-  {
-    code: 'administrator',
-    name: 'Administrador',
-    description: 'Administra la configuración y operación general del sistema.',
-    role_type: :system
-  },
-  {
-    code: 'accountant',
-    name: 'Contador',
-    description: 'Consulta y administra información fiscal y contable.',
-    role_type: :system
-  },
-  {
-    code: 'branch_manager',
-    name: 'Gerente de sucursal',
-    description: 'Administra la operación de una sucursal asignada.',
-    role_type: :branch
-  },
-  {
-    code: 'cashier',
-    name: 'Cajero',
-    description: 'Opera ventas, cobros y cortes de caja.',
-    role_type: :branch
-  },
-  {
-    code: 'inventory_manager',
-    name: 'Encargado de inventario',
-    description: 'Administra existencias, productos y movimientos de inventario.',
-    role_type: :branch
-  }
-].freeze
+require_relative 'seeds/seed_console'
 
-DEFAULT_PERMISSIONS = [
-  {
-    code: 'dashboard.access',
-    name: 'Acceso al dashboard',
-    module_name: 'Dashboard',
-    description: 'Permite acceder al panel principal.'
-  },
-  {
-    code: 'sales.access',
-    name: 'Acceso a ventas',
-    module_name: 'Ventas',
-    description: 'Permite acceder al módulo de ventas.'
-  },
-  {
-    code: 'cash_register.access',
-    name: 'Acceso a caja',
-    module_name: 'Caja',
-    description: 'Permite acceder al módulo de caja.'
-  },
-  {
-    code: 'inventory.access',
-    name: 'Acceso a inventario',
-    module_name: 'Inventario',
-    description: 'Permite acceder al módulo de inventario.'
-  },
-  {
-    code: 'customers.access',
-    name: 'Acceso a clientes',
-    module_name: 'Clientes',
-    description: 'Permite acceder al módulo de clientes.'
-  },
-  {
-    code: 'suppliers.access',
-    name: 'Acceso a proveedores',
-    module_name: 'Proveedores',
-    description: 'Permite acceder al módulo de proveedores.'
-  },
-  {
-    code: 'employees.access',
-    name: 'Acceso a empleados',
-    module_name: 'Empleados',
-    description: 'Permite acceder al módulo de empleados.'
-  },
-  {
-    code: 'reports.access',
-    name: 'Acceso a reportes',
-    module_name: 'Reportes',
-    description: 'Permite acceder al módulo de reportes.'
-  },
-  {
-    code: 'products.access',
-    name: 'Acceso a productos',
-    module_name: 'Productos',
-    description: 'Permite acceder al catálogo de productos.'
-  },
-  {
-    code: 'categories.access',
-    name: 'Acceso a categorías',
-    module_name: 'Categorías',
-    description: 'Permite acceder al catálogo de categorías.'
-  },
-  {
-    code: 'branches.access',
-    name: 'Acceso a sucursales',
-    module_name: 'Sucursales',
-    description: 'Permite administrar las sucursales.'
-  },
-  {
-    code: 'languages.access',
-    name: 'Acceso a idiomas',
-    module_name: 'Idiomas',
-    description: 'Permite administrar los idiomas disponibles.'
-  },
-  { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
-    description: 'Permite administrar roles y sus permisos.' },
-  { code: 'organizations.access', name: 'Acceso a organizaciones', module_name: 'Organizaciones',
-    description: 'Permite administrar organizaciones.' },
-  { code: 'membership_plans.access', name: 'Acceso a planes de membresía', module_name: 'Membresías',
-    description: 'Permite administrar planes de membresía.' },
-  { code: 'subscriptions.access', name: 'Acceso a suscripciones', module_name: 'Membresías',
-    description: 'Permite administrar suscripciones.' }
-].freeze
+SeedConsole.start_run!
+
+unless defined?(SYSTEM_ROLES)
+  SYSTEM_ROLES = [
+    {
+      code: 'super_admin',
+      name: 'Superadministrador',
+      description: 'Acceso total al sistema y a todas las sucursales.',
+      role_type: :system
+    },
+    {
+      code: 'administrator',
+      name: 'Administrador',
+      description: 'Administra la configuración y operación general del sistema.',
+      role_type: :system
+    },
+    {
+      code: 'manager',
+      name: 'Gerente',
+      description: 'Administra operaciones y sucursales asignadas.',
+      role_type: :system
+    },
+    {
+      code: 'supervisor',
+      name: 'Supervisor',
+      description: 'Supervisa equipos de operación y producción.',
+      role_type: :system
+    },
+    {
+      code: 'cashier',
+      name: 'Cajero',
+      description: 'Opera la caja, cobros y cortes de caja.',
+      role_type: :system
+    },
+    {
+      code: 'salesman',
+      name: 'Vendedor',
+      description: 'Gestiona carteras, cotizaciones y ventas.',
+      role_type: :system
+    },
+    {
+      code: 'inventory',
+      name: 'Inventarios',
+      description: 'Administra existencias, productos y movimientos de inventario.',
+      role_type: :system
+    },
+    {
+      code: 'purchases',
+      name: 'Compras',
+      description: 'Administra órdenes de compra y proveedores.',
+      role_type: :system
+    },
+    {
+      code: 'finance',
+      name: 'Finanzas',
+      description: 'Consulta y administra información fiscal y financiera.',
+      role_type: :system
+    },
+    {
+      code: 'auditor',
+      name: 'Auditor',
+      description: 'Audita registros, movimientos y conciliaciones.',
+      role_type: :system
+    },
+    {
+      code: 'support',
+      name: 'Soporte',
+      description: 'Soporte técnico y resolución de incidencias.',
+      role_type: :system
+    }
+  ].freeze
+end
+
+unless defined?(DEFAULT_PERMISSIONS)
+  DEFAULT_PERMISSIONS = [
+    {
+      code: 'dashboard.access',
+      name: 'Acceso al dashboard',
+      module_name: 'Dashboard',
+      description: 'Permite acceder al panel principal.'
+    },
+    {
+      code: 'sales.access',
+      name: 'Acceso a ventas',
+      module_name: 'Ventas',
+      description: 'Permite acceder al módulo de ventas.'
+    },
+    {
+      code: 'cash_register.access',
+      name: 'Acceso a caja',
+      module_name: 'Caja',
+      description: 'Permite acceder al módulo de caja.'
+    },
+    {
+      code: 'inventory.access',
+      name: 'Acceso a inventario',
+      module_name: 'Inventario',
+      description: 'Permite acceder al módulo de inventario.'
+    },
+    {
+      code: 'customers.access',
+      name: 'Acceso a clientes',
+      module_name: 'Clientes',
+      description: 'Permite acceder al módulo de clientes.'
+    },
+    {
+      code: 'suppliers.access',
+      name: 'Acceso a proveedores',
+      module_name: 'Proveedores',
+      description: 'Permite acceder al módulo de proveedores.'
+    },
+    {
+      code: 'suppliers.view',
+      name: 'View suppliers',
+      module_name: 'Proveedores',
+      description: 'View suppliers.'
+    },
+    {
+      code: 'suppliers.create',
+      name: 'Create suppliers',
+      module_name: 'Proveedores',
+      description: 'Create suppliers.'
+    },
+    {
+      code: 'suppliers.update',
+      name: 'Update suppliers',
+      module_name: 'Proveedores',
+      description: 'Update suppliers.'
+    },
+    {
+      code: 'suppliers.destroy',
+      name: 'Delete suppliers',
+      module_name: 'Proveedores',
+      description: 'Delete suppliers.'
+    },
+    {
+      code: 'suppliers.export',
+      name: 'Export suppliers',
+      module_name: 'Proveedores',
+      description: 'Export suppliers.'
+    },
+    {
+      code: 'suppliers.contacts.view',
+      name: 'View supplier contacts',
+      module_name: 'Proveedores',
+      description: 'View supplier contacts.'
+    },
+    {
+      code: 'suppliers.contacts.manage',
+      name: 'Manage supplier contacts',
+      module_name: 'Proveedores',
+      description: 'Manage supplier contacts.'
+    },
+    {
+      code: 'suppliers.addresses.view',
+      name: 'View supplier addresses',
+      module_name: 'Proveedores',
+      description: 'View supplier addresses.'
+    },
+    {
+      code: 'suppliers.addresses.manage',
+      name: 'Manage supplier addresses',
+      module_name: 'Proveedores',
+      description: 'Manage supplier addresses.'
+    },
+    {
+      code: 'suppliers.schedules.view',
+      name: 'View supplier schedules',
+      module_name: 'Proveedores',
+      description: 'View supplier schedules.'
+    },
+    {
+      code: 'suppliers.schedules.manage',
+      name: 'Manage supplier schedules',
+      module_name: 'Proveedores',
+      description: 'Manage supplier schedules.'
+    },
+    { code: 'suppliers.contacts.create', name: 'create supplier contacts',
+      module_name: 'Proveedores', description: 'Allow create action for supplier contacts.' },
+    { code: 'suppliers.contacts.update', name: 'update supplier contacts',
+      module_name: 'Proveedores', description: 'Allow update action for supplier contacts.' },
+    { code: 'suppliers.contacts.destroy', name: 'destroy supplier contacts',
+      module_name: 'Proveedores', description: 'Allow destroy action for supplier contacts.' },
+    { code: 'suppliers.contacts.restore', name: 'restore supplier contacts',
+      module_name: 'Proveedores', description: 'Allow restore action for supplier contacts.' },
+    { code: 'suppliers.addresses.create', name: 'create supplier addresses',
+      module_name: 'Proveedores', description: 'Allow create action for supplier addresses.' },
+    { code: 'suppliers.addresses.update', name: 'update supplier addresses',
+      module_name: 'Proveedores', description: 'Allow update action for supplier addresses.' },
+    { code: 'suppliers.addresses.destroy', name: 'destroy supplier addresses',
+      module_name: 'Proveedores', description: 'Allow destroy action for supplier addresses.' },
+    { code: 'suppliers.addresses.restore', name: 'restore supplier addresses',
+      module_name: 'Proveedores', description: 'Allow restore action for supplier addresses.' },
+    { code: 'suppliers.schedules.create', name: 'create supplier schedules',
+      module_name: 'Proveedores', description: 'Allow create action for supplier schedules.' },
+    { code: 'suppliers.schedules.update', name: 'update supplier schedules',
+      module_name: 'Proveedores', description: 'Allow update action for supplier schedules.' },
+    { code: 'suppliers.schedules.destroy', name: 'destroy supplier schedules',
+      module_name: 'Proveedores', description: 'Allow destroy action for supplier schedules.' },
+    { code: 'suppliers.schedules.restore', name: 'restore supplier schedules',
+      module_name: 'Proveedores', description: 'Allow restore action for supplier schedules.' },
+    { code: 'suppliers.addresses.set_primary', name: 'set_primary supplier addresses',
+      module_name: 'Proveedores', description: 'Allow set_primary action for supplier addresses.' },
+    { code: 'suppliers.addresses.geocode', name: 'geocode supplier addresses',
+      module_name: 'Proveedores', description: 'Allow geocode action for supplier addresses.' },
+    {
+      code: 'suppliers.documents.view',
+      name: 'View supplier documents',
+      module_name: 'Proveedores',
+      description: 'View supplier documents.'
+    },
+    {
+      code: 'suppliers.documents.manage',
+      name: 'Manage supplier documents',
+      module_name: 'Proveedores',
+      description: 'Manage supplier documents.'
+    },
+    { code: 'suppliers.documents.create', name: 'create supplier documents',
+      module_name: 'Proveedores', description: 'Allow create action for supplier documents.' },
+    { code: 'suppliers.documents.update', name: 'update supplier documents',
+      module_name: 'Proveedores', description: 'Allow update action for supplier documents.' },
+    { code: 'suppliers.documents.destroy', name: 'destroy supplier documents',
+      module_name: 'Proveedores', description: 'Allow destroy action for supplier documents.' },
+    { code: 'suppliers.documents.restore', name: 'restore supplier documents',
+      module_name: 'Proveedores', description: 'Allow restore action for supplier documents.' },
+    { code: 'suppliers.products.create', name: 'create supplier products',
+      module_name: 'Proveedores', description: 'Allow create action for supplier products.' },
+    { code: 'suppliers.products.update', name: 'update supplier products',
+      module_name: 'Proveedores', description: 'Allow update action for supplier products.' },
+    { code: 'suppliers.products.destroy', name: 'destroy supplier products',
+      module_name: 'Proveedores', description: 'Allow destroy action for supplier products.' },
+    { code: 'suppliers.products.restore', name: 'restore supplier products',
+      module_name: 'Proveedores', description: 'Allow restore action for supplier products.' },
+    { code: 'suppliers.products.prefer', name: 'Select preferred supplier',
+      module_name: 'Proveedores', description: 'Manage preferred supplier selection.' },
+    {
+      code: 'suppliers.fiscal.view',
+      name: 'View supplier fiscal information',
+      module_name: 'Proveedores',
+      description: 'View supplier fiscal information.'
+    },
+    {
+      code: 'suppliers.fiscal.manage',
+      name: 'Manage supplier fiscal information',
+      module_name: 'Proveedores',
+      description: 'Manage supplier fiscal information.'
+    },
+    {
+      code: 'suppliers.commercial.view',
+      name: 'View supplier commercial data',
+      module_name: 'Proveedores',
+      description: 'View supplier commercial data.'
+    },
+    {
+      code: 'suppliers.commercial.manage',
+      name: 'Manage supplier commercial data',
+      module_name: 'Proveedores',
+      description: 'Manage supplier commercial data.'
+    },
+    { code: 'suppliers.products.view', name: 'Ver productos de proveedores',
+      module_name: 'Proveedores', description: 'Consulta ofertas y precios por proveedor.' },
+    { code: 'suppliers.products.manage', name: 'Administrar productos de proveedores',
+      module_name: 'Proveedores', description: 'Edita ofertas de compra y presentaciones.' },
+    {
+      code: 'purchases.view',
+      name: 'View purchases',
+      module_name: 'Compras',
+      description: 'View purchases within the current organization.'
+    },
+    {
+      code: 'purchases.create',
+      name: 'Create purchase documents',
+      module_name: 'Compras',
+      description: 'Create purchase documents within the current organization.'
+    },
+    {
+      code: 'purchases.approve',
+      name: 'Approve purchases',
+      module_name: 'Compras',
+      description: 'Approve purchases within the current organization.'
+    },
+    {
+      code: 'purchases.receive',
+      name: 'Receive purchased merchandise',
+      module_name: 'Compras',
+      description: 'Receive purchased merchandise within the current organization.'
+    },
+    {
+      code: 'purchases.returns',
+      name: 'Process supplier returns',
+      module_name: 'Compras',
+      description: 'Process supplier returns within the current organization.'
+    },
+    {
+      code: 'employees.access',
+      name: 'Acceso a empleados',
+      module_name: 'Empleados',
+      description: 'Permite acceder al módulo de empleados.'
+    },
+    {
+      code: 'reports.access',
+      name: 'Acceso a reportes',
+      module_name: 'Reportes',
+      description: 'Permite acceder al módulo de reportes.'
+    },
+    {
+      code: 'products.access',
+      name: 'Acceso a productos',
+      module_name: 'Productos',
+      description: 'Permite acceder al catálogo de productos.'
+    },
+    {
+      code: 'categories.access',
+      name: 'Acceso a categorías',
+      module_name: 'Categorías',
+      description: 'Permite acceder al catálogo de categorías.'
+    },
+    {
+      code: 'branches.access',
+      name: 'Acceso a sucursales',
+      module_name: 'Sucursales',
+      description: 'Permite administrar las sucursales.'
+    },
+    {
+      code: 'languages.access',
+      name: 'Acceso a idiomas',
+      module_name: 'Idiomas',
+      description: 'Permite administrar los idiomas disponibles.'
+    },
+    { code: 'roles.access', name: 'Acceso a roles', module_name: 'Roles',
+      description: 'Permite administrar roles y sus permisos.' },
+    { code: 'accounts_payable.view', name: 'View accounts payable', module_name: 'Cuentas por pagar',
+      description: 'View vendor invoices, outstanding balances and reconciliations.' },
+    { code: 'accounts_payable.manage', name: 'Manage invoices', module_name: 'Cuentas por pagar',
+      description: 'Create and edit vendor invoices, payments and credit notes.' },
+    { code: 'accounts_payable.approve', name: 'Approve invoices and credits', module_name: 'Cuentas por pagar',
+      description: 'Post and cancel vendor invoices and credit notes.' },
+    { code: 'accounts_payable.pay', name: 'Apply and reverse payments', module_name: 'Cuentas por pagar',
+      description: 'Post, allocate and reverse financial settlements.' },
+    { code: 'accounts_payable.banks.view', name: 'View vendor bank accounts', module_name: 'Cuentas por pagar',
+      description: 'View masked bank account information.' },
+    { code: 'accounts_payable.banks.manage', name: 'Manage vendor bank accounts', module_name: 'Cuentas por pagar',
+      description: 'Add, update and archive vendor bank accounts.' },
+    { code: 'accounts_payable.banks.create', name: 'Crear cuentas bancarias de proveedores',
+      module_name: 'Cuentas por pagar',
+      description: 'Registrar cuentas bancarias nuevas.' },
+    { code: 'accounts_payable.banks.update', name: 'Editar cuentas bancarias de proveedores',
+      module_name: 'Cuentas por pagar',
+      description: 'Actualizar datos y estados operativos de cuentas bancarias.' },
+    { code: 'accounts_payable.banks.destroy', name: 'Archivar cuentas bancarias de proveedores',
+      module_name: 'Cuentas por pagar',
+      description: 'Archivar cuentas bancarias sin eliminarlas físicamente.' },
+    { code: 'accounts_payable.banks.restore', name: 'Restaurar cuentas bancarias de proveedores',
+      module_name: 'Cuentas por pagar',
+      description: 'Recuperar cuentas bancarias archivadas.' },
+    { code: 'accounts_payable.banks.review', name: 'Verificar cuentas bancarias de proveedores',
+      module_name: 'Cuentas por pagar',
+      description: 'Aprobar, rechazar o revertir verificaciones bancarias.' },
+    { code: 'accounts_payable.banks.reveal', name: 'Reveal bank account numbers', module_name: 'Cuentas por pagar',
+      description: 'Access full encrypted banking details with audit logging.' }
+  ].freeze
+end
 
 def load_translations_from_file(file_path, locale_code)
   return unless File.exist?(file_path)
@@ -131,7 +374,10 @@ def load_translations_from_file(file_path, locale_code)
   return unless locale_hash && language
 
   flatten_hash(locale_hash, '').each do |key, value|
-    persist_translation(key, value.to_s, locale_code, language) unless value.is_a?(Hash)
+    next if value.is_a?(Hash)
+    next if value.blank? || value.to_s.strip.empty?
+
+    persist_translation(key, value.to_s, locale_code, language)
   end
 end
 
@@ -160,13 +406,6 @@ def flatten_hash(hash, prefix = '')
   result
 end
 
-def create_sat_month(number)
-  SatMonth.find_or_create_by!(code: format('%02d', number)) do |month|
-    month.description = Date::MONTHNAMES[number]
-    month.month_number = number
-  end
-end
-
 def seed_permissions
   DEFAULT_PERMISSIONS.each do |permission_attributes|
     Permission.find_or_initialize_by(code: permission_attributes[:code]).tap do |permission|
@@ -178,17 +417,9 @@ def seed_permissions
 end
 
 def assign_default_role_permissions
-  role_codes = %w[super_admin administrator]
-  permissions = Permission.available
-
-  SystemRole.where(code: role_codes).find_each do |role|
-    assign_permissions_to_role(role, permissions)
-  end
-end
-
-def assign_permissions_to_role(role, permissions)
-  permissions.find_each do |permission|
-    SystemRolePermission.find_or_create_by!(system_role: role, permission: permission)
+  SystemRole::ADMINISTRATIVE_CODES.each do |role_code|
+    role = SystemRole.available.find_by!(code: role_code)
+    AdministratorPermissionProvisioner.call(role:)
   end
 end
 
@@ -196,16 +427,30 @@ def seed_admin_user
   language = Language.find_by!(code: 'es')
   administrator_role = SystemRole.find_by!(code: 'administrator')
   user = User.find_or_initialize_by(email: 'administrador@delta.com')
-  assign_admin_user_attributes(user, language)
-  user.save!
+  action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
+  $stdout.puts "[SEEDS][USUARIO][#{action}] Administrador: #{user.email}"
+  if user.new_record?
+    assign_admin_user_attributes(user, language)
+    user.save!
+  end
+  report_admin_user(user, language)
   assign_admin_role(user, administrator_role)
+  report_admin_roles(user)
+end
+
+def report_admin_user(user, language)
+  $stdout.puts "[SEEDS][USUARIO][OK] id=#{user.id} usuario=#{user.username} " \
+               "tipo=#{user.user_type} estado=#{user.status} idioma=#{language.code}"
+end
+
+def report_admin_roles(user)
+  $stdout.puts "[SEEDS][USUARIO][OK] Administrador configurado; roles=#{user.system_roles.pluck(:code).join(', ')}"
 end
 
 def assign_admin_user_attributes(user, language)
   user.assign_attributes(
     username: 'administrador',
-    password: 'administrador',
-    password_confirmation: 'administrador',
+    **(user.new_record? ? { password: 'administrador', password_confirmation: 'administrador' } : {}),
     user_type: :employee,
     status: :active,
     theme: Theme::DEFAULT,
@@ -214,9 +459,51 @@ def assign_admin_user_attributes(user, language)
 end
 
 def assign_admin_role(user, administrator_role)
-  UserRole.find_or_create_by!(user:, system_role: administrator_role, branch: nil) do |user_role|
-    user_role.deleted_at = nil
+  assignment = UserRole.find_or_initialize_by(user:, system_role: administrator_role, branch: nil)
+  action = assignment.new_record? ? 'CREAR' : 'VERIFICAR'
+  assignment.deleted_at = nil
+  assignment.save!
+  $stdout.puts "[SEEDS][ROL][#{action}] usuario_id=#{user.id} rol=#{administrator_role.code} " \
+               "asignacion_id=#{assignment.id}"
+end
+
+unless defined?(USER_SEED_ROLES)
+  USER_SEED_ROLES = %w[
+    manager supervisor cashier salesman inventory purchases finance auditor support
+  ].freeze
+end
+
+def seed_users(count = 15)
+  roles = SystemRole.where(code: USER_SEED_ROLES).order(:id).to_a
+  language = Language.find_by!(code: 'es')
+  $stdout.puts "[SEEDS][USUARIOS][INICIO] Procesando #{count} usuarios de ejemplo; roles disponibles=#{roles.length}"
+  count.times { |index| seed_example_user(index, count, roles, language) }
+  $stdout.puts "[SEEDS][USUARIOS][OK] Total usuarios de ejemplo procesados=#{count}"
+end
+
+def seed_example_user(index, count, roles, language)
+  user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
+  action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
+  if user.new_record?
+    assign_user_attributes(user, language, index)
+    user.save!
   end
+  role = roles.fetch(index % roles.length)
+  assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
+  $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
+               "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
+               "rol=#{role.code} asignacion_id=#{assignment.id}"
+end
+
+def assign_user_attributes(user, language, index)
+  user.assign_attributes(
+    username: "user#{index + 1}",
+    **(user.new_record? ? { password: 'password123', password_confirmation: 'password123' } : {}),
+    user_type: :employee,
+    status: :active,
+    theme: Theme::DEFAULT,
+    language:
+  )
 end
 
 def seed_system_roles
@@ -229,296 +516,188 @@ def seed_system_roles
   end
 end
 
-# Create default languages
-[
-  { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
-  { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
-  { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
-].each do |lang_attrs|
-  Language.find_or_create_by(code: lang_attrs[:code]) do |language|
-    language.assign_attributes(lang_attrs)
-  end
-end
-
-# Load all locale files
-Rails.root.glob('config/locales/*.yml').each do |file|
-  next if file.to_s.include?('devise.security_extension')
-
-  filename = File.basename(file)
-  case filename
-  when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
-  when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
-  when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
-  end
-end
-
-(1..12).each do |i|
-  create_sat_month(i)
-end
-
-seed_system_roles
-seed_permissions
-assign_default_role_permissions
-seed_admin_user
-
-require 'faker'
-
-# Create client examples
-20.times do |index|
-  code = "CLI#{format('%04d', index + 1)}"
-
-  name = Faker::Company.name
-                       .gsub(/[^A-Za-z0-9ÁÉÍÓÚáéíóúÑñ&.-]/, '')
-                       .strip
-
-  rfc_prefix = index.even? ? 3 : 4
-
-  rfc = "#{Faker::Alphanumeric.alpha(number: rfc_prefix).upcase}" \
-        "#{Faker::Number.number(digits: 6)}" \
-        "#{Faker::Alphanumeric.alphanumeric(number: 3).upcase}"
-
-  postal_code = format('%05d', Faker::Number.between(from: 1, to: 99_999))
-
-  Client.create!(
-    code: code,
-    email: Faker::Internet.unique.email,
-    name: name,
-    notes: Faker::Lorem.sentence(word_count: 8),
-    phone: Faker::PhoneNumber.cell_phone,
-    postal_code: postal_code,
-    credit_limit: Faker::Number.between(from: 0, to: 100_000),
-    rfc: rfc,
-    status: %w[active inactive].sample
-  )
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping client seed due to error: #{e.message}"
-end
-
-# Create category examples
-15.times do |index|
-  name = Faker::Commerce.department(max: 1).gsub(/[^a-zA-Z0-9ÁÉÍÓÚáéíóúÑñ]/, '')
-  name = "Categoria#{index + 1}" if name.blank?
-
-  Category.create!(
-    code: "cat#{format('%04d', index + 1)}",
-    name: name[0, 50],
-    description: Faker::Lorem.sentence(word_count: 8),
-    status: %w[active active active inactive].sample
-  )
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping category seed due to error: #{e.message}"
-end
-
-categories = Category.not_deleted.to_a
-
-# Create product examples
-15.times do |index|
-  code = "PROD#{format('%04d', index + 1)}"
-
-  name = Faker::Commerce.product_name
-  price = Faker::Commerce.price(range: 50.0..5000.0)
-  stock = Faker::Number.between(from: 10, to: 500)
-
-  Product.create!(
-    code: code,
-    name: name,
-    description: Faker::Lorem.sentence(word_count: 12),
-    price: price,
-    cost: (price * 0.6).round(2),
-    stock: stock,
-    min_stock: 5,
-    max_stock: stock + 100,
-    sku: "SKU-#{Faker::Alphanumeric.alphanumeric(number: 8).upcase}",
-    barcode: "75#{Faker::Number.number(digits: 10)}",
-    category: categories.sample,
-    status: %w[active active active inactive].sample
-  )
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping product seed due to error: #{e.message}"
-end
-
-# Create branch examples
-15.times do |index|
-  street = Faker::Address.street_name
-  neighborhood = Faker::Address.city
-  city = Faker::Address.city
-  state = Faker::Address.state
-  exterior_number = Faker::Address.building_number.to_s.strip
-  exterior_number = Faker::Number.between(from: 1, to: 999).to_s if exterior_number.blank?
-  postal_code = format('%05d', Faker::Address.zip_code.to_s.gsub(/\D/, '')[0, 5].to_i)
-  phone = Faker::PhoneNumber.cell_phone.gsub(/[^0-9+\-()\s]/, '')[0, 20]
-
-  Branch.create!(
-    name: "Sucursal #{format('%02d', index + 1)} - #{neighborhood}"[0, 100],
-    phone: phone,
-    status: [true, true, true, false].sample,
-    address_attributes: {
-      street: street[0, 150],
-      exterior_number: exterior_number,
-      neighborhood: neighborhood[0, 100],
-      city: city[0, 100],
-      state: state[0, 100],
-      country: 'España',
-      postal_code: postal_code
-    }
-  )
-rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-  Rails.logger.warn "Skipping branch seed due to error: #{e.message}"
-end
-
-MEMBERSHIP_FEATURES = [
-  { key: 'pos', name: 'Punto de venta', value_type: :boolean, position: 1 },
-  { key: 'customers', name: 'Clientes', value_type: :boolean, position: 2 },
-  { key: 'suppliers', name: 'Proveedores', value_type: :boolean, position: 3 },
-  { key: 'products', name: 'Productos', value_type: :boolean, position: 4 },
-  { key: 'inventory', name: 'Inventario', value_type: :boolean, position: 5 },
-  { key: 'advanced_inventory', name: 'Inventario avanzado', value_type: :boolean, position: 6 },
-  { key: 'cash_registers', name: 'Cajas', value_type: :boolean, position: 7 },
-  { key: 'reports', name: 'Reportes', value_type: :boolean, position: 8 },
-  { key: 'advanced_reports', name: 'Reportes avanzados', value_type: :boolean, position: 9 },
-  { key: 'multi_branch', name: 'Multi-sucursal', value_type: :boolean, position: 10 },
-  { key: 'expenses', name: 'Gastos', value_type: :boolean, position: 11 },
-  { key: 'api', name: 'API', value_type: :boolean, position: 12 },
-  { key: 'exports', name: 'Exportaciones', value_type: :boolean, position: 13 },
-  { key: 'max_users', name: 'Máximo de usuarios', value_type: :integer, position: 20 },
-  { key: 'max_branches', name: 'Máximo de sucursales', value_type: :integer, position: 21 },
-  { key: 'max_products', name: 'Máximo de productos', value_type: :integer, position: 22 },
-  { key: 'max_clients', name: 'Máximo de clientes', value_type: :integer, position: 23 },
-  { key: 'max_suppliers', name: 'Máximo de proveedores', value_type: :integer, position: 24 },
-  { key: 'max_warehouses', name: 'Máximo de almacenes', value_type: :integer, position: 25 },
-  { key: 'max_pos_terminals', name: 'Máximo de terminales POS', value_type: :integer, position: 26 }
-].freeze
-
-MEMBERSHIP_PLANS = [
-  {
-    name: 'Starter',
-    slug: 'starter',
-    description: 'Para negocios que comienzan a organizar sus ventas.',
-    price: 299.00,
-    currency: 'MXN',
-    billing_interval: :monthly,
-    trial_days: 14,
-    position: 1,
-    active: true
-  },
-  {
-    name: 'Professional',
-    slug: 'professional',
-    description: 'Para negocios que necesitan inventario, reportes y crecimiento multi-sucursal.',
-    price: 599.00,
-    currency: 'MXN',
-    billing_interval: :monthly,
-    trial_days: 14,
-    position: 2,
-    active: true
-  },
-  {
-    name: 'Business',
-    slug: 'business',
-    description: 'Para operaciones con múltiples sucursales y mayores límites.',
-    price: 999.00,
-    currency: 'MXN',
-    billing_interval: :monthly,
-    trial_days: 14,
-    position: 3,
-    active: true
-  },
-  {
-    name: 'Enterprise',
-    slug: 'enterprise',
-    description: 'Para organizaciones con necesidades empresariales y API.',
-    price: 0.00,
-    currency: 'MXN',
-    billing_interval: :monthly,
-    trial_days: 0,
-    position: 4,
-    active: true
-  }
-].freeze
-
-MEMBERSHIP_PLAN_CONFIGURATION = {
-  'starter' => {
-    enabled: %w[pos customers products cash_registers reports],
-    limits: { 'max_users' => 3, 'max_branches' => 1, 'max_products' => 500, 'max_clients' => 500, 'max_suppliers' => 25, 'max_warehouses' => 1, 'max_pos_terminals' => 1 }
-  },
-  'professional' => {
-    enabled: %w[pos customers suppliers products inventory cash_registers reports multi_branch expenses exports],
-    limits: { 'max_users' => 10, 'max_branches' => 3, 'max_products' => 5000, 'max_clients' => 5000, 'max_suppliers' => 500, 'max_warehouses' => 3, 'max_pos_terminals' => 5 }
-  },
-  'business' => {
-    enabled: %w[pos customers suppliers products inventory advanced_inventory cash_registers reports advanced_reports multi_branch expenses exports],
-    limits: { 'max_users' => 30, 'max_branches' => 10, 'max_products' => nil, 'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => 10, 'max_pos_terminals' => 20 }
-  },
-  'enterprise' => {
-    enabled: %w[pos customers suppliers products inventory advanced_inventory cash_registers reports advanced_reports multi_branch expenses api exports],
-    limits: { 'max_users' => nil, 'max_branches' => nil, 'max_products' => nil, 'max_clients' => nil, 'max_suppliers' => nil, 'max_warehouses' => nil, 'max_pos_terminals' => nil }
-  }
-}.freeze
-
-def seed_membership_catalog
-  MEMBERSHIP_FEATURES.each do |attributes|
-    feature = MembershipFeature.find_or_initialize_by(key: attributes[:key])
-    feature.assign_attributes(attributes.merge(active: true))
-    feature.save!
-  end
-
-  MEMBERSHIP_PLANS.each do |attributes|
-    plan = MembershipPlan.find_or_initialize_by(slug: attributes[:slug])
-    plan.assign_attributes(attributes)
-    plan.save!
-
-    configuration = MEMBERSHIP_PLAN_CONFIGURATION.fetch(plan.slug)
-
-    MembershipFeature.where(deleted_at: nil).find_each do |feature|
-      plan_feature = MembershipPlanFeature.find_or_initialize_by(
-        membership_plan: plan,
-        membership_feature: feature
-      )
-      plan_feature.assign_attributes(
-        enabled: configuration[:enabled].include?(feature.key),
-        limit: configuration[:limits][feature.key],
-        value: configuration[:limits].key?(feature.key) && configuration[:limits][feature.key].nil? ? 'unlimited' : nil,
-        position: feature.position,
-        deleted_at: nil
-      )
-      plan_feature.value = 'true' if feature.value_type == 'boolean' && plan_feature.enabled?
-      plan_feature.save!
+SeedConsole.track('Idiomas', Language) do
+  # Create default languages
+  [
+    { code: 'en', name: 'English', flag_iso: 'us', status: 'active' },
+    { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
+    { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
+  ].each do |lang_attrs|
+    Language.find_or_create_by(code: lang_attrs[:code]) do |language|
+      language.assign_attributes(lang_attrs)
     end
   end
 end
 
-def seed_demo_organization
-  organization = Organization.find_or_initialize_by(code: 'DELTA-DEMO')
-  organization.assign_attributes(
-    name: 'Delta POS Demo',
-    legal_name: 'Delta POS Demo',
-    email: 'demo@delta.com',
-    phone: '5555555555',
-    status: 'active',
-    deleted_at: nil
-  )
-  organization.save!
+SeedConsole.track('Traducciones', Translate) do
+  # Load all locale files
+  Rails.root.glob('config/locales/*.yml').each do |file|
+    next if file.to_s.include?('devise.security_extension')
 
-  plan = MembershipPlan.find_by!(slug: 'professional')
-  subscription = organization.subscriptions.current.first_or_initialize
-  subscription.assign_attributes(
-    membership_plan: plan,
-    status: 'active',
-    starts_at: Time.current,
-    ends_at: nil,
-    trial_ends_at: nil,
-    canceled_at: nil
-  )
-  subscription.save!
-
-  subscription.subscription_events.find_or_create_by!(
-    event_type: 'subscription_created',
-    membership_plan: plan,
-    to_status: 'active'
-  ) do |event|
-    event.description = 'Initial Delta POS demo subscription.'
+    filename = File.basename(file)
+    case filename
+    when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
+    when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
+    when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
+    end
   end
 end
 
-seed_membership_catalog
-seed_demo_organization
+require_relative 'seeds/sat_catalogs'
+require_relative 'seeds/sat_catalog_csv'
+SeedConsole.track('CSV completos del SAT') { SatCatalogCsv.seed! }
+SatCatalogSeeds.seed!
+
+require_relative 'seeds/currencies'
+require_relative 'seeds/countries'
+SeedConsole.track('Monedas', Currency) { CurrencySeeds.seed! }
+SeedConsole.track('Países', Country) { CountrySeeds.seed! }
+SeedConsole.report('Monedas por país', CountryCurrency)
+
+SeedConsole.track('Roles', SystemRole) { seed_system_roles }
+SeedConsole.track('Permisos', Permission) { seed_permissions }
+SeedConsole.track('Asignación de permisos') { assign_default_role_permissions }
+SeedConsole.track('Usuario administrador', User) { seed_admin_user }
+SeedConsole.track('Usuarios de ejemplo', User) { seed_users }
+
+require_relative 'seeds/supplier_examples'
+SeedConsole.track('Organización Delta POS', Organization) do
+  SupplierExamples.seed!
+end
+SeedConsole.report('Proveedores', Supplier)
+SeedConsole.report('Regímenes fiscales SAT', SatFiscalRegime)
+SeedConsole.report('Contactos', Contact)
+SeedConsole.report('Membresías', OrganizationMembership)
+
+# Deterministic examples avoid Faker collisions and invalid phone/address data.
+SeedConsole.track('Clientes', Client) do
+  20.times do |index|
+    number = index + 1
+    code = format('CLI%04d', number)
+    next if Client.unscoped.exists?(code:)
+
+    Client.create!(
+      code:,
+      name: "Cliente de ejemplo #{number}",
+      email: "cliente#{number}@example.com",
+      phones_attributes: [
+        {
+          number: format('551234%04d', number),
+          country_code: 'MX',
+          kind: 'mobile',
+          primary: true,
+          organization: Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+        }
+      ],
+      rfc: format('CDE260101%03d', number),
+      postal_code: '06000',
+      credit_limit: number * 1000,
+      notes: "Cliente de demostración #{number}.",
+      status: (number % 5).zero? ? :inactive : :active
+    )
+  end
+end
+
+SeedConsole.track('Categorías', Category) do
+  15.times do |index|
+    number = index + 1
+    code = format('cat%04d', number)
+    next if Category.unscoped.exists?(code:)
+
+    Category.create!(
+      code:,
+      name: "Categoría #{number}",
+      description: "Categoría de ejemplo #{number} para Delta POS.",
+      status: (number % 5).zero? ? :inactive : :active
+    )
+  end
+end
+
+SeedConsole.track('Productos', Product) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  categories = Category.not_deleted.order(:id).to_a
+  raise 'No hay categorías disponibles para crear productos' if categories.empty?
+
+  15.times do |index|
+    number = index + 1
+    code = format('PROD%04d', number)
+    next if Product.unscoped.exists?(organization:, code:)
+
+    organization.products.create!(
+      code:,
+      name: "Producto de ejemplo #{number}",
+      description: "Producto de demostración #{number} para Delta POS.",
+      price: number * 100,
+      cost: number * 60,
+      sku: format('SKU-DELTA-%04d', number),
+      barcode: format('75000000%05d', number),
+      category: categories[index % categories.length],
+      status: (number % 5).zero? ? :inactive : :active
+    )
+  end
+end
+
+SeedConsole.track('Sucursales', Branch) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+
+  15.times do |index|
+    number = index + 1
+    name = format('Sucursal Delta %02d', number)
+    next if Branch.unscoped.exists?(organization:, name:)
+
+    Branch.create!(
+      organization:,
+      name:,
+      phones_attributes: [
+        {
+          number: format('551234%04d', 100 + number),
+          country_code: 'MX',
+          kind: 'mobile',
+          primary: true,
+          organization:
+        }
+      ],
+      status: number % 5 != 0,
+      address_attributes: {
+        street: 'Avenida Insurgentes',
+        exterior_number: number.to_s,
+        neighborhood: 'Centro',
+        city: 'Ciudad de México',
+        state: 'Ciudad de México',
+        country: Country.find_by!(iso_alpha2: 'MX'),
+        postal_code: '06000'
+      }
+    )
+  end
+end
+
+require_relative 'seeds/supplier_dossier_examples'
+SeedConsole.track('Expedientes de proveedores') do
+  SupplierDossierExamples.seed!
+end
+
+require_relative 'seeds/supplier_commercial_examples'
+SeedConsole.track('Productos por proveedor', SupplierProduct) do
+  SupplierCommercialExamples.seed_products!
+end
+SeedConsole.track('Cuentas bancarias de proveedores', SupplierBankAccount) do
+  SupplierCommercialExamples.seed_bank_accounts!
+end
+SeedConsole.report('Proveedores preferidos', Product.where.not(preferred_supplier_id: nil))
+SeedConsole.report('Direcciones de proveedores', Address.where(addressable_type: 'Supplier'))
+SeedConsole.report('Calendarios de proveedores', SupplierSchedule)
+
+SeedConsole.track('Inventarios', Inventory) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  branch = organization.branches.not_deleted.order(:id).first
+  organization.products.not_deleted.find_each do |product|
+    Inventory.find_or_create_by!(organization:, branch:, product:) do |record|
+      record.stock = 0
+      record.min_stock = 5
+      record.max_stock = 300
+    end
+  end
+end
+
+SeedConsole.report('Direcciones', Address)
+SeedConsole.finish_run!

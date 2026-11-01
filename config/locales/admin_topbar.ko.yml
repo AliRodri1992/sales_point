@@ -1,0 +1,19 @@
+---
+ko:
+  admin:
+    shared:
+      topbar:
+        toggle_sidebar: "사이드바 열기 또는 닫기"
+        morning_greeting: "좋은 아침입니다, %{name}님"
+      branch_selector:
+        branch_center: "중앙 지점"
+        branch_north: "북부 지점"
+        branch_south: "남부 지점"
+      language_selector:
+        toggle: "언어 변경"
+      notifications:
+        toggle: "알림 열기"
+        title: "알림"
+        mark_all_read: "모두 읽음으로 표시"
+      user_menu:
+        settings: "설정"

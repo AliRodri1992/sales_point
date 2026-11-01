@@ -1,25 +1,101 @@
 # frozen_string_literal: true
 
 class Organization < ApplicationRecord
-  has_many :subscriptions, dependent: :restrict_with_exception
-  has_one :current_subscription,
-          -> { current },
-          class_name: 'Subscription'
+  has_one_attached :logo
+  has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :inventories, dependent: :restrict_with_exception
+  has_many :purchase_requests, dependent: :restrict_with_exception
+  has_many :purchase_quotations, dependent: :restrict_with_exception
+  has_many :purchase_orders, dependent: :restrict_with_exception
+  has_many :goods_receipts, dependent: :restrict_with_exception
+  has_many :purchase_returns, dependent: :restrict_with_exception
+  has_many :supplier_bank_accounts, dependent: :restrict_with_exception
+  has_many :supplier_invoices, dependent: :restrict_with_exception
+  has_many :account_payables, dependent: :restrict_with_exception
+  has_many :supplier_payments, dependent: :restrict_with_exception
+  has_many :supplier_credit_notes, dependent: :restrict_with_exception
+  has_many :financial_audit_events, dependent: :restrict_with_exception
+  has_many :products, dependent: :restrict_with_exception
+  has_many :suppliers, dependent: :restrict_with_exception
+  has_many :contacts, as: :contactable, dependent: :restrict_with_exception
+  has_many :addresses, as: :addressable, dependent: :restrict_with_exception
+  has_many :organization_memberships, dependent: :restrict_with_exception
+  has_many :users, through: :organization_memberships
+  has_many :employees, dependent: :restrict_with_exception
+  has_many :branches, dependent: :restrict_with_exception
+  has_many :organization_settings, dependent: :destroy
+  has_many :table_page_preferences, dependent: :destroy
+  has_many :payment_integrations, dependent: :restrict_with_exception
+  has_many :organization_migrations, dependent: :restrict_with_exception
+  has_many :onboarding_audits, dependent: :restrict_with_exception
 
-  scope :not_deleted, -> { where(deleted_at: nil) }
-  scope :active, -> { not_deleted.where(status: 'active') }
+  enum :status, { active: 'active', inactive: 'inactive', suspended: 'suspended' }
+  enum :onboarding_status, { pending: 'pending', in_progress: 'in_progress', completed: 'completed' }
 
-  validates :name, presence: true, length: { in: 2..150 }
-  validates :code,
+  ONBOARDING_BUSINESS_SECTORS = %w[grocery fashion restaurant pharmacy].freeze
+  TAX_ID_FORMAT = /\A[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}\z/i
+
+  validates :name, presence: true, length: { in: 2..150 }, on: %i[create update]
+  validates :tax_id,
             presence: true,
+            length: { in: 12..13 },
+            format: { with: TAX_ID_FORMAT },
             uniqueness: { conditions: -> { where(deleted_at: nil) } },
-            format: { with: /\A[a-zA-Z0-9_-]+\z/ },
-            length: { in: 2..50 }
-  validates :legal_name, length: { maximum: 200 }, allow_blank: true
-  validates :tax_id, length: { in: 12..13 }, allow_blank: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validates :phone,
-            format: { with: /\A[0-9+\-\s()]{7,30}\z/ },
-            allow_blank: true
-  validates :status, inclusion: { in: %w[active inactive] }
+            on: %i[create update]
+  validates :business_sector,
+            presence: true,
+            inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
+            on: %i[create update]
+  validates :status, presence: true, inclusion: { in: statuses.keys }, on: %i[create update]
+  validates :onboarding_status,
+            presence: true,
+            inclusion: { in: onboarding_statuses.keys },
+            on: %i[create update]
+  validates :onboarding_current_step,
+            presence: true,
+            numericality: { only_integer: true, in: 1..5 },
+            on: %i[create update]
+
+  validates :name, presence: true, length: { in: 2..150 }, on: :onboardingstep1
+  validates :tax_id,
+            presence: true,
+            length: { in: 12..13 },
+            format: { with: TAX_ID_FORMAT },
+            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            on: :onboardingstep1
+  validates :business_sector,
+            presence: true,
+            inclusion: { in: ONBOARDING_BUSINESS_SECTORS },
+            on: :onboardingstep1
+
+  before_validation :normalize_tax_id
+
+  scope :active_records, -> { where(deleted_at: nil, status: :active) }
+
+  private
+
+  def normalize_tax_id
+    self.tax_id = tax_id.to_s.strip.upcase if tax_id.present?
+  end
+
+  public
+
+  def start_onboarding!
+    return if onboarding_status.in?(%w[in_progress completed])
+
+    update!(onboarding_status: 'in_progress', updated_at: Time.current)
+  end
+
+  def complete_onboarding!
+    update!(
+      onboarding_status: 'completed',
+      onboarding_completed_at: Time.current,
+      onboarding_current_step: 5,
+      updated_at: Time.current
+    )
+  end
+
+  def onboarding_completed?
+    onboarding_status == 'completed'
+  end
 end

@@ -1,0 +1,155 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Supplier contact integration', type: :request do
+  let(:user) { create(:user, :english) }
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: create(:system_role, code: 'administrator', role_type: :system))
+    sign_in user
+  end
+
+  it 'keeps a consistent supplier heading and back navigation when creating a contact' do
+    get new_admin_supplier_contact_path(supplier)
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-supplier-subpage-header] h1')).to be_present
+    expect(page.at_css('[data-supplier-subpage-header]').text).to include(supplier.name)
+    expect(page.at_css("[data-supplier-subpage-header] a[href='#{admin_supplier_contacts_path(supplier)}']"))
+      .to be_present
+  end
+
+  it 'returns new contacts to the dossier when created from its empty state' do
+    get new_admin_supplier_contact_path(supplier, return_to: 'dossier')
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('input[name="return_to"]')['value']).to eq('dossier')
+    expect(page.at_css("[data-supplier-subpage-header] a[href='#{admin_supplier_path(supplier, tab: 'contacts')}']"))
+      .to be_present
+
+    post admin_supplier_contacts_path(supplier), params: {
+      return_to: 'dossier', contact: { name: 'New dossier contact', email: 'new@example.com' }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'contacts'))
+    expect(supplier.contacts.find_by!(name: 'New dossier contact').email).to eq('new@example.com')
+  end
+
+  it 'explains a filtered empty result without implying the supplier has no contacts' do
+    create(:contact, contactable: supplier, name: 'Present person')
+
+    get admin_supplier_contacts_path(supplier, q: 'missing-example')
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.text).to include(I18n.t('admin.supplier_dossier.contact_cards.no_results_title'))
+    expect(page.text).not_to include('Present person')
+  end
+
+  it 'creates, normalizes and displays a supplier contact' do
+    post admin_supplier_contacts_path(supplier),
+         params: { contact: {
+           name: 'Operations', email: 'OPS@EXAMPLE.COM',
+           phones_attributes: [
+             { number: '5512345678', country_code: 'MX', kind: 'mobile', primary: true }
+           ]
+         } }
+
+    expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
+    contact = supplier.contacts.last
+    expect(contact.email).to eq('ops@example.com')
+    expect(contact.phones.active.find_by!(kind: 'mobile').number).to start_with('+52')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+    expect(response.body).to include('Operations')
+  end
+
+  it 'provides preset and custom phone labels without radio controls' do
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    picker = page.at_css('[data-phone-label-picker]')
+    expect(picker).to be_present
+    expect(picker.css('button[data-action="phone-label#select"]').size).to eq(7)
+    expect(picker.css('input[name$="[label]"]').size).to eq(1)
+    expect(picker.css('input[type="radio"]')).to be_empty
+    expect(picker.at_css('[data-phone-label-target="input"]')['maxlength']).to eq('60')
+  end
+
+  it 'highlights the saved phone label when editing a supplier contact' do
+    contact = create(:contact, contactable: supplier, name: 'Purchasing')
+    contact.phones.create!(number: '5512345678', kind: 'mobile', primary: true, label: 'Sales')
+
+    get edit_admin_supplier_contact_path(supplier, contact)
+
+    page = Nokogiri::HTML(response.body)
+    picker = page.at_css('[data-phone-label-picker]')
+    expect(picker.at_css('input[name$="[label]"]')['value']).to eq('Sales')
+    expect(picker.at_css('button[data-phone-label-value="Sales"]')['aria-pressed']).to eq('true')
+  end
+
+  it 'shows descriptive phone labels in the management list and dossier cards' do
+    contact = create(:contact, contactable: supplier, name: 'Office coordinator')
+    contact.phones.create!(number: '5512345678', kind: 'landline', primary: true, label: 'Reception')
+
+    get admin_supplier_contacts_path(supplier)
+
+    listing = Nokogiri::HTML(response.body)
+    expect(listing.css('span').map(&:text)).to include('Reception')
+
+    get admin_supplier_path(supplier, tab: 'contacts')
+
+    dossier = Nokogiri::HTML(response.body)
+    expect(dossier.at_css("[data-supplier-contact-id='#{contact.id}']").text).to include('Reception')
+  end
+
+  it 'finds contacts by active phone number in the management list' do
+    contact = create(:contact, contactable: supplier, name: 'Telephone contact')
+    contact.phones.create!(
+      number: '5512345678', country_code: 'MX', kind: 'mobile', primary: true
+    )
+
+    get admin_supplier_contacts_path(supplier, q: '5512345678')
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).text).to include('Telephone contact')
+  end
+
+  it 'excludes archived phone numbers from contact search results' do
+    contact = create(:contact, contactable: supplier, name: 'Archived number contact')
+    contact.phones.create!(
+      number: '5587654321', country_code: 'MX', kind: 'mobile',
+      primary: true, deleted_at: Time.current
+    )
+
+    get admin_supplier_contacts_path(supplier, q: '5587654321')
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).text).not_to include('Archived number contact')
+  end
+
+  it 'hides active status on new contact and forces active on creation' do
+    get new_admin_supplier_contact_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('name="contact[active]"')
+
+    post admin_supplier_contacts_path(supplier), params: { contact: { name: 'Operations', active: '0' } }
+
+    expect(response).to redirect_to(admin_supplier_contacts_path(supplier))
+    expect(supplier.contacts.last).to be_active
+  end
+
+  it 'preserves entered values and displays field errors for invalid email' do
+    post admin_supplier_contacts_path(supplier),
+         params: { contact: { name: 'Operations', email: 'invalid-email' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('invalid-email')
+    expect(response.body).to include('data-server-field-error')
+  end
+end

@@ -1,0 +1,35 @@
+en:
+  admin:
+    supplier_bank_details:
+      clabe_placeholder: "18 digits for SPEI transfers"
+      clabe_hint: "An 18-digit CLABE is required for SPEI; the bank is identified automatically once all digits are entered."
+      select_bank: "Select a bank"
+      bank_hint: "The first three CLABE digits identify the bank. You may also select a bank."
+      account_type: "Account type"
+      select_type: "Select account type"
+      account_types:
+        checking: "Checking"
+        savings: "Savings"
+        payroll: "Payroll"
+        business: "Business"
+        other: "Other"
+      status: "Account status"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+        blocked: "Blocked"
+      verification_status: "Verification status"
+      verification_states:
+        pending: "Pending"
+        verified: "Verified"
+        rejected: "Rejected"
+      review_actions:
+        pending: "Return to pending"
+        verified: "Mark as verified"
+        rejected: "Reject verification"
+      review_confirm: "Confirm this bank verification decision?"
+      verified_at: "Verified on %{date}"
+      verification_date: "Verification date"
+      verification_date_required: "Select a valid date before verifying the account."
+      blocked_reason: "Reason for blocking"
+      blocked_reason_hint: "Required when the status is Blocked"

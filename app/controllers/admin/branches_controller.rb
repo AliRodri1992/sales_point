@@ -9,14 +9,20 @@ module Admin
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
     SORTABLE_COLUMNS = %w[
       branches.name
-      branches.phone
       addresses.street
       branches.status
     ].freeze
     SORT_DIRECTIONS = %w[asc desc].freeze
+
+    def select
+      branch = available_branches.find(params[:id])
+      session[:current_branch_id] = branch.id
+
+      redirect_back_or_to(admin_dashboard_path)
+    end
 
     def index
       authorize Branch
@@ -42,6 +48,7 @@ module Admin
 
     def create
       @branch = Branch.new(branch_params)
+      @branch.organization ||= current_organization
       authorize @branch
 
       if @branch.save
@@ -105,22 +112,19 @@ module Admin
       scope.order(sort_column => sort_direction)
     end
 
-    def per_page_param(total_count)
-      return PER_PAGE if total_count <= PER_PAGE
-
-      value = params[:per_page].to_i
-      PER_PAGE_OPTIONS.include?(value) ? value : PER_PAGE
+    def per_page_param(_total_count)
+      table_page_size_for('branches')
     end
 
     def branch_params
       params.expect(
         branch: [
           :name,
-          :phone,
           :status,
-          { address_attributes: %i[
-            id street exterior_number interior_number neighborhood city state country postal_code
-          ] }
+          { phones_attributes: [%i[id number country_code kind label extension primary whatsapp_enabled _destroy]],
+            address_attributes: %i[
+              id street exterior_number interior_number neighborhood city state country_id postal_code
+            ] }
         ]
       )
     end

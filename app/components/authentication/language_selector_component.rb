@@ -2,6 +2,8 @@
 
 module Authentication
   class LanguageSelectorComponent < ViewComponent::Base
+    delegate :delta_icon, to: :view_context
+
     def initialize(
       languages:,
       current_language:,

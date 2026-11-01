@@ -204,4 +204,32 @@ RSpec.describe SatPaymentMethodType, type: :model do
       expect(record.description).to eq('Test')
     end
   end
+
+  describe 'validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_payment_method_type, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
+    end
+
+    it 'accepts a valid bounded range' do
+      record = build(
+        :sat_payment_method_type,
+        valid_from: Date.current,
+        valid_to: Date.tomorrow
+      )
+
+      expect(record).to be_valid
+    end
+
+    it 'accepts a payment method valid on a single date' do
+      date = Date.current
+      record = build(:sat_payment_method_type, valid_from: date, valid_to: date)
+
+      expect(record).to be_valid
+      expect(record.valid_for_date?(date)).to be(true)
+    end
+  end
 end

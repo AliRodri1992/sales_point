@@ -39,44 +39,76 @@ CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 
 ### Docker Compose (Desarrollo)
 
-```yaml
-# docker-compose.dev.yml
-version: '3.8'
-services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: sale_point
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: sale_point_development
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+### Reparar Sidekiq cuando ruby-vips no encuentra libvips.so.42
 
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
+Si `ruby-vips` existe en `Gemfile.lock`, el `Dockerfile.dev` instala `libvips42`
+y el build terminó sin errores, pero un `docker compose exec sidekiq`
+sigue sin encontrar `libvips.so.42`, la imagen reconstruida y el contenedor
+en ejecución no están sincronizados.
 
-  web:
-    build: .
-    command: bin/dev
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
-    environment:
-      POSTGRES_USER: sale_point
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: sale_point_development
-    depends_on:
-      - db
-      - redis
+Ejecuta desde la raíz de `sale_point`:
 
-volumes:
-  db_data:
+```bash
+bash bin/repair-sidekiq-vips
 ```
+
+Este comando comprueba **primero la imagen**, reconstruye únicamente Sidekiq
+si falta Vips, comprueba otra vez la imagen **antes de sustituir el contenedor**,
+recrea `sidekiq` con Compose y verifica el paquete y la gema **dentro del
+contenedor nuevo**. Termina con `[VIPS][OK]` solamente cuando funciona.
+No detiene `web`, `db` ni `redis`, ni elimina volúmenes.
+
+Si el proceso termina con error, conserva el diagnóstico en la terminal: será
+la comprobación específica que falló y no será necesario repetir comandos
+inconexos de Docker.
+
+
+**Si el servicio `assets` muestra `[watch] stopped automatically because stdin was closed`:**
+esbuild se había configurado con `--watch`, que finaliza en procesos sin entrada
+estándar interactiva. Foreman detecta que terminó `js.1` y envía `SIGTERM` a
+`css.1`; Docker reinicia `assets` y repite el ciclo. No es un fallo de Rails.
+
+El script `build:js:watch` usa ahora `--watch=forever`, por lo que esbuild
+permanece activo aunque Docker Compose ejecute el servicio en segundo plano,
+sin necesidad de habilitar una terminal interactiva. Los dos Procfile de desarrollo
+reutilizan ese comando. Para aplicar el ajuste tras actualizar la rama:
+
+```bash
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate assets
+docker compose -f docker-compose.dev.yml logs --tail=80 assets
+```
+
+
+La configuración real es `docker-compose.dev.yml`. En desarrollo separa los procesos:
+
+- `web`: ejecuta `db:prepare` y Puma en el puerto 3000, sin Foreman ni observadores de recursos.
+- `assets`: ejecuta Foreman únicamente para observar cambios de JavaScript y CSS; comparte los archivos del proyecto con `web`.
+- `sidekiq`: procesa trabajos en segundo plano.
+- `db` y `redis`: almacenan datos en volúmenes persistentes.
+
+Todos estos servicios usan `restart: unless-stopped`. Si un observador de assets falla, Compose reinicia `assets` **sin detener Rails**. Si Rails falla, Compose intenta reiniciar `web`, pero **eso no corrige la causa raíz**; hay que consultar su error.
+
+Después de actualizar esta configuración:
+
+```bash
+docker compose -f docker-compose.dev.yml up -d --build
+docker compose -f docker-compose.dev.yml ps -a
+docker compose -f docker-compose.dev.yml logs --tail=150 web assets sidekiq
+```
+
+Se puede detener el servicio `assets` mientras se investiga sin interrumpir el servidor: `docker compose -f docker-compose.dev.yml stop assets`. Los cambios en JS/CSS no se recompilarán hasta volver a iniciarlo.
+
+**Si `web` vuelve a detenerse**, tomar el diagnóstico antes de limpiar/recrear recursos:
+
+```bash
+docker inspect rails_sale_point --format='OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}} RestartCount={{.RestartCount}}'
+docker compose -f docker-compose.dev.yml logs --timestamps --tail=250 web assets
+docker stats --no-stream rails_sale_point sidekiq_sale_point
+```
+
+Un `OOMKilled=true` indica que Docker terminó el proceso por memoria; `OOMKilled=false` requiere examinar los logs, incluso cuando el código de salida no es cero. En Docker Desktop, confirma el límite de memoria asignado, especialmente al ejecutar RSpec, Chromium y Sidekiq a la vez. El hook pre-push local **no ejecuta Docker ni RSpec**, para evitar esperas y bloqueos al publicar cambios. GitHub Actions ejecuta la suite completa. Cuando se ejecuta **manualmente** `bash bin/overcommit-rspec`, las pruebas corren en un contenedor `web` temporal y aislado, sin detener el servidor principal.
+
+**Importante:** no ejecutar `docker compose down -v` ni `docker volume prune` para solucionar este problema; eso podría borrar la base de datos de desarrollo.
 
 ---
 
@@ -397,6 +429,30 @@ servers:
 ```
 
 ---
+
+## Análisis de imágenes de Active Storage
+
+Si Sidekiq registra `Skipping image analysis because the ruby-vips gem isn't installed`,
+la gema puede existir en `Gemfile.lock` y aun así fallar al cargar por falta
+de la biblioteca nativa. En desarrollo, tanto `web` como `sidekiq`
+usan `Dockerfile.dev`, que debe instalar `libvips42`.
+
+Después de incorporar la corrección, reconstruye y recrea **ambos** servicios:
+
+```bash
+docker compose -f docker-compose.dev.yml build --no-cache web sidekiq
+docker compose -f docker-compose.dev.yml up -d --no-deps --force-recreate web sidekiq
+docker compose -f docker-compose.dev.yml exec sidekiq bundle exec ruby -e "require 'vips'; puts Vips::Image.black(1, 1).width"
+docker compose -f docker-compose.dev.yml logs --tail=80 sidekiq
+```
+
+El comando de comprobación debe mostrar `1` y salir sin error.
+El paso de compilación también comprueba que Ruby puede cargar Vips:
+un fallo real de la dependencia detendrá la compilación de Docker,
+en vez de llegar a Sidekiq sin soporte de imágenes.
+
+Estos comandos conservan los volúmenes de PostgreSQL y Redis.
+**No uses** `docker compose down -v` para reparar las dependencias de imágenes.
 
 ## 🚨 Solución de Problemas
 

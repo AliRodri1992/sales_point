@@ -1,0 +1,5 @@
+<%= t("demo_request_mailer.reminder.#{@reminder_window}.title") %>
+
+<%= t('demo_request_mailer.scheduled.greeting', name: @demo_request.name) %>
+<%= t("demo_request_mailer.reminder.#{@reminder_window}.message", date: l(@demo_request.scheduled_at, format: :long)) %>
+<%= t('demo_request_mailer.scheduled.contact') %>

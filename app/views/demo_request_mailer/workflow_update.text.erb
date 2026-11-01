@@ -1,0 +1,6 @@
+<%= t("demo_request_mailer.workflow_update.#{@action}.title") %>
+
+<%= t('demo_request_mailer.workflow_update.greeting', name: @assignee.display_name) %>
+<%= t("demo_request_mailer.workflow_update.#{@action}.message", prospect: @demo_request.name, company: @demo_request.company) %>
+<%= t('demo_request_mailer.workflow_update.request') %>: <%= @demo_request.id %>
+<%= t('demo_request_mailer.workflow_update.performed_by') %>: <%= @actor.display_name %>

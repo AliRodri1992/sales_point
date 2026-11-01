@@ -6,8 +6,10 @@ RSpec.describe 'Admin::Products', type: :request do
   include Devise::Test::IntegrationHelpers
 
   let!(:user) { create(:user, status: 'active') }
+  let!(:organization) { create(:organization) }
 
   before do
+    create(:organization_membership, user:, organization:)
     sign_in user
   end
 
@@ -16,10 +18,10 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'GET /admin/products' do
-    let!(:product) { create(:product, name: 'Coca-Cola', code: 'PROD-COLA') }
+    let!(:product) { create(:product, organization:, name: 'Coca-Cola', code: 'PROD-COLA') }
 
     before do
-      create_list(:product, 15)
+      create_list(:product, 15, organization:)
     end
 
     it 'returns a paginated list with at least 10 items per page' do
@@ -69,11 +71,56 @@ RSpec.describe 'Admin::Products', type: :request do
     end
   end
 
+  describe 'GET /admin/products/:id' do
+    it 'finds a product by numeric database id' do
+      product = create(:product, organization:, name: 'Product By Id')
+
+      get admin_product_path(product.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Id')
+    end
+
+    it 'finds a product by slug' do
+      product = create(:product, organization:, name: 'Product By Slug', slug: 'product-by-slug')
+
+      get admin_product_path(product.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Slug')
+    end
+
+    it 'finds a product by code when the slug does not match' do
+      product = create(:product, organization:, name: 'Product By Code', code: 'LOOKUP-CODE')
+
+      get admin_product_path(product.code)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Product By Code')
+    end
+
+    it 'redirects to the catalog with an alert for an unknown product' do
+      get admin_product_path('missing-product')
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(flash[:alert]).to eq(I18n.t('admin.products.index.not_found'))
+    end
+  end
+
+  describe 'GET /admin/products/new' do
+    it 'renders the new product form with default values' do
+      get new_admin_product_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('name="product[name]"')
+    end
+  end
+
   describe 'POST /admin/products' do
     it 'sends a "created" notification to the current user' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -83,16 +130,35 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       post admin_products_path(format: :turbo_stream),
-           params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+           params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
+    end
+
+    it 'renders the real-time catalog broadcast partial after a successful create' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
+
+      post admin_products_path,
+           params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10 } }
+
+      expect(response).to redirect_to(admin_products_path)
+    end
+
+    it 'renders the form when a unique index rejects the create' do
+      allow_any_instance_of(Product).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      post admin_products_path,
+           params: { product: { code: 'PROD-DUPLICATE', name: 'Duplicate Product', price: 10 } }
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'defaults the status to active when not provided' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
       end.to change(Product, :count).by(1)
 
       expect(Product.find_by(code: 'PROD-NEW').status).to eq('active')
@@ -101,47 +167,47 @@ RSpec.describe 'Admin::Products', type: :request do
     it 'does not persist the product when name is blank' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEW', name: '', price: 10, stock: 5 } }
+             params: { product: { code: 'PROD-NEW', name: '', price: 10 } }
       end.not_to change(Product, :count)
     end
 
     it 'does not persist the product when code is blank' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: '', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: '', name: 'New Product', price: 10 } }
       end.not_to change(Product, :count)
     end
 
     it 'does not persist the product when code is already taken' do
-      create(:product, code: 'duplicate')
+      create(:product, organization:, code: 'duplicate')
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'duplicate', name: 'New Product', price: 10, stock: 5 } }
+             params: { product: { code: 'duplicate', name: 'New Product', price: 10 } }
       end.not_to change(Product, :count)
     end
 
     it 'does not persist the product when price is negative' do
       expect do
         post admin_products_path(format: :turbo_stream),
-             params: { product: { code: 'PROD-NEG', name: 'Negative Price', price: -5, stock: 5 } }
+             params: { product: { code: 'PROD-NEG', name: 'Negative Price', price: -5 } }
       end.not_to change(Product, :count)
     end
 
     it 'renders the create status with validation errors on invalid data' do
       post admin_products_path(format: :turbo_stream),
-           params: { product: { code: '', name: '', price: 10, stock: 5 } }
+           params: { product: { code: '', name: '', price: 10 } }
 
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
   describe 'PATCH /admin/products/:id' do
-    let!(:product) { create(:product, name: 'Old Name', code: 'old_code', price: 10, stock: 5) }
+    let!(:product) { create(:product, organization:, name: 'Old Name', code: 'old_code', price: 10) }
 
     it 'sends an "updated" notification to the current user' do
       expect do
         patch admin_product_path(product, format: :turbo_stream),
-              params: { product: { name: 'New Name', code: 'old_code', price: 10, stock: 5 } }
+              params: { product: { name: 'New Name', code: 'old_code', price: 10 } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -151,7 +217,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       patch admin_product_path(product, format: :turbo_stream),
             params: { product: { name: 'New Name', code: 'old_code' } }
@@ -170,10 +236,19 @@ RSpec.describe 'Admin::Products', type: :request do
 
       expect(product.reload.name).to eq('Old Name')
     end
+
+    it 'renders the edit form when a unique index rejects the update' do
+      allow_any_instance_of(Product).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+
+      patch admin_product_path(product),
+            params: { product: { name: 'Conflicting Name', code: 'old_code' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'DELETE /admin/products/:id' do
-    let!(:product) { create(:product, name: 'ToDelete', code: 'del_prod', price: 10, stock: 5) }
+    let!(:product) { create(:product, organization:, name: 'ToDelete', code: 'del_prod', price: 10) }
 
     it 'sends a "destroyed" notification to the current user' do
       expect do
@@ -202,7 +277,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with('products_catalog', target: 'admin_products_list', html: kind_of(String))
+        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
 
       delete admin_product_path(product, format: :turbo_stream)
     end
@@ -214,6 +289,23 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(Product.with_deleted.find(product.id).deleted_at).not_to be_nil
     end
 
+    it 'redirects safely when the delete operation raises RecordNotFound' do
+      allow_any_instance_of(Product).to receive(:update!).and_raise(ActiveRecord::RecordNotFound)
+
+      delete admin_product_path(product)
+
+      expect(response).to redirect_to(admin_products_path)
+    end
+
+    it 'redirects with an alert when the delete operation raises another error' do
+      allow_any_instance_of(Product).to receive(:update!).and_raise(StandardError, 'delete failed')
+
+      delete admin_product_path(product)
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(flash[:alert]).to eq(I18n.t('admin.products.destroy_failed'))
+    end
+
     it 'appears in user.notifications even when the product is soft-deleted' do
       delete admin_product_path(product, format: :turbo_stream)
 
@@ -222,6 +314,92 @@ RSpec.describe 'Admin::Products', type: :request do
       )
       expect(notification).to be_present
       expect(notification.params[:action]).to eq('destroyed')
+    end
+  end
+
+  describe 'GET /admin/products filter and pagination edge cases' do
+    it 'filters to featured products' do
+      featured = create(:product, organization:, name: 'Featured Item', featured: true)
+      create(:product, organization:, name: 'Regular Item', featured: false)
+
+      get admin_products_path, params: { featured: 'true' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(featured.name)
+      expect(response.body).not_to include('Regular Item')
+    end
+
+    it 'filters out featured products when featured=false' do
+      create(:product, organization:, name: 'Featured Item', featured: true)
+      regular = create(:product, organization:, name: 'Regular Item', featured: false)
+
+      get admin_products_path, params: { featured: 'false' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(regular.name)
+      expect(response.body).not_to include('Featured Item')
+    end
+
+    it 'does not filter status when status=all' do
+      create(:product, organization:, name: 'Active Item', status: :active)
+      create(:product, organization:, name: 'Inactive Item', status: :inactive)
+
+      get admin_products_path, params: { status: 'all' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Active Item')
+      expect(response.body).to include('Inactive Item')
+    end
+
+    it 'falls back to the default sort column and direction for invalid values' do
+      create(:product, organization:, name: 'Alpha Item')
+      create(:product, organization:, name: 'Zulu Item')
+
+      get admin_products_path, params: { sort: 'products.unsafe_column', direction: 'sideways' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body.index('Alpha Item')).to be < response.body.index('Zulu Item')
+    end
+
+    it 'normalizes a page below one to the first page' do
+      create_list(:product, 12, organization:)
+
+      get admin_products_path, params: { page: 0 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    end
+
+    it 'clamps a page beyond the last page to the last page' do
+      create_list(:product, 12, organization:)
+
+      get admin_products_path, params: { page: 999 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(2)
+    end
+
+    it 'uses the default page size for an unsupported per_page value' do
+      create_list(:product, 12, organization:)
+
+      get admin_products_path, params: { per_page: 7 }
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(10)
+    end
+
+    it 'searches by SKU and barcode' do
+      sku_product = create(:product, organization:, name: 'SKU Match', sku: 'SKU-COVERAGE-01')
+      barcode_product = create(:product, organization:, name: 'Barcode Match', barcode: 'BAR-COVERAGE-01')
+      create(:product, organization:, name: 'No Match')
+
+      get admin_products_path, params: { search: 'SKU-COVERAGE-01' }
+      expect(response.body).to include(sku_product.name)
+      expect(response.body).not_to include('No Match')
+
+      get admin_products_path, params: { search: 'BAR-COVERAGE-01' }
+      expect(response.body).to include(barcode_product.name)
+      expect(response.body).not_to include('No Match')
     end
   end
 end

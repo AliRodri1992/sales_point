@@ -1,6 +1,8 @@
 module ApplicationHelper
   include BreadcrumbsHelper
   include PaginationHelper
+  include DeltaIconsHelper
+  include SupplierPhoneIconHelper
 
   AVATAR_COLORS = [
     { classes: 'bg-blue-100 text-blue-600', style: 'background-color:#dbeafe;color:#2563eb' },
@@ -23,18 +25,53 @@ module ApplicationHelper
     user_avatar_theme(user)[:style]
   end
 
+  def onboarding_progress_for_current_user
+    return unless current_user
+
+    organization = current_user.organizations.active_records.first
+    return unless organization && !organization.onboarding_completed?
+
+    Onboarding::ProgressCalculator.call(organization)
+  end
+
+  def onboarding_pending?
+    progress = onboarding_progress_for_current_user
+    progress.present? && progress[:percentage] < 100
+  end
+
+  def onboarding_section_complete?(section)
+    progress = onboarding_progress_for_current_user
+    return true unless progress
+
+    progress[:sections].find { |item| item[:key].to_sym == section.to_sym }&.fetch(:percentage, 100) == 100
+  end
+
+  SIDEBAR_CONTROLLER_GROUPS = {
+    'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
+                      supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
+    'purchase_orders' => %w[goods_receipts purchase_requests purchase_quotations],
+    'account_payables' => %w[supplier_invoices supplier_payments supplier_credit_notes]
+  }.freeze
+
   def sidebar_item_active?(controller)
-    controller_name == controller.to_s
+    key = controller.to_s
+    controller_name == key || SIDEBAR_CONTROLLER_GROUPS.fetch(key, []).include?(controller_name)
+  end
+
+  def sidebar_role_label(user)
+    user.display_role_name.presence ||
+      t(user.admin? ? 'admin.shared.sidebar.role_admin' : 'admin.shared.sidebar.role_user')
   end
 
   def sidebar_link_classes(controller, variant: :default)
     active = sidebar_item_active?(controller)
-    shared = 'flex items-center gap-3 rounded-xl text-sm transition'
+    shared = 'flex items-center gap-3 rounded-xl text-sm transition ' \
+             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600'
     spacing = variant == :submenu ? 'px-3 py-2' : 'px-3 py-2.5'
-    return "#{shared} #{spacing} bg-blue-50 font-semibold text-blue-600" if active
+    return "#{shared} #{spacing} bg-emerald-700 font-semibold text-white hover:bg-emerald-800" if active
 
     color = variant == :submenu ? 'text-slate-500' : 'text-slate-600'
-    "#{shared} #{spacing} font-medium #{color} hover:bg-slate-50 hover:text-slate-900}"
+    "#{shared} #{spacing} font-medium #{color} hover:bg-emerald-50 hover:text-emerald-800"
   end
 
   def sidebar_section_open?(*controllers)
@@ -42,18 +79,25 @@ module ApplicationHelper
   end
 
   def form_state_classes(object, attribute)
-    object.errors[attribute].any? ? 'border border-rose-500 bg-rose-50' : 'border border-slate-200 bg-slate-50'
+    return 'input-field-error border border-rose-500 bg-rose-50' if object.errors[attribute].any?
+
+    'border border-slate-200 bg-slate-50'
   end
 
   def error_message_for(object, attribute)
     return '' unless object && object.errors[attribute].any?
 
-    attribute_name = I18n.t("errors.attributes.#{attribute}", default: attribute.to_s.humanize)
+    model = object.class.name.underscore
+    model_attribute = "errors.attributes.#{model}.#{attribute}"
+    general_attribute = "errors.attributes.#{attribute}"
+
+    fallback_name = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
+    attribute_name = I18n.t(model_attribute, default: fallback_name)
     error_message = object.errors[attribute].first
     formatted_message = "#{attribute_name} #{error_message}"
 
     content_tag(:p, formatted_message,
-                class: 'mt-1 text-xs text-rose-600')
+                class: 'mt-1 text-xs text-rose-600', data: { server_field_error: true })
   end
 
   def sort_link(column, title = nil, frame: nil)
@@ -73,7 +117,18 @@ module ApplicationHelper
     active = params[:sort] == column
     css = active ? 'size-3 text-slate-800' : 'size-3 text-slate-300 opacity-50'
 
-    icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
+    delta_icon(active && params[:direction] != 'asc' ? 'arrow-down' : 'arrow-up', class: css)
+  end
+
+  def user_status_badge(status)
+    classes = case status
+              when 'active' then 'bg-emerald-50 text-emerald-700'
+              when 'suspended' then 'bg-amber-50 text-amber-700'
+              when 'blocked' then 'bg-rose-50 text-rose-700'
+              else 'bg-slate-100 text-slate-600'
+              end
+    label = t("admin.users.statuses.#{status}")
+    tag.span(label, class: "inline-flex rounded-full px-2.5 py-1 text-xs font-semibold #{classes}")
   end
 
   def user_avatar(user, size: 'h-9 w-9', online_indicator: false)

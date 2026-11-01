@@ -1,0 +1,348 @@
+<%= form_with model: [:admin, @supplier, @address],
+              class: 'space-y-4',
+              html: { novalidate: true },
+              data: {
+                loading_message: t('admin.action_loader.saving'),
+                controller: 'supplier-address-preview supplier-address-location',
+                action: 'input->supplier-address-preview#refresh change->supplier-address-preview#refresh input->supplier-address-location#changed change->supplier-address-location#changed',
+                supplier_address_preview_placeholder_value: t('admin.supplier_details.address_form.preview_pending'),
+                supplier_address_location_suggest_url_value: address_location_suggestion_admin_supplier_path(@supplier),
+                supplier_address_location_map_url_value: address_map_admin_supplier_path(@supplier),
+                supplier_address_location_unavailable_value: t('admin.supplier_details.address_form.location_unavailable'),
+                supplier_address_location_ready_value: t('admin.supplier_details.address_form.location_ready'),
+                supplier_address_location_confirmed_value: t('admin.supplier_details.address_form.location_confirmed'),
+                supplier_address_location_searching_value: t('admin.supplier_details.address_form.location_searching'),
+                supplier_address_location_low_confidence_value: t('admin.supplier_details.location_low_confidence'),
+                supplier_address_location_adjusted_value: t('admin.supplier_details.location_adjusted'),
+                supplier_address_location_review_required_value: t('admin.supplier_details.location_review_required'),
+                supplier_address_location_reason_required_value: t('admin.supplier_details.location_adjustment_required'),
+                supplier_address_location_reason_min_length_value: t('admin.supplier_details.location_adjustment_min_length'),
+                supplier_address_location_confirm_button_value: t('admin.supplier_details.address_form.location_confirm'),
+                supplier_address_location_confirmed_button_value: t('admin.supplier_details.address_form.location_confirmed_button'),
+                supplier_address_location_changed_value: t('admin.supplier_details.address_form.location_changed'),
+                supplier_address_location_confidence_value: @address.geocoding_confidence || 1.0
+              } do |form| %>
+  <%= hidden_field_tag :source, 'dossier' if params[:source] == 'dossier' %>
+  <%= form.hidden_field :latitude, data: { supplier_address_location_target: 'latitude' } %>
+  <%= form.hidden_field :longitude, data: { supplier_address_location_target: 'longitude' } %>
+  <%= hidden_field_tag 'address[location_confirmed]', '0', data: { supplier_address_location_target: 'confirmed' } %>
+  <%= hidden_field_tag 'address[location_signature]',
+                       (@address.persisted? && !@address.changed? && @address.latitude.present? && @address.longitude.present? ?
+                        Suppliers::AddressLocationProof.issue(
+                          address: @address, supplier: @supplier, user: current_user,
+                          coordinates: { latitude: @address.latitude, longitude: @address.longitude,
+                                         confidence: @address.geocoding_confidence || 1.0 }
+                        ) : ''),
+                       data: { supplier_address_location_target: 'signature' } %>
+
+  <% if @address.errors[:base].any? %>
+    <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      <%= @address.errors.full_messages_for(:base).to_sentence %>
+    </div>
+  <% end %>
+
+  <div class="grid items-stretch gap-4 lg:grid-cols-2">
+    <section data-controller="supplier-postal-assist supplier-country-fields"
+             data-supplier-country-fields-state-required-codes-value="<%= Addresses::CountryRules::STATE_REQUIRED.to_json %>"
+             data-action="input->supplier-country-fields#rememberDraft input->supplier-postal-assist#input change->supplier-postal-assist#input change->supplier-country-fields#update"
+             data-supplier-postal-assist-url-value="<%= postal_code_suggestions_admin_supplier_path(@supplier) %>"
+             data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+             data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
+             data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
+             data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
+             data-supplier-postal-assist-unavailable-value="<%= t('admin.supplier_details.address_form.postal_unavailable') %>"
+             aria-labelledby="supplier-address-location-heading" class="min-w-0 h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="mb-6 flex items-center gap-3">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+          <%= delta_icon('map-pin', class: 'size-5') %>
+        </span>
+        <div>
+          <h2 id="supplier-address-location-heading" class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.address_form.location_heading') %></h2>
+          <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.address_form.location_description') %></p>
+        </div>
+      </div>
+
+      <div class="grid gap-x-4 gap-y-5 sm:grid-cols-2">
+        <div class="min-w-0" data-address-field="country">
+          <%= form.label :country_id, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+            <%= t('admin.supplier_details.address_fields.country') %> <span class="text-rose-600" aria-hidden="true">*</span>
+          <% end %>
+          <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
+            <%= form.select :country_id,
+                            options_for_select(
+                              @countries.map { |country| [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, flag_url: country_flag_asset_path(country) } }] },
+                              form.object.country_id
+                            ),
+                            { include_blank: t('admin.supplier_placeholders.country') },
+                            class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:ring-emerald-500 #{form_state_classes(@address, :country)}" %>
+          </div>
+          <%= error_message_for(@address, :country) %>
+        </div>
+        <div class="min-w-0" data-address-field="postal_code" data-country-postal-wrapper>
+          <%= form.label :postal_code, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+            <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.postal_code.other') %>"><%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %></span> <span data-required-when="postal" class="text-rose-600" aria-hidden="true">*</span>
+          <% end %>
+          <%= form.text_field :postal_code, inputmode: 'text', autocomplete: 'postal-code',
+                              placeholder: t('admin.supplier_details.address_form.placeholders.postal_code'),
+                              class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :postal_code)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <%= error_message_for(@address, :postal_code) %>
+          <p data-supplier-postal-assist-target="status" aria-live="polite" class="mt-1 text-xs text-slate-500"></p>
+        </div>
+
+        <% %i[state city].each do |field| %>
+          <div class="min-w-0" data-address-field="<%= field %>">
+            <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+              <span data-country-label data-country-label-mx="<%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %>" data-country-label-other="<%= t("admin.supplier_details.address_form.country_labels.#{field}.other") %>"><%= t("admin.supplier_details.address_form.country_labels.#{field}.mx") %></span> <span data-required-when="<%= field == :city ? 'always' : 'state' %>" class="text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <%= form.text_field field, autocomplete: (field == :state ? 'address-level1' : 'address-level2'),
+                                placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),
+                                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+            <%= error_message_for(@address, field) %>
+          </div>
+        <% end %>
+
+        <div class="sm:col-span-2" data-address-field="neighborhood">
+          <%= form.label :neighborhood, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+            <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.other') %>"><%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %></span> <span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span>
+          <% end %>
+          <%= form.text_field :neighborhood, list: 'supplier-neighborhoods',
+                              placeholder: t('admin.supplier_details.address_form.placeholders.neighborhood'),
+                              class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :neighborhood)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <datalist id="supplier-neighborhoods" data-supplier-postal-assist-target="neighborhoods"></datalist>
+          <div class="relative mt-2 hidden" data-controller="delta-select"
+               data-searchable="true" data-wrap-options="true"
+               data-search-placeholder="<%= t('admin.supplier_details.postal_search_neighborhood') %>"
+               data-supplier-postal-assist-target="choicesWrapper">
+            <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+                    data-supplier-postal-assist-target="choices"
+                    data-action="change->supplier-postal-assist#chooseNeighborhood"
+                    class="block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100">
+              <option value=""><%= t('admin.supplier_details.postal_choose_neighborhood') %></option>
+            </select>
+          </div>
+          <%= error_message_for(@address, :neighborhood) %>
+        </div>
+
+        <div class="sm:col-span-2" data-address-field="street">
+          <%= form.label :street, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+            <%= t('admin.supplier_details.address_fields.street') %> <span class="text-rose-600" aria-hidden="true">*</span>
+          <% end %>
+          <%= form.text_field :street, autocomplete: 'street-address',
+                              placeholder: t('admin.supplier_details.address_form.placeholders.street'),
+                              class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, :street)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <%= error_message_for(@address, :street) %>
+        </div>
+
+        <% %i[exterior_number interior_number].each do |field| %>
+          <div class="min-w-0" data-address-field="<%= field %>">
+            <%= form.label field, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+              <% if field == :exterior_number %>
+                <span data-country-label data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.exterior_number.mx') %>" data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.exterior_number.other') %>"><%= t('admin.supplier_details.address_form.country_labels.exterior_number.mx') %></span> <span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span>
+              <% else %>
+                <%= t("admin.supplier_details.address_fields.#{field}") %>
+              <% end %>
+            <% end %>
+            <%= form.text_field field,
+                                placeholder: t("admin.supplier_details.address_form.placeholders.#{field}"),
+                                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@address, field)} px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400" %>
+            <%= error_message_for(@address, field) %>
+          </div>
+        <% end %>
+
+        <% if form.object.has_attribute?(:reference_notes) %>
+        <div class="sm:col-span-2" data-address-field="reference_notes">
+          <%= form.label :reference_notes, t('admin.supplier_details.address_form.references'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_area :reference_notes, rows: 2,
+                             placeholder: t('admin.supplier_details.address_form.placeholders.references'),
+                             class: "input-field min-h-20 w-full resize-y rounded-xl #{form_state_classes(@address, :reference_notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400" %>
+          <%= error_message_for(@address, :reference_notes) %>
+        </div>
+        <% end %>
+      </div>
+    </section>
+
+    <section aria-labelledby="supplier-address-classification-heading" class="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div class="mb-6 flex items-center gap-3">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('document-text', class: 'size-5') %></span>
+          <div>
+            <h2 id="supplier-address-classification-heading" class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.address_form.classification_heading') %></h2>
+            <p class="mt-1 text-sm text-slate-500"><%= t('admin.supplier_details.address_form.classification_description') %></p>
+          </div>
+        </div>
+
+        <fieldset data-address-field="purpose">
+          <legend class="mb-3 text-sm font-semibold text-slate-800">
+            <%= t('admin.supplier_details.address_form.address_type') %> <span class="text-rose-600" aria-hidden="true">*</span>
+          </legend>
+          <% purpose_icons = { 'fiscal' => 'building-office-2', 'commercial' => 'building-storefront', 'delivery' => 'truck', 'general' => 'map-pin' } %>
+          <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <% %w[fiscal commercial delivery general].each do |purpose| %>
+              <label class="flex min-h-28 min-w-0 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-3 text-center text-xs font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 has-checked:border-emerald-600 has-checked:bg-emerald-50 has-checked:text-emerald-800 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-emerald-600">
+                <%= delta_icon(purpose_icons.fetch(purpose), class: 'size-6') %>
+                <span><%= t("admin.supplier_details.address_purposes.#{purpose}") %></span>
+                <%= form.radio_button :purpose, purpose,
+                                      data: { label: t("admin.supplier_details.address_purposes.#{purpose}") },
+                                      class: 'size-4 cursor-pointer accent-emerald-600' %>
+              </label>
+            <% end %>
+          </div>
+          <p class="mt-2 text-xs text-slate-500"><%= t('admin.supplier_details.address_form.purpose_hint') %></p>
+          <%= error_message_for(@address, :purpose) %>
+        </fieldset>
+
+        <fieldset data-address-field="primary" class="mt-6 border-t border-slate-100 pt-5">
+          <legend class="mb-3 text-sm font-semibold text-slate-800"><%= t('admin.supplier_details.address_form.is_primary') %></legend>
+          <div class="space-y-2">
+            <% [[false, 'secondary_option', 'secondary_hint'], [true, 'primary_option', 'primary_choice_hint']].each do |value, key, hint| %>
+              <label class="flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-emerald-300 has-checked:border-emerald-600 has-checked:bg-emerald-50 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-emerald-600">
+                <%= form.radio_button :primary, value, checked: (form.object.primary? == value),
+                                      data: { label: t("admin.supplier_details.#{key}") },
+                                      class: 'size-5 shrink-0 cursor-pointer accent-emerald-600' %>
+                <span class="min-w-0">
+                  <span class="block text-sm font-semibold text-slate-900"><%= t("admin.supplier_details.#{key}") %></span>
+                  <span class="mt-1 block text-xs leading-5 text-slate-500"><%= t("admin.supplier_details.address_form.#{hint}") %></span>
+                </span>
+              </label>
+            <% end %>
+          </div>
+          <p class="mt-3 text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.primary_hint') %></p>
+          <%= error_message_for(@address, :primary) %>
+        </fieldset>
+      </section>
+
+  </div>
+
+  <section aria-labelledby="supplier-address-preview-heading" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div class="mb-4 flex items-center gap-3">
+          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('map-pin', class: 'size-5') %></span>
+          <div>
+            <h2 id="supplier-address-preview-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.address_form.summary_heading', default: 'Resumen de la dirección') %></h2>
+            <p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.address_form.preview_description') %></p>
+          </div>
+        </div>
+        <div class="min-w-0">
+          <div class="relative isolate aspect-[2/1] w-full min-h-0 overflow-hidden rounded-xl bg-slate-100">
+            <div data-supplier-address-location-target="mapPlaceholder" class="absolute inset-0 flex items-center justify-center px-4 text-center text-xs text-slate-500">
+              <%= t('admin.supplier_details.address_form.location_map_empty') %>
+            </div>
+            <img alt="<%= t('admin.supplier_details.address_form.location_map_alt') %>"
+                 data-supplier-address-location-target="mapImage" class="absolute inset-0 hidden size-full max-w-full object-contain">
+            <button type="button" data-supplier-address-location-target="mapClick"
+                    data-action="click->supplier-address-location#adjust keydown->supplier-address-location#nudge pointerdown->supplier-address-location#dragStart pointermove->supplier-address-location#dragMove pointerup->supplier-address-location#dragEnd pointercancel->supplier-address-location#dragCancel wheel->supplier-address-location#wheelZoom:!passive"
+                    aria-label="<%= t('admin.supplier_details.address_form.location_adjust') %>"
+                    class="absolute inset-0 z-10 hidden size-full cursor-crosshair touch-none focus-visible:ring-2 focus-visible:ring-emerald-500"></button>
+            <div data-supplier-address-location-target="pin"
+                 class="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-full rounded-full bg-white/90 p-1 text-emerald-700 shadow-lg">
+              <%= delta_icon('map-pin', class: 'size-6') %>
+            </div>
+          </div>
+
+        </div>
+        <div data-address-map-controls class="mt-3 flex flex-wrap items-center gap-2">
+          <button type="button" data-action="supplier-address-location#zoomIn" aria-label="<%= t('admin.supplier_details.location_zoom_in') %>"
+                  class="flex size-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-emerald-800 transition hover:bg-emerald-50"><%= delta_icon('plus', class: 'size-4') %></button>
+          <button type="button" data-action="supplier-address-location#zoomOut" aria-label="<%= t('admin.supplier_details.location_zoom_out') %>"
+                  class="flex size-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-emerald-800 transition hover:bg-emerald-50"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="size-4"><path d="M5 12h14"/></svg></button>
+          <% { 'up' => 'arrow-up', 'down' => 'arrow-down', 'left' => 'arrow-left', 'right' => 'arrow-right' }.each do |direction, arrow| %>
+            <button type="button" data-action="supplier-address-location#panDirection"
+                    data-direction="<%= direction %>"
+                    aria-label="<%= t("admin.supplier_details.location_pan_#{direction}") %>"
+                    class="flex size-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-emerald-800 transition hover:bg-emerald-50"><%= delta_icon(arrow, class: 'size-4') %></button>
+          <% end %>
+          <button type="button" data-action="supplier-address-location#lookup" data-supplier-address-location-target="lookupButton"
+                  class="inline-flex min-h-10 items-center gap-2 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700">
+            <%= delta_icon('magnifying-glass', class: 'size-4') %>
+            <%= t('admin.supplier_details.address_form.location_search') %>
+          </button>
+          <button type="button" data-action="supplier-address-location#confirm" data-supplier-address-location-target="confirmButton"
+                  class="hidden min-h-10 items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 disabled:cursor-default disabled:bg-emerald-100 disabled:text-emerald-900">
+            <span data-supplier-address-location-target="confirmButtonIcon" class="hidden"><%= delta_icon('check-circle', class: 'size-4') %></span>
+            <span data-supplier-address-location-target="confirmButtonLabel"><%= t('admin.supplier_details.address_form.location_confirm') %></span>
+          </button>
+        </div>
+        <div data-supplier-address-location-target="statusPanel" role="status" aria-live="polite"
+             class="mt-3 flex items-start gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm leading-5 text-slate-700">
+          <span data-supplier-address-location-target="statusIcon" class="hidden shrink-0 text-emerald-700">
+            <%= delta_icon('check-circle', class: 'size-5') %>
+          </span>
+          <div class="min-w-0">
+            <p data-supplier-address-location-target="status"><%= t('admin.supplier_details.address_form.location_optional') %></p>
+            <p data-supplier-address-location-target="saveHint" class="mt-1 hidden text-xs font-medium">
+              <%= t('admin.supplier_details.address_form.location_confirmed_save_hint') %>
+            </p>
+          </div>
+        </div>
+        <div class="mt-5 grid grid-cols-1 gap-5 border-t border-slate-100 pt-5 lg:grid-cols-2 lg:items-start">
+        <div class="min-w-0">
+          <%= form.label :location_adjustment_reason, t('admin.supplier_details.location_adjustment_reason'),
+                         class: 'block text-xs font-semibold text-slate-700' %>
+          <%= form.text_field :location_adjustment_reason, maxlength: 250,
+                              placeholder: t('admin.supplier_details.location_adjustment_placeholder'),
+                              data: { action: 'input->supplier-address-location#clearReasonError' },
+                              aria: { describedby: 'supplier-location-reason-error' },
+                              class: 'mt-1 min-h-10 w-full rounded-lg border border-slate-200 px-3 text-sm' %>
+          <p id="supplier-location-reason-error" data-supplier-address-location-target="reasonError" role="alert" class="mt-1 hidden text-xs font-semibold text-rose-600"><%= t("admin.supplier_details.location_adjustment_required") %></p>
+          <%= error_message_for(@address, :location_adjustment_reason) %>
+          <p class="mt-1 text-xs text-slate-500"><%= t('admin.supplier_details.location_adjustment_hint') %></p>
+          <div data-supplier-address-location-target="reviewFields" class="mt-3 hidden rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <%= hidden_field_tag 'address[location_reviewed]', '0' %>
+            <label class="mt-2 flex items-start gap-2 text-xs text-amber-900">
+              <%= check_box_tag 'address[location_reviewed]', '1', false,
+                                data: { supplier_address_location_target: 'reviewed',
+                                        action: 'change->supplier-address-location#clearReviewError' },
+                                aria: { describedby: 'supplier-location-review-error' },
+                                class: 'mt-0.5 size-4 shrink-0' %>
+              <span><%= t('admin.supplier_details.location_review_acknowledgment') %></span>
+            </label>
+            <p id="supplier-location-review-error" data-supplier-address-location-target="reviewError"
+               role="alert" class="mt-2 hidden text-xs font-semibold text-rose-600">
+              <%= t('admin.supplier_details.location_review_acknowledgment_required') %>
+            </p>
+          </div>
+        </div>
+    <div class="min-w-0 border-t border-slate-100 pt-4 lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" aria-labelledby="supplier-address-summary-heading">
+      <div class="mb-3 flex items-center gap-2">
+        <span class="flex size-9 items-center justify-center rounded-lg bg-sky-50 text-sky-700"><%= delta_icon('document-text', class: 'size-5') %></span>
+        <h3 id="supplier-address-summary-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.supplier_details.address_form.preview_address') %></h3>
+      </div>
+    <dl class="grid min-w-0 gap-x-5 gap-y-4 bg-white text-sm sm:grid-cols-2">
+            <div>
+              <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_type') %></dt>
+              <dd data-supplier-address-preview-target="purpose" class="mt-1 break-words font-semibold text-slate-800">—</dd>
+            </div>
+            <div class="min-w-0 sm:col-span-2">
+              <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_address') %></dt>
+              <dd data-supplier-address-preview-target="address" class="mt-1 break-words text-slate-800"><%= t('admin.supplier_details.address_form.preview_pending') %></dd>
+              <dd data-supplier-address-preview-target="area" class="mt-1 break-words text-slate-600"></dd>
+              <dd data-supplier-address-preview-target="country" class="mt-1 break-words text-slate-600"></dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-slate-500"><%= t('admin.supplier_details.address_form.preview_priority') %></dt>
+              <dd data-supplier-address-preview-target="primary" class="mt-1 break-words text-slate-800">—</dd>
+            </div>
+            <div class="min-w-0 sm:col-span-2"><p data-supplier-address-preview-target="reference" class="hidden break-words border-t border-slate-200 pt-3 text-slate-600"></p></div>
+          </dl>
+    </div>
+        </div>
+        <p class="mt-2 text-[11px] leading-5 text-slate-500">
+          <%= t('admin.supplier_details.address_form.location_map_help') %>
+          <a href="https://www.mapbox.com/about/maps/" target="_blank" rel="noopener noreferrer"
+             class="font-semibold underline underline-offset-2">© Mapbox © OpenStreetMap</a>
+        </p>
+
+
+  </section>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm sm:px-6">
+    <p class="text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.address_form.required_legend') %> <span class="font-semibold text-rose-600">*</span></p>
+    <div class="ml-auto flex flex-wrap items-center gap-3">
+      <%= link_to t('admin.supplier_details.address_form.cancel'), (params[:source] == 'dossier' ? admin_supplier_path(@supplier, tab: 'addresses') : admin_supplier_addresses_path(@supplier)),
+                  data: { loading_message: t('admin.action_loader.returning') },
+                  class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
+      <%= form.button type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('check', class: 'size-4') %>
+        <%= t("admin.supplier_details.address_form.#{@address.persisted? ? 'save_changes' : 'save_address'}") %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

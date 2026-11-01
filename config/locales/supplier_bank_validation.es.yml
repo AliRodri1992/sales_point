@@ -1,0 +1,28 @@
+es:
+  activerecord:
+    errors:
+      models:
+        supplier_bank_account:
+          attributes:
+            clabe:
+              invalid: "debe contener 18 dígitos y un dígito verificador válido"
+            account_number:
+              invalid: "debe contener entre 4 y 20 dígitos"
+            card_number:
+              invalid: "debe contener entre 12 y 19 dígitos con verificación válida"
+            sat_bank_code:
+              invalid: "debe existir en el catálogo y coincidir con la CLABE"
+    attributes:
+      supplier_bank_account:
+        holder_name: "Titular de la cuenta"
+        clabe: "CLABE"
+        sat_bank_code: "Banco SAT"
+        bank_name: "Nombre del banco"
+        account_number: "Número de cuenta"
+        card_number: "Número de tarjeta"
+        account_type: "Tipo de cuenta"
+        currency_code: "Moneda"
+        status: "Estado de la cuenta"
+        verification_status: "Estado de verificación"
+        blocked_reason: "Motivo de bloqueo"
+        primary: "Cuenta principal"

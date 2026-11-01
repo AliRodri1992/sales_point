@@ -3,8 +3,8 @@ es:
     breadcrumbs:
       clients: "Clientes"
     clients:
-      created: "Cliente creado correctamente"
-      updated: "Cliente actualizado correctamente"
+      created: "El cliente se registró correctamente y ya aparece en el catálogo de clientes."
+      updated: "Los datos del cliente se guardaron. Abre su ficha para revisar la información actualizada."
       destroyed: "Cliente eliminado correctamente"
       errors:
         duplicate: "El código o RFC del cliente ya está registrado."

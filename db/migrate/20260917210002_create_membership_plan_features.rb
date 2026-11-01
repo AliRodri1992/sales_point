@@ -9,7 +9,7 @@ class CreateMembershipPlanFeatures < ActiveRecord::Migration[8.1]
       t.string :value
       t.integer :limit
       t.integer :position, null: false, default: 0
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
 
       t.timestamps
     end

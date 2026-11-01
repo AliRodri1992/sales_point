@@ -73,7 +73,8 @@ RSpec.describe Client, type: :model do
       client.code = '  CLI-0001  '
       client.name = '  Cliente Demo  '
       client.email = '  CLIENTE@EXAMPLE.COM  '
-      client.phone = ' 5555555555 '
+      mobile = client.phones.build(number: ' 5555555555 ', kind: 'mobile', primary: true,
+                                   organization: create(:organization))
       client.rfc = ' xaxx010101001 '
       client.postal_code = ' 06000 '
       client.notes = '  Nota  '
@@ -83,7 +84,7 @@ RSpec.describe Client, type: :model do
       expect(client.code).to eq('CLI-0001')
       expect(client.name).to eq('Cliente Demo')
       expect(client.email).to eq('cliente@example.com')
-      expect(client.phone).to eq('5555555555')
+      expect(mobile.number).to eq('+525555555555')
       expect(client.rfc).to eq('XAXX010101001')
       expect(client.postal_code).to eq('06000')
       expect(client.notes).to eq('Nota')
@@ -91,7 +92,6 @@ RSpec.describe Client, type: :model do
 
     it 'stores blank optional values as nil' do
       client.email = ' '
-      client.phone = ' '
       client.rfc = ' '
       client.postal_code = ' '
       client.notes = ' '
@@ -99,7 +99,6 @@ RSpec.describe Client, type: :model do
       client.valid?
 
       expect(client.email).to be_nil
-      expect(client.phone).to be_nil
       expect(client.rfc).to be_nil
       expect(client.postal_code).to be_nil
       expect(client.notes).to be_nil

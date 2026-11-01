@@ -1,0 +1,149 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        startup:
+          title: "Primeros pasos"
+          description: "Configura tu negocio y familiarízate con el panel antes de registrar operaciones."
+          topics:
+            -
+              id: "onboarding"
+              title: "Configuración inicial"
+              description: "Asistente de cinco etapas que prepara la organización."
+              before: "Necesitas una organización y un usuario administrador."
+              tasks:
+                -
+                  title: "Completar el asistente"
+                  steps:
+                    -
+                      "Inicia sesión con una cuenta administradora y abre «Configuración inicial» si el sistema muestra que está pendiente."
+                    -
+                      "Paso 1: comprueba nombre de empresa, RFC, giro, moneda base y zona horaria; guarda y continúa."
+                    -
+                      "Paso 2: registra la sucursal principal, teléfono y dirección; comprueba el país y código postal."
+                    -
+                      "Paso 3: establece el nombre de la terminal o caja inicial para distinguirla de otras."
+                    -
+                      "Paso 4: selecciona el método de pago solicitado por el asistente."
+                    -
+                      "Paso 5: revisa el resumen y finaliza; el sistema vuelve al panel principal."
+                  result: "La organización queda configurada y el avance se registra."
+                -
+                  title: "Prepararte para operar"
+                  steps:
+                    -
+                      "Comprueba la sucursal activa en el selector de la barra superior."
+                    -
+                      "Crea primero las categorías y después los productos para poder clasificarlos."
+                    -
+                      "Registra tus proveedores, vincula ofertas de sus productos y configura los datos comerciales."
+                    -
+                      "Define roles y permisos para quienes administran compras, inventarios y finanzas."
+              note: "El asistente se cierra cuando está completado; los datos se administran después desde los módulos correspondientes."
+            -
+              id: "dashboard"
+              title: "Panel principal y widgets"
+              description: "Consulta indicadores y personaliza el espacio de trabajo."
+              tasks:
+                -
+                  title: "Consultar el panel"
+                  steps:
+                    -
+                      "Entra a «Panel principal» desde el menú lateral."
+                    -
+                      "Consulta los indicadores y, si está pendiente, la tarjeta de configuración inicial."
+                    -
+                      "Entra al módulo de origen para comprobar la información antes de tomar decisiones."
+                -
+                  title: "Organizar widgets"
+                  steps:
+                    -
+                      "Mueve o cambia el tamaño de los widgets que permitan interacción."
+                    -
+                      "Confirma o guarda la distribución cuando se ofrezca la opción."
+                    -
+                      "Regresa al panel para comprobar que se conservan tus preferencias."
+              note: "La disponibilidad de widgets depende de la instalación actual."
+            -
+              id: "profile"
+              title: "Mi perfil y preferencias"
+              description: "Actualiza tus datos sin cambiar los permisos de tu cuenta."
+              tasks:
+                -
+                  title: "Actualizar el perfil"
+                  steps:
+                    -
+                      "Abre el menú de usuario situado junto a tu avatar y selecciona «Mi perfil»."
+                    -
+                      "Revisa nombre de usuario, correo electrónico, idioma y tema visual."
+                    -
+                      "Modifica lo que necesites y selecciona «Guardar»."
+                    -
+                      "Comprueba el mensaje de confirmación y vuelve a abrir el perfil para verificar los cambios."
+                -
+                  title: "Cambiar idioma"
+                  steps:
+                    -
+                      "Desde «Mi perfil» selecciona español, inglés o coreano, según los idiomas disponibles."
+                    -
+                      "Guarda los cambios y comprueba los textos de la siguiente pantalla."
+              note: "Los roles y permisos se administran aparte; editar el perfil no otorga acceso adicional."
+            -
+              id: "branches"
+              title: "Sucursales y selección de sucursal"
+              description: "Crea ubicaciones operativas y elige dónde registrar movimientos."
+              tasks:
+                -
+                  title: "Crear una sucursal"
+                  steps:
+                    -
+                      "Abre «Configuración» → «Sucursales» y selecciona «Nueva sucursal»."
+                    -
+                      "Escribe nombre, teléfono y los datos de dirección; selecciona el país correspondiente."
+                    -
+                      "Completa los campos obligatorios y revisa el estado."
+                    -
+                      "Guarda y localiza la sucursal en el listado."
+                -
+                  title: "Editar o eliminar una sucursal"
+                  steps:
+                    -
+                      "Localiza la sucursal y abre sus acciones."
+                    -
+                      "Selecciona «Editar», corrige datos y guarda."
+                    -
+                      "Para darla de baja, utiliza «Eliminar» y confirma; la baja es lógica, no un borrado físico."
+                -
+                  title: "Cambiar sucursal activa"
+                  steps:
+                    -
+                      "Utiliza el selector de sucursales de la interfaz."
+                    -
+                      "Elige una sucursal activa y confirma la selección."
+                    -
+                      "Antes de consultar inventarios, verifica que la sucursal activa sea la correcta."
+              note: "Los inventarios y varias operaciones dependen de la sucursal seleccionada."
+            -
+              id: "organization_contacts"
+              title: "Contactos de tu organización"
+              description: "Gestiona los datos de contacto oficiales del negocio."
+              before: "Requiere acceso administrativo y organización activa."
+              tasks:
+                -
+                  title: "Registrar y actualizar un contacto"
+                  steps:
+                    -
+                      "Accede a «Contactos de la organización» desde administración."
+                    -
+                      "Pulsa «Nuevo contacto» y captura los campos solicitados."
+                    -
+                      "Guarda y comprueba que aparece en el listado."
+                    -
+                      "Para corregirlo, usa «Editar» en el contacto correspondiente y guarda."
+                -
+                  title: "Eliminar un contacto"
+                  steps:
+                    -
+                      "Localiza el contacto que dejará de utilizarse."
+                    -
+                      "Selecciona la acción de eliminación y confirma antes de salir."

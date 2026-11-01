@@ -1,0 +1,6 @@
+<%= t('demo_request_mailer.scheduled.title') %>
+
+<%= t('demo_request_mailer.scheduled.greeting', name: @demo_request.name) %>
+<%= t('demo_request_mailer.scheduled.message', date: l(@demo_request.scheduled_at, format: :long)) %>
+<%= t('demo_request_mailer.scheduled.company') %>: <%= @demo_request.company %>
+<%= t('demo_request_mailer.scheduled.contact') %>

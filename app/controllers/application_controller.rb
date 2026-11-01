@@ -1,19 +1,50 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include OrganizationTimeZone
+  include TablePageSizing
 
   allow_browser versions: :modern
 
+  around_action :with_organization_timezone
   before_action :set_locale
   before_action :configure_permitted_parameters, if: :devise_controller?
   after_action :set_action_cable_user_id_cookie
 
-  # Helper method for views to get the currently selected language
-  helper_method :current_language
+  rescue_from Pundit::NotAuthorizedError, with: :forbidden
+
+  helper_method :current_language, :current_organization, :available_branches, :current_branch
+
+  def current_organization
+    return unless current_user
+
+    active_ids = current_user.organization_memberships.active.select(:organization_id)
+    @current_organization ||= Organization.active_records.where(id: active_ids).first
+  end
+
+  def available_branches
+    return Branch.none unless current_organization
+
+    current_organization.branches.not_deleted.where(status: true).order(:name)
+  end
+
+  def current_branch
+    return unless current_organization
+
+    branch = available_branches.find_by(id: session[:current_branch_id])
+    branch || available_branches.first
+  end
 
   private
 
+  def with_organization_timezone(&)
+    settings = current_organization&.organization_settings&.active_records
+    zone = settings&.first&.timezone
+    timezone = ActiveSupport::TimeZone[zone] if zone.present?
+    Time.use_zone(timezone || Time.zone, &)
+  end
+
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:user_type])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[email password password_confirmation theme])
   end
 
   def set_action_cable_user_id_cookie
@@ -33,13 +64,21 @@ class ApplicationController < ActionController::Base
   end
 
   def preferred_locale
-    user_language_code || session_language_code
+    user_language_code || session_language_code || cookie_language_code
+  end
+
+  def cookie_language_code
+    code = cookies[:terminal_language].presence
+    return unless code
+
+    code.downcase.to_sym if I18n.available_locales.include?(code.downcase.to_sym)
   end
 
   def user_language_code
-    return unless user_signed_in? && current_user.language
+    user = current_user || request.env['warden']&.user
+    return unless user&.language
 
-    current_user.language.code.downcase.to_sym
+    user.language.code.downcase.to_sym
   end
 
   def session_language_code
@@ -50,14 +89,18 @@ class ApplicationController < ActionController::Base
   end
 
   def current_language
-    # First check if user has a preferred language
     return current_user.language if user_signed_in? && current_user.language
 
-    # Then check session language
     language = Language.find_by(id: session[:language_id])
     return language if language
 
-    # Fallback to a default language (e.g., English)
+    language = Language.available.find_by(code: cookies[:terminal_language].to_s.downcase)
+    return language if language
+
     Language.available.first
+  end
+
+  def forbidden
+    head :forbidden
   end
 end

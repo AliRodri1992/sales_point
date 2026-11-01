@@ -11,5 +11,10 @@ FactoryBot.define do
       name { 'English' }
       flag_iso { 'us' }
     end
+
+    to_create do |language|
+      existing = Language.find_by(code: language.code)
+      existing || language.save!
+    end
   end
 end

@@ -1,0 +1,13 @@
+en:
+  admin:
+    supplier_general_layout:
+      identification: "Supplier identification"
+      contact_management: "Contact and administration"
+      additional: "Additional information"
+      call: "Call supplier"
+      email_action: "Send email"
+      phone_missing: "Phone not registered"
+      email_missing: "Email not registered"
+      responsible_missing: "No assigned manager"
+      tags_missing: "No tags registered"
+      notes_missing: "No notes registered"

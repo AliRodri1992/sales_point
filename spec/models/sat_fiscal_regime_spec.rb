@@ -70,12 +70,14 @@ RSpec.describe SatFiscalRegime, type: :model do
     describe '.valid_on' do
       let!(:valid_regime) do
         create(:sat_fiscal_regime,
+               code: 'VLD',
                valid_from: Date.yesterday,
                valid_to: Date.tomorrow)
       end
 
       let!(:invalid_regime) do
         create(:sat_fiscal_regime,
+               code: 'INV',
                valid_from: 10.days.ago,
                valid_to: 5.days.ago)
       end
@@ -188,6 +190,16 @@ RSpec.describe SatFiscalRegime, type: :model do
 
       expect(regime.code).to eq('601')
       expect(regime.person_type).to eq('F')
+    end
+  end
+
+  describe 'optional validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_fiscal_regime, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
     end
   end
 end

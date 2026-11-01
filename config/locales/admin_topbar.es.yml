@@ -1,0 +1,19 @@
+---
+es:
+  admin:
+    shared:
+      topbar:
+        toggle_sidebar: "Mostrar u ocultar barra lateral"
+        morning_greeting: "Buenos días, %{name}"
+      branch_selector:
+        branch_center: "Sucursal Centro"
+        branch_north: "Sucursal Norte"
+        branch_south: "Sucursal Sur"
+      language_selector:
+        toggle: "Cambiar idioma"
+      notifications:
+        toggle: "Abrir notificaciones"
+        title: "Notificaciones"
+        mark_all_read: "Marcar todas como leídas"
+      user_menu:
+        settings: "Configuración"

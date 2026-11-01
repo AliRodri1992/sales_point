@@ -1,0 +1,82 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe DemoRequestReminderJob, type: :job do
+  let(:demo_request) do
+    create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+  end
+
+  it 'sends the reminder and records the delivery' do
+    message_delivery = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
+    mailer = DemoRequestMailer.with(demo_request: demo_request, locale: demo_request.locale)
+    allow(mailer).to receive(:reminder).with('one_hour').and_return(message_delivery)
+    allow(DemoRequestMailer).to receive(:with).with(
+      demo_request: demo_request,
+      locale: demo_request.locale
+    ).and_return(mailer)
+
+    expect do
+      described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
+    end.to change { demo_request.reload.reminder_1h_sent_at }.from(nil)
+
+    expect(DemoRequestMailer).to have_received(:with).with(
+      demo_request: demo_request,
+      locale: demo_request.locale
+    )
+    expect(demo_request.activities.where(action: 'reminder_sent')).to exist
+  end
+
+  it 'ignores jobs carrying a stale schedule timestamp' do
+    record = demo_request
+    expect(DemoRequestMailer).not_to receive(:with)
+
+    described_class.perform_now(record.id, 'one_hour', record.scheduled_at.to_i - 60)
+    expect(record.reload.reminder_1h_sent_at).to be_nil
+  end
+
+  it 'ignores jobs for requests without a scheduled date' do
+    record = demo_request
+    allow(record).to receive(:scheduled_at).and_return(nil)
+
+    expect(described_class.new.send(:valid_reminder?, record, 0)).to be(false)
+  end
+
+  it 'does not send a duplicate reminder' do
+    demo_request.update!(reminder_1h_sent_at: Time.current)
+    expect(DemoRequestMailer).not_to receive(:with)
+
+    described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
+  end
+
+  it 'does not send reminders for cancelled requests' do
+    demo_request.update!(status: :cancelled)
+    expect(DemoRequestMailer).not_to receive(:with)
+
+    described_class.perform_now(demo_request.id, 'one_hour', demo_request.scheduled_at.to_i)
+  end
+  it 'rejects an archived request even when the record has already been loaded' do
+    record = demo_request
+    record.destroy!
+
+    expect(described_class.new.send(:valid_reminder?, record, record.scheduled_at.to_i)).to be(false)
+  end
+
+  it 'sends a reminder after a previously archived request is restored' do
+    record = demo_request
+    record.destroy!
+    record.restore
+    expect(DemoRequestDeliveryService).to receive(:call).with(record, 'one_hour')
+
+    described_class.perform_now(record.id, 'one_hour', record.scheduled_at.to_i)
+  end
+
+  it 'ignores a reminder for a demo request deleted before execution' do
+    request_id = demo_request.id
+    scheduled_at = demo_request.scheduled_at.to_i
+    demo_request.destroy!
+
+    expect(DemoRequestMailer).not_to receive(:with)
+    expect { described_class.perform_now(request_id, 'one_hour', scheduled_at) }.not_to raise_error
+  end
+end

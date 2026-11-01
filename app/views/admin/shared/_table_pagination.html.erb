@@ -1,0 +1,17 @@
+<% if @total_count.positive? %>
+  <nav class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600"
+       aria-label="<%= t('admin.general_settings.table_section') %>">
+    <div class="flex flex-wrap items-center gap-3">
+      <label for="table-per-page-<%= table_key %>"><%= t('admin.general_settings.unit') %></label>
+      <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                     id: "table-per-page-#{table_key}",
+                     data: { controller: 'table-page-size', table_page_size_key_value: table_key,
+                             action: 'change->table-page-size#apply' },
+                     class: 'min-h-10 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-700' %>
+      <span aria-live="polite"><%= @total_count %> · <%= @current_page %> / <%= @total_pages %></span>
+    </div>
+    <div class="flex flex-wrap items-center gap-1">
+      <%= pagination_links(@total_pages, frame: '_top', window: 2) if @total_pages > 1 %>
+    </div>
+  </nav>
+<% end %>

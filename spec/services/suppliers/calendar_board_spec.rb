@@ -1,0 +1,140 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe Suppliers::CalendarBoard do
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:branch) { create(:branch, organization:) }
+  let(:date) { Date.iso8601('2026-10-23') }
+
+  it 'shows one event on each day that its time range overlaps' do
+    supplier.supplier_events.create!(
+      title: 'Conference', branch:, kind: 'visit', all_day: true,
+      starts_at: Time.zone.local(2026, 10, 22, 9),
+      ends_at: Time.zone.local(2026, 10, 25, 0)
+    )
+
+    calendar = described_class.new(supplier:, month: '2026-10')
+    expect(calendar.items_on(Date.new(2026, 10, 22)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 23)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 24)).pluck(:title)).to eq(['Conference'])
+    expect(calendar.items_on(Date.new(2026, 10, 25))).to be_empty
+  end
+
+  it 'renders a single-date day view with the daily navigation step' do
+    calendar = described_class.new(supplier:, view: 'day', day: '2026-10-23')
+    expect(calendar.weeks).to eq([[Date.new(2026, 10, 23)]])
+    expect(calendar.next_navigation(1)).to include(calendar_view: 'day', calendar_day: '2026-10-24')
+  end
+
+  it 'shows weekly schedules without suspensions and includes dated events separately' do
+    schedule = SupplierSchedule.create!(supplier:, branch:, kind: 'visit', weekday: date.wday,
+                                        starts_at: '09:00', ends_at: '11:00')
+    supplier.supplier_events.create!(title: 'Special visit', branch:, kind: 'visit',
+                                     starts_at: Time.zone.local(2026, 10, 23, 12))
+    supplier.supplier_schedule_exceptions.create!(
+      branch:, supplier_schedule: schedule, reason: 'suspension', starts_on: date
+    )
+
+    board = described_class.new(supplier:, month: '2026-10')
+    expect(board.items_on(date).pluck(:type)).to eq([:event])
+    expect(board.exception_count).to eq(1)
+  end
+
+  it 'filters by branch, kind and dates and ignores archived events' do
+    supplier.supplier_events.create!(title: 'Visible delivery', branch:, kind: 'delivery',
+                                     starts_at: Time.zone.local(2026, 10, 23, 12))
+    supplier.supplier_events.create!(title: 'Deleted event', branch:, kind: 'delivery',
+                                     starts_at: Time.zone.local(2026, 10, 23, 13),
+                                     deleted_at: Time.current)
+    supplier.supplier_events.create!(title: 'Other kind', branch:, kind: 'visit',
+                                     starts_at: Time.zone.local(2026, 10, 23, 14))
+
+    board = described_class.new(supplier:, month: '2026-10', branch_id: branch.id, kind: 'delivery')
+    expect(board.items_on(date).pluck(:title)).to eq(['Visible delivery'])
+    expect(board.next_navigation(1)[:calendar_month]).to eq('2026-11')
+    expect(board.weeks.flatten).to include(date)
+    expect(board.weeks.map(&:size).uniq).to eq([7])
+  end
+
+  it 'selects dates in the visible range and retains calendar filters in day navigation' do
+    board = described_class.new(supplier:, month: '2026-10', selected_day: '2026-10-23',
+                                kind: 'visit', branch_id: branch.id)
+    expect(board.selected_date).to eq(date)
+    expect(board.day_navigation(date)).to include(
+      calendar_selected_day: '2026-10-23', calendar_branch: branch.id, calendar_kind: 'visit'
+    )
+    expect(board.selected_items).to be_empty
+
+    board = described_class.new(supplier:, month: '2026-11', selected_day: '2026-10-23')
+    expect(board.selected_date).to eq(Date.iso8601('2026-11-01'))
+  end
+
+  it 'keeps the month synchronized with week navigation across a month boundary' do
+    board = described_class.new(supplier:, month: '2026-10', view: 'week', day: '2026-11-03')
+
+    expect(board.month).to eq(Date.iso8601('2026-11-01'))
+    expect(board.weeks.map(&:size)).to eq([7])
+    expect(board.next_navigation(-1)[:calendar_day]).to eq('2026-10-27')
+  end
+
+  it 'handles invalid calendar dates without an exception' do
+    board = described_class.new(supplier:, month: 'invalid', view: 'unknown', day: 'not-a-date')
+    expect(board.view).to eq('month')
+    expect(board.month).to eq(Date.current.beginning_of_month)
+  end
+
+  it 'includes UTC-next-day events on the correct local calendar day' do
+    create(:organization_setting, organization:, timezone: 'America/Tijuana')
+    supplier.supplier_events.create!(
+      title: 'Evening local delivery', branch:, kind: 'delivery',
+      starts_at: Time.utc(2026, 11, 1, 5), ends_at: Time.utc(2026, 11, 1, 6)
+    )
+
+    board = described_class.new(supplier:, view: 'day', day: '2026-10-31')
+
+    expect(board.items_on(Date.new(2026, 10, 31)).pluck(:title))
+      .to eq(['Evening local delivery'])
+    expect(board.items_on(Date.new(2026, 10, 31)).pluck(:time)).to eq(['22:00'])
+  end
+
+  it 'never leaks events or appointments outside the selected calendar range' do
+    supplier.supplier_events.create!(
+      title: 'Outside month', branch:, kind: 'visit',
+      starts_at: Time.zone.local(2026, 11, 23, 12)
+    )
+    board = described_class.new(supplier:, month: '2026-10')
+
+    expect(board.items_on(Date.new(2026, 11, 23))).to be_empty
+    expect(board.items_on(Date.new(2026, 9, 23))).to be_empty
+    expect(board.events).to be_empty
+  end
+
+  it 'ignores an unknown kind filter instead of hiding all scheduled activities' do
+    supplier.supplier_events.create!(
+      title: 'Visible with invalid filter', branch:, kind: 'visit',
+      starts_at: Time.zone.local(2026, 10, 23, 12)
+    )
+    board = described_class.new(supplier:, month: '2026-10', kind: 'invalid')
+
+    expect(board.kind).to be_nil
+    expect(board.items_on(date).pluck(:title)).to include('Visible with invalid filter')
+  end
+
+  it 'does not suppress a weekly appointment with an exception for another schedule' do
+    original = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: date.wday, starts_at: '09:00', ends_at: '10:00'
+    )
+    another = supplier.supplier_schedules.create!(
+      branch:, kind: 'visit', weekday: date.wday, starts_at: '11:00', ends_at: '12:00'
+    )
+    supplier.supplier_schedule_exceptions.create!(
+      supplier_schedule: original, branch:, reason: 'holiday', starts_on: date
+    )
+    board = described_class.new(supplier:, month: '2026-10')
+
+    expect(board.items_on(date).pluck(:record)).to include(another)
+    expect(board.items_on(date).pluck(:record)).not_to include(original)
+  end
+end

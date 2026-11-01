@@ -1,0 +1,6 @@
+---
+en:
+  admin:
+    profiles:
+      update:
+        success: "Your profile was updated. Saved name, language, or preference changes are now available in your account."

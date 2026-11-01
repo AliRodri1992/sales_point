@@ -1,0 +1,6 @@
+es:
+  admin:
+    supplier_dossier:
+      address_cards:
+        no_results_title: "No se encontraron direcciones"
+        no_results_description: "Prueba con otra calle, colonia o código postal, o cambia los filtros."

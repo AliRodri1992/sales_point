@@ -1,0 +1,128 @@
+<section class="min-w-0 space-y-5" data-bank-accounts-page data-loading-scope="true">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex min-w-0 items-center gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+        <%= delta_icon('building-library', class: 'size-6') %>
+      </span>
+      <div>
+        <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.accounts_payable.bank_accounts') %></h1>
+        <p class="mt-1 text-sm text-slate-500"><%= t('admin.accounts_payable.bank_list.description') %></p>
+      </div>
+    </div>
+    <%= link_to admin_supplier_path(@supplier, tab: 'bank_accounts'),
+                class: 'inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:text-emerald-800' do %>
+      <%= delta_icon('arrow-left', class: 'size-4') %>
+      <%= t('admin.accounts_payable.bank_list.back_to_supplier') %>
+    <% end %>
+  </header>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <%= form_with url: admin_supplier_bank_accounts_path(@supplier), method: :get,
+                  class: 'grid items-end gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(11rem,14rem)_minmax(11rem,14rem)_auto]' do %>
+      <div class="relative min-w-0">
+        <label for="bank-account-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
+        <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+        <input id="bank-account-search" name="q" type="search" maxlength="100" autocomplete="off"
+               value="<%= params[:q] %>" placeholder="<%= t('admin.accounts_payable.bank_list.search_placeholder') %>"
+               class="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100">
+      </div>
+      <div>
+        <label for="bank-account-bank" class="sr-only"><%= t('admin.bank_cards.bank_filter') %></label>
+        <div class="relative" data-controller="delta-select">
+<%= select_tag :bank,
+                       options_for_select([[t('admin.bank_cards.all_banks'), '']] + @bank_options.map { |name| [name, name] }, params[:bank]),
+                       id: 'bank-account-bank',
+                       class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+</div>
+      </div>
+      <div>
+        <label for="bank-account-status" class="sr-only"><%= t('admin.bank_cards.status_filter') %></label>
+        <div class="relative" data-controller="delta-select">
+<%= select_tag :status,
+                       options_for_select([
+                         [t('admin.bank_cards.all_statuses'), 'all'],
+                         [t('admin.bank_cards.active_plural'), 'active'],
+                         [t('admin.bank_cards.inactive_plural'), 'inactive'],
+                         [t('admin.bank_cards.blocked_plural'), 'blocked'],
+                         [t('admin.bank_cards.archived_plural'), 'archived']
+                       ], @status),
+                       id: 'bank-account-status',
+                       class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+</div>
+      </div>
+      <%= button_tag type: :submit,
+                     class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('magnifying-glass', class: 'size-4') %>
+        <%= t('admin.accounts_payable.bank_list.search') %>
+      <% end %>
+    <% end %>
+
+    <nav class="mt-5 flex gap-2 overflow-x-auto border-b border-slate-200" aria-label="<%= t('admin.bank_cards.status_filter') %>">
+      <% [
+        ['all', :all, 'all_label'], ['active', :active, 'active_plural'], ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
+        ['archived', :archived, 'archived_plural']
+      ].each do |value, key, label| %>
+        <%= link_to admin_supplier_bank_accounts_path(@supplier, status: value, q: params[:q], bank: params[:bank]),
+                    class: "inline-flex shrink-0 items-center gap-1 border-b-[3px] px-4 py-3 text-sm font-semibold transition #{ @status == value ? 'border-emerald-600 text-emerald-800' : 'border-transparent text-slate-500 hover:text-slate-800' }",
+                    aria: { current: (@status == value ? 'page' : nil) } do %>
+          <%= t("admin.bank_cards.#{label}") %>
+          <span class="text-xs tabular-nums">(<%= @account_counts.fetch(key) %>)</span>
+        <% end %>
+      <% end %>
+    </nav>
+
+    <div data-supplier-bank-accounts-target="list"
+         class="mt-5 grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <%= render partial: 'account_card', collection: @accounts, as: :account, locals: { supplier: @supplier } %>
+
+      <% if @status != 'archived' && params[:q].blank? && params[:bank].blank? &&
+            @supplier.active? && policy(SupplierBankAccount.new(organization: current_organization, supplier: @supplier)).create? %>
+        <%= link_to new_admin_supplier_bank_account_path(@supplier),
+                    data: { bank_accounts_add_tile: true },
+                    class: 'flex min-h-[214px] min-w-0 flex-col items-center justify-center rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/30 p-5 text-center transition hover:border-emerald-600 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+          <span class="mb-3 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+            <%= delta_icon('plus', class: 'size-7') %>
+          </span>
+          <span class="font-jakarta text-base font-bold text-emerald-800"><%= t('admin.accounts_payable.new_bank') %></span>
+          <span class="mt-1 max-w-56 text-xs leading-5 text-slate-500"><%= t('admin.bank_cards.add_hint') %></span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if @accounts.empty? %>
+      <% bank_filters_active = params[:q].present? || params[:bank].present? || @status != 'all' %>
+      <div data-bank-accounts-empty class="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-10 text-center sm:py-12">
+        <span class="flex size-16 items-center justify-center rounded-2xl border border-emerald-100 bg-white text-emerald-700 shadow-sm">
+          <%= delta_icon(bank_filters_active ? 'magnifying-glass' : 'building-library', class: 'size-8') %>
+        </span>
+        <h2 class="mt-4 font-jakarta text-base font-bold text-slate-900 sm:text-lg"><%= t(bank_filters_active ? 'admin.bank_cards.empty_filtered_title' : 'admin.accounts_payable.bank_list.empty_title') %></h2>
+        <p class="mt-2 max-w-md text-sm leading-6 text-slate-500"><%= t(bank_filters_active ? 'admin.bank_cards.empty_filtered_description' : 'admin.accounts_payable.bank_list.empty_description') %></p>
+        <% if bank_filters_active %>
+          <%= link_to t('admin.suppliers.index.advanced.clear'), admin_supplier_bank_accounts_path(@supplier),
+                      class: 'mt-5 inline-flex min-h-11 items-center rounded-xl border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <nav class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm text-slate-500"
+         aria-label="<%= t('admin.bank_cards.pagination') %>">
+      <span><%= t('admin.bank_cards.range', from: @accounts_total.zero? ? 0 : (@accounts_page - 1) * 8 + 1,
+                  to: [@accounts_page * 8, @accounts_total].min, total: @accounts_total) %></span>
+      <div class="flex items-center gap-2">
+        <% if @accounts_page > 1 %>
+          <%= link_to t('admin.accounts_payable.bank_list.previous'),
+                      admin_supplier_bank_accounts_path(@supplier, q: params[:q], bank: params[:bank],
+                                                        status: @status, page: @accounts_page - 1),
+                      class: 'rounded-lg border border-slate-200 px-3 py-2 font-semibold text-emerald-800' %>
+        <% end %>
+        <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-700 font-bold text-white tabular-nums"><%= @accounts_page %></span>
+        <% if @accounts_page < @accounts_pages %>
+          <%= link_to t('admin.accounts_payable.bank_list.next'),
+                      admin_supplier_bank_accounts_path(@supplier, q: params[:q], bank: params[:bank],
+                                                        status: @status, page: @accounts_page + 1),
+                      class: 'rounded-lg border border-slate-200 px-3 py-2 font-semibold text-emerald-800' %>
+        <% end %>
+      </div>
+    </nav>
+  </div>
+</section>

@@ -1,0 +1,59 @@
+<% sections = [
+  ['general', 'building', :dossier],
+  ['fiscal', 'file', :dossier],
+  ['commercial', 'handshake', :dossier],
+  ['contacts', 'users', :dossier],
+  ['addresses', 'pin', :dossier],
+  ['schedules', 'calendar', :dossier],
+  ['documents', 'file', :dossier],
+  ['products', 'box', :operations]
+] %>
+<% sections << ['bank_accounts', 'bank', :finances] if allowed_sections.include?('bank_accounts') %>
+<% sections << ['statement', 'wallet', :finances] if allowed_sections.include?('statement') %>
+<% sections.select! { |section, _icon, _group| allowed_sections.include?(section) } %>
+<% sidebar_groups = sections.group_by(&:last) %>
+
+<aside class="min-w-0 w-full shrink-0 rounded-2xl border border-slate-200 bg-white px-3 py-5 shadow-sm lg:self-start lg:h-auto lg:w-full" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
+  <div class="lg:hidden">
+    <label for="supplier-dossier-section" class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_dossier.navigation.label') %></label>
+    <div class="relative" data-controller="delta-select">
+      <select id="supplier-dossier-section" data-supplier-dossier-target="mobileSelect" data-action="change->supplier-dossier#select" class="min-h-12 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-semibold text-slate-800 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100">
+      <% sidebar_groups.each do |group, entries| %>
+        <optgroup label="<%= t("admin.supplier_dossier.navigation.#{group}") %>">
+          <% entries.each do |section, _icon, _category| %>
+            <option value="<%= section %>"><%= t("admin.supplier_dossier.sections.#{section}") %></option>
+          <% end %>
+        </optgroup>
+      <% end %>
+      </select>
+    </div>
+  </div>
+
+  <nav role="tablist" aria-orientation="vertical" class="hidden space-y-5 lg:-mx-3 lg:block" aria-label="<%= t('admin.supplier_dossier.navigation.label') %>">
+    <% sidebar_groups.each do |group, entries| %>
+      <div>
+        <h2 class="px-3 pb-2 text-[11px] font-bold uppercase lg:px-6 tracking-[0.09em] text-slate-500"><%= t("admin.supplier_dossier.navigation.#{group}") %></h2>
+        <div class="space-y-1">
+          <% entries.each do |section, symbol, _category| %>
+            <button type="button" role="tab" id="supplier-dossier-tab-<%= section %>" tabindex="-1" aria-selected="false" data-supplier-dossier-target="tab" data-action="click->supplier-dossier#select keydown->supplier-dossier#navigate" data-section="<%= section %>" aria-controls="supplier-dossier-<%= section.tr('_', '-') %>" class="group flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left lg:mx-3 lg:w-[calc(100%_-_1.5rem)] text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+              <% navigation_icon = {
+                'layout-dashboard' => 'squares-2x2',
+                'building' => 'building-office-2',
+                'file' => 'document-text',
+                'handshake' => 'tag',
+                'users' => 'users',
+                'pin' => 'map-pin',
+                'calendar' => 'calendar-days',
+                'box' => 'cube',
+                'wallet' => 'banknotes',
+                'bank' => 'building-library'
+              }.fetch(symbol) %>
+              <%= delta_icon(navigation_icon, class: 'size-5 shrink-0') %>
+              <span class="min-w-0 break-words"><%= t("admin.supplier_dossier.sections.#{section}") %></span>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </nav>
+</aside>

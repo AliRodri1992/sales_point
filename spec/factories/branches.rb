@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :branch do
+    association :organization
     name { 'Sucursal Centro' }
-    phone { '5551234567' }
     status { true }
     deleted_at { nil }
 
@@ -23,7 +23,9 @@ FactoryBot.define do
           neighborhood: 'Centro',
           city: 'Cuautitlán',
           state: 'Estado de México',
-          country: 'MX',
+          country: Country.find_by(iso_alpha2: 'MX') || build(
+            :country, name: 'México', iso_alpha2: 'MX', iso_alpha3: 'MEX', iso_numeric: '484'
+          ),
           postal_code: '54800'
         )
       end

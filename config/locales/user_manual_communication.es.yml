@@ -1,0 +1,73 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        communication:
+          title: "Comunicación y estado de módulos"
+          description: "Utiliza avisos y mensajes; distingue funciones operativas de enlaces todavía demostrativos."
+          topics:
+            -
+              id: "notifications"
+              title: "Centro de notificaciones"
+              description: "Consulta eventos recientes y marca avisos como leídos."
+              tasks:
+                -
+                  title: "Revisar notificaciones"
+                  steps:
+                    -
+                      "Pulsa el icono de notificaciones de la barra superior."
+                    -
+                      "Lee los avisos de operaciones relevantes y abre el registro de origen cuando exista el enlace."
+                    -
+                      "Utiliza «Marcar todas como leídas» si quieres limpiar los pendientes."
+              note: "Un aviso no sustituye la verificación del comprobante o saldo de origen."
+            -
+              id: "messages"
+              title: "Mensajería interna"
+              description: "Escribe a otros usuarios desde el chat disponible."
+              tasks:
+                -
+                  title: "Enviar un mensaje"
+                  steps:
+                    -
+                      "Abre el panel de chat integrado en el diseño del sistema."
+                    -
+                      "Selecciona una conversación o inicia una nueva si esa opción está habilitada."
+                    -
+                      "Escribe el texto y utiliza el botón de envío."
+                    -
+                      "Confirma que el mensaje se muestra en el hilo correcto."
+              note: "Las conversaciones visibles dependen de las cuentas y del acceso configurado."
+            -
+              id: "demo_requests"
+              title: "Solicitudes de demostración"
+              description: "Da seguimiento a personas interesadas en Delta POS."
+              before: "Requiere acceso administrativo."
+              tasks:
+                -
+                  title: "Atender una solicitud de demostración"
+                  steps:
+                    -
+                      "Abre «Solicitudes de demostración» desde el menú de administración."
+                    -
+                      "Busca o filtra una solicitud y entra a su detalle."
+                    -
+                      "Revisa los datos proporcionados por la persona interesada."
+                    -
+                      "Actualiza el estado o los datos de seguimiento disponibles y guarda."
+              note: "Este proceso gestiona interesados en el sistema; no es una operación de venta en caja."
+            -
+              id: "coming_soon"
+              title: "Opciones pendientes de desarrollo"
+              description: "Reconoce accesos visuales que todavía no constituyen módulos operativos."
+              tasks:
+                -
+                  title: "Identificar secciones no habilitadas"
+                  steps:
+                    -
+                      "En el menú pueden aparecer «Nueva venta», «Historial de ventas», «Devoluciones de ventas», «Caja», «Empleados», «Kardex», «Impuestos» o «Reportes» como enlaces demostrativos."
+                    -
+                      "Un enlace que solo contiene «#» no abre una pantalla funcional ni permite guardar información."
+                    -
+                      "Consulta a administración sobre futuras versiones y no asumas que ya existe un procedimiento de registro para esas funciones."
+              note: "El manual documenta procedimientos de rutas funcionales y no inventa flujos de pantallas pendientes."

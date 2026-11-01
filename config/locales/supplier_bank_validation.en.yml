@@ -1,0 +1,28 @@
+en:
+  activerecord:
+    errors:
+      models:
+        supplier_bank_account:
+          attributes:
+            clabe:
+              invalid: "must contain 18 digits and a valid check digit"
+            account_number:
+              invalid: "must contain 4 to 20 digits"
+            card_number:
+              invalid: "must contain 12 to 19 digits with a valid checksum"
+            sat_bank_code:
+              invalid: "must exist in the catalog and match the CLABE"
+    attributes:
+      supplier_bank_account:
+        holder_name: "Account holder"
+        clabe: "CLABE"
+        sat_bank_code: "SAT bank"
+        bank_name: "Bank name"
+        account_number: "Account number"
+        card_number: "Card number"
+        account_type: "Account type"
+        currency_code: "Currency"
+        status: "Account status"
+        verification_status: "Verification status"
+        blocked_reason: "Blocking reason"
+        primary: "Primary account"

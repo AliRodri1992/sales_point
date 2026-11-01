@@ -1,0 +1,65 @@
+# frozen_string_literal: true
+
+module Admin
+  class GoodsReceiptsController < ApplicationController
+    include PurchasesAccess
+
+    QUANTITY_FIELDS = %w[delivered_quantity accepted_quantity damaged_quantity].freeze
+
+    before_action :set_order, only: %i[index new create]
+
+    def index
+      authorize GoodsReceipt.new(organization: current_organization), :index?
+      @receipts = @order.goods_receipts.includes(:received_by).order(created_at: :desc)
+    end
+
+    def show
+      @receipt = policy_scope(current_organization.goods_receipts).find(params[:id])
+      authorize @receipt
+    end
+
+    def new
+      @receipt = @order.goods_receipts.new(organization: current_organization)
+      authorize @receipt
+    end
+
+    def create
+      authorize GoodsReceipt.new(organization: current_organization), :create?
+      entries = receiving_entries
+      @receipt = Purchases::Receive.call(
+        order: @order, user: current_user, idempotency_key: params.require(:idempotency_key),
+        entries:, notes: params[:notes], actual_costs: actual_cost_params
+      )
+      Purchases::Notify.call(record: @receipt, action: 'receipt_posted', user: current_user)
+      redirect_to admin_goods_receipt_path(@receipt)
+    rescue ActiveRecord::RecordInvalid, ArgumentError, ActiveRecord::RecordNotUnique => e
+      reject_purchase(e, new_admin_purchase_order_goods_receipt_path(@order))
+    end
+
+    private
+
+    def actual_cost_params
+      names = %i[actual_freight_amount actual_insurance_amount extra_expenses_amount additional_discount_amount]
+      params.permit(*names).to_h.symbolize_keys.compact_blank
+    end
+
+    def receiving_entries
+      params.fetch(:entries, {}).values.map(&:to_unsafe_h).reject do |entry|
+        QUANTITY_FIELDS.all? do |field|
+          zero_quantity?(entry[field])
+        end
+      end
+    end
+
+    def zero_quantity?(value)
+      BigDecimal(value.to_s).zero?
+    rescue ArgumentError
+      false
+    end
+
+    def set_order
+      @order = policy_scope(current_organization.purchase_orders).find(params[:purchase_order_id])
+      authorize @order, :receive?
+    end
+  end
+end

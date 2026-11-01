@@ -114,3 +114,11 @@ app/assets/builds/.keep
 app/assets/builds/
 
 .qoder/
+
+plantillas/
+
+*.example
+
+# Development-only Active Record Encryption keys (never commit)
+/config/financial_encryption.local.json
+/config/financial_encryption.local.json.lock

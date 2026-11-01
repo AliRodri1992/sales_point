@@ -6,9 +6,14 @@ class DemoRequestsController < ApplicationController
   end
 
   def create
-    @demo_request = DemoRequest.new(demo_request_params)
+    @demo_request = DemoRequest.new(demo_request_params.merge(locale: I18n.locale.to_s))
 
     if @demo_request.save
+      DemoRequestMailer
+        .with(demo_request: @demo_request, locale: I18n.locale.to_s)
+        .confirmation
+        .deliver_later
+
       redirect_to new_demo_request_path, notice: t('.success')
     else
       render :new, status: :unprocessable_content
@@ -18,6 +23,10 @@ class DemoRequestsController < ApplicationController
   private
 
   def demo_request_params
-    params.expect(demo_request: %i[name email phone company message])
+    permitted = params.expect(
+      demo_request: %i[name email phone phone_full company business_type branches message terms_accepted]
+    )
+    permitted[:phone] = permitted.delete(:phone_full).presence || permitted[:phone]
+    permitted
   end
 end
