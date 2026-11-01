@@ -22,19 +22,19 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
     Warden.test_reset!
   end
 
-  def account(name:, account_number:)
+  def account(name:, clabe:)
     SupplierBankAccount.create!(
       supplier:, organization:, bank_name: name, holder_name: 'Supplier Vendor',
-      account_number:, currency_code: 'MXN'
+      clabe:, currency_code: 'MXN'
     )
   end
 
   scenario 'clears the visible bank selection when a payment switches suppliers' do
     other_supplier = create(:supplier, organization:)
-    bank = account(name: 'Original Bank', account_number: '1234567890')
+    bank = account(name: 'Original Bank', clabe: '032180000118359719')
     SupplierBankAccount.create!(
       supplier: other_supplier, organization:, bank_name: 'New Bank',
-      holder_name: 'Other Vendor', account_number: '9876543210',
+      holder_name: 'Other Vendor', clabe: '012180001234567899',
       currency_code: supplier.currency.code
     )
     bank.update!(currency_code: supplier.currency.code)
@@ -71,8 +71,8 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
   end
 
   scenario 'shows blocked bank accounts distinctly from active and verified accounts' do
-    blocked = account(name: 'Blocked Bank', account_number: '1234567890')
-    verified = account(name: 'Verified Bank', account_number: '9876543210')
+    blocked = account(name: 'Blocked Bank', clabe: '032180000118359719')
+    verified = account(name: 'Verified Bank', clabe: '012180001234567899')
     blocked.update!(status: 'blocked', blocked_reason: 'Review required')
     verified.update!(verification_status: 'verified')
     visit admin_supplier_bank_accounts_path(supplier)
@@ -83,19 +83,19 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
   end
 
   scenario 'offers to clear restrictive filters after a bank search has no results' do
-    account(name: 'Existing Bank', account_number: '1234567890')
+    account(name: 'Existing Bank', clabe: '032180000118359719')
     visit admin_supplier_bank_accounts_path(supplier, q: 'No Match')
     expect(page).to have_css('[data-bank-accounts-empty]', visible: true)
     expect(page).to have_link(href: admin_supplier_bank_accounts_path(supplier))
   end
 
-  scenario 'filters bank accounts without exposing the encrypted account number' do
-    account(name: 'First Bank', account_number: '1234567890')
-    account(name: 'Other Bank', account_number: '9876543210')
+  scenario 'filters bank accounts without exposing the encrypted CLABE' do
+    account(name: 'First Bank', clabe: '032180000118359719')
+    account(name: 'Other Bank', clabe: '012180001234567899')
     visit admin_supplier_bank_accounts_path(supplier)
 
     expect(page).to have_css('[data-supplier-bank-accounts-target="card"]', count: 2)
-    expect(page).to have_no_text('1234567890')
+    expect(page).to have_no_text('032180000118359719')
     fill_in 'q', with: 'First Bank'
     click_button 'Search'
 
@@ -105,7 +105,7 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
   end
 
   scenario 'displays the approved bank cards within View Supplier and keeps search in that tab' do
-    account(name: 'BBVA México', account_number: '1234567890')
+    account(name: 'BBVA México', clabe: '032180000118359719')
     visit admin_supplier_path(supplier, tab: 'bank_accounts')
 
     expect(page).to have_css('#supplier-dossier-bank-accounts:not(.hidden)', visible: true)
@@ -117,7 +117,7 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
 
     within('#supplier-dossier-bank-accounts') do
       expect(page).to have_text('BBVA')
-      expect(page).to have_no_text('1234567890')
+      expect(page).to have_no_text('032180000118359719')
       expect(page).to have_no_text('MXN')
       find('#dossier-banks-search').fill_in with: 'BBVA'
       find('summary', text: 'All banks').click
@@ -148,13 +148,13 @@ RSpec.describe 'Supplier financial dossier browser', type: :feature, js: true do
   end
 
   scenario 'does not offer new financial accounts when a supplier is inactive' do
-    account(name: 'History Bank', account_number: '1234567890')
+    account(name: 'History Bank', clabe: '032180000118359719')
     supplier.update!(status: :inactive)
     visit admin_supplier_bank_accounts_path(supplier)
 
     expect(page).to have_text('History Bank')
     expect(page).to have_no_css("a[href='#{new_admin_supplier_bank_account_path(supplier)}']")
-    expect(page).to have_no_text('1234567890')
+    expect(page).to have_no_text('032180000118359719')
   end
 
   scenario 'keeps product offer price history accessible after archiving' do
