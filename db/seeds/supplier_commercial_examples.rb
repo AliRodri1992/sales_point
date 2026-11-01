@@ -32,7 +32,7 @@ module SupplierCommercialExamples
         next unless supplier.active?
 
         # This includes archived records: an intentionally deleted bank account
-        # must not be recreated or replaced with a different account number.
+        # must not be recreated or replaced with a different CLABE.
         next if supplier.supplier_bank_accounts.exists?
 
         number = supplier.code.delete_prefix('SUP-').to_i
@@ -41,7 +41,6 @@ module SupplierCommercialExamples
           holder_name: "PROVEEDOR DEMO #{number} - CUENTA FICTICIA",
           bank_name: 'BANCO DE DEMOSTRACION - NO REAL',
           currency_code: 'MXN',
-          account_number: format('9900000000%08d', number),
           clabe: demo_clabe(number),
           primary: true
         )
