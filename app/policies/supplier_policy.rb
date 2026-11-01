@@ -83,7 +83,7 @@ class SupplierPolicy
 
   def view_documents?
     authorized_record? && (allowed?('suppliers.documents.view') ||
-                           section_any_action?('documents', %w[create update destroy restore]))
+                           allowed?('suppliers.documents.manage'))
   end
 
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')
