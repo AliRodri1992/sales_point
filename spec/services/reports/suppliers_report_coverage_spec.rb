@@ -71,7 +71,7 @@ RSpec.describe 'Supplier report definitions' do
     expect(Reports::ExportService.call(report:, format: :pdf)).to eq('es')
   end
   it 'never exports private columns for an anonymous user or an inactive membership' do
-    anonymous_report = described_class.new(scope:, organization:, user: nil, locale: :es)
+    anonymous_report = Reports::Definitions::SuppliersReport.new(scope:, organization:, user: nil, locale: :es)
     expect(anonymous_report.columns(format: :xlsx).size).to eq(4)
 
     organization.organization_memberships.find_by!(user: actor).update!(status: :inactive)
