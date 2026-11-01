@@ -24,6 +24,12 @@ RSpec.describe 'Supplier report definitions' do
     expect(report.columns(format: :xlsx).size).to eq(4)
   end
 
+  it 'never exports contact details to users who can only create contacts' do
+    allow(actor).to receive(:permission?).with('suppliers.contacts.create').and_return(true)
+    expect(report.columns(format: :pdf).size).to eq(4)
+    expect(report.columns(format: :xlsx).size).to eq(4)
+  end
+
   it 'includes fiscal and contacts fields only with their own viewing permissions' do
     allow(actor).to receive(:permission?).with('suppliers.fiscal.view').and_return(true)
     expect(report.columns(format: :pdf).size).to eq(5)
