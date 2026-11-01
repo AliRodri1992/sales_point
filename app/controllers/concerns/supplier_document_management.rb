@@ -7,12 +7,12 @@ module SupplierDocumentManagement
     supplier.with_lock do
       existing_ids = supplier.documents.attachments.pluck(:id)
       supplier.documents.attach(files)
-      attachments = supplier.documents.attachments.where.not(id: existing_ids).order(:id).to_a
+      attachments = new_document_attachments(supplier, existing_ids)
       raise ActiveRecord::RecordInvalid, supplier unless attachments.size == files.size
 
       attachments.each do |attachment|
         document = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
-        document.assign_attributes(uploaded_by: current_user, **metadata_attributes)
+        document.assign_attributes(uploaded_document_metadata)
         document.save!
       end
     end
@@ -28,16 +28,18 @@ module SupplierDocumentManagement
   def persist_replacement(supplier, document)
     existing_ids = supplier.documents.attachments.pluck(:id)
     supplier.documents.attach(document_file)
-    attachment = supplier.documents.attachments.where.not(id: existing_ids).order(:id).last
+    attachment = new_document_attachments(supplier, existing_ids).last
     raise ActiveRecord::RecordInvalid, supplier unless attachment
 
     document.update!(current_version: false, updated_by: current_user)
     replacement = supplier.supplier_documents.with_deleted.find_or_initialize_by(attachment:)
-    replacement.assign_attributes(
-      uploaded_by: current_user, previous_version: document, series_id: document.series_id,
-      revision_number: document.revision_number + 1, **metadata_attributes(document)
-    )
+    replacement.assign_attributes(replacement_document_metadata(document))
     replacement.save!
+  end
+
+  def new_document_attachments(supplier, existing_ids)
+    ActiveStorage::Attachment.where(record: supplier, name: 'documents')
+                             .where.not(id: existing_ids).order(:id).to_a
   end
 
   def current_document(supplier)
@@ -46,6 +48,17 @@ module SupplierDocumentManagement
 
   def document_for(supplier)
     supplier.supplier_documents.find_by!(attachment_id: params[:document_id])
+  end
+
+  def uploaded_document_metadata
+    { uploaded_by: current_user, **metadata_attributes }
+  end
+
+  def replacement_document_metadata(document)
+    {
+      uploaded_by: current_user, previous_version: document, series_id: document.series_id,
+      revision_number: document.revision_number + 1, **metadata_attributes(document)
+    }
   end
 
   def metadata_attributes(previous = nil)
