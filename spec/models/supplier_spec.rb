@@ -4,6 +4,33 @@ RSpec.describe Supplier, type: :model do
   let(:organization) { create(:organization) }
   subject(:supplier) { build(:supplier, organization:) }
 
+  describe 'mandatory onboarding dossier' do
+    it 'rejects creating a supplier without a main contact and fiscal address' do
+      supplier.skip_primary_dossier_validation = false
+
+      expect(supplier).not_to be_valid
+      expect(supplier.errors[:contacts]).to be_present
+      expect(supplier.errors[:addresses]).to be_present
+    end
+
+    it 'accepts a complete primary contact and fiscal address in the same transaction' do
+      supplier.skip_primary_dossier_validation = false
+      supplier.contacts.build(name: 'Contacto principal', primary: true, active: true)
+      supplier.addresses.build(
+        purpose: 'fiscal', primary: true,
+        country: create(:country, iso_alpha2: 'MX'),
+        street: 'Avenida Central', exterior_number: '100',
+        city: 'Cuautitlán Izcalli', state: 'Estado de México',
+        neighborhood: 'Centro', postal_code: '54700'
+      )
+
+      expect(supplier).to be_valid
+      expect { supplier.save! }.to change(Supplier, :count).by(1)
+      expect(supplier.contacts.reload.where(primary: true).count).to eq(1)
+      expect(supplier.addresses.reload.where(purpose: 'fiscal', primary: true).count).to eq(1)
+    end
+  end
+
   describe 'automatic code assignment' do
     it 'generates a sequential code for a new supplier without a code' do
       first = create(:supplier, organization:, code: nil)
