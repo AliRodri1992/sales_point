@@ -8,7 +8,19 @@ RSpec.describe 'Admin suppliers', type: :request do
   let(:currency) { create(:currency) }
 
   def supplier_attributes
-    attributes_for(:supplier).merge(currency_id: currency.id)
+    country = Country.find_by(iso_alpha2: 'MX') || create(:country, iso_alpha2: 'MX')
+    attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Contacto principal', primary: '1' } },
+      addresses_attributes: {
+        '0' => {
+          street: 'Avenida Central', exterior_number: '100', neighborhood: 'Centro',
+          city: 'Cuautitlán', state: 'Estado de México',
+          postal_code: '54800', country_id: country.id,
+          purpose: 'fiscal', primary: '1'
+        }
+      }
+    )
   end
 
   before do
