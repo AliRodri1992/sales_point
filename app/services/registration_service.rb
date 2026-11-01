@@ -88,18 +88,43 @@ class RegistrationService
   end
 
   def validate_configuration!
+    validate_business_configuration!
+    validate_terminal_configuration!
+    validate_migration_configuration! if parameter(:setup_type) == 'migration'
+  end
+
+  def validate_business_configuration!
     reject_registration!(:setup_type, 1) unless %w[new migration].include?(parameter(:setup_type))
-    reject_registration!(:business_sector, 4) unless Organization::ONBOARDING_BUSINESS_SECTORS.include?(parameter(:business_sector))
+    reject_registration!(:business_sector, 4) unless valid_business_sector?
     reject_registration!(:currency, 4) unless Currency.active.exists?(code: parameter(:currency).upcase)
     reject_registration!(:timezone, 4) unless OrganizationSetting::ONBOARDING_TIMEZONES.include?(timezone)
-    reject_registration!(:branches, 4) unless parameter(:branches).blank? || parameter(:branches) == '1'
+  end
+
+  def validate_terminal_configuration!
+    reject_registration!(:branches, 4) if parameter(:branches).present? && parameter(:branches) != '1'
     reject_registration!(:terminals, 5) unless valid_terminal_count?
-    reject_registration!(:payment_integration, 5) unless OrganizationSetting.payment_methods.key?(parameter(:payment_integration))
+    reject_registration!(:payment_integration, 5) unless valid_payment_method?
+  end
 
-    return unless parameter(:setup_type) == 'migration'
+  def validate_migration_configuration!
+    reject_registration!(:migration_volume, 4) unless valid_migration_volume?
+    reject_registration!(:migration_priority, 4) unless valid_migration_priority?
+  end
 
-    reject_registration!(:migration_volume, 4) unless OrganizationMigration.volumes.value?(parameter(:migration_volume))
-    reject_registration!(:migration_priority, 4) unless OrganizationMigration.priorities.value?(parameter(:migration_priority))
+  def valid_business_sector?
+    Organization::ONBOARDING_BUSINESS_SECTORS.include?(parameter(:business_sector))
+  end
+
+  def valid_payment_method?
+    OrganizationSetting.payment_methods.key?(parameter(:payment_integration))
+  end
+
+  def valid_migration_volume?
+    OrganizationMigration.volumes.value?(parameter(:migration_volume))
+  end
+
+  def valid_migration_priority?
+    OrganizationMigration.priorities.value?(parameter(:migration_priority))
   end
 
   def valid_terminal_count?
@@ -127,12 +152,16 @@ class RegistrationService
 
   def failure_result(record)
     @user.errors.add(:base, record.errors.full_messages.to_sentence) unless record.equal?(@user)
-    step = @failure_step || case record
-                           when Organization then 3
-                           when Employee, User then 2
-                           when OrganizationSetting, Currency then 4
-                           else 5
-                           end
+    step = @failure_step || failure_step_for(record)
     Result.new(user: @user, organization: nil, errors: @user.errors, step:)
+  end
+
+  def failure_step_for(record)
+    case record
+    when Organization then 3
+    when Employee, User then 2
+    when OrganizationSetting, Currency then 4
+    else 5
+    end
   end
 end

@@ -340,11 +340,11 @@
                   <% end %>
                 </dl>
               </div>
-              <div data-field class="flex items-start pt-1">
-                <input id="terms" name="terms" type="checkbox" value="1" <%= "checked" if params[:terms].present? %> class="mt-0.5 h-4 w-4 rounded-md border border-slate-300 bg-white shadow-sm accent-[var(--theme-primary-start)] checked:border-[var(--theme-primary-start)] checked:bg-[var(--theme-primary-start)] focus:ring-[var(--theme-primary-start)]" data-registration-wizard-target="terms">
-                <label for="terms" class="ml-2 block text-xs leading-normal text-slate-500">
-                  <%= t(".step_five.terms") %>
-                </label>
+              <div data-field class="pt-1">
+                <div class="flex items-start gap-3">
+                  <input id="terms" name="terms" type="checkbox" value="1" <%= "checked" if params[:terms].to_s.in?(%w[1 on true]) %> class="mt-0.5 h-5 w-5 shrink-0 rounded-md border border-slate-300 bg-white shadow-sm accent-[var(--theme-primary-start)] focus:ring-2 focus:ring-emerald-600" data-registration-wizard-target="terms">
+                  <label for="terms" class="block text-sm leading-relaxed text-slate-700"><%= t(".step_five.terms") %></label>
+                </div>
               </div>
             </section>
 

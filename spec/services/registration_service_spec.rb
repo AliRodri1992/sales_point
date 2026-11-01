@@ -106,8 +106,10 @@ RSpec.describe RegistrationService, type: :service do
   end
 
   it 'supports an exact initial terminal count and a configured timezone' do
-    result = described_class.call(resource: user,
-      params: params.merge(terminals: '4', timezone: 'America/Mexico_City'))
+    result = described_class.call(
+      resource: user,
+      params: params.merge(terminals: '4', timezone: 'America/Mexico_City')
+    )
 
     expect(result).to be_success
     expect(result.organization.branches.first.terminals.count).to eq(4)

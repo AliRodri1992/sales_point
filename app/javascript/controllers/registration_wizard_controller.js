@@ -187,6 +187,7 @@ export default class extends Controller {
       if (!this.validateStep()) {
         event.preventDefault()
         this.updateStep()
+        this.firstInvalidField?.focus()
         return
       }
     }
