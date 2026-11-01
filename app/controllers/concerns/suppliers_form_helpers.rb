@@ -32,7 +32,9 @@ module SuppliersFormHelpers
   end
 
   def valid_primary_records?(raw, association, creating:)
-    return true if raw.blank?
+    return !creating && @supplier.public_send(association).not_deleted.where(
+      primary: true, **(association == :addresses ? { purpose: 'fiscal' } : {})
+    ).exists? if raw.blank?
 
     records = raw.respond_to?(:values) ? raw.values : Array(raw)
     return false if records.size > 1
