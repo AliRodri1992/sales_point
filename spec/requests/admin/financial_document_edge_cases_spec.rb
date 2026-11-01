@@ -144,7 +144,7 @@ RSpec.describe 'Financial document edge cases', type: :request do
   it 'archives bank accounts without disclosing private values' do
     account = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Example', holder_name: 'Vendor',
-      account_number: '1234567890', currency_code: currency.code
+      clabe: '032180000118359719', currency_code: currency.code
     )
 
     delete admin_supplier_bank_account_path(supplier, account)
@@ -157,14 +157,14 @@ RSpec.describe 'Financial document edge cases', type: :request do
   it 'reveal requests remain private and are audited' do
     account = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Example', holder_name: 'Vendor',
-      account_number: '1234567890', currency_code: currency.code
+      clabe: '032180000118359719', currency_code: currency.code
     )
 
     post reveal_admin_supplier_bank_account_path(supplier, account)
 
     expect(response).to have_http_status(:ok)
     expect(response.headers['Cache-Control']).to eq('no-store')
-    expect(response.parsed_body.fetch('account_number')).to eq('1234567890')
+    expect(response.parsed_body.fetch('clabe')).to eq('032180000118359719')
     expect(FinancialAuditEvent.where(event: 'bank_account.revealed', subject_id: account.id)).to exist
   end
 end
