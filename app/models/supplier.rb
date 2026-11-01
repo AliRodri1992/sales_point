@@ -96,20 +96,26 @@ class Supplier < ApplicationRecord
   def latest_generated_code_number
     Supplier.unscoped.where(organization_id: organization.id)
             .where('code ~ ?', '^PROV-[0-9]+$')
-            .maximum(Arel.sql("CAST(SUBSTRING(code FROM 6) AS bigint)")) || 0
+            .maximum(Arel.sql('CAST(SUBSTRING(code FROM 6) AS bigint)')) || 0
   end
 
   def primary_dossier_required
-    valid_contact = contacts.any? do |contact|
-      contact.primary? && contact.deleted_at.nil? &&
-        !contact.marked_for_destruction? && contact.name.present?
+    errors.add(:contacts, :blank) unless primary_contact_present?
+    errors.add(:addresses, :blank) unless primary_fiscal_address_present?
+  end
+
+  def primary_contact_present?
+    contacts.any? { |contact| valid_primary_entry?(contact) && contact.name.present? }
+  end
+
+  def primary_fiscal_address_present?
+    addresses.any? do |address|
+      valid_primary_entry?(address) && address.purpose == 'fiscal' && address.street.present?
     end
-    valid_address = addresses.any? do |address|
-      address.primary? && address.purpose == 'fiscal' && address.deleted_at.nil? &&
-        !address.marked_for_destruction? && address.street.present?
-    end
-    errors.add(:contacts, :blank) unless valid_contact
-    errors.add(:addresses, :blank) unless valid_address
+  end
+
+  def valid_primary_entry?(record)
+    record.primary? && record.deleted_at.nil? && !record.marked_for_destruction?
   end
 
   def responsible_user_in_organization

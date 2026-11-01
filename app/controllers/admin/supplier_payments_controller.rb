@@ -27,18 +27,12 @@ module Admin
     end
 
     def bank_accounts
-      payment = new_payment
-      authorize payment, :new?
+      authorize new_payment, :new?
       supplier = current_organization.suppliers.available.find_by(id: params[:supplier_id])
       currency = Currency.active.find_by(id: params[:currency_id])
       return render json: { accounts: [] } unless supplier && currency
 
-      accounts = supplier.supplier_bank_accounts.active
-                         .where(status: 'active', currency_code: currency.code)
-                         .order(:bank_name, :id)
-      render json: { accounts: accounts.map { |account|
-        { id: account.id, label: "#{account.bank_name.presence || account.sat_bank_code} · #{account.masked_number}" }
-      } }
+      render json: { accounts: payment_bank_options(supplier, currency) }
     end
 
     def create
@@ -76,6 +70,14 @@ module Admin
     end
 
     private
+
+    def payment_bank_options(supplier, currency)
+      supplier.supplier_bank_accounts.active
+              .where(status: 'active', currency_code: currency.code)
+              .order(:bank_name, :id).map do |account|
+        { id: account.id, label: "#{account.bank_name.presence || account.sat_bank_code} · #{account.masked_number}" }
+      end
+    end
 
     def set_payment
       @payment = policy_scope(current_organization.supplier_payments).find(params[:id])

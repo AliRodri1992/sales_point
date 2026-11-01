@@ -20,14 +20,16 @@ module SupplierFormAuthorization
     records.filter_map do |record|
       next unless record.respond_to?(:[]) && record.respond_to?(:key?)
 
-      destroy = ActiveModel::Type::Boolean.new.cast(record[:_destroy])
-      action = if destroy
-                 record[:id].present? ? 'destroy' : nil
-               else
-                 record[:id].present? ? 'update' : 'create'
-               end
+      action = nested_record_action(record)
       :"#{action}_#{section}?" if action
     end.uniq
+  end
+
+  def nested_record_action(record)
+    destroying = ActiveModel::Type::Boolean.new.cast(record[:_destroy])
+    return (record[:id].present? ? 'destroy' : nil) if destroying
+
+    record[:id].present? ? 'update' : 'create'
   end
 
   def authorize_sensitive_fields!(attributes)
