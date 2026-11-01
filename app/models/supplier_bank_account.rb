@@ -41,13 +41,6 @@ class SupplierBankAccount < ApplicationRecord
     last_four.present? ? "•••• #{last_four}" : '••••'
   end
 
-  def card_display_number
-    "•••• •••• •••• #{card_last_four.presence || last_four.presence || '••••'}"
-  end
-
-  # The bank card layout is retained; bank-account expiry is no longer stored.
-  def card_expiration_label = nil
-
   def reveal!(actor:)
     raise Pundit::NotAuthorizedError unless Pundit.policy(actor, self)&.reveal?
 
@@ -100,28 +93,6 @@ class SupplierBankAccount < ApplicationRecord
     return if clabe.blank?
 
     errors.add(:clabe, :invalid) unless valid_clabe_format? && valid_clabe_checksum?
-  end
-
-  def valid_account_number
-    return if account_number.blank?
-
-    errors.add(:account_number, :invalid) unless account_number.match?(/\A\d{4,20}\z/)
-  end
-
-  def valid_card_number
-    return if card_number.blank?
-
-    digits = card_number.chars.map(&:to_i)
-    return if card_number.match?(/\A\d{12,19}\z/) && luhn_checksum_valid?(digits)
-
-    errors.add(:card_number, :invalid)
-  end
-
-  def luhn_checksum_valid?(digits)
-    digits.reverse.each_with_index.sum do |digit, index|
-      value = index.odd? ? digit * 2 : digit
-      value > 9 ? value - 9 : value
-    end.modulo(10).zero?
   end
 
   def consistent_bank_code
