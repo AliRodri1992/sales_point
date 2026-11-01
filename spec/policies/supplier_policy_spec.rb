@@ -68,6 +68,22 @@ RSpec.describe 'SupplierPolicy dossier authorization boundaries' do
     allow(user).to receive(:permission?).and_return(false)
   end
 
+  it 'does not grant document downloads to users who can only create documents' do
+    allow(user).to receive(:permission?).with('suppliers.documents.create').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.create_documents?).to be(true)
+    expect(policy.view_documents?).to be(false)
+  end
+
+  it 'permits document reading with explicit view permission' do
+    allow(user).to receive(:permission?).with('suppliers.documents.view').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.view_documents?).to be(true)
+    expect(policy.create_documents?).to be(false)
+  end
+
   it 'allows document management to imply document viewing but not supplier editing' do
     allow(user).to receive(:permission?).with('suppliers.documents.manage').and_return(true)
     policy = SupplierPolicy.new(user, supplier)
