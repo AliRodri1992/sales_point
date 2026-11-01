@@ -305,7 +305,7 @@ RSpec.describe 'Supplier financial and purchasing relationship validation' do
   it 'rejects bank data from suppliers of other organizations' do
     record = SupplierBankAccount.new(
       organization:, supplier: foreign_supplier,
-      bank_name: 'Bank', holder_name: 'User', account_number: '1234567890', currency_code: 'MXN'
+      bank_name: 'Bank', holder_name: 'User', clabe: '032180000118359719', currency_code: 'MXN'
     )
     record.valid?
     expect(record.errors[:supplier]).to be_present
