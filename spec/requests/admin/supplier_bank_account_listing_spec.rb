@@ -31,6 +31,72 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     Nokogiri::HTML(response.body)
   end
 
+  it 'requires an explicit valid verification date and preserves the audit trail' do
+    account = bank_account
+
+    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'verified' }
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(account.reload.verification_status).to eq('pending')
+
+    patch review_admin_supplier_bank_account_path(supplier, account),
+          params: { decision: 'verified', verified_on: '2099-01-01' }
+    expect(account.reload.verification_status).to eq('pending')
+
+    patch review_admin_supplier_bank_account_path(supplier, account),
+          params: { decision: 'verified', verified_on: '2026-10-31' }
+    expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
+    expect(account.reload.verification_status).to eq('verified')
+    expect(account.verified_at.to_date).to eq(Date.new(2026, 10, 31))
+    audit = FinancialAuditEvent.where(event: 'bank_account.verification_reviewed', subject: account).last
+    expect(audit.details.stringify_keys).to include('verified_on' => '2026-10-31')
+
+    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'rejected' }
+    expect(account.reload.verification_status).to eq('rejected')
+    expect(account.verified_at).to be_nil
+  end
+
+  it 'shows a manual date field only to users permitted to review bank accounts' do
+    account = bank_account
+    get admin_supplier_bank_accounts_path(supplier)
+
+    expect(document.at_css("input[name='verified_on'][type='date']")).to be_present
+    expect(document.at_css("form[action='#{review_admin_supplier_bank_account_path(supplier, account)}']"))
+      .to be_present
+  end
+
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Supplier bank accounts list', type: :request do
+  let(:organization) { create(:organization) }
+  let(:supplier) { create(:supplier, organization:) }
+  let(:user) { create(:user, :english) }
+
+  before do
+    create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    sign_in user
+  end
+
+  def valid_clabe(value)
+    digits = format('032%014d', value.to_i)
+    checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * [3, 7, 1][index % 3]) % 10 }
+    "#{digits}#{(10 - checksum % 10) % 10}"
+  end
+
+  def bank_account(attributes = {})
+    SupplierBankAccount.create!({
+      organization:, supplier:, bank_name: 'Example Bank',
+      holder_name: 'Vendor Holdings', clabe: valid_clabe(3456789012),
+      currency_code: 'MXN'
+    }.merge(attributes))
+  end
+
+  def document
+    Nokogiri::HTML(response.body)
+  end
+
   it 'separates bank verification rights from editing and archiving rights' do
     account = bank_account
     reviewer = create(:user)
