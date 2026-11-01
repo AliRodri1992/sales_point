@@ -38,7 +38,7 @@ module Admin
     end
 
     def preview
-      attachment = authorized_attachment(:view_documents?)
+      attachment = authorized_attachment(:read_documents?)
       raise ActiveRecord::RecordNotFound unless attachment.blob
 
       return head :unsupported_media_type unless attachment.blob.content_type.in?(PREVIEW_TYPES)
@@ -62,7 +62,7 @@ module Admin
     end
 
     def download
-      send_attachment(authorized_attachment(:view_documents?), disposition: 'attachment')
+      send_attachment(authorized_attachment(:read_documents?), disposition: 'attachment')
     end
 
     def destroy
@@ -81,14 +81,14 @@ module Admin
     end
 
     def history
-      supplier = authorized_supplier(:view_documents?)
+      supplier = authorized_supplier(:read_documents?)
       document = document_for(supplier)
       @supplier = supplier
       @versions = supplier.supplier_documents.where(series_id: document.series_id).order(revision_number: :desc)
     end
 
     def version_download
-      supplier = authorized_supplier(:view_documents?)
+      supplier = authorized_supplier(:read_documents?)
       send_attachment(document_for(supplier).attachment, disposition: 'attachment')
     end
 

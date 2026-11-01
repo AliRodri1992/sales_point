@@ -86,6 +86,10 @@ class SupplierPolicy
                            section_any_action?('documents', %w[create update destroy restore]))
   end
 
+  def read_documents?
+    authorized_record? && (allowed?('suppliers.documents.view') || allowed?('suppliers.documents.manage'))
+  end
+
   def manage_documents? = authorized_record? && allowed?('suppliers.documents.manage')
   def create_documents? = section_action?('documents', 'create')
   def update_documents? = section_action?('documents', 'update')
