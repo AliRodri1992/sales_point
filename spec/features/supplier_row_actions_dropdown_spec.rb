@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Supplier row actions dropdown', type: :feature, js: true do
+RSpec.describe 'Supplier row actions', type: :feature, js: true do
   include Warden::Test::Helpers
 
   let(:organization) { create(:organization) }
@@ -21,61 +21,43 @@ RSpec.describe 'Supplier row actions dropdown', type: :feature, js: true do
     Warden.test_reset!
   end
 
-  def open_last_row_menu
+  def last_row_actions
     visit admin_suppliers_path(per_page: 5)
-
-    trigger = find('tbody tr:last-child details[data-supplier-floating-menu="true"] > summary')
-    trigger.click
-    expect(page).to have_css('body > [data-supplier-floating-panel]', visible: true)
-    trigger
+    find('tbody tr:last-child td:last-child > div')
   end
 
-  def expect_floating_panel_visible
-    expect(page).to have_css('body > [data-supplier-floating-panel]', visible: true)
-    Selenium::WebDriver::Wait.new(timeout: 5, interval: 0.05).until do
-      page.evaluate_script(<<~JS)
-        (() => {
-          const menu = document.querySelector('body > [data-supplier-floating-panel]')
-          if (!menu) return false
-          const rect = menu.getBoundingClientRect()
-          return rect.width >= 176 &&
-                 rect.height > 0 &&
-                 rect.left >= 0 && rect.top >= 0 &&
-                 rect.right <= window.innerWidth &&
-                 rect.bottom <= window.innerHeight
-        })()
-      JS
-    end
-  end
-
-  scenario 'shows last-row actions outside the clipped table on compact screens' do
+  scenario 'keeps the last row actions directly accessible on compact desktop screens' do
     page.driver.browser.manage.window.resize_to(880, 530)
 
-    trigger = open_last_row_menu
-    expect_floating_panel_visible
-    expect(page).to have_css('body > [data-supplier-floating-panel] form button', visible: true)
-    expect(trigger['aria-expanded']).to eq('true')
+    actions = last_row_actions
+    expect(actions).to have_css('a', count: 2)
+    expect(actions).to have_css('form button[data-controller~="swal-confirm"]', visible: true)
+    expect(actions).to have_no_css('details[data-supplier-floating-menu]', visible: :all)
 
-    trigger.send_keys(:escape)
-    expect(page).to have_no_css('body > [data-supplier-floating-panel]', visible: :all)
-    expect(page).to have_css('details[data-supplier-floating-menu="true"] [data-supplier-floating-panel]',
-                             visible: :all)
-    expect(trigger['aria-expanded']).to eq('false')
-    expect(page.evaluate_script('document.activeElement === arguments[0]', trigger)).to be(true)
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const actions = document.querySelector('tbody tr:last-child td:last-child > div')
+        const buttons = actions.querySelectorAll('a, form button')
+        return buttons.length === 3 && Array.from(buttons).every((button) => {
+          const rect = button.getBoundingClientRect()
+          return rect.width > 0 && rect.height > 0 &&
+            rect.left >= 0 && rect.top >= 0 &&
+            rect.right <= window.innerWidth && rect.bottom <= window.innerHeight
+        })
+      })()
+    JS
   end
 
-  scenario 'opens and closes the action menu repeatedly without leaving a panel on body' do
+  scenario 'requires confirmation before removing a supplier from the visible row actions' do
     page.driver.browser.manage.window.resize_to(1400, 900)
 
-    trigger = open_last_row_menu
-    expect_floating_panel_visible
+    actions = last_row_actions
+    expect(actions).to have_no_css('details', visible: :all)
+    actions.find('form button[data-controller~="swal-confirm"]').click
 
-    trigger.click
-    expect(page).to have_no_css('body > [data-supplier-floating-panel]', visible: :all)
-
-    trigger.click
-    expect_floating_panel_visible
-    find('h1', match: :first).click
-    expect(page).to have_no_css('body > [data-supplier-floating-panel]', visible: :all)
+    expect(page).to have_css('.swal2-popup', visible: true)
+    find('.swal2-cancel', visible: true).click
+    expect(page).to have_no_css('.swal2-popup', visible: true)
+    expect(page).to have_css('tbody tr', count: 5)
   end
 end
