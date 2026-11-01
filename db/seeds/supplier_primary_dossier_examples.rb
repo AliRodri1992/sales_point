@@ -17,5 +17,4 @@ module SupplierPrimaryDossierExamples
       state: 'Estado de México', postal_code: '54700'
     )
   end
-
 end

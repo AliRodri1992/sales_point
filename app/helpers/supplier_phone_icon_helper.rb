@@ -8,5 +8,4 @@ module SupplierPhoneIconHelper
     else 'phone'
     end
   end
-
 end

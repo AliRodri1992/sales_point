@@ -53,6 +53,10 @@ module Admin
       end
     end
 
+    def review
+      perform_bank_review
+    end
+
     def destroy
       authorize @account
       @account.update!(deleted_at: Time.current, primary: false)

@@ -39,7 +39,8 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'renders the redesigned supplier contact editor with accessible settings and multiple phones' do
     supplier = create(:supplier, organization:)
     contact = create(
-      :contact, contactable: supplier, name: 'Mariana Cruz', position: 'Purchasing Manager',
+      :contact,
+      contactable: supplier, name: 'Mariana Cruz', position: 'Purchasing Manager',
       email: 'mariana@example.com', primary: true,
       phones_attributes: [
         { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
@@ -107,7 +108,8 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'keeps the same nested phone records when editing a contact' do
     supplier = create(:supplier, organization:)
     contact = create(
-      :contact, contactable: supplier, name: 'Telephone Contact',
+      :contact,
+      contactable: supplier, name: 'Telephone Contact',
       phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }]
     )
     phone = contact.phones.first
@@ -128,11 +130,14 @@ RSpec.describe 'Admin suppliers', type: :request do
 
   it 'removes a phone only after saving the contact edit request' do
     supplier = create(:supplier, organization:)
-    contact = create(:contact, contactable: supplier, name: 'Operations',
-                     phones_attributes: [
+    contact = create(
+      :contact,
+      contactable: supplier, name: 'Operations',
+      phones_attributes: [
                        { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },
                        { number: '5587654321', country_code: 'MX', kind: 'mobile', primary: true }
-                     ])
+      ]
+    )
     office_phone = contact.phones.find_by!(kind: 'landline')
     mobile_phone = contact.phones.find_by!(kind: 'mobile')
 
@@ -227,7 +232,8 @@ RSpec.describe 'Admin suppliers', type: :request do
   it 'shows redesigned contact cards without repeating the primary label or job title' do
     supplier = create(:supplier, organization:)
     contact = create(
-      :contact, contactable: supplier, name: 'Ana Lopez', position: 'Purchasing Manager',
+      :contact,
+      contactable: supplier, name: 'Ana Lopez', position: 'Purchasing Manager',
       email: 'ana@example.com', primary: true, notes: 'Prefer email during business hours',
       phones_attributes: [
         { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true },

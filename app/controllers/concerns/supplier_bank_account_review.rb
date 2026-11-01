@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SupplierBankAccountReview
-  def review
+  def perform_bank_review
     authorize @account, :review?
     decision = params[:decision].to_s
     unless %w[verified rejected pending].include?(decision) && @account.status == 'active'

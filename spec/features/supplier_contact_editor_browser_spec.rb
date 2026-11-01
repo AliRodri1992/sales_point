@@ -126,7 +126,8 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
 
   scenario 'adds and saves an additional number while editing a contact' do
     contact = create(
-      :contact, contactable: supplier, name: 'Existing contact',
+      :contact,
+      contactable: supplier, name: 'Existing contact',
       phones_attributes: [
         { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }
       ]
@@ -148,7 +149,8 @@ RSpec.describe 'Supplier contact editor browser workflow', type: :feature, js: t
 
   scenario 'removes and restores an existing number before saving' do
     contact = create(
-      :contact, contactable: supplier, name: 'Purchasing contact',
+      :contact,
+      contactable: supplier, name: 'Purchasing contact',
       phones_attributes: [
         { number: '5512345678', country_code: 'MX', kind: 'landline', primary: true }
       ]

@@ -11,5 +11,4 @@ module SupplierFormCatalogs
     @currencies = Currency.active.order(:code)
     @countries = Country.active.ordered
   end
-
 end
