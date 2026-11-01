@@ -27,7 +27,16 @@ RSpec.describe 'Supplier access after membership deactivation', type: :request d
 
   it 'creates suppliers only in the organization with an active membership' do
     currency = create(:currency)
-    attributes = attributes_for(:supplier).merge(currency_id: currency.id)
+    country = create(:country, iso_alpha2: 'MX')
+    attributes = attributes_for(:supplier).merge(
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Primary contact', primary: true } },
+      addresses_attributes: { '0' => {
+        street: 'Avenida Central', city: 'Cuautitlán Izcalli', state: 'Estado de México',
+        neighborhood: 'Centro', postal_code: '54700', country_id: country.id,
+        purpose: 'fiscal', primary: true
+      } }
+    )
 
     post admin_suppliers_path, params: { supplier: attributes }
 
