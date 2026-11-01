@@ -109,7 +109,7 @@ module Admin
     def load_banks = (@banks = SatBank.current.order(:name))
 
     def bank_params
-      sensitive_fields = %i[sat_bank_code bank_name holder_name account_number clabe card_number]
+      sensitive_fields = %i[sat_bank_code bank_name holder_name clabe]
       status_fields = %i[currency_code primary account_type status blocked_reason]
       attributes = params.expect(supplier_bank_account: sensitive_fields + status_fields)
       attributes[:sat_bank_code] = attributes[:sat_bank_code].presence if attributes.key?(:sat_bank_code)
@@ -118,10 +118,8 @@ module Admin
 
     def assign_bank_details
       attributes = bank_params
-      @account.assign_attributes(attributes.except(:account_number, :clabe, :card_number))
-      @account.account_number = attributes[:account_number] if attributes[:account_number].present?
+      @account.assign_attributes(attributes.except(:clabe))
       @account.clabe = attributes[:clabe] if attributes[:clabe].present?
-      @account.card_number = attributes[:card_number] if attributes[:card_number].present?
     end
 
     def save_account
