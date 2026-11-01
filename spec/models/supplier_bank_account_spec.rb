@@ -165,7 +165,10 @@ RSpec.describe SupplierBankAccount do
     expect(account.verification_status).to eq('pending')
     expect(account.verified_at).to be_nil
     account.update!(verification_status: 'verified')
-    expect(account.verified_at).to be_present
+    expect(account.verified_at).to be_nil
+    verified_on = Time.zone.parse('2026-10-31 12:00:00')
+    account.update!(verified_at: verified_on)
+    expect(account.reload.verified_at).to eq(verified_on)
     account.update!(verification_status: 'rejected')
     expect(account.verified_at).to be_nil
 
