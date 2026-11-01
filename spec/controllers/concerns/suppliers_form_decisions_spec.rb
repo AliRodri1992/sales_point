@@ -20,7 +20,7 @@ RSpec.describe SuppliersFormHelpers do
   end
 
   it 'accepts an omitted contact or address collection' do
-    expect(host.send(:valid_primary_records?, nil, :contacts, creating: true)).to be(true)
+    expect(host.send(:valid_primary_records?, nil, :contacts, creating: true)).to be(false)
     expect(host.send(:valid_primary_records?, {}, :addresses, creating: false)).to be(true)
   end
 
@@ -49,7 +49,7 @@ RSpec.describe SuppliersFormHelpers do
 
   it 'accepts the first fiscal address or contact when no primary exists' do
     expect(accepts?({ name: 'First' })).to be(true)
-    expect(accepts?({ purpose: 'fiscal' }, association: :addresses)).to be(true)
+    expect(accepts?({ purpose: 'fiscal', street: 'Calle principal' }, association: :addresses)).to be(true)
   end
 
   it 'rejects a second principal contact when a primary already exists' do

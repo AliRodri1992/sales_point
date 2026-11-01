@@ -48,7 +48,8 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
     expect(account.reload.verification_status).to eq('verified')
     expect(account.verified_at.to_date).to eq(Date.new(2026, 10, 31))
-    audit = FinancialAuditEvent.where(event: 'bank_account.verification_reviewed', subject: account).last
+    audit = FinancialAuditEvent.where(event: 'bank_account.verification_reviewed',
+                                     subject_type: 'SupplierBankAccount', subject_id: account.id).last
     expect(audit.details.stringify_keys).to include('verified_on' => '2026-10-31')
 
     patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'rejected' }

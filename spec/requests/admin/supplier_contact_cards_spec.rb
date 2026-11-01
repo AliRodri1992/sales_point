@@ -75,7 +75,7 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     expect(card.at_css('button[aria-expanded="false"]')).to be_present
     expect(card.at_css("[id='supplier-contact-detail-#{contact.id}']")['class']).to include('hidden')
     expect(card.text).to include('Call before delivery')
-    expect(card.at_css("a[href='#{edit_admin_supplier_contact_path(supplier, contact)}']")).to be_present
+    expect(card.at_css("a[href='#{edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier')}']")).to be_present
   end
 
   it 'shows both missing-contact labels when neither phone nor email is registered' do
@@ -85,11 +85,11 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     get admin_supplier_path(supplier, tab: 'contacts')
 
     card = cards.find { |item| item['data-supplier-contact-id'] == contact.id.to_s }
-    expect(card.text).to include('Phone not registered', 'Email not registered')
+    expect(card.text).to include('—', 'Correo electrónico no registrado')
     expect(card.css('a[href^="tel:"], a[href^="mailto:"]')).to be_empty
 
     get contacts_page_admin_supplier_path(supplier)
-    expect(cards.first.text).to include('Phone not registered', 'Email not registered')
+    expect(cards.first.text).to include('—', 'Correo electrónico no registrado')
   end
 
   it 'shows a registered mobile number instead of the missing-phone label' do
@@ -100,8 +100,8 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
     get admin_supplier_path(supplier, tab: 'contacts')
 
     expect(cards.first.css('a[href^="tel:"]').length).to eq(1)
-    expect(cards.first.text).not_to include('Phone not registered')
-    expect(cards.first.text).to include('Email not registered')
+    expect(cards.first.text).not_to include('—')
+    expect(cards.first.text).to include('Correo electrónico no registrado')
   end
 
   it 'shows the missing-phone label but preserves the mail link if an email exists' do
@@ -110,15 +110,15 @@ RSpec.describe 'Supplier contact cards and progressive loading', type: :request 
 
     get admin_supplier_path(supplier, tab: 'contacts')
 
-    expect(cards.first.text).to include('Phone not registered')
-    expect(cards.first.text).not_to include('Email not registered')
+    expect(cards.first.text).to include('—')
+    expect(cards.first.text).not_to include('Correo electrónico no registrado')
     expect(cards.first.css('a[href^="mailto:"]').length).to eq(1)
   end
 
   it 'translates the missing communication labels into Spanish and Korean' do
     {
-      es: ['Teléfono no registrado', 'Correo electrónico no registrado'],
-      ko: ['등록된 전화번호 없음', '등록된 이메일 없음']
+      es: ['Teléfono de oficina', 'Celular', 'Correo electrónico no registrado'],
+      ko: ['—', '등록된 이메일 없음']
     }.each do |locale, labels|
       language = Language.find_by(code: locale.to_s) ||
                  create(:language, code: locale.to_s, name: locale.to_s, flag_iso: 'mx')

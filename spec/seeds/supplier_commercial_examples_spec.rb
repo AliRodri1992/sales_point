@@ -7,6 +7,7 @@ require Rails.root.join('db/seeds/supplier_commercial_examples')
 RSpec.describe SupplierCommercialExamples do
   let!(:administrator) { create(:user, email: 'administrador@delta.com') }
   let!(:currency) { create(:currency, code: 'MXN') }
+  let!(:country) { create(:country, iso_alpha2: 'MX') }
 
   before do
     SupplierExamples.seed!

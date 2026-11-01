@@ -114,7 +114,7 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
           params: { supplier_bank_account: { holder_name: 'New Owner', verification_status: 'verified' } }
     expect(account.reload.verification_status).to eq('pending')
 
-    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'verified' }
+    patch review_admin_supplier_bank_account_path(supplier, account), params: { decision: 'verified', verified_on: Date.current.iso8601 }
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
     expect(account.reload.verification_status).to eq('verified')
     expect(account.verified_at).to be_present
@@ -220,16 +220,16 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     post admin_supplier_bank_accounts_path(supplier), params: {
       supplier_bank_account: {
         holder_name: 'Vendor Holdings', bank_name: 'Example Bank',
-        account_number: '1234567890', currency_code: 'MXN', primary: '1'
+        clabe: '032180000118359719', currency_code: 'MXN', primary: '1'
       }
     }
     account = supplier.supplier_bank_accounts.last
     expect(response).to redirect_to(admin_supplier_bank_accounts_path(supplier))
-    expect(account.masked_number).to eq('•••• 7890')
+    expect(account.masked_number).to eq('•••• 9719')
 
     get admin_supplier_bank_accounts_path(supplier)
     expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include('1234567890')
+    expect(response.body).not_to include('032180000118359719')
 
     get edit_admin_supplier_bank_account_path(supplier, account)
     expect(response).to have_http_status(:ok)
@@ -241,7 +241,7 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
 
     post reveal_admin_supplier_bank_account_path(supplier, account)
     expect(response).to have_http_status(:ok)
-    expect(response.parsed_body.fetch('account_number')).to eq('1234567890')
+    expect(response.parsed_body.fetch('clabe')).to eq('032180000118359719')
     expect(FinancialAuditEvent.where(event: 'bank_account.revealed')).to exist
   end
 
