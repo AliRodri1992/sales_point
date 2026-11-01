@@ -700,4 +700,9 @@ SeedConsole.track('Inventarios', Inventory) do
 end
 
 SeedConsole.report('Direcciones', Address)
+require_relative 'seeds/membership_catalog_examples'
+SeedConsole.track('Catálogo de membresías', MembershipPlan) do
+  MembershipCatalogExamples.seed!
+end
+
 SeedConsole.finish_run!

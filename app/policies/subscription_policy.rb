@@ -39,7 +39,8 @@ class SubscriptionPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      return scope.all if user&.admin?
+      return scope.all if user&.role?('super_admin')
+      return scope.where(organization_id: user.organization_memberships.active.select(:organization_id)) if user&.admin?
 
       scope.none
     end
