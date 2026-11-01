@@ -91,12 +91,17 @@ module Admin
       @suppliers = current_organization.suppliers.available.order(:name)
       @currencies = Currency.active.order(:code)
       @bank_accounts = if @payment.supplier_id.present? && @payment.currency_id.present?
-                         current_organization.supplier_bank_accounts.active
-                           .where(supplier_id: @payment.supplier_id, status: 'active',
-                                  currency_code: @payment.currency&.code).order(:bank_name, :id)
+                         selected_supplier_bank_accounts
                        else
                          SupplierBankAccount.none
                        end
+    end
+
+    def selected_supplier_bank_accounts
+      current_organization.supplier_bank_accounts.active
+                          .where(supplier_id: @payment.supplier_id, status: 'active',
+                                 currency_code: @payment.currency&.code)
+                          .order(:bank_name, :id)
     end
 
     def payment_params
