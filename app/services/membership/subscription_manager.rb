@@ -32,8 +32,8 @@ module Membership
 
     def resume!
       ensure_status!('paused')
-      previously_trialing = subscription.subscription_events.where(event_type: 'paused', from_status: 'trialing')
-                                       .order(created_at: :desc, id: :desc).exists?
+      events = subscription.subscription_events
+      previously_trialing = events.where(event_type: 'paused', from_status: 'trialing').exists?
       resume_trial = previously_trialing && subscription.trial_ends_at&.future?
       transition!(resume_trial ? 'trialing' : 'active')
     end

@@ -5,7 +5,9 @@ class MembershipPlan < ApplicationRecord
            dependent: :destroy
   has_many :active_membership_plan_features,
            -> { where(deleted_at: nil) },
-           class_name: 'MembershipPlanFeature'
+           class_name: 'MembershipPlanFeature',
+           dependent: :destroy,
+           inverse_of: :membership_plan
   has_many :membership_features,
            through: :membership_plan_features
 
