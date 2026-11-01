@@ -5,8 +5,6 @@ es:
       clabe_hint: "La CLABE de 18 dígitos es necesaria para SPEI; al capturarla completa, el banco se identifica automáticamente."
       select_bank: "Seleccione un banco"
       bank_hint: "Se identifica por los tres primeros dígitos de la CLABE. También puedes seleccionar el banco."
-      card_number: "Número de tarjeta (opcional)"
-      card_hint: "Solo si es necesario: se cifra y se mostrará enmascarado. Nunca captures CVV, NIP ni vencimiento."
       account_type: "Tipo de cuenta"
       select_type: "Seleccione tipo de cuenta"
       account_types:
@@ -31,5 +29,7 @@ es:
         rejected: "Rechazar verificación"
       review_confirm: "¿Confirmas este cambio de verificación bancaria?"
       verified_at: "Verificada el %{date}"
+      verification_date: "Fecha de verificación"
+      verification_date_required: "Selecciona una fecha válida para verificar la cuenta."
       blocked_reason: "Motivo de bloqueo"
       blocked_reason_hint: "Obligatorio cuando el estado es Bloqueada"
