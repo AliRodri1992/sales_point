@@ -70,7 +70,7 @@ es:
       subscriptions: Suscripciones
     organizations:
       index:
-        page_title: Organizaciones | Nexo POS
+        page_title: Organizaciones | Delta POS
         title: Organizaciones
         subtitle: Administra los negocios registrados en Delta POS.
         new: Nueva organización
@@ -108,7 +108,7 @@ es:
       updated: Organización actualizada correctamente.
     membership_plans:
       index:
-        page_title: Planes de membresía | Nexo POS
+        page_title: Planes de membresía | Delta POS
         title: Planes de membresía
         subtitle: Configura las capacidades y límites comerciales de Delta POS.
         new: Nuevo plan
@@ -146,7 +146,7 @@ es:
       updated: Plan de membresía actualizado correctamente.
     subscriptions:
       index:
-        page_title: Suscripciones | Nexo POS
+        page_title: Suscripciones | Delta POS
         title: Suscripciones
         subtitle: Administra las suscripciones de las organizaciones.
         new: Nueva suscripción
