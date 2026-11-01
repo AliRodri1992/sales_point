@@ -26,6 +26,21 @@ module Admin
       load_catalogs
     end
 
+    def bank_accounts
+      payment = new_payment
+      authorize payment, :new?
+      supplier = current_organization.suppliers.available.find_by(id: params[:supplier_id])
+      currency = Currency.active.find_by(id: params[:currency_id])
+      return render json: { accounts: [] } unless supplier && currency
+
+      accounts = supplier.supplier_bank_accounts.active
+                         .where(status: 'active', currency_code: currency.code)
+                         .order(:bank_name, :id)
+      render json: { accounts: accounts.map { |account|
+        { id: account.id, label: "#{account.bank_name.presence || account.sat_bank_code} · #{account.masked_number}" }
+      } }
+    end
+
     def create
       @payment = new_payment
       authorize @payment
@@ -73,7 +88,13 @@ module Admin
     def load_catalogs
       @suppliers = current_organization.suppliers.available.order(:name)
       @currencies = Currency.active.order(:code)
-      @bank_accounts = SupplierBankAccount.where(organization: current_organization).active.order(:bank_name, :id)
+      @bank_accounts = if @payment.supplier_id.present? && @payment.currency_id.present?
+                         current_organization.supplier_bank_accounts.active
+                           .where(supplier_id: @payment.supplier_id, status: 'active',
+                                  currency_code: @payment.currency&.code).order(:bank_name, :id)
+                       else
+                         SupplierBankAccount.none
+                       end
     end
 
     def payment_params
