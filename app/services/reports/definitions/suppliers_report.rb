@@ -23,8 +23,7 @@ module Reports
       private
 
       def field_allowed?(permission)
-        policy = SupplierPolicy.new(user, scope.klass.new(organization: organization))
-        policy.public_send(permission)
+        SupplierPolicy.new(user, Supplier.new(organization:)).public_send(permission)
       end
 
       def column_value(supplier, key)
