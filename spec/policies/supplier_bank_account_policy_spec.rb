@@ -9,7 +9,7 @@ RSpec.describe SupplierBankAccountPolicy do
   let(:account) do
     SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Example Bank', holder_name: 'Supplier',
-      account_number: '123456789012', currency_code: 'MXN'
+      clabe: '032180000118359719', currency_code: 'MXN'
     )
   end
 
@@ -49,7 +49,7 @@ RSpec.describe SupplierBankAccountPolicy do
     other_account = SupplierBankAccount.create!(
       organization: other_supplier.organization, supplier: other_supplier,
       bank_name: 'Different Bank', holder_name: 'Other Supplier',
-      account_number: '999988887777', currency_code: 'MXN'
+      clabe: '012180001234567899', currency_code: 'MXN'
     )
     allow(user).to receive(:permission?) { |code| code == 'accounts_payable.banks.manage' }
 
