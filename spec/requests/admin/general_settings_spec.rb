@@ -7,9 +7,8 @@ RSpec.describe 'Admin general settings', type: :request do
 
   before do
     create(:organization_membership, user:, organization:)
-    create(:user_role, user:, system_role: SystemRole.find_or_create_by!(code: 'administrator') do |role|
-      role.role_type = :system
-    end)
+    role = SystemRole.find_or_create_by!(code: 'administrator') { |record| record.role_type = :system }
+    create(:user_role, user:, system_role: role)
     settings
     sign_in user
   end
