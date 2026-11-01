@@ -97,6 +97,29 @@ RSpec.describe 'Supplier document library', type: :request do
     expect(supplier.supplier_documents.pluck(:description)).to all(eq('Multiple agreements'))
   end
 
+  it 'does not overwrite metadata of existing attachments when a new batch is uploaded' do
+    post admin_supplier_documents_path(supplier), params: {
+      document: { file: upload('older.pdf'), category: 'fiscal', description: 'Previous contract' }
+    }
+    previous = supplier.supplier_documents.first
+    expect(previous.description).to eq('Previous contract')
+
+    post admin_supplier_documents_path(supplier), params: {
+      document: {
+        files: [upload('new-a.pdf'), upload('new-b.pdf')],
+        category: 'contract', description: 'New contracts'
+      }
+    }
+
+    expect(response).to redirect_to(admin_supplier_path(supplier, tab: 'documents'))
+    expect(previous.reload).to have_attributes(category: 'fiscal', description: 'Previous contract')
+    expect(supplier.reload.supplier_documents.count).to eq(3)
+    newer = supplier.supplier_documents.where.not(id: previous.id)
+    expect(newer.pluck(:description)).to contain_exactly('New contracts', 'New contracts')
+    expect(newer.map { |doc| doc.attachment.blob.filename.to_s })
+      .to contain_exactly('new-a.pdf', 'new-b.pdf')
+  end
+
   it 'rejects an entire batch when any file is disallowed' do
     post admin_supplier_documents_path(supplier), params: { document: {
       files: [upload('valid.pdf'), upload('unsafe.html', 'text/html')], category: 'other'
