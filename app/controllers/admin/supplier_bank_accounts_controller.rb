@@ -60,7 +60,15 @@ module Admin
                            alert: t('admin.supplier_bank_details.status')
       end
 
-      @account.update!(verification_status: decision)
+      verification_date = verified_bank_date if decision == 'verified'
+      if decision == 'verified' && verification_date.nil?
+        return redirect_to admin_supplier_bank_accounts_path(@supplier),
+                           alert: t('admin.supplier_bank_details.verification_date_required')
+      end
+
+      attributes = { verification_status: decision }
+      attributes[:verified_at] = verification_date.in_time_zone if verification_date
+      @account.update!(attributes)
       FinancialAuditEvent.record!(organization: current_organization, actor: current_user,
                                   event: 'bank_account.verification_reviewed', subject: @account,
                                   details: { decision: decision })
@@ -93,6 +101,12 @@ module Admin
     end
 
     private
+
+    def verified_bank_date
+      Date.iso8601(params[:verified_on].to_s)
+    rescue Date::Error
+      nil
+    end
 
     def set_supplier
       @supplier = current_organization.suppliers.not_deleted.find(params[:supplier_id])
