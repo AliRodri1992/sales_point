@@ -67,9 +67,12 @@ RSpec.describe 'Membership plan administration', type: :request do
   end
 
   it 'reactivates a previously soft-deleted feature assignment' do
-    assignment = create(:membership_plan_feature, membership_plan: plan,
-                                                    membership_feature: feature,
-                                                    deleted_at: Time.current)
+    assignment = create(
+      :membership_plan_feature,
+      membership_plan: plan,
+      membership_feature: feature,
+      deleted_at: Time.current
+    )
 
     patch admin_membership_plan_path(plan),
           params: {
