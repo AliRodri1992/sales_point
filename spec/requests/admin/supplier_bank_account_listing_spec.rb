@@ -122,9 +122,9 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.text).not_to include('Vendor Finance')
     expect(document.text).to include(primary.masked_number)
     expect(document.at_css('[title="Primary"]')).to be_present
-    expect(document.text).not_to include('123_456_789_012', '9_876_543_210')
+    expect(document.text).not_to include('123456789012', '9876543210')
     expect(cards.first.css('.tabular-nums').size).to eq(1)
-    expect(response.body).not_to include('123_456_789_012', '9_876_543_210')
+    expect(response.body).not_to include('123456789012', '9876543210')
     expect(document.css('a[href^="/admin/suppliers/"][href*="/bank_accounts/"][href$="/edit"]').size).to eq(2)
     expect(document.css("form[action$='/bank_accounts/#{primary.id}']").size).to eq(1)
     expect(document.at_css('[data-bank-accounts-empty]')).to be_nil
@@ -159,7 +159,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.css('[data-supplier-bank-accounts-target="card"]').length).to eq(1)
     expect(document.css('[data-supplier-bank-accounts-target="card"]').map(&:text).join)
       .not_to include('Example Bank')
-    expect(response.body).not_to include('999_900_001_234')
+    expect(response.body).not_to include('999900001234')
   end
 
   it 'paginates and filters more than eight supplier bank accounts' do
@@ -239,7 +239,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
   end
 
   it 'renders the edit controls and keeps every encrypted input blank' do
-    account = bank_account(clabe: '012_180_001_234_567_899')
+    account = bank_account(clabe: '012180001234567899')
 
     get edit_admin_supplier_bank_account_path(supplier, account)
 
