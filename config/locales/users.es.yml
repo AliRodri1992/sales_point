@@ -13,8 +13,8 @@ es:
           destroyed: "Se eliminó el usuario '%{name}' por %{user}"
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
-      created: "Usuario creado correctamente."
-      updated: "Usuario actualizado correctamente."
+      created: "El usuario se registró y ya aparece en la lista. Revisa sus roles y permisos antes de que comience a utilizar el sistema."
+      updated: "Los datos del usuario se guardaron. Revisa su información y los accesos asignados para confirmar los cambios."
       destroyed: "Usuario eliminado correctamente."
       cannot_delete_self: "No puedes eliminar tu propia cuenta."
       confirm_delete: "¿Estás seguro de que deseas eliminar al usuario %{name}?"
@@ -123,7 +123,7 @@ es:
           language_placeholder: Selecciona un idioma
           theme: Tema
         save: Guardar cambios
-        success: Perfil actualizado correctamente
+        success: "Los cambios de tu perfil se guardaron. Vuelve a abrirlo para comprobar tus preferencias y datos personales."
         never: Nunca
         roles:
           title: Roles

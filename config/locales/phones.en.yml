@@ -1,0 +1,28 @@
+en:
+  admin:
+    phones:
+      mobile: "Mobile"
+      landline: "Office / landline"
+      other: "Other"
+      kind: "Type"
+      number: "Phone number"
+      extension: "Extension"
+      label: "Label"
+      primary: "Primary"
+      remove: "Remove phone"
+      add: "Add another phone"
+      primary_mobile: "Primary mobile phone"
+      primary_office: "Primary office phone"
+      label_optional: "Optional"
+      label_hint: "Choose a suggested label or write a custom one to identify this number."
+      label_suggestions: "Suggested labels for this phone"
+      label_custom_placeholder: "Custom label, e.g. Warehouse or Emergencies"
+      label_clear: "Clear label"
+      label_presets:
+        office: "Office"
+        personal: "Personal"
+        sales: "Sales"
+        purchasing: "Purchasing"
+        support: "Support"
+        billing: "Billing"
+        reception: "Reception"

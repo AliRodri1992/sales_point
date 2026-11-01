@@ -1,0 +1,43 @@
+en:
+  admin:
+    supplier_closure:
+      user_guide: "User guide"
+      guide_title: "System user guide"
+      guide_intro: "Learn the main Delta POS workflows. Available features depend on your permissions."
+      open_module: "Open module"
+      active_records: "Active"
+      archived_records: "Archived"
+      select_all: "Select page"
+      bulk_archive: "Archive selected"
+      bulk_restore: "Restore selected"
+      guide:
+        profile:
+          title: "Profile and preferences"
+          description: "Review your account information and adjust your preferences using the user menu."
+        suppliers:
+          title: "Supplier catalog"
+          description: "Register a supplier with one primary contact and fiscal address. Manage additional records in the supplier dossier."
+        contacts:
+          title: "Supplier contacts"
+          description: "Create, edit, set a primary contact, archive or restore supplier contacts from the supplier dossier."
+        addresses:
+          title: "Addresses and locations"
+          description: "Choose a country, enter the address, review the map suggestion, and confirm the location."
+        products:
+          title: "Products and prices"
+          description: "Associate products, register prices and compare offers. Choose a preferred supplier only when available."
+        documents:
+          title: "Document library"
+          description: "Drag and drop files, filter the library, view previews, inspect versions, and restore documents."
+        schedules:
+          title: "Schedules and exceptions"
+          description: "Plan branch visits, orders and deliveries; manage holidays and suspensions by date."
+        finances:
+          title: "Payables and finances"
+          description: "Review outstanding balances and register invoices, payments and credit notes with the required permissions."
+        purchases:
+          title: "Purchases and receiving"
+          description: "Create requisitions and purchase orders, request approvals, record receiving, and check inventory changes."
+        reports:
+          title: "Reports"
+          description: "Access reports allowed by your role and export only authorized data."

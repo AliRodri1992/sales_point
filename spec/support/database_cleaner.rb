@@ -10,7 +10,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.strategy = RSpec.current_example.metadata[:concurrent_db] ? :truncation : :transaction
   end
 
   config.before(:each, js: true) do

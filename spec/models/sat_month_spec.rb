@@ -16,7 +16,7 @@ RSpec.describe SatMonth, type: :model do
     end
 
     it 'rejects invalid code' do
-      sat_month.code = '13'
+      sat_month.code = '19'
       expect(sat_month).not_to be_valid
     end
 
@@ -26,8 +26,14 @@ RSpec.describe SatMonth, type: :model do
     end
 
     it 'rejects out of range month number' do
-      sat_month.month_number = 13
+      sat_month.month_number = 19
       expect(sat_month).not_to be_valid
+    end
+
+    it 'accepts SAT bimesters numbered 13 through 18' do
+      sat_month.assign_attributes(code: '13', month_number: 13, description: 'Enero-Febrero')
+      expect(sat_month).to be_valid
+      expect(sat_month.month_name).to eq('Enero-Febrero')
     end
 
     it 'rejects mismatched code' do
@@ -202,6 +208,16 @@ RSpec.describe SatMonth, type: :model do
       sat_month.validate
 
       expect(sat_month.code).to be_nil
+    end
+  end
+
+  describe 'optional validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_month, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
     end
   end
 end

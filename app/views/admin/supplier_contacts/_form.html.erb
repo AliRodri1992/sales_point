@@ -1,0 +1,158 @@
+<% editing = @contact.persisted? %>
+<% @contact.phones.build(kind: 'mobile', primary: true, country_code: 'MX') if !editing && @contact.phones.empty? %>
+<% input_classes = 'block min-h-11 w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+
+<%= form_with model: [:admin, @supplier, @contact], class: 'space-y-4',
+              data: { supplier_contact_form: true, loading_message: t('admin.action_loader.saving') } do |form| %>
+  <%= hidden_field_tag :return_to, 'dossier' if params[:return_to] == 'dossier' %>
+  <% if @contact.errors.any? %>
+    <div role="alert" class="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-rose-800">
+      <%= delta_icon('exclamation-circle', class: 'mt-0.5 size-5 shrink-0') %>
+      <div class="min-w-0">
+        <p class="text-sm font-bold"><%= t('admin.supplier_details.contact_form.validation_title') %></p>
+        <p class="mt-1 text-xs leading-5"><%= t('admin.supplier_details.contact_form.validation_description') %></p>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="min-w-0 overflow-visible rounded-2xl border border-slate-200 bg-white shadow-sm" data-supplier-contact-editor>
+    <section id="supplier-contact-identity" class="min-w-0 px-5 py-6 sm:px-7" aria-labelledby="supplier-contact-identity-title">
+      <div class="mb-5 flex items-start gap-3">
+        <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800">
+          <%= delta_icon('identification', class: 'size-5') %>
+        </span>
+        <div class="min-w-0">
+          <h2 id="supplier-contact-identity-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.personal_title') %></h2>
+          <p class="mt-1 text-sm leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.personal_description') %></p>
+        </div>
+      </div>
+      <div class="grid min-w-0 gap-x-5 gap-y-4 md:grid-cols-2">
+        <div class="min-w-0">
+          <%= form.label :name, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+            <%= t('admin.supplier_details.contact_fields.name') %> <span aria-hidden="true" class="text-rose-600">*</span>
+          <% end %>
+          <%= form.text_field :name, maxlength: 150, autocomplete: 'name',
+                              aria: { required: true, invalid: @contact.errors[:name].any? },
+                              class: "#{input_classes} #{form_state_classes(@contact, :name)}",
+                              placeholder: t('admin.supplier_details.contact_form.name_placeholder') %>
+          <%= error_message_for(@contact, :name) %>
+        </div>
+        <div class="min-w-0">
+          <%= form.label :position, t('admin.supplier_details.contact_fields.position'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_field :position, maxlength: 100, aria: { invalid: @contact.errors[:position].any? },
+                              class: "#{input_classes} #{form_state_classes(@contact, :position)}",
+                              placeholder: t('admin.supplier_details.contact_form.position_placeholder') %>
+          <%= error_message_for(@contact, :position) %>
+        </div>
+        <div class="min-w-0 md:col-span-2">
+          <%= form.label :email, t('admin.supplier_details.contact_fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <div class="relative">
+            <%= delta_icon('envelope', class: 'pointer-events-none absolute left-3.5 top-3.5 size-4 text-slate-400') %>
+            <%= form.email_field :email, maxlength: 150, autocomplete: 'email',
+                                 aria: { invalid: @contact.errors[:email].any? },
+                                 class: "#{input_classes} pl-10 #{form_state_classes(@contact, :email)}",
+                                 placeholder: 'contacto@proveedor.com' %>
+          </div>
+          <%= error_message_for(@contact, :email) %>
+        </div>
+      </div>
+    </section>
+
+    <section id="supplier-contact-communication" class="min-w-0 border-t border-slate-200 px-5 py-6 sm:px-7" aria-labelledby="supplier-contact-communication-title">
+      <div data-controller="nested-phones" data-supplier-contact-phones class="min-w-0 space-y-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="flex min-w-0 items-start gap-3">
+            <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800">
+              <%= delta_icon('phone', class: 'size-5') %>
+            </span>
+            <div class="min-w-0">
+              <h2 id="supplier-contact-communication-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.phones_title') %></h2>
+              <p class="mt-1 max-w-xl text-sm leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.phone_hint') %></p>
+            </div>
+          </div>
+          <button type="button" data-action="nested-phones#add"
+                  class="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+            <%= delta_icon('plus', class: 'size-4') %>
+            <%= t('admin.phones.add') %>
+          </button>
+        </div>
+        <div data-nested-phones-target="empty" role="status" class="hidden rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-6 text-center text-sm text-slate-600">
+          <%= t('admin.supplier_details.contact_form.no_phones_hint') %>
+        </div>
+        <div data-nested-phones-target="items" class="grid min-w-0 items-start gap-4 lg:grid-cols-2" aria-live="polite">
+          <%= form.fields_for :phones, @contact.phones.reject { |phone| phone.deleted_at.present? } do |phone_form| %>
+            <%= render 'admin/supplier_contacts/phone_fields', form: phone_form %>
+          <% end %>
+        </div>
+        <template data-nested-phones-target="template">
+          <%= form.fields_for :phones, Phone.new(kind: 'mobile', country_code: 'MX'), child_index: 'NEW_PHONE' do |phone_form| %>
+            <%= render 'admin/supplier_contacts/phone_fields', form: phone_form %>
+          <% end %>
+        </template>
+      </div>
+    </section>
+
+    <section id="supplier-contact-preferences" class="min-w-0 border-t border-slate-200 px-5 py-6 sm:px-7" aria-labelledby="supplier-contact-preferences-title">
+      <div class="mb-5 flex items-start gap-3">
+        <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800">
+          <%= delta_icon('adjustments-horizontal', class: 'size-5') %>
+        </span>
+        <div class="min-w-0">
+          <h2 id="supplier-contact-preferences-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_details.contact_form.settings_title') %></h2>
+          <p class="mt-1 text-sm leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.settings_description') %></p>
+        </div>
+      </div>
+      <div class="grid min-w-0 gap-6 lg:grid-cols-2">
+        <div class="min-w-0 space-y-4" data-supplier-contact-settings>
+          <label class="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3" data-supplier-contact-primary-toggle>
+            <span class="min-w-0">
+              <span class="flex items-center gap-2 text-sm font-bold text-slate-900">
+                <%= delta_icon('star', class: 'size-4 shrink-0 text-emerald-700') %>
+                <%= t('admin.supplier_details.contact_form.primary_contact_label') %>
+              </span>
+              <span class="mt-1 block text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.primary_hint') %></span>
+            </span>
+            <%= form.check_box :primary, class: 'peer sr-only' %>
+            <span aria-hidden="true" class="relative h-6 w-11 shrink-0 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500 peer-focus-visible:ring-offset-2 after:absolute after:left-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5"></span>
+          </label>
+          <%= error_message_for(@contact, :primary) %>
+          <% if editing %>
+            <label class="flex min-h-16 cursor-pointer items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3" data-supplier-contact-active-toggle>
+              <span class="min-w-0">
+                <span class="flex items-center gap-2 text-sm font-bold text-slate-900">
+                  <%= delta_icon('check-circle', class: 'size-4 shrink-0 text-emerald-700') %>
+                  <%= t('admin.supplier_details.contact_form.active_title') %>
+                </span>
+                <span class="mt-1 block text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.active_description') %></span>
+              </span>
+              <%= form.check_box :active, class: 'peer sr-only' %>
+              <span aria-hidden="true" class="relative h-6 w-11 shrink-0 rounded-full bg-slate-300 transition peer-checked:bg-emerald-600 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500 peer-focus-visible:ring-offset-2 after:absolute after:left-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5"></span>
+            </label>
+            <%= error_message_for(@contact, :active) %>
+          <% end %>
+        </div>
+
+        <div class="min-w-0">
+          <%= form.label :notes, t('admin.supplier_details.contact_form.notes_title'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_area :notes, rows: 5,
+                             class: "#{input_classes} min-h-36 resize-y #{form_state_classes(@contact, :notes)}",
+                             placeholder: t('admin.supplier_details.contact_form.notes_placeholder') %>
+          <%= error_message_for(@contact, :notes) %>
+          <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.supplier_details.contact_form.notes_hint') %></p>
+        </div>
+      </div>
+    </section>
+
+    <div data-supplier-contact-actions class="flex flex-col gap-3 border-t border-slate-200 bg-slate-50/60 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+      <p class="text-xs text-slate-500"><%= t('admin.supplier_details.contact_form.required_hint') %></p>
+      <div class="flex flex-wrap items-center gap-2 sm:justify-end">
+        <%= link_to t('admin.supplier_details.contact_form.cancel'),
+                    (editing && params[:return_to] == 'dossier' ? admin_supplier_path(@supplier, tab: 'contacts') : admin_supplier_contacts_path(@supplier)),
+                    data: { loading_message: t('admin.action_loader.returning') },
+                    class: 'inline-flex min-h-11 flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:flex-none' %>
+        <%= form.submit t(editing ? 'admin.supplier_details.contact_form.update' : 'admin.supplier_details.contact_form.create'),
+                        class: 'inline-flex min-h-11 flex-1 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-6 text-sm font-bold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:flex-none' %>
+      </div>
+    </div>
+  </div>
+<% end %>

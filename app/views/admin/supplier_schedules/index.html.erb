@@ -1,0 +1,183 @@
+<div class="space-y-6" data-loading-scope="true">
+  <header class="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-emerald-700"><%= @supplier.code %> · <%= @supplier.name %></p>
+      <h1 class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.supplier_dossier.schedules') %></h1>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <%= link_to t('admin.supplier_details.back'), admin_supplier_path(@supplier, tab: 'schedules'), class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+      <% if policy(@supplier).create_schedules? %>
+        <%= link_to t('admin.supplier_details.add'), new_admin_supplier_schedule_path(@supplier), class: 'inline-flex min-h-11 items-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700' %>
+      <% end %>
+    </div>
+  </header>
+  <div class="grid gap-3 sm:grid-cols-3">
+    <% [
+      [t('admin.supplier_ui.scheduled_count'), @schedules.size, 'calendar-days', 'bg-emerald-50 text-emerald-700'],
+      [t('admin.supplier_ui.branches_count'), @schedules.map(&:branch_id).uniq.size, 'building-office-2', 'bg-sky-50 text-sky-700'],
+      [t('admin.supplier_ui.exceptions_count'), @exceptions_total, 'exclamation-circle', 'bg-amber-50 text-amber-800']
+    ].each do |label, count, icon, tone| %>
+      <div class="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+        <span class="flex size-11 shrink-0 items-center justify-center rounded-xl <%= tone %>"><%= delta_icon(icon, class: 'size-5') %></span>
+        <div class="min-w-0">
+          <p class="text-xs font-semibold text-slate-500"><%= label %></p>
+          <p class="mt-0.5 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= count %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <% @schedules.each do |schedule| %>
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-3">
+          <h2 class="font-semibold text-slate-900"><%= schedule.branch.name %></h2>
+          <% kind_style = { 'visit' => 'bg-sky-50 text-sky-800', 'order' => 'bg-amber-50 text-amber-800', 'delivery' => 'bg-emerald-50 text-emerald-800' }.fetch(schedule.kind) %>
+          <span class="rounded-full px-3 py-1 text-xs font-semibold <%= kind_style %>"><%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %></span>
+        </div>
+        <p class="mt-3 text-sm font-medium text-slate-700"><%= t('date.day_names')[schedule.weekday] %></p>
+        <p class="mt-1 text-sm text-slate-600"><%= schedule.starts_at.strftime('%H:%M') %><% if schedule.ends_at.present? %>–<%= schedule.ends_at.strftime('%H:%M') %><% end %></p>
+        <% if schedule.notes.present? %><p class="mt-3 text-sm text-slate-500"><%= schedule.notes %></p><% end %>
+        <% if policy(@supplier).update_schedules? || policy(@supplier).destroy_schedules? %>
+          <div class="mt-5 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-4">
+            <% if policy(@supplier).update_schedules? %>
+            <%= link_to t('admin.supplier_details.edit'), edit_admin_supplier_schedule_path(@supplier, schedule), class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
+            <% end %>
+            <% if policy(@supplier).destroy_schedules? %>
+            <%= button_to t('admin.supplier_details.delete'), admin_supplier_schedule_path(@supplier, schedule), method: :delete, form: { data: { turbo_confirm: t('admin.supplier_details.confirm') } }, class: 'inline-flex min-h-10 items-center rounded-lg border border-rose-200 px-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50' %>
+            <% end %>
+          </div>
+        <% end %>
+      </article>
+    <% end %>
+  </div>
+  <% if policy(@supplier).create_schedules? %>
+    <section class="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %></h2>
+      <%= form_with url: admin_supplier_schedule_exceptions_path(@supplier),
+                    scope: :supplier_schedule_exception, class: 'grid gap-3 md:grid-cols-2' do |form| %>
+        <div>
+          <%= form.label :starts_on, t('admin.supplier_schedule_exceptions.starts_on') %>
+          <%= form.date_field :starts_on, required: true, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div>
+          <%= form.label :ends_on, t('admin.supplier_schedule_exceptions.ends_on') %>
+          <%= form.date_field :ends_on, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <div>
+          <%= form.label :reason, t('admin.supplier_schedule_exceptions.reason') %>
+          <div class="relative" data-controller="delta-select">
+            <%= form.select :reason, SupplierScheduleException::REASONS.map { |value| [t("admin.supplier_schedule_exceptions.reasons.#{value}"), value] },
+                          {}, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+          </div>
+        </div>
+        <div>
+          <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
+          <div class="relative" data-controller="delta-select">
+            <%= form.collection_select :branch_id, @branches, :id, :name,
+                                     { include_blank: t('admin.supplier_schedule_exceptions.all_branches') },
+                                     class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+          </div>
+        </div>
+        <div>
+          <%= form.label :supplier_schedule_id, t('admin.supplier_calendar.specific_schedule') %>
+          <div class="relative" data-controller="delta-select">
+            <%= form.collection_select :supplier_schedule_id, @schedules, :id,
+                                     ->(schedule) { "#{schedule.branch.name} · #{t('date.day_names')[schedule.weekday]} · #{schedule.starts_at.strftime('%H:%M')} · #{t("admin.supplier_dossier.kinds.#{schedule.kind}")}" },
+                                     { include_blank: t('admin.supplier_calendar.all_schedules') },
+                                     class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+          </div>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :notes, t('admin.supplier_schedule_exceptions.notes') %>
+          <%= form.text_area :notes, rows: 2, maxlength: 1000, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+        </div>
+        <%= form.submit t('admin.supplier_details.save'), class: 'w-fit cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
+      <% end %>
+    </section>
+  <% end %>
+  <section class="space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %>
+        (<%= @exceptions_total %>)</h2>
+      <div class="flex gap-3 text-sm font-semibold text-emerald-800">
+        <%= link_to t('admin.supplier_closure.active_records'),
+                    admin_supplier_schedules_path(@supplier), class: 'hover:underline' %>
+        <%= link_to t('admin.supplier_closure.archived_records'),
+                    admin_supplier_schedules_path(@supplier, archived: '1'), class: 'hover:underline' %>
+      </div>
+    </div>
+    <% if @exceptions.any? %>
+      <%= form_with url: bulk_update_admin_supplier_schedule_exceptions_path(@supplier),
+                    method: :patch, class: 'space-y-3', data: { controller: 'supplier-bulk-select' } do %>
+        <% if @archived_exceptions ? policy(@supplier).restore_schedules? : policy(@supplier).destroy_schedules? %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3">
+          <label class="flex items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" data-supplier-bulk-select-target="all" data-action="change->supplier-bulk-select#toggleAll" aria-label="<%= t('admin.supplier_closure.select_all') %>" class="size-5 cursor-pointer rounded border-slate-300 text-emerald-700 focus:ring-emerald-500">
+            <%= t('admin.supplier_closure.select_all') %>
+          </label>
+          <span data-supplier-bulk-select-target="count" data-template="<%= t('admin.supplier_ui.selection_count', count: '%{count}') %>" role="status" aria-live="polite" class="text-xs font-semibold text-slate-600"><%= t('admin.supplier_ui.selection_count', count: 0) %></span>
+          <%= hidden_field_tag :operation, @archived_exceptions ? 'restore' : 'archive' %>
+          <%= submit_tag t(@archived_exceptions ? 'admin.supplier_closure.bulk_restore' :
+                           'admin.supplier_closure.bulk_archive'), name: nil,
+                         data: { supplier_bulk_select_target: 'submit' }, disabled: true,
+                         class: 'min-h-10 cursor-pointer rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50' %>
+        </div>
+        <% end %>
+        <% @exceptions.each do |exception| %>
+          <label class="flex min-w-0 items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200">
+            <% if @archived_exceptions ? policy(@supplier).restore_schedules? : policy(@supplier).destroy_schedules? %>
+              <%= check_box_tag 'exception_ids[]', exception.id, false,
+                                data: { supplier_bulk_select_target: 'item', action: 'change->supplier-bulk-select#refresh' },
+                                class: 'size-5 shrink-0 cursor-pointer rounded border-slate-300 text-emerald-700' %>
+            <% end %>
+            <span class="min-w-0 break-words text-sm text-slate-700">
+              <span class="font-semibold text-slate-900"><%= t("admin.supplier_schedule_exceptions.reasons.#{exception.reason}") %></span>
+              · <%= l(exception.starts_on) %>
+              <% if exception.ends_on.present? %>–<%= l(exception.ends_on) %><% end %>
+              · <%= exception.branch&.name || t('admin.supplier_schedule_exceptions.all_branches') %>
+              <% if exception.notes.present? %>· <%= exception.notes %><% end %>
+              <% if policy(@supplier).update_schedules? && !@archived_exceptions %>
+                <%= link_to t('admin.supplier_calendar.edit'),
+                            edit_admin_supplier_schedule_exception_path(@supplier, exception),
+                            class: 'ml-3 text-emerald-700 underline' %>
+              <% end %>
+            </span>
+          </label>
+        <% end %>
+      <% end %>
+    <% end %>
+    <nav class="flex items-center justify-between text-sm text-slate-600" aria-label="<%= t('admin.supplier_ui.exception_pages') %>">
+      <span><%= @exceptions_page %> / <%= @exceptions_pages %></span>
+      <div class="flex gap-2">
+        <% if @exceptions_page > 1 %>
+          <%= link_to t('admin.supplier_ui.previous'), admin_supplier_schedules_path(@supplier, archived: params[:archived],
+                                                         page: @exceptions_page - 1),
+                      class: 'rounded-lg border border-slate-200 px-4 py-2' %>
+        <% end %>
+        <% if @exceptions_page < @exceptions_pages %>
+          <%= link_to t('admin.supplier_ui.next'), admin_supplier_schedules_path(@supplier, archived: params[:archived],
+                                                         page: @exceptions_page + 1),
+                      class: 'rounded-lg border border-slate-200 px-4 py-2' %>
+        <% end %>
+      </div>
+    </nav>
+  </section>
+  <% if @schedules.empty? %>
+    <div class="flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center"><span class="flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><%= delta_icon('calendar-days', class: 'size-7') %></span><p class="mt-4 font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_ui.empty_schedules_title') %></p><p class="mt-2 max-w-md text-sm leading-6 text-slate-500"><%= t('admin.supplier_ui.empty_schedules_description') %></p></div>
+  <% end %>
+  <% deleted_schedules = @supplier.supplier_schedules.with_deleted.where.not(deleted_at: nil).includes(:branch) %>
+  <% if deleted_schedules.any? %>
+    <section class="space-y-3">
+      <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_details.deleted_records') %></h2>
+      <% deleted_schedules.each do |schedule| %>
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-sm text-slate-600"><%= schedule.branch.name %> · <%= t("admin.supplier_dossier.kinds.#{schedule.kind}") %></p>
+          <% if policy(@supplier).restore_schedules? %>
+            <%= button_to t('admin.supplier_details.restore'), restore_admin_supplier_schedule_path(@supplier, schedule),
+                          method: :patch, class: 'rounded-lg border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-700' %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

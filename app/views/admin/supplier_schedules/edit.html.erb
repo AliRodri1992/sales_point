@@ -1,0 +1,6 @@
+<div class="mx-auto max-w-6xl space-y-5" data-supplier-management-form-page>
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.supplier_dossier.schedules'), subtitle: t('admin.supplier_calendar.scheduled'),
+             icon: 'calendar-days', back_path: admin_supplier_schedules_path(@supplier) %>
+  <%= render 'form' %>
+</div>

@@ -7,7 +7,7 @@ class CreateOrganizationMemberships < ActiveRecord::Migration[8.1]
       t.references :user, null: false, foreign_key: true
       t.string :status, null: false, default: 'active', limit: 20
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :organization_memberships, :deleted_at

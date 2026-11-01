@@ -1,0 +1,71 @@
+<div data-supplier-nested-item class="<%= local_assigns.fetch(:embedded, false) ? '' : 'rounded-2xl border border-slate-200 bg-white p-5 shadow-sm' %>">
+  <%= form.hidden_field :id if form.object.persisted? %>
+  <%= form.hidden_field :_destroy, value: '0', data: { supplier_nested_destroy: true } %>
+  <% if local_assigns.fetch(:allow_remove, true) %>
+  <div class="mb-4 flex justify-end"><button type="button" data-action="supplier-nested#remove" class="text-sm font-semibold text-rose-600"><%= t('admin.supplier_details.delete') %></button></div>
+<% end %>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <% %i[name position email].each do |field| %>
+      <div>
+        <%= form.label field, t("admin.supplier_details.contact_fields.#{field}"), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.text_field field, placeholder: t("admin.supplier_placeholders.contact.#{field}"), class: "block min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(form.object, field)}" %>
+        <%= error_message_for(form.object, field) %>
+      </div>
+    <% end %>
+    <% # Only the two primary contact numbers are edited from the supplier dossier. %>
+    <% %w[landline mobile].each_with_index do |kind, index| %>
+      <% phone = form.object.phones.find { |entry| entry.kind == kind && entry.primary? && entry.deleted_at.nil? && !entry.marked_for_destruction? } %>
+      <% phone ||= form.object.phones.build(kind: kind, primary: true, country_code: 'MX') %>
+      <div>
+        <%= form.fields_for :phones, phone, child_index: index do |phone_form| %>
+          <%= phone_form.hidden_field :id if phone_form.object.persisted? %>
+          <%= phone_form.hidden_field :kind, value: kind %>
+          <%= phone_form.hidden_field :primary, value: '1' %>
+          <%= phone_form.hidden_field :country_code, value: phone_form.object.country_code.presence || 'MX' %>
+          <div class="grid min-w-0 gap-3 <%= 'sm:grid-cols-[minmax(0,1fr)_8rem]' if kind == 'landline' %>">
+            <div class="min-w-0">
+          <%= phone_form.label :number, t(kind == 'mobile' ? 'admin.phones.primary_mobile' : 'admin.phones.primary_office'),
+                               class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <div data-controller="international-phone" class="[&_.iti]:w-full [&_.iti__tel-input]:w-full">
+            <%= phone_form.telephone_field :number, data: { international_phone_target: 'input' },
+                   class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 text-sm',
+                   placeholder: '55 1234 5678' %>
+          </div>
+          <%= error_message_for(phone_form.object, :number) %>
+            </div>
+            <% if kind == 'landline' %>
+              <div class="min-w-0">
+                <%= phone_form.label :extension, t('admin.phones.extension'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+                <%= phone_form.text_field :extension, maxlength: 10, inputmode: 'numeric', autocomplete: 'off',
+                     placeholder: '123', class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 text-sm' %>
+                <%= error_message_for(phone_form.object, :extension) %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <% if local_assigns.fetch(:primary_locked, false) %>
+      <%= form.hidden_field :primary, value: '1' %>
+    <% else %>
+    <div>
+      <label class="inline-flex cursor-pointer items-center gap-3">
+        <%= form.check_box :primary, class: 'peer sr-only' %>
+        <span aria-hidden="true" class="relative inline-flex h-6 w-11 shrink-0 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-600 after:absolute after:left-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5"></span>
+        <span class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_details.primary') %></span>
+      </label>
+      <%= error_message_for(form.object, :primary) %>
+    </div>
+    <% end %>
+    <% if form.object.persisted? %>
+    <div>
+      <label class="inline-flex cursor-pointer items-center gap-3">
+        <%= form.check_box :active, class: 'peer sr-only' %>
+        <span aria-hidden="true" class="relative inline-flex h-6 w-11 shrink-0 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-600 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-emerald-600 after:absolute after:left-0.5 after:top-0.5 after:size-5 after:rounded-full after:bg-white after:shadow-sm after:transition-transform peer-checked:after:translate-x-5"></span>
+        <span class="text-sm font-semibold text-slate-700"><%= t('admin.supplier_details.contact_fields.active') %></span>
+      </label>
+      <%= error_message_for(form.object, :active) %>
+    </div>
+    <% end %>
+  </div>
+</div>

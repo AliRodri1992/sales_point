@@ -1,0 +1,16 @@
+<% mobile = record.phones.find { |phone| phone.kind == 'mobile' && phone.primary? && phone.deleted_at.nil? } %>
+<% mobile ||= record.phones.build(kind: 'mobile', primary: true) %>
+<%= form.fields_for :phones, [mobile] do |phone_form| %>
+  <div>
+    <%= phone_form.hidden_field :id if phone_form.object.persisted? %>
+    <%= phone_form.hidden_field :kind, value: 'mobile' %>
+    <%= phone_form.hidden_field :primary, value: '1' %>
+    <%= phone_form.label :number, t('admin.phones.primary_mobile'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+    <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
+      <%= phone_form.telephone_field :number, data: { international_phone_target: 'input' },
+                                     class: 'input-field min-h-11 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm',
+                                     placeholder: '55 1234 5678' %>
+    </div>
+    <%= error_message_for(phone_form.object, :number) %>
+  </div>
+<% end %>

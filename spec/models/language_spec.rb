@@ -65,14 +65,18 @@ RSpec.describe Language, type: :model do
   describe 'flag URLs' do
     let(:language) { build(:language, flag_iso: 'mx') }
 
-    it 'generates the default FlagCDN URL' do
-      expect(language.flag_url).to eq('https://flagcdn.com/64x48/mx.png')
+    it 'returns a fingerprinted local flag asset instead of an external URL' do
+      expect(language.flag_url).to include('/assets/flags/mx')
+      expect(language.flag_url).not_to include('flagcdn.com')
     end
 
-    it 'generates a FlagCDN srcset' do
-      expect(language.flag_srcset).to eq(
-        'https://flagcdn.com/80x60/mx.png 2x, https://flagcdn.com/96x72/mx.png 3x'
-      )
+    it 'returns a density-independent local SVG source set' do
+      expect(language.flag_srcset).to eq("#{language.flag_url} 1x")
+    end
+
+    it 'uses a neutral SVG for an unknown country code' do
+      language.flag_iso = 'zz'
+      expect(language.flag_url).to include('/assets/flags/unknown')
     end
   end
 

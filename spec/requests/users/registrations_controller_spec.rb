@@ -3,10 +3,9 @@
 RSpec.describe Users::RegistrationsController, type: :request do
   let!(:administrator) { create(:system_role, :system, code: 'administrator') }
   let!(:permission) { create(:permission, status: :active) }
+  let!(:base_currency) { create(:currency, code: 'MXN') }
 
-  before do
-    create(:system_role_permission, system_role: administrator, permission:)
-  end
+  # Administrative permissions are provisioned automatically when created.
 
   let(:registration_params) do
     {
@@ -28,12 +27,22 @@ RSpec.describe Users::RegistrationsController, type: :request do
     }
   end
 
+  it 'renders registration wizard icons using native Delta SVGs' do
+    get new_user_registration_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('[data-registration-wizard-target="setupCard"] svg').size).to eq(2)
+    expect(document.css('[data-registration-wizard-target="dropdown"] svg')).not_to be_empty
+  end
+
   it 'creates the initial organization and signs the user in' do
     post user_registration_path, params: registration_params
 
     expect(response).to redirect_to(admin_dashboard_path)
     expect(User.find_by(email: 'owner@example.com').employee.organization).to be_present
     expect(Organization.count).to eq(1)
+    expect(administrator.permissions).to include(permission)
     expect(OrganizationMembership.count).to eq(1)
     expect(Branch.count).to eq(1)
     expect(Terminal.count).to eq(1)

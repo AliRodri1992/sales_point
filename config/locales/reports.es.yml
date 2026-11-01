@@ -1,0 +1,18 @@
+es:
+  reports:
+    suppliers:
+      title: "Listado de proveedores"
+      columns:
+        code: "Código"
+        name: "Proveedor"
+        rfc: "RFC"
+        email: "Correo electrónico"
+        phone: "Teléfono"
+        classification: "Clasificación"
+        credit_days: "Días de crédito"
+        credit_limit: "Límite de crédito"
+        status: "Estado"
+    export:
+      button: "Exportar"
+      excel: "Exportar Excel"
+      pdf: "Exportar PDF"

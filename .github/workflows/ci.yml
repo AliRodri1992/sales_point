@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -9,6 +10,10 @@ on:
       - staging
       - test
       - feature/register
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -74,7 +79,7 @@ jobs:
             rubocop-${{ runner.os }}-
 
       - name: Lint Ruby code
-        run: bin/rubocop -f github
+        run: bin/rubocop -f github -f simple
 
   test:
     name: RSpec
@@ -114,6 +119,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y libpq-dev libvips
 
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -137,25 +149,50 @@ jobs:
       - name: Prepare test database
         run: bin/rails db:prepare
 
+      - name: Export generated schema for synchronization
+        run: |
+          echo "__SCHEMA_START__"
+          base64 -w0 db/schema.rb
+          echo
+          echo "__SCHEMA_END__"
+
+      - name: Verify edit-only Uppy uploader and Active Storage integration
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: bundle exec rspec spec/requests/admin/supplier_edit_uppy_spec.rb spec/features/supplier_edit_uppy_browser_spec.rb
+
+      - name: Run focused supplier branch-coverage regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/models/supplier_bank_account_spec.rb spec/services/suppliers/dossier_bank_accounts_page_spec.rb spec/requests/admin/supplier_postal_codes_spec.rb spec/requests/admin/supplier_documents_spec.rb spec/models/supplier_invoice_receipt_spec.rb spec/requests/admin/organization_contacts_spec.rb
+
+      - name: Run focused branded dropdown browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/features/supplier_dropdown_hover_spec.rb spec/features/supplier_calendar_browser_spec.rb spec/features/supplier_address_browser_spec.rb spec/features/supplier_row_actions_dropdown_spec.rb
+
+      - name: Run focused sidebar and supplier validation browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec spec/features/admin_sidebar_navigation_spec.rb spec/features/admin_sidebar_interactions_spec.rb spec/features/supplier_creation_summary_spec.rb
+
       - name: Run RSpec
         env:
           COVERAGE: true
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: bundle exec rspec
 
       - name: Report coverage gaps
         if: always()
-        run: |
-          ruby -rjson -e '
-            result = JSON.parse(File.read("coverage/.resultset.json"))
-            coverage = result.values.first.fetch("coverage")
-            coverage.each do |file, data|
-              values = data.fetch("lines")
-              total = values.compact.length
-              covered = values.compact.count { |value| value.to_i.positive? }
-              percentage = total.zero? ? 100.0 : covered * 100.0 / total
-              puts "%6.2f%% %4d/%-4d %s" % [percentage, covered, total, file] if percentage < 90
-            end
-          '
+        run: ruby script/report_coverage_gaps.rb
 
   i18n:
     name: Rails I18n and YAML audit
@@ -180,8 +217,67 @@ jobs:
         run: python -m pip install --disable-pip-version-check PyYAML
 
       - name: Audit locale YAML files
-        run: python script/audit_i18n.py
+        run: I18N_STRICT_PARITY=1 python script/audit_i18n.py
+
+      - name: Audit clarity of user-facing messages (advisory)
+        run: python script/audit_ux_messages.py
 
       - name: Validate Rails I18n loading
         run: |
           bin/rails runner 'I18n.available_locales.each { |locale| I18n.backend.send(:init_translations); I18n.backend.send(:translations)[locale] }'
+
+
+  fresh_database:
+    name: Fresh migrations and seed data
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: development
+      POSTGRES_DB: sale_point_fresh_ci
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_fresh_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_fresh_ci"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+
+      - name: Recreate the database and load all seeds
+        run: bin/rails db:drop db:create db:migrate db:seed
+
+      - name: Assert legacy phone columns are absent
+        run: |
+          bin/rails runner '
+            tables = %w[suppliers contacts clients branches employees]
+            invalid = tables.flat_map do |table|
+              (ActiveRecord::Base.connection.columns(table).map(&:name) & %w[phone mobile_phone])
+                .map { |column| "#{table}.#{column}" }
+            end
+            abort("Legacy telephone columns still exist: #{invalid.join(", ")}") if invalid.any?
+            abort("Polymorphic phones table missing") unless ActiveRecord::Base.connection.data_source_exists?("phones")
+            puts "Fresh schema contains only polymorphic phone records for managed entities."
+          '

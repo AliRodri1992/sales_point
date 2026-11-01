@@ -1,0 +1,37 @@
+require 'rails_helper'
+
+RSpec.describe 'admin/suppliers/index', type: :view do
+  let(:admin_role) { create(:system_role, code: 'administrator', role_type: :system) }
+  let(:user) { create(:user) }
+
+  before do
+    create(:user_role, user:, system_role: admin_role)
+    allow(view).to receive(:current_user).and_return(user)
+    organization = create(:organization)
+    create(:organization_membership, user:, organization:)
+    view.define_singleton_method(:current_organization) { organization }
+    allow(view).to receive(:turbo_stream_from).and_return('')
+    params = ActionController::Parameters.new(controller: 'admin/suppliers', action: 'index')
+    allow(view).to receive(:params).and_return(params)
+
+    # Include Pundit in view context
+    view.extend(Pundit::Authorization)
+    allow(view).to receive(:pundit_user).and_return(user)
+
+    assign(:suppliers, Supplier.none)
+    assign(:total_count, 0)
+    assign(:total_pages, 1)
+    assign(:supplier_stats, { total: 0, active: 0, inactive: 0, credit: 0 })
+    assign(:supplier_regimes, SatFiscalRegime.none)
+    assign(:supplier_currencies, Currency.active.order(:code))
+  end
+
+  it 'renders an accessible empty state' do
+    render
+
+    expect(rendered).to include('No suppliers yet')
+    expect(rendered).to include('Identity', 'Tax information', 'Commercial terms', 'Dates')
+    expect(rendered.scan('<fieldset').size).to eq(4)
+    expect(rendered).to include('Add your first supplier')
+  end
+end

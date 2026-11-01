@@ -8,7 +8,7 @@ class CreateAddresses < ActiveRecord::Migration[8.1]
       t.string :neighborhood, limit: 100
       t.string :city, limit: 100
       t.string :state, limit: 100
-      t.string :country, null: false, limit: 100
+      t.references :country, null: false, foreign_key: true
       t.string :postal_code, null: false, limit: 10
 
       t.decimal :latitude, precision: 10, scale: 6
@@ -20,10 +20,13 @@ class CreateAddresses < ActiveRecord::Migration[8.1]
       t.timestamp :deleted_at
     end
 
+    add_index :addresses, %i[addressable_type addressable_id],
+              where: 'deleted_at IS NULL',
+              name: 'idx_addresses_owner_active'
     add_index :addresses, :deleted_at, where: "deleted_at IS NULL"
     add_index :addresses, :postal_code
     add_index :addresses, :geocoding_status
-    add_index :addresses, [:postal_code, :country, :geocoding_status]
+    add_index :addresses, [:postal_code, :country_id, :geocoding_status]
 
     add_check_constraint :addresses,
                          "latitude BETWEEN -90 AND 90 OR latitude IS NULL",

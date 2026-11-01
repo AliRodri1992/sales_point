@@ -1,0 +1,116 @@
+# frozen_string_literal: true
+
+module Admin
+  class PurchaseQuotationsController < ApplicationController
+    include PurchasesAccess
+    include TableListingPagination
+
+    before_action :set_quotation, only: %i[show edit update submit accept reject]
+
+    def index
+      authorize new_record, :index?
+      scope = policy_scope(current_organization.purchase_quotations).includes(:supplier).order(created_at: :desc)
+      @quotations = paginate_table_listing(scope, table_key: 'purchase_quotations')
+    end
+
+    def show
+      authorize @quotation
+    end
+
+    def new
+      @quotation = quotation_from_request || new_record
+      authorize @quotation
+      3.times { @quotation.purchase_quotation_items.build } if @quotation.purchase_quotation_items.empty?
+      load_purchase_catalogs
+    end
+
+    def edit
+      authorize @quotation
+      raise ActiveRecord::RecordNotFound unless @quotation.draft?
+
+      load_purchase_catalogs
+    end
+
+    def create
+      @quotation = new_record
+      authorize @quotation
+      @quotation.assign_attributes(quotation_params)
+      if @quotation.save
+        redirect_to admin_purchase_quotation_path(@quotation)
+      else
+        load_purchase_catalogs
+        render :new, status: :unprocessable_content
+      end
+    end
+
+    def update
+      authorize @quotation
+      raise ActiveRecord::RecordNotFound unless @quotation.draft?
+
+      if @quotation.update(quotation_params)
+        redirect_to admin_purchase_quotation_path(@quotation)
+      else
+        load_purchase_catalogs
+        render :edit, status: :unprocessable_content
+      end
+    end
+
+    def submit
+      change_status!(:submitted, from: :draft, permission: :update?)
+    end
+
+    def accept
+      raise ArgumentError, 'Quotation has expired' unless @quotation.valid_offer?
+
+      change_status!(:accepted, from: :submitted, permission: :accept?)
+    rescue ArgumentError => e
+      reject_purchase(e, admin_purchase_quotation_path(@quotation))
+    end
+
+    def reject
+      change_status!(:rejected, from: :submitted, permission: :reject?)
+    end
+
+    private
+
+    def new_record
+      current_organization.purchase_quotations.new
+    end
+
+    def quotation_from_request
+      return if params[:purchase_request_id].blank?
+
+      request = current_organization.purchase_requests.find(params[:purchase_request_id])
+      Purchases::BuildQuotationFromRequest.call(request:)
+    end
+
+    def set_quotation
+      @quotation = policy_scope(current_organization.purchase_quotations).find(params[:id])
+    end
+
+    # Nested fields_for uses numeric-indexed hashes; preserve those attributes.
+    def quotation_params
+      # rubocop:disable-next Rails/StrongParametersExpect
+      params.require(:purchase_quotation).permit(
+        :supplier_id, :purchase_request_id, :currency_id, :valid_until, :notes,
+        purchase_quotation_items_attributes: %i[
+          id product_id supplier_product_id quantity units_per_package
+          unit_price discount_percent lead_time_days
+        ]
+      )
+    end
+
+    def change_status!(status, from:, permission:)
+      authorize @quotation, permission
+      @quotation.with_lock do
+        raise ArgumentError, 'Invalid quotation status transition' unless @quotation.status == from.to_s
+
+        @quotation.update!(status:)
+      end
+      Purchases::Notify.call(record: @quotation, action: "quotation_#{status}", user: current_user)
+      redirect_to admin_purchase_quotation_path(@quotation)
+    rescue ArgumentError => e
+      reject_purchase(e, admin_purchase_quotation_path(@quotation))
+    end
+  end
+end

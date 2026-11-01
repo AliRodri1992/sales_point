@@ -1,8 +1,40 @@
 ---
 en:
   activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            rfc:
+              person_type_mismatch: "does not match the selected person type"
+              invalid_date: "contains an invalid date"
+        contact:
+          attributes:
+            primary:
+              taken: "has already been assigned to another active contact."
+        address:
+          attributes:
+            country:
+              required: "can't be blank"
+            base:
+              invalid_location_confirmation: "The confirmed location no longer matches this address. Search again and confirm the new location."
+            primary:
+              taken: "has already been assigned to another address of this type."
     attributes:
+      supplier:
+        code: "Code"
+        name: "Supplier name"
+        rfc: "Tax ID (RFC)"
+        email: "Email address"
+        phone: "Phone"
+        postal_code: "Postal code"
+        person_type: "Person type"
+      contact:
+        primary: "A primary contact"
+        name: "Full name"
+        mobile_phone: "Mobile phone"
       address:
+        primary: "A primary address"
         city: City
         country: Country
         exterior_number: Exterior number

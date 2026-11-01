@@ -7,20 +7,151 @@ RSpec.describe Address, type: :model do
     it { is_expected.to belong_to(:addressable) }
   end
 
+  describe 'country-specific address validation' do
+    it 'requires all Mexican address fields and a five-digit postal code' do
+      country = build(:country, iso_alpha2: 'MX')
+      attributes = { country:, exterior_number: nil, neighborhood: nil,
+                     state: nil, postal_code: 'ABC12' }
+      address = build(:address, **attributes)
+      expect(address).not_to be_valid
+      %i[exterior_number neighborhood state postal_code].each do |field|
+        expect(address.errors[field]).to be_present
+      end
+    end
+
+    it 'removes a stale postal code for a supplier moving to a no-postal-code country' do
+      supplier = create(:supplier)
+      address = create(:address, addressable: supplier, country: create(:country, iso_alpha2: 'MX'))
+      address.update!(country: create(:country, iso_alpha2: 'AE'))
+
+      expect(address.reload.postal_code).to be_nil
+      expect(address).to be_valid
+    end
+
+    it 'clears Mexican-only fields for supplier addresses when changing country' do
+      supplier = create(:supplier)
+      address = create(:address, addressable: supplier, country: create(:country, iso_alpha2: 'MX'))
+      address.update!(country: create(:country, iso_alpha2: 'US'), postal_code: '90210-1234')
+
+      expect(address.reload.neighborhood).to be_nil
+      expect(address.exterior_number).to be_present
+      expect(address).to be_valid
+    end
+
+    it 'supports US ZIP+4 and optional neighborhood and exterior number' do
+      country = build(:country, iso_alpha2: 'US')
+      attributes = { country:, exterior_number: nil, neighborhood: nil,
+                     postal_code: '90210-1234' }
+      address = build(:address, **attributes)
+      expect(address).to be_valid
+    end
+
+    it 'supports Canadian alphanumeric and Korean postal formats' do
+      address = build(:address, country: build(:country, iso_alpha2: 'CA'), postal_code: 'K1A 0B1')
+      expect(address).to be_valid
+      address.country.iso_alpha2 = 'KR'
+      address.postal_code = '04524'
+      expect(address).to be_valid
+    end
+
+    it 'allows countries without postal codes to omit the postal code and region' do
+      country = build(:country, iso_alpha2: 'AE')
+      attributes = { country:, postal_code: nil, neighborhood: nil,
+                     state: nil, exterior_number: nil }
+      address = build(:address, **attributes)
+      expect(address).to be_valid
+    end
+
+    it 'preserves manually entered fields when changing between country rules' do
+      attributes = { country: build(:country, iso_alpha2: 'US'), postal_code: '90210-1234',
+                     neighborhood: 'Original area', exterior_number: '100' }
+      address = build(:address, **attributes)
+      expect(address).to be_valid
+
+      address.country = build(:country, iso_alpha2: 'CA')
+      address.postal_code = 'K1A 0B1'
+      expect(address).to be_valid
+      expect(address.neighborhood).to eq('Original area')
+      expect(address.exterior_number).to eq('100')
+
+      address.country = build(:country, iso_alpha2: 'MX')
+      address.postal_code = '54800'
+      expect(address).to be_valid
+    end
+
+    it 'rejects invalid postal formats for countries with known rules' do
+      address = build(:address, country: build(:country, iso_alpha2: 'US'), postal_code: 'HELLO')
+      expect(address).not_to be_valid
+      expect(address.errors[:postal_code]).to be_present
+    end
+  end
+
+  describe 'restoring an archived primary' do
+    it 'refuses restoration when another active address is primary for its purpose' do
+      supplier = create(:supplier)
+      archived = create(:address, :fiscal, :primary, :deleted, addressable: supplier)
+      create(:address, :fiscal, :primary, addressable: supplier)
+
+      expect(archived.restore_safely).to be false
+      expect(archived.reload.deleted_at).to be_present
+      expect(archived.errors[:primary]).to be_present
+    end
+
+    it 'restores a primary when there is no active conflict' do
+      supplier = create(:supplier)
+      archived = create(:address, :delivery, :primary, :deleted, addressable: supplier)
+
+      expect(archived.restore_safely).to be true
+      expect(archived.reload).to be_primary
+      expect(archived.deleted_at).to be_nil
+    end
+  end
+
+  describe 'location freshness' do
+    it 'clears stale coordinates and confirmation when any location component changes' do
+      address = create(:address)
+      address.update!(latitude: 19.4, longitude: -99.1,
+                      location_confirmed_at: Time.current, geocoding_status: :success)
+      address.update!(street: 'Different Street')
+      expect(address).to have_attributes(latitude: nil, longitude: nil,
+                                         location_confirmed_at: nil, geocoding_status: 'pending')
+    end
+
+    it 'preserves confirmed coordinates when explicitly confirming the new address' do
+      address = create(:address)
+      attributes = { street: 'A different street', latitude: 19.5, longitude: -99.2,
+                     location_confirmed_at: Time.current, geocoding_status: :success }
+      address.update!(**attributes)
+      expect(address.reload.location_confirmed?).to be true
+      expect(address.latitude.to_f).to eq(19.5)
+    end
+
+    it 'provides stable fingerprints for geocoding jobs' do
+      address = build(:address)
+      previous = address.geocoding_fingerprint
+      address.street = 'Another Street'
+      expect(address.geocoding_fingerprint).not_to eq(previous)
+    end
+  end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:street) }
     it { is_expected.to validate_length_of(:street).is_at_least(2).is_at_most(150) }
     it { is_expected.to validate_presence_of(:exterior_number) }
-    it { is_expected.to validate_length_of(:exterior_number).is_at_least(1).is_at_most(20) }
+    it 'rejects an exterior number longer than the database limit' do
+      address = build(:address, exterior_number: 'A' * 21)
+      expect(address).not_to be_valid
+      expect(address.errors[:exterior_number]).to be_present
+    end
     it { is_expected.to validate_length_of(:interior_number).is_at_most(20).allow_blank }
+    it { is_expected.to validate_length_of(:reference_notes).is_at_most(200).allow_blank }
     it { is_expected.to validate_presence_of(:neighborhood) }
     it { is_expected.to validate_length_of(:neighborhood).is_at_least(2).is_at_most(100) }
     it { is_expected.to validate_presence_of(:city) }
     it { is_expected.to validate_length_of(:city).is_at_least(2).is_at_most(100) }
     it { is_expected.to validate_presence_of(:state) }
     it { is_expected.to validate_length_of(:state).is_at_least(2).is_at_most(100) }
-    it { is_expected.to validate_presence_of(:country) }
-    it { is_expected.to validate_length_of(:country).is_at_least(2).is_at_most(100) }
+    it { is_expected.to belong_to(:country) }
     it { is_expected.to validate_presence_of(:postal_code) }
     it { is_expected.to allow_value('54800').for(:postal_code) }
     it { is_expected.not_to allow_value('5480').for(:postal_code) }
@@ -132,7 +263,7 @@ RSpec.describe Address, type: :model do
           :address,
           street: 'Av. Reforma',
           city: 'CDMX',
-          country: 'MX',
+          country: build(:country),
           postal_code: '06000'
         )
 
@@ -158,5 +289,38 @@ RSpec.describe Address, type: :model do
         expect(build(:address, geocoding_status: :pending).needs_geocoding?).to be true
       end
     end
+  end
+
+  describe 'archived address restoration failures' do
+    it 'keeps the archived timestamp when the database rejects a concurrent restoration' do
+      supplier = create(:supplier)
+      archived = create(:address, :delivery, :primary, :deleted, addressable: supplier)
+      original_deleted_at = archived.deleted_at
+      allow(archived).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      expect(archived.restore_safely).to be(false)
+      expect(archived.deleted_at).to eq(original_deleted_at)
+      expect(archived.errors[:primary]).to be_present
+    end
+
+    it 'does not alter a primary address that has never been archived' do
+      supplier = create(:supplier)
+      address = create(:address, :delivery, :primary, addressable: supplier)
+
+      expect(address.restore_safely).to be(false)
+      expect(address.reload.deleted_at).to be_nil
+    end
+  end
+
+  it 'does not discard client address fields when supplier-only normalization runs' do
+    client = create(:client)
+    country = create(:country, iso_alpha2: 'US')
+    details = { postal_code: '90210', neighborhood: 'Kept neighborhood' }
+    address = build(:address, addressable: client, country:, **details)
+
+    address.send(:clear_unused_supplier_fields)
+
+    expect(address.neighborhood).to eq('Kept neighborhood')
+    expect(address.postal_code).to eq('90210')
   end
 end

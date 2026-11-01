@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
+  has_many :phones, as: :phoneable, dependent: :restrict_with_exception
+  accepts_nested_attributes_for :phones,
+                                allow_destroy: true,
+                                reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
   belongs_to :sat_fiscal_regime, optional: true
 
   validates :code,
@@ -15,8 +19,6 @@ class Client < ApplicationRecord
             length: { maximum: 150 },
             format: { with: URI::MailTo::EMAIL_REGEXP },
             allow_blank: true
-
-  validates :phone, length: { maximum: 30 }, allow_blank: true
 
   validates :rfc,
             length: { in: 12..13 },
@@ -47,7 +49,6 @@ class Client < ApplicationRecord
   end
 
   def normalize_contact_info
-    self.phone = phone.to_s.strip.presence
     self.postal_code = postal_code.to_s.strip.presence
   end
 

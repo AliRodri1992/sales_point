@@ -100,6 +100,154 @@ def load_locale(path: pathlib.Path):
     return locale, parsed
 
 
+
+def deep_merge(target, source):
+    """Mirror Rails locale merging without discarding unrelated scopes."""
+    for key, value in source.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            deep_merge(target[key], value)
+        else:
+            target[key] = value
+
+
+def leaf_map(value, prefix=()):
+    """Keep arrays as values: empty lists must not silently count as translated topics."""
+    if isinstance(value, dict):
+        result = {}
+        for key, child in value.items():
+            result.update(leaf_map(child, prefix + (str(key),)))
+        return result
+    return {".".join(prefix): value}
+
+
+
+def compare_manual_structure(base_sections, other_sections, locale):
+    """Validate every manual topic, task and step against the Spanish reference."""
+    issues = []
+    for section_name, base_section in base_sections.items():
+        translated_section = other_sections.get(section_name, {})
+        if not isinstance(translated_section, dict):
+            issues.append(f"{locale}: MANUAL_SECTION_MISSING {section_name}")
+            continue
+        base_topics = base_section.get("topics", [])
+        translated_topics = translated_section.get("topics", [])
+        if not isinstance(translated_topics, list):
+            issues.append(f"{locale}: MANUAL_TOPICS_NOT_LIST {section_name}")
+            continue
+        if len(base_topics) != len(translated_topics):
+            issues.append(
+                f"{locale}: MANUAL_TOPIC_COUNT {section_name}: "
+                f"{len(translated_topics)}/{len(base_topics)}"
+            )
+        for index, base_topic in enumerate(base_topics):
+            if index >= len(translated_topics):
+                break
+            topic = translated_topics[index]
+            if not isinstance(topic, dict):
+                issues.append(f"{locale}: MANUAL_TOPIC_NOT_MAPPING {section_name}[{index}]")
+                continue
+            prefix = f"{section_name}[{index}]"
+            if topic.get("id") != base_topic.get("id"):
+                issues.append(f"{locale}: MANUAL_TOPIC_ID {prefix}: {topic.get('id')!r}")
+            for field in ("title", "description", "before", "note"):
+                if field in base_topic and not str(topic.get(field, "")).strip():
+                    issues.append(f"{locale}: MANUAL_MISSING_FIELD {prefix}.{field}")
+            base_tasks = base_topic.get("tasks", [])
+            translated_tasks = topic.get("tasks", [])
+            if not isinstance(translated_tasks, list):
+                issues.append(f"{locale}: MANUAL_TASKS_NOT_LIST {prefix}")
+                continue
+            if len(base_tasks) != len(translated_tasks):
+                issues.append(
+                    f"{locale}: MANUAL_TASK_COUNT {prefix}: "
+                    f"{len(translated_tasks)}/{len(base_tasks)}"
+                )
+            for task_index, base_task in enumerate(base_tasks):
+                if task_index >= len(translated_tasks):
+                    break
+                task = translated_tasks[task_index]
+                task_prefix = f"{prefix}.tasks[{task_index}]"
+                if not isinstance(task, dict):
+                    issues.append(f"{locale}: MANUAL_TASK_NOT_MAPPING {task_prefix}")
+                    continue
+                for field in ("title", "result"):
+                    if field in base_task and not str(task.get(field, "")).strip():
+                        issues.append(f"{locale}: MANUAL_MISSING_FIELD {task_prefix}.{field}")
+                steps = task.get("steps", [])
+                base_steps = base_task.get("steps", [])
+                if not isinstance(steps, list):
+                    issues.append(f"{locale}: MANUAL_STEPS_NOT_LIST {task_prefix}")
+                    continue
+                if len(steps) != len(base_steps):
+                    issues.append(
+                        f"{locale}: MANUAL_STEP_COUNT {task_prefix}: "
+                        f"{len(steps)}/{len(base_steps)}"
+                    )
+                for step_index, step in enumerate(steps):
+                    if not isinstance(step, str) or not step.strip():
+                        issues.append(
+                            f"{locale}: MANUAL_EMPTY_STEP {task_prefix}.steps[{step_index}]"
+                        )
+    return issues
+
+def audit_full_locale_parity(parsed):
+    """Report full file-catalog coverage; opt-in strict mode gates outstanding debt."""
+    import os
+
+    merged = {locale: {} for locale in REQUIRED_LOCALES}
+    for locale, data in parsed.values():
+        if locale in merged:
+            deep_merge(merged[locale], data[locale])
+
+    leaves = {locale: leaf_map(tree) for locale, tree in merged.items()}
+    reference = leaves["es"]
+    issues = []
+    for locale in ("en", "ko"):
+        current = leaves[locale]
+        for key, value in sorted(reference.items()):
+            if key not in current:
+                issues.append(f"{locale}: MISSING {key}")
+                continue
+            translated = current[key]
+            if isinstance(value, str) and isinstance(translated, str):
+                base_vars = sorted(INTERPOLATION_RE.findall(value))
+                target_vars = sorted(INTERPOLATION_RE.findall(translated))
+                if base_vars != target_vars:
+                    issues.append(f"{locale}: INTERPOLATION {key}: {base_vars} != {target_vars}")
+            if isinstance(translated, str) and not translated.strip() and str(value).strip():
+                issues.append(f"{locale}: EMPTY {key}")
+            if isinstance(value, list) and isinstance(translated, list):
+                if len(translated) < len(value):
+                    issues.append(f"{locale}: SHORT_LIST {key}: {len(translated)}/{len(value)}")
+        for key in sorted(set(current) - set(reference)):
+            issues.append(f"{locale}: EXTRA {key}")
+
+    for locale in REQUIRED_LOCALES:
+        sections = merged[locale].get("admin", {}).get("user_manual", {}).get("sections", {})
+        if isinstance(sections, dict):
+            for section, content in sections.items():
+                if isinstance(content, dict) and not content.get("topics"):
+                    issues.append(f"{locale}: EMPTY_MANUAL {section}")
+
+    reference_sections = merged["es"].get("admin", {}).get("user_manual", {}).get("sections", {})
+    for locale in ("en", "ko"):
+        translated_sections = merged[locale].get("admin", {}).get("user_manual", {}).get("sections", {})
+        issues.extend(compare_manual_structure(reference_sections, translated_sections, locale))
+
+    print("FULL_LOCALE_PARITY")
+    for locale in REQUIRED_LOCALES:
+        print(f"  {locale}: {len(leaves[locale])} leaf paths")
+    print(f"  findings: {len(issues)}")
+    for issue in issues[:200]:
+        print(f"  - {issue}")
+    if len(issues) > 200:
+        print(f"  ... {len(issues) - 200} additional findings omitted")
+    if issues and os.environ.get("I18N_STRICT_PARITY") == "1":
+        return 1
+    if issues:
+        print("WARN: translation coverage is incomplete; use I18N_STRICT_PARITY=1 to fail CI.")
+    return 0
+
 def main() -> int:
     paths = sorted(LOCALES_DIR.rglob("*.yml")) + sorted(LOCALES_DIR.rglob("*.yaml"))
     if not paths:
@@ -186,8 +334,9 @@ def main() -> int:
                     f"en={variables}, {locale}={registration_interpolations[locale].get(path)}"
                 )
 
+    parity_result = audit_full_locale_parity(parsed)
     print(f"PASS: audited {len(paths)} locale files with strict duplicate-key detection.")
-    return 0
+    return parity_result
 
 
 if __name__ == "__main__":

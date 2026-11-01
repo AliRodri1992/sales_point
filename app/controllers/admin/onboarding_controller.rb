@@ -45,7 +45,9 @@ module Admin
     private
 
     def set_organization
-      @organization = current_user.organizations.active_records.first
+      membership = current_user.organization_memberships.active.joins(:organization)
+                               .merge(Organization.active_records).first
+      @organization = membership&.organization
       raise ActiveRecord::RecordNotFound unless @organization
     end
 
@@ -76,6 +78,7 @@ module Admin
     end
 
     def load_onboarding
+      @currencies = Currency.active.order(:code)
       @progress_percentage = Onboarding::ProgressCalculator.call(@organization)[:percentage]
       @step = normalized_step
       @branch = active_branch

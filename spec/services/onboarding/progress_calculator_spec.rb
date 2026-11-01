@@ -20,6 +20,19 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
     expect(progress[:percentage]).to eq(67)
   end
 
+  it 'handles an organization without settings, branches, or migration records' do
+    organization = create(:organization)
+
+    progress = described_class.call(organization)
+    sections = progress[:sections].index_by { |section| section[:key] }
+
+    expect(sections[:company]).to include(percentage: 50, status: 'in_progress')
+    expect(sections[:branches]).to include(percentage: 0, status: 'not_started')
+    expect(sections[:payments]).to include(percentage: 0, status: 'not_started')
+    expect(sections[:migration]).to include(percentage: 0, status: 'not_applicable')
+    expect(progress[:percentage]).to be_between(0, 100)
+  end
+
   it 'reports partial configuration as in progress' do
     organization = create(:organization)
     create(:branch, organization:, without_address: true)
@@ -63,5 +76,28 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
       section[:status] == 'not_applicable'
     end).to all(include(status: 'completed'))
     expect(progress[:percentage]).to eq(100)
+  end
+
+  it 'treats an inactive branch as incomplete until an active branch exists' do
+    organization = create(:organization)
+    create(:branch, organization:, status: false)
+
+    progress = described_class.call(organization)
+    branch_section = progress[:sections].find { |section| section[:key] == :branches }
+    terminal_section = progress[:sections].find { |section| section[:key] == :terminals }
+
+    expect(branch_section).to include(percentage: 0, status: 'not_started')
+    expect(terminal_section).to include(percentage: 0, status: 'not_started')
+  end
+
+  it 'calculates migration progress when migration data is present' do
+    organization = create(:organization)
+    migration = create(:organization_migration, organization:, volume: :small, priority: :catalog)
+
+    progress = described_class.call(organization)
+    migration_section = progress[:sections].find { |section| section[:key] == :migration }
+
+    expect(migration_section).to include(percentage: 100, status: 'completed')
+    expect(migration).to be_persisted
   end
 end

@@ -1,0 +1,9 @@
+<% if record.errors.any? %>
+  <div role="alert" class="mb-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+    <p class="font-semibold"><%= t('admin.accounts_payable.validation_errors') %></p>
+    <ul class="mt-2 list-disc space-y-1 pl-5">
+      <% record.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+    </ul>
+  </div>
+<% end %>
+

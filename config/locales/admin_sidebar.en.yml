@@ -36,6 +36,10 @@ en:
         users: Users
         taxes: Taxes
         role_admin: Administrator
+        role_user: User
+        navigation: Sidebar navigation
+        close_navigation: Close navigation
+        coming_soon: Coming soon
         onboarding:
           title: Initial setup
           progress: Initial setup at %{percentage}%

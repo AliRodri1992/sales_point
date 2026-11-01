@@ -58,6 +58,11 @@ class DemoRequest < ApplicationRecord
   validates :demo_outcome, inclusion: { in: DEMO_OUTCOMES }, allow_blank: true
   validates :next_action, length: { maximum: 120 }, allow_blank: true
 
+  # A paranoid-deleted request must not trigger previously queued notifications.
+  def available_for_notification?
+    deleted_at.nil? && !destroyed?
+  end
+
   def follow_up_due?
     next_follow_up_at.present? && next_follow_up_at <= Time.current
   end

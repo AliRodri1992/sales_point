@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'apexcharts'
 gem 'aws-sdk-s3'
 gem 'bootsnap', require: false
+gem 'caxlsx', '~> 4.0'
 gem 'chartkick'
 gem 'cocoon'
 gem 'cssbundling-rails'
@@ -28,6 +29,8 @@ gem 'kamal', require: false
 gem 'kredis'
 gem 'money'
 gem 'name_of_person'
+# Keep the transitive SSH client above the patched 7.3.6 security baseline.
+gem 'net-ssh', '~> 7.3', '>= 7.3.6', require: false
 gem 'noticed'
 gem 'paper_trail'
 gem 'paranoia'
@@ -39,10 +42,11 @@ gem 'pundit'
 gem 'rack-attack'
 gem 'rails', '~> 8.1.3'
 gem 'rails-i18n'
-gem 'rails_icons'
 gem 'redis'
 gem 'roo'
 gem 'roo-xls'
+# Active Storage uses the system libvips shared library to analyze images.
+gem 'ruby-vips', '~> 2.3', require: false
 gem 'secure_headers'
 gem 'sidekiq'
 gem 'solid_cable'

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module TerminalHelper
+  include CountryFlagsHelper
+
   def terminal_themes
     Theme.all
   end
@@ -34,8 +36,6 @@ module TerminalHelper
   end
 
   def language_flag_path(language)
-    image_path("flags/#{language.flag_iso}.svg")
-  rescue Propshaft::MissingAssetError
-    language.flag_url
+    country_flag_asset_path(language.flag_iso) || image_path('flags/unknown.svg')
   end
 end

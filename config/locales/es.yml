@@ -1,8 +1,40 @@
 ---
 es:
   activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            rfc:
+              person_type_mismatch: "El RFC no corresponde al tipo de persona seleccionado"
+              invalid_date: "El RFC contiene una fecha inexistente"
+        contact:
+          attributes:
+            primary:
+              taken: "ya está asignado a otro contacto activo."
+        address:
+          attributes:
+            country:
+              required: "no puede estar vacío"
+            base:
+              invalid_location_confirmation: "La ubicación confirmada ya no corresponde al domicilio actual. Vuelve a buscarla y confírmala."
+            primary:
+              taken: "ya está asignada a otra dirección de este tipo."
     attributes:
+      supplier:
+        code: "Código"
+        name: "Nombre del proveedor"
+        rfc: "RFC"
+        email: "Correo electrónico"
+        phone: "Teléfono"
+        postal_code: "Código postal"
+        person_type: "Tipo de persona"
+      contact:
+        primary: "El contacto principal"
+        name: "Nombre completo"
+        mobile_phone: "Celular"
       address:
+        primary: "La dirección principal"
         city: Ciudad
         country: País
         exterior_number: Número exterior
@@ -401,6 +433,7 @@ es:
         title: Detalles del idioma
       statuses:
         active: Activo
+        inactive: Inactivo
     onboarding:
       active: Activa
       back: Atrás

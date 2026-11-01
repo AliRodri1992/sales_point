@@ -2,11 +2,12 @@
 
 module DemoRequests
   class Filters
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
 
-    def initialize(params, current_user)
+    def initialize(params, current_user, per_page: TablePagePreference::DEFAULT)
       @params = params
       @current_user = current_user
+      @per_page = per_page
     end
 
     def call
@@ -30,8 +31,7 @@ module DemoRequests
       }
     end
 
-    def pagination_info
-      scope = policy_scope
+    def pagination_info(scope = policy_scope)
       total_count = scope.count
       per_page = per_page_param
       total_pages = [(total_count / per_page.to_f).ceil, 1].max
@@ -56,6 +56,7 @@ module DemoRequests
       scope = scope.where(status: @params[:status]) if valid_status?
       scope = apply_follow_up_filters(scope)
       scope = apply_outcome_filters(scope)
+      scope = apply_demo_outcome_filters(scope)
       scope = apply_search_filter(scope)
       apply_pagination(scope)
     end
@@ -66,6 +67,7 @@ module DemoRequests
 
     def apply_follow_up_filters(scope)
       return scope if @params[:follow_up].blank?
+      return scope unless %w[overdue upcoming].include?(@params[:follow_up])
 
       scope = scope.where.not(next_follow_up_at: nil)
                    .where.not(status: %w[converted cancelled])
@@ -109,10 +111,8 @@ module DemoRequests
     end
 
     def apply_pagination(scope)
-      pagination = pagination_info
+      pagination = pagination_info(scope)
 
-      scope = scope.where(contact_outcome: @params[:contact_outcome]) if @params[:contact_outcome].present?
-      scope = scope.where(demo_outcome: @params[:demo_outcome]) if @params[:demo_outcome].present?
       scope = apply_ordering(scope)
       scope.limit(pagination[:per_page]).offset((pagination[:current_page] - 1) * pagination[:per_page])
     end
@@ -124,8 +124,7 @@ module DemoRequests
     end
 
     def per_page_param
-      value = @params[:per_page].to_i
-      PER_PAGE_OPTIONS.include?(value) ? value : 10
+      @per_page
     end
 
     def overdue_follow_ups_count(scope)

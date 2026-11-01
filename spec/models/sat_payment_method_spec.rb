@@ -116,6 +116,12 @@ RSpec.describe SatPaymentMethod, type: :model do
       it 'searches by description' do
         expect(described_class.search('Transferencia')).to include(record)
       end
+
+      it 'returns all records when the search term is blank' do
+        another_record = create(:sat_payment_method, code: '99', description: 'Efectivo')
+
+        expect(described_class.search('')).to contain_exactly(record, another_record)
+      end
     end
   end
 
@@ -194,6 +200,16 @@ RSpec.describe SatPaymentMethod, type: :model do
       record.validate
 
       expect(record.description).to eq('Test')
+    end
+  end
+
+  describe 'optional validity boundaries' do
+    it 'accepts an open validity range when dates are missing' do
+      record = build(:sat_payment_method, valid_from: nil, valid_to: nil)
+
+      record.valid?
+
+      expect(record.errors[:valid_to]).to be_empty
     end
   end
 end

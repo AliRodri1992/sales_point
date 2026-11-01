@@ -1,0 +1,6 @@
+ko:
+  admin:
+    supplier_dossier:
+      address_cards:
+        no_results_title: "검색된 주소가 없습니다"
+        no_results_description: "다른 도로명, 동네 또는 우편번호로 검색하거나 필터를 변경하세요."

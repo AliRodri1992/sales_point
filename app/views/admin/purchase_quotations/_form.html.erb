@@ -1,0 +1,39 @@
+<%= form_with model: [:admin, @quotation], class: 'space-y-5' do |form| %>
+  <% if @quotation.errors.any? %><p class="rounded-xl bg-rose-50 p-3 text-sm text-rose-700"><%= @quotation.errors.full_messages.to_sentence %></p><% end %>
+  <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 md:grid-cols-2">
+    <div><%= form.label :supplier_id, t('admin.purchases.supplier'), class: 'mb-2 block text-sm' %>
+      <%= form.collection_select :supplier_id, @suppliers, :id, :name, { include_blank: true },
+                                 class: 'w-full rounded-xl border border-slate-200 p-3', required: true %></div>
+    <div><%= form.label :currency_id, t('admin.purchases.currency'), class: 'mb-2 block text-sm' %>
+      <%= form.collection_select :currency_id, @currencies, :id, :code, { include_blank: true },
+                                 class: 'w-full rounded-xl border border-slate-200 p-3', required: true %></div>
+    <div><%= form.label :purchase_request_id, t('admin.purchases.request'), class: 'mb-2 block text-sm' %>
+      <%= form.collection_select :purchase_request_id, current_organization.purchase_requests.approved,
+                                 :id, :code, { include_blank: true },
+                                 class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+    <div><%= form.label :valid_until, t('admin.purchases.valid_until'), class: 'mb-2 block text-sm' %>
+      <%= form.date_field :valid_until, class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+    <div class="md:col-span-2"><%= form.label :notes, t('admin.purchases.notes'), class: 'mb-2 block text-sm' %>
+      <%= form.text_area :notes, rows: 2, class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+  </div>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6">
+    <h2 class="mb-4 font-semibold"><%= t('admin.purchases.items') %></h2>
+    <%= form.fields_for :purchase_quotation_items do |item| %>
+      <div class="mb-4 grid gap-3 border-b border-slate-100 pb-4 md:grid-cols-3">
+        <%= item.hidden_field :id if item.object.persisted? %>
+        <% %i[product_id supplier_product_id].each do |key| %>
+          <div><%= item.label key, t("admin.purchases.#{key == :product_id ? 'product' : 'supplier_product'}"), class: 'mb-1 block text-sm' %>
+            <%= item.collection_select key, key == :product_id ? @products : @offers,
+                                       :id, key == :product_id ? :name : :presentation_name,
+                                       { include_blank: true }, class: 'w-full rounded-xl border border-slate-200 p-2' %></div>
+        <% end %>
+        <% %i[quantity units_per_package unit_price discount_percent lead_time_days].each do |key| %>
+          <div><%= item.label key, t("admin.purchases.#{key}"), class: 'mb-1 block text-sm' %>
+            <%= item.number_field key, min: 0, step: key == :lead_time_days ? 1 : 0.001,
+                                  class: 'w-full rounded-xl border border-slate-200 p-2' %></div>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+  <%= form.submit t('admin.purchases.save'), class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
+<% end %>

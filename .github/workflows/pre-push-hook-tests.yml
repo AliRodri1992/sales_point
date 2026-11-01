@@ -1,0 +1,30 @@
+name: Hook configuration
+
+on:
+  push:
+    branches-ignore:
+      - feature/suppliers
+  pull_request:
+
+concurrency:
+  group: hooks-${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  hook-configuration:
+    name: Verify fast local hooks and CI test enforcement
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify local hooks and full CI coverage
+        run: ruby test/overcommit_configuration_test.rb
+
+      - name: Preserve isolated RSpec runner regression tests
+        run: bash test/overcommit_rspec_test.sh
+
+      - name: Validate Sidekiq image repair flow without Docker daemon
+        run: bash test/repair_sidekiq_vips_test.sh

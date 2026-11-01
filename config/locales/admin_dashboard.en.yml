@@ -12,7 +12,7 @@ en:
         text: "Your dashboard changes were saved successfully."
       save_error:
         title: "Save failed"
-        text: "Your dashboard changes could not be saved."
+        text: "The dashboard layout was not saved. Try again without leaving this screen; if the problem continues, reload the page and check your connection."
       kpi_grid:
         sales_today: "Sales today"
         transactions: "Transactions"

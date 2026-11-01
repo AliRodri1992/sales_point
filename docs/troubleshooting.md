@@ -233,6 +233,37 @@ docker-compose exec redis redis-cli ping
 bundle exec sidekiq -C config/sidekiq.yml
 ```
 
+### Correo de demo con ActiveJob::DeserializationError
+
+Si Sidekiq registra `Couldn't find DemoRequest with 'id'`, un correo
+quedó encolado antes de que el registro desapareciera (por ejemplo,
+después de eliminarlo o reiniciar la base de datos). Rails guarda el
+registro como GlobalID en los argumentos del correo.
+
+`DemoRequestMailer` descarta únicamente las entregas cuyo GlobalID
+apunta a un registro definitivamente inexistente. Las fallas temporales
+de conexión a PostgreSQL siguen fallando para permitir su investigación y
+reintento. Esta protección también se aplica a correos ya encolados que
+todavía usan `ActionMailer::MailDeliveryJob`.
+
+```bash
+# Confirmar si el registro mencionado realmente existe.
+docker compose -f docker-compose.dev.yml exec web \
+  bin/rails runner 'puts DemoRequest.exists?(11)'
+
+# Cargar el código actualizado en el proceso Sidekiq.
+docker compose -f docker-compose.dev.yml restart sidekiq
+
+# Consultar las colas y los trabajos fallidos sin borrarlos.
+docker compose -f docker-compose.dev.yml exec web \
+  bin/rails runner 'puts Sidekiq::RetrySet.new.size'
+```
+
+No vacíes Redis ni toda la cola de Sidekiq: podría eliminar trabajos
+válidos. Un trabajo anterior marcado como fallido puede permanecer en
+RetrySet hasta su próximo intento; identifica primero el JID y evalúa
+su eliminación individual solo si es imposible que vuelva a ser válido.
+
 ### Jobs se quedan en retry
 
 ```bash

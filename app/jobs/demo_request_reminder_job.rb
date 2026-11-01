@@ -18,7 +18,8 @@ class DemoRequestReminderJob < ApplicationJob
   private
 
   def valid_reminder?(demo_request, scheduled_at_timestamp)
-    demo_request&.scheduled? &&
+    demo_request&.available_for_notification? &&
+      demo_request.scheduled? &&
       demo_request.scheduled_at.present? &&
       demo_request.scheduled_at.to_i == scheduled_at_timestamp.to_i
   end

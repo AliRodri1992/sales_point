@@ -3,6 +3,7 @@
 RSpec.describe RegistrationService, type: :service do
   let(:role) { create(:system_role, :system, code: 'administrator') }
   let!(:permissions) { create_list(:permission, 3, status: :active) }
+  let!(:base_currency) { create(:currency, code: 'MXN') }
   let(:user) do
     build(:user, email: 'owner@example.com', password: 'password123', password_confirmation: 'password123')
   end
@@ -14,15 +15,23 @@ RSpec.describe RegistrationService, type: :service do
       company_name: 'Delta Retail',
       tax_id: 'ABC123456789',
       business_sector: 'grocery',
-      currency: 'MXN',
       terminals: '2',
       payment_integration: 'cash',
+      currency: 'MXN',
       terms: '1'
     }
   end
 
   before do
     allow(SystemRole).to receive(:available).and_return(SystemRole.where(id: role.id))
+  end
+
+  describe RegistrationService::Result do
+    it 'is unsuccessful when the user is nil' do
+      result = described_class.new(user: nil, organization: nil, errors: nil)
+
+      expect(result).not_to be_success
+    end
   end
 
   it 'creates the initial organization atomically' do
@@ -32,6 +41,7 @@ RSpec.describe RegistrationService, type: :service do
     expect(user.reload.employee.organization.name).to eq('Delta Retail')
     expect(user.organizations).to contain_exactly(user.employee.organization)
     expect(user.system_roles).to contain_exactly(role)
+    expect(user.employee.organization.organization_settings.first.base_currency).to eq(base_currency)
     expect(user.employee.organization.branches.count).to eq(1)
     expect(user.employee.organization.branches.first.terminals.count).to eq(2)
   end

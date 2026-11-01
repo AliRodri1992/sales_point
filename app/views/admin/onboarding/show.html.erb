@@ -16,7 +16,7 @@
                     method: :patch,
                     data: { turbo_confirm: t("admin.onboarding.reset_confirm") },
                     class: "inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-white/20" do %>
-        <%= icon("arrow-path", class: "size-4") %>
+        <%= delta_icon("arrow-path", class: "size-4") %>
         <%= t("admin.onboarding.reset_button") %>
       <% end %>
     </div>
@@ -59,18 +59,18 @@
           <div>
             <%= form.label "organization[business_sector]", t("admin.onboarding.fields.business_sector"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
             <%= form.select "organization[business_sector]",
-              options_for_select(%w[grocery fashion restaurant pharmacy].map { |key| [t("registration.step_four.sectors.#{key}"), key] }, @organization.business_sector),
+              options_for_select(Organization::ONBOARDING_BUSINESS_SECTORS.map { |key| [t("admin.onboarding.business_sectors.#{key}"), key] }, @organization.business_sector),
               { include_blank: t("admin.onboarding.fields.select_business_sector") },
-              class: "w-full rounded-xl border #{@settings&.errors&.[]( :currency).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+              class: "w-full rounded-xl border #{@organization.errors[:business_sector].any? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
             <%= render "admin/onboarding/field_errors", object: @organization, attribute: :business_sector %>
           </div>
           <div>
-            <%= form.label "organization[currency]", t("admin.onboarding.fields.currency"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-            <%= form.select "organization[currency]",
-              options_for_select(%w[MXN USD JPY KRW].map { |key| [t("registration.step_four.currencies.#{key.downcase}"), key] }, @settings&.currency),
+            <%= form.label "organization[base_currency_id]", t("admin.onboarding.fields.currency"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
+            <%= form.select "organization[base_currency_id]",
+              options_from_collection_for_select(@currencies, :id, :code, @settings&.base_currency_id),
               { include_blank: t("admin.onboarding.fields.select_currency") },
-              class: "w-full rounded-xl border #{@settings&.errors&.[](:timezone).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
-            <%= render "admin/onboarding/field_errors", object: @settings, attribute: :currency %>
+              class: "w-full rounded-xl border #{@settings&.errors&.[](:base_currency).present? ? 'border-red-400' : 'border-slate-200'} bg-white px-4 py-3 text-sm" %>
+            <%= render "admin/onboarding/field_errors", object: @settings, attribute: :base_currency %>
           </div>
           <div>
             <%= form.label "organization[timezone]", t("admin.onboarding.fields.timezone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
@@ -98,20 +98,33 @@
               <%= render "admin/onboarding/field_errors", object: @branch, attribute: :name %>
             </div>
               <div>
-              <%= branch_fields.label :phone, t("admin.onboarding.fields.phone"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
-              <%= branch_fields.telephone_field :phone, class: "w-full rounded-xl border #{@branch.errors[:phone].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
-              <%= render "admin/onboarding/field_errors", object: @branch, attribute: :phone %>
-            </div>
+                <%= render 'admin/shared/primary_mobile_field', form: branch_fields, record: @branch %>
+              </div>
             </div>
             <%= branch_fields.fields_for :address do |address_fields| %>
               <div class="grid gap-5 pt-2 md:grid-cols-2">
-                <% %i[street exterior_number interior_number neighborhood city state country postal_code].each do |field| %>
+                <% %i[street exterior_number interior_number neighborhood city state postal_code].each do |field| %>
                   <div>
                     <%= address_fields.label field, t("admin.onboarding.fields.#{field}"), class: "mb-2 block text-sm font-semibold text-slate-700" %>
                     <%= address_fields.text_field field, class: "w-full rounded-xl border #{address_fields.object.errors[field].any? ? 'border-red-400' : 'border-slate-200'} px-4 py-3 text-sm" %>
                     <%= render "admin/onboarding/field_errors", object: address_fields.object, attribute: field %>
                   </div>
                 <% end %>
+                <div>
+                  <%= address_fields.label :country_id, t('admin.onboarding.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+                  <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
+                    <%= address_fields.select :country_id,
+                      options_for_select(
+                        Country.active.ordered.map do |country|
+                          [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }]
+                        end,
+                        address_fields.object.country_id
+                      ),
+                      { include_blank: t('admin.supplier_placeholders.country') },
+                      class: "block min-h-11 w-full rounded-xl border #{address_fields.object.errors[:country].any? ? 'border-red-400' : 'border-slate-200'} bg-slate-50/60 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" %>
+                  </div>
+                  <%= render 'admin/onboarding/field_errors', object: address_fields.object, attribute: :country %>
+                </div>
               </div>
             <% end %>
           <% end %>
@@ -210,8 +223,8 @@
                 <% when :company %>
                   <div class="grid gap-4 sm:grid-cols-2">
                     <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.company_name"), value: @organization.name %>
-                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.business_sector"), value: t("registration.step_four.sectors.#{@organization.business_sector}", default: @organization.business_sector) %>
-                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.currency"), value: @settings&.currency %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.business_sector"), value: t("admin.onboarding.business_sectors.#{@organization.business_sector}", default: @organization.business_sector) %>
+                    <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.currency"), value: @settings&.base_currency&.code %>
                     <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.timezone"), value: @settings&.timezone %>
                   </div>
                 <% when :fiscal %>
@@ -220,14 +233,14 @@
                   <% if @branch %>
                     <div class="grid gap-4 sm:grid-cols-2">
                       <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.branch_name"), value: @branch.name %>
-                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.phone"), value: @branch.phone %>
+                      <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.phone"), value: @branch.phones.active.find_by(kind: "mobile", primary: true)&.number %>
                       <% if @branch.address %>
                         <% address = @branch.address %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.street"), value: [address.street, address.exterior_number, address.interior_number].compact_blank.join(" ") %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.neighborhood"), value: address.neighborhood %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.city"), value: address.city %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.state"), value: address.state %>
-                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.country"), value: address.country %>
+                        <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.country"), value: address.country&.name %>
                         <%= render "admin/onboarding/detail", label: t("admin.onboarding.fields.postal_code"), value: address.postal_code %>
                       <% end %>
                     </div>

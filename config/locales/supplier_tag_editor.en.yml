@@ -1,0 +1,12 @@
+en:
+  admin:
+    suppliers:
+      tag_editor:
+        add: "Add"
+        input_placeholder: "Type a tag"
+        help: "Press Enter or comma to add. Backspace removes the last tag."
+        assigned: "Assigned tags"
+        suggested: "Recently used tags"
+        remove: "Remove tag %{tag}"
+        duplicate: "This tag has already been added."
+        limit: "You can add up to 20 tags."

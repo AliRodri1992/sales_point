@@ -1,0 +1,24 @@
+<div class="rounded-2xl border bg-white p-6">
+  <h1 class="text-xl font-bold"><%= t('admin.supplier_details.contacts') %> — <%= @organization.name %></h1>
+  <%= link_to t('admin.supplier_details.add'), new_admin_organization_contact_path, class: 'my-4 inline-block rounded-lg bg-emerald-600 px-4 py-2 text-white' %>
+  <ul class="divide-y">
+    <% @contacts.each do |contact| %>
+      <li class="flex items-center justify-between gap-3 py-3">
+        <div><strong><%= contact.name %></strong><p class="text-sm text-slate-500"><%= [contact.position, contact.email, contact.phones.active.find_by(kind: 'mobile', primary: true)&.number].reject(&:blank?).join(' · ') %></p></div>
+        <div class="flex gap-3">
+          <%= link_to t('admin.supplier_details.edit'), edit_admin_organization_contact_path(contact) %>
+          <%= button_to t('admin.supplier_details.delete'), admin_organization_contact_path(contact), method: :delete, data: { turbo_confirm: t('admin.supplier_details.confirm') }, class: 'text-rose-600' %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <h2 class="mt-6 text-lg font-semibold"><%= t('admin.supplier_details.deleted_records') %></h2>
+  <ul class="divide-y">
+    <% @organization.contacts.where.not(deleted_at: nil).order(updated_at: :desc).each do |contact| %>
+      <li class="flex items-center justify-between gap-3 py-3">
+        <span><%= contact.name %></span>
+        <%= button_to t('admin.supplier_details.restore'), restore_admin_organization_contact_path(contact), method: :patch, class: 'text-emerald-700' %>
+      </li>
+    <% end %>
+  </ul>
+</div>

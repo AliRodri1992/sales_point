@@ -2,19 +2,36 @@ const TOOLTIP_ID = "adminSidebarTooltip"
 const FLYOUT_ID = "adminSidebarFlyout"
 
 let activeFlyoutTarget = null
+let activeTooltipTarget = null
+let flyoutPinned = false
+let suppressFlyoutOnFocusRestore = false
+let flyoutCloseTimer = null
+const cancelFlyoutClose = () => {
+    if (flyoutCloseTimer !== null) clearTimeout(flyoutCloseTimer)
+    flyoutCloseTimer = null
+}
 
 const sidebarTooltip = () => document.getElementById(TOOLTIP_ID)
 const sidebarFlyout = () => document.getElementById(FLYOUT_ID)
 
 const isCollapsedSidebar = () =>
+    window.innerWidth >= 1024 &&
     document.getElementById("adminSidebar")?.classList.contains("sidebar-collapsed")
 
 const removeSidebarTooltip = () => {
+    if (activeTooltipTarget?.getAttribute("aria-describedby") === TOOLTIP_ID) {
+        activeTooltipTarget.removeAttribute("aria-describedby")
+    }
+    activeTooltipTarget = null
     sidebarTooltip()?.remove()
 }
 
 const removeSidebarFlyout = () => {
+    cancelFlyoutClose()
     sidebarFlyout()?.remove()
+    flyoutPinned = false
+    activeFlyoutTarget?.setAttribute("aria-expanded", "false")
+    activeFlyoutTarget?.removeAttribute("aria-controls")
     activeFlyoutTarget = null
 }
 
@@ -25,15 +42,17 @@ const positionSidebarTooltip = (target) => {
     const rect = target.getBoundingClientRect()
     const gap = 12
 
-    tooltip.style.left = `${rect.right + gap}px`
-    tooltip.style.top = `${rect.top + rect.height / 2}px`
+    tooltip.style.left = `${Math.max(4, Math.min(rect.right + gap, window.innerWidth - tooltip.offsetWidth - 4))}px`
+    tooltip.style.top = `${Math.max(tooltip.offsetHeight / 2 + 4, Math.min(rect.top + rect.height / 2, window.innerHeight - tooltip.offsetHeight / 2 - 4))}px`
 }
 
 const showSidebarTooltip = (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    if (!sidebar?.classList.contains("sidebar-collapsed")) return
+    if (!isCollapsedSidebar() || !sidebar) return
 
-    const target = event.target.closest("[data-tooltip]")
+    const target = event.target instanceof Element
+        ? event.target.closest("[data-tooltip]")
+        : null
     if (!target || !sidebar.contains(target)) return
 
     if (target.matches(".sidebar-catalog > summary")) {
@@ -51,6 +70,8 @@ const showSidebarTooltip = (event) => {
     tooltip.setAttribute("role", "tooltip")
     tooltip.textContent = message
     document.body.appendChild(tooltip)
+    activeTooltipTarget = target
+    if (!target.hasAttribute("aria-describedby")) target.setAttribute("aria-describedby", TOOLTIP_ID)
     positionSidebarTooltip(target)
 
     requestAnimationFrame(() => tooltip.classList.add("is-visible"))
@@ -58,7 +79,9 @@ const showSidebarTooltip = (event) => {
 
 const refreshSidebarTooltip = (event) => {
     const tooltip = sidebarTooltip()
-    const target = event.target.closest("[data-tooltip]")
+    const target = event.target instanceof Element
+        ? event.target.closest("[data-tooltip]")
+        : null
 
     if (tooltip && target) {
         positionSidebarTooltip(target)
@@ -68,8 +91,11 @@ const refreshSidebarTooltip = (event) => {
 const flyoutItemMarkup = (submenu) => {
     const fragment = document.createDocumentFragment()
 
-    submenu.querySelectorAll(":scope > a, :scope > details").forEach((item) => {
-        fragment.appendChild(item.cloneNode(true))
+    Array.from(submenu.children).filter((item) => item.matches("a, details, [aria-disabled]")).forEach((item) => {
+        const clone = item.cloneNode(true)
+        clone.removeAttribute("id")
+        clone.querySelectorAll("[id]").forEach((child) => child.removeAttribute("id"))
+        fragment.appendChild(clone)
     })
 
     return fragment
@@ -80,7 +106,7 @@ const positionSidebarFlyout = (target, flyout) => {
     const gap = 10
     const viewportPadding = 12
 
-    flyout.style.left = `${rect.right + gap}px`
+    flyout.style.left = `${Math.min(rect.right + gap, Math.max(12, window.innerWidth - flyout.offsetWidth - 12))}px`
 
     const flyoutHeight = flyout.offsetHeight
     const preferredTop = rect.top
@@ -89,7 +115,7 @@ const positionSidebarFlyout = (target, flyout) => {
     flyout.style.top = `${Math.max(viewportPadding, Math.min(preferredTop, maxTop))}px`
 }
 
-const showSidebarFlyout = (target) => {
+const showSidebarFlyout = (target, { pinned = false } = {}) => {
     if (!isCollapsedSidebar()) return
 
     const submenu = target.parentElement?.querySelector(":scope > .sidebar-submenu")
@@ -99,13 +125,22 @@ const showSidebarFlyout = (target) => {
     }
 
     removeSidebarTooltip()
+    if (activeFlyoutTarget === target && sidebarFlyout()) {
+        flyoutPinned = flyoutPinned || pinned
+        cancelFlyoutClose()
+        refreshSidebarFlyout()
+        return
+    }
     removeSidebarFlyout()
     activeFlyoutTarget = target
+    flyoutPinned = pinned
+    target.setAttribute("aria-expanded", "true")
 
     const flyout = document.createElement("div")
     flyout.id = FLYOUT_ID
     flyout.className = "admin-sidebar-flyout"
-    flyout.setAttribute("role", "menu")
+    flyout.setAttribute("role", "navigation")
+    target.setAttribute("aria-controls", FLYOUT_ID)
     flyout.setAttribute(
         "aria-label",
         target.querySelector(".sidebar-label")?.textContent?.trim() || ""
@@ -137,7 +172,7 @@ const refreshSidebarFlyout = () => {
 
 const sidebarSummaryAtEvent = (event) => {
     const sidebar = document.getElementById("adminSidebar")
-    if (!sidebar?.classList.contains("sidebar-collapsed")) return null
+    if (!isCollapsedSidebar() || !sidebar) return null
 
     const target = event.target instanceof Element
         ? event.target.closest(".sidebar-catalog > summary")
@@ -160,12 +195,16 @@ const syncFlyoutWithPointer = (event) => {
     const sidebar = document.getElementById("adminSidebar")
     const flyout = sidebarFlyout()
 
-    if (
-        activeFlyoutTarget &&
-        sidebar?.contains(event.target) &&
-        !flyout?.contains(event.target)
-    ) {
+    if (flyout?.contains(event.target)) {
+        cancelFlyoutClose()
+    } else if (flyoutPinned) {
+        // Explicit click or keyboard activation pins the menu until dismissal.
+        return
+    } else if (activeFlyoutTarget && sidebar?.contains(event.target)) {
         removeSidebarFlyout()
+    } else if (activeFlyoutTarget && flyoutCloseTimer === null) {
+        // Allow the pointer to cross the small gap to the floating submenu.
+        flyoutCloseTimer = setTimeout(removeSidebarFlyout, 160)
     }
 }
 
@@ -192,16 +231,8 @@ document.addEventListener("mouseout", (event) => {
 })
 
 document.addEventListener("focusin", (event) => {
-    const target = event.target instanceof Element
-        ? event.target.closest(".sidebar-catalog > summary")
-        : null
-
-    if (target && document.getElementById("adminSidebar")?.contains(target)) {
-        showSidebarFlyout(target)
-        return
-    }
-
-    showSidebarTooltip(event)
+    // Focusing a group is not activation. Keyboard users open it with Enter/Space.
+    if (!suppressFlyoutOnFocusRestore) showSidebarTooltip(event)
 })
 
 document.addEventListener("focusout", (event) => {
@@ -209,11 +240,12 @@ document.addEventListener("focusout", (event) => {
         ? event.target.closest(".sidebar-catalog > summary")
         : null
 
-    if (
-        target &&
-        !event.relatedTarget?.closest?.("#adminSidebarTooltip, #adminSidebarFlyout")
-    ) {
-        removeSidebarFlyout()
+    if (target && !event.relatedTarget?.closest?.("#adminSidebarFlyout")) {
+        // Defer dismissal until focus settles; clicking through the flyout must remain possible.
+        queueMicrotask(() => {
+            const focused = document.activeElement
+            if (!sidebarFlyout()?.contains(focused) && focused !== activeFlyoutTarget) removeSidebarFlyout()
+        })
     }
 
     removeSidebarTooltip()
@@ -231,7 +263,7 @@ document.addEventListener("click", (event) => {
         sidebar.classList.contains("sidebar-collapsed")
     ) {
         event.preventDefault()
-        showSidebarFlyout(target)
+        showSidebarFlyout(target, { pinned: true })
         return
     }
 
@@ -245,8 +277,16 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
+        const returnTarget = activeFlyoutTarget
         removeSidebarFlyout()
         removeSidebarTooltip()
+        if (returnTarget && isCollapsedSidebar()) {
+            // Escape returns focus to the trigger without reopening the flyout
+            // through its focusin handler.
+            suppressFlyoutOnFocusRestore = true
+            returnTarget.focus({ preventScroll: true })
+            queueMicrotask(() => { suppressFlyoutOnFocusRestore = false })
+        }
         return
     }
 
@@ -257,13 +297,27 @@ document.addEventListener("keydown", (event) => {
         if (!isCollapsedSidebar()) return
 
         event.preventDefault()
-        showSidebarFlyout(event.target)
+        showSidebarFlyout(event.target, { pinned: true })
+        sidebarFlyout()?.querySelector("a[href], summary")?.focus()
     }
 })
 
 document.addEventListener("scroll", (event) => {
-    if (event.target.closest?.("#adminSidebar nav")) {
-        removeSidebarTooltip()
+    const nav = event.target.closest?.("#adminSidebar nav")
+    if (!nav) return
+
+    removeSidebarTooltip()
+    const flyout = sidebarFlyout()
+    const trigger = activeFlyoutTarget
+    if (!flyout || !trigger) return
+
+    // Scrolling the sidebar to an active trigger should reposition its menu,
+    // rather than instantly dismissing it after a click or keyboard activation.
+    const bounds = trigger.getBoundingClientRect()
+    const viewport = nav.getBoundingClientRect()
+    if (bounds.bottom >= viewport.top && bounds.top <= viewport.bottom) {
+        refreshSidebarFlyout()
+    } else {
         removeSidebarFlyout()
     }
 }, true)
@@ -277,4 +331,19 @@ document.addEventListener("mousemove", (event) => {
     syncFlyoutWithPointer(event)
     refreshSidebarTooltip(event)
     refreshSidebarFlyout()
+})
+
+// Keep focus in the expanded menu when tabbing into cloned flyout links.
+document.addEventListener("focusin", (event) => {
+    if (sidebarFlyout()?.contains(event.target)) removeSidebarTooltip()
+})
+
+document.addEventListener("turbo:before-cache", () => {
+    removeSidebarTooltip()
+    removeSidebarFlyout()
+})
+
+document.addEventListener("sidebar:state-changed", () => {
+    removeSidebarTooltip()
+    removeSidebarFlyout()
 })

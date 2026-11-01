@@ -1,0 +1,11 @@
+# Limited offline fallback only. Extend from a verified SEPOMEX source before broadening.
+"06000":
+  state: Ciudad de México
+  municipality: Cuauhtémoc
+  neighborhoods:
+    - Centro
+"06600":
+  state: Ciudad de México
+  municipality: Cuauhtémoc
+  neighborhoods:
+    - Juárez

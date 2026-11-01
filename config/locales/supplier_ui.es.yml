@@ -1,0 +1,22 @@
+es:
+  admin:
+    supplier_ui:
+      selection_count: "%{count} seleccionados"
+      exception_pages: "Páginas de excepciones"
+      previous: "Anterior"
+      next: "Siguiente"
+      empty_schedules_title: "Aún no hay horarios registrados"
+      empty_schedules_description: "Configura horarios recurrentes por sucursal para planificar visitas, pedidos y entregas."
+      all_day_hint: "Se conservarán las fechas; el evento abarca el día completo."
+      archived_status: "Archivada"
+      contact_pages: "Páginas de contactos"
+      empty_contacts_description: "Registra personas de contacto para facilitar la comunicación y el seguimiento con este proveedor."
+      confirm_action: "Confirmar"
+      scheduled_count: "Horarios recurrentes"
+      branches_count: "Sucursales"
+      exceptions_count: "Excepciones"
+      offer_identity_title: "Identificación de la oferta"
+      offer_identity_description: "Selecciona el producto y define cómo lo suministra este proveedor."
+      offer_terms_title: "Precios y condiciones"
+      offer_terms_description: "Configura costos, cantidades y tiempos de entrega."
+      offer_settings_title: "Disponibilidad"

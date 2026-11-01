@@ -1,8 +1,11 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
+  include OrganizationTimeZone
+  include TablePageSizing
 
   allow_browser versions: :modern
 
+  around_action :with_organization_timezone
   before_action :set_locale
   before_action :configure_permitted_parameters, if: :devise_controller?
   after_action :set_action_cable_user_id_cookie
@@ -14,7 +17,8 @@ class ApplicationController < ActionController::Base
   def current_organization
     return unless current_user
 
-    @current_organization ||= current_user.organizations.active_records.first
+    active_ids = current_user.organization_memberships.active.select(:organization_id)
+    @current_organization ||= Organization.active_records.where(id: active_ids).first
   end
 
   def available_branches
@@ -31,6 +35,13 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def with_organization_timezone(&)
+    settings = current_organization&.organization_settings&.active_records
+    zone = settings&.first&.timezone
+    timezone = ActiveSupport::TimeZone[zone] if zone.present?
+    Time.use_zone(timezone || Time.zone, &)
+  end
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[email password password_confirmation theme])

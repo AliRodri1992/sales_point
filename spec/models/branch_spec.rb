@@ -10,11 +10,17 @@ RSpec.describe Branch, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_length_of(:name).is_at_least(2).is_at_most(100) }
-    it { is_expected.to allow_value('5551234567').for(:phone) }
-    it { is_expected.to allow_value('+52 55 5123 4567').for(:phone) }
-    it { is_expected.not_to allow_value('abc123').for(:phone) }
-    it { is_expected.to validate_length_of(:phone).is_at_least(7).is_at_most(20).allow_blank }
-    it { is_expected.to validate_inclusion_of(:status).in_array([true, false]) }
+    it 'stores a primary mobile in the polymorphic phones association' do
+      branch = build(:branch)
+      mobile = branch.phones.build(number: '55 1234 5678', kind: 'mobile', primary: true)
+
+      expect(branch).to be_valid
+      expect(mobile.number).to eq('+525512345678')
+    end
+    it 'accepts both boolean status values' do
+      expect(build(:branch, status: true)).to be_valid
+      expect(build(:branch, status: false)).to be_valid
+    end
 
     it 'requires unique branch names within an organization' do
       organization = create(:organization)
@@ -36,7 +42,7 @@ RSpec.describe Branch, type: :model do
         neighborhood: 'Centro',
         city: 'Cuautitlán',
         state: 'Estado de México',
-        country: 'MX',
+        country: build(:country, iso_alpha2: 'MX'),
         postal_code: '54800'
       )
 

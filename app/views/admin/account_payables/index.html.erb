@@ -1,0 +1,87 @@
+<%= render 'admin/financials/navigation' %>
+<section class="space-y-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.accounts_payable.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.accounts_payable.description') %></p>
+      <% if @supplier %>
+        <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+          <span class="rounded-lg bg-emerald-50 px-3 py-2 font-semibold text-emerald-800"><%= t('admin.accounts_payable.supplier') %>: <%= @supplier.name %></span>
+          <%= link_to t('admin.supplier_dossier.finance.view_all_suppliers'), admin_account_payables_path, class: 'font-semibold text-emerald-800 hover:underline' %>
+          <%= link_to t('admin.supplier_dossier.finance.back_to_statement'), admin_supplier_path(@supplier, tab: 'statement'), class: 'font-semibold text-slate-600 hover:text-emerald-800' %>
+        </div>
+      <% end %>
+    </div>
+    <% if policy(SupplierInvoice.new(organization: current_organization)).create? %>
+      <%= link_to t('admin.accounts_payable.new_invoice'), new_admin_supplier_invoice_path, class: 'rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700' %>
+    <% end %>
+  </div>
+  <div class="grid gap-4 sm:grid-cols-3">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.accounts_payable.open_count') %></p>
+      <p class="mt-2 font-jakarta text-2xl font-bold text-slate-900"><%= @open_count %></p>
+    </div>
+    <% @currency_balances.each do |currency_code, amounts| %>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= currency_code %></p>
+        <p class="mt-2 text-sm text-slate-500"><%= t('admin.accounts_payable.open_amount') %></p>
+        <p class="font-jakarta text-xl font-bold text-slate-900"><%= number_to_currency(amounts[:open], unit: '') %></p>
+        <p class="mt-2 text-sm text-rose-600"><%= t('admin.accounts_payable.overdue_amount') %>: <%= number_to_currency(amounts[:overdue], unit: '') %></p>
+      </div>
+    <% end %>
+  </div>
+  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="min-w-full text-left text-sm">
+      <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <tr>
+          <% %w[supplier invoice due_on original_amount paid credit balance status].each do |key| %>
+            <th class="px-4 py-3"><%= t("admin.accounts_payable.#{key}") %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payables.each do |payable| %>
+          <tr class="border-t border-slate-100 hover:bg-slate-50">
+            <td class="px-4 py-3 font-medium text-slate-900"><%= payable.supplier.name %></td>
+            <td class="px-4 py-3"><%= link_to payable.supplier_invoice.folio.presence || "##{payable.supplier_invoice.id}", admin_account_payable_path(payable), class: 'font-semibold text-emerald-700 hover:underline' %></td>
+            <td class="px-4 py-3"><%= l(payable.due_on) %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.amount, unit: '') %> <%= payable.supplier_invoice.currency&.code || '—' %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.paid_amount, unit: '') %></td>
+            <td class="px-4 py-3"><%= number_to_currency(payable.credited_amount, unit: '') %></td>
+            <td class="px-4 py-3 font-semibold"><%= number_to_currency(payable.balance, unit: '') %></td>
+            <td class="px-4 py-3">
+              <span class="rounded-full px-3 py-1 text-xs font-semibold <%= payable.overdue? ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700' %>">
+                <%= t("admin.accounts_payable.states.#{!payable.supplier_invoice.posted? ? 'cancelled' : payable.settled? ? 'settled' : payable.overdue? ? 'overdue' : 'open'}") %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @payables.empty? %><p class="p-8 text-center text-sm text-slate-500"><%= t('admin.accounts_payable.empty') %></p><% end %>
+  </div>
+  <nav class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600" aria-label="Payables pages">
+    <div class="flex flex-wrap items-center gap-3">
+      <% if @total_payables.positive? %>
+        <label for="payables-per-page"><%= t('admin.general_settings.unit') %></label>
+        <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                       id: 'payables-per-page',
+                       data: { controller: 'table-page-size', table_page_size_key_value: 'account_payables',
+                               action: 'change->table-page-size#apply' },
+                       class: 'min-h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-700' %>
+      <% end %>
+      <span><%= @total_payables %> · <%= @page %> / <%= @pages %></span>
+    </div>
+    <div class="flex gap-2">
+      <% if @page > 1 %>
+        <%= link_to '‹', admin_account_payables_path(supplier_id: params[:supplier_id], page: @page - 1),
+                    class: 'rounded-lg border border-slate-200 bg-white px-4 py-2' %>
+      <% end %>
+      <% if @page < @pages %>
+        <%= link_to '›', admin_account_payables_path(supplier_id: params[:supplier_id], page: @page + 1),
+                    class: 'rounded-lg border border-slate-200 bg-white px-4 py-2' %>
+      <% end %>
+    </div>
+  </nav>
+</section>
+

@@ -1,0 +1,6 @@
+es:
+  admin:
+    supplier_document_history:
+      versions: "Historial de versiones"
+      trash: "Papelera"
+      restore: "Recuperar"

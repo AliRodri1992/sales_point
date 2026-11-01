@@ -42,7 +42,7 @@ RSpec.describe 'Admin onboarding', type: :request do
         name: organization.name,
         tax_id: organization.tax_id,
         business_sector: organization.business_sector,
-        currency: 'MXN',
+        base_currency_id: organization.organization_settings.first.base_currency_id,
         timezone: 'America/Mexico_City'
       }
     }
@@ -52,7 +52,7 @@ RSpec.describe 'Admin onboarding', type: :request do
     patch admin_onboarding_path(step: 2), params: {
       branch: {
         name: 'Sucursal Centro',
-        phone: '5551234567',
+        phones_attributes: [{ number: '5551234567', country_code: 'MX', kind: 'mobile', primary: true }],
         address_attributes: {
           id: branch.address.id,
           street: 'Av. Reforma',

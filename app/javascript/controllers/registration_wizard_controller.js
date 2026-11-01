@@ -210,7 +210,7 @@ export default class extends Controller {
   }
 
   validateEnvironment() {
-    if (!this.businessSectorTarget.value) {
+    if (!this.businessSectorTarget.value || !this.currencyTarget.value) {
       return this.setError("setup", this.message("required"))
     }
 

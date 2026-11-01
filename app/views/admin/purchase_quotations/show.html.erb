@@ -1,0 +1,34 @@
+<%= render 'admin/purchases/navigation' %>
+<section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6">
+  <div class="flex flex-wrap justify-between gap-4">
+    <h1 class="font-jakarta text-2xl font-bold"><%= @quotation.code %></h1>
+    <span class="rounded-xl bg-slate-100 px-3 py-2"><%= t("admin.purchases.statuses.#{@quotation.status}") %></span>
+  </div>
+  <p><%= @quotation.supplier.name %> · <%= @quotation.currency.code %> · <%= @quotation.valid_until %></p>
+  <table class="min-w-full text-left text-sm">
+    <thead><tr><% %w[product quantity unit_price discount_percent].each do |key| %>
+      <th class="p-3"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead>
+    <tbody><% @quotation.purchase_quotation_items.includes(:product).each do |item| %>
+      <tr class="border-t"><td class="p-3"><%= item.product.name %></td>
+        <td class="p-3"><%= item.quantity %></td><td class="p-3"><%= item.unit_price %></td>
+        <td class="p-3"><%= item.discount_percent %></td></tr>
+    <% end %></tbody>
+  </table>
+  <div class="flex flex-wrap gap-3">
+    <% if @quotation.draft? && policy(@quotation).edit? %>
+      <%= link_to t('admin.purchases.edit'), edit_admin_purchase_quotation_path(@quotation), class: 'rounded-xl border p-3' %>
+      <%= button_to t('admin.purchases.submit'), submit_admin_purchase_quotation_path(@quotation),
+                    class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
+    <% end %>
+    <% if @quotation.submitted? && policy(@quotation).accept? %>
+      <%= button_to t('admin.purchases.accept'), accept_admin_purchase_quotation_path(@quotation),
+                    class: 'rounded-xl bg-emerald-600 px-5 py-3 text-white' %>
+      <%= button_to t('admin.purchases.reject'), reject_admin_purchase_quotation_path(@quotation),
+                    class: 'rounded-xl border border-rose-300 p-3 text-rose-700' %>
+    <% end %>
+    <% if @quotation.accepted? %>
+      <%= link_to t('admin.purchases.new_order'), new_admin_purchase_order_path(quotation_id: @quotation.id),
+                  class: 'rounded-xl border border-emerald-200 p-3 text-emerald-700' %>
+    <% end %>
+  </div>
+</section>

@@ -1,11 +1,30 @@
 # frozen_string_literal: true
 
 class Organization < ApplicationRecord
+  has_one_attached :logo
+  has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :inventories, dependent: :restrict_with_exception
+  has_many :purchase_requests, dependent: :restrict_with_exception
+  has_many :purchase_quotations, dependent: :restrict_with_exception
+  has_many :purchase_orders, dependent: :restrict_with_exception
+  has_many :goods_receipts, dependent: :restrict_with_exception
+  has_many :purchase_returns, dependent: :restrict_with_exception
+  has_many :supplier_bank_accounts, dependent: :restrict_with_exception
+  has_many :supplier_invoices, dependent: :restrict_with_exception
+  has_many :account_payables, dependent: :restrict_with_exception
+  has_many :supplier_payments, dependent: :restrict_with_exception
+  has_many :supplier_credit_notes, dependent: :restrict_with_exception
+  has_many :financial_audit_events, dependent: :restrict_with_exception
+  has_many :products, dependent: :restrict_with_exception
+  has_many :suppliers, dependent: :restrict_with_exception
+  has_many :contacts, as: :contactable, dependent: :restrict_with_exception
+  has_many :addresses, as: :addressable, dependent: :restrict_with_exception
   has_many :organization_memberships, dependent: :restrict_with_exception
   has_many :users, through: :organization_memberships
   has_many :employees, dependent: :restrict_with_exception
   has_many :branches, dependent: :restrict_with_exception
   has_many :organization_settings, dependent: :destroy
+  has_many :table_page_preferences, dependent: :destroy
   has_many :payment_integrations, dependent: :restrict_with_exception
   has_many :organization_migrations, dependent: :restrict_with_exception
   has_many :onboarding_audits, dependent: :restrict_with_exception

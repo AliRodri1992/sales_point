@@ -1,0 +1,6 @@
+en:
+  admin:
+    supplier_dossier:
+      address_cards:
+        no_results_title: "No addresses found"
+        no_results_description: "Try a different street, neighborhood, or postal code, or change the filters."

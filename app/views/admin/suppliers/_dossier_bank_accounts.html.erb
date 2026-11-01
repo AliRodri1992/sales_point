@@ -1,0 +1,105 @@
+<section id="supplier-dossier-bank-accounts" role="tabpanel" tabindex="0" aria-labelledby="supplier-dossier-tab-bank_accounts" data-supplier-dossier-target="panel" data-section="bank_accounts"
+         class="hidden w-full min-w-0 space-y-4 lg:flex-1">
+  <% bank_page = @dossier_bank_accounts_page %>
+  <div data-finance-bank-accounts class="min-w-0 space-y-4">
+    <div data-finance-banks-header class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <div data-finance-banks-heading-row class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex min-w-0 items-center gap-3">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+            <%= delta_icon('building-library', class: 'size-5') %>
+          </span>
+          <div>
+            <h2 class="font-jakarta text-xl font-bold text-slate-900"><%= t('admin.accounts_payable.bank_accounts') %></h2>
+            <p class="mt-1 text-sm text-slate-500"><%= t('admin.accounts_payable.bank_list.description') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-finance-banks-content class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+      <%= form_with url: admin_supplier_path(supplier), method: :get,
+                    class: 'space-y-3' do %>
+        <%= hidden_field_tag :tab, 'bank_accounts' %>
+        <div data-finance-banks-search-row class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="relative min-w-0 flex-1">
+            <label for="dossier-banks-search" class="sr-only"><%= t('admin.accounts_payable.bank_list.search') %></label>
+            <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+            <%= search_field_tag :banks_q, bank_page.query, id: 'dossier-banks-search', maxlength: 100,
+                                 placeholder: t('admin.accounts_payable.bank_list.search_placeholder'),
+                                 class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-3 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+          </div>
+          <%= link_to admin_supplier_bank_accounts_path(supplier),
+                      aria: { label: t('admin.supplier_dossier.finance.manage_banks') },
+                      class: 'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50 sm:w-auto sm:shrink-0' do %>
+            <%= delta_icon('arrow-top-right-on-square', class: 'size-4') %>
+            <%= t('admin.supplier_dossier.finance.manage_banks') %>
+          <% end %>
+        </div>
+        <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+          <div>
+            <span id="supplier_banks_bank_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.bank_filter') %></span>
+            <%= render 'admin/suppliers/filter_dropdown', name: 'banks_bank', selected: bank_page.bank,
+                       options: [[t('admin.bank_cards.all_banks'), '']] + bank_page.banks.map { |bank| [bank, bank] },
+                       plain_options: true %>
+          </div>
+          <div>
+            <span id="supplier_banks_status_label" class="mb-2 block text-xs font-semibold text-slate-600"><%= t('admin.bank_cards.status_filter') %></span>
+            <% statuses = [['all', :all, 'all_label'], ['active', :active, 'active_plural'],
+                           ['inactive', :inactive, 'inactive_plural'], ['blocked', :blocked, 'blocked_plural'],
+                           ['archived', :archived, 'archived_plural']] %>
+            <%= render 'admin/suppliers/filter_dropdown', name: 'banks_status', selected: bank_page.status,
+                       options: statuses.map { |value, key, label| ["#{t("admin.bank_cards.#{label}")} (#{bank_page.counts.fetch(key)})", value] },
+                       plain_options: true %>
+          </div>
+          <%= button_tag type: :submit,
+                         class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800' do %>
+            <%= delta_icon('magnifying-glass', class: 'size-4') %>
+            <%= t('admin.accounts_payable.bank_list.search') %>
+          <% end %>
+        </div>
+      <% end %>
+
+
+      <div data-finance-bank-cards class="mt-5 grid min-w-0 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+        <%= render partial: 'admin/supplier_bank_accounts/account_card', collection: bank_page.accounts,
+                   as: :account, locals: { supplier: supplier } %>
+
+      </div>
+
+      <% if bank_page.total_count.zero? %>
+        <div data-finance-empty-banks class="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-5 py-10 text-center text-sm text-slate-600">
+          <span class="mb-3 flex size-14 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm"><%= delta_icon('building-library', class: 'size-7') %></span>
+          <p class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.accounts_payable.bank_list.empty_title') %></p>
+          <p class="mt-1"><%= t('admin.accounts_payable.bank_list.empty_description') %></p>
+        </div>
+      <% end %>
+
+      <footer data-finance-bank-pagination class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+        <p class="text-sm text-slate-500">
+          <%= t('admin.bank_cards.range', from: bank_page.from, to: bank_page.to, total: bank_page.total_count) %>
+        </p>
+        <% if bank_page.total_pages > 1 %>
+          <nav aria-label="<%= t('admin.bank_cards.pagination') %>" class="flex flex-wrap items-center gap-2">
+            <% if bank_page.page > 1 %>
+              <%= link_to t('admin.accounts_payable.bank_list.previous'),
+                          admin_supplier_path(supplier, tab: 'bank_accounts', banks_q: bank_page.query.presence,
+                                              banks_bank: bank_page.bank.presence, banks_status: bank_page.status,
+                                              banks_page: bank_page.page - 1),
+                          class: 'rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-emerald-800' %>
+            <% end %>
+            <span class="flex size-9 items-center justify-center rounded-lg bg-emerald-700 text-sm font-bold text-white tabular-nums">
+              <%= bank_page.page %>
+            </span>
+            <% if bank_page.page < bank_page.total_pages %>
+              <%= link_to t('admin.accounts_payable.bank_list.next'),
+                          admin_supplier_path(supplier, tab: 'bank_accounts', banks_q: bank_page.query.presence,
+                                              banks_bank: bank_page.bank.presence, banks_status: bank_page.status,
+                                              banks_page: bank_page.page + 1),
+                          class: 'rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-emerald-800' %>
+            <% end %>
+          </nav>
+        <% end %>
+      </footer>
+    </div>
+  </div>
+</section>

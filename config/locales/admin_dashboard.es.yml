@@ -12,7 +12,7 @@ es:
         text: "Los cambios del panel se guardaron correctamente."
       save_error:
         title: "No se pudo guardar"
-        text: "No se pudieron guardar los cambios del panel."
+        text: "No se guardó la distribución del panel. Conserva esta pantalla y vuelve a intentar; si continúa el problema, recarga y comprueba tu conexión."
       kpi_grid:
         sales_today: "Ventas de hoy"
         transactions: "Transacciones"

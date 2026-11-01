@@ -1,0 +1,784 @@
+en:
+  admin:
+    user_manual:
+      sections:
+        startup:
+          title: "Initial setup and branches"
+          description: "Set up your organization, onboarding, branches, dashboard, and personal preferences."
+          topics:
+            -
+              id: "onboarding"
+              title: "Initial setup"
+              description: "A five-step wizard that prepares your organization."
+              before: "You need an organization and an administrator account."
+              tasks:
+                -
+                  title: "Complete the wizard"
+                  steps:
+                    - "Sign in as an administrator and open “Initial setup” if it is still pending."
+                    - "Step 1: check the company name, RFC, business sector, base currency, and time zone; save and continue."
+                    - "Step 2: register the main branch, phone number, and address; verify the country and postal code."
+                    - "Step 3: name the first terminal or cash register so it can be distinguished from others."
+                    - "Step 4: choose the payment method requested by the wizard."
+                    - "Step 5: review the summary and finish; the system returns to the main dashboard."
+                  result: "Your organization's setup is saved and its progress is recorded."
+                -
+                  title: "Get ready for operations"
+                  steps:
+                    - "Check the active branch in the top navigation selector."
+                    - "Create categories before products so you can classify them."
+                    - "Register suppliers, link their product offers, and configure business details."
+                    - "Set roles and permissions for staff responsible for purchasing, inventory, and finances."
+              note: "The wizard closes once completed; you can manage those details in their respective modules."
+            -
+              id: "dashboard"
+              title: "Main dashboard and widgets"
+              description: "Review indicators and customize your workspace."
+              tasks:
+                -
+                  title: "View the dashboard"
+                  steps:
+                    - "Open “Dashboard” from the sidebar."
+                    - "Review the indicators and any outstanding initial-setup card."
+                    - "Open the source module to verify information before making decisions."
+                -
+                  title: "Arrange widgets"
+                  steps:
+                    - "Move or resize widgets that support interaction."
+                    - "Confirm or save the layout when that option is available."
+                    - "Return to the dashboard to check that your preferences were retained."
+              note: "Available widgets depend on the installed version."
+            -
+              id: "profile"
+              title: "My profile and preferences"
+              description: "Update your details without changing your account permissions."
+              tasks:
+                -
+                  title: "Update your profile"
+                  steps:
+                    - "Open the user menu beside your avatar and select “My profile”."
+                    - "Review your username, email, language, and appearance theme."
+                    - "Make changes and select “Save”."
+                    - "Check the confirmation, then reopen your profile to verify the updates."
+                -
+                  title: "Change language"
+                  steps:
+                    - "In “My profile”, select Spanish, English, or Korean from the supported languages."
+                    - "Save and verify the text on the following screen."
+              note: "Roles and permissions are managed separately; editing your profile does not grant additional access."
+            -
+              id: "branches"
+              title: "Branches and active-branch selection"
+              description: "Create operating locations and choose where transactions are recorded."
+              tasks:
+                -
+                  title: "Create a branch"
+                  steps:
+                    - "Open “Settings” → “Branches” and select “New branch”."
+                    - "Enter a name, phone number, and address, including the country."
+                    - "Fill in the required fields and review the status."
+                    - "Save and locate the branch in the list."
+                -
+                  title: "Edit or delete a branch"
+                  steps:
+                    - "Find the branch and open its actions."
+                    - "Select “Edit”, update the details, and save."
+                    - "To deactivate it, choose “Delete” and confirm. This is a soft deletion, not permanent removal."
+                -
+                  title: "Change the active branch"
+                  steps:
+                    - "Open the branch selector in the interface."
+                    - "Choose an active branch and confirm your selection."
+                    - "Before checking inventory, verify that the correct branch is active."
+              note: "Inventory and several other operations depend on the selected branch."
+            -
+              id: "organization_contacts"
+              title: "Organization contacts"
+              description: "Maintain your business's official contact details."
+              before: "Requires administrative access and an active organization."
+              tasks:
+                -
+                  title: "Create or update a contact"
+                  steps:
+                    - "Open “Organization contacts” from the administration area."
+                    - "Select “New contact” and complete the required fields."
+                    - "Save and confirm the contact appears in the list."
+                    - "To correct a contact, select its “Edit” action and save."
+                -
+                  title: "Delete a contact"
+                  steps:
+                    - "Find the contact that should no longer be used."
+                    - "Choose the delete action and confirm before leaving the page."
+        security:
+          title: "Users, roles, and permissions"
+          description: "Create user accounts and manage roles, access, and language preferences."
+          topics:
+            -
+              id: "users"
+              title: "User management"
+              description: "Create accounts and update user details or status."
+              before: "An administrator role is required."
+              tasks:
+                -
+                  title: "Create a user"
+                  steps:
+                    - "Open “Settings” → “Users” and select “New user”."
+                    - "Enter the username, email address, user type, and any requested access settings."
+                    - "Assign an available role or authorization options, and verify the initial status."
+                    - "Save, then find the user in the list to confirm the account was created."
+                -
+                  title: "Edit a user"
+                  steps:
+                    - "Find the user by name or email in the table."
+                    - "Select “View” or “Edit” and update the permitted fields."
+                    - "Save and check the confirmation."
+                -
+                  title: "Delete a user"
+                  steps:
+                    - "Verify that you selected the correct account, then choose “Delete”."
+                    - "Confirm the action and check the updated list."
+                    - "You cannot delete your own account this way; use an authorized administrative process."
+              note: "Deletion is soft; avoid sharing the same user account between people."
+            -
+              id: "roles"
+              title: "Roles and permissions"
+              description: "Apply least-privilege access according to responsibilities."
+              tasks:
+                -
+                  title: "Create or edit a role"
+                  steps:
+                    - "Open “Settings” → “Roles and permissions”."
+                    - "Select an existing role or create one with its own name and code."
+                    - "Review permissions by module, including view, create, edit, archive, export, or financial operations where available."
+                    - "Save, then verify the result with a user assigned to the role."
+                -
+                  title: "Resolve access denied"
+                  steps:
+                    - "Identify the action the user cannot perform."
+                    - "Check the active organization, role, and specific permission."
+                    - "Grant the appropriate permission only if the person needs that operation."
+                    - "Ask the user to reopen the module and confirm access."
+              note: "Hiding a button does not replace server-side authorization checks; both are required."
+            -
+              id: "languages"
+              title: "Language catalog"
+              description: "Manage the language options displayed by the application."
+              tasks:
+                -
+                  title: "Add a language"
+                  steps:
+                    - "Open “Catalogs” → “Languages”."
+                    - "Select “New language” and enter a name, code, ISO flag, and status."
+                    - "Save and verify the language appears in the table."
+                -
+                  title: "Edit or deactivate a language"
+                  steps:
+                    - "Find the language using search or filters."
+                    - "Select “Edit”, update its details, and save."
+                    - "Use “Delete” to archive a language that should no longer be available."
+              note: "Adding a catalog language does not automatically translate screens or generate translation files."
+        catalogs:
+          title: "Catalogs, inventory, and customers"
+          description: "Manage product categories, products, stock by branch, and customer records."
+          topics:
+            -
+              id: "categories"
+              title: "Product categories"
+              description: "Organize products into families using recognizable codes."
+              before: "You need permission to access Categories."
+              tasks:
+                -
+                  title: "Create a category"
+                  steps:
+                    - "Open “Catalogs” → “Categories” from the sidebar."
+                    - "Select “New category” and enter a name that identifies the product family."
+                    - "Enter a unique code and select the appropriate status."
+                    - "Select “Save” and check the confirmation."
+                    - "Return to the list and use search to find the category."
+                  result: "The new category can be used to classify products."
+                -
+                  title: "Edit a category"
+                  steps:
+                    - "Find the category by name or code."
+                    - "Select “Edit” and update the name, code, or status."
+                    - "Save and verify the displayed information has changed."
+                -
+                  title: "Delete a category"
+                  steps:
+                    - "Find the exact category and check whether it is used to organize products."
+                    - "Select “Delete” from the actions menu."
+                    - "Confirm. The system performs a soft deletion and removes it from active categories."
+                  result: "The category becomes inactive without permanently removing its record."
+                -
+                  title: "Find and sort categories"
+                  steps:
+                    - "Enter part of the name or code in search."
+                    - "Use status filters and ascending or descending sorting."
+                    - "Choose the available page size to display more or fewer results."
+              note: "Duplicate codes are not allowed. Resolve any form validation errors before saving."
+            -
+              id: "products"
+              title: "Products"
+              description: "Manage prices, costs, categories, tax information, and the product life cycle."
+              before: "Create categories before registering products whenever possible."
+              tasks:
+                -
+                  title: "Create a product"
+                  steps:
+                    - "Open “Catalogs” → “Products” and select “New product”."
+                    - "Enter the code, name, description, SKU, and barcode if applicable."
+                    - "Choose an existing category and complete the SAT unit, taxes, and tracking method."
+                    - "Enter the cost and selling price and attach an image when appropriate."
+                    - "Review the status and save the product."
+                    - "Find the item in the list to confirm it was created."
+                  result: "The product belongs to the active organization."
+                -
+                  title: "Edit product details or price"
+                  steps:
+                    - "Locate the product by name, code, or SKU."
+                    - "Open its details and select “Edit”."
+                    - "Update the category, cost, price, description, or other required information."
+                    - "Save and return to the catalog to confirm the change."
+                -
+                  title: "Delete a product"
+                  steps:
+                    - "Find exactly the item that should no longer be offered."
+                    - "Check whether it has inventory, purchase orders, or other related transactions."
+                    - "Select “Delete” in its actions and confirm."
+                    - "Verify it is no longer in the active catalog; historical records are retained."
+                  result: "The system records a soft-deletion timestamp."
+                -
+                  title: "Search for products"
+                  steps:
+                    - "Open the “Products” list and use search."
+                    - "Apply available filters and sorting to narrow the results."
+                    - "Check the name, SKU, and price before selecting an item."
+              note: "If a SKU already exists, the form displays an error. Do not delete a product simply to change its price."
+            -
+              id: "inventory"
+              title: "Inventory by branch"
+              description: "Manage location-specific stock, minimums, maximums, and adjustments."
+              before: "Create at least one branch and one product first."
+              tasks:
+                -
+                  title: "View inventory"
+                  steps:
+                    - "Open “Settings” → “Branches” and choose the branch to review."
+                    - "Open that branch's inventory area."
+                    - "Find the product, check stock and minimum/maximum quantities, and review batches if available."
+                -
+                  title: "Create or configure inventory"
+                  steps:
+                    - "Open the branch inventory and choose the available create action."
+                    - "Select an active product and define minimum and maximum stock levels."
+                    - "Save and confirm the product appears in that branch's inventory."
+                -
+                  title: "Adjust inventory"
+                  steps:
+                    - "Select the inventory item and choose “Adjust”."
+                    - "Enter the quantity and reason using the form options."
+                    - "Confirm and review the updated balance and related movements."
+              note: "The product catalog is shared by the organization, but inventory is tracked separately for each branch."
+            -
+              id: "clients"
+              title: "Customers"
+              description: "Maintain contact, billing, and credit details."
+              tasks:
+                -
+                  title: "Create a customer"
+                  steps:
+                    - "Open “Customers” and select “New customer”."
+                    - "Enter the code, name, email address, and phone number."
+                    - "If invoicing is needed, add the RFC, tax regime, and postal code."
+                    - "Review the credit limit, status, and notes; then save."
+                -
+                  title: "Edit a customer"
+                  steps:
+                    - "Find the customer in the list using search and filters."
+                    - "Select “Edit”, update the relevant fields, and save."
+                    - "Check the confirmation and updated details."
+                -
+                  title: "Delete a customer"
+                  steps:
+                    - "Find the correct record and review its details before proceeding."
+                    - "Select “Delete” and confirm."
+                    - "Verify it was removed from the active list without assuming historical records were permanently deleted."
+              note: "Before issuing invoices, verify that the RFC and tax details match the customer receiving the invoice."
+        suppliers:
+          title: "Suppliers and their records"
+          description: "Register suppliers and manage contacts, addresses, offers, documents, and schedules."
+          topics:
+            -
+              id: "suppliers"
+              title: "Supplier catalog"
+              description: "Create, view, update, archive, and restore suppliers."
+              before: "An organization and the appropriate supplier permissions are required."
+              tasks:
+                -
+                  title: "Register a supplier"
+                  steps:
+                    - "Open “Suppliers” from the sidebar and choose “New supplier”."
+                    - "Enter the legal name, trading name, alias, and classification where applicable."
+                    - "Under tax details, select the mandatory person type, tax regime, and RFC; also enter the main tax address."
+                    - "During creation, capture one primary contact and one main tax address."
+                    - "Set the supplier currency and any available business terms."
+                    - "Save, return to the list, and open “View supplier” to complete the record."
+                  result: "The supplier is created under the organization and its detail tabs become available."
+                -
+                  title: "Edit or archive a supplier"
+                  steps:
+                    - "Search by name or use catalog filters."
+                    - "Select “View” to review tabs or “Edit” to update general information."
+                    - "Before archiving, check for open orders, invoices, or outstanding balances."
+                    - "Choose the archive action and review the result."
+                -
+                  title: "Restore a supplier"
+                  steps:
+                    - "Open the list of archived or deleted suppliers."
+                    - "Find the exact record and select “Restore”."
+                    - "Open the record again and check its status; restoration does not automatically reactivate the supplier."
+              note: "Archiving may be blocked while commitments are outstanding. Do not delete historical invoices or orders merely to force archiving."
+            -
+              id: "supplier_fiscal"
+              title: "Supplier tax information"
+              description: "Tax details and primary fiscal address."
+              tasks:
+                -
+                  title: "Enter or correct tax details"
+                  steps:
+                    - "From “Suppliers”, open the record and select “Tax details”."
+                    - "Select the correct person type and tax regime where applicable."
+                    - "Enter the RFC and other requested tax information."
+                    - "Edit the main fiscal address; use its postal code rather than duplicating one on the supplier."
+                    - "Save and verify the information in the tax tab."
+              note: "The fiscal address and postal code belong to the primary address record with fiscal purpose."
+            -
+              id: "supplier_contacts"
+              title: "Supplier contacts"
+              description: "People responsible for orders, deliveries, or administration."
+              tasks:
+                -
+                  title: "Add a contact"
+                  steps:
+                    - "Open “View supplier” → “Contacts”, then go to contact management."
+                    - "Choose “Add contact” and enter the name, position, email, and phone numbers."
+                    - "Check the country dialing prefix when entering an international number."
+                    - "Mark the primary contact when appropriate, then save."
+                -
+                  title: "Edit, delete, or restore contacts"
+                  steps:
+                    - "Use search in the contact list to find a person."
+                    - "Choose “Edit” to update details or change the primary contact."
+                    - "Choose “Delete” to archive; use the deleted contacts tab to select “Restore”."
+                    - "Return to “View supplier” and confirm the Contacts tab is retained."
+              note: "The initial supplier form does not create unlimited contacts; manage additional contacts later within the supplier record."
+            -
+              id: "supplier_addresses"
+              title: "Addresses and geolocation"
+              description: "Purpose-specific locations with primary addresses and a map view."
+              tasks:
+                -
+                  title: "Add an address"
+                  steps:
+                    - "From “View supplier” → “Addresses”, open address management."
+                    - "Choose “Add address”, its purpose, and country."
+                    - "Enter applicable address fields, such as street, exterior number, neighborhood, city, state, and postal code."
+                    - "Review the suggested map location and confirm the pin is correct."
+                    - "Select “Primary” if it should replace the primary address for the same purpose."
+                    - "Save and check the address card."
+                -
+                  title: "Edit or change the primary address"
+                  steps:
+                    - "Find the address among active records and select “Edit”."
+                    - "Update the details; if the location has changed, check the suggested map position."
+                    - "Choose “Set as primary” when this should be the main address for its purpose."
+                    - "Confirm the previous address is no longer marked primary for the same purpose."
+                -
+                  title: "Delete and restore addresses"
+                  steps:
+                    - "Among active address cards, choose the address no longer needed."
+                    - "Select “Delete” and confirm."
+                    - "Open deleted addresses and choose “Restore” where appropriate."
+              note: "Suggested geocoding may be inaccurate; verify the location before using it in operations."
+            -
+              id: "supplier_commercial"
+              title: "Commercial terms"
+              description: "Currency, credit, discounts, and internal account owner."
+              tasks:
+                -
+                  title: "Update business agreements"
+                  steps:
+                    - "Open “Commercial details” in the supplier record."
+                    - "Check purchase currency, credit terms, discounts, and minimum order requirements where applicable."
+                    - "Assign an internal owner and add available tags or notes."
+                    - "Save and review the terms summary in the supplier record."
+              note: "The supplier currency does not necessarily match the organization's base currency."
+            -
+              id: "supplier_products"
+              title: "Supplier products and offers"
+              description: "Link products, record prices, and choose preferred supplier offers."
+              before: "The product must first exist under Catalogs → Products."
+              tasks:
+                -
+                  title: "Link a product to a supplier"
+                  steps:
+                    - "From “View supplier” → “Products”, open offer management."
+                    - "Select “Add product” and choose an existing product from your organization's catalog."
+                    - "Enter the supplier SKU, presentation, units per pack, purchase price, currency, and discounts."
+                    - "Complete minimum quantity, additional costs, and lead time where applicable."
+                    - "Save and verify the new offer in the list."
+                -
+                  title: "Compare prices and mark preferred"
+                  steps:
+                    - "Open the offers and choose the relevant product comparison."
+                    - "Compare prices, additional costs, delivery times, and terms."
+                    - "Mark only an available supplier and offer as preferred."
+                    - "Review price history before changing the terms."
+                -
+                  title: "Edit or archive an offer"
+                  steps:
+                    - "Find the supplier offer and select “Edit”."
+                    - "Update allowed fields and save."
+                    - "If it should no longer be used, choose “Delete” and verify it is absent from available offers."
+              note: "Do not use inactive offers for new orders; review price history whenever conditions change."
+            -
+              id: "supplier_documents"
+              title: "Document library"
+              description: "Contracts, tax certificates, files, and document versions."
+              tasks:
+                -
+                  title: "Upload documents"
+                  steps:
+                    - "Open “Documents” in “View supplier”."
+                    - "Drag files into the upload area or click to select them from your device."
+                    - "Choose a category and provide a description where appropriate."
+                    - "Confirm the upload and verify that new cards appear in the document library."
+                  result: "Files are linked to the supplier record."
+                -
+                  title: "Preview and download"
+                  steps:
+                    - "Use search or filters to locate the document."
+                    - "Select “Preview” on its card to open the side panel."
+                    - "Review content when supported; Office files may require an available converter."
+                    - "Select “Download” to obtain the original file."
+                -
+                  title: "Versions, archiving, and restoration"
+                  steps:
+                    - "Use the replace option to upload an updated file version."
+                    - "Open “History” to review and, if needed, download earlier revisions."
+                    - "Archive a document through its actions and restore it from the deleted documents view."
+              note: "Upload 1–10 files per operation. Each file must be of an allowed type and at most 10 MB."
+            -
+              id: "supplier_calendar"
+              title: "Calendars, schedules, and exceptions"
+              description: "Plan visits, orders, and deliveries by branch."
+              tasks:
+                -
+                  title: "Create a weekly schedule"
+                  steps:
+                    - "Open “Calendars” in the supplier record, then schedule management."
+                    - "Select “New schedule”, a branch, activity type, and weekday."
+                    - "Enter start and end times, and notes if needed."
+                    - "Save and ensure the interval does not overlap incompatible schedules."
+                -
+                  title: "Create and edit dated events"
+                  steps:
+                    - "Choose a date in the calendar or select “New event”."
+                    - "Enter title, type, branch, date, and time."
+                    - "Save and verify the event in the monthly or daily view."
+                    - "Use event actions to edit, archive, or restore it."
+                -
+                  title: "Add and manage exceptions"
+                  steps:
+                    - "Select “Add exception” in the exceptions area."
+                    - "Enter start and end dates, reason, branch, and notes."
+                    - "Save and review the affected period."
+                    - "To archive or restore multiple exceptions, use bulk selection for up to 100 records."
+              note: "Overlapping intervals are not allowed for the same scheduling combination; review any displayed conflicts."
+            -
+              id: "supplier_banks"
+              title: "Supplier bank accounts"
+              description: "Protect CLABE and account numbers and manage authorized accounts."
+              tasks:
+                -
+                  title: "Register an account"
+                  steps:
+                    - "Open the supplier record and go to bank accounts."
+                    - "Select “New account”."
+                    - "Enter the bank, account holder, account or CLABE, currency, and whether it is primary."
+                    - "Save and find the record in the account list."
+                -
+                  title: "Edit, reveal protected details, or archive"
+                  steps:
+                    - "Find the account by bank or account holder and filter by currency if needed."
+                    - "Select “Edit” to update permitted details."
+                    - "Use “Reveal” only when authorized and necessary for the task."
+                    - "Archive accounts that must no longer be used for future payments."
+              note: "Do not share complete account numbers in screenshots; revealing sensitive details is audited and permission-controlled."
+            -
+              id: "supplier_export"
+              title: "Supplier exports"
+              description: "Review authorized supplier lists outside the application."
+              tasks:
+                -
+                  title: "Generate an export"
+                  steps:
+                    - "Open the “Suppliers” catalog and apply search or filters."
+                    - "Select “Export” if your permissions make that action available."
+                    - "Review the generated file before sharing it or using it for reconciliation."
+              note: "Export permission is separate from permission to edit suppliers."
+        purchasing:
+          title: "Purchases and receiving"
+          description: "Manage purchasing requests, quotations, orders, receiving, and returns."
+          topics:
+            -
+              id: "purchase_requests"
+              title: "Purchase requests"
+              description: "Specify items needed by a branch."
+              tasks:
+                -
+                  title: "Create a request"
+                  steps:
+                    - "Open “Purchase requests” and select “New request”."
+                    - "Select a branch, the required date, and any notes."
+                    - "Add each product and quantity; ensure no line items are missing."
+                    - "Save as a draft and review its details."
+                -
+                  title: "Submit and decide"
+                  steps:
+                    - "Open the draft and select “Submit”."
+                    - "An authorized user reviews the details and selects “Approve” or “Reject”."
+                    - "If it remains a draft and is no longer needed, select “Cancel”."
+                    - "Check the current status before starting a quotation."
+              note: "An approved request does not mean goods have been received or a liability has been paid."
+            -
+              id: "purchase_quotations"
+              title: "Purchase quotations"
+              description: "Record supplier proposals and verify their validity."
+              tasks:
+                -
+                  title: "Create a quotation"
+                  steps:
+                    - "Open “Purchase quotations” and select “New quotation”, or start from a purchase request."
+                    - "Enter the supplier, currency, expiration date, and notes."
+                    - "Add products, quantities, units per pack, costs, discounts, and delivery days."
+                    - "Save the draft and check every detail."
+                -
+                  title: "Submit, accept, or reject"
+                  steps:
+                    - "Open a draft quotation and select “Submit”."
+                    - "After the supplier confirms, choose “Accept” or “Reject” as appropriate."
+                    - "Before accepting, make sure the proposal has not expired."
+                    - "A submitted quotation cannot be edited as though it were still a draft."
+              note: "An accepted quotation may be used to create a purchase order."
+            -
+              id: "purchase_orders"
+              title: "Purchase orders"
+              description: "Formalize an order and manage its approval and dispatch."
+              tasks:
+                -
+                  title: "Create an order"
+                  steps:
+                    - "Open “Purchase orders” and select “New order”, or start from an accepted quotation."
+                    - "Enter the branch, supplier, currency, and estimated delivery date."
+                    - "Add products, quantities, unit prices, discounts, freight, insurance, and applicable taxes."
+                    - "Save as a draft and validate the calculated totals."
+                -
+                  title: "Approve and send to the supplier"
+                  steps:
+                    - "From the order details, select “Submit” to request approval."
+                    - "An authorized person selects “Approve” or “Reject”."
+                    - "If the order is approved and the supplier remains available, select “Send order” or the dispatch action."
+                    - "Check its status before recording goods receipts."
+                -
+                  title: "Cancel or close an order"
+                  steps:
+                    - "Review the current status and related deliveries."
+                    - "Use “Cancel” only if it is allowed at the current workflow stage."
+                    - "When all commitments are resolved, select “Close” according to the current rules."
+              note: "An inactive or archived supplier may prevent new orders and dispatches; historical obligations must still be resolved."
+            -
+              id: "goods_receipts"
+              title: "Goods receipts"
+              description: "Confirm the quantities actually delivered."
+              tasks:
+                -
+                  title: "Record a receipt"
+                  steps:
+                    - "Open a purchase order that allows receipts and select “Receipts”."
+                    - "Select “New receipt” and review the branch, pending items, and ordered quantities."
+                    - "Enter quantities actually received and batch details where required."
+                    - "Save and open the receipt confirmation."
+                    - "Check the inventory movements for the branch."
+              note: "A partial receipt does not automatically clear all pending items on the order."
+            -
+              id: "purchase_returns"
+              title: "Supplier returns"
+              description: "Return received products with an accurate audit trail."
+              tasks:
+                -
+                  title: "Create a return"
+                  steps:
+                    - "Open the original goods receipt."
+                    - "Select “New return” and choose the relevant products and quantities."
+                    - "Provide a reason and notes when requested."
+                    - "Save, then choose “Process return” with the required authorization."
+                    - "Review the status, inventory records, and related documents."
+              note: "A supplier return originates from a goods receipt, not a new sale."
+        finances:
+          title: "Supplier invoices and accounts payable"
+          description: "Register invoices and apply payments and credits while reconciling balances."
+          topics:
+            -
+              id: "supplier_invoices"
+              title: "Supplier invoices and CFDI"
+              description: "Capture documents, import XML, and record accounting obligations."
+              tasks:
+                -
+                  title: "Create a draft invoice"
+                  steps:
+                    - "Open “Supplier invoices” and select “New invoice”."
+                    - "Choose an active supplier, currency, and related purchase order if applicable."
+                    - "Enter series, invoice number, issue date, receipt date, due date, subtotal, discounts, and taxes."
+                    - "Attach the CFDI XML and PDF files when available; use “CFDI preview” before saving."
+                    - "Verify amounts and tax details, then save the draft."
+                -
+                  title: "Match receipts and post the invoice"
+                  steps:
+                    - "Open the invoice details and use “Match receipts” where applicable."
+                    - "Choose records for goods actually received."
+                    - "Check differences in quantities, totals, and due dates."
+                    - "Once the information is correct, select “Post” using the appropriate permission."
+                    - "Open the generated payable to confirm its balance."
+                -
+                  title: "Cancel an invoice"
+                  steps:
+                    - "Open the invoice details and check its status."
+                    - "If the workflow allows, choose “Cancel” and confirm."
+                    - "Review the effect on payables and related documents."
+              note: "A posted invoice must not be edited like a draft. CFDI validation requires fiscal review; a preview alone does not prove validity with the SAT."
+            -
+              id: "payables"
+              title: "Accounts payable and due dates"
+              description: "Review unpaid invoices, payments, and outstanding balances."
+              tasks:
+                -
+                  title: "Review liabilities"
+                  steps:
+                    - "Open “Accounts payable” from the sidebar."
+                    - "Use filters and pagination, when available, to find a supplier or due date."
+                    - "Open the payable and check the invoice, original amount, payments, credit notes, and balance."
+                    - "Prioritize upcoming and overdue accounts using the displayed due dates."
+                -
+                  title: "Reconcile a balance"
+                  steps:
+                    - "After posting a payment or applying a credit note, reopen the payable."
+                    - "Compare the previous balance, the amount applied, and the remaining amount."
+                    - "If values differ, inspect the source documents and their allocations before creating another transaction."
+              note: "Draft invoices should not be treated as posted liabilities."
+            -
+              id: "supplier_payments"
+              title: "Supplier payments"
+              description: "Record full or partial payments and allocate amounts across liabilities."
+              tasks:
+                -
+                  title: "Record a payment"
+                  steps:
+                    - "Open “Supplier payments” and select “New payment”."
+                    - "Select a supplier, currency, payment date, reference, and amount."
+                    - "Choose an authorized supplier bank account if required."
+                    - "Save and open the payment details."
+                -
+                  title: "Allocate and post the payment"
+                  steps:
+                    - "In the details, choose payables belonging to that same supplier."
+                    - "Allocate the amount across one or more invoices without exceeding their outstanding balances."
+                    - "Select “Post payment” and confirm."
+                    - "Verify the credits and updated balances in the payables."
+                -
+                  title: "Reverse a payment"
+                  steps:
+                    - "Find the payment and open its details."
+                    - "Check where it was allocated, and use “Reverse” only if authorized."
+                    - "Verify that the original balances are restored consistently."
+              note: "Do not record a duplicate payment just to correct an allocation; use the authorized reversal process."
+            -
+              id: "supplier_credits"
+              title: "Credit notes"
+              description: "Record credits and apply them to unpaid invoices."
+              tasks:
+                -
+                  title: "Record a credit note"
+                  steps:
+                    - "Open “Credit notes” and select “New note”."
+                    - "Choose a supplier, currency, related invoice or return, document number, and date."
+                    - "Enter the amount and attach the CFDI XML when available."
+                    - "Save the draft, review the details, and select “Post” when appropriate."
+                -
+                  title: "Apply credit to a payable"
+                  steps:
+                    - "Open a posted note and select a payable for the same supplier."
+                    - "Enter an amount no greater than the available credit or outstanding payable."
+                    - "Confirm and check the remaining credit and new liability balance."
+                -
+                  title: "Cancel a credit note"
+                  steps:
+                    - "Check the note status and whether allocations already exist."
+                    - "Select “Cancel” only when the current rules allow it."
+                    - "If allocations exist, resolve related transactions first; direct cancellation is blocked."
+              note: "Payments and credit notes change financial balances: verify the supplier and amounts before confirming."
+        communication:
+          title: "Communication and module status"
+          description: "Review notifications, messaging, demo requests, and upcoming features."
+          topics:
+            -
+              id: "notifications"
+              title: "Notification center"
+              description: "Review recent events and mark notifications as read."
+              tasks:
+                -
+                  title: "Review notifications"
+                  steps:
+                    - "Select the notifications icon in the top bar."
+                    - "Read notices about relevant operations and open the source record when a link is available."
+                    - "Select “Mark all as read” to clear unread notifications."
+              note: "A notification does not replace checking the original receipt or balance."
+            -
+              id: "messages"
+              title: "Internal messaging"
+              description: "Send messages to other users through the available chat."
+              tasks:
+                -
+                  title: "Send a message"
+                  steps:
+                    - "Open the chat panel integrated into the system."
+                    - "Choose a conversation, or start a new one if the option is enabled."
+                    - "Enter your message and select Send."
+                    - "Confirm that the message appears in the correct conversation."
+              note: "Visible conversations depend on accounts and configured access."
+            -
+              id: "demo_requests"
+              title: "Demo requests"
+              description: "Follow up with people interested in Delta POS."
+              before: "Administrative access is required."
+              tasks:
+                -
+                  title: "Handle a demo request"
+                  steps:
+                    - "Open “Demo requests” from the administration menu."
+                    - "Search or filter requests, then open the relevant details."
+                    - "Review the information submitted by the prospective customer."
+                    - "Update the status or available follow-up details, then save."
+              note: "This process manages product inquiries; it does not record a point-of-sale transaction."
+            -
+              id: "coming_soon"
+              title: "Features under development"
+              description: "Recognize navigation entries that are not operational yet."
+              tasks:
+                -
+                  title: "Identify unavailable sections"
+                  steps:
+                    - "The menu may display “New sale”, “Sales history”, “Sales returns”, “Cash register”, “Employees”, “Kardex”, “Taxes” or “Reports” as demonstration links."
+                    - "A link whose destination is only “#” does not open a working page or save data."
+                    - "Ask an administrator about future releases; do not assume those features already have a usable workflow."
+              note: "This manual documents working routes and does not invent workflows for unfinished screens."

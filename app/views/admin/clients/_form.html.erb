@@ -28,13 +28,7 @@
                            placeholder: t('admin.clients.form.email_placeholder') %>
       <%= error_message_for(client, :email) %>
     </div>
-    <div>
-      <%= form.label :phone, t('admin.clients.form.phone'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.telephone_field :phone,
-                               class: "input-field w-full rounded-xl #{form_state_classes(client, :phone)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                               placeholder: t('admin.clients.form.phone_placeholder') %>
-      <%= error_message_for(client, :phone) %>
-    </div>
+    <%= render 'admin/shared/primary_mobile_field', form: form, record: client %>
     <div>
       <%= form.label :rfc, t('admin.clients.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :rfc, maxlength: 13,

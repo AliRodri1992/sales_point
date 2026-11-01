@@ -8,7 +8,7 @@ class CreatePaymentIntegrations < ActiveRecord::Migration[8.1]
       t.string :status, null: false, default: 'pending', limit: 20
       t.jsonb :configuration, null: false, default: {}
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :payment_integrations, :deleted_at

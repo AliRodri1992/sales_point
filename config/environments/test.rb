@@ -38,6 +38,7 @@ Rails.application.configure do
 
   # Allow the default Capybara host used by feature specs.
   config.hosts << 'www.example.com'
+  config.hosts << '127.0.0.1' # Capybara's local Puma server uses a random port.
 
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }

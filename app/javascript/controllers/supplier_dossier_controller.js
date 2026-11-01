@@ -1,0 +1,87 @@
+import { Controller } from "@hotwired/stimulus"
+
+// The dossier opens directly in General; the navigation is permission-aware.
+export default class extends Controller {
+  static targets = ["tab", "panel", "mobileSelect"]
+  static values = { initialTab: { type: String, default: "general" } }
+
+  connect() {
+    this.onPopState = () => this.activateTab(this.requestedTab(), false)
+    this.activateTab(this.requestedTab(), false)
+    window.addEventListener("popstate", this.onPopState)
+  }
+
+  disconnect() {
+    window.removeEventListener("popstate", this.onPopState)
+  }
+
+  requestedTab() {
+    const section = new URL(window.location.href).searchParams.get("tab") || this.initialTabValue
+    return section === "finances" ? "statement" : section === "overview" ? "general" : section
+  }
+
+  select(event) {
+    const section = event.currentTarget.dataset.section || event.currentTarget.value
+    this.activateTab(section)
+    // Cross-panel buttons must not leave keyboard focus inside a hidden panel.
+    if (event.currentTarget.matches('[role="tab"]')) return
+    const tab = this.tabTargets.find((candidate) => candidate.dataset.section === section)
+    const panel = this.panelTargets.find((candidate) => candidate.dataset.section === section)
+    if (tab && tab.getClientRects().length > 0) tab.focus()
+    else panel?.focus()
+  }
+
+  navigate(event) {
+    if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
+    event.preventDefault()
+    const tabs = this.tabTargets
+    const current = tabs.indexOf(event.currentTarget)
+    const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 :
+      (current + (event.key === "ArrowDown" ? 1 : -1) + tabs.length) % tabs.length
+    const next = tabs[nextIndex]
+    if (!next) return
+    this.activateTab(next.dataset.section)
+    next.focus()
+  }
+
+  activateTab(section, updateUrl = true) {
+    const available = this.panelTargets.map((panel) => panel.dataset.section)
+    // Choose only existing sections and never assume access to General.
+    const selected = available.includes(section) ? section : available[0]
+    if (!selected) return
+
+    this.tabTargets.forEach((tab) => {
+      const active = tab.dataset.section === selected
+      tab.setAttribute("aria-selected", String(active))
+      tab.tabIndex = active ? 0 : -1
+      tab.classList.toggle("bg-emerald-50", active)
+      tab.classList.toggle("text-emerald-800", active)
+      tab.classList.toggle("font-semibold", active)
+      tab.classList.toggle("text-slate-600", !active)
+      tab.classList.toggle("font-medium", !active)
+    })
+
+    if (this.hasMobileSelectTarget) {
+      this.mobileSelectTarget.value = selected
+      // The native value changes without a change event during desktop tab
+      // navigation and browser history; update the visible Delta dropdown too.
+      const dropdown = this.mobileSelectTarget.closest('[data-controller~="delta-select"]')
+      if (dropdown) this.application.getControllerForElementAndIdentifier(dropdown, "delta-select")?.refresh()
+    }
+    this.panelTargets.forEach((panel) => {
+      const active = panel.dataset.section === selected
+      panel.hidden = !active
+      panel.classList.toggle("hidden", !active)
+      panel.setAttribute("aria-hidden", String(!active))
+    })
+
+    if (updateUrl) {
+      const url = new URL(window.location.href)
+      if (selected === "general") url.searchParams.delete("tab")
+      else url.searchParams.set("tab", selected)
+      if (url.toString() !== window.location.href) {
+        window.history.pushState(window.history.state, "", url)
+      }
+    }
+  }
+}

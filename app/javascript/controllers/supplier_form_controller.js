@@ -1,0 +1,408 @@
+import { Controller } from "@hotwired/stimulus"
+
+// Accessible supplier dossier navigation; one Rails form, one submission.
+export default class extends Controller {
+  static targets = ["step", "tab", "circle", "previous", "next", "submit",
+    "addressValidationError", "progress", "progressBar", "position", "navigation"]
+  static values = {
+    index: { type: Number, default: 0 },
+    addressValidationUrl: String,
+    newRecord: Boolean
+  }
+
+  connect() {
+    this.validating = false
+    this.allowSubmit = false
+    this.onFieldChange = (event) => {
+      if (event.target.closest("[data-supplier-address-validation]")) {
+        this.clearAddressFieldError(event.target)
+      } else if (event.target.matches("input[required], select[required], textarea[required]")) {
+        this.validateField(event.target)
+      } else if (event.target.matches("input, select, textarea") &&
+        (event.target.getAttribute("aria-invalid") === "true" || event.target.classList.contains("input-field-error"))) {
+        this.clearFieldError(event.target)
+      }
+      this.refreshStepIndicators()
+    }
+    for (const eventName of ["input", "change"]) {
+      this.element.addEventListener(eventName, this.onFieldChange)
+    }
+    this.onOutsideNavigationClick = (event) => {
+      if (this.hasNavigationTarget && !this.navigationTarget.contains(event.target)) {
+        this.navigationTarget.open = false
+      }
+    }
+    document.addEventListener("click", this.onOutsideNavigationClick)
+    this.initializeServerFieldErrors()
+    const invalid = this.stepTargets.findIndex((step) => step.querySelector("[aria-invalid='true'], .field_with_errors, [data-server-field-error]"))
+    if (invalid >= 0) this.indexValue = invalid
+    this.render()
+  }
+
+  disconnect() {
+    for (const eventName of ["input", "change"]) {
+      this.element.removeEventListener(eventName, this.onFieldChange)
+    }
+    document.removeEventListener("click", this.onOutsideNavigationClick)
+  }
+
+  fieldWrapper(field) {
+    return field.closest("[data-controller='international-phone']")?.parentElement || field.closest(".grid > div") || field.parentElement
+  }
+
+  visibleSelectButton(field) {
+    return field.closest('[data-controller~="delta-select"]')?.querySelector('button[aria-haspopup="listbox"]')
+  }
+
+  setFieldInvalid(field, invalid) {
+    if (invalid) field.setAttribute("aria-invalid", "true")
+    else field.removeAttribute("aria-invalid")
+    field.classList.toggle("input-field-error", invalid)
+    const trigger = this.visibleSelectButton(field)
+    if (invalid) trigger?.setAttribute("aria-invalid", "true")
+    else trigger?.removeAttribute("aria-invalid")
+
+    // Preserve a high-contrast border on native and custom controls even when
+    // CSS utility layers or browser focus styles override the base class.
+    for (const control of [field, trigger].filter(Boolean)) {
+      if (invalid) {
+        control.style.setProperty("border-color", "#e11d48", "important")
+        control.style.setProperty("background-color", "#fff1f2", "important")
+      } else {
+        control.style.removeProperty("border-color")
+        control.style.removeProperty("background-color")
+      }
+    }
+  }
+
+  describeFieldError(field, message) {
+    if (!message.id) message.id = `${field.id || "supplier-field"}-validation-error`
+    const controls = [field, this.visibleSelectButton(field)].filter(Boolean)
+    controls.forEach((control) => {
+      const ids = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean)
+      if (!ids.includes(message.id)) ids.push(message.id)
+      control.setAttribute("aria-describedby", ids.join(" "))
+    })
+  }
+
+  initializeServerFieldErrors() {
+    this.element.querySelectorAll("input:not([type='hidden']):not([type='checkbox']), select, textarea").forEach((field) => {
+      const wrapper = this.fieldWrapper(field)
+      const message = wrapper?.querySelector("[data-server-field-error]")
+      if (!message && !field.closest(".field_with_errors") && !field.classList.contains("input-field-error")) return
+      this.setFieldInvalid(field, true)
+      if (message) this.describeFieldError(field, message)
+    })
+  }
+
+  clearFieldError(field) {
+    const wrapper = this.fieldWrapper(field)
+    const messages = [...(wrapper?.querySelectorAll("[data-required-error], [data-server-field-error]") || [])]
+    const controls = [field, this.visibleSelectButton(field)].filter(Boolean)
+    controls.forEach((control) => {
+      const ids = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean)
+        .filter((id) => !messages.some((message) => message.id === id))
+      if (ids.length) control.setAttribute("aria-describedby", ids.join(" "))
+      else control.removeAttribute("aria-describedby")
+    })
+    messages.forEach((message) => message.remove())
+    this.setFieldInvalid(field, false)
+    field.classList.remove("border-rose-500", "bg-rose-50")
+  }
+
+  showFieldError(field, reason) {
+    const wrapper = this.fieldWrapper(field)
+    if (!wrapper) return
+    this.setFieldInvalid(field, true)
+    field.classList.add("border-rose-500", "bg-rose-50")
+    wrapper.querySelectorAll("[data-server-field-error]").forEach((message) => message.remove())
+    let message = wrapper.querySelector("[data-required-error]")
+    if (!message) {
+      message = document.createElement("p")
+      message.dataset.requiredError = "true"
+      message.className = "mt-1 text-xs text-rose-600"
+      wrapper.append(message)
+    }
+    const label = field.labels?.[0]?.textContent?.replace(/\*/g, "").trim() || field.name
+    const template = reason === "format" ? this.element.dataset.invalidFormatMessage : this.element.dataset.requiredMessage
+    message.textContent = template.replace("%{field}", label)
+    this.describeFieldError(field, message)
+  }
+
+  validateField(field) {
+    const value = field.value.trim()
+    const valid = value.length > 0 && field.validity.valid
+    if (valid) this.clearFieldError(field)
+    else this.showFieldError(field, value.length === 0 ? "required" : "format")
+    return valid
+  }
+
+  addressRoot() {
+    return this.stepTargets[1]?.querySelector("[data-supplier-address-validation]:not([hidden])")
+  }
+
+  addressInput(root, name) {
+    return root.querySelector('[name$="[' + name + ']"]')
+  }
+
+  clearAddressFieldError(field) {
+    const root = field.closest("[data-supplier-address-validation]")
+    if (!root) return
+    if (field.name?.endsWith("[country_id]")) {
+      this.clearAddressErrors(root)
+      return
+    }
+    const name = field.name?.split("[").pop()?.replace("]", "")
+    const message = root.querySelector('[data-supplier-address-model-error="' + name + '"]')
+    if (message) {
+      message.classList.add("hidden")
+      message.textContent = ""
+    }
+    this.clearFieldError(field)
+  }
+
+  clearAddressErrors(root) {
+    root.querySelectorAll("[data-supplier-address-model-error]").forEach((message) => {
+      message.classList.add("hidden")
+      message.textContent = ""
+    })
+    root.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
+      this.clearFieldError(field)
+    })
+    if (this.hasAddressValidationErrorTarget) {
+      this.addressValidationErrorTarget.textContent = ""
+      this.addressValidationErrorTarget.classList.add("hidden")
+    }
+  }
+
+  showAddressErrors(root, errors) {
+    let firstField = null
+    for (const [name, messages] of Object.entries(errors)) {
+      const message = root.querySelector('[data-supplier-address-model-error="' + name + '"]')
+      if (!message) continue
+      message.textContent = (Array.isArray(messages) ? messages : [messages]).join(" ")
+      message.classList.remove("hidden")
+      const field = this.addressInput(root, name)
+      if (!field) continue
+      this.setFieldInvalid(field, true)
+      field.classList.add("border-rose-500", "bg-rose-50")
+      this.describeFieldError(field, message)
+      firstField ||= field
+    }
+    return firstField
+  }
+
+  async validateFiscalAddress(index) {
+    if (index !== 1 || !this.addressValidationUrlValue) return true
+    const root = this.addressRoot()
+    if (!root) return true
+    const attributes = ["street", "exterior_number", "interior_number",
+      "neighborhood", "city", "state", "postal_code", "country_id"]
+    const body = new URLSearchParams()
+    attributes.forEach((name) => {
+      body.append("address[" + name + "]", this.addressInput(root, name)?.value || "")
+    })
+    this.clearAddressErrors(root)
+
+    try {
+      const response = await fetch(this.addressValidationUrlValue, {
+        method: "POST",
+        body,
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || ""
+        }
+      })
+      if (response.ok) return true
+      if (response.status !== 422) throw new Error("Address validation unavailable")
+
+      const result = await response.json()
+      const first = this.showAddressErrors(root, result.errors || {})
+      this.invalidAddressField = first
+      return false
+    } catch (_error) {
+      if (this.hasAddressValidationErrorTarget) {
+        this.addressValidationErrorTarget.textContent =
+          this.element.dataset.supplierFormValidationUnavailableMessage
+        this.addressValidationErrorTarget.classList.remove("hidden")
+      }
+      this.invalidAddressField = null
+      return false
+    }
+  }
+
+  focusField(field) {
+    const dropdown = field?.closest('[data-controller~="delta-select"]')
+    const target = dropdown?.querySelector('button[aria-haspopup="listbox"]') || field
+    target?.focus()
+  }
+
+  navigationKeydown(event) {
+    if (event.key !== "Escape" || !this.hasNavigationTarget || !this.navigationTarget.open) return
+    event.preventDefault()
+    this.navigationTarget.open = false
+    this.navigationTarget.querySelector("summary")?.focus()
+  }
+
+  async select(event) {
+    if (this.validating) return
+    if (this.hasNavigationTarget) this.navigationTarget.open = false
+    const destination = Number(event.currentTarget.dataset.stepIndex)
+    this.validating = true
+    try {
+      if (this.newRecordValue && destination > this.indexValue && !await this.validateThrough(destination)) return
+      this.indexValue = destination
+    } finally {
+      this.validating = false
+    }
+  }
+
+  async next() {
+    if (this.validating) return
+    this.validating = true
+    try {
+      if (this.newRecordValue && !await this.validateStep(this.indexValue)) return
+      this.indexValue = Math.min(this.indexValue + 1, this.stepTargets.length - 1)
+    } finally {
+      this.validating = false
+    }
+  }
+
+  async submit(event) {
+    if (this.allowSubmit) {
+      this.allowSubmit = false
+      return
+    }
+    event.preventDefault()
+    if (this.validating) return
+    this.validating = true
+    try {
+      if (!await this.validateThrough(this.stepTargets.length - 1)) return
+      if (!await this.validateStep(this.stepTargets.length - 1)) return
+      if (this.newRecordValue && this.indexValue !== this.stepTargets.length - 1) {
+        this.indexValue = this.stepTargets.length - 1
+        return
+      }
+      this.allowSubmit = true
+      this.element.requestSubmit(this.submitTarget)
+    } finally {
+      this.validating = false
+    }
+  }
+
+  previous() {
+    if (this.validating) return
+    this.indexValue = Math.max(this.indexValue - 1, 0)
+  }
+
+  indexValueChanged() {
+    if (this.hasStepTarget) this.render()
+  }
+
+  async validateThrough(destination) {
+    for (let index = 0; index < destination; index += 1) {
+      if (!await this.validateStep(index)) return false
+    }
+    return true
+  }
+
+  async validateStep(index) {
+    const step = this.stepTargets[index]
+    const fields = [...step.querySelectorAll("input[required], select[required], textarea[required]")]
+      .filter((field) => !field.disabled && !field.closest("[data-supplier-address-validation]") &&
+        !field.closest("template"))
+    const invalid = fields.filter((field) => !this.validateField(field))
+    const addressValid = await this.validateFiscalAddress(index)
+    if (!invalid.length && addressValid) return true
+
+    this.indexValue = index
+    this.render()
+    this.focusField(invalid[0] || this.invalidAddressField)
+    return false
+  }
+
+  refreshStepIndicators() {
+    this.tabTargets.forEach((tab, index) => {
+      const invalid = this.stepTargets[index]?.querySelector('[aria-invalid="true"], .field_with_errors, [data-server-field-error]')
+      const required = [...(this.stepTargets[index]?.querySelectorAll('input[required], select[required], textarea[required]') || [])]
+        .filter((field) => !field.disabled && !field.closest("template"))
+      const editable = [...(this.stepTargets[index]?.querySelectorAll("input:not([type='hidden']), select, textarea") || [])]
+        .filter((field) => !field.disabled && !field.closest("template"))
+      // A preselected checkbox is not evidence that the user has completed a section.
+      // In particular, the primary contact checkbox must not mark an empty contact complete.
+      const hasContent = editable.some((field) =>
+        !["checkbox", "radio"].includes(field.type) && field.value.trim() !== "")
+      const requiredComplete = required.every((field) => field.value.trim() !== "" && field.checkValidity())
+      const complete = !invalid && hasContent && requiredComplete
+      const state = invalid ? "error" : complete ? "complete" : hasContent ? "progress" : "pending"
+      tab.dataset.stepState = state
+      tab.classList.toggle("ring-1", !!invalid)
+      tab.classList.toggle("ring-rose-400", !!invalid)
+      let indicator = tab.querySelector("[data-step-indicator]")
+      if (!indicator) {
+        indicator = document.createElement("span")
+        indicator.dataset.stepIndicator = "true"
+        indicator.className = "inline-flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+        tab.append(indicator)
+      }
+      indicator.textContent = { complete: "✓", error: "!", progress: "·", pending: "○" }[state]
+      indicator.setAttribute("role", "img")
+      indicator.setAttribute("aria-label", state === "progress" ? this.element.dataset.supplierFormInProgressLabel : (this.element.dataset[`supplierForm${state[0].toUpperCase() + state.slice(1)}Label`] || state))
+      indicator.classList.toggle("bg-emerald-100", state === "complete")
+      indicator.classList.toggle("text-emerald-800", state === "complete")
+      indicator.classList.toggle("bg-rose-100", state === "error")
+      indicator.classList.toggle("text-rose-800", state === "error")
+      indicator.classList.toggle("bg-amber-100", state === "progress")
+      indicator.classList.toggle("text-amber-800", state === "progress")
+      indicator.classList.toggle("bg-slate-100", state === "pending")
+      indicator.classList.toggle("text-slate-600", state === "pending")
+    })
+    if (this.hasProgressTarget) {
+      const count = this.tabTargets.filter((tab) => tab.dataset.stepState === "complete").length
+      const template = this.element.dataset.supplierFormProgressLabel || "%{count} / %{total}"
+      this.progressTarget.textContent = template.replace("%{count}", String(count))
+        .replace("%{total}", String(this.stepTargets.length))
+    }
+  }
+
+  render() {
+    if (this.hasPositionTarget) {
+      const template = this.element.dataset.supplierFormStepCounterTemplate || "%{current} / %{total}"
+      this.positionTarget.textContent = template.replace("%{current}", String(this.indexValue + 1))
+        .replace("%{total}", String(this.stepTargets.length))
+    }
+    if (this.hasProgressBarTarget) {
+      this.progressBarTarget.style.width = `${((this.indexValue + 1) / this.stepTargets.length) * 100}%`
+    }
+    this.stepTargets.forEach((step, index) => {
+      step.hidden = index !== this.indexValue
+      step.classList.toggle("hidden", index !== this.indexValue)
+    })
+    this.tabTargets.forEach((tab, index) => {
+      const active = index === this.indexValue
+      if (active) tab.setAttribute("aria-current", this.newRecordValue ? "step" : "location")
+      else tab.removeAttribute("aria-current")
+      tab.classList.toggle("bg-emerald-50", active)
+      tab.classList.toggle("text-emerald-800", active)
+      tab.classList.toggle("border-emerald-500", active)
+      tab.classList.toggle("ring-2", active)
+      tab.classList.toggle("ring-emerald-100", active)
+      tab.classList.toggle("border-transparent", !active)
+      tab.classList.toggle("bg-white", !active)
+    })
+    this.circleTargets.forEach((circle, index) => {
+      const active = index === this.indexValue
+      circle.classList.toggle("bg-emerald-600", active)
+      circle.classList.toggle("border-emerald-600", active)
+      circle.classList.toggle("text-white", active)
+      circle.classList.toggle("bg-white", !active)
+      circle.classList.toggle("border-slate-200", !active)
+      circle.classList.toggle("text-slate-500", !active)
+    })
+    this.refreshStepIndicators()
+    if (this.hasSubmitTarget) this.submitTarget.hidden = this.newRecordValue && this.indexValue !== this.stepTargets.length - 1
+    if (this.hasPreviousTarget) this.previousTarget.hidden = !this.newRecordValue || this.indexValue === 0
+    if (this.hasNextTarget) this.nextTarget.hidden = !this.newRecordValue || this.indexValue === this.stepTargets.length - 1
+  }
+}

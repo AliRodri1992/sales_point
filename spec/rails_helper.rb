@@ -13,11 +13,28 @@ ENV['RAILS_ENV'] = 'test'
 # database (config/database.yml + POSTGRES_DB_TEST) instead of truncating the
 # development database (with the seeds) every time the specs run.
 ENV.delete('DATABASE_URL')
+
+# Lock before Rails checks/updates the test schema and DatabaseCleaner truncates
+# tables. The pre-push runner already owns this lock across db:prepare + RSpec.
+require_relative '../lib/test_database_lock'
+unless ENV['TEST_DATABASE_LOCK_HELD'] == '1'
+  TEST_DATABASE_LOCK = TestDatabaseLock.new
+  TEST_DATABASE_LOCK.acquire
+  at_exit { TEST_DATABASE_LOCK.release }
+end
+
 require File.expand_path('../config/environment', __dir__)
 
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 
 require 'rspec/rails'
+
+# Keep the test database synchronized with the current migrations before examples run.
+# RAILS_ENV and DATABASE_URL are set above to avoid touching development data.
+ActiveRecord::Migration.maintain_test_schema!
+
+# Suppress Sidekiq connection INFO messages in test output while retaining warnings.
+Sidekiq.logger.level = Logger::WARN if defined?(Sidekiq)
 require 'capybara/rspec'
 require 'shoulda/matchers'
 # ─────────────────────────────

@@ -1,16 +1,4 @@
 module BreadcrumbsHelper
-  BREADCRUMB_HANDLERS = {
-    'admin/products' => :product_breadcrumb_items,
-    'admin/dashboard' => :dashboard_breadcrumb_items,
-    'admin/languages' => :language_breadcrumb_items,
-    'admin/categories' => :category_breadcrumb_items,
-    'system_roles' => :system_role_breadcrumb_items,
-    'admin/profiles' => :profile_breadcrumb_items,
-    'admin/branches' => :branch_breadcrumb_items,
-    'admin/clients' => :client_breadcrumb_items,
-    'admin/users' => :user_breadcrumb_items
-  }.freeze
-
   def breadcrumb_items
     [home_breadcrumb, *controller_breadcrumb_items]
   end
@@ -22,11 +10,13 @@ module BreadcrumbsHelper
   end
 
   def controller_breadcrumb_items
-    send(BREADCRUMB_HANDLERS.fetch(params[:controller], :default_breadcrumb_items))
+    send(BreadcrumbHandlerRegistry::HANDLERS.fetch(params[:controller], :default_breadcrumb_items))
   end
 
   def default_breadcrumb_items
-    [{ label: params[:controller].to_s.remove('admin/').humanize }]
+    controller_name = params[:controller].to_s.delete_prefix('admin/')
+    label = t("admin.breadcrumbs.controllers.#{controller_name}", default: controller_name.humanize)
+    [{ label: }]
   end
 
   def current_product
@@ -108,6 +98,12 @@ module BreadcrumbsHelper
     end
   end
 
+  include SupplierBreadcrumbsHelper
+  include SupplierCatalogBreadcrumbsHelper
+  include PurchasesBreadcrumbsHelper
+  include FinancialBreadcrumbsHelper
+  include SystemRoleBreadcrumbsHelper
+
   def user_breadcrumb_items
     base = { label: t('admin.breadcrumbs.users'), path: admin_users_path }
     record = controller.view_assigns['user']
@@ -127,18 +123,5 @@ module BreadcrumbsHelper
 
   def editable_record_breadcrumb(record, fallback, path_builder)
     record_breadcrumb(record, fallback).merge(path: record&.then { |value| path_builder.call(value) })
-  end
-
-  def system_role_breadcrumb_items
-    roles_path = { label: t('admin.breadcrumbs.roles'), path: system_roles_path }
-
-    case params[:action]
-    when 'new', 'create'
-      [roles_path, { label: t('admin.system_roles.new.title') }]
-    when 'edit'
-      [roles_path, { label: t('admin.system_roles.edit.title') }]
-    else
-      [roles_path]
-    end
   end
 end

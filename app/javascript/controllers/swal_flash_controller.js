@@ -1,25 +1,30 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Shows a server-provided SweetAlert2 toast on page load.
-// The layout renders a hidden trigger element carrying the message and icon
-// as Stimulus values; connect() fires the toast once.
+// Displays the server-provided SweetAlert2 message once after navigation.
+// Authentication notices may use a centered dialog; other notices remain toasts.
 export default class extends Controller {
     static values = {
         message: String,
-        icon: { type: String, default: "success" }
+        icon: { type: String, default: "success" },
+        mode: { type: String, default: "toast" }
     }
 
     connect() {
-        if (!this.messageValue) return
+        if (!this.messageValue || !window.Swal) return
 
+        const modal = this.modeValue === "modal"
         window.Swal.fire({
-            toast: true,
+            toast: !modal,
             icon: this.iconValue,
-            position: "top-end",
-            timer: 2600,
-            showConfirmButton: false,
-            timerProgressBar: true,
+            position: modal ? "center" : "top-end",
+            timer: modal ? undefined : 2600,
+            showConfirmButton: modal,
+            confirmButtonColor: "#047857",
+            timerProgressBar: !modal,
             title: this.messageValue
         })
+
+        // Prevent the same notification from replaying after Turbo navigation.
+        this.element.remove()
     }
 }

@@ -5,6 +5,11 @@ en:
     initial_terminal_name: "Register %{number}"
   admin:
     onboarding:
+      business_sectors:
+        grocery: "Grocery"
+        fashion: "Fashion and apparel"
+        restaurant: "Restaurants"
+        pharmacy: "Pharmacies"
       link: "Initial setup"
       show:
         title: "Initial Setup"

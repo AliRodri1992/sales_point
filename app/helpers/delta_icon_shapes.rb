@@ -1,0 +1,115 @@
+# frozen_string_literal: true
+
+# Original 24x24 vector drawings for Delta POS.
+module DeltaIconShapes
+  ICON_SHAPES = {
+    'banknotes' => 'r:3,6,18,12,2|c:12,12,3|M6 9h1|M17 15h1',
+    'bars-3' => 'M4 6h16|M4 12h16|M4 18h16',
+    'bell' => 'M7 17V10a5 5 0 0 1 10 0v7l2 2H5l2-2|M10 21h4',
+    'book-open' => 'M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1|M12 5c3-2 6-2 9-1v15c-3-1-6-1-9 1|M12 5v15',
+    'building-library' => 'M3 9l9-6 9 6|M4 10h16|M6 10v9|M10 10v9|M14 10v9|M18 10v9|M3 20h18',
+    'building-office-2' => 'r:4,3,12,18,2|M16 9h4v12|M8 7h1|M12 7h1|M8 11h1|M12 11h1|M8 15h1|M12 15h1|M9 21v-3h3v3',
+    'building-storefront' => [
+      'M4 9V5h16v4|M3 9h18l-1 4a3 3 0 0 1-4 1 3 3 0 0 1-4 0 3 3 0 0 1-4',
+      ' 0 3 3 0 0 1-4-1z|M5 15v6h14v-6|M9 21v-5h6v5'
+    ].join,
+    'calculator' => 'r:5,2,14,20,2|M8 7h8|M8 11h1|M12 11h1|M16 11h1|M8 15h1|M12 15h1|M16 15h1|M8 19h1|M12 19h5',
+    'calendar-days' => 'r:3,5,18,16,2|M7 3v4|M17 3v4|M3 10h18|M8 14h2|M14 14h2|M8 18h2|M14 18h2',
+    'chart-bar' => 'M4 20V4|M4 20h17|r:8,11,3,9,0|r:14,6,3,14,0|M20 20V9',
+    'chart-pie' => 'c:12,12,9|M12 3v9h9|M9 4v9h9',
+    'chat-bubble-left-right' => [
+      'M5 5h12a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9l-5 3v-3a3 3 0 0 1-2-3V8a',
+      '3 3 0 0 1 3-3z|M7 10h10|M7 14h6'
+    ].join,
+    'check' => 'M4 12l5 5L20 6',
+    'check-circle' => 'c:12,12,9|M7.5 12l3 3L17 8.5',
+    'chevron-down' => 'M5 9l7 7 7-7',
+    'chevron-left' => 'M15 5l-7 7 7 7',
+    'chevron-right' => 'M9 5l7 7-7 7',
+    'chevron-up' => 'M5 15l7-7 7 7',
+    'clipboard-document-list' => 'r:5,5,14,17,2|r:9,2,6,5,1|M9 11h6|M9 15h6|M9 19h4',
+    'clock' => 'c:12,12,9|M12 6v6l4 2',
+    'cloud-arrow-up' => 'M7 18H6a4 4 0 0 1-1-8 7 7 0 0 1 13 1h1a3.5 3.5 0 0 1 0 7h-2|M12 21V11|M8.5 14.5 12 11l3.5 3.5',
+    'cog' => [
+      'c:12,12,3|M10 2h4l.5 3 2 .8 2.5-1.4 2.2 3.5-2.2 2 .1 2.3 2.1 2-2',
+      '.2 3.5-2.5-1.2-2 1-.5 2.8h-4l-.5-2.8-2-1-2.5 1.2-2.2-3.5 2.1-2v-',
+      '2.3l-2.1-2L5 4.4l2.5 1.4 2-.8z'
+    ].join,
+    'computer-desktop' => 'r:3,4,18,13,2|M12 17v4|M8 21h8',
+    'credit-card' => 'r:2,5,20,14,2|M2 10h20|M6 15h5',
+    'cube' => 'M12 2 3 7l9 5 9-5-9-5z|M3 7v10l9 5 9-5V7|M12 12v10',
+    'device-phone-mobile' => 'r:7,2,10,20,2|M10 5h4|M11 19h2',
+    'document-arrow-up' => 'M6 3h8l4 4v5|M14 3v4h4|M6 3v18h12v-4|M12 21v-9|M8.5 15.5 12 12l3.5 3.5',
+    'document-text' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 11h6|M9 15h6|M9 19h4',
+    'document-magnifying-glass' => 'M6 3h8l4 4v6|M14 3v4h4|M6 3v18h8|M9 11h5|c:17,16.5,3|M19.2 18.7 22 21.5',
+    'paper-clip' => 'M9 12.5l5.7-5.7a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a5 5 0 0 1-7-7l8.7-8.7',
+    'document-check' => 'M6 3h8l4 4v14H6z|M14 3v4h4|M9 14l2 2 4-5',
+    'ellipsis-horizontal' => 'c:5,12,1|c:12,12,1|c:19,12,1',
+    'ellipsis-vertical' => 'c:12,5,1|c:12,12,1|c:12,19,1',
+    'envelope' => 'r:3,5,18,14,2|M3 7l9 7 9-7',
+    'exclamation-circle' => 'c:12,12,9|M12 7v6|M12 17v.5',
+    'exclamation-triangle' => 'M12 3 2 21h20z|M12 9v5|M12 17v.3',
+    'eye' => 'M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6z|c:12,12,3',
+    'funnel' => 'M3 5h18l-7 8v6l-4 2v-8z',
+    'home' => 'M3 11 12 3l9 8|M5 10v11h14V10|M9 21v-7h6v7',
+    'identification' => 'r:3,4,18,16,2|c:9,10,2|M6 16c0-3 6-3 6 0|M15 9h4|M15 13h4',
+    'inbox' => 'M5 4h14l3 11v5H2v-5z|M2 15h6l2 3h4l2-3h6',
+    'information-circle' => 'c:12,12,9|M12 11v5|M12 7.5v.5',
+    'key' => 'c:8,10,5|M12 13l9 9|M16 17l2-2|M18 19l2-2',
+    'language' => 'c:12,12,9|M3 12h18|M12 3c-5 5-5 13 0 18|M12 3c5 5 5 13 0 18|M5 7h14|M5 17h14',
+    'light-bulb' => 'M9 17c-.3-2-3-3-3-7a6 6 0 0 1 12 0c0 4-2.7 5-3 7z|M9 20h6|M10 22h4',
+    'list-bullet' => 'M4 6h1|M9 6h12|M4 12h1|M9 12h12|M4 18h1|M9 18h12',
+    'lock-closed' => 'r:5,10,14,11,2|M8 10V7a4 4 0 0 1 8 0v3|M12 15v2',
+    'lock-open' => 'r:5,10,14,11,2|M8 10V7a4 4 0 0 1 8-1|M12 15v2',
+    'magnifying-glass' => 'c:10.5,10.5,6.5|M15.5 15.5 21 21',
+    'map-pin' => 'M12 22s-8-7-8-12a8 8 0 0 1 16 0c0 5-8 12-8 12z|c:12,10,3',
+    'paper-airplane' => 'M22 2 2 11l9 2 2 9z|M11 13 22 2',
+    'pencil' => 'M4 20l4.5-1 11-11a2 2 0 0 0-3-3l-11 11z|M14.5 7.5l3 3',
+    'pencil-square' => [
+      'M12 5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7|M9 15',
+      'l3-.6L21 6a2 2 0 0 0-3-3l-8.4 9z'
+    ].join,
+    'phone' => 'M7 3 4 6c0 7 7 14 14 14l3-3-5-4-3 3c-3-1-5-3-6-6l3-3z',
+    'phone-mobile' => 'r:7.5,2,9,20,2.2|M10.5 5h3|M11 19h2|M10 8.5h4',
+    'phone-landline' => [
+      'M4 7.8a2.7 2.7 0 0 1 2.7-2.7h10.6A2.7 2.7 0 0 1 20 7.8v1.6H4z|',
+      'M7 9.4v2.4l-2 4.1v3h14v-3l-2-4.1V9.4|M10 14h4|M10 16.5h4'
+    ].join,
+    'plus' => 'M12 4v16|M4 12h16',
+    'plus-circle' => 'c:12,12,9|M12 7v10|M7 12h10',
+    'presentation-chart-line' => 'r:3,3,18,13,1|M12 16v5|M8 21h8|M6 12l3-3 3 1 5-4',
+    'rectangle-stack' => 'r:5,7,16,13,2|M3 17V5h15|M7 3h13',
+    'receipt-percent' => [
+      'M6 3h12v18l-3-2-3 2-3-2-3 2V3z|c:9.5,9,1|c:14.5,15,1|M9 16l6-8'
+    ].join,
+    'shield-check' => 'M12 2 4 5v7c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z|M8 12l3 3 5-6',
+    'finger-print' => 'M6 11a6 6 0 0 1 12 0|M9 14v-3a3 3 0 0 1 6 0v3|M12 10v8|M6 15v2|M18 15v2|M8 19l2 2',
+    'sparkles' => [
+      'M12 2l2.3 6.7L21 11l-6.7 2.3L12 20l-2.3-6.7L3 11l6.7-2.3z|M20 17',
+      'l.8 1.7L22 19l-1.2.3L20 21l-.8-1.7L18 19l1.2-.3z'
+    ].join,
+    'squares-2x2' => 'r:3,3,8,8,2|r:13,3,8,8,2|r:3,13,8,8,2|r:13,13,8,8,2',
+    'star' => 'M12 2.5 15 9l7 1-5.2 5 1.3 7-6.1-3.4-6.1 3.4 1.3-7L2 10l7-1z',
+    'swatch' => 'M5 3h7v16a3.5 3.5 0 0 1-7 0z|M12 7l5-3 4 6-9 6|M8 21h12',
+    'tag' => 'M3 4h10l8 8-9 9-9-9z|c:8,9,1',
+    'trash' => 'M4 7h16|M9 7V4h6v3|M6 7l1 14h10l1-14|M10 11v7|M14 11v7',
+    'truck' => 'r:2,5,12,12,1|M14 9h4l4 5v3h-8|c:7,18,2|c:18,18,2',
+    'user' => 'c:12,8,4|M4 21v-2a8 8 0 0 1 16 0v2',
+    'user-circle' => 'c:12,12,9|c:12,9,3|M6 18a6.5 6.5 0 0 1 12 0',
+    'user-group' => 'c:9,8,3|M2 20v-2a7 7 0 0 1 14 0v2|M16 5a3 3 0 0 1 0 6|M19 14a6 6 0 0 1 3 6',
+    'user-plus' => 'c:9,8,4|M2 21v-2a7 7 0 0 1 14 0v2|M19 7v8|M15 11h8',
+    'users' => 'c:9,8,3|M2 20v-2a7 7 0 0 1 14 0v2|M16 5a3 3 0 0 1 0 6|M19 14a6 6 0 0 1 3 6',
+    'view-columns' => 'r:3,4,18,16,2|M9 4v16|M15 4v16',
+    'circle-stack' => [
+      'c:12,5,6|M6 5v6c0 2 2.7 3.5 6 3.5s6-1.5 6-3.5V5|',
+      'M6 11v6c0 2 2.7 3.5 6 3.5s6-1.5 6-3.5v-6|',
+      'M6 17c0 2 2.7 3.5 6 3.5s6-1.5 6-3.5'
+    ].join,
+    'briefcase' => 'r:3,7,18,14,2|M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2|M3 13a19 19 0 0 0 18 0|M11 13h2v3h-2z',
+    'wallet' => ['M4 7h15a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a3 3 0 0 1 3-3h12|',
+                 'M15 12h6v5h-6a2 2 0 0 1 0-5z'].join,
+    'globe-europe-africa' => ['c:12,12,9|M3 12h18|M12 3c-2.4 2.4-3.6 5.4-3.6 9s1.2 6.6 3.6 9|',
+                              'M12 3c2.4 2.4 3.6 5.4 3.6 9S14.4 18.6 12 21'].join,
+    'x-mark' => 'M5 5l14 14|M19 5 5 19'
+  }.merge(DeltaIconShapeBasics::SHAPES).freeze
+end

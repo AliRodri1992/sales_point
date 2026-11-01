@@ -1,0 +1,5 @@
+ko:
+  admin:
+    suppliers:
+      lifecycle:
+        draft_invoices: "초안 송장이 남아 있는 동안 공급업체를 보관할 수 없습니다."

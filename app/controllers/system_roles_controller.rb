@@ -52,7 +52,7 @@ class SystemRolesController < ApplicationController
   end
 
   def update_permissions
-    authorize @system_role
+    authorize @system_role, :update_permissions?
 
     permission_ids = selected_permission_ids
 

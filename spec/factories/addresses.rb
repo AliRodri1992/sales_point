@@ -7,13 +7,33 @@ FactoryBot.define do
     neighborhood { 'Centro' }
     city { 'Cuautitlán' }
     state { 'Estado de México' }
-    country { 'MX' }
+    country do
+      Country.find_by(iso_alpha2: 'MX') ||
+        FactoryBot.create(:country, name: 'Mexico', iso_alpha2: 'MX',
+                                    iso_alpha3: 'MEX', iso_numeric: '484')
+    end
     postal_code { '54800' }
 
     latitude { 19.4326 }
     longitude { -99.1332 }
 
     geocoding_status { :pending }
+
+    trait :primary do
+      primary { true }
+    end
+
+    trait :deleted do
+      deleted_at { Time.current }
+    end
+
+    trait :fiscal do
+      purpose { 'fiscal' }
+    end
+
+    trait :delivery do
+      purpose { 'delivery' }
+    end
 
     trait :success do
       geocoding_status { :success }

@@ -1,49 +1,64 @@
+# frozen_string_literal: true
+
 module Geocoding
   class MapboxValidateAddressService
-    MAPBOX_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places'.freeze
+    MAPBOX_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places'
 
     def initialize(address)
       @address = address
     end
 
     def call
-      response = Faraday.get(url)
+      return { valid: false } if token.blank?
 
-      json = JSON.parse(response.body)
+      key = Digest::SHA256.hexdigest("#{token}:#{@address.geocoding_fingerprint}")
+      Rails.cache.fetch("mapbox:geocoding:#{key}", expires_in: 12.hours, skip_nil: true) do
+        response = connection.get(url)
+        next unless response.success?
 
-      return false if json['features'].empty?
-
-      feature = json['features'].first
-
-      {
-        valid: true,
-        full_address: feature['place_name'],
-        latitude: feature['center'][1],
-        longitude: feature['center'][0],
-        confidence: feature['relevance']
-      }
-    rescue StandardError
+        result = extract_response(response.body)
+        result if result[:valid]
+      end || { valid: false }
+    rescue Faraday::Error, JSON::ParserError, TypeError, KeyError => e
+      Rails.logger.warn("[MapboxAddress] #{e.class}")
       { valid: false }
     end
 
     private
 
+    def extract_response(body)
+      feature = JSON.parse(body).fetch('features', []).first
+      feature ? build_result(feature) : { valid: false }
+    end
+
+    def build_result(feature)
+      center = feature.fetch('center')
+      lat = Float(center.fetch(1))
+      lng = Float(center.fetch(0))
+      return { valid: false } unless lat.between?(-90, 90) && lng.between?(-180, 180)
+
+      {
+        valid: true,
+        full_address: feature['place_name'],
+        latitude: lat, longitude: lng,
+        confidence: feature['relevance']
+      }
+    rescue ArgumentError, IndexError
+      { valid: false }
+    end
+
+    def connection
+      @connection ||= Faraday.new do |client|
+        client.options.timeout = 5
+        client.options.open_timeout = 2
+      end
+    end
+
     def url
-      query = CGI.escape(full_address_string)
-
-      "#{MAPBOX_URL}/#{query}.json?access_token=#{ENV.fetch('MAPBOX_TOKEN', nil)}&limit=1"
+      query = CGI.escape(@address.geocoding_query)
+      "#{MAPBOX_URL}/#{query}.json?access_token=#{CGI.escape(token)}&limit=1"
     end
 
-    def full_address_string
-      [
-        @address.street,
-        @address.exterior_number,
-        @address.neighborhood,
-        @address.city,
-        @address.state,
-        @address.country,
-        @address.postal_code
-      ].compact.join(', ')
-    end
+    def token = ENV['MAPBOX_TOKEN'].presence
   end
 end

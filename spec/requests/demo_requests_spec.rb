@@ -37,6 +37,15 @@ RSpec.describe 'Demo requests', type: :request do
       expect(response.body).to include(I18n.t('demo_requests.create.success'))
     end
 
+    it 'enqueues the confirmation using the persisted demo request' do
+      post demo_requests_path, params: { demo_request: attributes_for(:demo_request) }
+
+      expect(response).to redirect_to(new_demo_request_path)
+      expect(DemoRequestMailer).to have_received(:with).with(
+        demo_request: DemoRequest.last, locale: I18n.locale.to_s
+      )
+    end
+
     it 'renders the form when the request is invalid' do
       post demo_requests_path, params: {
         demo_request: {

@@ -1,0 +1,156 @@
+<%= turbo_stream_from "suppliers_catalog_#{current_organization.id}" %>
+
+<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <div>
+    <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t(params[:archived] == '1' ? 'admin.suppliers.index.archived_title' : 'admin.suppliers.index.title') %></h1>
+    <p class="mt-1 text-sm text-slate-500"><%= t('admin.suppliers.index.subtitle') %></p>
+  </div>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <% if policy(Supplier).index? %>
+      <%= link_to t("admin.suppliers.lifecycle.#{params[:archived] == '1' ? 'active_list' : 'archived_list'}"),
+                  admin_suppliers_path(archived: params[:archived] == '1' ? nil : '1'),
+                  data: { loading_message: t('admin.action_loader.updating') },
+                  class: 'inline-flex min-h-10 items-center rounded-lg border border-slate-200 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-50' %>
+    <% end %>
+    <% if policy(Supplier).export? %>
+      <details class="relative" data-controller="supplier-dropdown">
+        <summary class="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 [&::-webkit-details-marker]:hidden" aria-label="<%= t('reports.export.button') %>">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3"/></svg>
+          <%= t('reports.export.button') %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="absolute right-0 z-30 mt-1 min-w-44 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+          <%= link_to export_admin_suppliers_path(file_format: 'pdf'), class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-rose-50', data: { turbo: false } do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-rose-600" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h3a2 2 0 0 1 0 4H8v-4Zm7 0v4m0-4h2"/></svg>
+            <%= t('reports.export.pdf') %>
+          <% end %>
+          <%= link_to export_admin_suppliers_path(file_format: 'xlsx'), class: 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-emerald-50', data: { turbo: false } do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 text-emerald-600" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12M13 13l4 4m0-4-4 4"/></svg>
+            <%= t('reports.export.excel') %>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+    <% if policy(Supplier.new).new? %>
+      <%= link_to new_admin_supplier_path,
+                  data: { tooltip: t('admin.suppliers.index.new'), loading_message: t('admin.action_loader.creating') },
+                  class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700' do %>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <%= t('admin.suppliers.index.new') %>
+      <% end %>
+    <% end %>
+
+
+  </div>
+</div>
+
+<p class="mb-2 text-xs font-medium text-slate-500"><%= t('admin.suppliers.index.metrics_scope') %></p>
+<div class="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+  <div class="flex min-w-0 items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 4v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M5 7V4h8v3"/></svg></span>
+    <div class="min-w-0"><p class="text-sm text-slate-500"><%= t('admin.suppliers.index.metrics.total') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:total) %></p></div>
+  </div>
+  <div class="flex min-w-0 items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span>
+    <div class="min-w-0"><p class="text-sm text-slate-500"><%= t('admin.suppliers.index.metrics.active') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:active) %></p></div>
+  </div>
+  <div class="flex min-w-0 items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8v8M14 8v8"/></svg></span>
+    <div class="min-w-0"><p class="text-sm text-slate-500"><%= t('admin.suppliers.index.metrics.inactive') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:inactive) %></p></div>
+  </div>
+  <% if current_user.admin? || current_user.permission?('suppliers.commercial.view') %>
+  <div class="flex min-w-0 items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <span class="flex size-14 shrink-0 items-center justify-center rounded-full bg-cyan-50 text-teal-600"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-7" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></span>
+    <div class="min-w-0"><p class="text-sm text-slate-500"><%= t('admin.suppliers.index.metrics.credit') %></p><p class="mt-1 text-2xl font-bold text-slate-900"><%= @supplier_stats.fetch(:credit) %></p></div>
+  </div>
+  <% end %>
+</div>
+
+<div class="mb-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+<%= form_with url: admin_suppliers_path, method: :get, data: { controller: 'supplier-search', turbo_frame: '_top', action: 'change->supplier-search#schedule input->supplier-search#schedule submit->supplier-search#submit' }, class: '' do %>
+  <%= hidden_field_tag :archived, '1' if params[:archived] == '1' %>
+  <div class="relative">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <label for="search" class="sr-only"><%= t('admin.suppliers.index.search_label') %></label>
+    <%= search_field_tag :search, params[:search],
+                         placeholder: t('admin.suppliers.index.search_placeholder' +
+                           ((current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+                             current_user.permission?('suppliers.fiscal.manage')) ? '' : '_limited')), autocomplete: 'off', data: { supplier_search_target: 'input' }, class: 'w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %>
+  </div>
+  <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+    <h2 class="flex items-center gap-2 text-sm font-bold text-emerald-700"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg><%= t('admin.suppliers.index.advanced.title') %></h2>
+  </div>
+  <div data-supplier-search-target="error" role="alert" class="mt-3 hidden rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+    <span><%= t('admin.suppliers.index.search_error') %></span>
+    <button type="button" data-action="supplier-search#retry" class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.suppliers.index.retry') %></button>
+  </div>
+  <%= render "active_filters_frame" %>
+  <% if policy(Supplier).index? %>
+  <details class="group mt-4" data-advanced-filters>
+    <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden"><%= t('admin.suppliers.index.advanced.expand') %><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+    <div class="mt-4 space-y-4">
+      <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
+        <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.identity') %></legend>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div><span id="supplier_status_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.status') %></span><%= render 'filter_dropdown', name: :status, options: ['all','active','inactive'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:status] || 'all' %></div>
+          <% if current_user.admin? || current_user.permission?('suppliers.view') ||
+                current_user.permission?('suppliers.update') %>
+          <div><span id="supplier_classification_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.classification') %></span><%= render 'filter_dropdown', name: :classification, options: ['all','manufacturer','distributor','wholesaler','service','other'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:classification] || 'all' %></div>
+          <% end %>
+          <% if current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+                current_user.permission?('suppliers.fiscal.manage') %>
+          <div><span id="supplier_person_type_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.person_type') %></span><%= render 'filter_dropdown', name: :person_type, options: ['all','individual','company'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:person_type] || 'all' %></div>
+          <% end %>
+          <% if current_user.admin? || current_user.permission?('suppliers.view') ||
+                current_user.permission?('suppliers.update') %>
+          <div><span id="supplier_responsible_user_id_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.responsible') %></span><%= render 'filter_dropdown', name: :responsible_user_id, options: [[t('admin.suppliers.index.advanced.options.all'), '']] + current_organization.users.order(:id).map { |user| [user.email, user.id] }, selected: params[:responsible_user_id] || '' %></div>
+          <% end %>
+        </div>
+      </fieldset>
+      <% if current_user.admin? || current_user.permission?('suppliers.fiscal.view') ||
+            current_user.permission?('suppliers.fiscal.manage') %>
+      <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
+        <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.fiscal') %></legend>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div><span id="supplier_sat_fiscal_regime_id_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.fiscal_regime') %></span><%= render 'filter_dropdown', name: :sat_fiscal_regime_id, options: [[t('admin.suppliers.index.advanced.options.all'), '']] + @supplier_regimes.map { |regime| ["#{regime.code}", regime.id] }, selected: params[:sat_fiscal_regime_id] || '' %></div>
+        </div>
+      </fieldset>
+      <% end %>
+      <% if current_user.admin? || current_user.permission?('suppliers.commercial.view') ||
+            current_user.permission?('suppliers.commercial.manage') %>
+      <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
+        <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.commercial') %></legend>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div><span id="supplier_currency_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.currency') %></span><%= render 'filter_dropdown', name: :currency, options: [[t('admin.suppliers.index.advanced.options.all'), 'all']] + Array(@supplier_currencies).map { |currency| [currency.code, currency.code] }, selected: params[:currency] || 'all' %></div>
+          <div><span id="supplier_credit_label" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit') %></span><%= render 'filter_dropdown', name: :credit, options: ['all','yes','no'].map { |value| [t("admin.suppliers.index.advanced.options.#{value}"), value] }, selected: params[:credit] || 'all' %></div>
+          <div><label for="supplier_credit_days_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_min') %></label><%= number_field_tag :credit_days_min, params[:credit_days_min], id: 'supplier_credit_days_min', min: 0, step: 1, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_credit_days_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_days_max') %></label><%= number_field_tag :credit_days_max, params[:credit_days_max], id: 'supplier_credit_days_max', min: 0, step: 1, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_credit_limit_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_min') %></label><%= number_field_tag :credit_limit_min, params[:credit_limit_min], id: 'supplier_credit_limit_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_credit_limit_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.credit_limit_max') %></label><%= number_field_tag :credit_limit_max, params[:credit_limit_max], id: 'supplier_credit_limit_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_minimum_order_amount_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.minimum_order_amount_min') %></label><%= number_field_tag :minimum_order_amount_min, params[:minimum_order_amount_min], id: 'supplier_minimum_order_amount_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_minimum_order_amount_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.minimum_order_amount_max') %></label><%= number_field_tag :minimum_order_amount_max, params[:minimum_order_amount_max], id: 'supplier_minimum_order_amount_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_discount_percent_min" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.discount_percent_min') %></label><%= number_field_tag :discount_percent_min, params[:discount_percent_min], id: 'supplier_discount_percent_min', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_discount_percent_max" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.discount_percent_max') %></label><%= number_field_tag :discount_percent_max, params[:discount_percent_max], id: 'supplier_discount_percent_max', min: 0, step: 0.01, class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+        </div>
+      </fieldset>
+      <% end %>
+      <fieldset class="min-w-0 rounded-xl border border-slate-200 bg-slate-50/40 p-4">
+        <legend class="px-2 font-jakarta text-sm font-bold text-slate-800"><%= t('admin.suppliers.index.advanced.groups.dates') %></legend>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div><label for="supplier_created_at_from" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.created_at_from') %></label><%= date_field_tag :created_at_from, params[:created_at_from], id: 'supplier_created_at_from', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_created_at_to" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.created_at_to') %></label><%= date_field_tag :created_at_to, params[:created_at_to], id: 'supplier_created_at_to', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_updated_at_from" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.updated_at_from') %></label><%= date_field_tag :updated_at_from, params[:updated_at_from], id: 'supplier_updated_at_from', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+          <div><label for="supplier_updated_at_to" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.suppliers.index.advanced.updated_at_to') %></label><%= date_field_tag :updated_at_to, params[:updated_at_to], id: 'supplier_updated_at_to', class: 'w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-emerald-500' %></div>
+        </div>
+      </fieldset>
+    </div>
+  </details>
+  <% end %>
+  <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>
+  <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+  <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+<% end %>
+</div>
+
+<%= render "list_frame" %>

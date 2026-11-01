@@ -8,7 +8,7 @@ class CreateOrganizationMigrations < ActiveRecord::Migration[8.1]
       t.string :priority, null: false, limit: 20
       t.string :status, null: false, default: 'pending', limit: 20
       t.timestamps
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
     end
 
     add_index :organization_migrations, :deleted_at

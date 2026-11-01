@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class SatBank < ApplicationRecord
+  has_many :supplier_bank_accounts, foreign_key: :sat_bank_code, primary_key: :code,
+                                    inverse_of: :sat_bank, dependent: :restrict_with_exception
   CODE_FORMAT = /\A\d{3}\z/
 
   scope :active, -> { where(status: true) }

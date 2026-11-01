@@ -4,7 +4,32 @@
 import { GridStack } from "gridstack"
 import Swal from "sweetalert2"
 
+let activeDashboardListeners = null
+
+document.addEventListener("turbo:before-cache", () => {
+    document.getElementById("adminDashboardContent")?.removeAttribute("inert")
+    const sidebar = document.getElementById("adminSidebar")
+    sidebar?.classList.remove("sidebar-open")
+    sidebar?.removeAttribute("role")
+    sidebar?.removeAttribute("aria-modal")
+    sidebar?.removeAttribute("inert")
+    document.getElementById("sidebarOverlay")?.classList.remove("is-visible")
+    document.body.classList.remove("sidebar-drawer-open")
+    document.getElementById("sidebarToggle")?.removeAttribute("data-sidebar-ready")
+    activeDashboardListeners?.abort()
+    activeDashboardListeners = null
+})
+
 document.addEventListener("turbo:load", () => {
+    activeDashboardListeners?.abort()
+    const listeners = new AbortController()
+    activeDashboardListeners = listeners
+    const onDocument = (type, handler, options = {}) =>
+        document.addEventListener(type, handler, { ...options, signal: listeners.signal })
+    const onWindow = (type, handler, options = {}) =>
+        window.addEventListener(type, handler, { ...options, signal: listeners.signal })
+    const onElement = (element, type, handler) =>
+        element?.addEventListener(type, handler, { signal: listeners.signal })
     const javascriptTranslationsElement =
         document.getElementById(
             "javascriptTranslations"
@@ -22,8 +47,11 @@ document.addEventListener("turbo:load", () => {
 
     const sidebar = document.getElementById("adminSidebar")
     const sidebarToggle = document.getElementById("sidebarToggle")
+    const sidebarCloseButton = document.getElementById("sidebarCloseButton")
+    const sidebarContent = document.getElementById("adminDashboardContent")
     const sidebarOverlay =
         document.getElementById("sidebarOverlay")
+    sidebarToggle?.removeAttribute("data-sidebar-ready")
 
     const dropdowns = [
         {
@@ -119,7 +147,7 @@ document.addEventListener("turbo:load", () => {
     }
 
     // Keep the KPI cells compact when crossing the stacking breakpoint.
-    window.addEventListener("resize", () => {
+    onWindow("resize", () => {
         if (!kpiGrid) return
 
         kpiGrid.cellHeight(kpiCellHeight())
@@ -327,23 +355,24 @@ document.addEventListener("turbo:load", () => {
      */
 
     const closeAllDropdowns = (except = null) => {
-        const branchSelector = document.querySelector("[data-dashboard-selector] details")
-
-    if (branchSelector) {
-        const branchMenu = branchSelector.querySelector("[data-dashboard-selector-menu]")
-
-        branchSelector.querySelector("summary")?.addEventListener("click", () => {
-            closeAllDropdowns(branchMenu)
+        document.querySelectorAll("[data-dashboard-selector]").forEach((container) => {
+            const menu = container.querySelector("[data-dashboard-selector-menu]")
+            if (menu === except) return
+            container.querySelectorAll("details").forEach((details) => { details.open = false })
+            if (!container.querySelector("details")) menu?.classList.add("hidden")
+            container.querySelector("[aria-expanded]")?.setAttribute("aria-expanded", "false")
         })
-    }
-
-    dropdowns.forEach(({ button, menu }) => {
+        dropdowns.forEach(({ button, menu }) => {
             if (!button || !menu || menu === except) return
-
             menu.classList.add("hidden")
             button.setAttribute("aria-expanded", "false")
         })
     }
+
+    const branchDetails = document.querySelector("[data-dashboard-selector] > details")
+    onElement(branchDetails?.querySelector("summary"), "click", () => {
+        closeAllDropdowns(branchDetails.querySelector("[data-dashboard-selector-menu]"))
+    })
 
     const toggleDropdown = (button, menu) => {
         if (!button || !menu) return
@@ -378,32 +407,115 @@ document.addEventListener("turbo:load", () => {
         if (!sidebar) return
 
         sidebar.classList.add("sidebar-open")
+        sidebar.removeAttribute("inert")
+        sidebar.setAttribute("role", "dialog")
+        sidebar.setAttribute("aria-modal", "true")
+        sidebarToggle?.setAttribute("aria-expanded", "true")
+        sidebarContent?.setAttribute("inert", "")
+        document.body.classList.add("sidebar-drawer-open")
+        sidebarCloseButton?.focus()
 
         if (sidebarOverlay) {
             sidebarOverlay.classList.add("is-visible")
-            sidebarOverlay.setAttribute(
-                "aria-hidden",
-                "false"
-            )
+            sidebarOverlay.setAttribute("aria-hidden", "true")
         }
     }
 
     const closeMobileSidebar = () => {
         if (!sidebar) return
 
+        const wasOpen = sidebar.classList.contains("sidebar-open")
         sidebar.classList.remove("sidebar-open")
+        if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
+        sidebar.removeAttribute("role")
+        sidebar.removeAttribute("aria-modal")
+        sidebarToggle?.setAttribute("aria-expanded", "false")
+        sidebarContent?.removeAttribute("inert")
+        document.body.classList.remove("sidebar-drawer-open")
 
         if (sidebarOverlay) {
             sidebarOverlay.classList.remove("is-visible")
-            sidebarOverlay.setAttribute(
-                "aria-hidden",
-                "true"
-            )
+            sidebarOverlay.setAttribute("aria-hidden", "true")
+        }
+
+        if (wasOpen && window.innerWidth < 1024) {
+            sidebarToggle?.focus({ preventScroll: true })
+            // Restore focus after the click default action has settled.
+            requestAnimationFrame(() => sidebarToggle?.focus({ preventScroll: true }))
+            // When the translated drawer completes its CSS transition, Chrome
+            // can blur the now offscreen close button; recover only if focus
+            // was lost, without stealing it from an intentional next action.
+            const recoverFocusIfLost = () => {
+                if (!sidebarToggle?.isConnected || sidebar.classList.contains("sidebar-open") ||
+                    window.innerWidth >= 1024) return
+                const focused = document.activeElement
+                const focusLost = !focused ||
+                    focused === document.body ||
+                    focused === document.documentElement ||
+                    !focused.isConnected ||
+                    sidebar.contains(focused) ||
+                    sidebarOverlay?.contains(focused)
+                if (focusLost) sidebarToggle.focus({ preventScroll: true })
+            }
+            // Deferring restoration across the CSS transform keeps focus
+            // out of BODY even if Chrome blurs the removed, inert close button
+            // during a busy Turbo navigation. Never override a user's focus.
+            for (const delay of [0, 100, 350, 700, 1500, 3000]) {
+                setTimeout(recoverFocusIfLost, delay)
+            }
         }
     }
 
+    const trapMobileSidebarFocus = (event) => {
+        if (event.key !== "Tab" || !sidebar?.classList.contains("sidebar-open")) return
+
+        const candidates = sidebar.querySelectorAll("a[href], button:not([disabled]), summary, [tabindex='0']")
+        const focusable = [...candidates].filter((item) => item.getClientRects().length > 0)
+        if (!focusable.length) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault()
+            last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault()
+            first.focus()
+        }
+    }
+
+    if (sidebar && window.innerWidth < 1024 && !sidebar.classList.contains("sidebar-open")) {
+        sidebar.setAttribute("inert", "")
+    } else if (window.innerWidth >= 1024) {
+        // Turbo may restore a cached mobile drawer with an obsolete inert state.
+        sidebar?.removeAttribute("inert")
+    }
+
+    onWindow("resize", () => {
+        if (!sidebar) return
+        if (window.innerWidth >= 1024) {
+            if (sidebar.classList.contains("sidebar-open")) closeMobileSidebar()
+            sidebar.removeAttribute("inert")
+            sidebarContent?.removeAttribute("inert")
+            sidebarToggle?.setAttribute(
+                "aria-expanded",
+                String(!sidebar.classList.contains("sidebar-collapsed"))
+            )
+        } else if (!sidebar.classList.contains("sidebar-open")) {
+            sidebar.setAttribute("inert", "")
+            sidebarToggle?.setAttribute("aria-expanded", "false")
+        }
+    })
+
+    onDocument("keydown", trapMobileSidebarFocus)
+    onElement(sidebarCloseButton, "click", closeMobileSidebar)
+
     if (sidebar && sidebarToggle) {
-        sidebarToggle.addEventListener("click", () => {
+        sidebarToggle.setAttribute(
+            "aria-expanded",
+            String(window.innerWidth >= 1024 && !sidebar.classList.contains("sidebar-collapsed"))
+        )
+        onElement(sidebarToggle, "click", () => {
             const isMobile = window.innerWidth < 1024
 
             if (isMobile) {
@@ -422,33 +534,64 @@ document.addEventListener("turbo:load", () => {
             const collapsed = sidebar.classList.toggle(
                 "sidebar-collapsed"
             )
+            sidebarToggle.setAttribute("aria-expanded", String(!collapsed))
+            document.dispatchEvent(new Event("sidebar:state-changed"))
             persistSidebarState(collapsed)
         })
+        sidebarToggle.dataset.sidebarReady = "true"
     }
 
+    let sidebarSaveQueue = Promise.resolve()
+    let sidebarSaveRevision = 0
+    let persistedSidebarCollapsed = sidebar?.classList.contains("sidebar-collapsed") ?? false
     const persistSidebarState = (collapsed) => {
-        const csrf = document.querySelector(
-            'meta[name="csrf-token"]'
-        )
-        if (!csrf) return
-
-        fetch("/admin/sidebar", {
-            method: "PATCH",
-            headers: {
+        const revision = ++sidebarSaveRevision
+        sidebarToggle?.setAttribute("data-sidebar-save-state", "pending")
+        // Serialize saves so quick toggles cannot reach the server out of order.
+        sidebarSaveQueue = sidebarSaveQueue.catch(() => {}).then(async () => {
+            // Rails omits the CSRF meta tag when forgery protection is disabled
+            // (for example, in browser specs). In protected environments Rails
+            // validates the token; never send a fabricated or empty value.
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+            const headers = {
                 "Content-Type": "application/json",
-                "X-CSRF-Token": csrf.content,
                 "X-Requested-With": "XMLHttpRequest"
-            },
-            body: JSON.stringify({
-                sidebar_collapsed: collapsed
+            }
+            if (csrf) headers["X-CSRF-Token"] = csrf
+
+            const response = await fetch("/admin/sidebar", {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify({ sidebar_collapsed: collapsed })
             })
-        }).catch(() => {})
+            if (!response.ok) {
+                throw new Error(`Sidebar save failed: ${response.status}`)
+            }
+            persistedSidebarCollapsed = collapsed
+            if (revision === sidebarSaveRevision) {
+                sidebarToggle?.setAttribute("data-sidebar-save-state", "saved")
+            }
+        }).catch((error) => {
+            if (revision !== sidebarSaveRevision || !sidebar) return
+            sidebarToggle?.setAttribute("data-sidebar-save-state", "error")
+            sidebarToggle?.setAttribute("data-sidebar-save-error", error.message)
+
+            sidebar.classList.toggle("sidebar-collapsed", persistedSidebarCollapsed)
+            sidebarToggle?.setAttribute("aria-expanded", String(!persistedSidebarCollapsed))
+            document.dispatchEvent(new Event("sidebar:state-changed"))
+            window.Swal?.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                title: "No se pudo guardar la preferencia del menú",
+                showConfirmButton: false,
+                timer: 3500
+            })
+        })
     }
 
     if (sidebarOverlay) {
-        sidebarOverlay.addEventListener("click", () => {
-            closeMobileSidebar()
-        })
+        onElement(sidebarOverlay, "click", closeMobileSidebar)
     }
 
     /*
@@ -465,12 +608,12 @@ document.addEventListener("turbo:load", () => {
             "false"
         )
 
-        button.addEventListener("click", (event) => {
+        onElement(button, "click", (event) => {
             event.stopPropagation()
             toggleDropdown(button, menu)
         })
 
-        menu.addEventListener("click", (event) => {
+        onElement(menu, "click", (event) => {
             event.stopPropagation()
         })
     })
@@ -481,8 +624,18 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    document.addEventListener("click", () => {
+    onDocument("click", (event) => {
+        if (!event.target.closest?.("[data-dashboard-selector], #userMenuButton, #sidebarUserMenuButton, #userMenu, #sidebarUserMenu")) closeAllDropdowns()
+    })
+
+    onDocument("keydown", (event) => {
+        if (event.key !== "Escape") return
+        const active = document.activeElement
+        const openButton = dropdowns.find(({ menu }) => menu && !menu.classList.contains("hidden"))?.button
+        const openDetails = document.querySelector("[data-dashboard-selector] details[open] summary")
         closeAllDropdowns()
+        if (openButton || openDetails) (openButton || openDetails).focus()
+        else if (active?.matches?.("[data-dashboard-selector] button")) active.focus()
     })
 
     /*
@@ -867,7 +1020,7 @@ document.addEventListener("turbo:load", () => {
         // GridStack remaps its columns through a throttled
         // ResizeObserver, so the button state is re-checked once
         // the viewport has settled (e.g. after a rotation).
-        window.addEventListener("resize", () => {
+        onWindow("resize", () => {
             window.setTimeout(
                 syncCustomizationAvailability,
                 150
@@ -899,7 +1052,7 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    document.addEventListener(
+    onDocument(
         "keydown",
         (event) => {
             if (event.key !== "Escape") return
@@ -933,17 +1086,15 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    window.addEventListener(
+    onWindow(
         "resize",
         () => {
             if (!sidebar) return
 
             if (window.innerWidth >= 1024) {
                 closeMobileSidebar()
-            } else {
-                sidebar.classList.remove(
-                    "sidebar-collapsed"
-                )
+                sidebarToggle?.setAttribute("aria-expanded",
+                    String(!sidebar.classList.contains("sidebar-collapsed")))
             }
         }
     )

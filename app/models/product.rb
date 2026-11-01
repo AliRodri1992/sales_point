@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 class Product < ApplicationRecord
+  has_paper_trail only: [:preferred_supplier_id]
+  belongs_to :organization
+  include PreferredSupplierValidation
+
+  has_many :supplier_products, dependent: :restrict_with_exception
+  has_many :inventories, dependent: :restrict_with_exception
+  has_many :purchase_order_items, dependent: :restrict_with_exception
+  has_many :purchase_request_items, dependent: :restrict_with_exception
+  enum :tracking_mode, { none: 'none', lot: 'lot', serial: 'serial' },
+       prefix: :tracking, validate: true, default: :none
+
   belongs_to :category, optional: true
   belongs_to :sat_unit_key, optional: true
   belongs_to :sat_tax, optional: true
@@ -9,7 +20,7 @@ class Product < ApplicationRecord
 
   validates :code,
             presence: true,
-            uniqueness: { case_sensitive: false },
+            uniqueness: { scope: :organization_id, case_sensitive: false },
             length: { maximum: 50 },
             format: { with: /\A[A-Za-z0-9\-_]+\z/,
                       message: :invalid_format }
@@ -22,7 +33,7 @@ class Product < ApplicationRecord
             length: { maximum: 500 }
 
   validates :sku,
-            uniqueness: { case_sensitive: false, allow_nil: true,
+            uniqueness: { scope: :organization_id, case_sensitive: false, allow_nil: true,
                           if: -> { sku.present? } }
 
   validates :barcode,
@@ -36,20 +47,6 @@ class Product < ApplicationRecord
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_nil: true
-
-  validates :stock,
-            presence: true,
-            numericality: { greater_than_or_equal_to: 0 }
-
-  validates :min_stock,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_nil: true
-
-  validates :max_stock,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_nil: true
-
-  validate :max_stock_greater_than_min_stock, if: -> { min_stock && max_stock }
 
   enum :status,
        {
@@ -87,19 +84,9 @@ class Product < ApplicationRecord
   scope :by_slug, ->(slug) { where(slug: slug) }
   scope :sorted_by_position, -> { order(position: :asc, name: :asc) }
 
-  def low_stock?
-    return false if min_stock.nil? || min_stock.zero?
+  def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
-    stock <= min_stock
-  end
-
-  def increment_view_count!
-    update!(view_count: view_count.to_i + 1)
-  end
-
-  def to_param
-    slug.presence
-  end
+  def to_param = slug.presence
 
   private
 
@@ -114,11 +101,5 @@ class Product < ApplicationRecord
     return if slug.present?
 
     self.slug = name.to_s.parameterize(separator: '-')
-  end
-
-  def max_stock_greater_than_min_stock
-    return if max_stock.nil? || min_stock.nil?
-
-    errors.add(:max_stock, :greater_than_min) if max_stock < min_stock
   end
 end

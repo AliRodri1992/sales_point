@@ -34,6 +34,37 @@ RSpec.describe 'SystemRoles', type: :request do
       expect(notification.event.record.name).to eq('Auditor')
       expect(notification.event.params[:action]).to eq('created')
     end
+
+    it 're-renders the role form when role validation fails' do
+      post system_roles_path,
+           params: { system_role: { name: '', code: 'invalid-role', role_type: 'branch', status: 'active' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('name="system_role[name]"')
+      expect(SystemRole.find_by(code: 'invalid-role')).to be_nil
+    end
+  end
+
+  describe 'DELETE /system_roles/:id' do
+    it 'soft-deletes the role and marks it deprecated' do
+      role = create(:system_role, name: 'Temporary Role', code: 'temporary_role', role_type: :branch)
+
+      delete system_role_path(role)
+
+      expect(response).to redirect_to(system_roles_path)
+      expect(role.reload).to have_attributes(status: 'deprecated')
+      expect(role.deleted_at).to be_present
+    end
+  end
+
+  describe 'authorization' do
+    it 'forbids a non-administrator from listing system roles' do
+      sign_in create(:user)
+
+      get system_roles_path
+
+      expect(response).to have_http_status(:forbidden)
+    end
   end
 
   describe 'breadcrumb' do
@@ -60,6 +91,38 @@ RSpec.describe 'SystemRoles', type: :request do
     end
   end
 
+  describe 'protected administrator permissions' do
+    it 'renders protected permissions as read-only without a save control' do
+      get system_role_path(admin_role)
+
+      page = Nokogiri::HTML(response.body)
+      expect(response).to have_http_status(:ok)
+      expect(page.at_css('input[type="submit"][value="Save permissions"]')).to be_nil
+      expect(page.css('input[name="permission_ids[]"]')).to all(
+        satisfy { |input| input.key?('disabled') }
+      )
+    end
+
+    it 'forbids removing administrator and super-administrator permissions' do
+      permission = create(:permission)
+      super_role = create(:system_role, :system, code: 'super_admin')
+
+      [admin_role, super_role].each do |role|
+        expect(role.permissions).to include(permission)
+        patch permissions_system_role_path(role), params: { permission_ids: [] }
+        expect(response).to have_http_status(:forbidden)
+        expect(role.permissions.reload).to include(permission)
+      end
+    end
+
+    it 'prevents deletion of protected administrative roles' do
+      delete system_role_path(admin_role)
+
+      expect(response).to have_http_status(:forbidden)
+      expect(admin_role.reload).to be_active
+    end
+  end
+
   describe 'PATCH /system_roles/:id/permissions' do
     let!(:role) { create(:system_role, name: 'Cajero', code: 'cashier', role_type: :branch) }
     let!(:permission) { create(:permission) }
@@ -73,6 +136,26 @@ RSpec.describe 'SystemRoles', type: :request do
       expect(notification.type).to eq('SystemRoleNotification::Notification')
       expect(notification.event.record).to eq(role)
       expect(notification.event.params[:action]).to eq('updated')
+    end
+
+    it 'removes all permissions when the selection is empty' do
+      role.system_role_permissions.create!(permission:)
+      expect(role.permissions).to include(permission)
+
+      patch permissions_system_role_path(role), params: { permission_ids: [] }
+
+      expect(response).to redirect_to(system_role_path(role))
+      expect(role.permissions.reload).not_to include(permission)
+    end
+
+    it 'ignores blank permission identifiers in the submitted selection' do
+      second_permission = create(:permission)
+
+      patch permissions_system_role_path(role),
+            params: { permission_ids: ['', nil, permission.id.to_s, second_permission.id.to_s] }
+
+      expect(response).to redirect_to(system_role_path(role))
+      expect(role.permissions.reload).to contain_exactly(permission, second_permission)
     end
 
     it 'shows the notification in the panel' do

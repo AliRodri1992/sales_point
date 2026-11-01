@@ -28,11 +28,11 @@
 
       <div class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-200 pt-4 text-sm text-slate-600">
         <span class="inline-flex items-center gap-2">
-          <%= icon('key', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+          <%= delta_icon('key', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
           <span class="font-medium"><%= t(".user_type.#{@profile.user_type}") %></span>
         </span>
         <span class="inline-flex items-center gap-2">
-          <%= icon('clock', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+          <%= delta_icon('clock', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
           <span class="font-medium"><%= @profile.last_sign_in_at ? l(@profile.last_sign_in_at, format: :long) : t('.never') %></span>
         </span>
       </div>
@@ -52,7 +52,7 @@
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
             <div class="flex items-center gap-2">
-              <%= icon('user', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= delta_icon('user', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
               <%= form.label :username, t('.fields.username'), class: 'block text-sm font-medium text-slate-700' %>
             </div>
             <%= form.text_field :username,
@@ -63,7 +63,7 @@
 
           <div>
             <div class="flex items-center gap-2">
-              <%= icon('at-symbol', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= delta_icon('at-symbol', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
               <%= form.label :email, t('.fields.email'), class: 'block text-sm font-medium text-slate-700' %>
             </div>
             <%= form.email_field :email,
@@ -74,7 +74,7 @@
 
           <div>
             <div class="flex items-center gap-2">
-              <%= icon('language', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= delta_icon('language', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
               <%= form.label :language_id, t('.fields.language'), class: 'block text-sm font-medium text-slate-700' %>
             </div>
             <%= form.collection_select :language_id, @languages, :id, :name,
@@ -85,7 +85,7 @@
 
           <div>
             <div class="flex items-center gap-2">
-              <%= icon('swatch', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
+              <%= delta_icon('swatch', class: 'size-4 text-slate-400', aria: { hidden: true }) %>
               <%= form.label :theme, t('.fields.theme'), class: 'block text-sm font-medium text-slate-700' %>
             </div>
             <%= form.select :theme,
@@ -114,7 +114,7 @@
           <div class="flex flex-wrap gap-2">
             <% @roles.each do |role| %>
               <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700">
-                <%= icon('shield-check', class: 'size-4 text-blue-600', aria: { hidden: true }) %>
+                <%= delta_icon('shield-check', class: 'size-4 text-blue-600', aria: { hidden: true }) %>
                 <%= role.name %>
               </span>
             <% end %>

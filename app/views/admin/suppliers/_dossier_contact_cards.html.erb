@@ -1,0 +1,128 @@
+<% contacts.each do |contact| %>
+  <% active_phones = contact.phones.select { |phone| phone.deleted_at.nil? }.sort_by { |phone| [phone.primary? ? 0 : 1, phone.id || 0] } %>
+  <% office_phone = active_phones.find { |phone| phone.kind == 'landline' } %>
+  <% mobile_phone = active_phones.find { |phone| phone.kind == 'mobile' } %>
+  <% additional_phones = active_phones.reject { |phone| phone == office_phone || phone == mobile_phone } %>
+  <% has_details = contact.notes.present? || additional_phones.any? %>
+
+  <article data-supplier-contact-id="<%= contact.id %>"
+           class="group min-w-0 self-start overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:border-emerald-200 hover:shadow-md">
+    <div class="px-4 pb-4 pt-5 sm:px-5">
+      <div class="flex min-w-0 items-start gap-3">
+        <span aria-hidden="true" class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-100 font-jakarta text-sm font-extrabold tracking-wide text-emerald-800 ring-1 ring-emerald-100">
+          <%= contact.name.to_s.split.first(2).map { |part| part.first.upcase }.join %>
+        </span>
+        <div class="min-w-0 flex-1">
+          <h3 class="min-w-0 break-words font-jakarta text-base font-bold leading-6 text-slate-900"><%= contact.name %></h3>
+          <div data-contact-meta-row class="mt-2 flex min-w-0 items-center gap-2 whitespace-nowrap">
+            <% if contact.primary? %>
+              <span data-contact-primary-badge class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold leading-4 text-emerald-800 ring-1 ring-inset ring-emerald-200">
+                <%= delta_icon('star', class: 'size-3.5 shrink-0', stroke_width: 2) %>
+                <%= t('admin.supplier_details.primary') %>
+              </span>
+            <% end %>
+            <span data-contact-position class="min-w-0 flex-1 truncate text-xs font-medium text-slate-600" title="<%= contact.position %>"><%= contact.position.presence || '—' %></span>
+            <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset <%= contact.active? ? 'bg-sky-50 text-sky-800 ring-sky-200' : 'bg-slate-100 text-slate-600 ring-slate-200' %>">
+              <span aria-hidden="true" class="size-1.5 rounded-full <%= contact.active? ? 'bg-sky-600' : 'bg-slate-400' %>"></span>
+              <%= t("admin.supplier_details.contact_statuses.#{contact.active? ? 'active' : 'inactive'}") %>
+            </span>
+          </div>
+        </div>
+        <% if policy(supplier).update_contacts? %>
+          <%= link_to edit_admin_supplier_contact_path(supplier, contact, return_to: 'dossier'),
+                      data: { turbo_frame: '_top', tooltip: t('admin.supplier_details.edit') },
+                      aria: { label: "#{t('admin.supplier_details.edit')}: #{contact.name}" },
+                      class: 'inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+            <%= delta_icon('pencil', class: 'size-4') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="space-y-3 border-t border-slate-100 bg-slate-50/50 px-4 py-4 sm:px-5">
+      <div class="min-w-0">
+        <p class="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500"><%= t('admin.supplier_dossier.overview.email') %></p>
+        <% if contact.email.present? %>
+          <%= mail_to contact.email, class: 'inline-flex min-w-0 max-w-full items-center gap-2 rounded-lg text-sm font-semibold text-emerald-800 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+            <%= delta_icon('envelope', class: 'size-4 shrink-0 text-emerald-700') %>
+            <span class="min-w-0 break-all"><%= contact.email %></span>
+          <% end %>
+        <% else %>
+          <p class="flex items-center gap-2 text-sm text-slate-400">
+            <%= delta_icon('envelope', class: 'size-4 shrink-0') %>
+            <%= t('admin.supplier_dossier.contact_cards.email_not_registered') %>
+          </p>
+        <% end %>
+      </div>
+      <div class="grid gap-2 xl:grid-cols-2">
+        <% [
+          [t('admin.supplier_details.contact_fields.office_phone', default: 'Teléfono de oficina'), office_phone],
+          [t('admin.supplier_details.contact_fields.mobile_phone'), mobile_phone]
+        ].each do |label, phone| %>
+          <div class="min-w-0 rounded-xl border border-slate-200/80 bg-white px-3 py-2.5">
+            <div class="mb-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
+              <p class="text-[11px] font-semibold text-slate-500"><%= label %></p>
+              <% if phone&.label.present? %>
+                <span class="inline-flex min-w-0 items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800">
+                  <%= delta_icon('tag', class: 'size-3 shrink-0') %>
+                  <span class="truncate" title="<%= phone.label %>"><%= phone.label %></span>
+                </span>
+              <% end %>
+            </div>
+            <% if phone.present? %>
+              <%= link_to "tel:#{phone.number}#{";ext=#{phone.extension}" if phone.extension.present?}",
+                          aria: { label: "#{t('admin.supplier_general_layout.call')}: #{label}" },
+                          class: 'inline-flex min-w-0 max-w-full items-center gap-2 text-sm font-semibold text-slate-800 hover:text-emerald-800 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+                <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'size-4 shrink-0 text-emerald-700') %>
+                <span class="min-w-0 break-all"><%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %></span>
+              <% end %>
+            <% else %>
+              <p class="text-sm text-slate-400">—</p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <% if has_details %>
+      <div class="border-t border-slate-100 px-4 sm:px-5">
+        <button type="button" data-action="supplier-contacts#toggleCard"
+                aria-controls="supplier-contact-detail-<%= contact.id %>" aria-expanded="false"
+                aria-label="<%= t('admin.supplier_dossier.contact_cards.expand', name: contact.name) %>"
+                data-expand-label="<%= t('admin.supplier_dossier.contact_cards.expand', name: contact.name) %>"
+                data-collapse-label="<%= t('admin.supplier_dossier.contact_cards.collapse', name: contact.name) %>"
+                class="flex min-h-11 w-full items-center justify-between gap-3 py-2 text-left text-xs font-bold text-emerald-800 transition hover:text-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600">
+          <span><%= t('admin.supplier_dossier.contact_cards.more_details', default: 'Información adicional') %></span>
+          <%= delta_icon('chevron-down', class: 'size-4 shrink-0 transition-transform') %>
+        </button>
+        <div id="supplier-contact-detail-<%= contact.id %>" class="hidden border-t border-slate-100 pb-4 pt-3" data-contact-detail>
+          <dl class="grid gap-4 text-sm">
+            <% if additional_phones.any? %>
+              <div>
+                <dt class="mb-2 text-xs font-semibold text-slate-500"><%= t('admin.supplier_dossier.contact_cards.additional_phones', default: 'Otros teléfonos') %></dt>
+                <dd class="space-y-2">
+                  <% additional_phones.each do |phone| %>
+                    <% phone_label = phone.label.presence || (phone.kind == 'mobile' ? t('admin.supplier_details.contact_fields.mobile_phone') : phone.kind == 'landline' ? t('admin.supplier_details.contact_fields.office_phone', default: 'Teléfono de oficina') : t('admin.supplier_dossier.overview.phone')) %>
+                    <div class="flex min-w-0 flex-wrap items-center gap-2">
+                      <span class="text-xs font-medium text-slate-500"><%= phone_label %>:</span>
+                      <%= delta_icon(supplier_phone_icon_name(phone.kind), class: 'size-4 shrink-0 text-emerald-700') %>
+                      <%= link_to "tel:#{phone.number}#{";ext=#{phone.extension}" if phone.extension.present?}", class: 'break-all font-semibold text-emerald-800 hover:underline' do %>
+                        <%= phone.number %><%= " ext. #{phone.extension}" if phone.extension.present? %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </dd>
+              </div>
+            <% end %>
+            <% if contact.notes.present? %>
+              <div>
+                <dt class="mb-1 text-xs font-semibold text-slate-500"><%= t('admin.supplier_details.contact_fields.notes') %></dt>
+                <dd class="whitespace-pre-wrap break-words leading-6 text-slate-700"><%= contact.notes %></dd>
+              </div>
+            <% end %>
+          </dl>
+        </div>
+      </div>
+    <% end %>
+  </article>
+<% end %>

@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex min-w-0 items-start gap-3">
         <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-          <%= icon("sparkles", class: "size-5") %>
+          <%= delta_icon("sparkles", class: "size-5") %>
         </div>
         <div class="min-w-0">
           <h2 id="onboarding-card-title" class="font-jakarta text-base font-bold text-slate-900">
@@ -18,7 +18,7 @@
       <%= link_to admin_onboarding_path,
                   class: "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700" do %>
         <%= t('admin.dashboard.onboarding.continue') %>
-        <%= icon("arrow-right", class: "size-4") %>
+        <%= delta_icon("arrow-right", class: "size-4") %>
       <% end %>
     </div>
 

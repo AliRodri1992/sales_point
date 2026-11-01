@@ -1,0 +1,147 @@
+es:
+  admin:
+    user_manual:
+      sections:
+        finances:
+          title: "Facturas y cuentas por pagar"
+          description: "Documenta obligaciones, contabiliza facturas, aplica pagos y concilia saldos de proveedores."
+          topics:
+            -
+              id: "supplier_invoices"
+              title: "Facturas de proveedores y CFDI"
+              description: "Captura documentos, importa XML y registra compromisos contables."
+              tasks:
+                -
+                  title: "Crear factura en borrador"
+                  steps:
+                    -
+                      "Abre «Facturas de proveedores» y selecciona «Nueva factura»."
+                    -
+                      "Elige proveedor activo, moneda y orden de compra relacionada si existe."
+                    -
+                      "Captura serie, folio, fechas de emisión, recepción y vencimiento, subtotal, descuentos e impuestos."
+                    -
+                      "Adjunta el archivo XML CFDI y PDF si están disponibles; utiliza «Vista previa del CFDI» antes de guardar."
+                    -
+                      "Verifica importes y datos fiscales y guarda el borrador."
+                -
+                  title: "Relacionar recepciones y contabilizar"
+                  steps:
+                    -
+                      "Abre el detalle de la factura y utiliza «Relacionar recepciones» cuando aplique."
+                    -
+                      "Selecciona los registros de mercancía efectivamente recibida."
+                    -
+                      "Comprueba diferencias de cantidades, totales y vencimiento."
+                    -
+                      "Cuando la información sea correcta, selecciona «Contabilizar» con permiso adecuado."
+                    -
+                      "Abre la cuenta por pagar generada para confirmar su saldo."
+                -
+                  title: "Cancelar una factura"
+                  steps:
+                    -
+                      "Consulta el detalle y el estado de la factura."
+                    -
+                      "Si el proceso lo permite, selecciona «Cancelar» y confirma."
+                    -
+                      "Revisa el impacto sobre la cuenta por pagar y los documentos asociados."
+              note: "Una factura contabilizada no debe editarse como borrador. La verificación de CFDI requiere revisión fiscal; una vista previa no acredita por sí sola su validez ante el SAT."
+            -
+              id: "payables"
+              title: "Cuentas por pagar y vencimientos"
+              description: "Consulta facturas pendientes, pagos y saldo vigente."
+              tasks:
+                -
+                  title: "Consultar las obligaciones"
+                  steps:
+                    -
+                      "Entra a «Cuentas por pagar» desde el menú lateral."
+                    -
+                      "Usa filtros y paginación cuando correspondan para localizar proveedor o vencimiento."
+                    -
+                      "Abre la cuenta y verifica la factura, importe original, abonos, notas de crédito y saldo."
+                    -
+                      "Prioriza las cuentas próximas a vencer o vencidas según la fecha mostrada."
+                -
+                  title: "Comprobar una conciliación"
+                  steps:
+                    -
+                      "Después de contabilizar un pago o aplicar una nota de crédito, vuelve a la cuenta."
+                    -
+                      "Compara saldo anterior, importe aplicado y saldo pendiente."
+                    -
+                      "Si detectas diferencias, revisa las aplicaciones desde los documentos de origen antes de realizar un nuevo movimiento."
+              note: "Los borradores de facturas no deben interpretarse como deuda contabilizada."
+            -
+              id: "supplier_payments"
+              title: "Pagos a proveedores"
+              description: "Registra pagos completos o parciales y distribuye importes entre obligaciones."
+              tasks:
+                -
+                  title: "Registrar un pago"
+                  steps:
+                    -
+                      "Abre «Pagos a proveedores» y selecciona «Nuevo pago»."
+                    -
+                      "Elige proveedor, moneda, fecha de pago, referencia e importe."
+                    -
+                      "Selecciona la cuenta bancaria autorizada del proveedor cuando corresponda."
+                    -
+                      "Guarda el registro y abre su detalle."
+                -
+                  title: "Aplicar y contabilizar el pago"
+                  steps:
+                    -
+                      "En el detalle selecciona las cuentas por pagar de ese mismo proveedor."
+                    -
+                      "Distribuye el importe entre una o varias facturas, sin exceder los saldos pendientes."
+                    -
+                      "Pulsa «Contabilizar pago» y confirma."
+                    -
+                      "Verifica que las cuentas por pagar reflejen los abonos y nuevos saldos."
+                -
+                  title: "Revertir un pago"
+                  steps:
+                    -
+                      "Localiza el pago y abre su detalle."
+                    -
+                      "Revisa dónde se aplicó y usa «Revertir» únicamente si cuentas con permiso."
+                    -
+                      "Comprueba que los saldos originales se restauren de forma consistente."
+              note: "No vuelvas a capturar el pago solo para corregir una aplicación; utiliza el proceso de reversión autorizado."
+            -
+              id: "supplier_credits"
+              title: "Notas de crédito"
+              description: "Documenta créditos y aplícalos a facturas pendientes."
+              tasks:
+                -
+                  title: "Registrar una nota de crédito"
+                  steps:
+                    -
+                      "Abre «Notas de crédito» y selecciona «Nueva nota»."
+                    -
+                      "Elige proveedor, moneda, factura o devolución relacionada, folio y fecha."
+                    -
+                      "Captura importe y adjunta el CFDI XML cuando exista."
+                    -
+                      "Guarda el borrador, revisa los datos y selecciona «Contabilizar» cuando proceda."
+                -
+                  title: "Aplicar el saldo a una cuenta por pagar"
+                  steps:
+                    -
+                      "Abre una nota contabilizada y selecciona la cuenta por pagar del mismo proveedor."
+                    -
+                      "Indica el importe de aplicación sin superar el saldo disponible de la nota ni de la cuenta."
+                    -
+                      "Confirma y verifica el remanente de crédito y el nuevo saldo de la obligación."
+                -
+                  title: "Cancelar una nota"
+                  steps:
+                    -
+                      "Revisa el estado de la nota y si tiene aplicaciones existentes."
+                    -
+                      "Selecciona «Cancelar» solamente cuando aún cumpla las reglas para hacerlo."
+                    -
+                      "Si existen aplicaciones, resuelve primero los movimientos relacionados; la cancelación directa está bloqueada."
+              note: "Pagos y notas de crédito modifican saldos financieros: verifica los importes y el proveedor antes de confirmar."

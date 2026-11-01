@@ -1,0 +1,8 @@
+ko:
+  activerecord:
+    errors:
+      models:
+        supplier:
+          attributes:
+            documents:
+              file_too_large: "각 문서의 크기는 10MB 이하여야 합니다"

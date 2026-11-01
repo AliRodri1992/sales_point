@@ -7,7 +7,7 @@ module Admin
     before_action :set_demo_request, only: %i[show update]
 
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
 
     def index
       authorize DemoRequest
@@ -38,7 +38,7 @@ module Admin
     private
 
     def setup_filters_and_queries
-      @filters = DemoRequests::Filters.new(params, current_user)
+      @filters = DemoRequests::Filters.new(params, current_user, per_page: table_page_size_for('demo_requests'))
       @demo_requests = @filters.call
       @users = User.active
                    .where(user_type: :employee)
@@ -54,7 +54,7 @@ module Admin
     end
 
     def per_page_option
-      [params[:per_page].to_i, *PER_PAGE_OPTIONS].max
+      table_page_size_for('demo_requests')
     end
 
     def total_pages_for(per_page)

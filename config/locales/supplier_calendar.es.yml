@@ -1,0 +1,67 @@
+---
+es:
+  admin:
+    supplier_calendar:
+      title: Calendarios del proveedor
+      subtitle: Consulta las actividades recurrentes, eventos puntuales y excepciones por sucursal.
+      manage: Administrar horarios y excepciones
+      new_event: Nuevo evento
+      edit_event: Editar evento
+      create_event: Registrar evento
+      save_changes: Guardar cambios
+      cancel: Cancelar
+      event_help: Programa una actividad para una fecha y hora específicas. No modificará los horarios semanales.
+      title_placeholder: Ej. Entrega extraordinaria de mercancía
+      select_branch: Selecciona una sucursal
+      all_branches: Todas las sucursales
+      all_kinds: Todas las actividades
+      filter: Filtrar
+      month: Mes
+      week: Semana
+      previous: Anterior
+      next: Siguiente
+      day: "Día"
+      reminder: "Mañana: %{title} de %{supplier}, %{date}."
+      today: Hoy
+      scheduled: Horarios semanales
+      punctual: Eventos puntuales
+      exceptions: Excepciones
+      weekly: Recurrente
+      single: Evento
+      no_schedules: "Aún no hay horarios semanales para este proveedor. Selecciona «Nuevo horario» para programar visitas, pedidos o entregas."
+      no_events: "No hay eventos en el periodo seleccionado. Cambia de fecha o selecciona «Nuevo evento» para agregar uno."
+      no_activities: "Este proveedor aún no tiene actividades programadas. Agrega un horario semanal o registra un evento para comenzar."
+      more: "%{count} más"
+      new_schedule: Nuevo horario
+      edit: Editar
+      delete: Eliminar
+      delete_confirm: ¿Eliminar este evento? Puedes conservar el registro histórico sin mostrarlo en la agenda.
+      selected_day: Actividades del día
+      archived_events: Eventos eliminados recientemente
+      restore: Recuperar
+      all_day: "Todo el día"
+      status: "Estado"
+      statuses:
+        scheduled: "Programado"
+        completed: "Completado"
+        cancelled: "Cancelado"
+      supplier_unavailable: "Proveedor no disponible para programar nuevas actividades."
+      specific_schedule: "Horario específico"
+      all_schedules: "Todos los horarios"
+      edit_exception: "Editar excepción"
+      event_details: Próximos eventos
+      exception_note: Excepción
+      fields:
+        title: Nombre del evento
+        starts_at: Fecha y hora de inicio
+        ends_at: Fecha y hora de término (opcional)
+      kinds:
+        visit: Visita
+        order: Pedido
+        delivery: Reparto
+        other: Otra actividad
+      messages:
+        created: "El evento se agregó al calendario del proveedor. Revisa su fecha y horario en la agenda."
+        updated: "Los cambios del evento se guardaron. Revisa la fecha y el horario actualizados en la agenda."
+        deleted: "El evento se retiró de la agenda activa del proveedor. Consulta los eventos archivados si necesitas recuperarlo."
+        restored: "El evento se recuperó y vuelve a aparecer en la agenda del proveedor, según su fecha programada."

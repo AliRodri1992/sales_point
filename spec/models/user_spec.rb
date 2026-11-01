@@ -55,19 +55,19 @@ RSpec.describe User, type: :model do
 
     before { create(:user_role, user:, system_role: role) }
 
-    it 'recognizes active permission' do
-      create(:system_role_permission, system_role: role, permission:)
+    it 'recognizes active permission automatically assigned to administrators' do
+      permission
 
       expect(user.permission?('categories.access')).to be(true)
+      expect(role.permissions).to include(permission)
     end
 
     it 'returns false without permission' do
       expect(user.permission?('categories.access')).to be(false)
     end
 
-    it 'rejects inactive permission' do
+    it 'rejects inactive permission even if the administrator was assigned previously' do
       permission.update!(status: :inactive)
-      create(:system_role_permission, system_role: role, permission:)
 
       expect(user.permission?('categories.access')).to be(false)
     end
@@ -86,6 +86,41 @@ RSpec.describe User, type: :model do
 
       expect(user.initials).to eq('JD')
       expect(user.display_name).to eq('JD')
+    end
+
+    it 'uses two characters for single-word usernames' do
+      expect(build(:user, username: 'ivan').initials).to eq('IV')
+    end
+
+    it 'supports accented names without changing the displayed username' do
+      user = build(:user, username: 'Álvaro Núñez')
+      expect(user.initials).to eq('ÁN')
+      expect(user.display_name).to eq('Álvaro Núñez')
+    end
+
+    it 'uses two characters for single-part email aliases' do
+      expect(build(:user, username: nil, email: 'ivan@example.com').initials).to eq('IV')
+    end
+
+    it 'returns a safe placeholder when a draft user has no name or email' do
+      user = build(:user, username: nil, email: nil)
+
+      expect(user.initials).to eq('U')
+      expect(user.display_name).to eq('U')
+    end
+  end
+
+  describe '#display_role_name' do
+    it 'returns nil without an active assigned role' do
+      expect(create(:user).display_role_name).to be_nil
+    end
+
+    it 'returns the name of an active assigned role' do
+      user = create(:user)
+      role = create(:system_role, :system, name: 'Supervisor', code: 'supervisor')
+      create(:user_role, user:, system_role: role)
+
+      expect(user.display_role_name).to eq('Supervisor')
     end
   end
 
@@ -108,8 +143,10 @@ RSpec.describe User, type: :model do
 
   describe '.online_user_ids and #online?' do
     it 'converts ids to integers' do
-      kredis_set = instance_double('KredisSet', members: %w[1 2])
-      allow(Kredis).to receive(:set).with(User::ONLINE_USERS_KEY).and_return(kredis_set)
+      redis = instance_double(Redis)
+      allow(User).to receive(:presence_redis).and_return(redis)
+      allow(redis).to receive(:zremrangebyscore)
+      allow(redis).to receive(:zrange).and_return(%w[1:tab-a 2:tab-b])
 
       expect(User.online_user_ids).to eq([1, 2])
     end

@@ -2,6 +2,10 @@
 
 class Employee < ApplicationRecord
   belongs_to :organization
+  has_many :phones, as: :phoneable, dependent: :restrict_with_exception
+  accepts_nested_attributes_for :phones,
+                                allow_destroy: true,
+                                reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
   has_one :user, dependent: :nullify
 
   enum :status, {

@@ -1,0 +1,30 @@
+ko:
+  admin:
+    supplier_placeholders:
+      legal_name: "법인명을 입력하세요"
+      trade_name: "상호를 입력하세요"
+      alias_name: "별칭을 입력하세요"
+      credit_days: "외상 결제 일수를 입력하세요"
+      credit_limit: "신용 한도를 입력하세요"
+      discount_percent: "할인율을 입력하세요"
+      minimum_order_amount: "최소 주문 금액을 입력하세요"
+      tags_text: "태그를 쉼표로 구분하여 입력하세요"
+      documents: "첨부할 문서를 선택하세요"
+      classification: "분류를 선택하세요"
+      currency: "통화를 선택하세요"
+      country: "국가를 선택하세요"
+      purpose: "용도를 선택하세요"
+      contact:
+        name: "이름을 입력하세요"
+        position: "직책을 입력하세요"
+        email: "example@company.com"
+        phone: "전화번호를 입력하세요"
+        mobile_phone: "휴대전화 번호를 입력하세요"
+      address:
+        street: "도로명을 입력하세요"
+        exterior_number: "건물 번호를 입력하세요"
+        interior_number: "상세 번호를 입력하세요 (선택 사항)"
+        neighborhood: "동네를 입력하세요"
+        city: "도시를 입력하세요"
+        state: "주 또는 도를 입력하세요"
+        postal_code: "우편번호를 입력하세요"

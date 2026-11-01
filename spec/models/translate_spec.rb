@@ -98,6 +98,23 @@ RSpec.describe Translate, type: :model do
       file&.unlink
     end
 
+    it 'loads translations using the legacy locale column path' do
+      create(:language, code: 'en')
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'save' => 'Save' } }.to_yaml)
+      file.close
+      translation = instance_double(described_class)
+
+      allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
+      expect(described_class).to receive(:find_or_initialize_by)
+        .with(key: 'save', locale: 'en').and_return(translation)
+      expect(translation).to receive(:update!).with(value: 'Save')
+
+      described_class.load_from_file(file.path, 'en')
+    ensure
+      file&.unlink
+    end
+
     it 'returns when file is absent' do
       expect(described_class.load_from_file('/tmp/delta-pos-missing.yml', 'en')).to be_nil
     end

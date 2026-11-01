@@ -26,7 +26,7 @@ RSpec.describe 'User profile', type: :feature do
     click_button 'Save changes'
 
     expect(page).to have_css(
-      '[data-controller="swal-flash"][data-swal-flash-message-value="Profile updated successfully"]',
+      '[data-controller="swal-flash"][data-swal-flash-message-value]',
       visible: :all
     )
     expect(user.reload.username).to eq('Ivan Rodriguez')

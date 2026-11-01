@@ -1,10 +1,11 @@
 module Admin
   module ProductsListing
     PER_PAGE = 10
-    PER_PAGE_OPTIONS = [5, 10, 15].freeze
+    PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
+    SORT_DIRECTIONS = %w[asc desc].freeze
 
     SORTABLE_COLUMNS = %w[
-      products.name products.code products.price products.stock
+      products.name products.code products.price
       products.cost products.created_at products.updated_at products.position
     ].freeze
 
@@ -17,17 +18,17 @@ module Admin
     end
 
     def broadcast_products_update
-      total_count = Product.not_deleted.count
-      products = Product.not_deleted.with_category.order(:name).limit(PER_PAGE)
+      total_count = accessible_products.count
+      products = accessible_products.with_category.order(:name).limit(PER_PAGE)
       total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
       html = render_to_string(partial: 'admin/products/list', formats: [:html],
                               locals: { products:, total_count:, total_pages: })
-      Turbo::StreamsChannel.broadcast_update_to('products_catalog',
-                                                target: 'admin_products_list', html: html)
+      stream = current_organization ? "products_catalog_#{current_organization.id}" : 'products_catalog'
+      Turbo::StreamsChannel.broadcast_update_to(stream, target: 'admin_products_list', html: html)
     end
 
     def load_products
-      @products = filter_scope(Product.not_deleted)
+      @products = filter_scope(accessible_products)
       @total_count = @products.count
       @products = apply_sorting(@products)
       @products = paginate(@products)
@@ -62,7 +63,7 @@ module Admin
 
     def apply_sorting(scope)
       sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'products.name'
-      sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
+      sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
       scope.order(sort_column => sort_direction)
     end
@@ -71,6 +72,7 @@ module Admin
       page = (params[:page] || 1).to_i
       page = 1 if page < 1
       per_page = per_page_param
+      @per_page = per_page
 
       @total_pages = (scope.count / per_page.to_f).ceil
       @total_pages = 1 if @total_pages < 1
@@ -80,8 +82,7 @@ module Admin
     end
 
     def per_page_param
-      per_page = params[:per_page]&.to_i
-      PER_PAGE_OPTIONS.include?(per_page) ? per_page : PER_PAGE
+      table_page_size_for('products')
     end
   end
 end

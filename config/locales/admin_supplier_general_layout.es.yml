@@ -1,0 +1,13 @@
+es:
+  admin:
+    supplier_general_layout:
+      identification: "Identificación del proveedor"
+      contact_management: "Contacto y administración"
+      additional: "Información adicional"
+      call: "Llamar al proveedor"
+      email_action: "Enviar correo electrónico"
+      phone_missing: "Teléfono no registrado"
+      email_missing: "Correo electrónico no registrado"
+      responsible_missing: "Sin responsable asignado"
+      tags_missing: "Sin etiquetas registradas"
+      notes_missing: "Sin notas registradas"

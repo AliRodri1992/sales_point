@@ -1,0 +1,35 @@
+<%= render 'admin/purchases/navigation' %>
+<section class="space-y-5 rounded-2xl border border-slate-200 bg-white p-6">
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.purchases.receipts') %> #<%= @receipt.id %></h1>
+  <p><%= link_to @receipt.purchase_order.code, admin_purchase_order_path(@receipt.purchase_order),
+                class: 'text-emerald-700 hover:underline' %>
+    · <%= @receipt.branch.name %> · <%= l(@receipt.received_at, format: :short) %></p>
+  <div class="grid gap-3 text-sm md:grid-cols-4">
+    <% %w[actual_freight_amount actual_insurance_amount extra_expenses_amount additional_discount_amount].each do |field| %>
+      <div class="rounded-xl bg-slate-50 p-3">
+        <p class="text-slate-500"><%= t("admin.purchases.#{field}") %></p>
+        <strong><%= @receipt.public_send(field) || '—' %></strong>
+      </div>
+    <% end %>
+  </div>
+  <table class="min-w-full text-left text-sm">
+    <thead><tr><% %w[product delivered_quantity accepted_quantity damaged_quantity unclassified_quantity landed_unit_cost lot_code expires_on].each do |key| %>
+      <th class="p-3"><%= t("admin.purchases.#{key}") %></th><% end %></tr></thead><tbody>
+    <% @receipt.goods_receipt_items.includes(purchase_order_item: :product).each do |item| %>
+      <tr class="border-t border-slate-100">
+        <td class="p-3"><%= item.purchase_order_item.product.name %></td>
+        <td class="p-3"><%= item.delivered_quantity %></td>
+        <td class="p-3"><%= item.accepted_quantity %></td>
+        <td class="p-3"><%= item.damaged_quantity %></td>
+        <td class="p-3"><%= item.delivered_quantity - item.accepted_quantity - item.damaged_quantity %></td>
+        <td class="p-3"><%= item.landed_unit_cost %></td>
+        <td class="p-3"><%= item.lot_code %></td>
+        <td class="p-3"><%= item.expires_on %></td>
+      </tr>
+    <% end %></tbody>
+  </table>
+  <% if policy(PurchaseReturn.new(organization: current_organization, goods_receipt: @receipt)).create? %>
+    <%= link_to t('admin.purchases.new_return'), new_admin_goods_receipt_purchase_return_path(@receipt),
+                class: 'inline-flex rounded-xl border border-emerald-200 px-5 py-3 font-semibold text-emerald-700' %>
+  <% end %>
+</section>

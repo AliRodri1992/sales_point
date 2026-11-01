@@ -1,0 +1,5 @@
+ko:
+  admin:
+    supplier_details:
+      location_adjustment_min_length: "조정 사유는 최소 10자 이상 입력해야 합니다"
+      location_review_acknowledgment_required: "위치 확인 체크박스를 선택해야 합니다"

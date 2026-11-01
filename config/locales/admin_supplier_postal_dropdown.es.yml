@@ -1,0 +1,4 @@
+es:
+  admin:
+    supplier_details:
+      postal_search_neighborhood: "Buscar colonia..."

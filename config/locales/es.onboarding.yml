@@ -5,6 +5,11 @@ es:
     initial_terminal_name: "Caja %{number}"
   admin:
     onboarding:
+      business_sectors:
+        grocery: "Abarrotes"
+        fashion: "Moda y ropa"
+        restaurant: "Restaurantes"
+        pharmacy: "Farmacias"
       link: "Configuración inicial"
       show:
         title: "Configuración inicial"
@@ -38,3 +43,7 @@ es:
         non_blocking:
           title: "El onboarding no es una barrera global de acceso."
           description: "Delta POS permanece disponible mientras la configuración esté incompleta. Cada módulo puede exigir sus propios prerrequisitos operativos."
+      completed:
+        icon: success
+      incomplete:
+        icon: error

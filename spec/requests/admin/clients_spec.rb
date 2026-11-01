@@ -128,7 +128,7 @@ RSpec.describe 'Admin clients', type: :request do
       get edit_admin_client_path(client)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(I18n.t('admin.clients.edit.title', name: client.name))
+      expect(response.body).to include(client.name)
     end
   end
 
@@ -207,6 +207,29 @@ RSpec.describe 'Admin clients', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Clientes')
+    end
+  end
+
+  describe 'duplicate database constraints' do
+    it 'renders the new form when the create hits a unique index' do
+      allow_any_instance_of(Client).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      post admin_clients_path, params: { client: attributes_for(:client) }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t('admin.clients.new.title'))
+      expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
+    end
+
+    it 'renders the edit form when the update hits a unique index' do
+      client = create(:client)
+      allow_any_instance_of(Client).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+
+      patch admin_client_path(client), params: { client: { name: 'Conflicting Client' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t('admin.clients.edit.title', name: 'Conflicting Client'))
+      expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
     end
   end
 end

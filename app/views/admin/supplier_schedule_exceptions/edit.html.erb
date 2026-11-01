@@ -1,0 +1,62 @@
+<div class="mx-auto max-w-5xl space-y-5" data-supplier-exception-form-page>
+  <%= render 'admin/suppliers/subpage_header', supplier: @supplier,
+             title: t('admin.supplier_calendar.edit_exception'),
+             subtitle: t('admin.supplier_schedule_exceptions.title'),
+             icon: 'calendar-days', back_path: admin_supplier_schedules_path(@supplier) %>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <h2 class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.supplier_schedule_exceptions.title') %></h2>
+    <%= form_with model: @exception, url: admin_supplier_schedule_exception_path(@supplier, @exception),
+                  class: 'mt-5 grid gap-4 sm:grid-cols-2',
+                  data: { loading_message: t('admin.action_loader.saving') } do |form| %>
+      <div>
+        <%= form.label :starts_on, t('admin.supplier_schedule_exceptions.starts_on') %>
+        <%= form.date_field :starts_on, required: true, class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        <%= error_message_for(@exception, :starts_on) %>
+      </div>
+      <div>
+        <%= form.label :ends_on, t('admin.supplier_schedule_exceptions.ends_on') %>
+        <%= form.date_field :ends_on, class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        <%= error_message_for(@exception, :ends_on) %>
+      </div>
+      <div>
+        <%= form.label :reason, t('admin.supplier_schedule_exceptions.reason') %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.select :reason, SupplierScheduleException::REASONS.map { |v| [t("admin.supplier_schedule_exceptions.reasons.#{v}"), v] },
+                        {}, class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        </div>
+        <%= error_message_for(@exception, :reason) %>
+      </div>
+      <div>
+        <%= form.label :branch_id, t('admin.supplier_dossier.branch') %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.collection_select :branch_id, @branches, :id, :name,
+                                   { include_blank: t('admin.supplier_schedule_exceptions.all_branches') },
+                                   class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        </div>
+        <%= error_message_for(@exception, :branch) %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :supplier_schedule_id, t('admin.supplier_calendar.specific_schedule') %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.collection_select :supplier_schedule_id, @schedules, :id,
+                                   ->(schedule) { "#{schedule.branch.name} · #{t('date.day_names')[schedule.weekday]} · #{schedule.starts_at.strftime('%H:%M')} · #{t("admin.supplier_dossier.kinds.#{schedule.kind}")}" },
+                                   { include_blank: t('admin.supplier_calendar.all_schedules') },
+                                   class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        </div>
+        <%= error_message_for(@exception, :supplier_schedule) %>
+      </div>
+      <div class="sm:col-span-2">
+        <%= form.label :notes, t('admin.supplier_schedule_exceptions.notes') %>
+        <%= form.text_area :notes, rows: 3, maxlength: 1000,
+                           class: 'mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100' %>
+        <%= error_message_for(@exception, :notes) %>
+      </div>
+      <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:col-span-2 sm:flex-row sm:justify-end">
+        <%= link_to t('admin.supplier_calendar.cancel'), admin_supplier_schedules_path(@supplier),
+                    class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
+        <%= form.submit t('admin.supplier_calendar.save_changes'),
+                        class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800' %>
+      </div>
+    <% end %>
+  </section>
+</div>

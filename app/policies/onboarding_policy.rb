@@ -20,6 +20,7 @@ class OnboardingPolicy < ApplicationPolicy
   end
 
   def active_organization?
-    user.organizations.active_records.exists?
+    user.organization_memberships.active.joins(:organization)
+        .merge(Organization.active_records).exists?
   end
 end

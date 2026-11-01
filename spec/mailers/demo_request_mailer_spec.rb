@@ -90,3 +90,98 @@ RSpec.describe 'DemoRequestMailer workflow updates', type: :mailer do
     expect(mail.html_part.body.to_s).to include(demo_request.name)
   end
 end
+
+RSpec.describe 'DemoRequestMailer queued delivery recovery', type: :mailer do
+  def serialized_delivery(demo_request, action: 'confirmation', args: [])
+    ActionMailer::MailDeliveryJob.new(
+      'DemoRequestMailer', action, 'deliver_now',
+      args:, params: { demo_request:, locale: 'en' }
+    ).serialize
+  end
+
+  before do
+    notification = instance_double(DemoRequestNotification, deliver: true)
+    allow(DemoRequestNotification).to receive(:with).and_return(notification)
+    ActionMailer::Base.deliveries.clear
+  end
+
+  it 'discards a queued confirmation when its demo request was deleted' do
+    demo_request = create(:demo_request)
+    serialized = serialized_delivery(demo_request)
+    demo_request.destroy!
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }.not_to raise_error
+    expect(ActionMailer::Base.deliveries).to be_empty
+  end
+
+  it 'discards a queued scheduled email when its demo request was deleted' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    serialized = serialized_delivery(demo_request, action: 'scheduled')
+    demo_request.destroy!
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }.not_to raise_error
+    expect(ActionMailer::Base.deliveries).to be_empty
+  end
+
+  it 'suppresses all email actions for a soft-deleted demo request' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    demo_request.destroy!
+    archived = DemoRequest.with_deleted.find(demo_request.id)
+
+    %i[confirmation scheduled new_request].each do |action|
+      mail = DemoRequestMailer.with(demo_request: archived, locale: 'en').public_send(action)
+
+      expect(mail.message.perform_deliveries).to be(false)
+      expect { mail.deliver_now }.not_to change(ActionMailer::Base.deliveries, :size)
+    end
+  end
+
+  it 'never delivers queued reminders for a deleted request' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    serialized = serialized_delivery(demo_request, action: 'reminder', args: ['one_hour'])
+    demo_request.destroy!
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }.not_to raise_error
+    expect(ActionMailer::Base.deliveries).to be_empty
+  end
+
+  it 'suppresses assignment updates when the associated request was archived' do
+    demo_request = create(:demo_request)
+    assignee = create(:user)
+    actor = create(:user)
+    demo_request.destroy!
+
+    message = DemoRequestMailer.with(demo_request:, assignee:, actor:,
+                                     action: 'assigned', locale: 'en').workflow_update
+
+    expect(message.message.perform_deliveries).to be(false)
+    expect { message.deliver_now }.not_to change(ActionMailer::Base.deliveries, :size)
+  end
+
+  it 'leaves a live request deliverable, including the scheduled email' do
+    demo_request = create(:demo_request, status: :scheduled, scheduled_at: 2.hours.from_now)
+    mail = DemoRequestMailer.with(demo_request:, locale: 'en').scheduled
+
+    expect(mail.message.perform_deliveries).to be(true)
+    expect { mail.deliver_now }.to change(ActionMailer::Base.deliveries, :size).by(1)
+  end
+
+  it 'delivers the same serialized mail normally while its record exists' do
+    demo_request = create(:demo_request)
+    serialized = serialized_delivery(demo_request)
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }
+      .to change(ActionMailer::Base.deliveries, :size).by(1)
+    expect(ActionMailer::Base.deliveries.last.to).to eq([demo_request.email])
+  end
+
+  it 'does not discard transient database failures during deserialization' do
+    demo_request = create(:demo_request)
+    serialized = serialized_delivery(demo_request)
+    allow(GlobalID::Locator).to receive(:locate)
+      .and_raise(ActiveRecord::ConnectionNotEstablished, 'temporary database outage')
+
+    expect { ActionMailer::MailDeliveryJob.execute(serialized) }
+      .to raise_error(ActiveJob::DeserializationError)
+  end
+end
