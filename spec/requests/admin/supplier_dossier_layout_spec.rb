@@ -57,7 +57,7 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
   it 'distinguishes a blocked bank account from an archived one' do
     supplier.supplier_bank_accounts.create!(
       organization:, bank_name: 'Demo', holder_name: 'Vendor',
-      account_number: '1234567890', currency_code: 'MXN', status: 'blocked',
+      clabe: '032180000118359719', currency_code: 'MXN', status: 'blocked',
       blocked_reason: 'Manual review'
     )
 
@@ -109,11 +109,11 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
   it 'names bank account action menus with account context' do
     supplier.supplier_bank_accounts.create!(
       organization:, holder_name: 'Vendor', bank_name: 'Sample Bank',
-      account_number: '1234567890', currency_code: 'MXN'
+      clabe: '032180000118359719', currency_code: 'MXN'
     )
     get admin_supplier_path(supplier, tab: 'bank_accounts')
     menu = dossier.at_css('[data-supplier-bank-accounts-target="card"] summary')
-    expect(menu['aria-label']).to include('Sample Bank', '7890')
+    expect(menu['aria-label']).to include('Sample Bank', '9719')
   end
 
   it 'connects the bank accounts tab to its accessible panel' do
@@ -138,11 +138,11 @@ RSpec.describe 'Supplier dossier navigation', type: :request do
   it 'separates active, inactive, blocked and archived bank account filters' do
     supplier.supplier_bank_accounts.create!(
       organization:, holder_name: 'Vendor', bank_name: 'Bank',
-      account_number: '1234567890', currency_code: 'MXN', status: 'inactive'
+      clabe: '032180000118359719', currency_code: 'MXN', status: 'inactive'
     )
     supplier.supplier_bank_accounts.create!(
       organization:, holder_name: 'Vendor', bank_name: 'Bank',
-      account_number: '1234567891', currency_code: 'MXN', status: 'blocked',
+      clabe: '012180001234567899', currency_code: 'MXN', status: 'blocked',
       blocked_reason: 'Suspected fraud'
     )
 
