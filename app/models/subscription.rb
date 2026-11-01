@@ -17,7 +17,7 @@ class Subscription < ApplicationRecord
        },
        validate: true
 
-  scope :current, -> { where(status: %w[trialing active]) }
+  scope :current, -> { where(status: %w[trialing active past_due paused]) }
 
   validates :starts_at, presence: true
   validates :ends_at, comparison: { greater_than_or_equal_to: :starts_at }, allow_nil: true
@@ -69,12 +69,10 @@ class Subscription < ApplicationRecord
     limit = limit_for(key)
     limit.present? && current_count >= limit
   end
-end
-
   private
 
   def only_one_current_subscription_per_organization
-    return unless active_or_trialing?
+    return unless status.in?(%w[trialing active past_due paused])
     return unless organization
 
     relation = organization.subscriptions.current

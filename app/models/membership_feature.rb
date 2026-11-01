@@ -7,7 +7,7 @@ class MembershipFeature < ApplicationRecord
            -> { where(deleted_at: nil) },
            class_name: 'MembershipPlanFeature'
   has_many :membership_plans,
-           through: :active_membership_plan_features
+           through: :membership_plan_features
 
   enum :value_type,
        {
