@@ -44,7 +44,7 @@ class SupplierPolicy
   def view_general? = authorized_record? && (allowed?('suppliers.view') || allowed?('suppliers.update'))
 
   def view_contacts?
-    authorized_record? && (allowed?('suppliers.contacts.view') || contacts_any_action?)
+    authorized_record? && (allowed?('suppliers.contacts.view') || allowed?('suppliers.contacts.manage'))
   end
 
   def manage_contacts? = authorized_record? && allowed?('suppliers.contacts.manage')
@@ -56,7 +56,7 @@ class SupplierPolicy
   def manage_addresses? = authorized_record? && allowed?('suppliers.addresses.manage')
 
   def view_schedules?
-    authorized_record? && (allowed?('suppliers.schedules.view') || schedules_any_action?)
+    authorized_record? && (allowed?('suppliers.schedules.view') || allowed?('suppliers.schedules.manage'))
   end
 
   def manage_schedules? = authorized_record? && allowed?('suppliers.schedules.manage')
@@ -82,8 +82,7 @@ class SupplierPolicy
   def restore_schedules? = section_action?('schedules', 'restore')
 
   def view_documents?
-    authorized_record? && (allowed?('suppliers.documents.view') ||
-                           section_any_action?('documents', %w[create update destroy restore]))
+    authorized_record? && (allowed?('suppliers.documents.view') || allowed?('suppliers.documents.manage'))
   end
 
   def read_documents?
@@ -109,8 +108,7 @@ class SupplierPolicy
   def manage_commercial? = authorized_record? && allowed?('suppliers.commercial.manage')
 
   def view_products?
-    authorized_record? && (allowed?('suppliers.products.view') ||
-                           section_any_action?('products', %w[create update destroy restore prefer]))
+    authorized_record? && (allowed?('suppliers.products.view') || allowed?('suppliers.products.manage'))
   end
 
   def manage_products? = authorized_record? && allowed?('suppliers.products.manage')
