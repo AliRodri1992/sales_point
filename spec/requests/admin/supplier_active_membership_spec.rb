@@ -32,7 +32,8 @@ RSpec.describe 'Supplier access after membership deactivation', type: :request d
       currency_id: currency.id,
       contacts_attributes: { '0' => { name: 'Primary contact', primary: true } },
       addresses_attributes: { '0' => {
-        street: 'Avenida Central', city: 'Cuautitlán Izcalli', state: 'Estado de México',
+        street: 'Avenida Central', exterior_number: '100',
+        city: 'Cuautitlán Izcalli', state: 'Estado de México',
         neighborhood: 'Centro', postal_code: '54700', country_id: country.id,
         purpose: 'fiscal', primary: true
       } }

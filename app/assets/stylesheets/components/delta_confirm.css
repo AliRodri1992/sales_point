@@ -3,6 +3,8 @@
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
+  /* Keep the dialog inside narrow screens even when inline Swal widths change. */
+  max-width: calc(100vw - 2rem);
   border: 1px solid #e2e8f0;
   border-radius: 1.25rem;
   background: #fff;

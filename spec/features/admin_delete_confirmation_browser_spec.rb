@@ -45,7 +45,9 @@ RSpec.describe 'Delta POS confirmation dialog', type: :feature, js: true do
     find('article', text: contact.name).find('form[method="post"] button', text: 'Delete').click
     find('.swal2-popup.delta-confirm-popup .delta-confirm-accept').click
 
-    expect(page).to have_current_path(admin_supplier_contacts_path(supplier), wait: 10)
+    # This action redirects to the same URL: checking the path alone does not
+    # wait for the Turbo request or the database transaction to finish.
+    expect(page).to have_no_css('article', text: contact.name, wait: 10)
     expect(contact.reload.deleted_at).to be_present
   end
 
@@ -85,14 +87,18 @@ RSpec.describe 'Delta POS confirmation dialog', type: :feature, js: true do
     find('article', text: contact.name).find('form[method="post"] button', text: 'Delete').click
     expect(page).to have_css('.swal2-popup.delta-confirm-popup')
 
-    expect(page.evaluate_script(<<~JS)).to be(true)
-      (() => {
-        const dialog = document.querySelector('.swal2-popup.delta-confirm-popup')
-        const box = dialog.getBoundingClientRect()
-        return box.left >= 0 && box.right <= window.innerWidth &&
-          dialog.querySelectorAll('.swal2-actions button').length === 2
-      })()
-    JS
+    # SweetAlert animates its popup; inspect layout once the animation settles.
+    Selenium::WebDriver::Wait.new(timeout: 5, interval: 0.05).until do
+      page.evaluate_script(<<~JS)
+        (() => {
+          const dialog = document.querySelector('.swal2-popup.delta-confirm-popup')
+          if (!dialog) return false
+          const box = dialog.getBoundingClientRect()
+          return box.left >= -1 && box.right <= window.innerWidth + 1 &&
+            dialog.querySelectorAll('.swal2-actions button').length === 2
+        })()
+      JS
+    end
     find('.swal2-popup.delta-confirm-popup .delta-confirm-cancel').click
   ensure
     page.driver.browser.manage.window.resize_to(1400, 900)

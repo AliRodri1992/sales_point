@@ -445,7 +445,8 @@ document.addEventListener("turbo:load", () => {
             // When the translated drawer completes its CSS transition, Chrome
             // can blur the now offscreen close button; recover only if focus
             // was lost, without stealing it from an intentional next action.
-            setTimeout(() => {
+            const recoverFocusIfLost = () => {
+                if (!sidebarToggle?.isConnected || sidebar.classList.contains("sidebar-open")) return
                 const focused = document.activeElement
                 const focusLost = !focused ||
                     focused === document.body ||
@@ -453,10 +454,12 @@ document.addEventListener("turbo:load", () => {
                     !focused.isConnected ||
                     sidebar.contains(focused) ||
                     sidebarOverlay?.contains(focused)
-                if (focusLost && sidebarToggle?.isConnected) {
-                    sidebarToggle.focus({ preventScroll: true })
-                }
-            }, 350)
+                if (focusLost) sidebarToggle.focus({ preventScroll: true })
+            }
+            setTimeout(recoverFocusIfLost, 350)
+            // The drawer can finish its transform after the first focus check
+            // under an overloaded browser; do not strand keyboard focus on BODY.
+            setTimeout(recoverFocusIfLost, 700)
         }
     }
 

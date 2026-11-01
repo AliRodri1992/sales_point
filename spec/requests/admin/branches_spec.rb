@@ -229,6 +229,10 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'creates a branch, address and notification' do
+      # New phones inherit the branch organization and require an active one.
+      organization = create(:organization)
+      create(:organization_membership, user: admin_user, organization:)
+
       expect do
         post admin_branches_path, params: {
           branch: {

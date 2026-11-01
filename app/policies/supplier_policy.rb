@@ -126,9 +126,6 @@ class SupplierPolicy
                            allowed?("suppliers.#{section}.manage"))
   end
 
-  def contacts_any_action? = section_any_action?('contacts', %w[create update destroy restore])
-  def addresses_any_action? = section_any_action?('addresses', %w[create update destroy restore set_primary geocode])
-  def schedules_any_action? = section_any_action?('schedules', %w[create update destroy restore])
 
   def section_any_action?(section, actions)
     allowed?("suppliers.#{section}.manage") ||
