@@ -74,7 +74,9 @@ RSpec.describe 'Supplier nested dossier', type: :request do
     allow(GeocodeAddressJob).to receive(:perform_later)
 
     post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
-      currency_id: currency.id, addresses_attributes: { '0' => address_attributes }
+      currency_id: currency.id,
+      contacts_attributes: { '0' => { name: 'Primary contact', primary: true } },
+      addresses_attributes: { '0' => address_attributes }
     ) }
 
     expect(response).to redirect_to(admin_suppliers_path)
