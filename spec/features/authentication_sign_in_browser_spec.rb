@@ -24,6 +24,21 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
   end
 
+  scenario 'shows model-derived missing-field errors inline without native browser bubbles' do
+    visit new_user_session_path
+
+    form = find('form[action="/users/sign_in"]')
+    expect(form['novalidate']).to be_present
+    find('[data-terminal-target="loginSubmit"]').click
+
+    email = find('#user_email')
+    password = find('#user_password')
+    expect(email['aria-invalid']).to eq('true')
+    expect(password['aria-invalid']).to eq('true')
+    expect(find('#login-email-error').text).to eq(email['data-auth-blank-message'])
+    expect(find('#login-password-error').text).to eq(password['data-auth-blank-message'])
+  end
+
   scenario 'toggles password visibility and restores the accessible label' do
     visit new_user_session_path
     fill_in 'user_password', with: 'not-a-secret'

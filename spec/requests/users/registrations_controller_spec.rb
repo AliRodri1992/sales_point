@@ -92,6 +92,19 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(document.css('[data-registration-wizard-target="node"]').size).to eq(5)
     expect(document.css('[data-step-label]').size).to eq(5)
   end
+  it 'renders a localized model error with the field name and accessibility association' do
+    post user_registration_path, params: registration_params.merge(
+      user: registration_params[:user].merge(email: 'invalid-address')
+    )
+
+    document = Nokogiri::HTML(response.body)
+    error = document.at_css('#registration-user-email-error')
+    expect(error).to be_present
+    expect(error.text).to include(User.human_attribute_name(:email))
+    expect(document.at_css('#user_email')['aria-describedby']).to eq('registration-user-email-error')
+    expect(document.at_css('#user_email')['aria-invalid']).to eq('true')
+  end
+
   it 'renders server field errors inside reserved validation rails without shifting the registration layout' do
     post user_registration_path, params: registration_params.merge(
       user: registration_params[:user].merge(email: 'invalid-address')

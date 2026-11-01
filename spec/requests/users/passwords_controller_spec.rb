@@ -13,6 +13,15 @@ RSpec.describe Users::PasswordsController, type: :request do
     expect(document.at_css('a[href="/users/sign_in"]')).to be_present
   end
 
+  it 'reserves an inline error slot and disables native HTML5 messages' do
+    get new_user_password_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('form')['novalidate']).to be_present
+    expect(document.at_css('#recovery-email-error')['class']).to include('h-10')
+    expect(document.at_css('#recovery-email-error')['role']).to eq('status')
+  end
+
   it 'renders the reset form with the token and confirmation field' do
     get edit_user_password_path, params: { reset_password_token: 'sample-token' }
 
