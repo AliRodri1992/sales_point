@@ -75,6 +75,32 @@ RSpec.describe 'Financial integrity regression', type: :request do
     expect(response.parsed_body.to_s).not_to include(bank.clabe)
   end
 
+  it 'does not return other suppliers banking data in the payment bank lookup' do
+    other_supplier = create(:supplier, organization:)
+    permitted = SupplierBankAccount.create!(
+      organization:, supplier:, bank_name: 'Selected bank',
+      holder_name: 'Vendor', clabe: '032180000118359719', currency_code: currency.code
+    )
+    foreign = SupplierBankAccount.create!(
+      organization:, supplier: other_supplier, bank_name: 'Private bank',
+      holder_name: 'Other vendor', clabe: '012180001234567899', currency_code: currency.code
+    )
+
+    get bank_accounts_admin_supplier_payments_path, params: {
+      supplier_id: supplier.id, currency_id: currency.id
+    }, as: :json
+
+    expect(response).to have_http_status(:ok)
+    ids = response.parsed_body.fetch('accounts').map { |row| row.fetch('id') }
+    expect(ids).to eq([permitted.id])
+    expect(response.body).not_to include(foreign.bank_name, foreign.clabe)
+
+    get bank_accounts_admin_supplier_payments_path, params: {
+      supplier_id: other_supplier.id, currency_id: currency.id
+    }, as: :json
+    expect(response.parsed_body.fetch('accounts').map { |row| row.fetch('id') }).to eq([foreign.id])
+  end
+
   it 'rejects posting a payment using an archived bank account' do
     bank = SupplierBankAccount.create!(
       organization:, supplier:, bank_name: 'Test bank',
