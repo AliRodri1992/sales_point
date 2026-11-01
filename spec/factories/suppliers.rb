@@ -13,6 +13,11 @@ FactoryBot.define do
     sat_fiscal_regime { nil }
     deleted_at { nil }
 
+    after(:build) do |supplier|
+      # Isolated model fixtures deliberately omit the full onboarding dossier.
+      supplier.skip_primary_dossier_validation = true
+    end
+
     trait :deleted do
       deleted_at { Time.current }
     end
