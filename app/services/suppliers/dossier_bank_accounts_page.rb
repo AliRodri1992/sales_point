@@ -43,8 +43,9 @@ module Suppliers
         blocked: scope.where(deleted_at: nil, status: 'blocked').count,
         archived: scope.where.not(deleted_at: nil).count
       }
-      bank_options = by_status(scope).includes(:sat_bank)
-      @banks = bank_options.filter_map { |account| account.sat_bank&.name || account.bank_name }.uniq.sort
+      @banks = by_status(scope).left_joins(:sat_bank)
+                               .distinct.pluck(Arel.sql('COALESCE(sat_banks.name, supplier_bank_accounts.bank_name)'))
+                               .compact_blank.sort
     end
 
     def load_results(scope)
