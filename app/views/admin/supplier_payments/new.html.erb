@@ -3,7 +3,7 @@
   <h1 class="mb-5 border-b border-slate-100 pb-5 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.accounts_payable.new_payment') %></h1>
   <%= render 'admin/financials/errors', record: @payment %>
   <%= form_with model: [:admin, @payment], class: 'grid min-w-0 gap-5 md:grid-cols-2',
-                data: { controller: 'supplier-payment-bank' } do |f| %>
+                data: { controller: 'supplier-payment-bank', supplier_payment_bank_url_value: bank_accounts_admin_supplier_payments_path } do |f| %>
     <div><%= f.label :supplier_id, t('admin.accounts_payable.supplier'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <div class="relative" data-controller="delta-select" data-searchable="true">
         <%= f.collection_select :supplier_id, @suppliers, :id, :name, { prompt: true }, { required: true, data: { 'supplier-payment-bank-target': 'supplier', action: 'change->supplier-payment-bank#filter' }, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' } %>
