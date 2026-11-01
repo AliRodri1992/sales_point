@@ -92,4 +92,18 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(document.css('[data-registration-wizard-target="node"]').size).to eq(5)
     expect(document.css('[data-step-label]').size).to eq(5)
   end
+  it 'renders server field errors inside reserved validation rails without shifting the registration layout' do
+    post user_registration_path, params: registration_params.merge(
+      user: registration_params[:user].merge(email: 'invalid-address')
+    )
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    field = document.at_css('input#user_email')
+    wrapper = field.ancestors.find { |element| element['data-field'] }
+    expect(wrapper['class']).to include('pb-9')
+    expect(wrapper.at_css('[data-registration-field-error]')['class']).to include('absolute')
+    expect(document.at_css('[data-registration-form-card]')).to be_present
+    expect(document.at_css('[data-terminal-target="loginCard"]')).to be_nil
+  end
 end

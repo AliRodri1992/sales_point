@@ -146,6 +146,7 @@ export default class extends Controller {
   }
 
   showErrors() {
+    if (this.element.classList.contains("registration-page")) return
     if (!this.hasErrorBannerTarget || !this.hasLoginCardTarget) return
     this.loginCardTarget.classList.add("animate-shake")
     setTimeout(() => this.loginCardTarget.classList.remove("animate-shake"), 400)

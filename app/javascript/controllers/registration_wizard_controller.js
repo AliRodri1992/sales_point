@@ -50,7 +50,7 @@ export default class extends Controller {
     this.selectedSetupType = event.currentTarget.dataset.setupType
     this.setupTypeTarget.value = this.selectedSetupType
     this.updateSetupCards()
-    this.clearErrors()
+    this.clearFieldError({ target: event.currentTarget })
   }
 
   toggleDropdown(event) {
@@ -77,8 +77,9 @@ export default class extends Controller {
     this[input + "Target"].value = option.dataset.dropdownValue
     this.updateDropdownOptions(name, option.dataset.dropdownValue)
     this.closeDropdowns()
-    this.dropdownTargets.find((button) => button.dataset.dropdownName === name)?.focus()
-    this.clearErrors()
+    const trigger = this.dropdownTargets.find((button) => button.dataset.dropdownName === name)
+    trigger?.focus()
+    if (trigger) this.clearFieldError({ target: trigger })
   }
 
   dropdownInputTarget(name) {
@@ -155,17 +156,17 @@ export default class extends Controller {
 
   selectTimezone(event) {
     this.timezoneTarget.value = event.currentTarget.value
-    this.clearErrors()
+    this.clearFieldError({ target: event.currentTarget })
   }
 
   selectVolume(event) {
     this.migrationVolumeTarget.value = event.currentTarget.value
-    this.clearErrors()
+    this.clearFieldError({ target: event.currentTarget })
   }
 
   selectPriority(event) {
     this.migrationPriorityTarget.value = event.currentTarget.value
-    this.clearErrors()
+    this.clearFieldError({ target: event.currentTarget })
   }
 
   togglePassword(event) {
@@ -292,7 +293,9 @@ export default class extends Controller {
     if (!error) {
       error = document.createElement("p")
       error.dataset.registrationFieldError = "true"
-      error.className = "mt-1.5 text-xs font-medium leading-relaxed text-rose-700"
+      error.className = "absolute inset-x-0 bottom-0 h-9 overflow-y-auto text-xs font-medium leading-4 text-rose-700"
+      error.setAttribute("role", "alert")
+      error.setAttribute("aria-live", "polite")
       wrapper.appendChild(error)
     }
     error.id = id
@@ -300,6 +303,18 @@ export default class extends Controller {
     field.setAttribute("aria-describedby", id)
     if (!this.firstInvalidField) this.firstInvalidField = field
     return false
+  }
+
+  clearFieldError(event) {
+    const wrapper = event.target.closest("[data-field]")
+    if (!wrapper) return
+
+    wrapper.querySelector("[data-registration-field-error]")?.remove()
+    wrapper.querySelectorAll('[aria-invalid="true"]').forEach((field) => {
+      field.removeAttribute("aria-invalid")
+      field.removeAttribute("aria-describedby")
+      field.classList.remove("border-rose-500", "bg-rose-50")
+    })
   }
 
   clearErrors() {
