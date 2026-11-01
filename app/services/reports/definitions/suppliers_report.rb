@@ -9,9 +9,9 @@ module Reports
 
       def columns(format: :pdf)
         keys = %i[code name classification status]
-        keys += %i[rfc] if field_allowed?(:view_fiscal?)
-        keys += %i[email phone] if field_allowed?(:view_contacts?)
-        keys += %i[credit_days credit_limit] if format.to_sym == :xlsx && field_allowed?(:view_commercial?)
+        keys += %i[rfc] if field_allowed?('suppliers.fiscal')
+        keys += %i[email phone] if field_allowed?('suppliers.contacts')
+        keys += %i[credit_days credit_limit] if format.to_sym == :xlsx && field_allowed?('suppliers.commercial')
         keys.map do |key|
           {
             label: I18n.t("reports.suppliers.columns.#{key}", locale:),
@@ -22,8 +22,11 @@ module Reports
 
       private
 
-      def field_allowed?(permission)
-        SupplierPolicy.new(user, Supplier.new(organization:)).public_send(permission)
+      def field_allowed?(section)
+        return false unless user
+        return false unless organization.organization_memberships.active.exists?(user: user)
+
+        user.admin? || user.permission?("#{section}.view") || user.permission?("#{section}.manage")
       end
 
       def column_value(supplier, key)
@@ -42,7 +45,7 @@ module Reports
       end
 
       def primary_office_number(supplier)
-        return '' unless SupplierPolicy.new(user, supplier).view_contacts?
+        return '' unless field_allowed?('suppliers.contacts')
 
         contact = supplier.contacts.not_deleted.find_by(primary: true, active: true)
         return '' unless contact
