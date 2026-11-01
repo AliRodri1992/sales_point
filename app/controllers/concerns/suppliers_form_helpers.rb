@@ -44,11 +44,17 @@ module SuppliersFormHelpers
 
   def valid_primary_record?(record, association, creating:)
     return false unless valid_primary_flags?(record, association)
+    return false if record[:id].blank? && !primary_record_has_data?(record, association)
     return record[:id].blank? if creating
 
     return existing_primary_record?(record, association) if record[:id].present?
 
     no_primary_record?(association)
+  end
+
+  def primary_record_has_data?(record, association)
+    field = association == :contacts ? :name : :street
+    record[field].present?
   end
 
   def valid_primary_flags?(record, association)
