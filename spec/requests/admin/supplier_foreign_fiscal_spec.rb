@@ -16,6 +16,7 @@ RSpec.describe 'Foreign supplier fiscal registration', type: :request do
     country = create(:country, iso_alpha2: 'US')
     post admin_suppliers_path, params: { supplier: attributes_for(:supplier).merge(
       rfc: '', foreign_tax_id: 'US-98-7654321', currency_id: create(:currency).id,
+      contacts_attributes: { '0' => { name: 'Foreign primary contact', primary: true } },
       addresses_attributes: { '0' => {
         country_id: country.id, street: 'Main St', city: 'Austin',
         state: 'TX', postal_code: '78701', purpose: 'fiscal', primary: true
