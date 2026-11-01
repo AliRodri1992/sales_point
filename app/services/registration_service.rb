@@ -2,6 +2,7 @@
 
 class RegistrationService
   include RegistrationInputValidation
+
   Result = Struct.new(:user, :organization, :errors, :step, keyword_init: true) do
     def success?
       errors.blank? && user&.persisted?

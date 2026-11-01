@@ -58,5 +58,4 @@ module RegistrationInputValidation
     @user.errors.add(:base, I18n.t("registration.validation.#{key}"))
     raise ActiveRecord::RecordInvalid, @user
   end
-
 end
