@@ -44,13 +44,13 @@ class SupplierPolicy
   def view_general? = authorized_record? && (allowed?('suppliers.view') || allowed?('suppliers.update'))
 
   def view_contacts?
-    authorized_record? && (allowed?('suppliers.contacts.view') || contacts_any_action?)
+    authorized_record? && (allowed?('suppliers.contacts.view') || allowed?('suppliers.contacts.manage'))
   end
 
   def manage_contacts? = authorized_record? && allowed?('suppliers.contacts.manage')
 
   def view_addresses?
-    authorized_record? && (allowed?('suppliers.addresses.view') || addresses_any_action?)
+    authorized_record? && (allowed?('suppliers.addresses.view') || allowed?('suppliers.addresses.manage'))
   end
 
   def manage_addresses? = authorized_record? && allowed?('suppliers.addresses.manage')
