@@ -69,6 +69,8 @@ RSpec.describe 'Supplier dropdown option hover', type: :feature, js: true do
 
   scenario 'excludes options hidden by a dependent select without changing form values' do
     visit new_admin_supplier_path
+    find('input[name="supplier[name]"]').set('Supplier person type filtering')
+    find('[data-action="supplier-form#next"]').click
 
     dropdown = find('select[name="supplier[person_type]"]', visible: :all).find(:xpath, '..')
     page.execute_script(<<~JS)

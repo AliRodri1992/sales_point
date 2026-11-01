@@ -7,7 +7,7 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
   let(:supplier) { create(:supplier, organization:) }
 
   def valid_clabe(value, bank_code: '032')
-    digits = format('%s%014d', bank_code, value.to_i)
+    digits = format('%<bank_code>s%<serial>014d', bank_code:, serial: value.to_i)
     weights = [3, 7, 1]
     checksum = digits.chars.each_with_index.sum { |digit, index| (digit.to_i * weights[index % 3]) % 10 }
     "#{digits}#{(10 - (checksum % 10)) % 10}"
