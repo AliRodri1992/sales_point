@@ -76,8 +76,7 @@ module Suppliers
       term = "%#{ActiveRecord::Base.sanitize_sql_like(query)}%"
       scope.where(
         'supplier_bank_accounts.bank_name ILIKE :term OR sat_banks.name ILIKE :term OR ' \
-        'supplier_bank_accounts.holder_name ILIKE :term OR supplier_bank_accounts.last_four ILIKE :term ' \
-        'OR supplier_bank_accounts.card_last_four ILIKE :term', term:
+        'supplier_bank_accounts.holder_name ILIKE :term OR supplier_bank_accounts.last_four ILIKE :term', term:
       )
     end
 
