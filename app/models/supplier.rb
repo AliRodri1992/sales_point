@@ -7,6 +7,9 @@ class Supplier < ApplicationRecord
 
   has_paper_trail
 
+  # Test fixtures may build isolated supplier records without the full onboarding dossier.
+  attr_accessor :skip_primary_dossier_validation
+
   belongs_to :organization
   has_many :supplier_products, dependent: :restrict_with_exception
   has_many :purchase_quotations, dependent: :restrict_with_exception
@@ -30,6 +33,7 @@ class Supplier < ApplicationRecord
   has_many :supplier_documents, dependent: :restrict_with_exception
   validate :responsible_user_in_organization
   validate :documents_are_safe
+  validate :primary_dossier_required, on: :create, unless: :skip_primary_dossier_validation
 
   def tags_text = tags.join(', ')
 
@@ -96,6 +100,19 @@ class Supplier < ApplicationRecord
       digits = value.delete_prefix('PROV-')
       digits.to_i if digits.match?(/\A[0-9]+\z/)
     end.max || 0
+  end
+
+  def primary_dossier_required
+    valid_contact = contacts.any? do |contact|
+      contact.primary? && contact.deleted_at.nil? &&
+        !contact.marked_for_destruction? && contact.name.present?
+    end
+    valid_address = addresses.any? do |address|
+      address.primary? && address.purpose == 'fiscal' && address.deleted_at.nil? &&
+        !address.marked_for_destruction? && address.street.present?
+    end
+    errors.add(:contacts, :blank) unless valid_contact
+    errors.add(:addresses, :blank) unless valid_address
   end
 
   def responsible_user_in_organization
