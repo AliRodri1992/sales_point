@@ -68,6 +68,17 @@ RSpec.describe 'SupplierPolicy dossier authorization boundaries' do
     allow(user).to receive(:permission?).and_return(false)
   end
 
+  it 'does not allow write-only contact or address roles to read existing records' do
+    allow(user).to receive(:permission?).with('suppliers.contacts.create').and_return(true)
+    allow(user).to receive(:permission?).with('suppliers.addresses.create').and_return(true)
+    policy = SupplierPolicy.new(user, supplier)
+
+    expect(policy.create_contacts?).to be(true)
+    expect(policy.create_addresses?).to be(true)
+    expect(policy.view_contacts?).to be(false)
+    expect(policy.view_addresses?).to be(false)
+  end
+
   it 'does not grant document downloads to users who can only create documents' do
     allow(user).to receive(:permission?).with('suppliers.documents.create').and_return(true)
     policy = SupplierPolicy.new(user, supplier)
