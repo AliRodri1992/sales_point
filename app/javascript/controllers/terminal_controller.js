@@ -72,11 +72,12 @@ export default class extends Controller {
 
             option.classList.toggle("rounded-full", selected)
             option.classList.toggle("rounded-lg", !selected)
-            option.innerHTML = ""
+            option.querySelector("[data-theme-indicator]")?.remove()
 
             if (!selected) return
 
             const dot = document.createElement("span")
+            dot.dataset.themeIndicator = "true"
             dot.className = theme === "theme-material-school-yellow"
                 ? "block w-1.5 h-1.5 rounded-full bg-zinc-800"
                 : "block w-1.5 h-1.5 rounded-full bg-white"
@@ -99,8 +100,7 @@ export default class extends Controller {
 
 
     submitLogin(event) {
-
-        if (!this.hasLoginSubmitTarget) return
+        if (!this.hasLoginSubmitTarget || !event.target.checkValidity()) return
 
         if (this.loginSubmitTarget.disabled) {
             event.preventDefault()
@@ -144,6 +144,7 @@ export default class extends Controller {
         this.themeDropdownTarget
             .classList
             .remove("hidden")
+        this.element.querySelector("[data-theme-toggle]")?.setAttribute("aria-expanded", "true")
 
 
         requestAnimationFrame(() => {
@@ -161,6 +162,7 @@ export default class extends Controller {
 
 
     closeDropdowns() {
+        this.element.querySelector("[data-theme-toggle]")?.setAttribute("aria-expanded", "false")
 
         if(
             this.hasThemeDropdownTarget
@@ -190,10 +192,9 @@ export default class extends Controller {
 
         if (!passwordField) return
 
-        passwordField.type =
-            passwordField.type === "password"
-                ? "text"
-                : "password"
+        const visible = passwordField.type === "password"
+        passwordField.type = visible ? "text" : "password"
+        event.currentTarget.setAttribute("aria-pressed", String(visible))
     }
 
 
@@ -242,7 +243,7 @@ export default class extends Controller {
                 )
 
 
-                option.innerHTML = ""
+                option.querySelector("[data-theme-indicator]")?.remove()
 
             }
         )
@@ -266,6 +267,7 @@ export default class extends Controller {
             )
 
 
+        dot.dataset.themeIndicator = "true"
         dot.className =
             theme === "theme-material-school-yellow"
                 ?

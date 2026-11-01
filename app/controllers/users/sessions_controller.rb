@@ -43,7 +43,8 @@ module Users
 
     def render_with_model_errors
       build_resource_with_params
-      resource.valid?
+      resource.errors.add(:email, :blank) if resource.email.blank?
+      resource.errors.add(:password, :blank) if resource.password.blank?
       flash.now[:alert] = t('devise.failure.invalid')
 
       render :new, status: :unprocessable_content
@@ -53,6 +54,7 @@ module Users
       self.resource = resource_class.new
       resource.email = params.dig(resource_name, :email)
       resource.password = params.dig(resource_name, :password)
+      resource.remember_me = params.dig(resource_name, :remember_me)
     end
 
     def login_credentials_present?

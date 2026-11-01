@@ -2,7 +2,10 @@
   <div class="relative" data-controller="language-selector">
     <button
       type="button"
-      data-action="click->language-selector#toggle"
+      id="languageSelectorButton"
+      aria-controls="language-selector-menu"
+      aria-expanded="false"
+      data-action="click->language-selector#toggle keydown.esc->language-selector#keydown"
       class="inline-flex h-10 w-24 items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       aria-label="<%= t('authentication.language_selector.toggle', default: 'Select language') %>">
       <span class="flex items-center gap-1.5">
@@ -19,7 +22,9 @@
     </button>
 
     <div
+      id="language-selector-menu"
       data-language-selector-target="dropdown"
+      data-action="keydown.esc->language-selector#keydown"
       class="absolute right-0 mt-1 hidden w-24 overflow-hidden rounded-xl border border-slate-100/80 bg-white shadow-2xl">
       <div id="language_selector_content" class="flex flex-col">
         <% languages.each do |language| %>

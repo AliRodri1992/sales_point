@@ -12,10 +12,16 @@ class Rack::Attack
     request.ip
   end
 
-  # Protect sign-in without raising the original five-attempt limit.
-  throttle('login attempts', limit: 5, period: 1.minute) do |request|
+  # Per-IP limit prevents rotating identifiers from bypassing the sign-in throttle.
+  throttle('login attempts by IP', limit: 5, period: 1.minute) do |request|
+    request.ip if request.path == '/users/sign_in' && request.post?
+  end
+
+  # A second limit protects accounts across multiple source IP addresses.
+  throttle('login attempts by email', limit: 20, period: 5.minutes) do |request|
     if request.path == '/users/sign_in' && request.post?
-      "#{request.ip}:#{request.params['email']}"
+      email = request.params.dig('user', 'email').to_s.strip.downcase
+      email if email.present?
     end
   end
 

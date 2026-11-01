@@ -1,7 +1,10 @@
 <div class="relative">
   <button
     type="button"
-    data-action="click->terminal#toggleThemeDropdown"
+    data-action="click->terminal#toggleThemeDropdown keydown.esc->terminal#closeDropdowns"
+    data-theme-toggle
+    aria-expanded="false"
+    aria-controls="terminal-theme-dropdown"
     class="inline-flex h-10 w-24 items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50 px-2.5 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
     aria-label="<%= t('authentication.theme_selector.toggle', default: 'Select theme') %>">
     <span class="flex items-center gap-1.5">
@@ -12,6 +15,7 @@
   </button>
 
   <div
+    id="terminal-theme-dropdown"
     data-terminal-target="themeDropdown"
     class="absolute right-0 mt-2 hidden w-52 origin-top-right rounded-2xl border border-slate-100 bg-white p-4 opacity-0 scale-95 shadow-2xl transition-all">
     <p class="mb-3 text-[9px] font-bold uppercase tracking-wider text-slate-400">
@@ -26,13 +30,14 @@
           data-theme="<%= theme[:id] %>"
           data-action="click->terminal#selectTheme"
           title="<%= theme[:id].humanize %>"
+          aria-label="<%= theme[:id].humanize %>"
           class="<%= class_names(
             'flex h-6 w-6 cursor-pointer items-center justify-center rounded-lg border border-slate-200/50 shadow-sm transition focus:outline-none hover:scale-105 active:scale-90',
             theme[:id] == current_theme && 'rounded-full'
           ) %>"
           style="background:<%= theme[:color] %>">
           <% if theme[:id] == current_theme %>
-            <span class="<%= theme[:id] == 'theme-material-school-yellow' ? 'bg-zinc-800' : 'bg-white' %> h-1.5 w-1.5 rounded-full"></span>
+            <span data-theme-indicator class="<%= theme[:id] == 'theme-material-school-yellow' ? 'bg-zinc-800' : 'bg-white' %> h-1.5 w-1.5 rounded-full"></span>
           <% end %>
         </button>
       <% end %>
