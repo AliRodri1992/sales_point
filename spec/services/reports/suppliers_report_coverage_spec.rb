@@ -70,4 +70,40 @@ RSpec.describe 'Supplier report definitions' do
     allow(Reports::PdfExporter).to receive(:call) { I18n.locale.to_s }
     expect(Reports::ExportService.call(report:, format: :pdf)).to eq('es')
   end
+  it 'never exports private columns for an anonymous user or an inactive membership' do
+    anonymous_report = described_class.new(scope:, organization:, user: nil, locale: :es)
+    expect(anonymous_report.columns(format: :xlsx).size).to eq(4)
+
+    organization.organization_memberships.find_by!(user: actor).update!(status: :inactive)
+    allow(actor).to receive(:permission?).and_return(true)
+    expect(report.columns(format: :xlsx).size).to eq(4)
+  end
+
+  it 'allows authorized report fields through manage permissions and administrator access' do
+    allow(actor).to receive(:permission?).with('suppliers.contacts.manage').and_return(true)
+    allow(actor).to receive(:permission?).with('suppliers.fiscal.manage').and_return(true)
+    expect(report.columns(format: :pdf).size).to eq(7)
+
+    allow(actor).to receive(:admin?).and_return(true)
+    expect(report.columns(format: :xlsx).size).to eq(9)
+  end
+
+  it 'renders blank classifications and missing primary office numbers without leaking other phones' do
+    allow(actor).to receive(:permission?).with('suppliers.contacts.view').and_return(true)
+    supplier.update!(classification: nil)
+    values = report.columns.to_h { |column| [column.fetch(:label), column.fetch(:value).call(supplier)] }
+    expect(values[I18n.t('reports.suppliers.columns.classification', locale: :es)]).to eq('')
+    expect(values[I18n.t('reports.suppliers.columns.phone', locale: :es)]).to eq('')
+
+    contact = create(:contact, contactable: supplier, primary: true, active: true)
+    expect(report.columns.find { |column| column[:label] == I18n.t('reports.suppliers.columns.phone', locale: :es) }
+                 .fetch(:value).call(supplier)).to eq('')
+
+    phone = contact.phones.create!(
+      organization:, kind: 'landline', country_code: 'MX', number: '5512345678', primary: true
+    )
+    expect(report.columns.find { |column| column[:label] == I18n.t('reports.suppliers.columns.phone', locale: :es) }
+                 .fetch(:value).call(supplier)).to eq(phone.reload.number)
+  end
+
 end
