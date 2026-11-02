@@ -31,7 +31,7 @@ module Admin
       @products = filter_scope(accessible_products)
       @total_count = @products.count
       @products = apply_sorting(@products)
-      @products = paginate(@products)
+      @products = paginate(@products).includes(:category)
     end
 
     def filter_scope(scope)

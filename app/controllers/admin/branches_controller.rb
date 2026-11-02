@@ -97,7 +97,7 @@ module Admin
     end
 
     def load_branches
-      scope = policy_scope(Branch).left_joins(:address).includes(:address)
+      scope = policy_scope(Branch).left_joins(:address).includes(:address, :phones)
       @total_count = scope.count
       @per_page = per_page_param(@total_count)
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max

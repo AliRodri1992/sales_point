@@ -30,7 +30,7 @@
               <td class="px-6 py-4">
                 <div class="space-y-0.5">
                   <div class="text-slate-700"><%= client.email.presence || '—' %></div>
-                  <div class="text-xs text-slate-400"><%= client.phones.active.find_by(kind: 'mobile', primary: true)&.number || '—' %></div>
+                  <div class="text-xs text-slate-400"><%= client.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }&.number || '—' %></div>
                 </div>
               </td>
               <td class="px-6 py-4 text-slate-600"><%= client.rfc.presence || '—' %></td>

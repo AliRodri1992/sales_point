@@ -10,7 +10,7 @@ module Admin
     def index
       authorize new_record, :index?
       scope = policy_scope(current_organization.purchase_orders)
-              .includes(:branch, :supplier).order(created_at: :desc)
+              .includes(:branch, :supplier, :currency, :purchase_order_items).order(created_at: :desc)
       @orders = paginate_table_listing(scope, table_key: 'purchase_orders')
     end
 

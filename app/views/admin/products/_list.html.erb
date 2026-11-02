@@ -3,6 +3,8 @@
     back to the controller-set instance variables for normal requests. %>
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+<% product_rows = products.to_a %>
+<% stock_totals = Inventory.where(product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
 
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex items-center justify-between px-6 py-4">
@@ -14,7 +16,7 @@
     </div>
   </div>
 
-  <% if products.any? %>
+  <% if product_rows.any? %>
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
@@ -46,7 +48,7 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          <% products.each do |product| %>
+          <% product_rows.each do |product| %>
             <tr class="hover:bg-slate-50">
               <td class="px-6 py-4">
                 <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= product.code %></code>
@@ -58,7 +60,7 @@
                 <%= number_to_currency(product.price) %>
               </td>
               <td class="px-6 py-4 text-right">
-                <%= number_with_precision(product.inventories.sum(:stock), strip_insignificant_zeros: true, precision: 3) %>
+                <%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %>
               </td>
               <td class="px-6 py-4">
                 <%= product.category&.name || '-' %>

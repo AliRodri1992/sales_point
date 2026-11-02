@@ -95,7 +95,7 @@ module Admin
     def load_clients
       @clients = ClientFilter.new(Client.not_deleted, params).call
       @total_count = @clients.count
-      @clients = @clients.includes(:sat_fiscal_regime)
+      @clients = @clients.includes(:sat_fiscal_regime, :phones)
       @clients = paginate(@clients)
     end
 
