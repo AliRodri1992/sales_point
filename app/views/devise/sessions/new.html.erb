@@ -3,7 +3,8 @@
 <div
   class="min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal"
-  data-terminal-target="wrapper">
+  data-terminal-target="wrapper"
+  data-network-error="<%= t('authentication.login.network_error') %>">
 
   <div class="flex min-h-screen w-full flex-col lg:flex-row">
 
@@ -122,6 +123,11 @@
               </p>
             </div>
 
+            <div id="login-feedback" role="alert" tabindex="-1" data-terminal-target="errorBanner"
+              class="<%= 'hidden' if @login_error.blank? %> rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm font-medium text-rose-800 focus:outline focus:outline-2 focus:outline-rose-700">
+              <%= @login_error %>
+            </div>
+
             <%= form_for(
               resource,
               as: resource_name,
@@ -129,7 +135,7 @@
               html: {
                 class: "space-y-5",
                 novalidate: true,
-                data: { action: "submit->terminal#submitLogin turbo:submit-end->terminal#finishLogin" }
+                data: { action: "submit->terminal#submitLogin turbo:submit-end->terminal#finishLogin turbo:fetch-request-error->terminal#loginNetworkError" }
               }
             ) do |f| %>
 
@@ -157,6 +163,7 @@
                     data: {
                       terminal_target: "input",
                       auth_blank_message: authentication_blank_message(resource, :email),
+                      auth_invalid_message: authentication_invalid_message(resource, :email),
                       action: "input->terminal#clearErrors"
                     }
                   ) %>

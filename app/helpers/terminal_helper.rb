@@ -28,6 +28,7 @@ module TerminalHelper
       Language.find_by(
         id: session[:language_id]
       ) ||
+      Language.available.find { |language| language.code == I18n.locale.to_s } ||
       Language.available.first
   end
 

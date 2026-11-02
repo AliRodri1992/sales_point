@@ -22,6 +22,35 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     expect(page).to have_css('#user_email')
     expect(page).to have_css('#user_password')
     expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
+    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
+    expect(find('#user_email').value).to eq('nobody@example.com')
+  end
+
+  scenario 'blocks malformed email locally and allows correcting and retrying' do
+    visit new_user_session_path
+    fill_in 'user_email', with: 'invalid-address'
+    fill_in 'user_password', with: 'not-a-real-password'
+    find('[data-terminal-target="loginSubmit"]').click
+
+    expect(find('#user_email')['aria-invalid']).to eq('true')
+    expect(page).to have_css('#login-email-error', text: 'valid email address')
+    expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
+    fill_in 'user_email', with: 'absent@example.invalid'
+    find('#user_password').send_keys(:enter)
+    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
+  end
+
+  scenario 'recovers from a transport failure with a visible message' do
+    visit new_user_session_path
+    page.execute_script(<<~JS)
+      window.fetch = () => Promise.reject(new TypeError('Test connection unavailable'));
+    JS
+    fill_in 'user_email', with: 'absent@example.invalid'
+    fill_in 'user_password', with: 'not-a-real-password'
+    find('[data-terminal-target="loginSubmit"]').click
+
+    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.network_error'))
+    expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
   end
 
   scenario 'shows model-derived missing-field errors inline without native browser bubbles' do

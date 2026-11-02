@@ -4,14 +4,16 @@ module Users
   class SessionsController < Devise::SessionsController
     layout 'authentication'
 
-    before_action :store_terminal_preferences, only: :new
+    prepend_before_action :store_terminal_preferences, only: :new
 
     def new
       super
     end
 
     def create
-      return render_with_model_errors unless login_credentials_present?
+      build_resource_with_params
+      return render_with_model_errors unless valid_login_input?
+      return render_invalid_credentials unless warden.authenticate(auth_options)
 
       super
       store_sign_in_success_message if user_signed_in?
@@ -42,9 +44,12 @@ module Users
     end
 
     def render_with_model_errors
-      build_resource_with_params
-      resource.errors.add(:email, :blank) if resource.email.blank?
-      resource.errors.add(:password, :blank) if resource.password.blank?
+      render :new, status: :unprocessable_content
+    end
+
+    def render_invalid_credentials
+      resource.password = nil
+      @login_error = t('authentication.login.invalid_credentials')
       render :new, status: :unprocessable_content
     end
 
@@ -55,9 +60,15 @@ module Users
       resource.remember_me = params.dig(resource_name, :remember_me)
     end
 
-    def login_credentials_present?
-      params.dig(resource_name, :email).present? &&
-        params.dig(resource_name, :password).present?
+    def valid_login_input?
+      resource.errors.add(:email, :blank) if resource.email.blank?
+      resource.errors.add(:email, :invalid) if invalid_login_email?
+      resource.errors.add(:password, :blank) if resource.password.blank?
+      resource.errors.empty?
+    end
+
+    def invalid_login_email?
+      resource.email.present? && !resource.email.strip.match?(/\A[^\s@]+@[^\s@]+\.[^\s@]+\z/)
     end
 
     def store_terminal_preferences

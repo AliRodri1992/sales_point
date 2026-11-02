@@ -106,8 +106,12 @@ export default class extends Controller {
     if (!this.hasLoginSubmitTarget) return
     let firstInvalid = null
     this.inputTargets.forEach((input) => {
-      if (input.value.trim()) return
-      this.showFieldError(input, input.dataset.authBlankMessage)
+      const value = input.value.trim()
+      const message = !value ? input.dataset.authBlankMessage
+        : input.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? input.dataset.authInvalidMessage : null
+      if (!message) return
+      this.showFieldError(input, message)
       firstInvalid ||= input
     })
     if (firstInvalid) {
@@ -128,12 +132,25 @@ export default class extends Controller {
     }
   }
 
-  finishLogin() {
+  finishLogin(event) {
     if (!this.hasLoginSubmitTarget) return
     this.loginSubmitTarget.disabled = false
     this.loginSubmitTarget.removeAttribute("aria-busy")
     const label = this.loginSubmitTarget.querySelector("span")
     if (label && this.originalLabel) label.textContent = this.originalLabel
+    if (event?.detail?.error || event?.detail?.fetchResponse?.statusCode >= 500) this.showNetworkError()
+  }
+
+  loginNetworkError(event) {
+    event.preventDefault()
+    this.finishLogin()
+    this.showNetworkError()
+  }
+
+  showNetworkError() {
+    if (!this.hasErrorBannerTarget) return
+    this.errorBannerTarget.textContent = this.element.dataset.networkError
+    this.showErrors()
   }
 
   showFieldError(input, message) {
@@ -170,5 +187,6 @@ export default class extends Controller {
     this.loginCardTarget.classList.add("animate-shake")
     setTimeout(() => this.loginCardTarget.classList.remove("animate-shake"), 400)
     this.errorBannerTarget.classList.remove("hidden", "translate-y-2", "opacity-0")
+    this.errorBannerTarget.focus()
   }
 }

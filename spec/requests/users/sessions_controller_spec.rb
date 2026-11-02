@@ -92,6 +92,45 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(session[:swal_message]).to eq(I18n.t('devise.sessions.signed_in'))
   end
 
+  it 'rejects malformed email before authentication and associates its error with the field' do
+    post user_session_path, params: { user: { email: 'invalid-address', password: 'not-a-real-password' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#user_email')['aria-describedby']).to eq('login-email-error')
+    locale = document.at_css('html')['lang']
+    message = I18n.t('activerecord.errors.models.user.attributes.email.invalid', locale:)
+    expect(document.at_css('#login-email-error').text).to include(message)
+    expect(document.at_css('#user_email')['value']).to eq('invalid-address')
+  end
+
+  it 'shows the same generic rejection for unknown accounts and incorrect passwords' do
+    [user.email, 'absent@example.invalid'].each do |email|
+      post user_session_path, params: { user: { email:, password: 'not-a-real-password' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#login-feedback[role="alert"]').text.strip)
+        .to eq(I18n.t('authentication.login.invalid_credentials'))
+      expect(document.at_css('#user_email')['value']).to eq(email)
+      expect(document.at_css('#user_password')['value']).to be_blank
+      expect(controller.current_user).to be_nil
+    end
+  end
+
+  it 'keeps the chosen language on a rejected sign-in' do
+    spanish = create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
+    cookies[:terminal_language] = spanish.code
+
+    post user_session_path, params: { user: { email: 'absent@example.invalid', password: 'incorrect' } }
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('html')['lang']).to eq('es')
+    expect(document.at_css('#login-feedback').text.strip)
+      .to eq(I18n.t('authentication.login.invalid_credentials', locale: :es))
+    expect(document.at_css('#languageSelectorButton').text).to include('ES')
+  end
+
   it 'displays the sign-in success via SweetAlert2 once on the dashboard' do
     post user_session_path, params: { user: { email: user.email, password: } }
     follow_redirect!

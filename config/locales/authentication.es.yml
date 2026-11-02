@@ -2,6 +2,8 @@ es:
   authentication:
     rate_limited: "Demasiados intentos. Espera un momento antes de volver a intentarlo."
     login:
+      invalid_credentials: "El correo electrónico o la contraseña son incorrectos. Inténtalo de nuevo."
+      network_error: "No pudimos completar el acceso. Revisa tu conexión e inténtalo nuevamente."
       show_password: "Mostrar contraseña"
       hide_password: "Ocultar contraseña"
       back_to_sign_in: "Volver al inicio de sesión"
@@ -24,6 +26,7 @@ es:
           attributes:
             email:
               blank: "no puede estar vacío"
+              invalid: "debe tener un formato válido"
             password:
               blank: "no puede estar vacía"
             password_confirmation:

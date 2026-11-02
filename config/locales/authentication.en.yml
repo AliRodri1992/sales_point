@@ -2,6 +2,8 @@ en:
   authentication:
     rate_limited: "Too many attempts. Please wait a moment and try again."
     login:
+      invalid_credentials: "The email address or password is incorrect. Please try again."
+      network_error: "We could not complete sign-in. Check your connection and try again."
       show_password: "Show password"
       hide_password: "Hide password"
       back_to_sign_in: "Back to sign in"
@@ -24,6 +26,7 @@ en:
           attributes:
             email:
               blank: "can't be blank"
+              invalid: "must be a valid email address"
             password:
               blank: "can't be blank"
             password_confirmation:
