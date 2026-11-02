@@ -58,4 +58,50 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     expect(page).to have_css('[data-registration-field-error]', minimum: 1)
     expect(form_height).to be_within(1).of(height_before)
   end
+  scenario 'highlights exactly one implementation option without changing either card height' do
+    visit new_user_registration_path
+
+    new_card = find('[data-setup-type="new"]')
+    migration_card = find('[data-setup-type="migration"]')
+    initial_heights = page.evaluate_script(
+      'Array.from(document.querySelectorAll("[data-registration-wizard-target=setupCard]")).map(e => e.offsetHeight)'
+    )
+
+    new_card.click
+    expect(new_card['aria-pressed']).to eq('true')
+    expect(new_card[:class]).to include('border-emerald-600')
+    expect(new_card).to have_css('[data-setup-check]:not(.opacity-0)')
+    expect(new_card).to have_css('[data-setup-selected-label]:not(.invisible)')
+    expect(migration_card['aria-pressed']).to eq('false')
+
+    migration_card.click
+    expect(migration_card['aria-pressed']).to eq('true')
+    expect(new_card['aria-pressed']).to eq('false')
+    expect(new_card).to have_css('[data-setup-check].opacity-0', visible: :all)
+    expect(
+      page.evaluate_script(
+        'Array.from(document.querySelectorAll("[data-registration-wizard-target=setupCard]")).map(e => e.offsetHeight)'
+      )
+    ).to eq(initial_heights)
+  end
+
+  scenario 'keeps input spacing compact while reserving a fixed feedback area' do
+    page.driver.browser.manage.window.resize_to(1440, 900)
+    visit_administrator_step
+
+    gap = page.evaluate_script(<<~JS)
+      const first = document.querySelector("#first-name").closest("[data-field]");
+      const next = document.querySelector("#last-name").closest("[data-field]");
+      next.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
+    JS
+
+    expect(gap).to be_between(0, 12)
+    expect(find('#first-name').find(:xpath, './ancestor::*[@data-field][1]')[:class]).to include('pb-7')
+
+    original_height = form_height
+    find('[data-registration-wizard-target="next"]').click
+    expect(page).to have_css('[data-registration-field-error]', minimum: 3)
+    expect(form_height).to be_within(1).of(original_height)
+  end
+
 end

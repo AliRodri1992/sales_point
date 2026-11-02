@@ -1321,6 +1321,7 @@ es:
         saving: "Creando tu cuenta…"
         step_label: Progreso del registro
         step_one:
+          selected: "Seleccionado"
           migration_description: Migra tu catálogo e información operativa actual
             a Delta POS de forma segura.
           migration_title: Es una migración de un sistema existente

@@ -299,7 +299,7 @@ export default class extends Controller {
     if (!error) {
       error = document.createElement("p")
       error.dataset.registrationFieldError = "true"
-      error.className = "absolute inset-x-0 bottom-0 h-9 overflow-y-auto text-xs font-medium leading-4 text-rose-700"
+      error.className = "absolute inset-x-0 bottom-0 h-7 overflow-hidden text-xs font-medium leading-[14px] text-rose-700"
       error.setAttribute("role", "alert")
       error.setAttribute("aria-live", "polite")
       wrapper.appendChild(error)
@@ -392,7 +392,18 @@ export default class extends Controller {
       card.classList.toggle("bg-emerald-50", selected)
       card.classList.toggle("bg-white", !selected)
       card.classList.toggle("ring-2", selected)
-      card.classList.toggle("ring-emerald-500/20", selected)
+      card.classList.toggle("ring-emerald-500/30", selected)
+      card.classList.toggle("shadow-md", selected)
+      card.classList.toggle("shadow-sm", !selected)
+
+      const icon = card.querySelector("[data-setup-icon]")
+      icon?.classList.toggle("bg-emerald-100", selected)
+      icon?.classList.toggle("text-emerald-700", selected)
+      icon?.classList.toggle("bg-slate-100", !selected)
+      icon?.classList.toggle("text-slate-600", !selected)
+
+      card.querySelector("[data-setup-check]")?.classList.toggle("opacity-0", !selected)
+      card.querySelector("[data-setup-selected-label]")?.classList.toggle("invisible", !selected)
       card.setAttribute("aria-pressed", String(selected))
     })
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")

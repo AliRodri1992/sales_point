@@ -91,7 +91,7 @@
             as: resource_name,
             url: registration_path(resource_name),
             html: {
-              class: "space-y-5",
+              class: "space-y-4",
               novalidate: true,
               data: { action: "submit->registration-wizard#submit" }
             }
@@ -132,13 +132,13 @@
 
             <span data-registration-wizard-target="stepCounter" class="sr-only">1 / 5</span>
 
-            <section data-registration-wizard-target="step" data-step="1" class="space-y-5">
+            <section data-registration-wizard-target="step" data-step="1" class="space-y-4">
               <div>
                 <h2 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t(".step_one.title") %></h2>
                 <p class="mt-1 text-xs text-slate-400"><%= t(".step_one.subtitle") %></p>
               </div>
 
-              <div data-field class="relative space-y-3 pb-9">
+              <div data-field class="relative space-y-3 pb-7">
                 <% [
                   ["new", "step_one.new_title", "step_one.new_description", "sparkles"],
                   ["migration", "step_one.migration_title", "step_one.migration_description", "arrow-path"]
@@ -148,45 +148,52 @@
                     data-action="click->registration-wizard#selectSetup"
                     data-setup-type="<%= type %>"
                     data-registration-wizard-target="setupCard"
-                    class="group relative flex w-full cursor-pointer appearance-none items-start space-x-3 rounded-xl border-2 border-slate-100 bg-white p-3.5 text-left shadow-sm transition-all duration-200 hover:border-emerald-600"
+                    class="group flex w-full cursor-pointer items-start gap-3 rounded-2xl border-2 border-slate-200 bg-white p-4 text-left shadow-sm transition-colors duration-150 hover:border-emerald-400 hover:bg-emerald-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     aria-pressed="false">
-                    <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-transform group-hover:scale-105">
-                      <%= delta_icon icon_name, class: "h-4 w-4" %>
+                    <span data-setup-icon class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 transition-colors duration-150">
+                      <%= delta_icon icon_name, class: "h-5 w-5" %>
                     </span>
                     <span class="min-w-0 flex-1">
-                      <span class="block text-xs font-bold leading-none text-slate-900"><%= t(".#{title_key}") %></span>
-                      <span class="mt-1.5 block text-xs leading-normal text-slate-400"><%= t(".#{description_key}") %></span>
-                    </span>                  </button>
+                      <span class="block text-sm font-bold leading-snug text-slate-900"><%= t(".#{title_key}") %></span>
+                      <span class="mt-1 block text-[13px] leading-relaxed text-slate-600"><%= t(".#{description_key}") %></span>
+                    </span>
+                    <span class="flex w-7 shrink-0 flex-col items-center gap-1 sm:w-20">
+                      <span data-setup-check class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-700 text-white opacity-0 transition-opacity duration-150" aria-hidden="true">
+                        <%= delta_icon "check", class: "h-4 w-4" %>
+                      </span>
+                      <span data-setup-selected-label class="invisible hidden text-[11px] font-bold text-emerald-800 sm:block"><%= t(".step_one.selected") %></span>
+                    </span>
+                  </button>
                 <% end %>
               </div>
             </section>
 
-            <section data-registration-wizard-target="step" data-step="2" class="hidden space-y-5">
-              <div>
+            <section data-registration-wizard-target="step" data-step="2" class="hidden space-y-2">
+              <div class="mb-4">
                 <h2 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t(".step_two.title") %></h2>
                 <p class="mt-1 text-xs text-slate-400"><%= t(".step_two.subtitle") %></p>
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="first-name" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_two.first_name") %></label>
                 <input id="first-name" name="first_name" value="<%= params[:first_name] %>" type="text" autocomplete="given-name" placeholder="<%= t(".step_two.first_name_placeholder") %>" class="appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-registration-wizard-target="firstName">
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="last-name" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_two.last_name") %></label>
                 <input id="last-name" name="last_name" value="<%= params[:last_name] %>" type="text" autocomplete="family-name" placeholder="<%= t(".step_two.last_name_placeholder") %>" class="appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-registration-wizard-target="lastName">
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <%= f.label :email, t(".step_two.email"), class: "block font-jakarta text-xs font-medium text-slate-700" %>
                 <%= f.email_field :email, value: resource.email, autocomplete: "email", placeholder: t(".step_two.email_placeholder"), class: "appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500", data: { registration_wizard_target: "input" }, 'aria-invalid': resource.errors[:email].any?, 'aria-describedby': (resource.errors[:email].any? ? 'registration-user-email-error' : nil) %>
                 <% if resource.errors[:email].any? %>
-                  <p id="registration-user-email-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-9 overflow-y-auto text-xs font-medium leading-4 text-rose-700"><%= resource.errors.full_messages_for(:email).first %></p>
+                  <p id="registration-user-email-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-7 overflow-hidden text-xs font-medium leading-[14px] text-rose-700"><%= resource.errors.full_messages_for(:email).first %></p>
                 <% end %>
               </div>
 
               <div class="grid gap-3 sm:grid-cols-2">
-                <div data-field class="relative pb-9">
+                <div data-field class="relative pb-7">
                   <%= f.label :password, t(".step_two.password"), class: "block font-jakarta text-xs font-medium text-slate-700" %>
                   <div class="relative mt-1">
                     <%= f.password_field :password, autocomplete: "new-password", placeholder: "••••••••", class: "appearance-none block w-full rounded-xl border border-slate-200 px-4 py-3 pr-10 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500", data: { registration_wizard_target: "password" }, 'aria-invalid': resource.errors[:password].any?, 'aria-describedby': (resource.errors[:password].any? ? 'registration-user-password-error' : nil) %>
@@ -196,43 +203,43 @@
                   </div>
                   <% if @minimum_password_length %><p class="mt-1 text-xs text-slate-400"><%= t(".step_two.password_minimum", count: @minimum_password_length) %></p><% end %>
                   <% if resource.errors[:password].any? %>
-                  <p id="registration-user-password-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-9 overflow-y-auto text-xs font-medium leading-4 text-rose-700"><%= resource.errors.full_messages_for(:password).first %></p>
+                  <p id="registration-user-password-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-7 overflow-hidden text-xs font-medium leading-[14px] text-rose-700"><%= resource.errors.full_messages_for(:password).first %></p>
                 <% end %>
                 </div>
-                <div data-field class="relative pb-9">
+                <div data-field class="relative pb-7">
                   <%= f.label :password_confirmation, t(".step_two.password_confirmation"), class: "block font-jakarta text-xs font-medium text-slate-700" %>
                   <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "••••••••", class: "appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500", data: { registration_wizard_target: "confirmation" }, 'aria-invalid': resource.errors[:password_confirmation].any?, 'aria-describedby': (resource.errors[:password_confirmation].any? ? 'registration-user-password-confirmation-error' : nil) %>
                   <% if resource.errors[:password_confirmation].any? %>
-                  <p id="registration-user-password-confirmation-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-9 overflow-y-auto text-xs font-medium leading-4 text-rose-700"><%= resource.errors.full_messages_for(:password_confirmation).first %></p>
+                  <p id="registration-user-password-confirmation-error" data-registration-field-error role="status" aria-live="polite" class="absolute inset-x-0 bottom-0 h-7 overflow-hidden text-xs font-medium leading-[14px] text-rose-700"><%= resource.errors.full_messages_for(:password_confirmation).first %></p>
                 <% end %>
                 </div>
               </div>
             </section>
 
-            <section data-registration-wizard-target="step" data-step="3" class="hidden space-y-5">
-              <div>
+            <section data-registration-wizard-target="step" data-step="3" class="hidden space-y-2">
+              <div class="mb-4">
                 <h2 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t(".step_three.title") %></h2>
                 <p class="mt-1 text-xs text-slate-400"><%= t(".step_three.subtitle") %></p>
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="company-name" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_three.company_name") %></label>
                 <input id="company-name" name="company_name" value="<%= params[:company_name] %>" type="text" placeholder="<%= t(".step_three.company_name_placeholder") %>" class="appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-registration-wizard-target="companyName">
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="tax-id" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_three.tax_id") %></label>
                 <input id="tax-id" name="tax_id" value="<%= params[:tax_id] %>" type="text" maxlength="13" placeholder="<%= t(".step_three.tax_id_placeholder") %>" class="appearance-none mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm uppercase text-slate-800 shadow-sm placeholder-slate-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-registration-wizard-target="taxId">
               </div>
             </section>
 
-            <section data-registration-wizard-target="step" data-step="4" class="hidden space-y-5">
+            <section data-registration-wizard-target="step" data-step="4" class="hidden space-y-3">
               <div>
                 <h2 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t(".step_four.title") %></h2>
                 <p class="mt-1 text-xs text-slate-400"><%= t(".step_four.subtitle") %></p>
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="business-sector" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.business_sector") %></label>
                 <button type="button" id="business-sector" data-registration-wizard-target="dropdown" data-dropdown-name="business-sector" data-action="click->registration-wizard#toggleDropdown" aria-haspopup="listbox" aria-expanded="false" aria-controls="registration-menu-business-sector" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_four.select_sector") %></span>
@@ -275,7 +282,7 @@
                   <input id="branches-input" type="number" min="1" value="1" class="mt-1 block w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500 shadow-sm" disabled>
                   <p class="mt-1.5 text-xs leading-relaxed text-slate-500"><%= t(".branch_hint") %></p>
                 </div>
-                <div data-field class="relative pb-9">
+                <div data-field class="relative pb-7">
                   <label for="currency" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.currency") %></label>
                   <button type="button" id="currency" data-registration-wizard-target="dropdown" data-dropdown-name="currency" data-action="click->registration-wizard#toggleDropdown" aria-haspopup="listbox" aria-expanded="false" aria-controls="registration-menu-currency" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                     <span data-registration-wizard-target="dropdownLabel"><%= params[:currency].presence || "MXN" %></span>
@@ -290,7 +297,7 @@
                   </div>
                 </div>
               </div>
-              <div data-field class="relative mt-4 pb-9">
+              <div data-field class="relative mt-4 pb-7">
                 <label for="timezone-select" class="block font-jakarta text-sm font-medium text-slate-700"><%= t(".timezone_label") %></label>
                 <select id="timezone-select" data-action="change->registration-wizard#selectTimezone" class="mt-1 block min-h-11 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600">
                   <% OrganizationSetting::ONBOARDING_TIMEZONES.each do |zone| %>
@@ -300,13 +307,13 @@
               </div>
             </section>
 
-            <section data-registration-wizard-target="step" data-step="5" class="hidden space-y-5">
+            <section data-registration-wizard-target="step" data-step="5" class="hidden space-y-4">
               <div>
                 <h2 class="font-jakarta text-base font-extrabold leading-none text-slate-900"><%= t(".step_five.title") %></h2>
                 <p class="mt-1 text-xs text-slate-400"><%= t(".step_five.subtitle") %></p>
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="terminals" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.terminals") %></label>
                 <button type="button" id="terminals" data-registration-wizard-target="dropdown" data-dropdown-name="terminals" data-action="click->registration-wizard#toggleDropdown" aria-haspopup="listbox" aria-expanded="false" aria-controls="registration-menu-terminals" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.terminal_options.one") %></span>
@@ -321,7 +328,7 @@
                 </div>
               </div>
 
-              <div data-field class="relative pb-9">
+              <div data-field class="relative pb-7">
                 <label for="payment-integration" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_five.payments") %></label>
                 <button type="button" id="payment-integration" data-registration-wizard-target="dropdown" data-dropdown-name="payment-integration" data-action="click->registration-wizard#toggleDropdown" aria-haspopup="listbox" aria-expanded="false" aria-controls="registration-menu-payment-integration" class="mt-1 flex w-full items-center justify-between rounded-xl border border-slate-200 px-3 py-1.5 text-left text-xs text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <span data-registration-wizard-target="dropdownLabel"><%= t(".step_five.payment_options.cash") %></span>
@@ -349,7 +356,7 @@
                   <% end %>
                 </dl>
               </div>
-              <div data-field class="relative pb-9 pt-1">
+              <div data-field class="relative pb-7 pt-1">
                 <div class="flex items-start gap-3">
                   <input id="terms" name="terms" type="checkbox" value="1" <%= "checked" if params[:terms].to_s.in?(%w[1 on true]) %> class="mt-0.5 h-5 w-5 shrink-0 rounded-md border border-slate-300 bg-white shadow-sm accent-[var(--theme-primary-start)] focus:ring-2 focus:ring-emerald-600" data-registration-wizard-target="terms">
                   <label for="terms" class="block text-sm leading-relaxed text-slate-700"><%= t(".step_five.terms") %></label>

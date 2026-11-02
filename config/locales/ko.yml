@@ -1299,6 +1299,7 @@ ko:
         saving: "계정을 만들고 있습니다…"
         step_label: 등록 진행률
         step_one:
+          selected: "선택됨"
           migration_description: 현재 상품 카탈로그와 운영 정보를 Delta POS로 안전하게 이전합니다.
           migration_title: 기존 시스템을 마이그레이션합니다
           new_description: 깨끗한 데이터베이스로 시작합니다. 첫 번째 소매점을 여는 경우에 적합합니다.
