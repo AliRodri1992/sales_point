@@ -1,94 +1,122 @@
 <% content_for :title, "#{@user.display_name} | #{t('admin.users.index.title')}" %>
+<% assignments = @user.user_roles.active.includes(:system_role, :branch).to_a.select do |assignment|
+     assignment.branch_id.nil? || assignment.branch&.organization_id == current_organization&.id
+   end %>
+<% global_roles = assignments.select { |assignment| assignment.branch_id.nil? } %>
+<% branch_roles = assignments.reject { |assignment| assignment.branch_id.nil? } %>
 
-<div>
-  <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-    <div>
-      <p class="text-sm font-medium text-slate-500"><%= t('admin.users.index.title') %></p>
-      <h1 class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= @user.display_name %></h1>
-      <p class="mt-1 text-sm text-slate-500"><%= @user.email %></p>
+<div class="mx-auto max-w-[92rem] space-y-6">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div class="min-w-0">
+      <p class="mb-2 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
+      <div class="flex min-w-0 items-center gap-4">
+        <span class="flex size-16 shrink-0 items-center justify-center rounded-2xl text-xl font-bold" style="<%= user_avatar_style(@user) %>" aria-hidden="true"><%= @user.initials %></span>
+        <div class="min-w-0">
+          <h1 class="break-words font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= @user.display_name %></h1>
+          <p class="mt-1 break-all text-sm text-slate-500"><%= @user.email %></p>
+          <div class="mt-2 flex flex-wrap items-center gap-2"><%= user_status_badge(@user.status) %><span class="text-xs text-slate-500"><%= t("admin.users.user_types.#{@user.user_type}") %></span></div>
+        </div>
+      </div>
     </div>
-
-    <div class="flex flex-wrap items-center gap-3">
-      <%= link_to admin_users_path,
-                  data: { turbo_frame: '_top' },
-                  class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100' do %>
-        <%= delta_icon('arrow-left', class: 'size-4') %>
-        <%= t('admin.users.form.buttons.back') %>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to admin_users_path, data: { turbo_frame: '_top' },
+                  class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.users.form.buttons.back') %>
       <% end %>
-
       <% if @can_manage_users %>
-        <%= link_to edit_admin_user_path(@user),
-                    data: { turbo_frame: '_top' },
-                    class: 'inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
-          <%= delta_icon('pencil-square', class: 'size-4') %>
-          <%= t('admin.users.actions.edit') %>
+        <%= link_to edit_admin_user_path(@user), data: { turbo_frame: '_top' },
+                    class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' do %>
+          <%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.users.actions.edit') %>
         <% end %>
       <% end %>
     </div>
-  </div>
+  </header>
 
-  <div class="grid gap-6 lg:grid-cols-2">
-    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-      <div class="mb-4 border-b border-slate-100 pb-2">
-        <h2 class="font-jakarta text-base font-semibold text-slate-900"><%= t('admin.users.show.identity_title') %></h2>
+  <div class="grid items-start gap-5 lg:grid-cols-2">
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="user-identity-title">
+      <div class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+        <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('user-circle', class: 'size-5') %></span>
+        <h2 id="user-identity-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.show.identity_title') %></h2>
       </div>
-
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.email') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= @user.email %></p>
+      <dl class="grid gap-5 sm:grid-cols-2">
+        <div class="min-w-0 sm:col-span-2">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.email') %></dt>
+          <dd class="mt-1 break-all text-sm font-medium text-slate-800"><%= @user.email %></dd>
+        </div>
+        <div class="min-w-0">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.username') %></dt>
+          <dd class="mt-1 break-words text-sm font-medium text-slate-800"><%= @user.username.presence || t('admin.users.index.no_data') %></dd>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.username') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= @user.username.presence || '<span class="text-slate-400">—</span>'.html_safe %></p>
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.user_type') %></dt>
+          <dd class="mt-1 text-sm font-medium text-slate-800"><%= t("admin.users.user_types.#{@user.user_type}") %></dd>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.user_type') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= t("admin.users.user_types.#{@user.user_type}") %></p>
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.language') %></dt>
+          <dd class="mt-1 text-sm font-medium text-slate-800"><%= @user.language&.name || t('admin.users.index.no_data') %></dd>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.theme') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= t("admin.users.themes.#{@user.theme}", default: @user.theme.to_s.humanize) %></p>
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.theme') %></dt>
+          <dd class="mt-1 text-sm font-medium text-slate-800"><%= t("admin.users.themes.#{@user.theme}", default: @user.theme.to_s.humanize) %></dd>
         </div>
-      </div>
+      </dl>
     </section>
 
-    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:p-8">
-      <div class="mb-4 border-b border-slate-100 pb-2">
-        <h2 class="font-jakarta text-base font-semibold text-slate-900"><%= t('admin.users.show.access_title') %></h2>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="user-security-title">
+      <div class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+        <span class="flex size-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><%= delta_icon('lock-closed', class: 'size-5') %></span>
+        <h2 id="user-security-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.show.access_title') %></h2>
       </div>
+      <dl class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.status') %></dt>
+          <dd class="mt-2"><%= user_status_badge(@user.status) %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.sign_in_count') %></dt>
+          <dd class="mt-1 font-jakarta text-lg font-bold tabular-nums text-slate-900"><%= @user.sign_in_count || 0 %></dd>
+        </div>
+        <div class="sm:col-span-2">
+          <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.last_sign_in_at') %></dt>
+          <dd class="mt-1 text-sm font-medium text-slate-800"><%= @user.last_sign_in_at ? l(@user.last_sign_in_at, format: :long) : t('admin.users.show.never') %></dd>
+        </div>
+      </dl>
+    </section>
+  </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.status') %></p>
-          <div class="mt-1"><%= user_status_badge(@user.status) %></div>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.language') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= @user.language&.name || '—' %></p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.last_sign_in_at') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= @user.last_sign_in_at ? l(@user.last_sign_in_at, format: :long) : t('admin.users.show.never') %></p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.sign_in_count') %></p>
-          <p class="mt-1 text-sm text-slate-700"><%= @user.sign_in_count %></p>
-        </div>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="user-roles-title">
+    <div class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">
+      <span class="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-5') %></span>
+      <div>
+        <h2 id="user-roles-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.show.roles') %></h2>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.users.ui.roles_detail_hint') %></p>
       </div>
-
-      <div class="mt-4 border-t border-slate-100 pt-4">
-        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400"><%= t('admin.users.show.roles') %></p>
-        <% if @user.system_roles.active.any? %>
-          <div class="mt-2 flex flex-wrap gap-1.5">
-            <% @user.system_roles.active.each do |role| %>
-              <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"><%= system_role_name(role) %></span>
+    </div>
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div>
+        <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-600"><%= t('admin.users.ui.global_roles_title') %></h3>
+        <% if global_roles.any? %>
+          <div class="flex flex-wrap gap-2">
+            <% global_roles.each do |assignment| %>
+              <span class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"><%= system_role_name(assignment.system_role) %></span>
             <% end %>
           </div>
         <% else %>
-          <p class="mt-2 text-sm text-slate-500"><%= t('admin.users.show.no_roles') %></p>
+          <p class="text-sm text-slate-500"><%= t('admin.users.show.no_roles') %></p>
         <% end %>
       </div>
-    </section>
-  </div>
+      <div>
+        <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-600"><%= t('admin.users.ui.branch_roles_title') %></h3>
+        <% if branch_roles.any? %>
+          <div class="flex flex-wrap gap-2">
+            <% branch_roles.each do |assignment| %>
+              <span class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700"><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %></span>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-sm text-slate-500"><%= t('admin.users.ui.no_branch_roles') %></p>
+        <% end %>
+      </div>
+    </div>
+  </section>
 </div>

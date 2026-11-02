@@ -1,115 +1,214 @@
-<div>
-  <div class="mb-7 flex items-start justify-between gap-4">
-    <div>
-      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= title %></h1>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.users.form.subtitle') %></p>
+<% editing = @user.persisted? %>
+<% submitted_role_ids = params.dig(:user, :system_role_ids) %>
+<% selected_role_ids = if submitted_role_ids
+                         Array(submitted_role_ids).map(&:to_i)
+                       elsif editing
+                         @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
+                       else
+                         []
+                       end %>
+<div class="mx-auto max-w-[92rem] space-y-6">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="min-w-0">
+      <p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= title %></h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"><%= t('admin.users.form.subtitle') %></p>
     </div>
-    <%= link_to admin_users_path,
-                class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100' do %>
-      <%= delta_icon('arrow-left', class: 'size-4') %>
-      <%= t('admin.users.form.buttons.back') %>
+    <%= link_to(editing ? admin_user_path(@user) : admin_users_path,
+                class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600') do %>
+      <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.users.form.buttons.back') %>
     <% end %>
-  </div>
+  </header>
 
-  <div class="max-w-6xl rounded-xl border border-slate-200 bg-white shadow-sm">
-    <%= form_with model: @user,
-                  url: @user.persisted? ? admin_user_path(@user) : admin_users_path,
-                  class: 'space-y-6 p-6 lg:p-8' do |form| %>
-      <div class="grid gap-5 sm:grid-cols-2">
-        <div>
-          <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.email_field :email,
-                              class: "input-field w-full rounded-xl #{form_state_classes(@user, :email)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                              autocomplete: 'email' %>
-          <%= error_message_for(@user, :email) %>
+  <%= form_with model: @user, url: editing ? admin_user_path(@user) : admin_users_path,
+                html: { novalidate: true }, class: 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' do |form| %>
+    <div class="min-w-0 space-y-5">
+      <% if @user.errors[:base].any? %>
+        <div role="alert" class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800">
+          <% @user.errors[:base].each do |message| %><p><%= message %></p><% end %>
         </div>
+      <% end %>
 
-        <div>
-          <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_field :username,
-                            class: "input-field w-full rounded-xl #{form_state_classes(@user, :username)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            autocomplete: 'username' %>
-          <%= error_message_for(@user, :username) %>
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-identity-title">
+        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('user-circle', class: 'size-6') %></span>
+          <div>
+            <h2 id="users-identity-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.ui.form_identity') %></h2>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.form_identity_hint') %></p>
+          </div>
+        </header>
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+          <div class="min-w-0">
+            <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.email_field :email, autocomplete: 'email',
+                                 aria: { invalid: @user.errors[:email].any? },
+                                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :email)} px-3.5 py-2.5 text-sm text-slate-800" %>
+            <%= error_message_for(@user, :email) %>
+          </div>
+          <div class="min-w-0">
+            <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.text_field :username, autocomplete: 'username',
+                                aria: { invalid: @user.errors[:username].any? },
+                                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :username)} px-3.5 py-2.5 text-sm text-slate-800" %>
+            <%= error_message_for(@user, :username) %>
+          </div>
+          <div class="min-w-0">
+            <%= form.label :user_type, t('admin.users.form.fields.user_type'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <div class="relative" data-controller="delta-select">
+              <%= form.select :user_type, options_for_select(
+                User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
+                { include_blank: t('admin.users.form.fields.user_type_placeholder') },
+                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :user_type)} px-3.5 py-2.5 text-sm",
+                aria: { invalid: @user.errors[:user_type].any? } %>
+            </div>
+            <%= error_message_for(@user, :user_type) %>
+          </div>
+          <div class="min-w-0">
+            <%= form.label :status, t('admin.users.form.fields.status'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <div class="relative" data-controller="delta-select">
+              <%= form.select :status, options_for_select(
+                (User.statuses.keys - ['deleted']).map { |status| [t("admin.users.statuses.#{status}"), status] }, @user.status),
+                { include_blank: t('admin.users.form.fields.status_placeholder') },
+                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :status)} px-3.5 py-2.5 text-sm",
+                aria: { invalid: @user.errors[:status].any? } %>
+            </div>
+            <%= error_message_for(@user, :status) %>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <%= form.label :password, t('admin.users.form.fields.password'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.password_field :password,
-                                 class: "input-field w-full rounded-xl #{form_state_classes(@user, :password)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                                 autocomplete: 'new-password' %>
-          <% if @user.persisted? %>
-            <p class="mt-1 text-xs text-slate-500"><%= t('admin.users.form.password_hint') %></p>
-          <% end %>
-          <%= error_message_for(@user, :password) %>
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-security-title">
+        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><%= delta_icon('lock-closed', class: 'size-6') %></span>
+          <div>
+            <h2 id="users-security-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.ui.form_security') %></h2>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t(editing ? 'admin.users.form.password_hint' : 'admin.users.ui.form_security_hint') %></p>
+          </div>
+        </header>
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+          <div class="min-w-0">
+            <%= form.label :password, t('admin.users.form.fields.password'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.password_field :password, autocomplete: 'new-password',
+                                    aria: { invalid: @user.errors[:password].any? },
+                                    class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :password)} px-3.5 py-2.5 text-sm" %>
+            <%= error_message_for(@user, :password) %>
+          </div>
+          <div class="min-w-0">
+            <%= form.label :password_confirmation, t('admin.users.form.fields.password_confirmation'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.password_field :password_confirmation, autocomplete: 'new-password',
+                                    aria: { invalid: @user.errors[:password_confirmation].any? },
+                                    class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :password_confirmation)} px-3.5 py-2.5 text-sm" %>
+            <%= error_message_for(@user, :password_confirmation) %>
+          </div>
         </div>
+      </section>
 
-        <div>
-          <%= form.label :password_confirmation, t('admin.users.form.fields.password_confirmation'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.password_field :password_confirmation,
-                                 class: "input-field w-full rounded-xl #{form_state_classes(@user, :password_confirmation)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                                 autocomplete: 'new-password' %>
-          <%= error_message_for(@user, :password_confirmation) %>
-        </div>
-
-        <div>
-          <%= form.label :user_type, t('admin.users.form.fields.user_type'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.select :user_type,
-                          options_for_select(
-                            User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] },
-                            @user.user_type
-                          ),
-                          { include_blank: t('admin.users.form.fields.user_type_placeholder') },
-                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :user_type)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-          <%= error_message_for(@user, :user_type) %>
-        </div>
-
-        <div>
-          <%= form.label :status, t('admin.users.form.fields.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.select :status,
-                          options_for_select(
-                            (User.statuses.keys - ['deleted']).map { |status| [t("admin.users.statuses.#{status}"), status] },
-                            @user.status
-                          ),
-                          { include_blank: t('admin.users.form.fields.status_placeholder') },
-                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-          <%= error_message_for(@user, :status) %>
-        </div>
-
-        <div>
-          <%= form.label :language_id, t('admin.users.form.fields.language'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.collection_select :language_id,
-                                    @languages, :id, :name,
-                                    { include_blank: t('admin.users.form.fields.language_placeholder') },
-                                    class: "input-field w-full rounded-xl #{form_state_classes(@user, :language_id)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-          <%= error_message_for(@user, :language_id) %>
-        </div>
-
-        <div>
-          <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.select :theme,
-                          @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize), theme[:id]] },
-                          { include_blank: true },
-                          class: "input-field w-full rounded-xl #{form_state_classes(@user, :theme)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-          <%= error_message_for(@user, :theme) %>
-        </div>
-
-        <div class="sm:col-span-2">
-          <%= form.label :system_role_ids, t('admin.users.form.fields.system_roles'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.collection_check_boxes :system_role_ids, @roles, :id, :name, class: 'mt-1' do |b| %>
-            <label class="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700">
-              <%= b.check_box class: 'size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500' %>
-              <span class="truncate"><%= b.text %></span>
-              <span class="ml-auto text-xs text-slate-500"><%= b.value %></span>
-            </label>
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-access-title">
+        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-6') %></span>
+          <div>
+            <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.form.fields.system_roles') %></h2>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.form_roles_hint') %></p>
+          </div>
+        </header>
+        <div class="p-5 sm:p-6">
+          <%= hidden_field_tag 'user[system_role_ids][]', '' %>
+          <% if @roles.any? %>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <% @roles.each do |role| %>
+                <label for="user_role_<%= role.id %>" class="flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/40 px-4 py-3 transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
+                  <%= check_box_tag 'user[system_role_ids][]', role.id, selected_role_ids.include?(role.id),
+                                    id: "user_role_#{role.id}",
+                                    class: 'mt-1 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
+                  <span class="min-w-0">
+                    <span class="block break-words text-sm font-semibold text-slate-800"><%= system_role_name(role) %></span>
+                    <% if system_role_description(role).present? %>
+                      <span class="mt-1 block text-xs leading-5 text-slate-500"><%= system_role_description(role) %></span>
+                    <% end %>
+                  </span>
+                </label>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-sm text-slate-500"><%= t('admin.users.ui.no_roles_available') %></p>
           <% end %>
           <%= error_message_for(@user, :system_role_ids) %>
+          <% if editing %>
+            <% branch_assignments = @user.user_roles.active.includes(:system_role, :branch).select { |assignment| assignment.branch_id.present? && assignment.branch&.organization_id == current_organization&.id } %>
+            <% if branch_assignments.any? %>
+              <div class="mt-5 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4">
+                <p class="text-xs font-bold text-emerald-900"><%= t('admin.users.ui.branch_roles_title') %></p>
+                <p class="mt-1 text-xs leading-5 text-emerald-800"><%= t('admin.users.ui.branch_roles_hint') %></p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <% branch_assignments.each do |assignment| %>
+                    <span class="rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-emerald-800"><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %></span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
         </div>
-      </div>
+      </section>
 
-      <div class="flex justify-end border-t border-slate-100 pt-5">
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-preferences-title">
+        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><%= delta_icon('adjustments-horizontal', class: 'size-6') %></span>
+          <div>
+            <h2 id="users-preferences-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.ui.form_preferences') %></h2>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.form_preferences_hint') %></p>
+          </div>
+        </header>
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+          <div class="min-w-0">
+            <%= form.label :language_id, t('admin.users.form.fields.language'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <div class="relative" data-controller="delta-select">
+              <%= form.collection_select :language_id, @languages, :id, :name,
+                                         { include_blank: t('admin.users.form.fields.language_placeholder') },
+                                         class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :language_id)} px-3.5 py-2.5 text-sm",
+                                         aria: { invalid: @user.errors[:language_id].any? } %>
+            </div>
+            <%= error_message_for(@user, :language_id) %>
+          </div>
+          <div class="min-w-0">
+            <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <div class="relative" data-controller="delta-select">
+              <%= form.select :theme,
+                              @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize), theme[:id]] },
+                              { include_blank: true },
+                              class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
+                              aria: { invalid: @user.errors[:theme].any? } %>
+            </div>
+            <%= error_message_for(@user, :theme) %>
+          </div>
+        </div>
+      </section>
+
+      <footer class="flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:px-6">
+        <%= link_to t('admin.users.form.buttons.back'), editing ? admin_user_path(@user) : admin_users_path,
+                    class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
         <%= form.submit submit_label,
-                        class: 'rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2' %>
+                        class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
+      </footer>
+    </div>
+
+    <aside class="space-y-4 xl:sticky xl:top-24" aria-label="<%= t('admin.users.ui.form_help_title') %>">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('information-circle', class: 'size-6') %></span>
+        <h2 class="mt-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.users.ui.form_help_title') %></h2>
+        <p class="mt-2 text-xs leading-6 text-slate-600"><%= t('admin.users.ui.form_help_body') %></p>
       </div>
-    <% end %>
-  </div>
+      <% if editing %>
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <span class="flex size-12 shrink-0 items-center justify-center rounded-xl text-sm font-bold" style="<%= user_avatar_style(@user) %>" aria-hidden="true"><%= @user.initials %></span>
+            <div class="min-w-0">
+              <p class="truncate text-sm font-bold text-slate-900"><%= @user.display_name %></p>
+              <p class="truncate text-xs text-slate-500"><%= @user.email %></p>
+            </div>
+          </div>
+          <div class="mt-4"><%= user_status_badge(@user.status) %></div>
+        </div>
+      <% end %>
+    </aside>
+  <% end %>
 </div>
