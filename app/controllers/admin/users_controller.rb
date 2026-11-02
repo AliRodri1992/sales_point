@@ -152,6 +152,5 @@ module Admin
 
       actor.broadcast_notifications_refresh
     end
-
   end
 end

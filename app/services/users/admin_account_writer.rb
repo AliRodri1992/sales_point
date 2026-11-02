@@ -14,8 +14,8 @@ module Users
       @user.assign_attributes(user_attributes)
       role_ids = requested_role_ids
       branch_roles = branch_role_editor
-      return reject_invalid_role!(:system_role_ids) if role_ids == :invalid
-      return reject_invalid_role!(:branch_role_assignments) unless branch_roles.valid?
+      return invalid_role_error?(:system_role_ids) if role_ids == :invalid
+      return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
 
       persist!(role_ids, branch_roles)
       true
@@ -53,7 +53,7 @@ module Users
       )
     end
 
-    def reject_invalid_role!(attribute)
+    def invalid_role_error?(attribute)
       @user.valid?
       @user.errors.add(attribute, :invalid)
       false
