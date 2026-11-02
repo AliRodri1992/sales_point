@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # Guards the paginated catalog queries at realistic collection sizes.
 # Queries are observed only during the HTTP request, not fixture creation.
-RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, :n_plus_one do
+RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, n_plus_one: true do
   include SqlQueryRecorder
 
   let(:organization) { create(:organization) }
