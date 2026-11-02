@@ -488,17 +488,22 @@ def seed_example_user(index, count, roles, language, organization)
     assign_user_attributes(user, language, index)
     user.save!
   end
-  membership = OrganizationMembership.find_or_initialize_by(user:, organization:)
-  if membership.new_record?
-    membership.assign_attributes(status: :active, deleted_at: nil)
-    membership.save!
-  end
+  membership = ensure_example_user_membership(user, organization)
   role = roles.fetch(index % roles.length)
   assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
                "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
                "organizacion_id=#{organization.id} membresia_id=#{membership.id} " \
                "rol=#{role.code} asignacion_id=#{assignment.id}"
+end
+
+def ensure_example_user_membership(user, organization)
+  membership = OrganizationMembership.find_or_initialize_by(user:, organization:)
+  if membership.new_record?
+    membership.assign_attributes(status: :active, deleted_at: nil)
+    membership.save!
+  end
+  membership
 end
 
 def assign_user_attributes(user, language, index)
@@ -579,7 +584,7 @@ SeedConsole.report('Membresías', OrganizationMembership)
 SeedConsole.track('Usuarios de ejemplo', User) do
   organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
   admin = User.find_by!(email: 'administrador@delta.com')
-  unless admin.organization_memberships.active.where(organization:, deleted_at: nil).exists?
+  unless admin.organization_memberships.active.exists?(organization:, deleted_at: nil)
     raise 'El administrador debe pertenecer a la organización demo antes de sembrar usuarios'
   end
 
@@ -719,14 +724,30 @@ end
 require_relative 'seeds/demo_operational_examples'
 organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
 admin = User.find_by!(email: 'administrador@delta.com')
-SeedConsole.track('Empleados', Employee) { DemoOperationalExamples.seed_employees!(organization: organization) }
-SeedConsole.track('Contactos de la organización', Contact) { DemoOperationalExamples.seed_organization_contacts!(organization: organization) }
-SeedConsole.track('Solicitudes de compra', PurchaseRequest) { DemoOperationalExamples.seed_purchase_requests!(organization: organization, admin: admin) }
-SeedConsole.track('Cotizaciones de compra', PurchaseQuotation) { DemoOperationalExamples.seed_purchase_quotations!(organization: organization) }
-SeedConsole.track('Órdenes de compra', PurchaseOrder) { DemoOperationalExamples.seed_purchase_orders!(organization: organization, admin: admin) }
-SeedConsole.track('Facturas de proveedores', SupplierInvoice) { DemoOperationalExamples.seed_supplier_invoices!(organization: organization, admin: admin) }
-SeedConsole.track('Configuración de pagos', PaymentIntegration) { DemoOperationalExamples.seed_payment_integrations!(organization: organization) }
-SeedConsole.track('Inventarios de sucursales', Inventory) { DemoOperationalExamples.seed_inventories!(organization: organization, admin: admin) }
+SeedConsole.track('Empleados', Employee) do
+  DemoOperationalExamples.seed_employees!(organization: organization)
+end
+SeedConsole.track('Contactos de la organización', Contact) do
+  DemoOperationalExamples.seed_organization_contacts!(organization: organization)
+end
+SeedConsole.track('Solicitudes de compra', PurchaseRequest) do
+  DemoPurchasingExamples.seed_purchase_requests!(organization: organization, admin: admin)
+end
+SeedConsole.track('Cotizaciones de compra', PurchaseQuotation) do
+  DemoPurchasingExamples.seed_purchase_quotations!(organization: organization)
+end
+SeedConsole.track('Órdenes de compra', PurchaseOrder) do
+  DemoPurchasingExamples.seed_purchase_orders!(organization: organization, admin: admin)
+end
+SeedConsole.track('Facturas de proveedores', SupplierInvoice) do
+  DemoPurchasingExamples.seed_supplier_invoices!(organization: organization, admin: admin)
+end
+SeedConsole.track('Configuración de pagos', PaymentIntegration) do
+  DemoOperationalExamples.seed_payment_integrations!(organization: organization)
+end
+SeedConsole.track('Inventarios de sucursales', Inventory) do
+  DemoOperationalExamples.seed_inventories!(organization: organization, admin: admin)
+end
 
 SeedConsole.report('Direcciones', Address)
 SeedConsole.finish_run!
