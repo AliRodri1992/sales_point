@@ -716,5 +716,17 @@ SeedConsole.track('Inventarios', Inventory) do
   end
 end
 
+require_relative 'seeds/demo_operational_examples'
+organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+admin = User.find_by!(email: 'administrador@delta.com')
+SeedConsole.track('Empleados', Employee) { DemoOperationalExamples.seed_employees!(organization: organization) }
+SeedConsole.track('Contactos de la organización', Contact) { DemoOperationalExamples.seed_organization_contacts!(organization: organization) }
+SeedConsole.track('Solicitudes de compra', PurchaseRequest) { DemoOperationalExamples.seed_purchase_requests!(organization: organization, admin: admin) }
+SeedConsole.track('Cotizaciones de compra', PurchaseQuotation) { DemoOperationalExamples.seed_purchase_quotations!(organization: organization) }
+SeedConsole.track('Órdenes de compra', PurchaseOrder) { DemoOperationalExamples.seed_purchase_orders!(organization: organization, admin: admin) }
+SeedConsole.track('Facturas de proveedores', SupplierInvoice) { DemoOperationalExamples.seed_supplier_invoices!(organization: organization, admin: admin) }
+SeedConsole.track('Configuración de pagos', PaymentIntegration) { DemoOperationalExamples.seed_payment_integrations!(organization: organization) }
+SeedConsole.track('Inventarios de sucursales', Inventory) { DemoOperationalExamples.seed_inventories!(organization: organization, admin: admin) }
+
 SeedConsole.report('Direcciones', Address)
 SeedConsole.finish_run!
