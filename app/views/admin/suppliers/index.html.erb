@@ -157,6 +157,7 @@
      data-skeleton-loading-region-value="suppliers" aria-busy="false"
      data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
   <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
+  <div class="delta-skeleton-region__progress" data-skeleton-loading-target="indicator" hidden aria-hidden="true"><span></span></div>
   <div data-skeleton-loading-target="content">
     <%= render "list_frame" %>
   </div>

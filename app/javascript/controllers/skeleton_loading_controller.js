@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Scoped loading state: preserve existing records during refreshes, and only
 // display the skeleton when there is no usable content yet.
 export default class extends Controller {
-  static targets = ["content", "placeholder", "status", "error"]
+  static targets = ["content", "placeholder", "status", "error", "indicator"]
   static values = {
     region: String,
     delay: { type: Number, default: 140 }
@@ -33,10 +33,12 @@ export default class extends Controller {
     const hasRecords = this.contentTarget.querySelector(
       "tbody tr, [data-supplier-mobile-card], [data-skeleton-record]"
     )
-    if (hasRecords) return
-
     this.showTimer = window.setTimeout(() => {
       if (!this.loading) return
+      if (hasRecords) {
+        if (this.hasIndicatorTarget) this.indicatorTarget.hidden = false
+        return
+      }
       this.contentTarget.hidden = true
       this.placeholderTarget.hidden = false
     }, this.delayValue)
@@ -55,6 +57,7 @@ export default class extends Controller {
     this.activeRequestId = null
     this.element.setAttribute("aria-busy", "false")
     if (this.hasStatusTarget) this.statusTarget.hidden = true
+    if (this.hasIndicatorTarget) this.indicatorTarget.hidden = true
     if (this.hasContentTarget) this.contentTarget.hidden = false
     if (this.hasPlaceholderTarget) this.placeholderTarget.hidden = true
   }

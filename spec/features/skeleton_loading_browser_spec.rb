@@ -31,6 +31,7 @@ RSpec.describe 'Scoped skeleton loading', type: :feature, js: true do
     expect(page).to have_css('[data-skeleton-loading-region-value="suppliers"][aria-busy="true"]')
     expect(page).to have_text('Visible Supplier')
     expect(page).to have_css('[data-skeleton-loading-target="placeholder"][hidden]', visible: :all)
+    expect(page).to have_css('[data-skeleton-loading-target="indicator"]:not([hidden])', wait: 5)
 
     page.execute_script(<<~JS)
       document.dispatchEvent(new CustomEvent('skeleton:end', {
