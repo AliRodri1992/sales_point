@@ -3,17 +3,24 @@
 module Purchases
   class Costing
     def self.apply!(receipt)
-      receipt.goods_receipt_items.includes(:purchase_order_item).find_each do |entry|
-        allocate!(entry)
-      end
+      order = receipt.purchase_order
+      entries = receipt.goods_receipt_items.includes(:purchase_order_item).to_a
+      order_items = order.purchase_order_items.to_a
+      totals = {
+        order_goods: order_items.sum(&:line_total),
+        order_quantity: order_items.sum(&:quantity),
+        receipt_goods: entries.sum { |entry| goods_cost(entry) },
+        receipt_quantity: entries.sum(&:accepted_quantity)
+      }
+      entries.each { |entry| allocate!(entry, receipt:, order:, totals:) }
     end
 
-    def self.allocate!(entry)
-      receipt = entry.goods_receipt
-      order = receipt.purchase_order
+    def self.allocate!(entry, receipt: nil, order: nil, totals: nil)
+      receipt ||= entry.goods_receipt
+      order ||= receipt.purchase_order
       goods = goods_cost(entry)
-      receipt_weight = weight_in_receipt(entry, goods)
-      order_weight = weight_in_order(order, entry, goods)
+      receipt_weight = weight_in_receipt(entry, goods, totals:)
+      order_weight = weight_in_order(order, entry, goods, totals:)
 
       costs = expenses(receipt, order, receipt_weight, order_weight)
       landed = landed_cost(entry:, goods:, exchange_rate: order.exchange_rate, **costs)
@@ -31,20 +38,25 @@ module Purchases
       line.line_total * (entry.accepted_quantity / line.quantity)
     end
 
-    def self.weight_in_order(order, entry, goods)
-      total = order.goods_total
+    def self.weight_in_order(order, entry, goods, totals: nil)
+      total = totals ? totals.fetch(:order_goods) : order.goods_total
       return goods / total if total.positive?
 
-      quantity = order.purchase_order_items.sum(:quantity)
+      quantity = totals ? totals.fetch(:order_quantity) : order.purchase_order_items.sum(:quantity)
       quantity.positive? ? entry.accepted_quantity / quantity : 0
     end
 
-    def self.weight_in_receipt(entry, goods)
-      receipt_items = entry.goods_receipt.goods_receipt_items.includes(:purchase_order_item)
-      total = receipt_items.sum { |item| goods_cost(item) }
+    def self.weight_in_receipt(entry, goods, totals: nil)
+      if totals
+        total = totals.fetch(:receipt_goods)
+        quantity = totals.fetch(:receipt_quantity)
+      else
+        receipt_items = entry.goods_receipt.goods_receipt_items.includes(:purchase_order_item)
+        total = receipt_items.sum { |item| goods_cost(item) }
+        quantity = receipt_items.sum(&:accepted_quantity)
+      end
       return goods / total if total.positive?
 
-      quantity = receipt_items.sum(&:accepted_quantity)
       quantity.positive? ? entry.accepted_quantity / quantity : 0
     end
 

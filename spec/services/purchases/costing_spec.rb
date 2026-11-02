@@ -53,6 +53,29 @@ RSpec.describe Purchases::Costing do
     expect(allocation.landed_unit_cost).to eq(BigDecimal('14.5'))
   end
 
+  it 'distributes fixed freight proportionally across multiple receipt lines' do
+    first = order.purchase_order_items.create!(
+      product:, quantity: 10, units_per_package: 1, unit_price: 10, discount_percent: 0
+    )
+    second = order.purchase_order_items.create!(
+      product: create(:product, organization:), quantity: 10,
+      units_per_package: 1, unit_price: 10, discount_percent: 0
+    )
+    order.update!(status: :ordered)
+    receipt = Purchases::Receive.call(
+      order:, user:, idempotency_key: 'cost-multiple',
+      entries: [first, second].map do |item|
+        { purchase_order_item_id: item.id, delivered_quantity: 10,
+          accepted_quantity: 10, damaged_quantity: 0 }
+      end
+    )
+
+    costs = receipt.goods_receipt_items.map(&:purchase_cost_allocation)
+    expect(costs.sum(&:freight_amount)).to eq(12)
+    expect(costs.sum(&:insurance_amount)).to eq(3)
+    expect(costs.map(&:goods_amount)).to match_array([100, 100])
+  end
+
   it 'returns zero cost when no merchandise is accepted' do
     cost = described_class.landed_cost(
       entry: GoodsReceiptItem.new(accepted_quantity: 0),
