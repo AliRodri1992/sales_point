@@ -6,6 +6,10 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :session_limitable,
          :recoverable, :rememberable, :validatable, :trackable
 
+  # Form-only selections are validated by the admin account writer.
+  # Declaring the virtual attribute lets ActiveModel format field errors.
+  attr_accessor :branch_role_assignments
+
   belongs_to :language,
              optional: true
   belongs_to :employee, optional: true
