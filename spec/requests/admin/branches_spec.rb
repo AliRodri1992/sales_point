@@ -12,7 +12,7 @@ RSpec.describe 'Admin::Branches', type: :request do
   include SqlQueryRecorder
 
   describe 'GET /admin/branches' do
-    it 'loads all visible branch phones in a batch' do
+    it 'loads all visible branch phones in a batch', :n_plus_one do
       11.times { |index| create(:branch, name: "Performance Branch #{index}") }
       statements = recorded_sql_queries { get admin_branches_path }
 

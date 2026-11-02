@@ -157,6 +157,13 @@ jobs:
           echo
           echo "__SCHEMA_END__"
 
+      - name: Guard against N+1 query regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec --tag n_plus_one spec/requests/admin/products_spec.rb spec/requests/admin/clients_spec.rb spec/requests/admin/branches_spec.rb spec/requests/admin/inventory_controller_paths_spec.rb spec/services/accounts_payable/financial_cycle_spec.rb
+
       - name: Verify edit-only Uppy uploader and Active Storage integration
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}

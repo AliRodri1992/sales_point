@@ -20,7 +20,7 @@ RSpec.describe 'Admin::Products', type: :request do
   include SqlQueryRecorder
 
   describe 'GET /admin/products' do
-    it 'queries inventory stock totals once for a page of products' do
+    it 'queries inventory stock totals once for a page of products', :n_plus_one do
       statements = recorded_sql_queries { get admin_products_path }
 
       expect(response).to have_http_status(:ok)

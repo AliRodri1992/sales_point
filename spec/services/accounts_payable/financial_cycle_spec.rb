@@ -92,7 +92,7 @@ RSpec.describe 'Supplier financial lifecycle' do
     end.to raise_error(ArgumentError, 'Unknown payable')
   end
 
-  it 'reads precomputed payment and credit totals without per-payable queries' do
+  it 'reads precomputed payment and credit totals without per-payable queries', :n_plus_one do
     invoice = invoice_for(200)
     payable = AccountsPayable::PostInvoice.call(invoice:, actor: user)
     payment = payment_for(70)

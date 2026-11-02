@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Inventory administration controller paths', type: :request do
+  include SqlQueryRecorder
   let(:organization) { create(:organization) }
   let(:branch) { create(:branch, organization:) }
   let(:product) { create(:product, organization:) }
@@ -12,6 +13,26 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
     create(:organization_membership, user: actor, organization:)
     create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
     sign_in actor
+  end
+
+  it 'loads the latest five movements for all inventories in one query', :n_plus_one do
+    2.times do |index|
+      stock = Inventory.create!(
+        organization:, branch:, product: create(:product, organization:),
+        stock: 7, min_stock: 0
+      )
+      7.times do |movement|
+        InventoryMovement.create!(
+          organization:, inventory: stock, kind: 'adjustment', quantity: 1,
+          stock_before: movement, stock_after: movement + 1,
+          created_at: Time.current - (index * 10 + movement).minutes
+        )
+      end
+    end
+
+    statements = recorded_sql_queries { get admin_branch_inventories_path(branch) }
+    expect(response).to have_http_status(:ok)
+    expect(statements.grep(/ROW_NUMBER\(\) OVER/).size).to eq(1)
   end
 
   it 'displays inventories for a branch' do

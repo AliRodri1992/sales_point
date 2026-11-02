@@ -18,7 +18,7 @@ RSpec.describe 'Admin clients', type: :request do
   include SqlQueryRecorder
 
   describe 'GET /admin/clients' do
-    it 'fetches phones once rather than once for each client' do
+    it 'fetches phones once rather than once for each client', :n_plus_one do
       create_list(:client, 11)
       statements = recorded_sql_queries { get admin_clients_path }
 
