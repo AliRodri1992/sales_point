@@ -114,7 +114,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
     document = Nokogiri::HTML(response.body)
     field = document.at_css('input#user_email')
     wrapper = field.ancestors.find { |element| element['data-field'] }
-    expect(wrapper['class']).to include('pb-9')
+    expect(wrapper['class']).to include('pb-7')
     expect(wrapper.at_css('[data-registration-field-error]')['class']).to include('absolute')
     expect(document.at_css('[data-registration-form-card]')).to be_present
     expect(document.at_css('[data-terminal-target="loginCard"]')).to be_nil
