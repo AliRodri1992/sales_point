@@ -90,7 +90,7 @@ RSpec.describe Users::SessionsController, type: :request do
       user.update!(status:)
       post user_session_path, params: { user: { email: user.email, password: } }
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to redirect_to(new_user_session_path)
       expect(session['warden.user.user.key']).to be_nil
     end
   end
@@ -102,7 +102,9 @@ RSpec.describe Users::SessionsController, type: :request do
     get admin_dashboard_path
 
     expect(response).to redirect_to(new_user_session_path)
-    expect(controller.current_user).to be_nil
+    follow_redirect!
+    expect(response).to have_http_status(:ok)
+    expect(session['warden.user.user.key']).to be_nil
   end
 
   it 'signs in successfully and stores the SweetAlert session message' do
