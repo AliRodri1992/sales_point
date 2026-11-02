@@ -8,6 +8,7 @@ module Reports
       end
 
       def columns(format: :pdf)
+        @field_access = {}
         keys = %i[code name classification status]
         keys += %i[rfc] if field_allowed?('suppliers.fiscal')
         keys += %i[email phone] if field_allowed?('suppliers.contacts')

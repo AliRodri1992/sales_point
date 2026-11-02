@@ -67,8 +67,10 @@ RSpec.describe Suppliers::CalendarBoard do
     )
     expect(board.selected_items).to be_empty
 
-    board = described_class.new(supplier:, month: '2026-11', selected_day: '2026-10-23')
-    expect(board.selected_date).to eq(Date.iso8601('2026-11-01'))
+    travel_to Time.zone.local(2026, 10, 23, 12) do
+      board = described_class.new(supplier:, month: '2026-11', selected_day: '2026-10-23')
+      expect(board.selected_date).to eq(Date.iso8601('2026-11-01'))
+    end
   end
 
   it 'keeps the month synchronized with week navigation across a month boundary' do
