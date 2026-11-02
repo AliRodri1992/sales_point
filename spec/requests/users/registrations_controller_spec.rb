@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe Users::RegistrationsController, type: :request do
   let!(:administrator) { create(:system_role, :system, code: 'administrator') }
   let!(:permission) { create(:permission, status: :active) }
