@@ -58,7 +58,7 @@
     </div>
     <div data-supplier-contacts-target="sentinel" class="h-1" aria-hidden="true"></div>
     <div data-supplier-contacts-target="skeleton" class="hidden py-3" aria-hidden="true">
-       <%= render Ui::SkeletonComponent.new(variant: :card, rows: 4) %>
+       <%= render Ui::SkeletonComponent.new(variant: :card, rows: 4, columns: 2) %>
      </div>
      <p data-supplier-contacts-target="loading" role="status" class="hidden py-3 text-center text-xs font-semibold text-emerald-700"><%= t('admin.supplier_dossier.contact_cards.loading') %></p>
     <p data-supplier-contacts-target="error" role="alert" class="hidden py-3 text-center text-sm text-rose-700"><%= t('admin.supplier_dossier.contact_cards.load_error') %></p>

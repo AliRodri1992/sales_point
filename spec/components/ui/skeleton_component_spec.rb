@@ -20,6 +20,13 @@ RSpec.describe Ui::SkeletonComponent, type: :component do
     expect(rendered.css('.delta-skeleton__table-grid:first-child .delta-skeleton__bar').size).to eq(4)
   end
 
+  it 'uses the dossier two-column layout when requested' do
+    rendered = render_inline(described_class.new(variant: :card, rows: 4, columns: 2))
+
+    expect(rendered.at_css('.delta-skeleton--card .grid')['class']).to include('md:grid-cols-2')
+    expect(rendered.at_css('.delta-skeleton--card .grid')['class']).not_to include('xl:grid-cols-3')
+  end
+
   it 'rejects unknown layouts and unreasonable placeholder counts' do
     expect { described_class.new(variant: :unknown) }.to raise_error(ArgumentError)
     expect { described_class.new(variant: :table, rows: 0) }.to raise_error(ArgumentError)
