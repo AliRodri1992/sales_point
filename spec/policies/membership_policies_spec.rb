@@ -38,4 +38,38 @@ RSpec.describe 'Membership policies', type: :policy do
     expect(SubscriptionPolicy.new(non_admin, Subscription.new).index?).to be(false)
     expect(SubscriptionPolicy.new(non_admin, Subscription.new).change_plan?).to be(false)
   end
+
+  it 'scopes organizations and subscriptions to active memberships' do
+    assigned = create(:organization)
+    unrelated = create(:organization)
+    create(:organization_membership, user: admin, organization: assigned)
+    selected = create(:subscription, organization: assigned)
+    create(:subscription, organization: unrelated)
+
+    visible_organizations = OrganizationPolicy::Scope.new(admin, Organization.all).resolve
+    visible_subscriptions = SubscriptionPolicy::Scope.new(admin, Subscription.all).resolve
+
+    expect(visible_organizations).to contain_exactly(assigned)
+    expect(visible_subscriptions).to contain_exactly(selected)
+    expect(OrganizationPolicy::Scope.new(non_admin, Organization.all).resolve).to be_empty
+    expect(SubscriptionPolicy::Scope.new(non_admin, Subscription.all).resolve).to be_empty
+  end
+
+  it 'allows system super-admins to see all organizations and subscriptions' do
+    super_admin = create(:user)
+    create(:user_role, user: super_admin, system_role: create(:system_role, :system, code: 'super_admin'))
+    organization = create(:organization)
+    membership = create(:subscription, organization:)
+
+    expect(OrganizationPolicy.new(super_admin, organization).create?).to be(true)
+    expect(OrganizationPolicy::Scope.new(super_admin, Organization.all).resolve).to include(organization)
+    expect(SubscriptionPolicy::Scope.new(super_admin, Subscription.all).resolve).to include(membership)
+  end
+
+  it 'does not expose membership plans to ordinary users' do
+    plan = create(:membership_plan)
+    expect(MembershipPlanPolicy::Scope.new(admin, MembershipPlan.all).resolve).to include(plan)
+    expect(MembershipPlanPolicy::Scope.new(non_admin, MembershipPlan.all).resolve).to be_empty
+  end
+
 end
