@@ -72,7 +72,6 @@ RSpec.describe 'Supplier report definitions' do
     )
 
     rows = []
-    statements = []
     statements = recorded_sql_queries do
       batch_report.each_row do |record|
         expect(record.association(:contacts)).to be_loaded
@@ -81,7 +80,7 @@ RSpec.describe 'Supplier report definitions' do
     end
 
     expect(rows).to eq(names.reverse)
-    expect(statements.grep(/FROM\\s+"?contacts"?/i).size).to eq(2)
+    expect(statements.grep(/FROM\s+"?contacts"?/i).size).to eq(2)
   end
 
   it 'creates a predictable filename without leaking data' do
