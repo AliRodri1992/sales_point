@@ -6,6 +6,7 @@ en:
         copyright: "© %{year} Delta POS Inc. All rights reserved."
         privacy: Privacy
         terms: Terms
+        terms_unavailable: "Terms unavailable. Contact your administrator."
       notifications:
         supplier_activity:
           contact_created: "The contact was added to the supplier record and is now available in its contact list."

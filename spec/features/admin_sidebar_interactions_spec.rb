@@ -75,9 +75,11 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
 
     find('#sidebarToggle').click
     expect(page).to have_css('#adminSidebar.sidebar-open')
-    find('#sidebarOverlay').click
+    overlay = find('#sidebarOverlay').native
+    # The drawer covers the overlay's center; click its exposed right edge.
+    page.driver.browser.action.move_to(overlay).move_by((overlay.rect.width / 2) - 16, 0).click.perform
     expect(page).to have_no_css('#adminSidebar.sidebar-open', visible: :all)
-    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+    expect_sidebar_toggle_focused
   end
 
   scenario 'keeps the selected dashboard link readable when keyboard focused' do

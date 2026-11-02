@@ -5,6 +5,9 @@ es:
       topbar:
         toggle_sidebar: "Mostrar u ocultar barra lateral"
         morning_greeting: "Buenos días, %{name}"
+        afternoon_greeting: "Buenas tardes, %{name}"
+        evening_greeting: "Buenas noches, %{name}"
+        greeting: "Hola, %{name}"
       branch_selector:
         branch_center: "Sucursal Centro"
         branch_north: "Sucursal Norte"

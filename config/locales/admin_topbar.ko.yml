@@ -5,6 +5,9 @@ ko:
       topbar:
         toggle_sidebar: "사이드바 열기 또는 닫기"
         morning_greeting: "좋은 아침입니다, %{name}님"
+        afternoon_greeting: "좋은 오후입니다, %{name}님"
+        evening_greeting: "좋은 저녁입니다, %{name}님"
+        greeting: "안녕하세요, %{name}님"
       branch_selector:
         branch_center: "중앙 지점"
         branch_north: "북부 지점"

@@ -1,7 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
+import { greetingPeriod } from "../lib/greeting_period.mjs"
 
 export default class extends Controller {
-    static values = { locale: String }
+    static targets = ["date", "greeting"]
+    static values = { locale: String, morning: String, afternoon: String, evening: String }
 
     connect() {
         this.tick()
@@ -28,8 +30,11 @@ export default class extends Controller {
             second: "2-digit"
         })
 
-        this.element.textContent =
+        this.dateTarget.textContent =
             `${capitalize(date)} · ${time}`
+
+        const period = greetingPeriod(now.getHours())
+        this.greetingTarget.textContent = this[`${period}Value`]
     }
 }
 

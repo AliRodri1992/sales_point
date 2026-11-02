@@ -93,15 +93,16 @@
         <% end %>
 
         <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-          data-tooltip="<%= t('admin.shared.sidebar.cash_register') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.cash_register') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           aria-label="<%= t('admin.shared.sidebar.cash_register') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
         >
           <%= sidebar_navigation_icon(:cash_register, class_name: 'size-5') %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.cash_register') %></span>
+          <span class="sidebar-badge ml-auto rounded bg-slate-100 px-1.5 py-1 text-[10px] leading-tight"><%= t('admin.shared.sidebar.coming_soon') %></span>
         </span>
 
-        
+
 
         <a
           href="<%= admin_clients_path %>"
@@ -138,12 +139,13 @@
         <% end %>
 
         <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-          data-tooltip="<%= t('admin.shared.sidebar.employees') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.employees') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           aria-label="<%= t('admin.shared.sidebar.employees') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
         >
           <%= sidebar_navigation_icon(:employees, class_name: 'size-5') %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.employees') %></span>
+          <span class="sidebar-badge ml-auto rounded bg-slate-100 px-1.5 py-1 text-[10px] leading-tight"><%= t('admin.shared.sidebar.coming_soon') %></span>
         </span>
       </div>
     </div>
@@ -209,12 +211,13 @@
 
       <div class="space-y-1">
         <span aria-disabled="true" title="<%= t('admin.shared.sidebar.coming_soon') %>"
-          data-tooltip="<%= t('admin.shared.sidebar.reports') %>"
+          data-tooltip="<%= t('admin.shared.sidebar.reports') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           aria-label="<%= t('admin.shared.sidebar.reports') %> — <%= t('admin.shared.sidebar.coming_soon') %>"
           class="sidebar-disabled-option flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 cursor-not-allowed opacity-60"
         >
           <%= sidebar_navigation_icon(:reports, class_name: 'size-5') %>
           <span class="sidebar-label"><%= t('admin.shared.sidebar.reports') %></span>
+          <span class="sidebar-badge ml-auto rounded bg-slate-100 px-1.5 py-1 text-[10px] leading-tight"><%= t('admin.shared.sidebar.coming_soon') %></span>
         </span>
 
         <% if current_user.admin? || policy(SystemRole).index? || policy(Branch).index? || policy(User).index? %>
@@ -283,6 +286,7 @@
             >
               <%= sidebar_navigation_icon(:taxes, class_name: 'size-4') %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.taxes') %></span>
+              <span class="sidebar-badge ml-auto rounded bg-slate-100 px-1.5 py-1 text-[10px] leading-tight"><%= t('admin.shared.sidebar.coming_soon') %></span>
             </span>
           </div>
         </details>

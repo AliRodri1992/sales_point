@@ -670,7 +670,9 @@ en:
           created: Product %{name} created
           destroyed: Product %{name} deleted
           updated: Product %{name} updated
-        subtitle: "%{count} unread notifications"
+        subtitle:
+          one: "%{count} unread notification"
+          other: "%{count} unread notifications"
         subtitle_none: No new notifications
         system_role:
           created: System role %{name} created

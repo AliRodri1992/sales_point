@@ -15,14 +15,18 @@
       <%= delta_icon("view-columns", class: "hidden size-5 lg:block") %>
     </button>
 
-    <div class="hidden min-w-0 sm:block">
-      <p class="truncate text-xs text-slate-400" data-controller="clock" data-clock-locale-value="<%= I18n.locale %>">
+    <div class="hidden min-w-0 sm:block" data-controller="clock"
+         data-clock-locale-value="<%= I18n.locale %>"
+         data-clock-morning-value="<%= t('admin.shared.topbar.morning_greeting', name: current_user.display_name) %>"
+         data-clock-afternoon-value="<%= t('admin.shared.topbar.afternoon_greeting', name: current_user.display_name) %>"
+         data-clock-evening-value="<%= t('admin.shared.topbar.evening_greeting', name: current_user.display_name) %>">
+      <p class="truncate text-xs text-slate-400" data-clock-target="date">
         <time><%= l(Time.current, format: :long) %></time>
       </p>
 
-      <h1 class="font-jakarta truncate text-xl font-bold text-slate-900">
-        <%= t('admin.shared.topbar.morning_greeting', name: current_user.display_name) %>
-      </h1>
+      <p class="font-jakarta truncate text-xl font-bold text-slate-900" data-clock-target="greeting">
+        <%= t('admin.shared.topbar.greeting', name: current_user.display_name) %>
+      </p>
     </div>
   </div>
 

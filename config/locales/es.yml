@@ -297,7 +297,7 @@ es:
       branches: Sucursales
       categories: Categorías
       clients: Clientes
-      dashboard: Dashboard
+      dashboard: Panel de control
       home: Inicio
       label: Ruta de migas
       languages: Idiomas
@@ -674,7 +674,9 @@ es:
           created: Producto %{name} creado
           destroyed: Producto %{name} eliminado
           updated: Producto %{name} actualizado
-        subtitle: "%{count} notificaciones sin leer"
+        subtitle:
+          one: "%{count} notificación sin leer"
+          other: "%{count} notificaciones sin leer"
         subtitle_none: Sin notificaciones nuevas
         system_role:
           created: Rol %{name} creado

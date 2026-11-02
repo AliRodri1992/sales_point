@@ -6,6 +6,7 @@ es:
         copyright: "© %{year} Delta POS Inc. Todos los derechos reservados."
         privacy: Privacidad
         terms: Términos
+        terms_unavailable: "Términos no disponibles. Consulta al administrador."
       notifications:
         supplier_activity:
           contact_created: "El contacto se agregó al expediente del proveedor y ya está disponible en su lista de contactos."

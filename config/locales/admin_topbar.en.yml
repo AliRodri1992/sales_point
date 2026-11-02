@@ -5,6 +5,9 @@ en:
       topbar:
         toggle_sidebar: "Toggle sidebar"
         morning_greeting: "Good morning, %{name}"
+        afternoon_greeting: "Good afternoon, %{name}"
+        evening_greeting: "Good evening, %{name}"
+        greeting: "Hello, %{name}"
       branch_selector:
         branch_center: "Central Branch"
         branch_north: "North Branch"
