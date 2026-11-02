@@ -21,12 +21,31 @@ module Reports
         end
       end
 
-      # Keep the caller's sort order while preloading the contacts used by each row.
+      EXPORT_BATCH_SIZE = 200
+
+      # Read related contacts/phones per batch, preserving the caller's sort.
+      # Avoid materializing entire multi-thousand-row exports in Ruby memory.
       def each_row(&)
-        scope.includes(contacts: :phones).to_a.each(&)
+        records = scope.preload(contacts: :phones)
+        return records.each(&) if records.limit_value
+
+        each_page(records, &)
       end
 
       private
+
+      def each_page(records, &)
+        records = records.order(:id) if records.order_values.empty?
+        offset = records.offset_value.to_i
+
+        loop do
+          page = records.limit(EXPORT_BATCH_SIZE).offset(offset).to_a
+          break if page.empty?
+
+          page.each(&)
+          offset += EXPORT_BATCH_SIZE
+        end
+      end
 
       def field_allowed?(section)
         @field_access ||= {}
