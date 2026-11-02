@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Suppliers::CalendarBoard do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:branch) { create(:branch, organization:) }
