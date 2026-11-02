@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Supplier report definitions' do
+  include SqlQueryRecorder
+
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:actor) { create(:user) }
@@ -56,6 +58,30 @@ RSpec.describe 'Supplier report definitions' do
     rows = []
     report.each_row { |record| rows << record }
     expect(rows).to eq([supplier])
+  end
+
+  it 'preserves supplier order while preloading contacts in bounded batches' do
+    stub_const('Reports::Definitions::SuppliersReport::EXPORT_BATCH_SIZE', 2)
+    names = %w[Alpha Bravo Charlie]
+    names.each do |name|
+      create(:supplier, organization:, name:)
+    end
+    ordered_scope = organization.suppliers.where(name: names).order(name: :desc)
+    batch_report = Reports::Definitions::SuppliersReport.new(
+      scope: ordered_scope, organization:, user: actor, locale: :es
+    )
+
+    rows = []
+    statements = []
+    statements = recorded_sql_queries do
+      batch_report.each_row do |record|
+        expect(record.association(:contacts)).to be_loaded
+        rows << record.name
+      end
+    end
+
+    expect(rows).to eq(names.reverse)
+    expect(statements.grep(/FROM\\s+"?contacts"?/i).size).to eq(2)
   end
 
   it 'creates a predictable filename without leaking data' do
