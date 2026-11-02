@@ -168,6 +168,10 @@ jobs:
         run: |
           bundle exec rspec spec/services/reports/suppliers_report_coverage_spec.rb spec/services/suppliers/calendar_board_spec.rb spec/services/purchases/costing_spec.rb
 
+      - name: Verify demo seed organization membership and repeatability
+        run: |
+          bundle exec rspec spec/seeds/full_seed_repeatability_spec.rb spec/seeds/delta_pos_organization_spec.rb
+
       - name: Verify edit-only Uppy uploader and Active Storage integration
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
