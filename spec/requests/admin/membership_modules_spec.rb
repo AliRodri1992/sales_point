@@ -149,4 +149,34 @@ RSpec.describe 'Membership administration', type: :request do
     patch admin_subscription_path(subscription), params: { subscription: { status: 'invalid' } }
     expect(response).to have_http_status(:unprocessable_content)
   end
+
+  it 'denies subscription creation outside an administrator organization' do
+    local_admin = create(:user)
+    role = create(:system_role, :system, code: 'administrator')
+    create(:user_role, user: local_admin, system_role: role)
+    organization = create(:organization)
+    plan = create(:membership_plan, trial_days: 0)
+
+    sign_out admin
+    sign_in local_admin
+    post admin_subscriptions_path,
+         params: { subscription: { organization_id: organization.id, membership_plan_id: plan.id,
+                                   status: 'active', starts_at: Time.current } }
+    expect(response).to have_http_status(:forbidden)
+    sign_out local_admin
+  end
+
+  it 'records changes to the subscription membership plan' do
+    organization = create(:organization)
+    plan = create(:membership_plan, trial_days: 0)
+    replacement = create(:membership_plan, trial_days: 0)
+    subscription = create(:subscription, organization:, membership_plan: plan)
+
+    patch admin_subscription_path(subscription),
+          params: { subscription: { membership_plan_id: replacement.id } }
+
+    expect(response).to redirect_to(admin_subscription_path(subscription))
+    expect(subscription.reload.membership_plan).to eq(replacement)
+    expect(subscription.subscription_events.last.event_type).to eq('plan_changed')
+  end
 end

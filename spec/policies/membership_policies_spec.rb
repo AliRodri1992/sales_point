@@ -71,4 +71,21 @@ RSpec.describe 'Membership policies', type: :policy do
     expect(MembershipPlanPolicy::Scope.new(admin, MembershipPlan.all).resolve).to include(plan)
     expect(MembershipPlanPolicy::Scope.new(non_admin, MembershipPlan.all).resolve).to be_empty
   end
+
+  it 'denies anonymous access and returns empty scopes without a user' do
+    organization = create(:organization)
+    plan = create(:membership_plan)
+    subscription = create(:subscription, organization:, membership_plan: plan)
+
+    expect(OrganizationPolicy.new(nil, organization).index?).to be_falsey
+    expect(OrganizationPolicy.new(nil, organization).create?).to be_falsey
+    expect(OrganizationPolicy.new(nil, organization).destroy?).to be_falsey
+    expect(MembershipPlanPolicy.new(nil, plan).index?).to be_falsey
+    expect(SubscriptionPolicy.new(nil, subscription).index?).to be_falsey
+    expect(SubscriptionPolicy.new(nil, subscription).cancel?).to be_falsey
+
+    expect(OrganizationPolicy::Scope.new(nil, Organization.all).resolve).to be_empty
+    expect(MembershipPlanPolicy::Scope.new(nil, MembershipPlan.all).resolve).to be_empty
+    expect(SubscriptionPolicy::Scope.new(nil, Subscription.all).resolve).to be_empty
+  end
 end
