@@ -13,33 +13,51 @@ module Users
       return true if @tokens.nil?
 
       parsed = parse_tokens
-      return false unless parsed
-
-      branch_ids = parsed.map(&:first).uniq
-      role_ids = parsed.map(&:last).uniq
-      valid_branches = @organization.branches.not_deleted.where(status: true, id: branch_ids).pluck(:id)
-      valid_roles = SystemRole.branch.active.not_deleted.where(id: role_ids).pluck(:id)
-      branch_ids.sort == valid_branches.sort && role_ids.sort == valid_roles.sort
+      parsed && valid_branch_ids?(parsed) && valid_role_ids?(parsed)
     end
 
     def apply!
       return if @tokens.nil?
 
       desired = parse_tokens
-      assignments = @user.user_roles.active.where(branch_id: @organization.branches.select(:id))
-                         .where(system_roles: { role_type: 'branch' })
-      existing = assignments.map { |assignment| [assignment.branch_id, assignment.system_role_id] }
-      assignments.each do |assignment|
+      existing = local_assignments.to_a
+      revoke_missing!(existing, desired)
+      create_missing!(existing, desired)
+    end
+
+    private
+
+    def valid_branch_ids?(parsed)
+      ids = parsed.map(&:first).uniq
+      allowed = @organization.branches.not_deleted.where(status: true, id: ids).pluck(:id)
+      ids.sort == allowed.sort
+    end
+
+    def valid_role_ids?(parsed)
+      ids = parsed.map(&:last).uniq
+      allowed = SystemRole.branch.active.not_deleted.where(id: ids).pluck(:id)
+      ids.sort == allowed.sort
+    end
+
+    def local_assignments
+      @user.user_roles.active.where(branch_id: @organization.branches.select(:id))
+           .where(system_roles: { role_type: 'branch' })
+    end
+
+    def revoke_missing!(existing, desired)
+      existing.each do |assignment|
         next if desired.include?([assignment.branch_id, assignment.system_role_id])
 
         assignment.update!(deleted_at: Time.current)
       end
-      (desired - existing).each do |branch_id, role_id|
+    end
+
+    def create_missing!(existing, desired)
+      active_pairs = existing.map { |assignment| [assignment.branch_id, assignment.system_role_id] }
+      (desired - active_pairs).each do |branch_id, role_id|
         @user.user_roles.create!(branch_id:, system_role_id: role_id)
       end
     end
-
-    private
 
     def parse_tokens
       values = Array(@tokens).compact_blank.uniq

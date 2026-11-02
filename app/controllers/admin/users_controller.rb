@@ -9,7 +9,6 @@ module Admin
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
-    PER_PAGE = 10
     PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
     SORTABLE_COLUMNS = %w[users.email users.username users.user_type users.status users.created_at].freeze
     SORT_DIRECTIONS = %w[asc desc].freeze
@@ -141,7 +140,8 @@ module Admin
       @languages = Language.available.order(:name)
       @themes = Theme.all
       @roles = SystemRole.system.active.not_deleted.order(:name)
-      @branches = current_organization&.branches&.not_deleted&.where(status: true)&.order(:name) || Branch.none
+      branches = current_organization ? current_organization.branches.not_deleted.where(status: true) : Branch.none
+      @branches = branches.order(:name)
       @branch_roles = SystemRole.branch.active.not_deleted.order(:name)
     end
 
@@ -153,8 +153,5 @@ module Admin
       actor.broadcast_notifications_refresh
     end
 
-    def forbidden
-      head :forbidden
-    end
   end
 end
