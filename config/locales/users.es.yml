@@ -17,6 +17,7 @@ es:
       updated: "Los datos del usuario se guardaron. Revisa su información y los accesos asignados para confirmar los cambios."
       destroyed: "Usuario eliminado correctamente."
       cannot_delete_self: "No puedes eliminar tu propia cuenta."
+      shared_account_cannot_delete: "No puedes eliminar esta cuenta porque también pertenece a otras organizaciones."
       confirm_delete: "¿Estás seguro de que deseas eliminar al usuario %{name}?"
       confirm:
         cancel: Cancelar

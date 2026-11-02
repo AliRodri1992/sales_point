@@ -17,6 +17,7 @@ en:
       updated: "The user details were saved. Review the account and assigned access to confirm the changes."
       destroyed: "User deleted successfully."
       cannot_delete_self: "You cannot delete your own account."
+      shared_account_cannot_delete: "You cannot delete this account because it also belongs to other organizations."
       confirm_delete: "Are you sure you want to delete the user %{name}?"
       confirm:
         cancel: Cancel

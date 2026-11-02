@@ -5,12 +5,21 @@ require 'rails_helper'
 RSpec.describe 'Admin::Users', type: :request do
   let(:system_admin_role) { create(:system_role, :system, code: 'administrator') }
   let(:admin_user) { create(:user, system_roles: [system_admin_role]) }
+  let(:organization) { create(:organization) }
 
-  before { sign_in admin_user }
+  before do
+    create(:organization_membership, user: admin_user, organization:)
+    sign_in admin_user
+  end
+
+  def add_member(user)
+    create(:organization_membership, user:, organization:)
+    user
+  end
 
   describe 'GET /admin/users' do
     it 'renders the users index with the list and table headings' do
-      create(:user, email: 'listed@example.com')
+      add_member(create(:user, email: 'listed@example.com'))
 
       get admin_users_path
 
@@ -34,7 +43,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
   describe 'GET /admin/users/:id' do
     it 'renders the user profile' do
-      target = create(:user, email: 'profile@example.com')
+      target = add_member(create(:user, email: 'profile@example.com'))
 
       get admin_user_path(target)
 
@@ -44,7 +53,7 @@ RSpec.describe 'Admin::Users', type: :request do
     end
 
     it 'renders the edit form for an existing user' do
-      target = create(:user, email: 'edit-profile@example.com')
+      target = add_member(create(:user, email: 'edit-profile@example.com'))
 
       get edit_admin_user_path(target)
 
@@ -73,6 +82,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
       created_user = User.find_by!(email: valid_params.dig(:user, :email))
       expect(created_user).to be_active
+      expect(created_user.organization_memberships.active.pluck(:organization_id)).to eq([organization.id])
       expect(response).to redirect_to(admin_users_path)
       follow_redirect!
       expect(response.body).to include(I18n.t('admin.users.created', locale: :es))
@@ -93,7 +103,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
   describe 'PATCH /admin/users/:id' do
     it 'updates a user and sends the success notification message' do
-      target = create(:user, email: 'before-update@example.com')
+      target = add_member(create(:user, email: 'before-update@example.com'))
 
       patch admin_user_path(target), params: { user: { email: 'after-update@example.com' } }
 
@@ -103,7 +113,7 @@ RSpec.describe 'Admin::Users', type: :request do
     end
 
     it 're-renders the edit form when validation fails' do
-      target = create(:user, email: 'valid-user@example.com')
+      target = add_member(create(:user, email: 'valid-user@example.com'))
 
       patch admin_user_path(target), params: { user: { email: '' } }
 
@@ -115,7 +125,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
   describe 'DELETE /admin/users/:id' do
     it 'soft-deletes a user and displays the success Swal message' do
-      target = create(:user, email: 'deleted@example.com')
+      target = add_member(create(:user, email: 'deleted@example.com'))
 
       delete admin_user_path(target)
 
@@ -138,8 +148,8 @@ RSpec.describe 'Admin::Users', type: :request do
   describe 'server-side pagination and sorting boundaries' do
     before do
       16.times do |index|
-        create(:user, email: format('paginate-%02d@example.com', index),
-                      username: format('employee_%02d', index))
+        add_member(create(:user, email: format('paginate-%02d@example.com', index),
+                                username: format('employee_%02d', index)))
       end
     end
 

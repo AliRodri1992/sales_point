@@ -17,6 +17,7 @@ ko:
       updated: "사용자 정보가 저장되었습니다. 계정과 부여된 접근 권한을 확인하세요."
       destroyed: "사용자가 성공적으로 삭제되었습니다."
       cannot_delete_self: "자신의 계정은 삭제할 수 없습니다."
+      shared_account_cannot_delete: "이 계정은 다른 조직에도 속해 있으므로 삭제할 수 없습니다."
       confirm_delete: "%{name} 사용자를 삭제하시겠습니까?"
       confirm:
         cancel: 취소
