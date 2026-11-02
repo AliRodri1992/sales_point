@@ -43,7 +43,6 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(form['novalidate']).to be_present
     expect(document.at_css('#login-email-error').text).to include(User.human_attribute_name(:email, locale:))
     expect(document.at_css('#login-password-error').text).to include(User.human_attribute_name(:password, locale:))
-    expect(document.at_css('#login-email-error')['class']).to include('h-10')
     expect(document.at_css('#user_email')['data-auth-blank-message'])
       .to include(User.human_attribute_name(:email, locale:))
   end

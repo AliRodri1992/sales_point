@@ -168,7 +168,7 @@
                     }
                   ) %>
                 </div>
-                <%= authentication_field_message(resource, :email, id: "login-email-error") %>
+                <%= authentication_field_message(resource, :email, id: "login-email-error", compact: true) %>
               </div>
 
               <div data-login-field>
@@ -218,7 +218,7 @@
                     </span>
                   </button>
                 </div>
-                <%= authentication_field_message(resource, :password, id: "login-password-error") %>
+                <%= authentication_field_message(resource, :password, id: "login-password-error", compact: true) %>
               </div>
 
               <div class="flex flex-wrap items-center justify-between gap-3">

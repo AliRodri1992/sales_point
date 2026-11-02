@@ -36,9 +36,10 @@ module AuthenticationFormHelper
     resource.errors.full_message(attribute, resource.errors.generate_message(attribute, :login_too_short, count:))
   end
 
-  def authentication_field_message(resource, attribute, id:)
+  def authentication_field_message(resource, attribute, id:, compact: false)
+    spacing = compact ? 'pt-1 empty:pt-0' : 'h-10 overflow-y-auto pt-1'
     content_tag(:div, id:, role: 'status', 'aria-live': 'polite',
-                      class: 'h-10 overflow-y-auto pt-1 text-xs leading-4 text-rose-700') do
+                      class: "#{spacing} text-xs leading-4 text-rose-700") do
       safe_join(resource.errors.full_messages_for(attribute).map do |message|
         content_tag(:p, message, class: 'font-medium', data: { server_field_error: true })
       end)
