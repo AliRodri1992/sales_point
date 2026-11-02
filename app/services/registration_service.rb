@@ -98,9 +98,19 @@ class RegistrationService
   end
 
   def failure_result(record)
-    @user.errors.add(:base, record.errors.full_messages.to_sentence) unless record.equal?(@user)
+    append_record_errors(record)
     step = @failure_step || failure_step_for(record)
     Result.new(user: @user, organization: nil, errors: @user.errors, step:)
+  end
+
+  def append_record_errors(record)
+    return if record.equal?(@user)
+
+    if record.is_a?(Employee) && record.errors.attribute_names == [:email]
+      record.errors[:email].each { |message| @user.errors.add(:email, message) }
+    else
+      @user.errors.add(:base, record.errors.full_messages.to_sentence)
+    end
   end
 
   def failure_step_for(record)

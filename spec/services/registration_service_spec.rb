@@ -80,6 +80,17 @@ RSpec.describe RegistrationService, type: :service do
     expect(OrganizationMembership.count).to eq(0)
   end
 
+  it 'projects an employee email model error back onto the registration email field' do
+    user.email = 'invalid-address'
+
+    result = described_class.call(resource: user, params:)
+
+    expect(result).not_to be_success
+    expect(result.user.errors[:email]).to be_present
+    expect(result.user.errors[:base]).to be_empty
+    expect(Organization.count).to eq(0)
+  end
+
   it 'accepts the native checkbox value' do
     result = described_class.call(resource: user, params: params.merge(terms: 'on'))
 

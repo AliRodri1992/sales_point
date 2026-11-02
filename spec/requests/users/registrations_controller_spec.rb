@@ -34,7 +34,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
 
     expect(response).to have_http_status(:ok)
     document = Nokogiri::HTML(response.body)
-    expect(document.css('[data-registration-wizard-target="setupCard"] svg').size).to eq(2)
+    expect(document.css('[data-registration-wizard-target="setupCard"] svg').size).to eq(4)
     expect(document.css('[data-registration-wizard-target="dropdown"] svg')).not_to be_empty
   end
 
