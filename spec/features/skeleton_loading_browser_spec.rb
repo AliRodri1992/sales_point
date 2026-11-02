@@ -68,6 +68,15 @@ RSpec.describe 'Scoped skeleton loading', type: :feature, js: true do
     expect(page).to have_css('[data-skeleton-loading-target="placeholder"][hidden]', visible: :all)
   end
 
+  scenario 'provides card-shaped placeholders in supplier contact and address tabs' do
+    supplier = create(:supplier, organization:)
+    visit admin_supplier_path(supplier, tab: 'contacts')
+
+    expect(page).to have_css('[data-supplier-contacts-target="skeleton"][aria-hidden="true"]', visible: :all)
+    expect(page).to have_css('[data-supplier-addresses-target="skeleton"][aria-hidden="true"]', visible: :all)
+    expect(page).to have_css('.delta-skeleton--card', minimum: 2, visible: :all)
+  end
+
   scenario 'targets product searches to their own Turbo Frame' do
     visit admin_products_path
 

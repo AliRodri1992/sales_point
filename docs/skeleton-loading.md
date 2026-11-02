@@ -25,7 +25,9 @@ on `document`, with matching `region` and `requestId` values. Only the
 most recently started request can end the loading state.
 
 Currently integrated in seven asynchronous catalogs: suppliers, products,
-categories, languages, branches, users and clients.
+categories, languages, branches, users and clients. Supplier contact and
+address pages also use card-shaped skeletons on cold pagination and preserve
+previous records during filter requests.
 
 ## When NOT to add one
 

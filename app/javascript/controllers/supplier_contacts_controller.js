@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 // Search and filters run on the server; no duplicate full-list download is needed.
 export default class extends Controller {
   static targets = ["scroll", "list", "search", "filter", "filterCount", "count", "sentinel", "empty",
-    "emptyTitle", "emptyText", "emptyAction", "loading", "error", "loadMore"]
+    "emptyTitle", "emptyText", "emptyAction", "loading", "skeleton", "error", "loadMore"]
   static values = {
     url: String,
     nextPage: Number,
@@ -17,6 +17,7 @@ export default class extends Controller {
 
   connect() {
     this.loading = false
+    this.pendingRefresh = false
     this.queryPending = false
     this.request = null
     this.searchTimer = null
@@ -94,9 +95,10 @@ export default class extends Controller {
 
   refresh() {
     this.abortRequest()
-    this.listTarget.replaceChildren()
+    // Keep the previous results visible until the replacement request succeeds.
+    // This avoids a flash of empty content on every filter change.
+    this.pendingRefresh = true
     this.nextPageValue = 1
-    this.countTarget.textContent = "0"
     this.updateEmptyMessage()
     this.emptyTarget.classList.add("hidden")
     this.errorTarget.classList.add("hidden")
@@ -109,6 +111,7 @@ export default class extends Controller {
     this.request = null
     this.loading = false
     if (this.hasLoadingTarget) this.loadingTarget.classList.add("hidden")
+    if (this.hasSkeletonTarget) this.skeletonTarget.classList.add("hidden")
   }
 
   updateLoadMore() {
@@ -125,7 +128,13 @@ export default class extends Controller {
     this.request = controller
     this.loading = true
     this.updateLoadMore()
-    this.loadingTarget.classList.remove("hidden")
+    if (this.hasSkeletonTarget && !this.listTarget.children.length) {
+      this.skeletonTarget.classList.remove("hidden")
+      this.loadingTarget.classList.add("hidden")
+    } else {
+      this.loadingTarget.classList.remove("hidden")
+      if (this.hasSkeletonTarget) this.skeletonTarget.classList.add("hidden")
+    }
     this.errorTarget.classList.add("hidden")
 
     const url = new URL(this.urlValue, window.location.href)
@@ -145,6 +154,10 @@ export default class extends Controller {
       const markup = await response.text()
       if (this.request !== controller) return
 
+      if (this.pendingRefresh) {
+        this.listTarget.replaceChildren()
+        this.pendingRefresh = false
+      }
       this.listTarget.insertAdjacentHTML("beforeend", markup)
       this.nextPageValue = Number(response.headers.get("X-Next-Page")) || 0
       const total = Number(response.headers.get("X-Contacts-Count")) || 0
@@ -164,6 +177,7 @@ export default class extends Controller {
         this.loading = false
         this.request = null
         this.loadingTarget.classList.add("hidden")
+        if (this.hasSkeletonTarget) this.skeletonTarget.classList.add("hidden")
         this.updateLoadMore()
       }
     }
