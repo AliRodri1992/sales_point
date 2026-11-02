@@ -39,9 +39,10 @@ RSpec.describe Admin::LowStockComponent, type: :component do
     expect(page).to have_css('span.text-amber-600', count: 2)
   end
 
-  it 'renders the view inventory link' do
+  it 'labels the stock list as sample data without a placeholder link' do
     render_inline(described_class.new)
 
-    expect(page).to have_link('View inventory')
+    expect(page).to have_text('Sample data')
+    expect(page).to have_no_css('a[href="#"]')
   end
 end

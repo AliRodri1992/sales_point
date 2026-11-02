@@ -46,6 +46,18 @@ RSpec.describe Admin::DashboardController, type: :request do
     expect(assistant.at_css('img.deltin-avatar')).to be_present
   end
 
+  it 'escapes saved widget identifiers in the embedded preferences JSON' do
+    identifier = '</script><script>alert(1)</script>'
+    create(:dashboard_preference, user:, grid_type: 'main', widget_id: identifier)
+
+    get admin_dashboard_path
+
+    document = Nokogiri::HTML(response.body)
+    preferences = JSON.parse(document.at_css('#dashboardPreferences').text)
+    expect(preferences.first['widget_id']).to eq(identifier)
+    expect(response.body).not_to include(identifier)
+  end
+
   it 'returns success when saving dashboard preferences' do
     post '/admin/dashboard/preferences', params: {
       widgets: [

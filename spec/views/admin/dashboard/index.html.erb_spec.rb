@@ -21,8 +21,8 @@ RSpec.describe 'admin/dashboard/index.html.erb', type: :view do
     expect(rendered).to have_css('h1')
   end
 
-  it 'renders the onboarding card' do
+  it 'omits onboarding when no progress is present' do
     render
-    expect(rendered).to have_css('[data-controller="onboarding-card"]', minimum: 0)
+    expect(rendered).not_to have_css('#onboarding-card-title')
   end
 end

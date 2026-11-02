@@ -1,31 +1,18 @@
-<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+<div class="dashboard-page-header">
   <div>
-    <h1 class="font-jakarta text-2xl font-bold text-slate-900">
-      <%= t('admin.dashboard.page_header.title') %>
-    </h1>
-
-    <p class="mt-1 text-sm text-slate-500">
-      <%= t('admin.dashboard.page_header.subtitle') %>
-    </p>
+    <h1 id="dashboard-title" class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.dashboard.page_header.title') %></h1>
+    <p class="mt-1 text-sm text-slate-600"><%= t('admin.dashboard.experience.subtitle') %></p>
   </div>
-
-  <div class="flex items-center gap-2">
-    <button
-      id="customizeDashboardButton"
-      type="button"
-      aria-pressed="false"
-      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-    >
+  <div class="dashboard-page-actions">
+    <button id="cancelDashboardButton" type="button" class="dashboard-button dashboard-button-secondary" hidden><%= t('admin.dashboard.experience.cancel') %></button>
+    <button id="customizeDashboardButton" type="button" disabled aria-pressed="false" aria-describedby="dashboardEditingHelp" class="dashboard-button dashboard-button-secondary">
       <%= delta_icon("bars-3", class: "size-4") %>
-      <%= t('admin.dashboard.page_header.customize') %>
+      <span data-dashboard-customize-label><%= t('admin.dashboard.page_header.customize') %></span>
     </button>
-
-    <button
-      type="button"
-      class="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-    >
+    <%= link_to new_admin_product_path, class: "dashboard-button dashboard-button-primary" do %>
       <%= delta_icon("plus", class: "size-4") %>
-      <%= t('admin.dashboard.page_header.new_sale') %>
-    </button>
+      <%= t('admin.dashboard.widgets.quick_actions.add_product') %>
+    <% end %>
   </div>
 </div>
+<p id="dashboardEditingHelp" class="dashboard-editing-help" hidden><%= t('admin.dashboard.experience.editing_help') %></p>

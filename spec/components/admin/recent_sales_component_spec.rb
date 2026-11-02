@@ -5,12 +5,13 @@ require 'rails_helper'
 RSpec.describe Admin::RecentSalesComponent, type: :component do
   around { |example| I18n.with_locale(:en, &example) }
 
-  it 'renders the header and view all link' do
+  it 'renders the header and identifies sample sales without a placeholder link' do
     render_inline(described_class.new)
 
     expect(page).to have_text('Recent sales')
     expect(page).to have_text('Latest transactions recorded in the system.')
-    expect(page).to have_link('View all')
+    expect(page).to have_text('Sample data')
+    expect(page).to have_no_css('a[href="#"]')
   end
 
   it 'renders the translated column headers' do

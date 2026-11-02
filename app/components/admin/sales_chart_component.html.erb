@@ -6,23 +6,25 @@
   gs-y="0"
   gs-w="8"
   gs-h="5"
+  gs-min-w="4"
+  gs-min-h="5"
 >
   <div class="grid-stack-item-content dashboard-widget">
-    <div class="dashboard-widget-card h-[calc(100%-2rem)] rounded-2xl border border-slate-200 bg-white p-6 md:h-full">
+    <div class="dashboard-widget-card h-full rounded-2xl border border-slate-200 bg-white p-6">
 
-      <div class="mb-6 flex items-center justify-between">
+      <div class="dashboard-chart-header">
         <div>
-          <h3 class="text-base font-bold">
+          <h2 class="text-base font-bold">
             <%= t('admin.dashboard.widgets.sales.title') %>
-          </h3>
+          </h2>
 
-          <p class="mt-1 text-xs text-slate-400">
+          <p class="mt-1 text-xs text-slate-600">
             <%= t('admin.dashboard.widgets.sales.subtitle') %>
           </p>
         </div>
 
-        <select
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none"
+        <select disabled
+          class="dashboard-period rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 outline-none"
           aria-label="<%= t('admin.dashboard.widgets.sales.period_label') %>"
         >
           <% periods.each do |value, label| %>
@@ -44,7 +46,7 @@
             ></div>
 
             <span
-              class="<%= point.highlight ? 'text-[11px] font-semibold text-slate-600' : 'text-[11px] text-slate-400' %>"
+              class="<%= point.highlight ? 'text-[11px] font-semibold text-slate-600' : 'text-[11px] text-slate-600' %>"
             >
               <%= t(point.label) %>
             </span>

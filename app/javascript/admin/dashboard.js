@@ -5,6 +5,8 @@ import { GridStack } from "gridstack"
 import Swal from "sweetalert2"
 
 let activeDashboardListeners = null
+let activeDashboardGrids = []
+let activeDashboardSave = null
 
 document.addEventListener("turbo:before-cache", () => {
     document.getElementById("adminDashboardContent")?.removeAttribute("inert")
@@ -16,6 +18,18 @@ document.addEventListener("turbo:before-cache", () => {
     document.getElementById("sidebarOverlay")?.classList.remove("is-visible")
     document.body.classList.remove("sidebar-drawer-open")
     document.getElementById("sidebarToggle")?.removeAttribute("data-sidebar-ready")
+    activeDashboardSave?.abort()
+    activeDashboardSave = null
+    activeDashboardGrids.forEach((grid) => grid.destroy(false))
+    activeDashboardGrids = []
+    document.querySelectorAll(".dashboard-layout-handle").forEach((handle) => handle.remove())
+    document.querySelectorAll(".dashboard-editing").forEach((grid) => grid.classList.remove("dashboard-editing"))
+    document.querySelectorAll("#cancelDashboardButton, #dashboardEditingHelp").forEach((element) => { element.hidden = true })
+    const customizeButton = document.getElementById("customizeDashboardButton")
+    if (customizeButton) {
+        customizeButton.disabled = true
+        customizeButton.removeAttribute("data-dashboard-ready")
+    }
     activeDashboardListeners?.abort()
     activeDashboardListeners = null
 })
@@ -83,14 +97,6 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    // Below this width both grids stack into a single column.
-    const stackBreakpoint = 768
-
-    // KPI cards go full width when stacked, so they use shorter
-    // cells there to keep the same card proportions.
-    const kpiCellHeight = () =>
-        window.innerWidth <= stackBreakpoint ? 80 : 96
-
     const kpiGridElement =
         document.getElementById("kpiGrid")
 
@@ -105,11 +111,12 @@ document.addEventListener("turbo:load", () => {
             {
                 column: 12,
                 columnOpts: {
-                    breakpoints: [{ w: stackBreakpoint, c: 1 }],
+                    breakpoints: [{ w: 1279, c: 1 }],
                     breakpointForWindow: true
                 },
-                cellHeight: kpiCellHeight(),
-                margin: 10,
+                cellHeight: 80,
+                margin: 8,
+                handle: ".dashboard-layout-handle",
                 float: false,
                 animate: true,
                 disableDrag: true,
@@ -128,16 +135,17 @@ document.addEventListener("turbo:load", () => {
             {
                 column: 12,
                 columnOpts: {
-                    breakpoints: [{ w: stackBreakpoint, c: 1 }],
+                    breakpoints: [{ w: 1279, c: 1 }],
                     breakpointForWindow: true
                 },
                 cellHeight: 80,
-                margin: "8px 10px",
+                margin: 8,
+                handle: ".dashboard-layout-handle",
                 float: false,
                 animate: true,
                 disableDrag: true,
                 disableResize: true,
-                minRow: 12,
+                minRow: 10,
                 resizable: {
                     handles: "e,se,s,sw,w"
                 }
@@ -146,12 +154,7 @@ document.addEventListener("turbo:load", () => {
         )
     }
 
-    // Keep the KPI cells compact when crossing the stacking breakpoint.
-    onWindow("resize", () => {
-        if (!kpiGrid) return
-
-        kpiGrid.cellHeight(kpiCellHeight())
-    })
+    activeDashboardGrids = [kpiGrid, mainDashboardGrid].filter(Boolean)
 
     /*
      * ============================================================
@@ -271,14 +274,17 @@ document.addEventListener("turbo:load", () => {
         ]
 
         if (widgets.length === 0) {
-            return
+            return false
         }
 
+        const saveController = new AbortController()
+        activeDashboardSave = saveController
         try {
             const response = await fetch(
                 "/admin/dashboard/preferences",
                 {
                     method: "POST",
+                    signal: saveController.signal,
                     headers: {
                         "Content-Type":
                             "application/json",
@@ -295,7 +301,9 @@ document.addEventListener("turbo:load", () => {
                 }
             )
 
-            if (!response.ok) {
+            const result = response.headers.get("content-type")?.includes("application/json")
+                ? await response.json() : null
+            if (!response.ok || result?.success !== true) {
                 throw new Error(
                     "No se pudieron guardar las preferencias del dashboard."
                 )
@@ -315,7 +323,9 @@ document.addEventListener("turbo:load", () => {
                 showConfirmButton: false,
                 timerProgressBar: true
             })
+            return true
         } catch (error) {
+            if (error.name === "AbortError") return false
             console.error(
                 "Error guardando preferencias del dashboard:",
                 error
@@ -330,6 +340,9 @@ document.addEventListener("turbo:load", () => {
                     "save_error_text"
                 )
             })
+            return false
+        } finally {
+            if (activeDashboardSave === saveController) activeDashboardSave = null
         }
     }
 
@@ -913,154 +926,118 @@ document.addEventListener("turbo:load", () => {
      * ============================================================
      */
 
-    const customizeDashboardButton =
-        document.getElementById(
-            "customizeDashboardButton"
-        )
+    const customizeDashboardButton = document.getElementById("customizeDashboardButton")
+    const cancelDashboardButton = document.getElementById("cancelDashboardButton")
+    const editingHelp = document.getElementById("dashboardEditingHelp")
+    const layoutStatus = document.getElementById("dashboardLayoutStatus")
+    const label = customizeDashboardButton?.querySelector("[data-dashboard-customize-label]")
+    let editing = false
+    let saving = false
+    let originalLayout = []
 
-    const setDashboardEditing = (
-        editing
-    ) => {
-        if (!customizeDashboardButton) {
+    const announceLayout = (key) => {
+        if (layoutStatus) layoutStatus.textContent = translateDashboard(key)
+    }
+    const customizationAvailable = () =>
+        activeDashboardGrids.length > 0 && activeDashboardGrids.every((grid) => grid.getColumn() === 12)
+
+    const setDashboardEditing = (value) => {
+        editing = value
+        activeDashboardGrids.forEach((grid) => {
+            grid.enableMove(value && !saving && grid.getColumn() === 12)
+            grid.enableResize(value && !saving && grid.getColumn() === 12)
+            grid.el.classList.toggle("dashboard-editing", value)
+        })
+        customizeDashboardButton?.classList.toggle("is-active", value)
+        customizeDashboardButton?.setAttribute("aria-pressed", String(value))
+        if (label) label.textContent = translateDashboard(saving ? "saving" : value ? "save_changes" : "customize_dashboard")
+        if (cancelDashboardButton) cancelDashboardButton.hidden = !value
+        if (editingHelp) editingHelp.hidden = !value
+    }
+
+    const restoreLayout = () => {
+        setDashboardEditing(false)
+        activeDashboardGrids.forEach((grid, index) => {
+            // GridStack stores a 12-column layout internally while stacked.
+            // Restore in that base coordinate system, then return to the breakpoint.
+            const columns = grid.getColumn()
+            if (columns !== 12) grid.column(12)
+            grid.load(originalLayout[index], false)
+            if (columns !== 12) grid.column(columns)
+        })
+        announceLayout("cancelled")
+        setDashboardEditing(false)
+    }
+
+    activeDashboardGrids.forEach((grid) => {
+        grid.getGridItems().forEach((item) => {
+            const handle = document.createElement("button")
+            handle.type = "button"
+            handle.className = "dashboard-layout-handle"
+            const title = item.querySelector("h2, h3, p")?.textContent.trim() || ""
+            handle.setAttribute("aria-label", `${translateDashboard("handle_label")} ${title}`)
+            handle.setAttribute("aria-describedby", "dashboardEditingHelp")
+            handle.textContent = "↔"
+            item.append(handle)
+            onElement(handle, "keydown", (event) => {
+                if (!editing || saving || !event.key.startsWith("Arrow")) return
+                event.preventDefault()
+                const { x, y, w, h, minW = 1, minH = 1 } = item.gridstackNode
+                const horizontal = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0
+                const vertical = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0
+                const position = event.shiftKey
+                    ? { w: Math.max(minW, Math.min(12 - x, w + horizontal)), h: Math.max(minH, h + vertical) }
+                    : { x: Math.max(0, Math.min(12 - w, x + horizontal)), y: Math.max(0, y + vertical) }
+                grid.update(item, position)
+                announceLayout("layout_updated")
+            })
+        })
+    })
+
+    const syncCustomizationAvailability = () => {
+        const available = customizationAvailable()
+        if (!available && editing && !saving) restoreLayout()
+        if (customizeDashboardButton) {
+            customizeDashboardButton.disabled = saving || !available
+            customizeDashboardButton.title = available ? "" : translateDashboard("desktop_only")
+        }
+    }
+    activeDashboardGrids.forEach((grid) => grid.on("change", syncCustomizationAvailability))
+    let resizeTimer
+    onWindow("resize", () => {
+        window.clearTimeout(resizeTimer)
+        resizeTimer = window.setTimeout(syncCustomizationAvailability, 200)
+    })
+    setDashboardEditing(false)
+    syncCustomizationAvailability()
+    customizeDashboardButton?.setAttribute("data-dashboard-ready", "true")
+
+    onElement(cancelDashboardButton, "click", () => {
+        if (saving) return
+        restoreLayout()
+        customizeDashboardButton?.focus()
+    })
+    onElement(customizeDashboardButton, "click", async () => {
+        if (saving || !customizationAvailable()) return
+        if (!editing) {
+            originalLayout = activeDashboardGrids.map((grid) => grid.save(false))
+            setDashboardEditing(true)
             return
         }
-
-        const dashboardGrids = [
-            kpiGrid,
-            mainDashboardGrid
-        ]
-
-        dashboardGrids.forEach((grid) => {
-            if (!grid) return
-
-            // Only the base 12-column layout can be customized,
-            // since that is the layout that gets persisted.
-            const editable =
-                editing && grid.getColumn() === 12
-
-            grid.enableMove(editable)
-            grid.enableResize(editable)
-        })
-
-        const dashboardGridElements = [
-            kpiGridElement,
-            mainDashboardGridElement
-        ]
-
-        dashboardGridElements.forEach(
-            (gridElement) => {
-                if (!gridElement) return
-
-                gridElement.classList.toggle(
-                    "dashboard-editing",
-                    editing
-                )
-            }
-        )
-
-        customizeDashboardButton.classList.toggle(
-            "is-active",
-            editing
-        )
-
-        customizeDashboardButton.setAttribute(
-            "aria-pressed",
-            editing.toString()
-        )
-
-        const icon =
-            customizeDashboardButton.querySelector(
-                "i"
-            )
-
-        if (icon) {
-            icon.classList.toggle(
-                "fa-sliders",
-                !editing
-            )
-
-            icon.classList.toggle(
-                "fa-check",
-                editing
-            )
-        }
-
-        const textNode =
-            Array.from(
-                customizeDashboardButton.childNodes
-            ).find(
-                (node) =>
-                    node.nodeType === Node.TEXT_NODE &&
-                    node.textContent
-                        .trim()
-                        .length > 0
-            )
-
-        if (textNode) {
-            textNode.textContent = editing
-                ? ` ${translateDashboard("save_changes")}`
-                : ` ${translateDashboard("customize_dashboard")}`
-        }
-    }
-
-    if (customizeDashboardButton) {
-        customizeDashboardButton.setAttribute(
-            "aria-pressed",
-            "false"
-        )
-
-        const customizationAvailable = () =>
-            [kpiGrid, mainDashboardGrid].some(
-                (grid) => grid && grid.getColumn() === 12
-            )
-
-        const syncCustomizationAvailability = () => {
-            const available =
-                customizationAvailable()
-
-            customizeDashboardButton.disabled =
-                !available
-
-            if (
-                !available &&
-                customizeDashboardButton.classList.contains(
-                    "is-active"
-                )
-            ) {
-                setDashboardEditing(false)
-            }
-        }
-
+        saving = true
+        if (cancelDashboardButton) cancelDashboardButton.disabled = true
+        customizeDashboardButton.disabled = true
+        customizeDashboardButton.setAttribute("aria-busy", "true")
+        setDashboardEditing(true)
+        const saved = await saveDashboardPreferences()
+        saving = false
+        if (listeners.signal.aborted) return
+        if (cancelDashboardButton) cancelDashboardButton.disabled = false
+        customizeDashboardButton.removeAttribute("aria-busy")
+        setDashboardEditing(!saved)
         syncCustomizationAvailability()
-
-        // GridStack remaps its columns through a throttled
-        // ResizeObserver, so the button state is re-checked once
-        // the viewport has settled (e.g. after a rotation).
-        onWindow("resize", () => {
-            window.setTimeout(
-                syncCustomizationAvailability,
-                150
-            )
-        })
-
-        customizeDashboardButton.addEventListener(
-            "click",
-            async () => {
-                const isEditing =
-                    customizeDashboardButton.classList.contains(
-                        "is-active"
-                    )
-
-                if (isEditing) {
-                    await saveDashboardPreferences()
-                }
-
-                setDashboardEditing(
-                    !isEditing
-                )
-            }
-        )
-    }
+        customizeDashboardButton.focus()
+    })
 
     /*
      * ============================================================

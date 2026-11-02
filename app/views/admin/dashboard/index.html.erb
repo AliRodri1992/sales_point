@@ -2,10 +2,17 @@
 
 <script
   id="dashboardPreferences" type="application/json">
-  <%= raw @dashboard_preferences.to_json %>
+  <%= raw json_escape(@dashboard_preferences.to_json) %>
 </script>
 
+<div role="region" class="dashboard-overview" aria-labelledby="dashboard-title">
 <%= render "admin/dashboard/page_header" %>
+
+<div class="dashboard-preview-notice" role="note">
+  <%= delta_icon("information-circle", class: "size-5 shrink-0") %>
+  <p><strong><%= t('admin.dashboard.experience.preview_title') %></strong> <%= t('admin.dashboard.experience.preview_description') %></p>
+</div>
+<p id="dashboardLayoutStatus" class="sr-only" role="status" aria-live="polite"></p>
 
 <%= render "admin/dashboard/onboarding_card" %>
 
@@ -19,4 +26,6 @@
   <%= render Admin::RecentSalesComponent.new %>
 
   <%= render Admin::LowStockComponent.new %>
+</div>
+
 </div>

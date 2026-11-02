@@ -666,7 +666,9 @@ ko:
           created: 상품 %{name}이(가) 생성되었습니다
           destroyed: 상품 %{name}이(가) 삭제되었습니다
           updated: 상품 %{name}이(가) 업데이트되었습니다
-        subtitle: 읽지 않은 알림 %{count}개
+        subtitle:
+          one: 읽지 않은 알림 %{count}개
+          other: 읽지 않은 알림 %{count}개
         subtitle_none: 새로운 알림이 없습니다
         system_role:
           created: 시스템 역할 %{name}이(가) 생성되었습니다
