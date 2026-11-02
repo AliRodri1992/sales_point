@@ -35,3 +35,6 @@ es:
         roles_detail_hint: "Consulta los permisos globales y los asociados a sucursales de esta organización."
         global_roles_title: "Roles globales"
         no_branch_roles: "Sin roles de sucursal asignados."
+        branch_access_title: "Acceso por sucursal"
+        branch_access_hint: "Expande cada sucursal y marca los roles autorizados para esta persona."
+        branch_access_empty: "No hay sucursales activas o roles de sucursal configurados."

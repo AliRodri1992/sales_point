@@ -35,3 +35,6 @@ en:
         roles_detail_hint: "Review global permissions and roles for branches in this organization."
         global_roles_title: "Global roles"
         no_branch_roles: "No branch roles assigned."
+        branch_access_title: "Branch access"
+        branch_access_hint: "Expand each branch and select the roles this user should have there."
+        branch_access_empty: "No active branches or branch roles are configured."
