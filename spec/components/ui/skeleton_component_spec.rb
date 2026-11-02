@@ -16,8 +16,8 @@ RSpec.describe Ui::SkeletonComponent, type: :component do
   it 'renders the requested number of table rows and columns' do
     rendered = render_inline(described_class.new(variant: :table, rows: 3, columns: 4))
 
-    expect(rendered.css('.delta-skeleton__table-grid')).to have(4).items
-    expect(rendered.css('.delta-skeleton__table-grid:first-child .delta-skeleton__bar')).to have(4).items
+    expect(rendered.css('.delta-skeleton__table-grid').size).to eq(4)
+    expect(rendered.css('.delta-skeleton__table-grid:first-child .delta-skeleton__bar').size).to eq(4)
   end
 
   it 'rejects unknown layouts and unreasonable placeholder counts' do

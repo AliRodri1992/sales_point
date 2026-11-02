@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Scoped loading state: preserve existing records during refreshes, and only
 // display the skeleton when there is no usable content yet.
 export default class extends Controller {
-  static targets = ["content", "placeholder", "status"]
+  static targets = ["content", "placeholder", "status", "error"]
   static values = {
     region: String,
     delay: { type: Number, default: 140 }
@@ -12,6 +12,7 @@ export default class extends Controller {
   connect() {
     this.activeRequestId = null
     this.loading = false
+    this.lastURL = null
   }
 
   disconnect() {
@@ -25,6 +26,7 @@ export default class extends Controller {
     this.loading = true
     this.activeRequestId = event.detail.requestId ?? null
     this.element.setAttribute("aria-busy", "true")
+    if (this.hasErrorTarget) this.errorTarget.hidden = true
     if (this.hasStatusTarget) this.statusTarget.hidden = false
 
     if (!this.hasContentTarget || !this.hasPlaceholderTarget) return
@@ -70,14 +72,37 @@ export default class extends Controller {
   }
 
   turboStart(event) {
-    if (this.related(event.target)) this.begin({ detail: { region: this.regionValue } })
+    if (!this.related(event.target)) return
+    this.lastURL = event.detail?.url?.toString() || null
+    this.begin({ detail: { region: this.regionValue } })
   }
 
   turboFinish(event) {
-    if (event.target?.id === this.regionValue) this.clear()
+    if (event.target?.id !== this.regionValue) return
+    this.clear()
+    if (this.hasErrorTarget) this.errorTarget.hidden = true
   }
 
   turboError(event) {
-    if (this.related(event.target)) this.clear()
+    if (!this.related(event.target)) return
+    this.showError()
+  }
+
+  turboMissing(event) {
+    if (event.target?.id !== this.regionValue) return
+    event.preventDefault()
+    this.showError()
+  }
+
+  showError() {
+    this.clear()
+    if (this.hasErrorTarget) this.errorTarget.hidden = false
+  }
+
+  retry() {
+    const frame = this.hasContentTarget ? this.contentTarget.querySelector("turbo-frame") : null
+    if (!frame || !this.lastURL) return
+    if (this.hasErrorTarget) this.errorTarget.hidden = true
+    frame.src = this.lastURL
   }
 }

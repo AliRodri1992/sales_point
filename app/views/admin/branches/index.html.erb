@@ -19,7 +19,7 @@
 
   <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="branches_list" aria-busy="false"
-     data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:before-cache@document->skeleton-loading#clear">
+     data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
   <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
   <div data-skeleton-loading-target="content">
 <%= turbo_frame_tag "branches_list" do %>
@@ -34,6 +34,12 @@
   </div>
   <div data-skeleton-loading-target="placeholder" hidden>
     <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 5) %>
+  </div>
+  <div data-skeleton-loading-target="error" hidden role="alert"
+       class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+    <span><%= t('admin.skeleton_loading.failed') %></span>
+    <button type="button" data-action="skeleton-loading#retry"
+            class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
   </div>
 </div>
 </div>

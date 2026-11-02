@@ -94,7 +94,7 @@ export default class extends Controller {
       if (!response.ok) throw new Error(`Supplier filtering failed: ${response.status}`)
       const html = await response.text()
       if (request.signal.aborted || this.request !== request) return
-      window.Turbo.renderStreamMessage(html)
+      await window.Turbo.renderStreamMessage(html)
       window.history.replaceState(window.history.state, "", url)
       if (this.hasErrorTarget) this.errorTarget.classList.add("hidden")
     } catch (error) {

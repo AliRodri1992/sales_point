@@ -1,0 +1,5 @@
+es:
+  admin:
+    skeleton_loading:
+      failed: "No fue posible actualizar la información. Intenta de nuevo."
+      retry: "Reintentar"
