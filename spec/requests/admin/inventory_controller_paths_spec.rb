@@ -23,10 +23,11 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
         stock: 7, min_stock: 0
       )
       7.times do |movement|
+        minutes_ago = (index * 10) + movement
         InventoryMovement.create!(
           organization:, inventory: stock, kind: 'adjustment', quantity: 1,
           stock_before: movement, stock_after: movement + 1,
-          created_at: Time.current - ((index * 10 + movement).minutes)
+          created_at: minutes_ago.minutes.ago
         )
       end
     end
