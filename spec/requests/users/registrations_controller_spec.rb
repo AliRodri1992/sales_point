@@ -105,7 +105,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(document.at_css('#user_email')['aria-invalid']).to eq('true')
   end
 
-  it 'renders server field errors inside reserved validation rails without shifting the registration layout' do
+  it 'renders server field errors directly below inputs without empty gutters' do
     post user_registration_path, params: registration_params.merge(
       user: registration_params[:user].merge(email: 'invalid-address')
     )
@@ -114,8 +114,9 @@ RSpec.describe Users::RegistrationsController, type: :request do
     document = Nokogiri::HTML(response.body)
     field = document.at_css('input#user_email')
     wrapper = field.ancestors.find { |element| element['data-field'] }
-    expect(wrapper['class']).to include('pb-7')
-    expect(wrapper.at_css('[data-registration-field-error]')['class']).to include('absolute')
+    expect(wrapper['class']).not_to include('pb-')
+    expect(wrapper.at_css('[data-registration-field-error]')['class']).to include('mt-1')
+    expect(wrapper.at_css('[data-registration-field-error]')['class']).not_to include('overflow-hidden')
     expect(document.at_css('[data-registration-form-card]')).to be_present
     expect(document.at_css('[data-terminal-target="loginCard"]')).to be_nil
   end

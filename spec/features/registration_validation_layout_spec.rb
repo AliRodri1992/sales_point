@@ -28,7 +28,7 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     expect(page).to have_css('section[data-step="2"]:not(.hidden)')
   end
 
-  scenario 'does not resize the form or move the promotional panel when client errors appear' do
+  scenario 'shows field errors in flow without moving the promotional panel' do
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit_administrator_step
 
@@ -37,12 +37,16 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     find('[data-registration-wizard-target="next"]').click
 
     expect(page).to have_css('[data-registration-field-error]', minimum: 3)
-    expect(form_height).to be_within(1).of(height_before)
-    aside_top_after = aside_top
-    expect(aside_top_after).to be_within(1).of(aside_top_before)
+    expect(form_height).to be > height_before
+    expect(aside_top).to be_within(1).of(aside_top_before)
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      const first = document.querySelector("#first-name").closest("[data-field]");
+      const next = document.querySelector("#last-name").getBoundingClientRect();
+      first.querySelector("[data-registration-field-error]").getBoundingClientRect().bottom <= next.top;
+    JS
   end
 
-  scenario 'keeps a stable form height and fits narrow mobile screens after validation' do
+  scenario 'keeps the layout within narrow mobile screens and clears corrected errors' do
     page.driver.browser.manage.window.resize_to(375, 740)
     visit_administrator_step
 
@@ -50,14 +54,16 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     find('[data-registration-wizard-target="next"]').click
 
     expect(page).to have_css('[data-registration-field-error]', minimum: 3)
-    expect(form_height).to be_within(1).of(height_before)
+    expect(form_height).to be > height_before
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
 
+    height_with_errors = form_height
     fill_in 'first-name', with: 'Ana'
     expect(find('#first-name')['aria-invalid']).to be_nil
     expect(page).to have_css('[data-registration-field-error]', minimum: 1)
-    expect(form_height).to be_within(1).of(height_before)
+    expect(form_height).to be < height_with_errors
   end
+
   scenario 'highlights exactly one implementation option without changing either card height' do
     visit new_user_registration_path
 
@@ -85,7 +91,7 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     ).to eq(initial_heights)
   end
 
-  scenario 'keeps input spacing compact while reserving a fixed feedback area' do
+  scenario 'keeps fields close together when there are no validation errors' do
     page.driver.browser.manage.window.resize_to(1440, 900)
     visit_administrator_step
 
@@ -95,12 +101,8 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
       next.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
     JS
 
-    expect(gap).to be_between(0, 12)
-    expect(find('#first-name').find(:xpath, './ancestor::*[@data-field][1]')[:class]).to include('pb-7')
-
-    original_height = form_height
-    find('[data-registration-wizard-target="next"]').click
-    expect(page).to have_css('[data-registration-field-error]', minimum: 3)
-    expect(form_height).to be_within(1).of(original_height)
+    expect(gap).to be_between(8, 16)
+    expect(find('#first-name').find(:xpath, './ancestor::*[@data-field][1]')[:class]).not_to include('pb-')
+    expect(page).to have_no_css('[data-registration-field-error]')
   end
 end

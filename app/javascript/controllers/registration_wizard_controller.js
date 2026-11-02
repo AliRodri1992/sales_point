@@ -299,7 +299,7 @@ export default class extends Controller {
     if (!error) {
       error = document.createElement("p")
       error.dataset.registrationFieldError = "true"
-      error.className = "absolute inset-x-0 bottom-0 h-7 overflow-hidden text-xs font-medium leading-[14px] text-rose-700"
+      error.className = "mt-1 break-words text-xs font-medium leading-4 text-rose-700"
       error.setAttribute("role", "alert")
       error.setAttribute("aria-live", "polite")
       wrapper.appendChild(error)
