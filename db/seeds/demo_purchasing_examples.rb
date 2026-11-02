@@ -53,12 +53,14 @@ module DemoPurchasingExamples
     branches, products = catalog(organization)
     suppliers = active_suppliers(organization)
     currency = Currency.active.find_by!(code: 'MXN')
+    sources = [branches, suppliers, products, currency]
     ORDER_COUNT.times do |index|
-      seed_order!(organization:, admin:, branches:, suppliers:, products:, currency:, index:)
+      seed_order!(organization:, admin:, sources:, index:)
     end
   end
 
-  def seed_order!(organization:, admin:, branches:, suppliers:, products:, currency:, index:)
+  def seed_order!(organization:, admin:, sources:, index:)
+    branches, suppliers, products, currency = sources
     code = demo_code('PO', index)
     return if organization.purchase_orders.exists?(code:)
 
@@ -113,7 +115,7 @@ module DemoPurchasingExamples
   end
 
   def demo_code(prefix, index)
-    format('DEMO-%s-%04d', prefix, index + 1)
+    format('DEMO-%<prefix>s-%<number>04d', prefix:, number: index + 1)
   end
 
   def selected_products(products, index)

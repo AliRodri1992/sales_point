@@ -489,12 +489,17 @@ def seed_example_user(index, count, roles, language, organization)
     user.save!
   end
   membership = ensure_example_user_membership(user, organization)
-  role = roles.fetch(index % roles.length)
-  assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
+  role, assignment = assign_example_user_role(user, roles, index)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
                "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
                "organizacion_id=#{organization.id} membresia_id=#{membership.id} " \
                "rol=#{role.code} asignacion_id=#{assignment.id}"
+end
+
+def assign_example_user_role(user, roles, index)
+  role = roles.fetch(index % roles.length)
+  assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
+  [role, assignment]
 end
 
 def ensure_example_user_membership(user, organization)
