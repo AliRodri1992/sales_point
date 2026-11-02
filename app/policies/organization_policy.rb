@@ -24,9 +24,10 @@ class OrganizationPolicy < ApplicationPolicy
   class Scope < ApplicationPolicy::Scope
     def resolve
       return scope.where(deleted_at: nil) if user&.role?('super_admin')
-      return scope.where(deleted_at: nil).where(id: user.organization_memberships.active.select(:organization_id)) if user&.admin?
+      return scope.none unless user&.admin?
 
-      scope.none
+      organization_ids = user.organization_memberships.active.select(:organization_id)
+      scope.where(deleted_at: nil, id: organization_ids)
     end
   end
 
