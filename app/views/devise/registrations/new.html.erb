@@ -1,11 +1,13 @@
 <% content_for :title, t(".page_title") %>
 
 <div
-  class="registration-page min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
+  class="authentication-page registration-page min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal registration-wizard"
   data-terminal-target="wrapper"
   data-registration-wizard-target="wrapper"
   data-initial-step="<%= @registration_error_step || 1 %>"
+  data-setup-new-label="<%= t('authentication.registration.setup_new') %>"
+  data-setup-migration-label="<%= t('authentication.registration.setup_migration') %>"
   data-action="keydown->registration-wizard#handleKeydown input->registration-wizard#clearFieldError change->registration-wizard#clearFieldError"
   data-validation-required="<%= t(".client_validation_required") %>"
   data-validation-password-match="<%= t(".client_validation_password_match") %>"
@@ -43,9 +45,9 @@
             <span aria-hidden="true">⚡</span>
             <%= t(".panel_badge") %>
           </span>
-          <h1 class="font-jakarta text-3xl font-extrabold leading-tight tracking-tight lg:text-4xl">
+          <h2 class="font-jakarta text-3xl font-extrabold leading-tight tracking-tight lg:text-4xl">
             <%= t(".panel_title") %>
-          </h1>
+          </h2>
           <p class="text-sm leading-relaxed text-slate-400">
             <%= t(".panel_description") %>
           </p>
@@ -70,21 +72,23 @@
       </div>
 
       <p class="relative z-10 text-xs tracking-wide text-slate-500">
-        <%= t(".copyright") %>
+        <%= t("devise.sessions.new.copyright", year: Time.current.year) %>
       </p>
     </aside>
 
     <main class="relative flex min-h-screen w-full flex-col bg-white lg:h-dvh lg:min-h-0 lg:w-[58%] lg:overflow-hidden">
-      <div class="absolute left-5 top-6 z-30 flex items-center gap-2 lg:hidden" aria-label="Delta POS">
-        <%= image_tag "delta-pos-logo.svg", class: "h-9 w-9", alt: "" %>
-        <span class="font-jakarta text-base font-extrabold tracking-tight text-slate-900">DELTA <span class="text-emerald-700">POS</span></span>
-      </div>
-      <div class="absolute right-6 top-6 z-40 flex items-center gap-3">
-        <%= render Authentication::ThemeSelectorComponent.new(themes: terminal_themes, current_theme: current_terminal_theme) %>
-        <%= render Authentication::LanguageSelectorComponent.new(current_language: current_language, languages: terminal_languages) %>
-      </div>
+      <header data-registration-header class="relative z-40 flex flex-col gap-4 px-5 pt-6 sm:flex-row sm:items-center sm:justify-between lg:absolute lg:right-6 lg:top-6 lg:p-0">
+        <div class="flex items-center gap-2 lg:hidden" aria-label="Delta POS">
+          <%= image_tag "delta-pos-logo.svg", class: "h-9 w-9", alt: "" %>
+          <span class="font-jakarta text-base font-extrabold tracking-tight text-slate-900">DELTA <span class="text-emerald-700">POS</span></span>
+        </div>
+        <div data-registration-controls class="flex flex-wrap items-center gap-3">
+          <%= render Authentication::ThemeSelectorComponent.new(themes: terminal_themes, current_theme: current_terminal_theme) %>
+          <%= render Authentication::LanguageSelectorComponent.new(current_language: current_language, languages: terminal_languages) %>
+        </div>
+      </header>
 
-      <div class="flex min-h-screen w-full items-start justify-center px-5 pb-12 pt-28 sm:px-10 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:px-16 lg:py-16">
+      <div class="flex w-full flex-1 items-start justify-center px-5 pb-12 pt-8 sm:px-10 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:px-16 lg:py-16">
         <div data-registration-form-card class="mx-auto w-full max-w-lg space-y-6">
           <%= form_for(
             resource,
@@ -125,12 +129,15 @@
                     class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-200 bg-white text-xs font-bold text-slate-500 transition-all duration-300">
                     <%= index + 1 %>
                   </div>
-                  <span data-step-label class="text-xs font-medium leading-tight text-slate-600"><%= t(".step_names.#{step_keys[index]}") %></span>
+                  <span data-step-label class="sr-only text-xs font-medium leading-tight text-slate-600 sm:not-sr-only"><%= t(".step_names.#{step_keys[index]}") %></span>
                 </div>
               <% end %>
             </nav>
 
-            <span data-registration-wizard-target="stepCounter" class="sr-only">1 / 5</span>
+            <p data-mobile-step-status role="status" class="flex items-center justify-between gap-3 text-sm font-medium text-slate-700 sm:hidden">
+              <span data-registration-wizard-target="currentStepName"><%= t('.step_names.one') %></span>
+              <span data-registration-wizard-target="stepCounter">1 / 5</span>
+            </p>
 
             <section data-registration-wizard-target="step" data-step="1" class="space-y-4">
               <div>
@@ -255,7 +262,7 @@
               </div>
 
               <div data-registration-wizard-target="migrationFields" class="hidden grid gap-4 sm:grid-cols-2">
-                <div>
+                <div data-field>
                   <label for="migration-volume" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.migration_volume") %></label>
                   <select id="migration-volume" class="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-action="change->registration-wizard#selectVolume">
                     <option value=""><%= t(".step_four.select_volume") %></option>
@@ -264,7 +271,7 @@
                     <option value="over_5000" <%= "selected" if params[:migration_volume] == "over_5000" %>><%= t(".step_four.volumes.over_5000") %></option>
                   </select>
                 </div>
-                <div>
+                <div data-field>
                   <label for="migration-priority" class="block font-jakarta text-xs font-medium text-slate-700"><%= t(".step_four.migration_priority") %></label>
                   <select id="migration-priority" class="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-800 shadow-sm transition-all focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" data-action="change->registration-wizard#selectPriority">
                     <option value=""><%= t(".step_four.select_priority") %></option>
@@ -348,8 +355,22 @@
                 <h3 class="text-sm font-bold text-slate-900"><%= t(".registration_summary") %></h3>
                 <p class="mt-1 text-xs text-slate-500"><%= t(".registration_summary_hint") %></p>
                 <dl class="mt-3 grid gap-x-4 gap-y-3 sm:grid-cols-2">
-                  <% [[:name, "step_two.first_name"], [:email, "step_two.email"], [:company, "step_three.company_name"], [:tax, "step_three.tax_id"], [:sector, "step_four.business_sector"], [:currency, "step_four.currency"], [:terminals, "step_five.terminals"], [:payment, "step_five.payments"]].each do |key, label| %>
+                  <div>
+                    <dt class="text-xs font-medium text-slate-500"><%= t('authentication.registration.setup_type') %></dt>
+                    <dd data-summary-key="setup" class="mt-1 break-words text-sm font-semibold text-slate-900">—</dd>
+                  </div>
+                  <div>
+                    <dt class="text-xs font-medium text-slate-500"><%= t('authentication.registration.full_name') %></dt>
+                    <dd data-summary-key="name" class="mt-1 break-words text-sm font-semibold text-slate-900">—</dd>
+                  </div>
+                  <% [[:email, "step_two.email"], [:company, "step_three.company_name"], [:tax, "step_three.tax_id"], [:sector, "step_four.business_sector"], [:currency, "step_four.currency"], [:timezone, "timezone_label"], [:terminals, "step_five.terminals"], [:payment, "step_five.payments"]].each do |key, label| %>
                     <div class="min-w-0">
+                      <dt class="text-xs font-medium text-slate-500"><%= t(".#{label}") %></dt>
+                      <dd data-summary-key="<%= key %>" class="mt-1 break-words text-sm font-semibold text-slate-900">—</dd>
+                    </div>
+                  <% end %>
+                  <% [[:volume, "step_four.migration_volume"], [:priority, "step_four.migration_priority"]].each do |key, label| %>
+                    <div data-summary-migration>
                       <dt class="text-xs font-medium text-slate-500"><%= t(".#{label}") %></dt>
                       <dd data-summary-key="<%= key %>" class="mt-1 break-words text-sm font-semibold text-slate-900">—</dd>
                     </div>
@@ -359,8 +380,11 @@
               <div data-field class="relative pt-1">
                 <div class="flex items-start gap-3">
                   <input id="terms" name="terms" type="checkbox" value="1" <%= "checked" if params[:terms].to_s.in?(%w[1 on true]) %> class="mt-0.5 h-5 w-5 shrink-0 rounded-md border border-slate-300 bg-white shadow-sm accent-[var(--theme-primary-start)] focus:ring-2 focus:ring-emerald-600" data-registration-wizard-target="terms">
-                  <label for="terms" class="block text-sm leading-relaxed text-slate-700"><%= t(".step_five.terms") %></label>
+                  <label for="terms" class="block text-sm leading-relaxed text-slate-700"><%= t('authentication.documents.acceptance_html', terms: authentication_document_reference(:terms), privacy: authentication_document_reference(:privacy)) %></label>
                 </div>
+                <% unless authentication_documents_available? %>
+                  <p class="mt-2 text-xs leading-relaxed text-slate-600"><%= t('authentication.documents.unavailable') %></p>
+                <% end %>
               </div>
             </section>
 

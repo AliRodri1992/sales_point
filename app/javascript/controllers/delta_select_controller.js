@@ -17,7 +17,9 @@ export default class extends Controller {
     this.element.dataset.deltaSelectReady = "true"
     this.select.classList.add("delta-select-native")
     this.oldTabIndex = this.select.getAttribute("tabindex")
+    this.oldAriaHidden = this.select.getAttribute("aria-hidden")
     this.select.tabIndex = -1
+    this.select.setAttribute("aria-hidden", "true")
 
     this.button = document.createElement("button")
     this.button.type = "button"
@@ -83,10 +85,14 @@ export default class extends Controller {
       if (event.key === "Escape") {
         this.close()
         this.button.focus()
-      } else if (event.key === "ArrowDown" && event.target === this.button) {
+      } else if (["ArrowDown", "ArrowUp"].includes(event.key) && event.target === this.button) {
         event.preventDefault()
         this.open()
-        this.optionsContainer.querySelector("[role='option']:not([disabled]):not([hidden])")?.focus()
+        const items = this.optionsContainer.querySelectorAll("[role='option']:not([disabled]):not([hidden])")
+        items[event.key === "ArrowDown" ? 0 : items.length - 1]?.focus()
+      } else if (event.key === "Tab" && !this.menu.hidden) {
+        this.close()
+        this.button.focus()
       }
     }
     this.onChange = () => this.refresh()
@@ -95,7 +101,7 @@ export default class extends Controller {
     }
     this.optionObserver = new MutationObserver(() => this.refresh())
     this.optionObserver.observe(this.select, { childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["disabled", "selected", "label", "hidden", "aria-invalid"] })
+      attributeFilter: ["disabled", "selected", "label", "hidden", "aria-invalid", "aria-describedby", "required"] })
     this.onReset = () => setTimeout(() => this.refresh(), 0)
     this.onInvalid = (event) => {
       event.preventDefault()
@@ -110,6 +116,11 @@ export default class extends Controller {
     this.element.addEventListener("keydown", this.onKeyDown)
     this.select.addEventListener("change", this.onChange)
     this.select.addEventListener("invalid", this.onInvalid)
+    this.onLabelClick = (event) => {
+      event.preventDefault()
+      this.button.focus()
+    }
+    this.select.labels?.forEach((label) => label.addEventListener("click", this.onLabelClick))
     this.select.form?.addEventListener("reset", this.onReset)
     document.addEventListener("pointerdown", this.onOutsidePointerDown, true)
     this.refresh()
@@ -124,6 +135,7 @@ export default class extends Controller {
     this.element.removeEventListener("keydown", this.onKeyDown)
     this.select?.removeEventListener("change", this.onChange)
     this.select?.removeEventListener("invalid", this.onInvalid)
+    this.select?.labels?.forEach((label) => label.removeEventListener("click", this.onLabelClick))
     this.select?.form?.removeEventListener("reset", this.onReset)
     this.optionObserver?.disconnect()
     document.removeEventListener("scroll", this.onReposition, true)
@@ -133,6 +145,8 @@ export default class extends Controller {
     this.menu?.remove()
     this.select?.classList.remove("delta-select-native")
     if (this.select) {
+      if (this.oldAriaHidden === null) this.select.removeAttribute("aria-hidden")
+      else this.select.setAttribute("aria-hidden", this.oldAriaHidden)
       if (this.oldTabIndex === null) this.select.removeAttribute("tabindex")
       else this.select.setAttribute("tabindex", this.oldTabIndex)
     }
@@ -141,6 +155,10 @@ export default class extends Controller {
 
   refresh() {
     this.button.disabled = this.select.disabled
+    const description = this.select.getAttribute("aria-describedby")
+    if (description) this.button.setAttribute("aria-describedby", description)
+    else this.button.removeAttribute("aria-describedby")
+    this.button.setAttribute("aria-required", String(this.select.required))
     this.button.setAttribute("aria-invalid", String(this.select.getAttribute("aria-invalid") === "true" ||
       this.select.classList.contains("input-field-error")))
     const options = [...this.select.options]

@@ -10,7 +10,7 @@ export default class extends Controller {
     "migrationVolume", "migrationPriority", "branchesHidden", "currency",
     "terminals", "payments", "migrationFields", "terms", "back", "next",
     "companyName", "taxId", "firstName", "lastName", "password", "confirmation",
-    "timezone", "summary"
+    "timezone", "summary", "currentStepName"
   ]
 
   connect() {
@@ -307,11 +307,16 @@ export default class extends Controller {
     error.id = id
     error.textContent = message
     field.setAttribute("aria-describedby", id)
-    if (!this.firstInvalidField) this.firstInvalidField = field
+    if (!this.firstInvalidField) {
+      this.firstInvalidField = field.matches("select")
+        ? field.closest('[data-controller~="delta-select"]')?.querySelector('button[aria-haspopup="listbox"]') || field
+        : field
+    }
     return false
   }
 
   clearFieldError(event) {
+    if (event.target.matches("select") && !event.target.value) return
     const wrapper = event.target.closest("[data-field]")
     if (!wrapper) return
 
@@ -353,6 +358,9 @@ export default class extends Controller {
       else node.removeAttribute("aria-current")
     })
     this.stepCounterTarget.textContent = String(this.currentStep) + " / 5"
+    if (this.hasCurrentStepNameTarget) {
+      this.currentStepNameTarget.textContent = this.nodeTargets[this.currentStep - 1].getAttribute("aria-label")
+    }
     this.backTarget.classList.toggle("hidden", this.currentStep === 1)
     this.nextTarget.classList.toggle("col-span-2", this.currentStep === 1)
     this.nextTarget.classList.toggle("col-start-2", this.currentStep !== 1)
@@ -365,17 +373,24 @@ export default class extends Controller {
   updateSummary() {
     if (!this.hasSummaryTarget) return
     const values = {
+      setup: this.wrapperTarget.dataset[this.selectedSetupType === "migration" ? "setupMigrationLabel" : "setupNewLabel"],
       name: [this.firstNameTarget.value, this.lastNameTarget.value].filter(Boolean).join(" "),
       email: this.element.querySelector('input[name="user[email]"]')?.value || "",
       company: this.companyNameTarget.value,
       tax: this.taxIdTarget.value,
       sector: this.dropdownValueLabel("business-sector"),
       currency: this.currencyTarget.value,
+      timezone: this.timezoneTarget.value,
+      volume: this.element.querySelector("#migration-volume")?.selectedOptions[0]?.textContent.trim(),
+      priority: this.element.querySelector("#migration-priority")?.selectedOptions[0]?.textContent.trim(),
       terminals: this.dropdownValueLabel("terminals"),
       payment: this.dropdownValueLabel("payment-integration")
     }
     this.summaryTarget.querySelectorAll("[data-summary-key]").forEach((element) => {
       element.textContent = values[element.dataset.summaryKey] || "—"
+    })
+    this.summaryTarget.querySelectorAll("[data-summary-migration]").forEach((row) => {
+      row.classList.toggle("hidden", this.selectedSetupType !== "migration")
     })
   }
 

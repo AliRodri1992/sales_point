@@ -1230,6 +1230,50 @@ select:focus-visible {
    Scoped enhancements from the registration template.
    ============================================================ */
 
+/* Accessible action tones share the existing brand hue; other screens keep
+   their original theme colors. Logo artwork and decorative fills are unchanged. */
+.authentication-page {
+    --auth-action: #047857;
+}
+
+.authentication-page.theme-selected {
+    --auth-action: var(--brand-on-white, var(--brand));
+}
+
+.authentication-page .btn-delta-gradient {
+    background: var(--auth-action);
+    color: #ffffff;
+}
+
+.authentication-page .btn-delta-gradient:hover {
+    background: color-mix(in srgb, var(--auth-action) 88%, black);
+}
+
+.authentication-page .btn-delta-gradient:active {
+    background: color-mix(in srgb, var(--auth-action) 76%, black);
+}
+
+.authentication-page .theme-text,
+.authentication-page .text-theme-link {
+    color: var(--auth-action);
+}
+
+.authentication-page a:focus-visible {
+    outline: 2px solid var(--auth-action);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+.authentication-page .theme-text:hover,
+.authentication-page .text-theme-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.registration-page [data-registration-wizard-target="step"] > div > p {
+    color: var(--registration-muted);
+}
+
 .registration-page {
     --registration-surface: #ffffff;
     --registration-muted: #64748b;

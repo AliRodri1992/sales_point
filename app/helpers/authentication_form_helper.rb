@@ -2,6 +2,28 @@
 
 # Localized ActiveModel validation feedback for authentication screens.
 module AuthenticationFormHelper
+  DOCUMENT_URL_ENV = { terms: 'DELTA_POS_TERMS_URL', privacy: 'DELTA_POS_PRIVACY_URL' }.freeze
+
+  def authentication_document_url(kind)
+    url = URI.parse(ENV.fetch(DOCUMENT_URL_ENV.fetch(kind), '').strip)
+    url.to_s if url.is_a?(URI::HTTPS) && url.host.present? && url.userinfo.nil?
+  rescue URI::InvalidURIError
+    nil
+  end
+
+  def authentication_document_reference(kind)
+    name = t("authentication.documents.#{kind}")
+    url = authentication_document_url(kind)
+    return name unless url
+
+    link_to name, url, target: '_blank', rel: 'noopener noreferrer',
+                       class: 'theme-text font-semibold underline underline-offset-2'
+  end
+
+  def authentication_documents_available?
+    DOCUMENT_URL_ENV.keys.all? { |kind| authentication_document_url(kind).present? }
+  end
+
   def authentication_blank_message(resource, attribute)
     resource.errors.full_message(attribute, resource.errors.generate_message(attribute, :blank))
   end

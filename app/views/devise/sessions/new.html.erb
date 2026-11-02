@@ -1,7 +1,7 @@
 <% content_for :title, t('.page_title') %>
 
 <div
-  class="min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
+  class="authentication-page min-h-screen w-full bg-slate-900 <%= current_terminal_theme %> <%= "theme-selected" if terminal_theme_selected? %>"
   data-controller="terminal"
   data-terminal-target="wrapper"
   data-network-error="<%= t('authentication.login.network_error') %>">
@@ -53,9 +53,9 @@
             <%= t(".panel_badge") %>
           </span>
 
-          <h1 class="font-jakarta text-3xl font-extrabold leading-tight tracking-tight lg:text-4xl">
+          <h2 class="font-jakarta text-3xl font-extrabold leading-tight tracking-tight lg:text-4xl">
             <%= t(".panel_title") %>
-          </h1>
+          </h2>
 
           <p class="text-sm leading-relaxed text-slate-400">
             <%= t(".panel_description") %>
@@ -115,9 +115,9 @@
 
           <section data-terminal-target="loginCard" class="space-y-5">
             <div class="space-y-1">
-              <h2 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900">
+              <h1 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900">
                 <%= t(".title") %>
-              </h2>
+              </h1>
               <p class="text-sm leading-relaxed text-slate-500">
                 <%= t(".subtitle") %>
               </p>

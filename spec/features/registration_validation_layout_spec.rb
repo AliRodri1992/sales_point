@@ -40,9 +40,11 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     expect(form_height).to be > height_before
     expect(aside_top).to be_within(1).of(aside_top_before)
     expect(page.evaluate_script(<<~JS)).to be(true)
-      const first = document.querySelector("#first-name").closest("[data-field]");
-      const next = document.querySelector("#last-name").getBoundingClientRect();
-      first.querySelector("[data-registration-field-error]").getBoundingClientRect().bottom <= next.top;
+      (() => {
+        const first = document.querySelector("#first-name").closest("[data-field]");
+        const next = document.querySelector("#last-name").getBoundingClientRect();
+        return first.querySelector("[data-registration-field-error]").getBoundingClientRect().bottom <= next.top;
+      })()
     JS
   end
 
@@ -96,9 +98,11 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     visit_administrator_step
 
     gap = page.evaluate_script(<<~JS)
-      const first = document.querySelector("#first-name").closest("[data-field]");
-      const next = document.querySelector("#last-name").closest("[data-field]");
-      next.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
+      (() => {
+        const first = document.querySelector("#first-name").closest("[data-field]");
+        const next = document.querySelector("#last-name").closest("[data-field]");
+        return next.getBoundingClientRect().top - first.getBoundingClientRect().bottom;
+      })()
     JS
 
     expect(gap).to be_between(8, 16)

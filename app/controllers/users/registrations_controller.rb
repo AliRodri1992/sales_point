@@ -33,7 +33,7 @@ module Users
       params.permit(
         :setup_type, :first_name, :last_name, :company_name, :tax_id,
         :business_sector, :migration_volume, :migration_priority,
-        :branches, :currency, :terminals, :payment_integration, :terms
+        :branches, :currency, :timezone, :terminals, :payment_integration, :terms
       )
     end
 

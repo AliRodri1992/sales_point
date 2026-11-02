@@ -1,5 +1,15 @@
 es:
   authentication:
+    registration:
+      full_name: "Nombre completo"
+      setup_type: "Tipo de implementación"
+      setup_new: "Sistema nuevo"
+      setup_migration: "Migración"
+    documents:
+      terms: "Términos de servicio"
+      privacy: "Política de privacidad"
+      acceptance_html: "Acepto los %{terms} y la %{privacy} de Delta POS."
+      unavailable: "Solicita los términos y la política de privacidad al administrador antes de aceptar."
     rate_limited: "Demasiados intentos. Espera un momento antes de volver a intentarlo."
     login:
       invalid_credentials: "El correo electrónico o la contraseña son incorrectos. Inténtalo de nuevo."

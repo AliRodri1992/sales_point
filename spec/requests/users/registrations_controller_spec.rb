@@ -58,6 +58,13 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(User.find_by(email: 'owner@example.com')).to be_nil
     expect(Organization.count).to eq(0)
   end
+
+  it 'persists the time zone selected in the registration environment' do
+    post user_registration_path, params: registration_params.merge(timezone: 'America/Tijuana')
+
+    expect(response).to redirect_to(admin_dashboard_path)
+    expect(OrganizationSetting.last.timezone).to eq('America/Tijuana')
+  end
   it 'keeps entered business information and returns to the administrator step when a user is invalid' do
     post user_registration_path, params: registration_params.merge(
       user: registration_params[:user].merge(email: 'invalid-address'),

@@ -1,99 +1,119 @@
 .theme-material-red {
     --brand: #b71c1c;
+    --brand-on-white: #b71c1c;
     --brand-light: #ffebee;
 }
 
 .theme-material-navy {
     --brand: #0d47a1;
+    --brand-on-white: #0d47a1;
     --brand-light: #e3f2fd;
 }
 
 .theme-material-school-yellow {
     --brand: #fbc02d;
+    --brand-on-white: #854d0e;
     --brand-light: #fffde7;
 }
 
 .theme-saas-blue {
     --brand: #4f46e5;
+    --brand-on-white: #4f46e5;
     --brand-light: #e0e7ff;
 }
 
 .theme-emerald-green {
     --brand: #10b981;
+    --brand-on-white: #047857;
     --brand-light: #d1fae5;
 }
 
 .theme-commercial-orange {
     --brand: #ea580c;
+    --brand-on-white: #c2410c;
     --brand-light: #ffedd5;
 }
 
 .theme-industrial-mono {
     --brand: #18181b;
+    --brand-on-white: #18181b;
     --brand-light: #f4f4f5;
 }
 
 .theme-tech-purple {
     --brand: #9333ea;
+    --brand-on-white: #9333ea;
     --brand-light: #f3e8ff;
 }
 
 .theme-slate-charcoal {
     --brand: #334155;
+    --brand-on-white: #334155;
     --brand-light: #e2e8f0;
 }
 
 .theme-ocean-cyan {
     --brand: #0e7490;
+    --brand-on-white: #0e7490;
     --brand-light: #cffafe;
 }
 
 .theme-candy-pink {
     --brand: #db2777;
+    --brand-on-white: #db2777;
     --brand-light: #fce7f3;
 }
 
 .theme-earth-brown {
     --brand: #78350f;
+    --brand-on-white: #78350f;
     --brand-light: #fef3c7;
 }
 
 .theme-wheat-yellow {
     --brand: #ca8a04;
+    --brand-on-white: #854d0e;
     --brand-light: #fef9c3;
 }
 
 .theme-silver-grey {
     --brand: #4b5563;
+    --brand-on-white: #4b5563;
     --brand-light: #f3f4f6;
 }
 
 .theme-supermarket-red {
     --brand: #dc2626;
+    --brand-on-white: #dc2626;
     --brand-light: #fee2e2;
 }
 
 .theme-mint-turquoise {
     --brand: #0d9488;
+    --brand-on-white: #0f766e;
     --brand-light: #ccfbf1;
 }
 
 .theme-orchid-violet {
     --brand: #7c3aed;
+    --brand-on-white: #7c3aed;
     --brand-light: #ede9fe;
 }
 
 .theme-lime-green {
     --brand: #65a30d;
+    --brand-on-white: #4d7c0f;
     --brand-light: #ecfccb;
 }
 
 .theme-denim-blue {
     --brand: #2563eb;
+    --brand-on-white: #2563eb;
     --brand-light: #dbeafe;
 }
 
 .theme-delta-emerald {
     --brand: #059669;
+    --brand-on-white: #047857;
     --brand-light: #d1fae5;
 }

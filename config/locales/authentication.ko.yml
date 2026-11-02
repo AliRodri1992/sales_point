@@ -1,5 +1,15 @@
 ko:
   authentication:
+    registration:
+      full_name: "성명"
+      setup_type: "구축 유형"
+      setup_new: "새 시스템"
+      setup_migration: "마이그레이션"
+    documents:
+      terms: "서비스 이용약관"
+      privacy: "개인정보 보호정책"
+      acceptance_html: "Delta POS %{terms} 및 %{privacy}에 동의합니다."
+      unavailable: "동의하기 전에 관리자에게 이용약관과 개인정보 보호정책을 요청하세요."
     rate_limited: "시도 횟수가 너무 많습니다. 잠시 후 다시 시도하세요."
     login:
       invalid_credentials: "이메일 주소 또는 비밀번호가 올바르지 않습니다. 다시 시도해 주세요."
