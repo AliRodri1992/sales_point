@@ -426,11 +426,15 @@ document.addEventListener("turbo:load", () => {
 
         const wasOpen = sidebar.classList.contains("sidebar-open")
         sidebar.classList.remove("sidebar-open")
+        // Release the main region and restore keyboard focus before making
+        // the drawer inert. Otherwise Chrome may drop focus to BODY when the
+        // currently focused close button becomes inert.
+        sidebarContent?.removeAttribute("inert")
+        if (wasOpen && window.innerWidth < 1024) sidebarToggle?.focus({ preventScroll: true })
         if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
         sidebar.removeAttribute("role")
         sidebar.removeAttribute("aria-modal")
         sidebarToggle?.setAttribute("aria-expanded", "false")
-        sidebarContent?.removeAttribute("inert")
         document.body.classList.remove("sidebar-drawer-open")
 
         if (sidebarOverlay) {
