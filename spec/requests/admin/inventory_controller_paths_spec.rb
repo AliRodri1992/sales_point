@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Inventory administration controller paths', type: :request do
   include SqlQueryRecorder
+
   let(:organization) { create(:organization) }
   let(:branch) { create(:branch, organization:) }
   let(:product) { create(:product, organization:) }
@@ -25,7 +26,7 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
         InventoryMovement.create!(
           organization:, inventory: stock, kind: 'adjustment', quantity: 1,
           stock_before: movement, stock_after: movement + 1,
-          created_at: Time.current - (index * 10 + movement).minutes
+          created_at: Time.current - ((index * 10 + movement).minutes)
         )
       end
     end
