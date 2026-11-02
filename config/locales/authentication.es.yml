@@ -35,8 +35,8 @@ es:
         user:
           attributes:
             email:
-              blank: "no puede estar vacío"
-              invalid: "debe tener un formato válido"
+              blank: "no puede estar vacío."
+              invalid: "no tiene un formato válido."
             password:
               blank: "no puede estar vacía"
             password_confirmation:

@@ -1270,7 +1270,7 @@ select:focus-visible {
     text-decoration: underline;
 }
 
-.registration-page [data-registration-wizard-target="step"] > div > p {
+.registration-page [data-registration-wizard-target="step"] > div > p:not([data-registration-field-error]) {
     color: var(--registration-muted);
 }
 

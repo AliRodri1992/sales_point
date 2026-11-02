@@ -1314,7 +1314,7 @@ es:
         payment_hint: "Las integraciones con tarjeta y QR quedarán pendientes de configuración."
         migration_hint: "La migración se programará después del registro; tus datos no se importarán automáticamente."
         timezone_label: "Zona horaria"
-        client_validation_email: "Introduce un correo electrónico válido."
+        client_validation_email: "Correo electrónico no tiene un formato válido."
         client_validation_password_length: "La contraseña debe tener al menos 6 caracteres."
         client_validation_field_required: "Completa este campo para continuar."
         client_validation_tax_format: "Introduce un RFC válido de 12 o 13 caracteres."
