@@ -1,0 +1,47 @@
+en:
+  demo_requests:
+    form:
+      title: Request a demonstration
+      contact_step: Contact
+      business_step: Business
+      consent: Consent
+      message_hint: Optional. Up to 2,000 characters.
+      sending: Sending…
+      email_invalid: does not have a valid format.
+      phone_invalid: does not have a valid format for the selected country.
+      phone_pending: cannot be validated yet. Please wait a moment.
+      phone_unavailable: could not be validated. Reload the page and try again.
+      network_error: We could not confirm the submission. Check your connection and try again. Your details remain
+        in the form.
+      server_error: The request could not be completed. Try again in a moment. Your details remain in the form.
+      close_notice: Close request notice
+      themes:
+        emerald: Emerald
+        sapphire: Sapphire
+        sky: Sky blue
+        lime: Lime
+        olive: Olive
+        yellow: Yellow
+        gold: Gold
+        orange: Orange
+        magenta: Magenta
+        rose: Rose
+        mint: Mint
+        cherry: Cherry
+        violet: Violet
+        teal: Teal
+        indigo: Indigo
+        cyan: Cyan
+        fuchsia: Fuchsia
+        ruby: Ruby
+        bronze: Bronze
+        slate: Slate
+  activerecord:
+    errors:
+      models:
+        demo_request:
+          too_short: must have at least %{count} characters.
+          too_long: cannot exceed %{count} characters.
+          attributes:
+            company:
+              blank: cannot be blank.

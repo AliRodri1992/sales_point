@@ -91,7 +91,9 @@ export default class extends Controller {
       })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       closeDashboardSelectors()
-      window.location.reload()
+      // Forms can hand their draft to a Turbo render without persistent storage.
+      const change = this.dispatch("changed", { detail: { language }, cancelable: true })
+      if (!change.defaultPrevented) window.location.reload()
     } catch (error) {
       console.error("Language change error:", error)
       const title = this.element.dataset.languageErrorTitle

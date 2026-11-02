@@ -6,9 +6,11 @@ module AuthenticationFormHelper
 
   def authentication_document_url(kind)
     url = URI.parse(ENV.fetch(DOCUMENT_URL_ENV.fetch(kind), '').strip)
-    url.to_s if url.is_a?(URI::HTTPS) && url.host.present? && url.userinfo.nil?
+    return url.to_s if url.is_a?(URI::HTTPS) && url.host.present? && url.userinfo.nil?
+
+    privacy_path if kind == :privacy
   rescue URI::InvalidURIError
-    nil
+    privacy_path if kind == :privacy
   end
 
   def authentication_document_reference(kind)

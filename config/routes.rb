@@ -11,6 +11,7 @@ Rails.application.routes.draw do
              }
 
   root 'home#index'
+  get '/privacy', to: 'privacy#show', as: :privacy
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do

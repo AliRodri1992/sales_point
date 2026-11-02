@@ -1,0 +1,57 @@
+es:
+  privacy:
+    title: Política de privacidad
+    eyebrow: Delta POS · Privacidad
+    intro: Información sobre el uso de los datos que compartes al solicitar una demostración de Delta POS.
+    version: Versión
+    skip: Saltar al contenido
+    contents: En esta página
+    draft_title: Borrador pendiente de completar
+    draft_body: Borrador para revisión. Falta habilitar el correo de atención y confirmar el domicilio completo,
+      las condiciones de conservación, los proveedores que intervienen y el procedimiento de atención antes de considerar
+      definitivo este aviso.
+    identity: Responsable del tratamiento
+    address: Domicilio
+    contact: Atención de privacidad
+    pending: Pendiente de completar
+    footer: Esta página se abre por separado para que conserves tu formulario.
+    sections:
+      responsible:
+        title: Quién trata tus datos
+        body: La entidad responsable de operar Delta POS deberá identificarse a continuación. El nombre comercial
+          del sistema no sustituye la identidad de su responsable.
+      data:
+        title: Datos de la solicitud
+        body: El formulario solicita nombre, correo electrónico, teléfono con código de país, nombre y giro del
+          comercio y número de sucursales. El mensaje es opcional. Se registra el idioma de la solicitud y la fecha
+          de aceptación del consentimiento. Evita incluir contraseñas, datos bancarios o información sensible en
+          el mensaje.
+      purposes:
+        title: Para qué se utilizan
+        body: La solicitud permite al equipo dar seguimiento comercial, responder tus preguntas y coordinar una
+          demostración. El sistema puede enviar confirmaciones, actualizaciones de la cita y recordatorios relacionados
+          con esa solicitud. El formulario no incluye una suscripción a publicidad.
+      handling:
+        title: Acceso y conservación
+        body: La información enviada se guarda en el sistema y se consulta desde el módulo administrativo de solicitudes.
+          El envío de correos requiere los servicios configurados por el operador. Deben confirmarse los destinatarios,
+          proveedores, posibles transferencias y plazos de conservación aplicables; este borrador no establece todavía
+          esos detalles.
+      rights:
+        title: Tus opciones y solicitudes
+        body: Puedes solicitar información sobre tus datos, su corrección o eliminación, o expresar oposición y
+          revocar tu consentimiento a través del canal de privacidad indicado arriba, una vez habilitado. Indica
+          la solicitud que quieres revisar y evita enviar documentos sensibles por canales no confirmados. El responsable
+          deberá definir y comunicar el procedimiento de atención aplicable.
+      cookies:
+        title: Preferencias del navegador
+        body: El sistema utiliza una sesión y la preferencia de idioma del navegador. Al cambiar el idioma dentro
+          del formulario, los campos se conservan temporalmente en memoria para continuar el mismo flujo; no se
+          guardan en el almacenamiento local del navegador. Al recargar o cerrar la página puede perderse lo que
+          aún no has enviado.
+      changes:
+        title: Cambios en este documento
+        body: La versión vigente y sus cambios se publicarán en esta página. Revisa la fecha de versión y los datos
+          del responsable antes de enviar tu solicitud.
+    contact_name: Persona de contacto
+    provisional_email: Correo de ejemplo. No está habilitado para recibir solicitudes.

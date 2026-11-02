@@ -1,0 +1,55 @@
+<% content_for :title, "#{t('privacy.title')} · Delta POS" %>
+<div class="privacy-page">
+  <a href="#privacy-content" class="privacy-skip"><%= t('privacy.skip') %></a>
+  <header class="privacy-header">
+    <div class="privacy-header-inner">
+      <%= link_to root_path, class: 'inline-flex items-center gap-3 font-jakarta text-lg font-extrabold text-slate-900', 'aria-label': 'Delta POS' do %>
+        <%= image_tag 'delta-pos-logo.svg', width: 36, height: 36, alt: '', class: 'h-9 w-9' %><span>Delta POS</span>
+      <% end %>
+      <%= render Authentication::LanguageSelectorComponent.new(languages: Language.available.order(:code), current_language: Language.available.find_by(code: I18n.locale.to_s) || current_language) %>
+    </div>
+  </header>
+  <main id="privacy-content" class="privacy-content" tabindex="-1">
+    <header class="privacy-intro">
+      <p class="privacy-eyebrow"><%= t('privacy.eyebrow') %></p>
+      <h1><%= t('privacy.title') %></h1>
+      <p class="privacy-lead"><%= t('privacy.intro') %></p>
+      <p class="text-sm text-slate-600"><%= t('privacy.version') %>: 2026-11-02</p>
+    </header>
+    <aside class="privacy-draft" role="note" aria-label="<%= t('privacy.draft_title') %>" data-privacy-draft>
+      <strong><%= t('privacy.draft_title') %></strong><p><%= t('privacy.draft_body') %></p>
+    </aside>
+    <div class="privacy-layout">
+      <nav class="privacy-index" aria-label="<%= t('privacy.contents') %>">
+        <p><%= t('privacy.contents') %></p>
+        <ol>
+          <% %w[responsible data purposes handling rights cookies changes].each_with_index do |section, index| %>
+            <li><%= link_to "#{index + 1}. #{t("privacy.sections.#{section}.title")}", "##{section}" %></li>
+          <% end %>
+        </ol>
+      </nav>
+      <article class="privacy-article">
+        <section id="responsible" aria-labelledby="responsible-title">
+          <h2 id="responsible-title"><span>01</span><%= t('privacy.sections.responsible.title') %></h2>
+          <p><%= t('privacy.sections.responsible.body') %></p>
+          <dl class="privacy-details">
+            <dt><%= t('privacy.identity') %></dt><dd><%= @privacy_identity.presence || t('privacy.pending') %></dd>
+            <dt><%= t('privacy.contact_name') %></dt><dd><%= @privacy_contact_name.presence || t('privacy.pending') %></dd>
+            <dt><%= t('privacy.address') %></dt><dd><%= @privacy_address.presence || t('privacy.pending') %></dd>
+            <dt><%= t('privacy.contact') %></dt><dd><% if @privacy_email %><%= mail_to @privacy_email %><% else %><span>privacidad@kurosoft.example</span><p class="text-sm text-slate-600"><%= t('privacy.provisional_email') %></p><% end %></dd>
+          </dl>
+        </section>
+        <% %w[data purposes handling rights cookies changes].each_with_index do |section, index| %>
+          <section id="<%= section %>" aria-labelledby="<%= section %>-title">
+            <h2 id="<%= section %>-title"><span>0<%= index + 2 %></span><%= t("privacy.sections.#{section}.title") %></h2>
+            <p><%= t("privacy.sections.#{section}.body") %></p>
+          </section>
+        <% end %>
+      </article>
+    </div>
+    <footer class="privacy-footer">
+      <p><%= t('privacy.footer') %></p>
+      <%= link_to t('demo_requests.new.return_home'), root_path, class: 'privacy-back' %>
+    </footer>
+  </main>
+</div>

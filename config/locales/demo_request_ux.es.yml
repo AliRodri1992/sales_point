@@ -1,0 +1,48 @@
+es:
+  demo_requests:
+    form:
+      title: Solicitar demostración
+      contact_step: Contacto
+      business_step: Comercio
+      consent: Consentimiento
+      message_hint: Opcional. Hasta 2,000 caracteres.
+      sending: Enviando…
+      email_invalid: no tiene un formato válido.
+      phone_invalid: no tiene un formato válido para el país seleccionado.
+      phone_pending: no se puede validar todavía. Espera un momento.
+      phone_unavailable: no se pudo validar. Recarga la página e inténtalo de nuevo.
+      network_error: No pudimos confirmar el envío. Revisa la conexión e inténtalo de nuevo. Conservamos tus datos
+        en el formulario.
+      server_error: No se pudo completar la solicitud. Inténtalo de nuevo en unos momentos. Conservamos tus datos
+        en el formulario.
+      close_notice: Cerrar aviso de la solicitud
+      themes:
+        emerald: Esmeralda
+        sapphire: Zafiro
+        sky: Azul cielo
+        lime: Verde lima
+        olive: Verde oliva
+        yellow: Amarillo
+        gold: Dorado
+        orange: Naranja
+        magenta: Magenta
+        rose: Rosa
+        mint: Menta
+        cherry: Cereza
+        violet: Violeta
+        teal: Verde azulado
+        indigo: Índigo
+        cyan: Cian
+        fuchsia: Fucsia
+        ruby: Rubí
+        bronze: Bronce
+        slate: Pizarra
+  activerecord:
+    errors:
+      models:
+        demo_request:
+          too_short: debe tener al menos %{count} caracteres.
+          too_long: no puede superar los %{count} caracteres.
+          attributes:
+            company:
+              blank: no puede estar vacía.

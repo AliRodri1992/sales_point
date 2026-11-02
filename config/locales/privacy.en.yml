@@ -1,0 +1,53 @@
+en:
+  privacy:
+    title: Privacy policy
+    eyebrow: Delta POS · Privacy
+    intro: Information about the use of the data you share when requesting a Delta POS demonstration.
+    version: Version
+    skip: Skip to content
+    contents: On this page
+    draft_title: Draft awaiting completion
+    draft_body: Draft for review. The contact email must be enabled and the full address, retention conditions,
+      service providers and request procedure confirmed before this notice is finalized.
+    identity: Data controller
+    address: Address
+    contact: Privacy contact
+    pending: To be completed
+    footer: This page opens separately so you can keep your form.
+    sections:
+      responsible:
+        title: Who handles your data
+        body: The entity responsible for operating Delta POS must be identified below. The product name does not
+          replace the identity of its operator.
+      data:
+        title: Request information
+        body: The form requests your name, email, phone with country code, business name and type, and branch count.
+          Your message is optional. The request language and consent timestamp are recorded. Avoid including passwords,
+          banking details or sensitive information in your message.
+      purposes:
+        title: How it is used
+        body: The request lets the team follow up, answer questions and coordinate a demonstration. The system may
+          send confirmations, appointment updates and reminders related to your request. The form does not include
+          an advertising subscription.
+      handling:
+        title: Access and retention
+        body: Submitted information is stored in the system and accessed through the administrative requests module.
+          Email delivery uses services configured by the operator. Recipients, providers, possible transfers and
+          applicable retention periods must be confirmed; this draft does not yet establish those details.
+      rights:
+        title: Your choices and requests
+        body: You can request information about your data, correction or deletion, express objections, or withdraw
+          consent through the privacy contact above once enabled. Identify the request you want reviewed and avoid
+          sending sensitive documents through unconfirmed channels. The operator must define and communicate the
+          applicable request procedure.
+      cookies:
+        title: Browser preferences
+        body: The system uses a session and a browser language preference. Switching language within the form temporarily
+          keeps fields in memory to continue the same flow; they are not saved in browser local storage. Reloading
+          or closing the page may discard information you have not submitted.
+      changes:
+        title: Changes to this document
+        body: The current version and changes will be published on this page. Review the version date and operator
+          details before submitting a request.
+    contact_name: Contact person
+    provisional_email: Example email. It is not enabled to receive requests.

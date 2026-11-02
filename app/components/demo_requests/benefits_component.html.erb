@@ -1,4 +1,4 @@
-<div class="relative z-10 flex h-full max-w-sm select-none flex-col justify-between text-white">
+<div class="relative z-10 flex min-h-full max-w-sm select-none flex-col justify-between text-white">
   <div class="flex items-center gap-3">
     <%= image_tag 'delta-pos-logo.svg', class: 'h-20 w-20 shrink-0', alt: t('demo_requests.new.logo_alt') %>
     <div class="flex flex-col leading-none">
@@ -9,8 +9,8 @@
 
   <div class="my-auto w-full space-y-5">
     <div class="space-y-2">
-      <h1 id="demo-request-title" class="font-jakarta text-xl font-extrabold leading-tight tracking-tight text-white"><%= t('demo_requests.new.panel_title') %></h1>
-      <p class="text-xs font-medium leading-relaxed text-slate-400"><%= t('demo_requests.new.panel_description') %></p>
+      <h2 id="demo-request-title" class="font-jakarta text-2xl font-extrabold leading-tight tracking-tight text-white"><%= t('demo_requests.new.panel_title') %></h2>
+      <p class="text-sm font-medium leading-relaxed text-slate-300"><%= t('demo_requests.new.panel_description') %></p>
     </div>
 
     <div class="space-y-2.5">
@@ -25,13 +25,13 @@
             <%= render Ui::IconComponent.new(name: icon_name, size: :sm, color: :inherit) %>
           </div>
           <div class="leading-none">
-            <h2 class="font-jakarta text-xs font-bold text-white"><%= t("demo_requests.new.modules.#{module_key}.title") %></h2>
-            <p class="mt-1 text-[10px] leading-normal text-slate-400"><%= t("demo_requests.new.modules.#{module_key}.description") %></p>
+            <h2 class="font-jakarta text-sm font-bold text-white"><%= t("demo_requests.new.modules.#{module_key}.title") %></h2>
+            <p class="mt-1 text-xs leading-relaxed text-slate-300"><%= t("demo_requests.new.modules.#{module_key}.description") %></p>
           </div>
         </div>
       <% end %>
     </div>
   </div>
 
-  <div class="relative text-[11px] tracking-wide text-slate-500"><%= t('demo_requests.new.copyright', year: Time.current.year) %></div>
+  <div class="relative text-xs tracking-wide text-slate-400"><%= t('demo_requests.new.copyright', year: Time.current.year) %></div>
 </div>

@@ -1,0 +1,46 @@
+ko:
+  demo_requests:
+    form:
+      title: 데모 신청
+      contact_step: 연락처
+      business_step: 사업 정보
+      consent: 개인정보 동의
+      message_hint: 선택 사항입니다. 최대 2,000자까지 입력할 수 있습니다.
+      sending: 전송 중…
+      email_invalid: 올바른 형식이 아닙니다.
+      phone_invalid: 선택한 국가의 전화번호 형식과 일치하지 않습니다.
+      phone_pending: 아직 확인할 수 없습니다. 잠시 기다려 주세요.
+      phone_unavailable: 확인할 수 없습니다. 페이지를 새로고침한 후 다시 시도해 주세요.
+      network_error: 전송을 확인하지 못했습니다. 연결을 확인하고 다시 시도하세요. 입력한 정보는 양식에 남아 있습니다.
+      server_error: 요청을 완료하지 못했습니다. 잠시 후 다시 시도하세요. 입력한 정보는 양식에 남아 있습니다.
+      close_notice: 신청 알림 닫기
+      themes:
+        emerald: 에메랄드
+        sapphire: 사파이어
+        sky: 하늘색
+        lime: 라임
+        olive: 올리브
+        yellow: 노란색
+        gold: 금색
+        orange: 주황색
+        magenta: 마젠타
+        rose: 장미색
+        mint: 민트
+        cherry: 체리
+        violet: 보라색
+        teal: 청록색
+        indigo: 남색
+        cyan: 시안
+        fuchsia: 푸시아
+        ruby: 루비
+        bronze: 브론즈
+        slate: 슬레이트
+  activerecord:
+    errors:
+      models:
+        demo_request:
+          too_short: 최소 %{count}자 이상이어야 합니다.
+          too_long: '%{count}자를 초과할 수 없습니다.'
+          attributes:
+            company:
+              blank: 비워 둘 수 없습니다.

@@ -7,6 +7,8 @@
 @import "./components/sweetalert.css";
 @import "./components/delta_confirm.css";
 @import "./components/landing.css";
+@import "./components/demo_request.css";
+@import "./components/privacy.css";
 @import "./components/supplier_edit_uppy.css";
 
 @theme {
@@ -1395,60 +1397,6 @@ select:focus-visible {
         transition: none;
     }
 }
-
-
-/* ============================================================
-   DELTA POS — Demo Request
-   ============================================================ */
-.demo-request-page {
-  --demo-primary-start: #059669;
-  --demo-primary-end: #0d9488;
-}
-
-.demo-request-page .btn-delta-gradient {
-  background: linear-gradient(135deg, var(--demo-primary-start), var(--demo-primary-end));
-}
-
-.demo-request-page .btn-delta-gradient:hover {
-  filter: brightness(.94);
-}
-
-.demo-request-page .demo-request__input:focus {
-  box-shadow: 0 0 0 1px var(--demo-primary-start);
-}
-
-.demo-request-page .iti {
-  display: block;
-  width: 100%;
-}
-
-.demo-request-page .iti input.iti__tel-input {
-  width: 100%;
-  min-width: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .demo-request-page * {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-/* ============================================================
-   DELTA POS — Demo Request Validation & Success State
-   ============================================================ */
-.demo-request-page [aria-invalid="true"] { border-color: #f43f5e !important; background-color: #fff1f2; }
-.demo-request-page [aria-invalid="true"]:focus { border-color: #f43f5e !important; box-shadow: 0 0 0 1px #f43f5e; }
-.demo-request-page input[type="checkbox"][aria-invalid="true"] { outline: 2px solid #f43f5e; outline-offset: 2px; }
-.demo-request-page .success-state { animation: demo-success-enter 180ms ease-out; }
-@keyframes demo-success-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@media (max-width: 639px) {
-  .demo-request-page { min-height: 100dvh; }
-  .demo-request-page > div { min-height: 100dvh; }
-  .demo-request-page .demo-request__input, .demo-request-page .iti input.iti__tel-input, .demo-request-page select { min-height: 2.75rem; }
-}
-@media (prefers-reduced-motion: reduce) { .demo-request-page .success-state { animation: none; } }
 
 
 /* Supplier forms: invalid state must remain visible on focus, including custom selects. */

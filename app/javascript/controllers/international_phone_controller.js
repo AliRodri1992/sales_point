@@ -1,11 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 import intlTelInput from "intl-tel-input"
+import en from "intl-tel-input/locale/en"
+import es from "intl-tel-input/locale/es"
+import ko from "intl-tel-input/locale/ko"
 
 export default class extends Controller {
   static targets = ["input"]
 
   connect() {
     this.ready = false
+    this.inputTarget.dataset.phoneStatus = "loading"
     this.inputTarget.dataset.valid = "false"
     this.inputTarget.setAttribute("aria-invalid", "false")
 
@@ -21,13 +25,19 @@ export default class extends Controller {
       formatAsYouType: true,
       numberDisplayFormat: "INTERNATIONAL",
       loadUtils: () => import("intl-tel-input/utils"),
-      countryNameLocale: document.documentElement.lang || "es"
+      countryNameLocale: document.documentElement.lang || "es",
+      uiTranslations: { en, es, ko }[document.documentElement.lang?.split("-")[0]] || en
     })
 
     this.iti.promise.then(() => {
       this.ready = true
+      this.inputTarget.dataset.phoneStatus = "ready"
       this.syncCountryCode()
       this.updateValidity()
+    }).catch(() => {
+      this.inputTarget.dataset.valid = "false"
+      this.inputTarget.dataset.phoneStatus = "failed"
+      this.inputTarget.dispatchEvent(new CustomEvent("international-phone:validated", { bubbles: true }))
     })
 
     this.form = this.inputTarget.form
@@ -45,8 +55,8 @@ export default class extends Controller {
     this.iti?.destroy()
   }
 
-  normalizeOnSubmit = () => {
-    if (this.ready && this.iti.isValidNumber()) {
+  normalizeOnSubmit = (event) => {
+    if (!event.defaultPrevented && this.ready && this.iti.isValidNumber()) {
       this.inputTarget.value = this.iti.getNumber()
     }
   }
@@ -57,11 +67,11 @@ export default class extends Controller {
   }
 
   syncCountryCode = () => {
+    const selectedCode = this.iti.getSelectedCountry()?.iso2?.toUpperCase()
+    if (!selectedCode) return
+    this.inputTarget.dataset.countryCode = selectedCode
     const name = this.inputTarget.name.replace(/\[number\]$/, "[country_code]")
     if (name === this.inputTarget.name) return
-
-    const selectedCode = this.iti.getSelectedCountryData()?.iso2?.toUpperCase()
-    if (!selectedCode) return
 
     let field = Array.from(this.form?.querySelectorAll('input[name]') || [])
       .find((input) => input.name === name)
@@ -83,5 +93,6 @@ export default class extends Controller {
     this.inputTarget.setAttribute("aria-invalid", String(hasValue && !valid))
     this.inputTarget.classList.toggle("border-rose-500", hasValue && !valid)
     this.inputTarget.classList.toggle("bg-rose-50", hasValue && !valid)
+    this.inputTarget.dispatchEvent(new CustomEvent("international-phone:validated", { bubbles: true }))
   }
 }

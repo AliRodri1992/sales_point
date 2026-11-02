@@ -23,22 +23,78 @@ module DemoRequests
     attr_reader :demo_request, :notice
 
     def field_classes(attribute)
-      base = 'demo-request__input appearance-none block w-full rounded-xl border px-3 py-1.5'
-      base += ' text-xs shadow-sm transition-all placeholder:text-slate-400 focus:outline-none focus:ring-1'
-
-      class_names(base, field_state_classes(attribute))
+      class_names('demo-request__input', 'demo-request__input--invalid': demo_request.errors[attribute].any?)
     end
 
-    def field_state_classes(attribute)
-      if demo_request.errors[attribute].any?
-        'border-rose-400 bg-rose-50 focus:border-rose-500 focus:ring-rose-500'
-      else
-        'border-slate-200 bg-white focus:border-emerald-500 focus:ring-emerald-500'
-      end
+    def demo_field_label(attribute)
+      return t('demo_requests.form.consent') if attribute == :terms_accepted
+      return DemoRequest.human_attribute_name(:message) if attribute == :message
+
+      t("demo_requests.new.#{attribute}")
+    end
+
+    def formatted_error(attribute, message)
+      text = "#{demo_field_label(attribute)} #{message}".strip
+      text.match?(/[.!?。？！]\z/) ? text : "#{text}."
     end
 
     def error_for(attribute)
-      helpers.error_message_for(demo_request, attribute)
+      demo_request.errors[attribute].map { |message| formatted_error(attribute, message) }.join(' ')
+    end
+
+    def limits_for(attribute)
+      options = DemoRequest.validators_on(attribute).find { |validator| validator.kind == :length }&.options || {}
+      { minlength: options[:in]&.begin || options[:minimum],
+        maxlength: options[:in]&.end || options[:maximum] }.compact
+    end
+
+    def field_options(attribute, data: {})
+      limits_for(attribute).merge(
+        required: attribute != :message,
+        aria: { describedby: "demo_request_#{attribute}_error", invalid: demo_request.errors[attribute].any? },
+        data: validation_messages(attribute).merge(demo_field: attribute).merge(data)
+      )
+    end
+
+    def validation_message(attribute, code, **)
+      formatted_error(attribute, demo_request.errors.generate_message(attribute, code, **))
+    end
+
+    def invalid_message(attribute)
+      return formatted_error(attribute, t('demo_requests.form.phone_invalid')) if attribute == :phone
+      return formatted_error(attribute, t('demo_requests.form.email_invalid')) if attribute == :email
+
+      validation_message(attribute, :invalid)
+    end
+
+    def validation_messages(attribute)
+      messages = { demo_required: validation_message(attribute, :blank), demo_invalid: invalid_message(attribute),
+                   demo_accepted: validation_message(attribute, :accepted) }
+      if attribute == :phone
+        messages[:demo_pending] = formatted_error(attribute, t('demo_requests.form.phone_pending'))
+        messages[:demo_unavailable] = formatted_error(attribute, t('demo_requests.form.phone_unavailable'))
+      end
+      add_length_messages(messages, attribute)
+      add_branch_messages(messages, attribute)
+      messages
+    end
+
+    def add_length_messages(messages, attribute)
+      limits = limits_for(attribute)
+      if limits[:minlength]
+        messages[:demo_too_short] = validation_message(attribute, :too_short, count: limits[:minlength])
+      end
+      return unless limits[:maxlength]
+
+      messages[:demo_too_long] = validation_message(attribute, :too_long, count: limits[:maxlength])
+    end
+
+    def add_branch_messages(messages, attribute)
+      return unless attribute == :branches
+
+      messages[:demo_integer] = validation_message(attribute, :not_an_integer)
+      messages[:demo_minimum] = validation_message(attribute, :greater_than_or_equal_to, count: 1)
+      messages[:demo_maximum] = validation_message(attribute, :less_than_or_equal_to, count: DemoRequest::MAX_BRANCHES)
     end
   end
 end

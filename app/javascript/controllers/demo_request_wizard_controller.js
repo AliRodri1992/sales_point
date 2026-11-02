@@ -1,45 +1,61 @@
 import { Controller } from "@hotwired/stimulus"
+import { Turbo } from "@hotwired/turbo-rails"
+
+// A one-render handoff for explicit language changes. Contact data never goes to browser storage.
+let pendingDraft = null
+
+function actionColor(hex) {
+  const rgb = hex.match(/[a-f\d]{2}/gi).map(value => parseInt(value, 16))
+  let factor = 1
+  let channels = rgb
+  const contrast = values => {
+    const linear = values.map(value => {
+      const channel = value / 255
+      return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+    })
+    return 1.05 / (linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722 + 0.05)
+  }
+  while (contrast(channels) < 4.8) {
+    factor *= 0.95
+    channels = rgb.map(value => Math.round(value * factor))
+  }
+  return `#${channels.map(value => value.toString(16).padStart(2, "0")).join("")}`
+}
 
 export default class extends Controller {
-  static targets = [
-    "step", "node", "progress", "form", "businessType", "businessError",
-    "branches", "branchesError", "terms", "termsError", "themeDropdown",
-    "nameError", "emailError", "phoneError", "company", "companyError", "message", "messageError", "success"
-  ]
-
-  static values = { paletteOnly: Boolean }
+  static targets = ["step", "node", "progress", "form", "themeDropdown", "themeButton", "themeOption", "success", "feedback"]
+  static values = { networkMessage: String, serverMessage: String, closeLabel: String }
 
   connect() {
+    this.errorsShown = new Set()
     this.currentStep = this.initialStep()
-    if (this.hasSuccessTarget) requestAnimationFrame(() => this.successTarget.focus())
-    document.addEventListener("click", this.closeOnOutsideClick)
+    this.theme = "emerald"
+    if (this.hasFormTarget) {
+      this.fields.forEach(field => {
+        if (this.errorTarget(field)?.textContent.trim()) this.errorsShown.add(field.dataset.demoField)
+      })
+      const draft = pendingDraft
+      pendingDraft = null
+      if (draft?.url === window.location.href) this.restoreDraft(draft)
+    }
+    this.applyTheme(this.theme)
     this.renderStep()
+    if (this.hasSuccessTarget) requestAnimationFrame(() => this.successTarget.focus())
+    else if (this.errorsShown.size) requestAnimationFrame(() => this.focusFirstInvalid())
   }
 
-  disconnect() {
-    document.removeEventListener("click", this.closeOnOutsideClick)
+  get fields() {
+    return Array.from(this.formTarget.querySelectorAll("[data-demo-field]"))
   }
 
   initialStep() {
-    if (this.paletteOnlyValue || !this.hasFormTarget) return 1
-
-    const [stepOne, stepTwo] = this.stepTargets
-    if (stepTwo?.querySelector('[aria-invalid="true"]')) return 2
-    if (stepOne?.querySelector('[aria-invalid="true"]')) return 1
-
-    return 1
+    return this.stepTargets.find(step => step.querySelector('[aria-invalid="true"]'))?.dataset.step === "2" ? 2 : 1
   }
 
   next(event) {
     event.preventDefault()
-    const valid = this.validateStepOne()
-
-    if (valid) {
-      this.currentStep = 2
-    } else {
-      this.showValidationAlert()
-    }
-
+    if (this.validateStep(1)) this.currentStep = 2
+    else this.showValidationAlert()
     this.renderStep()
     this.focusFirstInvalid()
   }
@@ -52,183 +68,199 @@ export default class extends Controller {
   }
 
   submit(event) {
-    if (this.paletteOnlyValue || !this.hasFormTarget) return
+    if (this.currentStep === 1) return this.next(event)
+    const firstValid = this.validateStep(1)
+    const secondValid = this.validateStep(2)
+    if (firstValid && secondValid) return
+    event.preventDefault()
+    this.currentStep = firstValid ? 2 : 1
+    this.renderStep()
+    this.showValidationAlert()
+    this.focusFirstInvalid()
+  }
 
-    this.clearBusinessErrors()
-    const stepOneValid = this.validateStepOne()
-    const stepTwoValid = this.validateStepTwo()
+  validateStep(number) {
+    const fields = this.fields.filter(field => field.closest('[data-demo-request-wizard-target="step"]').dataset.step === String(number))
+    return fields.map(field => this.validateField(field)).every(Boolean)
+  }
 
-    if (!stepOneValid || !stepTwoValid) {
-      event.preventDefault()
-      this.currentStep = stepOneValid ? 2 : 1
-      this.renderStep()
-      this.showValidationAlert()
-      this.focusFirstInvalid()
+  errorTarget(field) {
+    return this.formTarget.querySelector(`#demo_request_${field.dataset.demoField}_error`)
+  }
+
+  messageFor(field) {
+    const value = field.value.trim()
+    const data = field.dataset
+    if (field.type === "checkbox") return field.checked ? "" : data.demoAccepted
+    if (field.required && !value) return data.demoRequired
+    const length = Array.from(value).length
+    if (field.minLength > 0 && length < field.minLength) return data.demoTooShort
+    if (field.maxLength >= 0 && length > field.maxLength) return data.demoTooLong
+    if (field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return data.demoInvalid
+    if (data.demoField === "phone" && data.valid !== "true") {
+      if (data.phoneStatus === "loading") return data.demoPending
+      if (data.phoneStatus === "failed") return data.demoUnavailable
+      return data.demoInvalid
     }
-  }
-
-  validateStepOne() {
-    let valid = true
-    const fields = [
-      ["name", this.nameErrorTarget],
-      ["email", this.emailErrorTarget],
-      ["phone", this.phoneErrorTarget]
-    ]
-
-    fields.forEach(([field, errorTarget]) => {
-      const input = this.formTarget.querySelector(`#demo_request_${field}`)
-      errorTarget.classList.add("hidden")
-      if (input && !input.value.trim()) {
-        errorTarget.classList.remove("hidden")
-        errorTarget.textContent = errorTarget.dataset.requiredMessage
-        input.setAttribute("aria-invalid", "true")
-        valid = false
-      } else if (input && field === "email" && !this.validEmail(input.value)) {
-        errorTarget.classList.remove("hidden")
-        errorTarget.textContent = errorTarget.dataset.invalidMessage
-        input.setAttribute("aria-invalid", "true")
-        valid = false
-      } else if (input && field === "phone" && input.dataset.valid !== "true") {
-        errorTarget.classList.remove("hidden")
-        errorTarget.textContent = errorTarget.dataset.invalidMessage
-        input.setAttribute("aria-invalid", "true")
-        valid = false
-      } else if (input) {
-        errorTarget.classList.add("hidden")
-        input.removeAttribute("aria-invalid")
-      }
-    })
-
-    return valid
-  }
-
-  validEmail(value) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-  }
-
-  showValidationAlert() {
-    if (!window.Swal) return
-
-    window.Swal.fire({
-      toast: true,
-      icon: "warning",
-      position: "top-end",
-      timer: 3200,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      title: this.formTarget.dataset.validationTitle
-    })
-  }
-
-  validateStepTwo() {
-    let valid = true
-    if (!this.businessTypeTarget.value) {
-      this.showError(this.businessTypeTarget, this.businessErrorTarget, this.businessErrorTarget.dataset.requiredMessage)
-      valid = false
-    } else {
-      this.clearFieldError(this.businessTypeTarget, this.businessErrorTarget)
+    if (data.demoField === "branches") {
+      const number = Number(value)
+      if (!Number.isInteger(number)) return data.demoInteger
+      if (number < Number(field.min)) return data.demoMinimum
+      if (number > Number(field.max)) return data.demoMaximum
     }
-
-    if (!this.companyTarget.value.trim()) {
-      this.showError(this.companyTarget, this.companyErrorTarget, this.companyErrorTarget.dataset.requiredMessage)
-      valid = false
-    } else {
-      this.clearFieldError(this.companyTarget, this.companyErrorTarget)
-    }
-
-    const branchesValue = Number(this.branchesTarget.value)
-    if (!this.branchesTarget.value || !Number.isInteger(branchesValue) || branchesValue < 1 || branchesValue > Number(this.branchesTarget.max)) {
-      this.showError(this.branchesTarget, this.branchesErrorTarget, this.branchesErrorTarget.dataset.requiredMessage)
-      valid = false
-    } else {
-      this.clearFieldError(this.branchesTarget, this.branchesErrorTarget)
-    }
-
-    if (this.messageTarget.value.length > 2000) {
-      this.showError(this.messageTarget, this.messageErrorTarget, this.messageErrorTarget.dataset.invalidMessage)
-      valid = false
-    } else {
-      this.clearFieldError(this.messageTarget, this.messageErrorTarget)
-    }
-
-    if (!this.termsTarget.checked) {
-      this.showError(this.termsTarget, this.termsErrorTarget, this.termsErrorTarget.dataset.requiredMessage)
-      valid = false
-    } else {
-      this.clearFieldError(this.termsTarget, this.termsErrorTarget)
-    }
-
-    return valid
+    return ""
   }
 
-  showError(input, target, message) {
-    target.textContent = message
-    target.classList.remove("hidden")
-    input.setAttribute("aria-invalid", "true")
+  validateField(field) {
+    this.errorsShown.add(field.dataset.demoField)
+    const message = this.messageFor(field) || ""
+    const error = this.errorTarget(field)
+    error.textContent = message
+    error.classList.toggle("hidden", !message)
+    field.setAttribute("aria-invalid", String(!!message))
+    field.classList.toggle("demo-request__input--invalid", !!message)
+    return !message
   }
 
-  clearFieldError(input, target) {
-    target.textContent = ""
-    target.classList.add("hidden")
-    input.setAttribute("aria-invalid", "false")
+  revalidate(event) {
+    const field = event.target.closest("[data-demo-field]")
+    if (field && this.errorsShown.has(field.dataset.demoField)) this.validateField(field)
   }
 
-  clearBusinessErrors() {
-    this.clearFieldError(this.businessTypeTarget, this.businessErrorTarget)
-    this.clearFieldError(this.branchesTarget, this.branchesErrorTarget)
-    this.clearFieldError(this.termsTarget, this.termsErrorTarget)
+  validateOnBlur(event) {
+    const field = event.target.closest("[data-demo-field]")
+    if (field && (field.value.trim() || this.errorsShown.has(field.dataset.demoField))) this.validateField(field)
   }
 
   focusFirstInvalid() {
-    const step = this.stepTargets.find((item) => Number(item.dataset.step) === this.currentStep)
+    const step = this.stepTargets.find(item => Number(item.dataset.step) === this.currentStep)
     if (!step) return
-    const invalid = step.querySelector('[aria-invalid="true"]')
-    // Native selects may have been enhanced into a visible Delta Select trigger.
+    const invalid = Array.from(step.querySelectorAll("[data-demo-field]")).find(field => this.errorTarget(field)?.textContent.trim())
     const target = invalid?.tagName === "SELECT"
       ? invalid.closest(".delta-select-container")?.querySelector('button[aria-haspopup="listbox"]') || invalid
-      : invalid || step.querySelector("h3")
+      : invalid || step.querySelector(".demo-step-title")
     target?.focus()
   }
 
   renderStep() {
-    if (this.paletteOnlyValue || !this.hasFormTarget) return
-
-    this.stepTargets.forEach((step) => {
-      step.classList.toggle("hidden", Number(step.dataset.step) !== this.currentStep)
-    })
+    if (!this.hasFormTarget) return
+    this.stepTargets.forEach(step => step.classList.toggle("hidden", Number(step.dataset.step) !== this.currentStep))
     this.progressTarget.style.width = this.currentStep === 1 ? "0%" : "100%"
-
-    this.nodeTargets.forEach((node) => {
-      const active = Number(node.dataset.step) <= this.currentStep
-      node.classList.toggle("bg-slate-100", !active)
-      node.classList.toggle("text-slate-400", !active)
-      node.classList.toggle("bg-[var(--demo-primary-start)]", active)
-      node.classList.toggle("text-white", active)
-      node.setAttribute("aria-current", Number(node.dataset.step) === this.currentStep ? "step" : "false")
+    this.nodeTargets.forEach(node => {
+      const step = Number(node.dataset.step)
+      node.dataset.active = String(step <= this.currentStep)
+      if (step === this.currentStep) node.setAttribute("aria-current", "step")
+      else node.removeAttribute("aria-current")
     })
   }
 
-  toggleTheme(event) {
-    event.stopPropagation()
-    this.themeDropdownTarget.classList.toggle("hidden")
+  showValidationAlert() {
+    window.Swal?.fire({ toast: true, icon: "warning", position: "top-end", timer: 3200,
+      timerProgressBar: true, showConfirmButton: false, title: this.formTarget.dataset.validationTitle })
+  }
+
+  submitStart() {
+    this.failedNotified = false
+    this.feedbackTarget.classList.add("hidden")
+  }
+
+  beforeResponse(event) {
+    const status = event.detail.fetchResponse.statusCode
+    if (status < 400 || status === 422) return
+    event.preventDefault()
+    this.showSubmissionError(this.serverMessageValue)
+  }
+
+  requestError(event) {
+    event.preventDefault()
+    this.showSubmissionError(this.networkMessageValue)
+  }
+
+  submitEnd(event) {
+    if (event.detail.error && !this.failedNotified) this.showSubmissionError(this.networkMessageValue)
+  }
+
+  showSubmissionError(message) {
+    if (this.failedNotified) return
+    this.failedNotified = true
+    const button = this.formTarget.querySelector('input[type="submit"]')
+    if (window.Swal) {
+      window.Swal.fire({ toast: true, icon: "error", position: "top-end", title: message,
+        showConfirmButton: false, showCloseButton: true, closeButtonAriaLabel: this.closeLabelValue,
+        didClose: () => { if (button?.isConnected) button.focus() } })
+      requestAnimationFrame(() => button?.focus())
+    } else {
+      this.feedbackTarget.textContent = message
+      this.feedbackTarget.classList.remove("hidden")
+      this.feedbackTarget.focus()
+    }
+  }
+
+  changeLanguage(event) {
+    if (!this.hasFormTarget) return
+    event.preventDefault()
+    pendingDraft = { url: window.location.href, step: this.currentStep, theme: this.theme,
+      fields: this.fields.map(field => ({ name: field.dataset.demoField, value: field.value,
+        checked: field.checked, country: field.dataset.countryCode })), touched: [...this.errorsShown] }
+    Turbo.visit(window.location.href, { action: "replace" })
+    document.addEventListener("turbo:load", () => setTimeout(() => { pendingDraft = null }, 0), { once: true })
+  }
+
+  restoreDraft(draft) {
+    draft.fields.forEach(saved => {
+      const field = this.fields.find(item => item.dataset.demoField === saved.name)
+      if (!field) return
+      field.value = saved.value
+      if (field.tagName === "SELECT") field.dispatchEvent(new Event("change", { bubbles: true }))
+      if (field.type === "checkbox") field.checked = saved.checked
+      if (saved.country) field.dataset.countryCode = saved.country
+    })
+    this.currentStep = draft.step
+    this.theme = draft.theme
+    this.fields.filter(field => draft.touched.includes(field.dataset.demoField)).forEach(field => this.validateField(field))
+  }
+
+  toggleTheme() {
+    if (!this.themeDropdownTarget.classList.contains("hidden")) return this.closeTheme()
+    this.themeDropdownTarget.classList.remove("hidden")
+    this.themeButtonTarget.setAttribute("aria-expanded", "true")
+    this.themeOptionTargets.find(option => option.getAttribute("aria-pressed") === "true")?.focus()
+  }
+
+  closeTheme() {
+    this.themeDropdownTarget.classList.add("hidden")
+    this.themeButtonTarget.setAttribute("aria-expanded", "false")
   }
 
   selectTheme(event) {
-    event.stopPropagation()
-    const { start, end } = event.currentTarget.dataset
-    const root = document.documentElement
-
-    root.style.setProperty("--demo-primary-start", start)
-    root.style.setProperty("--demo-primary-end", end)
-    root.style.setProperty("--theme-hover-start", `color-mix(in srgb, ${start} 88%, black)`)
-    root.style.setProperty("--theme-hover-end", `color-mix(in srgb, ${end} 88%, black)`)
-    root.style.setProperty("--theme-active-start", `color-mix(in srgb, ${start} 76%, black)`)
-    root.style.setProperty("--theme-active-end", `color-mix(in srgb, ${end} 76%, black)`)
-    this.themeDropdownTarget.classList.add("hidden")
+    this.applyTheme(event.currentTarget.dataset.theme)
+    this.closeTheme()
+    this.themeButtonTarget.focus()
   }
 
-  closeOnOutsideClick = (event) => {
-    if (!this.paletteOnlyValue || this.element.contains(event.target)) return
-    this.themeDropdownTarget.classList.add("hidden")
+  applyTheme(theme) {
+    const option = this.themeOptionTargets.find(item => item.dataset.theme === theme) || this.themeOptionTargets[0]
+    this.theme = option.dataset.theme
+    this.element.style.setProperty("--demo-primary-start", actionColor(option.dataset.start))
+    this.element.style.setProperty("--demo-primary-end", actionColor(option.dataset.end))
+    this.themeOptionTargets.forEach(item => item.setAttribute("aria-pressed", String(item === option)))
+  }
+
+  themeKeydown(event) {
+    if (this.themeDropdownTarget.classList.contains("hidden")) return
+    if (event.key === "Escape") {
+      event.preventDefault()
+      this.closeTheme()
+      this.themeButtonTarget.focus()
+    } else if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+      event.preventDefault()
+      const index = this.themeOptionTargets.indexOf(document.activeElement)
+      const direction = ["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1
+      this.themeOptionTargets[(index + direction + this.themeOptionTargets.length) % this.themeOptionTargets.length].focus()
+    }
+  }
+
+  closeThemeOutside(event) {
+    if (!this.themeDropdownTarget.contains(event.target) && !this.themeButtonTarget.contains(event.target)) this.closeTheme()
   }
 }

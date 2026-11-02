@@ -24,14 +24,14 @@ RSpec.describe 'Demo request wizard focus', type: :feature, js: true do
     fill_in 'demo_request_phone', with: '2221234567'
     expect(page).to have_css('#demo_request_phone[data-valid="true"]')
     click_button I18n.t('demo_requests.new.continue')
-    expect(page).to have_css('[data-step="2"] h3:focus')
+    expect(page).to have_css('[data-step="2"] .demo-step-title:focus')
 
     # Terms remain unchecked: this exercises local validation without submitting a request.
     click_button I18n.t('demo_requests.new.submit')
     expect(page).to have_css('#demo_business_type[aria-invalid="true"]', visible: :all)
     expect(page).to have_css('.delta-select-container button[aria-haspopup="listbox"]:focus')
     click_button I18n.t('demo_requests.new.back_step')
-    expect(page).to have_css('[data-step="1"] h3:focus')
+    expect(page).to have_css('[data-step="1"] .demo-step-title:focus')
     expect(find('#demo_request_email').value).to eq('demo@example.invalid')
   end
 

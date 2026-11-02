@@ -21,6 +21,27 @@ RSpec.describe 'Demo requests', type: :request do
       expect(response.body).to include('demo-request-page')
       expect(response.body).to include('demo-request-wizard')
     end
+
+    it 'uses the approved privacy URL without navigating away from the form' do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', '').and_return('https://example.com/privacy')
+      get new_demo_request_path
+
+      link = Nokogiri::HTML(response.body).at_css('a[href="https://example.com/privacy"]')
+      expect(link['target']).to eq('_blank')
+      expect(link['rel']).to include('noopener', 'noreferrer')
+      expect(response.body).not_to include('href="/#privacy"')
+    end
+
+    it 'links to the local privacy page when no external document is configured' do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', '').and_return('')
+      get new_demo_request_path
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('a[href="/privacy"][target="_blank"]')).to be_present
+      expect(document.css('a[href="/#privacy"]')).to be_empty
+    end
   end
 
   describe 'POST /demo_requests' do
