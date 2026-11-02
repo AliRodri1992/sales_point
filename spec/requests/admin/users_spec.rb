@@ -149,7 +149,7 @@ RSpec.describe 'Admin::Users', type: :request do
     before do
       16.times do |index|
         add_member(create(:user, email: format('paginate-%02d@example.com', index),
-                                username: format('employee_%02d', index)))
+                                 username: format('employee_%02d', index)))
       end
     end
 

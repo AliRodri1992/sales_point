@@ -39,10 +39,10 @@ module Admin
     def create
       return head :forbidden unless current_organization
 
-      @user = User.new(user_attributes)
+      @user = User.new
       authorize @user
 
-      if persist_user
+      if account_writer.save
         notify_user(current_user, @user, 'created')
         redirect_to admin_users_path, flash: { swal_message: t('admin.users.created') }
       else
@@ -52,9 +52,8 @@ module Admin
 
     def update
       authorize @user
-      @user.assign_attributes(user_attributes)
 
-      if persist_user
+      if account_writer.save
         notify_user(current_user, @user, 'updated')
         redirect_to admin_user_path(@user), flash: { swal_message: t('admin.users.updated') }
       else
@@ -65,15 +64,7 @@ module Admin
     def destroy
       authorize @user
 
-      if @user == current_user
-        @swal_message = t('admin.users.cannot_delete_self')
-      elsif @user.organization_memberships.active.where.not(organization_id: current_organization.id).exists?
-        @swal_message = t('admin.users.shared_account_cannot_delete')
-      else
-        @user.update!(deleted_at: Time.current)
-        notify_user(current_user, @user, 'destroyed')
-        @swal_message = t('admin.users.destroyed')
-      end
+      @swal_message = destroy_account
 
       load_users
 
@@ -92,14 +83,9 @@ module Admin
     def scoped_users
       return policy_scope(User).none unless current_organization
 
-      policy_scope(User)
-        .joins(:organization_memberships)
-        .where(organization_memberships: {
-          organization_id: current_organization.id,
-          status: 'active',
-          deleted_at: nil
-        })
-        .distinct
+      active_members = current_organization.organization_memberships.active
+                                           .where(deleted_at: nil).select(:user_id)
+      policy_scope(User).where(id: active_members)
     end
 
     def load_users
@@ -136,53 +122,19 @@ module Admin
       )
     end
 
-    def user_attributes
-      attributes = user_params.except(:system_role_ids)
-      if attributes[:password].blank?
-        attributes.delete(:password)
-        attributes.delete(:password_confirmation) if attributes[:password_confirmation].blank?
-      end
-      attributes
+    def account_writer
+      Users::AdminAccountWriter.new(user: @user, organization: current_organization, attributes: user_params)
     end
 
-    def requested_system_role_ids
-      values = user_params[:system_role_ids]
-      return nil if values.nil?
-
-      provided = Array(values).reject(&:blank?)
-      return :invalid unless provided.all? { |value| value.to_s.match?(/\A\d+\z/) }
-
-      ids = provided.map(&:to_i).uniq
-      allowed = SystemRole.system.active.where(id: ids).pluck(:id)
-      ids.sort == allowed.sort ? ids : :invalid
-    end
-
-    def persist_user
-      role_ids = requested_system_role_ids
-      if role_ids == :invalid
-        @user.valid?
-        @user.errors.add(:system_role_ids, :invalid)
-        return false
+    def destroy_account
+      return t('admin.users.cannot_delete_self') if @user == current_user
+      if @user.organization_memberships.active.where.not(organization_id: current_organization.id).exists?
+        return t('admin.users.shared_account_cannot_delete')
       end
 
-      User.transaction do
-        @user.save!
-        if @user.previously_new_record?
-          @user.organization_memberships.create!(organization: current_organization, status: :active)
-        end
-        sync_system_roles!(role_ids) unless role_ids.nil?
-      end
-      true
-    rescue ActiveRecord::RecordInvalid => error
-      @user.errors.add(:base, error.message) if @user.errors.empty?
-      false
-    end
-
-    def sync_system_roles!(role_ids)
-      active_roles = @user.user_roles.active.where(branch_id: nil).where(system_roles: { role_type: 'system' })
-      existing_ids = active_roles.pluck(:system_role_id)
-      active_roles.where.not(system_role_id: role_ids).update_all(deleted_at: Time.current, updated_at: Time.current)
-      (role_ids - existing_ids).each { |id| @user.user_roles.create!(system_role_id: id) }
+      @user.update!(deleted_at: Time.current)
+      notify_user(current_user, @user, 'destroyed')
+      t('admin.users.destroyed')
     end
 
     def load_form_options

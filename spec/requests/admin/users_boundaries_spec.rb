@@ -99,7 +99,7 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
   end
 
   it 'rejects creating an account when the administrator has no active organization' do
-    admin.organization_memberships.update_all(status: 'inactive')
+    admin.organization_memberships.each { |membership| membership.update!(status: 'inactive') }
 
     post admin_users_path, params: { user: { email: 'orphan@example.com', password: 'password123' } }
 
