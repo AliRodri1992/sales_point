@@ -10,9 +10,11 @@ class CreateSubscriptions < ActiveRecord::Migration[8.1]
       t.datetime :ends_at
       t.datetime :trial_ends_at
       t.datetime :canceled_at
+      t.datetime :deleted_at
       t.timestamps
     end
 
+    add_index :subscriptions, :deleted_at
     add_index :subscriptions, :status
     add_index :subscriptions, [:organization_id, :status],
               name: 'idx_subscriptions_organization_status'

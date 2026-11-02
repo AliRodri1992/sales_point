@@ -23,7 +23,7 @@ module Membership
     end
 
     def save_assignment(feature_id, position, values, limits)
-      assignment = @plan.membership_plan_features.find_or_initialize_by(membership_feature_id: feature_id)
+      assignment = @plan.membership_plan_features.with_deleted.find_or_initialize_by(membership_feature_id: feature_id)
       assignment.assign_attributes(
         enabled: true,
         value: values[feature_id.to_s],
