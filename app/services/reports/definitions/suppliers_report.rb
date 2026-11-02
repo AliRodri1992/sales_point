@@ -20,13 +20,21 @@ module Reports
         end
       end
 
+      # Keep the caller's sort order while preloading the contacts used by each row.
+      def each_row(&block)
+        scope.includes(contacts: :phones).each(&block)
+      end
+
       private
 
       def field_allowed?(section)
-        return false unless user
-        return false unless organization.organization_memberships.active.exists?(user: user)
-
-        user.admin? || user.permission?("#{section}.view") || user.permission?("#{section}.manage")
+        @field_access ||= {}
+        @field_access.fetch(section) do
+          @field_access[section] = user.present? &&
+                                   organization.organization_memberships.active.exists?(user: user) &&
+                                   (user.admin? || user.permission?("#{section}.view") ||
+                                    user.permission?("#{section}.manage"))
+        end
       end
 
       def column_value(supplier, key)
@@ -45,12 +53,14 @@ module Reports
       end
 
       def primary_office_number(supplier)
-        return '' unless field_allowed?('suppliers.contacts')
-
-        contact = supplier.contacts.not_deleted.find_by(primary: true, active: true)
+        contact = supplier.contacts.find do |item|
+          item.primary? && item.active? && item.deleted_at.nil?
+        end
         return '' unless contact
 
-        contact.phones.active.find_by(kind: 'landline', primary: true)&.number.to_s
+        contact.phones.find do |phone|
+          phone.deleted_at.nil? && phone.kind == 'landline' && phone.primary?
+        end&.number.to_s
       end
     end
   end

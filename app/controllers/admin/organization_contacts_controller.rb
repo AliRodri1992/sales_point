@@ -8,7 +8,7 @@ module Admin
     before_action :set_contact, only: %i[edit update destroy]
 
     def index
-      @contacts = @organization.contacts.not_deleted.order(primary: :desc, name: :asc)
+      @contacts = @organization.contacts.not_deleted.includes(:phones).order(primary: :desc, name: :asc)
     end
 
     def new
