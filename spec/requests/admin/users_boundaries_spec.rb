@@ -55,13 +55,13 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
     staff_role = create(:system_role, :system, code: 'staff_role')
     other_role = create(:system_role, :system, code: 'other_role')
     create(:user_role, user: target, system_role: branch_role, branch:)
-    create(:user_role, user: target, system_role: staff_role)
+    previous_assignment = create(:user_role, user: target, system_role: staff_role)
 
     patch admin_user_path(target), params: { user: { system_role_ids: ['', other_role.id.to_s] } }
 
     expect(response).to redirect_to(admin_user_path(target))
     expect(target.user_roles.active.pluck(:system_role_id)).to contain_exactly(branch_role.id, other_role.id)
-    expect(target.user_roles.where(system_role_id: staff_role.id).first.deleted_at).to be_present
+    expect(UserRole.with_deleted.find(previous_assignment.id).deleted_at).to be_present
   end
 
   it 'rejects branch roles and inactive global roles sent as forged system roles' do

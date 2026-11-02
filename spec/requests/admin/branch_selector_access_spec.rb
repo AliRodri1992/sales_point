@@ -92,11 +92,12 @@ RSpec.describe 'Navbar branch selector authorization', type: :request do
     denied = create(:branch, organization:, name: 'Sucursal Ajena')
     assign_branch(allowed)
 
-    patch select_admin_branch_path(denied)
-
-    expect(response).to have_http_status(:not_found)
     get admin_dashboard_path
-    expect(selector.at_css('summary').text).to include(allowed.name)
+    expect(selector_actions).to contain_exactly(select_admin_branch_path(allowed))
+
+    patch select_admin_branch_path(denied)
+    expect(response).to have_http_status(:not_found)
+    expect(session[:current_branch_id]).to be_nil
   end
 
   it 'falls back to a remaining branch when an assignment is revoked after selection' do

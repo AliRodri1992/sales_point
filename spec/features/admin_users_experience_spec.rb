@@ -43,7 +43,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
 
     visit edit_admin_user_path(target)
     expect(page).to have_css('#users-branches-title')
-    accordion = find('details', text: branch.name)
+    accordion = find('section[aria-labelledby="users-branches-title"] details', text: branch.name)
     accordion.find('summary').click
     check("user_branch_role_#{branch.id}_#{branch_role.id}")
     click_button 'Save changes'

@@ -8,7 +8,7 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
   let(:admin) { create(:user, system_roles: [create(:system_role, :system, code: 'administrator')]) }
   let(:target) { create(:user) }
   let(:branch_role) { create(:system_role, :branch, code: 'cashier_branch') }
-  let(:branch) { create(:branch, organization:) }
+  let(:branch) { create(:branch, organization:, name: 'Sucursal Principal') }
 
   before do
     create(:organization_membership, user: admin, organization:)
@@ -31,9 +31,9 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
   end
 
   it 'replaces only local branch assignments, leaving foreign organization roles untouched' do
-    foreign_branch = create(:branch, organization: other_organization)
+    foreign_branch = create(:branch, organization: other_organization, name: 'Sucursal Externa')
     create(:organization_membership, user: target, organization: other_organization)
-    create(:user_role, user: target, system_role: branch_role, branch:)
+    removed_assignment = create(:user_role, user: target, system_role: branch_role, branch:)
     foreign_role = create(:system_role, :branch, code: 'foreign_cashier')
     create(:user_role, user: target, system_role: foreign_role, branch: foreign_branch)
 
@@ -41,12 +41,12 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
 
     expect(response).to redirect_to(admin_user_path(target))
     expect(target.user_roles.active.pluck(:branch_id)).to eq([foreign_branch.id])
-    expect(target.user_roles.find_by!(branch_id: branch).deleted_at).to be_present
+    expect(UserRole.with_deleted.find(removed_assignment.id).deleted_at).to be_present
   end
 
   it 'rejects forged branch and role values without saving partial edits' do
-    forbidden_branch = create(:branch, organization: other_organization)
-    inactive_branch = create(:branch, organization:, status: false)
+    forbidden_branch = create(:branch, organization: other_organization, name: 'Sucursal Externa')
+    inactive_branch = create(:branch, organization:, name: 'Sucursal Inactiva', status: false)
     inactive_role = create(:system_role, :branch, :inactive, code: 'disabled_cashier')
     invalid_inputs = [
       "#{forbidden_branch.id}:#{branch_role.id}",
