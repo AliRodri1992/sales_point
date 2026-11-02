@@ -1,0 +1,339 @@
+/* Shared by all SweetAlert2 callers, including direct imports and Turbo streams. */
+.swal2-container {
+  --delta-alert-action: var(--brand-on-white, #047857);
+  --swal2-backdrop: rgb(15 23 42 / .48);
+  --swal2-container-padding: 1.25rem;
+  --swal2-width: 32rem;
+  --swal2-show-animation: delta-alert-enter 180ms ease-out;
+  --swal2-hide-animation: delta-alert-exit 120ms ease-in forwards;
+  --swal2-toast-show-animation: delta-alert-enter 180ms ease-out;
+  --swal2-toast-hide-animation: delta-alert-exit 120ms ease-in forwards;
+}
+
+/* The unselected authentication screen uses Delta emerald, not the catalog's first theme. */
+body:has(.authentication-page:not(.theme-selected)) .swal2-container {
+  --delta-alert-action: #047857;
+}
+
+.swal2-container .swal2-popup {
+  --delta-alert-color: #047857;
+  --delta-alert-tint: #ecfdf5;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  background: #fff;
+  color: #0f172a;
+  box-shadow: 0 24px 64px rgb(15 23 42 / .18), 0 4px 12px rgb(15 23 42 / .06);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  text-align: left;
+}
+
+.swal2-popup.swal2-icon-error {
+  --delta-alert-color: #be123c;
+  --delta-alert-tint: #fff1f2;
+}
+
+.swal2-popup.swal2-icon-warning {
+  --delta-alert-color: #92400e;
+  --delta-alert-tint: #fffbeb;
+}
+
+.swal2-popup.swal2-icon-info,
+.swal2-popup.swal2-icon-question {
+  --delta-alert-color: #1d4ed8;
+  --delta-alert-tint: #eff6ff;
+}
+
+.swal2-popup .swal2-title {
+  margin: 0;
+  padding: 0;
+  color: #0f172a;
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.75rem;
+  letter-spacing: -.025em;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.swal2-popup .swal2-html-container {
+  margin: .625rem 0 0;
+  padding: 0;
+  color: #475569;
+  font-size: .875rem;
+  line-height: 1.5rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* Static, local SVG masks keep every state crisp at both popup sizes. */
+.swal2-popup .swal2-icon:not(.delta-confirm-icon) {
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 0 1.125rem;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--delta-alert-tint);
+  color: var(--delta-alert-color);
+  animation: none;
+}
+
+.swal2-popup .swal2-icon:not(.delta-confirm-icon) > * {
+  display: none !important;
+}
+
+.swal2-popup .swal2-icon:not(.delta-confirm-icon)::before {
+  content: "";
+  width: 1.625rem;
+  height: 1.625rem;
+  margin: auto;
+  background: currentColor;
+  mask: var(--delta-alert-symbol) center / contain no-repeat;
+}
+
+.swal2-icon.swal2-success {
+  --delta-alert-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 4 4L19 6'/%3E%3C/svg%3E");
+}
+
+.swal2-icon.swal2-error {
+  --delta-alert-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m9 9 6 6m0-6-6 6'/%3E%3C/svg%3E");
+}
+
+.swal2-icon.swal2-warning {
+  --delta-alert-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m10.3 3.9-8 14a2 2 0 0 0 1.7 3h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01'/%3E%3C/svg%3E");
+}
+
+.swal2-icon.swal2-info {
+  --delta-alert-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6m0-10h.01'/%3E%3C/svg%3E");
+}
+
+.swal2-icon.swal2-question {
+  --delta-alert-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.5 9a2.7 2.7 0 0 1 5 1.5c0 1.8-2.5 2-2.5 4M12 18h.01'/%3E%3C/svg%3E");
+}
+
+.swal2-popup .swal2-actions {
+  width: 100%;
+  gap: .625rem;
+  justify-content: flex-end;
+  margin: 1.5rem 0 0;
+  padding: 1.125rem 0 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.swal2-popup .swal2-actions button {
+  min-height: 2.75rem;
+  margin: 0;
+  padding: .625rem 1.125rem;
+  border: 1px solid transparent;
+  border-radius: .75rem;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: .875rem;
+  font-weight: 650;
+  line-height: 1.25rem;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.swal2-popup .swal2-actions .swal2-confirm {
+  background: var(--delta-alert-action);
+  color: #fff;
+}
+
+.swal2-popup .swal2-actions .swal2-deny {
+  background: #be123c;
+  color: #fff;
+}
+
+.swal2-popup .swal2-actions .swal2-cancel {
+  border-color: #cbd5e1;
+  background: #fff;
+  color: #334155;
+}
+
+.swal2-popup .swal2-actions :is(.swal2-confirm, .swal2-deny):hover {
+  background-image: linear-gradient(rgb(0 0 0 / .12), rgb(0 0 0 / .12));
+}
+
+.swal2-popup .swal2-actions .swal2-cancel:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.swal2-popup .swal2-close {
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: .375rem;
+  border-radius: .625rem;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 1.625rem;
+  line-height: 1;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.swal2-popup .swal2-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.swal2-popup :is(.swal2-actions button, .swal2-close):focus-visible {
+  outline: 3px solid var(--delta-alert-action);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.swal2-popup :is(.swal2-input, .swal2-textarea, .swal2-select) {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 2.75rem;
+  max-width: 100%;
+  margin: 1rem 0 0;
+  padding: .625rem .875rem;
+  border: 1px solid #cbd5e1;
+  border-radius: .75rem;
+  color: #0f172a;
+  font: inherit;
+  font-size: .875rem;
+  box-shadow: none;
+}
+
+.swal2-popup .swal2-input-label {
+  justify-content: flex-start;
+  margin: 1rem 0 -.5rem;
+  color: #334155;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.swal2-popup :is(.swal2-input, .swal2-textarea, .swal2-select):focus {
+  border-color: var(--delta-alert-action);
+  outline: 3px solid color-mix(in srgb, var(--delta-alert-action) 20%, transparent);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+.swal2-popup .swal2-validation-message {
+  margin: .75rem 0 0;
+  padding: .75rem;
+  border-radius: .625rem;
+  background: #fff1f2;
+  color: #9f1239;
+  font-size: .875rem;
+}
+
+.swal2-popup .swal2-footer {
+  margin: 1.25rem 0 0;
+  padding: 1rem 0 0;
+  border-color: #e2e8f0;
+  color: #475569;
+  font-size: .8125rem;
+}
+
+.swal2-popup .swal2-loader {
+  border-color: var(--delta-alert-action) transparent var(--delta-alert-action) transparent;
+}
+
+/* Toasts keep the page interactive and use the state color only as an accent. */
+body.swal2-toast-shown .swal2-container:has(.swal2-toast) {
+  width: 28rem;
+}
+
+.swal2-container .swal2-popup.swal2-toast {
+  grid-template-columns: min-content minmax(0, 1fr) min-content;
+  column-gap: .75rem;
+  padding: 1rem;
+  overflow: hidden;
+  border-inline-start: 3px solid var(--delta-alert-color);
+  border-radius: 1rem;
+  box-shadow: 0 12px 32px rgb(15 23 42 / .12), 0 2px 6px rgb(15 23 42 / .05);
+}
+
+.swal2-toast .swal2-icon:not(.delta-confirm-icon) {
+  align-self: start;
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  margin: 0;
+  border-radius: .75rem;
+}
+
+.swal2-toast .swal2-icon:not(.delta-confirm-icon)::before {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.swal2-toast .swal2-title {
+  align-self: center;
+  margin: 0;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-size: .875rem;
+  font-weight: 650;
+  line-height: 1.375rem;
+  letter-spacing: -.01em;
+}
+
+.swal2-toast .swal2-html-container {
+  margin: .25rem 0 0;
+  font-size: .8125rem;
+  line-height: 1.25rem;
+}
+
+.swal2-toast .swal2-close {
+  align-self: start;
+  margin: -.125rem -.375rem 0 0;
+}
+
+.swal2-toast .swal2-actions {
+  width: auto;
+  margin-top: .75rem;
+  padding: 0;
+  border: 0;
+  justify-content: flex-start;
+}
+
+.swal2-popup .swal2-timer-progress-bar-container {
+  height: 3px;
+}
+
+.swal2-popup .swal2-timer-progress-bar {
+  height: 3px;
+  background: var(--delta-alert-color);
+  opacity: .35;
+}
+
+@keyframes delta-alert-enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes delta-alert-exit {
+  to { opacity: 0; transform: translateY(-4px); }
+}
+
+@media (max-width: 420px) {
+  .swal2-container { --swal2-container-padding: .75rem; }
+
+  .swal2-container .swal2-popup { padding: 1.25rem; }
+
+  .swal2-container .swal2-popup.swal2-toast {
+    column-gap: .5rem;
+    padding: .875rem;
+  }
+
+  .swal2-popup:not(.swal2-toast) .swal2-actions button { flex: 1 1 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swal2-container {
+    --swal2-show-animation: none;
+    --swal2-hide-animation: none;
+    --swal2-toast-show-animation: none;
+    --swal2-toast-hide-animation: none;
+  }
+
+  .swal2-popup *,
+  .swal2-popup *::before { transition: none !important; animation: none !important; }
+}

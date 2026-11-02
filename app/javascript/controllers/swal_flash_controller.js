@@ -26,7 +26,6 @@ export default class extends Controller {
             showConfirmButton: modal,
             showCloseButton: this.persistentValue,
             closeButtonAriaLabel: this.closeLabelValue,
-            confirmButtonColor: "#047857",
             timerProgressBar: !modal && !this.persistentValue,
             title: this.messageValue,
             didClose: () => {
