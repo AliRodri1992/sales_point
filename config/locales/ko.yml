@@ -1215,9 +1215,9 @@ ko:
         error_banner_title: "계정 등록을 완료할 수 없습니다"
         client_validation_branches: 지점 수는 최소 1개여야 합니다.
         client_validation_password_match: 비밀번호가 일치하지 않습니다.
-        client_validation_required: 계속하기 전에 필수 정보를 입력하세요.
+        client_validation_required: "%{field} 필수 항목입니다."
         client_validation_tax_id: 세금 식별 번호는 12~13자여야 합니다.
-        client_validation_terms: 계정을 만들려면 약관에 동의해야 합니다.
+        client_validation_terms: "서비스 약관 및 개인정보 보호정책 계정을 만들려면 동의해야 합니다."
         cloud_badge: Delta POS Cloud
         email: 이메일 주소
         email_placeholder: email@example.com
@@ -1292,10 +1292,11 @@ ko:
         payment_hint: "카드 및 QR 결제는 추가 설정이 필요합니다."
         migration_hint: "마이그레이션은 가입 후 예약되며 즉시 데이터를 가져오지 않습니다."
         timezone_label: "시간대"
-        client_validation_email: "올바른 이메일 주소를 입력하세요."
-        client_validation_password_length: "비밀번호는 최소 6자여야 합니다."
-        client_validation_field_required: "필수 정보를 입력하세요."
-        client_validation_tax_format: "12~13자의 올바른 납세자 번호를 입력하세요."
+        client_validation_email: "이메일 올바른 이메일 주소여야 합니다."
+        client_validation_password_length: "%{field} 최소 6자여야 합니다."
+        client_validation_field_required: "%{field} 입력해야 합니다."
+        client_validation_field_length: "%{field} 최소 2자여야 합니다."
+        client_validation_tax_format: "%{field} 올바른 12~13자 형식이어야 합니다."
         saving: "계정을 만들고 있습니다…"
         step_label: 등록 진행률
         step_one:

@@ -1233,10 +1233,10 @@ es:
         error_banner_title: "No pudimos completar tu registro"
         client_validation_branches: El número de sucursales debe ser al menos 1.
         client_validation_password_match: Las contraseñas no coinciden.
-        client_validation_required: Completa la información requerida antes de continuar.
+        client_validation_required: "%{field} es obligatorio."
         client_validation_tax_id: El RFC o identificador fiscal debe contener 12 o
           13 caracteres.
-        client_validation_terms: Debes aceptar los términos para crear tu cuenta.
+        client_validation_terms: "Términos y política de privacidad deben aceptarse para crear la cuenta."
         cloud_badge: Delta POS Cloud
         email: Correo electrónico
         email_placeholder: correo@ejemplo.com
@@ -1315,9 +1315,10 @@ es:
         migration_hint: "La migración se programará después del registro; tus datos no se importarán automáticamente."
         timezone_label: "Zona horaria"
         client_validation_email: "Correo electrónico no tiene un formato válido."
-        client_validation_password_length: "La contraseña debe tener al menos 6 caracteres."
-        client_validation_field_required: "Completa este campo para continuar."
-        client_validation_tax_format: "Introduce un RFC válido de 12 o 13 caracteres."
+        client_validation_password_length: "%{field} debe tener al menos 6 caracteres."
+        client_validation_field_required: "%{field} no puede estar vacío."
+        client_validation_field_length: "%{field} debe tener al menos 2 caracteres."
+        client_validation_tax_format: "%{field} no tiene un formato válido de 12 o 13 caracteres."
         saving: "Creando tu cuenta…"
         step_label: Progreso del registro
         step_one:

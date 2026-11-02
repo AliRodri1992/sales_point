@@ -1225,9 +1225,9 @@ en:
         error_banner_title: "We couldn't complete your registration"
         client_validation_branches: The number of branches must be at least 1.
         client_validation_password_match: The passwords do not match.
-        client_validation_required: Complete the required information before continuing.
+        client_validation_required: "%{field} is required."
         client_validation_tax_id: The tax ID must contain 12 or 13 characters.
-        client_validation_terms: You must accept the terms to create your account.
+        client_validation_terms: "Terms and Privacy Policy must be accepted before creating your account."
         cloud_badge: Delta POS Cloud
         email: Email address
         email_placeholder: email@example.com
@@ -1304,10 +1304,11 @@ en:
         payment_hint: "Card and QR integrations will require additional setup."
         migration_hint: "Migration will be scheduled after registration; no data is imported automatically."
         timezone_label: "Time zone"
-        client_validation_email: "Enter a valid email address."
-        client_validation_password_length: "Your password must contain at least 6 characters."
-        client_validation_field_required: "Complete this field to continue."
-        client_validation_tax_format: "Enter a valid 12- or 13-character tax ID."
+        client_validation_email: "Email address must be a valid email address."
+        client_validation_password_length: "%{field} must contain at least 6 characters."
+        client_validation_field_required: "%{field} can't be blank."
+        client_validation_field_length: "%{field} must contain at least 2 characters."
+        client_validation_tax_format: "%{field} must have a valid 12- or 13-character format."
         saving: "Creating your account…"
         step_label: Registration progress
         step_one:

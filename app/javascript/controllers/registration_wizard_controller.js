@@ -212,14 +212,14 @@ export default class extends Controller {
 
   validateSetupType() {
     return this.selectedSetupType
-      ? true : this.setFieldError(this.setupCardTargets[0], this.message("required"))
+      ? true : this.setFieldError(this.setupCardTargets[0], this.message("required", this.setupCardTargets[0]))
   }
 
   validateAdministrator() {
     let valid = true
     for (const field of [this.firstNameTarget, this.lastNameTarget]) {
       if (field.value.trim().length >= 2) continue
-      this.setFieldError(field, this.message("fieldRequired"))
+      this.setFieldError(field, this.message(field.value.trim() ? "fieldLength" : "fieldRequired", field))
       valid = false
     }
     const email = this.element.querySelector('input[name="user[email]"]')
@@ -234,7 +234,7 @@ export default class extends Controller {
       this.setFieldError(this.passwordTarget, this.wrapperTarget.dataset.validationModelPasswordBlank)
       valid = false
     } else if (this.passwordTarget.value.length < 6) {
-      this.setFieldError(this.passwordTarget, this.message("passwordLength"))
+      this.setFieldError(this.passwordTarget, this.message("passwordLength", this.passwordTarget))
       valid = false
     }
     if (!this.confirmationTarget.value || this.passwordTarget.value !== this.confirmationTarget.value) {
@@ -247,12 +247,13 @@ export default class extends Controller {
   validateCompany() {
     let valid = true
     if (this.companyNameTarget.value.trim().length < 2) {
-      this.setFieldError(this.companyNameTarget, this.message("fieldRequired"))
+      const key = this.companyNameTarget.value.trim() ? "fieldLength" : "fieldRequired"
+      this.setFieldError(this.companyNameTarget, this.message(key, this.companyNameTarget))
       valid = false
     }
     this.taxIdTarget.value = this.taxIdTarget.value.trim().toUpperCase()
     if (!RFC_FORMAT.test(this.taxIdTarget.value)) {
-      this.setFieldError(this.taxIdTarget, this.message("taxFormat"))
+      this.setFieldError(this.taxIdTarget, this.message("taxFormat", this.taxIdTarget))
       valid = false
     }
     return valid
@@ -267,7 +268,7 @@ export default class extends Controller {
     ]) {
       if (value) continue
       const trigger = this.dropdownTargets.find((button) => button.dataset.dropdownName === name)
-      this.setFieldError(trigger, this.message("required"))
+      this.setFieldError(trigger, this.message("required", trigger))
       valid = false
     }
     if (this.selectedSetupType === "migration") {
@@ -276,7 +277,7 @@ export default class extends Controller {
         this.element.querySelector("#migration-priority")
       ]) {
         if (field?.value) continue
-        this.setFieldError(field, this.message("required"))
+        this.setFieldError(field, this.message("required", field))
         valid = false
       }
     }
@@ -424,8 +425,11 @@ export default class extends Controller {
     this.migrationFieldsTarget.classList.toggle("hidden", this.selectedSetupType !== "migration")
   }
 
-  message(key) {
+  message(key, field) {
     const code = "validation" + key.charAt(0).toUpperCase() + key.slice(1)
-    return this.wrapperTarget.dataset[code] || this.wrapperTarget.dataset.validationRequired
+    const template = this.wrapperTarget.dataset[code] || this.wrapperTarget.dataset.validationRequired
+    const label = field?.dataset.validationLabel || field?.labels?.[0]?.textContent.trim() ||
+      field?.closest("[data-field]")?.querySelector("label")?.textContent.trim() || ""
+    return template.replaceAll("%{field}", label)
   }
 }

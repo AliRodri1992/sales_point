@@ -89,7 +89,7 @@ RSpec.describe 'Authentication audit corrections', type: :feature, js: true do
     expect(page).to have_css('[data-summary-key="volume"]', text: 'Fewer than 500 products')
     expect(find('#terms')).not_to be_checked
     next_step
-    expect(page).to have_css('[data-registration-field-error]', text: 'accept the terms')
+    expect(page).to have_css('[data-registration-field-error]', text: 'Terms and Privacy Policy must be accepted')
   end
 
   scenario 'omits migration preferences when configuring a new system' do
@@ -98,6 +98,26 @@ RSpec.describe 'Authentication audit corrections', type: :feature, js: true do
     expect(page).to have_css('[data-summary-key="setup"]', text: 'New system')
     expect(page).to have_css('[data-summary-key="name"]', text: 'Ana Audit')
     expect(page).to have_no_css('[data-summary-migration]', visible: true)
+  end
+
+  scenario 'names the administrator field before each validation message' do
+    visit new_user_registration_path
+    find('[data-setup-type="new"]').click
+    next_step
+    next_step
+
+    expect(page).to have_css('#registration-error-first-name', text: "First Name can't be blank.")
+    expect(page).to have_css('#registration-error-last-name', text: "Last Name can't be blank.")
+    expect(page).to have_css('#registration-error-user-email', text: "Email address can't be blank")
+    expect(page).to have_css('#registration-error-user-password', text: "Password can't be blank")
+    fill_in 'first-name', with: 'A'
+    fill_in 'user_email', with: 'invalid-address'
+    fill_in 'user_password', with: '123'
+    next_step
+
+    expect(page).to have_css('#registration-error-first-name', text: 'First Name must contain at least 2 characters.')
+    expect(page).to have_css('#registration-error-user-email', text: 'Email address must be a valid email address')
+    expect(page).to have_css('#registration-error-user-password', text: 'Password must contain at least 6 characters.')
   end
 
   scenario 'keeps branding and current-step text readable at supported widths and languages' do
