@@ -21,8 +21,8 @@ module Reports
       end
 
       # Keep the caller's sort order while preloading the contacts used by each row.
-      def each_row(&block)
-        scope.includes(contacts: :phones).each(&block)
+      def each_row(&)
+        scope.includes(contacts: :phones).to_a.each(&)
       end
 
       private
@@ -53,14 +53,18 @@ module Reports
       end
 
       def primary_office_number(supplier)
-        contact = supplier.contacts.find do |item|
-          item.primary? && item.active? && item.deleted_at.nil?
-        end
+        contact = supplier.contacts.find { |item| primary_active_contact?(item) }
         return '' unless contact
 
-        contact.phones.find do |phone|
-          phone.deleted_at.nil? && phone.kind == 'landline' && phone.primary?
-        end&.number.to_s
+        contact.phones.find { |phone| primary_office_phone?(phone) }&.number.to_s
+      end
+
+      def primary_active_contact?(contact)
+        contact.primary? && contact.active? && contact.deleted_at.nil?
+      end
+
+      def primary_office_phone?(phone)
+        phone.deleted_at.nil? && phone.kind == 'landline' && phone.primary?
       end
     end
   end

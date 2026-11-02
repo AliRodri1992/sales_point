@@ -17,8 +17,8 @@ module Admin
       @credits = paginate_filtered_financial(policy_scope(current_organization.supplier_credit_notes),
                                              includes: %i[supplier currency], reference_column: :folio)
       @credits = @credits.to_a
-      @allocated_amounts = SupplierCreditAllocation.where(supplier_credit_note_id: @credits.map(&:id))
-                                                 .group(:supplier_credit_note_id).sum(:amount)
+      allocations = SupplierCreditAllocation.where(supplier_credit_note_id: @credits.map(&:id))
+      @allocated_amounts = allocations.group(:supplier_credit_note_id).sum(:amount)
     end
 
     def show
