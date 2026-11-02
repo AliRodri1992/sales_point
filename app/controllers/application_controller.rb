@@ -24,7 +24,18 @@ class ApplicationController < ActionController::Base
   def available_branches
     return Branch.none unless current_organization
 
-    current_organization.branches.not_deleted.where(status: true).order(:name)
+    @available_branches ||= begin
+      branches = current_organization.branches.not_deleted.where(status: true)
+
+      unless current_user.admin?
+        assigned_branch_ids = current_user.user_roles.active
+                                         .where.not(branch_id: nil)
+                                         .select(:branch_id)
+        branches = branches.where(id: assigned_branch_ids)
+      end
+
+      branches.order(:name)
+    end
   end
 
   def current_branch
