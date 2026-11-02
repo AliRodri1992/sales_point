@@ -23,7 +23,7 @@ module Admin
       @per_page = table_page_size_for('account_payables')
       @pages = [(@total_payables.to_f / @per_page).ceil, 1].max
       @page = params[:page].to_i.clamp(1, @pages)
-      @payables = scope.includes(:supplier, supplier_invoice: :currency)
+      @payables = scope.with_precomputed_allocations.includes(:supplier, supplier_invoice: :currency)
                        .order(due_on: :asc, id: :asc).limit(@per_page).offset((@page - 1) * @per_page)
     end
 

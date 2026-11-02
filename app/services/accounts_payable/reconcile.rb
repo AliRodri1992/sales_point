@@ -3,7 +3,7 @@
 module AccountsPayable
   class Reconcile
     def self.call(supplier:)
-      payables = supplier.account_payables.includes(supplier_invoice: :currency)
+      payables = supplier.account_payables.with_precomputed_allocations.includes(supplier_invoice: :currency)
                          .order(due_on: :asc).select { |entry| entry.supplier_invoice.posted? }
       payables.group_by { |entry| entry.supplier_invoice.currency.code }
               .transform_values { |items| reconcile_currency(items) }

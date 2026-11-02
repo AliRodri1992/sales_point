@@ -8,7 +8,8 @@ class AccountsPayableReminderJob < ApplicationJob
   end
 
   def candidates(today)
-    AccountPayable.outstanding.where(due_on: ..(today + 7.days)).includes(:organization, :supplier)
+    AccountPayable.outstanding.where(due_on: ..(today + 7.days))
+                  .with_precomputed_allocations.includes(:organization, :supplier, :supplier_invoice)
   end
 
   def process_payable(payable, today)

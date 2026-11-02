@@ -14,10 +14,8 @@ module Suppliers
       @next_due = outstanding.where(due_on: Date.current..).minimum(:due_on)
       @balances = grouped_balances(outstanding)
       @overdue = grouped_balances(outstanding.where(due_on: ...Date.current))
-      @recent = outstanding.joins(:supplier_invoice)
-                           .includes(supplier_invoice: :currency,
-                                     supplier_payment_allocations: :supplier_payment,
-                                     supplier_credit_allocations: :supplier_credit_note)
+      @recent = outstanding.with_precomputed_allocations.joins(:supplier_invoice)
+                           .includes(supplier_invoice: :currency)
                            .order('supplier_invoices.issued_on DESC, account_payables.id DESC').limit(5)
       self
     end

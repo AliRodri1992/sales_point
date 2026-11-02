@@ -16,7 +16,7 @@ module Admin
     def show
       authorize @payment
       @payables = current_organization.account_payables
-                                      .where(supplier_id: @payment.supplier_id)
+                                      .where(supplier_id: @payment.supplier_id).with_precomputed_allocations
                                       .includes(supplier_invoice: :currency).order(:due_on).reject(&:settled?)
     end
 
