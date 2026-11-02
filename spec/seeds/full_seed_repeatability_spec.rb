@@ -6,6 +6,9 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
   let(:seeded_models) do
     [
       Organization, OrganizationSetting, User, UserRole, OrganizationMembership,
+      Employee, PaymentIntegration, InventoryMovement, PurchaseRequest, PurchaseRequestItem,
+      PurchaseQuotation, PurchaseQuotationItem, PurchaseOrder, PurchaseOrderItem,
+      SupplierInvoice, SupplierInvoiceLine,
       SystemRole, Permission, SystemRolePermission, Language, Translate, SatMonth,
       Supplier, Contact, Address, SupplierSchedule, SupplierEvent, SupplierProduct,
       SupplierProductPrice, SupplierBankAccount, Product, Inventory,
@@ -52,6 +55,33 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     ids = seeded_identifiers
     Rails.application.load_seed
     expect(seeded_identifiers).to eq(ids)
+  end
+
+  it 'makes all seeded users visible within the administrator tenant' do
+    Rails.application.load_seed
+
+    admin = User.find_by!(email: 'administrador@delta.com')
+    organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    expect(admin.organization_memberships.active.where(organization:, deleted_at: nil)).to exist
+
+    emails = (1..30).map { |number| "user#{number}@delta.com" }
+    users = User.where(email: emails)
+    expect(users.count).to eq(30)
+    memberships = OrganizationMembership.where(
+      organization:, user_id: users.select(:id), status: :active, deleted_at: nil
+    )
+    expect(memberships.count).to eq(30)
+    employees = users.joins(:employee).where(employees: { organization_id: organization.id })
+    expect(employees.count).to eq(30)
+    expect(admin.employee&.organization).to eq(organization)
+
+    expect(organization.purchase_requests.count).to be >= 24
+    expect(organization.purchase_quotations.count).to be >= 20
+    expect(organization.purchase_orders.count).to be >= 20
+    expect(organization.supplier_invoices.draft.count).to be >= 20
+    expect(organization.payment_integrations.pending.count).to eq(2)
+    expect(organization.inventories.select(:branch_id).distinct.count).to be >= 3
+    expect(InventoryMovement.where(organization:).count).to be_positive
   end
 
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
