@@ -3,7 +3,7 @@ class ConversationsController < ApplicationController
 
   def show
     @conversation = Conversation.find(params[:id])
-    @messages = @conversation.messages.order(:created_at)
+    @messages = @conversation.messages.includes(:user).order(:created_at)
     mark_notifications_as_read
     render layout: false
   end
@@ -11,7 +11,7 @@ class ConversationsController < ApplicationController
   def create
     participant = User.find(params[:participant_id])
     @conversation = Conversation.find_or_create_direct(current_user, participant)
-    @messages = @conversation.messages.order(:created_at)
+    @messages = @conversation.messages.includes(:user).order(:created_at)
     mark_notifications_as_read
 
     render :show, layout: false

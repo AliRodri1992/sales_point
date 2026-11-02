@@ -10,6 +10,26 @@ module Admin
 
     def index
       @inventories = @branch.inventories.includes(:product).order('products.name')
+      load_recent_movements
+    end
+
+    # SQL window function limits movements per inventory, not per entire branch.
+    def load_recent_movements
+      ids = @inventories.map(&:id)
+      @recent_movements_by_inventory = {}
+      return if ids.empty?
+
+      ranked = InventoryMovement.where(inventory_id: ids)
+                                .select('inventory_movements.*', Arel.sql(<<~SQL.squish))
+                                  ROW_NUMBER() OVER (
+                                    PARTITION BY inventory_id ORDER BY created_at DESC, id DESC
+                                  ) AS movement_rank
+                                SQL
+      @recent_movements_by_inventory = InventoryMovement
+                                       .from("(#{ranked.to_sql}) inventory_movements")
+                                       .where('movement_rank <= 5')
+                                       .order(:inventory_id, created_at: :desc, id: :desc)
+                                       .to_a.group_by(&:inventory_id)
     end
 
     def create

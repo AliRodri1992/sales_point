@@ -16,9 +16,9 @@ class Conversation < ApplicationRecord
                        .having('COUNT(DISTINCT user_id) = 2')
                        .pluck(:conversation_id)
 
-    existing = where(id: conversation_ids, conversation_type: DIRECT).find do |conv|
-      conv.conversation_participants.count == 2
-    end
+    existing = where(id: conversation_ids, conversation_type: DIRECT)
+               .where('(SELECT COUNT(*) FROM conversation_participants WHERE conversation_id = conversations.id) = 2')
+               .first
 
     existing || create_with_participants(user_a, user_b)
   end

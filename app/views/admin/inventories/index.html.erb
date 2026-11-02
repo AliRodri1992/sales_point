@@ -42,7 +42,7 @@
                 <%= form.submit t('admin.inventory.adjust'),
                                 class: 'rounded-lg bg-emerald-600 px-3 py-2 font-semibold text-white' %>
               <% end %>
-              <% inventory.inventory_movements.order(created_at: :desc).limit(5).each do |movement| %>
+              <% (@recent_movements_by_inventory[inventory.id] || []).each do |movement| %>
                 <p class="mt-1 text-xs text-slate-500"><%= movement.kind %>: <%= movement.quantity %></p>
               <% end %>
             </td>
