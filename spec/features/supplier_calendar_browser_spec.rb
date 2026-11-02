@@ -59,8 +59,10 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-calendar-event]')
     expect(page).to have_css('[data-calendar-day-details]')
     expect(page).to have_css('[data-controller~="supplier-calendar"][data-supplier-calendar-ready="true"]')
-    expect(page.evaluate_script("document.querySelector('[data-calendar-event]').textContent")).to include('Special delivery')
-    expect(page.evaluate_script("document.querySelector('[data-calendar-day-details]').textContent")).to include('Special delivery')
+    event_label = page.evaluate_script("document.querySelector('[data-calendar-event]').textContent")
+    expect(event_label).to include('Special delivery')
+    agenda_label = page.evaluate_script("document.querySelector('[data-calendar-day-details]').textContent")
+    expect(agenda_label).to include('Special delivery')
 
     # The event appears after the redirect; wait for Stimulus to reattach
     # before activating its enhanced edit link.
@@ -73,7 +75,8 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     find('[data-supplier-calendar-target="submit"]').click
 
     expect(page).to have_css('[data-calendar-event]')
-    expect(page.evaluate_script("document.querySelector('[data-calendar-event]').textContent")).to include('Updated delivery')
+    updated_label = page.evaluate_script("document.querySelector('[data-calendar-event]').textContent")
+    expect(updated_label).to include('Updated delivery')
     expect(supplier.supplier_events.not_deleted.count).to eq(1)
   end
 
