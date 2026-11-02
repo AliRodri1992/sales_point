@@ -49,6 +49,9 @@
   <button type="button" data-action="supplier-documents#retryFilters" class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t("#{dictionary}.retry") %></button>
 </div>
 <div class="mt-5 min-w-0">
+<div data-supplier-documents-target="skeleton" class="hidden pb-3" aria-hidden="true">
+  <%= render Ui::SkeletonComponent.new(variant: :card, rows: 4, columns: 2) %>
+</div>
 <div data-supplier-documents-target="list" class="grid auto-rows-fr grid-cols-1 items-stretch gap-3 md:grid-cols-2">
             <% documents.each do |document| %>
               <% attachment = document.attachment %>

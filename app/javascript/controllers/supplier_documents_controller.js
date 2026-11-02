@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Browses supplier attachments locally; every preview uses the authorized Rails endpoint.
 export default class extends Controller {
   static targets = [
-    "categorySelect", "search", "status", "date", "card", "noResults", "filterError",
+    "categorySelect", "search", "status", "date", "card", "noResults", "filterError", "skeleton",
     "uploadForm", "uploadInput", "uploadSelection", "uploadSubmit", "uploadNames",
     "uploadCount", "uploadError", "dropzone", "queuedList", "queuedDialog",
     "queuedClose", "queuedImage", "queuedFrame", "queuedText", "queuedUnsupported",
@@ -93,6 +93,9 @@ export default class extends Controller {
     const caret = keepFocus ? this.searchTarget.selectionStart : null
     this.filterErrorTarget?.classList.add("hidden")
     this.element.setAttribute("aria-busy", "true")
+    if (this.hasSkeletonTarget && this.cardTargets.length === 0) {
+      this.skeletonTarget.classList.remove("hidden")
+    }
 
     try {
       const response = await fetch(url, {
@@ -134,6 +137,7 @@ export default class extends Controller {
     } finally {
       if (this.filterRequest === request) {
         this.element.removeAttribute("aria-busy")
+        if (this.hasSkeletonTarget) this.skeletonTarget.classList.add("hidden")
         this.filterRequest = null
       }
     }

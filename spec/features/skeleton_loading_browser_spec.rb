@@ -74,6 +74,7 @@ RSpec.describe 'Scoped skeleton loading', type: :feature, js: true do
 
     expect(page).to have_css('[data-supplier-contacts-target="skeleton"][aria-hidden="true"]', visible: :all)
     expect(page).to have_css('[data-supplier-addresses-target="skeleton"][aria-hidden="true"]', visible: :all)
+    expect(page).to have_css('[data-supplier-documents-target="skeleton"][aria-hidden="true"]', visible: :all)
     expect(page).to have_css('.delta-skeleton--card', minimum: 2, visible: :all)
   end
 
