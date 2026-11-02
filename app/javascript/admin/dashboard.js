@@ -595,7 +595,19 @@ document.addEventListener("turbo:load", () => {
     }
 
     if (sidebarOverlay) {
-        onElement(sidebarOverlay, "click", closeMobileSidebar)
+        onElement(sidebarOverlay, "click", (event) => {
+            // The overlay is only a drawer dismissal surface. Don't let its
+            // click reach the document-wide dropdown handlers, which can move
+            // focus after the drawer has returned it to the navbar toggle.
+            event.preventDefault()
+            event.stopPropagation()
+            closeMobileSidebar()
+            queueMicrotask(() => {
+                if (!sidebar?.classList.contains("sidebar-open") && window.innerWidth < 1024) {
+                    sidebarToggle?.focus({ preventScroll: true })
+                }
+            })
+        })
     }
 
     /*

@@ -96,6 +96,7 @@ RSpec.describe 'Admin sidebar interactions', type: :feature, js: true do
   scenario 'opens a modal drawer on mobile and restores focus on close' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
 
     find('#sidebarToggle').click
     expect(page).to have_css('#adminSidebar.sidebar-open')
