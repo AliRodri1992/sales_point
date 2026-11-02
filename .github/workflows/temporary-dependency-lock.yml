@@ -1,0 +1,22 @@
+name: Temporary dependency lock regeneration
+on:
+  push:
+    branches:
+      - feature/fixes
+jobs:
+  regenerate-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Ruby without dependency installation
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: false
+      - name: Resolve patched dependencies using Bundler
+        run: |
+          bundle lock --update loofah nokogiri rails-html-sanitizer
+          echo '__VALID_LOCK_START__'
+          base64 -w0 Gemfile.lock
+          echo
+          echo '__VALID_LOCK_END__'
