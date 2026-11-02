@@ -19,7 +19,7 @@ module Admin
       load_users
       @can_manage_users = policy(User).create?
       @user_status_counts = scoped_users.group(:status).count
-      @filter_roles = SystemRole.system.active.order(:name)
+      @filter_roles = SystemRole.system.active.not_deleted.order(:name)
     end
 
     def show
@@ -117,7 +117,7 @@ module Admin
         user: [
           :email, :username, :password, :password_confirmation,
           :user_type, :status, :theme, :language_id,
-          { system_role_ids: [] }
+          { system_role_ids: [], branch_role_assignments: [] }
         ]
       )
     end
@@ -140,7 +140,9 @@ module Admin
     def load_form_options
       @languages = Language.available.order(:name)
       @themes = Theme.all
-      @roles = SystemRole.system.active.order(:name)
+      @roles = SystemRole.system.active.not_deleted.order(:name)
+      @branches = current_organization&.branches&.not_deleted&.where(status: true)&.order(:name) || Branch.none
+      @branch_roles = SystemRole.branch.active.not_deleted.order(:name)
     end
 
     def notify_user(actor, record, action)

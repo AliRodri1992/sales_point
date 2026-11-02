@@ -13,13 +13,16 @@ module Users
     def save
       @user.assign_attributes(user_attributes)
       role_ids = requested_role_ids
-      return invalid_role_error if role_ids == :invalid
+      branch_roles = branch_role_editor
+      return invalid_role_error(:system_role_ids) if role_ids == :invalid
+      return invalid_role_error(:branch_role_assignments) unless branch_roles.valid?
 
       User.transaction do
         created = @user.new_record?
         @user.save!
         @user.organization_memberships.create!(organization: @organization, status: :active) if created
         sync_system_roles!(role_ids) unless role_ids.nil?
+        branch_roles.apply!
       end
       true
     rescue ActiveRecord::RecordInvalid => e
@@ -30,7 +33,7 @@ module Users
     private
 
     def user_attributes
-      permitted = @attributes.except(:system_role_ids)
+      permitted = @attributes.except(:system_role_ids, :branch_role_assignments)
       if permitted[:password].blank?
         permitted.delete(:password)
         permitted.delete(:password_confirmation) if permitted[:password_confirmation].blank?
@@ -46,13 +49,19 @@ module Users
       return :invalid unless provided.all? { |value| value.to_s.match?(/\A\d+\z/) }
 
       ids = provided.map(&:to_i).uniq
-      allowed = SystemRole.system.active.where(id: ids).pluck(:id)
+      allowed = SystemRole.system.active.not_deleted.where(id: ids).pluck(:id)
       ids.sort == allowed.sort ? ids : :invalid
     end
 
-    def invalid_role_error
+    def branch_role_editor
+      Users::BranchRoleAssignments.new(
+        user: @user, organization: @organization, tokens: @attributes[:branch_role_assignments]
+      )
+    end
+
+    def invalid_role_error(attribute)
       @user.valid?
-      @user.errors.add(:system_role_ids, :invalid)
+      @user.errors.add(attribute, :invalid)
       false
     end
 
