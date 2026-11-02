@@ -55,6 +55,10 @@ class User < ApplicationRecord
             presence: true,
             inclusion: { in: Theme.ids }
 
+  def active_for_authentication?
+    super && active? && deleted_at.nil?
+  end
+
   def admin?
     system_roles.active.exists?(code: %w[super_admin administrator])
   end

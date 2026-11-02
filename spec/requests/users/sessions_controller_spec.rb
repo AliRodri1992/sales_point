@@ -85,6 +85,26 @@ RSpec.describe Users::SessionsController, type: :request do
       .to eq(I18n.t('authentication.login.show_password', locale:))
   end
 
+  it 'rejects suspended and blocked accounts even when the password is correct' do
+    %w[suspended blocked].each do |status|
+      user.update!(status:)
+      post user_session_path, params: { user: { email: user.email, password: } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(session['warden.user.user.key']).to be_nil
+    end
+  end
+
+  it 'signs out an existing session when an administrator blocks the account' do
+    sign_in user
+    user.update!(status: 'blocked')
+
+    get admin_dashboard_path
+
+    expect(response).to redirect_to(new_user_session_path)
+    expect(controller.current_user).to be_nil
+  end
+
   it 'signs in successfully and stores the SweetAlert session message' do
     post user_session_path, params: {
       user: { email: user.email, password: }

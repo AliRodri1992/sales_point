@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
 
   around_action :with_organization_timezone
   before_action :set_locale
+  before_action :enforce_active_account
   before_action :configure_permitted_parameters, if: :devise_controller?
   after_action :set_action_cable_user_id_cookie
 
@@ -44,6 +45,14 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def enforce_active_account
+    return unless user_signed_in?
+    return if current_user.active? && current_user.deleted_at.nil?
+
+    sign_out(current_user)
+    redirect_to new_user_session_path
+  end
 
   def with_organization_timezone(&)
     settings = current_organization&.organization_settings&.active_records
