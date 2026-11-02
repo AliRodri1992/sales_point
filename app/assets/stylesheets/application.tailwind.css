@@ -1285,6 +1285,22 @@ select:focus-visible {
     animation: registration-step-enter 180ms ease-out;
 }
 
+.registration-page [data-step="4"] :is(input:not([type="hidden"]), button[aria-haspopup="listbox"]) {
+    @apply min-h-11 px-4 py-2.5 text-sm leading-5;
+}
+
+.registration-page [data-step="4"] label {
+    @apply text-xs leading-4;
+}
+
+.registration-page [data-step="4"] .delta-select-container {
+    @apply mt-1;
+}
+
+.registration-page [data-step="4"] [data-registration-wizard-target="dropdownLabel"] {
+    @apply min-w-0 truncate;
+}
+
 .registration-page [data-registration-wizard-target="setupCard"] {
     border: 2px solid var(--registration-border);
     transition:
