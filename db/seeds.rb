@@ -473,25 +473,31 @@ unless defined?(USER_SEED_ROLES)
   ].freeze
 end
 
-def seed_users(count = 15)
+def seed_users(organization:, count: 30)
   roles = SystemRole.where(code: USER_SEED_ROLES).order(:id).to_a
   language = Language.find_by!(code: 'es')
   $stdout.puts "[SEEDS][USUARIOS][INICIO] Procesando #{count} usuarios de ejemplo; roles disponibles=#{roles.length}"
-  count.times { |index| seed_example_user(index, count, roles, language) }
+  count.times { |index| seed_example_user(index, count, roles, language, organization) }
   $stdout.puts "[SEEDS][USUARIOS][OK] Total usuarios de ejemplo procesados=#{count}"
 end
 
-def seed_example_user(index, count, roles, language)
+def seed_example_user(index, count, roles, language, organization)
   user = User.find_or_initialize_by(email: "user#{index + 1}@delta.com")
   action = user.new_record? ? 'CREAR' : 'ACTUALIZAR'
   if user.new_record?
     assign_user_attributes(user, language, index)
     user.save!
   end
+  membership = OrganizationMembership.find_or_initialize_by(user:, organization:)
+  if membership.new_record?
+    membership.assign_attributes(status: :active, deleted_at: nil)
+    membership.save!
+  end
   role = roles.fetch(index % roles.length)
   assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
                "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
+               "organizacion_id=#{organization.id} membresia_id=#{membership.id} " \
                "rol=#{role.code} asignacion_id=#{assignment.id}"
 end
 
@@ -558,7 +564,6 @@ SeedConsole.track('Roles', SystemRole) { seed_system_roles }
 SeedConsole.track('Permisos', Permission) { seed_permissions }
 SeedConsole.track('Asignación de permisos') { assign_default_role_permissions }
 SeedConsole.track('Usuario administrador', User) { seed_admin_user }
-SeedConsole.track('Usuarios de ejemplo', User) { seed_users }
 
 require_relative 'seeds/supplier_examples'
 SeedConsole.track('Organización Delta POS', Organization) do
@@ -569,9 +574,21 @@ SeedConsole.report('Regímenes fiscales SAT', SatFiscalRegime)
 SeedConsole.report('Contactos', Contact)
 SeedConsole.report('Membresías', OrganizationMembership)
 
+# SupplierExamples creates the demo tenant and the administrator's membership.
+# Seed the remaining users only after that tenant exists.
+SeedConsole.track('Usuarios de ejemplo', User) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  admin = User.find_by!(email: 'administrador@delta.com')
+  unless admin.organization_memberships.active.where(organization:, deleted_at: nil).exists?
+    raise 'El administrador debe pertenecer a la organización demo antes de sembrar usuarios'
+  end
+
+  seed_users(organization:)
+end
+
 # Deterministic examples avoid Faker collisions and invalid phone/address data.
 SeedConsole.track('Clientes', Client) do
-  20.times do |index|
+  30.times do |index|
     number = index + 1
     code = format('CLI%04d', number)
     next if Client.unscoped.exists?(code:)
@@ -599,7 +616,7 @@ SeedConsole.track('Clientes', Client) do
 end
 
 SeedConsole.track('Categorías', Category) do
-  15.times do |index|
+  30.times do |index|
     number = index + 1
     code = format('cat%04d', number)
     next if Category.unscoped.exists?(code:)
@@ -618,7 +635,7 @@ SeedConsole.track('Productos', Product) do
   categories = Category.not_deleted.order(:id).to_a
   raise 'No hay categorías disponibles para crear productos' if categories.empty?
 
-  15.times do |index|
+  30.times do |index|
     number = index + 1
     code = format('PROD%04d', number)
     next if Product.unscoped.exists?(organization:, code:)
