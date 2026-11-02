@@ -1,0 +1,42 @@
+/* Visual placeholders are decorative and never receive focus or pointer events. */
+.delta-skeleton {
+    width: 100%;
+    pointer-events: none;
+}
+
+.delta-skeleton__bar {
+    display: block;
+    background-color: #e2e8f0;
+    background-image: linear-gradient(100deg, transparent 25%, rgba(255, 255, 255, .72) 50%, transparent 75%);
+    background-size: 200% 100%;
+    animation: delta-skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+.delta-skeleton__table-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--skeleton-columns), minmax(0, 1fr));
+    align-items: center;
+    gap: 1rem;
+}
+
+.delta-skeleton-region [hidden] {
+    display: none !important;
+}
+
+@keyframes delta-skeleton-shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+}
+
+.dark .delta-skeleton__bar,
+[data-theme="dark"] .delta-skeleton__bar {
+    background-color: #334155;
+    background-image: linear-gradient(100deg, transparent 25%, rgba(148, 163, 184, .18) 50%, transparent 75%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .delta-skeleton__bar {
+        animation: none;
+        background-image: none;
+    }
+}

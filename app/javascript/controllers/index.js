@@ -146,6 +146,9 @@ application.register("products-search", ProductsSearchController)
 import UserGuideController from "./user_guide_controller"
 application.register("user-guide", UserGuideController)
 
+import SkeletonLoadingController from "./skeleton_loading_controller"
+application.register("skeleton-loading", SkeletonLoadingController)
+
 import AdminActionLoaderController from "./admin_action_loader_controller"
 application.register("admin-action-loader", AdminActionLoaderController)
 

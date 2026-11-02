@@ -6,11 +6,15 @@ export default class extends Controller {
   connect() {
     this.pending = null
     this.request = null
+    this.requestNumber = 0
   }
 
   disconnect() {
     window.clearTimeout(this.pending)
     this.request?.abort()
+    document.dispatchEvent(new CustomEvent('skeleton:end', {
+      detail: { region: 'suppliers', requestId: this.requestNumber }
+    }))
   }
 
   schedule(event) {
@@ -70,7 +74,12 @@ export default class extends Controller {
   async refresh() {
     this.errorTarget?.classList.add('hidden')
     this.request?.abort()
-    this.request = new AbortController()
+    const request = new AbortController()
+    this.request = request
+    const requestId = ++this.requestNumber
+    document.dispatchEvent(new CustomEvent('skeleton:begin', {
+      detail: { region: 'suppliers', requestId }
+    }))
     const url = new URL(this.element.action)
     const params = new URLSearchParams(new FormData(this.element))
     params.delete("page")
@@ -80,18 +89,24 @@ export default class extends Controller {
       const response = await fetch(url, {
         headers: { Accept: "text/vnd.turbo-stream.html" },
         credentials: "same-origin",
-        signal: this.request.signal
+        signal: request.signal
       })
       if (!response.ok) throw new Error(`Supplier filtering failed: ${response.status}`)
       const html = await response.text()
-      if (this.request.signal.aborted) return
+      if (request.signal.aborted || this.request !== request) return
       window.Turbo.renderStreamMessage(html)
       window.history.replaceState(window.history.state, "", url)
       if (this.hasErrorTarget) this.errorTarget.classList.add("hidden")
     } catch (error) {
-      if (error.name !== "AbortError") {
+      if (error.name !== "AbortError" && this.request === request) {
         if (this.hasErrorTarget) this.errorTarget.classList.remove("hidden")
         console.error(error)
+      }
+    } finally {
+      if (this.request === request) {
+        document.dispatchEvent(new CustomEvent('skeleton:end', {
+          detail: { region: 'suppliers', requestId }
+        }))
       }
     }
   }

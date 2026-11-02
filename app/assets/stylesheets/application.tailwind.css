@@ -10,6 +10,7 @@
 @import "./components/demo_request.css";
 @import "./components/privacy.css";
 @import "./components/onboarding.css";
+@import "./components/skeleton.css";
 @import "./components/supplier_edit_uppy.css";
 
 @theme {

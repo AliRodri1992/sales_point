@@ -16,7 +16,7 @@
     <% end %>
 
     <%= form_with url: admin_products_path, method: :get,
-                  data: { controller: 'products-search' },
+                  data: { controller: 'products-search', turbo_frame: 'admin_products_list' },
                   class: 'flex items-center gap-2' do |f| %>
       <%= text_field_tag :search, params[:search],
             placeholder: t('admin.products.index.search_placeholder'),
@@ -32,6 +32,16 @@
   </div>
 </div>
 
+<div class="delta-skeleton-region" data-controller="skeleton-loading"
+     data-skeleton-loading-region-value="admin_products_list" aria-busy="false"
+     data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:before-cache@document->skeleton-loading#clear">
+  <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
+  <div data-skeleton-loading-target="content">
 <%= turbo_frame_tag "admin_products_list" do %>
   <%= render "list", products: @products %>
 <% end %>
+  </div>
+  <div data-skeleton-loading-target="placeholder" hidden>
+    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 8) %>
+  </div>
+</div>
