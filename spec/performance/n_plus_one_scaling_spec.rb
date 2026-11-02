@@ -35,13 +35,13 @@ RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, 
 
   def expect_bounded_query_growth(counts, limit:)
     expect(counts.keys).to eq([1, 20, 100])
+    expect(counts.fetch(1)).to be >= 1
     expect(counts.values.max).to be <= limit
     expect(counts.fetch(100)).to be <= counts.fetch(1) + 1
   end
 
   it 'does not multiply inventory stock aggregations across 1, 20, and 100 products' do
-    counts = query_counts_for([1, 20, 100], admin_products_path, /SUM\\([^\\n]*stock[^\\n]*\\)/i) do
-      |index|
+    counts = query_counts_for([1, 20, 100], admin_products_path, /SUM\([^\n]*stock[^\n]*\)/i) do |index|
       create(:product, organization:, name: "Measured product #{index}")
     end
 
@@ -49,7 +49,7 @@ RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, 
   end
 
   it 'does not multiply phone queries across 1, 20, and 100 clients' do
-    counts = query_counts_for([1, 20, 100], admin_clients_path, /FROM\\s+"?phones"?/i) do |_index|
+    counts = query_counts_for([1, 20, 100], admin_clients_path, /FROM\s+"?phones"?/i) do |_index|
       create(:client)
     end
 
@@ -57,7 +57,7 @@ RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, 
   end
 
   it 'does not multiply phone queries across 1, 20, and 100 branches' do
-    counts = query_counts_for([1, 20, 100], admin_branches_path, /FROM\\s+"?phones"?/i) do |index|
+    counts = query_counts_for([1, 20, 100], admin_branches_path, /FROM\s+"?phones"?/i) do |index|
       create(:branch, organization:, name: "Measured branch #{index}")
     end
 
