@@ -184,6 +184,10 @@ jobs:
         run: |
           bundle exec rspec spec/features/admin_sidebar_navigation_spec.rb spec/features/admin_sidebar_interactions_spec.rb spec/features/supplier_creation_summary_spec.rb
 
+      - name: Run focused membership integration regressions
+        run: |
+          bundle exec rspec spec/models/organization_spec.rb spec/models/subscription_spec.rb spec/policies/membership_policies_spec.rb spec/services/membership/subscription_manager_spec.rb spec/requests/admin/membership_modules_spec.rb spec/requests/admin/membership_plan_features_spec.rb spec/requests/admin/subscription_lifecycle_spec.rb spec/services/suppliers/calendar_board_spec.rb
+
       - name: Run RSpec
         env:
           COVERAGE: true
