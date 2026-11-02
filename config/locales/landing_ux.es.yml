@@ -1,6 +1,7 @@
 es:
   landing:
     buttons:
+      dashboard: Ir al panel
       close_menu: Cerrar menú
     hero_preview:
       title: Vista previa del panel

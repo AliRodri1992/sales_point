@@ -7,11 +7,18 @@
   outline-offset: 3px;
 }
 
-.landing-page header :is(a, button):focus-visible {
+.landing-page header :is(a, button, summary):focus-visible {
   outline-color: #6ee7b7;
 }
 
 .landing-page [data-controller="language-selector"] [data-language]:focus-visible {
+  outline-color: #047857;
+  outline-offset: -3px;
+}
+
+.landing-account-toggle::-webkit-details-marker { display: none; }
+
+.landing-page [data-navbar-target="accountMenu"] :is(a, button):focus-visible {
   outline-color: #047857;
   outline-offset: -3px;
 }

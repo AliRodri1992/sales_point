@@ -1,6 +1,7 @@
 ko:
   landing:
     buttons:
+      dashboard: 대시보드로 이동
       close_menu: 메뉴 닫기
     hero_preview:
       title: 대시보드 미리보기

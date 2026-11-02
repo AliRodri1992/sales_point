@@ -36,7 +36,7 @@ module Landing
     end
 
     def plan_button_text
-      I18n.t('landing.buttons.start')
+      helpers.landing_primary_action_text
     end
   end
 end

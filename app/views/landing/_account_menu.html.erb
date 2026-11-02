@@ -1,0 +1,11 @@
+<details class="relative" data-navbar-target="accountMenu">
+  <summary class="landing-account-toggle flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl bg-slate-800 px-3 py-1.5 text-white hover:bg-slate-700"
+    aria-label="<%= t('admin.shared.user_menu.toggle') %>: <%= current_user.display_name %>">
+    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-800" aria-hidden="true"><%= current_user.initials %></span>
+    <span class="max-w-28 truncate text-sm font-medium" title="<%= current_user.display_name %>"><%= current_user.display_name %></span>
+    <%= delta_icon('chevron-down', class: 'h-3 w-3 shrink-0', 'aria-hidden': true) %>
+  </summary>
+  <div class="<%= local_assigns[:mobile] ? 'mt-2' : 'absolute right-0 top-full mt-2' %> z-50 w-56 max-w-full overflow-hidden rounded-xl border border-slate-200 bg-white text-slate-700 shadow-lg">
+    <%= render 'admin/shared/account_menu_items' %>
+  </div>
+</details>

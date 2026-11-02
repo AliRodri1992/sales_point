@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'home/index.html.erb', type: :view do
+  include Devise::Test::ControllerHelpers
+
   before do
     assign(:features, [])
     assign(:testimonials, [])

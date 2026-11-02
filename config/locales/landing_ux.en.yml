@@ -1,6 +1,7 @@
 en:
   landing:
     buttons:
+      dashboard: Go to dashboard
       close_menu: Close menu
     hero_preview:
       title: Dashboard preview

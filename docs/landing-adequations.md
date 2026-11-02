@@ -26,3 +26,11 @@ Las pruebas de navegador cubren menú móvil/tablet, teclado e idioma, destinos,
 anclas, tamaños de 320 a 1440 px, testimonios sin avance automático y foco del
 formulario y confirmación de demostración. Las pruebas usan el runner aislado
 `bash bin/overcommit-rspec`; la demostración de éxito se simula sin enviar correos.
+
+Con sesión activa, todos los CTA de registro muestran «Ir al panel» y apuntan al
+dashboard existente. La cabecera ofrece las iniciales y el nombre del usuario con
+las opciones de cuenta ya implementadas (perfil, guía y cierre de sesión con DELETE).
+El menú de cuenta funciona con teclado, cierra con Escape/clic exterior y mantiene
+los permisos y rutas existentes. La landing sigue siendo pública y consultable.
+La caché de vistas de Turbo se desactiva en la landing para consultar el estado
+actual de sesión al volver con el historial después de iniciar o cerrar sesión.
