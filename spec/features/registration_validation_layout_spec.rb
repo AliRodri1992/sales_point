@@ -103,5 +103,4 @@ RSpec.describe 'Registration validation layout', type: :feature, js: true do
     expect(page).to have_css('[data-registration-field-error]', minimum: 3)
     expect(form_height).to be_within(1).of(original_height)
   end
-
 end
