@@ -28,9 +28,7 @@ class ApplicationController < ActionController::Base
       branches = current_organization.branches.not_deleted.where(status: true)
 
       unless current_user.admin?
-        assigned_branch_ids = current_user.user_roles.active
-                                         .where.not(branch_id: nil)
-                                         .select(:branch_id)
+        assigned_branch_ids = current_user.user_roles.active.where.not(branch_id: nil).select(:branch_id)
         branches = branches.where(id: assigned_branch_ids)
       end
 
