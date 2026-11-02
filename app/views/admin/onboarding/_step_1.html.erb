@@ -1,0 +1,11 @@
+<div class="onboarding-field-grid">
+<%= fields_for :organization, @organization do |fields| %>
+    <%= render 'field', form: fields, attribute: :name, label: t('admin.onboarding.fields.company_name'), autocomplete: 'organization' %>
+    <%= render 'field', form: fields, attribute: :tax_id, label: t('admin.onboarding.fields.tax_id'), data: { onboarding_pattern: onboarding_pattern(Organization::TAX_ID_FORMAT) } %>
+    <%= render 'field', form: fields, attribute: :business_sector, label: t('admin.onboarding.fields.business_sector'), collection: Organization::ONBOARDING_BUSINESS_SECTORS.map { |key| [t("admin.onboarding.business_sectors.#{key}"), key] } %>
+<% end %>
+<%= fields_for :organization, @settings do |fields| %>
+    <%= render 'field', form: fields, attribute: :base_currency_id, error_attribute: :base_currency, label: t('admin.onboarding.fields.currency'), collection: @currencies.map { |currency| [currency.code, currency.id] } %>
+    <%= render 'field', form: fields, attribute: :timezone, label: t('admin.onboarding.fields.timezone'), collection: OrganizationSetting::ONBOARDING_TIMEZONES.map { |zone| [zone, zone] } %>
+<% end %>
+</div>

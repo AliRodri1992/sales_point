@@ -103,7 +103,7 @@ module Onboarding
     end
 
     def section_key
-      %i[company fiscal branches terminals payments migration team][@step - 1]
+      { 1 => :company, 2 => :branches, 3 => :terminals, 4 => :payments }[@step]
     end
 
     def advance_step

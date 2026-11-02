@@ -1,0 +1,78 @@
+en:
+  admin:
+    onboarding_ui:
+      title: Initial setup
+      description: Set up your business. Save and continue later.
+      back_dashboard: Back to dashboard
+      progress_help: Progress is calculated from your saved configuration.
+      steps_label: Setup steps
+      current_step: Step %{number} of 5
+      review_title: Review your setup
+      review_help: Check your saved details and resolve outstanding items before finishing.
+      required_help: Fields marked * are required.
+      select_option: Select an option
+      save_continue: Save and continue
+      save_exit: Save and exit
+      saving: Saving…
+      phone_help: Optional when adding it. Select the number’s country.
+      address_title: Branch location
+      address_help: Required fields adapt to the selected country.
+      active_branch: Active branch
+      active_branch_help: The branch must be active to set up its registers and complete this section.
+      payment_help: This choice sets your initial payment preference. It does not disconnect existing integrations
+        or activate a provider. New integration requests remain pending configuration.
+      integrations_title: Existing integration status
+      review_section: Review section
+      footer_help: Your progress is kept when you save. Initial setup does not prevent you from using the rest of
+        the system.
+      other_actions: Other actions
+      reset_help: Return to the first step to review your setup. Business, branch, register and payment data are
+        preserved.
+      reset_confirm: You will return to the first step and restart the review status. Saved data is preserved and
+        progress is recalculated from it. Unsaved changes will be discarded.
+      step_status:
+        current: Current step
+        complete: Completed
+        pending: Pending
+      integration_status:
+        active: Active
+        pending: Pending setup
+        inactive: Inactive
+      feedback:
+        incomplete: Could not save. Review the highlighted fields and outstanding items in this section.
+        completed: Initial setup completed.
+        saved: Changes saved.
+        recovered: Initial setup updated.
+      pending:
+        company: Review your business details.
+        fiscal: Complete your tax identification.
+        branches: Review and activate the branch.
+        terminals: Create or review this branch’s register.
+        payments: Select your initial payment method.
+        migration: Review the saved migration preferences.
+        team: Complete the responsible person’s profile above.
+      recovery:
+        terminal_help: This branch has no active registers yet. You can create the first register here. Existing
+          registers are preserved.
+        active_branch_required: First save an active branch in the Branch step.
+        create_terminal: Create first register
+        team_title: Complete your responsible person profile
+        team_help: This organization has no active employee profile. One will be created with your sign-in email,
+          without changing your permissions.
+        first_name: First name
+        last_name: Last name
+        create_team: Save my profile
+        existing_profile: An inactive profile with your email already exists. Ask your administrator to review it;
+          it will not be reactivated automatically.
+      client:
+        unsaved_title: You have unsaved changes
+        unsaved_body: Leaving this section will discard changes you have not saved.
+        discard: Discard and leave
+        keep_editing: Keep editing
+        phone_invalid: is not valid for the selected country.
+        network_error: We could not confirm the save. Check your connection and try again. Your information is still
+          in the form.
+        server_error: Could not save right now. Your information is kept so you can retry.
+        access_error: Your session or permissions no longer allow saving. Check your access before retrying.
+        close: Close notice
+      terminal_intro: Review your register names or create the first register if none exists yet.

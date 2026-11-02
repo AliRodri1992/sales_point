@@ -2,16 +2,6 @@
 
 module Onboarding
   class ProgressCalculator
-    REQUIRED_ADDRESS_FIELDS = %i[
-      street
-      exterior_number
-      neighborhood
-      city
-      state
-      country
-      postal_code
-    ].freeze
-
     def self.call(organization)
       new(organization).call
     end
@@ -56,14 +46,20 @@ module Onboarding
 
       branch_percentage = percentage_for([branch.name])
       address_percentage = percentage_for(
-        REQUIRED_ADDRESS_FIELDS.map { |field| branch.address&.public_send(field) }
+        required_address_fields(branch.address).map { |field| branch.address&.public_send(field) }
       )
 
       section(:branches, (branch_percentage + address_percentage) / 2)
     end
 
+    def required_address_fields(address)
+      rules = Addresses::CountryRules.new(address&.country&.iso_alpha2)
+      %i[street city country] + rules.required_fields
+    end
+
     def terminal_section
-      configured = @organization.branches.joins(:terminals).merge(Terminal.active_records).exists?
+      configured = @organization.branches.not_deleted.where(status: true)
+                                .joins(:terminals).merge(Terminal.active_records).exists?
       section(:terminals, configured ? 100 : 0)
     end
 

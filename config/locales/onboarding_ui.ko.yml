@@ -1,0 +1,70 @@
+ko:
+  admin:
+    onboarding_ui:
+      title: 초기 설정
+      description: 사업장 설정을 저장하고 나중에 이어서 진행하세요.
+      back_dashboard: 대시보드로 돌아가기
+      progress_help: 저장된 설정을 기준으로 진행률을 계산합니다.
+      steps_label: 설정 단계
+      current_step: 5단계 중 %{number}단계
+      review_title: 설정 검토
+      review_help: 저장된 정보를 확인하고 미완료 항목을 해결한 후 완료하세요.
+      required_help: '* 표시가 있는 항목은 필수입니다.'
+      select_option: 옵션을 선택하세요
+      save_continue: 저장하고 계속
+      save_exit: 저장하고 나가기
+      saving: 저장 중…
+      phone_help: 새로 추가할 때 선택 사항입니다. 전화번호의 국가를 선택하세요.
+      address_title: 지점 위치
+      address_help: 선택한 국가에 따라 필수 항목이 바뀝니다.
+      active_branch: 활성 지점
+      active_branch_help: 금전함을 설정하고 이 항목을 완료하려면 지점이 활성 상태여야 합니다.
+      payment_help: 초기 결제 방식만 선택합니다. 기존 연동을 해제하거나 제공업체를 활성화하지 않습니다. 새 연동 요청은 설정 대기 상태가 됩니다.
+      integrations_title: 기존 연동 상태
+      review_section: 항목 검토
+      footer_help: 저장하면 진행 상황이 유지됩니다. 초기 설정을 완료하지 않아도 시스템의 다른 기능을 사용할 수 있습니다.
+      other_actions: 기타 작업
+      reset_help: 첫 단계로 돌아가 설정을 검토합니다. 사업장, 지점, 금전함 및 결제 정보는 유지됩니다.
+      reset_confirm: 첫 단계로 돌아가 검토 상태를 다시 시작합니다. 저장된 정보는 유지되며 이를 기준으로 진행률을 다시 계산합니다. 저장하지 않은 변경 사항은 사라집니다.
+      step_status:
+        current: 현재 단계
+        complete: 완료
+        pending: 미완료
+      integration_status:
+        active: 활성
+        pending: 설정 대기 중
+        inactive: 비활성
+      feedback:
+        incomplete: 저장하지 못했습니다. 표시된 입력란과 이 항목의 미완료 내용을 확인하세요.
+        completed: 초기 설정이 완료되었습니다.
+        saved: 변경 사항을 저장했습니다.
+        recovered: 초기 설정을 업데이트했습니다.
+      pending:
+        company: 사업장 정보를 확인하세요.
+        fiscal: 세금 식별 정보를 입력하세요.
+        branches: 지점을 확인하고 활성화하세요.
+        terminals: 이 지점의 금전함을 만들거나 확인하세요.
+        payments: 초기 결제 방식을 선택하세요.
+        migration: 저장된 이전 설정을 확인하세요.
+        team: 위에서 책임자 프로필을 완성하세요.
+      recovery:
+        terminal_help: 이 지점에는 아직 활성 금전함이 없습니다. 여기에서 첫 금전함을 만들 수 있습니다. 기존 금전함은 유지됩니다.
+        active_branch_required: 먼저 지점 단계에서 활성 지점을 저장하세요.
+        create_terminal: 첫 금전함 만들기
+        team_title: 책임자 프로필 완성
+        team_help: 이 조직에는 활성 직원 프로필이 없습니다. 권한을 변경하지 않고 로그인 이메일로 프로필을 만듭니다.
+        first_name: 이름
+        last_name: 성
+        create_team: 내 프로필 저장
+        existing_profile: 이 이메일을 사용하는 비활성 프로필이 이미 있습니다. 관리자에게 검토를 요청하세요. 자동으로 재활성화되지 않습니다.
+      client:
+        unsaved_title: 저장하지 않은 변경 사항이 있습니다
+        unsaved_body: 이 항목을 떠나면 저장하지 않은 변경 사항이 사라집니다.
+        discard: 변경 사항을 버리고 나가기
+        keep_editing: 계속 편집
+        phone_invalid: 선택한 국가에 유효한 형식이 아닙니다.
+        network_error: 저장 여부를 확인할 수 없습니다. 연결을 확인하고 다시 시도하세요. 입력한 정보는 양식에 유지됩니다.
+        server_error: 지금 저장할 수 없습니다. 다시 시도할 수 있도록 입력한 정보를 유지합니다.
+        access_error: 현재 세션 또는 권한으로 저장할 수 없습니다. 접근 권한을 확인한 후 다시 시도하세요.
+        close: 알림 닫기
+      terminal_intro: 금전함 이름을 확인하거나 아직 없다면 첫 금전함을 만드세요.

@@ -17,7 +17,7 @@ module Onboarding
       return false if terminals.blank?
 
       terminals.each_with_index do |terminal, index|
-        terminal.assign_attributes(name: terminal_name(index))
+        terminal.assign_attributes(name: terminal_name(index, terminal.name))
         return false unless terminal.save!(context: :onboardingstep3)
       end
 
@@ -34,9 +34,8 @@ module Onboarding
       branch.terminals.active_records.order(:id).to_a
     end
 
-    def terminal_name(index)
-      @params.dig(:terminal_names, index.to_s).presence ||
-        I18n.t('registration.initial_terminal_name', number: index + 1)
+    def terminal_name(index, existing_name)
+      @params.dig(:terminal_names, index.to_s)&.strip || existing_name
     end
   end
 end

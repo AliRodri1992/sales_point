@@ -38,7 +38,7 @@ module Onboarding
           'mobile_phone' => branch.phones.active.find_by(kind: 'mobile', primary: true)&.number
         ),
         'address' => branch.address&.attributes&.slice('street', 'exterior_number', 'interior_number', 'neighborhood',
-                                                       'city', 'state', 'country', 'postal_code')
+                                                       'city', 'state', 'country_id', 'postal_code')
       }
     end
 

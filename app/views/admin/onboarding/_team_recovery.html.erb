@@ -1,0 +1,10 @@
+<section id="onboarding-team" class="onboarding-team" aria-labelledby="onboarding-team-title">
+  <h3 id="onboarding-team-title"><%= t('admin.onboarding_ui.recovery.team_title') %></h3><p class="onboarding-field-hint"><%= t('admin.onboarding_ui.recovery.team_help') %></p>
+  <p class="onboarding-profile-email"><%= current_user.email %></p>
+  <%= form_with url: admin_onboarding_path(step: 5, intent: 'team'), method: :patch, html: { novalidate: true },
+    data: { onboarding_target: 'form', action: 'submit->onboarding#submit turbo:submit-start->onboarding#submitStart turbo:submit-end->onboarding#submitEnd turbo:before-fetch-response->onboarding#beforeResponse turbo:fetch-request-error->onboarding#requestError' } do |form| %>
+    <%= fields_for :recovery, @team_member do |fields| %><div class="onboarding-field-grid"><% %i[first_name last_name].each do |attribute| %><%= render 'field', form: fields, attribute:, label: t("admin.onboarding_ui.recovery.#{attribute}") %><% end %></div><% end %>
+    <%= render 'field_errors', object: @team_member, attribute: :base, label: '', id: 'onboarding-team-error' %>
+    <%= form.button t('admin.onboarding_ui.recovery.create_team'), class: 'onboarding-secondary', data: { turbo_submits_with: t('admin.onboarding_ui.saving') } %>
+  <% end %>
+</section>

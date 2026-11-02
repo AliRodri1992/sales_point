@@ -1,0 +1,77 @@
+es:
+  admin:
+    onboarding_ui:
+      title: Configuración inicial
+      description: Configura tu negocio a tu ritmo. Guarda tu avance y continúa después.
+      back_dashboard: Volver al panel
+      progress_help: Avance calculado a partir de tu configuración guardada.
+      steps_label: Pasos de configuración
+      current_step: Paso %{number} de 5
+      review_title: Revisa tu configuración
+      review_help: Consulta los datos guardados y resuelve los pendientes antes de finalizar.
+      required_help: Los campos con * son obligatorios.
+      select_option: Selecciona una opción
+      save_continue: Guardar y continuar
+      save_exit: Guardar y salir
+      saving: Guardando…
+      phone_help: Opcional al añadirlo. Selecciona el país del número.
+      address_title: Ubicación de la sucursal
+      address_help: Los campos obligatorios se ajustan al país seleccionado.
+      active_branch: Sucursal activa
+      active_branch_help: La sucursal debe estar activa para configurar sus cajas y completar esta sección.
+      payment_help: Esta elección indica tu método inicial. No desconecta integraciones existentes ni activa un
+        proveedor. Las nuevas solicitudes de integración quedan pendientes de configuración.
+      integrations_title: Estado de las integraciones existentes
+      review_section: Revisar sección
+      footer_help: Tu avance se conserva al guardar. La configuración inicial no impide usar el resto del sistema.
+      other_actions: Otras acciones
+      reset_help: Vuelve al primer paso para revisar la configuración. Los datos de empresa, sucursal, cajas y pagos
+        se conservan.
+      reset_confirm: Volverás al primer paso y se reiniciará el estado de la revisión. Tus datos guardados se conservan
+        y el porcentaje se calcula de nuevo a partir de ellos. Los cambios sin guardar se descartarán.
+      step_status:
+        current: Paso actual
+        complete: Completado
+        pending: Pendiente
+      integration_status:
+        active: Activa
+        pending: Pendiente de configuración
+        inactive: Inactiva
+      feedback:
+        incomplete: No se pudo guardar. Revisa los campos señalados y los pendientes de esta sección.
+        completed: Configuración inicial completada.
+        saved: Cambios guardados.
+        recovered: Configuración inicial actualizada.
+      pending:
+        company: Revisa los datos del negocio.
+        fiscal: Completa la identificación fiscal.
+        branches: Revisa y activa la sucursal.
+        terminals: Crea o revisa la caja de esta sucursal.
+        payments: Selecciona el método de pago inicial.
+        migration: Revisa las preferencias de migración guardadas.
+        team: Completa el perfil del responsable que aparece arriba.
+      recovery:
+        terminal_help: Esta sucursal aún no tiene cajas activas. Puedes crear la primera caja aquí. Las cajas existentes
+          se conservan.
+        active_branch_required: Primero guarda una sucursal activa en el paso Sucursal.
+        create_terminal: Crear primera caja
+        team_title: Completa el perfil del responsable
+        team_help: Falta un perfil de empleado activo en esta organización. Se creará con tu correo de acceso, sin
+          cambiar tus permisos.
+        first_name: Nombre
+        last_name: Apellidos
+        create_team: Guardar mi perfil
+        existing_profile: Ya existe un perfil inactivo con tu correo. Solicita su revisión al administrador; no
+          se reactivará automáticamente.
+      client:
+        unsaved_title: Tienes cambios sin guardar
+        unsaved_body: Si sales de esta sección, se descartarán los cambios que aún no guardaste.
+        discard: Descartar y salir
+        keep_editing: Seguir editando
+        phone_invalid: no tiene un formato válido para el país seleccionado.
+        network_error: No pudimos confirmar el guardado. Revisa tu conexión e inténtalo de nuevo. Tus datos siguen
+          en el formulario.
+        server_error: No se pudo guardar en este momento. Conservamos los datos para que puedas reintentar.
+        access_error: La sesión o los permisos ya no permiten guardar. Revisa tu acceso antes de reintentar.
+        close: Cerrar aviso
+      terminal_intro: Revisa los nombres de tus cajas o crea la primera si todavía no existe.

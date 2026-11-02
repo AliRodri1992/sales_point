@@ -1,0 +1,16 @@
+<% required = local_assigns.fetch(:required, true) %>
+<% error_attribute = local_assigns.fetch(:error_attribute, attribute) %>
+<% options = onboarding_field_options(form, attribute, label:, required:, error_attribute:) %>
+<% options[:name] = local_assigns[:name] if local_assigns[:name] %>
+<% options[:data].merge!(local_assigns.fetch(:data, {})) %>
+<div class="onboarding-field" data-field-key="<%= attribute %>">
+  <%= form.label attribute, for: options[:id] do %><%= label %><span class="onboarding-required" aria-hidden="true" data-onboarding-required><%= '*' if required %></span><% end %>
+  <% if local_assigns[:collection] %>
+    <div class="relative" data-controller="delta-select" data-country-flags="<%= attribute == :country_id %>">
+      <%= form.select attribute, collection, { include_blank: local_assigns.fetch(:prompt, t('admin.onboarding_ui.select_option')), selected: local_assigns.fetch(:selected, form.object.respond_to?(attribute) ? form.object.public_send(attribute) : nil) }, options %>
+    </div>
+  <% else %>
+    <%= form.public_send(local_assigns.fetch(:type, :text_field), attribute, **options, autocomplete: local_assigns.fetch(:autocomplete, 'off')) %>
+  <% end %>
+  <%= render 'field_errors', object: form.object, attribute: error_attribute, label:, id: "#{options[:id]}_error" %>
+</div>

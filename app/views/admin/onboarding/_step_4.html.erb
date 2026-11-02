@@ -1,0 +1,10 @@
+<%= fields_for :payment, @settings do |fields| %>
+  <%= render 'field', form: fields, attribute: :payment_method, name: 'payment[method]', label: t('admin.onboarding.fields.payment_method'), collection: %w[cash card qr].map { |key| [t("registration.step_five.payment_options.#{key}"), key] } %>
+<% end %>
+<div class="onboarding-info"><p><%= t('admin.onboarding_ui.payment_help') %></p></div>
+<% integrations = @organization.payment_integrations.order(:id).to_a %>
+<% if integrations.any? %>
+  <section class="onboarding-fieldset"><h3><%= t('admin.onboarding_ui.integrations_title') %></h3>
+    <ul class="onboarding-integrations"><% integrations.each do |integration| %><li><strong><%= t("registration.step_five.payment_options.#{integration.provider}") %></strong><span class="onboarding-badge"><%= t("admin.onboarding_ui.integration_status.#{integration.status}") %></span></li><% end %></ul>
+  </section>
+<% end %>

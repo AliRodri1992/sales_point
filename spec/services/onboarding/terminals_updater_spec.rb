@@ -23,7 +23,7 @@ RSpec.describe Onboarding::TerminalsUpdater, type: :service do
 
     expect(result).to be(true)
     expect(terminals.map { |terminal| terminal.reload.name }).to eq(
-      ['Caja Principal', 'POS Terminal 2']
+      ['Caja Principal', 'Old Two']
     )
     expect(branch.terminals.count).to eq(2)
   end
@@ -35,6 +35,15 @@ RSpec.describe Onboarding::TerminalsUpdater, type: :service do
     terminal = create(:terminal, branch: active_branch)
 
     expect(described_class.call(organization, {}, terminals: nil)).to be(true)
-    expect(terminal.reload.name).to eq('POS Terminal 1')
+    expect(terminal.reload.name).to start_with('Register ')
+  end
+  it 'rejects clearing a saved register name instead of replacing it with a default' do
+    organization = create(:organization)
+    branch = create(:branch, organization:)
+    terminal = create(:terminal, branch:, name: 'Main register')
+    expect do
+      described_class.call(organization, { terminal_names: { '0' => '' } }, terminals: [terminal])
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(terminal.reload.name).to eq('Main register')
   end
 end

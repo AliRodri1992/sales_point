@@ -154,3 +154,6 @@ application.register("deltin-assistant", DeltinAssistantController)
 
 import SupplierEventFieldsController from "./supplier_event_fields_controller"
 application.register("supplier-event-fields", SupplierEventFieldsController)
+
+import OnboardingController from "./onboarding_controller"
+application.register("onboarding", OnboardingController)

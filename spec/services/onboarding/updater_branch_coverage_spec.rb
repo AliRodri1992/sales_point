@@ -19,20 +19,6 @@ RSpec.describe 'Onboarding updater decision paths', type: :service do
       expect(described_class.call(organization, params, settings:)).to be(false)
     end
 
-    it 'deactivates existing payment integrations for cash' do
-      settings = double
-      allow(settings).to receive(:payment_method=)
-      allow(settings).to receive(:save!).and_return(true)
-      integration = double
-      allow(integration).to receive(:update!)
-      allow(organization).to receive(:payment_integrations)
-        .and_return(double(where: double(find_each: nil)))
-      service = described_class.new(organization, params, settings)
-      allow(service).to receive(:deactivate_all_payment_integrations)
-      expect(service.call).to be(true)
-      expect(service).to have_received(:deactivate_all_payment_integrations)
-    end
-
     it 'activates the selected integration for noncash methods' do
       settings = double
       allow(settings).to receive(:payment_method=)

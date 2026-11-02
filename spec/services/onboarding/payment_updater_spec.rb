@@ -15,14 +15,14 @@ RSpec.describe Onboarding::PaymentUpdater, type: :service do
     expect(described_class.call(organization, payment_params('cash'))).to be(false)
   end
 
-  it 'deactivates existing integrations for cash payments' do
+  it 'preserves existing integrations when cash is selected' do
     organization = create(:organization, :with_settings)
     integration = create_integration(organization)
 
     expect(described_class.call(organization, payment_params('cash'))).to be(true)
 
-    expect(integration.reload.status).to eq('inactive')
-    expect(integration.deleted_at).to be_present
+    expect(integration.reload.status).to eq('pending')
+    expect(integration.deleted_at).to be_nil
     expect(organization.organization_settings.first.reload.payment_method).to eq('cash')
   end
 
@@ -49,5 +49,21 @@ RSpec.describe Onboarding::PaymentUpdater, type: :service do
 
     expect(integration.reload.status).to eq('pending')
     expect(integration.deleted_at).to be_nil
+  end
+  it 'keeps an active integration active when its preference is saved again' do
+    organization = create(:organization, :with_settings)
+    organization.organization_settings.first.update!(payment_method: :card)
+    integration = create_integration(organization, status: :active)
+    expect(described_class.call(organization, payment_params('card'))).to be(true)
+    expect(integration.reload.status).to eq('active')
+    expect(integration.deleted_at).to be_nil
+  end
+
+  it 'rejects an unknown payment method with a validation error' do
+    organization = create(:organization, :with_settings)
+    settings = organization.organization_settings.first
+    expect(described_class.call(organization, payment_params('unknown'), settings:)).to be(false)
+    expect(settings.errors[:payment_method]).to be_present
+    expect(settings.reload.payment_method).to eq('cash')
   end
 end

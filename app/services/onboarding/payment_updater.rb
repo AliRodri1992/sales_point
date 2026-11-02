@@ -17,6 +17,10 @@ module Onboarding
       return false unless settings
 
       method = @params.expect(payment: [:method]).fetch(:method)
+      unless OrganizationSetting.payment_methods.key?(method)
+        settings.errors.add(:payment_method, :inclusion)
+        return false
+      end
       return false unless assign_payment_method(settings, method)
 
       update_payment_integrations(method)
@@ -31,21 +35,13 @@ module Onboarding
     end
 
     def update_payment_integrations(method)
-      if method == 'cash'
-        deactivate_all_payment_integrations
-      else
-        create_or_update_payment_integration(method)
-      end
-    end
-
-    def deactivate_all_payment_integrations
-      @organization.payment_integrations.where(deleted_at: nil).find_each do |integration|
-        integration.update!(deleted_at: Time.current, status: 'inactive')
-      end
+      create_or_update_payment_integration(method) unless method == 'cash'
     end
 
     def create_or_update_payment_integration(method)
       integration = @organization.payment_integrations.with_deleted.find_or_initialize_by(provider: method)
+      return unless integration.new_record? || integration.deleted_at.present? || integration.inactive?
+
       integration.update!(status: :pending, deleted_at: nil)
     end
   end

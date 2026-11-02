@@ -27,7 +27,7 @@ RSpec.describe 'Extended organization onboarding progress branches', type: :serv
 
   it 'treats a branch with a complete address as fully configured' do
     address = double(street: 'Main', exterior_number: '1', neighborhood: 'North',
-                     city: 'Mexico', state: 'Mexico', country: double, postal_code: '12345')
+                     city: 'Mexico', state: 'Mexico', country: double(iso_alpha2: 'MX'), postal_code: '12345')
     stub_branches(double(name: 'Main', address:))
     expect(calculator.send(:branch_section)).to include(percentage: 100)
   end
@@ -49,6 +49,8 @@ RSpec.describe 'Extended organization onboarding progress branches', type: :serv
 
   it 'checks active terminal existence' do
     branches = double
+    allow(branches).to receive(:not_deleted).and_return(branches)
+    allow(branches).to receive(:where).with(status: true).and_return(branches)
     allow(branches).to receive(:joins).and_return(branches)
     allow(branches).to receive(:merge).and_return(branches)
     allow(branches).to receive(:exists?).and_return(false, true)

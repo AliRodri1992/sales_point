@@ -1,0 +1,11 @@
+<ol class="onboarding-steps-list">
+  <% (1..5).each do |step| %>
+    <% complete = onboarding_step_complete?(step, @progress) %>
+    <li>
+      <%= link_to admin_onboarding_path(step:), class: "onboarding-step #{'is-current' if step == @step}", aria: { current: step == @step ? 'step' : nil } do %>
+        <span class="onboarding-step-number" aria-hidden="true"><%= complete ? '✓' : step %></span>
+        <span><strong><%= t("admin.onboarding.steps.#{step}.title") %></strong><small><%= t("admin.onboarding_ui.step_status.#{step == @step ? 'current' : complete ? 'complete' : 'pending'}") %></small></span>
+      <% end %>
+    </li>
+  <% end %>
+</ol>

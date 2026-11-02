@@ -27,7 +27,7 @@ RSpec.describe Admin::OnboardingController, type: :request do
     patch admin_onboarding_path(step: 1), params: { organization: {} }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(flash.now[:swal_icon]).to eq(I18n.t('admin.onboarding.incomplete.icon'))
+    expect(response.body).to include(I18n.t('admin.onboarding_ui.feedback.incomplete'))
   end
 
   it 'redirects to the next step after a successful update' do
@@ -44,7 +44,7 @@ RSpec.describe Admin::OnboardingController, type: :request do
     patch admin_onboarding_path(step: 5), params: {}
 
     expect(response).to redirect_to(admin_dashboard_path)
-    expect(flash[:swal_message]).to eq(I18n.t('admin.onboarding.completed'))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.onboarding_ui.feedback.completed'))
   end
 
   it 'normalizes an invalid step to the first step' do

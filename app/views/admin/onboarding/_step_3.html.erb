@@ -1,0 +1,9 @@
+<div class="onboarding-field-grid">
+  <% @terminals.each_with_index do |terminal, index| %>
+    <section class="onboarding-terminal">
+      <div class="flex items-center justify-between gap-3"><h3><%= t('admin.onboarding.terminal', number: index + 1) %></h3><span class="onboarding-badge"><%= t("admin.onboarding.terminal_statuses.#{terminal.status}") %></span></div>
+      <%= fields_for "terminal_names_#{index}", terminal do |fields| %><%= render 'field', form: fields, attribute: :name, name: "terminal_names[#{index}]", label: t('admin.onboarding.fields.terminal_name') %><% end %>
+      <p class="onboarding-field-hint"><%= t('admin.onboarding.fields.terminal_code') %>: <%= terminal.code %> · <%= @branch.name %></p>
+    </section>
+  <% end %>
+</div>

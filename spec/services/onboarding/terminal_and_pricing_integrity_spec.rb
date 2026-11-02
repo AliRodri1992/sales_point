@@ -15,7 +15,7 @@ RSpec.describe 'Terminal onboarding and mutation protection branches', type: :se
     end
 
     it 'uses provided terminal names for successful updates' do
-      terminal = double
+      terminal = double(name: 'Existing')
       allow(terminal).to receive(:assign_attributes)
       allow(terminal).to receive(:save!).and_return(true)
       params = { terminal_names: { '0' => 'Checkout' } }
@@ -24,16 +24,16 @@ RSpec.describe 'Terminal onboarding and mutation protection branches', type: :se
     end
 
     it 'returns false as soon as a terminal cannot be saved' do
-      terminal = double
+      terminal = double(name: 'Existing')
       allow(terminal).to receive(:assign_attributes)
       allow(terminal).to receive(:save!).and_return(false)
       params = { terminal_names: { '0' => 'Checkout' } }
       expect(described_class.call(double, params, terminals: [terminal])).to be(false)
     end
 
-    it 'falls back to localized default names' do
+    it 'preserves existing names when no replacement is submitted' do
       instance = described_class.new(double, {}, [])
-      expect(instance.send(:terminal_name, 0)).to eq(I18n.t('registration.initial_terminal_name', number: 1))
+      expect(instance.send(:terminal_name, 0, 'Existing')).to eq('Existing')
     end
   end
 
