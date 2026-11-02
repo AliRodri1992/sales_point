@@ -45,28 +45,23 @@ class AccountPayable < ApplicationRecord
     SQL
   }
 
-  # The SQL sums are selected once for a collection. Individual records still
-  # use their existing Active Record queries, preserving mutation semantics.
-  def self.posted_payment_sql
-    <<~SQL.squish
-      COALESCE((SELECT SUM(allocation.amount) FROM supplier_payment_allocations allocation
-        INNER JOIN supplier_payments payment ON payment.id = allocation.supplier_payment_id
-        WHERE allocation.account_payable_id = account_payables.id AND payment.status = 'posted'), 0)
-    SQL
-  end
+  # Static SQL projections retain the accounting rule: posted allocations only.
+  PAID_AMOUNT_PROJECTION = <<~SQL.squish.freeze
+    COALESCE((SELECT SUM(allocation.amount) FROM supplier_payment_allocations allocation
+      INNER JOIN supplier_payments payment ON payment.id = allocation.supplier_payment_id
+      WHERE allocation.account_payable_id = account_payables.id AND payment.status = 'posted'), 0)
+      AS precomputed_paid_amount
+  SQL
 
-  def self.posted_credit_sql
-    <<~SQL.squish
-      COALESCE((SELECT SUM(allocation.amount) FROM supplier_credit_allocations allocation
-        INNER JOIN supplier_credit_notes note ON note.id = allocation.supplier_credit_note_id
-        WHERE allocation.account_payable_id = account_payables.id AND note.status = 'posted'), 0)
-    SQL
-  end
+  CREDIT_AMOUNT_PROJECTION = <<~SQL.squish.freeze
+    COALESCE((SELECT SUM(allocation.amount) FROM supplier_credit_allocations allocation
+      INNER JOIN supplier_credit_notes note ON note.id = allocation.supplier_credit_note_id
+      WHERE allocation.account_payable_id = account_payables.id AND note.status = 'posted'), 0)
+      AS precomputed_credited_amount
+  SQL
 
   scope :with_precomputed_allocations, lambda {
-    select('account_payables.*',
-           Arel.sql("#{posted_payment_sql} AS precomputed_paid_amount"),
-           Arel.sql("#{posted_credit_sql} AS precomputed_credited_amount"))
+    select('account_payables.*', Arel.sql(PAID_AMOUNT_PROJECTION), Arel.sql(CREDIT_AMOUNT_PROJECTION))
   }
 
   def paid_amount

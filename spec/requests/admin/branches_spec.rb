@@ -20,7 +20,6 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(statements.grep(/FROM "?phones"?/i).size).to be <= 2
     end
 
-
     before { Branch.unscoped.delete_all }
 
     it 'renders the branches page' do

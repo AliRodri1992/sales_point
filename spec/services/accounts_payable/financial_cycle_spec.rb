@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Supplier financial lifecycle' do
   include SqlQueryRecorder
+
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:user) { create(:user) }

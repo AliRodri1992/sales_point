@@ -28,7 +28,6 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(stock_sums.size).to eq(1)
     end
 
-
     let!(:product) { create(:product, organization:, name: 'Coca-Cola', code: 'PROD-COLA') }
 
     before do

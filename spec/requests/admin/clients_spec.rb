@@ -26,7 +26,6 @@ RSpec.describe 'Admin clients', type: :request do
       expect(statements.grep(/FROM "?phones"?/i).size).to be <= 2
     end
 
-
     it 'lists non-deleted clients' do
       create(:client, name: 'Visible Client')
       create(:client, :deleted, name: 'Deleted Client')
