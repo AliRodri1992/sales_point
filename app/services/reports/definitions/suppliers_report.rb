@@ -53,10 +53,10 @@ module Reports
       end
 
       def primary_office_number(supplier)
-        contact = supplier.contacts.find { |item| primary_active_contact?(item) }
+        contact = supplier.contacts.to_a.find { |item| primary_active_contact?(item) }
         return '' unless contact
 
-        contact.phones.find { |phone| primary_office_phone?(phone) }&.number.to_s
+        contact.phones.to_a.find { |phone| primary_office_phone?(phone) }&.number.to_s
       end
 
       def primary_active_contact?(contact)
