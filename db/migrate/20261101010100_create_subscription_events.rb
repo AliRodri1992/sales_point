@@ -13,6 +13,7 @@ class CreateSubscriptionEvents < ActiveRecord::Migration[8.1]
       t.bigint :performed_by_id
       t.text :description
       t.jsonb :metadata, null: false, default: {}
+      t.datetime :deleted_at
       t.timestamps
     end
 
@@ -23,6 +24,7 @@ class CreateSubscriptionEvents < ActiveRecord::Migration[8.1]
     add_foreign_key :subscription_events, :users,
                     column: :performed_by_id
 
+    add_index :subscription_events, :deleted_at
     add_index :subscription_events, :event_type
     add_index :subscription_events, :performed_by_id
     add_index :subscription_events, :from_membership_plan_id
