@@ -1,0 +1,21 @@
+<% roles = user.user_roles.select do |assignment|
+     assignment.deleted_at.nil? && assignment.system_role&.active? &&
+       (assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
+                                     assignment.branch.deleted_at.nil?))
+   end %>
+<% if roles.any? %>
+  <div class="flex flex-wrap items-center gap-1.5">
+    <% roles.first(3).each do |assignment| %>
+      <span class="inline-flex max-w-full items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">
+        <%= delta_icon('shield-check', class: 'size-3.5 shrink-0') %>
+        <span class="truncate"><%= system_role_name(assignment.system_role) %><% if assignment.branch %> · <%= assignment.branch.name %><% end %></span>
+      </span>
+    <% end %>
+    <% if roles.size > 3 %>
+      <span class="rounded-lg border border-slate-200 px-2 py-1 text-xs font-medium text-slate-600"
+            aria-label="<%= t('admin.users.ui.additional_roles', count: roles.size - 3) %>">+<%= roles.size - 3 %></span>
+    <% end %>
+  </div>
+<% else %>
+  <span class="text-xs font-medium text-slate-400"><%= t('admin.users.index.no_roles') %></span>
+<% end %>

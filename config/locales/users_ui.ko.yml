@@ -1,0 +1,22 @@
+ko:
+  admin:
+    users:
+      ui:
+        eyebrow: "접근 권한 관리"
+        description: "조직의 사용자 계정과 권한을 확인하고 접근을 관리하세요."
+        summary: "사용자 현황"
+        metrics:
+          total: "사용자"
+          active: "활성"
+          suspended: "일시 중지"
+          blocked: "차단"
+        filters_title: "사용자 검색 및 필터"
+        search_label: "이메일 또는 사용자명"
+        results_title: "사용자 목록"
+        results_count: "사용자 %{count}명"
+        filtered: "필터 적용됨"
+        your_account: "내 계정"
+        additional_roles: "추가 역할 %{count}개"
+        range: "%{first}–%{last} / %{total}"
+        no_results: "일치하는 사용자가 없습니다"
+        no_results_hint: "현재 필터와 일치하는 사용자가 없습니다. 조건을 변경해 보세요."

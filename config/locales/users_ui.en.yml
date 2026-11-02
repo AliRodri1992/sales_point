@@ -1,0 +1,22 @@
+en:
+  admin:
+    users:
+      ui:
+        eyebrow: "Access management"
+        description: "Review accounts in your organization, inspect their permissions, and manage access in one place."
+        summary: "User overview"
+        metrics:
+          total: "Users"
+          active: "Active"
+          suspended: "Suspended"
+          blocked: "Blocked"
+        filters_title: "Search and filter users"
+        search_label: "Email or username"
+        results_title: "User directory"
+        results_count: "%{count} users found"
+        filtered: "Filters applied"
+        your_account: "Your account"
+        additional_roles: "%{count} additional roles"
+        range: "%{first}–%{last} of %{total}"
+        no_results: "No matching users"
+        no_results_hint: "No users match these filters. Try different search criteria."

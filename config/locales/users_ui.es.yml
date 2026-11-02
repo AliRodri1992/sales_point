@@ -1,0 +1,22 @@
+es:
+  admin:
+    users:
+      ui:
+        eyebrow: "Gestión de accesos"
+        description: "Consulta las cuentas de tu organización, revisa sus permisos y administra su acceso desde un solo lugar."
+        summary: "Resumen de usuarios"
+        metrics:
+          total: "Usuarios"
+          active: "Activos"
+          suspended: "Suspendidos"
+          blocked: "Bloqueados"
+        filters_title: "Buscar y filtrar usuarios"
+        search_label: "Correo o nombre de usuario"
+        results_title: "Directorio de usuarios"
+        results_count: "%{count} usuarios encontrados"
+        filtered: "Filtros aplicados"
+        your_account: "Tu cuenta"
+        additional_roles: "%{count} roles adicionales"
+        range: "%{first}–%{last} de %{total}"
+        no_results: "No hay coincidencias"
+        no_results_hint: "No encontramos usuarios con esos filtros. Prueba con otros criterios."
