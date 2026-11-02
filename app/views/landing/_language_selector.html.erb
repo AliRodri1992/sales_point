@@ -1,0 +1,26 @@
+<% if current_language %>
+  <div class="relative flex flex-col items-end" data-controller="language-selector" data-action="keydown->language-selector#keydown"
+    data-language-error-title="<%= t('authentication.language_selector.update_error_title') %>"
+    data-language-error-message="<%= t('authentication.language_selector.update_error_message') %>">
+    <button type="button" id="<%= id_prefix %>-button" data-language-selector-target="button"
+      data-action="click->language-selector#toggle"
+      aria-label="<%= t('authentication.language_selector.toggle') %>" aria-expanded="false" aria-controls="<%= id_prefix %>-languages"
+      class="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-800 px-3 text-sm font-medium text-white hover:bg-slate-700">
+      <%= render Ui::IconComponent.new(name: 'language', size: :md, color: :white) %>
+      <span><%= current_language.code.upcase %></span>
+      <%= render Ui::IconComponent.new(name: 'chevron-down', size: :xs, color: :white) %>
+    </button>
+    <div id="<%= id_prefix %>-languages" data-language-selector-target="dropdown"
+      class="<%= local_assigns[:mobile] ? 'mt-2' : 'absolute right-0 top-full mt-2' %> z-50 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg">
+      <% Language.available.order(:code).each do |language| %>
+        <button type="button" data-action="click->language-selector#select" data-language="<%= language.code %>"
+          aria-pressed="<%= language.code == current_language.code %>"
+          class="flex min-h-11 w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium <%= language.code == current_language.code ? 'bg-emerald-50 text-emerald-800' : 'text-slate-700 hover:bg-slate-100' %>">
+          <img src="<%= language_flag_path(language) %>" width="24" height="24" alt="" class="h-6 w-6 shrink-0 rounded-full object-cover">
+          <span><%= language.name %></span>
+        </button>
+      <% end %>
+    </div>
+    <span role="status" data-language-selector-target="status" class="sr-only"></span>
+  </div>
+<% end %>

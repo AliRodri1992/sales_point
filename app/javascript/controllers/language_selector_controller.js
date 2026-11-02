@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import { closeDashboardSelectors, openDashboardSelector } from "./selector_coordinator"
 
 export default class extends Controller {
-  static targets = ["dropdown", "status"]
+  static targets = ["dropdown", "status", "button"]
 
   connect() {
     this.onOutsideClick = (event) => {
@@ -17,7 +17,7 @@ export default class extends Controller {
   }
 
   get button() {
-    return this.element.querySelector("#languageSelectorButton")
+    return this.hasButtonTarget ? this.buttonTarget : this.element.querySelector("#languageSelectorButton")
   }
 
   get choices() {
@@ -35,7 +35,8 @@ export default class extends Controller {
     this.dropdownTarget.classList.remove("hidden")
     this.button?.setAttribute("aria-expanded", "true")
     this.choices.find((choice) => choice.getAttribute("aria-pressed") === "true")?.focus()
-    if (!window.location.pathname.startsWith("/users/")) this.refreshDropdownContent()
+    if (this.element.querySelector("#language_selector_content") &&
+        window.location.pathname.startsWith("/admin/")) this.refreshDropdownContent()
   }
 
   close() {
@@ -48,6 +49,7 @@ export default class extends Controller {
     if (!this.hasDropdownTarget || this.dropdownTarget.classList.contains("hidden")) return
     if (event.key === "Escape") {
       event.preventDefault()
+      event.stopPropagation()
       this.close()
       this.button?.focus()
       return

@@ -179,8 +179,19 @@ export default class extends Controller {
     this.clearFieldError(this.termsTarget, this.termsErrorTarget)
   }
 
+  focusFirstInvalid() {
+    const step = this.stepTargets.find((item) => Number(item.dataset.step) === this.currentStep)
+    if (!step) return
+    const invalid = step.querySelector('[aria-invalid="true"]')
+    // Native selects may have been enhanced into a visible Delta Select trigger.
+    const target = invalid?.tagName === "SELECT"
+      ? invalid.closest(".delta-select-container")?.querySelector('button[aria-haspopup="listbox"]') || invalid
+      : invalid || step.querySelector("h3")
+    target?.focus()
+  }
+
   renderStep() {
-    if (this.paletteOnlyValue) return
+    if (this.paletteOnlyValue || !this.hasFormTarget) return
 
     this.stepTargets.forEach((step) => {
       step.classList.toggle("hidden", Number(step.dataset.step) !== this.currentStep)

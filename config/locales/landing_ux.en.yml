@@ -1,0 +1,11 @@
+en:
+  landing:
+    buttons:
+      close_menu: Close menu
+    hero_preview:
+      title: Dashboard preview
+    testimonials:
+      controls:
+        previous: Previous
+        next: Next
+        group: Testimonial group

@@ -1,3 +1,4 @@
+<div class="landing-page">
 <%= render Landing::NavbarComponent.new %>
 
 <main class="overflow-x-hidden">
@@ -47,17 +48,25 @@
         <h2 class="font-jakarta text-3xl font-extrabold tracking-tight text-slate-900"><%= t('landing.hero.testimonials_title') %></h2>
       </div>
 
-      <div class="overflow-hidden" data-testimonials-carousel-target="viewport" aria-label="<%= t('landing.testimonials.title') %>">
-        <div class="flex transition-transform duration-700 ease-in-out" data-testimonials-carousel-target="track">
-          <% @testimonials.each_slice(3) do |testimonials| %>
-            <div class="grid w-full shrink-0 grid-cols-1 gap-8 md:grid-cols-3">
-              <% testimonials.each do |testimonial| %>
-                <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
+      <div id="landing-testimonials" aria-label="<%= t('landing.testimonials.title') %>">
+        <% @testimonials.each_slice(3) do |testimonials| %>
+          <div data-testimonials-carousel-target="slide" class="mb-8 grid grid-cols-1 gap-8 md:grid-cols-3">
+            <% testimonials.each do |testimonial| %>
+              <%= render Landing::TestimonialComponent.new(**testimonial.to_h) %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
+      <% if @testimonials.size > 3 %>
+        <div class="mt-8 hidden items-center justify-center gap-4" data-testimonials-carousel-target="controls">
+          <button type="button" data-action="testimonials-carousel#previous" aria-controls="landing-testimonials" class="min-h-11 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"><%= t('landing.testimonials.controls.previous') %></button>
+          <span role="status" aria-live="polite" aria-atomic="true" class="text-sm font-medium text-slate-600">
+            <span class="sr-only"><%= t('landing.testimonials.controls.group') %></span>
+            <span data-testimonials-carousel-target="status"></span>
+          </span>
+          <button type="button" data-action="testimonials-carousel#next" aria-controls="landing-testimonials" class="min-h-11 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800"><%= t('landing.testimonials.controls.next') %></button>
+        </div>
+      <% end %>
     </div>
   </section>
 
@@ -73,3 +82,4 @@
 </main>
 
 <%= render Landing::FooterComponent.new %>
+</div>

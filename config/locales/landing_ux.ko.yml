@@ -1,0 +1,11 @@
+ko:
+  landing:
+    buttons:
+      close_menu: 메뉴 닫기
+    hero_preview:
+      title: 대시보드 미리보기
+    testimonials:
+      controls:
+        previous: 이전
+        next: 다음
+        group: 고객 후기 그룹

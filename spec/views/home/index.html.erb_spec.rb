@@ -22,7 +22,9 @@ RSpec.describe 'home/index.html.erb', type: :view do
 
   it 'renders the landing navbar' do
     render
-    expect(rendered).to have_css('[class*="Landing::NavbarComponent"]', minimum: 0)
+    expect(rendered).to have_css('header[data-controller="navbar"]')
+    expect(rendered).to have_css('button[aria-controls="landing-mobile-menu"]')
+    expect(rendered).to have_css('#landing-mobile-menu a[href="/users/sign_in"]', visible: :all)
   end
 
   it 'renders the pricing section' do

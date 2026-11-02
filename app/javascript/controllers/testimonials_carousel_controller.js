@@ -1,43 +1,36 @@
 import { Controller } from "@hotwired/stimulus"
 
-const AUTOPLAY_INTERVAL = 5000
-
+// Manual navigation leaves readers in control, including on mobile and reduced motion.
 export default class extends Controller {
-  static targets = ["track"]
+  static targets = ["slide", "status", "controls"]
 
   connect() {
     this.currentSlide = 0
-    this.totalSlides = this.trackTarget.children.length
-    this.startAutoplay()
-  }
-
-  disconnect() {
-    this.stopAutoplay()
-  }
-
-  startAutoplay() {
-    this.stopAutoplay()
-
-    if (this.totalSlides <= 1) return
-
-    this.interval = window.setInterval(() => {
-      this.next()
-    }, AUTOPLAY_INTERVAL)
-  }
-
-  stopAutoplay() {
-    if (this.interval) {
-      window.clearInterval(this.interval)
-      this.interval = null
+    this.updatePosition()
+    if (this.hasControlsTarget) {
+      this.controlsTarget.classList.remove("hidden")
+      this.controlsTarget.classList.add("flex")
     }
   }
 
+  previous() {
+    this.showSlide(this.currentSlide - 1)
+  }
+
   next() {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides
+    this.showSlide(this.currentSlide + 1)
+  }
+
+  showSlide(index) {
+    if (!this.slideTargets.length) return
+    this.currentSlide = (index + this.slideTargets.length) % this.slideTargets.length
     this.updatePosition()
   }
 
   updatePosition() {
-    this.trackTarget.style.transform = `translateX(-${this.currentSlide * 100}%)`
+    this.slideTargets.forEach((slide, index) => {
+      slide.classList.toggle("hidden", index !== this.currentSlide)
+    })
+    if (this.hasStatusTarget) this.statusTarget.textContent = `${this.currentSlide + 1} / ${this.slideTargets.length}`
   }
 }

@@ -1,0 +1,28 @@
+.landing-page main section[id] {
+  scroll-margin-top: 5rem;
+}
+
+.landing-page :is(a, button, summary):focus-visible {
+  outline: 3px solid #047857;
+  outline-offset: 3px;
+}
+
+.landing-page header :is(a, button):focus-visible {
+  outline-color: #6ee7b7;
+}
+
+.landing-page [data-controller="language-selector"] [data-language]:focus-visible {
+  outline-color: #047857;
+  outline-offset: -3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.landing-page) { scroll-behavior: auto; }
+
+  .landing-page *,
+  .landing-page *::before,
+  .landing-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,11 @@
+es:
+  landing:
+    buttons:
+      close_menu: Cerrar menú
+    hero_preview:
+      title: Vista previa del panel
+    testimonials:
+      controls:
+        previous: Anterior
+        next: Siguiente
+        group: Grupo de testimonios
