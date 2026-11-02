@@ -71,5 +71,4 @@ RSpec.describe 'Membership policies', type: :policy do
     expect(MembershipPlanPolicy::Scope.new(admin, MembershipPlan.all).resolve).to include(plan)
     expect(MembershipPlanPolicy::Scope.new(non_admin, MembershipPlan.all).resolve).to be_empty
   end
-
 end

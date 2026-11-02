@@ -149,5 +149,4 @@ RSpec.describe 'Membership administration', type: :request do
     patch admin_subscription_path(subscription), params: { subscription: { status: 'invalid' } }
     expect(response).to have_http_status(:unprocessable_content)
   end
-
 end

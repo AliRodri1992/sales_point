@@ -65,7 +65,7 @@ RSpec.describe Membership::SubscriptionManager, type: :service do
   end
 
   it 'resumes a completed trial as active' do
-    started_at = 5.days.ago
+    starts_at = 5.days.ago
     trial = create(:subscription, organization:, membership_plan: old_plan, status: :trialing,
                                   starts_at:, trial_ends_at: 1.day.ago)
     manager = described_class.new(trial, actor:)
@@ -74,5 +74,4 @@ RSpec.describe Membership::SubscriptionManager, type: :service do
 
     expect(trial.reload).to be_active
   end
-
 end

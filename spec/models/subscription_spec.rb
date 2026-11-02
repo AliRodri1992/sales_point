@@ -96,5 +96,4 @@ RSpec.describe Subscription, type: :model do
 
     expect(canceled).to be_valid
   end
-
 end
