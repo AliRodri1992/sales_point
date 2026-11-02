@@ -123,10 +123,19 @@
               </p>
             </div>
 
+            <% if @login_error.present? %>
+              <div hidden data-login-rejected data-controller="swal-flash"
+                data-swal-flash-message-value="<%= @login_error %>"
+                data-swal-flash-icon-value="error"
+                data-swal-flash-mode-value="toast"
+                data-swal-flash-persistent-value="true"
+                data-swal-flash-close-label-value="<%= t('authentication.login.close_error') %>"
+                data-swal-flash-focus-selector-value="#user_password"></div>
+              <noscript><p role="alert" class="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm font-medium text-rose-800"><%= @login_error %></p></noscript>
+            <% end %>
+
             <div id="login-feedback" role="alert" tabindex="-1" data-terminal-target="errorBanner"
-              class="<%= 'hidden' if @login_error.blank? %> rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm font-medium text-rose-800 focus:outline focus:outline-2 focus:outline-rose-700">
-              <%= @login_error %>
-            </div>
+              class="hidden rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm font-medium text-rose-800 focus:outline focus:outline-2 focus:outline-rose-700"></div>
 
             <%= form_for(
               resource,

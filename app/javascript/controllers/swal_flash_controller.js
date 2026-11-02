@@ -6,22 +6,32 @@ export default class extends Controller {
     static values = {
         message: String,
         icon: { type: String, default: "success" },
-        mode: { type: String, default: "toast" }
+        mode: { type: String, default: "toast" },
+        persistent: { type: Boolean, default: false },
+        closeLabel: { type: String, default: "Close" },
+        focusSelector: String
     }
 
     connect() {
         if (!this.messageValue || !window.Swal) return
 
         const modal = this.modeValue === "modal"
+        const focusTarget = this.focusSelectorValue ? document.querySelector(this.focusSelectorValue) : null
+        focusTarget?.focus()
         window.Swal.fire({
             toast: !modal,
             icon: this.iconValue,
             position: modal ? "center" : "top-end",
-            timer: modal ? undefined : 2600,
+            timer: modal || this.persistentValue ? undefined : 2600,
             showConfirmButton: modal,
+            showCloseButton: this.persistentValue,
+            closeButtonAriaLabel: this.closeLabelValue,
             confirmButtonColor: "#047857",
-            timerProgressBar: !modal,
-            title: this.messageValue
+            timerProgressBar: !modal && !this.persistentValue,
+            title: this.messageValue,
+            didClose: () => {
+                if (focusTarget?.isConnected) focusTarget.focus()
+            }
         })
 
         // Prevent the same notification from replaying after Turbo navigation.

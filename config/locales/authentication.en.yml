@@ -12,6 +12,7 @@ en:
       unavailable: "Ask the administrator for the terms and privacy policy before accepting."
     rate_limited: "Too many attempts. Please wait a moment and try again."
     login:
+      close_error: "Close sign-in error"
       invalid_credentials: "The email address or password is incorrect. Please try again."
       network_error: "We could not complete sign-in. Check your connection and try again."
       show_password: "Show password"

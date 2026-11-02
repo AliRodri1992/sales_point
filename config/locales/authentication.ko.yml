@@ -12,6 +12,7 @@ ko:
       unavailable: "동의하기 전에 관리자에게 이용약관과 개인정보 보호정책을 요청하세요."
     rate_limited: "시도 횟수가 너무 많습니다. 잠시 후 다시 시도하세요."
     login:
+      close_error: "로그인 오류 알림 닫기"
       invalid_credentials: "이메일 주소 또는 비밀번호가 올바르지 않습니다. 다시 시도해 주세요."
       network_error: "로그인을 완료할 수 없습니다. 연결을 확인하고 다시 시도해 주세요."
       show_password: "비밀번호 표시"

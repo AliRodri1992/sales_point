@@ -12,6 +12,7 @@ es:
       unavailable: "Solicita los términos y la política de privacidad al administrador antes de aceptar."
     rate_limited: "Demasiados intentos. Espera un momento antes de volver a intentarlo."
     login:
+      close_error: "Cerrar aviso de acceso"
       invalid_credentials: "El correo electrónico o la contraseña son incorrectos. Inténtalo de nuevo."
       network_error: "No pudimos completar el acceso. Revisa tu conexión e inténtalo nuevamente."
       show_password: "Mostrar contraseña"

@@ -144,8 +144,12 @@ RSpec.describe Users::SessionsController, type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
       document = Nokogiri::HTML(response.body)
-      expect(document.at_css('#login-feedback[role="alert"]').text.strip)
-        .to eq(I18n.t('authentication.login.invalid_credentials'))
+      alert = document.at_css('[data-login-rejected][data-controller="swal-flash"]')
+      expect(alert['data-swal-flash-message-value']).to eq(I18n.t('authentication.login.invalid_credentials'))
+      expect(alert['data-swal-flash-icon-value']).to eq('error')
+      expect(alert['data-swal-flash-mode-value']).to eq('toast')
+      expect(alert['data-swal-flash-persistent-value']).to eq('true')
+      expect(document.at_css('#login-feedback').text).to be_blank
       expect(document.at_css('#user_email')['value']).to eq(email)
       expect(document.at_css('#user_password')['value']).to be_blank
       expect(controller.current_user).to be_nil
@@ -160,8 +164,11 @@ RSpec.describe Users::SessionsController, type: :request do
 
     document = Nokogiri::HTML(response.body)
     expect(document.at_css('html')['lang']).to eq('es')
-    expect(document.at_css('#login-feedback').text.strip)
+    alert = document.at_css('[data-login-rejected]')
+    expect(alert['data-swal-flash-message-value'])
       .to eq(I18n.t('authentication.login.invalid_credentials', locale: :es))
+    expect(alert['data-swal-flash-close-label-value'])
+      .to eq(I18n.t('authentication.login.close_error', locale: :es))
     expect(document.at_css('#languageSelectorButton').text).to include('ES')
   end
 
