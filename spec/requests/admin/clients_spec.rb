@@ -15,7 +15,18 @@ RSpec.describe 'Admin clients', type: :request do
     end
   end
 
+  include SqlQueryRecorder
+
   describe 'GET /admin/clients' do
+    it 'fetches phones once rather than once for each client' do
+      create_list(:client, 11)
+      statements = recorded_sql_queries { get admin_clients_path }
+
+      expect(response).to have_http_status(:ok)
+      expect(statements.grep(/FROM "?phones"?/i).size).to be <= 2
+    end
+
+
     it 'lists non-deleted clients' do
       create(:client, name: 'Visible Client')
       create(:client, :deleted, name: 'Deleted Client')

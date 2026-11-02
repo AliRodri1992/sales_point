@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Supplier financial lifecycle' do
+  include SqlQueryRecorder
   let(:organization) { create(:organization) }
   let(:supplier) { create(:supplier, organization:) }
   let(:user) { create(:user) }
@@ -88,6 +89,30 @@ RSpec.describe 'Supplier financial lifecycle' do
         payment:, allocations: [{ account_payable_id: payable.id, amount: '20' }], actor: user
       )
     end.to raise_error(ArgumentError, 'Unknown payable')
+  end
+
+  it 'reads precomputed payment and credit totals without per-payable queries' do
+    invoice = invoice_for(200)
+    payable = AccountsPayable::PostInvoice.call(invoice:, actor: user)
+    payment = payment_for(70)
+    AccountsPayable::ApplyPayment.call(payment:, allocations: [{ account_payable_id: payable.id, amount: '70' }],
+                                       actor: user)
+    credit = SupplierCreditNote.create!(
+      organization:, supplier:, currency:, created_by: user, issued_on: Date.current,
+      total: 30, status: :posted
+    )
+    AccountsPayable::ApplyCredit.call(credit_note: credit, account_payable: payable, amount: 30, actor: user)
+
+    statements = recorded_sql_queries do
+      record = AccountPayable.where(id: payable.id).with_precomputed_allocations
+                             .includes(:supplier_invoice).first
+      expect(record.paid_amount).to eq(70)
+      expect(record.credited_amount).to eq(30)
+      expect(record.balance).to eq(100)
+    end
+
+    expect(statements.grep(/FROM "?supplier_payment_allocations"?/i).size).to be <= 1
+    expect(statements.grep(/FROM "?supplier_credit_allocations"?/i).size).to be <= 1
   end
 
   it 'reconciles open amounts independently by currency' do

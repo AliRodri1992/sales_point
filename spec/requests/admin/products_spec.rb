@@ -17,7 +17,18 @@ RSpec.describe 'Admin::Products', type: :request do
     sign_out user
   end
 
+  include SqlQueryRecorder
+
   describe 'GET /admin/products' do
+    it 'queries inventory stock totals once for a page of products' do
+      statements = recorded_sql_queries { get admin_products_path }
+
+      expect(response).to have_http_status(:ok)
+      stock_sums = statements.grep(/SUM\([^\n]*stock[^\n]*\)/i)
+      expect(stock_sums.size).to eq(1)
+    end
+
+
     let!(:product) { create(:product, organization:, name: 'Coca-Cola', code: 'PROD-COLA') }
 
     before do

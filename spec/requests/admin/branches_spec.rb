@@ -9,7 +9,18 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   before { sign_in admin_user }
 
+  include SqlQueryRecorder
+
   describe 'GET /admin/branches' do
+    it 'loads all visible branch phones in a batch' do
+      11.times { |index| create(:branch, name: "Performance Branch #{index}") }
+      statements = recorded_sql_queries { get admin_branches_path }
+
+      expect(response).to have_http_status(:ok)
+      expect(statements.grep(/FROM "?phones"?/i).size).to be <= 2
+    end
+
+
     before { Branch.unscoped.delete_all }
 
     it 'renders the branches page' do
