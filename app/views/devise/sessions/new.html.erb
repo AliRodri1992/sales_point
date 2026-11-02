@@ -187,6 +187,7 @@
                   <%= f.password_field(
                     :password,
                     required: true,
+                    minlength: Users::SessionsController::MINIMUM_PASSWORD_LENGTH,
                     'aria-invalid': password_has_error,
                     'aria-describedby': (password_has_error ? 'login-password-error' : nil),
                     autocomplete: "current-password",
@@ -195,6 +196,7 @@
                     data: {
                       terminal_target: "input password",
                       auth_blank_message: authentication_blank_message(resource, :password),
+                      auth_min_length_message: authentication_minimum_length_message(resource, :password, count: Users::SessionsController::MINIMUM_PASSWORD_LENGTH),
                       action: "input->terminal#clearErrors"
                     }
                   ) %>

@@ -106,10 +106,7 @@ export default class extends Controller {
     if (!this.hasLoginSubmitTarget) return
     let firstInvalid = null
     this.inputTargets.forEach((input) => {
-      const value = input.value.trim()
-      const message = !value ? input.dataset.authBlankMessage
-        : input.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-          ? input.dataset.authInvalidMessage : null
+      const message = this.loginInputMessage(input)
       if (!message) return
       this.showFieldError(input, message)
       firstInvalid ||= input
@@ -130,6 +127,18 @@ export default class extends Controller {
       this.originalLabel = label.textContent
       label.textContent = this.loginSubmitTarget.dataset.loadingText
     }
+  }
+
+  loginInputMessage(input) {
+    const value = input.value.trim()
+    if (!value) return input.dataset.authBlankMessage
+    if (input.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return input.dataset.authInvalidMessage
+    }
+    if (input.minLength > 0 && Array.from(input.value).length < input.minLength) {
+      return input.dataset.authMinLengthMessage
+    }
+    return null
   }
 
   finishLogin(event) {

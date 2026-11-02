@@ -39,5 +39,6 @@ en:
               invalid: "must be a valid email address"
             password:
               blank: "can't be blank"
+              login_too_short: "must contain at least %{count} characters."
             password_confirmation:
               confirmation: "doesn't match the password"

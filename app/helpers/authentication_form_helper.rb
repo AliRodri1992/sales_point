@@ -32,6 +32,10 @@ module AuthenticationFormHelper
     resource.errors.full_message(attribute, resource.errors.generate_message(attribute, :invalid))
   end
 
+  def authentication_minimum_length_message(resource, attribute, count:)
+    resource.errors.full_message(attribute, resource.errors.generate_message(attribute, :login_too_short, count:))
+  end
+
   def authentication_field_message(resource, attribute, id:)
     content_tag(:div, id:, role: 'status', 'aria-live': 'polite',
                       class: 'h-10 overflow-y-auto pt-1 text-xs leading-4 text-rose-700') do

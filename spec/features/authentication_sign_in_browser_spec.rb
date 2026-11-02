@@ -18,11 +18,11 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     fill_in 'user_password', with: 'wrong-password'
     find('button[type="submit"]').click
 
+    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
     expect(page).to have_css('form[action="/users/sign_in"]')
     expect(page).to have_css('#user_email')
     expect(page).to have_css('#user_password')
     expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
-    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
     expect(find('#user_email').value).to eq('nobody@example.com')
   end
 
@@ -37,6 +37,23 @@ RSpec.describe 'Delta POS sign-in experience', type: :feature, js: true do
     expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
     fill_in 'user_email', with: 'absent@example.invalid'
     find('#user_password').send_keys(:enter)
+    expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
+  end
+
+  scenario 'requires more than eight password characters even when visibility is toggled' do
+    visit new_user_session_path
+    fill_in 'user_email', with: 'absent@example.invalid'
+    fill_in 'user_password', with: '12345678'
+    find('[data-action*="terminal#togglePassword"]').click
+    find('[data-terminal-target="loginSubmit"]').click
+
+    expect(find('#user_password')['minlength']).to eq('9')
+    expect(find('#user_password')['aria-invalid']).to eq('true')
+    expect(page).to have_css('#login-password-error', text: 'Password must contain at least 9 characters.')
+    expect(find('[data-terminal-target="loginSubmit"]')).not_to be_disabled
+
+    fill_in 'user_password', with: '123456789'
+    find('[data-terminal-target="loginSubmit"]').click
     expect(page).to have_css('#login-feedback', text: I18n.t('authentication.login.invalid_credentials'))
   end
 

@@ -2,17 +2,18 @@
 
 module Users
   class SessionsController < Devise::SessionsController
+    MINIMUM_PASSWORD_LENGTH = 9
+
     layout 'authentication'
 
     prepend_before_action :store_terminal_preferences, only: :new
+    prepend_before_action :validate_login_input, only: :create
 
     def new
       super
     end
 
     def create
-      build_resource_with_params
-      return render_with_model_errors unless valid_login_input?
       return render_invalid_credentials unless warden.authenticate(auth_options)
 
       super
@@ -20,6 +21,15 @@ module Users
     end
 
     private
+
+    # Check input before inherited callbacks can ask Warden for current_user.
+    def validate_login_input
+      locale = session_language_code || cookie_language_code || I18n.default_locale
+      I18n.with_locale(locale) do
+        build_resource_with_params
+        render_with_model_errors unless valid_login_input?
+      end
+    end
 
     def require_no_authentication
       return super unless action_name == 'new' && user_signed_in?
@@ -63,8 +73,16 @@ module Users
     def valid_login_input?
       resource.errors.add(:email, :blank) if resource.email.blank?
       resource.errors.add(:email, :invalid) if invalid_login_email?
-      resource.errors.add(:password, :blank) if resource.password.blank?
+      validate_login_password
       resource.errors.empty?
+    end
+
+    def validate_login_password
+      if resource.password.blank?
+        resource.errors.add(:password, :blank)
+      elsif resource.password.length < MINIMUM_PASSWORD_LENGTH
+        resource.errors.add(:password, :login_too_short, count: MINIMUM_PASSWORD_LENGTH)
+      end
     end
 
     def invalid_login_email?

@@ -39,11 +39,13 @@ RSpec.describe Users::SessionsController, type: :request do
 
     document = Nokogiri::HTML(response.body)
     form = document.at_css('form[action="/users/sign_in"]')
+    locale = document.at_css('html')['lang']
     expect(form['novalidate']).to be_present
-    expect(document.at_css('#login-email-error').text).to include(User.human_attribute_name(:email))
-    expect(document.at_css('#login-password-error').text).to include(User.human_attribute_name(:password))
+    expect(document.at_css('#login-email-error').text).to include(User.human_attribute_name(:email, locale:))
+    expect(document.at_css('#login-password-error').text).to include(User.human_attribute_name(:password, locale:))
     expect(document.at_css('#login-email-error')['class']).to include('h-10')
-    expect(document.at_css('#user_email')['data-auth-blank-message']).to include(User.human_attribute_name(:email))
+    expect(document.at_css('#user_email')['data-auth-blank-message'])
+      .to include(User.human_attribute_name(:email, locale:))
   end
 
   it 'keeps the remember-me selection when credentials are incomplete' do
@@ -79,7 +81,9 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(document.at_css('#user_email')['aria-invalid']).to eq('true')
     expect(document.at_css('#user_password')['aria-invalid']).to eq('true')
     expect(document.at_css('#login-email-error [data-server-field-error]')).to be_present
-    expect(document.at_css('[data-show-label]')['data-show-label']).to eq(I18n.t('authentication.login.show_password'))
+    locale = document.at_css('html')['lang']
+    expect(document.at_css('[data-show-label]')['data-show-label'])
+      .to eq(I18n.t('authentication.login.show_password', locale:))
   end
 
   it 'signs in successfully and stores the SweetAlert session message' do
@@ -90,6 +94,37 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(response).to redirect_to(admin_dashboard_path)
     expect(session[:swal_icon]).to eq('success')
     expect(session[:swal_message]).to eq(I18n.t('devise.sessions.signed_in'))
+  end
+
+  context 'with an eight-character password' do
+    let(:password) { '12345678' }
+
+    it 'rejects even correct credentials before creating a session' do
+      post user_session_path, params: { user: { email: user.email, password: } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      field = document.at_css('#user_password')
+      locale = document.at_css('html')['lang']
+      message = I18n.t('activerecord.errors.models.user.attributes.password.login_too_short', locale:, count: 9)
+      expect(field['aria-invalid']).to eq('true')
+      expect(field['aria-describedby']).to eq('login-password-error')
+      expect(document.at_css('#login-password-error').text).to include(message)
+      expect(session['warden.user.user.key']).to be_nil
+
+      get admin_dashboard_path
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
+  context 'with a nine-character password' do
+    let(:password) { '123456789' }
+
+    it 'accepts the exact minimum length when credentials are correct' do
+      post user_session_path, params: { user: { email: user.email, password: } }
+
+      expect(response).to redirect_to(admin_dashboard_path)
+    end
   end
 
   it 'rejects malformed email before authentication and associates its error with the field' do

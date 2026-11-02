@@ -39,5 +39,6 @@ es:
               invalid: "no tiene un formato válido."
             password:
               blank: "no puede estar vacía"
+              login_too_short: "debe tener al menos %{count} caracteres."
             password_confirmation:
               confirmation: "no coincide con la contraseña"
