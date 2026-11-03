@@ -36,5 +36,7 @@ module SalePoint
 
     config.autoload_paths << Rails.root.join('app/presenters')
     config.eager_load_paths << Rails.root.join('app/presenters')
+    config.autoload_paths << Rails.root.join('app/queries')
+    config.eager_load_paths << Rails.root.join('app/queries')
   end
 end
