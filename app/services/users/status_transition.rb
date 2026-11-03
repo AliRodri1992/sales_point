@@ -113,8 +113,14 @@ module Users
       changes[:deleted_at] = Time.current if @target == 'deleted'
       @user.update!(changes)
       UserInvitation.revoke_for!(@user) if %w[blocked deleted].include?(@target)
-      @status_event = UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
-                              from_status: from, to_status: @target, reason: @reason)
+      @status_event = UserStatusEvent.create!(
+        user: @user,
+        organization: @organization,
+        actor: @actor,
+        from_status: from,
+        to_status: @target,
+        reason: @reason
+      )
     end
   end
 end
