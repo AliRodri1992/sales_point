@@ -1925,6 +1925,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
     t.datetime "updated_at", null: false
     t.integer "version", default: 1, null: false
     t.index ["key", "locale"], name: "index_email_templates_on_key_and_locale", unique: true
+    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
   end
 
   create_table "user_invitations", force: :cascade do |t|
@@ -1938,7 +1939,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
+    t.index ["expires_at"], name: "idx_user_invitations_pending_expiration", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
+    t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["user_id"], name: "index_user_invitations_on_user_id"
   end
 

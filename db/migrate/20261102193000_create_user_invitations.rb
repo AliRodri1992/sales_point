@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateUserInvitationsAndEmailTemplates < ActiveRecord::Migration[8.1]
+class CreateUserInvitations < ActiveRecord::Migration[8.1]
   def change
     remove_check_constraint :users, name: 'chk_users_status'
     add_check_constraint :users, "status IN ('pending','active','suspended','blocked','deleted')", name: 'chk_users_status'
@@ -15,19 +15,13 @@ class CreateUserInvitationsAndEmailTemplates < ActiveRecord::Migration[8.1]
       t.datetime :deleted_at
       t.timestamps
     end
-    add_index :user_invitations, :token_digest, unique: true
 
-    create_table :email_templates do |t|
-      t.string :key, null: false
-      t.string :locale, null: false, default: 'es'
-      t.string :subject, null: false
-      t.text :html_body, null: false
-      t.text :text_body, null: false
-      t.boolean :enabled, null: false, default: true
-      t.integer :version, null: false, default: 1
-      t.datetime :deleted_at
-      t.timestamps
-    end
-    add_index :email_templates, [:key, :locale], unique: true
+    add_index :user_invitations, :token_digest, unique: true
+    add_index :user_invitations, [:user_id, :created_at],
+              where: 'accepted_at IS NULL AND revoked_at IS NULL AND deleted_at IS NULL',
+              name: 'idx_user_invitations_pending_user'
+    add_index :user_invitations, :expires_at,
+              where: 'accepted_at IS NULL AND revoked_at IS NULL AND deleted_at IS NULL',
+              name: 'idx_user_invitations_pending_expiration'
   end
 end
