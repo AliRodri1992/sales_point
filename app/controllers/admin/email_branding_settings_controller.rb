@@ -13,10 +13,15 @@ module Admin
     def update
       verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
-      if @branding.update(branding_params)
-        redirect_to edit_admin_email_branding_settings_path, notice: t('admin.email_templates.saved')
-      else
-        render :edit, status: :unprocessable_content
+      attributes = branding_params
+      EmailBrandingSetting.transaction do
+        if @branding.update(attributes)
+          extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
+          EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
+          redirect_to edit_admin_email_branding_settings_path, notice: t('admin.email_templates.saved')
+        else
+          render :edit, status: :unprocessable_content
+        end
       end
     end
 
