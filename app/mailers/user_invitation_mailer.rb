@@ -4,6 +4,7 @@ require 'digest'
 
 class UserInvitationMailer < ApplicationMailer
   after_deliver :mark_delivered
+  rescue_from StandardError, with: :mark_delivery_failed
 
   def invite(invitation_id, encrypted_token)
     raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
@@ -23,6 +24,12 @@ class UserInvitationMailer < ApplicationMailer
   def mark_delivered
     invitation = UserInvitation.find_by(id: @invitation_id)
     invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
+  end
+
+  def mark_delivery_failed(e)
+    invitation = UserInvitation.find_by(id: @invitation_id)
+    invitation&.update!(delivery_status: 'failed')
+    raise e
   end
 
   def valid_invitation?(invitation, token)

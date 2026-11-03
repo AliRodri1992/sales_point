@@ -50,6 +50,8 @@ module Admin
       end
     end
 
+    rescue_from Users::InvitationDispatcher::DeliveryError, with: :invitation_delivery_failed
+
     def update
       authorize @user
 
@@ -121,6 +123,10 @@ module Admin
       branches = current_organization ? current_organization.branches.not_deleted.where(status: true) : Branch.none
       @branches = branches.order(:name)
       @branch_roles = SystemRole.branch.active.not_deleted.order(:name)
+    end
+
+    def invitation_delivery_failed
+      redirect_to admin_user_path(@user), alert: t('admin.users.status_management.invitation_delivery_failed')
     end
 
     def notify_user(actor, record, action)

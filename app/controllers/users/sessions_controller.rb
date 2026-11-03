@@ -23,6 +23,12 @@ module Users
       store_sign_in_success_message
     end
 
+    def destroy
+      cookies.delete(:user_id)
+      session.delete(:user_session_issued_at)
+      super
+    end
+
     private
 
     # Check input before inherited callbacks can ask Warden for current_user.

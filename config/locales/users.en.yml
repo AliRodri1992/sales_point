@@ -14,6 +14,7 @@ en:
           updated: "User '%{name}' was updated by %{user}"
     users:
       status_management:
+        invitation_delivery_failed: "The user was created, but the invitation could not be queued. You can resend it from the user profile."
         deleted_accounts: "Deactivated accounts"
         restore: "Restore account"
         restored: "Account restored as pending. Review roles and resend the invitation."

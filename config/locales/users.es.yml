@@ -14,6 +14,7 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        invitation_delivery_failed: "El usuario se creó, pero no fue posible poner la invitación en cola. Puedes reenviarla desde su expediente."
         deleted_accounts: "Cuentas dadas de baja"
         restore: "Restaurar cuenta"
         restored: "Cuenta restaurada como pendiente. Revisa sus roles y vuelve a enviar la invitación."

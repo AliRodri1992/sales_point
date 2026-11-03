@@ -13,7 +13,13 @@ module Admin
       redirect_to admin_user_path(user), notice: t('admin.users.status_management.resent')
     end
 
+    rescue_from Users::InvitationDispatcher::DeliveryError, with: :delivery_failed
+
     private
+
+    def delivery_failed
+      redirect_to admin_user_path(params[:user_id]), alert: t('admin.users.status_management.invitation_delivery_failed')
+    end
 
     def invitation_user
       member_ids = current_organization.organization_memberships.active.select(:user_id)
@@ -29,7 +35,8 @@ module Admin
     end
 
     def resend_limited?(user)
-      user.user_invitations.order(created_at: :desc).exists?(['created_at > ?', 60.seconds.ago])
+      user.user_invitations.where.not(delivery_status: 'failed')
+          .exists?(['created_at > ?', 60.seconds.ago])
     end
 
     def resend_limited(user)

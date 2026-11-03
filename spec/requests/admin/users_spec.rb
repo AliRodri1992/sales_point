@@ -8,6 +8,12 @@ RSpec.describe 'Admin::Users', type: :request do
   let(:organization) { create(:organization) }
 
   before do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Remove user'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: system_admin_role, permission:)
     create(:organization_membership, user: admin_user, organization:)
     sign_in admin_user
   end
