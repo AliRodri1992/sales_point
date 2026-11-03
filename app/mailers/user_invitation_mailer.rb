@@ -13,7 +13,8 @@ class UserInvitationMailer < ApplicationMailer
     return unless valid_invitation?(invitation, raw_token)
 
     subject, html, plain = invitation_template(invitation).render_with(template_variables(invitation, raw_token))
-    mail(to: invitation.user.email, subject:) do |format|
+    headers = EmailTemplates::Sender.headers_for(organization: invitation.organization)
+    mail(to: invitation.user.email, subject:, **headers) do |format|
       format.html { render body: html, content_type: 'text/html' }
       format.text { render plain: }
     end
@@ -46,15 +47,14 @@ class UserInvitationMailer < ApplicationMailer
   end
 
   def template_variables(invitation, token)
-    {
+    EmailTemplates::Branding.values(organization: invitation.organization).merge(
       invited_name: invitation.user.display_name,
+      recipient_name: invitation.user.display_name,
+      recipient_email: invitation.user.email,
       organization_name: invitation.organization.name,
       activation_url: user_invitation_url(token:),
       expiration_hours: 72,
-      current_year: Time.current.year,
-      logo_url: ActionController::Base.helpers.image_url(
-        'delta-pos-logo.svg', host: default_url_options[:host]
-      )
-    }
+      current_year: Time.current.year
+    )
   end
 end
