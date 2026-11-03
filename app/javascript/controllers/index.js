@@ -160,3 +160,6 @@ application.register("supplier-event-fields", SupplierEventFieldsController)
 
 import OnboardingController from "./onboarding_controller"
 application.register("onboarding", OnboardingController)
+
+import EmailTemplatePreviewController from "./email_template_preview_controller"
+application.register("email-template-preview", EmailTemplatePreviewController)
