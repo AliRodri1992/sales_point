@@ -37,12 +37,12 @@ RSpec.describe ApplicationCable::Connection do
       expect(User).not_to have_received(:track_online_connection)
     end
 
-    it 'does not track unauthenticated connections' do
+    it 'rejects unauthenticated connections without tracking presence' do
       allow(connection).to receive(:cookies).and_return(double(signed: {}))
+      allow(connection).to receive(:reject_unauthorized_connection)
+        .and_raise(ActionCable::Connection::Authorization::UnauthorizedError)
 
-      connection.connect
-
-      expect(connection.current_user).to be_nil
+      expect { connection.connect }.to raise_error(ActionCable::Connection::Authorization::UnauthorizedError)
       expect(User).not_to have_received(:track_online_connection)
     end
 
