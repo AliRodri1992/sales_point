@@ -31,9 +31,7 @@ class EmailTemplateVersion < ApplicationRecord
     return errors.add(:allowed_variables, :invalid) unless allowed_variables.is_a?(Array)
 
     allowed_variables.each do |variable|
-      unless variable.to_s.match?(/\A[a-z][a-z0-9_]*\z/)
-        errors.add(:allowed_variables, :invalid)
-      end
+      errors.add(:allowed_variables, :invalid) unless variable.to_s.match?(/\A[a-z][a-z0-9_]*\z/)
     end
   end
 

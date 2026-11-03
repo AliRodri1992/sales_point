@@ -60,6 +60,7 @@ class EmailTemplatePolicy < ApplicationPolicy
 
   def same_tenant?
     return user.role?('super_admin') if record.organization_id.nil?
+
     user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
   end
 end

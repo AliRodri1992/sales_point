@@ -6,7 +6,7 @@
     <% @template.errors.full_messages.each do |error| %><p role="alert" class="text-sm text-rose-700"><%= error %></p><% end %>
     <% { key: :text_field, name: :text_field, category: :text_field }.each do |field, method| %>
       <div><%= f.label field, t("admin.email_templates.columns.#{field}"), class: 'mb-1 block text-sm font-semibold' %>
-        <%= f.public_send(method, field, required: true, class: 'w-full rounded-xl border border-slate-300 px-3 py-2' %></div>
+        <%= f.public_send(method, field, required: true, class: 'w-full rounded-xl border border-slate-300 px-3 py-2') %></div>
     <% end %>
     <div><%= f.label :locale, t('admin.email_templates.columns.locale'), class: 'mb-1 block text-sm font-semibold' %>
       <%= f.select :locale, [['Español', 'es'], ['English', 'en'], ['한국어', 'ko']], {}, class: 'w-full rounded-xl border border-slate-300 px-3 py-2' %></div>

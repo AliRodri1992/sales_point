@@ -18,7 +18,7 @@ class EmailTemplate < ApplicationRecord
   validates :locale, inclusion: { in: %w[es en ko] }
   validates :key, format: { with: /\A[a-z][a-z0-9_]*\z/ }
   validates :version, numericality: { only_integer: true, greater_than: 0 }
-  validates :key, uniqueness: { scope: [:organization_id, :locale] }
+  validates :key, uniqueness: { scope: %i[organization_id locale] }
   validate :published_version_belongs_to_template
 
   def self.resolve(key:, locale:, organization: nil)

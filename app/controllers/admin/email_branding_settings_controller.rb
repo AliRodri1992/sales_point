@@ -32,8 +32,9 @@ module Admin
     end
 
     def branding_params
-      params.expect(email_branding_setting: %i[display_name primary_color secondary_color button_color
-                                              support_email support_url privacy_url footer_text logo])
+      keys = %i[display_name primary_color secondary_color button_color support_email
+                support_url privacy_url footer_text logo]
+      params.expect(email_branding_setting: keys)
     end
   end
 end

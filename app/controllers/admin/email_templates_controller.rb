@@ -9,13 +9,11 @@ module Admin
 
     def index
       authorize EmailTemplate
-      scope = policy_scope(EmailTemplate).includes(:organization, :published_version)
-      scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{ActiveRecord::Base.sanitize_sql_like(params[:q])}%") if params[:q].present?
-      scope = scope.where(locale: params[:locale]) if params[:locale].in?(%w[es en ko])
-      scope = scope.where(status: params[:status]) if params[:status].in?(EmailTemplate::STATUSES)
+      scope = filtered_templates
       @total = scope.count
       @page = [params[:page].to_i, 1].max
-      @templates = scope.order(updated_at: :desc).limit(20).offset((@page - 1) * 20)
+      @templates = scope.includes(:organization, :published_version)
+                        .order(updated_at: :desc).limit(20).offset((@page - 1) * 20)
       @counts = policy_scope(EmailTemplate).group(:status).count
     end
 
@@ -30,17 +28,16 @@ module Admin
       authorize @template
     end
 
+    def edit
+      authorize @template, :update?
+      @draft = @template.versions.where(status: 'draft').order(version_number: :desc).first ||
+               @template.new_draft!(actor: current_user)
+    end
+
     def create
       @template = EmailTemplate.new(template_attributes)
       authorize @template
-      @template.organization = current_user.role?('super_admin') && params[:global] == '1' ? nil : current_organization
-      @template.created_by = current_user
-      @template.updated_by = current_user
-      @template.status = 'draft'
-      @template.enabled = false
-      @template.subject = @template.subject.presence || 'New template'
-      @template.html_body = @template.html_body.presence || '<p>{{recipient_name}}</p>'
-      @template.text_body = @template.text_body.presence || '{{recipient_name}}'
+      prepare_new_template
 
       if @template.save
         draft = @template.new_draft!(actor: current_user)
@@ -49,12 +46,6 @@ module Admin
       else
         render :new, status: :unprocessable_content
       end
-    end
-
-    def edit
-      authorize @template, :update?
-      @draft = @template.versions.where(status: 'draft').order(version_number: :desc).first ||
-               @template.new_draft!(actor: current_user)
     end
 
     def update_draft
@@ -111,9 +102,7 @@ module Admin
 
     def send_test
       authorize @template, :send_test?
-      recipient = params[:email].to_s.strip.downcase
-      raise ArgumentError, 'Invalid recipient' unless recipient.match?(URI::MailTo::EMAIL_REGEXP)
-      raise ArgumentError, 'Template not published' unless @template.published_version
+      recipient = validate_test_recipient!
 
       @template.audit!(action: 'test_sent', actor: current_user)
       EmailTemplateTestMailer.sample(@template.id, recipient).deliver_later
@@ -123,6 +112,38 @@ module Admin
     end
 
     private
+
+    def filtered_templates
+      scope = policy_scope(EmailTemplate)
+      if params[:q].present?
+        escaped = ActiveRecord::Base.sanitize_sql_like(params[:q])
+        scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{escaped}%")
+      end
+      scope = scope.where(locale: params[:locale]) if params[:locale].in?(%w[es en ko])
+      scope = scope.where(status: params[:status]) if params[:status].in?(EmailTemplate::STATUSES)
+      scope
+    end
+
+    def prepare_new_template
+      global = current_user.role?('super_admin') && params[:global] == '1'
+      @template.organization = global ? nil : current_organization
+      @template.created_by = current_user
+      @template.updated_by = current_user
+      @template.status = 'draft'
+      @template.enabled = false
+      @template.subject ||= 'New template'
+      @template.html_body ||= '<p>{{recipient_name}}</p>'
+      @template.text_body ||= '{{recipient_name}}'
+    end
+
+    def validate_test_recipient!
+      recipient = params[:email].to_s.strip.downcase
+      raise ArgumentError, 'Invalid recipient' unless recipient.match?(URI::MailTo::EMAIL_REGEXP)
+      raise ArgumentError, 'Template not published' unless @template.published_version
+
+      recipient
+    end
+
 
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])

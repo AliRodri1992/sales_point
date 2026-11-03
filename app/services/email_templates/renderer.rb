@@ -59,8 +59,8 @@ module EmailTemplates
 
     def validate_url!(key, value)
       parsed = URI.parse(value.to_s)
-      raise ArgumentError, "Unsafe email URL: #{key}" unless parsed.is_a?(URI::HTTPS) ||
-                                                               (Rails.env.development? && parsed.is_a?(URI::HTTP))
+      valid = parsed.is_a?(URI::HTTPS) || (Rails.env.development? && parsed.is_a?(URI::HTTP))
+      raise ArgumentError, "Unsafe email URL: #{key}" unless valid
     rescue URI::InvalidURIError
       raise ArgumentError, "Invalid email URL: #{key}"
     end
