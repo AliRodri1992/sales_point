@@ -56,4 +56,29 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(EmailSettingAudit.where(setting_type: 'branding', organization:).count).to eq(1)
   end
+  it 'does not display audit history from another organization' do
+    foreign = create(:organization)
+    EmailSettingAudit.create!(
+      organization: foreign, actor: administrator, setting_type: 'sender',
+      changeset: { 'from_address' => ['private@another.example', 'private2@another.example'] }
+    )
+
+    get edit_admin_email_sender_settings_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('private@another.example')
+    expect(response.body).not_to include('private2@another.example')
+    expect(response.body).to include('Historial de cambios')
+  end
+
+  it 'prevents deleting audit evidence' do
+    audit = EmailSettingAudit.create!(
+      organization:, actor: administrator, setting_type: 'sender',
+      changeset: { 'display_name' => ['Before', 'After'] }
+    )
+
+    expect(audit.destroy).to be_falsey
+    expect(EmailSettingAudit.exists?(audit.id)).to be(true)
+  end
+
 end
