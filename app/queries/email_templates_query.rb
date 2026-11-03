@@ -9,8 +9,8 @@ class EmailTemplatesQuery
   def call
     scope = @scope
     if @filters[:q].present?
-      escaped = ActiveRecord::Base.sanitize_sql_like(@filters[:q])
-      scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{escaped}%")
+      escaped = ActiveRecord::Base.sanitize_sql_like(@filters[:q].to_s.strip)
+      scope = scope.where('email_templates.key ILIKE :q OR email_templates.name ILIKE :q', q: "%#{escaped}%")
     end
     scope = scope.where(locale: @filters[:locale]) if @filters[:locale].in?(%w[es en ko])
     scope = scope.where(status: @filters[:status]) if @filters[:status].in?(EmailTemplate::STATUSES)
