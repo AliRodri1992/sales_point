@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1477,6 +1477,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
     t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
     t.index ["organization_id"], name: "index_supplier_bank_accounts_on_organization_id"
     t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
+    t.index ["sat_bank_code"], name: "index_supplier_bank_accounts_on_sat_bank_code"
     t.index ["supplier_id"], name: "index_supplier_bank_accounts_on_supplier_id"
   end
 
