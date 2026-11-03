@@ -54,18 +54,21 @@ class EmailTemplate < ApplicationRecord
 
   def new_draft!(actor:)
     with_lock do
-      next_number = versions.maximum(:version_number).to_i + 1
       source = published_version || versions.order(version_number: :desc).first
-      body = source&.html_body || html_body
-      text = source&.text_body || text_body
-      title = source&.subject || subject
-      variables = source&.allowed_variables.presence ||
-                  [title, body, text].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
       versions.create!(
-        version_number: next_number, status: 'draft', created_by: actor,
-        subject: title, html_body: body, text_body: text, allowed_variables: variables
+        version_number: versions.maximum(:version_number).to_i + 1,
+        status: 'draft', created_by: actor, **draft_content(source)
       )
     end
+  end
+
+  def draft_content(source)
+    title = source&.subject || subject
+    body = source&.html_body || html_body
+    plain = source&.text_body || text_body
+    variables = source&.allowed_variables.presence ||
+                [title, body, plain].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
+    { subject: title, html_body: body, text_body: plain, allowed_variables: variables }
   end
 
   def audit!(action:, actor:, version: nil)

@@ -39,9 +39,13 @@ module Admin
       @template = EmailTemplate.new(template_attributes)
       authorize @template
       raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
+
       @template.prepare_for_creation!(actor: current_user, organization: current_organization,
                                       global: current_user.role?('super_admin') && params[:global] == '1')
+      save_new_template
+    end
 
+    def save_new_template
       if @template.save
         draft = @template.new_draft!(actor: current_user)
         @template.audit!(action: 'created', actor: current_user, version: draft)
