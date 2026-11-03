@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_224300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -318,6 +318,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
   create_table "email_branding_settings", force: :cascade do |t|
     t.string "button_color", default: "#047857", null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.string "display_name", default: "Delta POS", null: false
     t.text "footer_text"
     t.bigint "organization_id"
@@ -327,6 +328,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
     t.string "support_email"
     t.string "support_url"
     t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
     t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "(organization_id IS NULL)"
     t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
@@ -334,6 +336,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
 
   create_table "email_sender_settings", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.string "default_locale", default: "es", null: false
     t.string "display_name", default: "Delta POS", null: false
     t.string "domain"
@@ -342,6 +345,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
     t.bigint "organization_id"
     t.string "reply_to"
     t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_email_sender_settings_on_deleted_at"
     t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "(organization_id IS NULL)"
     t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id"], name: "index_email_sender_settings_on_organization_id"
@@ -351,6 +355,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
     t.jsonb "allowed_variables", default: [], null: false
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.bigint "email_template_id", null: false
     t.text "html_body", null: false
     t.string "preheader", default: "", null: false
@@ -361,6 +366,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
     t.text "text_body", null: false
     t.datetime "updated_at", null: false
     t.integer "version_number", null: false
+    t.index ["deleted_at"], name: "index_email_template_versions_on_deleted_at"
     t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
     t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
     t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
@@ -373,11 +379,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
     t.string "action", null: false
     t.bigint "actor_id"
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.bigint "email_template_id", null: false
     t.bigint "email_template_version_id"
     t.jsonb "metadata", default: {}, null: false
     t.bigint "organization_id"
     t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_email_template_audits_on_deleted_at"
     t.index ["actor_id"], name: "index_email_template_audits_on_actor_id"
     t.index ["email_template_id", "created_at"], name: "idx_email_template_audits_history"
     t.index ["email_template_id"], name: "index_email_template_audits_on_email_template_id"
