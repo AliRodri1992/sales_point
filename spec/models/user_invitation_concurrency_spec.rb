@@ -12,7 +12,7 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
     invitation = UserInvitation.issue!(user:, organization:)
     start = Queue.new
     results = Queue.new
-    workers = 2.times.map do
+    workers = Array.new(2) do
       Thread.new do
         ActiveRecord::Base.connection_pool.with_connection do
           start.pop
@@ -30,7 +30,7 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
     2.times { start << true }
     workers.each(&:join)
 
-    outcomes = 2.times.map { results.pop }
+    outcomes = Array.new(2) { results.pop }
     expect(outcomes.grep(StandardError)).to be_empty
     expect(outcomes.count(true)).to eq(1)
     expect(invitation.reload.accepted_at).to be_present
@@ -40,7 +40,7 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
   it 'leaves only the newest token valid after concurrent resends' do
     start = Queue.new
     results = Queue.new
-    workers = 2.times.map do
+    workers = Array.new(2) do
       Thread.new do
         ActiveRecord::Base.connection_pool.with_connection do
           start.pop
@@ -53,7 +53,7 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
     2.times { start << true }
     workers.each(&:join)
 
-    invitations = 2.times.map { results.pop }
+    invitations = Array.new(2) { results.pop }
     expect(invitations.grep(StandardError)).to be_empty
     expect(invitations.count(&:usable?)).to eq(1)
   end

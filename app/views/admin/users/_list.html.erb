@@ -39,7 +39,7 @@
                 </div>
               </td>
               <td class="px-5 py-4 text-slate-600"><%= t("admin.users.user_types.#{user.user_type}") %></td>
-              <td class="px-5 py-4"><%= user_status_badge(user.organization_memberships.active.find_by(organization: current_organization)&.account_status || user.status) %></td>
+              <td class="px-5 py-4"><%= user_status_badge(user.organization_memberships.find { |membership| membership.organization_id == current_organization.id && membership.active? && membership.deleted_at.nil? }&.account_status || user.status) %></td>
               <td class="max-w-64 px-5 py-4"><%= render 'role_badges', user: user %></td>
               <td class="whitespace-nowrap px-5 py-4 text-xs text-slate-600"><%= l(user.created_at, format: :short) %></td>
               <td class="px-5 py-4"><%= render 'row_actions', user: user, can_manage_users: can_manage_users %></td>
