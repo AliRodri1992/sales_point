@@ -17,6 +17,18 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    resources :email_templates, only: %i[index show new create edit] do
+      member do
+        patch 'draft/:version_id', action: :update_draft, as: :draft
+        post 'publish/:version_id', action: :publish, as: :publish
+        post 'restore/:version_id', action: :restore, as: :restore
+        patch :archive
+        get :preview
+        post :send_test
+      end
+    end
+    resource :email_branding_settings, only: %i[edit update]
+    resource :email_sender_settings, only: %i[edit update]
     resource :general_settings, only: %i[show update]
     patch 'table_page_preferences/:table_key', to: 'table_page_preferences#update',
                                                as: :table_page_preference
