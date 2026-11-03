@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         post 'restore/:version_id', action: :restore, as: :restore
         patch :archive
         get :preview
+        post 'preview_draft/:version_id', action: :preview_draft, as: :preview_draft
         get :compare
         post :send_test
       end
