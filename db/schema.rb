@@ -328,8 +328,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.string "support_email"
     t.string "support_url"
     t.datetime "updated_at", null: false
-    t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
     t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
   end
@@ -349,8 +349,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
 
   create_table "email_sender_settings", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
     t.string "default_locale", default: "es", null: false
+    t.datetime "deleted_at"
     t.string "display_name", default: "Delta POS", null: false
     t.string "domain"
     t.string "domain_status", default: "unverified", null: false
@@ -358,34 +358,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.bigint "organization_id"
     t.string "reply_to"
     t.datetime "updated_at", null: false
-    t.index ["deleted_at"], name: "index_email_sender_settings_on_deleted_at"
     t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index ["deleted_at"], name: "index_email_sender_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id"], name: "index_email_sender_settings_on_organization_id"
   end
 
-  create_table "email_template_versions", force: :cascade do |t|
-    t.jsonb "allowed_variables", default: [], null: false
-    t.bigint "created_by_id"
+  create_table "email_setting_audits", force: :cascade do |t|
+    t.bigint "actor_id", null: false
+    t.jsonb "changeset", default: {}, null: false
     t.datetime "created_at", null: false
-    t.datetime "deleted_at"
-    t.bigint "email_template_id", null: false
-    t.text "html_body", null: false
-    t.string "preheader", default: "", null: false
-    t.bigint "published_by_id"
-    t.datetime "published_at"
-    t.string "status", default: "draft", null: false
-    t.string "subject", null: false
-    t.text "text_body", null: false
+    t.bigint "organization_id"
+    t.string "setting_type", null: false
     t.datetime "updated_at", null: false
-    t.integer "version_number", null: false
-    t.index ["deleted_at"], name: "index_email_template_versions_on_deleted_at"
-    t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
-    t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
-    t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
-    t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
-    t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
-    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'archived'::character varying::text])", name: "chk_email_template_versions_status"
+    t.index ["actor_id"], name: "index_email_setting_audits_on_actor_id"
+    t.index ["organization_id", "created_at"], name: "idx_email_setting_audits_tenant_history"
+    t.index ["organization_id"], name: "index_email_setting_audits_on_organization_id"
+    t.check_constraint "setting_type::text = ANY (ARRAY['branding'::character varying, 'sender'::character varying]::text[])", name: "chk_email_setting_audit_type"
   end
 
   create_table "email_template_audits", force: :cascade do |t|
@@ -398,8 +387,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.jsonb "metadata", default: {}, null: false
     t.bigint "organization_id"
     t.datetime "updated_at", null: false
-    t.index ["deleted_at"], name: "index_email_template_audits_on_deleted_at"
     t.index ["actor_id"], name: "index_email_template_audits_on_actor_id"
+    t.index ["deleted_at"], name: "index_email_template_audits_on_deleted_at"
     t.index ["email_template_id", "created_at"], name: "idx_email_template_audits_history"
     t.index ["email_template_id"], name: "index_email_template_audits_on_email_template_id"
     t.index ["email_template_version_id"], name: "index_email_template_audits_on_email_template_version_id"
@@ -407,33 +396,56 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.index ["organization_id"], name: "index_email_template_audits_on_organization_id"
   end
 
+  create_table "email_template_versions", force: :cascade do |t|
+    t.jsonb "allowed_variables", default: [], null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.datetime "deleted_at"
+    t.bigint "email_template_id", null: false
+    t.text "html_body", null: false
+    t.string "preheader", default: "", null: false
+    t.datetime "published_at"
+    t.bigint "published_by_id"
+    t.string "status", default: "draft", null: false
+    t.string "subject", null: false
+    t.text "text_body", null: false
+    t.datetime "updated_at", null: false
+    t.integer "version_number", null: false
+    t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
+    t.index ["deleted_at"], name: "index_email_template_versions_on_deleted_at"
+    t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
+    t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
+    t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
+    t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'archived'::character varying]::text[])", name: "chk_email_template_versions_status"
+  end
+
   create_table "email_templates", force: :cascade do |t|
     t.string "category", default: "transactional", null: false
-    t.bigint "created_by_id"
     t.datetime "created_at", null: false
+    t.bigint "created_by_id"
     t.datetime "deleted_at"
     t.boolean "enabled", default: true, null: false
     t.text "html_body", null: false
     t.string "key", null: false
+    t.string "locale", default: "es", null: false
     t.string "name", null: false
     t.bigint "organization_id"
     t.bigint "published_version_id"
-    t.string "locale", default: "es", null: false
     t.string "status", default: "published", null: false
     t.string "subject", null: false
     t.text "text_body", null: false
-    t.bigint "updated_by_id"
     t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
     t.integer "version", default: 1, null: false
     t.index ["created_by_id"], name: "index_email_templates_on_created_by_id"
     t.index ["key", "locale"], name: "idx_email_templates_global_unique", unique: true, where: "(organization_id IS NULL)"
+    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
     t.index ["organization_id", "key", "locale"], name: "idx_email_templates_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
     t.index ["organization_id"], name: "index_email_templates_on_organization_id"
-    t.index ["published_version_id"], name: "index_email_templates_on_published_version_id"
     t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
-    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
-    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'inactive'::character varying::text, 'archived'::character varying::text])", name: "chk_email_templates_status"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'inactive'::character varying, 'archived'::character varying]::text[])", name: "chk_email_templates_status"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -730,12 +742,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["deleted_at"], name: "index_organization_memberships_on_deleted_at"
-    t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id", "account_status"], name: "idx_org_memberships_account_status", where: "((deleted_at IS NULL) AND ((status)::text = 'active'::text))"
+    t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
     t.index ["user_id"], name: "index_organization_memberships_on_user_id"
+    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'suspended'::character varying, 'blocked'::character varying, 'deleted'::character varying]::text[])", name: "chk_org_member_account_status"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_org_memberships_status"
-    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_org_member_account_status"
   end
 
   create_table "organization_migrations", force: :cascade do |t|
@@ -775,8 +787,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.string "business_sector", limit: 50, null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
-    t.string "name", limit: 150, null: false
     t.bigint "membership_plan_id"
+    t.string "name", limit: 150, null: false
     t.datetime "onboarding_completed_at"
     t.integer "onboarding_current_step", default: 1, null: false
     t.jsonb "onboarding_sections", default: {}, null: false
@@ -2045,7 +2057,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
     t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["user_id"], name: "index_user_invitations_on_user_id"
-    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying::text, 'queued'::character varying::text, 'sent'::character varying::text, 'failed'::character varying::text])", name: "chk_user_invitations_delivery_status"
+    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying, 'queued'::character varying, 'sent'::character varying, 'failed'::character varying]::text[])", name: "chk_user_invitations_delivery_status"
   end
 
   create_table "user_roles", force: :cascade do |t|
@@ -2176,6 +2188,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
   add_foreign_key "email_setting_audits", "organizations"
   add_foreign_key "email_setting_audits", "users", column: "actor_id"
   add_foreign_key "email_sender_settings", "organizations"
+  add_foreign_key "email_setting_audits", "organizations"
+  add_foreign_key "email_setting_audits", "users", column: "actor_id"
   add_foreign_key "email_template_audits", "email_template_versions"
   add_foreign_key "email_template_audits", "email_templates"
   add_foreign_key "email_template_audits", "organizations"
@@ -2217,12 +2231,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
   add_foreign_key "messages", "users"
   add_foreign_key "onboarding_audits", "organizations"
   add_foreign_key "onboarding_audits", "users"
-  add_foreign_key "organizations", "membership_plans"
   add_foreign_key "organization_memberships", "organizations"
   add_foreign_key "organization_memberships", "users"
   add_foreign_key "organization_migrations", "organizations"
   add_foreign_key "organization_settings", "currencies", column: "base_currency_id"
   add_foreign_key "organization_settings", "organizations"
+  add_foreign_key "organizations", "membership_plans"
   add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "phones", "organizations"
   add_foreign_key "products", "categories"
