@@ -58,7 +58,14 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  # Public URLs in emails must use the deployment's real HTTPS domain.
+  # Fail at boot rather than silently sending unusable invitation links.
+  public_host = ENV.fetch('DELTA_POS_PUBLIC_HOST')
+  raise 'DELTA_POS_PUBLIC_HOST must be a hostname, without a scheme or path' if
+    public_host.blank? || public_host.match?(%r{[/:\\s]}) || public_host == 'example.com'
+
+  config.action_mailer.default_url_options = { host: public_host, protocol: 'https' }
+  config.action_mailer.raise_delivery_errors = true
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {
