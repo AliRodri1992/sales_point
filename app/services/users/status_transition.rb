@@ -58,9 +58,9 @@ module Users
       memberships = @user.organization_memberships.active
       raise Pundit::NotAuthorizedError unless memberships.exists?(organization: @organization)
 
-      if @target == 'deleted' && memberships.where.not(organization: @organization).exists?
-        raise Pundit::NotAuthorizedError
-      end
+      return unless @target == 'deleted' && memberships.where.not(organization: @organization).exists?
+
+      raise Pundit::NotAuthorizedError
     end
 
     def persist_transition!
