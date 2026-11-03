@@ -48,10 +48,19 @@ class ApplicationController < ActionController::Base
 
   def enforce_active_account
     return unless user_signed_in?
-    return if current_user.active? && current_user.deleted_at.nil?
+    return if current_user.active? && current_user.deleted_at.nil? && session_not_revoked?
 
     sign_out(current_user)
+    cookies.delete(:user_id)
     redirect_to new_user_session_path
+  end
+
+  def session_not_revoked?
+    revoked_at = current_user.session_revoked_at
+    return true unless revoked_at
+
+    issued_at = session[:user_session_issued_at]
+    issued_at.present? && issued_at.to_f > revoked_at.to_f
   end
 
   def with_organization_timezone(&)
@@ -67,10 +76,12 @@ class ApplicationController < ActionController::Base
 
   def set_action_cable_user_id_cookie
     return unless user_signed_in?
-    return if cookies.signed[:user_id] == current_user.id
+    payload = cookies.signed[:user_id]
+    return if payload.is_a?(Hash) && payload['id'] == current_user.id &&
+              payload['issued_at'] == session[:user_session_issued_at]
 
     cookies.signed[:user_id] = {
-      value: current_user.id,
+      value: { id: current_user.id, issued_at: session[:user_session_issued_at] },
       httponly: true,
       same_site: :lax
     }

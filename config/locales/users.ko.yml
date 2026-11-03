@@ -14,6 +14,7 @@ ko:
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
       status_management:
+        history: 계정 상태 변경 내역
         deleted: 사용자 비활성화
         resend: 초대 다시 보내기
         resent: 새 초대가 생성되었습니다.

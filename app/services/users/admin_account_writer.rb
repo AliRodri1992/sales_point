@@ -35,7 +35,7 @@ module Users
 
     def user_attributes
       permitted = @attributes.except(:system_role_ids, :branch_role_assignments, :status)
-      permitted = permitted.except(:password, :password_confirmation) if @user.new_record?
+      permitted = permitted.except(:password, :password_confirmation)
       if permitted[:password].blank?
         permitted.delete(:password)
         permitted.delete(:password_confirmation) if permitted[:password_confirmation].blank?

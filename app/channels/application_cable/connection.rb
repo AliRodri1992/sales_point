@@ -20,17 +20,33 @@ module ApplicationCable
 
     # Action Cable invokes beat periodically while the socket stays connected.
     def beat
-      User.track_online_connection(current_user.id, @presence_token) if current_user && @presence_token
+      return unless current_user && @presence_token
+
+      current_user.reload
+      return close(reason: 'Access revoked') unless valid_account?
+
+      User.track_online_connection(current_user.id, @presence_token)
       super
     end
 
     private
 
     def find_verified_user
-      user_id = cookies.signed[:user_id]
-      return unless user_id
+      payload = cookies.signed[:user_id]
+      return reject_unauthorized_connection unless payload.is_a?(Hash)
 
-      User.find_by(id: user_id) || reject_unauthorized_connection
+      @issued_at = payload['issued_at']
+      user = User.find_by(id: payload['id'])
+      return reject_unauthorized_connection unless user&.active_for_authentication?
+      return reject_unauthorized_connection if user.session_revoked_at &&
+                                                @issued_at.to_f <= user.session_revoked_at.to_f
+
+      user
+    end
+
+    def valid_account?
+      current_user.active_for_authentication? &&
+        (!current_user.session_revoked_at || @issued_at.to_f > current_user.session_revoked_at.to_f)
     end
 
     def broadcast_presence

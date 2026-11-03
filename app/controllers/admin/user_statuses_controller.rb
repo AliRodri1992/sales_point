@@ -9,7 +9,7 @@ module Admin
     def edit
       authorize @user, :update?
       @target = params[:transition].to_s
-      head :unprocessable_content unless Users::StatusTransition.allowed_targets(@user).include?(@target)
+      head :unprocessable_content unless Users::StatusTransition.allowed_targets(@user, organization: current_organization).include?(@target)
     end
 
     def update

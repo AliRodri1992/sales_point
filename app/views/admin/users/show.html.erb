@@ -33,7 +33,7 @@
   </header>
 
   <% if @can_manage_users && @user != current_user %>
-    <% transitions = Users::StatusTransition.allowed_targets(@user) %>
+    <% transitions = Users::StatusTransition.allowed_targets(@user, organization: current_organization) %>
     <% if @user.pending? %>
       <%= button_to t('admin.users.status_management.resend'), admin_user_invitation_path(@user), method: :post,
                     class: 'rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800' %>
@@ -53,6 +53,26 @@
     <% end %>
   <% end %>
 
+  <% if @can_manage_users %>
+    <% history = UserStatusEvent.where(user: @user, organization: current_organization).order(created_at: :desc).limit(10) %>
+    <% if history.any? %>
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.history') %></h2>
+        <ol class="mt-4 divide-y divide-slate-100">
+          <% history.each do |event| %>
+            <li class="py-3 text-sm">
+              <div class="flex flex-wrap justify-between gap-2">
+                <strong><%= t("admin.users.statuses.#{event.from_status}") %> → <%= t("admin.users.statuses.#{event.to_status}") %></strong>
+                <time class="text-xs text-slate-500" datetime="<%= event.created_at.iso8601 %>"><%= l(event.created_at, format: :short) %></time>
+              </div>
+              <p class="mt-1 break-words text-slate-600"><%= event.reason %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= event.actor&.display_name %></p>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+    <% end %>
+  <% end %>
   <div class="grid items-start gap-5 lg:grid-cols-2">
     <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="user-identity-title">
       <div class="mb-5 flex items-center gap-3 border-b border-slate-100 pb-5">

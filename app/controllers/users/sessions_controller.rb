@@ -17,7 +17,10 @@ module Users
       return render_invalid_credentials unless warden.authenticate(auth_options)
 
       super
-      store_sign_in_success_message if user_signed_in?
+      if user_signed_in?
+        session[:user_session_issued_at] = Time.current.to_f
+        store_sign_in_success_message
+      end
     end
 
     private

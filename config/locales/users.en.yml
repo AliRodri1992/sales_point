@@ -14,6 +14,7 @@ en:
           updated: "User '%{name}' was updated by %{user}"
     users:
       status_management:
+        history: Account status history
         deleted: Deactivate
         resend: Resend invitation
         resent: A new invitation has been generated.

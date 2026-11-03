@@ -14,6 +14,7 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        history: Historial de estatus
         deleted: Dar de baja
         resend: Reenviar invitación
         resent: Se generó una nueva invitación para el usuario.

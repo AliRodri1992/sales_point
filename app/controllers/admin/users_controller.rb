@@ -103,7 +103,7 @@ module Admin
     def user_params
       params.expect(
         user: [
-          :email, :username, :password, :password_confirmation,
+          :email, :username,
           :user_type, :theme, :language_id,
           { system_role_ids: [], branch_role_assignments: [] }
         ]

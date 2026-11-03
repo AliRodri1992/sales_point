@@ -71,35 +71,11 @@
         </div>
       </section>
 
-      <% if editing %>
-      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-security-title">
-        <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
-          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><%= delta_icon('lock-closed', class: 'size-6') %></span>
-          <div>
-            <h2 id="users-security-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.ui.form_security') %></h2>
-            <p class="mt-0.5 text-xs text-slate-500"><%= t(editing ? 'admin.users.form.password_hint' : 'admin.users.ui.form_security_hint') %></p>
-          </div>
-        </header>
-        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
-          <div class="min-w-0">
-            <%= form.label :password, t('admin.users.form.fields.password'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-            <%= form.password_field :password, autocomplete: 'new-password',
-                                    aria: { invalid: @user.errors[:password].any? },
-                                    class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :password)} px-3.5 py-2.5 text-sm" %>
-            <%= error_message_for(@user, :password) %>
-          </div>
-          <div class="min-w-0">
-            <%= form.label :password_confirmation, t('admin.users.form.fields.password_confirmation'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-            <%= form.password_field :password_confirmation, autocomplete: 'new-password',
-                                    aria: { invalid: @user.errors[:password_confirmation].any? },
-                                    class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :password_confirmation)} px-3.5 py-2.5 text-sm" %>
-            <%= error_message_for(@user, :password_confirmation) %>
-          </div>
-        </div>
-      </section>
-
-      <% else %>
-        <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><p class="font-semibold text-emerald-900"><%= t('admin.users.form.invitation_title') %></p><p class="mt-2 text-sm text-emerald-800"><%= t('admin.users.form.invitation_hint') %></p></section>
+      <% unless editing %>
+        <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+          <p class="font-semibold text-emerald-900"><%= t('admin.users.form.invitation_title') %></p>
+          <p class="mt-2 text-sm text-emerald-800"><%= t('admin.users.form.invitation_hint') %></p>
+        </section>
       <% end %>
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-access-title">
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
