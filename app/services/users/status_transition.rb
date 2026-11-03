@@ -96,6 +96,8 @@ module Users
     end
 
     def notify_account_holder
+      EmailTemplate.ensure_status_template!
+      UserStatusMailer.changed(@status_event.id).deliver_later
       return if @user.deleted?
 
       UserStatusNotification.with(record: @user, action: @target, user: @actor)
@@ -111,7 +113,7 @@ module Users
       changes[:deleted_at] = Time.current if @target == 'deleted'
       @user.update!(changes)
       UserInvitation.revoke_for!(@user) if %w[blocked deleted].include?(@target)
-      UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
+      @status_event = UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
                               from_status: from, to_status: @target, reason: @reason)
     end
   end

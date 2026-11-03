@@ -11,6 +11,12 @@ class EmailTemplate < ApplicationRecord
     load Rails.root.join('db/seeds/email_templates.rb')
   end
 
+  def self.ensure_status_template!
+    return if exists?(key: 'user_status_changed', locale: 'es')
+
+    load Rails.root.join('db/seeds/user_status_templates.rb')
+  end
+
   def render_with(values)
     [subject, html_body, text_body].each_with_index.map do |source, index|
       source.gsub(/\{\{([a-z_]+)\}\}/) do |match|
