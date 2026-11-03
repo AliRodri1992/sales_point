@@ -39,6 +39,7 @@ es:
       desktop: "Escritorio"
       mobile: "Móvil"
       plain_text: "Texto plano"
+      compare: "Comparar versiones"
       columns:
         name: "Nombre"
         key: "Código"

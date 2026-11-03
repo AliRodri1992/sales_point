@@ -89,6 +89,13 @@ module Admin
       redirect_to admin_email_templates_path, notice: t('admin.email_templates.archived')
     end
 
+    def compare
+      authorize @template, :versions?
+      @left = @template.versions.find(params[:left])
+      @right = @template.versions.find(params[:right])
+      render :compare
+    end
+
     def preview
       authorize @template, :preview?
       @version = @template.versions.find_by(id: params[:version_id]) || @template.published_version

@@ -39,6 +39,7 @@ en:
       desktop: "Desktop"
       mobile: "Mobile"
       plain_text: "Plain text"
+      compare: "Compare versions"
       columns:
         name: "Name"
         key: "Key"

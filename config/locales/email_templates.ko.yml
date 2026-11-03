@@ -39,6 +39,7 @@ ko:
       desktop: "데스크톱"
       mobile: "모바일"
       plain_text: "일반 텍스트"
+      compare: "버전 비교"
       columns:
         name: "이름"
         key: "코드"

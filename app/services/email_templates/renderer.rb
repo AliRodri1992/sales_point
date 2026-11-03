@@ -3,7 +3,8 @@
 module EmailTemplates
   class Renderer
     VARIABLE_PATTERN = /\{\{([a-z][a-z0-9_]*)\}\}/
-    URL_VARIABLES = %w[activation_url recovery_url support_url privacy_url logo_url organization_logo platform_logo].freeze
+    URL_VARIABLES = %w[activation_url recovery_url support_url privacy_url
+                       logo_url organization_logo platform_logo].freeze
     KNOWN_VARIABLES = %w[
       name recipient_name recipient_email invited_name organization_name organization_logo
       platform_logo platform_name logo_url support_email support_url privacy_url
