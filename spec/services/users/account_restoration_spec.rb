@@ -16,7 +16,7 @@ RSpec.describe Users::AccountRestoration do
     end
     SystemRolePermission.find_or_create_by!(system_role: super_role, permission:)
     create(:organization_membership, user: administrator, organization:)
-    create(:organization_membership, user:, organization:)
+    create(:organization_membership, user:, organization:, account_status: :deleted)
   end
 
   it 'restores only to pending and removes historical role assignments' do

@@ -39,12 +39,29 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(admin.reload).to be_active
   end
 
-  it 'rejects global status changes for accounts shared by organizations' do
-    other_organization = create(:organization)
-    create(:organization_membership, user: target, organization: other_organization)
-    patch admin_user_status_path(target), params: { transition: 'suspended', reason: 'Not tenant safe' }
-    expect(response).to have_http_status(:forbidden)
+  it 'suspends only the selected organization for shared accounts' do
+    second_organization = create(:organization)
+    second_membership = create(:organization_membership, user: target, organization: second_organization)
+    patch admin_user_status_path(target), params: { transition: 'suspended', reason: 'Tenant review' }
+
+    expect(response).to redirect_to(admin_user_path(target))
     expect(target.reload).to be_active
+    expect(target.organization_memberships.find_by!(organization:).account_status).to eq('suspended')
+    expect(second_membership.reload.account_status).to eq('active')
+  end
+
+  it 'requires incident resolution for unlocking a blocked account' do
+    patch admin_user_status_path(target), params: { transition: 'blocked', reason: 'Security incident' }
+    expect(UserSecurityIncident.where(user: target, organization:).count).to eq(1)
+
+    patch admin_user_status_path(target), params: { transition: 'active', reason: 'Reviewed' }
+    expect(target.organization_memberships.find_by!(organization:).account_status).to eq('blocked')
+
+    patch admin_user_status_path(target), params: {
+      transition: 'active', reason: 'Reviewed', resolution: 'Identity verified by administrator'
+    }
+    expect(target.organization_memberships.find_by!(organization:).account_status).to eq('active')
+    expect(UserSecurityIncident.find_by!(user: target, organization:).resolved_at).to be_present
   end
 
   it 'revokes the account session on an authorized block' do

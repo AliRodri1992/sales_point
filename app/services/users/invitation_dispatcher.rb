@@ -14,7 +14,7 @@ module Users
     end
 
     def self.enqueue!(invitation, encrypted_token)
-      UserInvitationMailer.invite(invitation.id, encrypted_token).deliver_later
+      Users::InvitationDeliveryJob.perform_later(invitation.id, encrypted_token)
     rescue StandardError => e
       invitation.update!(delivery_status: 'failed')
       Rails.logger.error("Invitation mail enqueue failed: #{e.class}")

@@ -13,8 +13,9 @@ RSpec.describe ApplicationCable::Connection do
 
   describe '#connect' do
     before do
-      allow(connection).to receive(:cookies).and_return(double(signed: { user_id: user.id }))
+      allow(connection).to receive(:cookies).and_return(double(signed: { user_id: { 'id' => user.id, 'issued_at' => 123.0 } }))
       allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+      allow(user).to receive(:active_for_authentication?).and_return(true)
       allow(User).to receive(:track_online_connection)
     end
 
@@ -24,6 +25,15 @@ RSpec.describe ApplicationCable::Connection do
       expect(connection.current_user).to eq(user)
       expect(User).to have_received(:track_online_connection).with(user.id, an_instance_of(String))
       expect(connection).to have_received(:broadcast_presence)
+    end
+
+    it 'rejects a signed cookie created before session revocation' do
+      allow(user).to receive(:session_revoked_at).and_return(Time.at(124))
+      allow(connection).to receive(:reject_unauthorized_connection)
+        .and_raise(ActionCable::Connection::Authorization::UnauthorizedError)
+
+      expect { connection.connect }.to raise_error(ActionCable::Connection::Authorization::UnauthorizedError)
+      expect(User).not_to have_received(:track_online_connection)
     end
 
     it 'does not track unauthenticated connections' do
