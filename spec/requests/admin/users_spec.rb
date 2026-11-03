@@ -122,6 +122,15 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(flash[:swal_message]).to eq(I18n.t('admin.users.updated', locale: :es))
     end
 
+    it 'does not accept forged administrative password changes' do
+      target = add_member(create(:user, password: 'originalpassword123'))
+      patch admin_user_path(target), params: {
+        user: { password: 'hackedpassword123', password_confirmation: 'hackedpassword123' }
+      }
+      expect(target.reload.valid_password?('originalpassword123')).to be(true)
+      expect(target.valid_password?('hackedpassword123')).to be(false)
+    end
+
     it 'does not accept forged administrative status updates' do
       target = add_member(create(:user, status: :active))
       patch admin_user_path(target), params: { user: { status: 'blocked', username: 'safe' } }

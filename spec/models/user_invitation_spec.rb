@@ -27,6 +27,24 @@ RSpec.describe UserInvitation, type: :model do
     expect(current).to be_usable
   end
 
+  it 'rejects activation after a security block without changing the password' do
+    invitation = described_class.issue!(user:, organization:)
+    user.update!(status: :blocked)
+    expect(invitation.accept!(token: invitation.raw_token, password: 'newpassword123',
+                              password_confirmation: 'newpassword123')).to be(false)
+    expect(user.reload).to be_blocked
+    expect(invitation.reload.accepted_at).to be_nil
+  end
+
+  it 'does not activate with a short or mismatched password' do
+    invitation = described_class.issue!(user:, organization:)
+    expect(invitation.accept!(token: invitation.raw_token, password: '12345678',
+                              password_confirmation: '12345678')).to be(false)
+    expect(invitation.accept!(token: invitation.raw_token, password: 'newpassword123',
+                              password_confirmation: 'mismatch123')).to be(false)
+    expect(user.reload).to be_pending
+  end
+
   it 'rejects expired and forged links' do
     invitation = described_class.issue!(user:, organization:)
     expect(invitation.accept!(token: 'invalid', password: 'newpassword123',
