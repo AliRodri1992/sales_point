@@ -40,6 +40,11 @@ class UserInvitation < ApplicationRecord
       digest = Digest::SHA256.hexdigest(token.to_s)
       return false unless ActiveSupport::SecurityUtils.secure_compare(token_digest, digest)
 
+      if password.to_s.length < 9
+        user.errors.add(:password, :too_short, count: 9)
+        return false
+      end
+
       user.password = password
       user.password_confirmation = password_confirmation
       user.status = :active

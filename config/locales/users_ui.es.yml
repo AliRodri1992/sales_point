@@ -8,7 +8,7 @@ es:
         metrics:
           total: "Usuarios"
           pending: Pendientes
-        active: "Activos"
+          active: "Activos"
           suspended: "Suspendidos"
           blocked: "Bloqueados"
         filters_title: "Buscar y filtrar usuarios"
