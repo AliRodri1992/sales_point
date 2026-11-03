@@ -102,10 +102,9 @@ module Admin
 
     def send_test
       authorize @template, :send_test?
-      recipient = validate_test_recipient!
-
-      @template.audit!(action: 'test_sent', actor: current_user)
-      EmailTemplateTestMailer.sample(@template.id, recipient).deliver_later
+      EmailTemplates::TestDelivery.call(
+        template: @template, actor: current_user, recipient: params[:email]
+      )
       redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.test_queued')
     rescue ArgumentError => e
       redirect_to admin_email_template_path(@template), alert: e.message
