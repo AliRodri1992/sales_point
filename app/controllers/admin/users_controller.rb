@@ -17,7 +17,8 @@ module Admin
       authorize User
       load_users
       @can_manage_users = policy(User).create?
-      @user_status_counts = scoped_users.group(:status).count
+      @user_status_counts = current_organization.organization_memberships.active
+                                                .where(deleted_at: nil).group(:account_status).count
       @filter_roles = SystemRole.system.active.not_deleted.order(:name)
     end
 

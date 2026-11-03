@@ -16,6 +16,20 @@
         <%= text_area_tag :reason, nil, required: true, maxlength: 1000, rows: 4,
                           class: 'w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-emerald-600 focus:ring-emerald-100' %>
       </div>
+      <% if @target == 'suspended' %>
+        <div>
+          <%= label_tag :review_at, t('admin.users.status_management.review_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= datetime_local_field_tag :review_at, nil, min: Time.current.strftime('%Y-%m-%dT%H:%M'),
+                                       class: 'w-full rounded-xl border border-slate-300 p-3 text-sm' %>
+        </div>
+      <% end %>
+      <% if @user.organization_memberships.active.find_by(organization: current_organization)&.account_blocked? && @target != 'deleted' %>
+        <div>
+          <%= label_tag :resolution, t('admin.users.status_management.resolution'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= text_area_tag :resolution, nil, required: true, maxlength: 1000, rows: 3,
+                            class: 'w-full rounded-xl border border-slate-300 p-3 text-sm' %>
+        </div>
+      <% end %>
       <p class="rounded-xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><%= t('admin.users.status_management.warning') %></p>
       <div class="flex flex-wrap justify-end gap-3">
         <%= link_to t('admin.users.form.buttons.back'), admin_user_path(@user), class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold' %>
