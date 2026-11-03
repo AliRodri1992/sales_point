@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_213000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1918,17 +1918,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_213000) do
     t.datetime "accepted_at"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
+    t.datetime "delivery_attempted_at"
+    t.string "delivery_status", default: "pending", null: false
     t.datetime "expires_at", null: false
     t.bigint "organization_id", null: false
     t.datetime "revoked_at"
+    t.datetime "sent_at"
     t.string "token_digest", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["delivery_status", "created_at"], name: "idx_user_invitations_delivery_queue", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["expires_at"], name: "idx_user_invitations_pending_expiration", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
     t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
     t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["user_id"], name: "index_user_invitations_on_user_id"
+    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying::text, 'queued'::character varying::text, 'sent'::character varying::text, 'failed'::character varying::text])", name: "chk_user_invitations_delivery_status"
   end
 
   create_table "user_roles", force: :cascade do |t|

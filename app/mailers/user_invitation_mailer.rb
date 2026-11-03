@@ -3,7 +3,11 @@
 require 'digest'
 
 class UserInvitationMailer < ApplicationMailer
-  def invite(invitation_id, raw_token)
+  after_deliver :mark_delivered
+
+  def invite(invitation_id, encrypted_token)
+    raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
+    @invitation_id = invitation_id
     invitation = UserInvitation.includes(:user, :organization).find(invitation_id)
     return unless valid_invitation?(invitation, raw_token)
 
@@ -15,6 +19,12 @@ class UserInvitationMailer < ApplicationMailer
   end
 
   private
+
+  def mark_delivered
+    UserInvitation.where(id: @invitation_id).update_all(
+      delivery_status: 'sent', sent_at: Time.current, updated_at: Time.current
+    )
+  end
 
   def valid_invitation?(invitation, token)
     return false unless invitation.usable?

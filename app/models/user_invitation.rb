@@ -4,9 +4,12 @@ require 'digest'
 
 class UserInvitation < ApplicationRecord
   EXPIRATION = 72.hours
+  DELIVERY_STATES = %w[pending queued sent failed].freeze
   belongs_to :user
   belongs_to :organization
   attr_accessor :raw_token
+
+  validates :delivery_status, inclusion: { in: DELIVERY_STATES }
 
   scope :pending, -> { where(accepted_at: nil, revoked_at: nil) }
 
@@ -14,7 +17,7 @@ class UserInvitation < ApplicationRecord
     raise ArgumentError, 'User must be pending' unless user.pending?
     raise ArgumentError, 'Membership required' unless user.organization_memberships.active.exists?(organization:)
 
-    transaction do
+    user.with_lock do
       user.user_invitations.pending.find_each { |old| old.update!(revoked_at: Time.current) }
       token = SecureRandom.urlsafe_base64(48)
       create!(user:, organization:, token_digest: Digest::SHA256.hexdigest(token),

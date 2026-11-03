@@ -5,7 +5,9 @@ module Users
     def self.call(user:, organization:)
       EmailTemplate.ensure_invitation_template!
       invitation = UserInvitation.issue!(user:, organization:)
-      UserInvitationMailer.invite(invitation.id, invitation.raw_token).deliver_later
+      encrypted_token = InvitationDeliveryToken.encrypt(invitation.raw_token)
+      UserInvitationMailer.invite(invitation.id, encrypted_token).deliver_later
+      invitation.update!(delivery_status: 'queued', delivery_attempted_at: Time.current)
     end
   end
 end
