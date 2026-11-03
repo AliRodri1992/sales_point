@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_223100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_224200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -315,19 +315,104 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_223100) do
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
   end
 
+  create_table "email_branding_settings", force: :cascade do |t|
+    t.string "button_color", default: "#047857", null: false
+    t.datetime "created_at", null: false
+    t.string "display_name", default: "Delta POS", null: false
+    t.text "footer_text"
+    t.bigint "organization_id"
+    t.string "primary_color", default: "#064e3b", null: false
+    t.string "privacy_url"
+    t.string "secondary_color", default: "#047857", null: false
+    t.string "support_email"
+    t.string "support_url"
+    t.datetime "updated_at", null: false
+    t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
+  end
+
+  create_table "email_sender_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "default_locale", default: "es", null: false
+    t.string "display_name", default: "Delta POS", null: false
+    t.string "domain"
+    t.string "domain_status", default: "unverified", null: false
+    t.string "from_address"
+    t.bigint "organization_id"
+    t.string "reply_to"
+    t.datetime "updated_at", null: false
+    t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id"], name: "index_email_sender_settings_on_organization_id"
+  end
+
+  create_table "email_template_versions", force: :cascade do |t|
+    t.jsonb "allowed_variables", default: [], null: false
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.bigint "email_template_id", null: false
+    t.text "html_body", null: false
+    t.string "preheader", default: "", null: false
+    t.bigint "published_by_id"
+    t.datetime "published_at"
+    t.string "status", default: "draft", null: false
+    t.string "subject", null: false
+    t.text "text_body", null: false
+    t.datetime "updated_at", null: false
+    t.integer "version_number", null: false
+    t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
+    t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
+    t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
+    t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
+    t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'archived'::character varying::text])", name: "chk_email_template_versions_status"
+  end
+
+  create_table "email_template_audits", force: :cascade do |t|
+    t.string "action", null: false
+    t.bigint "actor_id"
+    t.datetime "created_at", null: false
+    t.bigint "email_template_id", null: false
+    t.bigint "email_template_version_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "organization_id"
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_email_template_audits_on_actor_id"
+    t.index ["email_template_id", "created_at"], name: "idx_email_template_audits_history"
+    t.index ["email_template_id"], name: "index_email_template_audits_on_email_template_id"
+    t.index ["email_template_version_id"], name: "index_email_template_audits_on_email_template_version_id"
+    t.index ["organization_id", "created_at"], name: "idx_email_template_audits_tenant"
+    t.index ["organization_id"], name: "index_email_template_audits_on_organization_id"
+  end
+
   create_table "email_templates", force: :cascade do |t|
+    t.string "category", default: "transactional", null: false
+    t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.boolean "enabled", default: true, null: false
     t.text "html_body", null: false
     t.string "key", null: false
+    t.string "name", null: false
+    t.bigint "organization_id"
+    t.bigint "published_version_id"
     t.string "locale", default: "es", null: false
+    t.string "status", default: "published", null: false
     t.string "subject", null: false
     t.text "text_body", null: false
+    t.bigint "updated_by_id"
     t.datetime "updated_at", null: false
     t.integer "version", default: 1, null: false
-    t.index ["key", "locale"], name: "index_email_templates_on_key_and_locale", unique: true
+    t.index ["created_by_id"], name: "index_email_templates_on_created_by_id"
+    t.index ["key", "locale"], name: "idx_email_templates_global_unique", unique: true, where: "(organization_id IS NULL)"
+    t.index ["organization_id", "key", "locale"], name: "idx_email_templates_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
+    t.index ["organization_id"], name: "index_email_templates_on_organization_id"
+    t.index ["published_version_id"], name: "index_email_templates_on_published_version_id"
+    t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
     t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'inactive'::character varying::text, 'archived'::character varying::text])", name: "chk_email_templates_status"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -2066,6 +2151,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_223100) do
   add_foreign_key "demo_request_activities", "demo_requests"
   add_foreign_key "demo_request_activities", "users"
   add_foreign_key "demo_requests", "users", column: "assigned_to_id"
+  add_foreign_key "email_branding_settings", "organizations"
+  add_foreign_key "email_sender_settings", "organizations"
+  add_foreign_key "email_template_audits", "email_template_versions"
+  add_foreign_key "email_template_audits", "email_templates"
+  add_foreign_key "email_template_audits", "organizations"
+  add_foreign_key "email_template_audits", "users", column: "actor_id"
+  add_foreign_key "email_template_versions", "email_templates"
+  add_foreign_key "email_template_versions", "users", column: "created_by_id"
+  add_foreign_key "email_template_versions", "users", column: "published_by_id"
+  add_foreign_key "email_templates", "email_template_versions", column: "published_version_id", on_delete: :nullify
+  add_foreign_key "email_templates", "organizations"
+  add_foreign_key "email_templates", "users", column: "created_by_id"
+  add_foreign_key "email_templates", "users", column: "updated_by_id"
   add_foreign_key "employees", "organizations"
   add_foreign_key "financial_audit_events", "organizations"
   add_foreign_key "financial_audit_events", "users", column: "actor_id"
