@@ -7,7 +7,8 @@ ko:
         summary: "사용자 현황"
         metrics:
           total: "사용자"
-          active: "활성"
+          pending: 대기 중
+        active: "활성"
           suspended: "일시 중지"
           blocked: "차단"
         filters_title: "사용자 검색 및 필터"

@@ -20,7 +20,7 @@
     <% [
       ['total', counts.values.sum, 'users', 'bg-slate-100 text-slate-700'],
       ['active', counts.fetch('active', 0), 'check-circle', 'bg-emerald-50 text-emerald-700'],
-      ['suspended', counts.fetch('suspended', 0), 'clock', 'bg-amber-50 text-amber-700'],
+      ['pending', counts.fetch('pending', 0), 'clock', 'bg-amber-50 text-amber-700'],
       ['blocked', counts.fetch('blocked', 0), 'shield-exclamation', 'bg-rose-50 text-rose-700']
     ].each do |key, count, icon, theme| %>
       <div class="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">

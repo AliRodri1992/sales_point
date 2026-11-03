@@ -14,6 +14,8 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        resend: Reenviar invitación
+        resent: Se generó una nueva invitación para el usuario.
         eyebrow: Administrar estatus
         reason: Motivo del cambio (obligatorio)
         warning: El cambio se auditará y puede revocar sesiones activas.

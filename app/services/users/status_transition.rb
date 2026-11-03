@@ -37,8 +37,9 @@ module Users
         raise ArgumentError, 'Transition not permitted' unless self.class.allowed_targets(@user).include?(@target)
         prevent_last_admin!
         before = @user.status
-        @user.update!(status: @target)
-        @user.update_columns(session_revoked_at: Time.current) if @target != 'active'
+        attributes = { status: @target }
+        attributes[:session_revoked_at] = Time.current unless @target == 'active'
+        @user.update!(attributes)
         UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
                                 from_status: before, to_status: @target, reason: @reason)
       end

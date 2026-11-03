@@ -14,6 +14,8 @@ ko:
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
       status_management:
+        resend: 초대 다시 보내기
+        resent: 새 초대가 생성되었습니다.
         eyebrow: 계정 상태 관리
         reason: 변경 사유 (필수)
         warning: 변경 사항이 기록되며 활성 세션이 취소될 수 있습니다.

@@ -91,7 +91,7 @@ module Admin
     def load_users
       scope = filtered_users
       @total_count = scope.count
-      @per_page = per_page_param(@total_count)
+      @per_page = table_page_size_for('users')
       @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
       @current_page = params[:page].to_i.clamp(1, @total_pages)
       @users = apply_sorting(scope).limit(@per_page).offset((@current_page - 1) * @per_page)
@@ -106,10 +106,6 @@ module Admin
       sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
       scope.order(sort_column => sort_direction)
-    end
-
-    def per_page_param(_total_count)
-      table_page_size_for('users')
     end
 
     def user_params

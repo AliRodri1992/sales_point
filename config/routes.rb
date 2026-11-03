@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     end
     resources :users do
       resource :status, only: %i[edit update], controller: 'user_statuses'
+      resource :invitation, only: :create, controller: 'user_invitations'
     end
     resources :clients
     resource :profile, only: %i[show update]

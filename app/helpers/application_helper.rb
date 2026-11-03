@@ -122,6 +122,7 @@ module ApplicationHelper
 
   def user_status_badge(status)
     classes = case status
+              when 'pending' then 'bg-amber-50 text-amber-800'
               when 'active' then 'bg-emerald-50 text-emerald-700'
               when 'suspended' then 'bg-amber-50 text-amber-700'
               when 'blocked' then 'bg-rose-50 text-rose-700'
