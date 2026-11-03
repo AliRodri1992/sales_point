@@ -125,14 +125,6 @@ module Admin
       @template.text_body ||= '{{recipient_name}}'
     end
 
-    def validate_test_recipient!
-      recipient = params[:email].to_s.strip.downcase
-      raise ArgumentError, 'Invalid recipient' unless recipient.match?(URI::MailTo::EMAIL_REGEXP)
-      raise ArgumentError, 'Template not published' unless @template.published_version
-
-      recipient
-    end
-
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])
     end

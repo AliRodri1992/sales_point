@@ -3,7 +3,7 @@
 module EmailTemplates
   class SampleData
     def self.call(template)
-      {
+      EmailTemplates::Branding.values(organization: template.organization).merge(
         recipient_name: 'Usuario de ejemplo',
         recipient_email: 'prueba@example.org',
         invited_name: 'Usuario de ejemplo',
