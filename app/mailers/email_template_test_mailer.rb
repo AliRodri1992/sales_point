@@ -8,7 +8,8 @@ class EmailTemplateTestMailer < ApplicationMailer
     variables = EmailTemplates::SampleData.call(template)
     variables[:recipient_email] = recipient
     subject, html, plain = template.render_with(variables)
-    mail(to: recipient, subject: "[TEST] #{subject}") do |format|
+    headers = EmailTemplates::Sender.headers_for(organization: template.organization)
+    mail(to: recipient, subject: "[TEST] #{subject}", **headers) do |format|
       format.html { render body: html, content_type: 'text/html' }
       format.text { render plain: }
     end
