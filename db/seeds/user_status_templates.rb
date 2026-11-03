@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'es') do |template|
-  template.subject = "Actualización de acceso · Delta POS"
+  template.subject = 'Actualización de acceso · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>
     <html lang="es">
@@ -24,19 +24,19 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'es') do |t
   HTML
   template.text_body = <<~TEXT
     Hola, {{recipient_name}}.
-    
+
     Se ha actualizado el estatus de tu cuenta en la organización indicada.
-    
+
     {{organization_name}} — Estatus actual: {{status_label}}
-    
+
     Si no reconoces este cambio, comunícate con el administrador de tu organización.
-    
+
     Este es un mensaje de seguridad automático de Delta POS.
   TEXT
 end
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'en') do |template|
-  template.subject = "Account access update · Delta POS"
+  template.subject = 'Account access update · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>
     <html lang="en">
@@ -59,19 +59,19 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'en') do |t
   HTML
   template.text_body = <<~TEXT
     Hello, {{recipient_name}}.
-    
+
     Your account status has been updated for the organization below.
-    
+
     {{organization_name}} — Current status: {{status_label}}
-    
+
     If you do not recognize this change, contact your organization administrator.
-    
+
     This is an automated Delta POS security message.
   TEXT
 end
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'ko') do |template|
-  template.subject = "계정 접근 상태 변경 · Delta POS"
+  template.subject = '계정 접근 상태 변경 · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>
     <html lang="ko">
@@ -94,13 +94,13 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'ko') do |t
   HTML
   template.text_body = <<~TEXT
     안녕하세요, {{recipient_name}}.
-    
+
     아래 조직의 계정 상태가 변경되었습니다.
-    
+
     {{organization_name}} — 현재 상태: {{status_label}}
-    
+
     변경 사항을 확인할 수 없다면 조직 관리자에게 문의하세요.
-    
+
     Delta POS에서 발송한 자동 보안 안내입니다.
   TEXT
 end
