@@ -58,4 +58,51 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.reload.published_version).to eq(draft)
     expect(template.audits.where(action: 'published')).to exist
   end
+  it 'previews unsaved draft content without persisting changes' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: 'Hola {{recipient_name}}',
+        html_body: '<p>Hola {{recipient_name}}</p>',
+        text_body: 'Hola {{recipient_name}}',
+        allowed_variables_csv: 'recipient_name'
+      }
+    }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body.fetch('subject')).to include('Usuario de ejemplo')
+    expect(response.parsed_body.fetch('html')).to include('Usuario de ejemplo')
+    expect(draft.reload.subject).to eq('Order')
+  end
+
+  it 'does not preview unsaved drafts from another organization' do
+    foreign = create_template(organization: other_organization)
+    draft = foreign.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(foreign, version_id: draft.id), params: {
+      email_template_version: { subject: 'Access forbidden' }
+    }
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'rejects unauthorized placeholders in an unsaved preview' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: '{{not_approved}}',
+        html_body: '<p>Test</p>',
+        text_body: 'Test',
+        allowed_variables_csv: 'recipient_name'
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(draft.reload.subject).to eq('Order')
+  end
+
 end
