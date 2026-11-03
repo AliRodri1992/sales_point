@@ -36,6 +36,7 @@ class UserInvitation < ApplicationRecord
     transaction do
       lock!
       return false unless usable?
+
       digest = Digest::SHA256.hexdigest(token.to_s)
       return false unless ActiveSupport::SecurityUtils.secure_compare(token_digest, digest)
 

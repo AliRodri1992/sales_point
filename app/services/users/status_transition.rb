@@ -39,12 +39,26 @@ module Users
     private
 
     def validate_request!
+      validate_reason!
+      validate_actor!
+      validate_membership!
+    end
+
+    def validate_reason!
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
+    end
+
+    def validate_actor!
       raise Pundit::NotAuthorizedError unless @actor.admin?
       raise Pundit::NotAuthorizedError if @user == @actor
-      raise Pundit::NotAuthorizedError unless @user.organization_memberships.active.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError if @user.admin? && !@actor.role?('super_admin')
-      if @target == 'deleted' && @user.organization_memberships.active.where.not(organization: @organization).exists?
+    end
+
+    def validate_membership!
+      memberships = @user.organization_memberships.active
+      raise Pundit::NotAuthorizedError unless memberships.exists?(organization: @organization)
+
+      if @target == 'deleted' && memberships.where.not(organization: @organization).exists?
         raise Pundit::NotAuthorizedError
       end
     end
