@@ -68,7 +68,7 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).not_to include('private@another.example')
     expect(response.body).not_to include('private2@another.example')
-    expect(response.body).to include('Historial de cambios')
+    expect(response.body).to include(I18n.t('email_setting_audits.heading'))
   end
 
   it 'prevents deleting audit evidence' do
