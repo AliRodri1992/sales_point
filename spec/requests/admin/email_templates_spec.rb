@@ -43,6 +43,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to be_nil
   end
 
+  it 'loads the catalog query and filters only permitted templates' do
+    own = create_template(organization:)
+    own.update!(name: 'Welcome notice')
+    foreign = create_template(organization: other_organization)
+    foreign.update!(name: 'Welcome private')
+
+    get admin_email_templates_path, params: { q: 'Welcome', locale: 'es' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Welcome notice')
+    expect(response.body).not_to include('Welcome private')
+  end
+
   it 'rejects viewing another organization template by guessed ID' do
     foreign = create_template(organization: other_organization)
     get admin_email_template_path(foreign)
