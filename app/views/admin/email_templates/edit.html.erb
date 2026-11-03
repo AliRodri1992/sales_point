@@ -2,7 +2,10 @@
   <%= link_to t('admin.email_templates.back'), admin_email_template_path(@template), class: 'text-sm text-emerald-700' %>
   <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.email_templates.edit') %> · <%= @template.name %></h1>
   <p class="text-sm text-slate-500"><%= t('admin.email_templates.draft_explanation') %> v<%= @draft.version_number %></p>
-  <%= form_with model: @draft, url: draft_admin_email_template_path(@template, version_id: @draft.id), method: :patch, class: 'grid gap-6 lg:grid-cols-2' do |f| %>
+  <%= form_with model: @draft, url: draft_admin_email_template_path(@template, version_id: @draft.id), method: :patch, class: 'grid gap-6 lg:grid-cols-2',
+                  data: { controller: 'email-template-preview',
+                          action: 'input->email-template-preview#schedule',
+                          email_template_preview_url_value: preview_draft_admin_email_template_path(@template, version_id: @draft.id) } do |f| %>
     <section class="space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
       <% @draft.errors.full_messages.each do |error| %><p role="alert" class="text-sm text-rose-700"><%= error %></p><% end %>
       <div><%= f.label :subject, t('admin.email_templates.subject'), class: 'mb-1 block text-sm font-semibold' %>
@@ -25,10 +28,20 @@
       <h2 class="font-bold"><%= t('admin.email_templates.preview') %></h2>
       <%= link_to t('admin.email_templates.preview'), preview_admin_email_template_path(@template, version_id: @draft.id), class: 'inline-block rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white' %>
       <p class="text-sm text-slate-500"><%= t('admin.email_templates.preview_hint') %></p>
-      <div class="overflow-auto rounded-xl border border-slate-200 bg-white p-5 text-sm">
-        <p class="mb-3 font-semibold"><%= @draft.subject %></p>
-        <pre class="max-h-[440px] whitespace-pre-wrap break-all text-xs"><%= @draft.html_body %></pre>
+      <p role="status" aria-live="polite" class="text-sm text-rose-700" data-email-template-preview-target="status"></p>
+      <p class="text-sm font-semibold" data-email-template-preview-target="subject"><%= @draft.subject %></p>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div>
+          <p class="mb-2 text-xs font-semibold text-slate-600"><%= t('admin.email_templates.desktop') %></p>
+          <iframe sandbox="" title="<%= t('admin.email_templates.desktop') %>" class="h-[380px] w-full rounded-lg border border-slate-200 bg-white" data-email-template-preview-target="desktop"></iframe>
+        </div>
+        <div>
+          <p class="mb-2 text-xs font-semibold text-slate-600"><%= t('admin.email_templates.mobile') %></p>
+          <iframe sandbox="" title="<%= t('admin.email_templates.mobile') %>" class="h-[380px] w-full rounded-lg border border-slate-200 bg-white" data-email-template-preview-target="mobile"></iframe>
+        </div>
       </div>
+      <p class="text-xs font-semibold text-slate-600"><%= t('admin.email_templates.plain_text') %></p>
+      <pre class="max-h-40 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-white p-3 text-xs" data-email-template-preview-target="plain"><%= @draft.text_body %></pre>
     </aside>
   <% end %>
 </main>
