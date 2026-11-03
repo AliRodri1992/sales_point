@@ -12,4 +12,5 @@
       <%= f.file_field :logo, accept: 'image/png,image/jpeg,image/webp', class: 'w-full text-sm' %></div>
     <%= f.submit t('admin.email_templates.save'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 font-semibold text-white' %>
   <% end %>
+  <%= render 'admin/email_setting_audits/history', audits: @audits %>
 </main>
