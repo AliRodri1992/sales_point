@@ -11,7 +11,9 @@ class EmailTemplateVersion < ApplicationRecord
   validates :status, inclusion: { in: STATUSES }
   validates :subject, :html_body, :text_body, presence: true
   validate :variables_are_safe
+  validate :declared_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
+  before_destroy :protect_published_version
 
   def publish!(actor:)
     raise ArgumentError, 'Only draft versions may be published' unless status == 'draft'
@@ -33,6 +35,16 @@ class EmailTemplateVersion < ApplicationRecord
     allowed_variables.each do |variable|
       errors.add(:allowed_variables, :invalid) unless variable.to_s.match?(/\A[a-z][a-z0-9_]*\z/)
     end
+  end
+
+  def declared_variables
+    content = [subject, html_body, text_body].join(' ')
+    used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
+    errors.add(:allowed_variables, 'must include every placeholder') unless (used - allowed_variables).empty?
+  end
+
+  def protect_published_version
+    throw :abort if status == 'published'
   end
 
   def published_version_is_immutable

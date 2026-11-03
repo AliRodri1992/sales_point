@@ -20,6 +20,7 @@ class EmailTemplate < ApplicationRecord
   validates :version, numericality: { only_integer: true, greater_than: 0 }
   validates :key, uniqueness: { scope: %i[organization_id locale] }
   validate :published_version_belongs_to_template
+  validate :identity_immutable_after_publish, on: :update
 
   def self.resolve(key:, locale:, organization: nil)
     requested = locale.to_s.in?(%w[es en ko]) ? locale.to_s : 'es'
@@ -55,11 +56,14 @@ class EmailTemplate < ApplicationRecord
     with_lock do
       next_number = versions.maximum(:version_number).to_i + 1
       source = published_version || versions.order(version_number: :desc).first
+      body = source&.html_body || html_body
+      text = source&.text_body || text_body
+      title = source&.subject || subject
+      variables = source&.allowed_variables.presence ||
+                  [title, body, text].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
       versions.create!(
         version_number: next_number, status: 'draft', created_by: actor,
-        subject: source&.subject || subject, html_body: source&.html_body || html_body,
-        text_body: source&.text_body || text_body,
-        allowed_variables: source&.allowed_variables || []
+        subject: title, html_body: body, text_body: text, allowed_variables: variables
       )
     end
   end
@@ -74,6 +78,14 @@ class EmailTemplate < ApplicationRecord
   end
 
   private
+
+  def identity_immutable_after_publish
+    return unless published_version_id_was
+
+    changed = will_save_change_to_key? || will_save_change_to_locale? ||
+              will_save_change_to_organization_id?
+    errors.add(:base, 'Published template identity cannot be changed') if changed
+  end
 
   def published_version_belongs_to_template
     return unless published_version

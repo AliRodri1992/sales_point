@@ -26,6 +26,7 @@ module Admin
     def new
       @template = EmailTemplate.new(locale: I18n.locale.to_s, category: 'transactional')
       authorize @template
+      raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
     end
 
     def edit
@@ -37,6 +38,7 @@ module Admin
     def create
       @template = EmailTemplate.new(template_attributes)
       authorize @template
+      raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
       @template.prepare_for_creation!(actor: current_user, organization: current_organization,
                                       global: current_user.role?('super_admin') && params[:global] == '1')
 

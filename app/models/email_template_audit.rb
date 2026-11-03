@@ -7,4 +7,5 @@ class EmailTemplateAudit < ApplicationRecord
   belongs_to :actor, class_name: 'User', optional: true
 
   validates :action, presence: true
+  before_destroy { throw :abort }
 end
