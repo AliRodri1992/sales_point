@@ -3,15 +3,25 @@
 module EmailTemplates
   class Sender
     def self.call(organization: nil)
-      setting = EmailSenderSetting.find_by(organization:)
-      default = ENV.fetch('DELTA_POS_MAIL_FROM', 'from@example.com')
-      return default unless setting&.domain_status == 'verified'
+      headers_for(organization:)[:from] || ENV.fetch('DELTA_POS_MAIL_FROM', 'from@example.com')
+    end
 
-      address = setting.from_address.to_s.downcase
-      domain = address.split('@').last
-      return default if address.blank? || domain != setting.domain.to_s.downcase
+    def self.headers_for(organization: nil)
+      local = EmailSenderSetting.find_by(organization:) if organization
+      setting = verified?(local) ? local : EmailSenderSetting.find_by(organization_id: nil)
+      return {} unless verified?(setting)
 
-      %("#{setting.display_name.gsub(/[\r\n"]/, '')}" <#{address}>)
+      name = setting.display_name.to_s.gsub(/[\r\n"]/, '')
+      headers = { from: %("#{name}" <#{setting.from_address.downcase}>) }
+      headers[:reply_to] = setting.reply_to if setting.reply_to.present?
+      headers
+    end
+
+    def self.verified?(setting)
+      setting&.domain_status == 'verified' &&
+        setting.from_address.present? &&
+        setting.domain.present? &&
+        setting.from_address.split('@').last&.casecmp?(setting.domain)
     end
   end
 end
