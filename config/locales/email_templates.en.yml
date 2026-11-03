@@ -40,6 +40,7 @@ en:
       mobile: "Mobile"
       plain_text: "Plain text"
       compare: "Compare versions"
+      variables: "Allowed variables (comma-separated)"
       columns:
         name: "Name"
         key: "Key"

@@ -6,6 +6,14 @@ class EmailTemplateVersion < ApplicationRecord
   belongs_to :published_by, class_name: 'User', optional: true
 
   STATUSES = %w[draft published archived].freeze
+
+  def allowed_variables_csv
+    allowed_variables.join(', ')
+  end
+
+  def allowed_variables_csv=(value)
+    self.allowed_variables = value.to_s.split(',').map(&:strip).reject(&:blank?).uniq
+  end
   validates :version_number, numericality: { only_integer: true, greater_than: 0 },
                              uniqueness: { scope: :email_template_id }
   validates :status, inclusion: { in: STATUSES }
@@ -33,7 +41,7 @@ class EmailTemplateVersion < ApplicationRecord
     return errors.add(:allowed_variables, :invalid) unless allowed_variables.is_a?(Array)
 
     allowed_variables.each do |variable|
-      errors.add(:allowed_variables, :invalid) unless variable.to_s.match?(/\A[a-z][a-z0-9_]*\z/)
+      errors.add(:allowed_variables, :invalid) unless EmailTemplates::Renderer::KNOWN_VARIABLES.include?(variable)
     end
   end
 

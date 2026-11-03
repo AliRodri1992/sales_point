@@ -13,6 +13,12 @@
         <%= f.text_area :html_body, rows: 14, required: true, class: 'w-full rounded-xl border border-slate-300 p-3 font-mono text-xs' %></div>
       <div><%= f.label :text_body, 'Text/plain', class: 'mb-1 block text-sm font-semibold' %>
         <%= f.text_area :text_body, rows: 6, required: true, class: 'w-full rounded-xl border border-slate-300 p-3 font-mono text-xs' %></div>
+      <div>
+        <%= f.label :allowed_variables_csv, t('admin.email_templates.variables'), class: 'mb-1 block text-sm font-semibold' %>
+        <%= f.text_field :allowed_variables_csv,
+                         class: 'w-full rounded-xl border border-slate-300 p-3 font-mono text-xs' %>
+        <p class="mt-1 text-xs text-slate-500"><%= EmailTemplates::Renderer::KNOWN_VARIABLES.join(', ') %></p>
+      </div>
       <%= f.submit t('admin.email_templates.save_draft'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-4 py-3 font-semibold text-white' %>
     </section>
     <aside class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-5">

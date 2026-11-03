@@ -139,7 +139,7 @@ module Admin
     end
 
     def draft_attributes
-      params.expect(email_template_version: %i[subject preheader html_body text_body])
+      params.expect(email_template_version: %i[subject preheader html_body text_body allowed_variables_csv])
     end
   end
 end
