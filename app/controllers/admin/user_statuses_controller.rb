@@ -15,9 +15,7 @@ module Admin
 
     def update
       authorize @user, :update?
-      Users::StatusTransition.new(user: @user, actor: current_user, organization: current_organization,
-                                  target: params[:transition], reason: params[:reason],
-                                  review_at: params[:review_at], resolution: params[:resolution]).call!
+      Users::StatusTransition.new(**transition_attributes).call!
       destination = @user.deleted? ? admin_users_path : admin_user_path(@user)
       redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
     rescue ArgumentError => e
@@ -25,6 +23,14 @@ module Admin
     end
 
     private
+
+    def transition_attributes
+      {
+        user: @user, actor: current_user, organization: current_organization,
+        target: params[:transition], reason: params[:reason],
+        details: { review_at: params[:review_at], resolution: params[:resolution] }
+      }
+    end
 
     def find_user
       members = current_organization.organization_memberships.active.where(deleted_at: nil).select(:user_id)

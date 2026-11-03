@@ -45,18 +45,22 @@ class UserInvitation < ApplicationRecord
 
       return false unless acceptable_password?(password)
 
-      user.password = password
-      user.password_confirmation = password_confirmation
-      user.status = :active
-      return false unless user.save
-
-      user.organization_memberships.active.find_by!(organization:).update!(account_status: :active)
-      update!(accepted_at: Time.current)
-      true
+      activate_account!(password, password_confirmation)
     end
   end
 
   private
+
+  def activate_account!(password, confirmation)
+    user.password = password
+    user.password_confirmation = confirmation
+    user.status = :active
+    return false unless user.save
+
+    user.organization_memberships.active.find_by!(organization:).update!(account_status: :active)
+    update!(accepted_at: Time.current)
+    true
+  end
 
   def acceptable_password?(password)
     return true if password.to_s.length >= 9

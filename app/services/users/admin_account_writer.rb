@@ -69,7 +69,9 @@ module Users
 
     def persist!(role_ids, branch_roles)
       @organization.with_lock do
-        Users::OrganizationCapacity.new(organization: @organization).ensure_available! if @user.new_record?
+        if @user.new_record?
+          Users::OrganizationCapacity.new(organization: @organization).ensure_available!
+        end
         persist_account!(role_ids, branch_roles)
       end
     end

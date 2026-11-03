@@ -28,14 +28,14 @@ module Users
       targets & [previous, 'deleted']
     end
 
-    def initialize(user:, actor:, organization:, target:, reason:, review_at: nil, resolution: nil)
+    def initialize(user:, actor:, organization:, target:, reason:, details: {})
       @user = user
       @actor = actor
       @organization = organization
       @target = target.to_s
       @reason = reason.to_s.strip
-      @review_at = review_at.presence
-      @resolution = resolution.to_s.strip
+      @review_at = details[:review_at].presence
+      @resolution = details[:resolution].to_s.strip
     end
 
     def call!
@@ -50,7 +50,7 @@ module Users
         ).include?(@target)
 
         prevent_last_admin!
-        validate_incident!
+        incident_manager.validate_resolution! if @membership.account_blocked? && @target != 'deleted'
         persist_transition!
       end
       notify_account_holder
@@ -106,24 +106,12 @@ module Users
       Rails.logger.error("User status notification failed: #{e.class}")
     end
 
-    def validate_incident!
-      return unless @membership.account_blocked? && @target != 'deleted'
-      raise ArgumentError, 'Incident resolution required' if @resolution.blank?
-
-      incident = @user.user_security_incidents
-                      .where(organization: @organization, resolved_at: nil)
-                      .order(created_at: :desc).first
-      raise ArgumentError, 'Security incident not found' unless incident
-
-      incident.update!(resolution: @resolution, resolved_at: Time.current, resolved_by: @actor)
-    end
-
     def persist_transition!
       from = @membership.account_status
       @membership.update!(account_status: @target, status_review_at: review_date)
       apply_global_status! unless shared_membership?
       UserInvitation.revoke_for!(@user) if %w[blocked deleted].include?(@target)
-      open_incident! if @target == 'blocked'
+      incident_manager.open! if @target == 'blocked'
       @status_event = UserStatusEvent.create!(
         user: @user, organization: @organization, actor: @actor,
         from_status: from, to_status: @target, reason: @reason
@@ -150,10 +138,10 @@ module Users
       time
     end
 
-    def open_incident!
-      UserSecurityIncident.create!(
-        user: @user, organization: @organization,
-        opened_by: @actor, description: @reason
+    def incident_manager
+      @incident_manager ||= StatusIncidentManager.new(
+        user: @user, organization: @organization, actor: @actor,
+        description: @reason, resolution: @resolution
       )
     end
   end
