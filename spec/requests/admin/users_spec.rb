@@ -139,7 +139,7 @@ RSpec.describe 'Admin::Users', type: :request do
       target = add_member(create(:user, email: 'deleted@example.com'))
       patch admin_user_status_path(target), params: { transition: 'deleted', reason: 'Employee departure' }
 
-      expect(response).to redirect_to(admin_user_path(target))
+      expect(response).to redirect_to(admin_users_path)
       expect(User.with_deleted.find(target.id).deleted_at).to be_present
       event = UserStatusEvent.find_by!(user: target, to_status: 'deleted')
       expect(event.reason).to eq('Employee departure')

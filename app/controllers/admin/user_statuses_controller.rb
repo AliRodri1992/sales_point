@@ -16,7 +16,8 @@ module Admin
       authorize @user, :update?
       Users::StatusTransition.new(user: @user, actor: current_user, organization: current_organization,
                                   target: params[:transition], reason: params[:reason]).call!
-      redirect_to admin_user_path(@user), flash: { swal_message: t('admin.users.status_management.changed') }
+      destination = @user.deleted? ? admin_users_path : admin_user_path(@user)
+      redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
     rescue ArgumentError => e
       redirect_to admin_user_path(@user), alert: e.message
     end
