@@ -26,13 +26,21 @@ module Users
     private
 
     def verify_access!
+      verify_actor!
+      verify_target!
+    end
+
+    def verify_actor!
       raise Pundit::NotAuthorizedError unless @actor.active? && @actor.role?('super_admin')
       raise Pundit::NotAuthorizedError unless @actor.permission?('users.restore')
       raise Pundit::NotAuthorizedError unless @organization&.active?
-      raise Pundit::NotAuthorizedError if @user == @actor || !@membership.account_deleted?
 
       allowed = @actor.organization_memberships.accessible.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError unless allowed
+    end
+
+    def verify_target!
+      raise Pundit::NotAuthorizedError if @user == @actor || !@membership.account_deleted?
     end
 
     def restore_account!

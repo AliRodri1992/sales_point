@@ -28,35 +28,39 @@ module Users
       targets & [previous, 'deleted']
     end
 
-    def initialize(user:, actor:, organization:, target:, reason:, details: {})
-      @user = user
-      @actor = actor
-      @organization = organization
-      @target = target.to_s
-      @reason = reason.to_s.strip
-      @review_at = details[:review_at].presence
-      @resolution = details[:resolution].to_s.strip
+    def initialize(**attributes)
+      @user = attributes.fetch(:user)
+      @actor = attributes.fetch(:actor)
+      @organization = attributes.fetch(:organization)
+      @target = attributes.fetch(:target).to_s
+      @reason = attributes.fetch(:reason).to_s.strip
+      @review_at = attributes.fetch(:details, {})[:review_at].presence
+      @resolution = attributes.fetch(:details, {})[:resolution].to_s.strip
     end
 
     def call!
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
 
-      User.transaction do
-        @user.lock!
-        @membership = @user.organization_memberships.active.lock.find_by!(organization: @organization)
-        validate_access!
-        raise ArgumentError, 'Transition not permitted' unless self.class.allowed_targets(
-          @user, organization: @organization
-        ).include?(@target)
-
-        prevent_last_admin!
-        incident_manager.validate_resolution! if @membership.account_blocked? && @target != 'deleted'
-        persist_transition!
-      end
+      User.transaction { execute_transition! }
       notify_account_holder
     end
 
     private
+
+    def execute_transition!
+      @user.lock!
+      @membership = @user.organization_memberships.active.lock.find_by!(organization: @organization)
+      validate_access!
+      validate_transition!
+      prevent_last_admin!
+      incident_manager.validate_resolution! if @membership.account_blocked? && @target != 'deleted'
+      persist_transition!
+    end
+
+    def validate_transition!
+      allowed = self.class.allowed_targets(@user, organization: @organization)
+      raise ArgumentError, 'Transition not permitted' unless allowed.include?(@target)
+    end
 
     def validate_access!
       raise Pundit::NotAuthorizedError if @user == @actor

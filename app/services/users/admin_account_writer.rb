@@ -69,9 +69,7 @@ module Users
 
     def persist!(role_ids, branch_roles)
       @organization.with_lock do
-        if @user.new_record?
-          Users::OrganizationCapacity.new(organization: @organization).ensure_available!
-        end
+        Users::OrganizationCapacity.new(organization: @organization).ensure_available! if @user.new_record?
         persist_account!(role_ids, branch_roles)
       end
     end
@@ -81,9 +79,11 @@ module Users
         created = @user.new_record?
         @user.save!
         UserInvitation.revoke_for!(@user) if !created && @user.saved_change_to_email? && @user.pending?
-        @user.organization_memberships.create!(
-          organization: @organization, status: :active, account_status: :pending
-        ) if created
+        if created
+          @user.organization_memberships.create!(
+            organization: @organization, status: :active, account_status: :pending
+          )
+        end
         sync_system_roles!(role_ids) unless role_ids.nil?
         branch_roles.apply!
       end

@@ -47,13 +47,13 @@ class UserInvitation < ApplicationRecord
 
       return false unless acceptable_password?(password)
 
-      activate_account!(password, password_confirmation)
+      activate_account?(password, password_confirmation)
     end
   end
 
   private
 
-  def activate_account!(password, confirmation)
+  def activate_account?(password, confirmation)
     user.password = password
     user.password_confirmation = confirmation
     user.status = :active
