@@ -15,7 +15,7 @@ module EmailTemplates
         support_email: 'support@example.org',
         support_url: 'https://example.org/support', privacy_url: 'https://example.org/privacy',
         current_year: Time.current.year, expiration_hours: 72, status_label: 'Activo'
-      }
+      )
     end
   end
 end
