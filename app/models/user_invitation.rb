@@ -36,7 +36,7 @@ class UserInvitation < ApplicationRecord
   end
 
   def accept!(token:, password:, password_confirmation:)
-    transaction do
+    user.with_lock do
       lock!
       return false unless usable?
 
