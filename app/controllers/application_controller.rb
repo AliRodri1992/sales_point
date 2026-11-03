@@ -76,6 +76,7 @@ class ApplicationController < ActionController::Base
 
   def set_action_cable_user_id_cookie
     return unless user_signed_in?
+
     payload = cookies.signed[:user_id]
     return if payload.is_a?(Hash) && payload['id'] == current_user.id &&
               payload['issued_at'] == session[:user_session_issued_at]

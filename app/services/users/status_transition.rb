@@ -100,8 +100,8 @@ module Users
 
       UserStatusNotification.with(record: @user, action: @target, user: @actor)
                             .deliver(@user, enqueue_job: false)
-    rescue StandardError => error
-      Rails.logger.error("User status notification failed: #{error.class}")
+    rescue StandardError => e
+      Rails.logger.error("User status notification failed: #{e.class}")
     end
 
     def persist_transition!

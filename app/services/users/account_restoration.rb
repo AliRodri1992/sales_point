@@ -30,15 +30,28 @@ module Users
     private
 
     def verify_access!
+      verify_actor!
+      verify_target!
+      verify_memberships!
+    end
+
+    def verify_actor!
       raise Pundit::NotAuthorizedError unless @actor.active? && @actor.role?('super_admin')
       raise Pundit::NotAuthorizedError unless @actor.permission?('users.restore')
-      raise Pundit::NotAuthorizedError if @user == @actor || !@user.deleted?
       raise Pundit::NotAuthorizedError unless @organization&.active?
+    end
 
+    def verify_target!
+      raise Pundit::NotAuthorizedError if @user == @actor || !@user.deleted?
+    end
+
+    def verify_memberships!
       memberships = @user.organization_memberships.active
       raise Pundit::NotAuthorizedError unless memberships.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError if memberships.where.not(organization: @organization).exists?
-      raise Pundit::NotAuthorizedError unless @actor.organization_memberships.active.exists?(organization: @organization)
+
+      actor_member = @actor.organization_memberships.active.exists?(organization: @organization)
+      raise Pundit::NotAuthorizedError unless actor_member
     end
   end
 end

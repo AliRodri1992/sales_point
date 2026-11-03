@@ -13,22 +13,30 @@ module Admin
     end
 
     def create
-      members = current_organization.organization_memberships.active.select(:user_id)
-      user = User.with_deleted.where(id: members, status: 'deleted').find(params[:user_id])
-      Users::AccountRestoration.new(
-        user:, actor: current_user, organization: current_organization, reason: params[:reason]
-      ).call!
+      user = restore_target
+      restore_user!(user)
       redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
-    rescue ArgumentError => error
-      redirect_to admin_user_restorations_path, alert: error.message
+    rescue ArgumentError => e
+      redirect_to admin_user_restorations_path, alert: e.message
     end
 
     private
 
+    def restore_target
+      members = current_organization.organization_memberships.active.select(:user_id)
+      User.with_deleted.where(id: members, status: 'deleted').find(params[:user_id])
+    end
+
+    def restore_user!(user)
+      Users::AccountRestoration.new(
+        user:, actor: current_user, organization: current_organization, reason: params[:reason]
+      ).call!
+    end
+
     def verify_restore_permission!
       authorize User, :index?
-      raise Pundit::NotAuthorizedError unless current_user.role?('super_admin') &&
-                                             current_user.permission?('users.restore')
+      authorized = current_user.role?('super_admin') && current_user.permission?('users.restore')
+      raise Pundit::NotAuthorizedError unless authorized
     end
   end
 end

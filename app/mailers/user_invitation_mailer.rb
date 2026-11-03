@@ -21,9 +21,8 @@ class UserInvitationMailer < ApplicationMailer
   private
 
   def mark_delivered
-    UserInvitation.where(id: @invitation_id).update_all(
-      delivery_status: 'sent', sent_at: Time.current, updated_at: Time.current
-    )
+    invitation = UserInvitation.find_by(id: @invitation_id)
+    invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
   end
 
   def valid_invitation?(invitation, token)
