@@ -11,4 +11,5 @@
       <%= f.select :default_locale, [['Español', 'es'], ['English', 'en'], ['한국어', 'ko']], {}, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
     <%= f.submit t('admin.email_templates.save'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 font-semibold text-white' %>
   <% end %>
+  <%= render 'admin/email_setting_audits/history', audits: @audits %>
 </main>
