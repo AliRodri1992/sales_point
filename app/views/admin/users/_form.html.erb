@@ -64,19 +64,14 @@
             <%= error_message_for(@user, :user_type) %>
           </div>
           <div class="min-w-0">
-            <%= form.label :status, t('admin.users.form.fields.status'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-            <div class="relative" data-controller="delta-select">
-              <%= form.select :status, options_for_select(
-                (User.statuses.keys - ['deleted']).map { |status| [t("admin.users.statuses.#{status}"), status] }, @user.status),
-                { include_blank: t('admin.users.form.fields.status_placeholder') },
-                class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :status)} px-3.5 py-2.5 text-sm",
-                aria: { invalid: @user.errors[:status].any? } %>
-            </div>
-            <%= error_message_for(@user, :status) %>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %></span>
+            <div class="flex min-h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-semibold text-slate-700"><%= t("admin.users.statuses.#{@user.status || 'pending'}") %></div>
+            <p class="mt-1.5 text-xs text-slate-500"><%= t(editing ? 'admin.users.form.status_edit_hint' : 'admin.users.form.status_new_hint') %></p>
           </div>
         </div>
       </section>
 
+      <% if editing %>
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-security-title">
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><%= delta_icon('lock-closed', class: 'size-6') %></span>
@@ -103,6 +98,9 @@
         </div>
       </section>
 
+      <% else %>
+        <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><p class="font-semibold text-emerald-900"><%= t('admin.users.form.invitation_title') %></p><p class="mt-2 text-sm text-emerald-800"><%= t('admin.users.form.invitation_hint') %></p></section>
+      <% end %>
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-access-title">
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-6') %></span>

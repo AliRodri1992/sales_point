@@ -12,6 +12,11 @@ module Users
 
     def save
       @user.assign_attributes(user_attributes)
+      if @user.new_record?
+        @user.status = :pending
+        @user.password = SecureRandom.urlsafe_base64(36)
+        @user.password_confirmation = @user.password
+      end
       role_ids = requested_role_ids
       branch_roles = branch_role_editor
       return invalid_role_error?(:system_role_ids) if role_ids == :invalid
@@ -27,7 +32,8 @@ module Users
     private
 
     def user_attributes
-      permitted = @attributes.except(:system_role_ids, :branch_role_assignments)
+      permitted = @attributes.except(:system_role_ids, :branch_role_assignments, :status)
+      permitted = permitted.except(:password, :password_confirmation) if @user.new_record?
       if permitted[:password].blank?
         permitted.delete(:password)
         permitted.delete(:password_confirmation) if permitted[:password_confirmation].blank?

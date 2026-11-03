@@ -30,6 +30,7 @@ es:
         customer: Cliente
         supplier: Proveedor
       statuses:
+        pending: Pendiente de activación
         active: Activo
         suspended: Suspendido
         blocked: Bloqueado
@@ -65,6 +66,10 @@ es:
           all_statuses: Todos los estados
           all_roles: Todos los roles
       form:
+        status_edit_hint: Este estatus se administra mediante acciones autorizadas.
+        status_new_hint: Se asignará Pendiente de activación automáticamente.
+        invitation_title: Invitación segura por correo
+        invitation_hint: El invitado establecerá su propia contraseña mediante un enlace seguro.
         new_title: Nuevo usuario
         edit_title: Editar usuario
         subtitle: Completa la información del usuario.
@@ -106,6 +111,7 @@ es:
         title: Mi perfil
         subtitle: Administra la información y preferencias de tu cuenta.
         status:
+          pending: Pendiente de activación
           active: Activo
           suspended: Suspendido
           blocked: Bloqueado

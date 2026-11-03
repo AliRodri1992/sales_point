@@ -30,6 +30,7 @@ en:
         customer: Customer
         supplier: Supplier
       statuses:
+        pending: Pending activation
         active: Active
         suspended: Suspended
         blocked: Blocked
@@ -65,6 +66,10 @@ en:
           all_statuses: All statuses
           all_roles: All roles
       form:
+        status_edit_hint: Status changes require authorized actions.
+        status_new_hint: The account starts as Pending activation.
+        invitation_title: Secure email invitation
+        invitation_hint: The invited user will set their own password using a secure link.
         new_title: New user
         edit_title: Edit user
         subtitle: Fill in the user information.
@@ -106,6 +111,7 @@ en:
         title: My profile
         subtitle: Manage your account information and preferences.
         status:
+          pending: Pending activation
           active: Active
           suspended: Suspended
           blocked: Blocked

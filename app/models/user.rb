@@ -24,6 +24,7 @@ class User < ApplicationRecord
   has_many :conversations, through: :conversation_participants
   has_many :messages, dependent: :destroy
   has_many :onboarding_audits, dependent: :restrict_with_exception
+  has_many :user_invitations, dependent: :destroy
 
   ONLINE_USERS_KEY = 'online_user_connections'.freeze
 
@@ -37,6 +38,7 @@ class User < ApplicationRecord
 
   enum :status,
        {
+         pending: 'pending',
          active: 'active',
          suspended: 'suspended',
          blocked: 'blocked',

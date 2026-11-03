@@ -10,6 +10,8 @@ Rails.application.routes.draw do
                passwords: 'users/passwords'
              }
 
+  get '/invitations/accept', to: 'user_invitations#show', as: :user_invitation
+  patch '/invitations/accept', to: 'user_invitations#update', as: :accept_user_invitation
   root 'home#index'
   get '/privacy', to: 'privacy#show', as: :privacy
   get '/home/index', to: 'home#index'

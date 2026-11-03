@@ -27,7 +27,7 @@ module Admin
     end
 
     def new
-      @user = User.new(status: 'active', user_type: 'employee', theme: Theme::DEFAULT)
+      @user = User.new(status: 'pending', user_type: 'employee', theme: Theme::DEFAULT)
       authorize @user
     end
 
@@ -42,6 +42,8 @@ module Admin
       authorize @user
 
       if account_writer.save
+        invitation = UserInvitation.issue!(user: @user, organization: current_organization)
+        UserInvitationMailer.invite(invitation.id, invitation.raw_token).deliver_later
         notify_user(current_user, @user, 'created')
         redirect_to admin_users_path, flash: { swal_message: t('admin.users.created') }
       else
@@ -115,7 +117,7 @@ module Admin
       params.expect(
         user: [
           :email, :username, :password, :password_confirmation,
-          :user_type, :status, :theme, :language_id,
+          :user_type, :theme, :language_id,
           { system_role_ids: [], branch_role_assignments: [] }
         ]
       )
@@ -131,7 +133,8 @@ module Admin
         return t('admin.users.shared_account_cannot_delete')
       end
 
-      @user.update!(deleted_at: Time.current)
+      @user.update!(status: :deleted, deleted_at: Time.current)
+      @user.user_invitations.pending.update_all(revoked_at: Time.current)
       notify_user(current_user, @user, 'destroyed')
       t('admin.users.destroyed')
     end

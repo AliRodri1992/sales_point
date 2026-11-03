@@ -30,6 +30,7 @@ ko:
         customer: 고객
         supplier: 공급업체
       statuses:
+        pending: 활성화 대기
         active: 활성
         suspended: 일시 중지
         blocked: 차단됨
@@ -65,6 +66,10 @@ ko:
           all_statuses: 모든 상태
           all_roles: 모든 역할
       form:
+        status_edit_hint: 상태는 승인된 관리 작업으로 변경합니다.
+        status_new_hint: 계정은 활성화 대기 상태로 생성됩니다.
+        invitation_title: 보안 이메일 초대
+        invitation_hint: 초대받은 사용자는 보안 링크에서 자신의 비밀번호를 설정합니다.
         new_title: 새 사용자
         edit_title: 사용자 편집
         subtitle: 사용자 정보를 입력하세요.
@@ -106,6 +111,7 @@ ko:
         title: 내 프로필
         subtitle: 계정 정보와 환경설정을 관리합니다.
         status:
+          pending: 활성화 대기
           active: 활성
           suspended: 일시 중지
           blocked: 차단됨

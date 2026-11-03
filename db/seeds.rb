@@ -756,3 +756,6 @@ end
 
 SeedConsole.report('Direcciones', Address)
 SeedConsole.finish_run!
+
+# Centralized email templates
+load Rails.root.join('db/seeds/email_templates.rb') if defined?(EmailTemplate) && EmailTemplate.table_exists?
