@@ -132,7 +132,9 @@ RSpec.describe 'Admin dashboard layout', type: :feature, js: true do
             })
         })()
       JS
-      page.execute_script('window.scrollTo(0, document.getElementById("kpiGrid").getBoundingClientRect().top + scrollY - 90)')
+      page.execute_script(
+        'window.scrollTo(0, document.getElementById("kpiGrid").getBoundingClientRect().top + scrollY - 90)'
+      )
     end
   end
 

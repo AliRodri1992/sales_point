@@ -26,26 +26,34 @@ module Users
     end
 
     def call!
+      validate_request!
+      User.transaction do
+        @user.lock!
+        raise ArgumentError, 'Transition not permitted' unless self.class.allowed_targets(@user).include?(@target)
+
+        prevent_last_admin!
+        persist_transition!
+      end
+    end
+
+    private
+
+    def validate_request!
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
       raise Pundit::NotAuthorizedError unless @actor.admin?
       raise Pundit::NotAuthorizedError if @user == @actor
       raise Pundit::NotAuthorizedError unless @user.organization_memberships.active.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError if @user.admin? && !@actor.role?('super_admin')
-
-      User.transaction do
-        @user.lock!
-        raise ArgumentError, 'Transition not permitted' unless self.class.allowed_targets(@user).include?(@target)
-        prevent_last_admin!
-        before = @user.status
-        attributes = { status: @target }
-        attributes[:session_revoked_at] = Time.current unless @target == 'active'
-        @user.update!(attributes)
-        UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
-                                from_status: before, to_status: @target, reason: @reason)
-      end
     end
 
-    private
+    def persist_transition!
+      previous = @user.status
+      attributes = { status: @target }
+      attributes[:session_revoked_at] = Time.current unless @target == 'active'
+      @user.update!(attributes)
+      UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
+                              from_status: previous, to_status: @target, reason: @reason)
+    end
 
     def prevent_last_admin!
       return unless @user.admin? && @target != 'active'
