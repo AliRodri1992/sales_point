@@ -20,6 +20,8 @@ module Admin
           EmailSettingAudit.record!(setting: @sender, actor: current_user, kind: 'sender')
           redirect_to edit_admin_email_sender_settings_path, notice: t('admin.email_templates.saved')
         else
+          @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
+                                    .includes(:actor).order(created_at: :desc).limit(20)
           render :edit, status: :unprocessable_content
         end
       end
