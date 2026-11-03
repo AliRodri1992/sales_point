@@ -14,6 +14,11 @@ ko:
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
       status_management:
+        notification_active: "계정이 재활성화되었습니다."
+        notification_suspended: "계정이 일시 중지되었습니다."
+        notification_blocked: "보안상의 이유로 계정이 차단되었습니다."
+        notification_pending: "계정 재활성화가 필요합니다."
+        notification_deleted: "계정이 비활성화되었습니다."
         resend_cooldown: 초대를 다시 보내기 전에 최소 1분을 기다려 주세요.
         history: 계정 상태 변경 내역
         deleted: 사용자 비활성화

@@ -48,6 +48,7 @@ module Users
         prevent_last_admin!
         persist_transition!
       end
+      notify_account_holder
     end
 
     private
@@ -92,6 +93,15 @@ module Users
                       .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
                       .distinct
       raise ArgumentError, 'Cannot disable the last administrator' unless remaining.exists?
+    end
+
+    def notify_account_holder
+      return if @user.deleted?
+
+      UserStatusNotification.with(record: @user, action: @target, user: @actor)
+                            .deliver(@user, enqueue_job: false)
+    rescue StandardError => error
+      Rails.logger.error("User status notification failed: #{error.class}")
     end
 
     def persist_transition!

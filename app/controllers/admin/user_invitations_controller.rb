@@ -5,18 +5,35 @@ module Admin
     before_action :authenticate_user!
 
     def create
-      members = current_organization.organization_memberships.active.where(deleted_at: nil).select(:user_id)
-      user = policy_scope(User).where(id: members).find(params[:user_id])
-      authorize user, :update?
-      raise Pundit::NotAuthorizedError unless user.pending? && current_user.permission?('users.resend_invitation')
-      raise Pundit::NotAuthorizedError if user.organization_memberships.active.where.not(organization: current_organization).exists?
-
-      if user.user_invitations.order(created_at: :desc).where('created_at > ?', 60.seconds.ago).exists?
-        return redirect_to admin_user_path(user), alert: t('admin.users.status_management.resend_cooldown')
-      end
+      user = invitation_user
+      validate_access!(user)
+      return resend_limited(user) if resend_limited?(user)
 
       Users::InvitationDispatcher.call(user:, organization: current_organization)
       redirect_to admin_user_path(user), notice: t('admin.users.status_management.resent')
+    end
+
+    private
+
+    def invitation_user
+      member_ids = current_organization.organization_memberships.active.select(:user_id)
+      policy_scope(User).where(id: member_ids).find(params[:user_id])
+    end
+
+    def validate_access!(user)
+      authorize user, :update?
+      raise Pundit::NotAuthorizedError unless user.pending? && current_user.permission?('users.resend_invitation')
+
+      other_memberships = user.organization_memberships.active.where.not(organization: current_organization)
+      raise Pundit::NotAuthorizedError if other_memberships.exists?
+    end
+
+    def resend_limited?(user)
+      user.user_invitations.order(created_at: :desc).exists?(['created_at > ?', 60.seconds.ago])
+    end
+
+    def resend_limited(user)
+      redirect_to admin_user_path(user), alert: t('admin.users.status_management.resend_cooldown')
     end
   end
 end

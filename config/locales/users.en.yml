@@ -14,6 +14,11 @@ en:
           updated: "User '%{name}' was updated by %{user}"
     users:
       status_management:
+        notification_active: "Your account has been reactivated."
+        notification_suspended: "Your account has been suspended."
+        notification_blocked: "Your account has been blocked for security."
+        notification_pending: "Your account needs a new activation."
+        notification_deleted: "Your account was deactivated."
         resend_cooldown: Wait at least one minute before resending this invitation.
         history: Account status history
         deleted: Deactivate

@@ -1,7 +1,13 @@
 <% record = notification.record %>
 <% type_label = notification_type_label(notification) %>
 
-<% if record.is_a?(Language) %>
+<% if record.is_a?(User) %>
+  <% action = notification.params[:action] || 'updated' %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = record.initials %>
+  <% title_text = t("admin.users.status_management.notification_#{action}", default: record.display_name) %>
+  <% subtitle_text = actor&.display_name || record.email %>
+<% elsif record.is_a?(Language) %>
   <% action = notification.params[:action] || 'updated' %>
   <% actor = notification.params[:user] %>
   <% avatar_text = record.flag_iso.upcase %>

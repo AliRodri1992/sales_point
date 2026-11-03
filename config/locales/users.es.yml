@@ -14,6 +14,11 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        notification_active: "Tu cuenta fue reactivada."
+        notification_suspended: "Tu cuenta fue suspendida."
+        notification_blocked: "Tu cuenta fue bloqueada por seguridad."
+        notification_pending: "Tu cuenta requiere nueva activación."
+        notification_deleted: "Tu cuenta fue dada de baja."
         resend_cooldown: Espera al menos un minuto antes de reenviar la invitación.
         history: Historial de estatus
         deleted: Dar de baja

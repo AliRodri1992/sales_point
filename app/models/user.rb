@@ -99,17 +99,10 @@ class User < ApplicationRecord
   end
 
   def notifications
-    notification_relation_for(User)
-      .or(notification_relation_for(Message))
-      .or(notification_relation_for(Language))
-      .or(notification_relation_for(Category))
-      .or(notification_relation_for(Product))
-      .or(notification_relation_for(Branch))
-      .or(notification_relation_for(Client))
-      .or(notification_relation_for(SystemRole))
-      .or(notification_relation_for(Supplier))
-      .or(notification_relation_for(AccountPayable))
-      .order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
+    models = [User, Message, Language, Category, Product, Branch, Client, SystemRole, Supplier, AccountPayable]
+    models.drop(1).reduce(notification_relation_for(models.first)) do |relation, model|
+      relation.or(notification_relation_for(model))
+    end.order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
   end
 
   def unread_notifications
