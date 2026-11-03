@@ -5,6 +5,12 @@ class EmailTemplate < ApplicationRecord
   validates :key, uniqueness: { scope: :locale }
   validates :version, numericality: { only_integer: true, greater_than: 0 }
 
+  def self.ensure_invitation_template!
+    return if exists?(key: 'user_invitation', locale: 'es')
+
+    load Rails.root.join('db/seeds/email_templates.rb')
+  end
+
   def render_with(values)
     [subject, html_body, text_body].each_with_index.map do |source, index|
       source.gsub(/\{\{([a-z_]+)\}\}/) do |match|

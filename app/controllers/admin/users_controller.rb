@@ -42,6 +42,7 @@ module Admin
       authorize @user
 
       if account_writer.save
+        EmailTemplate.ensure_invitation_template!
         invitation = UserInvitation.issue!(user: @user, organization: current_organization)
         UserInvitationMailer.invite(invitation.id, invitation.raw_token).deliver_later
         notify_user(current_user, @user, 'created')

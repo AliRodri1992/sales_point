@@ -38,6 +38,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('name="user[email]"')
       expect(response.body).to include(Theme::DEFAULT)
+      expect(response.body).not_to include('name="user[status]"')
+      expect(response.body).not_to include('name="user[password]"')
     end
   end
 
@@ -60,6 +62,7 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('name="user[email]"')
       expect(response.body).to include('edit-profile@example.com')
+      expect(response.body).not_to include('name="user[status]"')
     end
   end
 
@@ -81,7 +84,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect { post admin_users_path, params: valid_params }.to change(User, :count).by(1)
 
       created_user = User.find_by!(email: valid_params.dig(:user, :email))
-      expect(created_user).to be_active
+      expect(created_user).to be_pending
+      expect(created_user.user_invitations.count).to eq(1)
       expect(created_user.organization_memberships.active.pluck(:organization_id)).to eq([organization.id])
       expect(response).to redirect_to(admin_users_path)
       follow_redirect!
@@ -110,6 +114,13 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response).to redirect_to(admin_user_path(target))
       expect(target.reload.email).to eq('after-update@example.com')
       expect(flash[:swal_message]).to eq(I18n.t('admin.users.updated', locale: :es))
+    end
+
+    it 'does not accept forged administrative status updates' do
+      target = add_member(create(:user, status: :active))
+      patch admin_user_path(target), params: { user: { status: 'blocked', username: 'safe' } }
+      expect(target.reload.status).to eq('active')
+      expect(target.username).to eq('safe')
     end
 
     it 're-renders the edit form when validation fails' do

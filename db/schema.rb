@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_01_003000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_193000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1913,6 +1913,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_003000) do
     t.index ["user_id"], name: "index_user_roles_on_user_id"
   end
 
+  create_table "email_templates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true, null: false
+    t.text "html_body", null: false
+    t.string "key", null: false
+    t.string "locale", default: "es", null: false
+    t.string "subject", null: false
+    t.text "text_body", null: false
+    t.datetime "updated_at", null: false
+    t.integer "version", default: 1, null: false
+    t.index ["key", "locale"], name: "index_email_templates_on_key_and_locale", unique: true
+  end
+
+  create_table "user_invitations", force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.bigint "organization_id", null: false
+    t.datetime "revoked_at"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
+    t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_user_invitations_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "current_session_token"
@@ -1956,7 +1983,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_003000) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
-    t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'blocked'::character varying::text, 'suspended'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'blocked'::character varying::text, 'suspended'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
@@ -2130,6 +2157,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_01_003000) do
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
+  add_foreign_key "user_invitations", "organizations"
+  add_foreign_key "user_invitations", "users"
   add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
 end
