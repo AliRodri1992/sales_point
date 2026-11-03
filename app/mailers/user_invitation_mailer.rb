@@ -40,8 +40,9 @@ class UserInvitationMailer < ApplicationMailer
 
   def invitation_template(invitation)
     EmailTemplate.ensure_invitation_template!
-    EmailTemplate.find_by(key: 'user_invitation', locale: invitation.user.language&.code, enabled: true) ||
-      EmailTemplate.find_by!(key: 'user_invitation', locale: 'es', enabled: true)
+    locale = invitation.user.language&.code.presence || 'es'
+    EmailTemplate.resolve(key: 'user_invitation', locale:, organization: invitation.organization) ||
+      EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es', enabled: true)
   end
 
   def template_variables(invitation, token)
