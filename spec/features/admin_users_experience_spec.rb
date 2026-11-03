@@ -65,4 +65,24 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('p[data-server-field-error]', text: /Email/i)
     expect(page).to have_css('#users-identity-title')
   end
+  scenario 'presents accessible status actions on narrow screens' do
+    role = admin.system_roles.first
+    permission = Permission.find_or_create_by!(code: 'users.suspend') do |item|
+      item.name = 'Suspend users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    target = create(:user, username: 'Status Employee')
+    create(:organization_membership, organization:, user: target)
+    page.driver.browser.manage.window.resize_to(390, 844)
+
+    visit edit_admin_user_status_path(target, transition: 'suspended')
+    expect(page).to have_css('label[for="reason"]')
+    expect(page).to have_css('label[for="review_at"]')
+    expect(page).to have_css('textarea#reason[required]')
+    expect(page).to have_no_css('input[type="radio"]', visible: :all)
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+  end
+
 end

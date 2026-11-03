@@ -118,6 +118,19 @@ RSpec.describe Users::SessionsController, type: :request do
     expect(session['warden.user.user.key']).to be_nil
   end
 
+  it 'does not allow a remembered session after administrative revocation' do
+    post user_session_path, params: {
+      user: { email: user.email, password:, remember_me: '1' }
+    }
+    expect(response).to redirect_to(admin_dashboard_path)
+
+    user.update!(session_revoked_at: 1.second.from_now)
+    get admin_dashboard_path
+
+    expect(response).to redirect_to(new_user_session_path)
+    expect(session['warden.user.user.key']).to be_nil
+  end
+
   it 'signs in successfully and stores the SweetAlert session message' do
     post user_session_path, params: {
       user: { email: user.email, password: }
