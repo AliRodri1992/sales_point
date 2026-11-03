@@ -8,8 +8,9 @@ module EmailTemplates
 
       raise ArgumentError, 'Invalid recipient' unless recipient.to_s.match?(URI::MailTo::EMAIL_REGEXP)
 
+      branding = EmailTemplates::Branding.values(organization: template.organization)
       ciphertext = EncryptedPayload.encrypt(
-        template_id: template.id, recipient:, values:
+        template_id: template.id, recipient:, values: values.symbolize_keys.merge(branding)
       )
       EmailTemplates::DeliveryJob.perform_later(ciphertext)
     end

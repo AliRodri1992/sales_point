@@ -85,6 +85,7 @@ email_catalog_content.each do |key, translations|
               <tr><td style="padding:24px;background:#064e3b;color:#fff">
                 <img src="{{#{logo_key}}}" width="44" alt="Delta POS" style="vertical-align:middle">
                 <strong style="margin-left:12px;color:#fff">Delta POS</strong>
+                <span style="float:right;color:#a7f3d0">{{organization_name}}</span>
               </td></tr>
               <tr><td style="padding:36px">
                 <h1 style="font-size:24px">#{subject}</h1>

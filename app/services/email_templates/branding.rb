@@ -10,8 +10,23 @@ module EmailTemplates
         organization_name: organization_name(local, organization),
         support_email: setting_value(local, global, :support_email, 'support@example.org'),
         support_url: setting_value(local, global, :support_url, 'https://example.org/support'),
-        privacy_url: setting_value(local, global, :privacy_url, 'https://example.org/privacy')
+        privacy_url: setting_value(local, global, :privacy_url, 'https://example.org/privacy'),
+        platform_logo: asset_logo(global),
+        organization_logo: asset_logo(local),
+        logo_url: asset_logo(global)
       }
+    end
+
+    def self.asset_logo(setting)
+      host = ENV['DELTA_POS_PUBLIC_HOST'].presence ||
+             Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
+             'www.example.com'
+      base_url = "https://#{host}"
+      if setting&.logo&.attached?
+        return Rails.application.routes.url_helpers.rails_blob_url(setting.logo, host:, protocol: 'https')
+      end
+
+      ActionController::Base.helpers.image_url('delta-pos-logo.svg', host: base_url)
     end
 
     def self.organization_name(local, organization)
