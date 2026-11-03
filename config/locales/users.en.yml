@@ -14,6 +14,11 @@ en:
           updated: "User '%{name}' was updated by %{user}"
     users:
       status_management:
+        deleted_accounts: "Deactivated accounts"
+        restore: "Restore account"
+        restored: "Account restored as pending. Review roles and resend the invitation."
+        restore_warning: "Restoration removes previous permissions and requires a fresh activation."
+        no_deleted_accounts: "No deactivated accounts found."
         notification_active: "Your account has been reactivated."
         notification_suspended: "Your account has been suspended."
         notification_blocked: "Your account has been blocked for security."

@@ -14,6 +14,11 @@ ko:
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
       status_management:
+        deleted_accounts: "비활성화된 계정"
+        restore: "계정 복원"
+        restored: "계정이 대기 상태로 복원되었습니다. 역할을 확인하고 초대를 다시 보내세요."
+        restore_warning: "복원 시 이전 권한이 제거되며 다시 활성화해야 합니다."
+        no_deleted_accounts: "비활성화된 계정이 없습니다."
         notification_active: "계정이 재활성화되었습니다."
         notification_suspended: "계정이 일시 중지되었습니다."
         notification_blocked: "보안상의 이유로 계정이 차단되었습니다."

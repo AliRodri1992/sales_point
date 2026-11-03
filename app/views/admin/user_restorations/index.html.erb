@@ -1,0 +1,36 @@
+<div class="mx-auto max-w-4xl space-y-6">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-wider text-emerald-700"><%= t('admin.users.status_management.eyebrow') %></p>
+      <h1 class="mt-1 font-jakarta text-2xl font-bold"><%= t('admin.users.status_management.deleted_accounts') %></h1>
+      <p class="mt-2 text-sm text-slate-600"><%= t('admin.users.status_management.restore_warning') %></p>
+    </div>
+    <%= link_to t('admin.users.form.buttons.back'), admin_users_path,
+                class: 'rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold' %>
+  </header>
+  <% if @deleted_users.empty? %>
+    <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+      <%= t('admin.users.status_management.no_deleted_accounts') %>
+    </div>
+  <% else %>
+    <div class="space-y-4">
+      <% @deleted_users.each do |user| %>
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 class="font-semibold text-slate-900"><%= user.display_name %></h2>
+          <p class="mt-1 break-all text-sm text-slate-500"><%= user.email %></p>
+          <%= form_with url: admin_user_restoration_path(user), method: :post,
+                        class: 'mt-4 flex flex-col gap-3 sm:flex-row sm:items-end' do |form| %>
+            <div class="min-w-0 flex-1">
+              <%= form.label :reason, t('admin.users.status_management.reason'), class: 'mb-1 block text-sm font-semibold' %>
+              <%= form.text_field :reason, required: true, maxlength: 1000,
+                                  class: 'w-full rounded-xl border border-slate-300 px-3 py-2 text-sm' %>
+            </div>
+            <%= form.submit t('admin.users.status_management.restore'),
+                            data: { turbo_confirm: t('admin.users.status_management.restore_warning') },
+                            class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white' %>
+          <% end %>
+        </section>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -40,6 +40,8 @@ Rails.application.routes.draw do
       end
       member { patch :select }
     end
+    get 'user_restorations', to: 'user_restorations#index', as: :user_restorations
+    post 'users/:user_id/restoration', to: 'user_restorations#create', as: :user_restoration
     resources :users do
       resource :status, only: %i[edit update], controller: 'user_statuses'
       resource :invitation, only: :create, controller: 'user_invitations'

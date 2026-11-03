@@ -14,6 +14,11 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        deleted_accounts: "Cuentas dadas de baja"
+        restore: "Restaurar cuenta"
+        restored: "Cuenta restaurada como pendiente. Revisa sus roles y vuelve a enviar la invitación."
+        restore_warning: "La restauración retira los permisos anteriores y exige una nueva activación."
+        no_deleted_accounts: "No hay cuentas dadas de baja."
         notification_active: "Tu cuenta fue reactivada."
         notification_suspended: "Tu cuenta fue suspendida."
         notification_blocked: "Tu cuenta fue bloqueada por seguridad."

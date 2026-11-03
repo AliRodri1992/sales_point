@@ -3,7 +3,13 @@
 
 <div class="mx-auto max-w-[100rem] space-y-6">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div class="min-w-0">
+    <% if current_user.role?('super_admin') && current_user.permission?('users.restore') %>
+    <div class="mb-4">
+      <%= link_to t('admin.users.status_management.deleted_accounts'), admin_user_restorations_path,
+                  class: 'inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700' %>
+    </div>
+  <% end %>
+  <div class="min-w-0">
       <p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
       <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.users.index.title') %></h1>
       <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"><%= t('admin.users.ui.description') %></p>
