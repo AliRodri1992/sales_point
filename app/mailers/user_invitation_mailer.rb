@@ -26,10 +26,10 @@ class UserInvitationMailer < ApplicationMailer
     invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
   end
 
-  def mark_delivery_failed(e)
+  def mark_delivery_failed(exception)
     invitation = UserInvitation.find_by(id: @invitation_id)
     invitation&.update!(delivery_status: 'failed')
-    raise e
+    raise exception
   end
 
   def valid_invitation?(invitation, token)

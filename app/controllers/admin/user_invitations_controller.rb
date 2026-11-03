@@ -28,7 +28,8 @@ module Admin
 
     def validate_access!(user)
       authorize user, :update?
-      raise Pundit::NotAuthorizedError unless user.pending? && current_user.permission?('users.resend_invitation')
+      allowed = user.pending? && current_user.permission?('users.resend_invitation')
+      raise Pundit::NotAuthorizedError unless allowed
 
       other_memberships = user.organization_memberships.active.where.not(organization: current_organization)
       raise Pundit::NotAuthorizedError if other_memberships.exists?
