@@ -55,7 +55,7 @@ module Users
       attributes[:session_revoked_at] = Time.current unless @target == 'active'
       attributes[:deleted_at] = Time.current if @target == 'deleted'
       @user.update!(attributes)
-      UserInvitation.revoke_for!(@user) if @target == 'deleted'
+      UserInvitation.revoke_for!(@user) if %w[blocked deleted].include?(@target)
       UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
                               from_status: previous, to_status: @target, reason: @reason)
     end

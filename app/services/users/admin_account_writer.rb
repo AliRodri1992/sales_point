@@ -71,6 +71,7 @@ module Users
       User.transaction do
         created = @user.new_record?
         @user.save!
+        UserInvitation.revoke_for!(@user) if !created && @user.saved_change_to_email? && @user.pending?
         @user.organization_memberships.create!(organization: @organization, status: :active) if created
         sync_system_roles!(role_ids) unless role_ids.nil?
         branch_roles.apply!
