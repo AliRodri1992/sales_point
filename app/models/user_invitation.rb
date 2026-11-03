@@ -50,6 +50,7 @@ class UserInvitation < ApplicationRecord
       user.status = :active
       return false unless user.save
 
+      user.organization_memberships.active.find_by!(organization:).update!(account_status: :active)
       update!(accepted_at: Time.current)
       true
     end

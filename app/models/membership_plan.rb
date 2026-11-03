@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class MembershipPlan < ApplicationRecord
+  has_many :organizations, dependent: :restrict_with_exception
   has_many :membership_plan_features,
            dependent: :destroy
   has_many :membership_features,

@@ -2,6 +2,7 @@
 
 class Organization < ApplicationRecord
   has_one_attached :logo
+  belongs_to :membership_plan, optional: true
   has_many :supplier_products, dependent: :restrict_with_exception
   has_many :inventories, dependent: :restrict_with_exception
   has_many :purchase_requests, dependent: :restrict_with_exception

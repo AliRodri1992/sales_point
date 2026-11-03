@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   def current_organization
     return unless current_user
 
-    active_ids = current_user.organization_memberships.active.select(:organization_id)
+    active_ids = current_user.organization_memberships.accessible.select(:organization_id)
     @current_organization ||= Organization.active_records.where(id: active_ids).first
   end
 

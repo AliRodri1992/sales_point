@@ -14,5 +14,13 @@ class OrganizationMembership < ApplicationRecord
               scope: :organization_id,
               conditions: -> { where(deleted_at: nil) }
             }
+  enum :account_status, {
+    pending: 'pending', active: 'active', suspended: 'suspended',
+    blocked: 'blocked', deleted: 'deleted'
+  }, prefix: :account
+
+  scope :accessible, -> { active.where(account_status: 'active', deleted_at: nil) }
+
   validates :status, presence: true
+  validates :account_status, presence: true
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_223100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -615,17 +615,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
   end
 
   create_table "organization_memberships", force: :cascade do |t|
+    t.string "account_status", default: "active", null: false
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "organization_id", null: false
     t.string "status", limit: 20, default: "active", null: false
+    t.datetime "status_review_at"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["deleted_at"], name: "index_organization_memberships_on_deleted_at"
     t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "account_status"], name: "idx_org_memberships_account_status", where: "((deleted_at IS NULL) AND ((status)::text = 'active'::text))"
     t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
     t.index ["user_id"], name: "index_organization_memberships_on_user_id"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_org_memberships_status"
+    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_org_member_account_status"
   end
 
   create_table "organization_migrations", force: :cascade do |t|
@@ -666,6 +670,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "name", limit: 150, null: false
+    t.bigint "membership_plan_id"
     t.datetime "onboarding_completed_at"
     t.integer "onboarding_current_step", default: 1, null: false
     t.jsonb "onboarding_sections", default: {}, null: false
@@ -675,6 +680,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
     t.datetime "updated_at", null: false
     t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
+    t.index ["membership_plan_id"], name: "index_organizations_on_membership_plan_id"
     t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
     t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
     t.check_constraint "onboarding_status::text = ANY (ARRAY['pending'::character varying::text, 'in_progress'::character varying::text, 'completed'::character varying::text])", name: "check_organizations_onboarding_status"
@@ -1951,6 +1957,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
     t.index ["user_id"], name: "index_user_roles_on_user_id"
   end
 
+  create_table "user_security_incidents", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.text "description", null: false
+    t.bigint "opened_by_id", null: false
+    t.bigint "organization_id", null: false
+    t.text "resolution"
+    t.datetime "resolved_at"
+    t.bigint "resolved_by_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["opened_by_id"], name: "index_user_security_incidents_on_opened_by_id"
+    t.index ["organization_id", "user_id", "resolved_at"], name: "idx_user_incidents_tenant_review"
+    t.index ["organization_id"], name: "index_user_security_incidents_on_organization_id"
+    t.index ["resolved_by_id"], name: "index_user_security_incidents_on_resolved_by_id"
+    t.index ["user_id"], name: "index_user_security_incidents_on_user_id"
+  end
+
   create_table "user_status_events", force: :cascade do |t|
     t.bigint "actor_id", null: false
     t.datetime "created_at", null: false
@@ -2072,6 +2096,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
   add_foreign_key "messages", "users"
   add_foreign_key "onboarding_audits", "organizations"
   add_foreign_key "onboarding_audits", "users"
+  add_foreign_key "organizations", "membership_plans"
   add_foreign_key "organization_memberships", "organizations"
   add_foreign_key "organization_memberships", "users"
   add_foreign_key "organization_migrations", "organizations"
@@ -2186,6 +2211,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_214000) do
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
+  add_foreign_key "user_security_incidents", "organizations"
+  add_foreign_key "user_security_incidents", "users"
+  add_foreign_key "user_security_incidents", "users", column: "opened_by_id"
+  add_foreign_key "user_security_incidents", "users", column: "resolved_by_id"
   add_foreign_key "user_status_events", "organizations"
   add_foreign_key "user_status_events", "users"
   add_foreign_key "user_status_events", "users", column: "actor_id"
