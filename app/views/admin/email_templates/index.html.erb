@@ -1,0 +1,65 @@
+<main class="mx-auto max-w-7xl space-y-6 p-5 sm:p-7">
+  <header class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <p class="text-xs font-bold uppercase tracking-widest text-emerald-700"><%= t('admin.email_templates.section') %></p>
+      <h1 class="mt-1 font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.email_templates.title') %></h1>
+      <p class="mt-2 text-sm text-slate-500"><%= t('admin.email_templates.intro') %></p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <%= link_to t('admin.email_templates.branding'), edit_admin_email_branding_settings_path,
+                  class: 'rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold' %>
+      <% if policy(EmailTemplate).create? %>
+        <%= link_to t('admin.email_templates.new'), new_admin_email_template_path,
+                    class: 'rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white' %>
+      <% end %>
+    </div>
+  </header>
+  <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+    <% %w[published draft inactive archived].each do |state| %>
+      <div class="rounded-2xl border border-slate-200 bg-white p-4">
+        <p class="text-xs font-semibold uppercase text-slate-500"><%= t("admin.email_templates.states.#{state}") %></p>
+        <p class="mt-2 text-2xl font-bold tabular-nums"><%= @counts.fetch(state, 0) %></p>
+      </div>
+    <% end %>
+  </div>
+  <%= form_with url: admin_email_templates_path, method: :get, class: 'grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-4' do |f| %>
+    <%= f.search_field :q, value: params[:q], placeholder: t('admin.email_templates.search'), class: 'w-full rounded-xl border border-slate-300 p-3 text-sm sm:col-span-2' %>
+    <%= f.select :locale, [['Todos', ''], ['Español', 'es'], ['English', 'en'], ['한국어', 'ko']], { selected: params[:locale] }, class: 'w-full rounded-xl border border-slate-300 p-3 text-sm' %>
+    <%= f.submit t('admin.email_templates.filter'), class: 'cursor-pointer rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white' %>
+  <% end %>
+  <section class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="w-full min-w-[760px] text-left text-sm">
+      <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-600">
+        <tr>
+          <% %w[name key locale scope state version updated actions].each do |column| %>
+            <th scope="col" class="px-5 py-4"><%= t("admin.email_templates.columns.#{column}") %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @templates.each do |template| %>
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-4 font-semibold"><%= template.name %></td>
+            <td class="px-5 py-4 font-mono text-xs"><%= template.key %></td>
+            <td class="px-5 py-4"><%= template.locale.upcase %></td>
+            <td class="px-5 py-4"><%= template.organization&.name || t('admin.email_templates.global') %></td>
+            <td class="px-5 py-4"><%= t("admin.email_templates.states.#{template.status}") %></td>
+            <td class="px-5 py-4"><%= template.published_version&.version_number || '—' %></td>
+            <td class="px-5 py-4 text-slate-500"><%= l(template.updated_at, format: :short) %></td>
+            <td class="px-5 py-4"><%= link_to t('admin.email_templates.view'), admin_email_template_path(template), class: 'font-semibold text-emerald-700 underline-offset-2 hover:underline' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <% if @templates.empty? %>
+      <p class="p-10 text-center text-sm text-slate-500"><%= t('admin.email_templates.empty') %></p>
+    <% end %>
+  </section>
+  <footer class="flex justify-between text-sm text-slate-500">
+    <span><%= @total %> <%= t('admin.email_templates.records') %></span>
+    <div class="flex gap-3">
+      <% if @page > 1 %><%= link_to t('admin.email_templates.previous'), admin_email_templates_path(page: @page - 1, q: params[:q]) %><% end %>
+      <% if @page * 20 < @total %><%= link_to t('admin.email_templates.next'), admin_email_templates_path(page: @page + 1, q: params[:q]) %><% end %>
+    </div>
+  </footer>
+</main>

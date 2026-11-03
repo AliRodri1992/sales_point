@@ -1,0 +1,14 @@
+<main class="mx-auto max-w-3xl space-y-6 p-6">
+  <%= link_to t('admin.email_templates.back'), admin_email_templates_path, class: 'text-sm text-emerald-700' %>
+  <h1 class="font-jakarta text-2xl font-bold"><%= t('admin.email_templates.branding') %></h1>
+  <%= form_with model: @branding, url: admin_email_branding_settings_path, method: :patch, multipart: true, class: 'space-y-4 rounded-2xl border border-slate-200 bg-white p-6' do |f| %>
+    <% @branding.errors.full_messages.each do |message| %><p role="alert" class="text-sm text-rose-700"><%= message %></p><% end %>
+    <% %i[display_name primary_color secondary_color button_color support_email support_url privacy_url footer_text].each do |attribute| %>
+      <div><%= f.label attribute, attribute.to_s.humanize, class: 'mb-1 block text-sm font-semibold' %>
+        <%= f.text_field attribute, class: 'w-full rounded-xl border border-slate-300 p-3' %></div>
+    <% end %>
+    <div><%= f.label :logo, 'Logo (PNG, JPG, WebP)', class: 'mb-1 block text-sm font-semibold' %>
+      <%= f.file_field :logo, accept: 'image/png,image/jpeg,image/webp', class: 'w-full text-sm' %></div>
+    <%= f.submit t('admin.email_templates.save'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 font-semibold text-white' %>
+  <% end %>
+</main>
