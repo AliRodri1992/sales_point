@@ -65,7 +65,8 @@
           </div>
           <div class="min-w-0">
             <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %></span>
-            <div class="flex min-h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-semibold text-slate-700"><%= t("admin.users.statuses.#{@user.status || 'pending'}") %></div>
+            <div class="flex min-h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-semibold text-slate-700"><% tenant_status = editing ? @user.organization_memberships.active.find_by(organization: current_organization)&.account_status : 'pending' %>
+              <%= t("admin.users.statuses.#{tenant_status || @user.status || 'pending'}") %></div>
             <p class="mt-1.5 text-xs text-slate-500"><%= t(editing ? 'admin.users.form.status_edit_hint' : 'admin.users.form.status_new_hint') %></p>
           </div>
         </div>

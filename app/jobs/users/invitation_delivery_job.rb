@@ -4,7 +4,11 @@ module Users
   class InvitationDeliveryJob < ApplicationJob
     queue_as :mailers
 
-    retry_on StandardError, wait: :polynomially_longer, attempts: 5
+    retry_on StandardError, wait: :polynomially_longer, attempts: 5 do |job, error|
+      invitation = UserInvitation.find_by(id: job.arguments.first)
+      invitation&.update!(delivery_status: 'failed')
+      Rails.logger.error("Invitation delivery exhausted retries: #{error.class}")
+    end
     discard_on ActiveJob::DeserializationError
 
     def perform(invitation_id, encrypted_token)
