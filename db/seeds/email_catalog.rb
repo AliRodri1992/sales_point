@@ -28,8 +28,10 @@ EMAIL_CATALOG_KEYS = {
   'email_changed' => 'Email address updated'
 }.freeze
 
+EMAIL_CATALOG_LOCALES = %w[es en ko].freeze
+
 EMAIL_CATALOG_KEYS.each do |key, default_subject|
-  %w[es en ko].each do |locale|
+  EMAIL_CATALOG_LOCALES.each do |locale|
     template = EmailTemplate.find_or_create_by!(key:, locale:, organization_id: nil) do |record|
       record.name = default_subject
       record.category = 'security'
@@ -49,7 +51,7 @@ EMAIL_CATALOG_KEYS.each do |key, default_subject|
       record.allowed_variables = %w[recipient_name]
       record.published_at = Time.current
     end
-    template.update_columns(published_version_id: version.id)
+    template.update!(published_version: version)
   end
 end
 
@@ -65,5 +67,5 @@ EmailTemplate.global.where(published_version_id: nil).find_each do |template|
     ]
     record.published_at = Time.current
   end
-  template.update_columns(published_version_id: version.id)
+  template.update!(published_version: version)
 end

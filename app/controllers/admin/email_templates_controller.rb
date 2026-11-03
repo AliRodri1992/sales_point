@@ -9,7 +9,7 @@ module Admin
 
     def index
       authorize EmailTemplate
-      scope = filtered_templates
+      scope = EmailTemplatesQuery.new(policy_scope(EmailTemplate), params).call
       @total = scope.count
       @page = [params[:page].to_i, 1].max
       @templates = scope.includes(:organization, :published_version)
@@ -113,17 +113,6 @@ module Admin
 
     private
 
-    def filtered_templates
-      scope = policy_scope(EmailTemplate)
-      if params[:q].present?
-        escaped = ActiveRecord::Base.sanitize_sql_like(params[:q])
-        scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{escaped}%")
-      end
-      scope = scope.where(locale: params[:locale]) if params[:locale].in?(%w[es en ko])
-      scope = scope.where(status: params[:status]) if params[:status].in?(EmailTemplate::STATUSES)
-      scope
-    end
-
     def prepare_new_template
       global = current_user.role?('super_admin') && params[:global] == '1'
       @template.organization = global ? nil : current_organization
@@ -143,7 +132,6 @@ module Admin
 
       recipient
     end
-
 
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])
