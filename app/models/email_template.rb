@@ -40,6 +40,17 @@ class EmailTemplate < ApplicationRecord
     load Rails.root.join('db/seeds/user_status_templates.rb')
   end
 
+  def prepare_for_creation!(actor:, organization:, global: false)
+    self.organization = global ? nil : organization
+    self.created_by = actor
+    self.updated_by = actor
+    self.status = 'draft'
+    self.enabled = false
+    self.subject ||= 'New template'
+    self.html_body ||= '<p>{{recipient_name}}</p>'
+    self.text_body ||= '{{recipient_name}}'
+  end
+
   def new_draft!(actor:)
     with_lock do
       next_number = versions.maximum(:version_number).to_i + 1

@@ -37,7 +37,8 @@ module Admin
     def create
       @template = EmailTemplate.new(template_attributes)
       authorize @template
-      prepare_new_template
+      @template.prepare_for_creation!(actor: current_user, organization: current_organization,
+                                      global: current_user.role?('super_admin') && params[:global] == '1')
 
       if @template.save
         draft = @template.new_draft!(actor: current_user)
@@ -118,18 +119,6 @@ module Admin
     end
 
     private
-
-    def prepare_new_template
-      global = current_user.role?('super_admin') && params[:global] == '1'
-      @template.organization = global ? nil : current_organization
-      @template.created_by = current_user
-      @template.updated_by = current_user
-      @template.status = 'draft'
-      @template.enabled = false
-      @template.subject ||= 'New template'
-      @template.html_body ||= '<p>{{recipient_name}}</p>'
-      @template.text_body ||= '{{recipient_name}}'
-    end
 
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])
