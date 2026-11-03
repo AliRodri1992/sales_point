@@ -7,6 +7,7 @@ class EmailSettingAudit < ApplicationRecord
   validates :setting_type, inclusion: { in: %w[branding sender] }
   validates :changeset, presence: true
 
+  before_update { throw :abort }
   before_destroy { throw :abort }
 
   def self.record!(setting:, actor:, kind:, extra: {})
