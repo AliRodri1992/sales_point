@@ -8,11 +8,20 @@ email_catalog_permissions = %w[
 ]
 
 email_catalog_permissions.each do |code|
-  Permission.find_or_create_by!(code:) do |permission|
-    permission.name = code.tr('._', ' ').titleize.first(80)
-    permission.module_name = 'Communication'
-    permission.description = "Email administration: #{code}"
-    permission.status = :active
+  permission = Permission.find_or_initialize_by(code:)
+  permission.name ||= code.tr('._', ' ').titleize.first(80)
+  permission.module_name ||= 'Communication'
+  permission.description ||= "Email administration: #{code}"
+  permission.status = :active
+  permission.save!
+end
+
+# Guarantee full communication-module access for existing administrative roles.
+# Upsert membership in the role/permission join table, never duplicate it.
+SystemRole.available.active.system_roles
+          .where(code: SystemRole::ADMINISTRATIVE_CODES).find_each do |role|
+  Permission.where(code: email_catalog_permissions, status: 'active').find_each do |permission|
+    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
   end
 end
 
