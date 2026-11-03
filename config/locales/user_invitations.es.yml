@@ -1,0 +1,10 @@
+es:
+  user_invitations:
+    title: Activa tu cuenta
+    description: "Has sido invitado a formar parte de %{organization}. Crea tu contraseña para comenzar."
+    password: Contraseña
+    password_confirmation: Confirmar contraseña
+    activate: Activar cuenta
+    activated: Tu cuenta fue activada. Ya puedes iniciar sesión.
+    invalid_title: Invitación no disponible
+    invalid_description: El enlace venció, fue revocado o ya se utilizó. Solicita una nueva invitación.

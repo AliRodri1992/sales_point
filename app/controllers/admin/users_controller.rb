@@ -42,9 +42,7 @@ module Admin
       authorize @user
 
       if account_writer.save
-        EmailTemplate.ensure_invitation_template!
-        invitation = UserInvitation.issue!(user: @user, organization: current_organization)
-        UserInvitationMailer.invite(invitation.id, invitation.raw_token).deliver_later
+        Users::InvitationDispatcher.call(user: @user, organization: current_organization)
         notify_user(current_user, @user, 'created')
         redirect_to admin_users_path, flash: { swal_message: t('admin.users.created') }
       else
@@ -135,7 +133,7 @@ module Admin
       end
 
       @user.update!(status: :deleted, deleted_at: Time.current)
-      @user.user_invitations.pending.update_all(revoked_at: Time.current)
+      UserInvitation.revoke_for!(@user)
       notify_user(current_user, @user, 'destroyed')
       t('admin.users.destroyed')
     end

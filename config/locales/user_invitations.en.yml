@@ -1,0 +1,10 @@
+en:
+  user_invitations:
+    title: Activate your account
+    description: "You have been invited to join %{organization}. Create a password to continue."
+    password: Password
+    password_confirmation: Confirm password
+    activate: Activate account
+    activated: Your account has been activated. You can sign in now.
+    invalid_title: Invitation unavailable
+    invalid_description: This link has expired, been revoked or already used. Request another invitation.
