@@ -110,7 +110,7 @@ module Users
       from = @membership.account_status
       @membership.update!(account_status: @target, status_review_at: review_date)
       apply_global_status! unless shared_membership?
-      UserInvitation.revoke_for!(@user) if %w[blocked deleted].include?(@target)
+      UserInvitation.revoke_for!(@user, organization: @organization) if %w[blocked deleted].include?(@target)
       incident_manager.open! if @target == 'blocked'
       @status_event = UserStatusEvent.create!(
         user: @user, organization: @organization, actor: @actor,

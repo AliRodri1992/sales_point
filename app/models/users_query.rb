@@ -4,9 +4,10 @@
 # index (search box, type, status and role). Kept out of the controller so the
 # action respects the project's Metrics/Clean Architecture thresholds.
 class UsersQuery
-  def initialize(scope, params)
+  def initialize(scope, params, organization: nil)
     @scope = scope
     @params = params
+    @organization = organization
   end
 
   def call
@@ -31,7 +32,12 @@ class UsersQuery
   def by_status(scope)
     return scope unless User.statuses.key?(@params[:status])
 
-    scope.where(status: @params[:status])
+    return scope.where(status: @params[:status]) unless @organization
+
+    memberships = OrganizationMembership.active.where(
+      organization: @organization, account_status: @params[:status], deleted_at: nil
+    ).select(:user_id)
+    scope.where(id: memberships)
   end
 
   def by_role(scope)

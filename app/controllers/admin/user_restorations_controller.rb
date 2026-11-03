@@ -7,9 +7,10 @@ module Admin
     before_action :verify_restore_permission!
 
     def index
-      members = current_organization.organization_memberships.active.select(:user_id)
-      @deleted_users = User.with_deleted.where(id: members, status: 'deleted')
-                           .where.not(deleted_at: nil).order(deleted_at: :desc).limit(100)
+      members = current_organization.organization_memberships.active
+                                    .where(account_status: 'deleted').select(:user_id)
+      @deleted_users = User.with_deleted.where(id: members)
+                           .order(created_at: :desc).limit(100)
     end
 
     def create
@@ -23,8 +24,9 @@ module Admin
     private
 
     def restore_target
-      members = current_organization.organization_memberships.active.select(:user_id)
-      User.with_deleted.where(id: members, status: 'deleted').find(params[:user_id])
+      members = current_organization.organization_memberships.active
+                                    .where(account_status: 'deleted').select(:user_id)
+      User.with_deleted.where(id: members).find(params[:user_id])
     end
 
     def restore_user!(user)

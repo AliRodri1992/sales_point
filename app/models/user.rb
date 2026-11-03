@@ -63,7 +63,14 @@ class User < ApplicationRecord
             inclusion: { in: Theme.ids }
 
   def active_for_authentication?
-    super && active? && deleted_at.nil?
+    super && active? && deleted_at.nil? && organization_accessible?
+  end
+
+  def organization_accessible?
+    membership_scope = organization_memberships.where(deleted_at: nil)
+    return true unless membership_scope.exists?
+
+    membership_scope.accessible.exists?
   end
 
   def admin?

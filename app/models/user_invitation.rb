@@ -25,8 +25,10 @@ class UserInvitation < ApplicationRecord
     end
   end
 
-  def self.revoke_for!(user)
-    user.user_invitations.pending.find_each { |invitation| invitation.update!(revoked_at: Time.current) }
+  def self.revoke_for!(user, organization: nil)
+    invitations = user.user_invitations.pending
+    invitations = invitations.where(organization:) if organization
+    invitations.find_each { |invitation| invitation.update!(revoked_at: Time.current) }
   end
 
   def usable?

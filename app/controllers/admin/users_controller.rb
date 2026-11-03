@@ -79,7 +79,8 @@ module Admin
       return policy_scope(User).none unless current_organization
 
       active_members = current_organization.organization_memberships.active
-                                           .where(deleted_at: nil).select(:user_id)
+                                           .where(deleted_at: nil)
+                                           .where.not(account_status: 'deleted').select(:user_id)
       policy_scope(User).where(id: active_members)
     end
 
@@ -93,7 +94,8 @@ module Admin
     end
 
     def filtered_users
-      UsersQuery.new(scoped_users.includes(user_roles: %i[system_role branch]), params).call
+      UsersQuery.new(scoped_users.includes(user_roles: %i[system_role branch]), params,
+                     organization: current_organization).call
     end
 
     def apply_sorting(scope)
