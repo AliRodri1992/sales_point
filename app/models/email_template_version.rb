@@ -12,7 +12,7 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def allowed_variables_csv=(value)
-    self.allowed_variables = value.to_s.split(',').map(&:strip).reject(&:blank?).uniq
+    self.allowed_variables = value.to_s.split(',').map(&:strip).compact_blank.uniq
   end
   validates :version_number, numericality: { only_integer: true, greater_than: 0 },
                              uniqueness: { scope: :email_template_id }
