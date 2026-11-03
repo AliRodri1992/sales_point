@@ -16,7 +16,8 @@ module Admin
     def update
       authorize @user, :update?
       Users::StatusTransition.new(**transition_attributes).call!
-      destination = @user.deleted? ? admin_users_path : admin_user_path(@user)
+      membership = @user.organization_memberships.active.find_by(organization: current_organization)
+      destination = membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
       redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
     rescue ArgumentError => e
       redirect_to admin_user_path(@user), alert: e.message

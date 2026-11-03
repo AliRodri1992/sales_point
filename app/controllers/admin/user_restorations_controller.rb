@@ -17,7 +17,7 @@ module Admin
       user = restore_target
       restore_user!(user)
       redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
-    rescue ArgumentError => e
+    rescue ArgumentError, Users::OrganizationCapacity::CapacityExceeded => e
       redirect_to admin_user_restorations_path, alert: e.message
     end
 

@@ -42,6 +42,7 @@ module Users
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
 
       User.transaction { execute_transition! }
+      disconnect_existing_sessions
       notify_account_holder
     end
 
@@ -102,6 +103,12 @@ module Users
       raise ArgumentError, 'Cannot disable the last administrator' unless remaining.exists?
     end
 
+    def disconnect_existing_sessions
+      ActionCable.server.remote_connections.where(current_user: @user).disconnect
+    rescue StandardError => e
+      Rails.logger.warn("Unable to disconnect existing user sockets: #{e.class}")
+    end
+
     def notify_account_holder
       EmailTemplate.ensure_status_template!
       UserStatusMailer.changed(@status_event.id).deliver_later
@@ -116,7 +123,11 @@ module Users
     def persist_transition!
       from = @membership.account_status
       @membership.update!(account_status: @target, status_review_at: incident_manager.review_date(@target, @review_at))
-      apply_global_status! unless shared_membership?
+      if shared_membership?
+        @user.update!(session_revoked_at: Time.current)
+      else
+        apply_global_status!
+      end
       UserInvitation.revoke_for!(@user, organization: @organization) if %w[blocked deleted].include?(@target)
       incident_manager.open! if @target == 'blocked'
       @status_event = UserStatusEvent.create!(
