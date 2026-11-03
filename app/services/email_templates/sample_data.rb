@@ -12,6 +12,7 @@ module EmailTemplates
         platform_logo: 'https://example.org/delta.png',
         platform_name: 'Delta POS', logo_url: 'https://example.org/delta.png',
         activation_url: 'https://example.org/activation-demo',
+        recovery_url: 'https://example.org/recovery-demo',
         support_email: 'support@example.org',
         support_url: 'https://example.org/support', privacy_url: 'https://example.org/privacy',
         current_year: Time.current.year, expiration_hours: 72, status_label: 'Activo'
