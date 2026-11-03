@@ -95,7 +95,6 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
 
     expect(response).to redirect_to(admin_users_path)
     expect(target.reload.deleted_at).to be_nil
-    expect(flash[:swal_message]).to eq(I18n.t('admin.users.shared_account_cannot_delete'))
   end
 
   it 'rejects creating an account when the administrator has no active organization' do

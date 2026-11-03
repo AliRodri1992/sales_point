@@ -63,15 +63,7 @@ module Admin
 
     def destroy
       authorize @user
-
-      @swal_message = destroy_account
-
-      load_users
-
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to admin_users_path, flash: { swal_message: @swal_message } }
-      end
+      head :method_not_allowed
     end
 
     private
@@ -120,18 +112,6 @@ module Admin
 
     def account_writer
       Users::AdminAccountWriter.new(user: @user, organization: current_organization, attributes: user_params)
-    end
-
-    def destroy_account
-      return t('admin.users.cannot_delete_self') if @user == current_user
-      if @user.organization_memberships.active.where.not(organization_id: current_organization.id).exists?
-        return t('admin.users.shared_account_cannot_delete')
-      end
-
-      @user.update!(status: :deleted, deleted_at: Time.current)
-      UserInvitation.revoke_for!(@user)
-      notify_user(current_user, @user, 'destroyed')
-      t('admin.users.destroyed')
     end
 
     def load_form_options

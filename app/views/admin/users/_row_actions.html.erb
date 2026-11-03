@@ -11,13 +11,10 @@
       <%= delta_icon('pencil-square', class: 'size-5') %>
     <% end %>
     <% unless current_user == user %>
-      <%= button_to admin_user_path(user), method: :delete, title: t('admin.users.actions.delete'),
-                    aria: { label: t('admin.users.actions.delete') },
-                    form: { data: { controller: 'swal-confirm', turbo_frame: 'users_list',
-                                    turbo_confirm: t('admin.users.confirm_delete', name: user.display_name),
-                                    confirm_record: user.display_name,
-                                    swal_cancel_text: t('admin.users.confirm.cancel') } },
-                    class: 'inline-flex size-10 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-700 transition hover:bg-rose-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600' do %>
+      <%= link_to edit_admin_user_status_path(user, transition: 'deleted'),
+                  title: t('admin.users.actions.delete'),
+                  aria: { label: t('admin.users.actions.delete') },
+                  class: 'inline-flex size-10 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-700 transition hover:bg-rose-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600' do %>
         <%= delta_icon('trash', class: 'size-5') %>
       <% end %>
     <% end %>

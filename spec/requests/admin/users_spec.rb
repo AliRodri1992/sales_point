@@ -134,25 +134,22 @@ RSpec.describe 'Admin::Users', type: :request do
     end
   end
 
-  describe 'DELETE /admin/users/:id' do
-    it 'soft-deletes a user and displays the success Swal message' do
+  describe 'Administrative account removal' do
+    it 'requires a reason and records a soft deletion' do
       target = add_member(create(:user, email: 'deleted@example.com'))
+      patch admin_user_status_path(target), params: { transition: 'deleted', reason: 'Employee departure' }
 
-      delete admin_user_path(target)
-
-      expect(response).to redirect_to(admin_users_path)
-      follow_redirect!
-      expect(response.body).to include(I18n.t('admin.users.destroyed', locale: :es))
-      expect(User.with_deleted.find_by(email: 'deleted@example.com').deleted_at).to be_present
+      expect(response).to redirect_to(admin_user_path(target))
+      expect(User.with_deleted.find(target.id).deleted_at).to be_present
+      event = UserStatusEvent.find_by!(user: target, to_status: 'deleted')
+      expect(event.reason).to eq('Employee departure')
     end
 
-    it 'prevents an admin from deleting their own account' do
-      delete admin_user_path(admin_user)
-
-      expect(response).to redirect_to(admin_users_path)
-      follow_redirect!
-      expect(response.body).to include(I18n.t('admin.users.cannot_delete_self', locale: :es))
-      expect(admin_user.reload.deleted_at).to be_nil
+    it 'rejects legacy DELETE requests without a reason' do
+      target = add_member(create(:user, email: 'legacy-delete@example.com'))
+      delete admin_user_path(target)
+      expect(response).to have_http_status(:method_not_allowed)
+      expect(target.reload.deleted_at).to be_nil
     end
   end
 

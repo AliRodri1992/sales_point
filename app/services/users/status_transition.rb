@@ -3,10 +3,10 @@
 module Users
   class StatusTransition
     ALLOWED = {
-      'active' => %w[suspended blocked],
-      'pending' => %w[blocked],
-      'suspended' => %w[active blocked],
-      'blocked' => %w[active suspended pending]
+      'active' => %w[suspended blocked deleted],
+      'pending' => %w[blocked deleted],
+      'suspended' => %w[active blocked deleted],
+      'blocked' => %w[active suspended pending deleted]
     }.freeze
 
     def self.allowed_targets(user)
@@ -14,7 +14,7 @@ module Users
       return targets unless user.blocked?
 
       previous = UserStatusEvent.where(user:).where(to_status: 'blocked').order(id: :desc).pick(:from_status)
-      targets & [previous]
+      targets & [previous, 'deleted']
     end
 
     def initialize(user:, actor:, organization:, target:, reason:)
@@ -44,13 +44,18 @@ module Users
       raise Pundit::NotAuthorizedError if @user == @actor
       raise Pundit::NotAuthorizedError unless @user.organization_memberships.active.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError if @user.admin? && !@actor.role?('super_admin')
+      if @target == 'deleted' && @user.organization_memberships.active.where.not(organization: @organization).exists?
+        raise Pundit::NotAuthorizedError
+      end
     end
 
     def persist_transition!
       previous = @user.status
       attributes = { status: @target }
       attributes[:session_revoked_at] = Time.current unless @target == 'active'
+      attributes[:deleted_at] = Time.current if @target == 'deleted'
       @user.update!(attributes)
+      UserInvitation.revoke_for!(@user) if @target == 'deleted'
       UserStatusEvent.create!(user: @user, organization: @organization, actor: @actor,
                               from_status: previous, to_status: @target, reason: @reason)
     end
