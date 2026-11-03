@@ -12,6 +12,7 @@ class CreateUserInvitationsAndEmailTemplates < ActiveRecord::Migration[8.1]
       t.datetime :expires_at, null: false
       t.datetime :accepted_at
       t.datetime :revoked_at
+      t.datetime :deleted_at
       t.timestamps
     end
     add_index :user_invitations, :token_digest, unique: true
@@ -24,6 +25,7 @@ class CreateUserInvitationsAndEmailTemplates < ActiveRecord::Migration[8.1]
       t.text :text_body, null: false
       t.boolean :enabled, null: false, default: true
       t.integer :version, null: false, default: 1
+      t.datetime :deleted_at
       t.timestamps
     end
     add_index :email_templates, [:key, :locale], unique: true

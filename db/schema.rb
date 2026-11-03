@@ -1915,6 +1915,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
 
   create_table "email_templates", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.boolean "enabled", default: true, null: false
     t.text "html_body", null: false
     t.string "key", null: false
@@ -1929,6 +1930,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
   create_table "user_invitations", force: :cascade do |t|
     t.datetime "accepted_at"
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.datetime "expires_at", null: false
     t.bigint "organization_id", null: false
     t.datetime "revoked_at"
@@ -1943,6 +1945,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
   create_table "user_status_events", force: :cascade do |t|
     t.bigint "actor_id", null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.string "from_status", null: false
     t.bigint "organization_id", null: false
     t.text "reason", null: false
