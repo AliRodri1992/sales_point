@@ -10,6 +10,15 @@ module Users
       @resolution = resolution
     end
 
+    def review_date(target, value)
+      return unless target == 'suspended' && value.present?
+
+      time = Time.zone.parse(value.to_s)
+      raise ArgumentError, 'Review date must be in the future' unless time&.future?
+
+      time
+    end
+
     def open!
       UserSecurityIncident.create!(
         user: @user, organization: @organization,

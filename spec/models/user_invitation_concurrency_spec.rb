@@ -22,8 +22,8 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
             password: 'securepassword123',
             password_confirmation: 'securepassword123'
           )
-        rescue StandardError => exception
-          results << exception
+        rescue StandardError => e
+          results << e
         end
       end
     end
@@ -45,8 +45,8 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
         ActiveRecord::Base.connection_pool.with_connection do
           start.pop
           results << UserInvitation.issue!(user: User.find(user.id), organization:)
-        rescue StandardError => exception
-          results << exception
+        rescue StandardError => e
+          results << e
         end
       end
     end

@@ -115,7 +115,7 @@ module Users
 
     def persist_transition!
       from = @membership.account_status
-      @membership.update!(account_status: @target, status_review_at: review_date)
+      @membership.update!(account_status: @target, status_review_at: incident_manager.review_date(@target, @review_at))
       apply_global_status! unless shared_membership?
       UserInvitation.revoke_for!(@user, organization: @organization) if %w[blocked deleted].include?(@target)
       incident_manager.open! if @target == 'blocked'
@@ -134,15 +134,6 @@ module Users
       changes[:deleted_at] = Time.current if @target == 'deleted'
       changes[:session_revoked_at] = Time.current if %w[suspended blocked deleted].include?(@target)
       @user.update!(changes)
-    end
-
-    def review_date
-      return unless @target == 'suspended' && @review_at.present?
-
-      time = Time.zone.parse(@review_at.to_s)
-      raise ArgumentError, 'Review date must be in the future' unless time&.future?
-
-      time
     end
 
     def incident_manager

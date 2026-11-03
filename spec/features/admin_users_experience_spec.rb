@@ -84,5 +84,4 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_no_css('input[type="radio"]', visible: :all)
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end
-
 end
