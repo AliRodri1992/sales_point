@@ -66,15 +66,11 @@ module Users
     def validate_access!
       raise Pundit::NotAuthorizedError if @user == @actor
       raise Pundit::NotAuthorizedError unless @organization&.active?
-      raise Pundit::NotAuthorizedError unless member?(@user)
+      raise Pundit::NotAuthorizedError unless @user.organization_memberships.active.exists?(organization: @organization)
       raise Pundit::NotAuthorizedError unless @actor.organization_memberships.accessible.exists?(
         organization: @organization
       )
       raise Pundit::NotAuthorizedError unless actor_authorized?
-    end
-
-    def member?(user)
-      user.organization_memberships.active.exists?(organization: @organization)
     end
 
     def actor_authorized?
