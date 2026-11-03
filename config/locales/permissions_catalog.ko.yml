@@ -2,6 +2,39 @@ ko:
   admin:
     system_roles:
       permissions:
+        email_templates_access:
+          name: "템플릿 조회"
+          description: "템플릿 조회"
+        email_templates_create:
+          name: "템플릿 생성"
+          description: "템플릿 생성"
+        email_templates_update:
+          name: "초안 편집"
+          description: "초안 편집"
+        email_templates_publish:
+          name: "템플릿 게시"
+          description: "템플릿 게시"
+        email_templates_archive:
+          name: "템플릿 보관"
+          description: "템플릿 보관"
+        email_templates_preview:
+          name: "이메일 미리보기"
+          description: "이메일 미리보기"
+        email_templates_send_test:
+          name: "테스트 이메일 발송"
+          description: "테스트 이메일 발송"
+        email_templates_versions:
+          name: "버전 조회"
+          description: "버전 조회"
+        email_branding_manage:
+          name: "이메일 브랜드 관리"
+          description: "이메일 브랜드 관리"
+        email_settings_manage:
+          name: "발신자 관리"
+          description: "발신자 관리"
+        email_template_audits_view:
+          name: "이메일 감사 조회"
+          description: "이메일 감사 조회"
         suppliers_view:
           name: "공급업체 조회"
           description: "공급업체 목록을 조회할 수 있습니다."

@@ -816,3 +816,6 @@ MembershipFeature.find_or_create_by!(key: 'users_limit') do |feature|
   feature.value_type = :integer
   feature.description = 'Maximum reserved user seats for a contracted plan'
 end
+
+# Communication module permissions and immutable initial template versions.
+load Rails.root.join('db/seeds/email_catalog.rb')

@@ -2,6 +2,39 @@ es:
   admin:
     system_roles:
       permissions:
+        email_templates_access:
+          name: "Consultar plantillas"
+          description: "Consultar plantillas"
+        email_templates_create:
+          name: "Crear plantillas"
+          description: "Crear plantillas"
+        email_templates_update:
+          name: "Editar borradores"
+          description: "Editar borradores"
+        email_templates_publish:
+          name: "Publicar plantillas"
+          description: "Publicar plantillas"
+        email_templates_archive:
+          name: "Archivar plantillas"
+          description: "Archivar plantillas"
+        email_templates_preview:
+          name: "Previsualizar correos"
+          description: "Previsualizar correos"
+        email_templates_send_test:
+          name: "Enviar correos de prueba"
+          description: "Enviar correos de prueba"
+        email_templates_versions:
+          name: "Consultar versiones"
+          description: "Consultar versiones"
+        email_branding_manage:
+          name: "Administrar identidad del correo"
+          description: "Administrar identidad del correo"
+        email_settings_manage:
+          name: "Administrar remitentes"
+          description: "Administrar remitentes"
+        email_template_audits_view:
+          name: "Consultar auditoría de correos"
+          description: "Consultar auditoría de correos"
         suppliers_view:
           name: "Consultar proveedores"
           description: "Permite consultar el catálogo de proveedores."

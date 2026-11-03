@@ -2,6 +2,39 @@ en:
   admin:
     system_roles:
       permissions:
+        email_templates_access:
+          name: "View templates"
+          description: "View templates"
+        email_templates_create:
+          name: "Create templates"
+          description: "Create templates"
+        email_templates_update:
+          name: "Edit drafts"
+          description: "Edit drafts"
+        email_templates_publish:
+          name: "Publish templates"
+          description: "Publish templates"
+        email_templates_archive:
+          name: "Archive templates"
+          description: "Archive templates"
+        email_templates_preview:
+          name: "Preview emails"
+          description: "Preview emails"
+        email_templates_send_test:
+          name: "Send test emails"
+          description: "Send test emails"
+        email_templates_versions:
+          name: "View versions"
+          description: "View versions"
+        email_branding_manage:
+          name: "Manage email branding"
+          description: "Manage email branding"
+        email_settings_manage:
+          name: "Manage sender settings"
+          description: "Manage sender settings"
+        email_template_audits_view:
+          name: "View email audit"
+          description: "View email audit"
         suppliers_view:
           name: "View suppliers"
           description: "View the supplier directory."

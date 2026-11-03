@@ -21,6 +21,7 @@ module SidebarHelper
     roles_permissions: 'shield-check',
     branches: 'building-storefront',
     users: 'user-group',
+    email_templates: 'envelope',
     taxes: 'calculator',
     suppliers: 'truck'
   }.freeze

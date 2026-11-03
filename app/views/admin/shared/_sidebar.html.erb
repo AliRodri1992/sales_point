@@ -221,7 +221,7 @@
         </span>
 
         <% if current_user.admin? || policy(SystemRole).index? || policy(Branch).index? || policy(User).index? %>
-        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users') %>"<%= ' open' if sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users') %>>
+        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users', 'email_templates') %>"<%= ' open' if sidebar_section_open?('general_settings', 'system_roles', 'branches', 'users') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             aria-label="<%= t('admin.shared.sidebar.settings') %>"
@@ -266,6 +266,16 @@
               <%= sidebar_navigation_icon(:branches, class_name: 'size-4') %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.branches') %></span>
             </a>
+            <% end %>
+
+            <% if policy(EmailTemplate).index? %>
+              <%= link_to admin_email_templates_path,
+                          data: { tooltip: t('admin.email_templates.title') },
+                          aria: { label: t('admin.email_templates.title') },
+                          class: sidebar_link_classes('email_templates', variant: :submenu) do %>
+                <%= sidebar_navigation_icon(:email_templates, class_name: 'size-4') %>
+                <span class="sidebar-label"><%= t('admin.email_templates.title') %></span>
+              <% end %>
             <% end %>
 
             <% if policy(User).index? %>
