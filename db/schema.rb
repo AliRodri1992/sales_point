@@ -315,6 +315,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
   end
 
+  create_table "email_templates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.boolean "enabled", default: true, null: false
+    t.text "html_body", null: false
+    t.string "key", null: false
+    t.string "locale", default: "es", null: false
+    t.string "subject", null: false
+    t.text "text_body", null: false
+    t.datetime "updated_at", null: false
+    t.integer "version", default: 1, null: false
+    t.index ["key", "locale"], name: "index_email_templates_on_key_and_locale", unique: true
+    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
+  end
+
   create_table "employees", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -717,7 +732,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["phoneable_type", "phoneable_id", "kind"], name: "idx_phones_one_primary_per_kind", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["phoneable_type", "phoneable_id", "number", "extension"], name: "idx_phones_unique_active_number", unique: true, where: "(deleted_at IS NULL)", nulls_not_distinct: true
     t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
-    t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying, 'Branch'::character varying, 'Employee'::character varying]::text[])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
+    t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying::text, 'Branch'::character varying::text, 'Employee'::character varying::text])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
     t.check_constraint "country_code::text ~ '^[A-Z]{2}$'::text", name: "chk_phones_country"
     t.check_constraint "kind::text = ANY (ARRAY['mobile'::character varying::text, 'landline'::character varying::text, 'other'::character varying::text])", name: "chk_phones_kind"
     t.check_constraint "number::text ~ '^\\+[1-9][0-9]{1,14}$'::text", name: "chk_phones_e164"
@@ -1476,8 +1491,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["organization_id", "supplier_id", "primary"], name: "idx_supplier_bank_accounts_org_supplier"
     t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
     t.index ["organization_id"], name: "index_supplier_bank_accounts_on_organization_id"
-    t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
     t.index ["sat_bank_code"], name: "index_supplier_bank_accounts_on_sat_bank_code"
+    t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
     t.index ["supplier_id"], name: "index_supplier_bank_accounts_on_supplier_id"
   end
 
@@ -1899,6 +1914,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["locale"], name: "index_translates_on_locale"
   end
 
+  create_table "user_invitations", force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.datetime "expires_at", null: false
+    t.bigint "organization_id", null: false
+    t.datetime "revoked_at"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["expires_at"], name: "idx_user_invitations_pending_expiration", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
+    t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
+    t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
+    t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
+    t.index ["user_id"], name: "index_user_invitations_on_user_id"
+  end
+
   create_table "user_roles", force: :cascade do |t|
     t.bigint "branch_id"
     t.datetime "created_at", null: false
@@ -1912,38 +1944,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["user_id", "system_role_id", "branch_id"], name: "idx_user_roles_branch_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NOT NULL))"
     t.index ["user_id", "system_role_id"], name: "idx_user_roles_global_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL))"
     t.index ["user_id"], name: "index_user_roles_on_user_id"
-  end
-
-  create_table "email_templates", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "deleted_at"
-    t.boolean "enabled", default: true, null: false
-    t.text "html_body", null: false
-    t.string "key", null: false
-    t.string "locale", default: "es", null: false
-    t.string "subject", null: false
-    t.text "text_body", null: false
-    t.datetime "updated_at", null: false
-    t.integer "version", default: 1, null: false
-    t.index ["key", "locale"], name: "index_email_templates_on_key_and_locale", unique: true
-    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
-  end
-
-  create_table "user_invitations", force: :cascade do |t|
-    t.datetime "accepted_at"
-    t.datetime "created_at", null: false
-    t.datetime "deleted_at"
-    t.datetime "expires_at", null: false
-    t.bigint "organization_id", null: false
-    t.datetime "revoked_at"
-    t.string "token_digest", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
-    t.index ["expires_at"], name: "idx_user_invitations_pending_expiration", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
-    t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
-    t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
-    t.index ["user_id"], name: "index_user_invitations_on_user_id"
   end
 
   create_table "user_status_events", force: :cascade do |t|
@@ -2005,7 +2005,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'blocked'::character varying::text, 'suspended'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
 
@@ -2176,11 +2176,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_204500) do
   add_foreign_key "table_page_preferences", "users"
   add_foreign_key "terminals", "branches"
   add_foreign_key "translates", "languages"
+  add_foreign_key "user_invitations", "organizations"
+  add_foreign_key "user_invitations", "users"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
-  add_foreign_key "user_invitations", "organizations"
-  add_foreign_key "user_invitations", "users"
   add_foreign_key "user_status_events", "organizations"
   add_foreign_key "user_status_events", "users"
   add_foreign_key "user_status_events", "users", column: "actor_id"
