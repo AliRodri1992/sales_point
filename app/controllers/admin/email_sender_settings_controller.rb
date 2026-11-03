@@ -8,6 +8,8 @@ module Admin
     def edit
       verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
+      @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
+                                .includes(:actor).order(created_at: :desc).limit(20)
     end
 
     def update
