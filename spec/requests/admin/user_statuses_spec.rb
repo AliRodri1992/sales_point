@@ -46,6 +46,7 @@ RSpec.describe 'Admin user statuses', type: :request do
 
     expect(response).to redirect_to(admin_user_path(target))
     expect(target.reload).to be_active
+    expect(target.session_revoked_at).to be_present
     expect(target.organization_memberships.find_by!(organization:).account_status).to eq('suspended')
     expect(second_membership.reload.account_status).to eq('active')
   end

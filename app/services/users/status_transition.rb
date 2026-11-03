@@ -42,7 +42,7 @@ module Users
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
 
       User.transaction { execute_transition! }
-      disconnect_existing_sessions
+      SessionRevoker.call(@user)
       notify_account_holder
     end
 
@@ -101,12 +101,6 @@ module Users
                       .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
                       .distinct
       raise ArgumentError, 'Cannot disable the last administrator' unless remaining.exists?
-    end
-
-    def disconnect_existing_sessions
-      ActionCable.server.remote_connections.where(current_user: @user).disconnect
-    rescue StandardError => e
-      Rails.logger.warn("Unable to disconnect existing user sockets: #{e.class}")
     end
 
     def notify_account_holder
