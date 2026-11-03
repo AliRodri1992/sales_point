@@ -18,7 +18,8 @@ module Admin
     private
 
     def delivery_failed
-      redirect_to admin_user_path(params[:user_id]), alert: t('admin.users.status_management.invitation_delivery_failed')
+      message = t('admin.users.status_management.invitation_delivery_failed')
+      redirect_to admin_user_path(params[:user_id]), alert: message
     end
 
     def invitation_user
