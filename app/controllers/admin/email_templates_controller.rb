@@ -5,7 +5,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :load_template, except: %i[index new create]
-    before_action :load_version, only: %i[update_draft publish restore]
+    before_action :load_version, only: %i[update_draft publish restore preview_draft]
 
     def index
       authorize EmailTemplate
@@ -112,6 +112,21 @@ module Admin
         source: @version, values: EmailTemplates::SampleData.call(@template)
       ).render
       render :preview
+    end
+
+    # Render the unsaved editor content without changing the stored draft.
+    def preview_draft
+      authorize @template, :update?
+      raise Pundit::NotAuthorizedError unless @version.status == 'draft'
+
+      source = @version.dup
+      source.assign_attributes(draft_attributes)
+      subject, html, plain = EmailTemplates::Renderer.new(
+        source:, values: EmailTemplates::SampleData.call(@template)
+      ).render
+      render json: { subject:, html:, plain: }
+    rescue ArgumentError => e
+      render json: { error: e.message }, status: :unprocessable_content
     end
 
     def send_test
