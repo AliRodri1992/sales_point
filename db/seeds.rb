@@ -77,14 +77,54 @@ end
 
 unless defined?(DEFAULT_PERMISSIONS)
   DEFAULT_PERMISSIONS = [
-    { code: 'users.invite', name: 'Invite users', module_name: 'Usuarios', description: 'Manage user invite actions.' },
-    { code: 'users.resend_invitation', name: 'Resend invitation users', module_name: 'Usuarios', description: 'Manage user resend_invitation actions.' },
-    { code: 'users.suspend', name: 'Suspend users', module_name: 'Usuarios', description: 'Manage user suspend actions.' },
-    { code: 'users.reactivate', name: 'Reactivate users', module_name: 'Usuarios', description: 'Manage user reactivate actions.' },
-    { code: 'users.block', name: 'Block users', module_name: 'Usuarios', description: 'Manage user block actions.' },
-    { code: 'users.unblock', name: 'Unblock users', module_name: 'Usuarios', description: 'Manage user unblock actions.' },
-    { code: 'users.destroy', name: 'Destroy users', module_name: 'Usuarios', description: 'Manage user destroy actions.' },
-    { code: 'users.restore', name: 'Restore users', module_name: 'Usuarios', description: 'Manage user restore actions.' },
+    {
+      code: 'users.invite',
+      name: 'Invite users',
+      module_name: 'Usuarios',
+      description: 'Manage user invite actions.'
+    },
+    {
+      code: 'users.resend_invitation',
+      name: 'Resend invitation users',
+      module_name: 'Usuarios',
+      description: 'Manage user resend_invitation actions.'
+    },
+    {
+      code: 'users.suspend',
+      name: 'Suspend users',
+      module_name: 'Usuarios',
+      description: 'Manage user suspend actions.'
+    },
+    {
+      code: 'users.reactivate',
+      name: 'Reactivate users',
+      module_name: 'Usuarios',
+      description: 'Manage user reactivate actions.'
+    },
+    {
+      code: 'users.block',
+      name: 'Block users',
+      module_name: 'Usuarios',
+      description: 'Manage user block actions.'
+    },
+    {
+      code: 'users.unblock',
+      name: 'Unblock users',
+      module_name: 'Usuarios',
+      description: 'Manage user unblock actions.'
+    },
+    {
+      code: 'users.destroy',
+      name: 'Destroy users',
+      module_name: 'Usuarios',
+      description: 'Manage user destroy actions.'
+    },
+    {
+      code: 'users.restore',
+      name: 'Restore users',
+      module_name: 'Usuarios',
+      description: 'Manage user restore actions.'
+    },
     {
       code: 'dashboard.access',
       name: 'Acceso al dashboard',

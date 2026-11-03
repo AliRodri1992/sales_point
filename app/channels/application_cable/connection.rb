@@ -39,7 +39,7 @@ module ApplicationCable
       user = User.find_by(id: payload['id'])
       return reject_unauthorized_connection unless user&.active_for_authentication?
       return reject_unauthorized_connection if user.session_revoked_at &&
-                                                @issued_at.to_f <= user.session_revoked_at.to_f
+                                               @issued_at.to_f <= user.session_revoked_at.to_f
 
       user
     end

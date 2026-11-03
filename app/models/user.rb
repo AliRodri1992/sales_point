@@ -99,7 +99,8 @@ class User < ApplicationRecord
   end
 
   def notifications
-    notification_relation_for(Message)
+    notification_relation_for(User)
+      .or(notification_relation_for(Message))
       .or(notification_relation_for(Language))
       .or(notification_relation_for(Category))
       .or(notification_relation_for(Product))
