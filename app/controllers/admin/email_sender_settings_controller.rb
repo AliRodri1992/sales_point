@@ -13,10 +13,13 @@ module Admin
     def update
       verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
-      if @sender.update(sender_params)
-        redirect_to edit_admin_email_sender_settings_path, notice: t('admin.email_templates.saved')
-      else
-        render :edit, status: :unprocessable_content
+      EmailSenderSetting.transaction do
+        if @sender.update(sender_params)
+          EmailSettingAudit.record!(setting: @sender, actor: current_user, kind: 'sender')
+          redirect_to edit_admin_email_sender_settings_path, notice: t('admin.email_templates.saved')
+        else
+          render :edit, status: :unprocessable_content
+        end
       end
     end
 
