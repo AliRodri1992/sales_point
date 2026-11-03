@@ -14,6 +14,10 @@ ko:
           updated: "사용자 '%{name}'을(를) %{user}님이 수정했습니다"
     users:
       status_management:
+        incidents: "보안 사고"
+        resolved: "해결됨"
+        open: "진행 중"
+        seats_used: "사용 중인 계정: %{occupied} / %{limit}"
         review_at: "검토일 (선택)"
         resolution: "사건 해결 내용 (필수)"
         invitation_history: "최근 초대"

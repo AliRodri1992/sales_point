@@ -809,3 +809,10 @@ SeedConsole.finish_run!
 load Rails.root.join('db/seeds/email_templates.rb') if defined?(EmailTemplate) && EmailTemplate.table_exists?
 
 load Rails.root.join('db/seeds/user_status_templates.rb') if defined?(EmailTemplate) && EmailTemplate.table_exists?
+
+# Expose the user-seat feature without changing any organization's subscription.
+MembershipFeature.find_or_create_by!(key: 'users_limit') do |feature|
+  feature.name = 'User seats'
+  feature.value_type = :integer
+  feature.description = 'Maximum reserved user seats for a contracted plan'
+end

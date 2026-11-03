@@ -14,6 +14,10 @@ es:
           updated: "Se actualizó el usuario '%{name}' por %{user}"
     users:
       status_management:
+        incidents: "Incidentes de seguridad"
+        resolved: "Resuelto"
+        open: "Abierto"
+        seats_used: "Cupos ocupados: %{occupied} de %{limit}"
         review_at: "Fecha de revisión (opcional)"
         resolution: "Resolución del incidente (obligatoria)"
         invitation_history: "Última invitación"

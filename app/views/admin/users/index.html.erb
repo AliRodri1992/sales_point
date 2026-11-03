@@ -22,6 +22,14 @@
     </div>
   </header>
 
+  <% capacity = Users::OrganizationCapacity.new(organization: current_organization) if current_organization %>
+  <% if capacity %>
+    <p class="text-sm text-slate-600" aria-live="polite">
+      <%= t('admin.users.status_management.seats_used', occupied: capacity.occupied,
+            limit: capacity.limit || '∞') %>
+    </p>
+  <% end %>
+
   <section class="grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="<%= t('admin.users.ui.summary') %>">
     <% [
       ['total', counts.values.sum, 'users', 'bg-slate-100 text-slate-700'],

@@ -22,13 +22,17 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
             password: 'securepassword123',
             password_confirmation: 'securepassword123'
           )
+        rescue StandardError => exception
+          results << exception
         end
       end
     end
     2.times { start << true }
     workers.each(&:join)
 
-    expect(2.times.map { results.pop }.count(true)).to eq(1)
+    outcomes = 2.times.map { results.pop }
+    expect(outcomes.grep(StandardError)).to be_empty
+    expect(outcomes.count(true)).to eq(1)
     expect(invitation.reload.accepted_at).to be_present
     expect(user.reload).to be_active
   end
@@ -41,6 +45,8 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
         ActiveRecord::Base.connection_pool.with_connection do
           start.pop
           results << UserInvitation.issue!(user: User.find(user.id), organization:)
+        rescue StandardError => exception
+          results << exception
         end
       end
     end
@@ -48,6 +54,7 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
     workers.each(&:join)
 
     invitations = 2.times.map { results.pop }
+    expect(invitations.grep(StandardError)).to be_empty
     expect(invitations.count(&:usable?)).to eq(1)
   end
 end
