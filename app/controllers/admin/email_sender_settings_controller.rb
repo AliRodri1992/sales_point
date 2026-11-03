@@ -23,7 +23,8 @@ module Admin
     private
 
     def verify_permission!
-      raise Pundit::NotAuthorizedError unless current_user.admin? && current_user.permission?('email_settings.manage')
+      allowed = current_organization && current_user.admin? && current_user.permission?('email_settings.manage')
+      raise Pundit::NotAuthorizedError unless allowed
     end
 
     def sender_params

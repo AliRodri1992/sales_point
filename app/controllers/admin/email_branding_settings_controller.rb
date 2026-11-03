@@ -28,7 +28,9 @@ module Admin
 
     def verify_permission!
       permission = selected_organization ? 'email_branding.manage' : 'email_settings.manage'
-      raise Pundit::NotAuthorizedError unless current_user.admin? && current_user.permission?(permission)
+      allowed = (selected_organization || current_user.role?('super_admin')) &&
+                current_user.admin? && current_user.permission?(permission)
+      raise Pundit::NotAuthorizedError unless allowed
     end
 
     def branding_params

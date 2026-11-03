@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-EMAIL_CATALOG_PERMISSIONS = %w[
+email_catalog_permissions = %w[
   email_templates.access email_templates.create email_templates.update
   email_templates.publish email_templates.archive email_templates.preview
   email_templates.send_test email_templates.versions email_branding.manage
   email_settings.manage email_template_audits.view
 ].freeze
 
-EMAIL_CATALOG_PERMISSIONS.each do |code|
+email_catalog_permissions.each do |code|
   Permission.find_or_create_by!(code:) do |permission|
     permission.name = code.tr('._', ' ').titleize.first(80)
     permission.module_name = 'Communication'
@@ -16,7 +16,7 @@ EMAIL_CATALOG_PERMISSIONS.each do |code|
   end
 end
 
-EMAIL_CATALOG_KEYS = {
+email_catalog_keys = {
   'user_invitation' => 'Invitation to Delta POS',
   'user_invitation_resend' => 'Your Delta POS invitation was resent',
   'user_welcome' => 'Welcome to Delta POS',
@@ -28,10 +28,10 @@ EMAIL_CATALOG_KEYS = {
   'email_changed' => 'Email address updated'
 }.freeze
 
-EMAIL_CATALOG_LOCALES = %w[es en ko].freeze
+email_catalog_locales = %w[es en ko]
 
-EMAIL_CATALOG_KEYS.each do |key, default_subject|
-  EMAIL_CATALOG_LOCALES.each do |locale|
+email_catalog_keys.each do |key, default_subject|
+  email_catalog_locales.each do |locale|
     template = EmailTemplate.find_or_create_by!(key:, locale:, organization_id: nil) do |record|
       record.name = default_subject
       record.category = 'security'

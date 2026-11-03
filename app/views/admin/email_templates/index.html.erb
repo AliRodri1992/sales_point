@@ -6,8 +6,14 @@
       <p class="mt-2 text-sm text-slate-500"><%= t('admin.email_templates.intro') %></p>
     </div>
     <div class="flex flex-wrap gap-2">
-      <%= link_to t('admin.email_templates.branding'), edit_admin_email_branding_settings_path,
-                  class: 'rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold' %>
+      <% if current_user.permission?('email_branding.manage') %>
+        <%= link_to t('admin.email_templates.branding'), edit_admin_email_branding_settings_path,
+                    class: 'rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold' %>
+      <% end %>
+      <% if current_user.permission?('email_settings.manage') %>
+        <%= link_to t('admin.email_templates.sender'), edit_admin_email_sender_settings_path,
+                    class: 'rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold' %>
+      <% end %>
       <% if policy(EmailTemplate).create? %>
         <%= link_to t('admin.email_templates.new'), new_admin_email_template_path,
                     class: 'rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white' %>
