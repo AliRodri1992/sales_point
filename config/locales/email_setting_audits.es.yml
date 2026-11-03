@@ -1,0 +1,4 @@
+es:
+  email_setting_audits:
+    heading: "Historial de cambios"
+    empty: "Todavía no hay cambios registrados."
