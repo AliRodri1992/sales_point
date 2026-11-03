@@ -1,0 +1,26 @@
+<div class="mx-auto max-w-2xl space-y-6">
+  <header>
+    <p class="text-xs font-bold uppercase tracking-wider text-emerald-700"><%= t('admin.users.status_management.eyebrow') %></p>
+    <h1 class="mt-2 font-jakarta text-2xl font-bold text-slate-900"><%= t("admin.users.status_management.#{@target}") %></h1>
+    <p class="mt-2 text-sm text-slate-600"><%= @user.display_name %> · <%= @user.email %></p>
+  </header>
+  <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div class="mb-5 flex flex-wrap items-center gap-3 text-sm">
+      <%= user_status_badge(@user.status) %><span aria-hidden="true">→</span>
+      <span class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-semibold"><%= t("admin.users.statuses.#{@target}") %></span>
+    </div>
+    <%= form_with url: admin_user_status_path(@user), method: :patch, class: 'space-y-5' do |form| %>
+      <%= hidden_field_tag :transition, @target %>
+      <div>
+        <%= form.label :reason, t('admin.users.status_management.reason'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= text_area_tag :reason, nil, required: true, maxlength: 1000, rows: 4,
+                          class: 'w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-emerald-600 focus:ring-emerald-100' %>
+      </div>
+      <p class="rounded-xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><%= t('admin.users.status_management.warning') %></p>
+      <div class="flex flex-wrap justify-end gap-3">
+        <%= link_to t('admin.users.form.buttons.back'), admin_user_path(@user), class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold' %>
+        <%= form.submit t('admin.users.status_management.confirm'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
+      </div>
+    <% end %>
+  </section>
+</div>

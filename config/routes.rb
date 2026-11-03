@@ -40,7 +40,9 @@ Rails.application.routes.draw do
       end
       member { patch :select }
     end
-    resources :users
+    resources :users do
+      resource :status, only: %i[edit update], controller: 'user_statuses'
+    end
     resources :clients
     resource :profile, only: %i[show update]
     get 'guide', to: 'guide#show', as: :guide

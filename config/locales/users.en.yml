@@ -13,6 +13,16 @@ en:
           destroyed: "User '%{name}' was deleted by %{user}"
           updated: "User '%{name}' was updated by %{user}"
     users:
+      status_management:
+        eyebrow: Manage account status
+        reason: Reason for change (required)
+        warning: This change is audited and may revoke active sessions.
+        confirm: Confirm change
+        changed: Account status updated.
+        active: Reactivate
+        suspended: Suspend
+        blocked: Block
+        pending: Return to pending
       created: "The user was registered and is now listed. Review their roles and permissions before they start using the system."
       updated: "The user details were saved. Review the account and assigned access to confirm the changes."
       destroyed: "User deleted successfully."

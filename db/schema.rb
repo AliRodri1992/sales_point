@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_193000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_02_194000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1940,6 +1940,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_193000) do
     t.index ["user_id"], name: "index_user_invitations_on_user_id"
   end
 
+  create_table "user_status_events", force: :cascade do |t|
+    t.bigint "actor_id", null: false
+    t.datetime "created_at", null: false
+    t.string "from_status", null: false
+    t.bigint "organization_id", null: false
+    t.text "reason", null: false
+    t.string "to_status", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["actor_id"], name: "index_user_status_events_on_actor_id"
+    t.index ["organization_id"], name: "index_user_status_events_on_organization_id"
+    t.index ["user_id", "created_at"], name: "index_user_status_events_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_user_status_events_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "current_session_token"
@@ -2159,6 +2174,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_193000) do
   add_foreign_key "user_roles", "users"
   add_foreign_key "user_invitations", "organizations"
   add_foreign_key "user_invitations", "users"
+  add_foreign_key "user_status_events", "organizations"
+  add_foreign_key "user_status_events", "users"
+  add_foreign_key "user_status_events", "users", column: "actor_id"
   add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
 end
