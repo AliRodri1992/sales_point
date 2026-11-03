@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 EmailTemplate.find_or_create_by!(key: 'user_invitation', locale: 'es') do |template|
+  template.name = 'User invitation'
   template.subject = 'Te invitaron a Delta POS · {{organization_name}}'
   template.html_body = <<~HTML
     <!doctype html>

@@ -4,6 +4,11 @@ module EmailTemplates
   class Renderer
     VARIABLE_PATTERN = /\{\{([a-z][a-z0-9_]*)\}\}/
     URL_VARIABLES = %w[activation_url support_url privacy_url logo_url organization_logo platform_logo].freeze
+    KNOWN_VARIABLES = %w[
+      recipient_name recipient_email invited_name organization_name organization_logo
+      platform_logo platform_name logo_url support_email support_url privacy_url
+      current_year activation_url expiration_hours status_label
+    ].freeze
 
     def initialize(source:, values:)
       @source = source
@@ -13,7 +18,7 @@ module EmailTemplates
     def render
       allowed = @source.respond_to?(:allowed_variables) ? @source.allowed_variables : []
       allowed = allowed.map(&:to_s)
-      validate_variables!(allowed) if allowed.any?
+      validate_variables!(allowed.presence || KNOWN_VARIABLES)
       [render_subject, render_html, render_plain]
     end
 
@@ -24,12 +29,12 @@ module EmailTemplates
     end
 
     def render_html
-      html = ActionController::Base.helpers.sanitize(
-        @source.html_body,
+      html = replace(@source.html_body, :html)
+      ActionController::Base.helpers.sanitize(
+        html,
         tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
         attributes: %w[lang charset name content width height role cellpadding cellspacing style href src alt align]
       )
-      replace(html, :html)
     end
 
     def render_plain

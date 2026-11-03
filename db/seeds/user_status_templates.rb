@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'es') do |template|
+  template.name = 'Account status notification'
   template.subject = 'Actualización de acceso · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>
@@ -36,6 +37,7 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'es') do |t
 end
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'en') do |template|
+  template.name = 'Account status notification'
   template.subject = 'Account access update · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>
@@ -71,6 +73,7 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'en') do |t
 end
 
 EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'ko') do |template|
+  template.name = 'Account status notification'
   template.subject = '계정 접근 상태 변경 · Delta POS'
   template.html_body = <<~HTML
     <!doctype html>

@@ -6,7 +6,7 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def show?
-    index? && same_tenant?
+    index? && visible_tenant?
   end
 
   def create?
@@ -26,7 +26,7 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def preview?
-    allowed?('email_templates.preview') && same_tenant?
+    allowed?('email_templates.preview') && visible_tenant?
   end
 
   def send_test?
@@ -34,7 +34,7 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def versions?
-    allowed?('email_templates.versions') && same_tenant?
+    allowed?('email_templates.versions') && visible_tenant?
   end
 
   class Scope < ApplicationPolicy::Scope
@@ -50,6 +50,12 @@ class EmailTemplatePolicy < ApplicationPolicy
 
   def allowed?(permission)
     user&.active? && user.admin? && user.permission?(permission)
+  end
+
+  def visible_tenant?
+    return true if record.organization_id.nil?
+
+    same_tenant?
   end
 
   def same_tenant?

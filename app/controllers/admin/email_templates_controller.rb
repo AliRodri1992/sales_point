@@ -10,7 +10,7 @@ module Admin
     def index
       authorize EmailTemplate
       scope = policy_scope(EmailTemplate).includes(:organization, :published_version)
-      scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{sanitize_sql_like(params[:q])}%") if params[:q].present?
+      scope = scope.where('key ILIKE :q OR name ILIKE :q', q: "%#{ActiveRecord::Base.sanitize_sql_like(params[:q])}%") if params[:q].present?
       scope = scope.where(locale: params[:locale]) if params[:locale].in?(%w[es en ko])
       scope = scope.where(status: params[:status]) if params[:status].in?(EmailTemplate::STATUSES)
       @total = scope.count
