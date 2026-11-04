@@ -2,10 +2,13 @@
 
 module Admin
   class QuickActionsComponent < ViewComponent::Base
-    def initialize(onboarding_progress: nil, sales_requirements: nil)
+    def initialize(onboarding_progress: nil, sales_requirements: nil,
+                   can_create_product: false, can_create_client: false)
       super()
       @onboarding_progress = onboarding_progress
       @sales_requirements = sales_requirements || {}
+      @can_create_product = can_create_product
+      @can_create_client = can_create_client
     end
 
     def sales_ready?

@@ -21,7 +21,10 @@
 <div id="mainDashboardGrid" class="grid-stack dashboard-grid gs-12 grid-stack-animate" data-grid-type="main">
   <%= render Admin::SalesChartComponent.new %>
 
-  <%= render Admin::QuickActionsComponent.new(onboarding_progress: @onboarding_progress, sales_requirements: @sales_requirements) %>
+  <%= render Admin::QuickActionsComponent.new(onboarding_progress: @onboarding_progress,
+                                             sales_requirements: @sales_requirements,
+                                             can_create_product: policy(Product).create?,
+                                             can_create_client: policy(Client).create?) %>
 
   <%= render Admin::RecentSalesComponent.new %>
 

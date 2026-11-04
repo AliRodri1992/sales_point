@@ -45,15 +45,19 @@
       <% end %>
 
       <div class="dashboard-quick-actions">
+        <% if @can_create_product %>
         <%= link_to new_admin_product_path, class: "dashboard-action-link" do %>
           <span class="dashboard-action-icon"><%= helpers.delta_icon("plus", class: "size-5") %></span>
           <span><strong><%= t('admin.dashboard.widgets.quick_actions.product') %></strong><small><%= t('admin.dashboard.widgets.quick_actions.add_product') %></small></span>
           <%= helpers.delta_icon("arrow-right", class: "size-4 dashboard-action-arrow") %>
         <% end %>
+        <% end %>
+        <% if @can_create_client %>
         <%= link_to new_admin_client_path, class: "dashboard-action-link" do %>
           <span class="dashboard-action-icon"><%= helpers.delta_icon("users", class: "size-5") %></span>
           <span><strong><%= t('admin.dashboard.widgets.quick_actions.customer') %></strong><small><%= t('admin.dashboard.widgets.quick_actions.new_customer') %></small></span>
           <%= helpers.delta_icon("arrow-right", class: "size-4 dashboard-action-arrow") %>
+        <% end %>
         <% end %>
         <div class="dashboard-upcoming-actions">
           <span><%= t('admin.dashboard.widgets.quick_actions.new_sale') %> · <%= t('admin.dashboard.widgets.quick_actions.cash_cut') %></span>

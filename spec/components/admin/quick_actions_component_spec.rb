@@ -13,7 +13,7 @@ RSpec.describe Admin::QuickActionsComponent, type: :component do
   end
 
   it 'links available actions to real forms and labels upcoming modules' do
-    render_inline(described_class.new)
+    render_inline(described_class.new(can_create_product: true, can_create_client: true))
 
     expect(page).to have_link('Product', href: '/admin/products/new')
     expect(page).to have_link('Customer', href: '/admin/clients/new')
@@ -22,11 +22,23 @@ RSpec.describe Admin::QuickActionsComponent, type: :component do
   end
 
   it 'renders translated action labels and descriptions' do
-    render_inline(described_class.new)
+    render_inline(described_class.new(can_create_product: true, can_create_client: true))
 
     expect(page).to have_text('New sale')
     expect(page).to have_text('Add product')
     expect(page).to have_text('New customer')
     expect(page).to have_text('Cash register')
+  end
+
+  it 'offers no creation shortcuts without permission' do
+    render_inline(described_class.new)
+    expect(page).to have_no_link(href: '/admin/products/new')
+    expect(page).to have_no_link(href: '/admin/clients/new')
+  end
+
+  it 'keeps customer and product creation permissions independent' do
+    render_inline(described_class.new(can_create_product: true, can_create_client: false))
+    expect(page).to have_link(href: '/admin/products/new')
+    expect(page).to have_no_link(href: '/admin/clients/new')
   end
 end

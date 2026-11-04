@@ -52,7 +52,7 @@ RSpec.describe 'Currency, inventory serial and authorization boundaries', type: 
 
   describe UserPolicy do
     it 'denies ordinary users access to user administration' do
-      policy = described_class.new(double(admin?: false), nil)
+      policy = described_class.new(instance_double(User, admin?: false, permission?: false), nil)
       expect(policy.index?).to be(false)
       expect(policy.create?).to be(false)
     end
@@ -65,7 +65,7 @@ RSpec.describe 'Currency, inventory serial and authorization boundaries', type: 
 
     it 'handles a missing user without granting permissions' do
       policy = described_class.new(nil, nil)
-      expect(policy.destroy?).to be_nil
+      expect(policy.destroy?).to be(false)
     end
   end
 
