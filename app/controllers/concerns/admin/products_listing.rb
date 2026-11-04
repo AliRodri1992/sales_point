@@ -18,13 +18,8 @@ module Admin
     end
 
     def broadcast_products_update
-      total_count = accessible_products.count
-      products = accessible_products.with_category.order(:name).limit(PER_PAGE)
-      total_pages = [(total_count / PER_PAGE.to_f).ceil, 1].max
-      html = render_to_string(partial: 'admin/products/list', formats: [:html],
-                              locals: { products:, total_count:, total_pages: })
       stream = current_organization ? "products_catalog_#{current_organization.id}" : 'products_catalog'
-      Turbo::StreamsChannel.broadcast_update_to(stream, target: 'admin_products_list', html: html)
+      Turbo::StreamsChannel.broadcast_refresh_to(stream)
     end
 
     def load_products

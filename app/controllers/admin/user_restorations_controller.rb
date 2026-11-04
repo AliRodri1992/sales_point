@@ -4,6 +4,7 @@ module Admin
   class UserRestorationsController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action { head :forbidden unless current_organization }
     before_action :verify_restore_permission!
 
     def index

@@ -1,22 +1,20 @@
-<label for="permission_<%= permission.id %>"
-       class="flex cursor-pointer items-center gap-4 rounded-xl border border-slate-200 bg-white px-5 py-5 transition hover:border-slate-300">
-  <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500">
-    <%= delta_icon(permission_icon(permission), class: 'size-5') %>
-  </span>
-
-  <span class="min-w-0 flex-1">
-    <span class="block text-sm font-semibold text-slate-900"><%= permission_name(permission) %></span>
-    <span class="mt-1 block text-sm text-slate-500"><%= permission_description(permission) %></span>
-  </span>
-
-  <span class="relative inline-flex shrink-0 items-center">
-    <%= check_box_tag 'permission_ids[]',
-                      permission.id,
-                      assigned_ids.include?(permission.id),
-                      id: "permission_#{permission.id}",
-                      class: 'peer sr-only',
-                      disabled: local_assigns.fetch(:read_only, false) %>
-    <span class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-blue-600 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"></span>
-    <span class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition peer-checked:translate-x-5"></span>
-  </span>
-</label>
+<div data-permission-row data-search="<%= [module_label, permission_resource_label(permission), permission_action_label(permission), permission_name(permission), permission_description(permission), permission.code].join(' ') %>">
+  <label for="permission_<%= permission.id %>" class="flex h-full min-h-24 cursor-pointer items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 transition motion-reduce:transition-none hover:border-emerald-300 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-700 has-[:disabled]:cursor-default">
+    <span class="min-w-0 flex-1">
+      <span id="permission_<%= permission.id %>_label" class="block text-sm font-semibold text-slate-900"><%= permission_action_label(permission) %></span>
+      <span class="mt-1 block break-words text-xs font-medium text-slate-600"><%= permission_name(permission) %></span>
+      <span id="permission_<%= permission.id %>_description" class="mt-1 block break-words text-xs leading-5 text-slate-500"><%= permission_description(permission) %></span>
+    </span>
+    <span class="relative inline-flex shrink-0 items-center">
+      <%= check_box_tag 'permission_ids[]', permission.id, assigned_ids.include?(permission.id),
+                        id: "permission_#{permission.id}", disabled: read_only, role: 'switch',
+                        aria: { label: "#{permission_resource_label(permission)}: #{permission_action_label(permission)}",
+                                describedby: "permission_#{permission.id}_description" },
+                        data: { role_permissions_target: 'permission', permission_code: permission.code,
+                                action: 'change->role-permissions#refresh' },
+                        class: 'peer sr-only' %>
+      <span aria-hidden="true" class="h-6 w-11 rounded-full bg-slate-300 transition-colors motion-reduce:transition-none peer-checked:bg-emerald-700 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-700 peer-focus-visible:ring-offset-2 peer-disabled:opacity-60"></span>
+      <span aria-hidden="true" class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none peer-checked:translate-x-5 peer-disabled:opacity-80"></span>
+    </span>
+  </label>
+</div>

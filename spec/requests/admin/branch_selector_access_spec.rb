@@ -70,7 +70,8 @@ RSpec.describe 'Navbar branch selector authorization', type: :request do
     assign_branch(removed).update!(deleted_at: Time.current)
     inactive_role = create(:system_role, :branch, code: 'inactive_branch_role')
     assign_branch(inactive_role_branch, role: inactive_role)
-    inactive_role.update!(status: 'inactive')
+    inactive_role.assign_attributes(status: 'inactive')
+    inactive_role.save!(context: :status_transition)
 
     get admin_dashboard_path
 

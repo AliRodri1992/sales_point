@@ -1,0 +1,62 @@
+---
+en:
+  admin:
+    system_roles:
+      statuses:
+        deprecated: Archived
+      lifecycle:
+        empty_archived_title: No archived roles
+        empty_archived_hint: Retired roles will appear here with their history.
+        inactive_branch: Inactive or archived branch · retain or revoke assignments only
+        saved_configuration: Save changes to details and permissions before reviewing status.
+        title: Status and availability
+        create_hint: New roles start inactive. Configure their permissions and activate them after review.
+        archived_read_only: Archived role. Restore it as inactive to review its configuration.
+        assignment_hint: Inactive · grants no access. Uncheck to revoke this assignment.
+        change_to: Change status to
+        review: Review change
+        review_title: Review status change
+        reason: Reason for the change
+        confirmation: I reviewed the impact and confirm this role status change.
+        confirm: Confirm status change
+        success: The role status was updated and the change was recorded in its history.
+        global_scope: This change affects every assignment of this role, including other branches and organizations. Global roles are not limited to the branches counted here.
+        affected_users: View assigned users
+        affected_hint: Up to 50 users from your organization are shown. Counters include the full impact. Reassign or uncheck this role in Users to revoke assignments.
+        manage_user: Manage roles
+        filter_label: Role availability
+        available: Available
+        archived: Archived
+        history: Status history
+        empty_history: No status changes have been recorded yet.
+        history_impact: '%{users} users · %{branches} branches with direct assignments at the time of the change.'
+        previous: Previous
+        next: Next
+        actions:
+          archive: Archive role
+          restore: Restore as inactive
+        hints:
+          active: This role grants its current permissions to assigned users. Deactivating it suspends that access and preserves its configuration.
+          inactive: Grants no permissions and accepts no new assignments. Keeps its configuration and existing assignments; activation restores that access.
+          deprecated: Retired from operation. Keeps its configuration and history and accepts no assignments. Restoration does not restore access automatically.
+        effects:
+          active: Users with retained assignments will regain this role's current permissions. Review its configuration before continuing.
+          inactive: This role will stop authorizing operations on the next request. Assignments are retained and other active roles remain effective. Account status does not change.
+          deprecated: The role will be archived without deleting its permissions or history. It must be inactive and have no current assignments.
+          restore: The role will return as inactive. Its permissions must be reviewed and it must be explicitly activated to grant access.
+        counts:
+          users: Assigned users
+          branches: Branches with direct assignments
+          without_other_roles: Users without another active role
+          permissions: Current permissions
+        errors:
+          review_required: Use Status and availability to review the impact and record a reason before changing status.
+          protected_role: Administrator and Superadministrator roles are protected; their status cannot be changed.
+          invalid_transition: This status change is not allowed. Return to the role and review its current status.
+          reason_required: Enter a reason between 1 and 1000 characters.
+          confirmation_required: Confirm that you reviewed the impact before continuing.
+          review_expired: The review expired or the configuration or assignments changed. Review the impact again and confirm the change.
+          permissions_required: Assign at least one current permission before activating the role.
+          assignments_remain: Revoke or reassign all current assignments before archiving this role, including suspended users and other organizations.
+          create_inactive: New roles must start inactive and cannot use reserved administrative codes.
+          not_assignable: must be active to accept new assignments.

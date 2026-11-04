@@ -4,6 +4,9 @@ module Admin
   class ClientsController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    include CatalogAuthorization
+    include CatalogNavigation
+
     before_action :set_client, only: %i[show edit update destroy]
 
     PER_PAGE = 10
@@ -30,6 +33,8 @@ module Admin
 
       if @client.save
         notify_client(current_user, @client, 'created')
+        return if redirect_without_catalog_listing(@client, :created)
+
         redirect_to admin_clients_path, flash: { swal_message: t('admin.clients.created') }
       else
         load_fiscal_regimes
@@ -44,6 +49,8 @@ module Admin
       assign_phone_organization(@client)
       if @client.save
         notify_client(current_user, @client, 'updated')
+        return if redirect_without_catalog_listing(@client, :updated)
+
         redirect_to admin_clients_path, flash: { swal_message: t('admin.clients.updated') }
       else
         load_fiscal_regimes
@@ -56,6 +63,7 @@ module Admin
     def destroy
       @client.update!(deleted_at: Time.current)
       notify_client(current_user, @client, 'destroyed')
+      return if redirect_without_catalog_listing(@client, :destroyed)
 
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.clients.destroyed') }

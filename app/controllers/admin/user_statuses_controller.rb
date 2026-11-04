@@ -4,17 +4,18 @@ module Admin
   class UserStatusesController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action { head :forbidden unless current_organization }
     before_action :find_user
 
     def edit
-      authorize @user, :update?
+      authorize @user, :manage_status?
       @target = params[:transition].to_s
-      allowed = Users::StatusTransition.allowed_targets(@user, organization: current_organization)
+      allowed = helpers.allowed_user_transitions(@user, organization: current_organization)
       head :unprocessable_content unless allowed.include?(@target)
     end
 
     def update
-      authorize @user, :update?
+      authorize @user, :manage_status?
       Users::StatusTransition.new(**transition_attributes).call!
       membership = @user.organization_memberships.active.find_by(organization: current_organization)
       destination = membership&.account_deleted? ? admin_users_path : admin_user_path(@user)

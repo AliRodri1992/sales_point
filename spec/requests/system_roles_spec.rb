@@ -16,7 +16,7 @@ RSpec.describe 'SystemRoles', type: :request do
   describe 'POST /system_roles' do
     it 'delivers the create confirmation as a SweetAlert2 flash' do
       post system_roles_path,
-           params: { system_role: { name: 'Sales Supervisor', role_type: 'branch', status: 'active' } }
+           params: { system_role: { name: 'Sales Supervisor', role_type: 'branch', status: 'inactive' } }
 
       expect(response).to redirect_to(system_role_path(SystemRole.find_by!(name: 'Sales Supervisor')))
       expect(flash[:swal_message]).to eq(I18n.t('system_roles.create.success'))
@@ -26,7 +26,7 @@ RSpec.describe 'SystemRoles', type: :request do
     it 'delivers a notification to the admin notifications panel' do
       expect do
         post system_roles_path,
-             params: { system_role: { name: 'Auditor', role_type: 'branch', status: 'active' } }
+             params: { system_role: { name: 'Auditor', role_type: 'branch', status: 'inactive' } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = admin.notifications.last
@@ -37,7 +37,7 @@ RSpec.describe 'SystemRoles', type: :request do
 
     it 're-renders the role form when role validation fails' do
       post system_roles_path,
-           params: { system_role: { name: '', code: 'invalid-role', role_type: 'branch', status: 'active' } }
+           params: { system_role: { name: '', code: 'invalid-role', role_type: 'branch', status: 'inactive' } }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('name="system_role[name]"')
@@ -46,14 +46,14 @@ RSpec.describe 'SystemRoles', type: :request do
   end
 
   describe 'DELETE /system_roles/:id' do
-    it 'soft-deletes the role and marks it deprecated' do
+    it 'requires a reviewed transition instead of deleting directly' do
       role = create(:system_role, name: 'Temporary Role', code: 'temporary_role', role_type: :branch)
 
       delete system_role_path(role)
 
-      expect(response).to redirect_to(system_roles_path)
-      expect(role.reload).to have_attributes(status: 'deprecated')
-      expect(role.deleted_at).to be_present
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(role.reload).to be_active
+      expect(role.deleted_at).to be_nil
     end
   end
 

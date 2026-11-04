@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -332,19 +332,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
     t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
-  end
-
-  create_table "email_setting_audits", force: :cascade do |t|
-    t.bigint "actor_id", null: false
-    t.jsonb "changeset", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.bigint "organization_id"
-    t.string "setting_type", null: false
-    t.datetime "updated_at", null: false
-    t.index ["actor_id"], name: "index_email_setting_audits_on_actor_id"
-    t.index ["organization_id", "created_at"], name: "idx_email_setting_audits_tenant_history"
-    t.index ["organization_id"], name: "index_email_setting_audits_on_organization_id"
-    t.check_constraint "setting_type::text = ANY (ARRAY['branding'::character varying::text, 'sender'::character varying::text])", name: "chk_email_setting_audit_type"
   end
 
   create_table "email_sender_settings", force: :cascade do |t|
@@ -1974,6 +1961,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.index ["system_role_id"], name: "index_system_role_permissions_on_system_role_id"
   end
 
+  create_table "system_role_status_events", force: :cascade do |t|
+    t.bigint "actor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "from_status", null: false
+    t.jsonb "impact", default: {}, null: false
+    t.text "reason", null: false
+    t.bigint "system_role_id", null: false
+    t.string "to_status", null: false
+    t.index ["actor_id"], name: "index_system_role_status_events_on_actor_id"
+    t.index ["system_role_id", "created_at"], name: "index_role_status_events_on_role_and_created_at"
+    t.index ["system_role_id"], name: "index_system_role_status_events_on_system_role_id"
+  end
+
   create_table "system_roles", force: :cascade do |t|
     t.string "code", limit: 50, null: false
     t.datetime "created_at", null: false
@@ -1981,7 +1982,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
     t.string "description"
     t.string "name", limit: 50, null: false
     t.string "role_type", limit: 20, null: false
-    t.string "status", limit: 20, default: "active", null: false
+    t.string "status", limit: 20, default: "inactive", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_system_roles_on_code", unique: true
     t.index ["created_at"], name: "index_system_roles_on_created_at"
@@ -2185,8 +2186,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
   add_foreign_key "demo_request_activities", "users"
   add_foreign_key "demo_requests", "users", column: "assigned_to_id"
   add_foreign_key "email_branding_settings", "organizations"
-  add_foreign_key "email_setting_audits", "organizations"
-  add_foreign_key "email_setting_audits", "users", column: "actor_id"
   add_foreign_key "email_sender_settings", "organizations"
   add_foreign_key "email_setting_audits", "organizations"
   add_foreign_key "email_setting_audits", "users", column: "actor_id"
@@ -2337,6 +2336,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_03_070000) do
   add_foreign_key "suppliers", "users", column: "responsible_user_id"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
+  add_foreign_key "system_role_status_events", "system_roles"
+  add_foreign_key "system_role_status_events", "users", column: "actor_id"
   add_foreign_key "table_page_preferences", "organizations"
   add_foreign_key "table_page_preferences", "users"
   add_foreign_key "terminals", "branches"

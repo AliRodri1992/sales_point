@@ -42,7 +42,10 @@ RSpec.describe SystemRoleNotification, type: :model do
     ).deliver(user, enqueue_job: false)
 
     notification = user.notifications.last
-    system_role.update!(deleted_at: Time.current, status: :deprecated)
+    system_role.assign_attributes(status: :inactive)
+    system_role.save!(context: :status_transition)
+    system_role.assign_attributes(deleted_at: Time.current, status: :deprecated)
+    system_role.save!(context: :status_transition)
 
     expect(notification.event.record).to eq(system_role)
   end

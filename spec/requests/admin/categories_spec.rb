@@ -12,6 +12,11 @@ RSpec.describe 'Admin::Categories', type: :request do
   before do
     create(:user_role, user:, system_role: role)
     create(:system_role_permission, system_role: role, permission: categories_permission)
+    GranularPermissionCatalog.sync!
+    codes = ['categories'].product(GranularPermissionCatalog::ACTIONS).map { |parts| parts.join('.') }
+    Permission.where(code: codes).find_each do |permission|
+      SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    end
     sign_in user
   end
 

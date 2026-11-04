@@ -8,12 +8,14 @@
     </p>
   </div>
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-    <%= link_to new_admin_category_path,
+    <% if policy(Category).create? %>
+<%= link_to new_admin_category_path,
                 data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.new') },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
       <%= delta_icon('plus', class: 'size-4') %>
       <%= t('admin.categories.index.new') %>
     <% end %>
+<% end %>
 
     <%= form_with url: admin_categories_path, method: :get,
                   data: { turbo_frame: 'categories_list', controller: 'categories-search' },

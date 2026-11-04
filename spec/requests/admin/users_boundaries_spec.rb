@@ -87,13 +87,13 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
     expect(target.reload).to be_valid_password('password123')
   end
 
-  it 'prevents deleting an account shared by multiple organizations' do
+  it 'rejects direct deletion of an account shared by multiple organizations' do
     target = member(create(:user))
     member(target, organization: other_organization)
 
     delete admin_user_path(target)
 
-    expect(response).to redirect_to(admin_users_path)
+    expect(response).to have_http_status(:method_not_allowed)
     expect(target.reload.deleted_at).to be_nil
   end
 
@@ -102,7 +102,7 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
 
     post admin_users_path, params: { user: { email: 'orphan@example.com', password: 'password123' } }
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
     expect(User.find_by(email: 'orphan@example.com')).to be_nil
   end
 end

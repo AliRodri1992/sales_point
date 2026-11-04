@@ -1,0 +1,100 @@
+---
+en:
+  admin:
+    system_roles:
+      permissions:
+        languages_access:
+          name: Access · Languages
+          description: Enables the module. Each operation also requires its own permission.
+        languages_index:
+          name: List · Languages
+          description: Allows viewing and searching the record list.
+        languages_show:
+          name: Show · Languages
+          description: Allows viewing an individual record.
+        languages_create:
+          name: Create · Languages
+          description: Allows creating new records.
+        languages_update:
+          name: Update · Languages
+          description: Allows updating existing records.
+        languages_destroy:
+          name: Delete / archive · Languages
+          description: Allows removing records through the module’s deletion workflow.
+        products_access:
+          name: Access · Products
+          description: Enables the module. Each operation also requires its own permission.
+        products_index:
+          name: List · Products
+          description: Allows viewing and searching the record list.
+        products_show:
+          name: Show · Products
+          description: Allows viewing an individual record.
+        products_create:
+          name: Create · Products
+          description: Allows creating new records.
+        products_update:
+          name: Update · Products
+          description: Allows updating existing records.
+        products_destroy:
+          name: Delete / archive · Products
+          description: Allows removing records through the module’s deletion workflow.
+        customers_access:
+          name: Access · Customers
+          description: Enables the module. Each operation also requires its own permission.
+        customers_index:
+          name: List · Customers
+          description: Allows viewing and searching the record list.
+        customers_show:
+          name: Show · Customers
+          description: Allows viewing an individual record.
+        customers_create:
+          name: Create · Customers
+          description: Allows creating new records.
+        customers_update:
+          name: Update · Customers
+          description: Allows updating existing records.
+        customers_destroy:
+          name: Delete / archive · Customers
+          description: Allows removing records through the module’s deletion workflow.
+        users_access:
+          name: Access · Users
+          description: Enables the module. Each operation also requires its own permission.
+        users_index:
+          name: List · Users
+          description: Allows viewing and searching the record list.
+        users_show:
+          name: Show · Users
+          description: Allows viewing an individual record.
+        users_create:
+          name: Create · Users
+          description: Allows creating users and sending their invitation. Also requires
+            Invite users permission.
+        users_update:
+          name: Update · Users
+          description: Allows editing users. Assigning roles and editing administrators
+            require an administrator account.
+        users_destroy:
+          name: Delete / archive · Users
+          description: Allows removing records through the module’s deletion workflow.
+        categories_access:
+          name: Access · Categories
+          description: Enables the module. Each operation also requires its own permission.
+        categories_index:
+          name: List · Categories
+          description: Allows viewing and searching the record list.
+        categories_show:
+          name: Show · Categories
+          description: Allows viewing an individual record.
+        categories_create:
+          name: Create · Categories
+          description: Allows creating new records.
+        categories_update:
+          name: Update · Categories
+          description: Allows updating existing records.
+        categories_destroy:
+          name: Delete / archive · Categories
+          description: Allows removing records through the module’s deletion workflow.
+        users_restore:
+          description: Allows restoring archived users. Requires a super-administrator
+            account.

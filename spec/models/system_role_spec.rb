@@ -23,6 +23,12 @@ RSpec.describe SystemRole, type: :model do
     expect(duplicate).not_to be_valid
   end
 
+  it 'generates a valid code for names in non-Latin scripts' do
+    role = build(:system_role, name: '매장 관리자', code: nil)
+    expect(role).to be_valid
+    expect(role.code).to match(/\A[a-z0-9_]+\z/)
+  end
+
   # =========================
   # ENUMS
   # =========================

@@ -24,7 +24,7 @@
                   class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
         <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.users.form.buttons.back') %>
       <% end %>
-      <% if @can_manage_users %>
+      <% if policy(@user).update? %>
         <%= link_to edit_admin_user_path(@user), data: { turbo_frame: '_top' },
                     class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' do %>
           <%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.users.actions.edit') %>
@@ -33,9 +33,9 @@
     </div>
   </header>
 
-  <% if @can_manage_users && @user != current_user %>
-    <% transitions = Users::StatusTransition.allowed_targets(@user, organization: current_organization) %>
-    <% if member_status == 'pending' %>
+  <% if policy(@user).manage_status? || policy(@user).resend_invitation? %>
+    <% transitions = allowed_user_transitions(@user, organization: current_organization) %>
+    <% if member_status == 'pending' && policy(@user).resend_invitation? %>
       <%= button_to t('admin.users.status_management.resend'), admin_user_invitation_path(@user), method: :post,
                     class: 'rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800' %>
     <% end %>

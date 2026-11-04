@@ -84,9 +84,11 @@ RSpec.describe UserRole, type: :model do
     it 'returns active assignments for active system roles' do
       user = create(:user)
       active_role = create(:system_role, :system, :active)
-      inactive_role = create(:system_role, :system, :inactive)
+      inactive_role = create(:system_role, :system)
       active_assignment = create(:user_role, user:, system_role: active_role)
       create(:user_role, user:, system_role: inactive_role)
+      inactive_role.assign_attributes(status: 'inactive')
+      inactive_role.save!(context: :status_transition)
 
       expect(described_class.active).to contain_exactly(active_assignment)
     end

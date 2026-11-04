@@ -4,6 +4,9 @@ module Admin
   class UsersController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action { head :forbidden unless current_organization }
+    include CatalogNavigation
+
     before_action :set_user, only: %i[show edit update destroy]
     before_action :load_form_options, only: %i[new create edit update]
 
@@ -24,7 +27,7 @@ module Admin
 
     def show
       authorize @user
-      @can_manage_users = policy(User).create?
+      @can_manage_users = current_user.admin?
     end
 
     def new
@@ -45,6 +48,8 @@ module Admin
       if account_writer.save
         Users::InvitationDispatcher.call(user: @user, organization: current_organization)
         notify_user(current_user, @user, 'created')
+        return if redirect_without_catalog_listing(@user, :created)
+
         redirect_to admin_users_path, flash: { swal_message: t('admin.users.created') }
       else
         render :new, status: :unprocessable_content
@@ -58,6 +63,8 @@ module Admin
 
       if account_writer.save
         notify_user(current_user, @user, 'updated')
+        return if redirect_without_catalog_listing(@user, :updated)
+
         redirect_to admin_user_path(@user), flash: { swal_message: t('admin.users.updated') }
       else
         render :edit, status: :unprocessable_content
@@ -106,6 +113,7 @@ module Admin
     end
 
     def user_params
+      reject_delegated_role_changes!
       params.expect(
         user: [
           :email, :username,
@@ -115,6 +123,13 @@ module Admin
       )
     end
 
+    def reject_delegated_role_changes!
+      return if current_user.admin?
+
+      fields = params[:user] || {}
+      raise Pundit::NotAuthorizedError if fields.key?(:system_role_ids) || fields.key?(:branch_role_assignments)
+    end
+
     def account_writer
       Users::AdminAccountWriter.new(user: @user, organization: current_organization, attributes: user_params)
     end
@@ -122,10 +137,9 @@ module Admin
     def load_form_options
       @languages = Language.available.order(:name)
       @themes = Theme.all
-      @roles = SystemRole.system.active.not_deleted.order(:name)
-      branches = current_organization ? current_organization.branches.not_deleted.where(status: true) : Branch.none
-      @branches = branches.order(:name)
-      @branch_roles = SystemRole.branch.active.not_deleted.order(:name)
+      @roles = SystemRole.selectable_for(@user).system.order(:name)
+      @branches = Users::BranchRoleAssignments.branch_options(user: @user, organization: current_organization)
+      @branch_roles = SystemRole.selectable_for(@user).branch.order(:name)
     end
 
     def invitation_delivery_failed

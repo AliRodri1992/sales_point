@@ -98,6 +98,10 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     category.update!(name: 'Categoría editada manualmente')
     bank_account = supplier.supplier_bank_accounts.first!
     bank_account.update!(holder_name: 'Titular editado manualmente')
+    role = SystemRole.find_by!(code: 'cashier')
+    review_token = SystemRoles::StatusReview.new(role:, actor: admin, target: 'inactive').token
+    SystemRoles::StatusTransition.new(role:, actor: admin, target: 'inactive', reason: 'Manual suspension',
+                                      review_token:, confirmed: true).call!
 
     Rails.application.load_seed
 
@@ -108,6 +112,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(product.reload.name).to eq('Producto editado manualmente')
     expect(category.reload.name).to eq('Categoría editada manualmente')
     expect(bank_account.reload.holder_name).to eq('Titular editado manualmente')
+    expect(role.reload).to be_inactive
+    expect(role.status_events.last.reason).to eq('Manual suspension')
     expect(SupplierProduct.count).to be_positive
     expect(SupplierBankAccount.count).to eq(supplier.organization.suppliers.available.count)
     expect(Supplier.where(code: 'SUP-0001').first.documents.attachments.count).to be >= 20

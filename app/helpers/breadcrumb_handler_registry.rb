@@ -7,6 +7,7 @@ module BreadcrumbHandlerRegistry
     'admin/languages' => :language_breadcrumb_items,
     'admin/categories' => :category_breadcrumb_items,
     'system_roles' => :system_role_breadcrumb_items,
+    'system_role_statuses' => :system_role_breadcrumb_items,
     'admin/profiles' => :profile_breadcrumb_items,
     'admin/branches' => :branch_breadcrumb_items,
     'admin/clients' => :client_breadcrumb_items,

@@ -9,7 +9,7 @@
           <%= t('admin.clients.show.subtitle') %>
         </p>
       </div>
-      <%= link_to admin_clients_path,
+      <%= link_to catalog_back_path(Client),
                   data: { turbo_frame: '_top' },
                   class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
         <%= delta_icon('arrow-left', class: 'size-4') %>
@@ -43,11 +43,13 @@
   </dl>
 
   <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
-    <%= link_to edit_admin_client_path(@client),
+    <% if policy(Client).update? %>
+<%= link_to edit_admin_client_path(@client),
                 data: { turbo_frame: '_top' },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
       <%= delta_icon('pencil-square', class: 'size-4') %>
       <%= t('admin.clients.index.edit') %>
     <% end %>
+<% end %>
   </div>
 </div>

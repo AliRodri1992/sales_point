@@ -3,6 +3,7 @@
 module Admin
   class UserInvitationsController < ApplicationController
     before_action :authenticate_user!
+    before_action { head :forbidden unless current_organization }
 
     def create
       user = invitation_user
@@ -28,7 +29,7 @@ module Admin
     end
 
     def validate_access!(user)
-      authorize user, :update?
+      authorize user, :resend_invitation?
       membership = user.organization_memberships.active.find_by(organization: current_organization)
       allowed = membership&.account_pending? && current_user.permission?('users.resend_invitation')
       raise Pundit::NotAuthorizedError unless allowed

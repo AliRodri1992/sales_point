@@ -198,6 +198,8 @@ Rails.application.routes.draw do
   resources :system_roles do
     member do
       patch :permissions, action: :update_permissions
+      get :status_review, to: 'system_role_statuses#show'
+      patch :status, to: 'system_role_statuses#update'
     end
   end
   resources :demo_requests, only: %i[new create]

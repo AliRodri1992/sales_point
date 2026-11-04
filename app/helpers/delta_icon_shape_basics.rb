@@ -2,6 +2,12 @@
 
 module DeltaIconShapeBasics
   SHAPES = {
+    'shield-crown' => [
+      'M12 2 4 5v7c0 5 3.5 8 8 10 4.5-2 8-5 8-10V5z|',
+      'M8 9l2 2 2-4 2 4 2-2-1 6H9z'
+    ].join,
+    'shopping-cart' => 'M3 3h2l3 13h11l3-10H6|c:10,20,1.5|c:18,20,1.5',
+    'headset' => 'M4 13v-2a8 8 0 0 1 16 0v2|r:2,11,4,7,2|r:18,11,4,7,2|M20 18v1a3 3 0 0 1-3 3h-4',
     'adjustments-horizontal' => 'M4 7h16|M4 17h16|c:9,7,2|c:16,17,2',
     'archive-box' => 'r:4,8,16,12,2|M3 5h18v4H3z|M10 13h4',
     'archive-box-arrow-down' => 'r:4,9,16,12,2|M3 7h18|M12 2v11|M9 10l3 3 3-3',

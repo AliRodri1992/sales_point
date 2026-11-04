@@ -14,14 +14,18 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def update?
-    admin? && !protected_role?
+    admin? && !protected_role? && !record.deprecated?
   end
 
   def destroy?
-    admin? && !protected_role?
+    change_status?
   end
 
   def update_permissions?
+    update?
+  end
+
+  def change_status?
     admin? && !protected_role?
   end
 

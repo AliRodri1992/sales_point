@@ -1,0 +1,148 @@
+---
+es:
+  admin:
+    system_roles:
+      catalog:
+        help: Explora cada módulo y selecciona las acciones que necesita este rol.
+          Los permisos de administración pueden incluir varias acciones.
+        selected: seleccionados
+        search: Buscar módulo o acción
+        search_placeholder: Ej. proveedores, crear, actualizar…
+        results: permisos encontrados
+        no_results: No hay permisos que coincidan con tu búsqueda.
+        empty: No hay permisos activos disponibles.
+        select_module: 'Seleccionar todo: %{module}'
+        save_hint: Los cambios se aplican al guardar.
+        saving: Guardando…
+        new_subtitle: Define el rol y sus accesos, organizados por módulo y acción.
+        edit_subtitle: Consulta los accesos y actualiza los datos y permisos de este
+          rol.
+        view_permissions: Ver permisos
+        modules:
+          dashboard: Panel principal
+          sales: Ventas
+          cash_register: Caja
+          inventory: Inventario
+          customers: Clientes
+          suppliers: Proveedores
+          employees: Empleados
+          reports: Reportes
+          products: Productos
+          categories: Categorías
+          branches: Sucursales
+          languages: Idiomas
+          roles: Roles y permisos
+          users: Usuarios
+          purchases: Compras
+          accounts_payable: Cuentas por pagar
+          communication: Comunicación
+        actions:
+          access: Acceder
+          index: Listar
+          list: Listar
+          show: Mostrar
+          view: Consultar
+          create: Crear
+          update: Actualizar
+          edit: Editar
+          destroy: Eliminar / archivar
+          delete: Eliminar
+          archive: Archivar
+          restore: Restaurar
+          manage: Administrar
+          approve: Autorizar
+          receive: Recibir
+          returns: Devolver
+          pay: Aplicar pagos
+          reveal: Revelar datos
+          review: Verificar
+          set_primary: Establecer principal
+          geocode: Geolocalizar
+          prefer: Marcar preferente
+          activate: Activar
+          suspend: Suspender
+          reactivate: Reactivar
+          invite: Invitar
+          resend_invitation: Reenviar invitación
+          publish: Publicar
+          preview: Previsualizar
+          send_test: Enviar prueba
+          versions: Ver versiones
+          block: Bloquear
+          unblock: Desbloquear
+        resources:
+          suppliers_contacts: Contactos
+          suppliers_addresses: Direcciones
+          suppliers_schedules: Calendarios
+          suppliers_documents: Documentos
+          suppliers_fiscal: Información fiscal
+          suppliers_commercial: Condiciones comerciales
+          suppliers_products: Productos y ofertas
+          accounts_payable_banks: Cuentas bancarias
+          email_templates: Plantillas de correo
+          email_branding: Identidad de correo
+          email_settings: Configuración de correo
+          email_template_audits: Auditoría de correo
+      form:
+        invalid_permissions: La selección contiene permisos no disponibles. Revisa
+          los permisos e intenta de nuevo.
+      new:
+        title: Nuevo rol
+      permissions:
+        users_invite:
+          name: Invitar usuarios
+          description: Permite invitar usuarios a la organización.
+        users_resend_invitation:
+          name: Reenviar invitaciones
+          description: Permite reenviar invitaciones pendientes.
+        users_suspend:
+          name: Suspender usuarios
+          description: Permite suspender el acceso de usuarios.
+        users_reactivate:
+          name: Reactivar usuarios
+          description: Permite restablecer el acceso de usuarios suspendidos.
+        users_block:
+          name: Bloquear usuarios
+          description: Permite bloquear usuarios por seguridad.
+        users_unblock:
+          name: Desbloquear usuarios
+          description: Permite levantar un bloqueo de seguridad.
+        users_destroy:
+          name: Archivar usuarios
+          description: Permite archivar usuarios de la organización.
+        users_restore:
+          name: Restaurar usuarios
+          description: Permite restaurar usuarios archivados.
+        email_templates_access:
+          name: Acceder a plantillas de correo
+          description: Permite abrir el catálogo de plantillas de correo.
+        email_templates_create:
+          name: Crear plantillas de correo
+          description: Permite crear borradores de plantillas.
+        email_templates_update:
+          name: Actualizar plantillas de correo
+          description: Permite editar el contenido de las plantillas.
+        email_templates_publish:
+          name: Publicar plantillas de correo
+          description: Permite publicar una versión de una plantilla.
+        email_templates_archive:
+          name: Archivar plantillas de correo
+          description: Permite retirar plantillas del catálogo activo.
+        email_templates_preview:
+          name: Previsualizar plantillas de correo
+          description: Permite consultar la vista previa de las plantillas.
+        email_templates_send_test:
+          name: Enviar correos de prueba
+          description: Permite enviar mensajes de prueba de las plantillas.
+        email_templates_versions:
+          name: Consultar versiones de plantillas
+          description: Permite consultar el historial de versiones.
+        email_branding_manage:
+          name: Administrar identidad de correo
+          description: Permite configurar la identidad visual de los correos.
+        email_settings_manage:
+          name: Administrar configuración de correo
+          description: Permite configurar el remitente de los correos.
+        email_template_audits_view:
+          name: Consultar auditoría de correo
+          description: Permite consultar el historial de cambios de correo.

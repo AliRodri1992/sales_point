@@ -1,0 +1,145 @@
+---
+ko:
+  admin:
+    system_roles:
+      catalog:
+        help: 모듈별로 이 역할에 필요한 작업을 선택하세요. 관리 권한에는 여러 작업이 포함될 수 있습니다.
+        selected: 선택됨
+        search: 모듈 또는 작업 검색
+        search_placeholder: '예: 공급업체, 생성, 업데이트…'
+        results: 개 권한 검색됨
+        no_results: 검색과 일치하는 권한이 없습니다.
+        empty: 사용 가능한 활성 권한이 없습니다.
+        select_module: '전체 선택: %{module}'
+        save_hint: 저장하면 변경 사항이 적용됩니다.
+        saving: 저장 중…
+        new_subtitle: 모듈과 작업별로 역할과 접근 권한을 설정하세요.
+        edit_subtitle: 접근 권한을 확인하고 역할 정보와 권한을 수정하세요.
+        view_permissions: 권한 보기
+        modules:
+          dashboard: 대시보드
+          sales: 판매
+          cash_register: 계산대
+          inventory: 재고
+          customers: 고객
+          suppliers: 공급업체
+          employees: 직원
+          reports: 보고서
+          products: 상품
+          categories: 카테고리
+          branches: 지점
+          languages: 언어
+          roles: 역할 및 권한
+          users: 사용자
+          purchases: 구매
+          accounts_payable: 미지급금
+          communication: 커뮤니케이션
+        actions:
+          access: 접근
+          index: 목록
+          list: 목록
+          show: 상세 보기
+          view: 조회
+          create: 생성
+          update: 업데이트
+          edit: 수정
+          destroy: 삭제 / 보관
+          delete: 삭제
+          archive: 보관
+          restore: 복원
+          manage: 관리
+          approve: 승인
+          receive: 입고
+          returns: 반품
+          pay: 결제 적용
+          reveal: 데이터 표시
+          review: 검토
+          set_primary: 기본값 설정
+          geocode: 위치 확인
+          prefer: 우선 지정
+          activate: 활성화
+          suspend: 일시 중지
+          reactivate: 재활성화
+          invite: 초대
+          resend_invitation: 초대 재전송
+          publish: 게시
+          preview: 미리 보기
+          send_test: 테스트 전송
+          versions: 버전 보기
+          block: 차단
+          unblock: 차단 해제
+        resources:
+          suppliers_contacts: 연락처
+          suppliers_addresses: 주소
+          suppliers_schedules: 일정
+          suppliers_documents: 문서
+          suppliers_fiscal: 세금 정보
+          suppliers_commercial: 거래 조건
+          suppliers_products: 상품 및 제안
+          accounts_payable_banks: 은행 계좌
+          email_templates: 이메일 템플릿
+          email_branding: 이메일 브랜딩
+          email_settings: 이메일 설정
+          email_template_audits: 이메일 감사
+      form:
+        invalid_permissions: 선택 항목에 사용할 수 없는 권한이 있습니다. 권한을 확인한 후 다시 시도하세요.
+      new:
+        title: 새 역할
+      permissions:
+        users_invite:
+          name: 사용자 초대
+          description: 조직에 사용자를 초대할 수 있습니다.
+        users_resend_invitation:
+          name: 초대 재전송
+          description: 보류 중인 초대를 다시 보낼 수 있습니다.
+        users_suspend:
+          name: 사용자 일시 중지
+          description: 사용자 접근을 일시 중지할 수 있습니다.
+        users_reactivate:
+          name: 사용자 재활성화
+          description: 일시 중지된 사용자의 접근을 복구할 수 있습니다.
+        users_block:
+          name: 사용자 차단
+          description: 보안을 위해 사용자를 차단할 수 있습니다.
+        users_unblock:
+          name: 사용자 차단 해제
+          description: 보안 차단을 해제할 수 있습니다.
+        users_destroy:
+          name: 사용자 보관
+          description: 조직 사용자를 보관할 수 있습니다.
+        users_restore:
+          name: 사용자 복원
+          description: 보관된 사용자를 복원할 수 있습니다.
+        email_templates_access:
+          name: 이메일 템플릿 접근
+          description: 이메일 템플릿 목록에 접근할 수 있습니다.
+        email_templates_create:
+          name: 이메일 템플릿 생성
+          description: 템플릿 초안을 생성할 수 있습니다.
+        email_templates_update:
+          name: 이메일 템플릿 수정
+          description: 템플릿 내용을 수정할 수 있습니다.
+        email_templates_publish:
+          name: 이메일 템플릿 게시
+          description: 템플릿 버전을 게시할 수 있습니다.
+        email_templates_archive:
+          name: 이메일 템플릿 보관
+          description: 활성 목록에서 템플릿을 보관할 수 있습니다.
+        email_templates_preview:
+          name: 이메일 템플릿 미리 보기
+          description: 이메일 템플릿을 미리 볼 수 있습니다.
+        email_templates_send_test:
+          name: 테스트 이메일 전송
+          description: 템플릿 테스트 메시지를 전송할 수 있습니다.
+        email_templates_versions:
+          name: 템플릿 버전 조회
+          description: 템플릿 버전 이력을 조회할 수 있습니다.
+        email_branding_manage:
+          name: 이메일 브랜딩 관리
+          description: 이메일 시각적 브랜딩을 설정할 수 있습니다.
+        email_settings_manage:
+          name: 이메일 설정 관리
+          description: 이메일 발신자 설정을 관리할 수 있습니다.
+        email_template_audits_view:
+          name: 이메일 감사 조회
+          description: 이메일 변경 이력을 조회할 수 있습니다.

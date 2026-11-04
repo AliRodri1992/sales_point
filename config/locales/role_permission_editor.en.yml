@@ -1,0 +1,147 @@
+---
+en:
+  admin:
+    system_roles:
+      catalog:
+        help: Explore each module and select the actions this role needs. Management
+          permissions may include several actions.
+        selected: selected
+        search: Search modules or actions
+        search_placeholder: E.g. suppliers, create, update…
+        results: permissions found
+        no_results: No permissions match your search.
+        empty: No active permissions are available.
+        select_module: 'Select all: %{module}'
+        save_hint: Changes take effect when you save.
+        saving: Saving…
+        new_subtitle: Define the role and its access, organized by module and action.
+        edit_subtitle: Review access and update this role’s details and permissions.
+        view_permissions: View permissions
+        modules:
+          dashboard: Dashboard
+          sales: Sales
+          cash_register: Cash register
+          inventory: Inventory
+          customers: Customers
+          suppliers: Suppliers
+          employees: Employees
+          reports: Reports
+          products: Products
+          categories: Categories
+          branches: Branches
+          languages: Languages
+          roles: Roles and permissions
+          users: Users
+          purchases: Purchases
+          accounts_payable: Accounts payable
+          communication: Communication
+        actions:
+          access: Access
+          index: List
+          list: List
+          show: Show
+          view: View
+          create: Create
+          update: Update
+          edit: Edit
+          destroy: Delete / archive
+          delete: Delete
+          archive: Archive
+          restore: Restore
+          manage: Manage
+          approve: Approve
+          receive: Receive
+          returns: Return
+          pay: Apply payments
+          reveal: Reveal data
+          review: Review
+          set_primary: Set primary
+          geocode: Geocode
+          prefer: Set preferred
+          activate: Activate
+          suspend: Suspend
+          reactivate: Reactivate
+          invite: Invite
+          resend_invitation: Resend invitation
+          publish: Publish
+          preview: Preview
+          send_test: Send test
+          versions: View versions
+          block: Block
+          unblock: Unblock
+        resources:
+          suppliers_contacts: Contacts
+          suppliers_addresses: Addresses
+          suppliers_schedules: Schedules
+          suppliers_documents: Documents
+          suppliers_fiscal: Tax information
+          suppliers_commercial: Commercial terms
+          suppliers_products: Products and offers
+          accounts_payable_banks: Bank accounts
+          email_templates: Email templates
+          email_branding: Email branding
+          email_settings: Email settings
+          email_template_audits: Email audits
+      form:
+        invalid_permissions: The selection contains unavailable permissions. Review
+          the permissions and try again.
+      new:
+        title: New role
+      permissions:
+        users_invite:
+          name: Invite users
+          description: Allows inviting users to the organization.
+        users_resend_invitation:
+          name: Resend invitations
+          description: Allows resending pending invitations.
+        users_suspend:
+          name: Suspend users
+          description: Allows suspending user access.
+        users_reactivate:
+          name: Reactivate users
+          description: Allows restoring access for suspended users.
+        users_block:
+          name: Block users
+          description: Allows blocking users for security reasons.
+        users_unblock:
+          name: Unblock users
+          description: Allows lifting a security block.
+        users_destroy:
+          name: Archive users
+          description: Allows archiving organization users.
+        users_restore:
+          name: Restore users
+          description: Allows restoring archived users.
+        email_templates_access:
+          name: Access email templates
+          description: Allows opening the email template catalog.
+        email_templates_create:
+          name: Create email templates
+          description: Allows creating template drafts.
+        email_templates_update:
+          name: Update email templates
+          description: Allows editing template content.
+        email_templates_publish:
+          name: Publish email templates
+          description: Allows publishing a template version.
+        email_templates_archive:
+          name: Archive email templates
+          description: Allows removing templates from the active catalog.
+        email_templates_preview:
+          name: Preview email templates
+          description: Allows previewing email templates.
+        email_templates_send_test:
+          name: Send test emails
+          description: Allows sending template test messages.
+        email_templates_versions:
+          name: View template versions
+          description: Allows viewing template version history.
+        email_branding_manage:
+          name: Manage email branding
+          description: Allows configuring email visual branding.
+        email_settings_manage:
+          name: Manage email settings
+          description: Allows configuring email sender settings.
+        email_template_audits_view:
+          name: View email audits
+          description: Allows viewing email change history.

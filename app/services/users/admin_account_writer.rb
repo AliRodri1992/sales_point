@@ -51,7 +51,7 @@ module Users
       return :invalid unless provided.all? { |value| value.to_s.match?(/\A\d+\z/) }
 
       ids = provided.map(&:to_i).uniq
-      allowed = SystemRole.system.active.not_deleted.where(id: ids).pluck(:id)
+      allowed = SystemRole.selectable_for(@user).system.where(id: ids).pluck(:id)
       ids.sort == allowed.sort ? ids : :invalid
     end
 
@@ -90,7 +90,8 @@ module Users
     end
 
     def sync_system_roles!(role_ids)
-      assignments = @user.user_roles.active.where(branch_id: nil).where(system_roles: { role_type: 'system' })
+      assignments = @user.user_roles.joins(:system_role).where(branch_id: nil)
+                         .where(system_roles: { role_type: 'system' })
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
         assignment.update!(deleted_at: Time.current)

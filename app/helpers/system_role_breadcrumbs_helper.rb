@@ -7,8 +7,9 @@ module SystemRoleBreadcrumbsHelper
     case params[:action]
     when 'new', 'create'
       [roles_path, { label: t('admin.system_roles.new.title') }]
-    when 'edit'
-      [roles_path, { label: t('admin.system_roles.edit.title') }]
+    when 'show', 'edit', 'update', 'update_permissions', 'status_review', 'change_status'
+      label = content_for(:system_role_breadcrumb_label).presence || t('admin.system_roles.index.title')
+      [roles_path, { label: }]
     else
       [roles_path]
     end

@@ -1,16 +1,19 @@
 <div class="flex flex-wrap items-center justify-end gap-1.5">
+  <% if policy(User).show? %>
   <%= link_to admin_user_path(user), data: { turbo_frame: '_top', tooltip: t('admin.users.actions.view') },
               aria: { label: t('admin.users.actions.view') },
               class: 'inline-flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
     <%= delta_icon('eye', class: 'size-5') %>
   <% end %>
-  <% if can_manage_users %>
+  <% end %>
+  <% if policy(User).update?(user) %>
     <%= link_to edit_admin_user_path(user), data: { turbo_frame: '_top', tooltip: t('admin.users.actions.edit') },
                 aria: { label: t('admin.users.actions.edit') },
                 class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
       <%= delta_icon('pencil-square', class: 'size-5') %>
     <% end %>
-    <% unless current_user == user %>
+  <% end %>
+    <% if policy(User).destroy?(user) %>
       <%= link_to edit_admin_user_status_path(user, transition: 'deleted'),
                   title: t('admin.users.actions.delete'),
                   aria: { label: t('admin.users.actions.delete') },
@@ -18,5 +21,4 @@
         <%= delta_icon('trash', class: 'size-5') %>
       <% end %>
     <% end %>
-  <% end %>
 </div>

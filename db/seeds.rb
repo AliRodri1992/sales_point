@@ -541,13 +541,14 @@ def seed_example_user(index, count, roles, language, organization)
   $stdout.puts "[SEEDS][USUARIO][#{action}] #{index + 1}/#{count} id=#{user.id} " \
                "usuario=#{user.username} email=#{user.email} estado=#{user.status} " \
                "organizacion_id=#{organization.id} membresia_id=#{membership.id} " \
-               "rol=#{role.code} asignacion_id=#{assignment.id}"
+               "rol=#{role.code} asignacion_id=#{assignment&.id || 'sin_asignacion'}"
 end
 
 def assign_example_user_role(user, roles, index)
   role = roles.fetch(index % roles.length)
-  assignment = UserRole.find_or_create_by!(user:, system_role: role, branch: nil)
-  [role, assignment]
+  assignment = UserRole.find_or_initialize_by(user:, system_role: role, branch: nil)
+  assignment.save! if assignment.new_record? && role.active?
+  [role, assignment.persisted? ? assignment : nil]
 end
 
 def ensure_example_user_membership(user, organization)
@@ -572,9 +573,11 @@ end
 
 def seed_system_roles
   SYSTEM_ROLES.each do |role_attributes|
-    SystemRole.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
+    SystemRole.with_deleted.find_or_initialize_by(code: role_attributes[:code]).tap do |role|
+      next if role.deleted_at.present?
+
       role.assign_attributes(role_attributes)
-      role.status = :active
+      role.status = :active if role.new_record?
       role.save!
     end
   end
@@ -819,3 +822,6 @@ end
 
 # Communication module permissions and immutable initial template versions.
 load Rails.root.join('db/seeds/email_catalog.rb')
+
+# Independent CRUD actions for the administration catalogs.
+GranularPermissionCatalog.sync!

@@ -6,6 +6,13 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
   let!(:user) { create(:user, status: 'active') }
 
   before do
+    permission_role = create(:system_role, :system)
+    create(:user_role, user:, system_role: permission_role)
+    GranularPermissionCatalog.sync!
+    codes = GranularPermissionCatalog::ACTIONS.map { |action| "languages.#{action}" }
+    Permission.where(code: codes).find_each do |permission|
+      create(:system_role_permission, system_role: permission_role, permission:)
+    end
     sign_in user
   end
 

@@ -163,3 +163,6 @@ application.register("onboarding", OnboardingController)
 
 import EmailTemplatePreviewController from "./email_template_preview_controller"
 application.register("email-template-preview", EmailTemplatePreviewController)
+
+import RolePermissionsController from "./role_permissions_controller"
+application.register("role-permissions", RolePermissionsController)

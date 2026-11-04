@@ -1,0 +1,62 @@
+---
+es:
+  admin:
+    system_roles:
+      statuses:
+        deprecated: Archivado
+      lifecycle:
+        empty_archived_title: No hay roles archivados
+        empty_archived_hint: Los roles retirados aparecerán aquí con su historial.
+        inactive_branch: Sucursal inactiva o archivada · solo conservar o retirar asignaciones
+        saved_configuration: Guarda los cambios de datos y permisos antes de revisar el estado.
+        title: Estado y disponibilidad
+        create_hint: El rol se crea inactivo. Configura sus permisos y actívalo después de revisarlos.
+        archived_read_only: Rol archivado. Restaúralo como inactivo para revisar su configuración.
+        assignment_hint: Inactivo · no concede acceso. Desmarca para retirar la asignación.
+        change_to: Cambiar estado a
+        review: Revisar cambio
+        review_title: Revisar cambio de estado
+        reason: Motivo del cambio
+        confirmation: He revisado el impacto y confirmo el cambio de estado de este rol.
+        confirm: Confirmar cambio de estado
+        success: El estado del rol se actualizó y el cambio quedó registrado en el historial.
+        global_scope: El cambio afecta a todas las asignaciones de este rol, incluso en otras sucursales u organizaciones. Un rol global no se limita a las sucursales contadas aquí.
+        affected_users: Consultar usuarios asignados
+        affected_hint: Se muestran hasta 50 usuarios de tu organización. Los contadores incluyen el impacto total. Reasigna o desmarca este rol en Usuarios para retirar asignaciones.
+        manage_user: Gestionar roles
+        filter_label: Disponibilidad de roles
+        available: Disponibles
+        archived: Archivados
+        history: Historial de estados
+        empty_history: Todavía no hay cambios de estado registrados.
+        history_impact: '%{users} usuarios · %{branches} sucursales con asignaciones directas al realizar el cambio.'
+        previous: Anterior
+        next: Siguiente
+        actions:
+          archive: Archivar rol
+          restore: Restaurar como inactivo
+        hints:
+          active: Este rol concede sus permisos vigentes a los usuarios asignados. Desactivarlo suspende esos accesos y conserva la configuración.
+          inactive: No concede permisos ni admite nuevas asignaciones. Conserva su configuración y sus asignaciones existentes; activarlo recupera esos accesos.
+          deprecated: Retirado de operación. Conserva su configuración e historial y no admite asignaciones. Restaurarlo no recupera accesos automáticamente.
+        effects:
+          active: Los usuarios con asignaciones conservadas recuperarán los permisos vigentes de este rol. Revisa la configuración antes de continuar.
+          inactive: Los permisos de este rol dejarán de autorizar operaciones desde la siguiente solicitud. Las asignaciones se conservan y los demás roles activos siguen vigentes. No cambia el estado de las cuentas.
+          deprecated: Se archivará el rol sin borrar sus permisos ni su historial. Solo se permite si está inactivo y no tiene asignaciones vigentes.
+          restore: El rol volverá como inactivo. Será necesario revisar sus permisos y activarlo expresamente para conceder acceso.
+        counts:
+          users: Usuarios asignados
+          branches: Sucursales con asignación directa
+          without_other_roles: Usuarios sin otro rol activo
+          permissions: Permisos vigentes
+        errors:
+          review_required: Cambia el estado desde Estado y disponibilidad para revisar el impacto y registrar un motivo.
+          protected_role: Los roles Administrador y Superadministrador están protegidos; su estado no puede modificarse.
+          invalid_transition: Este cambio de estado no está permitido. Vuelve al rol y revisa su estado actual.
+          reason_required: Escribe un motivo de entre 1 y 1000 caracteres.
+          confirmation_required: Confirma que revisaste el impacto antes de continuar.
+          review_expired: La revisión venció o cambió la configuración o alguna asignación. Revisa de nuevo el impacto y confirma el cambio.
+          permissions_required: Asigna al menos un permiso vigente antes de activar el rol.
+          assignments_remain: Retira o reasigna todas las asignaciones vigentes de este rol antes de archivarlo, incluso las de usuarios suspendidos y de otras organizaciones.
+          create_inactive: Los roles nuevos deben crearse inactivos y no pueden usar códigos administrativos reservados.
+          not_assignable: debe estar activo para admitir nuevas asignaciones.

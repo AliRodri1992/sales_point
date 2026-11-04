@@ -1,35 +1,76 @@
 # frozen_string_literal: true
 
-class UserPolicy < ApplicationPolicy
-  def index?
-    admin?
-  end
-
-  def show?
-    admin?
-  end
+class UserPolicy < CatalogPolicy
+  self.permission_prefix = 'users'
 
   def create?
-    admin?
+    permitted_action?(:create) && (administrator? || user.permission?('users.invite'))
   end
 
-  def update?
-    admin?
+  def update?(account = record)
+    permitted_action?(:update) && editable_account?(account)
   end
 
-  def destroy?
-    admin?
+  def destroy?(account = record)
+    permitted_action?(:destroy) && manageable_status_target?(account) && account != user
+  end
+
+  def manage_status?
+    status_actor? && manageable_status_target? && record != user
+  end
+
+  def resend_invitation?
+    permitted_action?(:resend_invitation) && editable_account?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      user.admin? ? scope.not_deleted : scope.none
+      actions = GranularPermissionCatalog::ACTIONS + %w[invite resend_invitation suspend reactivate block unblock]
+      codes = actions.map { |action| "users.#{action}" }
+      return scope.none unless user
+      return scope.not_deleted if user.admin?
+
+      allowed = user.permission?('users.access') && codes.any? { |code| user.permission?(code) }
+      allowed ? scope.not_deleted : scope.none
     end
   end
 
   private
 
-  def admin?
-    user&.admin?
+  def editable_account?(account = record)
+    return true if administrator? || !account.is_a?(User) || account.new_record?
+
+    !administrative_account?(account) && account != user && single_organization?(account)
+  end
+
+  def manageable_status_target?(account = record)
+    return false unless editable_account?(account)
+    return true unless account.is_a?(User) && administrative_account?(account)
+
+    user.role?('super_admin') && !account.role?('super_admin')
+  end
+
+  def administrative_account?(account)
+    return account.admin? unless account.association(:user_roles).loaded?
+
+    account.user_roles.any? do |assignment|
+      role = assignment.system_role
+      role && assignment.deleted_at.nil? && role.deleted_at.nil? && role.active? &&
+        SystemRole::ADMINISTRATIVE_CODES.include?(role.code)
+    end
+  end
+
+  def single_organization?(account)
+    return account.organization_memberships.active.one? unless account.association(:organization_memberships).loaded?
+
+    account.organization_memberships.one? { |membership| membership.active? && membership.deleted_at.nil? }
+  end
+
+  def status_actor?
+    user.present? && (administrator? || (user.permission?('users.access') && status_permissions?))
+  end
+
+  def status_permissions?
+    %w[suspend reactivate block unblock destroy].any? { |action| user.permission?("users.#{action}") }
   end
 end

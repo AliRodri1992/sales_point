@@ -1,0 +1,110 @@
+---
+es:
+  admin:
+    system_roles:
+      permissions:
+        languages_access:
+          name: Acceder · Idiomas
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        languages_index:
+          name: Listar · Idiomas
+          description: Permite consultar y buscar en la lista de registros.
+        languages_show:
+          name: Mostrar · Idiomas
+          description: Permite consultar el detalle de un registro.
+        languages_create:
+          name: Crear · Idiomas
+          description: Permite registrar nuevos elementos.
+        languages_update:
+          name: Actualizar · Idiomas
+          description: Permite actualizar los datos de registros existentes.
+        languages_destroy:
+          name: Eliminar / archivar · Idiomas
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
+        products_access:
+          name: Acceder · Productos
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        products_index:
+          name: Listar · Productos
+          description: Permite consultar y buscar en la lista de registros.
+        products_show:
+          name: Mostrar · Productos
+          description: Permite consultar el detalle de un registro.
+        products_create:
+          name: Crear · Productos
+          description: Permite registrar nuevos elementos.
+        products_update:
+          name: Actualizar · Productos
+          description: Permite actualizar los datos de registros existentes.
+        products_destroy:
+          name: Eliminar / archivar · Productos
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
+        customers_access:
+          name: Acceder · Clientes
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        customers_index:
+          name: Listar · Clientes
+          description: Permite consultar y buscar en la lista de registros.
+        customers_show:
+          name: Mostrar · Clientes
+          description: Permite consultar el detalle de un registro.
+        customers_create:
+          name: Crear · Clientes
+          description: Permite registrar nuevos elementos.
+        customers_update:
+          name: Actualizar · Clientes
+          description: Permite actualizar los datos de registros existentes.
+        customers_destroy:
+          name: Eliminar / archivar · Clientes
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
+        users_access:
+          name: Acceder · Usuarios
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        users_index:
+          name: Listar · Usuarios
+          description: Permite consultar y buscar en la lista de registros.
+        users_show:
+          name: Mostrar · Usuarios
+          description: Permite consultar el detalle de un registro.
+        users_create:
+          name: Crear · Usuarios
+          description: Permite crear usuarios e iniciar su invitación. También requiere
+            el permiso Invitar usuarios.
+        users_update:
+          name: Actualizar · Usuarios
+          description: Permite editar usuarios. La asignación de roles y la edición
+            de administradores requieren una cuenta administradora.
+        users_destroy:
+          name: Eliminar / archivar · Usuarios
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
+        categories_access:
+          name: Acceder · Categorías
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        categories_index:
+          name: Listar · Categorías
+          description: Permite consultar y buscar en la lista de registros.
+        categories_show:
+          name: Mostrar · Categorías
+          description: Permite consultar el detalle de un registro.
+        categories_create:
+          name: Crear · Categorías
+          description: Permite registrar nuevos elementos.
+        categories_update:
+          name: Actualizar · Categorías
+          description: Permite actualizar los datos de registros existentes.
+        categories_destroy:
+          name: Eliminar / archivar · Categorías
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
+        users_restore:
+          description: Permite restaurar usuarios archivados. Requiere una cuenta
+            superadministradora.

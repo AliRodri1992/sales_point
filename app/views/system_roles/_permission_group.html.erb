@@ -1,0 +1,34 @@
+<details open class="group rounded-xl border border-slate-200 bg-white" data-role-permissions-target="group">
+  <summary class="cursor-pointer rounded-xl px-4 py-4 marker:text-slate-400 focus-visible:outline-2 focus-visible:outline-emerald-700 sm:px-5">
+    <span class="ml-2 inline-flex max-w-full flex-wrap items-center gap-3 align-middle">
+      <span class="font-jakarta text-base font-bold text-slate-900"><%= permission_module_label(module_key) %></span>
+      <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+        <span data-group-count><%= permissions.count { |permission| @assigned_permission_ids.include?(permission.id) } %></span> / <%= permissions.size %>
+      </span>
+    </span>
+  </summary>
+  <fieldset class="border-t border-slate-100 px-4 pb-5 sm:px-5" <%= 'disabled' if read_only %>>
+    <legend class="sr-only"><%= permission_module_label(module_key) %></legend>
+    <% unless read_only %>
+      <label class="my-3 inline-flex min-h-11 cursor-pointer items-center gap-3 text-sm font-medium text-slate-700">
+        <input type="checkbox" data-select-group data-action="change->role-permissions#selectGroup"
+               class="size-4 rounded border-slate-300 accent-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-700"
+               aria-label="<%= t('admin.system_roles.catalog.select_module', module: permission_module_label(module_key)) %>">
+        <%= t('admin.system_roles.catalog.select_module', module: permission_module_label(module_key)) %>
+      </label>
+    <% end %>
+    <div class="space-y-5 pt-3">
+      <% permissions.group_by { |permission| permission_resource_key(permission) }.each_value do |resource_permissions| %>
+        <div data-permission-resource>
+          <h3 class="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500"><%= permission_resource_label(resource_permissions.first) %></h3>
+          <div class="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+            <% sorted_resource_permissions(resource_permissions).each do |permission| %>
+              <%= render 'system_roles/permission_card', permission: permission, assigned_ids: @assigned_permission_ids,
+                         module_label: permission_module_label(module_key), read_only: read_only %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </fieldset>
+</details>

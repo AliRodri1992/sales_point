@@ -1,0 +1,97 @@
+---
+ko:
+  admin:
+    system_roles:
+      permissions:
+        languages_access:
+          name: 접근 · 언어
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        languages_index:
+          name: 목록 · 언어
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        languages_show:
+          name: 상세 보기 · 언어
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        languages_create:
+          name: 생성 · 언어
+          description: 새 항목을 등록할 수 있습니다.
+        languages_update:
+          name: 업데이트 · 언어
+          description: 기존 항목을 업데이트할 수 있습니다.
+        languages_destroy:
+          name: 삭제 / 보관 · 언어
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        products_access:
+          name: 접근 · 상품
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        products_index:
+          name: 목록 · 상품
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        products_show:
+          name: 상세 보기 · 상품
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        products_create:
+          name: 생성 · 상품
+          description: 새 항목을 등록할 수 있습니다.
+        products_update:
+          name: 업데이트 · 상품
+          description: 기존 항목을 업데이트할 수 있습니다.
+        products_destroy:
+          name: 삭제 / 보관 · 상품
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        customers_access:
+          name: 접근 · 고객
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        customers_index:
+          name: 목록 · 고객
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        customers_show:
+          name: 상세 보기 · 고객
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        customers_create:
+          name: 생성 · 고객
+          description: 새 항목을 등록할 수 있습니다.
+        customers_update:
+          name: 업데이트 · 고객
+          description: 기존 항목을 업데이트할 수 있습니다.
+        customers_destroy:
+          name: 삭제 / 보관 · 고객
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        users_access:
+          name: 접근 · 사용자
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        users_index:
+          name: 목록 · 사용자
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        users_show:
+          name: 상세 보기 · 사용자
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        users_create:
+          name: 생성 · 사용자
+          description: 사용자를 생성하고 초대를 보낼 수 있습니다. 사용자 초대 권한도 필요합니다.
+        users_update:
+          name: 업데이트 · 사용자
+          description: 사용자를 수정할 수 있습니다. 역할 지정과 관리자 수정에는 관리자 계정이 필요합니다.
+        users_destroy:
+          name: 삭제 / 보관 · 사용자
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        categories_access:
+          name: 접근 · 카테고리
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        categories_index:
+          name: 목록 · 카테고리
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        categories_show:
+          name: 상세 보기 · 카테고리
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        categories_create:
+          name: 생성 · 카테고리
+          description: 새 항목을 등록할 수 있습니다.
+        categories_update:
+          name: 업데이트 · 카테고리
+          description: 기존 항목을 업데이트할 수 있습니다.
+        categories_destroy:
+          name: 삭제 / 보관 · 카테고리
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        users_restore:
+          description: 보관된 사용자를 복원할 수 있습니다. 최고 관리자 계정이 필요합니다.

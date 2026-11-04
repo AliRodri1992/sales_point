@@ -5,7 +5,15 @@ require 'rails_helper'
 RSpec.describe 'Admin sidebar', type: :request do
   let(:user) { create(:user) }
 
-  before { sign_in user }
+  before do
+    role = create(:system_role, :system, name: 'ZZZ Catalog reader', code: 'catalog_reader')
+    create(:user_role, user:, system_role: role)
+    %w[products.access products.index].each do |code|
+      permission = create(:permission, code:)
+      create(:system_role_permission, system_role: role, permission:)
+    end
+    sign_in user
+  end
 
   describe 'sidebar navigation accessibility' do
     it 'renders the collapsed navigation with persistent accessible link names' do

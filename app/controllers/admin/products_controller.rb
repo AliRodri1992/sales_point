@@ -7,6 +7,9 @@ module Admin
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    include CatalogAuthorization
+    include CatalogNavigation
+
     before_action :set_product, only: %i[show edit update destroy]
 
     rescue_from ActiveRecord::RecordNotFound, with: :product_not_found
@@ -29,6 +32,8 @@ module Admin
 
       if @product.save
         refresh_product_catalog('created')
+        return if redirect_without_catalog_listing(@product, :created)
+
         redirect_to admin_products_path, flash: { swal_message: t('admin.products.created') }
       else
         render :new, status: :unprocessable_content
@@ -41,6 +46,8 @@ module Admin
     def update
       if @product.update(product_params)
         refresh_product_catalog('updated')
+        return if redirect_without_catalog_listing(@product, :updated)
+
         redirect_to admin_products_path, flash: { swal_message: t('admin.products.updated') }
       else
         render :edit, status: :unprocessable_content
@@ -53,6 +60,8 @@ module Admin
     def destroy
       @product.update!(deleted_at: Time.current, updated_at: Time.current)
       refresh_product_catalog('destroyed')
+      return if redirect_without_catalog_listing(@product, :destroyed)
+
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
       redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))

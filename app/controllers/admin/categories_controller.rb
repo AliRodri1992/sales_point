@@ -4,8 +4,10 @@ module Admin
   class CategoriesController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    include CatalogAuthorization
+    include CatalogNavigation
+
     before_action :set_category, only: %i[show edit update destroy]
-    before_action :check_permissions
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
@@ -32,6 +34,8 @@ module Admin
       if @category.save
         load_categories
         notify_category(current_user, @category, 'created')
+        return if redirect_without_catalog_listing(@category, :created)
+
         broadcast_categories_update
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.categories.created') }
@@ -48,6 +52,8 @@ module Admin
       if @category.update(category_params)
         load_categories
         notify_category(current_user, @category, 'updated')
+        return if redirect_without_catalog_listing(@category, :updated)
+
         broadcast_categories_update
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.categories.updated') }
@@ -64,6 +70,8 @@ module Admin
       @category.update!(deleted_at: Time.current)
       load_categories
       notify_category(current_user, @category, 'destroyed')
+      return if redirect_without_catalog_listing(@category, :destroyed)
+
       broadcast_categories_update
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.categories.destroyed') }
@@ -136,10 +144,6 @@ module Admin
 
     def per_page_param
       table_page_size_for('categories')
-    end
-
-    def check_permissions
-      authorize Category
     end
 
     def forbidden

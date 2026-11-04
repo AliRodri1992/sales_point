@@ -1,0 +1,52 @@
+<% read_only = @system_role.persisted? && !policy(@system_role).update? %>
+<% creating = @system_role.new_record? %>
+<%= form_with model: @system_role, url: creating ? system_roles_path : system_role_path(@system_role), method: creating ? :post : :patch, class: 'pb-24 sm:pb-0' do |form| %>
+  <%= hidden_field_tag 'permission_ids[]', '', disabled: read_only %>
+  <% if @system_role.errors.any? %>
+    <div role="alert" class="mb-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+      <p class="font-semibold"><%= t('admin.system_roles.new.error_title') %></p>
+      <ul class="mt-2 list-disc space-y-1 pl-5">
+        <% @system_role.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+  <section class="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.system_roles.new.details_title') %></h2>
+    <p class="mt-1 text-sm text-slate-600"><%= t('admin.system_roles.new.details_subtitle') %></p>
+    <fieldset class="mt-5 grid gap-5 md:grid-cols-2" <%= 'disabled' if read_only %>>
+      <legend class="sr-only"><%= t('admin.system_roles.new.details_title') %></legend>
+      <div>
+        <%= form.label :name, t('admin.system_roles.new.fields.name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name, required: true, maxlength: 50, aria: { invalid: @system_role.errors[:name].any? }, class: 'min-h-11 w-full rounded-xl border border-slate-300 px-3 text-sm focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100', placeholder: t('admin.system_roles.new.fields.name_placeholder') %>
+      </div>
+      <div>
+        <% if creating %>
+          <%= form.label :role_type, t('admin.system_roles.new.fields.type'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+          <%= form.select :role_type, [[t('admin.system_roles.types.system'), 'system'], [t('admin.system_roles.types.branch'), 'branch']], {}, class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100' %>
+        <% else %>
+          <p class="mb-2 text-sm font-semibold text-slate-700"><%= t('admin.system_roles.show.type') %></p>
+          <p class="min-h-11 py-3 text-sm text-slate-600"><%= t("admin.system_roles.types.#{@system_role.role_type}") %> · <span class="break-all font-mono text-xs"><%= @system_role.code %></span></p>
+        <% end %>
+      </div>
+      <div>
+        <p class="mb-2 text-sm font-semibold text-slate-700"><%= t('admin.system_roles.new.fields.status') %></p>
+        <%= render 'system_roles/status_badge', system_role: @system_role %>
+        <p class="mt-2 text-xs leading-5 text-slate-500"><%= t(creating ? 'admin.system_roles.lifecycle.create_hint' : "admin.system_roles.lifecycle.hints.#{@system_role.status}") %></p>
+      </div>
+      <div>
+        <%= form.label :description, t('admin.system_roles.new.fields.description'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_area :description, rows: 3, class: 'w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100', placeholder: t('admin.system_roles.new.fields.description_placeholder') %>
+      </div>
+    </fieldset>
+  </section>
+  <%= render 'system_roles/permissions', read_only: read_only %>
+  <% unless read_only %>
+    <div class="z-10 mt-6 flex flex-col-reverse gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:sticky sm:bottom-3 sm:flex-row sm:items-center sm:justify-between sm:pr-40">
+      <p class="text-xs text-slate-500"><%= t('admin.system_roles.catalog.save_hint') %></p>
+      <div class="flex flex-wrap justify-end gap-3">
+        <%= link_to t('admin.system_roles.new.cancel'), system_roles_path, class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
+        <%= form.submit t(creating ? 'admin.system_roles.new.submit' : 'admin.system_roles.show.save_permissions'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none', data: { turbo_submits_with: t('admin.system_roles.catalog.saving') } %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

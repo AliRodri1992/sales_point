@@ -4,6 +4,9 @@ module Admin
   class LanguagesController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    include CatalogAuthorization
+    include CatalogNavigation
+
     before_action :set_language, only: %i[show edit update destroy]
 
     PER_PAGE = 10
@@ -29,7 +32,8 @@ module Admin
       if @language.save
         load_languages
         notify_language(current_user, @language, 'created')
-        broadcast_language_selector
+        return if redirect_without_catalog_listing(@language, :created)
+
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.created') }
           format.html do
@@ -45,7 +49,8 @@ module Admin
       if @language.update(language_params)
         load_languages
         notify_language(current_user, @language, 'updated')
-        broadcast_language_selector
+        return if redirect_without_catalog_listing(@language, :updated)
+
         respond_to do |format|
           format.turbo_stream { @swal_message = t('admin.languages.updated') }
           format.html do
@@ -61,7 +66,8 @@ module Admin
       @language.update!(deleted_at: Time.current)
       load_languages
       notify_language(current_user, @language, 'destroyed')
-      broadcast_language_selector
+      return if redirect_without_catalog_listing(@language, :destroyed)
+
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.languages.destroyed') }
         format.html do

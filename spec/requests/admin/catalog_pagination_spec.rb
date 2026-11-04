@@ -16,6 +16,11 @@ RSpec.describe 'Catalog pagination links', type: :request do
     create_list(:category, 12)
     create(:organization_membership, user:, organization:)
     create_list(:product, 12, organization:)
+    GranularPermissionCatalog.sync!
+    codes = %w[categories products].product(GranularPermissionCatalog::ACTIONS).map { |parts| parts.join('.') }
+    Permission.where(code: codes).find_each do |permission|
+      SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    end
     sign_in user
   end
 

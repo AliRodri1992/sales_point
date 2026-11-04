@@ -1,0 +1,62 @@
+---
+ko:
+  admin:
+    system_roles:
+      statuses:
+        deprecated: 보관됨
+      lifecycle:
+        empty_archived_title: 보관된 역할이 없습니다
+        empty_archived_hint: 운영에서 제외된 역할과 변경 이력이 여기에 표시됩니다.
+        inactive_branch: 비활성 또는 보관된 지점 · 기존 할당 유지 또는 해제만 가능
+        saved_configuration: 상태를 검토하기 전에 정보와 권한 변경 사항을 저장하세요.
+        title: 상태 및 사용 가능 여부
+        create_hint: 새 역할은 비활성 상태로 생성됩니다. 권한을 설정하고 검토한 후 활성화하세요.
+        archived_read_only: 보관된 역할입니다. 설정을 검토하려면 비활성 상태로 복원하세요.
+        assignment_hint: 비활성 · 접근 권한을 부여하지 않습니다. 할당을 해제하려면 선택을 취소하세요.
+        change_to: 변경할 상태
+        review: 변경 검토
+        review_title: 상태 변경 검토
+        reason: 변경 사유
+        confirmation: 영향을 검토했으며 이 역할의 상태 변경을 확인합니다.
+        confirm: 상태 변경 확인
+        success: 역할 상태가 변경되었으며 변경 이력이 기록되었습니다.
+        global_scope: 이 변경은 다른 지점과 조직을 포함한 이 역할의 모든 할당에 적용됩니다. 전역 역할은 여기에 집계된 지점으로 제한되지 않습니다.
+        affected_users: 할당된 사용자 보기
+        affected_hint: 현재 조직의 사용자를 최대 50명까지 표시합니다. 집계에는 전체 영향이 포함됩니다. 사용자에서 역할을 재할당하거나 선택을 취소하여 할당을 해제하세요.
+        manage_user: 역할 관리
+        filter_label: 역할 사용 가능 여부
+        available: 사용 가능
+        archived: 보관됨
+        history: 상태 변경 이력
+        empty_history: 기록된 상태 변경이 없습니다.
+        history_impact: '변경 당시 사용자 %{users}명 · 직접 할당된 지점 %{branches}개.'
+        previous: 이전
+        next: 다음
+        actions:
+          archive: 역할 보관
+          restore: 비활성 상태로 복원
+        hints:
+          active: 할당된 사용자에게 현재 권한을 부여합니다. 비활성화하면 설정을 유지하면서 접근 권한이 중단됩니다.
+          inactive: 권한을 부여하지 않으며 새 할당을 허용하지 않습니다. 설정과 기존 할당은 유지되며 활성화하면 접근 권한이 복구됩니다.
+          deprecated: 운영에서 제외되었습니다. 설정과 이력을 유지하며 할당을 허용하지 않습니다. 복원만으로 접근 권한이 복구되지 않습니다.
+        effects:
+          active: 기존 할당이 유지된 사용자는 이 역할의 현재 권한을 다시 받게 됩니다. 계속하기 전에 설정을 검토하세요.
+          inactive: 다음 요청부터 이 역할의 권한이 적용되지 않습니다. 할당과 다른 활성 역할의 권한은 유지됩니다. 계정 상태는 변경되지 않습니다.
+          deprecated: 권한과 이력을 삭제하지 않고 역할을 보관합니다. 비활성 상태이며 현재 할당이 없어야 합니다.
+          restore: 비활성 상태로 복원됩니다. 접근 권한을 부여하려면 권한 검토 후 명시적으로 활성화해야 합니다.
+        counts:
+          users: 할당된 사용자
+          branches: 직접 할당된 지점
+          without_other_roles: 다른 활성 역할이 없는 사용자
+          permissions: 현재 권한
+        errors:
+          review_required: 상태 및 사용 가능 여부에서 영향을 검토하고 사유를 기록한 후 상태를 변경하세요.
+          protected_role: 관리자와 최고 관리자 역할은 보호되며 상태를 변경할 수 없습니다.
+          invalid_transition: 허용되지 않는 상태 변경입니다. 역할로 돌아가 현재 상태를 확인하세요.
+          reason_required: 1자 이상 1000자 이하의 사유를 입력하세요.
+          confirmation_required: 계속하기 전에 영향을 검토했음을 확인하세요.
+          review_expired: 검토가 만료되었거나 설정 또는 할당이 변경되었습니다. 영향을 다시 검토하고 변경을 확인하세요.
+          permissions_required: 역할을 활성화하기 전에 현재 사용 가능한 권한을 하나 이상 할당하세요.
+          assignments_remain: 정지된 사용자와 다른 조직을 포함한 모든 현재 할당을 해제하거나 재할당한 후 역할을 보관하세요.
+          create_inactive: 새 역할은 비활성 상태로 생성해야 하며 예약된 관리자 코드를 사용할 수 없습니다.
+          not_assignable: 새 할당을 허용하려면 활성 상태여야 합니다.

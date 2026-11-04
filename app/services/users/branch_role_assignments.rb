@@ -3,6 +3,14 @@
 module Users
   # Applies branch role selections only within the current organization.
   class BranchRoleAssignments
+    def self.branch_options(user:, organization:)
+      return Branch.none unless organization
+
+      scope = organization.branches.with_deleted
+      retained_ids = user&.persisted? ? user.user_roles.select(:branch_id) : []
+      scope.where(status: true, deleted_at: nil).or(scope.where(id: retained_ids)).order(:name)
+    end
+
     def initialize(user:, organization:, tokens:)
       @user = user
       @organization = organization
@@ -30,17 +38,19 @@ module Users
     def valid_branch_ids?(parsed)
       ids = parsed.map(&:first).uniq
       allowed = @organization.branches.not_deleted.where(status: true, id: ids).pluck(:id)
-      ids.sort == allowed.sort
+      existing = local_assignments.pluck(:branch_id, :system_role_id)
+      parsed.all? { |pair| allowed.include?(pair.first) || existing.include?(pair) }
     end
 
     def valid_role_ids?(parsed)
       ids = parsed.map(&:last).uniq
       allowed = SystemRole.branch.active.not_deleted.where(id: ids).pluck(:id)
-      ids.sort == allowed.sort
+      existing = local_assignments.pluck(:branch_id, :system_role_id)
+      parsed.all? { |pair| allowed.include?(pair.last) || existing.include?(pair) }
     end
 
     def local_assignments
-      @user.user_roles.active.where(branch_id: @organization.branches.select(:id))
+      @user.user_roles.joins(:system_role).where(branch_id: @organization.branches.with_deleted.select(:id))
            .where(system_roles: { role_type: 'branch' })
     end
 

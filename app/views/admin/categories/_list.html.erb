@@ -50,19 +50,24 @@
               </td>
               <td class="px-6 py-4 text-center">
                 <div class="flex items-center justify-center gap-1">
-                  <%= link_to admin_category_path(category),
+                  <% if policy(Category).show? %>
+<%= link_to admin_category_path(category),
                               data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.categories.show.title') } do %>
                     <%= delta_icon('eye', class: 'size-4') %>
                   <% end %>
-                  <%= link_to edit_admin_category_path(category),
+<% end %>
+                  <% if policy(Category).update? %>
+<%= link_to edit_admin_category_path(category),
                               data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.edit') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.categories.index.edit') } do %>
                     <%= delta_icon('pencil-square', class: 'size-4') %>
                   <% end %>
-                  <%= button_to admin_category_path(category),
+<% end %>
+                  <% if policy(Category).destroy? %>
+<%= button_to admin_category_path(category),
                                 method: :delete,
                                 class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
                                 data: {
@@ -74,6 +79,7 @@
                                 aria: { label: t('admin.categories.index.delete') } do %>
                     <%= delta_icon('trash', class: 'size-4') %>
                   <% end %>
+<% end %>
                 </div>
               </td>
             </tr>

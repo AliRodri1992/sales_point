@@ -4,6 +4,13 @@ RSpec.describe 'Admin clients', type: :request do
   let(:user) { create(:user) }
 
   before do
+    role = create(:system_role, :system)
+    create(:user_role, user:, system_role: role)
+    GranularPermissionCatalog.sync!
+    codes = GranularPermissionCatalog::ACTIONS.map { |action| "customers.#{action}" }
+    Permission.where(code: codes).find_each do |permission|
+      create(:system_role_permission, system_role: role, permission:)
+    end
     sign_in user
   end
 

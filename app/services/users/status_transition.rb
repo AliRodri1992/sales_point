@@ -74,7 +74,8 @@ module Users
     end
 
     def actor_authorized?
-      return false unless @actor.active? && @actor.admin?
+      return false unless @actor.active?
+      return false unless UserPolicy.new(@actor, @user).manage_status?
       return false unless @actor.permission?(transition_permission)
       return true unless @user.admin?
 

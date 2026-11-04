@@ -1,0 +1,30 @@
+<section class="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="role-lifecycle-title">
+  <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
+    <div class="max-w-2xl">
+      <h2 id="role-lifecycle-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.system_roles.lifecycle.title') %></h2>
+      <p class="mt-2 text-sm leading-6 text-slate-600"><%= t("admin.system_roles.lifecycle.hints.#{@system_role.status}") %></p>
+      <% unless @system_role.deprecated? || @system_role.protected_permissions? %><p class="mt-2 text-xs text-slate-500"><%= t('admin.system_roles.lifecycle.saved_configuration') %></p><% end %>
+      <% if @system_role.protected_permissions? %>
+        <p class="mt-2 text-sm font-medium text-amber-800"><%= t('admin.system_roles.lifecycle.errors.protected_role') %></p>
+      <% end %>
+    </div>
+    <% if policy(@system_role).change_status? %>
+      <div class="flex flex-wrap items-end gap-3">
+        <% if @system_role.deprecated? %>
+          <%= link_to t('admin.system_roles.lifecycle.actions.restore'), status_review_system_role_path(@system_role, target: 'inactive'), class: 'inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
+        <% else %>
+          <%= form_with url: status_review_system_role_path(@system_role), method: :get, class: 'flex flex-wrap items-end gap-3' do %>
+            <div>
+              <%= label_tag :target, t('admin.system_roles.lifecycle.change_to'), class: 'mb-2 block text-xs font-semibold text-slate-600' %>
+              <%= select_tag :target, options_for_select([['active', t('admin.system_roles.statuses.active')], ['inactive', t('admin.system_roles.statuses.inactive')]].reject { |value, _| value == @system_role.status }.map { |value, label| [label, value] }), class: 'min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:border-emerald-700 focus:ring-emerald-100' %>
+            </div>
+            <%= submit_tag t('admin.system_roles.lifecycle.review'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
+          <% end %>
+          <% if @system_role.inactive? %>
+            <%= link_to t('admin.system_roles.lifecycle.actions.archive'), status_review_system_role_path(@system_role, target: 'deprecated'), class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

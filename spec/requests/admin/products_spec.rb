@@ -10,6 +10,13 @@ RSpec.describe 'Admin::Products', type: :request do
 
   before do
     create(:organization_membership, user:, organization:)
+    role = create(:system_role, :system)
+    create(:user_role, user:, system_role: role)
+    GranularPermissionCatalog.sync!
+    codes = GranularPermissionCatalog::ACTIONS.map { |action| "products.#{action}" }
+    Permission.where(code: codes).find_each do |permission|
+      create(:system_role_permission, system_role: role, permission:)
+    end
     sign_in user
   end
 
@@ -139,16 +146,16 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'broadcasts the updated catalog to subscribed clients' do
-      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
+      expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+        .with("products_catalog_#{organization.id}")
 
       post admin_products_path(format: :turbo_stream),
            params: { product: { code: 'PROD-NEW', name: 'New Product', price: 10 } }
     end
 
-    it 'renders the real-time catalog broadcast partial after a successful create' do
-      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
+    it 'refreshes viewers so each receives actions authorized for their own account' do
+      expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+        .with("products_catalog_#{organization.id}")
 
       post admin_products_path,
            params: { product: { code: 'PROD-BROADCAST', name: 'Broadcast Product', price: 10 } }
@@ -226,8 +233,8 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'broadcasts the updated catalog to subscribed clients' do
-      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
+      expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+        .with("products_catalog_#{organization.id}")
 
       patch admin_product_path(product, format: :turbo_stream),
             params: { product: { name: 'New Name', code: 'old_code' } }
@@ -286,8 +293,8 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'broadcasts the updated catalog to subscribed clients' do
-      expect(Turbo::StreamsChannel).to receive(:broadcast_update_to)
-        .with("products_catalog_#{organization.id}", target: 'admin_products_list', html: kind_of(String))
+      expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+        .with("products_catalog_#{organization.id}")
 
       delete admin_product_path(product, format: :turbo_stream)
     end

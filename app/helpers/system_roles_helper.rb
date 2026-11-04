@@ -55,7 +55,10 @@ module SystemRolesHelper
 
   def translate_system_role(system_role, attribute)
     key = system_role.code.to_s.parameterize(separator: '_')
-    t("admin.system_roles.roles.#{key}.#{attribute}", default: system_role.public_send(attribute))
+    lookup = "admin.system_roles.roles.#{key}.#{attribute}"
+    value = system_role.public_send(attribute)
+    defaults = I18n.available_locales.map { |locale| I18n.t(lookup, locale:, default: nil) }
+    defaults.include?(value) ? t(lookup, default: value) : value
   end
 
   def translate_permission(permission, attribute)

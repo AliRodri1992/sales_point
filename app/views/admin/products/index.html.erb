@@ -8,12 +8,14 @@
     </p>
   </div>
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-    <%= link_to new_admin_product_path,
+    <% if policy(Product).create? %>
+<%= link_to new_admin_product_path,
                 data: { tooltip: t('admin.products.index.new') },
                 class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
       <%= delta_icon('plus', class: 'size-4') %>
       <%= t('admin.products.index.new') %>
     <% end %>
+<% end %>
 
     <%= form_with url: admin_products_path, method: :get,
                   data: { controller: 'products-search', turbo_frame: 'admin_products_list' },

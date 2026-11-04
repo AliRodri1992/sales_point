@@ -9,9 +9,11 @@
       <%= delta_icon("bars-3", class: "size-4") %>
       <span data-dashboard-customize-label><%= t('admin.dashboard.page_header.customize') %></span>
     </button>
+    <% if policy(Product).create? %>
     <%= link_to new_admin_product_path, class: "dashboard-button dashboard-button-primary" do %>
       <%= delta_icon("plus", class: "size-4") %>
       <%= t('admin.dashboard.widgets.quick_actions.add_product') %>
+    <% end %>
     <% end %>
   </div>
 </div>
