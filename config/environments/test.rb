@@ -36,12 +36,15 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  # Keep test jobs out of the development Sidekiq queues.
+  config.active_job.queue_adapter = :test
+
   # Allow the default Capybara host used by feature specs.
   config.hosts << 'www.example.com'
   config.hosts << '127.0.0.1' # Capybara's local Puma server uses a random port.
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = { host: "example.com", protocol: "https" }
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr

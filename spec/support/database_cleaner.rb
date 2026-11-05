@@ -21,7 +21,10 @@ RSpec.configure do |config|
     DatabaseCleaner.start
   end
 
-  config.after(:each) do
+  # Browser sessions must finish before their database records are cleaned.
+  config.append_after(:each) do |example|
+    # Stop browser heartbeats before removing the accounts they reference.
+    ActionCable.server.restart if example.metadata[:js]
     DatabaseCleaner.clean
   end
 end

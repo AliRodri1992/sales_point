@@ -33,4 +33,19 @@ RSpec.describe EmailTemplates::TestDelivery do
       described_class.call(template:, actor:, recipient: actor.email)
     end.to raise_error(ArgumentError, /limit/)
   end
+
+  it 'requires a published version even for a permitted recipient' do
+    template.update!(published_version: nil)
+    expect do
+      described_class.call(template:, actor:, recipient: actor.email)
+    end.to raise_error(ArgumentError, 'Template not published')
+  end
+
+  it 'allows root administrators to test delivery to another valid recipient' do
+    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'super_admin'))
+    expect do
+      described_class.call(template:, actor:, recipient: ' Other@Example.org ')
+    end.to have_enqueued_mail(EmailTemplateTestMailer, :sample).with(template.id, 'other@example.org')
+    expect(template.audits.where(action: 'test_sent', actor:)).to exist
+  end
 end

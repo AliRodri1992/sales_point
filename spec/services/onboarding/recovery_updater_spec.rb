@@ -56,4 +56,35 @@ RSpec.describe Onboarding::RecoveryUpdater, type: :service do
     expect(record.errors[:base]).to be_present
     expect(organization.employees.active).to be_empty
   end
+
+  it 'reports validation errors without recording progress or leaving partial registers' do
+    record = Terminal.new
+    expect(recover('terminal', record, { name: '' })).to be(false)
+    expect(record.errors[:name]).to be_present
+    expect(branch.terminals).to be_empty
+    expect(organization.onboarding_audits).to be_empty
+  end
+
+  it 'requires selecting an active branch when recovering a register' do
+    record = Terminal.new
+    expect(recover('terminal', record, { name: 'Register' }, nil)).to be(false)
+    expect(record.errors[:base]).to be_present
+  end
+
+  it 'keeps an existing employee association while creating an organization profile' do
+    existing = create(:employee)
+    user.update!(employee: existing)
+    record = Employee.new
+    expect(recover('team', record, { first_name: 'Ana', last_name: 'Review' })).to be(true)
+    expect(record.organization).to eq(organization)
+    expect(user.reload.employee).to eq(existing)
+  end
+
+  it 'rolls back the employee profile if its account cannot be linked' do
+    user.status = nil
+    record = Employee.new
+    expect(recover('team', record, { first_name: 'Ana', last_name: 'Review' })).to be(false)
+    expect(record.errors[:base]).to be_present
+    expect(organization.employees).to be_empty
+  end
 end

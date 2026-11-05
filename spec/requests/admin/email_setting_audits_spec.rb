@@ -74,11 +74,67 @@ RSpec.describe 'Email settings audit history', type: :request do
   it 'prevents deleting audit evidence' do
     audit = EmailSettingAudit.create!(
       organization:, actor: administrator, setting_type: 'sender',
-      changeset: { 'display_name' => ['Before', 'After'] }
+      changeset: { 'display_name' => %w[Before After] }
     )
 
     expect(audit.destroy).to be_falsey
     expect(EmailSettingAudit.exists?(audit.id)).to be(true)
   end
 
+  it 'renders the branding editor and rejects invalid sender settings' do
+    get edit_admin_email_branding_settings_path
+    expect(response).to have_http_status(:ok)
+    patch admin_email_sender_settings_path, params: {
+      email_sender_setting: { from_address: 'invalid-address' }
+    }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(EmailSettingAudit.where(setting_type: 'sender')).to be_empty
+  end
+
+  it 'does not grant global branding access to an ordinary administrator' do
+    get edit_admin_email_branding_settings_path, params: { global: '1' }
+    expect(response).to have_http_status(:ok)
+    patch admin_email_branding_settings_path, params: {
+      global: '1', email_branding_setting: { display_name: 'Local identity' }
+    }
+    expect(response).to have_http_status(:redirect)
+    expect(EmailBrandingSetting.find_by!(organization:).display_name).to eq('Local identity')
+    expect(EmailBrandingSetting.find_by(organization_id: nil)).to be_nil
+  end
+
+  it 'requires explicit permissions for both settings editors' do
+    role.system_role_permissions.destroy_all
+    get edit_admin_email_branding_settings_path
+    expect(response).to have_http_status(:forbidden)
+    get edit_admin_email_sender_settings_path
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'allows a root administrator to audit global branding changes' do
+    role.update!(code: 'super_admin')
+    patch admin_email_branding_settings_path, params: {
+      global: '1', email_branding_setting: { display_name: 'Platform identity' }
+    }
+    expect(response).to have_http_status(:redirect)
+    expect(EmailBrandingSetting.find_by!(organization_id: nil).display_name).to eq('Platform identity')
+    expect(EmailSettingAudit.where(organization_id: nil, setting_type: 'branding')).to exist
+  end
+
+  it 'records logo replacement without storing the uploaded file in the audit' do
+    png = Base64.decode64(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII='
+    )
+    Tempfile.create(['branding-logo', '.png']) do |file|
+      file.binmode
+      file.write(png)
+      file.flush
+      patch admin_email_branding_settings_path, params: {
+        email_branding_setting: { display_name: 'Tenant', logo: Rack::Test::UploadedFile.new(file.path, 'image/png') }
+      }
+    end
+    expect(response).to have_http_status(:redirect)
+    expect(EmailBrandingSetting.find_by!(organization:).logo).to be_attached
+    expect(EmailSettingAudit.find_by!(organization:, setting_type: 'branding').changeset)
+      .to include('logo_updated' => true)
+  end
 end

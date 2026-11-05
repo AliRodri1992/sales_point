@@ -9,7 +9,7 @@ module Admin
       verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
       @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                .includes(:actor).order(created_at: :desc).limit(20)
+                                 .includes(:actor).order(created_at: :desc).limit(20)
     end
 
     def update
@@ -21,7 +21,7 @@ module Admin
           redirect_to edit_admin_email_sender_settings_path, notice: t('admin.email_templates.saved')
         else
           @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                    .includes(:actor).order(created_at: :desc).limit(20)
+                                     .includes(:actor).order(created_at: :desc).limit(20)
           render :edit, status: :unprocessable_content
         end
       end

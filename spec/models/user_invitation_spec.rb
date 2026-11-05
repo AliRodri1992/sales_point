@@ -53,4 +53,16 @@ RSpec.describe UserInvitation, type: :model do
     expect(invitation).not_to be_usable
     expect(user.reload).to be_pending
   end
+
+  it 'does not issue invitations for accounts that are already active' do
+    user.update!(status: :active)
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'User must be pending')
+    expect(described_class.where(user:)).to be_empty
+  end
+
+  it 'does not issue invitations without active organization membership' do
+    user.organization_memberships.find_by!(organization:).update!(status: :inactive)
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
+    expect(described_class.where(user:)).to be_empty
+  end
 end

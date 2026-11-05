@@ -5,7 +5,9 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :load_template, except: %i[index new create]
-    before_action :load_version, only: %i[update_draft publish restore preview_draft]
+    before_action :load_version, only: %i[update_draft publish restore]
+
+    include EmailTemplatePreviews
 
     def index
       authorize EmailTemplate
@@ -87,6 +89,8 @@ module Admin
                     allowed_variables: @version.allowed_variables)
       @template.audit!(action: 'restored', actor: current_user, version: draft)
       redirect_to edit_admin_email_template_path(@template), notice: t('admin.email_templates.restored')
+    rescue ArgumentError => e
+      redirect_to admin_email_template_path(@template), alert: e.message
     end
 
     def archive
@@ -101,32 +105,6 @@ module Admin
       @left = @template.versions.find(params[:left])
       @right = @template.versions.find(params[:right])
       render :compare
-    end
-
-    def preview
-      authorize @template, :preview?
-      @version = @template.versions.find_by(id: params[:version_id]) || @template.published_version
-      raise ActiveRecord::RecordNotFound unless @version
-
-      @subject, @html, @plain = EmailTemplates::Renderer.new(
-        source: @version, values: EmailTemplates::SampleData.call(@template)
-      ).render
-      render :preview
-    end
-
-    # Render the unsaved editor content without changing the stored draft.
-    def preview_draft
-      authorize @template, :update?
-      raise Pundit::NotAuthorizedError unless @version.status == 'draft'
-
-      source = @version.dup
-      source.assign_attributes(draft_attributes)
-      subject, html, plain = EmailTemplates::Renderer.new(
-        source:, values: EmailTemplates::SampleData.call(@template)
-      ).render
-      render json: { subject:, html:, plain: }
-    rescue ArgumentError => e
-      render json: { error: e.message }, status: :unprocessable_content
     end
 
     def send_test

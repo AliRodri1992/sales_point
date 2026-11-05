@@ -44,9 +44,14 @@ check_invocation running 0 ' run --rm -T ' spec/models/example_spec.rb
 [[ "$(grep -c ' run --rm -T ' "$fixture/docker.calls")" == 1 ]] || fail 'Debe usar un solo contenedor temporal.'
 grep -q 'RAILS_ENV=test' "$fixture/docker.calls" || fail 'El entorno debe ser test.'
 grep -q 'POSTGRES_HOST=db' "$fixture/docker.calls" || fail 'La BD debe ser db dentro de Docker.'
+grep -q 'REDIS_URL=redis://redis:6379/15' "$fixture/docker.calls" || fail 'Redis de pruebas debe estar aislado.'
+! grep -q 'COVERAGE=true' "$fixture/docker.calls" || fail 'La cobertura es opcional en el runner manual.'
 grep -q 'unset DATABASE_URL; exec bundle exec ruby bin/with-test-db-lock' "$fixture/docker.calls" || fail 'Debe reservar la BD de pruebas.'
 grep -q 'bin/rails db:prepare && exec bundle exec rspec' "$fixture/docker.calls" || fail 'Debe preparar la BD y correr RSpec.'
 grep -q 'spec/models/example_spec.rb' "$fixture/docker.calls" || fail 'Debe pasar argumentos a RSpec.'
+
+COVERAGE=true check_invocation running 0 ' run --rm -T '
+grep -q 'COVERAGE=true' "$fixture/docker.calls" || fail 'Debe pasar la cobertura solicitada al contenedor.'
 
 check_invocation stopped 0 ' run --rm -T '
 ! grep -q ' exec -T \| ps --status ' "$fixture/docker.calls" ||

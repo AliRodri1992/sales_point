@@ -46,6 +46,10 @@ Rails.root.glob('spec/support/**/*.rb').sort.each { |f| require f }
 # RSPEC CONFIG GENERAL
 # ─────────────────────────────
 RSpec.configure do |config|
+  # DatabaseCleaner owns rollback/truncation. Fixture transactions pin a
+  # connection shared with browser and socket threads across examples.
+  config.use_transactional_fixtures = false
+
   config.infer_spec_type_from_file_location!
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::IntegrationHelpers, type: :feature

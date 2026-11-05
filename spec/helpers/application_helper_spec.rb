@@ -3,6 +3,25 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
+  it 'builds an ordinary sort link while preserving filters and resetting the page' do
+    allow(helper).to receive(:params).and_return(ActionController::Parameters.new(sort: 'name', direction: 'desc'))
+    allow(helper.request).to receive(:query_parameters).and_return('q' => 'cashier', 'page' => '3')
+    allow(helper).to receive(:url_for).and_call_original
+    expect(helper).to receive(:url_for)
+      .with(hash_including('q' => 'cashier', sort: 'name', direction: 'asc', page: nil))
+      .and_return('/roles?q=cashier&sort=name&direction=asc')
+    link = Nokogiri::HTML.fragment(helper.sort_link('name')).at_css('a')
+    expect(link['href']).to include('q=cashier', 'direction=asc')
+    expect(link['data-turbo-frame']).to be_nil
+  end
+
+  it 'displays the online indicator only when requested for an online user' do
+    user = create(:user)
+    allow(user).to receive(:online?).and_return(true)
+    expect(helper.user_avatar(user, online_indicator: true)).to include('bg-emerald-500')
+    expect(helper.user_avatar(user)).not_to include('bg-emerald-500')
+  end
+
   describe '#sidebar_item_active?' do
     before { allow(helper).to receive(:controller_name).and_return(controller_name) }
 

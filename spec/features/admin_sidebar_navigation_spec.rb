@@ -36,14 +36,14 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(find('#sidebarToggle', visible: :all)['aria-expanded']).to eq('true')
     expect(page).to have_css('body.sidebar-drawer-open')
     expect(find('#sidebarCloseButton')).to be_visible
-    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarCloseButton')
+    expect(page).to have_css('#sidebarCloseButton:focus')
 
     find('#sidebarCloseButton').click
 
     expect(page).not_to have_css('#adminSidebar.sidebar-open')
     expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
     expect(page).not_to have_css('body.sidebar-drawer-open')
-    expect(page.evaluate_script('document.activeElement.id')).to eq('sidebarToggle')
+    expect(page).to have_css('#sidebarToggle:focus')
   end
 
   scenario 'closes the mobile sidebar with Escape and restores background interaction' do

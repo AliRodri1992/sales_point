@@ -141,6 +141,6 @@ RSpec.describe 'Admin supplier schedules', type: :request do
 
     get admin_supplier_schedules_path(supplier)
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
   end
 end

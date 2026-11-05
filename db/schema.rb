@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -355,13 +355,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.bigint "actor_id", null: false
     t.jsonb "changeset", default: {}, null: false
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.bigint "organization_id"
     t.string "setting_type", null: false
     t.datetime "updated_at", null: false
     t.index ["actor_id"], name: "index_email_setting_audits_on_actor_id"
     t.index ["organization_id", "created_at"], name: "idx_email_setting_audits_tenant_history"
     t.index ["organization_id"], name: "index_email_setting_audits_on_organization_id"
-    t.check_constraint "setting_type::text = ANY (ARRAY['branding'::character varying, 'sender'::character varying]::text[])", name: "chk_email_setting_audit_type"
+    t.check_constraint "setting_type::text = ANY (ARRAY['branding'::character varying::text, 'sender'::character varying::text])", name: "chk_email_setting_audit_type"
   end
 
   create_table "email_template_audits", force: :cascade do |t|
@@ -404,7 +405,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
     t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
     t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
-    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'archived'::character varying]::text[])", name: "chk_email_template_versions_status"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'archived'::character varying::text])", name: "chk_email_template_versions_status"
   end
 
   create_table "email_templates", force: :cascade do |t|
@@ -432,7 +433,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
     t.index ["organization_id"], name: "index_email_templates_on_organization_id"
     t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
-    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'inactive'::character varying, 'archived'::character varying]::text[])", name: "chk_email_templates_status"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'inactive'::character varying::text, 'archived'::character varying::text])", name: "chk_email_templates_status"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -733,7 +734,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
     t.index ["user_id"], name: "index_organization_memberships_on_user_id"
-    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'suspended'::character varying, 'blocked'::character varying, 'deleted'::character varying]::text[])", name: "chk_org_member_account_status"
+    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_org_member_account_status"
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "check_org_memberships_status"
   end
 
@@ -2058,7 +2059,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_120000) do
     t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
     t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
     t.index ["user_id"], name: "index_user_invitations_on_user_id"
-    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying, 'queued'::character varying, 'sent'::character varying, 'failed'::character varying]::text[])", name: "chk_user_invitations_delivery_status"
+    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying::text, 'queued'::character varying::text, 'sent'::character varying::text, 'failed'::character varying::text])", name: "chk_user_invitations_delivery_status"
   end
 
   create_table "user_roles", force: :cascade do |t|

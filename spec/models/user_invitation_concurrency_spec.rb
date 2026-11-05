@@ -55,6 +55,11 @@ RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
 
     invitations = Array.new(2) { results.pop }
     expect(invitations.grep(StandardError)).to be_empty
+    invitations.each(&:reload)
     expect(invitations.count(&:usable?)).to eq(1)
+    expect(UserInvitation.pending.where(user:).pluck(:id)).to eq([invitations.map(&:id).max])
+    revoked = invitations.find { |invitation| !invitation.usable? }
+    expect(revoked.accept!(token: revoked.raw_token, password: 'securepassword123',
+                           password_confirmation: 'securepassword123')).to be(false)
   end
 end

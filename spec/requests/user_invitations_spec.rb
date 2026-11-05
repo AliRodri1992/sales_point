@@ -24,4 +24,24 @@ RSpec.describe 'User invitation activation', type: :request do
     get user_invitation_path(token: invitation.raw_token)
     expect(response).to have_http_status(:gone)
   end
+
+  it 'rejects missing and unknown tokens on both activation endpoints' do
+    [nil, 'unknown-token'].each do |token|
+      get user_invitation_path(token:)
+      expect(response).to have_http_status(:gone)
+      patch accept_user_invitation_path(token:), params: { invitation: { password: 'password123' } }
+      expect(response).to have_http_status(:gone)
+    end
+    expect(user.reload).to be_pending
+  end
+
+  it 'keeps a usable invitation pending after password validation fails' do
+    invitation = UserInvitation.issue!(user:, organization:)
+    patch accept_user_invitation_path(token: invitation.raw_token), params: {
+      invitation: { password: 'short', password_confirmation: 'different' }
+    }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(user.reload).to be_pending
+    expect(invitation.reload).to be_usable
+  end
 end

@@ -53,7 +53,7 @@ RSpec.describe 'Admin general settings', type: :request do
 
     get admin_general_settings_path
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
   end
 
   it 'prevents non-administrators from reading or changing general settings' do

@@ -89,7 +89,7 @@ RSpec.describe 'Deltín assistant', type: :request do
 
     post admin_assistant_reply_path, params: { message: 'Dar de alta un producto' }, as: :json
 
-    expect(response).to have_http_status(:ok)
-    expect(response.parsed_body['steps']).to be_empty
+    expect(response).to have_http_status(:unauthorized)
+    expect(response.parsed_body).not_to have_key('steps')
   end
 end

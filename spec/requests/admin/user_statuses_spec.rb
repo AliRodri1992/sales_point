@@ -75,4 +75,10 @@ RSpec.describe 'Admin user statuses', type: :request do
     patch admin_user_status_path(target), params: { transition: 'pending', reason: 'Forged' }
     expect(target.reload).to be_active
   end
+
+  it 'does not render a confirmation form for a transition that is not allowed' do
+    get edit_admin_user_status_path(target), params: { transition: 'pending' }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(target.reload).to be_active
+  end
 end

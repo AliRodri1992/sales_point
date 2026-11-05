@@ -11,13 +11,13 @@ RSpec.describe EmailTemplates::Renderer do
   end
 
   it 'escapes user values and removes scripts and event handlers' do
-    content = '<p>{{recipient_name}}</p><script>alert(1)</script>'
+    content = '<p onclick="alert(1)">{{recipient_name}}</p><script>alert(1)</script>'
     _subject, html, _plain = described_class.new(
       source: template(content), values: { recipient_name: '<img src=x onerror=alert(1)>' }
     ).render
 
-    expect(html).not_to include('<script>')
-    expect(html).not_to include('onerror=')
+    document = Nokogiri::HTML.fragment(html)
+    expect(document.css('script, [onerror], [onclick]')).to be_empty
     expect(html).to include('&lt;img')
   end
 

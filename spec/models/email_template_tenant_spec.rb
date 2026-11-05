@@ -36,4 +36,30 @@ RSpec.describe 'Email template tenant resolution', type: :model do
     expect(duplicate).not_to be_valid
     expect(template_for(first_organization, 'es', 'Override')).to be_persisted
   end
+
+  it 'falls back to Spanish for unsupported language codes' do
+    global = template_for(nil, 'es', 'Spanish fallback')
+    expect(EmailTemplate.resolve(key: global.key, locale: 'unsupported')).to eq(global)
+    expect(EmailTemplate.visible_to(nil)).to contain_exactly(global)
+    expect(EmailTemplate.visible_to(first_organization)).to include(global)
+  end
+
+  it 'does not allow attaching a published snapshot from another template' do
+    first = template_for(first_organization, 'es', 'First')
+    second = template_for(second_organization, 'es', 'Second')
+    version = first.new_draft!(actor: nil)
+    version.publish!(actor: nil)
+    expect(second.update(published_version: version)).to be(false)
+    expect(second.errors[:published_version]).to be_present
+  end
+
+  it 'protects the key, locale and organization of a published identity' do
+    template = template_for(first_organization, 'es', 'Original')
+    template.new_draft!(actor: nil).publish!(actor: nil)
+    [{ key: 'renamed' }, { locale: 'en' }, { organization: second_organization }].each do |attributes|
+      expect(template.update(attributes)).to be(false)
+      expect(template.errors[:base]).to be_present
+      template.reload
+    end
+  end
 end

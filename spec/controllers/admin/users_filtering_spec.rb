@@ -13,25 +13,30 @@ RSpec.describe Admin::UsersController, type: :controller do
   end
 
   describe 'server-side user page sizing' do
-    it 'uses the default when the result set fits one page' do
+    it 'uses an explicitly allowed page size' do
       request_params(per_page: '5')
-      expect(controller.send(:per_page_param, 9)).to eq(5)
+      expect(controller.send(:table_page_size_for, 'users')).to eq(5)
     end
 
     it 'uses the explicitly allowed page size for long lists' do
       request_params(per_page: '5')
-      expect(controller.send(:per_page_param, 17)).to eq(5)
+      expect(controller.send(:table_page_size_for, 'users')).to eq(5)
     end
 
-    it 'accepts the maximum explicitly allowed page size' do
+    it 'accepts another explicitly allowed page size' do
       request_params(per_page: '15')
-      expect(controller.send(:per_page_param, 30)).to eq(15)
+      expect(controller.send(:table_page_size_for, 'users')).to eq(15)
+    end
+
+    it 'accepts the largest supported page size' do
+      request_params(per_page: '50')
+      expect(controller.send(:table_page_size_for, 'users')).to eq(50)
     end
 
     it 'rejects oversized and malformed page limits' do
       %w[999 invalid -5].each do |value|
         request_params(per_page: value)
-        expect(controller.send(:per_page_param, 30)).to eq(10)
+        expect(controller.send(:table_page_size_for, 'users')).to eq(10)
       end
     end
   end

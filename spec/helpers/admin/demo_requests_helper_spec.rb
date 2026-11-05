@@ -15,6 +15,17 @@ RSpec.describe Admin::DemoRequestsHelper, type: :helper do
   end
 
   describe '#demo_request_activity_description' do
+    it 'preserves an unquoted legacy numeric assignee identifier' do
+      allow(activity).to receive_messages(action: 'assigned', details: '{:assigned_to=>42}')
+      expect(helper.demo_request_activity_description(activity)).to include('42')
+    end
+
+    it 'keeps malformed legacy follow-up data readable' do
+      details = { date: { invalid: 'legacy timestamp' }, action: 'Call' }
+      allow(activity).to receive_messages(action: 'follow_up_scheduled', details:)
+      expect(helper.demo_request_activity_description(activity)).to include('legacy timestamp')
+    end
+
     context 'when details are a non-structured string' do
       let(:details) { 'A manually recorded activity' }
 

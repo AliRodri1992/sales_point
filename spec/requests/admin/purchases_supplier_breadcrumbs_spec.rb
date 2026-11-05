@@ -49,7 +49,7 @@ RSpec.describe 'Purchase and supplier breadcrumbs', type: :request do
 
     get admin_purchase_orders_path
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
   end
 
   it 'preserves the accessible breadcrumb landmark independently of the sidebar' do

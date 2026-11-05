@@ -24,7 +24,12 @@ test_environment=(
   -e POSTGRES_PORT=5432
   -e POSTGRES_USER=postgres
   -e POSTGRES_PASSWORD=postgres
+  -e REDIS_URL=redis://redis:6379/15
 )
+
+if [[ "${COVERAGE:-}" == 'true' ]]; then
+  test_environment+=(-e COVERAGE=true)
+fi
 
 rails_and_specs='unset DATABASE_URL; exec bundle exec ruby bin/with-test-db-lock sh -lc '\''bin/rails db:prepare && exec bundle exec rspec "$@"'\'' overcommit-rspec "$@"'
 

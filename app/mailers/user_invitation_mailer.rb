@@ -7,11 +7,12 @@ class UserInvitationMailer < ApplicationMailer
   rescue_from StandardError, with: :mark_delivery_failed
 
   def invite(invitation_id, encrypted_token)
-    raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
     @invitation_id = invitation_id
+    raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
     invitation = UserInvitation.includes(:user, :organization).find(invitation_id)
     return unless valid_invitation?(invitation, raw_token)
 
+    @deliverable_invitation = invitation
     subject, html, plain = invitation_template(invitation).render_with(template_variables(invitation, raw_token))
     headers = EmailTemplates::Sender.headers_for(organization: invitation.organization)
     mail(to: invitation.user.email, subject:, **headers) do |format|
@@ -23,8 +24,7 @@ class UserInvitationMailer < ApplicationMailer
   private
 
   def mark_delivered
-    invitation = UserInvitation.find_by(id: @invitation_id)
-    invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
+    @deliverable_invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
   end
 
   def mark_delivery_failed(exception)

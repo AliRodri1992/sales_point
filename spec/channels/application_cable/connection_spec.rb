@@ -53,6 +53,38 @@ RSpec.describe ApplicationCable::Connection do
 
       expect { connection.connect }.to raise_error(ActionCable::Connection::Authorization::UnauthorizedError)
     end
+
+    it 'closes an existing socket when the account is disabled' do
+      connection.connect
+      allow(user).to receive(:reload).and_return(user)
+      allow(user).to receive(:active_for_authentication?).and_return(false)
+      expect(connection).to receive(:close).with(reason: 'Access revoked')
+      connection.beat
+      expect(User).to have_received(:track_online_connection).once
+    end
+
+    it 'closes an existing socket after its session is revoked' do
+      connection.connect
+      allow(user).to receive(:reload).and_return(user)
+      allow(user).to receive(:session_revoked_at).and_return(Time.zone.at(124))
+      expect(connection).to receive(:close).with(reason: 'Access revoked')
+      connection.beat
+      expect(User).to have_received(:track_online_connection).once
+    end
+
+    it 'refreshes presence for a session issued after the revocation timestamp' do
+      allow(user).to receive(:session_revoked_at).and_return(Time.zone.at(122))
+      connection.connect
+      allow(user).to receive(:reload).and_return(user)
+      allow(connection).to receive(:transmit)
+      connection.beat
+      expect(User).to have_received(:track_online_connection).twice
+    end
+  end
+
+  it 'ignores heartbeat messages before authentication finishes' do
+    expect(User).not_to receive(:track_online_connection)
+    connection.beat
   end
 
   describe '#disconnect' do
@@ -73,6 +105,12 @@ RSpec.describe ApplicationCable::Connection do
       connection.disconnect
 
       expect(User).not_to have_received(:untrack_online_connection)
+    end
+
+    it 'handles disconnects before a presence token is registered' do
+      connection.current_user = user
+      expect(User).not_to receive(:untrack_online_connection)
+      connection.disconnect
     end
   end
 end

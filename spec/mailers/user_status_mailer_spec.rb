@@ -38,4 +38,14 @@ RSpec.describe UserStatusMailer, type: :mailer do
     expect(mail.from).to eq(['notificaciones@delta.test'])
   end
 
+  it 'uses the account language for a localized status message' do
+    organization = create(:organization)
+    user = create(:user, :english)
+    event = UserStatusEvent.create!(
+      user:, actor: create(:user), organization:, from_status: 'active', to_status: 'suspended', reason: 'Review'
+    )
+    email = described_class.changed(event.id)
+    expect(email.text_part.body.decoded).to include(I18n.t('admin.users.statuses.suspended', locale: :en))
+    expect(EmailTemplate.resolve(key: 'user_status_changed', locale: 'en', organization:)).to be_present
+  end
 end

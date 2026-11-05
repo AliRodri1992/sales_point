@@ -1,0 +1,63 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe 'Admin archived user restoration', type: :request do
+  let(:organization) { create(:organization) }
+  let(:role) { create(:system_role, :system, code: 'super_admin') }
+  let(:administrator) { create(:user, system_roles: [role]) }
+  let(:user) { create(:user, status: :deleted, deleted_at: Time.current) }
+
+  before do
+    permission = Permission.find_or_create_by!(code: 'users.restore') do |record|
+      record.name = 'Restore users'
+      record.module_name = 'Usuarios'
+      record.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    create(:organization_membership, user: administrator, organization:)
+    create(:organization_membership, user:, organization:, account_status: :deleted)
+    sign_in administrator
+  end
+
+  it 'lists only archived accounts belonging to the current organization' do
+    foreign = create(:user, status: :deleted, deleted_at: Time.current)
+    create(:organization_membership, user: foreign, account_status: :deleted)
+    get admin_user_restorations_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(user.email)
+    expect(response.body).not_to include(foreign.email)
+  end
+
+  it 'restores the account to pending and records the reason' do
+    post admin_user_restoration_path(user), params: { reason: 'Authorized review' }
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(user.reload).to be_pending
+    expect(UserStatusEvent.find_by!(user:, organization:).reason).to eq('Authorized review')
+  end
+
+  it 'reports a missing reason without restoring the account' do
+    post admin_user_restoration_path(user), params: { reason: '' }
+    expect(response).to redirect_to(admin_user_restorations_path)
+    expect(flash[:alert]).to eq('Reason required')
+    expect(user.reload).to be_deleted
+  end
+
+  it 'rejects an archived account from another organization' do
+    user.organization_memberships.find_by!(organization:).update!(organization: create(:organization))
+    post admin_user_restoration_path(user), params: { reason: 'Review' }
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'requires explicit restoration permission' do
+    role.system_role_permissions.destroy_all
+    get admin_user_restorations_path
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'rejects an ordinary administrator even with restoration permission' do
+    role.update!(code: 'administrator')
+    get admin_user_restorations_path
+    expect(response).to have_http_status(:forbidden)
+  end
+end

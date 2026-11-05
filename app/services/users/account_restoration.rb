@@ -57,14 +57,14 @@ module Users
     end
 
     def reset_local_access!
-      branch_ids = @organization.branches.select(:id)
-      @user.user_roles.active.where(branch_id: branch_ids).find_each do |role|
+      branch_ids = @organization.branches.with_deleted.select(:id)
+      @user.user_roles.where(branch_id: branch_ids).find_each do |role|
         role.update!(deleted_at: Time.current)
       end
     end
 
     def reset_global_account!
-      @user.user_roles.active.find_each { |role| role.update!(deleted_at: Time.current) }
+      @user.user_roles.find_each { |role| role.update!(deleted_at: Time.current) }
       @user.update!(
         status: :pending, deleted_at: nil, session_revoked_at: Time.current,
         password: SecureRandom.urlsafe_base64(48)

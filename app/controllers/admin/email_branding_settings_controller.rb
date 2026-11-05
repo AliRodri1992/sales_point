@@ -9,7 +9,7 @@ module Admin
       verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
       @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                .includes(:actor).order(created_at: :desc).limit(20)
+                                 .includes(:actor).order(created_at: :desc).limit(20)
     end
 
     def update
@@ -23,7 +23,7 @@ module Admin
           redirect_to edit_admin_email_branding_settings_path, notice: t('admin.email_templates.saved')
         else
           @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                    .includes(:actor).order(created_at: :desc).limit(20)
+                                     .includes(:actor).order(created_at: :desc).limit(20)
           render :edit, status: :unprocessable_content
         end
       end

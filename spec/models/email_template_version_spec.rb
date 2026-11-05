@@ -31,4 +31,32 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(draft.status).to eq('draft')
     expect(draft.subject).to eq(published.subject)
   end
+
+  it 'normalizes editor variable lists' do
+    version = template.new_draft!(actor: nil)
+    version.allowed_variables_csv = ' recipient_name, ,recipient_name, organization_name '
+    expect(version.allowed_variables).to eq(%w[recipient_name organization_name])
+    expect(version.allowed_variables_csv).to eq('recipient_name, organization_name')
+  end
+
+  it 'rejects malformed or unknown allowed variables' do
+    version = template.new_draft!(actor: nil)
+    expect(version.update(allowed_variables: 'recipient_name')).to be(false)
+    expect(version.update(allowed_variables: ['unknown_variable'])).to be(false)
+  end
+
+  it 'requires every placeholder to be declared before publishing' do
+    version = template.new_draft!(actor: nil)
+    version.update!(subject: 'Hello {{recipient_name}}', allowed_variables: [])
+    expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(template.reload.published_version).to be_nil
+  end
+
+  it 'protects a published version from deletion but permits removing drafts' do
+    published = template.new_draft!(actor: nil)
+    published.publish!(actor: nil)
+    expect(published.destroy).to be_falsey
+    expect(template.new_draft!(actor: nil).destroy).to be_truthy
+    expect(published.update(updated_at: 1.second.from_now)).to be(true)
+  end
 end

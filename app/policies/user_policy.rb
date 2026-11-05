@@ -24,9 +24,11 @@ class UserPolicy < CatalogPolicy
   end
 
   class Scope < ApplicationPolicy::Scope
+    USER_ACTIONS = (GranularPermissionCatalog::ACTIONS - ['access'] +
+                    %w[invite resend_invitation suspend reactivate block unblock]).freeze
+
     def resolve
-      actions = GranularPermissionCatalog::ACTIONS + %w[invite resend_invitation suspend reactivate block unblock]
-      codes = actions.map { |action| "users.#{action}" }
+      codes = USER_ACTIONS.map { |action| "users.#{action}" }
       return scope.none unless user
       return scope.not_deleted if user.admin?
 

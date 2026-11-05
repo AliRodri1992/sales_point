@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails_helper'
+
 RSpec.describe RegistrationService, type: :service do
   let(:role) { create(:system_role, :system, code: 'administrator') }
   let!(:permissions) { create_list(:permission, 3, status: :active) }
@@ -125,5 +127,48 @@ RSpec.describe RegistrationService, type: :service do
     expect(result).to be_success
     expect(result.organization.branches.first.terminals.count).to eq(4)
     expect(result.organization.organization_settings.first.timezone).to eq('America/Mexico_City')
+  end
+
+  it 'rolls back setup when account password validation fails' do
+    user.password = 'short'
+    user.password_confirmation = 'short'
+    result = described_class.call(resource: user, params:)
+    expect(result).not_to be_success
+    expect(result.step).to eq(2)
+    expect(result.errors[:password]).to be_present
+    expect(Organization.count).to eq(0)
+  end
+
+  it 'reports company model errors at the company step' do
+    result = described_class.call(resource: user, params: params.merge(company_name: ''))
+    expect(result).not_to be_success
+    expect(result.step).to eq(3)
+    expect(result.errors[:base]).to be_present
+    expect(User.count).to eq(0)
+  end
+
+  { OrganizationSetting => 4, Terminal => 5 }.each do |model, step|
+    it "rolls back registration when #{model.name} provisioning fails" do
+      invalid = model.new
+      invalid.errors.add(:base, 'Configuration unavailable')
+      allow(RegistrationConfigurationProvisioner).to receive(:call).and_raise(ActiveRecord::RecordInvalid, invalid)
+      result = described_class.call(resource: user, params:)
+      expect(result).not_to be_success
+      expect(result.step).to eq(step)
+      expect(result.errors[:base]).to include('Configuration unavailable')
+      expect(Organization.count).to eq(0)
+      expect(User.count).to eq(0)
+    end
+  end
+
+  [{ currency: 'UNKNOWN' }, { business_sector: 'unknown' }, { branches: '2' },
+   { setup_type: 'migration', migration_volume: 'unknown' },
+   { setup_type: 'migration', migration_volume: '500_5000', migration_priority: 'unknown' }].each do |invalid|
+    it "rejects unsupported registration configuration #{invalid}" do
+      result = described_class.call(resource: user, params: params.merge(invalid))
+      expect(result).not_to be_success
+      expect(Organization.count).to eq(0)
+      expect(UserRole.count).to eq(0)
+    end
   end
 end

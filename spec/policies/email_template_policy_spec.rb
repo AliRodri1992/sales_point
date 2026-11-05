@@ -10,7 +10,7 @@ RSpec.describe EmailTemplatePolicy do
 
   before do
     create(:organization_membership, user:, organization:)
-    %w[access update publish].each do |action|
+    %w[access create update publish archive preview send_test versions].each do |action|
       permission = Permission.find_or_create_by!(code: "email_templates.#{action}") do |record|
         record.name = "Email #{action}"
         record.module_name = 'Communication'
@@ -32,5 +32,34 @@ RSpec.describe EmailTemplatePolicy do
     expect(described_class.new(user, template_for(nil)).update?).to be(false)
     expect(described_class.new(user, template_for(other_organization)).update?).to be(false)
     expect(described_class.new(user, template_for(organization)).update?).to be(true)
+  end
+
+  %i[show? update? publish? archive? preview? send_test? versions?].each do |action|
+    it "allows #{action} only within the visible tenant boundaries" do
+      expect(described_class.new(user, template_for(organization)).public_send(action)).to be(true)
+      expect(described_class.new(user, template_for(other_organization)).public_send(action)).to be(false)
+    end
+  end
+
+  it 'permits global viewing while limiting global changes to root administrators' do
+    policy = described_class.new(user, template_for(nil))
+    expect(policy.show?).to be(true)
+    expect(policy.preview?).to be(true)
+    role.update!(code: 'super_admin')
+    expect(policy.update?).to be(true)
+  end
+
+  it 'denies permissions to inactive users and nonadministrative roles' do
+    user.update!(status: :suspended)
+    expect(described_class.new(user, template_for(organization)).create?).to be(false)
+    user.update!(status: :active)
+    user.user_roles.destroy_all
+    expect(described_class.new(user, template_for(organization)).create?).to be(false)
+    expect(described_class::Scope.new(user, EmailTemplate).resolve).to be_empty
+  end
+
+  it 'denies anonymous access and scopes' do
+    expect(described_class.new(nil, template_for(organization)).index?).to be_falsey
+    expect(described_class::Scope.new(nil, EmailTemplate).resolve).to be_empty
   end
 end

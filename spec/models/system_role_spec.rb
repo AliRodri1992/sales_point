@@ -85,6 +85,21 @@ RSpec.describe SystemRole, type: :model do
     expect(role.permissions).to include(permission)
   end
 
+  it 'rejects archiving an active role even when the validation context is forged' do
+    role = create(:system_role, :active)
+    role.assign_attributes(status: :deprecated, deleted_at: Time.current)
+    expect(role.save(context: :status_transition)).to be(false)
+    expect(role.reload).to be_active
+    expect(role.deleted_at).to be_nil
+  end
+
+  it 'requires an archive timestamp when deprecating an inactive role' do
+    role = create(:system_role, :inactive)
+    role.status = :deprecated
+    expect(role.save(context: :status_transition)).to be(false)
+    expect(role.reload).to be_inactive
+  end
+
   # =========================
   # FAKER REALISTIC TEST
   # =========================
