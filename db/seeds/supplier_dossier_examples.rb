@@ -67,7 +67,7 @@ module SupplierDossierExamples
         note_ids = Note.general.where(notable_type: 'Contact', body: reference).select(:notable_id)
         # Preserve renamed, archived and manually updated demo contacts.
         next if contacts.exists?(email:) || contacts.exists?(name: "Contacto demo #{index}") ||
-                contacts.where(id: note_ids).exists?
+                contacts.exists?(id: note_ids)
 
         supplier.contacts.create!(contact_attributes(index, email, reference))
       end
