@@ -46,15 +46,14 @@ RSpec.describe 'Published email template delivery', type: :mailer do
   end
 
   it 'uses the actual Delta POS logo and localizes sample names on previews' do
+    expected_names = { 'es' => 'Usuario de ejemplo', 'en' => 'Sample user', 'ko' => '예시 사용자' }
     %w[es en ko].each do |locale|
       sample_template = EmailTemplate.new(locale:)
       values = EmailTemplates::SampleData.call(sample_template)
 
       expect(values.fetch(:platform_logo)).to include('LOGOTIPO')
       expect(values.fetch(:logo_url)).to include('LOGOTIPO')
-      expect(values.fetch(:recipient_name)).to eq(
-        { 'es' => 'Usuario de ejemplo', 'en' => 'Sample user', 'ko' => '예시 사용자' }.fetch(locale)
-      )
+      expect(values.fetch(:recipient_name)).to eq(expected_names.fetch(locale))
     end
   end
 
