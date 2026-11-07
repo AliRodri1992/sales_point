@@ -41,7 +41,7 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     draft.publish!(actor: nil)
 
     expect { EmailTemplates::InvitationContent.ensure_published! }
-      .not_to change { built_in.reload.published_version_id }
+      .not_to(change { built_in.reload.published_version_id })
     expect(built_in.subject).to eq('Edited invitation')
   end
 
