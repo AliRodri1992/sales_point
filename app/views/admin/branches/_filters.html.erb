@@ -1,36 +1,36 @@
-<%= form_with url: admin_branches_path, method: :get, class: 'branch-filters border-b border-slate-100 p-4 sm:p-5', data: { branch_directory_target: 'form', action: 'submit->branch-directory#submit' } do %>
-  <div class="branch-toolbar flex flex-wrap items-end gap-3">
-    <div class="branch-search relative min-w-[220px] flex-1">
+<%= form_with url: admin_branches_path, method: :get, class: 'branch-filters', data: { branch_directory_target: 'form', action: 'submit->branch-directory#submit' } do %>
+  <div class="branch-toolbar">
+    <div class="branch-search">
       <label class="sr-only" for="branch-search"><%= t('admin.branch_workspace.filters.search') %></label>
       <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
-      <%= search_field_tag :search, @branch_filters['search'], id: 'branch-search', maxlength: 150, placeholder: t('admin.branch_workspace.search_placeholder'), autocomplete: 'off', class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-emerald-500', data: { action: 'input->branch-directory#schedule compositionstart->branch-directory#compositionStart compositionend->branch-directory#compositionEnd' } %>
+      <%= search_field_tag :search, @branch_filters['search'], id: 'branch-search', maxlength: 150, placeholder: t('admin.branch_workspace.search_placeholder'), autocomplete: 'off', class: 'branch-search-input', data: { action: 'input->branch-directory#schedule compositionstart->branch-directory#compositionStart compositionend->branch-directory#compositionEnd' } %>
     </div>
-    <div class="branch-status-filter min-w-[180px]">
+    <div class="branch-status-filter">
       <label class="sr-only" for="branch-filter-status"><%= t('admin.branch_workspace.filters.status') %></label>
       <div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="false">
         <%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), ''], [t('admin.catalog_design.active'), 'active'], [t('admin.catalog_design.inactive'), 'inactive']], @branch_filters['status']), id: 'branch-filter-status', data: { action: 'change->branch-directory#change' } %>
       </div>
     </div>
-    <details class="branch-advanced group w-full" <%= 'open' if @branch_filters.except('search', 'status').values.any?(&:present?) %>>
-      <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 [&::-webkit-details-marker]:hidden">
+    <details class="branch-advanced" <%= 'open' if @branch_filters.except('search', 'status').values.any?(&:present?) %>>
+      <summary >
         <%= delta_icon('adjustments-horizontal', class: 'size-4') %>
         <%= t('admin.branch_workspace.advanced') %>
         <%= delta_icon('chevron-down', class: 'size-4 transition-transform group-open:rotate-180') %>
       </summary>
-      <div class="branch-advanced-panel mt-4 rounded-xl border border-slate-200 bg-slate-50/60 p-4 sm:p-5">
-        <div class="branch-advanced-heading mb-4">
+      <div class="branch-advanced-panel">
+        <div class="branch-advanced-heading">
           <h2 class="font-jakarta text-sm font-bold text-slate-800"><%= t('admin.branch_workspace.advanced') %></h2>
           <p class="mt-1 text-xs text-slate-500"><%= t('admin.branch_workspace.automatic_hint') %></p>
         </div>
-        <div class="branch-advanced-grid grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <div><label class="mb-1.5 block text-xs font-semibold text-slate-600" for="branch-filter-country"><%= t('admin.branch_workspace.filters.country_id') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :country_id, options_for_select([[t('admin.branch_workspace.any_country'), ''], *@branch_countries.map { |country| [country.localized_name, country.id] }], @branch_filters['country_id']), id: 'branch-filter-country', data: { action: 'change->branch-directory#change' } %></div></div>
-          <div><label class="mb-1.5 block text-xs font-semibold text-slate-600" for="branch-filter-state"><%= t('admin.branch_workspace.filters.state') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :state, options_for_select([[t('admin.branch_workspace.any_state'), ''], *@branch_states.map { |value| [value, value] }], @branch_filters['state']), id: 'branch-filter-state', data: { action: 'change->branch-directory#change' } %></div></div>
-          <div><label class="mb-1.5 block text-xs font-semibold text-slate-600" for="branch-filter-city"><%= t('admin.branch_workspace.filters.city') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :city, options_for_select([[t('admin.branch_workspace.any_city'), ''], *@branch_cities.map { |value| [value, value] }], @branch_filters['city']), id: 'branch-filter-city', data: { action: 'change->branch-directory#change' } %></div></div>
+        <div class="branch-advanced-grid">
+          <div><label for="branch-filter-country"><%= t('admin.branch_workspace.filters.country_id') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :country_id, options_for_select([[t('admin.branch_workspace.any_country'), ''], *@branch_countries.map { |country| [country.localized_name, country.id] }], @branch_filters['country_id']), id: 'branch-filter-country', data: { action: 'change->branch-directory#change' } %></div></div>
+          <div><label for="branch-filter-state"><%= t('admin.branch_workspace.filters.state') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :state, options_for_select([[t('admin.branch_workspace.any_state'), ''], *@branch_states.map { |value| [value, value] }], @branch_filters['state']), id: 'branch-filter-state', data: { action: 'change->branch-directory#change' } %></div></div>
+          <div><label for="branch-filter-city"><%= t('admin.branch_workspace.filters.city') %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="true"><%= select_tag :city, options_for_select([[t('admin.branch_workspace.any_city'), ''], *@branch_cities.map { |value| [value, value] }], @branch_filters['city']), id: 'branch-filter-city', data: { action: 'change->branch-directory#change' } %></div></div>
           <% { contact: %w[with_phone without_phone with_email without_email], team: %w[assigned unassigned] }.each do |key, options| %>
-            <div><label class="mb-1.5 block text-xs font-semibold text-slate-600" for="branch-filter-<%= key %>"><%= t("admin.branch_workspace.filters.#{key}") %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="false"><%= select_tag key, options_for_select([[t('admin.branch_workspace.any_option'), ''], *options.map { |value| [t("admin.branch_workspace.options.#{value}"), value] }], @branch_filters[key.to_s]), id: "branch-filter-#{key}", data: { action: 'change->branch-directory#change' } %></div></div>
+            <div><label for="branch-filter-<%= key %>"><%= t("admin.branch_workspace.filters.#{key}") %></label><div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="false"><%= select_tag key, options_for_select([[t('admin.branch_workspace.any_option'), ''], *options.map { |value| [t("admin.branch_workspace.options.#{value}"), value] }], @branch_filters[key.to_s]), id: "branch-filter-#{key}", data: { action: 'change->branch-directory#change' } %></div></div>
           <% end %>
           <% %w[created_from created_to].each do |key| %>
-            <div><label class="mb-1.5 block text-xs font-semibold text-slate-600" for="branch-filter-<%= key %>"><%= t("admin.branch_workspace.filters.#{key}") %></label><%= date_field_tag key, @branch_filters[key], id: "branch-filter-#{key}", class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 focus:border-emerald-500 focus:ring-emerald-500', data: { action: 'change->branch-directory#change' } %></div>
+            <div><label for="branch-filter-<%= key %>"><%= t("admin.branch_workspace.filters.#{key}") %></label><%= date_field_tag key, @branch_filters[key], id: "branch-filter-#{key}", class: 'branch-date-input', data: { action: 'change->branch-directory#change' } %></div>
           <% end %>
         </div>
       </div>
