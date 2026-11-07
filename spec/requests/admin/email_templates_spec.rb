@@ -511,6 +511,68 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it 'presents Deltín and the final identity review in the guided creation flow' do
+    get new_admin_email_template_path
+
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('nav[aria-label="' + I18n.t('admin.email_templates.workflow_label') + '"] li').size).to eq(3)
+    expect(page.at_css('#email-template-guidance-title')).to be_present
+    expect(page.at_css('#email-template-review-title')).to be_present
+    expect(page.at_css('[data-email-template-identity-target="summaryKey"]')).to be_present
+    expect(page.at_css('button[data-category-value="security"][type="button"]')).to be_present
+    expect(page.at_css('aside')).to be_nil
+    expect(page.at_css('button[data-turbo-submits-with]')).to be_present
+    expect(page.at_css('#email-template-create-actions')).to be_present
+  end
+
+  it 'exposes variable tools and a safe live preview while editing a draft' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator)
+
+    get edit_admin_email_template_path(template)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    form = page.at_css('form[data-controller~="email-template-editor"]')
+    expect(form).to be_present
+    expect(form['data-controller']).to include('email-template-preview')
+    expect(page.at_css('button[data-variable="platform_logo"][type="button"]')).to be_present
+    expect(page.at_css('input[data-email-template-editor-target="variables"]')).to be_present
+    expect(page.css('iframe[sandbox]').size).to eq(2)
+    expect(page.at_css('nav li[aria-current="step"]')).to be_present
+  end
+
+  it 'shows an accessible device switcher for a saved email preview' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+
+    get preview_admin_email_template_path(template)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('iframe[sandbox]').size).to eq(1)
+    expect(page.at_css('iframe#preview-saved-frame')['srcdoc']).to include('Order')
+    expect(page.at_css('button[data-action="click->email-template-detail#showMobile"]')).to be_present
+    expect(page.at_css('details pre')).to be_present
+  end
+
+  it 'renders both selected email versions rather than only displaying HTML source' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    draft = template.new_draft!(actor: administrator)
+    draft.update!(subject: 'Second design')
+
+    get compare_admin_email_template_path(template), params: { left: published.id, right: draft.id }
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.css('iframe[sandbox]').size).to eq(2)
+    expect(page.text).to include('Second design')
+    expect(page.css('details summary').size).to eq(4)
+    expect(page.at_css('nav li[aria-current="step"]')).to be_present
+  end
+
   it 'has matching, nonempty email catalog translations for es, en, and ko' do
     paths = lambda do |hash, prefix = ''|
       hash.flat_map do |key, value|
