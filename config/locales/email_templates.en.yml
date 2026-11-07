@@ -4,7 +4,11 @@ en:
     shared:
       notifications:
         types:
+          email_setting: "Email settings"
           email_template: "Email template"
+        email_setting:
+          branding_updated: "Email branding settings updated"
+          sender_updated: "Email sender settings updated"
         email_template:
           created: "Template %{name} created"
           draft_updated: "Draft for %{name} updated"
