@@ -96,7 +96,7 @@
 
 .branch-workspace #branch-contact,.branch-workspace #branch-location { overflow:visible; }
 
-.branch-workspace .catalog-field:has(input[required],select[required])>label::after { content:" *"; color:#047857; }
+.branch-workspace .catalog-field:has(input[required],select[required]) > label:not(:has([data-required-when]))::after { content:" *"; color:#047857; }
 
 .branch-pagination [data-controller~="delta-select"] { width:90px; flex:0 0 90px; }
 
