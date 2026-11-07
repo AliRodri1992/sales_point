@@ -9,6 +9,7 @@ module Admin
 
     include EmailTemplatePreviews
     include EmailTemplateListing
+    include EmailTemplateActivity
 
     def index
       authorize EmailTemplate
@@ -36,7 +37,7 @@ module Admin
     end
 
     def create
-      @template = EmailTemplate.new(template_attributes)
+      @template = EmailTemplate.new(template_attributes.merge(locale: I18n.locale.to_s))
       authorize @template
       raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
 
@@ -45,28 +46,15 @@ module Admin
       save_new_template
     end
 
-    def save_new_template
-      if current_organization.nil? && params[:global] != '1'
-        @template.errors.add(:base, t('admin.email_templates.organization_required'))
-        return render :new, status: :unprocessable_content
-      end
-
-      if @template.save
-        draft = @template.new_draft!(actor: current_user)
-        @template.audit!(action: 'created', actor: current_user, version: draft)
-        redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.saved')
-      else
-        render :new, status: :unprocessable_content
-      end
-    end
-
     def update_draft
       authorize @template, :update?
       raise Pundit::NotAuthorizedError unless @version.status == 'draft'
 
       if @version.update(draft_attributes)
         @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
-        redirect_to edit_admin_email_template_path(@template), notice: t('admin.email_templates.saved')
+        notify_email_template('draft_updated')
+        redirect_to edit_admin_email_template_path(@template),
+                    flash: { swal_message: t('admin.email_templates.draft_updated_toast') }
       else
         @draft = @version
         render :edit, status: :unprocessable_content
@@ -77,10 +65,13 @@ module Admin
       authorize @template, :publish?
       @version.publish!(actor: current_user)
       @template.audit!(action: 'published', actor: current_user, version: @version)
-      redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.published')
+      notify_email_template('published')
+      redirect_to admin_email_template_path(@template),
+                  flash: { swal_message: t('admin.email_templates.published') }
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
       message = @version.status == 'draft' ? e.message : t('admin.email_templates.publish_not_draft')
-      redirect_to admin_email_template_path(@template), alert: message
+      redirect_to admin_email_template_path(@template),
+                  flash: { swal_message: message, swal_icon: 'error' }
     end
 
     def restore
@@ -91,16 +82,21 @@ module Admin
       draft = @template.new_draft!(actor: current_user)
       draft.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
       @template.audit!(action: 'restored', actor: current_user, version: draft)
-      redirect_to edit_admin_email_template_path(@template), notice: t('admin.email_templates.restored')
+      notify_email_template('restored')
+      redirect_to edit_admin_email_template_path(@template),
+                  flash: { swal_message: t('admin.email_templates.restored') }
     rescue ArgumentError => e
-      redirect_to admin_email_template_path(@template), alert: e.message
+      redirect_to admin_email_template_path(@template),
+                  flash: { swal_message: e.message, swal_icon: 'error' }
     end
 
     def archive
       authorize @template, :archive?
       @template.update!(status: 'archived', enabled: false)
       @template.audit!(action: 'archived', actor: current_user)
-      redirect_to admin_email_templates_path, notice: t('admin.email_templates.archived')
+      notify_email_template('archived')
+      redirect_to admin_email_templates_path,
+                  flash: { swal_message: t('admin.email_templates.archived') }
     end
 
     # Retain versions and immutable audit events instead of physically deleting them.
@@ -108,8 +104,9 @@ module Admin
       authorize @template, :destroy?
       @template.update!(status: 'archived', enabled: false, updated_by: current_user)
       @template.audit!(action: 'archived', actor: current_user)
+      notify_email_template('removed')
       redirect_to admin_email_templates_path, status: :see_other,
-                  notice: t('admin.email_templates.removed')
+                  flash: { swal_message: t('admin.email_templates.removed') }
     end
 
     def compare
@@ -125,7 +122,9 @@ module Admin
       EmailTemplates::TestDelivery.call(
         template: @template, actor: current_user, recipient: params[:email]
       )
-      redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.test_queued')
+      notify_email_template('test_queued')
+      redirect_to admin_email_template_path(@template),
+                  flash: { swal_message: t('admin.email_templates.test_queued') }
     rescue ArgumentError => e
       message = {
         'Invalid recipient' => t('admin.email_templates.invalid_recipient'),
@@ -146,7 +145,7 @@ module Admin
     end
 
     def template_attributes
-      params.expect(email_template: %i[key name category locale subject html_body text_body])
+      params.expect(email_template: %i[key name category])
     end
 
     def draft_attributes
