@@ -4,7 +4,11 @@ es:
     shared:
       notifications:
         types:
+          email_setting: "Configuración de correo"
           email_template: "Plantilla de correo"
+        email_setting:
+          branding_updated: "Identidad visual de correo actualizada"
+          sender_updated: "Configuración del remitente actualizada"
         email_template:
           created: "Plantilla %{name} creada"
           draft_updated: "Borrador de %{name} actualizado"
