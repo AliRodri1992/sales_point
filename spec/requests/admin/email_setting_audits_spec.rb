@@ -31,6 +31,9 @@ RSpec.describe 'Email settings audit history', type: :request do
     }
 
     expect(response).to have_http_status(:redirect)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.saved'))
+    expect(administrator.notifications.last.event).to have_attributes(record_type: 'EmailSenderSetting')
+    expect(administrator.notifications.last.event.params[:action]).to eq('sender_updated')
     audit = EmailSettingAudit.find_by!(setting_type: 'sender', organization:)
     expect(audit.actor).to eq(administrator)
     expect(audit.changeset).to include('from_address')
@@ -48,6 +51,9 @@ RSpec.describe 'Email settings audit history', type: :request do
 
     expect(response).to have_http_status(:redirect)
     expect(EmailSettingAudit.where(setting_type: 'branding', organization:).count).to eq(1)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.saved'))
+    expect(administrator.notifications.last.event).to have_attributes(record_type: 'EmailBrandingSetting')
+    expect(administrator.notifications.last.event.params[:action]).to eq('branding_updated')
 
     patch admin_email_branding_settings_path, params: {
       email_branding_setting: { primary_color: 'javascript:alert(1)' }
@@ -55,6 +61,7 @@ RSpec.describe 'Email settings audit history', type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(EmailSettingAudit.where(setting_type: 'branding', organization:).count).to eq(1)
+    expect(administrator.notifications.count).to eq(1)
   end
   it 'does not display audit history from another organization' do
     foreign = create(:organization)
