@@ -1,38 +1,71 @@
-<main class="mx-auto max-w-7xl space-y-5 px-4 pb-8 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
+<% content_for :title, t('admin.email_templates.compare') %>
+<main class="mx-auto max-w-7xl space-y-5 px-4 pb-10 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
   <header>
-    <%= link_to admin_email_template_path(@template), class: 'inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:underline' do %>
+    <%= link_to admin_email_template_path(@template),
+                class: 'inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
       <%= delta_icon('arrow-left', class: 'size-4') %>
       <%= t('admin.email_templates.back') %>
     <% end %>
-    <h1 class="mt-3 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.compare') %></h1>
-    <p class="mt-2 text-sm text-slate-500"><%= t('admin.email_templates.compare_hint') %></p>
+    <p class="mt-2 text-xs font-bold uppercase tracking-widest text-emerald-700"><%= t('admin.email_templates.section') %></p>
+    <h1 class="mt-1 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.compare') %></h1>
+    <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><%= @template.name %> · <%= t('admin.email_templates.compare_preview_hint') %></p>
   </header>
+
+  <%= render 'workflow_steps', step: 3 %>
+
   <div class="grid min-w-0 items-start gap-5 lg:grid-cols-2">
-    <% [@left, @right].each do |version| %>
-      <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <header class="border-b border-slate-100 px-5 py-4">
-          <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.preview_version', version: version.version_number) %></h2>
-          <span class="mt-1 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"><%= t("admin.email_templates.status_labels.#{version.status}") %></span>
-        </header>
-        <div class="min-w-0 space-y-5 p-5">
-          <div>
-            <h3 class="text-xs font-semibold text-slate-500"><%= t('admin.email_templates.subject') %></h3>
-            <p class="mt-1 break-words text-sm font-semibold text-slate-900"><%= version.subject %></p>
+    <% [@left, @right].each_with_index do |version, index| %>
+      <% result = @comparison_previews.fetch(version.id) %>
+      <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+               aria-labelledby="comparison-version-<%= version.id %>">
+        <header class="border-b border-slate-100 p-5 sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-700">
+              <%= t(index.zero? ? 'admin.email_templates.compare_left' : 'admin.email_templates.compare_right') %>
+            </span>
+            <span class="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700"><%= t("admin.email_templates.status_labels.#{version.status}") %></span>
           </div>
-          <% if version.preheader.present? %>
-            <div>
-              <h3 class="text-xs font-semibold text-slate-500"><%= t('admin.email_templates.preheader') %></h3>
-              <p class="mt-1 break-words text-sm text-slate-700"><%= version.preheader %></p>
-            </div>
+          <h2 id="comparison-version-<%= version.id %>" class="mt-2 font-jakarta text-lg font-bold text-slate-900"><%= t('admin.email_templates.preview_version', version: version.version_number) %></h2>
+          <% if version.published_at %>
+            <p class="mt-1 text-xs text-slate-500"><%= l(version.published_at, format: :short) %></p>
           <% end %>
-          <div>
-            <h3 class="mb-2 text-xs font-semibold text-slate-600"><%= t('admin.email_templates.html_source') %></h3>
-            <pre class="max-h-96 overflow-auto whitespace-pre-wrap break-all rounded-xl bg-slate-50 p-4 font-mono text-xs leading-5 text-slate-700"><%= version.html_body %></pre>
+        </header>
+
+        <dl class="grid gap-4 p-5 text-sm sm:p-6">
+          <div class="min-w-0">
+            <dt class="text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.email_templates.subject') %></dt>
+            <dd class="mt-1 break-words font-semibold text-slate-900"><%= version.subject %></dd>
           </div>
-          <div>
-            <h3 class="mb-2 text-xs font-semibold text-slate-600"><%= t('admin.email_templates.plain_text') %></h3>
-            <pre class="max-h-72 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 font-mono text-xs leading-5 text-slate-700"><%= version.text_body %></pre>
+          <div class="min-w-0">
+            <dt class="text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.email_templates.preheader') %></dt>
+            <dd class="mt-1 break-words leading-6 text-slate-700"><%= version.preheader.presence || '—' %></dd>
           </div>
+        </dl>
+        <div class="border-t border-slate-100 bg-slate-50 p-4 sm:p-5">
+          <p class="mb-3 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.compare_sample_hint') %></p>
+          <% if result[:html].present? %>
+            <iframe sandbox="" loading="lazy" title="<%= t('admin.email_templates.preview_version', version: version.version_number) %>"
+                    srcdoc="<%= h(String.new(result.fetch(:html))) %>"
+                    class="h-[460px] w-full rounded-xl border border-slate-200 bg-white sm:h-[560px]"></iframe>
+          <% else %>
+            <p class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900"><%= t('admin.email_templates.compare_preview_error') %></p>
+          <% end %>
+        </div>
+        <div class="divide-y divide-slate-100">
+          <details>
+            <summary class="flex min-h-12 cursor-pointer items-center justify-between gap-2 px-5 text-sm font-semibold text-slate-700 sm:px-6">
+              <%= t('admin.email_templates.compare_source_title') %>
+              <%= delta_icon('chevron-down', class: 'size-4') %>
+            </summary>
+            <pre class="max-h-80 overflow-auto whitespace-pre-wrap break-all border-t border-slate-100 bg-slate-50 p-5 font-mono text-xs leading-5 text-slate-700"><%= version.html_body %></pre>
+          </details>
+          <details>
+            <summary class="flex min-h-12 cursor-pointer items-center justify-between gap-2 px-5 text-sm font-semibold text-slate-700 sm:px-6">
+              <%= t('admin.email_templates.compare_plain_title') %>
+              <%= delta_icon('chevron-down', class: 'size-4') %>
+            </summary>
+            <pre class="max-h-72 overflow-auto whitespace-pre-wrap break-words border-t border-slate-100 bg-slate-50 p-5 font-mono text-xs leading-5 text-slate-700"><%= version.text_body %></pre>
+          </details>
         </div>
       </section>
     <% end %>

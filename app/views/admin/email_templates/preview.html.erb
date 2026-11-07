@@ -1,31 +1,69 @@
-<main class="mx-auto max-w-7xl space-y-5 px-4 pb-8 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
-  <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+<% content_for :title, t('admin.email_templates.preview') %>
+<main class="mx-auto max-w-6xl space-y-5 px-4 pb-10 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div class="min-w-0">
-      <%= link_to admin_email_template_path(@template), class: 'inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:underline' do %>
+      <%= link_to admin_email_template_path(@template),
+                  class: 'inline-flex min-h-10 items-center gap-2 rounded-lg text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
         <%= delta_icon('arrow-left', class: 'size-4') %>
         <%= t('admin.email_templates.back') %>
       <% end %>
-      <h1 class="mt-3 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.preview') %></h1>
-      <p class="mt-2 break-words text-sm text-slate-500"><%= @subject %></p>
+      <p class="mt-2 text-xs font-bold uppercase tracking-widest text-emerald-700"><%= t('admin.email_templates.section') %></p>
+      <h1 class="mt-1 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.preview') %></h1>
+      <p class="mt-2 break-words text-sm leading-6 text-slate-600"><%= @template.name %></p>
     </div>
-    <span class="self-start rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600"><%= t('admin.email_templates.preview_version', version: @version.version_number) %></span>
+    <div class="flex flex-wrap gap-2 self-start">
+      <span class="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700"><%= t('admin.email_templates.preview_version', version: @version.version_number) %></span>
+      <span class="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800"><%= t("admin.email_templates.status_labels.#{@version.status}") %></span>
+    </div>
   </header>
-  <div class="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(300px,1fr)]">
-    <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="preview-desktop-title">
-      <h2 id="preview-desktop-title" class="mb-3 font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.desktop') %></h2>
-      <div class="rounded-xl border border-slate-200 bg-slate-100 p-2">
-        <iframe sandbox="" title="<%= t('admin.email_templates.desktop') %>" srcdoc="<%= h(String.new(@html)) %>" class="h-[560px] w-full rounded-lg border border-slate-200 bg-white sm:h-[690px]"></iframe>
+
+  <%= render 'workflow_steps', step: 3 %>
+
+  <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="preview-subject-title">
+    <div class="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:px-6">
+      <div class="min-w-0">
+        <h2 id="preview-subject-title" class="text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.email_templates.subject') %></h2>
+        <p class="mt-2 break-words text-base font-bold text-slate-900"><%= @subject %></p>
       </div>
-    </section>
-    <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="preview-mobile-title">
-      <h2 id="preview-mobile-title" class="mb-3 font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.mobile') %></h2>
-      <div class="rounded-xl border border-slate-200 bg-slate-100 p-3 text-center">
-        <iframe sandbox="" title="<%= t('admin.email_templates.mobile') %>" srcdoc="<%= h(String.new(@html)) %>" class="mx-auto h-[560px] w-full max-w-[375px] rounded-lg border border-slate-200 bg-white sm:h-[690px]"></iframe>
+      <div class="min-w-0">
+        <h2 class="text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.email_templates.preheader') %></h2>
+        <p class="mt-2 break-words text-sm leading-6 text-slate-700"><%= @version.preheader.presence || '—' %></p>
       </div>
-    </section>
-  </div>
-  <section class="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-    <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.plain_text') %></h2>
-    <pre class="mt-3 max-h-80 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-slate-50 p-4 font-mono text-xs leading-6 text-slate-700"><%= @plain %></pre>
+    </div>
   </section>
+
+  <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="preview-stage-title"
+           data-controller="email-template-detail">
+    <div class="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div class="min-w-0">
+        <h2 id="preview-stage-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.detail_content_title') %></h2>
+        <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.detail_preview_sample') %></p>
+      </div>
+      <div class="inline-flex gap-1 self-start rounded-xl bg-slate-100 p-1" role="group" aria-label="<%= t('admin.email_templates.device_preview') %>">
+        <button type="button" data-email-template-detail-target="desktopButton"
+                data-action="click->email-template-detail#showDesktop"
+                aria-controls="preview-saved-frame" aria-pressed="true"
+                class="min-h-10 rounded-lg bg-white px-4 text-xs font-bold text-emerald-800 shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"><%= t('admin.email_templates.desktop') %></button>
+        <button type="button" data-email-template-detail-target="mobileButton"
+                data-action="click->email-template-detail#showMobile"
+                aria-controls="preview-saved-frame" aria-pressed="false"
+                class="min-h-10 rounded-lg px-4 text-xs font-bold text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"><%= t('admin.email_templates.mobile') %></button>
+      </div>
+    </div>
+    <div class="bg-slate-100 px-3 py-5 sm:px-6 sm:py-7">
+      <div data-email-template-detail-target="frame" class="mx-auto w-full max-w-[720px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-[max-width] duration-200">
+        <iframe id="preview-saved-frame" sandbox="" loading="lazy"
+                title="<%= t('admin.email_templates.preview') %>" srcdoc="<%= h(String.new(@html)) %>"
+                class="block h-[600px] w-full border-0 sm:h-[720px]"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <details class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <summary class="flex min-h-14 cursor-pointer items-center justify-between gap-3 px-5 text-sm font-semibold text-slate-800 sm:px-6">
+      <%= t('admin.email_templates.detail_text_toggle') %>
+      <%= delta_icon('chevron-down', class: 'size-4') %>
+    </summary>
+    <pre class="max-h-96 overflow-auto whitespace-pre-wrap break-words border-t border-slate-100 bg-slate-50 p-5 font-mono text-xs leading-6 text-slate-700 sm:p-6"><%= @plain %></pre>
+  </details>
 </main>
