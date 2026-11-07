@@ -114,7 +114,7 @@ RSpec.describe 'Email template locale and activity', type: :request do
     expect do
       post admin_email_templates_path,
            params: { email_template: { key: 'invalid-key', name: '', category: 'security' } }
-    end.not_to change { administrator.notifications.count }
+    end.not_to(change { administrator.notifications.count })
     expect(response).to have_http_status(:unprocessable_content)
   end
 end
