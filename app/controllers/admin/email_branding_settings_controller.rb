@@ -18,17 +18,21 @@ module Admin
       verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
       attributes = branding_params
-      EmailBrandingSetting.transaction do
-        if @branding.update(attributes)
-          extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
-          EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
-          notify_email_setting('branding_updated', @branding)
-          redirect_to edit_admin_email_branding_settings_path, flash: { swal_message: t('admin.email_templates.saved') }
-        else
-          @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                     .includes(:actor).order(created_at: :desc).limit(20)
-          render :edit, status: :unprocessable_content
-        end
+      saved = EmailBrandingSetting.transaction do
+        next false unless @branding.update(attributes)
+
+        extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
+        EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
+        true
+      end
+      if saved
+        notify_email_setting('branding_updated', @branding)
+        redirect_to edit_admin_email_branding_settings_path,
+                    flash: { swal_message: t('admin.email_templates.saved') }
+      else
+        @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
+                                   .includes(:actor).order(created_at: :desc).limit(20)
+        render :edit, status: :unprocessable_content
       end
     end
 
