@@ -48,7 +48,7 @@ class EmailTemplateVersion < ApplicationRecord
   def declared_variables
     content = [subject, html_body, text_body].join(' ')
     used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
-    errors.add(:allowed_variables, 'must include every placeholder') unless (used - allowed_variables).empty?
+    errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
   end
 
   def protect_published_version
@@ -59,6 +59,6 @@ class EmailTemplateVersion < ApplicationRecord
     return unless status_was == 'published'
     return if changes.keys == ['updated_at']
 
-    errors.add(:base, 'Published versions are immutable')
+    errors.add(:base, :published_immutable)
   end
 end

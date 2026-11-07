@@ -57,13 +57,16 @@ export default class extends Controller {
     this.statusTarget.classList.remove("text-rose-700")
 
     try {
+      const dataToPreview = new FormData(this.element)
+      // The editor saves with PATCH; the preview endpoint explicitly requires POST.
+      dataToPreview.delete("_method")
       const response = await fetch(this.urlValue, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || ""
         },
-        body: new FormData(this.element),
+        body: dataToPreview,
         signal: request.signal
       })
       const data = await response.json().catch(() => ({}))

@@ -532,4 +532,20 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:forbidden)
     expect(template.versions.where(status: 'draft')).to be_empty
   end
+
+  it 'rejects undeclared placeholders in an unsaved preview without saving the draft' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: 'Hello {{recipient_name}}', html_body: '<p>{{recipient_name}}</p>',
+        text_body: 'Hello {{recipient_name}}', allowed_variables_csv: ''
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.parsed_body['error']).to eq(I18n.t('admin.email_templates.preview_undeclared_variables'))
+    expect(draft.reload.subject).to eq('Order')
+  end
 end

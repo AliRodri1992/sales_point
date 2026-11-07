@@ -77,6 +77,7 @@ ko:
         draft: "초안"
         inactive: "비활성"
         archived: "보관됨"
+      preview_undeclared_variables: "게시하기 전에 본문에서 사용한 모든 변수를 선언하세요."
       default_subject: "새 템플릿"
       branding_intro: "이메일에 사용할 로고, 색상, 연락처 정보를 설정하세요."
       brand_identity_title: "이메일 브랜드 설정"
@@ -195,11 +196,52 @@ ko:
         restored: "버전 복원"
         archived: "템플릿 보관"
         test_sent: "테스트 이메일 발송"
-
   activerecord:
     attributes:
       email_template:
-        name: "이름"
         key: "코드"
+        name: "이름"
         category: "분류"
         locale: "언어"
+        subject: "제목"
+        html_body: "HTML 내용"
+        text_body: "일반 텍스트"
+        status: "상태"
+        enabled: "사용"
+      email_template_version:
+        subject: "제목"
+        preheader: "프리헤더"
+        html_body: "HTML 내용"
+        text_body: "일반 텍스트"
+        allowed_variables: "허용 변수"
+        allowed_variables_csv: "허용 변수"
+        version_number: "버전 번호"
+        status: "상태"
+      email_branding_setting:
+        display_name: "표시 이름"
+        primary_color: "기본 색상"
+        secondary_color: "보조 색상"
+        button_color: "버튼 색상"
+        support_email: "지원 이메일"
+        support_url: "지원 웹사이트"
+        privacy_url: "개인정보 처리방침"
+        footer_text: "바닥글 내용"
+        logo: "로고"
+      email_sender_setting:
+        display_name: "발신자 이름"
+        from_address: "발신 주소"
+        reply_to: "회신 주소"
+        default_locale: "기본 언어"
+        domain_status: "도메인 상태"
+    errors:
+      models:
+        email_template:
+          attributes:
+            base:
+              published_identity_immutable: "게시된 템플릿의 식별 정보는 변경할 수 없습니다."
+        email_template_version:
+          attributes:
+            allowed_variables:
+              undeclared_placeholders: "본문에 사용된 모든 변수를 포함해야 합니다"
+            base:
+              published_immutable: "게시된 버전은 변경할 수 없습니다."

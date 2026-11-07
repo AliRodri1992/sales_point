@@ -77,6 +77,7 @@ es:
         draft: "Borradores"
         inactive: "Inactivas"
         archived: "Archivadas"
+      preview_undeclared_variables: "Declara todas las variables usadas en el contenido antes de publicar."
       default_subject: "Nueva plantilla"
       branding_intro: "Personaliza el logotipo, los colores y la información de contacto de los correos."
       brand_identity_title: "Identidad de los correos"
@@ -195,11 +196,52 @@ es:
         restored: "Versión restaurada"
         archived: "Plantilla archivada"
         test_sent: "Correo de prueba enviado"
-
   activerecord:
     attributes:
       email_template:
-        name: "Nombre"
         key: "Código"
+        name: "Nombre"
         category: "Categoría"
         locale: "Idioma"
+        subject: "Asunto"
+        html_body: "Contenido HTML"
+        text_body: "Texto plano"
+        status: "Estado"
+        enabled: "Habilitada"
+      email_template_version:
+        subject: "Asunto"
+        preheader: "Preencabezado"
+        html_body: "Contenido HTML"
+        text_body: "Texto plano"
+        allowed_variables: "Variables permitidas"
+        allowed_variables_csv: "Variables permitidas"
+        version_number: "Número de versión"
+        status: "Estado"
+      email_branding_setting:
+        display_name: "Nombre para mostrar"
+        primary_color: "Color principal"
+        secondary_color: "Color secundario"
+        button_color: "Color de los botones"
+        support_email: "Correo de soporte"
+        support_url: "Sitio de soporte"
+        privacy_url: "Aviso de privacidad"
+        footer_text: "Texto del pie"
+        logo: "Logotipo"
+      email_sender_setting:
+        display_name: "Nombre del remitente"
+        from_address: "Correo del remitente"
+        reply_to: "Correo de respuesta"
+        default_locale: "Idioma predeterminado"
+        domain_status: "Estado del dominio"
+    errors:
+      models:
+        email_template:
+          attributes:
+            base:
+              published_identity_immutable: "No se puede modificar la identidad de una plantilla publicada."
+        email_template_version:
+          attributes:
+            allowed_variables:
+              undeclared_placeholders: "deben incluir todas las variables utilizadas en el contenido"
+            base:
+              published_immutable: "Las versiones publicadas no se pueden modificar."

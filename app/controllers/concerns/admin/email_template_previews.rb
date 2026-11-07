@@ -31,6 +31,7 @@ module Admin
 
       source = @version.dup
       source.assign_attributes(draft_attributes)
+      validate_draft_preview_variables!(source)
       subject, html, plain = EmailTemplates::Renderer.new(
         source:, values: EmailTemplates::SampleData.call(@template)
       ).render
@@ -47,6 +48,15 @@ module Admin
       ).render
     rescue ArgumentError
       @preview_error = true
+    end
+
+    def validate_draft_preview_variables!(source)
+      used = [source.subject, source.html_body, source.text_body].flat_map do |body|
+        body.to_s.scan(EmailTemplates::Renderer::VARIABLE_PATTERN).flatten
+      end.uniq
+      return if (used - Array(source.allowed_variables)).empty?
+
+      raise ArgumentError, t('admin.email_templates.preview_undeclared_variables')
     end
 
     def load_preview_version

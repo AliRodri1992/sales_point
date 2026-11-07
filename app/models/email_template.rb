@@ -89,7 +89,7 @@ class EmailTemplate < ApplicationRecord
 
     changed = will_save_change_to_key? || will_save_change_to_locale? ||
               will_save_change_to_organization_id?
-    errors.add(:base, 'Published template identity cannot be changed') if changed
+    errors.add(:base, :published_identity_immutable) if changed
   end
 
   def published_version_belongs_to_template
