@@ -2,7 +2,7 @@
   <div class="branch-toolbar">
     <div class="branch-search">
       <label class="sr-only" for="branch-search"><%= t('admin.branch_workspace.filters.search') %></label>
-      <%= delta_icon('magnifying-glass', class: 'pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400') %>
+      <%= delta_icon('magnifying-glass', class: 'size-5') %>
       <%= search_field_tag :search, @branch_filters['search'], id: 'branch-search', maxlength: 150, placeholder: t('admin.branch_workspace.search_placeholder'), autocomplete: 'off', class: 'branch-search-input', data: { action: 'input->branch-directory#schedule compositionstart->branch-directory#compositionStart compositionend->branch-directory#compositionEnd' } %>
     </div>
     <div class="branch-status-filter">
