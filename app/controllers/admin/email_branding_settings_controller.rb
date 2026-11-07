@@ -25,13 +25,11 @@ module Admin
         EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
         true
       end
-      if saved
-        notify_email_setting('branding_updated', @branding)
-        redirect_to edit_admin_email_branding_settings_path,
-                    flash: { swal_message: t('admin.email_templates.saved') }
-      else
-        render_branding_errors
-      end
+      return render_branding_errors unless saved
+
+      notify_email_setting('branding_updated', @branding)
+      redirect_to edit_admin_email_branding_settings_path,
+                  flash: { swal_message: t('admin.email_templates.saved') }
     end
 
     private
