@@ -17,6 +17,19 @@ class Branch < ApplicationRecord
   has_many :goods_receipts, dependent: :restrict_with_exception
   has_many :terminals, dependent: :restrict_with_exception
 
+  attribute :status, :boolean, default: true
+  normalizes :code, with: ->(value) { value.strip.upcase.presence }
+  normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
+  normalizes :notes, with: ->(value) { value.strip.presence }
+  validates :code, length: { maximum: 30 }, format: { with: /\A[A-Z0-9_-]+\z/ },
+                   uniqueness: { scope: :organization_id, case_sensitive: false,
+                                 conditions: -> { where(deleted_at: nil) } }, allow_nil: true
+  validates :contact_email, length: { maximum: 254 }, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_nil: true
+  validates :notes, length: { maximum: 2000 }
+
+  normalizes :name, with: ->(value) { value.strip }
+  validate :preserve_operational_history, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
+
   scope :not_deleted, -> { where(deleted_at: nil) }
 
   validates :name,
@@ -39,4 +52,18 @@ class Branch < ApplicationRecord
               conditions: -> { where(deleted_at: nil) }
             },
             on: :onboardingstep2
+
+  def self.team_assignments(organization)
+    people = OrganizationMembership.accessible.where(organization:).select(:user_id)
+    UserRole.active.joins(:user).merge(User.active).where(user_id: people)
+  end
+
+  private
+
+  def preserve_operational_history
+    protected_records = [inventories, purchase_requests, purchase_orders, goods_receipts, terminals]
+    return unless protected_records.any? { |records| records.with_deleted.exists? }
+
+    errors.add(:base, I18n.t('admin.catalog_design.branch_has_history'))
+  end
 end

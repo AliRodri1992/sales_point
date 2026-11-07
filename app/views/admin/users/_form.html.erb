@@ -7,7 +7,7 @@
                        else
                          []
                        end %>
-<div class="mx-auto max-w-[92rem] space-y-6">
+<div class="catalog-workspace space-y-6">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="min-w-0">
       <p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
@@ -21,13 +21,10 @@
   </header>
 
   <%= form_with model: @user, url: editing ? admin_user_path(@user) : admin_users_path,
-                html: { novalidate: true }, class: 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' do |form| %>
+                html: { novalidate: true }, data: { controller: 'user-access' }, class: 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' do |form| %>
     <div class="min-w-0 space-y-5">
-      <% if @user.errors[:base].any? %>
-        <div role="alert" class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800">
-          <% @user.errors[:base].each do |message| %><p><%= message %></p><% end %>
-        </div>
-      <% end %>
+      <%= catalog_errors(@user) %>
+      <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><a href="#users-identity-title"><%= t('admin.users.ui.form_identity') %></a><% if current_user.admin? %><a href="#users-access-title"><%= t('admin.users.form.fields.system_roles') %></a><a href="#users-branches-title"><%= t('admin.users.ui.branch_access_title') %></a><% end %><a href="#users-preferences-title"><%= t('admin.users.ui.form_preferences') %></a></nav>
 
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-identity-title">
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
@@ -84,20 +81,21 @@
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-6') %></span>
           <div>
             <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.form.fields.system_roles') %></h2>
-            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.form_roles_hint') %></p>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.catalog_design.user_roles_hint') %></p>
           </div>
         </header>
         <div class="p-5 sm:p-6">
           <%= hidden_field_tag 'user[system_role_ids][]', '' %>
           <% if @roles.any? %>
+            <div class="catalog-field mb-4"><label for="user-role-search"><%= t('admin.catalog_design.find_role') %></label><input id="user-role-search" type="search" data-action="input->user-access#filter" placeholder="<%= t('admin.catalog_design.find_role_hint') %>"></div><p class="catalog-hint mb-3" role="status" aria-live="polite" data-user-access-target="summary"></p>
             <div class="grid gap-3 sm:grid-cols-2">
               <% @roles.each do |role| %>
-                <label for="user_role_<%= role.id %>" class="flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/40 px-4 py-3 transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
+                <label data-user-access-target="role" data-role-name="<%= system_role_name(role) %>" for="user_role_<%= role.id %>" class="flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/40 px-4 py-3 transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
                   <%= check_box_tag 'user[system_role_ids][]', role.id, selected_role_ids.include?(role.id),
-                                    id: "user_role_#{role.id}",
+                                    id: "user_role_#{role.id}", data: { action: 'change->user-access#summarize' },
                                     class: 'mt-1 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
                   <span class="min-w-0">
-                    <span class="block break-words text-sm font-semibold text-slate-800"><%= system_role_name(role) %></span>
+                    <span class="block break-words text-sm font-semibold text-slate-800"><%= delta_icon(system_role_icon(role), class: 'mr-1 inline size-4 text-emerald-700') %><%= system_role_name(role) %></span>
                     <% if role.inactive? %><span class="mt-1 block text-xs text-amber-800"><%= t('admin.system_roles.lifecycle.assignment_hint') %></span><% end %>
                     <% if system_role_description(role).present? %>
                       <span class="mt-1 block text-xs leading-5 text-slate-500"><%= system_role_description(role) %></span>
@@ -154,7 +152,7 @@
                     <%= delta_icon('building-storefront', class: 'size-5 shrink-0 text-emerald-700') %>
                     <span class="min-w-0 flex-1 break-words"><%= branch.name %></span>
                     <% unless branch.status && branch.deleted_at.nil? %><span class="text-xs font-medium text-amber-800"><%= t('admin.system_roles.lifecycle.inactive_branch') %></span><% end %>
-                    <% if selected_count.positive? %><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs text-emerald-800"><%= selected_count %></span><% end %>
+                    <span data-branch-count class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs text-emerald-800" <%= 'hidden' if selected_count.zero? %>><%= selected_count %></span>
                     <%= delta_icon('chevron-down', class: 'size-4 shrink-0 text-slate-500 transition group-open:rotate-180') %>
                   </summary>
                   <div class="grid gap-2 border-t border-slate-100 p-3 sm:grid-cols-2">
@@ -165,7 +163,7 @@
                         <%= check_box_tag 'user[branch_role_assignments][]', "#{branch.id}:#{role.id}",
                                           selected_branch_assignments.include?("#{branch.id}:#{role.id}"),
                                           disabled: (!branch.status || branch.deleted_at.present?) && !selected_branch_assignments.include?("#{branch.id}:#{role.id}"),
-                                          id: input_id, class: 'mt-0.5 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
+                                          id: input_id, data: { action: 'change->user-access#updateBranchSummary' }, class: 'mt-0.5 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
                         <span class="min-w-0">
                           <span class="block break-words font-semibold"><%= system_role_name(role) %></span>
                     <% if role.inactive? %><span class="mt-1 block text-xs text-amber-800"><%= t('admin.system_roles.lifecycle.assignment_hint') %></span><% end %>
@@ -232,7 +230,7 @@
       <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('information-circle', class: 'size-6') %></span>
         <h2 class="mt-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.users.ui.form_help_title') %></h2>
-        <p class="mt-2 text-xs leading-6 text-slate-600"><%= t('admin.users.ui.form_help_body') %></p>
+        <p class="mt-2 text-xs leading-6 text-slate-600"><%= t('admin.catalog_design.user_help') %></p>
       </div>
       <% if editing %>
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -243,7 +241,7 @@
               <p class="truncate text-xs text-slate-500"><%= @user.email %></p>
             </div>
           </div>
-          <div class="mt-4"><%= user_status_badge(@user.status) %></div>
+          <div class="mt-4"><%= user_status_badge(tenant_status || @user.status) %></div>
         </div>
       <% end %>
     </aside>

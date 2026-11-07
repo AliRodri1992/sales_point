@@ -1,3 +1,8 @@
-<%= turbo_frame_tag "language_modal" do %>
-  <%= render "panel" %>
+<% content_for :title, t('admin.languages.new.title') %>
+<% if turbo_frame_request? %>
+  <%= turbo_frame_tag 'language_modal', class: 'catalog-workspace' do %>
+    <div data-modal-target="panel" role="dialog" aria-modal="true" class="w-full max-w-6xl rounded-2xl bg-slate-50 p-5 sm:p-8"><%= render 'panel' %></div>
+  <% end %>
+<% else %>
+  <div class="catalog-workspace"><%= render 'panel' %></div>
 <% end %>

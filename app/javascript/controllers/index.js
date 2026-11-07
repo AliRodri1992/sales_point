@@ -166,3 +166,24 @@ application.register("email-template-preview", EmailTemplatePreviewController)
 
 import RolePermissionsController from "./role_permissions_controller"
 application.register("role-permissions", RolePermissionsController)
+
+import UserAccessController from "./user_access_controller"
+application.register("user-access", UserAccessController)
+
+import NestedCatalogController from "./nested_catalog_controller"
+application.register("nested-catalog", NestedCatalogController)
+
+import CommercialConditionController from "./commercial_condition_controller"
+application.register("commercial-condition", CommercialConditionController)
+
+import ProductQuoteController from "./product_quote_controller"
+application.register("product-quote", ProductQuoteController)
+
+import ProductUploadController from "./product_upload_controller"
+application.register("product-upload", ProductUploadController)
+
+import BranchDirectoryController from "./branch_directory_controller"
+application.register("branch-directory", BranchDirectoryController)
+
+import BranchAddressController from "./branch_address_controller"
+application.register("branch-address", BranchAddressController)

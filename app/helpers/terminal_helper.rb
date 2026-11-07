@@ -16,7 +16,7 @@ module TerminalHelper
   end
 
   def terminal_languages
-    Language.available
+    Language.selectable
   end
 
   def current_terminal_language
@@ -24,12 +24,7 @@ module TerminalHelper
   end
 
   def current_language
-    @current_language ||=
-      Language.find_by(
-        id: session[:language_id]
-      ) ||
-      Language.available.find { |language| language.code == I18n.locale.to_s } ||
-      Language.available.first
+    @current_language ||= Language.selectable.find_by(code: I18n.locale.to_s) || Language.selectable.first
   end
 
   def current_language_flag

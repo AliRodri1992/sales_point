@@ -7,13 +7,18 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   let(:country) { create(:country, iso_alpha2: 'MX') }
 
-  before { sign_in admin_user }
+  let(:organization) { create(:organization) }
+
+  before do
+    create(:organization_membership, user: admin_user, organization:)
+    sign_in admin_user
+  end
 
   include SqlQueryRecorder
 
   describe 'GET /admin/branches' do
     it 'loads all visible branch phones in a batch', :n_plus_one do
-      11.times { |index| create(:branch, name: "Performance Branch #{index}") }
+      11.times { |index| create(:branch, organization:, name: "Performance Branch #{index}") }
       statements = recorded_sql_queries { get admin_branches_path }
 
       expect(response).to have_http_status(:ok)
@@ -23,7 +28,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     before { Branch.unscoped.delete_all }
 
     it 'renders the branches page' do
-      create(:branch, name: 'Sucursal Centro')
+      create(:branch, organization:, name: 'Sucursal Centro')
 
       get admin_branches_path
 
@@ -32,32 +37,32 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'keeps page-size preferences accessible for 9 branches' do
-      Array.new(9) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(9) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('branches-per-page')
+      expect(response.body).to include('table-per-page-branches')
       expect(response.body).to include('Sucursal 9')
     end
 
     it 'keeps page-size preferences accessible for exactly 10 branches' do
-      Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(10) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('branches-per-page')
+      expect(response.body).to include('table-per-page-branches')
       expect(response.body).to include('Sucursal 10')
     end
 
     it 'paginates branches with 10 records by default when more than 10 exist' do
-      Array.new(11) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(11) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('branches-per-page')
+      expect(response.body).to include('table-per-page-branches')
       expect(response.body).to include('Sucursal 1')
       expect(response.body).to include('Sucursal 10')
       # Verify pagination is showing page 1
@@ -65,7 +70,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'allows selecting 5 records per page' do
-      Array.new(11) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(11) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
@@ -74,7 +79,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'allows selecting 15 records per page' do
-      Array.new(16) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(16) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 15 }
 
@@ -83,18 +88,18 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'respects explicit page size when exactly 10 branches exist' do
-      Array.new(10) { |index| create(:branch, name: "Sucursal #{index + 1}") }
+      Array.new(10) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sucursal 10')
-      expect(response.body).to include('branches-per-page')
+      expect(response.body).to include('table-per-page-branches')
     end
 
     it 'sorts branches by name in ascending order' do
-      create(:branch, name: 'Sucursal Norte')
-      create(:branch, name: 'Sucursal Centro')
+      create(:branch, organization:, name: 'Sucursal Norte')
+      create(:branch, organization:, name: 'Sucursal Centro')
 
       get admin_branches_path, params: { sort: 'branches.name', direction: 'asc' }
 
@@ -103,8 +108,8 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'sorts branches by name in descending order' do
-      create(:branch, name: 'Sucursal Centro')
-      create(:branch, name: 'Sucursal Norte')
+      create(:branch, organization:, name: 'Sucursal Centro')
+      create(:branch, organization:, name: 'Sucursal Norte')
 
       get admin_branches_path, params: { sort: 'branches.name', direction: 'desc' }
 
@@ -114,8 +119,8 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'sorts branches by address street' do
-      center = create(:branch, name: 'Sucursal Centro')
-      north = create(:branch, name: 'Sucursal Norte')
+      center = create(:branch, organization:, name: 'Sucursal Centro')
+      north = create(:branch, organization:, name: 'Sucursal Norte')
       center.address.update!(street: 'Reforma')
       north.address.update!(street: 'Zaragoza')
 
@@ -128,8 +133,9 @@ RSpec.describe 'Admin::Branches', type: :request do
     it 'does not expose branches outside the current user access' do
       sign_out admin_user
       branch_user = create(:user)
-      assigned_branch = create(:branch, name: 'Sucursal Asignada')
-      create(:branch, name: 'Sucursal Restringida')
+      create(:organization_membership, user: branch_user, organization:)
+      assigned_branch = create(:branch, organization:, name: 'Sucursal Asignada')
+      create(:branch, organization:, name: 'Sucursal Restringida')
       create(:user_role, user: branch_user, system_role: branch_role, branch: assigned_branch)
       sign_in branch_user
 
@@ -143,8 +149,6 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'PATCH /admin/branches/:id/select' do
     it 'selects an active branch belonging to the current organization' do
-      organization = create(:organization)
-      create(:organization_membership, organization:, user: admin_user)
       branch = create(:branch, organization:, status: true)
 
       patch select_admin_branch_path(branch)
@@ -153,8 +157,6 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'does not select a branch outside the current organization' do
-      organization = create(:organization)
-      create(:organization_membership, organization:, user: admin_user)
       branch = create(:branch, organization: create(:organization), status: true)
 
       patch select_admin_branch_path(branch)
@@ -176,7 +178,9 @@ RSpec.describe 'Admin::Branches', type: :request do
 
     it 'forbids branch-only users from creating branches' do
       branch_user = create(:user)
-      create(:user_role, user: branch_user, system_role: branch_role, branch: create(:branch))
+      create(:organization_membership, user: branch_user, organization:)
+      create(:user_role, user: branch_user, system_role: branch_role,
+                         branch: create(:branch, organization:, name: "Sucursal #{Branch.count + 1}"))
       sign_out admin_user
       sign_in branch_user
 
@@ -188,8 +192,9 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'GET /admin/branches/:id' do
     it 'shows an assigned branch to a branch user' do
-      branch = create(:branch, name: 'Sucursal Centro')
+      branch = create(:branch, organization:, name: 'Sucursal Centro')
       branch_user = create(:user)
+      create(:organization_membership, user: branch_user, organization:)
       create(:user_role, user: branch_user, system_role: branch_role, branch:)
       sign_out admin_user
       sign_in branch_user
@@ -203,9 +208,11 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'does not expose another branch to a branch user' do
-      branch = create(:branch)
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
       branch_user = create(:user)
-      create(:user_role, user: branch_user, system_role: branch_role, branch: create(:branch))
+      create(:organization_membership, user: branch_user, organization:)
+      create(:user_role, user: branch_user, system_role: branch_role,
+                         branch: create(:branch, organization:, name: "Sucursal #{Branch.count + 1}"))
       sign_out admin_user
       sign_in branch_user
 
@@ -240,8 +247,6 @@ RSpec.describe 'Admin::Branches', type: :request do
 
     it 'creates a branch, address and notification' do
       # New phones inherit the branch organization and require an active one.
-      organization = create(:organization)
-      create(:organization_membership, user: admin_user, organization:)
 
       expect do
         post admin_branches_path, params: {
@@ -278,7 +283,9 @@ RSpec.describe 'Admin::Branches', type: :request do
 
     it 'forbids branch-only users from creating branches' do
       branch_user = create(:user)
-      create(:user_role, user: branch_user, system_role: branch_role, branch: create(:branch))
+      create(:organization_membership, user: branch_user, organization:)
+      create(:user_role, user: branch_user, system_role: branch_role,
+                         branch: create(:branch, organization:, name: "Sucursal #{Branch.count + 1}"))
       sign_out admin_user
       sign_in branch_user
 
@@ -290,7 +297,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'GET /admin/branches/:id/edit' do
     it 'renders the edit branch screen for a system administrator' do
-      branch = create(:branch, name: 'Sucursal Centro')
+      branch = create(:branch, organization:, name: 'Sucursal Centro')
 
       get edit_admin_branch_path(branch)
 
@@ -302,8 +309,9 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'forbids branch-only users from editing branches' do
-      branch = create(:branch)
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
       branch_user = create(:user)
+      create(:organization_membership, user: branch_user, organization:)
       create(:user_role, user: branch_user, system_role: branch_role, branch:)
       sign_out admin_user
       sign_in branch_user
@@ -316,7 +324,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'PATCH /admin/branches/:id' do
     it 'updates a branch and creates a notification' do
-      branch = create(:branch, name: 'Sucursal Centro')
+      branch = create(:branch, organization:, name: 'Sucursal Centro')
 
       expect do
         patch admin_branch_path(branch), params: {
@@ -343,8 +351,9 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'forbids branch-only users from updating branches' do
-      branch = create(:branch)
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
       branch_user = create(:user)
+      create(:organization_membership, user: branch_user, organization:)
       create(:user_role, user: branch_user, system_role: branch_role, branch:)
       sign_out admin_user
       sign_in branch_user
@@ -358,7 +367,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'DELETE /admin/branches/:id' do
     it 'soft deletes a branch and creates a notification with the actor' do
-      branch = create(:branch)
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
 
       expect do
         delete admin_branch_path(branch)
@@ -380,7 +389,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'updates the list and shows a success toast for Turbo requests' do
-      branch = create(:branch, name: 'Sucursal Centro')
+      branch = create(:branch, organization:, name: 'Sucursal Centro')
 
       delete admin_branch_path(branch), headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
@@ -392,8 +401,9 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'forbids branch-only users from deleting branches' do
-      branch = create(:branch)
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
       branch_user = create(:user)
+      create(:organization_membership, user: branch_user, organization:)
       create(:user_role, user: branch_user, system_role: branch_role, branch:)
       sign_out admin_user
       sign_in branch_user
@@ -407,7 +417,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'PATCH /admin/branches/:id validation failures' do
     it 're-renders the edit form and preserves the branch when validation fails' do
-      branch = create(:branch, name: 'Unchanged Branch')
+      branch = create(:branch, organization:, name: 'Unchanged Branch')
 
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 
@@ -418,7 +428,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'builds an address when an invalid update targets a branch without one' do
-      branch = create(:branch, :without_address)
+      branch = create(:branch, :without_address, organization:)
 
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 

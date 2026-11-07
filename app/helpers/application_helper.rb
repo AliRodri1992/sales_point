@@ -17,13 +17,9 @@ module ApplicationHelper
     AVATAR_COLORS[user.id % AVATAR_COLORS.size]
   end
 
-  def user_avatar_colors(user)
-    user_avatar_theme(user)[:classes]
-  end
+  def user_avatar_colors(user) = user_avatar_theme(user)[:classes]
 
-  def user_avatar_style(user)
-    user_avatar_theme(user)[:style]
-  end
+  def user_avatar_style(user) = user_avatar_theme(user)[:style]
 
   def onboarding_progress_for_current_user
     return unless current_user
@@ -47,6 +43,7 @@ module ApplicationHelper
   end
 
   SIDEBAR_CONTROLLER_GROUPS = {
+    'products' => %w[price_lists promotions price_change_events product_images],
     'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
                       supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
     'purchase_orders' => %w[goods_receipts purchase_requests purchase_quotations],

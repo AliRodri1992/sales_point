@@ -110,6 +110,9 @@ module DeltaIconShapes
                  'M15 12h6v5h-6a2 2 0 0 1 0-5z'].join,
     'globe-europe-africa' => ['c:12,12,9|M3 12h18|M12 3c-2.4 2.4-3.6 5.4-3.6 9s1.2 6.6 3.6 9|',
                               'M12 3c2.4 2.4 3.6 5.4 3.6 9S14.4 18.6 12 21'].join,
+    'photo' => 'r:3,4,18,16,2|c:8,9,1.5|M3 16l5-5 5 6 3-4 5 5',
+    'qr-code' => 'r:3,3,6,6,1|r:15,3,6,6,1|r:3,15,6,6,1|M15 15h3v3h3v3h-6z|M12 3v6|M3 12h6|M12 12h9|M12 16v5',
+    'gift' => 'r:3,8,18,4,1|M5 12v9h14v-9|M12 8v13|M12 8H8a3 3 0 1 1 3-3z|M12 8h4a3 3 0 1 0-3-3z',
     'x-mark' => 'M5 5l14 14|M19 5 5 19'
   }.merge(DeltaIconShapeBasics::SHAPES).freeze
 end

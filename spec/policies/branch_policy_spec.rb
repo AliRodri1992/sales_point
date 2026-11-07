@@ -3,10 +3,13 @@ require 'rails_helper'
 RSpec.describe BranchPolicy, type: :policy do
   subject(:policy) { described_class.new(user, branch) }
 
-  let(:branch) { create(:branch) }
-  let(:other_branch) { create(:branch) }
+  let(:organization) { create(:organization) }
+  let(:branch) { create(:branch, organization:) }
+  let(:other_branch) { create(:branch, organization:, name: 'Other branch') }
   let(:system_admin_role) { create(:system_role, :system, code: 'administrator') }
   let(:branch_role) { create(:system_role, :branch) }
+
+  before { create(:organization_membership, user:, organization:) if user }
 
   describe '#index?' do
     context 'when the user is a system administrator' do
@@ -129,8 +132,8 @@ RSpec.describe BranchPolicy, type: :policy do
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
-      it 'returns all active branches' do
-        deleted_branch = create(:branch, deleted_at: Time.current)
+      it 'returns branches only in accessible organizations' do
+        deleted_branch = create(:branch, organization:, name: 'Deleted branch', deleted_at: Time.current)
 
         expect(scope).to contain_exactly(branch, other_branch)
         expect(scope).not_to include(deleted_branch)
@@ -143,7 +146,7 @@ RSpec.describe BranchPolicy, type: :policy do
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
       it 'returns only assigned active branches' do
-        deleted_branch = create(:branch, deleted_at: Time.current)
+        deleted_branch = create(:branch, organization:, name: 'Deleted branch', deleted_at: Time.current)
         create(:user_role, user:, system_role: branch_role, branch: deleted_branch)
 
         expect(scope).to contain_exactly(branch)

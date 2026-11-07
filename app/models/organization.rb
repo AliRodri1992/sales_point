@@ -16,6 +16,9 @@ class Organization < ApplicationRecord
   has_many :supplier_payments, dependent: :restrict_with_exception
   has_many :supplier_credit_notes, dependent: :restrict_with_exception
   has_many :financial_audit_events, dependent: :restrict_with_exception
+  has_many :price_lists, dependent: :restrict_with_exception
+  has_many :promotions, dependent: :restrict_with_exception
+  has_many :price_change_events, dependent: :restrict_with_exception
   has_many :products, dependent: :restrict_with_exception
   has_many :suppliers, dependent: :restrict_with_exception
   has_many :contacts, as: :contactable, dependent: :restrict_with_exception

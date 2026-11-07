@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@uppy/core/css/style.min.css";
+@import "@uppy/dashboard/css/style.min.css";
 @import "./fonts.css";
 @import "./gridstack.css";
 /* Components */
@@ -12,6 +14,7 @@
 @import "./components/onboarding.css";
 @import "./components/skeleton.css";
 @import "./components/supplier_edit_uppy.css";
+@import "./components/catalog_workspace.css";
 
 @theme {
     --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -1636,3 +1639,5 @@ form[data-controller~="supplier-form"] [data-controller~="delta-select"] > butto
 .dashboard-overview .dashboard-widget-card .h-64 { height: 14rem; }
 
 .dashboard-overview .bg-nexus-green { background-color: #047857; }
+
+@import "./components/branch_workspace.css";

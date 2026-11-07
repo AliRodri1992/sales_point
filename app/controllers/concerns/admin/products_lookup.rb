@@ -9,7 +9,7 @@ module Admin
       return scope unless respond_to?(:current_organization, true)
       return scope.where(organization_id: nil) unless current_organization
 
-      scope.where(organization_id: [nil, current_organization.id])
+      scope.where(organization_id: current_organization.id)
     end
 
     def set_product
@@ -27,7 +27,7 @@ module Admin
       search_term = CGI.unescape(id_param)
       accessible_products
         .where('lower(slug) = lower(?)', search_term)
-        .or(accessible_products.where(code: search_term.upcase))
+        .or(accessible_products.where('lower(code) = lower(?)', search_term))
         .first
     end
 

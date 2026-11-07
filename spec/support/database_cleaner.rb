@@ -21,10 +21,14 @@ RSpec.configure do |config|
     DatabaseCleaner.start
   end
 
+  config.after(:each, js: true) do
+    Capybara.current_session.driver.quit
+  end
+
   # Browser sessions must finish before their database records are cleaned.
-  config.append_after(:each) do |example|
+  config.append_after(:each) do
     # Stop browser heartbeats before removing the accounts they reference.
-    ActionCable.server.restart if example.metadata[:js]
+    ActionCable.server.restart
     DatabaseCleaner.clean
   end
 end

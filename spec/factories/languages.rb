@@ -1,6 +1,9 @@
 FactoryBot.define do
   factory :language do
-    sequence(:code) { |n| n.to_s(36).rjust(2, '0') }
+    sequence(:code) do |n|
+      codes = ('aa'..'zz').to_a - %w[en es ko]
+      codes[(n - 1) % codes.length]
+    end
     sequence(:name) { |n| "Language #{n}" }
     flag_iso { 'us' }
     status { 'active' }

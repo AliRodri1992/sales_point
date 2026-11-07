@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+module BranchesHelper
+  def branch_mobile(branch)
+    branch.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }
+  end
+
+  def branch_location(branch)
+    address = branch.address
+    return t('admin.branch_workspace.location_pending') unless address
+
+    [address.city, address.state, address.country&.localized_name].compact_blank.join(' · ')
+  end
+
+  def branch_code(branch)
+    branch.code.presence || "##{branch.id}"
+  end
+
+  def branch_country_options(address)
+    countries = Country.active.ordered.to_a
+    retained = Country.with_deleted.find_by(id: address.country_id)
+    countries << retained if retained && countries.none? { |country| country.id == retained.id }
+    countries.map do |country|
+      required = Addresses::CountryRules.new(country.iso_alpha2).required_fields.join(' ')
+      [country.localized_name, country.id, { data: { country_code: country.iso_alpha2, required_fields: required } }]
+    end
+  end
+
+  def branch_filter_badges(filters, countries)
+    filters.filter_map do |key, value|
+      next if value.blank?
+
+      label = t("admin.branch_workspace.filters.#{key}")
+      display = case key
+                when 'status', 'contact', 'team' then t("admin.branch_workspace.options.#{value}")
+                when 'country_id' then countries.find { |country| country.id.to_s == value }&.localized_name
+                when 'created_from', 'created_to' then l(Date.iso8601(value))
+                else value
+                end
+      [key, "#{label}: #{display}"]
+    end
+  end
+
+  def branch_filter_removal_path(key, filters)
+    values = branch_directory_parameters.merge(filters).except(key, 'page').compact_blank
+    admin_branches_path(values)
+  end
+
+  def branch_contact_link(branch)
+    phone = branch_mobile(branch)
+    return content_tag(:span, t('admin.branch_workspace.contact_pending'), class: 'branch-muted') unless phone
+
+    link_to(phone.number, "tel:#{phone.number}", class: 'branch-contact-link')
+  end
+end

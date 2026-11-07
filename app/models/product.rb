@@ -17,6 +17,8 @@ class Product < ApplicationRecord
   belongs_to :sat_tax, optional: true
 
   has_one_attached :image
+  include ProductCommercialCatalog
+  include ProductImageValidation
 
   validates :code,
             presence: true,
@@ -37,15 +39,15 @@ class Product < ApplicationRecord
                           if: -> { sku.present? } }
 
   validates :barcode,
-            uniqueness: { case_sensitive: false, allow_nil: true,
+            uniqueness: { scope: :organization_id, case_sensitive: false, allow_nil: true,
                           if: -> { barcode.present? } }
 
   validates :price,
             presence: true,
-            numericality: { greater_than_or_equal_to: 0 }
+            numericality: { greater_than_or_equal_to: 0, less_than: 10_000_000_000 }
 
   validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
+            numericality: { greater_than_or_equal_to: 0, less_than: 10_000_000_000 },
             allow_nil: true
 
   enum :status,
@@ -76,6 +78,7 @@ class Product < ApplicationRecord
 
   before_validation :set_defaults, if: :new_record?
   before_validation :set_slug, if: -> { name.present? && slug.blank? }
+  validate :valid_catalog_references
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { where(status: :active) }
@@ -86,9 +89,18 @@ class Product < ApplicationRecord
 
   def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
-  def to_param = slug.presence
+  def to_param = slug.presence || id&.to_s
 
   private
+
+  def valid_catalog_references
+    %i[category sat_unit_key sat_tax].each do |association|
+      attribute = "#{association}_id"
+      next unless will_save_change_to_attribute?(attribute) && public_send(attribute).present?
+
+      errors.add(attribute, :invalid) if public_send(association).nil?
+    end
+  end
 
   def set_defaults
     self.status ||= 'active'
@@ -100,6 +112,10 @@ class Product < ApplicationRecord
   def set_slug
     return if slug.present?
 
-    self.slug = name.to_s.parameterize(separator: '-')
+    base = name.to_s.parameterize(separator: '-')
+    base = code.to_s.parameterize if base.blank?
+    self.slug = base
+    self.slug = "#{base}-#{SecureRandom.hex(4)}" if self.class.where(organization_id:,
+                                                                     slug: base).where.not(id:).exists?
   end
 end

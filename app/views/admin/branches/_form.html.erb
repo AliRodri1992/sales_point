@@ -1,88 +1,33 @@
-<div>
-  <div class="mb-7 flex items-start justify-between gap-4">
-    <div>
-      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= title %></h1>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.branches.form.subtitle') %></p>
-    </div>
-    <%= link_to admin_branches_path,
-                class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
-      <%= delta_icon('arrow-left', class: 'size-4') %>
-      <%= t('admin.branches.form.buttons.back') %>
-    <% end %>
-  </div>
-
-  <div class="max-w-6xl rounded-xl border border-slate-200 bg-white shadow-sm">
-    <%= form_with model: @branch,
-                  url: @branch.persisted? ? admin_branch_path(@branch) : admin_branches_path,
-                  class: 'space-y-6 p-6 lg:p-8' do |form| %>
-      <div>
-        <%= form.label :name,
-                       t('admin.branches.form.fields.name'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :name,
-                            class: "input-field w-full rounded-xl #{form_state_classes(@branch, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
-        <%= error_message_for(@branch, :name) %>
-      </div>
-
-      <%= render 'admin/shared/primary_mobile_field', form: form, record: @branch %>
-
-      <%= form.fields_for :address do |address_form| %>
-        <div class="border-t border-slate-100 pt-6">
-          <div class="mb-5">
-            <h2 class="text-sm font-semibold text-slate-800"><%= t('admin.branches.form.address.title') %></h2>
-            <p class="mt-1 text-xs text-slate-500"><%= t('admin.branches.form.address.description') %></p>
-          </div>
-          <%= address_form.hidden_field :id %>
-
-          <div class="grid gap-5 sm:grid-cols-2">
-            <% {
-              street: 'street',
-              exterior_number: 'exterior_number',
-              interior_number: 'interior_number',
-              neighborhood: 'neighborhood',
-              postal_code: 'postal_code',
-              city: 'city',
-              state: 'state'
-            }.each do |attribute, translation_key| %>
-              <div class="<%= attribute == :street ? 'sm:col-span-2' : '' %>">
-                <%= address_form.label attribute,
-                                       t("admin.branches.form.fields.#{translation_key}"),
-                                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-                <%= address_form.text_field attribute,
-                                            class: "input-field w-full rounded-xl #{form_state_classes(address_form.object, attribute)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400" %>
-                <%= error_message_for(address_form.object, attribute) %>
-              </div>
+<div class="catalog-workspace branch-workspace">
+  <header class="catalog-header"><div><p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p><h1><%= title %></h1><p><%= t('admin.branch_workspace.form_intro') %></p></div><%= link_to branch_directory_path, class: 'catalog-button' do %><%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.branches.form.buttons.back') %><% end %></header>
+  <%= form_with model: @branch, url: @branch.persisted? ? admin_branch_path(@branch, branch_directory_parameters) : admin_branches_path(branch_directory_parameters), class: 'catalog-layout', data: { turbo: false } do |form| %>
+    <div class="catalog-main">
+      <%= catalog_errors(@branch) %>
+      <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><% %w[identity contact location notes].each do |section| %><a href="#branch-<%= section %>"><%= t("admin.branch_workspace.#{section}") %></a><% end %></nav>
+      <section class="catalog-card" id="branch-identity"><%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.identity_hint'), icon: 'building-storefront') %><div class="catalog-card-body catalog-fields">
+        <div class="catalog-full"><%= catalog_field(form, :name, label: t('admin.branches.form.fields.name'), required: true, maxlength: 100, autocomplete: 'organization') %></div>
+        <div><%= catalog_field(form, :code, label: t('admin.branch_workspace.code'), maxlength: 30, pattern: '[A-Za-z0-9_-]{1,30}', autocomplete: 'off', placeholder: t('admin.branch_workspace.code_placeholder')) %><p class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p></div>
+        <label class="catalog-toggle branch-status-card"><%= form.check_box :status %><span><strong><%= t('admin.branches.form.status.active') %></strong><small><%= t('admin.branch_workspace.status_hint') %></small></span></label>
+      </div></section>
+      <section class="catalog-card" id="branch-contact"><%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'), icon: 'phone') %><div class="catalog-card-body catalog-fields">
+        <%= render 'phone_fields', form: form %>
+        <div><%= catalog_field(form, :contact_email, type: :email_field, label: t('admin.branch_workspace.contact_email'), maxlength: 254, autocomplete: 'email') %><p class="catalog-hint"><%= t('admin.branch_workspace.email_hint') %></p></div>
+      </div></section>
+      <section class="catalog-card" id="branch-location"><%= catalog_heading(t('admin.branch_workspace.location'), t('admin.branch_workspace.location_hint'), icon: 'map-pin') %><div class="catalog-card-body" data-controller="branch-address" data-action="change->branch-address#update">
+        <%= form.fields_for :address do |address_form| %>
+          <%= address_form.hidden_field :id if address_form.object.persisted? %>
+          <div class="catalog-fields">
+            <% { street: [150, 'street-address'], exterior_number: [20, 'off'], interior_number: [20, 'off'], neighborhood: [100, 'address-line2'], city: [100, 'address-level2'], state: [100, 'address-level1'], postal_code: [10, 'postal-code'] }.each do |attribute, settings| %>
+              <div class="<%= 'catalog-full' if attribute == :street %>"><%= catalog_field(address_form, attribute, label: t("admin.branches.form.fields.#{attribute}"), maxlength: settings.first, autocomplete: settings.last, required: %i[street city].include?(attribute), data: { branch_address_target: 'field', branch_attribute: attribute }) %></div>
             <% end %>
-            <div>
-              <%= address_form.label :country_id, t('admin.branches.form.fields.country'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-              <div class="relative" data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
-                <%= address_form.select :country_id,
-                                        options_for_select(
-                                          Country.active.ordered.map do |country|
-                                            [country.localized_name, country.id, { data: { country_code: country.iso_alpha2 } }]
-                                          end,
-                                          address_form.object.country_id
-                                        ),
-                                        { include_blank: t('admin.supplier_placeholders.country') },
-                                        class: 'input-field w-full rounded-xl border border-slate-200 px-4 py-3 text-sm' %>
-              </div>
-              <%= error_message_for(address_form.object, :country) %>
-            </div>
+            <div class="catalog-field"><%= address_form.label :country_id, t('admin.branches.form.fields.country') %><div data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>"><%= address_form.select :country_id, options_for_select(branch_country_options(address_form.object), address_form.object.country_id), { include_blank: t('admin.supplier_placeholders.country') }, required: true, data: { branch_address_target: 'country' } %></div><%= error_message_for(address_form.object, :country) %></div>
+            <div class="catalog-full"><%= catalog_field(address_form, :reference_notes, type: :text_area, label: t('admin.branch_workspace.reference_notes'), maxlength: 200, rows: 2) %><p class="catalog-hint"><%= t('admin.branch_workspace.reference_hint') %></p></div>
           </div>
-        </div>
-      <% end %>
-
-      <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-4 py-3">
-        <%= form.check_box :status, checked: @branch.new_record? ? true : @branch.status, class: 'size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500' %>
-        <span>
-          <span class="block text-sm font-medium text-slate-700"><%= t('admin.branches.form.status.active') %></span>
-          <span class="block text-xs text-slate-500"><%= t('admin.branches.form.status.description') %></span>
-        </span>
-      </label>
-
-      <div class="flex justify-end border-t border-slate-100 pt-5">
-        <%= form.submit submit_label, class: 'rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700' %>
-      </div>
-    <% end %>
-  </div>
+        <% end %>
+      </div></section>
+      <section class="catalog-card" id="branch-notes"><%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'), icon: 'document-text') %><div class="catalog-card-body"><%= catalog_field(form, :notes, type: :text_area, label: t('admin.branch_workspace.notes'), maxlength: 2000, rows: 4) %></div></section>
+      <footer class="catalog-footer"><%= link_to t('admin.catalog_design.cancel'), branch_directory_path, class: 'catalog-button' %><%= form.submit submit_label, class: 'catalog-button catalog-button-primary' %></footer>
+    </div>
+    <aside class="catalog-aside branch-form-aside"><section class="catalog-card catalog-card-body"><span class="branch-avatar"><%= delta_icon('building-storefront', class: 'size-6') %></span><h2><%= t('admin.branch_workspace.setup_title') %></h2><p><%= t('admin.branch_workspace.setup_hint') %></p><ul class="branch-checklist"><li><%= t('admin.branch_workspace.setup_identity') %></li><li><%= t('admin.branch_workspace.setup_contact') %></li><li><%= t('admin.branch_workspace.setup_location') %></li></ul></section><div class="catalog-notice"><%= t('admin.branch_workspace.optional_hint') %></div><section class="catalog-card catalog-card-body"><h2><%= t('admin.branch_workspace.history_title') %></h2><p><%= t('admin.catalog_design.branch_status_hint') %></p></section></aside>
+  <% end %>
 </div>

@@ -1,0 +1,111 @@
+{
+  "en": {
+    "admin": {
+      "branch_workspace": {
+        "eyebrow": "Organization · Branches",
+        "intro": "Locations, contact details and operations for your organization in one place.",
+        "overview": "Branch overview",
+        "advanced": "Advanced filters",
+        "automatic_hint": "Results update automatically.",
+        "search_placeholder": "Search name, code, location, email or phone…",
+        "any_country": "All countries",
+        "any_state": "All states / provinces",
+        "any_city": "All cities",
+        "any_option": "Any option",
+        "filters": {
+          "search": "Search",
+          "status": "Status",
+          "country_id": "Country",
+          "state": "State / province",
+          "city": "City",
+          "contact": "Contact",
+          "team": "Team",
+          "created_from": "Created from",
+          "created_to": "Created until"
+        },
+        "options": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "with_phone": "With mobile number",
+          "without_phone": "Without mobile number",
+          "with_email": "With email",
+          "without_email": "Without email",
+          "assigned": "With assigned people",
+          "unassigned": "Without assigned people"
+        },
+        "applied": {
+          "one": "1 applied filter",
+          "other": "%{count} applied filters"
+        },
+        "remove_filter": "Remove filter: %{filter}",
+        "clear_all": "Clear filters",
+        "request_error": "We could not update the directory. Previous results have been kept.",
+        "invalid_period": "The start date must be on or before the end date.",
+        "identifier_conflict": "The code, name or phone number is already registered. Review the details and try again.",
+        "results": {
+          "one": "1 branch",
+          "other": "%{count} branches"
+        },
+        "page": "Page %{current} of %{total}",
+        "assigned_people": {
+          "one": "1 assigned person",
+          "other": "%{count} assigned people"
+        },
+        "view": "View branch",
+        "view_branch": "View %{name}",
+        "edit_branch": "Edit %{name}",
+        "delete_branch": "Delete %{name}",
+        "contact": "Contact",
+        "location_pending": "Location not registered",
+        "contact_pending": "No mobile number registered",
+        "no_matches": "No branches match these filters",
+        "no_matches_hint": "Try another search or remove a filter to widen the results.",
+        "form_intro": "Organize branch details to make contact and daily operations easier.",
+        "identity": "Identification",
+        "identity_hint": "A recognizable name and an optional code for your operations.",
+        "code": "Internal code",
+        "code_placeholder": "e.g. CENTRAL-01",
+        "code_hint": "Optional. Up to 30 letters, numbers, hyphens or underscores. Unique within your organization.",
+        "status_hint": "Available for operations and branch selection. Deactivation preserves its history.",
+        "contact_hint": "Contact channels for this location, separate from those of your organization.",
+        "contact_email": "Contact email",
+        "email_hint": "For inquiries and coordination with this location.",
+        "location": "Location",
+        "location_hint": "Physical address and directions for visits or deliveries.",
+        "reference_notes": "Arrival directions",
+        "reference_hint": "For example: side street access, opposite the park, or the receiving entrance.",
+        "notes": "Operational notes",
+        "notes_hint": "Useful internal instructions for people working with this branch.",
+        "setup_title": "Useful details for your team",
+        "setup_hint": "Keep information clear so this branch is easy to identify and find.",
+        "setup_identity": "A recognizable name and a consistent code.",
+        "setup_contact": "At least one contact channel, when available.",
+        "setup_location": "A complete address and arrival directions.",
+        "optional_hint": "Code, mobile number, email and notes are optional. You can complete them later.",
+        "history_title": "Preserving history",
+        "detail_hint": "Identifiers, assigned team and registration dates.",
+        "assigned_team": "Assigned team",
+        "created_at": "Created on",
+        "updated_at": "Last updated",
+        "not_registered": "Not registered",
+        "whatsapp": "Mobile number available on WhatsApp",
+        "remove_phone": "Remove this mobile number when saving",
+        "no_notes": "No operational notes have been added yet.",
+        "operations": "Operations",
+        "operations_hint": "Information registered for this branch.",
+        "products": "Products with inventory",
+        "terminals": "Registered terminals",
+        "history_hint": "Deactivating a branch preserves its data. Branches with operational records must be deactivated instead of deleted."
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "branch": {
+          "code": "Internal code",
+          "contact_email": "Contact email",
+          "notes": "Operational notes"
+        }
+      }
+    }
+  }
+}

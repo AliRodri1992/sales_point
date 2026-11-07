@@ -1,0 +1,1 @@
+<dl id="branch-overview" class="branch-overview" aria-label="<%= t('admin.branch_workspace.overview') %>"><% [['total', @branch_counts.values.sum], ['active', @branch_counts.fetch(true, 0)], ['inactive', @branch_counts.fetch(false, 0)]].each do |key, count| %><div><dt><%= t("admin.catalog_design.#{key}") %></dt><dd><%= count %></dd></div><% end %></dl>

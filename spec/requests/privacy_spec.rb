@@ -46,11 +46,22 @@ RSpec.describe 'Privacy page', type: :request do
 
   %w[es ko].each do |locale|
     it "renders the #{locale} translation" do
+      create(:language, code: locale, name: locale.upcase, flag_iso: locale)
       cookies[:terminal_language] = locale
       get privacy_path
 
       expect(response.body).to include(I18n.t('privacy.title', locale:))
       expect(response.body).not_to include('translation missing')
     end
+  end
+
+  it 'falls back to an active language when a public cookie references an inactive locale' do
+    create(:language, code: 'es', name: 'Español', flag_iso: 'mx', status: 'inactive')
+    cookies[:terminal_language] = 'es'
+    get privacy_path
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('html')['lang']).to eq('en')
+    expect(response.body).to include(I18n.t('privacy.title', locale: 'en'))
   end
 end

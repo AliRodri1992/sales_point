@@ -1,0 +1,79 @@
+/* Catalog workspace uses Delta POS brand tokens and native accessible controls. */
+.catalog-workspace { max-width: 1440px; margin-inline: auto; color: #0f172a; }
+.catalog-header { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; }
+.catalog-eyebrow { color:var(--brand-on-white,#047857); font-size:.6875rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; margin-bottom:.5rem; }
+.catalog-header h1 { font-family:var(--font-jakarta); font-size:clamp(1.5rem,2vw,1.875rem); font-weight:700; letter-spacing:-.035em; overflow-wrap:anywhere; }
+.catalog-header p:not(.catalog-eyebrow) { margin-top:.5rem; max-width:65ch; font-size:.875rem; line-height:1.7; color:#64748b; }
+.catalog-actions { display:flex; align-items:center; flex-wrap:wrap; gap:.625rem; }
+.catalog-button { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; min-height:44px; padding:.625rem 1rem; border:1px solid #cbd5e1; border-radius:.625rem; background:white; color:#334155; font-size:.8125rem; font-weight:600; cursor:pointer; text-align:center; }
+.catalog-button:hover { background:#f8fafc; }
+.catalog-button-primary { color:white; background:var(--brand-on-white,#047857); border-color:transparent; }
+.catalog-button-primary:hover { background:#065f46; }
+.catalog-workspace :is(a,button,input,select,textarea,summary):focus-visible { outline:3px solid var(--brand-on-white,#047857); outline-offset:3px; }
+.catalog-button:disabled { opacity:.5; cursor:wait; }
+.catalog-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; align-items:start; gap:1.5rem; }
+.catalog-main { min-width:0; display:grid; gap:1.25rem; }
+.catalog-card { min-width:0; border:1px solid #e2e8f0; border-radius:1rem; background:#fff; overflow:clip; }
+.catalog-card-heading { display:flex; align-items:center; gap:.75rem; padding:1.25rem 1.5rem; border-bottom:1px solid #f1f5f9; }
+.catalog-card-heading h2 { font-family:var(--font-jakarta); font-size:.9375rem; font-weight:700; }
+.catalog-card-heading p { margin-top:.25rem; font-size:.75rem; line-height:1.6; color:#64748b; }
+.catalog-icon { flex-shrink:0; display:grid; place-items:center; width:40px; height:40px; border-radius:.75rem; background:#ecfdf5; color:#047857; }
+.catalog-card-body { padding:1.5rem; }
+.catalog-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; }
+.catalog-field { min-width:0; }
+.catalog-field label, .catalog-label { display:block; margin-bottom:.5rem; font-size:.8125rem; font-weight:600; color:#334155; }
+.catalog-field :is(input:not([type=checkbox]),select,textarea), .catalog-filter :is(input,select) { width:100%; min-height:44px; padding:.625rem .875rem; border:1px solid #cbd5e1; border-radius:.625rem; background:white; font-size:.875rem; color:#334155; }
+.catalog-field textarea { min-height:110px; resize:vertical; }
+.catalog-field input[type=file] { font-size:.8125rem; }
+.catalog-hint { font-size:.75rem; line-height:1.7; color:#64748b; margin-top:.5rem; }
+.catalog-full { grid-column:1/-1; }
+.catalog-aside { display:grid; gap:1rem; position:sticky; top:6rem; }
+.catalog-aside h2 { font-size:.875rem; font-weight:700; }
+.catalog-aside p { font-size:.8125rem; line-height:1.8; color:#64748b; margin-top:.5rem; }
+.catalog-step { display:flex; gap:.625rem; align-items:center; padding:.625rem 0; font-size:.8125rem; color:#475569; }
+.catalog-step span { display:grid; place-items:center; height:24px; width:24px; border-radius:50%; background:#ecfdf5; color:#065f46; font-size:.6875rem; font-weight:700; }
+.catalog-footer { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:.75rem; padding:1rem 1.5rem; border-top:1px solid #e2e8f0; background:#fff; border-radius:1rem; }
+.catalog-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-bottom:1.25rem; }
+.catalog-stat { padding:1rem 1.25rem; border:1px solid #e2e8f0; border-radius:.875rem; background:#fff; }
+.catalog-stat dt { font-size:.75rem; color:#64748b; }
+.catalog-stat dd { margin-top:.375rem; font-family:var(--font-jakarta); font-size:1.375rem; font-weight:700; font-variant-numeric:tabular-nums; }
+.catalog-filter { display:flex; flex-wrap:wrap; align-items:end; gap:.75rem; padding:1rem 1.25rem; margin-bottom:1.25rem; background:white; border:1px solid #e2e8f0; border-radius:.875rem; }
+.catalog-filter label { display:block; margin-bottom:.375rem; color:#475569; font-size:.75rem; font-weight:600; }
+.catalog-filter > div:first-child { flex:1 1 240px; }
+.catalog-filter > div { flex:0 1 190px; }
+.catalog-error { border:1px solid #fecdd3; border-radius:.75rem; background:#fff1f2; color:#9f1239; padding:1rem; font-size:.8125rem; line-height:1.8; margin-bottom:1.25rem; }
+.catalog-error ul { padding-left:1.25rem; list-style:disc; }
+.catalog-notice { padding:1rem; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; border-radius:.75rem; font-size:.8125rem; line-height:1.8; }
+.catalog-definition { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; }
+.catalog-definition dt { font-size:.6875rem; color:#64748b; text-transform:uppercase; letter-spacing:.07em; font-weight:600; }
+.catalog-definition dd { margin-top:.5rem; font-size:.875rem; font-weight:500; overflow-wrap:anywhere; }
+.catalog-status { display:inline-flex; gap:.375rem; align-items:center; padding:.25rem .625rem; border-radius:999px; color:#065f46; background:#ecfdf5; font-size:.6875rem; font-weight:600; }
+.catalog-status-inactive { color:#475569; background:#f1f5f9; }
+.catalog-toggle { display:flex; align-items:flex-start; gap:.75rem; padding:1rem; border:1px solid #e2e8f0; border-radius:.75rem; }
+.catalog-toggle input { margin-top:.25rem; accent-color:#047857; width:18px; height:18px; flex-shrink:0; }
+.catalog-toggle strong { display:block; font-size:.8125rem; }
+.catalog-toggle small { display:block; color:#64748b; line-height:1.7; margin-top:.25rem; }
+.catalog-workspace table { font-size:.8125rem; }
+.catalog-workspace th { color:#64748b; background:#f8fafc; }
+.catalog-workspace td :is(a,button)[aria-label] { min-height:40px; min-width:40px; }
+.catalog-media { display:grid; place-items:center; min-height:200px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:.75rem; overflow:hidden; }
+.catalog-media img { max-height:240px; object-fit:contain; max-width:100%; }
+.catalog-nested-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr)); gap:.75rem; align-items:end; padding:1rem; margin-bottom:.75rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:.75rem; }
+.catalog-nav { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.25rem; }
+.catalog-nav a { display:inline-flex; min-height:40px; align-items:center; padding:.5rem .875rem; border:1px solid #e2e8f0; background:white; border-radius:.5rem; font-size:.75rem; color:#475569; }
+.catalog-nav a:hover { border-color:#6ee7b7; color:#065f46; }
+.catalog-card[id] { scroll-margin-top:6rem; }
+.catalog-workspace .uppy-Dashboard-inner { max-width:100%; border-color:#e2e8f0; border-radius:.75rem; }
+.catalog-workspace .uppy-Dashboard-browse { color:#047857; }
+@media(max-width:1023px) { .catalog-layout { grid-template-columns:minmax(0,1fr); } .catalog-aside { position:static; } }
+@media(max-width:639px) { .catalog-card-body,.catalog-card-heading { padding:1rem; } .catalog-fields,.catalog-definition { grid-template-columns:minmax(0,1fr); } .catalog-summary { gap:.5rem; } .catalog-stat { padding:.75rem; } .catalog-stat dd { font-size:1.125rem; } .catalog-nested-row { grid-template-columns:minmax(0,1fr); } .catalog-actions { width:100%; } .catalog-filter > div { flex:1 1 100%; } }
+@media(prefers-reduced-motion:reduce) { .catalog-workspace * { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }
+
+.catalog-workspace [hidden] { display:none!important; }
+.catalog-workspace [id$="-title"] { scroll-margin-top:6rem; }
+
+.catalog-nested-row > .catalog-button { grid-column:1/-1; justify-self:end; }
+.catalog-workspace .uppy-StatusBar-actionBtn--done { color:#047857; }
+@media(max-width:639px) { .catalog-workspace { padding-bottom:4.5rem; } }
+
+.catalog-workspace .text-slate-400 { color:#64748b; }

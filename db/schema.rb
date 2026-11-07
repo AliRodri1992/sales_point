@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -103,9 +103,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
     t.bigint "organization_id"
     t.boolean "status"
     t.datetime "updated_at", null: false
+    t.string "code", limit: 30
+    t.string "contact_email", limit: 254
+    t.text "notes"
+    t.index "organization_id, lower((code)::text)", name: "idx_branches_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (code IS NOT NULL))"
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
     t.index ["organization_id"], name: "index_branches_on_organization_id"
+    t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -850,6 +855,121 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
     t.check_constraint "number::text ~ '^\\+[1-9][0-9]{1,14}$'::text", name: "chk_phones_e164"
   end
 
+  create_table "price_change_events", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "price_list_item_id"
+    t.bigint "actor_id", null: false
+    t.bigint "approved_by_id"
+    t.decimal "previous_price", precision: 12, scale: 2
+    t.decimal "new_price", precision: 12, scale: 2, null: false
+    t.string "currency", limit: 3, null: false
+    t.string "status", default: "pending", null: false
+    t.text "reason", null: false
+    t.datetime "approved_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_price_change_events_on_actor_id"
+    t.index ["approved_by_id"], name: "index_price_change_events_on_approved_by_id"
+    t.index ["organization_id"], name: "index_price_change_events_on_organization_id"
+    t.index ["price_list_item_id"], name: "index_price_change_events_on_price_list_item_id"
+    t.index ["product_id"], name: "index_price_change_events_on_product_id"
+    t.check_constraint "new_price >= 0::numeric", name: "price_change_positive_price"
+  end
+
+  create_table "price_list_items", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "price_list_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "product_variant_id"
+    t.bigint "product_presentation_id"
+    t.decimal "price", precision: 12, scale: 2, null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "id"], name: "index_price_list_items_on_organization_id_and_id", unique: true
+    t.index ["organization_id", "product_id", "id"], name: "idx_list_item_tenant_product", unique: true
+    t.index ["organization_id"], name: "index_price_list_items_on_organization_id"
+    t.index ["price_list_id"], name: "index_price_list_items_on_price_list_id"
+    t.index ["product_id"], name: "index_price_list_items_on_product_id"
+    t.index ["product_presentation_id"], name: "index_price_list_items_on_product_presentation_id"
+    t.index ["product_variant_id"], name: "index_price_list_items_on_product_variant_id"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "price_item_dates"
+    t.check_constraint "price >= 0::numeric", name: "list_item_positive_price"
+    t.exclusion_constraint "price_list_id WITH =, product_id WITH =, COALESCE(product_variant_id, (0)::bigint) WITH =, COALESCE(product_presentation_id, (0)::bigint) WITH =, tsrange(starts_at, ends_at, '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, deferrable: :deferred, name: "commercial_price_periods"
+  end
+
+  create_table "price_lists", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "code", limit: 50, null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.string "customer_segment", limit: 100
+    t.string "status", default: "draft", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "code"], name: "index_price_lists_on_organization_id_and_code", unique: true
+    t.index ["organization_id", "id"], name: "index_price_lists_on_organization_id_and_id", unique: true
+    t.index ["organization_id"], name: "index_price_lists_on_organization_id"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "price_list_dates"
+  end
+
+  create_table "product_barcodes", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "product_variant_id"
+    t.bigint "product_presentation_id"
+    t.string "value", limit: 100, null: false
+    t.string "symbology", default: "code128", null: false
+    t.boolean "primary", default: false, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "value"], name: "index_product_barcodes_on_organization_id_and_value", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_product_barcodes_on_organization_id"
+    t.index ["product_id"], name: "idx_product_primary_barcode", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
+    t.index ["product_id"], name: "index_product_barcodes_on_product_id"
+    t.index ["product_presentation_id"], name: "index_product_barcodes_on_product_presentation_id"
+    t.index ["product_variant_id"], name: "index_product_barcodes_on_product_variant_id"
+  end
+
+  create_table "product_presentations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.string "name", limit: 100, null: false
+    t.decimal "units", precision: 18, scale: 6, default: "1.0", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "product_id", "id"], name: "idx_presentation_tenant_product", unique: true
+    t.index ["organization_id"], name: "index_product_presentations_on_organization_id"
+    t.index ["product_id"], name: "index_product_presentations_on_product_id"
+    t.check_constraint "units > 0::numeric", name: "presentation_positive_units"
+  end
+
+  create_table "product_variants", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "sku", limit: 50
+    t.jsonb "options", default: {}, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "product_id", "id"], name: "idx_variant_tenant_product", unique: true
+    t.index ["organization_id", "sku"], name: "index_product_variants_on_organization_id_and_sku", unique: true, where: "((sku IS NOT NULL) AND ((sku)::text <> ''::text))"
+    t.index ["organization_id"], name: "index_product_variants_on_organization_id"
+    t.index ["product_id"], name: "index_product_variants_on_product_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "barcode"
     t.bigint "category_id"
@@ -878,6 +998,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
     t.index ["deleted_at"], name: "index_products_on_deleted_at"
     t.index ["featured"], name: "index_products_on_featured"
     t.index ["organization_id", "code"], name: "idx_products_org_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "id"], name: "index_products_on_organization_id_and_id", unique: true
     t.index ["organization_id", "sku"], name: "idx_products_org_sku", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL))"
     t.index ["organization_id", "slug"], name: "idx_products_org_slug", unique: true, where: "((deleted_at IS NULL) AND (slug IS NOT NULL))"
     t.index ["organization_id"], name: "index_products_on_organization_id"
@@ -886,6 +1007,77 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
     t.index ["sat_tax_id"], name: "index_products_on_sat_tax_id"
     t.index ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id"
     t.check_constraint "tracking_mode::text = ANY (ARRAY['none'::character varying::text, 'lot'::character varying::text, 'serial'::character varying::text])", name: "chk_products_tracking_mode"
+  end
+
+  create_table "promotion_benefits", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.string "kind", default: "percentage", null: false
+    t.decimal "value", precision: 12, scale: 4, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_promotion_benefits_on_organization_id"
+    t.index ["promotion_id"], name: "index_promotion_benefits_on_promotion_id"
+    t.check_constraint "value > 0::numeric AND (kind::text <> 'percentage'::text OR value <= 100::numeric)", name: "promotion_valid_benefit"
+  end
+
+  create_table "promotion_conditions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.string "kind", null: false
+    t.bigint "product_id"
+    t.bigint "category_id"
+    t.decimal "quantity", precision: 18, scale: 6
+    t.decimal "amount", precision: 12, scale: 2
+    t.string "customer_segment", limit: 100
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_promotion_conditions_on_category_id"
+    t.index ["organization_id"], name: "index_promotion_conditions_on_organization_id"
+    t.index ["product_id"], name: "index_promotion_conditions_on_product_id"
+    t.index ["promotion_id"], name: "index_promotion_conditions_on_promotion_id"
+  end
+
+  create_table "promotion_redemptions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.bigint "product_id", null: false
+    t.string "idempotency_key", limit: 100, null: false
+    t.string "customer_reference", limit: 100
+    t.decimal "quantity", precision: 18, scale: 6, null: false
+    t.decimal "discount", precision: 12, scale: 2, null: false
+    t.jsonb "snapshot", default: {}, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "idempotency_key"], name: "idx_promotion_redemption_idempotency", unique: true
+    t.index ["organization_id"], name: "index_promotion_redemptions_on_organization_id"
+    t.index ["product_id"], name: "index_promotion_redemptions_on_product_id"
+    t.index ["promotion_id", "customer_reference"], name: "idx_on_promotion_id_customer_reference_742ad4c936"
+    t.index ["promotion_id"], name: "index_promotion_redemptions_on_promotion_id"
+    t.check_constraint "quantity > 0::numeric AND discount >= 0::numeric", name: "redemption_positive_values"
+  end
+
+  create_table "promotions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "code", limit: 50, null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.integer "usage_limit"
+    t.integer "customer_limit"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "code"], name: "index_promotions_on_organization_id_and_code", unique: true
+    t.index ["organization_id", "id"], name: "index_promotions_on_organization_id_and_id", unique: true
+    t.index ["organization_id"], name: "index_promotions_on_organization_id"
+    t.check_constraint "(usage_limit IS NULL OR usage_limit > 0) AND (customer_limit IS NULL OR customer_limit > 0)", name: "promotion_positive_limits"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "promotion_dates"
   end
 
   create_table "purchase_approvals", force: :cascade do |t|
@@ -2239,11 +2431,57 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_133000) do
   add_foreign_key "organizations", "membership_plans"
   add_foreign_key "payment_integrations", "organizations"
   add_foreign_key "phones", "organizations"
+  add_foreign_key "price_change_events", "organizations"
+  add_foreign_key "price_change_events", "price_list_items"
+  add_foreign_key "price_change_events", "price_list_items", column: ["organization_id", "price_list_item_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_change_events", "price_list_items", column: ["organization_id", "product_id", "price_list_item_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_change_events", "products"
+  add_foreign_key "price_change_events", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_change_events", "users", column: "actor_id"
+  add_foreign_key "price_change_events", "users", column: "approved_by_id"
+  add_foreign_key "price_list_items", "organizations"
+  add_foreign_key "price_list_items", "price_lists"
+  add_foreign_key "price_list_items", "price_lists", column: ["organization_id", "price_list_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_list_items", "product_presentations"
+  add_foreign_key "price_list_items", "product_presentations", column: ["organization_id", "product_id", "product_presentation_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_list_items", "product_variants"
+  add_foreign_key "price_list_items", "product_variants", column: ["organization_id", "product_id", "product_variant_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_list_items", "products"
+  add_foreign_key "price_list_items", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_lists", "organizations"
+  add_foreign_key "product_barcodes", "organizations"
+  add_foreign_key "product_barcodes", "product_presentations"
+  add_foreign_key "product_barcodes", "product_presentations", column: ["organization_id", "product_id", "product_presentation_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "product_barcodes", "product_variants"
+  add_foreign_key "product_barcodes", "product_variants", column: ["organization_id", "product_id", "product_variant_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "product_barcodes", "products"
+  add_foreign_key "product_barcodes", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "product_presentations", "organizations"
+  add_foreign_key "product_presentations", "products"
+  add_foreign_key "product_presentations", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "product_variants", "organizations"
+  add_foreign_key "product_variants", "products"
+  add_foreign_key "product_variants", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
   add_foreign_key "products", "categories"
   add_foreign_key "products", "organizations"
   add_foreign_key "products", "sat_taxes"
   add_foreign_key "products", "sat_unit_keys"
   add_foreign_key "products", "suppliers", column: "preferred_supplier_id"
+  add_foreign_key "promotion_benefits", "organizations"
+  add_foreign_key "promotion_benefits", "promotions"
+  add_foreign_key "promotion_benefits", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_conditions", "categories"
+  add_foreign_key "promotion_conditions", "organizations"
+  add_foreign_key "promotion_conditions", "products"
+  add_foreign_key "promotion_conditions", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_conditions", "promotions"
+  add_foreign_key "promotion_conditions", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_redemptions", "organizations"
+  add_foreign_key "promotion_redemptions", "products"
+  add_foreign_key "promotion_redemptions", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_redemptions", "promotions"
+  add_foreign_key "promotion_redemptions", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotions", "organizations"
   add_foreign_key "purchase_approvals", "organizations"
   add_foreign_key "purchase_approvals", "purchase_orders"
   add_foreign_key "purchase_approvals", "users", column: "decided_by_id"

@@ -1,73 +1,25 @@
-<%= form_with model: [:admin, language],
-              class: 'space-y-5',
-              data: {
-                controller: 'swal-confirm',
-                turbo_frame: 'language_modal',
-                swal_cancel_text: t('admin.languages.confirm.cancel')
-              } do |form| %>
-  <div class="mx-auto max-w-sm space-y-5">
-    <div class="grid gap-5 sm:grid-cols-1">
-      <div>
-        <%= form.label :name, t('admin.languages.form.name'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :name,
-                            data: { autofocus: true },
-                            class: "input-field w-full rounded-xl #{form_state_classes(language, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.languages.form.name_placeholder') %>
-        <%= error_message_for(language, :name) %>
-      </div>
-
-      <div>
-        <%= form.label :code, t('admin.languages.form.code'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :code,
-                            class: "input-field w-full rounded-xl #{form_state_classes(language, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.languages.form.code_placeholder') %>
-        <p class="mt-2 text-xs text-slate-400">
-          <%= t('admin.languages.form.code_hint') %>
-        </p>
-        <%= error_message_for(language, :code) %>
-      </div>
-
-      <div>
-        <%= form.label :flag_iso, t('admin.languages.form.flag_iso'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :flag_iso,
-                            class: "input-field w-full rounded-xl #{form_state_classes(language, :flag_iso)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.languages.form.flag_placeholder') %>
-        <p class="mt-2 text-xs text-slate-400">
-          <%= t('admin.languages.form.flag_hint') %>
-        </p>
-        <%= error_message_for(language, :flag_iso) %>
-      </div>
-
-      <% if language.persisted? %>
-        <div>
-          <%= form.label :status, t('admin.languages.form.status'),
-                         class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.select :status,
-                          options_for_select(
-                            Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] },
-                            language.status || 'active'
-                          ),
-                          {},
-                          class: "input-field w-full rounded-xl #{form_state_classes(language, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
+<%= form_with model: [:admin, language], data: { turbo: false }, class: 'catalog-layout' do |form| %>
+  <div class="catalog-main">
+    <%= catalog_errors(language) %>
+    <section class="catalog-card">
+      <%= catalog_heading(t('admin.catalog_design.language_identity'), t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
+      <div class="catalog-card-body catalog-fields">
+        <% [:name, :code, :flag_iso].each do |attribute| %>
+          <div class="catalog-field <%= 'catalog-full' if attribute == :name %>">
+            <%= form.label attribute, t("admin.languages.form.#{attribute}") %>
+            <%= form.text_field attribute, required: true, maxlength: attribute == :name ? 100 : 2, autocomplete: 'off', spellcheck: false, aria: { invalid: language.errors[attribute].any?, describedby: "language_#{attribute}_hint" }, class: form_state_classes(language, attribute) %>
+            <p id="language_<%= attribute %>_hint" class="catalog-hint"><%= t("admin.catalog_design.language_#{attribute}_hint") %></p>
+            <%= error_message_for(language, attribute) %>
+          </div>
+        <% end %>
+        <div class="catalog-field">
+          <%= form.label :status, t('admin.languages.form.status') %>
+          <%= form.select :status, Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] } %>
           <%= error_message_for(language, :status) %>
         </div>
-      <% end %>
-    </div>
-
-    <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
-      <button
-        type="button"
-        data-modal-dismiss
-        data-action="modal#close"
-        class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-      >
-        <%= t('admin.languages.form.cancel') %>
-      </button>
-      <%= form.submit language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'),
-                      class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
-    </div>
+      </div>
+    </section>
+    <footer class="catalog-footer"><%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Language), class: 'catalog-button', data: { turbo: false } %><%= form.submit language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'), class: 'catalog-button catalog-button-primary' %></footer>
   </div>
+  <aside class="catalog-aside"><section class="catalog-card catalog-card-body"><span class="catalog-icon"><%= delta_icon('globe-alt', class: 'size-5') %></span><h2 class="mt-4"><%= t('admin.catalog_design.language_help_title') %></h2><p><%= t('admin.catalog_design.language_help') %></p><p><%= t('admin.catalog_design.language_status_hint') %></p></section></aside>
 <% end %>

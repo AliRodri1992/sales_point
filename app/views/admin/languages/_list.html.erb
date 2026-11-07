@@ -64,7 +64,7 @@
                 <div class="flex items-center justify-center gap-1">
                   <% if policy(Language).show? %>
 <%= link_to admin_language_path(language),
-                              data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.show.title') },
+                              data: { turbo_frame: '_top', tooltip: t('admin.languages.show.title') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.languages.show.title') } do %>
                     <%= delta_icon('eye', class: 'size-4') %>
@@ -72,7 +72,7 @@
 <% end %>
                   <% if policy(Language).update? %>
 <%= link_to edit_admin_language_path(language),
-                              data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.index.edit') },
+                              data: { turbo_frame: '_top', tooltip: t('admin.languages.index.edit') },
                               class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
                               aria: { label: t('admin.languages.index.edit') } do %>
                     <%= delta_icon('pencil-square', class: 'size-4') %>
@@ -109,7 +109,7 @@
                 options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
                 data: { controller: 'table-page-size', table_page_size_key_value: 'languages',
                         action: 'change->table-page-size#apply' },
-                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
         </div>
         <div class="flex items-center gap-1">
           <%= pagination_links(total_pages, frame: 'languages_list') if total_pages > 1 %>

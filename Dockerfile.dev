@@ -41,7 +41,7 @@ RUN if [ "$INSTALL_TEST_BROWSER" = "true" ]; then \
     fi
 
 # -------- NODE (compatible con Rails 8 + Hotwire + esbuild) --------
-ARG NODE_VERSION=20
+ARG NODE_VERSION=24
 
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
     apt-get install -y nodejs && \

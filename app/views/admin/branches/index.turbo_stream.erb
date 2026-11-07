@@ -1,0 +1,6 @@
+<%= turbo_stream.update 'branches_list' do %><%= render 'list', branches: @branches, total_count: @total_count, total_pages: @total_pages, current_page: @current_page, per_page: @per_page, can_manage_branches: @can_manage_branches %><% end %>
+<%= turbo_stream.replace 'branch-filter-badges' do %><%= render 'filter_badges' %><% end %>
+<% if request.headers['X-Branch-Locations'] == '1' %>
+  <%= turbo_stream.update 'branch-filter-state' do %><%= options_for_select([[t('admin.branch_workspace.any_state'), ''], *@branch_states.map { |value| [value, value] }], @branch_filters['state']) %><% end %>
+  <%= turbo_stream.update 'branch-filter-city' do %><%= options_for_select([[t('admin.branch_workspace.any_city'), ''], *@branch_cities.map { |value| [value, value] }], @branch_filters['city']) %><% end %>
+<% end %>

@@ -4,11 +4,17 @@ module Admin
   class ProductsController < ApplicationController
     include Admin::ProductsListing
     include Admin::ProductsLookup
+    include Admin::ProductImageAssignment
+    include Admin::ProductFormWriting
+    include Admin::ProductPricingPreview
+    include Admin::ProductPriceHistory
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
     include CatalogAuthorization
     include CatalogNavigation
+
+    skip_before_action :authorize_catalog_action, only: :quote
 
     before_action :set_product, only: %i[show edit update destroy]
 
@@ -18,7 +24,13 @@ module Admin
       load_products
     end
 
-    def show; end
+    def show
+      load_price_history
+    end
+
+    def quote
+      render_price_quote
+    end
 
     def new
       @product = Product.new
@@ -27,10 +39,10 @@ module Admin
     def edit; end
 
     def create
-      @product = Product.new(product_params)
+      @product = Product.new
       @product.organization = current_organization
 
-      if @product.save
+      if save_product
         refresh_product_catalog('created')
         return if redirect_without_catalog_listing(@product, :created)
 
@@ -39,49 +51,39 @@ module Admin
         render :new, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
-      @product.errors.add(:sku, :taken)
+      @product.errors.add(:base, t('admin.catalog_design.identifier_taken'))
       render :new, status: :unprocessable_content
     end
 
     def update
-      if @product.update(product_params)
+      if save_product
         refresh_product_catalog('updated')
-        return if redirect_without_catalog_listing(@product, :updated)
+        return if redirect_without_catalog_listing(@product, :updated, message: product_update_message)
 
-        redirect_to admin_products_path, flash: { swal_message: t('admin.products.updated') }
+        redirect_to admin_products_path, flash: { swal_message: product_update_message }
       else
         render :edit, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordNotUnique
-      @product.errors.add(:sku, :taken)
+      @product.errors.add(:base, t('admin.catalog_design.identifier_taken'))
       render :edit, status: :unprocessable_content
     end
 
     def destroy
-      @product.update!(deleted_at: Time.current, updated_at: Time.current)
+      @product.with_lock { @product.update!(deleted_at: Time.current, updated_at: Time.current) }
       refresh_product_catalog('destroyed')
       return if redirect_without_catalog_listing(@product, :destroyed)
 
       redirect_to admin_products_path, flash: { swal_message: t('admin.products.destroyed') }
     rescue ActiveRecord::RecordNotFound
       redirect_back_or_to(admin_products_path, alert: t('admin.products.index.not_found'))
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_product_path(@product), alert: e.record.errors.full_messages.to_sentence, status: :see_other
     rescue StandardError => e
       handle_destroy_error(e)
     end
 
     private
-
-    def product_params
-      params.expect(
-        product: %i[
-          code name description price cost
-          barcode sku category_id sat_unit_key_id sat_tax_id tracking_mode status
-          image_url position featured slug view_count
-        ]
-      ).tap do |p|
-        p[:image] = params[:product][:image] if params[:product][:image].present?
-      end
-    end
 
     def notify_product(user, product, action)
       ProductNotification

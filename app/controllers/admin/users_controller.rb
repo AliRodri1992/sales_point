@@ -135,7 +135,7 @@ module Admin
     end
 
     def load_form_options
-      @languages = Language.available.order(:name)
+      @languages = Language.selectable.or(Language.where(id: @user&.language_id)).order(:name)
       @themes = Theme.all
       @roles = SystemRole.selectable_for(@user).system.order(:name)
       @branches = Users::BranchRoleAssignments.branch_options(user: @user, organization: current_organization)

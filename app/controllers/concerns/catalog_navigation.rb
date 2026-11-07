@@ -13,10 +13,10 @@ module CatalogNavigation
     policy(model).index? ? polymorphic_path([:admin, model]) : admin_dashboard_path
   end
 
-  def redirect_without_catalog_listing(record, action)
+  def redirect_without_catalog_listing(record, action, message: nil)
     return if policy(record.class).index?
 
-    message = t("admin.#{controller_name}.#{action}")
+    message ||= t("admin.#{controller_name}.#{action}")
     redirect_to catalog_write_destination(record, action), status: :see_other, flash: { swal_message: message }
   end
 

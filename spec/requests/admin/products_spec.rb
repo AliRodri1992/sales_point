@@ -164,7 +164,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'renders the form when a unique index rejects the create' do
-      allow_any_instance_of(Product).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
+      allow_any_instance_of(Product).to receive(:save!).and_raise(ActiveRecord::RecordNotUnique)
 
       post admin_products_path,
            params: { product: { code: 'PROD-DUPLICATE', name: 'Duplicate Product', price: 10 } }
@@ -255,7 +255,7 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'renders the edit form when a unique index rejects the update' do
-      allow_any_instance_of(Product).to receive(:update).and_raise(ActiveRecord::RecordNotUnique)
+      allow_any_instance_of(Product).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
 
       patch admin_product_path(product),
             params: { product: { name: 'Conflicting Name', code: 'old_code' } }

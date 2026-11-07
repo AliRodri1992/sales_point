@@ -1,12 +1,12 @@
 <% member_status = @user.organization_memberships.active.find_by(organization: current_organization)&.account_status || @user.status %>
 <% content_for :title, "#{@user.display_name} | #{t('admin.users.index.title')}" %>
-<% assignments = @user.user_roles.active.includes(:system_role, :branch).to_a.select do |assignment|
-     assignment.branch_id.nil? || assignment.branch&.organization_id == current_organization&.id
+<% assignments = @user.user_roles.includes(:system_role, :branch).to_a.select do |assignment|
+     assignment.system_role && (assignment.branch_id.nil? || assignment.branch&.organization_id == current_organization&.id)
    end %>
 <% global_roles = assignments.select { |assignment| assignment.branch_id.nil? } %>
 <% branch_roles = assignments.reject { |assignment| assignment.branch_id.nil? } %>
 
-<div class="mx-auto max-w-[92rem] space-y-6">
+<div class="catalog-workspace space-y-6">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div class="min-w-0">
       <p class="mb-2 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
@@ -50,70 +50,6 @@
                         class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50' %>
           <% end %>
         </div>
-      </section>
-    <% end %>
-  <% end %>
-
-  <% if @can_manage_users %>
-    <% invitation = @user.user_invitations.where(organization: current_organization).order(created_at: :desc).first %>
-    <% if invitation %>
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.invitation_history') %></h2>
-        <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-          <div><dt class="font-semibold"><%= t('admin.users.status_management.delivery') %></dt><dd><%= invitation.delivery_status %></dd></div>
-          <div><dt class="font-semibold"><%= t('admin.users.status_management.expires') %></dt><dd><%= l(invitation.expires_at, format: :short) %></dd></div>
-          <div><dt class="font-semibold"><%= t('admin.users.status_management.sent') %></dt><dd><%= invitation.sent_at ? l(invitation.sent_at, format: :short) : '—' %></dd></div>
-          <div><dt class="font-semibold"><%= t('admin.users.status_management.accepted') %></dt><dd><%= invitation.accepted_at ? l(invitation.accepted_at, format: :short) : '—' %></dd></div>
-        </dl>
-      </section>
-    <% end %>
-  <% end %>
-
-  <% if @can_manage_users %>
-    <% history = UserStatusEvent.where(user: @user, organization: current_organization).order(created_at: :desc).limit(10) %>
-    <% if history.any? %>
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.history') %></h2>
-        <ol class="mt-4 divide-y divide-slate-100">
-          <% history.each do |event| %>
-            <li class="py-3 text-sm">
-              <div class="flex flex-wrap justify-between gap-2">
-                <strong><%= t("admin.users.statuses.#{event.from_status}") %> → <%= t("admin.users.statuses.#{event.to_status}") %></strong>
-                <time class="text-xs text-slate-500" datetime="<%= event.created_at.iso8601 %>"><%= l(event.created_at, format: :short) %></time>
-              </div>
-              <p class="mt-1 break-words text-slate-600"><%= event.reason %></p>
-              <p class="mt-1 text-xs text-slate-500"><%= event.actor&.display_name %></p>
-            </li>
-          <% end %>
-        </ol>
-      </section>
-    <% end %>
-  <% end %>
-  <% if @can_manage_users %>
-    <% membership = @user.organization_memberships.active.find_by(organization: current_organization) %>
-    <% if membership&.status_review_at %>
-      <p class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <strong><%= t('admin.users.status_management.review_at') %>:</strong>
-        <%= l(membership.status_review_at, format: :long) %>
-      </p>
-    <% end %>
-    <% incidents = @user.user_security_incidents.where(organization: current_organization).order(created_at: :desc).limit(10) %>
-    <% if incidents.any? %>
-      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-label="<%= t('admin.users.status_management.incidents') %>">
-        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.incidents') %></h2>
-        <ol class="mt-4 divide-y divide-slate-100">
-          <% incidents.each do |incident| %>
-            <li class="py-3 text-sm">
-              <p class="font-semibold text-slate-800"><%= incident.description %></p>
-              <p class="mt-1 text-xs text-slate-500"><%= l(incident.created_at, format: :short) %> · <%= incident.opened_by.display_name %></p>
-              <% if incident.resolved_at %>
-                <p class="mt-2 break-words text-emerald-800"><%= t('admin.users.status_management.resolved') %>: <%= incident.resolution %></p>
-              <% else %>
-                <p class="mt-2 text-amber-800"><%= t('admin.users.status_management.open') %></p>
-              <% end %>
-            </li>
-          <% end %>
-        </ol>
       </section>
     <% end %>
   <% end %>
@@ -184,7 +120,7 @@
         <% if global_roles.any? %>
           <div class="flex flex-wrap gap-2">
             <% global_roles.each do |assignment| %>
-              <span class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"><%= system_role_name(assignment.system_role) %></span>
+              <span class="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800"><%= delta_icon(system_role_icon(assignment.system_role), class: 'mr-1 inline size-4') %><%= system_role_name(assignment.system_role) %><% if assignment.system_role.inactive? %><small class="mt-1 block font-normal text-amber-800"><%= t('admin.system_roles.lifecycle.assignment_hint') %></small><% end %></span>
             <% end %>
           </div>
         <% else %>
@@ -196,7 +132,7 @@
         <% if branch_roles.any? %>
           <div class="flex flex-wrap gap-2">
             <% branch_roles.each do |assignment| %>
-              <span class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700"><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %></span>
+              <span class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700"><%= delta_icon(system_role_icon(assignment.system_role), class: 'mr-1 inline size-4') %><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %><% if assignment.system_role.inactive? || !assignment.branch.status %><small class="mt-1 block font-normal text-amber-800"><%= t(assignment.system_role.inactive? ? 'admin.system_roles.lifecycle.assignment_hint' : 'admin.system_roles.lifecycle.inactive_branch') %></small><% end %></span>
             <% end %>
           </div>
         <% else %>
@@ -205,4 +141,69 @@
       </div>
     </div>
   </section>
+  <% if @can_manage_users %>
+    <% invitation = @user.user_invitations.where(organization: current_organization).order(created_at: :desc).first %>
+    <% if invitation %>
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.invitation_history') %></h2>
+        <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+          <div><dt class="font-semibold"><%= t('admin.users.status_management.delivery') %></dt><dd><%= t("admin.catalog_design.delivery_#{invitation.delivery_status}") %></dd></div>
+          <div><dt class="font-semibold"><%= t('admin.users.status_management.expires') %></dt><dd><%= l(invitation.expires_at, format: :short) %></dd></div>
+          <div><dt class="font-semibold"><%= t('admin.users.status_management.sent') %></dt><dd><%= invitation.sent_at ? l(invitation.sent_at, format: :short) : '—' %></dd></div>
+          <div><dt class="font-semibold"><%= t('admin.users.status_management.accepted') %></dt><dd><%= invitation.accepted_at ? l(invitation.accepted_at, format: :short) : '—' %></dd></div>
+        </dl>
+      </section>
+    <% end %>
+  <% end %>
+
+  <% if @can_manage_users %>
+    <% history = UserStatusEvent.where(user: @user, organization: current_organization).order(created_at: :desc).limit(10) %>
+    <% if history.any? %>
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.history') %></h2>
+        <ol class="mt-4 divide-y divide-slate-100">
+          <% history.each do |event| %>
+            <li class="py-3 text-sm">
+              <div class="flex flex-wrap justify-between gap-2">
+                <strong><%= t("admin.users.statuses.#{event.from_status}") %> → <%= t("admin.users.statuses.#{event.to_status}") %></strong>
+                <time class="text-xs text-slate-500" datetime="<%= event.created_at.iso8601 %>"><%= l(event.created_at, format: :short) %></time>
+              </div>
+              <p class="mt-1 break-words text-slate-600"><%= event.reason %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= event.actor&.display_name %></p>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+    <% end %>
+  <% end %>
+  <% if @can_manage_users %>
+    <% membership = @user.organization_memberships.active.find_by(organization: current_organization) %>
+    <% if membership&.status_review_at %>
+      <p class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <strong><%= t('admin.users.status_management.review_at') %>:</strong>
+        <%= l(membership.status_review_at, format: :long) %>
+      </p>
+    <% end %>
+    <% incidents = @user.user_security_incidents.where(organization: current_organization).order(created_at: :desc).limit(10) %>
+    <% if incidents.any? %>
+      <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-label="<%= t('admin.users.status_management.incidents') %>">
+        <h2 class="font-jakarta text-base font-bold"><%= t('admin.users.status_management.incidents') %></h2>
+        <ol class="mt-4 divide-y divide-slate-100">
+          <% incidents.each do |incident| %>
+            <li class="py-3 text-sm">
+              <p class="font-semibold text-slate-800"><%= incident.description %></p>
+              <p class="mt-1 text-xs text-slate-500"><%= l(incident.created_at, format: :short) %> · <%= incident.opened_by.display_name %></p>
+              <% if incident.resolved_at %>
+                <p class="mt-2 break-words text-emerald-800"><%= t('admin.users.status_management.resolved') %>: <%= incident.resolution %></p>
+              <% else %>
+                <p class="mt-2 text-amber-800"><%= t('admin.users.status_management.open') %></p>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+    <% end %>
+  <% end %>
+
+
 </div>

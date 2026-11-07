@@ -1,3 +1,5 @@
+<% content_for :title, t('admin.products.index.title') %>
+<div class="catalog-workspace">
 <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
   <div>
     <h1 class="font-jakarta text-2xl font-bold text-slate-900">
@@ -11,29 +13,18 @@
     <% if policy(Product).create? %>
 <%= link_to new_admin_product_path,
                 data: { tooltip: t('admin.products.index.new') },
-                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800' do %>
       <%= delta_icon('plus', class: 'size-4') %>
       <%= t('admin.products.index.new') %>
     <% end %>
 <% end %>
 
-    <%= form_with url: admin_products_path, method: :get,
-                  data: { controller: 'products-search', turbo_frame: 'admin_products_list' },
-                  class: 'flex items-center gap-2' do |f| %>
-      <%= text_field_tag :search, params[:search],
-            placeholder: t('admin.products.index.search_placeholder'),
-            data: { action: 'input->products-search#debouncedSubmit' },
-            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
 
-      <%= button_tag type: 'submit',
-            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
-        <%= delta_icon('funnel', class: 'size-4') %>
-        <%= t('admin.products.index.filters.apply') %>
-      <% end %>
-    <% end %>
   </div>
 </div>
 
+<nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.commercial') %>"><% if policy(PriceList).index? %><%= link_to t('admin.catalog_design.price_lists'), admin_price_lists_path %><% end %><% if policy(Promotion).index? %><%= link_to t('admin.catalog_design.promotions'), admin_promotions_path %><% end %></nav>
+<%= form_with url: admin_products_path, method: :get, class: 'catalog-filter', data: { turbo_frame: 'admin_products_list' } do %><div><%= label_tag :search, t('admin.catalog_design.search') %><%= search_field_tag :search, params[:search], placeholder: t('admin.products.index.search_placeholder') %></div><div><%= label_tag :status, t('admin.catalog_design.status') %><%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), 'all'], [t('admin.catalog_design.active'), 'active'], [t('admin.catalog_design.inactive'), 'inactive']], params[:status]) %></div><%= submit_tag t('admin.catalog_design.filter'), class: 'catalog-button' %><%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'catalog-button', data: { turbo_frame: '_top' } %><% end %>
 <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="admin_products_list" aria-busy="false"
      data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
@@ -53,4 +44,5 @@
     <button type="button" data-action="skeleton-loading#retry"
             class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
   </div>
+</div>
 </div>

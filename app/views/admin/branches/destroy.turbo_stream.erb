@@ -8,3 +8,6 @@
              can_manage_branches: @can_manage_branches %>
 <% end %>
 <turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>
+
+<%= turbo_stream.replace 'branch-overview' do %><%= render 'overview' %><% end %>
+<%= turbo_stream.replace 'branch-filter-badges' do %><%= render 'filter_badges' %><% end %>

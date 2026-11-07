@@ -2,7 +2,10 @@
 
 class LanguagesController < ApplicationController
   def update
-    language = Language.available.find_by!(code: params[:language].downcase)
+    language = Language.available.find_by!(code: params[:language].to_s.downcase)
+    unless I18n.available_locales.include?(language.code.to_sym)
+      return render json: { success: false }, status: :unprocessable_content
+    end
 
     update_session_and_cookies(language)
     update_user_language(language) if user_signed_in?

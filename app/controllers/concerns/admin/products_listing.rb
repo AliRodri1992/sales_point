@@ -26,7 +26,7 @@ module Admin
       @products = filter_scope(accessible_products)
       @total_count = @products.count
       @products = apply_sorting(@products)
-      @products = paginate(@products).includes(:category)
+      @products = paginate(@products).includes(:category, image_attachment: :blob)
     end
 
     def filter_scope(scope)
@@ -38,10 +38,11 @@ module Admin
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      scope.where(
-        'name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q',
-        q: "%#{params[:search]}%"
-      )
+      query = "%#{Product.sanitize_sql_like(params[:search].to_s.strip)}%"
+      alternate_codes = ProductBarcode.where('value ILIKE ?', query).select(:product_id)
+      variants = ProductVariant.where('sku ILIKE :q OR name ILIKE :q', q: query).select(:product_id)
+      scope.where('name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q', q: query)
+           .or(scope.where(id: alternate_codes)).or(scope.where(id: variants))
     end
 
     def apply_featured_filter(scope)
@@ -64,7 +65,7 @@ module Admin
     end
 
     def paginate(scope)
-      page = (params[:page] || 1).to_i
+      page = params[:page].to_s.to_i
       page = 1 if page < 1
       per_page = per_page_param
       @per_page = per_page

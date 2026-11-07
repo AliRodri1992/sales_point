@@ -6,33 +6,25 @@ class BranchPolicy < ApplicationPolicy
   end
 
   def show?
-    admin? || assigned_to_branch?
+    managed_branch? || assigned_to_branch?
   end
 
   def create?
-    admin?
+    admin? && (record == Branch || managed_branch?)
   end
 
-  def update?
-    admin?
-  end
-
-  def destroy?
-    admin?
-  end
+  def update? = managed_branch?
+  def destroy? = managed_branch?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      active_branches = scope.not_deleted
-      return active_branches if user.admin?
+      return scope.none unless user
 
-      active_branches.where(id: active_branch_ids)
-    end
+      organization_ids = user.organization_memberships.accessible.select(:organization_id)
+      branches = scope.not_deleted.where(organization_id: organization_ids)
+      return branches if user.admin?
 
-    private
-
-    def active_branch_ids
-      user.user_roles.active.where.not(branch_id: nil).select(:branch_id)
+      branches.where(id: user.user_roles.active.where.not(branch_id: nil).select(:branch_id))
     end
   end
 
@@ -40,6 +32,14 @@ class BranchPolicy < ApplicationPolicy
 
   def admin?
     user&.admin?
+  end
+
+  def managed_branch?
+    admin? && record.is_a?(Branch) && member_of_branch_organization?
+  end
+
+  def member_of_branch_organization?
+    user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
   end
 
   def branch_access?
@@ -51,6 +51,6 @@ class BranchPolicy < ApplicationPolicy
   def assigned_to_branch?
     return false unless user && record.is_a?(Branch)
 
-    user.user_roles.active.exists?(branch_id: record.id)
+    member_of_branch_organization? && user.user_roles.active.exists?(branch_id: record.id)
   end
 end

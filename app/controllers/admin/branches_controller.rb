@@ -2,11 +2,17 @@
 
 module Admin
   class BranchesController < ApplicationController
+    include Admin::BranchFilters
+    include Admin::BranchesListing
+    include Admin::BranchForm
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_branch, only: %i[show edit update destroy]
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
+    rescue_from ActiveRecord::RecordNotUnique, with: :branch_identifier_taken
+    helper_method :branch_directory_parameters, :branch_directory_path
 
     PER_PAGE = 10
     PER_PAGE_OPTIONS = TablePagePreference::OPTIONS
@@ -14,6 +20,8 @@ module Admin
       branches.name
       addresses.street
       branches.status
+      branches.code
+      branches.created_at
     ].freeze
     SORT_DIRECTIONS = %w[asc desc].freeze
 
@@ -27,16 +35,25 @@ module Admin
     def index
       authorize Branch
       load_branches
-      @can_manage_branches = policy(Branch).create?
+      @can_manage_branches = current_organization.present? && policy(Branch).create?
+      respond_to do |format|
+        format.html
+        format.turbo_stream
+      end
     end
 
     def show
       authorize @branch
-      @can_manage_branches = policy(Branch).create?
+      @branch_team_count = Branch.team_assignments(current_organization)
+                                 .where(branch_id: @branch.id).distinct.count(:user_id)
+      return unless policy(@branch).update?
+
+      @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
+                                   terminals: @branch.terminals.count }
     end
 
     def new
-      @branch = Branch.new
+      @branch = Branch.new(organization: current_organization)
       authorize @branch
       @branch.build_address
     end
@@ -49,11 +66,13 @@ module Admin
     def create
       @branch = Branch.new(branch_params)
       @branch.organization ||= current_organization
+      raise Pundit::NotAuthorizedError unless current_organization
+
       authorize @branch
 
       if @branch.save
         notify_branch(current_user, @branch, 'created')
-        redirect_to admin_branches_path,
+        redirect_to branch_directory_path,
                     flash: { swal_message: t('admin.branches.created') }
       else
         @branch.build_address unless @branch.address
@@ -66,7 +85,7 @@ module Admin
 
       if @branch.update(branch_params)
         notify_branch(current_user, @branch, 'updated')
-        redirect_to admin_branches_path,
+        redirect_to branch_directory_path,
                     flash: { swal_message: t('admin.branches.updated') }
       else
         @branch.build_address unless @branch.address
@@ -76,57 +95,31 @@ module Admin
 
     def destroy
       authorize @branch
-      @branch.update!(deleted_at: Time.current)
+      unless @branch.update(deleted_at: Time.current)
+        return redirect_to admin_branch_path(@branch), alert: @branch.errors.full_messages.to_sentence,
+                                                       status: :see_other
+      end
+      render_destroyed_branch
+    end
+
+    private
+
+    def render_destroyed_branch
       notify_branch(current_user, @branch, 'destroyed')
       load_branches
-      @can_manage_branches = policy(Branch).create?
+      @can_manage_branches = current_organization.present? && policy(Branch).create?
 
       respond_to do |format|
         format.turbo_stream { @swal_message = t('admin.branches.destroyed') }
         format.html do
-          redirect_to admin_branches_path,
+          redirect_to branch_directory_path,
                       flash: { swal_message: t('admin.branches.destroyed') }
         end
       end
     end
 
-    private
-
     def set_branch
-      @branch = policy_scope(Branch).find(params[:id])
-    end
-
-    def load_branches
-      scope = policy_scope(Branch).left_joins(:address).includes(:address, :phones)
-      @total_count = scope.count
-      @per_page = per_page_param(@total_count)
-      @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
-      @current_page = params[:page].to_i.clamp(1, @total_pages)
-      @branches = apply_sorting(scope).limit(@per_page).offset((@current_page - 1) * @per_page)
-    end
-
-    def apply_sorting(scope)
-      sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'branches.name'
-      sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
-
-      scope.order(sort_column => sort_direction)
-    end
-
-    def per_page_param(_total_count)
-      table_page_size_for('branches')
-    end
-
-    def branch_params
-      params.expect(
-        branch: [
-          :name,
-          :status,
-          { phones_attributes: [%i[id number country_code kind label extension primary whatsapp_enabled _destroy]],
-            address_attributes: %i[
-              id street exterior_number interior_number neighborhood city state country_id postal_code
-            ] }
-        ]
-      )
+      @branch = policy_scope(organization_branches).find(params[:id])
     end
 
     def notify_branch(user, branch, action)

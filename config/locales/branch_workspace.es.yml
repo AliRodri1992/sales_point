@@ -1,0 +1,111 @@
+{
+  "es": {
+    "admin": {
+      "branch_workspace": {
+        "eyebrow": "Organización · Sucursales",
+        "intro": "Ubicaciones, contacto y operación de tu organización en un solo lugar.",
+        "overview": "Resumen de sucursales",
+        "advanced": "Filtros avanzados",
+        "automatic_hint": "Los resultados se actualizan automáticamente.",
+        "search_placeholder": "Buscar por nombre, clave, ubicación, correo o teléfono…",
+        "any_country": "Todos los países",
+        "any_state": "Todos los estados",
+        "any_city": "Todas las ciudades",
+        "any_option": "Cualquier opción",
+        "filters": {
+          "search": "Búsqueda",
+          "status": "Estado",
+          "country_id": "País",
+          "state": "Estado / provincia",
+          "city": "Ciudad",
+          "contact": "Contacto",
+          "team": "Equipo",
+          "created_from": "Alta desde",
+          "created_to": "Alta hasta"
+        },
+        "options": {
+          "active": "Activa",
+          "inactive": "Inactiva",
+          "with_phone": "Con celular",
+          "without_phone": "Sin celular",
+          "with_email": "Con correo",
+          "without_email": "Sin correo",
+          "assigned": "Con personas asignadas",
+          "unassigned": "Sin personas asignadas"
+        },
+        "applied": {
+          "one": "1 filtro aplicado",
+          "other": "%{count} filtros aplicados"
+        },
+        "remove_filter": "Quitar filtro: %{filter}",
+        "clear_all": "Limpiar filtros",
+        "request_error": "No pudimos actualizar el listado. Se conservan los resultados anteriores.",
+        "invalid_period": "La fecha inicial debe ser anterior o igual a la fecha final.",
+        "identifier_conflict": "La clave, el nombre o el teléfono ya están registrados. Revisa los datos e intenta nuevamente.",
+        "results": {
+          "one": "1 sucursal",
+          "other": "%{count} sucursales"
+        },
+        "page": "Página %{current} de %{total}",
+        "assigned_people": {
+          "one": "1 persona asignada",
+          "other": "%{count} personas asignadas"
+        },
+        "view": "Ver sucursal",
+        "view_branch": "Ver %{name}",
+        "edit_branch": "Editar %{name}",
+        "delete_branch": "Eliminar %{name}",
+        "contact": "Contacto",
+        "location_pending": "Ubicación pendiente",
+        "contact_pending": "Sin celular registrado",
+        "no_matches": "No encontramos sucursales con estos filtros",
+        "no_matches_hint": "Prueba otra búsqueda o quita algún filtro para ampliar los resultados.",
+        "form_intro": "Organiza los datos de la sucursal para facilitar el contacto y la operación diaria.",
+        "identity": "Identificación",
+        "identity_hint": "Nombre visible y una clave opcional para identificarla en tu operación.",
+        "code": "Clave interna",
+        "code_placeholder": "Ej. CENTRO-01",
+        "code_hint": "Opcional. Hasta 30 letras, números, guiones o guiones bajos. Única en tu organización.",
+        "status_hint": "Disponible para la operación y selección de sucursal. Desactivarla conserva su historial.",
+        "contact_hint": "Canales de contacto de esta ubicación, independientes de los de tu organización.",
+        "contact_email": "Correo de contacto",
+        "email_hint": "Para consultas y coordinación con esta sucursal.",
+        "location": "Ubicación",
+        "location_hint": "Domicilio físico y referencias útiles para llegar o recibir entregas.",
+        "reference_notes": "Referencias para llegar",
+        "reference_hint": "Por ejemplo: acceso por la calle lateral, frente al parque o puerta de recepción.",
+        "notes": "Notas operativas",
+        "notes_hint": "Instrucciones internas útiles para las personas que trabajan con esta sucursal.",
+        "setup_title": "Una ficha útil para tu equipo",
+        "setup_hint": "Registra información clara que ayude a identificar y localizar esta sucursal.",
+        "setup_identity": "Un nombre reconocible y una clave consistente.",
+        "setup_contact": "Al menos un canal de contacto, cuando esté disponible.",
+        "setup_location": "Dirección completa y referencias de acceso.",
+        "optional_hint": "La clave, el celular, el correo y las notas son opcionales. Puedes completar la ficha más adelante.",
+        "history_title": "Conservación del historial",
+        "detail_hint": "Identificadores, equipo asignado y fechas de registro.",
+        "assigned_team": "Equipo asignado",
+        "created_at": "Fecha de alta",
+        "updated_at": "Última actualización",
+        "not_registered": "No registrado",
+        "whatsapp": "Celular disponible en WhatsApp",
+        "remove_phone": "Eliminar este celular al guardar",
+        "no_notes": "Todavía no hay notas operativas.",
+        "operations": "Operación",
+        "operations_hint": "Información registrada para esta sucursal.",
+        "products": "Productos con inventario",
+        "terminals": "Terminales registradas",
+        "history_hint": "Desactivar una sucursal conserva sus datos. Si ya tiene registros operativos, debe desactivarse en lugar de eliminarse."
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "branch": {
+          "code": "Clave interna",
+          "contact_email": "Correo de contacto",
+          "notes": "Notas operativas"
+        }
+      }
+    }
+  }
+}

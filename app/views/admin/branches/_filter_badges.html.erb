@@ -1,0 +1,8 @@
+<div id="branch-filter-badges" class="branch-filter-badges" aria-live="polite">
+  <% if @branch_filter_error %><p class="branch-filter-error" role="alert"><%= @branch_filter_error %></p><% end %>
+  <% badges = branch_filter_badges(@branch_filters, @branch_countries) %>
+  <% if badges.any? %><span class="branch-filter-caption"><%= t('admin.branch_workspace.applied', count: badges.size) %></span>
+    <% badges.each do |key, label| %><%= link_to branch_filter_removal_path(key, @branch_filters), class: 'branch-filter-badge', data: { action: 'click->branch-directory#remove', filter_key: key }, aria: { label: t('admin.branch_workspace.remove_filter', filter: label) } do %><span><%= label %></span><%= delta_icon('x-mark', class: 'size-3.5') %><% end %><% end %>
+    <%= link_to t('admin.branch_workspace.clear_all'), admin_branches_path(branch_directory_parameters.except(*Admin::BranchesListing::FILTER_KEYS, 'page')), class: 'branch-clear-filters', data: { action: 'click->branch-directory#clear' } %>
+  <% else %><span class="branch-filter-caption"><%= t('admin.branch_workspace.automatic_hint') %></span><% end %>
+</div>

@@ -38,21 +38,16 @@ RSpec.describe TerminalHelper, type: :helper do
   end
 
   describe '#current_language' do
-    let(:language) { build(:language) }
+    let!(:language) { create(:language, :english) }
 
-    it 'looks up the language selected by session id' do
-      allow(helper).to receive(:session).and_return(language_id: language.id)
-      allow(Language).to receive(:find_by).with(id: language.id).and_return(language)
-
+    it 'shows the locale actually rendered by the page' do
+      create(:language, code: 'ko', name: 'Korean', flag_iso: 'kr')
+      allow(helper).to receive(:session).and_return(language_id: Language.find_by!(code: 'ko').id)
       expect(helper.current_language).to eq(language)
     end
 
-    it 'falls back to the first available language' do
-      allow(helper).to receive(:session).and_return({})
-      allow(Language).to receive(:find_by).with(id: nil).and_return(nil)
-      allow(Language).to receive(:available).and_return([language])
-
-      expect(helper.current_language).to eq(language)
+    it 'falls back to an active supported language when the rendered locale has no catalog entry' do
+      I18n.with_locale(:es) { expect(helper.current_language).to eq(language) }
     end
   end
 
@@ -89,7 +84,7 @@ RSpec.describe TerminalHelper, type: :helper do
       themes = [instance_double(Theme)]
       languages = [build(:language)]
       allow(Theme).to receive(:all).and_return(themes)
-      allow(Language).to receive(:available).and_return(languages)
+      allow(Language).to receive(:selectable).and_return(languages)
 
       expect(helper.terminal_themes).to eq(themes)
       expect(helper.terminal_languages).to eq(languages)

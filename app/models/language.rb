@@ -6,9 +6,14 @@ class Language < ApplicationRecord
   has_many :translates,
            dependent: :destroy
 
+  normalizes :code, with: ->(value) { value.strip.downcase }
+  normalizes :flag_iso, with: ->(value) { value.strip.downcase }
+  normalizes :name, with: ->(value) { value.strip }
+
   validates :code,
             presence: true,
-            uniqueness: true,
+            uniqueness: { case_sensitive: false },
+            format: { with: /\A[a-z]{2}\z/ },
             length: { maximum: 2 }
 
   validates :name,
@@ -16,7 +21,8 @@ class Language < ApplicationRecord
 
   validates :flag_iso,
             presence: true,
-            length: { is: 2 }
+            length: { is: 2 },
+            format: { with: /\A[a-z]{2}\z/ }
 
   enum :status,
        {
@@ -32,6 +38,8 @@ class Language < ApplicationRecord
   scope :available, lambda {
     where(status: :active, deleted_at: nil)
   }
+
+  scope :selectable, -> { available.where(code: I18n.available_locales.map(&:to_s)) }
 
   scope :not_deleted, lambda {
     where(deleted_at: nil)

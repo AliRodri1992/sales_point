@@ -89,7 +89,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    locale = preferred_locale || I18n.default_locale
+    locale = preferred_locale || fallback_locale
     I18n.locale = locale if I18n.available_locales.include?(locale)
   end
 
@@ -101,33 +101,32 @@ class ApplicationController < ActionController::Base
     code = cookies[:terminal_language].presence
     return unless code
 
-    code.downcase.to_sym if I18n.available_locales.include?(code.downcase.to_sym)
+    Language.selectable.find_by(code: code.downcase)&.code&.to_sym
   end
 
   def user_language_code
     user = current_user || request.env['warden']&.user
-    return unless user&.language
+    language = user&.language
+    return unless language&.active? && language.deleted_at.nil?
 
-    user.language.code.downcase.to_sym
+    code = language.code.downcase.to_sym
+    code if I18n.available_locales.include?(code)
   end
 
   def session_language_code
-    language = Language.find_by(id: session[:language_id])
+    language = Language.selectable.find_by(id: session[:language_id])
     return unless language
 
     language.code.downcase.to_sym
   end
 
+  def fallback_locale
+    language = Language.selectable.find_by(code: I18n.default_locale.to_s) || Language.selectable.first
+    language&.code&.to_sym || I18n.default_locale
+  end
+
   def current_language
-    return current_user.language if user_signed_in? && current_user.language
-
-    language = Language.find_by(id: session[:language_id])
-    return language if language
-
-    language = Language.available.find_by(code: cookies[:terminal_language].to_s.downcase)
-    return language if language
-
-    Language.available.first
+    Language.selectable.find_by(code: I18n.locale.to_s) || Language.selectable.first
   end
 
   def forbidden

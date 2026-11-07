@@ -1,0 +1,111 @@
+{
+  "ko": {
+    "admin": {
+      "branch_workspace": {
+        "eyebrow": "조직 · 지점",
+        "intro": "조직의 지점 위치, 연락처와 운영 정보를 한곳에서 관리하세요.",
+        "overview": "지점 현황",
+        "advanced": "상세 필터",
+        "automatic_hint": "결과가 자동으로 업데이트됩니다.",
+        "search_placeholder": "이름, 코드, 위치, 이메일 또는 전화번호 검색…",
+        "any_country": "모든 국가",
+        "any_state": "모든 시 / 도",
+        "any_city": "모든 도시",
+        "any_option": "모든 항목",
+        "filters": {
+          "search": "검색",
+          "status": "상태",
+          "country_id": "국가",
+          "state": "시 / 도",
+          "city": "도시",
+          "contact": "연락처",
+          "team": "배정 인원",
+          "created_from": "등록 시작일",
+          "created_to": "등록 종료일"
+        },
+        "options": {
+          "active": "활성",
+          "inactive": "비활성",
+          "with_phone": "휴대전화 있음",
+          "without_phone": "휴대전화 없음",
+          "with_email": "이메일 있음",
+          "without_email": "이메일 없음",
+          "assigned": "배정 인원 있음",
+          "unassigned": "배정 인원 없음"
+        },
+        "applied": {
+          "one": "필터 1개 적용",
+          "other": "필터 %{count}개 적용"
+        },
+        "remove_filter": "필터 제거: %{filter}",
+        "clear_all": "필터 초기화",
+        "request_error": "목록을 업데이트하지 못했습니다. 이전 결과가 유지됩니다.",
+        "invalid_period": "시작일은 종료일보다 늦을 수 없습니다.",
+        "identifier_conflict": "코드, 이름 또는 전화번호가 이미 등록되어 있습니다. 정보를 확인하고 다시 시도하세요.",
+        "results": {
+          "one": "지점 1개",
+          "other": "지점 %{count}개"
+        },
+        "page": "%{total}페이지 중 %{current}페이지",
+        "assigned_people": {
+          "one": "1명 배정",
+          "other": "%{count}명 배정"
+        },
+        "view": "지점 보기",
+        "view_branch": "%{name} 보기",
+        "edit_branch": "%{name} 수정",
+        "delete_branch": "%{name} 삭제",
+        "contact": "연락처",
+        "location_pending": "위치 미등록",
+        "contact_pending": "등록된 휴대전화 없음",
+        "no_matches": "조건에 맞는 지점이 없습니다",
+        "no_matches_hint": "다른 검색어를 입력하거나 필터를 제거해 검색 범위를 넓혀보세요.",
+        "form_intro": "연락과 일상 운영에 필요한 지점 정보를 체계적으로 관리하세요.",
+        "identity": "기본 식별 정보",
+        "identity_hint": "쉽게 알아볼 수 있는 이름과 선택 사항인 내부 코드를 입력하세요.",
+        "code": "내부 코드",
+        "code_placeholder": "예: CENTRAL-01",
+        "code_hint": "선택 사항입니다. 영문, 숫자, 하이픈, 밑줄을 최대 30자까지 사용할 수 있으며 조직 내에서 고유해야 합니다.",
+        "status_hint": "운영 및 지점 선택에 사용할 수 있습니다. 비활성화해도 이력은 보존됩니다.",
+        "contact_hint": "조직의 공용 연락처와 별도로 이 지점의 연락처를 등록하세요.",
+        "contact_email": "연락 이메일",
+        "email_hint": "지점 문의와 업무 협의에 사용할 이메일입니다.",
+        "location": "위치",
+        "location_hint": "방문 및 배송에 필요한 실제 주소와 찾아오는 방법을 입력하세요.",
+        "reference_notes": "찾아오는 방법",
+        "reference_hint": "예: 옆 도로로 진입, 공원 맞은편 또는 물품 접수 출입구.",
+        "notes": "운영 메모",
+        "notes_hint": "이 지점과 업무를 진행하는 사람들에게 필요한 내부 안내입니다.",
+        "setup_title": "팀에 도움이 되는 지점 정보",
+        "setup_hint": "지점을 쉽게 식별하고 찾아올 수 있도록 명확한 정보를 입력하세요.",
+        "setup_identity": "알아보기 쉬운 이름과 일관된 코드.",
+        "setup_contact": "가능한 경우 하나 이상의 연락 수단.",
+        "setup_location": "정확한 주소와 진입 안내.",
+        "optional_hint": "코드, 휴대전화, 이메일, 메모는 선택 사항이며 나중에 입력할 수 있습니다.",
+        "history_title": "이력 보존",
+        "detail_hint": "식별 정보, 배정 인원 및 등록 날짜를 확인하세요.",
+        "assigned_team": "배정 인원",
+        "created_at": "등록일",
+        "updated_at": "최종 수정일",
+        "not_registered": "미등록",
+        "whatsapp": "WhatsApp 사용 가능한 휴대전화",
+        "remove_phone": "저장 시 이 휴대전화 번호 삭제",
+        "no_notes": "아직 등록된 운영 메모가 없습니다.",
+        "operations": "운영 현황",
+        "operations_hint": "이 지점에 등록된 운영 정보입니다.",
+        "products": "재고 등록 상품",
+        "terminals": "등록된 단말기",
+        "history_hint": "지점을 비활성화해도 데이터는 보존됩니다. 운영 기록이 있는 지점은 삭제 대신 비활성화해야 합니다."
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "branch": {
+          "code": "내부 코드",
+          "contact_email": "연락 이메일",
+          "notes": "운영 메모"
+        }
+      }
+    }
+  }
+}

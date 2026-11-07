@@ -6,7 +6,7 @@ class TablePagePreference < ApplicationRecord
   TABLE_KEYS = %w[
     suppliers categories languages products clients branches users demo_requests system_roles
     account_payables supplier_invoices supplier_payments supplier_credit_notes
-    purchase_orders purchase_requests purchase_quotations
+    purchase_orders purchase_requests purchase_quotations price_lists promotions product_price_history
   ].freeze
 
   belongs_to :user

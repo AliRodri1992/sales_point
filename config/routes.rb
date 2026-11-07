@@ -44,7 +44,13 @@ Rails.application.routes.draw do
     get 'languages/content', to: 'languages#content'
     resources :languages
     resources :categories
-    resources :products
+    resources :product_images, only: :create
+    resources :price_lists
+    resources :promotions
+    resources :price_change_events, only: :update
+    resources :products do
+      member { get :quote }
+    end
     resources :clients
     resources :demo_requests, only: %i[index show update]
     resources :branches, only: %i[index show new create edit update destroy] do

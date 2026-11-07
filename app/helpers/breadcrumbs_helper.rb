@@ -63,14 +63,15 @@ module BreadcrumbsHelper
 
   def branch_breadcrumb_items
     branches_path = { label: t('admin.breadcrumbs.branches'), path: admin_branches_path }
+    viewed_branch = controller.view_assigns['branch']
 
     case params[:action]
     when 'new'
       [branches_path, { label: t('admin.branches.form.new_title') }]
     when 'show'
-      [branches_path, record_breadcrumb(current_branch, t('admin.branches.form.edit_title'))]
+      [branches_path, record_breadcrumb(viewed_branch, t('admin.branches.form.edit_title'))]
     when 'edit'
-      branch = current_branch
+      branch = viewed_branch
       [branches_path,
        editable_record_breadcrumb(branch, t('admin.branches.form.edit_title'), method(:admin_branch_path)),
        { label: t('admin.branches.form.edit_title') }]
