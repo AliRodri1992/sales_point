@@ -165,6 +165,8 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-content-title')).to be_present
     expect(page.at_css('#email-template-show-frame[sandbox]')).to be_present
     expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('Usuario de ejemplo')
+    expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('<p>Hello')
+    expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('</p>')
     expect(page.at_css('button[aria-controls="email-template-show-frame"][aria-pressed="true"]')).to be_present
     expect(page.at_css('details pre').text).to include('Usuario de ejemplo')
     expect(page.text).to include('Published subject')
