@@ -10,6 +10,7 @@ module Admin
 
     def preview
       authorize @template, :preview?
+      authorize @template, :versions? if params[:version_id].present?
       @version = if params[:version_id].present?
                    @template.versions.find(params[:version_id])
                  else

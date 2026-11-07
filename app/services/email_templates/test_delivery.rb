@@ -6,7 +6,8 @@ module EmailTemplates
 
     def self.call(template:, actor:, recipient:)
       recipient = validate_recipient!(actor, recipient)
-      raise ArgumentError, 'Template not published' unless template.published_version
+      available = template.status == 'published' && template.enabled? && template.published_version.present?
+      raise ArgumentError, 'Template not published' unless available
 
       template.with_lock do
         check_limit!(template, actor)

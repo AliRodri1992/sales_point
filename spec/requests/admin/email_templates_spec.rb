@@ -150,6 +150,91 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(EmailTemplate.global.where(key: 'forged_global')).to be_empty
   end
 
+  it 'shows a published email preview and the template identity without exposing the raw HTML' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    version.update!(subject: 'Published subject', html_body: '<p>Hello {{recipient_name}}</p>',
+                    text_body: 'Hello {{recipient_name}}', allowed_variables: ['recipient_name'])
+    version.publish!(actor: administrator)
+
+    get admin_email_template_path(template)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#email-template-overview-title')).to be_present
+    expect(page.at_css('#email-template-content-title')).to be_present
+    expect(page.at_css('#email-template-show-frame[sandbox]')).to be_present
+    expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('Usuario de ejemplo')
+    expect(page.at_css('button[aria-controls="email-template-show-frame"][aria-pressed="true"]')).to be_present
+    expect(page.at_css('details pre').text).to include('Usuario de ejemplo')
+    expect(page.text).to include('Published subject')
+  end
+
+  it 'shows Deltín and a clear next action when the template is not published' do
+    template = create_template(organization:)
+
+    get admin_email_template_path(template)
+
+    page = Nokogiri::HTML(response.body)
+    expect(response).to have_http_status(:ok)
+    expect(page.at_css('#email-template-show-frame')).to be_nil
+    expect(page.at_css('img[alt="' + I18n.t('admin.email_templates.deltin_alt') + '"]')).to be_present
+    expect(page.text).to include(I18n.t('admin.email_templates.detail_no_version'))
+    expect(page.at_css('#email-test-title')).to be_present
+    expect(page.at_css('input[name="email"]')).to be_nil
+  end
+
+  it 'keeps audit history private without the audit-view permission' do
+    template = create_template(organization:)
+    template.audit!(action: 'created', actor: administrator)
+
+    get admin_email_template_path(template)
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('#email-audit-title')).to be_nil
+
+    permission = Permission.find_or_create_by!(code: 'email_template_audits.view') do |entry|
+      entry.name = 'View template audit history'
+      entry.module_name = 'Communication'
+      entry.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+
+    get admin_email_template_path(template)
+
+    expect(Nokogiri::HTML(response.body).at_css('#email-audit-title')).to be_present
+    expect(response.body).to include(I18n.t('admin.email_templates.audit_actions.created'))
+  end
+
+  it 'does not send email tests after a template has been archived' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+    template.update!(status: 'archived', enabled: false)
+
+    get admin_email_template_path(template)
+    expect(Nokogiri::HTML(response.body).at_css('input[name="email"]')).to be_nil
+
+    post send_test_admin_email_template_path(template), params: { email: administrator.email }
+
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(flash[:alert]).to eq(I18n.t('admin.email_templates.test_not_published'))
+    expect(template.audits.where(action: 'test_sent')).not_to exist
+  end
+
+  it 'requires permission to browse historical versions even when preview is allowed' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    version.publish!(actor: administrator)
+    permission = Permission.find_by!(code: 'email_templates.versions')
+    SystemRolePermission.where(system_role: role, permission:).destroy_all
+
+    get preview_admin_email_template_path(template, version_id: version.id)
+    expect(response).to have_http_status(:forbidden)
+
+    get preview_admin_email_template_path(template)
+    expect(response).to have_http_status(:ok)
+  end
+
   it 'shows version history and reuses the current editable draft' do
     template = create_template(organization:)
     get admin_email_template_path(template)

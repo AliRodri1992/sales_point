@@ -18,7 +18,13 @@ module Admin
     def show
       authorize @template
       @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
-      @audits = @template.audits.includes(:actor).order(created_at: :desc).limit(30)
+      @can_view_audits = current_user.permission?('email_template_audits.view')
+      @audits = if @can_view_audits
+                  @template.audits.includes(:actor).order(created_at: :desc).limit(30)
+                else
+                  []
+                end
+      load_show_preview if policy(@template).preview? && @template.published_version
     end
 
     def new
@@ -124,6 +130,14 @@ module Admin
     end
 
     private
+
+    def load_show_preview
+      @preview_subject, @preview_html, @preview_plain = EmailTemplates::Renderer.new(
+        source: @template.published_version, values: EmailTemplates::SampleData.call(@template)
+      ).render
+    rescue ArgumentError
+      @preview_error = true
+    end
 
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])
