@@ -38,7 +38,7 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     expect(page).to have_css('#email-template-review-title')
     find('#email_template_name').set('Welcome staff')
 
-    expect(page).to have_css('#email_template_key[value="welcome_staff"]')
+    expect(find('#email_template_key').value).to eq('welcome_staff')
     find('button[data-category-value="security"]').click
     expect(find('#email_template_category').value).to eq('security')
     expect(find('[data-email-template-identity-target="summaryKey"]').text).to eq('welcome_staff')
