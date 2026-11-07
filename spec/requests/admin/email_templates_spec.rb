@@ -43,6 +43,87 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to be_nil
   end
 
+  it 'uses the signed-in preferred language and ignores forged creation locales' do
+    korean = create(:language, code: 'ko', name: '한국어', flag_iso: 'kr')
+    administrator.update!(language: korean)
+
+    get new_admin_email_template_path
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#email-template-language-display').text)
+      .to include(I18n.t('admin.email_templates.languages.ko', locale: :ko))
+    expect(document.at_css('select#email_template_locale')).to be_nil
+
+    expect do
+      post admin_email_templates_path, params: {
+        email_template: { key: 'automatic_language', name: 'Automatic language',
+                          category: 'transactional', locale: 'en' }
+      }
+    end.to change { administrator.notifications.count }.by(1)
+
+    template = EmailTemplate.find_by!(key: 'automatic_language', organization:)
+    expect(template.locale).to eq('ko')
+    expect(template.locale).to eq(I18n.locale.to_s)
+    expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject'))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.created_toast', locale: :ko))
+    expect(administrator.notifications.last.event.params[:action]).to eq('created')
+    expect(administrator.notifications.last.event.record).to eq(template)
+  end
+
+  it 'delivers a notification and SweetAlert after editing a draft' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    expect do
+      patch draft_admin_email_template_path(template, version_id: draft.id),
+            params: { email_template_version: { subject: 'Updated order' } }
+    end.to change { administrator.notifications.count }.by(1)
+
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.draft_updated_toast'))
+    expect(administrator.notifications.last.event.params[:action]).to eq('draft_updated')
+  end
+
+  it 'notifies the panel when publishing, restoring and archiving versions' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    expect do
+      post publish_admin_email_template_path(template, version_id: draft.id)
+    end.to change { administrator.notifications.count }.by(1)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.published'))
+    expect(administrator.notifications.last.event.params[:action]).to eq('published')
+
+    expect do
+      post restore_admin_email_template_path(template, version_id: draft.id)
+    end.to change { administrator.notifications.count }.by(1)
+    expect(administrator.notifications.last.event.params[:action]).to eq('restored')
+
+    expect do
+      patch archive_admin_email_template_path(template)
+    end.to change { administrator.notifications.count }.by(1)
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.archived'))
+    expect(administrator.notifications.last.event.params[:action]).to eq('archived')
+  end
+
+  it 'does not emit notifications for invalid create requests' do
+    expect do
+      post admin_email_templates_path,
+           params: { email_template: { key: 'invalid-key', name: '', category: 'transactional' } }
+    end.not_to change { administrator.notifications.count }
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
+  it 'archives a deleted template and notifies the actor through SweetAlert and Noticed' do
+    template = create_template(organization:)
+
+    expect do
+      delete admin_email_template_path(template)
+    end.to change { administrator.notifications.count }.by(1)
+
+    expect(template.reload.status).to eq('archived')
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.removed'))
+    expect(administrator.notifications.last.event.params[:action]).to eq('removed')
+  end
+
   it 'loads the catalog query and filters only permitted templates' do
     own = create_template(organization:)
     own.update!(name: 'Welcome notice')
@@ -220,7 +301,8 @@ RSpec.describe 'Admin email templates', type: :request do
     post send_test_admin_email_template_path(template), params: { email: administrator.email }
 
     expect(response).to redirect_to(admin_email_template_path(template))
-    expect(flash[:alert]).to eq(I18n.t('admin.email_templates.test_not_published'))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.test_not_published'))
+    expect(flash[:swal_icon]).to eq('error')
     expect(template.audits.where(action: 'test_sent')).not_to exist
   end
 
@@ -407,7 +489,9 @@ RSpec.describe 'Admin email templates', type: :request do
     get new_admin_email_template_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('[data-controller="delta-select"] select#email_template_locale')).to be_present
+    expect(document.at_css('#email-template-language-display')).to be_present
+    expect(document.at_css('select#email_template_locale')).to be_nil
+    expect(document.at_css('input[name="email_template[locale]"]')).to be_nil
     expect(document.at_css('input#email_template_key')).to be_present
 
     post admin_email_templates_path, params: {
@@ -447,9 +531,9 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css("img[alt=\"#{I18n.t('admin.email_templates.deltin_alt')}\"]")).to be_present
     expect(page.at_css('input#email_template_key[pattern="[a-z][a-z0-9_]*"]')).to be_present
     expect(page.at_css('[data-controller="email-template-identity"]')).to be_present
-    expect(page.css('label[for="email_template_locale"]').size).to eq(1)
-    expect(page.at_css('select#email_template_locale option[value="es"]').text)
-      .to include(I18n.t('admin.email_templates.languages.es'))
+    expect(page.at_css('#email-template-language-display').text)
+      .to include(I18n.t("admin.email_templates.languages.#{I18n.locale}"))
+    expect(page.at_css('select#email_template_locale')).to be_nil
   end
 
   it 'keeps invalid identity input visible with field-level errors' do
