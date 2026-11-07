@@ -422,9 +422,10 @@ RSpec.describe 'Admin email templates', type: :request do
   end
 
   it 'uses localized email template attribute names in validation errors' do
+    attributes = %i[name key category locale]
     %i[es en ko].each do |locale|
       I18n.with_locale(locale) do
-        %i[name key category locale].each do |attribute|
+        attributes.each do |attribute|
           expect(EmailTemplate.human_attribute_name(attribute)).to eq(
             I18n.t("admin.email_templates.columns.#{attribute}")
           )
