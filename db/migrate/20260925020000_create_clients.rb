@@ -9,7 +9,6 @@ class CreateClients < ActiveRecord::Migration[8.1]
       t.string :postal_code, limit: 5
       t.decimal :credit_limit, precision: 12, scale: 2, null: false, default: 0
       t.string :status, null: false, limit: 20, default: 'active'
-      t.text :notes
       t.timestamp :deleted_at
 
       t.timestamps

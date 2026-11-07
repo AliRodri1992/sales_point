@@ -5,7 +5,6 @@ class AddBranchContactDetails < ActiveRecord::Migration[8.1]
     change_table :branches, bulk: true do |table|
       table.string :code, limit: 30
       table.string :contact_email, limit: 254
-      table.text :notes
     end
     add_index :branches, 'organization_id, lower(code)', unique: true,
                                                          where: 'deleted_at IS NULL AND code IS NOT NULL',

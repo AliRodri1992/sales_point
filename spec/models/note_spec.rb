@@ -6,7 +6,7 @@ RSpec.describe Note, type: :model do
   let(:organization) { create(:organization) }
   let(:branch) { create(:branch, organization:) }
 
-  it 'creates a polymorphic note for a legacy notes write without duplicating the record' do
+  it 'creates a polymorphic note through the virtual notes field without duplicating the record' do
     branch.update!(notes: 'First note')
 
     expect(branch.note_entries.count).to eq(1)
@@ -54,6 +54,17 @@ RSpec.describe Note, type: :model do
 
     expect(branch.note_entries.general.sole.body).to eq('Updated instructions')
     expect(Note.with_deleted.where(notable: branch, kind: 'general').count).to eq(2)
+  end
+
+  it 'keeps the notes attribute virtual and reads the polymorphic record after reload' do
+    expect(Branch.column_names).not_to include('notes')
+    expect(Branch.attribute_types).to have_key('notes')
+
+    branch.update!(notes: 'Loading instructions')
+    expect(branch.reload.notes).to eq('Loading instructions')
+
+    branch.update!(notes: '')
+    expect(branch.reload.notes).to be_nil
   end
 
   it 'supports the same note relationship for records without an organization' do

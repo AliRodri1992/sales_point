@@ -55,7 +55,6 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
       t.string :source, null: false, default: 'manual', limit: 20
       t.datetime :posted_at
       t.datetime :cancelled_at
-      t.text :notes
       t.timestamps
       t.index %i[organization_id uuid], unique: true, where: 'uuid IS NOT NULL',
               name: 'idx_supplier_invoices_org_uuid'
@@ -110,7 +109,6 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
       t.string :status, default: 'draft', null: false, limit: 20
       t.datetime :posted_at
       t.datetime :reversed_at
-      t.text :notes
       t.timestamps
       t.index %i[organization_id supplier_id paid_on]
       t.check_constraint 'amount > 0', name: 'chk_supplier_payment_amount'
@@ -141,7 +139,6 @@ class CreateSupplierFinancials < ActiveRecord::Migration[8.1]
       t.date :issued_on, null: false
       t.decimal :total, precision: 18, scale: 2, null: false
       t.string :status, default: 'draft', null: false, limit: 20
-      t.text :notes
       t.timestamps
       t.index %i[organization_id uuid], unique: true, where: 'uuid IS NOT NULL',
               name: 'idx_supplier_credit_notes_org_uuid'

@@ -16,7 +16,9 @@ module SupplierCalendarEvents
 
   def self.seed_one(supplier, branches, title, index)
     marker = "DEMO-EVENTO-#{index + 1}"
-    return if supplier.supplier_events.with_deleted.exists?(notes: marker)
+    return if supplier.supplier_events.with_deleted.where(
+      id: Note.general.where(notable_type: 'SupplierEvent', body: marker).select(:notable_id)
+    ).exists?
 
     date = Date.new(2026, 10, 24) + index
     starts_at = Time.zone.local(date.year, date.month, date.day, 9)

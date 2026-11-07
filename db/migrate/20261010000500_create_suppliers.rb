@@ -10,7 +10,6 @@ class CreateSuppliers < ActiveRecord::Migration[8.1]
       t.string :rfc, limit: 13
       t.references :sat_fiscal_regime, foreign_key: true
       t.string :status, null: false, limit: 20, default: 'active'
-      t.text :notes
       t.timestamp :deleted_at
 
       t.timestamps

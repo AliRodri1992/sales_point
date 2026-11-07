@@ -52,7 +52,7 @@
     </div>
   </section>
   <div><%= form.label :notes, t('admin.purchases.notes'), class: 'mb-1 block font-medium' %>
-    <%= form.form :note_body, name: "#{form.object_name}[notes]", class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
+    <%= form.text_area :note_body, name: "#{form.object_name}[notes]", class: 'w-full rounded-xl border border-slate-200 p-3' %></div>
   <%= form.submit t('admin.purchases.receive'),
                   class: 'rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white' %>
 <% end %>

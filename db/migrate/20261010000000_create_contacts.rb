@@ -9,7 +9,6 @@ class CreateContacts < ActiveRecord::Migration[8.1]
       t.string :email, limit: 150
       t.boolean :primary, default: false, null: false
       t.boolean :active, default: true, null: false
-      t.text :notes
       t.timestamp :deleted_at
       t.timestamps
     end

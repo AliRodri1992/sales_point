@@ -10,7 +10,6 @@ class CreateSupplierEvents < ActiveRecord::Migration[8.1]
       t.string :kind, null: false
       t.timestamp :starts_at, null: false
       t.timestamp :ends_at
-      t.text :notes
       t.timestamp :deleted_at
       t.timestamps
     end

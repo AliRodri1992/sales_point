@@ -9,7 +9,6 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.string :code, null: false
       t.string :status, null: false, default: 'draft'
       t.date :needed_on
-      t.text :notes
       t.datetime :submitted_at
       t.datetime :deleted_at
       t.timestamps
@@ -20,7 +19,6 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.references :purchase_request, null: false, foreign_key: true
       t.references :product, null: false, foreign_key: true
       t.decimal :quantity, precision: 14, scale: 3, null: false
-      t.text :notes
       t.datetime :deleted_at
       t.timestamps
     end
@@ -34,7 +32,6 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.string :code, null: false
       t.string :status, null: false, default: 'draft'
       t.date :valid_until
-      t.text :notes
       t.datetime :deleted_at
       t.timestamps
     end
@@ -68,7 +65,6 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.decimal :insurance_amount, precision: 14, scale: 4, null: false, default: 0
       t.decimal :exchange_rate, precision: 18, scale: 8, null: false, default: 1
       t.date :expected_on
-      t.text :notes
       t.datetime :approved_at
       t.datetime :cancelled_at
       t.datetime :deleted_at
@@ -94,7 +90,6 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.references :purchase_order, null: false, foreign_key: true
       t.references :decided_by, null: false, foreign_key: { to_table: :users }
       t.string :decision, null: false
-      t.text :notes
       t.datetime :deleted_at
       t.timestamps
     end

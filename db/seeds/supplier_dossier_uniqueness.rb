@@ -11,6 +11,8 @@ module SupplierDossierUniqueness
   def self.schedule_exists?(supplier, attributes, notes)
     existing = supplier.supplier_schedules
     slot = attributes.slice(:branch, :kind, :weekday, :starts_at)
-    existing.exists?(notes:) || existing.exists?(slot)
+    existing.where(
+      id: Note.general.where(notable_type: 'SupplierSchedule', body: notes).select(:notable_id)
+    ).exists? || existing.exists?(slot)
   end
 end

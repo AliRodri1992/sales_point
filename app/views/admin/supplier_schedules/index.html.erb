@@ -89,7 +89,7 @@
         </div>
         <div class="md:col-span-2">
           <%= form.label :notes, t('admin.supplier_schedule_exceptions.notes') %>
-          <%= form.form :note_body, name: "#{form.object_name}[notes]", rows: 2, maxlength: 1000, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
+          <%= form.text_area :note_body, name: "#{form.object_name}[notes]", rows: 2, maxlength: 1000, class: 'mt-1 w-full rounded-xl border border-slate-200 p-3' %>
         </div>
         <%= form.submit t('admin.supplier_details.save'), class: 'w-fit cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
       <% end %>

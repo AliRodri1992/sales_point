@@ -105,7 +105,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "updated_at", null: false
     t.string "code", limit: 30
     t.string "contact_email", limit: 254
-    t.text "notes"
     t.index "organization_id, lower((code)::text)", name: "idx_branches_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (code IS NOT NULL))"
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
@@ -133,7 +132,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at", precision: nil
     t.string "email", limit: 150
     t.string "name", limit: 150, null: false
-    t.text "notes"
     t.string "postal_code", limit: 5
     t.string "rfc", limit: 13
     t.bigint "sat_fiscal_regime_id"
@@ -161,7 +159,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at", precision: nil
     t.string "email", limit: 150
     t.string "name", limit: 150, null: false
-    t.text "notes"
     t.string "position", limit: 100
     t.boolean "primary", default: false, null: false
     t.datetime "updated_at", null: false
@@ -495,7 +492,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.bigint "goods_receipt_id", null: false
     t.decimal "landed_unit_cost", precision: 18, scale: 6, default: "0.0", null: false
     t.string "lot_code", limit: 100
-    t.text "notes"
     t.bigint "purchase_order_item_id", null: false
     t.datetime "updated_at", null: false
     t.index ["goods_receipt_id"], name: "index_goods_receipt_items_on_goods_receipt_id"
@@ -512,7 +508,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at"
     t.decimal "extra_expenses_amount", precision: 14, scale: 4, default: "0.0", null: false
     t.string "idempotency_key", limit: 100, null: false
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.string "payload_digest", limit: 64
     t.bigint "purchase_order_id", null: false
@@ -1102,7 +1097,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.bigint "decided_by_id", null: false
     t.string "decision", null: false
     t.datetime "deleted_at"
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.bigint "purchase_order_id", null: false
     t.datetime "updated_at", null: false
@@ -1172,7 +1166,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.date "expected_on"
     t.decimal "freight_amount", precision: 14, scale: 4, default: "0.0", null: false
     t.decimal "insurance_amount", precision: 14, scale: 4, default: "0.0", null: false
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.bigint "purchase_quotation_id"
     t.bigint "purchase_request_id"
@@ -1216,7 +1209,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "created_at", null: false
     t.bigint "currency_id", null: false
     t.datetime "deleted_at"
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.bigint "purchase_request_id"
     t.string "status", default: "draft", null: false
@@ -1233,7 +1225,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
   create_table "purchase_request_items", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
-    t.text "notes"
     t.bigint "product_id", null: false
     t.bigint "purchase_request_id", null: false
     t.decimal "quantity", precision: 14, scale: 3, null: false
@@ -1249,7 +1240,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.date "needed_on"
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.bigint "requested_by_id", null: false
     t.string "status", default: "draft", null: false
@@ -1265,7 +1255,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.bigint "goods_receipt_item_id", null: false
-    t.text "notes"
     t.bigint "purchase_return_id", null: false
     t.decimal "quantity", precision: 14, scale: 3, null: false
     t.string "stock_disposition", default: "accepted", null: false
@@ -1280,7 +1269,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
     t.bigint "goods_receipt_id", null: false
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.datetime "processed_at"
     t.string "reason", default: "damaged", null: false
@@ -1839,7 +1827,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at"
     t.string "folio", limit: 60
     t.date "issued_on", null: false
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.bigint "purchase_return_id"
     t.string "status", limit: 20, default: "draft", null: false
@@ -1904,7 +1891,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at", precision: nil
     t.datetime "ends_at", precision: nil
     t.string "kind", null: false
-    t.text "notes"
     t.datetime "starts_at", precision: nil, null: false
     t.string "status", default: "scheduled", null: false
     t.bigint "supplier_id", null: false
@@ -1956,7 +1942,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.string "folio", limit: 60
     t.date "issued_on", null: false
     t.string "issuer_rfc", limit: 13
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.string "payment_method", limit: 3
     t.datetime "posted_at"
@@ -2007,7 +1992,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.bigint "created_by_id", null: false
     t.bigint "currency_id", null: false
     t.datetime "deleted_at"
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.date "paid_on", null: false
     t.datetime "posted_at"
@@ -2081,7 +2065,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.bigint "created_by_id"
     t.datetime "deleted_at", precision: nil
     t.date "ends_on"
-    t.text "notes"
     t.string "reason", null: false
     t.date "starts_on", null: false
     t.bigint "supplier_id", null: false
@@ -2100,7 +2083,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.datetime "deleted_at", precision: nil
     t.time "ends_at"
     t.string "kind", null: false
-    t.text "notes"
     t.time "starts_at", null: false
     t.bigint "supplier_id", null: false
     t.datetime "updated_at", null: false
@@ -2129,7 +2111,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.string "legal_name", limit: 150
     t.decimal "minimum_order_amount", precision: 15, scale: 2, default: "0.0", null: false
     t.string "name", limit: 150, null: false
-    t.text "notes"
     t.bigint "organization_id", null: false
     t.string "person_type", limit: 20
     t.bigint "responsible_user_id"

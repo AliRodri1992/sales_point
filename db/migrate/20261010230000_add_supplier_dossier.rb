@@ -12,7 +12,6 @@ class AddSupplierDossier < ActiveRecord::Migration[8.1]
       t.integer :weekday, null: false
       t.time :starts_at, null: false
       t.time :ends_at
-      t.text :notes
       t.timestamps
     end
     add_check_constraint :supplier_schedules, "kind IN ('visit', 'order', 'delivery')",

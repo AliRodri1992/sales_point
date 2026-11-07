@@ -1,26 +1,31 @@
 # frozen_string_literal: true
 
-# Compatibility bridge while legacy notes columns and consumers are migrated.
-# The polymorphic note entry is authoritative for form display and future APIs.
+# Existing forms still submit a :notes field, but the content is stored only
+# in the polymorphic notes table, not in the owner record.
 module HasPolymorphicNotes
   extend ActiveSupport::Concern
 
   included do
+    attribute :notes, :text
     has_many :note_entries, class_name: 'Note', as: :notable, inverse_of: :notable, dependent: :destroy
-    after_save :sync_general_note, if: :general_note_changed?
+    after_save :sync_general_note, if: :note_field_assigned?
   end
 
-  def note_body
-    return @note_body if defined?(@note_body)
-    return legacy_note_body if pending_note_change?
+  def notes
+    return self[:notes] if note_field_assigned?
 
-    general_note_entry&.body || legacy_note_body
+    general_note_entry&.body
   end
+
+  def notes=(value)
+    @note_field_assigned = true
+    self[:notes] = value.to_s.strip.presence
+  end
+
+  def note_body = notes
 
   def note_body=(value)
-    @note_body = value.to_s.strip.presence
-    @note_body_assigned = true
-    self[:notes] = @note_body if has_attribute?(:notes)
+    self.notes = value
   end
 
   def note_organization
@@ -31,20 +36,14 @@ module HasPolymorphicNotes
 
   private
 
-  def pending_note_change?
-    return false unless has_attribute?(:notes)
-
-    new_record? || will_save_change_to_attribute?('notes')
-  end
-
-  def legacy_note_body
-    self[:notes] if has_attribute?(:notes)
+  def note_field_assigned?
+    @note_field_assigned == true
   end
 
   def general_note_entry
     return note_entries.find { |entry| entry.kind == 'general' } if association(:note_entries).loaded?
 
-    note_entries.find_by(kind: 'general') if persisted?
+    note_entries.general.first if persisted?
   end
 
   def parent_note_organization
@@ -60,21 +59,15 @@ module HasPolymorphicNotes
     nil
   end
 
-  def general_note_changed?
-    @note_body_assigned || (has_attribute?(:notes) && saved_change_to_attribute?('notes'))
-  end
-
   def sync_general_note
-    content = @note_body_assigned ? @note_body : legacy_note_body.to_s.strip.presence
-    entry = note_entries.find_by(kind: 'general')
-    if content.present?
-      write_general_note(entry, content)
+    entry = note_entries.general.first
+    if self[:notes].present?
+      write_general_note(entry, self[:notes])
     else
       entry&.destroy!
     end
   ensure
-    remove_instance_variable(:@note_body_assigned) if instance_variable_defined?(:@note_body_assigned)
-    remove_instance_variable(:@note_body) if instance_variable_defined?(:@note_body)
+    @note_field_assigned = false
   end
 
   def write_general_note(entry, content)

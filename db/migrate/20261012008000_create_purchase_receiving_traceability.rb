@@ -13,7 +13,6 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.references :received_by, null: false, foreign_key: { to_table: :users }
       t.string :idempotency_key, null: false, limit: 100
       t.string :status, null: false, default: 'posted'
-      t.text :notes
       t.datetime :received_at, null: false
       t.datetime :deleted_at
       t.timestamps
@@ -30,7 +29,6 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.string :lot_code, limit: 100
       t.date :expires_on
       t.decimal :landed_unit_cost, precision: 18, scale: 6, null: false, default: 0
-      t.text :notes
       t.datetime :deleted_at
       t.timestamps
     end
@@ -70,7 +68,6 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.references :requested_by, null: false, foreign_key: { to_table: :users }
       t.string :status, null: false, default: 'draft'
       t.string :reason, null: false, default: 'damaged'
-      t.text :notes
       t.datetime :processed_at
       t.datetime :deleted_at
       t.timestamps
@@ -80,7 +77,6 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.references :purchase_return, null: false, foreign_key: true
       t.references :goods_receipt_item, null: false, foreign_key: true
       t.decimal :quantity, precision: 14, scale: 3, null: false
-      t.text :notes
       t.datetime :deleted_at
       t.timestamps
     end
