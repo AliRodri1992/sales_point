@@ -118,7 +118,7 @@ class Address < ApplicationRecord
   private
 
   def clear_unused_supplier_fields
-    return unless addressable_type == 'Supplier' && country
+    return unless %w[Supplier Branch].include?(addressable_type) && country
 
     rules = Addresses::CountryRules.new(country.iso_alpha2)
     self.postal_code = nil unless rules.postal_required?

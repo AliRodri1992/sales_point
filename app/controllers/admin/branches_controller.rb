@@ -42,6 +42,20 @@ module Admin
       end
     end
 
+    def postal_suggestions
+      raise Pundit::NotAuthorizedError unless current_organization
+
+      authorize Branch.new(organization: current_organization), :create?
+      return head :unprocessable_content unless params[:country] == 'MX' &&
+                                             /\\A\\d{5}\\z/.match?(params[:postal_code].to_s)
+
+      suggestion = Suppliers::MexicanPostalLookup.new(params[:postal_code]).call
+      return head :service_unavailable unless suggestion
+
+      response.headers['Cache-Control'] = 'private, no-store'
+      render json: suggestion
+    end
+
     def show
       authorize @branch
       @branch_team_count = Branch.team_assignments(current_organization)

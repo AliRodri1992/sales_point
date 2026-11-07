@@ -16,6 +16,35 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   include SqlQueryRecorder
 
+
+  describe 'GET /admin/branches/postal_suggestions' do
+    it 'returns Mexican postal suggestions using the existing supplier lookup' do
+      allow_any_instance_of(Suppliers::MexicanPostalLookup).to receive(:call).and_return(
+        { found: true, state: 'Estado de México', municipality: 'Cuautitlán',
+          neighborhoods: ['Centro'] }
+      )
+
+      get postal_suggestions_admin_branches_path, params: { country: 'MX', postal_code: '54800' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to include('found' => true, 'municipality' => 'Cuautitlán')
+      expect(response.headers['Cache-Control']).to include('no-store')
+    end
+
+    it 'rejects invalid postal lookup parameters' do
+      get postal_suggestions_admin_branches_path, params: { country: 'MX', postal_code: 'ABC' }
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'renders postal assistance and country-specific address fields in the new branch form' do
+      get new_admin_branch_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('supplier-postal-assist', 'supplier-country-fields',
+                                       'branch-neighborhoods', 'postal_suggestions')
+    end
+  end
+
   describe 'GET /admin/branches' do
     it 'loads all visible branch phones in a batch', :n_plus_one do
       11.times { |index| create(:branch, organization:, name: "Performance Branch #{index}") }
