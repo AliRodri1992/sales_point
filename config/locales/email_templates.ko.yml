@@ -62,6 +62,14 @@ ko:
       plain_text: "일반 텍스트"
       compare: "버전 비교"
       variables: "허용된 변수 (쉼표로 구분)"
+      categories:
+        transactional: "거래"
+        security: "보안"
+        notifications: "알림"
+        notification: "알림"
+        marketing: "마케팅"
+        general: "일반"
+        system: "시스템"
       columns:
         name: "이름"
         key: "코드"

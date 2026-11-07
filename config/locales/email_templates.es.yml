@@ -62,6 +62,14 @@ es:
       plain_text: "Texto plano"
       compare: "Comparar versiones"
       variables: "Variables permitidas (separadas por comas)"
+      categories:
+        transactional: "Transaccional"
+        security: "Seguridad"
+        notifications: "Notificaciones"
+        notification: "Notificación"
+        marketing: "Marketing"
+        general: "General"
+        system: "Sistema"
       columns:
         name: "Nombre"
         key: "Código"
