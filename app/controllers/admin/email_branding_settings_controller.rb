@@ -42,7 +42,6 @@ module Admin
       render :edit, status: :unprocessable_content
     end
 
-
     def selected_organization
       params[:global] == '1' && current_user.role?('super_admin') ? nil : current_organization
     end
