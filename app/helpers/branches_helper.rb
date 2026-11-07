@@ -9,7 +9,8 @@ module BranchesHelper
     address = branch.address
     return t('admin.branch_workspace.location_pending') unless address
 
-    [address.city, address.state, address.country&.localized_name].compact_blank.join(' · ')
+    location = [address.city, address.state, address.country&.localized_name].compact_blank.join(' · ')
+    location.presence || t('admin.branch_workspace.location_pending')
   end
 
   def branch_code(branch)

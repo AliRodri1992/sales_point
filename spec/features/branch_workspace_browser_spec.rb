@@ -158,4 +158,24 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page).to have_css('#branch-filter-badges [data-filter-key="city"]')
     within('#branches_list') { expect(page).to have_link(office.name, exact: true) }
   end
+  scenario 'shows branch details without mobile overflow and keeps section navigation usable' do
+    page.current_window.resize_to(390, 844)
+    visit admin_branch_path(central, search: 'Central', per_page: 5)
+
+    expect(page).to have_css('.branch-detail-header h1', text: central.name)
+    expect(page).to have_css('.branch-detail-nav a[href="#branch-detail-location"]')
+    expect(page).to have_css('#branch-detail-location .branch-detail-address-summary')
+    expect(page).to have_css('#branch-detail-operations')
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
+
+    within('.branch-detail-nav') { click_link I18n.t('admin.branch_workspace.notes', locale: :en) }
+    expect(page).to have_current_path(admin_branch_path(central, search: 'Central', per_page: '5'),
+                                      ignore_query: false)
+    expect(page.evaluate_script('window.location.hash')).to eq('#branch-detail-notes')
+    expect(page).to have_css('#branch-detail-notes')
+
+    within('.branch-detail-actions') { click_link I18n.t('admin.branches.form.buttons.back', locale: :en) }
+    expect(page).to have_field('branch-search', with: 'Central')
+  end
+
 end

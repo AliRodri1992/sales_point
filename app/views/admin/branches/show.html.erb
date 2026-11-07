@@ -1,10 +1,193 @@
 <% content_for :title, "#{@branch.name} | #{t('admin.branches.index.title')}" %>
-<div class="catalog-workspace branch-workspace">
-  <header class="catalog-header"><div><p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %> · <%= branch_code(@branch) %></p><h1><%= @branch.name %></h1><p><%= branch_location(@branch) %></p><div class="mt-3"><%= catalog_status(@branch.status, scope: 'admin.branches.statuses') %></div></div><div class="catalog-actions"><%= link_to branch_directory_path, class: 'catalog-button' do %><%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.branches.form.buttons.back') %><% end %><% if policy(@branch).update? %><%= link_to edit_admin_branch_path(@branch, branch_directory_parameters), class: 'catalog-button catalog-button-primary' do %><%= delta_icon('pencil-square', class: 'size-4') %><%= t('admin.branches.actions.edit') %><% end %><% end %></div></header>
-  <div class="catalog-layout"><div class="catalog-main">
-    <section class="catalog-card"><%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.detail_hint'), icon: 'building-storefront') %><dl class="catalog-card-body catalog-definition"><div><dt><%= t('admin.branch_workspace.code') %></dt><dd><%= @branch.code.presence || t('admin.branch_workspace.not_registered') %></dd></div><div><dt><%= t('admin.branch_workspace.assigned_team') %></dt><dd><%= t('admin.branch_workspace.assigned_people', count: @branch_team_count) %></dd></div><div><dt><%= t('admin.branch_workspace.created_at') %></dt><dd><%= l(@branch.created_at, format: :long) %></dd></div><div><dt><%= t('admin.branch_workspace.updated_at') %></dt><dd><%= l(@branch.updated_at, format: :long) %></dd></div></dl></section>
-    <section class="catalog-card"><%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'), icon: 'phone') %><dl class="catalog-card-body catalog-definition"><div><dt><%= t('admin.phones.primary_mobile') %></dt><dd><%= branch_contact_link(@branch) %></dd><% if branch_mobile(@branch)&.whatsapp_enabled? %><p class="catalog-hint"><%= t('admin.branch_workspace.whatsapp') %></p><% end %></div><div><dt><%= t('admin.branch_workspace.contact_email') %></dt><dd><%= @branch.contact_email.present? ? mail_to(@branch.contact_email) : t('admin.branch_workspace.not_registered') %></dd></div></dl></section>
-    <section class="catalog-card"><%= catalog_heading(t('admin.branch_workspace.location'), t('admin.branch_workspace.location_hint'), icon: 'map-pin') %><div class="catalog-card-body"><% if @branch.address %><dl class="catalog-definition"><% { street: 'street', exterior_number: 'exterior_number', interior_number: 'interior_number', neighborhood: 'neighborhood', city: 'city', state: 'state', postal_code: 'postal_code', country: 'country' }.each do |attribute, label| %><div><dt><%= t("admin.branches.form.fields.#{label}") %></dt><dd><%= (attribute == :country ? @branch.address.country&.localized_name : @branch.address.public_send(attribute)).presence || t('admin.branch_workspace.not_registered') %></dd></div><% end %><% if @branch.address.reference_notes.present? %><div class="catalog-full"><dt><%= t('admin.branch_workspace.reference_notes') %></dt><dd><%= @branch.address.reference_notes %></dd></div><% end %></dl><% else %><p class="branch-muted"><%= t('admin.branch_workspace.location_pending') %></p><% end %></div></section>
-    <section class="catalog-card"><%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'), icon: 'document-text') %><div class="catalog-card-body branch-notes"><%= @branch.notes.presence || t('admin.branch_workspace.no_notes') %></div></section>
-  </div><aside class="catalog-aside"><% if @branch_operation_counts %><section class="catalog-card catalog-card-body"><h2><%= t('admin.branch_workspace.operations') %></h2><p><%= t('admin.branch_workspace.operations_hint') %></p><dl class="branch-operation-stats"><% @branch_operation_counts.each do |key, value| %><div><dt><%= t("admin.branch_workspace.#{key}") %></dt><dd><%= value %></dd></div><% end %></dl><%= link_to admin_branch_inventories_path(@branch), class: 'catalog-button w-full' do %><%= delta_icon('cube', class: 'size-4') %><%= t('admin.inventory.title') %><% end %></section><% end %><div class="catalog-notice"><%= t('admin.branch_workspace.history_hint') %></div></aside></div>
+<% can_manage_branch = policy(@branch).update? %>
+<% address = @branch.address %>
+<% mobile = branch_mobile(@branch) %>
+
+<div class="catalog-workspace branch-workspace branch-details">
+  <header class="catalog-header branch-detail-header">
+    <div class="branch-detail-header-content">
+      <span class="branch-detail-avatar" aria-hidden="true">
+        <%= delta_icon('building-storefront', class: 'size-8') %>
+      </span>
+      <div class="branch-detail-heading">
+        <p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p>
+        <div class="branch-detail-title-row">
+          <h1><%= @branch.name %></h1>
+          <%= catalog_status(@branch.status, scope: 'admin.branches.statuses') %>
+        </div>
+        <p class="branch-detail-location">
+          <%= delta_icon('map-pin', class: 'size-4') %>
+          <span><%= branch_location(@branch) %></span>
+        </p>
+        <% if @branch.code.present? %>
+          <p class="branch-detail-code"><%= t('admin.branch_workspace.code') %>: <strong><%= @branch.code %></strong></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="catalog-actions branch-detail-actions">
+      <%= link_to branch_directory_path, class: 'catalog-button', data: { turbo_frame: '_top' } do %>
+        <%= delta_icon('arrow-left', class: 'size-4') %>
+        <%= t('admin.branches.form.buttons.back') %>
+      <% end %>
+      <% if can_manage_branch %>
+        <%= link_to edit_admin_branch_path(@branch, branch_directory_parameters),
+                    class: 'catalog-button catalog-button-primary', data: { turbo_frame: '_top' } do %>
+          <%= delta_icon('pencil-square', class: 'size-4') %>
+          <%= t('admin.branches.actions.edit') %>
+        <% end %>
+      <% end %>
+    </div>
+  </header>
+
+  <nav class="catalog-nav branch-detail-nav" aria-label="<%= t('admin.catalog_design.sections') %>">
+    <% %w[identity contact location notes].each do |section| %>
+      <%= link_to t("admin.branch_workspace.#{section}"), "#branch-detail-#{section}" %>
+    <% end %>
+    <% if @branch_operation_counts %>
+      <%= link_to t('admin.branch_workspace.operations'), '#branch-detail-operations' %>
+    <% end %>
+  </nav>
+
+  <div class="catalog-layout branch-detail-layout <%= 'branch-detail-layout-single' unless @branch_operation_counts %>">
+    <div class="catalog-main branch-detail-main">
+      <section class="catalog-card branch-detail-card" id="branch-detail-identity"
+               aria-labelledby="branch-detail-identity-title">
+        <%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.detail_hint'),
+                            icon: 'building-storefront', id: 'branch-detail-identity-title') %>
+        <dl class="catalog-card-body catalog-definition branch-detail-definition">
+          <div>
+            <dt><%= t('admin.branch_workspace.code') %></dt>
+            <dd><%= @branch.code.presence || t('admin.branch_workspace.not_registered') %></dd>
+          </div>
+          <div>
+            <dt><%= t('admin.branch_workspace.assigned_team') %></dt>
+            <dd><%= t('admin.branch_workspace.assigned_people', count: @branch_team_count) %></dd>
+          </div>
+          <div>
+            <dt><%= t('admin.branch_workspace.created_at') %></dt>
+            <dd><time datetime="<%= @branch.created_at.iso8601 %>"><%= l(@branch.created_at, format: :long) %></time></dd>
+          </div>
+          <div>
+            <dt><%= t('admin.branch_workspace.updated_at') %></dt>
+            <dd><time datetime="<%= @branch.updated_at.iso8601 %>"><%= l(@branch.updated_at, format: :long) %></time></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="catalog-card branch-detail-card" id="branch-detail-contact"
+               aria-labelledby="branch-detail-contact-title">
+        <%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'),
+                            icon: 'phone', id: 'branch-detail-contact-title') %>
+        <dl class="catalog-card-body catalog-definition branch-detail-definition">
+          <div>
+            <dt><%= t('admin.phones.primary_mobile') %></dt>
+            <dd>
+              <% if mobile %>
+                <%= link_to mobile.number, "tel:#{mobile.number}", class: 'branch-detail-link' %>
+                <% if mobile.whatsapp_enabled? %>
+                  <span class="branch-detail-hint"><%= t('admin.branch_workspace.whatsapp') %></span>
+                <% end %>
+              <% else %>
+                <span class="branch-detail-empty"><%= t('admin.branch_workspace.contact_pending') %></span>
+              <% end %>
+            </dd>
+          </div>
+          <div>
+            <dt><%= t('admin.branch_workspace.contact_email') %></dt>
+            <dd>
+              <% if @branch.contact_email.present? %>
+                <%= mail_to @branch.contact_email, @branch.contact_email, class: 'branch-detail-link' %>
+              <% else %>
+                <span class="branch-detail-empty"><%= t('admin.branch_workspace.not_registered') %></span>
+              <% end %>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="catalog-card branch-detail-card" id="branch-detail-location"
+               aria-labelledby="branch-detail-location-title">
+        <%= catalog_heading(t('admin.branch_workspace.location'), t('admin.branch_workspace.location_hint'),
+                            icon: 'map-pin', id: 'branch-detail-location-title') %>
+        <div class="catalog-card-body">
+          <% if address %>
+            <div class="branch-detail-address-summary">
+              <span class="branch-detail-address-icon" aria-hidden="true">
+                <%= delta_icon('map-pin', class: 'size-5') %>
+              </span>
+              <div>
+                <p class="branch-detail-address-line">
+                  <%= [address.street, address.exterior_number].compact_blank.join(' ').presence ||
+                      t('admin.branch_workspace.location_pending') %>
+                </p>
+                <p class="branch-detail-address-locality"><%= branch_location(@branch) %></p>
+              </div>
+            </div>
+            <dl class="catalog-definition branch-detail-definition branch-detail-address-fields">
+              <% %i[interior_number neighborhood city state postal_code country].each do |attribute| %>
+                <div>
+                  <dt><%= t("admin.branches.form.fields.#{attribute}") %></dt>
+                  <dd>
+                    <%= (attribute == :country ? address.country&.localized_name : address.public_send(attribute)).presence ||
+                        t('admin.branch_workspace.not_registered') %>
+                  </dd>
+                </div>
+              <% end %>
+            </dl>
+            <% if address.reference_notes.present? %>
+              <div class="branch-detail-directions">
+                <h3><%= t('admin.branch_workspace.reference_notes') %></h3>
+                <p><%= address.reference_notes %></p>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="branch-detail-empty"><%= t('admin.branch_workspace.location_pending') %></p>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="catalog-card branch-detail-card" id="branch-detail-notes"
+               aria-labelledby="branch-detail-notes-title">
+        <%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'),
+                            icon: 'document-text', id: 'branch-detail-notes-title') %>
+        <div class="catalog-card-body">
+          <% if @branch.notes.present? %>
+            <p class="branch-notes"><%= @branch.notes %></p>
+          <% else %>
+            <p class="branch-detail-empty"><%= t('admin.branch_workspace.no_notes') %></p>
+          <% end %>
+        </div>
+      </section>
+    </div>
+
+    <% if @branch_operation_counts %>
+      <aside class="catalog-aside branch-detail-aside">
+        <section class="catalog-card" id="branch-detail-operations"
+                 aria-labelledby="branch-detail-operations-title">
+          <%= catalog_heading(t('admin.branch_workspace.operations'), t('admin.branch_workspace.operations_hint'),
+                              icon: 'cube', id: 'branch-detail-operations-title') %>
+          <div class="catalog-card-body">
+            <dl class="branch-operation-stats">
+              <% @branch_operation_counts.each do |key, value| %>
+                <div>
+                  <dt><%= t("admin.branch_workspace.#{key}") %></dt>
+                  <dd><%= value %></dd>
+                </div>
+              <% end %>
+            </dl>
+            <%= link_to admin_branch_inventories_path(@branch), class: 'catalog-button branch-detail-inventory-link',
+                        data: { turbo_frame: '_top' } do %>
+              <%= delta_icon('cube', class: 'size-4') %>
+              <%= t('admin.inventory.title') %>
+            <% end %>
+          </div>
+        </section>
+        <div class="catalog-notice branch-detail-notice" role="note">
+          <%= delta_icon('information-circle', class: 'size-5') %>
+          <p><%= t('admin.branch_workspace.history_hint') %></p>
+        </div>
+      </aside>
+    <% end %>
+  </div>
 </div>
