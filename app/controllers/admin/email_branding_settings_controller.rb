@@ -30,13 +30,18 @@ module Admin
         redirect_to edit_admin_email_branding_settings_path,
                     flash: { swal_message: t('admin.email_templates.saved') }
       else
-        @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                   .includes(:actor).order(created_at: :desc).limit(20)
-        render :edit, status: :unprocessable_content
+        render_branding_errors
       end
     end
 
     private
+
+    def render_branding_errors
+      @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
+                                 .includes(:actor).order(created_at: :desc).limit(20)
+      render :edit, status: :unprocessable_content
+    end
+
 
     def selected_organization
       params[:global] == '1' && current_user.role?('super_admin') ? nil : current_organization
