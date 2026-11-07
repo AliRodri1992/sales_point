@@ -28,13 +28,18 @@ module Admin
         redirect_to edit_admin_email_sender_settings_path,
                     flash: { swal_message: t('admin.email_templates.saved') }
       else
-        @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                   .includes(:actor).order(created_at: :desc).limit(20)
-        render :edit, status: :unprocessable_content
+        render_sender_errors
       end
     end
 
     private
+
+    def render_sender_errors
+      @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
+                                 .includes(:actor).order(created_at: :desc).limit(20)
+      render :edit, status: :unprocessable_content
+    end
+
 
     def verify_permission!
       allowed = current_organization && current_user.admin? && current_user.permission?('email_settings.manage')
