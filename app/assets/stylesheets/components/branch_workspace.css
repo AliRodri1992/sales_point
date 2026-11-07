@@ -1,28 +1,38 @@
 .branch-workspace { max-width:1440px; }
-.branch-overview { display:flex; flex-wrap:wrap; gap:1rem 2rem; margin-bottom:1.25rem; padding:0 .125rem; }
-.branch-overview>div { display:flex; align-items:baseline; gap:.625rem; }
+.branch-page-header { display:block; margin-bottom:1.25rem; }
+.branch-page-title-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem 1rem; }
+.branch-page-header .catalog-eyebrow { margin-bottom:.625rem; }
+.branch-page-description { margin-top:.375rem; }
+.branch-create-button { flex-shrink:0; white-space:nowrap; }
+.branch-overview { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.5rem; margin-bottom:1.25rem; padding:.75rem 1rem; border:1px solid #e2e8f0; border-radius:.75rem; background:#fff; }
+.branch-overview .branch-overview-item { display:flex; align-items:center; gap:.5rem; }
 .branch-overview dt { color:#64748b; font-size:.8125rem; }
-.branch-overview dd { color:#0f172a; font:700 1.125rem var(--font-jakarta); font-variant-numeric:tabular-nums; }
+.branch-overview dd { color:#0f172a; font:700 .9375rem var(--font-jakarta); font-variant-numeric:tabular-nums; }
+.branch-overview .branch-overview-divider { display:block; height:1.25rem; width:1px; background:#e2e8f0; }
+.branch-overview .branch-overview-label { display:inline-flex; align-items:center; gap:.375rem; }
+.branch-overview .branch-overview-dot { display:inline-block; width:.5rem; height:.5rem; border-radius:50%; }
+.branch-overview .branch-overview-dot-active { background:#10b981; }
+.branch-overview .branch-overview-dot-inactive { background:#94a3b8; }
 .branch-directory-panel { border:1px solid #e2e8f0; border-radius:1rem; background:#fff; overflow:clip; }
 .branch-filters { padding:1.25rem 1.5rem; border-bottom:1px solid #e2e8f0; }
-.branch-toolbar { display:grid; grid-template-columns:minmax(220px,1fr) 170px auto; gap:.75rem; align-items:start; }
+.branch-toolbar { display:grid; grid-template-columns:minmax(0,1fr) minmax(170px,200px) auto; gap:.75rem; align-items:start; }
+.branch-status-filter { min-width:0; }
 .branch-search { position:relative; min-width:0; }
-.branch-search>svg { position:absolute; left:.875rem; top:.75rem; color:#64748b; pointer-events:none; }
+.branch-search>svg { position:absolute; left:.875rem; top:50%; transform:translateY(-50%); color:#64748b; pointer-events:none; }
 .branch-toolbar :is(input,select) { min-width:0; width:100%; min-height:44px; border:1px solid #cbd5e1; border-radius:.625rem; padding:.625rem .75rem; color:#334155; background:#fff; font-size:.8125rem; }
 .branch-search input { padding-left:2.625rem; }
 .branch-advanced { display:contents; }
-.branch-advanced::details-content { display:contents; }
 .branch-advanced>summary { display:flex; align-items:center; justify-content:center; gap:.5rem; min-height:44px; padding:.625rem .875rem; border:1px solid #cbd5e1; border-radius:.625rem; color:#334155; font-size:.8125rem; font-weight:600; cursor:pointer; list-style:none; }
 .branch-advanced>summary::-webkit-details-marker { display:none; }
 .branch-advanced[open]>summary { color:#047857; border-color:#6ee7b7; background:#ecfdf5; }
 .branch-advanced>summary>svg:last-child { transition:transform .15s; }
 .branch-advanced[open]>summary>svg:last-child { transform:rotate(180deg); }
-.branch-advanced-panel { grid-column:1/-1; border-top:1px solid #e2e8f0; padding-top:1rem; }
+.branch-advanced-panel { grid-column:1/-1; border:1px solid #e2e8f0; border-radius:.75rem; background:#f8fafc; padding:1rem; }
 .branch-advanced:not([open])>.branch-advanced-panel { display:none; }
 .branch-advanced-heading { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:.5rem; margin-bottom:1rem; }
 .branch-advanced-heading h2 { font-size:.8125rem; font-weight:700; }
 .branch-advanced-heading p,.branch-filter-caption,.branch-muted { color:#64748b; font-size:.75rem; line-height:1.6; }
-.branch-advanced-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; }
+.branch-advanced-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
 .branch-advanced-grid label { display:block; margin-bottom:.375rem; color:#475569; font-size:.75rem; font-weight:600; }
 .branch-filter-badges { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin-top:1rem; min-height:28px; }
 .branch-filter-badge { display:inline-flex; min-height:32px; max-width:100%; align-items:center; gap:.5rem; padding:.375rem .75rem; border:1px solid #a7f3d0; border-radius:999px; background:#ecfdf5; color:#065f46; font-size:.75rem; font-weight:600; }
@@ -81,7 +91,7 @@
 .branch-operation-stats dd { font:700 1.25rem var(--font-jakarta); }
 .branch-notes { white-space:pre-wrap; overflow-wrap:anywhere; color:#475569; font-size:.875rem; line-height:1.8; }
 @media(max-width:1099px) { .branch-table-wrap { display:none; } .branch-mobile-list { display:block; } .branch-advanced-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:639px) { .branch-filters { padding:1rem; } .branch-toolbar { grid-template-columns:minmax(0,1fr) auto; } .branch-search { grid-column:1/-1; } .branch-results-heading { padding:1rem; } .branch-filter-badge,.branch-clear-filters { min-height:40px; } .branch-status-card { margin-top:0; } .branch-overview { gap:1rem; } }
+@media(max-width:639px) { .branch-page-title-row { align-items:flex-start; flex-direction:column; } .branch-filters { padding:1rem; } .branch-toolbar { grid-template-columns:minmax(0,1fr); } .branch-search,.branch-status-filter,.branch-advanced>summary { grid-column:1/-1; } .branch-advanced>summary { justify-content:flex-start; } .branch-results-heading { padding:1rem; } .branch-filter-badge,.branch-clear-filters { min-height:40px; } .branch-status-card { margin-top:0; } .branch-overview { gap:.75rem 1rem; } .branch-overview .branch-overview-divider { display:none; } }
 @media(max-width:399px) { .branch-advanced-grid { grid-template-columns:minmax(0,1fr); } }
 
 .branch-workspace #branch-contact,.branch-workspace #branch-location { overflow:visible; }
@@ -91,3 +101,10 @@
 .branch-pagination [data-controller~="delta-select"] { width:90px; flex:0 0 90px; }
 
 .branch-filters .branch-select { width:100%; min-width:0; }
+
+/* Keep branch directory controls consistent with the module CSS. */
+.branch-toolbar .branch-search-input { padding-left:2.625rem; }
+.branch-toolbar .branch-date-input { width:100%; }
+.branch-advanced-grid > div { min-width:0; }
+.branch-advanced>summary { grid-column:3; }
+@media(max-width:639px) { .branch-advanced>summary { grid-column:1; } }
