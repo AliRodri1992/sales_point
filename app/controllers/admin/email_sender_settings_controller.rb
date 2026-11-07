@@ -40,7 +40,6 @@ module Admin
       render :edit, status: :unprocessable_content
     end
 
-
     def verify_permission!
       allowed = current_organization && current_user.admin? && current_user.permission?('email_settings.manage')
       raise Pundit::NotAuthorizedError unless allowed
