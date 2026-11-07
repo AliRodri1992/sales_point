@@ -2,6 +2,7 @@
 <% can_manage_branch = policy(@branch).update? %>
 <% address = @branch.address %>
 <% mobile = branch_mobile(@branch) %>
+<% note_body = @branch.note_body %>
 
 <div class="catalog-workspace branch-workspace branch-details">
   <header class="catalog-header branch-detail-header">
@@ -152,8 +153,8 @@
         <%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'),
                             icon: 'document-text', id: 'branch-detail-notes-title') %>
         <div class="catalog-card-body">
-          <% if @branch.notes.present? %>
-            <p class="branch-notes"><%= @branch.notes %></p>
+          <% if note_body.present? %>
+            <p class="branch-notes"><%= note_body %></p>
           <% else %>
             <p class="branch-detail-empty"><%= t('admin.branch_workspace.no_notes') %></p>
           <% end %>

@@ -201,6 +201,7 @@ RSpec.describe 'Branch directory and workspace', type: :request do
   it 'renders structured detail sections with working contact links and preserved directory context' do
     central.update!(notes: 'Receiving dock on weekdays. Ask for the manager.')
     central.address.update!(reference_notes: 'Enter through reception')
+    central.note_entries.general.sole.update!(body: 'Authoritative branch note')
     Phone.create!(phoneable: central, organization:, kind: 'mobile', primary: true,
                   number: '+525512345678', whatsapp_enabled: true)
 
@@ -219,7 +220,8 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     expect(document.at_css('#branch-detail-location .branch-detail-address-summary')).to be_present
     expect(document.at_css('#branch-detail-location .branch-detail-directions').text)
       .to include('Enter through reception')
-    expect(document.at_css('#branch-detail-notes .branch-notes').text).to include('Receiving dock on weekdays.')
+    expect(document.at_css('#branch-detail-notes .branch-notes').text).to include('Authoritative branch note')
+    expect(document.at_css('#branch-detail-notes .branch-notes').text).not_to include('Receiving dock on weekdays.')
     expect(document.css('#branch-detail-identity time[datetime]').size).to eq(2)
     expect(document.css('.branch-detail-actions a').pluck('href')).to include(
       admin_branches_path(search: 'CENTRAL', per_page: '5'),
