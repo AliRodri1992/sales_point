@@ -1,5 +1,18 @@
 es:
   admin:
+
+    shared:
+      notifications:
+        types:
+          email_template: "Plantilla de correo"
+        email_template:
+          created: "Plantilla %{name} creada"
+          draft_updated: "Borrador de %{name} actualizado"
+          published: "Plantilla %{name} publicada"
+          restored: "Versión de %{name} restaurada"
+          archived: "Plantilla %{name} archivada"
+          removed: "Plantilla %{name} eliminada del catálogo"
+          test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
       section: "Comunicación"
       title: "Plantillas de correo"
@@ -155,6 +168,9 @@ es:
       step_content_hint: "Escribe el asunto, el HTML y el texto plano; revisa la vista previa."
       step_publish_title: "Revisa y publica"
       step_publish_hint: "Publica una versión solo cuando su contenido esté listo."
+      automatic_locale_hint: "Se asigna automáticamente el idioma que tienes configurado en Delta POS. No necesitas seleccionarlo."
+      created_toast: "Plantilla creada correctamente. El borrador está listo para editar."
+      draft_updated_toast: "Borrador de correo actualizado correctamente."
       new_intro: "Define el nombre y el idioma. Después podrás editar el contenido y publicar la primera versión."
       filters_title: "Buscar y filtrar plantillas"
       search_label: "Buscar plantilla"
