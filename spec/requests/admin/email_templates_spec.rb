@@ -337,7 +337,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-delivery-title')).to be_present
     expect(page.at_css('#email-template-guidance-title')).to be_present
     expect(page.at_css('#email-template-create-actions button[type="submit"]')).to be_present
-    expect(page.at_css('img[alt="' + I18n.t('admin.email_templates.deltin_alt') + '"]')).to be_present
+    expect(page.at_css("img[alt=\"#{I18n.t('admin.email_templates.deltin_alt')}\"]")).to be_present
     expect(page.at_css('input#email_template_key[pattern="[a-z][a-z0-9_]*"]')).to be_present
     expect(page.at_css('[data-controller="email-template-identity"]')).to be_present
     expect(page.css('label[for="email_template_locale"]').size).to eq(1)

@@ -8,16 +8,11 @@ module Admin
     before_action :load_version, only: %i[update_draft publish restore]
 
     include EmailTemplatePreviews
+    include EmailTemplateListing
 
     def index
       authorize EmailTemplate
-      scope = EmailTemplatesQuery.new(policy_scope(EmailTemplate), params).call
-      @total = scope.count
-      @total_pages = [(@total + 19) / 20, 1].max
-      @page = [[params[:page].to_i, 1].max, @total_pages].min
-      @templates = scope.includes(:organization, :published_version)
-                        .order(updated_at: :desc).limit(20).offset((@page - 1) * 20)
-      @counts = policy_scope(EmailTemplate).group(:status).count
+      load_template_catalog
     end
 
     def show
@@ -92,9 +87,7 @@ module Admin
       raise ArgumentError, t('admin.email_templates.restore_not_published') unless @version.status == 'published'
 
       draft = @template.new_draft!(actor: current_user)
-      draft.update!(subject: @version.subject, preheader: @version.preheader,
-                    html_body: @version.html_body, text_body: @version.text_body,
-                    allowed_variables: @version.allowed_variables)
+      draft.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
       @template.audit!(action: 'restored', actor: current_user, version: draft)
       redirect_to edit_admin_email_template_path(@template), notice: t('admin.email_templates.restored')
     rescue ArgumentError => e
