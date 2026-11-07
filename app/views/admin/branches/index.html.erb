@@ -1,14 +1,30 @@
 <% content_for :title, t('admin.branches.index.page_title') %>
-<div class="catalog-workspace branch-workspace" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated popstate@window->branch-directory#restore" aria-busy="false">
-  <header class="catalog-header branch-page-header">
-    <div><p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p><h1><%= t('admin.branches.index.title') %></h1><p><%= t('admin.branch_workspace.intro') %></p></div>
-    <% if @can_manage_branches %><%= link_to new_admin_branch_path(branch_directory_parameters), class: 'catalog-button catalog-button-primary' do %><%= delta_icon('plus', class: 'size-4') %><%= t('admin.branches.index.new') %><% end %><% end %>
+<div class="catalog-workspace branch-workspace space-y-6" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated popstate@window->branch-directory#restore" aria-busy="false">
+  <header class="catalog-header branch-page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="min-w-0">
+      <p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p>
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.branches.index.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.branch_workspace.intro') %></p>
+    </div>
+    <% if @can_manage_branches %>
+      <%= link_to new_admin_branch_path(branch_directory_parameters), class: 'catalog-button catalog-button-primary inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('plus', class: 'size-4') %>
+        <%= t('admin.branches.index.new') %>
+      <% end %>
+    <% end %>
   </header>
+
   <%= render 'overview' %>
-  <section class="branch-directory-panel">
+
+  <section class="branch-directory-panel overflow-visible rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branches-result-title">
     <%= render 'filters' %>
-    <div data-branch-directory-target="error" class="branch-filter-error" role="alert" hidden><%= t('admin.branch_workspace.request_error') %><button type="button" data-action="branch-directory#retry"><%= t('admin.skeleton_loading.retry') %></button></div>
+    <div data-branch-directory-target="error" class="branch-filter-error mx-5 my-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800" role="alert" hidden>
+      <%= t('admin.branch_workspace.request_error') %>
+      <button type="button" class="ml-2 font-semibold underline" data-action="branch-directory#retry"><%= t('admin.skeleton_loading.retry') %></button>
+    </div>
     <div class="branch-loading-line" aria-hidden="true"></div>
-    <%= turbo_frame_tag 'branches_list' do %><%= render 'list', branches: @branches, total_count: @total_count, total_pages: @total_pages, current_page: @current_page, per_page: @per_page, can_manage_branches: @can_manage_branches %><% end %>
+    <%= turbo_frame_tag 'branches_list' do %>
+      <%= render 'list', branches: @branches, total_count: @total_count, total_pages: @total_pages, current_page: @current_page, per_page: @per_page, can_manage_branches: @can_manage_branches %>
+    <% end %>
   </section>
 </div>
