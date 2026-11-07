@@ -1,5 +1,18 @@
 en:
   admin:
+
+    shared:
+      notifications:
+        types:
+          email_template: "Email template"
+        email_template:
+          created: "Template %{name} created"
+          draft_updated: "Draft for %{name} updated"
+          published: "Template %{name} published"
+          restored: "Version of %{name} restored"
+          archived: "Template %{name} archived"
+          removed: "Template %{name} removed from the catalog"
+          test_queued: "Test delivery for %{name} queued"
     email_templates:
       section: "Communication"
       title: "Email templates"
@@ -155,6 +168,9 @@ en:
       step_content_hint: "Write the subject, HTML, and plain text, then review the preview."
       step_publish_title: "Review and publish"
       step_publish_hint: "Publish a version only when its content is ready."
+      automatic_locale_hint: "The template automatically uses your configured Delta POS language. No selection is needed."
+      created_toast: "Template created. Your draft is ready to edit."
+      draft_updated_toast: "Email draft updated successfully."
       new_intro: "Choose a name and language. You can then edit the content and publish the first version."
       filters_title: "Search and filter templates"
       search_label: "Search templates"
