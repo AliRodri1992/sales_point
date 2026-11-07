@@ -525,7 +525,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get new_admin_email_template_path
 
     page = Nokogiri::HTML(response.body)
-    expect(page.css('nav[aria-label="' + I18n.t('admin.email_templates.workflow_label') + '"] li').size).to eq(3)
+    expect(page.css("nav[aria-label=\"#{I18n.t('admin.email_templates.workflow_label')}\"] li").size).to eq(3)
     expect(page.at_css('#email-template-guidance-title')).to be_present
     expect(page.at_css('#email-template-review-title')).to be_present
     expect(page.at_css('[data-email-template-identity-target="summaryKey"]')).to be_present
