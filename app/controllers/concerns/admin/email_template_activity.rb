@@ -11,16 +11,21 @@ module Admin
         return render :new, status: :unprocessable_content
       end
 
-      if @template.save
-        draft = @template.new_draft!(actor: current_user)
-        @template.audit!(action: 'created', actor: current_user, version: draft)
-        notify_email_template('created')
-        destination = policy(@template).update? ? edit_admin_email_template_path(@template) :
+      return render :new, status: :unprocessable_content unless @template.save
+
+      finish_template_creation
+    end
+
+    def finish_template_creation
+      draft = @template.new_draft!(actor: current_user)
+      @template.audit!(action: 'created', actor: current_user, version: draft)
+      notify_email_template('created')
+      destination = if policy(@template).update?
+                      edit_admin_email_template_path(@template)
+                    else
                       admin_email_template_path(@template)
-        redirect_to destination, flash: { swal_message: t('admin.email_templates.created_toast') }
-      else
-        render :new, status: :unprocessable_content
-      end
+                    end
+      redirect_to destination, flash: { swal_message: t('admin.email_templates.created_toast') }
     end
 
     def notify_email_template(action)

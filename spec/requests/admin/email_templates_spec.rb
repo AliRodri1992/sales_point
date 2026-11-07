@@ -560,11 +560,12 @@ RSpec.describe 'Admin email templates', type: :request do
 
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
-    expect(page.at_css("form[action='#{publish_admin_email_template_path(template, version_id: draft.id)}']")).to be_present
+    publish_path = publish_admin_email_template_path(template, version_id: draft.id)
+    expect(page.at_css("form[action='#{publish_path}']")).to be_present
 
     draft.publish!(actor: administrator)
     get preview_admin_email_template_path(template, version_id: draft.id)
-    expect(Nokogiri::HTML(response.body).css("form[action='#{publish_admin_email_template_path(template, version_id: draft.id)}']")).to be_empty
+    expect(Nokogiri::HTML(response.body).css("form[action='#{publish_path}']")).to be_empty
   end
 
   it 'shows an accessible device switcher for a saved email preview' do
