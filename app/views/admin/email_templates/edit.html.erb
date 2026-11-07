@@ -59,10 +59,6 @@
           </div>
         </div>
         <div class="min-w-0">
-          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
-            <p class="text-sm font-bold text-slate-800"><%= t('admin.email_templates.html_source') %></p>
-            <span class="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">HTML</span>
-          </div>
           <%= f.label :html_body, t('admin.email_templates.html_source'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <div class="mb-3 flex flex-wrap items-center gap-2" role="group" aria-label="<%= t('admin.email_templates.insert_variable') %>">
             <% %w[recipient_name organization_name activation_url platform_logo].each do |variable| %>
