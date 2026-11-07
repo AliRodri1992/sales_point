@@ -187,17 +187,18 @@ RSpec.describe 'Admin email templates', type: :request do
   it 'keeps audit history private without the audit-view permission' do
     template = create_template(organization:)
     template.audit!(action: 'created', actor: administrator)
+    permission = Permission.find_or_create_by!(code: 'email_template_audits.view') do |entry|
+      entry.name = 'View template audit history'
+      entry.module_name = 'Communication'
+      entry.status = :active
+    end
+    SystemRolePermission.where(system_role: role, permission:).destroy_all
 
     get admin_email_template_path(template)
 
     expect(response).to have_http_status(:ok)
     expect(Nokogiri::HTML(response.body).at_css('#email-audit-title')).to be_nil
 
-    permission = Permission.find_or_create_by!(code: 'email_template_audits.view') do |entry|
-      entry.name = 'View template audit history'
-      entry.module_name = 'Communication'
-      entry.status = :active
-    end
     SystemRolePermission.find_or_create_by!(system_role: role, permission:)
 
     get admin_email_template_path(template)

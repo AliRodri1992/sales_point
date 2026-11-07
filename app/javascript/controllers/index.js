@@ -167,6 +167,9 @@ application.register("email-template-identity", EmailTemplateIdentityController)
 import EmailTemplatePreviewController from "./email_template_preview_controller"
 application.register("email-template-preview", EmailTemplatePreviewController)
 
+import EmailTemplateDetailController from "./email_template_detail_controller"
+application.register("email-template-detail", EmailTemplateDetailController)
+
 import RolePermissionsController from "./role_permissions_controller"
 application.register("role-permissions", RolePermissionsController)
 
