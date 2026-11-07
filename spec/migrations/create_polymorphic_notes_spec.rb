@@ -8,9 +8,8 @@ RSpec.describe CreatePolymorphicNotes, type: :model do
     organization = create(:organization)
     old_branch = create(:branch, organization:)
     # A pre-migration record must be simulated without the modern synchronization callback.
-    # rubocop:disable Rails/SkipsModelValidations
+    # rubocop:disable-next-line Rails/SkipsModelValidations
     old_branch.update_columns(notes: 'Legacy delivery details')
-    # rubocop:enable Rails/SkipsModelValidations
     existing = create(:branch, organization:, notes: 'Current note')
 
     expect do

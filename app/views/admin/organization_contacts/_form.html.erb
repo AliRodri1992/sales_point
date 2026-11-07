@@ -7,8 +7,8 @@
     </div>
   <% end %>
   <div>
-    <%= form.label :note_body, t('admin.supplier_details.contact_fields.notes'), class: 'block text-sm font-semibold' %>
-    <%= form.text_area :note_body, name: "#{form.object_name}[notes]", rows: 3,
+    <%= form.label :notes, t('admin.supplier_details.contact_fields.notes'), class: 'block text-sm font-semibold' %>
+    <%= form.text_area :note_body, name: "#{form.object_name}[notes]", id: form.field_id(:notes), rows: 3,
                        class: 'w-full rounded-lg border border-slate-300 p-2' %>
     <%= error_message_for(@contact, :notes) %>
   </div>

@@ -27,7 +27,7 @@
         <% elsif field == :amount %><%= f.number_field field, min: '0.01', step: '0.01', required: true, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
         <% else %><%= f.text_field field, class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %><% end %><%= error_message_for(@payment, field) %></div>
     <% end %>
-    <div class="md:col-span-2"><%= f.label :note_body, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+    <div class="md:col-span-2"><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
       <%= f.f :note_body, name: "#{f.object_name}[notes]", class: 'mt-1 w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
     <div class="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end md:col-span-2">
       <%= f.submit t('admin.accounts_payable.save'), class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-800' %>

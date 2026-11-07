@@ -17,7 +17,7 @@ RSpec.describe 'Polymorphic notes in branch forms', type: :request do
 
     expect(response).to have_http_status(:ok)
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('textarea#branch_note_body[name="branch[notes]"]')).to be_present
+    expect(document.at_css('textarea#branch_notes[name="branch[notes]"]')).to be_present
   end
 
   it 'persists a new branch note in the polymorphic table' do

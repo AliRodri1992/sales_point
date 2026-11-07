@@ -39,7 +39,7 @@
   </div>
   <p class="text-xs text-slate-500"><%= t('admin.accounts_payable.cfdi_hint') %></p>
   <div data-cfdi-preview-target="result" role="status" aria-live="polite" class="hidden rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900"></div>
-  <div><%= f.label :note_body, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+  <div><%= f.label :notes, t('admin.accounts_payable.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
     <%= f.f :note_body, name: "#{f.object_name}[notes]", rows: 3, class: 'w-full rounded-xl border min-h-11 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %></div>
   <div class="flex flex-wrap gap-3">
     <%= f.submit t('admin.accounts_payable.save'), class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-800' %>
