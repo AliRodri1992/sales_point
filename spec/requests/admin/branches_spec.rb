@@ -16,7 +16,6 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   include SqlQueryRecorder
 
-
   describe 'GET /admin/branches/postal_suggestions' do
     it 'returns Mexican postal suggestions using the existing supplier lookup' do
       allow_any_instance_of(Suppliers::MexicanPostalLookup).to receive(:call).and_return(
@@ -33,6 +32,9 @@ RSpec.describe 'Admin::Branches', type: :request do
 
     it 'rejects invalid postal lookup parameters' do
       get postal_suggestions_admin_branches_path, params: { country: 'MX', postal_code: 'ABC' }
+      expect(response).to have_http_status(:unprocessable_content)
+
+      get postal_suggestions_admin_branches_path, params: { country: 'US', postal_code: '54800' }
       expect(response).to have_http_status(:unprocessable_content)
     end
 

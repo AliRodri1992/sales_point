@@ -46,8 +46,7 @@ module Admin
       raise Pundit::NotAuthorizedError unless current_organization
 
       authorize Branch.new(organization: current_organization), :create?
-      return head :unprocessable_content unless params[:country] == 'MX' &&
-                                             /\\A\\d{5}\\z/.match?(params[:postal_code].to_s)
+      return head :unprocessable_content unless valid_postal_lookup_params?
 
       suggestion = Suppliers::MexicanPostalLookup.new(params[:postal_code]).call
       return head :service_unavailable unless suggestion
@@ -117,6 +116,10 @@ module Admin
     end
 
     private
+
+    def valid_postal_lookup_params?
+      params[:country] == 'MX' && /\A\d{5}\z/.match?(params[:postal_code].to_s)
+    end
 
     def render_destroyed_branch
       notify_branch(current_user, @branch, 'destroyed')
