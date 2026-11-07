@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class SupplierScheduleException < ApplicationRecord
+  include HasPolymorphicNotes
   REASONS = %w[holiday suspension exception].freeze
 
   has_paper_trail

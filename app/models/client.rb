@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Client < ApplicationRecord
+  include HasPolymorphicNotes
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :phones,
                                 allow_destroy: true,

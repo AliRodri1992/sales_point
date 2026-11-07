@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -679,6 +679,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
     t.index ["deleted_at"], name: "index_messages_on_deleted_at"
     t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "kind", limit: 30, default: "general", null: false
+    t.bigint "notable_id", null: false
+    t.string "notable_type", null: false
+    t.bigint "organization_id"
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_notes_on_created_by_id"
+    t.index ["notable_type", "notable_id", "kind"], name: "idx_notes_notable_kind", unique: true
+    t.index ["organization_id", "created_at"], name: "idx_notes_org_created_at"
+    t.check_constraint "length(btrim(body)) > 0", name: "chk_notes_nonempty_body"
   end
 
   create_table "noticed_events", force: :cascade do |t|
@@ -2421,6 +2436,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_090000) do
   add_foreign_key "membership_plan_features", "membership_plans"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
+  add_foreign_key "notes", "organizations"
+  add_foreign_key "notes", "users", column: "created_by_id"
   add_foreign_key "onboarding_audits", "organizations"
   add_foreign_key "onboarding_audits", "users"
   add_foreign_key "organization_memberships", "organizations"

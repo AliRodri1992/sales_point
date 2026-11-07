@@ -8,8 +8,8 @@
     <%= form.label :reason, t('admin.purchases.reason'), class: 'mb-2 block font-semibold' %>
     <%= form.select :reason, PurchaseReturn.reasons.keys.map { |key| [t("admin.purchases.reasons.#{key}"), key] },
                     {}, class: 'w-full rounded-xl border border-slate-200 p-3' %>
-    <%= form.label :notes, t('admin.purchases.notes'), class: 'mb-2 mt-4 block font-semibold' %>
-    <%= form.text_area :notes, class: 'w-full rounded-xl border border-slate-200 p-3' %>
+    <%= form.label :note_body, t('admin.purchases.notes'), class: 'mb-2 mt-4 block font-semibold' %>
+    <%= form.form :note_body, name: "#{form.object_name}[notes]", class: 'w-full rounded-xl border border-slate-200 p-3' %>
   </section>
   <section class="rounded-2xl border border-slate-200 bg-white p-6">
     <% @receipt.goods_receipt_items.includes(purchase_order_item: :product).each_with_index do |entry, index| %>

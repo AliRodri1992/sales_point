@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Supplier < ApplicationRecord
+  include HasPolymorphicNotes
   include SupplierDocumentTypes
   include SupplierLifecycle
   include SupplierFiscalRules

@@ -133,8 +133,8 @@
         </div>
 
         <div class="min-w-0">
-          <%= form.label :notes, t('admin.supplier_details.contact_form.notes_title'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= form.text_area :notes, rows: 5,
+          <%= form.label :note_body, t('admin.supplier_details.contact_form.notes_title'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= form.form :note_body, name: "#{form.object_name}[notes]", rows: 5,
                              class: "#{input_classes} min-h-36 resize-y #{form_state_classes(@contact, :notes)}",
                              placeholder: t('admin.supplier_details.contact_form.notes_placeholder') %>
           <%= error_message_for(@contact, :notes) %>

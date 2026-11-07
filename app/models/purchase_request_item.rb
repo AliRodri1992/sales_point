@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseRequestItem < ApplicationRecord
+  include HasPolymorphicNotes
   belongs_to :purchase_request
   belongs_to :product
 

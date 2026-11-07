@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseReturn < ApplicationRecord
+  include HasPolymorphicNotes
   has_paper_trail
 
   belongs_to :organization

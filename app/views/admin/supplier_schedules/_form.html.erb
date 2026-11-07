@@ -75,9 +75,9 @@
         </div>
       <% end %>
       <div class="min-w-0 sm:col-span-2">
-        <%= form.label :notes, t('admin.supplier_dossier.notes'),
+        <%= form.label :note_body, t('admin.supplier_dossier.notes'),
                        class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_area :notes, rows: 3, maxlength: 1000,
+        <%= form.form :note_body, name: "#{form.object_name}[notes]", rows: 3, maxlength: 1000,
                            class: "min-h-28 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 #{form_state_classes(@schedule, :notes)}" %>
         <%= error_message_for(@schedule, :notes) %>
       </div>

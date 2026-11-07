@@ -69,8 +69,8 @@
       </div>
     <% end %>
     <div class="sm:col-span-2">
-      <%= form.label :notes, t('admin.clients.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_area :notes, rows: 3,
+      <%= form.label :note_body, t('admin.clients.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.form :note_body, name: "#{form.object_name}[notes]", rows: 3,
                          class: "input-field w-full rounded-xl #{form_state_classes(client, :notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
                          placeholder: t('admin.clients.form.notes_placeholder') %>
       <%= error_message_for(client, :notes) %>
