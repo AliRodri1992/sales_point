@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_07_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -685,13 +685,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190000) do
     t.text "body", null: false
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
+    t.datetime "deleted_at"
     t.string "kind", limit: 30, default: "general", null: false
     t.bigint "notable_id", null: false
     t.string "notable_type", null: false
     t.bigint "organization_id"
     t.datetime "updated_at", null: false
     t.index ["created_by_id"], name: "index_notes_on_created_by_id"
-    t.index ["notable_type", "notable_id", "kind"], name: "idx_notes_notable_kind", unique: true
+    t.index ["deleted_at"], name: "index_notes_on_deleted_at"
+    t.index ["notable_type", "notable_id", "kind"], name: "idx_notes_notable_kind", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id", "created_at"], name: "idx_notes_org_created_at"
     t.check_constraint "length(btrim(body)) > 0", name: "chk_notes_nonempty_body"
   end

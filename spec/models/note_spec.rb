@@ -43,6 +43,19 @@ RSpec.describe Note, type: :model do
     expect(branch.reload.note_body).to eq('Polymorphic authoritative')
   end
 
+  it 'recreates a general note after soft deletion without a unique index conflict' do
+    branch.update!(notes: 'Initial instructions')
+    previous_note = branch.note_entries.general.sole
+    branch.update!(notes: '')
+
+    expect(Note.with_deleted.find(previous_note.id).deleted_at).to be_present
+
+    branch.update!(notes: 'Updated instructions')
+
+    expect(branch.note_entries.general.sole.body).to eq('Updated instructions')
+    expect(Note.with_deleted.where(notable: branch, kind: 'general').count).to eq(2)
+  end
+
   it 'supports the same note relationship for records without an organization' do
     client = create(:client, notes: 'Client note')
 
