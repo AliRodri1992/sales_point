@@ -199,7 +199,7 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     expect(response).to have_http_status(:not_found)
   end
   it 'renders structured detail sections with working contact links and preserved directory context' do
-    central.update!(notes: "Receiving dock on weekdays.\\nAsk for the manager.")
+    central.update!(notes: 'Receiving dock on weekdays. Ask for the manager.')
     central.address.update!(reference_notes: 'Enter through reception')
     Phone.create!(phoneable: central, organization:, kind: 'mobile', primary: true,
                   number: '+525512345678', whatsapp_enabled: true)
@@ -210,17 +210,18 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     document = Nokogiri::HTML(response.body)
     expect(document.css('.branch-detail-header h1').map(&:text)).to eq(['Central'])
     expect(document.css('.branch-detail-header .catalog-status').size).to eq(1)
-    expect(document.css('.branch-detail-nav a').map { |link| link['href'] }).to include(
+    expect(document.css('.branch-detail-nav a').pluck('href')).to include(
       '#branch-detail-identity', '#branch-detail-contact', '#branch-detail-location',
       '#branch-detail-notes', '#branch-detail-operations'
     )
     expect(document.at_css('#branch-detail-contact a[href="tel:+525512345678"]')).to be_present
     expect(document.at_css('#branch-detail-contact a[href="mailto:central@example.com"]')).to be_present
     expect(document.at_css('#branch-detail-location .branch-detail-address-summary')).to be_present
-    expect(document.at_css('#branch-detail-location .branch-detail-directions').text).to include('Enter through reception')
+    expect(document.at_css('#branch-detail-location .branch-detail-directions').text)
+      .to include('Enter through reception')
     expect(document.at_css('#branch-detail-notes .branch-notes').text).to include('Receiving dock on weekdays.')
     expect(document.css('#branch-detail-identity time[datetime]').size).to eq(2)
-    expect(document.css('.branch-detail-actions a').map { |link| link['href'] }).to include(
+    expect(document.css('.branch-detail-actions a').pluck('href')).to include(
       admin_branches_path(search: 'CENTRAL', per_page: '5'),
       edit_admin_branch_path(central, search: 'CENTRAL', per_page: '5')
     )
@@ -242,10 +243,9 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     )
     expect(document.at_css('#branch-detail-notes').text).to include(I18n.t('admin.branch_workspace.no_notes'))
     expect(document.at_css('#branch-detail-operations')).to be_nil
-    expect(document.css('.branch-detail-actions a').map { |link| link['href'] }).to eq([admin_branches_path])
-    expect(document.css('.branch-detail-nav a').map { |link| link['href'] }).not_to include(
+    expect(document.css('.branch-detail-actions a').pluck('href')).to eq([admin_branches_path])
+    expect(document.css('.branch-detail-nav a').pluck('href')).not_to include(
       '#branch-detail-operations'
     )
   end
-
 end
