@@ -108,7 +108,7 @@ class User < ApplicationRecord
 
   def notifications
     models = [User, Message, Language, Category, Product, Branch, Client, SystemRole,
-              Supplier, EmailTemplate, AccountPayable]
+              Supplier, EmailTemplate, EmailBrandingSetting, EmailSenderSetting, AccountPayable]
     models.drop(1).reduce(notification_relation_for(models.first)) do |relation, model|
       relation.or(notification_relation_for(model))
     end.order(Arel.sql('read_at IS NULL').desc, created_at: :desc)
