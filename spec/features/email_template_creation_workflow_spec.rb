@@ -46,7 +46,7 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
 
     find('#email-template-create-actions button[type="submit"]').click
 
-    expect(page).to have_css('#email-template-overview-title')
+    expect(page).to have_css('#template-editor-title')
     template = EmailTemplate.find_by!(key: 'welcome_staff', organization:)
     expect(template.html_body).to include('{{platform_logo}}')
     expect(template.versions.where(status: 'draft')).to exist

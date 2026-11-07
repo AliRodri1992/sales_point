@@ -512,6 +512,15 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it 'continues directly into draft editing after creating a template' do
+    post admin_email_templates_path, params: {
+      email_template: { name: 'Welcome team', key: 'welcome_team', category: 'notifications' }
+    }
+
+    template = EmailTemplate.find_by!(key: 'welcome_team', organization:)
+    expect(response).to redirect_to(edit_admin_email_template_path(template))
+  end
+
   it 'presents Deltín and the final identity review in the guided creation flow' do
     get new_admin_email_template_path
 
@@ -541,6 +550,21 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('input[data-email-template-editor-target="variables"]')).to be_present
     expect(page.css('iframe[sandbox]').size).to eq(2)
     expect(page.at_css('nav li[aria-current="step"]')).to be_present
+  end
+
+  it 'offers explicit publication only when previewing a draft with permission' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    get preview_admin_email_template_path(template, version_id: draft.id)
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css("form[action='#{publish_admin_email_template_path(template, version_id: draft.id)}']")).to be_present
+
+    draft.publish!(actor: administrator)
+    get preview_admin_email_template_path(template, version_id: draft.id)
+    expect(Nokogiri::HTML(response.body).css("form[action='#{publish_admin_email_template_path(template, version_id: draft.id)}']")).to be_empty
   end
 
   it 'shows an accessible device switcher for a saved email preview' do

@@ -15,8 +15,9 @@ module Admin
         draft = @template.new_draft!(actor: current_user)
         @template.audit!(action: 'created', actor: current_user, version: draft)
         notify_email_template('created')
-        redirect_to admin_email_template_path(@template),
-                    flash: { swal_message: t('admin.email_templates.created_toast') }
+        destination = policy(@template).update? ? edit_admin_email_template_path(@template) :
+                      admin_email_template_path(@template)
+        redirect_to destination, flash: { swal_message: t('admin.email_templates.created_toast') }
       else
         render :new, status: :unprocessable_content
       end
