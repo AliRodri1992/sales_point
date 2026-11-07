@@ -131,14 +131,6 @@ module Admin
 
     private
 
-    def load_show_preview
-      @preview_subject, @preview_html, @preview_plain = EmailTemplates::Renderer.new(
-        source: @template.published_version, values: EmailTemplates::SampleData.call(@template)
-      ).render
-    rescue ArgumentError
-      @preview_error = true
-    end
-
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])
     end

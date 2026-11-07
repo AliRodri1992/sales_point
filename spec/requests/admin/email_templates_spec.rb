@@ -178,7 +178,7 @@ RSpec.describe 'Admin email templates', type: :request do
     page = Nokogiri::HTML(response.body)
     expect(response).to have_http_status(:ok)
     expect(page.at_css('#email-template-show-frame')).to be_nil
-    expect(page.at_css('img[alt="' + I18n.t('admin.email_templates.deltin_alt') + '"]')).to be_present
+    expect(page.at_css("img[alt=\"#{I18n.t('admin.email_templates.deltin_alt')}\"]")).to be_present
     expect(page.text).to include(I18n.t('admin.email_templates.detail_no_version'))
     expect(page.at_css('#email-test-title')).to be_present
     expect(page.at_css('input[name="email"]')).to be_nil
