@@ -83,6 +83,12 @@
   <% avatar_text = record.name.to_s[0, 2].upcase %>
   <% title_text = t("admin.shared.notifications.email_template.#{action}", name: record.name, default: record.name) %>
   <% subtitle_text = actor ? t('admin.shared.notifications.performed_by', user: actor.display_name) : record.key %>
+<% elsif record.is_a?(EmailBrandingSetting) || record.is_a?(EmailSenderSetting) %>
+  <% action = notification.params[:action].to_s %>
+  <% actor = notification.params[:user] %>
+  <% avatar_text = 'EM' %>
+  <% title_text = t("admin.shared.notifications.email_setting.#{action}") %>
+  <% subtitle_text = actor ? t('admin.shared.notifications.performed_by', user: actor.display_name) : record.class.model_name.human %>
 <% elsif record.is_a?(AccountPayable) %>
   <% stage = notification.params[:stage].to_s %>
   <% allowed_stages = %w[overdue today days_1 days_3 days_7] %>
