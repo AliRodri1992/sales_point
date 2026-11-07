@@ -8,19 +8,11 @@ class EmailTemplatesQuery
 
   def call
     scope = search(@scope)
-    scope = scope.where(locale: @filters[:locale]) if @filters[:locale].in?(%w[es en ko])
-    scope = if @filters[:status].in?(EmailTemplate::STATUSES)
-              scope.where(status: @filters[:status])
-            else
-              scope.where.not(status: 'archived')
-            end
-    scope = scope.where(category: @filters[:category]) if @filters[:category].present?
+    scope = filter_locale(scope)
+    scope = filter_status(scope)
+    scope = filter_category(scope)
     scope = filter_scope(scope)
-    from = parsed_date(:updated_from)
-    to = parsed_date(:updated_to)
-    scope = scope.where(updated_at: from.beginning_of_day..) if from
-    scope = scope.where(updated_at: ..to.end_of_day) if to
-    scope
+    filter_updated_at(scope)
   end
 
   private
@@ -33,12 +25,38 @@ class EmailTemplatesQuery
                 'OR email_templates.subject ILIKE :q', q: "%#{escaped}%")
   end
 
+  def filter_locale(scope)
+    return scope unless @filters[:locale].in?(%w[es en ko])
+
+    scope.where(locale: @filters[:locale])
+  end
+
+  def filter_status(scope)
+    return scope.where(status: @filters[:status]) if @filters[:status].in?(EmailTemplate::STATUSES)
+
+    scope.where.not(status: 'archived')
+  end
+
+  def filter_category(scope)
+    return scope if @filters[:category].blank?
+
+    scope.where(category: @filters[:category])
+  end
+
   def filter_scope(scope)
     case @filters[:scope]
     when 'global' then scope.where(organization_id: nil)
     when 'organization' then scope.where.not(organization_id: nil)
     else scope
     end
+  end
+
+  def filter_updated_at(scope)
+    from = parsed_date(:updated_from)
+    to = parsed_date(:updated_to)
+    scope = scope.where(updated_at: from.beginning_of_day..) if from
+    scope = scope.where(updated_at: ..to.end_of_day) if to
+    scope
   end
 
   def parsed_date(key)

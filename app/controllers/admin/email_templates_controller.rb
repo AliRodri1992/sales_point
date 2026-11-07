@@ -9,6 +9,7 @@ module Admin
 
     include EmailTemplatePreviews
     include EmailTemplateListing
+    include EmailTemplateLifecycle
     include EmailTemplateActivity
 
     def index
@@ -88,25 +89,6 @@ module Admin
     rescue ArgumentError => e
       redirect_to admin_email_template_path(@template),
                   flash: { swal_message: e.message, swal_icon: 'error' }
-    end
-
-    def archive
-      authorize @template, :archive?
-      @template.update!(status: 'archived', enabled: false)
-      @template.audit!(action: 'archived', actor: current_user)
-      notify_email_template('archived')
-      redirect_to admin_email_templates_path,
-                  flash: { swal_message: t('admin.email_templates.archived') }
-    end
-
-    # Retain versions and immutable audit events instead of physically deleting them.
-    def destroy
-      authorize @template, :destroy?
-      @template.update!(status: 'archived', enabled: false, updated_by: current_user)
-      @template.audit!(action: 'archived', actor: current_user)
-      notify_email_template('removed')
-      redirect_to admin_email_templates_path, status: :see_other,
-                  flash: { swal_message: t('admin.email_templates.removed') }
     end
 
     def compare
