@@ -1,75 +1,192 @@
-<main class="mx-auto max-w-5xl space-y-6 px-4 pb-8 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
-  <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+<% content_for :title, t('admin.email_templates.new') %>
+<% global_selected = params[:global] == '1' || (action_name == 'new' && current_organization.nil?) %>
+<main class="mx-auto max-w-[1360px] space-y-6 px-4 pb-10 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
+  <header class="flex flex-col gap-4 border-b border-slate-200 pb-6 lg:flex-row lg:items-start lg:justify-between">
     <div class="min-w-0">
-      <p class="text-xs font-bold uppercase tracking-widest text-emerald-700"><%= t('admin.email_templates.section') %></p>
-      <h1 class="mt-1 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.new') %></h1>
-      <p class="mt-2 text-sm leading-6 text-slate-500"><%= t('admin.email_templates.new_intro') %></p>
+      <p class="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700"><%= t('admin.email_templates.section') %></p>
+      <div class="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">
+        <%= delta_icon('document-text', class: 'size-4') %>
+        <%= t('admin.email_templates.creation_stage') %>
+      </div>
+      <h1 class="mt-3 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.new') %></h1>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= t('admin.email_templates.new_intro') %></p>
     </div>
-    <%= link_to admin_email_templates_path, class: 'inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+    <%= link_to admin_email_templates_path,
+                class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
       <%= delta_icon('arrow-left', class: 'size-4') %>
       <%= t('admin.email_templates.back') %>
     <% end %>
   </header>
 
-  <%= form_with model: @template, url: admin_email_templates_path, class: 'overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm' do |f| %>
-    <% if @template.errors.any? %>
-      <div role="alert" class="m-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-        <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
-        <ul class="mt-2 list-disc space-y-1 pl-5"><% @template.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-      </div>
-    <% end %>
-    <div class="border-b border-slate-100 px-5 py-5 sm:px-6">
-      <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.identity_title') %></h2>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.email_templates.identity_hint') %></p>
-    </div>
-    <div class="grid gap-5 px-5 py-6 sm:grid-cols-2 sm:px-6">
-      <div class="sm:col-span-2">
-        <%= f.label :name, t('admin.email_templates.columns.name'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.text_field :name, required: true, maxlength: 150, autocomplete: 'off', aria: { invalid: @template.errors[:name].any? },
-                         class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-        <%= error_message_for(@template, :name) %>
-      </div>
-      <div>
-        <%= f.label :key, t('admin.email_templates.columns.key'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.text_field :key, required: true, maxlength: 100, autocomplete: 'off', spellcheck: false,
-                         placeholder: t('admin.email_templates.key_example'), aria: { invalid: @template.errors[:key].any? },
-                         class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-mono text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-        <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.key_hint') %></p>
-        <%= error_message_for(@template, :key) %>
-      </div>
-      <div>
-        <%= f.label :category, t('admin.email_templates.columns.category'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.text_field :category, required: true, maxlength: 100, autocomplete: 'off',
-                         placeholder: t('admin.email_templates.category_example'), aria: { invalid: @template.errors[:category].any? },
-                         class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-        <%= error_message_for(@template, :category) %>
-      </div>
-      <div class="sm:col-span-2">
-        <%= f.label :locale, t('admin.email_templates.columns.locale'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <div class="relative" data-controller="delta-select" data-searchable="false">
-          <%= f.select :locale, %w[es en ko].map { |code| [t("admin.email_templates.languages.#{code}"), code] },
-                       {}, required: true, class: 'min-h-11 w-full rounded-xl border border-slate-300 px-3 text-sm' %>
-        </div>
-        <p class="mt-1.5 text-xs text-slate-500"><%= t('admin.email_templates.locale_hint') %></p>
-        <%= error_message_for(@template, :locale) %>
-      </div>
-      <% if current_user.role?('super_admin') %>
-        <div class="sm:col-span-2 rounded-xl border border-emerald-100 bg-emerald-50/70 p-4">
-          <label class="flex cursor-pointer items-start gap-3">
-            <%= check_box_tag :global, '1', params[:global] == '1', class: 'mt-0.5 size-5 rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500' %>
-            <span>
-              <span class="block text-sm font-semibold text-slate-800"><%= t('admin.email_templates.global_scope') %></span>
-              <span class="mt-1 block text-xs leading-5 text-slate-600"><%= t('admin.email_templates.global_hint') %></span>
-            </span>
-          </label>
+  <%= form_with model: @template, url: admin_email_templates_path,
+                class: 'grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1fr)_320px]',
+                data: { controller: 'email-template-identity' } do |f| %>
+    <div class="min-w-0 space-y-5">
+      <% if @template.errors.any? %>
+        <div role="alert" aria-labelledby="email-template-errors-title"
+             class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+          <p id="email-template-errors-title" class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
+          <ul class="mt-2 list-disc space-y-1 pl-5">
+            <% @template.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
         </div>
       <% end %>
+
+      <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+               aria-labelledby="email-template-identity-title">
+        <div class="flex items-start gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700" aria-hidden="true">
+            <%= delta_icon('document-text', class: 'size-5') %>
+          </span>
+          <div class="min-w-0">
+            <h2 id="email-template-identity-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.identity_title') %></h2>
+            <p class="mt-1 text-sm leading-6 text-slate-500"><%= t('admin.email_templates.identity_hint') %></p>
+            <p class="mt-2 text-xs text-slate-500"><%= t('admin.email_templates.required_hint') %></p>
+          </div>
+        </div>
+        <div class="grid gap-5 px-5 py-6 sm:px-6">
+          <div class="min-w-0">
+            <%= f.label :name, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.email_templates.columns.name') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <%= f.text_field :name, required: true, maxlength: 150, autocomplete: 'off',
+                             placeholder: t('admin.email_templates.name_example'),
+                             data: { email_template_identity_target: 'name', action: 'input->email-template-identity#nameChanged' },
+                             aria: { invalid: @template.errors[:name].any?, describedby: 'email-template-name-hint' },
+                             class: "min-h-12 w-full rounded-xl border px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-4 #{ @template.errors[:name].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-100' }" %>
+            <p id="email-template-name-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.name_hint') %></p>
+            <%= error_message_for(@template, :name) %>
+          </div>
+          <div class="min-w-0">
+            <%= f.label :key, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.email_templates.columns.key') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <%= f.text_field :key, required: true, maxlength: 100, autocomplete: 'off', autocapitalize: 'none',
+                             spellcheck: false, pattern: '[a-z][a-z0-9_]*',
+                             title: t('admin.email_templates.key_hint'),
+                             placeholder: t('admin.email_templates.key_example'),
+                             data: { email_template_identity_target: 'key', action: 'input->email-template-identity#keyChanged' },
+                             aria: { invalid: @template.errors[:key].any?, describedby: 'email-template-key-hint' },
+                             class: "min-h-12 w-full rounded-xl border px-4 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:ring-4 #{ @template.errors[:key].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-100' }" %>
+            <p id="email-template-key-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.key_hint') %></p>
+            <%= error_message_for(@template, :key) %>
+          </div>
+        </div>
+      </section>
+
+      <section class="min-w-0 overflow-visible rounded-2xl border border-slate-200 bg-white shadow-sm"
+               aria-labelledby="email-template-delivery-title">
+        <div class="flex items-start gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700" aria-hidden="true">
+            <%= delta_icon('language', class: 'size-5') %>
+          </span>
+          <div class="min-w-0">
+            <h2 id="email-template-delivery-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.delivery_title') %></h2>
+            <p class="mt-1 text-sm leading-6 text-slate-500"><%= t('admin.email_templates.delivery_hint') %></p>
+          </div>
+        </div>
+        <div class="grid gap-5 px-5 py-6 sm:grid-cols-2 sm:px-6">
+          <div class="min-w-0">
+            <%= f.label :category, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.email_templates.columns.category') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <%= f.text_field :category, required: true, maxlength: 100, autocomplete: 'off', spellcheck: false,
+                             placeholder: t('admin.email_templates.category_example'),
+                             aria: { invalid: @template.errors[:category].any?, describedby: 'email-template-category-hint' },
+                             class: "min-h-12 w-full rounded-xl border px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-4 #{ @template.errors[:category].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-100' }" %>
+            <p id="email-template-category-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.category_hint') %></p>
+            <%= error_message_for(@template, :category) %>
+          </div>
+          <div class="min-w-0">
+            <%= f.label :locale, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.email_templates.columns.locale') %> <span class="text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <div class="relative" data-controller="delta-select" data-searchable="false">
+              <%= f.select :locale, %w[es en ko].map { |code| [t("admin.email_templates.languages.#{code}"), code] },
+                           {}, required: true, aria: { invalid: @template.errors[:locale].any?,
+                                                       describedby: 'email-template-locale-hint' },
+                           class: 'min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
+            </div>
+            <p id="email-template-locale-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.locale_hint') %></p>
+            <%= error_message_for(@template, :locale) %>
+          </div>
+        </div>
+        <div class="border-t border-slate-100 px-5 py-5 sm:px-6">
+          <h3 class="text-sm font-bold text-slate-800"><%= t('admin.email_templates.scope_title') %></h3>
+          <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.scope_hint') %></p>
+          <% if current_user.role?('super_admin') %>
+            <label class="mt-3 flex cursor-pointer items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
+              <%= check_box_tag :global, '1', global_selected,
+                                class: 'mt-0.5 size-5 shrink-0 rounded border-emerald-300 text-emerald-700 focus:ring-emerald-500' %>
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold text-slate-800"><%= t('admin.email_templates.global_scope') %></span>
+                <span class="mt-1 block text-xs leading-5 text-slate-600"><%= t('admin.email_templates.global_hint') %></span>
+              </span>
+            </label>
+          <% else %>
+            <div class="mt-3 flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <%= delta_icon('shield-check', class: 'mt-0.5 size-5 shrink-0 text-emerald-700') %>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-slate-800"><%= t('admin.email_templates.organization_scope') %></p>
+                <p class="mt-1 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.organization_scope_hint') %></p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <div id="email-template-create-actions" class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+        <p class="flex items-start gap-2 text-xs leading-5 text-slate-600 sm:max-w-xs">
+          <%= delta_icon('information-circle', class: 'mt-0.5 size-4 shrink-0 text-emerald-700') %>
+          <%= t('admin.email_templates.creation_safe_hint') %>
+        </p>
+        <div class="flex flex-wrap items-center gap-2">
+          <%= link_to t('admin.email_templates.cancel'), admin_email_templates_path,
+                      class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+          <%= button_tag type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+            <%= t('admin.email_templates.create_draft') %>
+            <%= delta_icon('arrow-right', class: 'size-4') %>
+          <% end %>
+        </div>
+      </div>
     </div>
-    <footer class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-      <%= link_to t('admin.email_templates.cancel'), admin_email_templates_path,
-                  class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-100' %>
-      <%= f.submit t('admin.email_templates.create_draft'),
-                   class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
-    </footer>
+
+    <aside class="min-w-0 space-y-4 xl:sticky xl:top-6" aria-labelledby="email-template-guidance-title">
+      <section class="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-sm">
+        <div class="flex items-center gap-3 border-b border-emerald-100 bg-emerald-50/70 px-5 py-4">
+          <%= image_tag 'deltin/waving.svg', alt: t('admin.email_templates.deltin_alt'),
+                        class: 'size-16 shrink-0 object-contain' %>
+          <div class="min-w-0">
+            <h2 id="email-template-guidance-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.guidance_title') %></h2>
+            <p class="mt-1 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.guidance_hint') %></p>
+          </div>
+        </div>
+        <ol class="space-y-0 px-5 py-4">
+          <li class="flex gap-3 border-b border-slate-100 pb-4">
+            <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-bold text-white">1</span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-slate-900"><%= t('admin.email_templates.step_identity_title') %></p>
+              <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.step_identity_hint') %></p>
+            </div>
+          </li>
+          <li class="flex gap-3 border-b border-slate-100 py-4">
+            <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-600">2</span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-slate-900"><%= t('admin.email_templates.step_content_title') %></p>
+              <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.step_content_hint') %></p>
+            </div>
+          </li>
+          <li class="flex gap-3 pt-4">
+            <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xs font-bold text-slate-600">3</span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-slate-900"><%= t('admin.email_templates.step_publish_title') %></p>
+              <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.step_publish_hint') %></p>
+            </div>
+          </li>
+        </ol>
+      </section>
+    </aside>
   <% end %>
 </main>

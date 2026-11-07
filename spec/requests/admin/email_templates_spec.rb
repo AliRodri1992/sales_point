@@ -328,6 +328,49 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: :ko))
   end
 
+  it 'shows the creation workflow, localized guidance and accessible required inputs' do
+    get new_admin_email_template_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#email-template-identity-title')).to be_present
+    expect(page.at_css('#email-template-delivery-title')).to be_present
+    expect(page.at_css('#email-template-guidance-title')).to be_present
+    expect(page.at_css('#email-template-create-actions button[type="submit"]')).to be_present
+    expect(page.at_css('img[alt="' + I18n.t('admin.email_templates.deltin_alt') + '"]')).to be_present
+    expect(page.at_css('input#email_template_key[pattern="[a-z][a-z0-9_]*"]')).to be_present
+    expect(page.at_css('[data-controller="email-template-identity"]')).to be_present
+    expect(page.css('label[for="email_template_locale"]').size).to eq(1)
+    expect(page.at_css('select#email_template_locale option[value="es"]').text)
+      .to include(I18n.t('admin.email_templates.languages.es'))
+  end
+
+  it 'keeps invalid identity input visible with field-level errors' do
+    post admin_email_templates_path, params: {
+      email_template: { key: 'invalid-key', name: '', category: '', locale: 'es' }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#email-template-key-hint')).to be_present
+    expect(page.at_css('input#email_template_key')['value']).to eq('invalid-key')
+    expect(page.at_css('input#email_template_key')['aria-invalid']).to eq('true')
+    expect(page.at_css('#email-template-errors-title')).to be_present
+    expect(EmailTemplate.where(key: 'invalid-key')).to be_empty
+  end
+
+  it 'does not create a global template from an unchecked form without an organization' do
+    administrator.organization_memberships.destroy_all
+
+    post admin_email_templates_path, params: {
+      email_template: { key: 'unchecked_global', name: 'Unchecked', category: 'security', locale: 'es' }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.email_templates.organization_required'))
+    expect(EmailTemplate.global.where(key: 'unchecked_global')).to be_empty
+  end
+
   it 'keeps test sending disabled until publication and restricts the recipient for administrators' do
     template = create_template(organization:)
 

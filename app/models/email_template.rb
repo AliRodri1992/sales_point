@@ -16,6 +16,9 @@ class EmailTemplate < ApplicationRecord
   validates :key, :locale, :name, :category, :subject, :html_body, :text_body, presence: true
   validates :status, inclusion: { in: STATUSES }
   validates :locale, inclusion: { in: %w[es en ko] }
+  validates :name, length: { maximum: 150 }
+  validates :key, length: { maximum: 100 }
+  validates :category, length: { maximum: 100 }
   validates :key, format: { with: /\A[a-z][a-z0-9_]*\z/ }
   validates :version, numericality: { only_integer: true, greater_than: 0 }
   validates :key, uniqueness: { scope: %i[organization_id locale] }

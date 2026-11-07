@@ -49,6 +49,11 @@ module Admin
     end
 
     def save_new_template
+      if current_organization.nil? && params[:global] != '1'
+        @template.errors.add(:base, t('admin.email_templates.organization_required'))
+        return render :new, status: :unprocessable_content
+      end
+
       if @template.save
         draft = @template.new_draft!(actor: current_user)
         @template.audit!(action: 'created', actor: current_user, version: draft)

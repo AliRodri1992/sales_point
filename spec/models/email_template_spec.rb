@@ -12,4 +12,12 @@ RSpec.describe EmailTemplate, type: :model do
     expect(html).not_to include('<script>')
     expect(plain).to include('<script>')
   end
+  it 'validates identity field lengths on the server, including non-browser clients' do
+    template = described_class.new(key: 'n' * 101, name: 'N' * 151, category: 'C' * 101,
+                                   locale: 'es', subject: 'Subject', html_body: '<p>Body</p>',
+                                   text_body: 'Body', status: 'draft')
+
+    expect(template).not_to be_valid
+    expect(template.errors.attribute_names).to include(:key, :name, :category)
+  end
 end
