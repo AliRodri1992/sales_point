@@ -360,6 +360,7 @@ RSpec.describe 'Admin email templates', type: :request do
   end
 
   it 'does not create a global template from an unchecked form without an organization' do
+    role.update!(code: 'super_admin')
     administrator.organization_memberships.destroy_all
 
     post admin_email_templates_path, params: {
