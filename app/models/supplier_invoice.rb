@@ -2,6 +2,7 @@
 
 class SupplierInvoice < ApplicationRecord
   include HasPolymorphicNotes
+
   has_paper_trail
   belongs_to :organization
   belongs_to :supplier

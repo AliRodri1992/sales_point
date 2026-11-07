@@ -2,6 +2,7 @@
 
 class SupplierEvent < ApplicationRecord
   include HasPolymorphicNotes
+
   KINDS = %w[visit order delivery other].freeze
   STATUSES = %w[scheduled completed cancelled].freeze
 

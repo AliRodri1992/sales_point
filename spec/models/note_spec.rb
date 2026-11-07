@@ -38,9 +38,9 @@ RSpec.describe Note, type: :model do
 
   it 'returns the polymorphic note as the authoritative form value' do
     branch.update!(notes: 'Stored in notes')
-    branch.update_columns(notes: 'Stale legacy value')
+    branch.note_entries.general.sole.update!(body: 'Polymorphic authoritative')
 
-    expect(branch.reload.note_body).to eq('Stored in notes')
+    expect(branch.reload.note_body).to eq('Polymorphic authoritative')
   end
 
   it 'supports the same note relationship for records without an organization' do

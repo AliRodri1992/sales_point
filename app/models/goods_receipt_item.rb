@@ -2,6 +2,7 @@
 
 class GoodsReceiptItem < ApplicationRecord
   include HasPolymorphicNotes
+
   belongs_to :goods_receipt
   belongs_to :purchase_order_item
   has_many :inventory_lots, dependent: :restrict_with_exception

@@ -2,6 +2,7 @@
 
 class PurchaseOrder < ApplicationRecord
   include HasPolymorphicNotes
+
   has_paper_trail
 
   belongs_to :organization

@@ -12,15 +12,9 @@ module HasPolymorphicNotes
 
   def note_body
     return @note_body if defined?(@note_body)
-    return self[:notes] if has_attribute?(:notes) &&
-                           (new_record? || will_save_change_to_attribute?('notes'))
+    return legacy_note_body if pending_note_change?
 
-    entry = if association(:note_entries).loaded?
-              note_entries.find { |note| note.kind == 'general' }
-            elsif persisted?
-              note_entries.find_by(kind: 'general')
-            end
-    entry&.body || (has_attribute?(:notes) ? self[:notes] : nil)
+    general_note_entry&.body || legacy_note_body
   end
 
   def note_body=(value)
@@ -32,38 +26,62 @@ module HasPolymorphicNotes
   def note_organization
     return organization if respond_to?(:organization) && organization.present?
 
-    parents = %i[supplier contactable goods_receipt purchase_request purchase_return purchase_order]
-    parents.each do |name|
-      next unless respond_to?(name)
-
-      parent = public_send(name)
-      return parent if parent.is_a?(Organization)
-      return parent.organization if parent&.respond_to?(:organization) && parent.organization.present?
-    end
-    nil
+    parent_note_organization
   end
 
   private
+
+  def pending_note_change?
+    return false unless has_attribute?(:notes)
+
+    new_record? || will_save_change_to_attribute?('notes')
+  end
+
+  def legacy_note_body
+    self[:notes] if has_attribute?(:notes)
+  end
+
+  def general_note_entry
+    return note_entries.find { |entry| entry.kind == 'general' } if association(:note_entries).loaded?
+
+    note_entries.find_by(kind: 'general') if persisted?
+  end
+
+  def parent_note_organization
+    %i[supplier contactable goods_receipt purchase_request purchase_return purchase_order].each do |name|
+      next unless respond_to?(name)
+
+      parent = public_send(name)
+      next unless parent
+
+      return parent if parent.is_a?(Organization)
+      return parent.organization if parent.respond_to?(:organization) && parent.organization.present?
+    end
+    nil
+  end
 
   def general_note_changed?
     @note_body_assigned || (has_attribute?(:notes) && saved_change_to_attribute?('notes'))
   end
 
   def sync_general_note
-    content = @note_body_assigned ? @note_body : self[:notes].to_s.strip.presence
+    content = @note_body_assigned ? @note_body : legacy_note_body.to_s.strip.presence
     entry = note_entries.find_by(kind: 'general')
     if content.present?
-      if entry
-        entry.update!(body: content, organization: note_organization) if entry.body != content ||
-                                                                  entry.organization_id != note_organization&.id
-      else
-        note_entries.create!(kind: 'general', body: content, organization: note_organization)
-      end
+      write_general_note(entry, content)
     else
       entry&.destroy!
     end
   ensure
     remove_instance_variable(:@note_body_assigned) if instance_variable_defined?(:@note_body_assigned)
     remove_instance_variable(:@note_body) if instance_variable_defined?(:@note_body)
+  end
+
+  def write_general_note(entry, content)
+    organization = note_organization
+    return note_entries.create!(kind: 'general', body: content, organization:) unless entry
+    return if entry.body == content && entry.organization_id == organization&.id
+
+    entry.update!(body: content, organization:)
   end
 end

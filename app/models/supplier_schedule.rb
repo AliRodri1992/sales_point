@@ -2,6 +2,7 @@
 
 class SupplierSchedule < ApplicationRecord
   include HasPolymorphicNotes
+
   has_paper_trail
 
   scope :not_deleted, -> { where(deleted_at: nil) }

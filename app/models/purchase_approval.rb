@@ -2,6 +2,7 @@
 
 class PurchaseApproval < ApplicationRecord
   include HasPolymorphicNotes
+
   belongs_to :organization
   belongs_to :purchase_order
   belongs_to :decided_by, class_name: 'User'

@@ -2,6 +2,7 @@
 
 class Contact < ApplicationRecord
   include HasPolymorphicNotes
+
   has_paper_trail if: ->(record) { record.contactable_type == 'Supplier' }
 
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception

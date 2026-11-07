@@ -14,7 +14,7 @@ class Note < ApplicationRecord
   private
 
   def matching_organization
-    return unless notable&.respond_to?(:note_organization)
+    return unless notable.respond_to?(:note_organization)
 
     expected = notable.note_organization
     errors.add(:organization, :invalid) if expected && organization_id != expected.id

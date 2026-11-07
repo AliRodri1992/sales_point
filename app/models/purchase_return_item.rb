@@ -2,6 +2,7 @@
 
 class PurchaseReturnItem < ApplicationRecord
   include HasPolymorphicNotes
+
   has_paper_trail
   belongs_to :purchase_return
   belongs_to :goods_receipt_item
