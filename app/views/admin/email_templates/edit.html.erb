@@ -12,20 +12,26 @@
     <% end %>
   </header>
 
+  <%= render 'workflow_steps', step: 2 %>
+
   <%= form_with model: @draft, url: draft_admin_email_template_path(@template, version_id: @draft.id),
                 method: :patch, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]',
-                data: { controller: 'email-template-preview',
+                data: { controller: 'email-template-preview email-template-editor',
                         action: 'input->email-template-preview#schedule change->email-template-preview#schedule',
                         email_template_preview_url_value: preview_draft_admin_email_template_path(@template, version_id: @draft.id),
                         email_template_preview_error_value: t('admin.email_templates.preview_error'),
                         email_template_preview_loading_value: t('admin.email_templates.preview_loading') } do |f| %>
     <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="template-editor-title">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
-        <div>
+        <div class="min-w-0">
           <h2 id="template-editor-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.content_title') %></h2>
           <p class="mt-1 text-xs text-slate-500"><%= t('admin.email_templates.content_hint') %></p>
         </div>
-        <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800"><%= t('admin.email_templates.status_labels.draft') %> · v<%= @draft.version_number %></span>
+        <div class="flex items-center gap-2">
+          <%= image_tag 'deltin/waving.svg', alt: t('admin.email_templates.deltin_alt'),
+                        class: 'hidden size-12 shrink-0 object-contain sm:block' %>
+          <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800"><%= t('admin.email_templates.status_labels.draft') %> · v<%= @draft.version_number %></span>
+        </div>
       </div>
 
       <% if @draft.errors.any? %>
@@ -35,42 +41,71 @@
         </div>
       <% end %>
 
-      <div class="space-y-5 px-5 py-5 sm:px-6">
-        <div>
+      <div class="space-y-6 px-5 py-5 sm:px-6">
+        <div class="grid gap-4 lg:grid-cols-2">
+          <div class="min-w-0">
           <%= f.label :subject, t('admin.email_templates.subject'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :subject, required: true, maxlength: 250, aria: { invalid: @draft.errors[:subject].any? },
+                           data: { action: 'focus->email-template-editor#rememberField' },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
           <%= error_message_for(@draft, :subject) %>
-        </div>
-        <div>
+          </div>
+          <div class="min-w-0">
           <%= f.label :preheader, t('admin.email_templates.preheader'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :preheader, maxlength: 250, aria: { invalid: @draft.errors[:preheader].any? },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.preheader_hint') %></p>
           <%= error_message_for(@draft, :preheader) %>
+          </div>
         </div>
-        <div>
+        <div class="min-w-0">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+            <p class="text-sm font-bold text-slate-800"><%= t('admin.email_templates.html_source') %></p>
+            <span class="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">HTML</span>
+          </div>
           <%= f.label :html_body, t('admin.email_templates.html_source'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_area :html_body, rows: 13, required: true, spellcheck: false,
+          <div class="mb-3 flex flex-wrap items-center gap-2" role="group" aria-label="<%= t('admin.email_templates.insert_variable') %>">
+            <% %w[recipient_name organization_name activation_url platform_logo].each do |variable| %>
+              <button type="button" data-action="click->email-template-editor#insertVariable"
+                      data-variable="<%= variable %>" title="<%= t('admin.email_templates.insert_variable') %>"
+                      class="min-h-9 rounded-lg border border-emerald-200 bg-emerald-50 px-3 font-mono text-[11px] font-semibold text-emerald-900 hover:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-emerald-600">
+                <%= "{{#{variable}}}" %>
+              </button>
+            <% end %>
+          </div>
+          <%= f.text_area :html_body, rows: 14, required: true, spellcheck: false,
+                          data: { email_template_editor_target: 'htmlBody', action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:html_body].any? },
-                          class: 'block min-h-72 w-full resize-y rounded-xl border border-slate-300 bg-slate-50/60 px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
+                          class: 'block min-h-80 w-full resize-y rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 font-mono text-xs leading-6 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
           <%= error_message_for(@draft, :html_body) %>
         </div>
         <div>
           <%= f.label :text_body, t('admin.email_templates.plain_text'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_area :text_body, rows: 5, required: true, aria: { invalid: @draft.errors[:text_body].any? },
+          <%= f.text_area :text_body, rows: 7, required: true,
+                          data: { action: 'focus->email-template-editor#rememberField' },
+                          aria: { invalid: @draft.errors[:text_body].any? },
                           class: 'block min-h-32 w-full resize-y rounded-xl border border-slate-300 bg-slate-50/60 px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
           <%= error_message_for(@draft, :text_body) %>
         </div>
         <div>
           <%= f.label :allowed_variables_csv, t('admin.email_templates.variables'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :allowed_variables_csv, autocomplete: 'off', spellcheck: false,
+                           data: { email_template_editor_target: 'variables' },
                            aria: { invalid: @draft.errors[:allowed_variables].any? },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-mono text-xs focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.variables_hint') %></p>
           <details class="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
             <summary class="cursor-pointer text-xs font-semibold text-emerald-800"><%= t('admin.email_templates.available_variables') %></summary>
-            <p class="mt-2 break-words font-mono text-xs leading-6 text-slate-600"><%= EmailTemplates::Renderer::KNOWN_VARIABLES.join(', ') %></p>
+            <p class="mt-2 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.editor_shortcuts_hint') %></p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <% EmailTemplates::Renderer::KNOWN_VARIABLES.each do |variable| %>
+                <button type="button" data-action="click->email-template-editor#insertVariable"
+                        data-variable="<%= variable %>" title="<%= t('admin.email_templates.insert_variable') %>"
+                        class="min-h-9 rounded-lg border border-slate-200 bg-white px-2.5 font-mono text-[11px] text-slate-700 hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-600">
+                  <%= "{{#{variable}}}" %>
+                </button>
+              <% end %>
+            </div>
           </details>
           <%= error_message_for(@draft, :allowed_variables) %>
         </div>
@@ -78,6 +113,7 @@
       <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
         <span class="text-xs leading-5 text-slate-500"><%= t('admin.email_templates.save_hint') %></span>
         <%= f.submit t('admin.email_templates.save_draft'),
+                     data: { turbo_submits_with: t('admin.email_templates.saving_draft') },
                      class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
       </footer>
     </section>
@@ -88,7 +124,7 @@
           <h2 id="email-preview-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.live_preview') %></h2>
           <p class="mt-1 text-xs text-slate-500"><%= t('admin.email_templates.preview_hint') %></p>
         </div>
-        <% if policy(@template).preview? %>
+        <% if policy(@template).preview? && policy(@template).versions? %>
         <%= link_to t('admin.email_templates.saved_preview'), preview_admin_email_template_path(@template, version_id: @draft.id),
                     class: 'inline-flex min-h-10 items-center rounded-lg border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-100' %>
         <% end %>
