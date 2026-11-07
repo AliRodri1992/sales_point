@@ -17,16 +17,20 @@ module Admin
     def update
       verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
-      EmailSenderSetting.transaction do
-        if @sender.update(sender_params)
-          EmailSettingAudit.record!(setting: @sender, actor: current_user, kind: 'sender')
-          notify_email_setting('sender_updated', @sender)
-          redirect_to edit_admin_email_sender_settings_path, flash: { swal_message: t('admin.email_templates.saved') }
-        else
-          @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                     .includes(:actor).order(created_at: :desc).limit(20)
-          render :edit, status: :unprocessable_content
-        end
+      saved = EmailSenderSetting.transaction do
+        next false unless @sender.update(sender_params)
+
+        EmailSettingAudit.record!(setting: @sender, actor: current_user, kind: 'sender')
+        true
+      end
+      if saved
+        notify_email_setting('sender_updated', @sender)
+        redirect_to edit_admin_email_sender_settings_path,
+                    flash: { swal_message: t('admin.email_templates.saved') }
+      else
+        @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
+                                   .includes(:actor).order(created_at: :desc).limit(20)
+        render :edit, status: :unprocessable_content
       end
     end
 
