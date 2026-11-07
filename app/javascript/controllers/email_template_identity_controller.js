@@ -45,7 +45,10 @@ export default class extends Controller {
       this.summaryCategoryTarget.textContent = this.categoryTarget.value.trim() || "—"
     }
     if (this.hasSummaryLocaleTarget && this.hasLocaleTarget) {
-      this.summaryLocaleTarget.textContent = this.localeTarget.selectedOptions[0]?.textContent?.trim() || "—"
+      const label = this.localeTarget.tagName === "SELECT"
+        ? this.localeTarget.selectedOptions[0]?.textContent
+        : this.localeTarget.textContent
+      this.summaryLocaleTarget.textContent = label?.trim() || "—"
     }
   }
 }

@@ -407,32 +407,33 @@ RSpec.describe 'Admin email templates', type: :request do
     get new_admin_email_template_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('[data-controller="delta-select"] select#email_template_locale')).to be_present
+    expect(document.at_css('#email-template-language-display')).to be_present
     expect(document.at_css('input#email_template_key')).to be_present
 
     post admin_email_templates_path, params: {
       email_template: { key: 'welcome_mail', name: 'Welcome mail', category: 'transactional', locale: 'ko' }
     }
     template = EmailTemplate.find_by!(key: 'welcome_mail', organization:)
-    expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: :ko))
+    expect(template.locale).to eq(I18n.locale.to_s)
+    expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: template.locale))
   end
 
-  it 'starts every new locale with an editable full-logo email layout' do
+  it 'starts new templates with an editable branded email in the active locale' do
     %w[es en ko].each do |locale|
-      post admin_email_templates_path, params: {
-        email_template: {
-          key: "draft_#{locale}", name: "Draft #{locale}",
-          category: 'transactional', locale:
-        }
-      }
-      expect(response).to have_http_status(:redirect)
-      template = EmailTemplate.find_by!(key: "draft_#{locale}", organization:)
-      expect(template.html_body).to include('src="{{platform_logo}}"')
-      expect(template.html_body).to include('{{recipient_name}}', '{{organization_name}}')
-      expect(template.text_body).to include('{{recipient_name}}')
-      draft = template.versions.order(:version_number).last
-      expect(draft.allowed_variables).to include('platform_logo', 'recipient_name', 'organization_name')
+      expect(EmailTemplates::DraftStarter.html(locale)).to include('src="{{platform_logo}}"')
+      expect(EmailTemplates::DraftStarter.html(locale)).to include('{{recipient_name}}')
+      expect(EmailTemplates::DraftStarter.plain(locale)).to include('{{recipient_name}}')
     end
+
+    post admin_email_templates_path, params: {
+      email_template: { key: 'new_branded', name: 'Branded draft', category: 'transactional' }
+    }
+    expect(response).to have_http_status(:redirect)
+    template = EmailTemplate.find_by!(key: 'new_branded', organization:)
+    expect(template.html_body).to include('{{platform_logo}}')
+    expect(template.text_body).to include('{{organization_name}}')
+    expect(template.versions.order(:version_number).last.allowed_variables)
+      .to include('platform_logo', 'recipient_name', 'organization_name')
   end
 
   it 'shows the creation workflow, localized guidance and accessible required inputs' do
@@ -447,9 +448,9 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css("img[alt=\"#{I18n.t('admin.email_templates.deltin_alt')}\"]")).to be_present
     expect(page.at_css('input#email_template_key[pattern="[a-z][a-z0-9_]*"]')).to be_present
     expect(page.at_css('[data-controller="email-template-identity"]')).to be_present
-    expect(page.css('label[for="email_template_locale"]').size).to eq(1)
-    expect(page.at_css('select#email_template_locale option[value="es"]').text)
-      .to include(I18n.t('admin.email_templates.languages.es'))
+    expect(page.at_css('#email-template-language-display')).to be_present
+    expect(page.at_css('select#email_template_locale')).to be_nil
+    expect(page.text).to include(I18n.t('admin.email_templates.automatic_locale_hint'))
   end
 
   it 'keeps invalid identity input visible with field-level errors' do

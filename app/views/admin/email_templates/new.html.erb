@@ -137,7 +137,7 @@
             <div id="email-template-language-display" aria-describedby="email-template-locale-hint"
                  class="flex min-h-12 items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 text-sm font-semibold text-emerald-900">
               <%= delta_icon('language', class: 'size-5 shrink-0') %>
-              <span><%= t("admin.email_templates.languages.#{@template.locale}") %></span>
+              <span data-email-template-identity-target="locale"><%= t("admin.email_templates.languages.#{@template.locale}") %></span>
             </div>
             <p id="email-template-locale-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.automatic_locale_hint') %></p>
           </div>
