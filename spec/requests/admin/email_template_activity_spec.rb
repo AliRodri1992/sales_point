@@ -64,6 +64,21 @@ RSpec.describe 'Email template locale and activity', type: :request do
     expect(administrator.notifications.last.event.params[:action]).to eq('created')
   end
 
+  it 'renders email template notifications in the actual notification panel' do
+    post admin_email_templates_path, params: {
+      email_template: { key: 'panel_notice', name: 'Panel notice', category: 'security' }
+    }
+    get admin_email_templates_path
+
+    document = Nokogiri::HTML(response.body)
+    list = document.at_css('#notifications_list')
+    expect(list).to be_present
+    expect(list.text).to include(
+      I18n.t('admin.shared.notifications.email_template.created', name: 'Panel notice', locale: :en)
+    )
+    expect(list.text).to include(I18n.t('admin.shared.notifications.types.email_template', locale: :en))
+  end
+
   it 'notifies only after a successful draft update' do
     template = create_draft
     draft = template.new_draft!(actor: administrator)
