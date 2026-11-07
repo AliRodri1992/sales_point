@@ -1,30 +1,51 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Progressive enhancement: the key remains editable and is never overwritten
-// after the user has entered a value manually.
+// Derive the key from the name until it is manually edited.
 export default class extends Controller {
-  static targets = ["name", "key"]
+  static targets = [
+    "name", "key", "category", "locale",
+    "summaryName", "summaryKey", "summaryCategory", "summaryLocale"
+  ]
 
   connect() {
     this.keyEdited = this.keyTarget.value.trim().length > 0
+    this.updateSummary()
   }
 
   nameChanged() {
-    if (this.keyEdited) return
-
-    const normalized = this.nameTarget.value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "")
-      .replace(/^[^a-z]+/, "")
-      .slice(0, 100)
-
-    this.keyTarget.value = normalized
+    if (!this.keyEdited) {
+      this.keyTarget.value = this.nameTarget.value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .replace(/^[^a-z]+/, "")
+        .slice(0, 100)
+    }
+    this.updateSummary()
   }
 
   keyChanged() {
     this.keyEdited = true
+    this.updateSummary()
+  }
+
+  selectCategory(event) {
+    if (!this.hasCategoryTarget) return
+    this.categoryTarget.value = event.currentTarget.dataset.categoryValue
+    this.categoryTarget.dispatchEvent(new Event("input", { bubbles: true }))
+    this.categoryTarget.focus()
+  }
+
+  updateSummary() {
+    if (this.hasSummaryNameTarget) this.summaryNameTarget.textContent = this.nameTarget.value.trim() || "—"
+    if (this.hasSummaryKeyTarget) this.summaryKeyTarget.textContent = this.keyTarget.value.trim() || "—"
+    if (this.hasSummaryCategoryTarget && this.hasCategoryTarget) {
+      this.summaryCategoryTarget.textContent = this.categoryTarget.value.trim() || "—"
+    }
+    if (this.hasSummaryLocaleTarget && this.hasLocaleTarget) {
+      this.summaryLocaleTarget.textContent = this.localeTarget.selectedOptions[0]?.textContent?.trim() || "—"
+    }
   }
 }
