@@ -16,7 +16,8 @@ module EmailTemplateLifecycle
     @template.update!(status: 'archived', enabled: false, updated_by: current_user)
     @template.audit!(action: 'archived', actor: current_user)
     notify_email_template('removed')
-    redirect_to admin_email_templates_path, status: :see_other,
+    redirect_to admin_email_templates_path,
+                status: :see_other,
                 flash: { swal_message: t('admin.email_templates.removed') }
   end
 end
