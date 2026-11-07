@@ -113,7 +113,8 @@ module Admin
         'Template not published' => t('admin.email_templates.test_not_published'),
         'Test email limit reached' => t('admin.email_templates.test_limit_reached')
       }.fetch(e.message, e.message)
-      redirect_to admin_email_template_path(@template), alert: message
+      redirect_to admin_email_template_path(@template),
+                  flash: { swal_message: message, swal_icon: 'error' }
     end
 
     private
