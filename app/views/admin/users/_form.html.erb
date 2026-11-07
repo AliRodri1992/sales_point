@@ -7,8 +7,8 @@
                        else
                          []
                        end %>
-<div class="catalog-workspace space-y-6">
-  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+<div class="catalog-workspace space-y-6 <%= 'users-create-workspace' unless editing %>">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between <%= 'mx-auto max-w-6xl' unless editing %>">
     <div class="min-w-0">
       <p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
       <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= title %></h1>
@@ -21,9 +21,41 @@
   </header>
 
   <%= form_with model: @user, url: editing ? admin_user_path(@user) : admin_users_path,
-                html: { novalidate: true }, data: { controller: 'user-access', action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission' }, class: 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' do |form| %>
+                html: { novalidate: true }, data: { controller: 'user-access', action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission' }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
     <div class="min-w-0 space-y-5">
       <%= catalog_errors(@user) %>
+
+      <% unless editing %>
+        <section id="users-create-deltin" class="relative overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50 shadow-sm" aria-labelledby="users-create-deltin-title">
+          <div class="pointer-events-none absolute -right-12 -top-24 size-56 rounded-full bg-emerald-100/70 blur-3xl" aria-hidden="true"></div>
+          <div class="relative flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8 sm:py-6">
+            <div class="min-w-0 flex-1">
+              <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/90 px-3 py-1 text-xs font-semibold text-emerald-800">
+                <%= delta_icon('shield-check', class: 'size-4') %>
+                <%= t('admin.users.form.invitation_title') %>
+              </span>
+              <h2 id="users-create-deltin-title" class="mt-3 font-jakarta text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"><%= t('admin.users.ui.create_hero_title') %></h2>
+              <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= t('admin.users.ui.create_hero_hint') %></p>
+              <ol class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-emerald-800" aria-label="<%= t('admin.users.ui.create_steps_label') %>">
+                <% %w[identity access invitation].each_with_index do |step, index| %>
+                  <li class="inline-flex items-center gap-1.5">
+                    <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-[10px] font-bold text-white"><%= index + 1 %></span>
+                    <%= t("admin.users.ui.create_step_#{step}") %>
+                  </li>
+                <% end %>
+              </ol>
+            </div>
+            <div class="flex shrink-0 items-center gap-3 self-start sm:flex-col sm:gap-1 sm:self-center">
+              <span class="flex size-24 items-center justify-center rounded-2xl border border-white/80 bg-white/75 shadow-sm sm:size-32">
+                <%= image_tag 'deltin/waving.svg', alt: t('admin.users.ui.deltin_alt'), width: 112, height: 112,
+                              class: 'size-24 object-contain sm:size-28', loading: 'lazy', draggable: false %>
+              </span>
+              <span class="text-xs font-bold tracking-wide text-emerald-800">Deltín</span>
+            </div>
+          </div>
+        </section>
+      <% end %>
+
       <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><a href="#users-identity-title"><%= t('admin.users.ui.form_identity') %></a><% if current_user.admin? %><a href="#users-access-title"><%= t('admin.users.form.fields.system_roles') %></a><a href="#users-branches-title"><%= t('admin.users.ui.branch_access_title') %></a><% end %><a href="#users-preferences-title"><%= t('admin.users.ui.form_preferences') %></a></nav>
 
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-identity-title">
@@ -69,12 +101,7 @@
         </div>
       </section>
 
-      <% unless editing %>
-        <section class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-          <p class="font-semibold text-emerald-900"><%= t('admin.users.form.invitation_title') %></p>
-          <p class="mt-2 text-sm text-emerald-800"><%= t('admin.users.form.invitation_hint') %></p>
-        </section>
-      <% end %>
+
       <% if current_user.admin? %>
       <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-access-title">
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
@@ -88,7 +115,7 @@
           <%= hidden_field_tag 'user[system_role_ids][]', '' %>
           <% if @roles.any? %>
             <div class="catalog-field mb-4"><label for="user-role-search"><%= t('admin.catalog_design.find_role') %></label><input id="user-role-search" type="search" data-action="input->user-access#filter" placeholder="<%= t('admin.catalog_design.find_role_hint') %>"></div><p class="catalog-hint mb-3" role="status" aria-live="polite" data-user-access-target="summary" data-empty-label="<%= t('admin.users.ui.roles_none_selected') %>" data-selected-label="<%= t('admin.users.ui.roles_selected') %>"></p><p class="hidden mb-3 text-sm text-slate-500" data-user-access-target="empty" role="status"><%= t('admin.users.ui.roles_no_matches') %></p>
-            <div class="grid gap-3 sm:grid-cols-2">
+            <div class="grid gap-3 sm:grid-cols-2 <%= 'lg:grid-cols-3' unless editing %>">
               <% @roles.each do |role| %>
                 <label data-user-access-target="role" data-role-name="<%= system_role_name(role) %>" for="user_role_<%= role.id %>" class="flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/40 px-4 py-3 transition hover:border-emerald-300 hover:bg-emerald-50/50 focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-100">
                   <%= check_box_tag 'user[system_role_ids][]', role.id, selected_role_ids.include?(role.id),
@@ -218,6 +245,28 @@
         </div>
       </section>
 
+      <% unless editing %>
+        <section id="users-review" class="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm" aria-labelledby="users-review-title">
+          <div class="flex items-start gap-3 p-5 sm:items-center sm:px-6">
+            <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+              <%= delta_icon('shield-check', class: 'size-6') %>
+            </span>
+            <div class="min-w-0">
+              <h2 id="users-review-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.ui.form_help_title') %></h2>
+              <p class="mt-1 text-sm leading-6 text-slate-600"><%= t('admin.users.ui.create_review_hint') %></p>
+            </div>
+          </div>
+          <ul class="grid gap-2 border-t border-emerald-100 bg-emerald-50/40 px-5 py-4 text-xs font-semibold text-emerald-900 sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <% %w[identity permissions invitation].each_with_index do |item, index| %>
+              <li class="flex items-start gap-2">
+                <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-[11px] text-emerald-700 shadow-sm"><%= index + 1 %></span>
+                <span><%= t("admin.users.ui.create_review_#{item}") %></span>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
       <footer class="flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:px-6">
         <%= link_to t('admin.users.form.buttons.back'), editing ? admin_user_path(@user) : admin_users_path,
                     class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
@@ -226,6 +275,7 @@
       </footer>
     </div>
 
+    <% if editing %>
     <aside class="space-y-4 xl:sticky xl:top-24" aria-label="<%= t('admin.users.ui.form_help_title') %>">
       <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('information-circle', class: 'size-6') %></span>
@@ -246,5 +296,6 @@
         </div>
       <% end %>
     </aside>
+    <% end %>
   <% end %>
 </div>

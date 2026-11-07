@@ -49,6 +49,9 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response.body).to include('data-user-access-target="submitButton"')
       expect(response.body).to include('data-empty-label=')
       expect(response.body).to include('maxlength="254"')
+      expect(response.body).to include('id="users-create-deltin"')
+      expect(response.body).to include('id="users-review-title"')
+      expect(response.body).not_to include('xl:sticky xl:top-24')
     end
   end
 
@@ -71,6 +74,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('name="user[email]"')
       expect(response.body).to include('edit-profile@example.com')
+      expect(response.body).not_to include('id="users-create-deltin"')
+      expect(response.body).to include('xl:sticky xl:top-24')
       expect(response.body).not_to include('name="user[status]"')
     end
   end

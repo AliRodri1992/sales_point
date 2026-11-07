@@ -35,6 +35,21 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end
 
+  scenario 'places the review near submit and shows Deltín without horizontal overflow' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit new_admin_user_path
+
+    expect(page).to have_css('#users-create-deltin img[alt="Deltín, the Delta POS mascot"]')
+    expect(page).to have_css('#users-review-title', text: 'Before saving')
+    expect(page).to have_no_css('.users-create-workspace aside')
+    order = page.evaluate_script(<<~JS)
+      ['users-create-deltin', 'users-identity-title', 'users-preferences-title', 'users-review-title']
+        .map((id) => document.getElementById(id)?.getBoundingClientRect().top)
+    JS
+    expect(order).to eq(order.sort)
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+  end
+
   scenario 'offers clear role selection feedback and guards against repeated submits' do
     visit new_admin_user_path
 
