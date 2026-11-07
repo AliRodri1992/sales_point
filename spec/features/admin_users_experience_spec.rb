@@ -35,6 +35,17 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end
 
+  scenario 'offers clear role selection feedback and guards against repeated submits' do
+    visit new_admin_user_path
+
+    expect(page).to have_css('[data-user-access-target="summary"]', text: 'No roles selected')
+    expect(page).to have_css('#user_email[maxlength="254"]')
+    expect(page).to have_css('input[data-user-access-target="submitButton"]')
+
+    fill_in 'Search role', with: 'role-that-does-not-exist'
+    expect(page).to have_css('[data-user-access-target="empty"]:not(.hidden)', text: /No roles match/)
+  end
+
   scenario 'edits branch access through accessible accordion checkboxes' do
     target = create(:user, username: 'Branch Employee')
     create(:organization_membership, organization:, user: target)
