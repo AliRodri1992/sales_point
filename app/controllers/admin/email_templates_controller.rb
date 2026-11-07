@@ -19,11 +19,7 @@ module Admin
       authorize @template
       @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
       @can_view_audits = current_user.permission?('email_template_audits.view')
-      @audits = if @can_view_audits
-                  @template.audits.includes(:actor).order(created_at: :desc).limit(30)
-                else
-                  []
-                end
+      @audits = @can_view_audits ? @template.audits.includes(:actor).order(created_at: :desc).limit(30) : []
       load_show_preview if policy(@template).preview? && @template.published_version
     end
 
