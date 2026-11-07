@@ -18,7 +18,7 @@ gem 'geocoder'
 gem 'groupdate'
 gem 'i18n'
 gem 'i18n-tasks', require: false
-gem 'image_processing', '~> 1.2'
+gem 'image_processing', '~> 2.2'
 gem 'jbuilder'
 gem 'jsbundling-rails'
 gem 'kamal', require: false
