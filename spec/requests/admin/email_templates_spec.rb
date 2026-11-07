@@ -220,7 +220,7 @@ RSpec.describe 'Admin email templates', type: :request do
     post send_test_admin_email_template_path(template), params: { email: administrator.email }
 
     expect(response).to redirect_to(admin_email_template_path(template))
-    expect(flash[:alert]).to eq(I18n.t('admin.email_templates.test_not_published'))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.test_not_published'))
     expect(template.audits.where(action: 'test_sent')).not_to exist
   end
 
@@ -289,11 +289,11 @@ RSpec.describe 'Admin email templates', type: :request do
     published.publish!(actor: administrator)
     post publish_admin_email_template_path(template, version_id: published.id)
     expect(response).to redirect_to(admin_email_template_path(template))
-    expect(flash[:alert]).to be_present
+    expect(flash[:swal_message]).to be_present
     draft = template.new_draft!(actor: administrator)
     post restore_admin_email_template_path(template, version_id: draft.id)
     expect(response).to redirect_to(admin_email_template_path(template))
-    expect(flash[:alert]).to be_present
+    expect(flash[:swal_message]).to be_present
   end
 
   it 'restores published content into a new draft and compares versions' do
@@ -342,7 +342,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(template.audits.where(action: 'test_sent')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }
-    expect(flash[:alert]).to eq(I18n.t('admin.email_templates.invalid_recipient'))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.invalid_recipient'))
   end
 
   it 'never selects a draft version owned by a different template' do
