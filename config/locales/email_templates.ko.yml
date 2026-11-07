@@ -174,3 +174,11 @@ ko:
         restored: "버전 복원"
         archived: "템플릿 보관"
         test_sent: "테스트 이메일 발송"
+
+  activerecord:
+    attributes:
+      email_template:
+        name: "이름"
+        key: "코드"
+        category: "분류"
+        locale: "언어"

@@ -44,7 +44,7 @@ RSpec.describe 'Email template creation experience', type: :feature, js: true do
 
     click_button I18n.t('admin.email_templates.create_draft', locale: :en)
 
-    expect(page).to have_current_path(/\/admin\/email_templates\/\d+$/)
+    expect(page).to have_current_path(%r{/admin/email_templates/\d+$})
     template = EmailTemplate.find_by!(key: 'custom_notice', organization:)
     expect(template.name).to eq('Updated confirmation')
     expect(template.status).to eq('draft')

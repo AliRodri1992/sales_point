@@ -174,3 +174,11 @@ en:
         restored: "Version restored"
         archived: "Template archived"
         test_sent: "Test email sent"
+
+  activerecord:
+    attributes:
+      email_template:
+        name: "Name"
+        key: "Key"
+        category: "Category"
+        locale: "Language"

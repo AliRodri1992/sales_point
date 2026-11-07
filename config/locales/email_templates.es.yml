@@ -174,3 +174,11 @@ es:
         restored: "Versión restaurada"
         archived: "Plantilla archivada"
         test_sent: "Correo de prueba enviado"
+
+  activerecord:
+    attributes:
+      email_template:
+        name: "Nombre"
+        key: "Código"
+        category: "Categoría"
+        locale: "Idioma"
