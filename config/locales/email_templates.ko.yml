@@ -4,7 +4,11 @@ ko:
     shared:
       notifications:
         types:
+          email_setting: "이메일 설정"
           email_template: "이메일 템플릿"
+        email_setting:
+          branding_updated: "이메일 브랜드 설정이 업데이트되었습니다"
+          sender_updated: "이메일 발신자 설정이 업데이트되었습니다"
         email_template:
           created: "%{name} 템플릿이 생성되었습니다"
           draft_updated: "%{name}의 초안이 수정되었습니다"
