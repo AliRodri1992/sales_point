@@ -374,6 +374,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(document.at_css('select#locale')).to be_present
     expect(document.at_css('select#status')).to be_present
     expect(document.at_css('label[for="q"]')).to be_present
+    expect(document.at_css('form[data-controller="email-template-filters"]')).to be_present
     expect(document.text).to include('Published mail')
     expect(document.text).not_to include('Draft mail')
   end
@@ -390,7 +391,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get admin_email_templates_path, params: { q: 'Mail notice', locale: 'en', status: 'draft' }
 
     document = Nokogiri::HTML(response.body)
-    next_link = document.css('a').find { |link| link.text.include?(I18n.t('admin.email_templates.next')) }
+    next_link = document.css('a').find { |link| link.text.include?(I18n.t('admin.pagination.next')) }
     expect(next_link).to be_present
     query = Rack::Utils.parse_query(URI.parse(next_link['href']).query)
     expect(query).to include('page' => '2', 'q' => 'Mail notice', 'locale' => 'en', 'status' => 'draft')
@@ -398,7 +399,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get admin_email_templates_path,
         params: { q: 'Mail notice', locale: 'en', status: 'draft', page: '9999' }
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include(I18n.t('admin.email_templates.page_status', page: 2, pages: 2))
+    expect(Nokogiri::HTML(response.body).at_css('[aria-current="page"]').text).to eq('3')
     expect(response.body).not_to include(I18n.t('admin.email_templates.empty_title'))
   end
 
@@ -549,6 +550,95 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.parsed_body['error']).to eq(I18n.t('admin.email_templates.preview_undeclared_variables'))
     expect(draft.reload.subject).to eq('Order')
+  end
+
+  it 'filters advanced category, scope and dates inside the authorized tenant' do
+    own = create_template(organization:)
+    own.update!(category: 'billing', name: 'Local billing')
+    foreign = create_template(organization: other_organization)
+    foreign.update!(category: 'billing', name: 'Private billing')
+
+    get admin_email_templates_path, params: {
+      q: 'billing', category: 'billing', scope: 'organization',
+      updated_from: 1.day.ago.to_date.iso8601, updated_to: 1.day.from_now.to_date.iso8601
+    }
+
+    expect(response).to have_http_status(:ok)
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.text).to include('Local billing')
+    expect(doc.text).not_to include('Private billing')
+    expect(doc.at_css('select#category')).to be_present
+    expect(doc.at_css('select#scope')).to be_present
+    expect(doc.at_css('input#updated_from[type="date"]')).to be_present
+    expect(doc.at_css('input#updated_to[type="date"]')).to be_present
+    expect(doc.css('a[aria-label]').map { |link| link['aria-label'] }).to include(
+      I18n.t('admin.email_templates.remove_filter', name: I18n.t('admin.email_templates.filter_names.category'))
+    )
+  end
+
+  it 'uses the users-style selectable page size and numbered navigation' do
+    12.times do |index|
+      EmailTemplate.create!(
+        organization:, key: "page_notice_#{index}", name: "Page notice #{index}",
+        locale: 'en', category: 'transactional', status: 'draft',
+        subject: 'Notice', html_body: '<p>Notice</p>', text_body: 'Notice', enabled: false
+      )
+    end
+    get admin_email_templates_path, params: { per_page: '5', q: 'Page notice', page: '2' }
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.css('tbody tr').size).to eq(5)
+    expect(doc.at_css('select#email-templates-per-page')['data-table-page-size-key-value']).to eq('email_templates')
+    expect(doc.at_css('[aria-current="page"]').text).to eq('2')
+    expect(doc.text).to include(I18n.t('admin.email_templates.range', first: 6, last: 10, total: 12))
+    expect(doc.at_css('turbo-frame#email_templates_list')).to be_present
+  end
+
+  it 'exposes authorized edit and removal actions from the catalog' do
+    template = create_template(organization:)
+    get admin_email_templates_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css("a[href='#{edit_admin_email_template_path(template)}']")).to be_present
+    expect(doc.at_css("form[action='#{admin_email_template_path(template)}'] input[name='_method'][value='delete']")).to be_present
+
+    SystemRolePermission.where(system_role: role, permission: Permission.find_by!(code: 'email_templates.archive')).destroy_all
+    get admin_email_templates_path
+    expect(Nokogiri::HTML(response.body).at_css("form[action='#{admin_email_template_path(template)}']")).to be_nil
+  end
+
+  it 'removes a template without erasing its immutable history' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    template.audit!(action: 'created', actor: administrator)
+
+    delete admin_email_template_path(template)
+
+    expect(response).to have_http_status(:see_other)
+    expect(template.reload).to have_attributes(status: 'archived', enabled: false)
+    expect(template.versions.find(draft.id)).to be_present
+    expect(template.audits.where(action: 'created')).to exist
+    expect(template.audits.where(action: 'archived')).to exist
+    get admin_email_templates_path
+    expect(response.body).not_to include(template.name)
+    get admin_email_templates_path, params: { status: 'archived' }
+    expect(response.body).to include(template.name)
+  end
+
+  it 'rejects removing other organizations templates and missing permissions' do
+    foreign = create_template(organization: other_organization)
+    delete admin_email_template_path(foreign)
+    expect(response).to have_http_status(:not_found)
+    own = create_template(organization:)
+    SystemRolePermission.where(system_role: role, permission: Permission.find_by!(code: 'email_templates.archive')).destroy_all
+    delete admin_email_template_path(own)
+    expect(response).to have_http_status(:forbidden)
+    expect(own.reload.status).to eq('draft')
+  end
+
+  it 'does not crash when advanced dates are invalid' do
+    get admin_email_templates_path, params: { updated_from: 'invalid', updated_to: 'bad' }
+    expect(response).to have_http_status(:ok)
   end
 
   it 'translates known template categories in the catalog' do

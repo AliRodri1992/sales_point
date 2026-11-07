@@ -25,6 +25,10 @@ class EmailTemplatePolicy < ApplicationPolicy
     allowed?('email_templates.archive') && same_tenant?
   end
 
+  def destroy?
+    archive? && record.status != 'archived'
+  end
+
   def preview?
     allowed?('email_templates.preview') && visible_tenant?
   end

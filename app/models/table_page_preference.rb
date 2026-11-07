@@ -4,7 +4,7 @@ class TablePagePreference < ApplicationRecord
   OPTIONS = [5, 10, 15, 25, 50].freeze
   DEFAULT = 10
   TABLE_KEYS = %w[
-    suppliers categories languages products clients branches users demo_requests system_roles
+    suppliers categories languages products clients branches users email_templates demo_requests system_roles
     account_payables supplier_invoices supplier_payments supplier_credit_notes
     purchase_orders purchase_requests purchase_quotations price_lists promotions product_price_history
   ].freeze

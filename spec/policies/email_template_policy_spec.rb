@@ -34,11 +34,17 @@ RSpec.describe EmailTemplatePolicy do
     expect(described_class.new(user, template_for(organization)).update?).to be(true)
   end
 
-  %i[show? update? publish? archive? preview? send_test? versions?].each do |action|
+  %i[show? update? publish? archive? destroy? preview? send_test? versions?].each do |action|
     it "allows #{action} only within the visible tenant boundaries" do
       expect(described_class.new(user, template_for(organization)).public_send(action)).to be(true)
       expect(described_class.new(user, template_for(other_organization)).public_send(action)).to be(false)
     end
+  end
+
+  it 'does not allow removing archived templates again' do
+    template = template_for(organization)
+    template.status = 'archived'
+    expect(described_class.new(user, template).destroy?).to be(false)
   end
 
   it 'permits global viewing while limiting global changes to root administrators' do

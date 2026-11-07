@@ -1,0 +1,142 @@
+<section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="email-templates-list-title">
+  <header class="flex flex-col gap-3 border-b border-slate-100 px-4 py-4 sm:px-5">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 id="email-templates-list-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.list_title') %></h2>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.email_templates.result_count', count: @total) %></p>
+      </div>
+      <nav class="flex flex-wrap items-center gap-1.5" aria-label="<%= t('admin.email_templates.status_summary') %>">
+        <% EmailTemplate::STATUSES.each do |state| %>
+          <% selected = params[:status] == state %>
+          <% preserved = request.query_parameters.except('page', 'status') %>
+          <%= link_to admin_email_templates_path(selected ? preserved : preserved.merge('status' => state)),
+                      data: { turbo_frame: '_top' },
+                      class: "inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition #{selected ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}" do %>
+            <%= t("admin.email_templates.states.#{state}") %>
+            <span class="tabular-nums"><%= @counts.fetch(state, 0) %></span>
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
+    <% active = { 'q' => params[:q], 'locale' => params[:locale], 'status' => params[:status],
+                  'category' => params[:category], 'scope' => params[:scope],
+                  'updated_from' => params[:updated_from], 'updated_to' => params[:updated_to] }.compact_blank %>
+    <% if active.any? %>
+      <div class="flex flex-wrap items-center gap-2" aria-label="<%= t('admin.email_templates.active_filters') %>">
+        <span class="text-xs font-semibold text-slate-500"><%= t('admin.email_templates.active_filters') %>:</span>
+        <% active.each do |field, value| %>
+          <% value_label = case field
+                           when 'locale' then t("admin.email_templates.languages.#{value}", default: value)
+                           when 'status' then t("admin.email_templates.states.#{value}", default: value)
+                           when 'category' then t("admin.email_templates.categories.#{value}", default: value)
+                           when 'scope' then t(value == 'global' ? 'admin.email_templates.global' : 'admin.email_templates.organization_scope')
+                           else value
+                           end %>
+          <%= link_to admin_email_templates_path(request.query_parameters.except('page', field)),
+                      data: { turbo_frame: '_top' },
+                      aria: { label: t('admin.email_templates.remove_filter', name: t("admin.email_templates.filter_names.#{field}")) },
+                      class: 'inline-flex min-h-9 items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-800 hover:bg-emerald-100' do %>
+            <span><%= t("admin.email_templates.filter_names.#{field}") %>: <%= value_label %></span>
+            <%= delta_icon('x-mark', class: 'size-3.5') %>
+          <% end %>
+        <% end %>
+        <%= link_to t('admin.email_templates.clear_filters'), admin_email_templates_path,
+                    data: { turbo_frame: '_top' }, class: 'inline-flex min-h-9 items-center px-2 text-xs font-semibold text-slate-600 hover:underline' %>
+      </div>
+    <% end %>
+  </header>
+
+  <% if @templates.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[920px] text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+          <tr>
+            <% %w[name key locale scope state version updated actions].each do |column| %>
+              <th scope="col" class="px-4 py-3.5 first:pl-5 last:pr-5"><%= t("admin.email_templates.columns.#{column}") %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @templates.each do |template| %>
+            <% tone = { 'published' => 'bg-emerald-50 text-emerald-800 ring-emerald-200',
+                        'draft' => 'bg-amber-50 text-amber-800 ring-amber-200',
+                        'inactive' => 'bg-slate-100 text-slate-700 ring-slate-200',
+                        'archived' => 'bg-rose-50 text-rose-700 ring-rose-200' }.fetch(template.status, 'bg-slate-100 text-slate-700 ring-slate-200') %>
+            <tr class="transition hover:bg-slate-50/80" data-skeleton-record>
+              <td class="max-w-64 px-4 py-4 pl-5">
+                <%= link_to template.name, admin_email_template_path(template), data: { turbo_frame: '_top' },
+                            class: 'block break-words font-semibold text-slate-900 hover:text-emerald-700 hover:underline' %>
+                <span class="mt-1 block text-xs text-slate-500"><%= t("admin.email_templates.categories.#{template.category}", default: template.category) %></span>
+              </td>
+              <td class="max-w-44 break-all px-4 py-4 font-mono text-xs text-slate-600"><%= template.key %></td>
+              <td class="px-4 py-4"><%= t("admin.email_templates.languages.#{template.locale}") %></td>
+              <td class="px-4 py-4 text-slate-600"><%= template.organization&.name || t('admin.email_templates.global') %></td>
+              <td class="px-4 py-4">
+                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset <%= tone %>"><%= t("admin.email_templates.status_labels.#{template.status}") %></span>
+              </td>
+              <td class="px-4 py-4 font-medium tabular-nums text-slate-700"><%= template.published_version&.version_number ? "v#{template.published_version.version_number}" : '—' %></td>
+              <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500"><%= l(template.updated_at, format: :short) %></td>
+              <td class="px-4 py-4 pr-5">
+                <div class="flex items-center justify-end gap-1.5">
+                  <%= link_to admin_email_template_path(template), data: { turbo_frame: '_top', tooltip: t('admin.email_templates.view') },
+                              aria: { label: t('admin.email_templates.view_named', name: template.name) },
+                              class: 'inline-flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-emerald-50 hover:text-emerald-800' do %>
+                    <%= delta_icon('eye', class: 'size-5') %>
+                  <% end %>
+                  <% if policy(template).update? %>
+                    <%= link_to edit_admin_email_template_path(template), data: { turbo_frame: '_top', tooltip: t('admin.email_templates.edit') },
+                                aria: { label: t('admin.email_templates.edit_named', name: template.name) },
+                                class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' do %>
+                      <%= delta_icon('pencil-square', class: 'size-5') %>
+                    <% end %>
+                  <% end %>
+                  <% if policy(template).destroy? %>
+                    <%= button_to admin_email_template_path(template), method: :delete,
+                                  form: { data: { turbo_confirm: t('admin.email_templates.confirm_remove', name: template.name), turbo_frame: '_top' } },
+                                  data: { tooltip: t('admin.email_templates.remove') },
+                                  aria: { label: t('admin.email_templates.remove_named', name: template.name) },
+                                  class: 'inline-flex size-10 items-center justify-center rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100' do %>
+                      <%= delta_icon('trash', class: 'size-5') %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <footer class="flex flex-col gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600">
+        <label for="email-templates-per-page" class="font-semibold"><%= t('admin.email_templates.per_page_label') %></label>
+        <div class="relative w-24" data-controller="delta-select" data-searchable="false">
+          <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                         id: 'email-templates-per-page',
+                         data: { controller: 'table-page-size', table_page_size_key_value: 'email_templates',
+                                 action: 'change->table-page-size#apply' },
+                         class: 'w-full rounded-xl border border-slate-300 bg-white px-2 py-2 text-sm text-slate-700' %>
+        </div>
+        <span aria-live="polite"><%= t('admin.email_templates.range', first: (@page - 1) * @per_page + 1,
+                                      last: [@page * @per_page, @total].min, total: @total) %></span>
+      </div>
+      <% if @total_pages > 1 %>
+        <nav class="flex flex-wrap items-center gap-1" aria-label="<%= t('admin.email_templates.pagination_label') %>">
+          <%= pagination_links(@total_pages, frame: 'email_templates_list', window: 2) %>
+        </nav>
+      <% end %>
+    </footer>
+  <% else %>
+    <div class="flex flex-col items-center px-5 py-12 text-center">
+      <span class="mb-4 inline-flex size-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><%= delta_icon('document-text', class: 'size-6') %></span>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.empty_title') %></h3>
+      <p class="mt-2 max-w-md text-sm leading-6 text-slate-500"><%= t('admin.email_templates.empty') %></p>
+      <% if active.any? %>
+        <%= link_to t('admin.email_templates.clear_filters'), admin_email_templates_path, data: { turbo_frame: '_top' },
+                    class: 'mt-4 inline-flex min-h-11 items-center rounded-xl border border-emerald-200 px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-50' %>
+      <% elsif policy(EmailTemplate).create? %>
+        <%= link_to t('admin.email_templates.new'), new_admin_email_template_path, data: { turbo_frame: '_top' },
+                    class: 'mt-4 inline-flex min-h-11 items-center rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white hover:bg-emerald-800' %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

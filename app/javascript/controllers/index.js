@@ -56,6 +56,9 @@ application.register("branches-pagination", BranchesPaginationController)
 import UsersPaginationController from "./users_pagination_controller"
 application.register("users-pagination", UsersPaginationController)
 
+import EmailTemplateFiltersController from "./email_template_filters_controller"
+application.register("email-template-filters", EmailTemplateFiltersController)
+
 import RegistrationWizardController from "./registration_wizard_controller"
 application.register("registration-wizard", RegistrationWizardController)
 

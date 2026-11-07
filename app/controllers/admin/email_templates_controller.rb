@@ -103,6 +103,15 @@ module Admin
       redirect_to admin_email_templates_path, notice: t('admin.email_templates.archived')
     end
 
+    # Retain versions and immutable audit events instead of physically deleting them.
+    def destroy
+      authorize @template, :destroy?
+      @template.update!(status: 'archived', enabled: false, updated_by: current_user)
+      @template.audit!(action: 'archived', actor: current_user)
+      redirect_to admin_email_templates_path, status: :see_other,
+                  notice: t('admin.email_templates.removed')
+    end
+
     def compare
       authorize @template, :versions?
       @left = @template.versions.find(params[:left])
