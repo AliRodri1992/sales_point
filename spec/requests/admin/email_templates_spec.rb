@@ -520,7 +520,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-review-title')).to be_present
     expect(page.at_css('[data-email-template-identity-target="summaryKey"]')).to be_present
     expect(page.at_css('button[data-category-value="security"][type="button"]')).to be_present
-    expect(page.at_css('aside')).to be_nil
+    expect(page.at_css('main[data-loading-scope="true"] aside')).to be_nil
     expect(page.at_css('button[data-turbo-submits-with]')).to be_present
     expect(page.at_css('#email-template-create-actions')).to be_present
   end
