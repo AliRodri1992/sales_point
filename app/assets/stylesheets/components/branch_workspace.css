@@ -1,5 +1,5 @@
 .branch-workspace { max-width:1440px; }
-.branch-page-header { display:block; margin-bottom:1.25rem; }
+.catalog-header.branch-page-header { display:block; margin-bottom:1.25rem; }
 .branch-page-title-row { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem 1rem; }
 .branch-page-header .catalog-eyebrow { margin-bottom:.625rem; }
 .branch-page-description { margin-top:.375rem; }
