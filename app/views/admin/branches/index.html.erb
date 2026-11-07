@@ -1,22 +1,22 @@
 <% content_for :title, t('admin.branches.index.page_title') %>
-<div class="catalog-workspace branch-workspace space-y-6" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated popstate@window->branch-directory#restore" aria-busy="false">
-  <header class="catalog-header branch-page-header block">
+<div class="catalog-workspace branch-workspace" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated popstate@window->branch-directory#restore" aria-busy="false">
+  <header class="catalog-header branch-page-header">
     <p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p>
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.branches.index.title') %></h1>
+    <div class="branch-page-title-row">
+      <h1><%= t('admin.branches.index.title') %></h1>
       <% if @can_manage_branches %>
-        <%= link_to new_admin_branch_path(branch_directory_parameters), class: 'catalog-button catalog-button-primary inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-emerald-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:self-auto' do %>
+        <%= link_to new_admin_branch_path(branch_directory_parameters), class: 'catalog-button catalog-button-primary branch-create-button' do %>
           <%= delta_icon('plus', class: 'size-4') %>
           <%= t('admin.branches.index.new') %>
         <% end %>
       <% end %>
     </div>
-    <p class="mt-1 text-sm text-slate-500"><%= t('admin.branch_workspace.intro') %></p>
+    <p class="branch-page-description"><%= t('admin.branch_workspace.intro') %></p>
   </header>
 
   <%= render 'overview' %>
 
-  <section class="branch-directory-panel overflow-visible rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branches-result-title">
+  <section class="branch-directory-panel" aria-labelledby="branches-result-title">
     <%= render 'filters' %>
     <div data-branch-directory-target="error" class="branch-filter-error mx-5 my-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800" role="alert" hidden>
       <%= t('admin.branch_workspace.request_error') %>
