@@ -98,7 +98,7 @@
                 <td class="max-w-64 px-4 py-4 pl-5">
                   <%= link_to template.name, admin_email_template_path(template),
                               class: 'block break-words font-semibold text-slate-900 hover:text-emerald-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600' %>
-                  <span class="mt-1 block text-xs text-slate-500"><%= template.category %></span>
+                  <span class="mt-1 block text-xs text-slate-500"><%= t("admin.email_templates.categories.#{template.category}", default: template.category) %></span>
                 </td>
                 <td class="max-w-44 break-all px-4 py-4 font-mono text-xs text-slate-600"><%= template.key %></td>
                 <td class="px-4 py-4"><%= t("admin.email_templates.languages.#{template.locale}") %></td>

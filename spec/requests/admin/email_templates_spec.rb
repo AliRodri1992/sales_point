@@ -550,4 +550,18 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response.parsed_body['error']).to eq(I18n.t('admin.email_templates.preview_undeclared_variables'))
     expect(draft.reload.subject).to eq('Order')
   end
+
+  it 'translates known template categories in the catalog' do
+    template = create_template(organization:)
+
+    get admin_email_templates_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.categories.transactions'))
+    expect(response.body).not_to include('>transactions</span>')
+
+    get admin_email_template_path(template)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.categories.transactions'))
+  end
 end

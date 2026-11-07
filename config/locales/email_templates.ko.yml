@@ -64,6 +64,8 @@ ko:
       variables: "허용된 변수 (쉼표로 구분)"
       categories:
         transactional: "거래"
+        transactions: "거래"
+        billing: "청구"
         security: "보안"
         notifications: "알림"
         notification: "알림"

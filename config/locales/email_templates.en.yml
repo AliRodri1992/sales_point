@@ -64,6 +64,8 @@ en:
       variables: "Allowed variables (comma-separated)"
       categories:
         transactional: "Transactional"
+        transactions: "Transactions"
+        billing: "Billing"
         security: "Security"
         notifications: "Notifications"
         notification: "Notification"

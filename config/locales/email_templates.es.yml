@@ -64,6 +64,8 @@ es:
       variables: "Variables permitidas (separadas por comas)"
       categories:
         transactional: "Transaccional"
+        transactions: "Transacciones"
+        billing: "Facturación"
         security: "Seguridad"
         notifications: "Notificaciones"
         notification: "Notificación"
