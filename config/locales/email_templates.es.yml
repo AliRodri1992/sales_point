@@ -60,6 +60,8 @@ es:
       desktop: "Escritorio"
       mobile: "Móvil"
       plain_text: "Texto plano"
+      compare_left: "Versión A"
+      compare_right: "Versión B"
       compare: "Comparar versiones"
       variables: "Variables permitidas (separadas por comas)"
       categories:

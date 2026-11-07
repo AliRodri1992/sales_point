@@ -60,6 +60,8 @@ en:
       desktop: "Desktop"
       mobile: "Mobile"
       plain_text: "Plain text"
+      compare_left: "Version A"
+      compare_right: "Version B"
       compare: "Compare versions"
       variables: "Allowed variables (comma-separated)"
       categories:

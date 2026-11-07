@@ -170,6 +170,9 @@ application.register("email-template-identity", EmailTemplateIdentityController)
 import EmailTemplatePreviewController from "./email_template_preview_controller"
 application.register("email-template-preview", EmailTemplatePreviewController)
 
+import EmailTemplateEditorController from "./email_template_editor_controller"
+application.register("email-template-editor", EmailTemplateEditorController)
+
 import EmailTemplateDetailController from "./email_template_detail_controller"
 application.register("email-template-detail", EmailTemplateDetailController)
 

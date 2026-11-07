@@ -59,6 +59,15 @@ module Admin
       raise ArgumentError, t('admin.email_templates.preview_undeclared_variables')
     end
 
+    def comparison_preview(version)
+      _subject, html, plain = EmailTemplates::Renderer.new(
+        source: version, values: EmailTemplates::SampleData.call(@template)
+      ).render
+      { html:, plain: }
+    rescue ArgumentError
+      { html: nil, plain: nil }
+    end
+
     def load_preview_version
       @version = @template.versions.find(params[:version_id])
     end

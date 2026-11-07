@@ -60,6 +60,8 @@ ko:
       desktop: "데스크톱"
       mobile: "모바일"
       plain_text: "일반 텍스트"
+      compare_left: "버전 A"
+      compare_right: "버전 B"
       compare: "버전 비교"
       variables: "허용된 변수 (쉼표로 구분)"
       categories:

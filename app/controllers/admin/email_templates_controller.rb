@@ -116,6 +116,7 @@ module Admin
       authorize @template, :versions?
       @left = @template.versions.find(params[:left])
       @right = @template.versions.find(params[:right])
+      @comparison_previews = [@left, @right].index_with { |version| comparison_preview(version) }
       render :compare
     end
 
