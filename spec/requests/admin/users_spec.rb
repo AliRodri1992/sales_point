@@ -46,6 +46,9 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response.body).to include(Theme::DEFAULT)
       expect(response.body).not_to include('name="user[status]"')
       expect(response.body).not_to include('name="user[password]"')
+      expect(response.body).to include('data-user-access-target="submitButton"')
+      expect(response.body).to include('data-empty-label=')
+      expect(response.body).to include('maxlength="254"')
     end
   end
 

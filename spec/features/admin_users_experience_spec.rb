@@ -42,7 +42,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('#user_email[maxlength="254"]')
     expect(page).to have_css('input[data-user-access-target="submitButton"]')
 
-    fill_in 'Search role', with: 'role-that-does-not-exist'
+    fill_in 'Find a role', with: 'role-that-does-not-exist'
     expect(page).to have_css('[data-user-access-target="empty"]:not(.hidden)', text: /No roles match/)
   end
 
