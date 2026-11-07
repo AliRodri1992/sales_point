@@ -108,3 +108,48 @@
 .branch-advanced-grid > div { min-width:0; }
 .branch-advanced>summary { grid-column:3; }
 @media(max-width:639px) { .branch-advanced>summary { grid-column:1; } }
+
+/* Branch form: use module-scoped layout instead of competing utility classes. */
+.branch-form-header { display:flex; align-items:center; justify-content:space-between; gap:1.25rem; margin-bottom:1.5rem; }
+.branch-form-header-copy { min-width:0; }
+.branch-form-header-copy p:last-child { max-width:68ch; }
+.branch-form-back { flex-shrink:0; }
+.branch-form-layout { grid-template-columns:minmax(0,1fr) 260px; align-items:start; gap:1.25rem; }
+.branch-form-main { min-width:0; gap:1.25rem; }
+.branch-form-nav { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:0; }
+.branch-form-nav a { border-radius:.625rem; font-weight:600; }
+.branch-form-nav a:hover,.branch-form-nav a:focus-visible { border-color:#6ee7b7; background:#ecfdf5; }
+.branch-form-section { min-width:0; scroll-margin-top:7rem; }
+.branch-form-section .catalog-card-body { padding:1.5rem; }
+.branch-form-section .catalog-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; align-items:start; }
+.branch-form-section .catalog-field { min-width:0; }
+.branch-form-section .catalog-field :is(input:not([type=checkbox]),select,textarea) { max-width:100%; }
+.branch-form-section .catalog-hint { margin-top:.375rem; }
+.branch-form-section .branch-status-card { margin-top:0; align-self:end; min-height:76px; border-radius:.75rem; background:#f8fafc; }
+.branch-form-section .branch-status-card span { min-width:0; }
+.branch-form-section .branch-status-card strong { color:#0f172a; }
+.branch-form-section .branch-status-card small { margin-top:.25rem; }
+.branch-form-aside { top:6rem; gap:1rem; }
+.branch-form-aside .catalog-card-body { padding:1.25rem; }
+.branch-form-aside .branch-avatar { width:44px; height:44px; margin-bottom:.75rem; }
+.branch-form-aside h2 { margin-top:0; }
+.branch-form-aside .branch-checklist { margin-top:1rem; padding-left:1.125rem; }
+.branch-form-aside .catalog-notice { padding:.875rem 1rem; }
+.branch-form-footer { position:relative; margin-top:.25rem; padding:1rem 1.25rem; gap:.75rem; }
+.branch-form-footer .catalog-button { min-width:120px; }
+@media(max-width:1100px) {
+  .branch-form-layout { grid-template-columns:minmax(0,1fr); }
+  .branch-form-aside { position:static; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .branch-form-aside .catalog-notice { grid-column:1/-1; }
+}
+@media(max-width:639px) {
+  .branch-form-header { align-items:stretch; flex-direction:column; gap:.875rem; }
+  .branch-form-back { align-self:flex-start; }
+  .branch-form-nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:.375rem; }
+  .branch-form-nav a { flex-shrink:0; }
+  .branch-form-section .catalog-card-body { padding:1rem; }
+  .branch-form-section .catalog-fields { grid-template-columns:minmax(0,1fr); gap:1rem; }
+  .branch-form-aside { grid-template-columns:minmax(0,1fr); }
+  .branch-form-footer { justify-content:stretch; }
+  .branch-form-footer .catalog-button { flex:1 1 140px; }
+}
