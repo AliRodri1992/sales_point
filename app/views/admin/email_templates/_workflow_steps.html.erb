@@ -1,0 +1,19 @@
+<% current_step = local_assigns.fetch(:step, 1).to_i %>
+<nav aria-label="<%= t('admin.email_templates.workflow_label') %>" class="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+  <ol class="grid grid-cols-3 gap-2 sm:gap-3">
+    <% %w[identity content publish].each_with_index do |name, index| %>
+      <% number = index + 1 %>
+      <% active = number == current_step %>
+      <% finished = number < current_step %>
+      <li aria-current="<%= active ? 'step' : 'false' %>" class="flex min-w-0 items-center gap-2 rounded-xl border px-2 py-2.5 sm:gap-3 sm:px-4 <%= active ? 'border-emerald-300 bg-emerald-50' : 'border-transparent bg-slate-50/70' %>">
+        <span class="flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold <%= active ? 'bg-emerald-700 text-white' : finished ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600' %>">
+          <% if finished %><%= delta_icon('check', class: 'size-4') %><% else %><%= number %><% end %>
+        </span>
+        <span class="min-w-0">
+          <span class="block text-[10px] font-semibold uppercase tracking-wide <%= active ? 'text-emerald-700' : 'text-slate-500' %>"><%= t('admin.email_templates.workflow_step', number:) %></span>
+          <span class="block break-words text-xs font-bold leading-5 <%= active ? 'text-emerald-950' : 'text-slate-700' %>"><%= t("admin.email_templates.step_#{name}_title") %></span>
+        </span>
+      </li>
+    <% end %>
+  </ol>
+</nav>
