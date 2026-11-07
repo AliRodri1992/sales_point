@@ -30,9 +30,7 @@ class EmailTemplate < ApplicationRecord
   end
 
   def self.ensure_invitation_template!
-    return if global.exists?(key: 'user_invitation', locale: 'es')
-
-    load Rails.root.join('db/seeds/email_templates.rb')
+    EmailTemplates::InvitationContent.ensure_published!
   end
 
   def self.ensure_status_template!

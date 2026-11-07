@@ -10,7 +10,7 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'es') do |t
     <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#0f172a">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:42px 14px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;border-radius:18px;background:#ffffff;border:1px solid #e2e8f0">
-    <tr><td style="background:#064e3b;padding:28px 36px"><img src="{{logo_url}}" alt="Delta POS" width="46" height="46" style="border:0;display:block"><div style="margin-top:12px;color:#fff;font-size:22px;font-weight:bold">Delta POS</div></td></tr>
+    <tr><td style="background:#ffffff;padding:28px 36px;border-bottom:1px solid #e2e8f0"><img src="{{platform_logo}}" alt="Delta POS — full logo" width="210" style="width:210px;max-width:100%;height:auto;border:0;display:block"></td></tr>
     <tr><td style="padding:36px"><h1 style="margin:0 0 16px;font-size:25px;line-height:1.35">Actualización de tu cuenta</h1>
     <p style="font-size:15px;color:#475569;line-height:1.8">Hola, <strong>{{recipient_name}}</strong>.</p>
     <p style="font-size:15px;color:#475569;line-height:1.8">Se ha actualizado el estatus de tu cuenta en la organización indicada.</p>
@@ -46,7 +46,7 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'en') do |t
     <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#0f172a">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:42px 14px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;border-radius:18px;background:#ffffff;border:1px solid #e2e8f0">
-    <tr><td style="background:#064e3b;padding:28px 36px"><img src="{{logo_url}}" alt="Delta POS" width="46" height="46" style="border:0;display:block"><div style="margin-top:12px;color:#fff;font-size:22px;font-weight:bold">Delta POS</div></td></tr>
+    <tr><td style="background:#ffffff;padding:28px 36px;border-bottom:1px solid #e2e8f0"><img src="{{platform_logo}}" alt="Delta POS — full logo" width="210" style="width:210px;max-width:100%;height:auto;border:0;display:block"></td></tr>
     <tr><td style="padding:36px"><h1 style="margin:0 0 16px;font-size:25px;line-height:1.35">Your account status has changed</h1>
     <p style="font-size:15px;color:#475569;line-height:1.8">Hello, <strong>{{recipient_name}}</strong>.</p>
     <p style="font-size:15px;color:#475569;line-height:1.8">Your account status has been updated for the organization below.</p>
@@ -82,7 +82,7 @@ EmailTemplate.find_or_create_by!(key: 'user_status_changed', locale: 'ko') do |t
     <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#0f172a">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:42px 14px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;border-radius:18px;background:#ffffff;border:1px solid #e2e8f0">
-    <tr><td style="background:#064e3b;padding:28px 36px"><img src="{{logo_url}}" alt="Delta POS" width="46" height="46" style="border:0;display:block"><div style="margin-top:12px;color:#fff;font-size:22px;font-weight:bold">Delta POS</div></td></tr>
+    <tr><td style="background:#ffffff;padding:28px 36px;border-bottom:1px solid #e2e8f0"><img src="{{platform_logo}}" alt="Delta POS — full logo" width="210" style="width:210px;max-width:100%;height:auto;border:0;display:block"></td></tr>
     <tr><td style="padding:36px"><h1 style="margin:0 0 16px;font-size:25px;line-height:1.35">계정 상태가 변경되었습니다</h1>
     <p style="font-size:15px;color:#475569;line-height:1.8">안녕하세요, <strong>{{recipient_name}}</strong>.</p>
     <p style="font-size:15px;color:#475569;line-height:1.8">아래 조직의 계정 상태가 변경되었습니다.</p>

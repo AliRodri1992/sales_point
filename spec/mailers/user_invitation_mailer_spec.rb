@@ -21,8 +21,14 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     expect { deliver }.to change(ActionMailer::Base.deliveries, :count).by(1)
     email = ActionMailer::Base.deliveries.last
     expect(email.to).to eq([user.email])
-    expect(email.html_part.body.decoded).to include('https://example.com/invitations/accept')
+    html = email.html_part.body.decoded
+    expect(html).to include('https://example.com/invitations/accept')
+    expect(html).to include('Crear mi contraseña')
+    expect(html).to include('LOGOTIPO%20COMPLETO.jpeg').or include('LOGOTIPO COMPLETO.jpeg')
+    expect(html).to include(organization.name)
+    expect(html).to include(user.email)
     expect(email.text_part.body.decoded).to include(organization.name)
+    expect(email.text_part.body.decoded).to include('Crear mi contraseña')
     expect(invitation.reload).to have_attributes(delivery_status: 'sent')
     expect(invitation.sent_at).to be_present
   end
@@ -33,6 +39,32 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     template = EmailTemplate.resolve(key: 'user_invitation', locale: 'en', organization:)
     expect(ActionMailer::Base.deliveries.last.subject).to include(organization.name)
     expect(template).to be_present
+    expect(ActionMailer::Base.deliveries.last.html_part.body.decoded).to include('Create my password')
+  end
+
+  it 'keeps the activation token out of the subject and only renders it in the links' do
+    token = invitation.raw_token
+    deliver
+    email = ActionMailer::Base.deliveries.last
+    expect(email.subject).not_to include(token)
+    expect(email.text_part.body.decoded).to include(token)
+    expect(email.html_part.body.decoded).to include('72')
+  end
+
+  it 'preserves a custom published organization invitation' do
+    EmailTemplates::InvitationContent.ensure_published!
+    original = EmailTemplate.resolve(key: 'user_invitation', locale: 'es', organization:)
+    custom = EmailTemplate.create!(
+      organization:, key: 'user_invitation', locale: 'es', name: 'Custom invitation',
+      category: 'security', status: 'draft', enabled: false,
+      subject: 'Personal invitation', html_body: '<p>Custom {{invited_name}}</p>',
+      text_body: 'Custom {{invited_name}}'
+    )
+    custom.new_draft!(actor: nil).publish!(actor: nil)
+
+    deliver
+    expect(ActionMailer::Base.deliveries.last.subject).to eq('Personal invitation')
+    expect(original.reload.published_version).to be_present
   end
 
   it 'does not deliver a revoked invitation' do

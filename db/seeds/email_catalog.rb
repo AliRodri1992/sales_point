@@ -79,7 +79,7 @@ email_catalog_content.each do |key, translations|
     subject, message = translations.fetch(position)
     invitation = key.in?(%w[user_invitation user_invitation_resend])
     recipient_key = invitation ? 'invited_name' : 'recipient_name'
-    logo_key = invitation ? 'logo_url' : 'platform_logo'
+    logo_key = 'platform_logo'
     action_url = key == 'password_recovery' ? 'recovery_url' : 'activation_url'
     action = invitation || key == 'password_recovery'
     action_link = action ? %(<p><a href="{{#{action_url}}}" style="color:#047857">Open Delta POS</a></p>) : ''
@@ -91,10 +91,9 @@ email_catalog_content.each do |key, translations|
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr><td align="center">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff">
-              <tr><td style="padding:24px;background:#064e3b;color:#fff">
-                <img src="{{#{logo_key}}}" width="44" alt="Delta POS" style="vertical-align:middle">
-                <strong style="margin-left:12px;color:#fff">Delta POS</strong>
-                <span style="float:right;color:#a7f3d0">{{organization_name}}</span>
+              <tr><td style="padding:24px;background:#ffffff;color:#0f172a;border-bottom:1px solid #e2e8f0">
+                <img src="{{#{logo_key}}}" width="214" alt="Delta POS — full logo" style="width:214px;max-width:100%;height:auto;border:0;display:block">
+                <span style="display:block;margin-top:12px;color:#047857;font-size:12px">{{organization_name}}</span>
               </td></tr>
               <tr><td style="padding:36px">
                 <h1 style="font-size:24px">#{subject}</h1>

@@ -15,6 +15,36 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     template.new_draft!(actor: nil).publish!(actor: nil)
   end
 
+  it 'publishes localized built-in invitations with the complete Delta POS logo' do
+    EmailTemplates::InvitationContent.ensure_published!
+    %w[es en ko].each do |locale|
+      built_in = EmailTemplate.global.find_by!(key: 'user_invitation', locale:)
+      expect(built_in.published_version).to be_present
+      subject, html, plain = built_in.render_with(
+        EmailTemplates::SampleData.call(built_in)
+      )
+      expect(subject).to be_present
+      expect(html).to include('LOGOTIPO')
+      expect(html).to include('example.org/activation-demo')
+      expect(plain).to include('activation-demo')
+    end
+  end
+
+  it 'does not replace customized published invitation versions' do
+    EmailTemplates::InvitationContent.ensure_published!
+    built_in = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+    draft = built_in.new_draft!(actor: nil)
+    draft.update!(
+      subject: 'Edited invitation', html_body: '<p>{{invited_name}}</p>',
+      text_body: '{{invited_name}}', allowed_variables: ['invited_name']
+    )
+    draft.publish!(actor: nil)
+
+    expect { EmailTemplates::InvitationContent.ensure_published! }
+      .not_to change { built_in.reload.published_version_id }
+    expect(built_in.subject).to eq('Edited invitation')
+  end
+
   it 'delivers a preview using sample data and marks its subject as a test' do
     publish
     email = EmailTemplateTestMailer.sample(template.id, 'preview@example.org')
