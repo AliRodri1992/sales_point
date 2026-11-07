@@ -45,7 +45,8 @@ class EmailTemplate < ApplicationRecord
     self.updated_by = actor
     self.status = 'draft'
     self.enabled = false
-    self.subject ||= 'New template'
+    default_locale = locale.in?(%w[es en ko]) ? locale : I18n.locale
+    self.subject ||= I18n.t('admin.email_templates.default_subject', locale: default_locale)
     self.html_body ||= '<p>{{recipient_name}}</p>'
     self.text_body ||= '{{recipient_name}}'
   end

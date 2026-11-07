@@ -254,7 +254,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(template.audits.where(action: 'test_sent')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }
-    expect(flash[:alert]).to eq('Invalid recipient')
+    expect(flash[:alert]).to eq(I18n.t('admin.email_templates.invalid_recipient'))
   end
 
   it 'never selects a draft version owned by a different template' do
@@ -267,5 +267,126 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(draft.reload.subject).to eq('Order')
     expect(foreign.reload.subject).to eq('Order')
+  end
+
+  it 'renders accessible language and status filters and applies both on the server' do
+    draft = create_template(organization:)
+    draft.update!(name: 'Draft mail')
+    published = EmailTemplate.create!(
+      organization:, key: 'published_mail', name: 'Published mail', locale: 'en',
+      category: 'transactional', status: 'draft',
+      subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello', enabled: false
+    )
+    published.new_draft!(actor: administrator).publish!(actor: administrator)
+
+    get admin_email_templates_path, params: { q: 'mail', locale: 'en', status: 'published' }
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('select#locale')).to be_present
+    expect(document.at_css('select#status')).to be_present
+    expect(document.at_css('label[for="q"]')).to be_present
+    expect(document.text).to include('Published mail')
+    expect(document.text).not_to include('Draft mail')
+  end
+
+  it 'keeps every active filter when changing pages and bounds oversized page numbers' do
+    21.times do |index|
+      EmailTemplate.create!(
+        organization:, key: "mail_notice_#{index}", name: "Mail notice #{index}",
+        locale: 'en', category: 'transactional', status: 'draft',
+        subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello', enabled: false
+      )
+    end
+
+    get admin_email_templates_path, params: { q: 'Mail notice', locale: 'en', status: 'draft' }
+
+    document = Nokogiri::HTML(response.body)
+    next_link = document.css('a').find { |link| link.text.include?(I18n.t('admin.email_templates.next')) }
+    expect(next_link).to be_present
+    query = Rack::Utils.parse_query(URI.parse(next_link['href']).query)
+    expect(query).to include('page' => '2', 'q' => 'Mail notice', 'locale' => 'en', 'status' => 'draft')
+
+    get admin_email_templates_path,
+        params: { q: 'Mail notice', locale: 'en', status: 'draft', page: '9999' }
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.page_status', page: 2, pages: 2))
+    expect(response.body).not_to include(I18n.t('admin.email_templates.empty_title'))
+  end
+
+  it 'shows branded draft creation inputs and localizes the initial draft subject' do
+    get new_admin_email_template_path
+
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="delta-select"] select#email_template_locale')).to be_present
+    expect(document.at_css('input#email_template_key')).to be_present
+
+    post admin_email_templates_path, params: {
+      email_template: { key: 'welcome_mail', name: 'Welcome mail', category: 'transactional', locale: 'ko' }
+    }
+    template = EmailTemplate.find_by!(key: 'welcome_mail', organization:)
+    expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: :ko))
+  end
+
+  it 'keeps test sending disabled until publication and restricts the recipient for administrators' do
+    template = create_template(organization:)
+
+    get admin_email_template_path(template)
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('input[name="email"]')).to be_nil
+
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+    get admin_email_template_path(template)
+
+    input = Nokogiri::HTML(response.body).at_css('input[name="email"]')
+    expect(input).to be_present
+    expect(input['readonly']).not_to be_nil
+    expect(input['value']).to eq(administrator.email)
+  end
+
+  it 'offers device switching for the draft preview and does not preview an unknown version' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    get edit_admin_email_template_path(template)
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('button[data-action="click->email-template-preview#showDesktop"]')).to be_present
+    expect(document.at_css('button[data-action="click->email-template-preview#showMobile"]')).to be_present
+    expect(document.css('iframe[sandbox]').size).to eq(2)
+
+    draft.publish!(actor: administrator)
+    get preview_admin_email_template_path(template), params: { version_id: draft.id + 10_000 }
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'has matching, nonempty email catalog translations for es, en, and ko' do
+    paths = lambda do |hash, prefix = ''|
+      hash.flat_map do |key, value|
+        current = prefix.empty? ? key.to_s : "#{prefix}.#{key}"
+        value.is_a?(Hash) ? paths.call(value, current) : [current]
+      end
+    end
+
+    locales = %i[es en ko].map { |locale| I18n.t('admin.email_templates', locale:) }
+    expect(locales.map { |hash| paths.call(hash).sort }.uniq.size).to eq(1)
+    locales.each do |hash|
+      expect(hash.dig(:languages, :es)).to be_present
+      expect(hash.dig(:status_labels, :published)).to be_present
+      expect(hash.dig(:settings_fields, :reply_to)).to be_present
+    end
+  end
+
+  it 'requires update permission to restore a published version' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    permission = Permission.find_by!(code: 'email_templates.update')
+    SystemRolePermission.where(system_role: role, permission:).destroy_all
+
+    post restore_admin_email_template_path(template, version_id: published.id)
+
+    expect(response).to have_http_status(:forbidden)
+    expect(template.versions.where(status: 'draft')).to be_empty
   end
 end

@@ -13,7 +13,8 @@ module Admin
       authorize EmailTemplate
       scope = EmailTemplatesQuery.new(policy_scope(EmailTemplate), params).call
       @total = scope.count
-      @page = [params[:page].to_i, 1].max
+      @total_pages = [(@total + 19) / 20, 1].max
+      @page = [[params[:page].to_i, 1].max, @total_pages].min
       @templates = scope.includes(:organization, :published_version)
                         .order(updated_at: :desc).limit(20).offset((@page - 1) * 20)
       @counts = policy_scope(EmailTemplate).group(:status).count
@@ -21,7 +22,7 @@ module Admin
 
     def show
       authorize @template
-      @versions = @template.versions.order(version_number: :desc)
+      @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
       @audits = @template.audits.includes(:actor).order(created_at: :desc).limit(30)
     end
 
@@ -76,12 +77,14 @@ module Admin
       @template.audit!(action: 'published', actor: current_user, version: @version)
       redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.published')
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
-      redirect_to admin_email_template_path(@template), alert: e.message
+      message = @version.status == 'draft' ? e.message : t('admin.email_templates.publish_not_draft')
+      redirect_to admin_email_template_path(@template), alert: message
     end
 
     def restore
       authorize @template, :versions?
-      raise ArgumentError, 'Only published versions can be restored' unless @version.status == 'published'
+      authorize @template, :update?
+      raise ArgumentError, t('admin.email_templates.restore_not_published') unless @version.status == 'published'
 
       draft = @template.new_draft!(actor: current_user)
       draft.update!(subject: @version.subject, preheader: @version.preheader,
@@ -114,7 +117,12 @@ module Admin
       )
       redirect_to admin_email_template_path(@template), notice: t('admin.email_templates.test_queued')
     rescue ArgumentError => e
-      redirect_to admin_email_template_path(@template), alert: e.message
+      message = {
+        'Invalid recipient' => t('admin.email_templates.invalid_recipient'),
+        'Template not published' => t('admin.email_templates.test_not_published'),
+        'Test email limit reached' => t('admin.email_templates.test_limit_reached')
+      }.fetch(e.message, e.message)
+      redirect_to admin_email_template_path(@template), alert: message
     end
 
     private

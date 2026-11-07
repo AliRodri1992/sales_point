@@ -10,7 +10,11 @@ module Admin
 
     def preview
       authorize @template, :preview?
-      @version = @template.versions.find_by(id: params[:version_id]) || @template.published_version
+      @version = if params[:version_id].present?
+                   @template.versions.find(params[:version_id])
+                 else
+                   @template.published_version
+                 end
       raise ActiveRecord::RecordNotFound unless @version
 
       @subject, @html, @plain = EmailTemplates::Renderer.new(
