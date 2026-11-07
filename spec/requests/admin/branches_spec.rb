@@ -27,6 +27,10 @@ RSpec.describe 'Admin::Branches', type: :request do
 
     before { Branch.unscoped.delete_all }
 
+    def listed_branch_names
+      Nokogiri::HTML(response.body).css('.branch-table tbody .branch-name').map(&:text)
+    end
+
     it 'renders the branches page' do
       create(:branch, organization:, name: 'Sucursal Centro')
 
@@ -63,40 +67,54 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('table-per-page-branches')
-      expect(response.body).to include('Sucursal 1')
-      expect(response.body).to include('Sucursal 10')
-      # Verify pagination is showing page 1
+      expect(listed_branch_names.size).to eq(10)
       expect(response.body).to include('aria-current="page">1</span>')
-    end
 
+      get admin_branches_path, params: { page: 2 }
+
+      expect(response).to have_http_status(:ok)
+      expect(listed_branch_names.size).to eq(1)
+    end
     it 'allows selecting 5 records per page' do
       Array.new(11) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Sucursal 1')
-    end
+      expect(listed_branch_names.size).to eq(5)
 
+      get admin_branches_path, params: { per_page: 5, page: 3 }
+
+      expect(response).to have_http_status(:ok)
+      expect(listed_branch_names.size).to eq(1)
+    end
     it 'allows selecting 15 records per page' do
       Array.new(16) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 15 }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Sucursal 1')
-    end
+      expect(listed_branch_names.size).to eq(15)
 
+      get admin_branches_path, params: { per_page: 15, page: 2 }
+
+      expect(response).to have_http_status(:ok)
+      expect(listed_branch_names.size).to eq(1)
+    end
     it 'respects explicit page size when exactly 10 branches exist' do
       Array.new(10) { |index| create(:branch, organization:, name: "Sucursal #{index + 1}") }
 
       get admin_branches_path, params: { per_page: 5 }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Sucursal 10')
+      expect(listed_branch_names.size).to eq(5)
       expect(response.body).to include('table-per-page-branches')
-    end
 
+      get admin_branches_path, params: { per_page: 5, page: 2 }
+
+      expect(response).to have_http_status(:ok)
+      expect(listed_branch_names.size).to eq(5)
+    end
     it 'sorts branches by name in ascending order' do
       create(:branch, organization:, name: 'Sucursal Norte')
       create(:branch, organization:, name: 'Sucursal Centro')

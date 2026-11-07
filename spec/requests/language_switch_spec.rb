@@ -29,6 +29,25 @@ RSpec.describe 'Language switch', type: :request do
       expect(response.cookies['terminal_language']).to eq('es')
     end
 
+    it 'applies the selected locale to subsequent public page rendering' do
+      spanish = create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
+      english = create(:language, :english)
+
+      patch '/language', params: { language: spanish.code }
+      expect(response).to have_http_status(:ok)
+
+      get '/home/index'
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('>ES<')
+
+      patch '/language', params: { language: english.code }, as: :json
+      expect(response).to have_http_status(:ok)
+
+      get '/home/index'
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('>EN<')
+    end
+
     it 'rejects a language that is not available' do
       language = create(:language, code: 'zz', name: 'Inactive Language', flag_iso: 'zz', status: :inactive)
 
