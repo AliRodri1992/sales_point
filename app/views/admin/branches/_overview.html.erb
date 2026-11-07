@@ -1,21 +1,21 @@
 <dl id="branch-overview"
-    class="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm sm:px-5"
+    class="branch-overview"
     aria-label="<%= t('admin.branch_workspace.overview') %>">
-  <div class="flex items-baseline gap-2">
+  <div class="branch-overview-item">
     <dt class="text-sm font-medium text-slate-600"><%= t('admin.catalog_design.total') %></dt>
     <dd class="font-jakarta text-base font-bold tabular-nums text-slate-900"><%= @branch_counts.values.sum %></dd>
   </div>
-  <div class="hidden h-5 w-px bg-slate-200 sm:block" aria-hidden="true"></div>
-  <div class="flex items-center gap-2">
-    <dt class="flex items-center gap-1.5 text-sm text-slate-600">
-      <span class="size-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
+  <div class="branch-overview-divider" aria-hidden="true"></div>
+  <div class="branch-overview-item">
+    <dt class="branch-overview-label">
+      <span class="branch-overview-dot branch-overview-dot-active" aria-hidden="true"></span>
       <%= t('admin.catalog_design.active') %>
     </dt>
     <dd class="font-jakarta text-sm font-bold tabular-nums text-emerald-700"><%= @branch_counts.fetch(true, 0) %></dd>
   </div>
-  <div class="flex items-center gap-2">
-    <dt class="flex items-center gap-1.5 text-sm text-slate-600">
-      <span class="size-2 rounded-full bg-slate-400" aria-hidden="true"></span>
+  <div class="branch-overview-item">
+    <dt class="branch-overview-label">
+      <span class="branch-overview-dot branch-overview-dot-inactive" aria-hidden="true"></span>
       <%= t('admin.catalog_design.inactive') %>
     </dt>
     <dd class="font-jakarta text-sm font-bold tabular-nums text-slate-700"><%= @branch_counts.fetch(false, 0) %></dd>
