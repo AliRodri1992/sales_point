@@ -58,7 +58,7 @@
         </div>
         <div>
           <%= form.label :notes, t('admin.supplier_dossier.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= form.form :note_body, name: "#{form.object_name}[notes]", rows: 4, maxlength: 1000,
+          <%= form.text_area :note_body, name: "#{form.object_name}[notes]", id: "#{form.object_name}_notes", rows: 4, maxlength: 1000,
                              class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm' %>
         </div>
       </div>
