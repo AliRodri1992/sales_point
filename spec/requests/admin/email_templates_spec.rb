@@ -417,6 +417,24 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: :ko))
   end
 
+  it 'starts every new locale with an editable full-logo email layout' do
+    %w[es en ko].each do |locale|
+      post admin_email_templates_path, params: {
+        email_template: {
+          key: "draft_#{locale}", name: "Draft #{locale}",
+          category: 'transactional', locale:
+        }
+      }
+      expect(response).to have_http_status(:redirect)
+      template = EmailTemplate.find_by!(key: "draft_#{locale}", organization:)
+      expect(template.html_body).to include('src="{{platform_logo}}"')
+      expect(template.html_body).to include('{{recipient_name}}', '{{organization_name}}')
+      expect(template.text_body).to include('{{recipient_name}}')
+      draft = template.versions.order(:version_number).last
+      expect(draft.allowed_variables).to include('platform_logo', 'recipient_name', 'organization_name')
+    end
+  end
+
   it 'shows the creation workflow, localized guidance and accessible required inputs' do
     get new_admin_email_template_path
 

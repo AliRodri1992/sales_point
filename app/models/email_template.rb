@@ -50,8 +50,8 @@ class EmailTemplate < ApplicationRecord
     self.enabled = false
     default_locale = locale.in?(%w[es en ko]) ? locale : I18n.locale
     self.subject ||= I18n.t('admin.email_templates.default_subject', locale: default_locale)
-    self.html_body ||= '<p>{{recipient_name}}</p>'
-    self.text_body ||= '{{recipient_name}}'
+    self.html_body ||= EmailTemplates::DraftStarter.html(default_locale)
+    self.text_body ||= EmailTemplates::DraftStarter.plain(default_locale)
   end
 
   def new_draft!(actor:)
