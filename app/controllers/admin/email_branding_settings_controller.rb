@@ -2,6 +2,8 @@
 
 module Admin
   class EmailBrandingSettingsController < ApplicationController
+    include EmailSettingActivity
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
 
@@ -20,7 +22,8 @@ module Admin
         if @branding.update(attributes)
           extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
           EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
-          redirect_to edit_admin_email_branding_settings_path, notice: t('admin.email_templates.saved')
+          notify_email_setting('branding_updated', @branding)
+          redirect_to edit_admin_email_branding_settings_path, flash: { swal_message: t('admin.email_templates.saved') }
         else
           @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
                                      .includes(:actor).order(created_at: :desc).limit(20)
