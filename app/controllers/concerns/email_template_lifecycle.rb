@@ -4,8 +4,10 @@
 module EmailTemplateLifecycle
   def archive
     authorize @template, :archive?
-    @template.update!(status: 'archived', enabled: false)
-    @template.audit!(action: 'archived', actor: current_user)
+    EmailTemplate.transaction do
+      @template.update!(status: 'archived', enabled: false, updated_by: current_user)
+      @template.audit!(action: 'archived', actor: current_user)
+    end
     notify_email_template('archived')
     redirect_to admin_email_templates_path,
                 status: :see_other,
@@ -14,8 +16,10 @@ module EmailTemplateLifecycle
 
   def deactivate
     authorize @template, :deactivate?
-    @template.update!(status: 'inactive', enabled: false, updated_by: current_user)
-    @template.audit!(action: 'deactivated', actor: current_user)
+    EmailTemplate.transaction do
+      @template.update!(status: 'inactive', enabled: false, updated_by: current_user)
+      @template.audit!(action: 'deactivated', actor: current_user)
+    end
     notify_email_template('deactivated')
     redirect_to admin_email_templates_path,
                 status: :see_other,
@@ -24,8 +28,10 @@ module EmailTemplateLifecycle
 
   def activate
     authorize @template, :activate?
-    @template.update!(status: 'published', enabled: true, updated_by: current_user)
-    @template.audit!(action: 'activated', actor: current_user)
+    EmailTemplate.transaction do
+      @template.update!(status: 'published', enabled: true, updated_by: current_user)
+      @template.audit!(action: 'activated', actor: current_user)
+    end
     notify_email_template('activated')
     redirect_to admin_email_templates_path,
                 status: :see_other,
@@ -34,9 +40,11 @@ module EmailTemplateLifecycle
 
   def reactivate
     authorize @template, :reactivate?
-    @template.update!(status: 'draft', enabled: false, updated_by: current_user)
-    @template.new_draft!(actor: current_user) unless @template.versions.exists?(status: 'draft')
-    @template.audit!(action: 'reactivated', actor: current_user)
+    EmailTemplate.transaction do
+      @template.update!(status: 'draft', enabled: false, updated_by: current_user)
+      @template.new_draft!(actor: current_user)
+      @template.audit!(action: 'reactivated', actor: current_user)
+    end
     notify_email_template('reactivated')
     redirect_to edit_admin_email_template_path(@template),
                 status: :see_other,
