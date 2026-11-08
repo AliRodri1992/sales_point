@@ -41,6 +41,32 @@ RSpec.describe Branches::LifecycleRequirements do
     expect(requirements.closure_blockers).to include(:outstanding_stock, :assigned_team)
   end
 
+  it 'blocks closure for remaining lot quantities even when aggregate stock is zero' do
+    inventory = create(:inventory, organization:, branch:, stock: 0)
+    InventoryLot.create!(
+      inventory:, organization:, code: 'PENDING-LOT', quantity: 2, status: 'quarantined'
+    )
+
+    requirements = described_class.new(branch:, actor:)
+    expect(requirements.closure_blockers).to include(:outstanding_stock)
+    expect do
+      Branches::TransitionStatus.call(branch:, actor:, to: 'closed', reason: 'Closing')
+    end.to raise_error(Branches::TransitionStatus::InvalidTransition)
+  end
+
+  it 'blocks closure for available serials even when aggregate stock and lot quantity are zero' do
+    inventory = create(:inventory, organization:, branch:, stock: 0)
+    lot = InventoryLot.create!(
+      inventory:, organization:, code: 'PENDING-SERIAL', quantity: 0, status: 'depleted'
+    )
+    InventorySerial.create!(
+      inventory_lot: lot, organization:, serial_number: 'UNRECONCILED-001', status: 'available'
+    )
+
+    requirements = described_class.new(branch:, actor:)
+    expect(requirements.closure_blockers).to include(:outstanding_stock)
+  end
+
   it 'protects the last active branch of an operating organization' do
     organization.update!(onboarding_status: :completed)
     requirements = described_class.new(branch:, actor:)
