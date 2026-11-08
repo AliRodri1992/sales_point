@@ -13,6 +13,21 @@ module BranchesHelper
                 class: "#{styles} #{colors.fetch(branch.operational_status)}")
   end
 
+  def branch_activation_requirements(branch)
+    organization = branch.organization
+    settings = organization&.organization_settings&.active_records&.first
+    team_ready = organization &&
+                 Branch.team_assignments(organization).where(branch_id: branch.id).exists?
+    {
+      organization: organization&.active?,
+      name: branch.name.present?,
+      code: branch.code.present?,
+      address: branch.address&.valid?,
+      currency: settings&.base_currency&.active?,
+      team: team_ready
+    }
+  end
+
   def branch_required_label(text)
     safe_join([text, content_tag(:span, ' *', class: 'branch-required-mark', aria: { hidden: true })])
   end
