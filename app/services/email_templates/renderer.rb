@@ -36,7 +36,7 @@ module EmailTemplates
       sanitized = ActionController::Base.helpers.sanitize(
         html,
         tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
-        attributes: %w[lang charset name content width height role cellpadding cellspacing style href src alt align]
+        attributes: %w[lang charset name content width height role cellpadding cellspacing style bgcolor href src alt align]
       )
       inject_preheader(sanitized)
     end

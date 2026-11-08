@@ -30,6 +30,19 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     end
   end
 
+  it 'applies organization button colors to both CSS and email-client fallback attributes' do
+    EmailTemplates::InvitationContent.ensure_published!
+    invitation = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+    values = EmailTemplates::SampleData.call(invitation).merge(button_color: '#135724')
+
+    _subject, html, _plain = invitation.render_with(values)
+    document = Nokogiri::HTML.fragment(html)
+
+    expect(document.at_css('td[bgcolor]')['bgcolor']).to eq('#135724')
+    expect(html).to include('background-color:#135724')
+    expect(html).not_to include('background-color:{{primary_color}}')
+  end
+
   it 'does not replace customized published invitation versions' do
     EmailTemplates::InvitationContent.ensure_published!
     built_in = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')

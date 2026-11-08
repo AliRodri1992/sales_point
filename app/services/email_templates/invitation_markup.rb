@@ -34,8 +34,8 @@ module EmailTemplates
                         <tr><td style="padding:0 20px 18px;color:#334155;font-size:14px;line-height:1.6;">{{recipient_email}}</td></tr>
                       </table>
                       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 23px;">
-                        <tr><td align="center" bgcolor="#047857" style="background-color:{{primary_color}};border-radius:10px;">
-                          <a href="{{activation_url}}" style="display:inline-block;padding:16px 28px;color:#ffffff;background-color:{{primary_color}};border-radius:10px;font-size:15px;font-weight:700;line-height:1.3;text-align:center;text-decoration:none;">#{copy.fetch(:action)}</a>
+                        <tr><td align="center" bgcolor="{{button_color}}" style="background-color:{{button_color}};border-radius:10px;">
+                          <a href="{{activation_url}}" style="display:inline-block;padding:16px 28px;color:#ffffff;background-color:{{button_color}};border-radius:10px;font-size:15px;font-weight:700;line-height:1.3;text-align:center;text-decoration:none;">#{copy.fetch(:action)}</a>
                         </td></tr>
                       </table>
                       <p style="margin:0 0 9px;font-size:14px;font-weight:700;color:#0f172a;">#{copy.fetch(:guideTitle)}</p>
