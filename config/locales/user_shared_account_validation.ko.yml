@@ -1,0 +1,18 @@
+ko:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."
+            username:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."
+            user_type:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."
+            theme:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."
+            language_id:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."
+            system_role_ids:
+              shared_account: "계정이 여러 조직에 속해 있어 변경할 수 없습니다."

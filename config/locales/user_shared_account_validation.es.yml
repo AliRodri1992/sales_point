@@ -1,0 +1,18 @@
+es:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."
+            username:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."
+            user_type:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."
+            theme:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."
+            language_id:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."
+            system_role_ids:
+              shared_account: "no puede modificarse porque la cuenta pertenece a más de una organización."

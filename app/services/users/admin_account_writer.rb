@@ -21,8 +21,10 @@ module Users
 
       prepare_admin_access_validation(role_ids, branch_roles)
       return false unless @user.valid?
+      return false unless tenant_safe_update?(role_ids)
 
       persist!(role_ids, branch_roles)
+      Users::SessionRevoker.call(@user) if @access_changed
       true
     rescue ActiveRecord::RecordInvalid, Users::OrganizationCapacity::CapacityExceeded => e
       @user.errors.add(:base, e.message) if @user.errors.empty?
@@ -88,6 +90,25 @@ module Users
       false
     end
 
+    def tenant_safe_update?(role_ids)
+      return true if @user.new_record?
+      return true unless @user.organization_memberships.active.where.not(organization: @organization).exists?
+
+      field = %i[email username user_type theme language_id].find do |attribute|
+        @user.will_save_change_to_attribute?(attribute)
+      end
+      if field
+        @user.errors.add(field, :shared_account)
+        return false
+      end
+
+      original_ids = @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
+      return true if role_ids.nil? || role_ids.sort == original_ids.sort
+
+      @user.errors.add(:system_role_ids, :shared_account)
+      false
+    end
+
     def persist!(role_ids, branch_roles)
       @organization.with_lock do
         Users::OrganizationCapacity.new(organization: @organization).ensure_available! if @user.new_record?
@@ -99,6 +120,7 @@ module Users
       User.transaction do
         created = @user.new_record?
         @user.save!
+        previous_access = active_assignment_pairs
         UserInvitation.revoke_for!(@user) if !created && @user.saved_change_to_email? && @user.pending?
         if created
           @user.organization_memberships.create!(
@@ -107,7 +129,13 @@ module Users
         end
         sync_system_roles!(role_ids) unless role_ids.nil?
         branch_roles.apply!
+        @access_changed = !created && previous_access != active_assignment_pairs
+        @user.update!(session_revoked_at: Time.current) if @access_changed
       end
+    end
+
+    def active_assignment_pairs
+      @user.user_roles.active.pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
     end
 
     def sync_system_roles!(role_ids)
