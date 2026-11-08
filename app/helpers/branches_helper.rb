@@ -25,6 +25,26 @@ module BranchesHelper
     Branches::LifecycleRequirements.new(branch:, actor: current_user).closure_blockers
   end
 
+  def branch_transition_blockers(branch, to_status)
+    case to_status.to_s
+    when 'active' then branch_activation_requirements(branch).reject { |_key, ready| ready }.keys
+    when 'suspended' then branch_suspension_blockers(branch)
+    when 'closed' then branch_closure_blockers(branch)
+    else []
+    end
+  end
+
+  def branch_blocker_path(branch, blocker)
+    case blocker.to_sym
+    when :outstanding_stock then admin_branch_inventories_path(branch)
+    when :pending_requests then admin_purchase_requests_path
+    when :pending_orders then admin_purchase_orders_path
+    when :pending_returns then admin_purchase_returns_path
+    when :assigned_team then admin_users_path
+    else nil
+    end
+  end
+
   def branch_required_label(text)
     safe_join([text, content_tag(:span, ' *', class: 'branch-required-mark', aria: { hidden: true })])
   end
