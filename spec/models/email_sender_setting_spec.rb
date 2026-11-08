@@ -3,6 +3,21 @@
 require 'rails_helper'
 
 RSpec.describe EmailSenderSetting, type: :model do
+  it 'derives a new sender domain without treating it as verified' do
+    sender = described_class.create!(display_name: 'Shop', from_address: 'hello@first.test')
+    expect(sender.domain).to eq('first.test')
+    expect(sender.domain_status).to eq('unverified')
+  end
+
+  it 'invalidates domain verification after moving to another sender domain' do
+    sender = described_class.create!(
+      display_name: 'Shop', from_address: 'hello@first.test',
+      domain: 'first.test', domain_status: 'verified'
+    )
+    sender.update!(from_address: 'hello@second.test')
+    expect(sender).to have_attributes(domain: 'second.test', domain_status: 'unverified')
+  end
+
   it 'normalizes optional addresses before validation' do
     sender = described_class.new(
       display_name: 'Local brand', default_locale: 'es',

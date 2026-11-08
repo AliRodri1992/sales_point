@@ -5,6 +5,15 @@ require 'rails_helper'
 RSpec.describe EmailTemplates::Sender do
   let(:organization) { create(:organization) }
 
+  it 'rejects a previously verified sender after its domain changes' do
+    sender = EmailSenderSetting.create!(
+      organization:, from_address: 'contact@first.test', domain: 'first.test',
+      domain_status: 'verified'
+    )
+    sender.update!(from_address: 'contact@second.test')
+    expect(described_class.verified?(sender)).to be_falsey
+  end
+
   it 'uses only a verified sender whose address matches its domain' do
     EmailSenderSetting.create!(
       organization:, from_address: 'notificaciones@delta.test',

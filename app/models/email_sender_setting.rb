@@ -4,6 +4,7 @@ class EmailSenderSetting < ApplicationRecord
   belongs_to :organization, optional: true
 
   before_validation :normalize_addresses
+  before_validation :sync_domain_from_sender
 
   validates :display_name, presence: true, length: { maximum: 150 }
   validates :from_address, presence: true
@@ -14,6 +15,19 @@ class EmailSenderSetting < ApplicationRecord
   validates :domain, format: { with: /\A[a-z0-9.-]+\.[a-z]{2,}\z/i }, allow_blank: true
 
   private
+
+  # A verified domain cannot remain trusted after the sender switches domains.
+  def sync_domain_from_sender
+    candidate = from_address.to_s.split('@', 2).last
+    return unless candidate.to_s.match?(/\A[a-z0-9.-]+\.[a-z]{2,}\z/i)
+
+    if domain.blank?
+      self.domain = candidate
+    elsif persisted? && will_save_change_to_from_address? && !domain.casecmp?(candidate)
+      self.domain = candidate
+      self.domain_status = 'unverified'
+    end
+  end
 
   def normalize_addresses
     self.from_address = from_address.to_s.strip.downcase.presence
