@@ -14,7 +14,11 @@ module RequiresOperationalBranch
   private
 
   def requires_operational_branch_check?
-    new_record? || will_save_change_to_branch_id?
+    new_record? || will_save_change_to_branch_id? || entering_operational_commitment?
+  end
+
+  def entering_operational_commitment?
+    will_save_change_to_status? && self.class::OPERATIONAL_COMMITMENT_STATUSES.include?(status)
   end
 
   def serialize_operational_branch_change
