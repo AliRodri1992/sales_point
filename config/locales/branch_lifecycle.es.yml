@@ -4,6 +4,11 @@ es:
       pending_for: "Pendientes para %{action}"
       resolve_blocker: "Resolver"
       unavailable: "Resuelve primero las condiciones pendientes"
+      audit_yes: "Sí"
+      audit_no: "No"
+      audit_availability: "Estado del registro"
+      audit_removed: "Retirado"
+      audit_present: "Vigente"
       changes_title: "Historial de cambios en datos"
       changes_hint: "Últimos cambios registrados en los datos de la sucursal, domicilio, teléfonos y notas."
       audit_subjects:
