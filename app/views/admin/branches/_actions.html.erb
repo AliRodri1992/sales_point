@@ -2,6 +2,7 @@
   <%= link_to admin_branch_path(branch, branch_directory_parameters), class: 'branch-icon-button', aria: { label: t('admin.branch_workspace.view_branch', name: branch.name) }, title: t('admin.branch_workspace.view') , data: { turbo_frame: '_top' } do %><%= delta_icon('eye', class: 'size-4') %><% end %>
   <% if can_manage_branches %>
     <%= link_to edit_admin_branch_path(branch, branch_directory_parameters), class: 'branch-icon-button', aria: { label: t('admin.branch_workspace.edit_branch', name: branch.name) }, title: t('admin.branches.actions.edit'), data: { turbo_frame: '_top' } do %><%= delta_icon('pencil-square', class: 'size-4') %><% end %>
+    <% if branch.preparing? %>
     <%= button_to admin_branch_path(branch, branch_directory_parameters), method: :delete,
                   class: 'branch-icon-button branch-delete',
                   aria: { label: t('admin.branch_workspace.remove_branch', name: branch.name) },
@@ -14,6 +15,7 @@
                     swal_cancel_text: t('admin.branches.confirm.cancel')
                   } } do %>
       <%= delta_icon('trash', class: 'size-4') %>
+    <% end %>
     <% end %>
   <% end %>
 </div>
