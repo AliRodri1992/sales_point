@@ -100,8 +100,8 @@ class EmailTemplate < ApplicationRecord
       allowed_variables: variables }
   end
 
-  def audit!(action:, actor:, version: nil)
-    audits.create!(action:, actor:, organization:, email_template_version: version)
+  def audit!(action:, actor:, version: nil, metadata: {})
+    audits.create!(action:, actor:, organization:, email_template_version: version, metadata:)
   end
 
   def render_with(values)

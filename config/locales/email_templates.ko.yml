@@ -370,6 +370,9 @@ ko:
         reactivated: "템플릿 복원"
         activated: "템플릿 활성화"
         deactivated: "템플릿 비활성화"
+        test_queued: "테스트 이메일 발송 대기"
+        test_delivered: "테스트 이메일 전송 완료"
+        test_failed: "테스트 이메일 전송 실패"
         test_sent: "테스트 이메일 발송"
   activerecord:
     attributes:

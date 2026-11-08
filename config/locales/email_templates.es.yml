@@ -370,6 +370,9 @@ es:
         reactivated: "Plantilla restaurada"
         activated: "Plantilla activada"
         deactivated: "Plantilla desactivada"
+        test_queued: "Correo de prueba en cola"
+        test_delivered: "Correo de prueba entregado"
+        test_failed: "Correo de prueba fallido"
         test_sent: "Correo de prueba enviado"
   activerecord:
     attributes:

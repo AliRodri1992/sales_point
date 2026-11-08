@@ -370,6 +370,9 @@ en:
         reactivated: "Template restored"
         activated: "Template activated"
         deactivated: "Template deactivated"
+        test_queued: "Test email queued"
+        test_delivered: "Test email delivered"
+        test_failed: "Test email failed"
         test_sent: "Test email sent"
   activerecord:
     attributes:

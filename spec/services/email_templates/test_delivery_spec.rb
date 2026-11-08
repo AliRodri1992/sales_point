@@ -28,7 +28,7 @@ RSpec.describe EmailTemplates::TestDelivery do
   end
 
   it 'caps attempts to three per hour' do
-    3.times { template.audit!(action: 'test_sent', actor:) }
+    3.times { template.audit!(action: 'test_queued', actor:) }
     expect do
       described_class.call(template:, actor:, recipient: actor.email)
     end.to raise_error(ArgumentError, /limit/)
@@ -45,7 +45,7 @@ RSpec.describe EmailTemplates::TestDelivery do
     create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'super_admin'))
     expect do
       described_class.call(template:, actor:, recipient: ' Other@Example.org ')
-    end.to have_enqueued_mail(EmailTemplateTestMailer, :sample).with(template.id, 'other@example.org')
-    expect(template.audits.where(action: 'test_sent', actor:)).to exist
+    end.to have_enqueued_job(EmailTemplates::TestDeliveryJob).with(template.id, actor.id, 'other@example.org')
+    expect(template.audits.where(action: 'test_queued', actor:)).to exist
   end
 end

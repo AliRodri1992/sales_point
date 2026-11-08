@@ -327,7 +327,7 @@ RSpec.describe 'Admin email templates', type: :request do
 
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.test_not_published'))
-    expect(template.audits.where(action: 'test_sent')).not_to exist
+    expect(template.audits.where(action: 'test_queued')).not_to exist
   end
 
   it 'requires permission to browse historical versions even when preview is allowed' do
@@ -355,7 +355,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(error).to be_present
     expect(error.text).to start_with(I18n.t('admin.email_templates.test_recipient'))
     expect(page.at_css('form[novalidate]')).to be_present
-    expect(template.audits.where(action: 'test_sent')).not_to exist
+    expect(template.audits.where(action: 'test_queued')).not_to exist
   end
 
   it 'shows version history and reuses the current editable draft' do
@@ -476,7 +476,7 @@ RSpec.describe 'Admin email templates', type: :request do
       post send_test_admin_email_template_path(template), params: { email: administrator.email }
     end.to have_enqueued_mail(EmailTemplateTestMailer, :sample).with(template.id, administrator.email)
     expect(response).to redirect_to(admin_email_template_path(template))
-    expect(template.audits.where(action: 'test_sent')).to exist
+    expect(template.audits.where(action: 'test_queued')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }
     expect(response).to have_http_status(:unprocessable_content)
     expect(Nokogiri::HTML(response.body).at_css('#email_templates_test_recipient_email_error')).to be_present

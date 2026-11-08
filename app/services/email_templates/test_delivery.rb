@@ -11,8 +11,8 @@ module EmailTemplates
 
       template.with_lock do
         check_limit!(template, actor)
-        template.audit!(action: 'test_sent', actor:)
-        EmailTemplateTestMailer.sample(template.id, recipient).deliver_later
+        template.audit!(action: 'test_queued', actor:)
+        EmailTemplates::TestDeliveryJob.perform_later(template.id, actor.id, recipient)
       end
     end
 
@@ -25,7 +25,7 @@ module EmailTemplates
     end
 
     def self.check_limit!(template, actor)
-      recent = template.audits.where(action: 'test_sent', actor:)
+      recent = template.audits.where(action: 'test_queued', actor:)
                        .where(created_at: 1.hour.ago..).count
       raise ArgumentError, 'Test email limit reached' if recent >= LIMIT_PER_HOUR
     end
