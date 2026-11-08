@@ -1,0 +1,42 @@
+<% if @branch_change_events.present? %>
+  <section class="catalog-card mt-5" aria-labelledby="branch-changes-title">
+    <div class="catalog-card-body">
+      <h2 id="branch-changes-title" class="font-jakarta text-base font-bold">
+        <%= t('admin.branch_lifecycle.changes_title') %>
+      </h2>
+      <p class="mt-1 text-xs text-slate-600"><%= t('admin.branch_lifecycle.changes_hint') %></p>
+      <ol class="mt-4 space-y-3">
+        <% @branch_change_events.each do |item| %>
+          <% event = item.fetch(:event) %>
+          <li class="rounded-xl border border-slate-200 p-3 text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <strong class="text-slate-900">
+                <%= t("admin.branch_lifecycle.audit_subjects.#{event.item_type.downcase}") %>
+                · <%= t("admin.branch_lifecycle.audit_events.#{event.event}", default: event.event) %>
+              </strong>
+              <time datetime="<%= event.created_at.iso8601 %>" class="text-xs text-slate-500">
+                <%= l(event.created_at, format: :long) %>
+              </time>
+            </div>
+            <p class="mt-1 text-xs text-slate-600">
+              <%= @branch_change_actors[event.whodunnit.to_i]&.display_name ||
+                  t('admin.branch_lifecycle.system_actor') %>
+            </p>
+            <dl class="mt-2 space-y-1 text-xs">
+              <% item.fetch(:fields).each do |attribute, values| %>
+                <div class="flex flex-wrap gap-2">
+                  <dt class="font-semibold text-slate-700">
+                    <%= event.item_type.safe_constantize.human_attribute_name(attribute) %>:
+                  </dt>
+                  <dd class="break-all text-slate-600">
+                    <%= Array(values).map { |value| value.presence || '—' }.join(' → ') %>
+                  </dd>
+                </div>
+              <% end %>
+            </dl>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </section>
+<% end %>
