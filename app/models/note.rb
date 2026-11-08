@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Note < ApplicationRecord
+  include RestrictsClosedBranchMutations
   belongs_to :notable, polymorphic: true
   belongs_to :organization, optional: true
   belongs_to :created_by, class_name: 'User', optional: true
