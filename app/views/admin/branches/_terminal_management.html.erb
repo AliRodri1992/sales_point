@@ -4,7 +4,7 @@
   </h3>
   <p class="mt-1 text-xs text-slate-600"><%= t('admin.branch_lifecycle.terminals_hint') %></p>
 
-  <% if @branch.terminals.any? %>
+  <% if @branch.terminals.exists? %>
     <ul class="mt-3 space-y-2">
       <% @branch.terminals.order(:id).each do |terminal| %>
         <li class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 p-3">
