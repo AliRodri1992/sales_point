@@ -60,6 +60,20 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(Nokogiri::HTML(response.body).at_css('#users_status_transition_resolution_error')).to be_present
   end
 
+  it 'shows a translated status-transition error instead of the internal exception' do
+    form = Users::StatusTransition.new(
+      user: target, actor: admin, organization:, target: 'suspended', reason: 'Review'
+    )
+    allow(Users::StatusTransition).to receive(:new).and_return(form)
+    allow(form).to receive(:call).and_raise(ArgumentError, 'Transition not permitted')
+
+    patch admin_user_status_path(target), params: { transition: 'suspended', reason: 'Review' }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.users.status_management.errors.transition_not_permitted'))
+    expect(response.body).not_to include('Transition not permitted')
+  end
+
   it 'prevents an administrator from changing their own status' do
     patch admin_user_status_path(admin), params: { transition: 'suspended', reason: 'Self change' }
     expect(admin.reload).to be_active

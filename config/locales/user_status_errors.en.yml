@@ -1,0 +1,12 @@
+en:
+  admin:
+    users:
+      status_management:
+        errors:
+          last_administrator: "You cannot disable this organization's last administrator."
+          transition_not_permitted: "This status change is no longer permitted. Refresh the page and try again."
+          reason_required: "Enter a reason before continuing."
+          resolution_required: "Explain how the incident was resolved."
+          incident_not_found: "There is no open security incident for this account."
+          review_date_future: "The review date must be in the future."
+          unexpected: "The status could not be changed. Refresh the page and try again."

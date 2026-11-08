@@ -1,0 +1,12 @@
+ko:
+  admin:
+    users:
+      status_management:
+        errors:
+          last_administrator: "이 조직의 마지막 관리자를 비활성화할 수 없습니다."
+          transition_not_permitted: "더 이상 허용되지 않는 상태 변경입니다. 페이지를 새로고침한 후 다시 시도하세요."
+          reason_required: "계속하려면 사유를 입력하세요."
+          resolution_required: "보안 사고가 어떻게 해결되었는지 입력하세요."
+          incident_not_found: "이 계정에 진행 중인 보안 사고가 없습니다."
+          review_date_future: "검토 날짜는 미래여야 합니다."
+          unexpected: "상태를 변경할 수 없습니다. 페이지를 새로고침한 후 다시 시도하세요."

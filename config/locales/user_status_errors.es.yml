@@ -1,0 +1,12 @@
+es:
+  admin:
+    users:
+      status_management:
+        errors:
+          last_administrator: "No puedes desactivar al último administrador de esta empresa."
+          transition_not_permitted: "El cambio de estado ya no está permitido. Actualiza la página y vuelve a intentarlo."
+          reason_required: "Debes indicar un motivo para continuar."
+          resolution_required: "Debes indicar cómo se resolvió el incidente."
+          incident_not_found: "No se encontró un incidente de seguridad pendiente para esta cuenta."
+          review_date_future: "La fecha de revisión debe ser futura."
+          unexpected: "No fue posible cambiar el estado. Actualiza la página e inténtalo nuevamente."

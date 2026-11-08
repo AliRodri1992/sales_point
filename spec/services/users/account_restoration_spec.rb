@@ -92,6 +92,38 @@ RSpec.describe Users::AccountRestoration do
     expect(other.reload).to be_account_suspended
   end
 
+  it 'preserves foreign branch assignments while resetting a shared globally deleted account' do
+    foreign_organization = create(:organization)
+    foreign_member = create(:organization_membership, user:, organization: foreign_organization,
+                           account_status: :suspended)
+    local = create(:branch, organization:)
+    foreign = create(:branch, organization: foreign_organization)
+    branch_role = create(:system_role, :branch, code: 'historical_shared_branch')
+    local_role = create(:user_role, user:, branch: local, system_role: branch_role)
+    foreign_role = create(:user_role, user:, branch: foreign, system_role: branch_role)
+
+    restore
+
+    expect(local_role.reload.deleted_at).to be_present
+    expect(foreign_role.reload.deleted_at).to be_nil
+    expect(foreign_member.reload).to be_account_suspended
+    expect(user.reload).to be_pending
+  end
+
+  it 'revokes old cross-organization invitations when a deleted global account is reset' do
+    foreign = create(:organization)
+    create(:organization_membership, user:, organization: foreign, account_status: :pending)
+    user.update!(status: :pending, deleted_at: nil)
+    invitation = UserInvitation.issue!(user:, organization: foreign)
+    user.update!(status: :deleted, deleted_at: Time.current)
+
+    restore
+
+    expect(invitation.reload.revoked_at).to be_present
+    expect(invitation).not_to be_usable
+    expect(user.reload).to be_pending
+  end
+
   ['', 'x' * 1001].each do |reason|
     it "rejects a restoration reason with #{reason.length} characters" do
       expect { restore(reason:) }.to raise_error(ArgumentError, 'Reason required')
