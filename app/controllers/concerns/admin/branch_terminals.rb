@@ -5,7 +5,9 @@ module Admin
   module BranchTerminals
     def add_terminal
       authorize @branch, :manage?
-      raise Branches::TransitionStatus::InvalidTransition, :invalid_transition unless @branch.preparing? || @branch.active?
+      unless @branch.preparing? || @branch.active?
+        raise Branches::TransitionStatus::InvalidTransition, :invalid_transition
+      end
 
       @terminal = @branch.terminals.build(name: terminal_params[:name], status: 'inactive')
       @branch.with_lock do
@@ -27,7 +29,9 @@ module Admin
       authorize @branch, :manage?
       terminal = @branch.terminals.find(params[:terminal_id])
       status = params[:terminal_status].to_s
-      raise Branches::TransitionStatus::InvalidTransition, :invalid_transition unless %w[active inactive].include?(status)
+      unless %w[active inactive].include?(status)
+        raise Branches::TransitionStatus::InvalidTransition, :invalid_transition
+      end
       raise Branches::TransitionStatus::InvalidTransition, :invalid_transition if status == 'active' && !@branch.active?
 
       @branch.with_lock do
