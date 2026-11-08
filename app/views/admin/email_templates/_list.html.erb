@@ -109,6 +109,24 @@
                       <%= delta_icon('pencil-square', class: 'size-5') %>
                     <% end %>
                   <% end %>
+                  <% if policy(template).deactivate? %>
+                    <%= button_to deactivate_admin_email_template_path(template), method: :patch,
+                                  form: { data: { turbo_confirm: t('admin.email_templates.confirm_deactivate'), turbo_frame: '_top' } },
+                                  data: { tooltip: t('admin.email_templates.deactivate') },
+                                  aria: { label: t('admin.email_templates.deactivate_named', name: template.name) },
+                                  class: 'inline-flex size-10 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100' do %>
+                      <%= delta_icon('archive-box-arrow-down', class: 'size-5') %>
+                    <% end %>
+                  <% end %>
+                  <% if policy(template).activate? %>
+                    <%= button_to activate_admin_email_template_path(template), method: :patch,
+                                  form: { data: { turbo_confirm: t('admin.email_templates.confirm_activate'), turbo_frame: '_top' } },
+                                  data: { tooltip: t('admin.email_templates.activate') },
+                                  aria: { label: t('admin.email_templates.activate_named', name: template.name) },
+                                  class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' do %>
+                      <%= delta_icon('arrow-path', class: 'size-5') %>
+                    <% end %>
+                  <% end %>
                   <% if policy(template).archive? && template.status != 'archived' %>
                     <%= button_to archive_admin_email_template_path(template), method: :patch,
                                   form: { data: { turbo_confirm: t('admin.email_templates.confirm_archive'), turbo_frame: '_top' } },

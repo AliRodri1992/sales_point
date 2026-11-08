@@ -914,4 +914,22 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(doc.at_css("form[action='#{archive_admin_email_template_path(global)}']")).to be_present
   end
 
+  it 'deactivates and reactivates published organization templates without changing versions' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    version.publish!(actor: administrator)
+
+    patch deactivate_admin_email_template_path(template)
+    expect(response).to have_http_status(:see_other)
+    expect(template.reload).to have_attributes(status: 'inactive', enabled: false)
+    expect(template.published_version).to eq(version)
+    expect(template.audits.where(action: 'deactivated')).to exist
+
+    patch activate_admin_email_template_path(template)
+    expect(response).to have_http_status(:see_other)
+    expect(template.reload).to have_attributes(status: 'published', enabled: true)
+    expect(template.published_version).to eq(version)
+    expect(template.audits.where(action: 'activated')).to exist
+  end
+
 end

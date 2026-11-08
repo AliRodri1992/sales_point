@@ -34,6 +34,15 @@ class EmailTemplatePolicy < ApplicationPolicy
       record.enabled? && record.published_version.present?
   end
 
+  def deactivate?
+    archive? && record.status == 'published' && record.enabled?
+  end
+
+  def activate?
+    allowed?('email_templates.publish') && same_tenant? &&
+      record.status == 'inactive' && record.published_version.present?
+  end
+
   def reactivate?
     allowed?('email_templates.archive') && same_tenant? &&
       record.status == 'archived' && !record.protected_global?

@@ -11,6 +11,24 @@ module EmailTemplateLifecycle
                 flash: { swal_message: t('admin.email_templates.archived') }
   end
 
+  def deactivate
+    authorize @template, :deactivate?
+    @template.update!(status: 'inactive', enabled: false, updated_by: current_user)
+    @template.audit!(action: 'deactivated', actor: current_user)
+    notify_email_template('deactivated')
+    redirect_to admin_email_templates_path, status: :see_other,
+                flash: { swal_message: t('admin.email_templates.deactivated_toast') }
+  end
+
+  def activate
+    authorize @template, :activate?
+    @template.update!(status: 'published', enabled: true, updated_by: current_user)
+    @template.audit!(action: 'activated', actor: current_user)
+    notify_email_template('activated')
+    redirect_to admin_email_templates_path, status: :see_other,
+                flash: { swal_message: t('admin.email_templates.activated_toast') }
+  end
+
   def reactivate
     authorize @template, :reactivate?
     @template.update!(status: 'draft', enabled: false, updated_by: current_user)

@@ -92,4 +92,26 @@ RSpec.describe EmailTemplatePolicy do
     expect(policy.publish?).to be(false)
   end
 
+  it 'controls active and inactive transitions without allowing critical global shutdowns' do
+    template = template_for(organization)
+    template.id = 24
+    template.status = 'published'
+    template.enabled = true
+    expect(described_class.new(user, template).deactivate?).to be(true)
+
+    template.status = 'inactive'
+    version = EmailTemplateVersion.new(
+      email_template: template, version_number: 1, status: 'published',
+      subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello'
+    )
+    allow(template).to receive(:published_version).and_return(version)
+    expect(described_class.new(user, template).activate?).to be(true)
+
+    global = template_for(nil)
+    global.key = 'user_invitation'
+    global.status = 'published'
+    global.enabled = true
+    expect(described_class.new(user, global).deactivate?).to be(false)
+  end
+
 end
