@@ -244,7 +244,7 @@ es:
       step_content_hint: "Escribe el asunto, el HTML y el texto plano; revisa la vista previa."
       step_publish_title: "Revisa y publica"
       step_publish_hint: "Publica una versión solo cuando su contenido esté listo."
-      automatic_locale_hint: "Se asigna automáticamente el idioma que tienes configurado en Delta POS. No necesitas seleccionarlo."
+      automatic_locale_hint: "Se propone el idioma de tu sesión. Puedes cambiarlo antes de crear el borrador."
       created_toast: "Plantilla creada correctamente. El borrador está listo para editar."
       draft_updated_toast: "Borrador de correo actualizado correctamente."
       new_intro: "Define el nombre y el idioma. Después podrás editar el contenido y publicar la primera versión."

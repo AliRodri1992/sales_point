@@ -244,7 +244,7 @@ en:
       step_content_hint: "Write the subject, HTML, and plain text, then review the preview."
       step_publish_title: "Review and publish"
       step_publish_hint: "Publish a version only when its content is ready."
-      automatic_locale_hint: "The template automatically uses your configured Delta POS language. No selection is needed."
+      automatic_locale_hint: "Your session language is preselected. You can change it before creating the draft."
       created_toast: "Template created. Your draft is ready to edit."
       draft_updated_toast: "Email draft updated successfully."
       new_intro: "Choose a name and language. You can then edit the content and publish the first version."
