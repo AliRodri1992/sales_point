@@ -15,7 +15,11 @@ module Admin
     private
 
     def show_transition_error(error)
-      @transition_error = error.is_a?(ActiveRecord::RecordInvalid) ? error.record.errors.full_messages.to_sentence : error.message
+      @transition_error = if error.is_a?(ActiveRecord::RecordInvalid)
+                            error.record.errors.full_messages.to_sentence
+                          else
+                            error.message
+                          end
       @transition_to = params[:to_status].to_s
       @transition_reason = params[:reason].to_s
       @branch.reload
