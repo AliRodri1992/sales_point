@@ -33,6 +33,10 @@
     <p class="mt-3 text-sm text-slate-600"><%= t('admin.branch_lifecycle.no_terminals') %></p>
   <% end %>
 
+  <% if @terminal_operation_error.present? %>
+    <p class="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"
+       role="alert"><%= @terminal_operation_error %></p>
+  <% end %>
   <% if @branch.preparing? || @branch.active? %>
     <%= form_with url: add_terminal_admin_branch_path(@branch), scope: :terminal,
                   class: 'mt-4 space-y-2', html: { novalidate: true } do |terminal_form| %>
