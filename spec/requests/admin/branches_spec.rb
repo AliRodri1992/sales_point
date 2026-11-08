@@ -320,6 +320,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to redirect_to(admin_branches_path)
       expect(flash[:swal_message]).to eq(I18n.t('admin.branches.created'))
+      expect(Branch.order(:id).last).to be_preparing
       notification = admin_user.notifications.last
       expect(notification.event.params[:action]).to eq('created')
       expect(notification.event.params[:user]).to eq(admin_user)
