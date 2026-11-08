@@ -111,6 +111,8 @@ module Users
       User.transaction do
         created = @user.new_record?
         @user.save!
+        raise ActiveRecord::RecordInvalid, @user unless last_admin_role_safe?(role_ids)
+
         previous_access = active_assignment_pairs
         @email_changed = !created && @user.saved_change_to_email? && @user.pending?
         UserInvitation.revoke_for!(@user) if @email_changed
