@@ -11,6 +11,7 @@ module Admin
       authorize @user, :manage_status?
       @target = params[:transition].to_s
       return head :unprocessable_content unless permitted_transition?
+
       @status_form = Users::StatusTransition.new(**transition_attributes)
     end
 
@@ -22,7 +23,7 @@ module Admin
       @status_form = Users::StatusTransition.new(**transition_attributes)
       return render :edit, status: :unprocessable_content unless @status_form.call
 
-      redirect_to status_destination, flash: { swal_message: t('admin.users.status_management.changed') }
+      render_successful_change
     rescue Users::InvitationDispatcher::DeliveryError
       redirect_to admin_user_path(@user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError => e
@@ -39,6 +40,10 @@ module Admin
     def status_destination
       membership = @user.organization_memberships.active.find_by(organization: current_organization)
       membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
+    end
+
+    def render_successful_change
+      redirect_to status_destination, flash: { swal_message: t('admin.users.status_management.changed') }
     end
 
     def transition_attributes
