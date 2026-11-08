@@ -92,7 +92,8 @@
           <% @branch.branch_status_transitions.includes(:changed_by).order(created_at: :desc).limit(20).each do |entry| %>
             <li class="text-sm">
               <time datetime="<%= entry.created_at.iso8601 %>"><%= l(entry.created_at, format: :long) %></time>
-              · <%= t("admin.branch_lifecycle.statuses.#{entry.to_status}") %>
+              · <%= entry.from_status.present? ? t("admin.branch_lifecycle.statuses.#{entry.from_status}") : '—' %>
+              → <%= t("admin.branch_lifecycle.statuses.#{entry.to_status}") %>
               · <%= entry.changed_by&.display_name || t('admin.branch_lifecycle.system_actor') %>
               <% if entry.reason.present? %> — <%= entry.reason %><% end %>
             </li>
