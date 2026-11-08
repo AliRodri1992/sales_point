@@ -3,7 +3,12 @@
 module Inventories
   class ApplyMovement
     def self.call(inventory:, quantity:, kind:, **options)
-      inventory.with_lock do
+      inventory.branch.with_lock do
+        if kind.to_s == 'sale' && !inventory.branch.operationally_active?
+          inventory.errors.add(:branch, :invalid)
+          raise ActiveRecord::RecordInvalid, inventory
+        end
+        inventory.with_lock do
         amount = BigDecimal(quantity.to_s)
         validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
         before = inventory.stock
@@ -17,6 +22,7 @@ module Inventories
           inventory_lot: options[:inventory_lot],
           quantity: amount, stock_before: before, stock_after: after
         )
+        end
       end
     end
 
