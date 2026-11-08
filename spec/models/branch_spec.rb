@@ -49,6 +49,7 @@ RSpec.describe Branch, type: :model do
       expect(branch).to be_valid
     end
   end
+
   it 'requires an address when registering a branch directly through the model' do
     branch = build(:branch, :without_address)
 
@@ -96,6 +97,7 @@ RSpec.describe Branch, type: :model do
     expect(branch.errors[:base]).to be_present
     expect(branch.reload.deleted_at).to be_nil
   end
+
   it 'does not allow deactivation with live terminals or untransferred stock' do
     organization = create(:organization)
     branch = create(:branch, organization:, name: 'Operations')
@@ -113,5 +115,4 @@ RSpec.describe Branch, type: :model do
     inventory.update!(stock: 0)
     expect(branch.update(status: false)).to be(true)
   end
-
 end

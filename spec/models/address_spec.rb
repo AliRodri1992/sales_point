@@ -323,4 +323,12 @@ RSpec.describe Address, type: :model do
     expect(address.neighborhood).to eq('Kept neighborhood')
     expect(address.postal_code).to eq('90210')
   end
+  it 'persists an address against the intentional address-less branch fixture' do
+    address = create(:address)
+
+    expect(address).to be_persisted
+    expect(address.addressable).to be_a(Branch)
+    expect(address.addressable.reload.address).to eq(address)
+  end
+
 end

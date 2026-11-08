@@ -13,6 +13,10 @@ FactoryBot.define do
       transient do
         without_address { true }
       end
+
+      # Legacy fixtures create the owner before its polymorphic address.
+      # Production Branch validations still require an address on creation.
+      to_create { |record| record.save!(validate: false) }
     end
 
     after(:build) do |branch, evaluator|
