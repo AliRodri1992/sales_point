@@ -737,7 +737,9 @@ SeedConsole.track('Sucursales', Branch) do
           organization:
         }
       ],
+      operational_status: (number % 5).zero? ? 'suspended' : 'active',
       status: number % 5 != 0,
+      code: format('SUC%03d', number),
       address_attributes: {
         street: 'Avenida Insurgentes',
         exterior_number: number.to_s,
