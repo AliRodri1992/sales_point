@@ -112,7 +112,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
     t.string "name"
     t.string "address"
     t.boolean "status"
-    t.string "operational_status", default: "preparing", null: false
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -123,10 +122,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
     t.index "organization_id, lower((code)::text)", name: "idx_branches_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (code IS NOT NULL))"
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
-    t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
     t.index ["organization_id"], name: "index_branches_on_organization_id"
     t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
-    t.check_constraint "operational_status IN (\'preparing\', \'active\', \'suspended\', \'closed\')", name: "branches_operational_status_valid"
     t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
     t.check_constraint "operational_status::text = ANY (ARRAY['preparing'::character varying, 'active'::character varying, 'suspended'::character varying, 'closed'::character varying]::text[])", name: "branches_operational_status_valid"
   end
