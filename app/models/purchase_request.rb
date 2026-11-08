@@ -2,6 +2,7 @@
 
 class PurchaseRequest < ApplicationRecord
   include HasPolymorphicNotes
+  include RequiresOperationalBranch
 
   has_paper_trail
 
@@ -18,7 +19,6 @@ class PurchaseRequest < ApplicationRecord
 
   validates :code, presence: true, uniqueness: { scope: :organization_id }
   validate :branch_belongs_to_organization
-  validate :branch_must_be_operational, on: :create
   validate :products_belong_to_organization
 
   before_validation :set_code, on: :create
@@ -27,10 +27,6 @@ class PurchaseRequest < ApplicationRecord
 
   def set_code
     self.code ||= "REQ-#{SecureRandom.hex(5).upcase}"
-  end
-
-  def branch_must_be_operational
-    errors.add(:branch, :invalid) unless branch&.operationally_active?
   end
 
   def branch_belongs_to_organization
