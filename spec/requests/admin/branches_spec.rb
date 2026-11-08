@@ -585,8 +585,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'builds an address when an invalid update targets a branch without one' do
-      branch = create(:branch, organization:)
-      branch.address.destroy!
+      branch = create(:branch, :without_address, organization:)
 
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 
@@ -609,6 +608,8 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(page.at_css('input#branch_name')['required']).to be_nil
       expect(page.at_css('input#branch_address_attributes_street')['required']).to be_nil
       expect(page.at_css('input#branch_code')['pattern']).to be_nil
+      expect(page.at_css('input#branch_code')['readonly']).to be_present
+      expect(page.at_css('input#branch_code')['tabindex']).to be_nil
       expect(response.body).to include('branch-required-mark')
     end
 
@@ -621,7 +622,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       document = Nokogiri::HTML(response.body)
       expect(document.at_css('#branch_address_error')).to be_present
       expect(document.at_css('#branch_address_error').text)
-        .to include(I18n.t('admin.branches.form.fields.country'))
+        .to include(I18n.t('admin.branch_workspace.location'))
     end
 
     it 'keeps malformed email and address messages below each input' do
