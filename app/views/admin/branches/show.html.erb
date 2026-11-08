@@ -89,40 +89,72 @@
           <% end %>
         <% end %>
       <% end %>
-      <% if can_change_lifecycle %>
+      <% if can_change_lifecycle && !@branch.closed? %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
-        <% allowed.each do |next_status| %>
-          <% blockers = branch_transition_blockers(@branch, next_status) %>
-          <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
-                        method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3',
-                        data: { turbo_confirm: t("admin.branch_lifecycle.confirmations.#{next_status}"),
-                                confirm_record: @branch.name } do |transition_form| %>
-            <%= transition_form.hidden_field :to_status, value: next_status,
-                                         id: "branch-transition-target-#{next_status}" %>
-            <div class="catalog-field flex-1">
-              <%= transition_form.label :reason, branch_required_label(t('admin.branch_lifecycle.reason')),
-                            for: "branch-transition-reason-#{next_status}", class: 'catalog-label' %>
-              <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
-                          id: "branch-transition-reason-#{next_status}",
-                          value: (@transition_to == next_status ? @transition_reason : nil),
-                          aria: { invalid: @transition_to == next_status &&
-                                           %w[reason_required reason_too_long].include?(@transition_error_code),
-                                  describedby: (@transition_to == next_status &&
-                                                %w[reason_required reason_too_long].include?(@transition_error_code) ?
-                                                "branch-transition-reason-error-#{next_status}" : nil) },
-                          class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
-              <% if @transition_to == next_status &&
-                     %w[reason_required reason_too_long].include?(@transition_error_code) %>
-                <p id="branch-transition-reason-error-<%= next_status %>" class="text-xs text-rose-700"
-                   role="alert"><%= t('admin.branch_lifecycle.reason') %> <%= @transition_error %></p>
-              <% end %>
+        <% selected_state = if allowed.include?(@transition_to)
+                              @transition_to
+                            else
+                              allowed.find { |state| branch_transition_blockers(@branch, state).empty? } || allowed.first
+                            end %>
+        <% selected_blocked = branch_transition_blockers(@branch, selected_state).any? %>
+        <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
+                      method: :patch, class: 'mt-5 space-y-4 rounded-xl border border-slate-200 p-4',
+                      html: { novalidate: true },
+                      data: { controller: 'branch-transition',
+                              unavailable_message: t('admin.branch_lifecycle.unavailable'),
+                              turbo_confirm: t("admin.branch_lifecycle.confirmations.#{selected_state}"),
+                              confirm_record: @branch.name } do |transition_form| %>
+          <div class="catalog-field">
+            <%= transition_form.label :to_status,
+                                      branch_required_label(t('admin.branch_lifecycle.next_status')),
+                                      class: 'catalog-label' %>
+            <div data-controller="delta-select" data-searchable="false">
+              <%= select_tag :to_status,
+                             options_for_select(allowed.map { |state|
+                               [t("admin.branch_lifecycle.actions.#{state}"), state,
+                                { data: { blocked: branch_transition_blockers(@branch, state).any?,
+                                          description: t("admin.branch_lifecycle.descriptions.#{state}"),
+                                          confirmation: t("admin.branch_lifecycle.confirmations.#{state}"),
+                                          action_label: t("admin.branch_lifecycle.actions.#{state}") } }]
+                             }, selected_state),
+                             id: 'branch-transition-target',
+                             data: { branch_transition_target: 'status',
+                                     action: 'change->branch-transition#update' },
+                             aria: { describedby: 'branch-transition-help branch-transition-availability' },
+                             class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
             </div>
-            <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
-                                       class: next_status == 'closed' ? 'catalog-button border-rose-600 text-rose-700' :
-                                         'catalog-button catalog-button-primary',
-                                       disabled: blockers.any?,
-                                       title: (blockers.any? ? t('admin.branch_lifecycle.unavailable') : nil) %>
-          <% end %>
+            <p id="branch-transition-help" data-branch-transition-target="description"
+               class="mt-2 text-sm text-slate-600">
+              <%= t("admin.branch_lifecycle.descriptions.#{selected_state}") %>
+            </p>
+            <p id="branch-transition-availability" data-branch-transition-target="availability"
+               class="mt-2 text-sm font-semibold text-amber-900" role="status" aria-live="polite"
+               <%= 'hidden' unless selected_blocked %>>
+              <%= t('admin.branch_lifecycle.unavailable') if selected_blocked %>
+            </p>
+          </div>
+          <div class="catalog-field">
+            <%= transition_form.label :reason,
+                                      branch_required_label(t('admin.branch_lifecycle.reason')),
+                                      class: 'catalog-label' %>
+            <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
+                            value: @transition_reason,
+                            aria: { invalid: %w[reason_required reason_too_long].include?(@transition_error_code),
+                                    describedby: (%w[reason_required reason_too_long].include?(@transition_error_code) ?
+                                                    'branch-transition-reason-error' : nil) },
+                            class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
+            <% if %w[reason_required reason_too_long].include?(@transition_error_code) %>
+              <p id="branch-transition-reason-error" class="mt-1 text-xs text-rose-700" role="alert">
+                <%= t('admin.branch_lifecycle.reason') %> <%= @transition_error %>
+              </p>
+            <% end %>
+          </div>
+          <%= transition_form.button t("admin.branch_lifecycle.actions.#{selected_state}"),
+                                     type: :submit,
+                                     class: 'catalog-button catalog-button-primary',
+                                     disabled: selected_blocked,
+                                     data: { branch_transition_target: 'submit' },
+                                     aria: { describedby: 'branch-transition-help branch-transition-availability' } %>
         <% end %>
       <% end %>
       <% if @branch.branch_status_transitions.exists? %>
