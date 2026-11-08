@@ -123,8 +123,8 @@ jobs:
         run: |
           yarn build:js
           yarn build:css
-      - name: Prepare test database
-        run: bin/rails db:prepare
+      - name: Create test database and run migrations without demo seeds
+        run: bin/rails db:create db:migrate
       - name: Run email models, requests, mailers, services and browser regressions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
