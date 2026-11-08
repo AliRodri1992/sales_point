@@ -268,7 +268,7 @@
               <%= t('admin.users.form.fields.theme') %><span data-required-indicator class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
               <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
             <% end %>
-            <div class="relative" data-controller="delta-select">
+            <div class="relative" data-controller="delta-select" data-theme-swatches="true">
               <%= form.select :theme,
                               @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize),
                                                 theme[:id], { 'data-swatch-color': theme[:color] }] },

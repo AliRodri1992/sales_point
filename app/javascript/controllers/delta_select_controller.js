@@ -164,7 +164,7 @@ export default class extends Controller {
     const options = [...this.select.options]
     const signature = JSON.stringify(options.map((option) => [
       option.value, option.textContent, option.selected, option.disabled,
-      option.hidden, option.dataset.countryCode, option.dataset.flagUrl
+      option.hidden, option.dataset.countryCode, option.dataset.flagUrl, option.dataset.swatchColor
     ]))
     // Focus and opening may trigger refresh several times. Recreating unchanged
     // buttons detaches Selenium targets and loses keyboard focus mid-click.
@@ -227,6 +227,15 @@ export default class extends Controller {
       flag.height = 16
       flag.className = "h-4 w-[22px] shrink-0 rounded-sm object-cover"
       content.append(flag)
+    }
+
+    const swatch = option?.dataset.swatchColor || ""
+    if (this.element.dataset.themeSwatches === "true" && /^#[0-9a-f]{6}$/i.test(swatch)) {
+      const dot = document.createElement("span")
+      dot.className = "size-5 shrink-0 rounded-md border border-slate-200 shadow-sm"
+      dot.style.backgroundColor = swatch
+      dot.setAttribute("aria-hidden", "true")
+      content.append(dot)
     }
 
     const name = document.createElement("span")
