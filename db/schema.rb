@@ -123,7 +123,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_020000) do
     t.text "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
     t.index ["branch_id", "created_at"], name: "idx_branch_status_transitions_chronological"
+    t.index ["deleted_at"], name: "index_branch_status_transitions_on_deleted_at"
     t.index ["branch_id"], name: "index_branch_status_transitions_on_branch_id"
     t.index ["changed_by_id"], name: "index_branch_status_transitions_on_changed_by_id"
   end
