@@ -46,7 +46,7 @@
       <% if @terminal_error.present? %>
         <p id="branch-terminal-name-error" data-server-field-error role="alert" class="text-xs text-rose-700">
           <%= t('admin.branch_lifecycle.terminal_name') %>
-          <%= @terminal&.errors&.full_messages_for(:name)&.map { |message| message.sub(/\A[^ ]+ /, '') }&.join(', ').presence ||
+          <%= @terminal&.errors&.[](:name)&.join(', ').presence ||
               t('admin.branch_lifecycle.terminal_invalid') %>
         </p>
       <% end %>
