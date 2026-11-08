@@ -574,7 +574,9 @@ RSpec.describe 'Admin email templates', type: :request do
     template.new_draft!(actor: administrator).publish!(actor: administrator)
     expect do
       post send_test_admin_email_template_path(template), params: { email: administrator.email }
-    end.to have_enqueued_job(EmailTemplates::TestDeliveryJob).with(template.id, administrator.id, administrator.email)
+    end.to have_enqueued_job(EmailTemplates::TestDeliveryJob).with(
+      template.id, administrator.id, administrator.email, template.published_version_id
+    )
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(template.audits.where(action: 'test_queued')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }

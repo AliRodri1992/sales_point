@@ -16,24 +16,28 @@ module Admin
     def update
       @sender = EmailSenderSetting.find_or_initialize_by(organization: selected_organization)
       authorize @sender, :update?
-      saved = EmailSenderSetting.transaction do
+      return render_sender_errors unless save_sender_change
+
+      notify_email_setting('sender_updated', @sender)
+      redirect_to sender_destination, flash: { swal_message: t('admin.email_templates.saved') }
+    end
+
+    private
+
+    def save_sender_change
+      EmailSenderSetting.transaction do
         next false unless @sender.update(sender_params)
 
         EmailSettingAudit.record!(setting: @sender, actor: current_user, kind: 'sender')
         true
       end
-      if saved
-        notify_email_setting('sender_updated', @sender)
-        destination = selected_organization.nil? ? edit_admin_email_sender_settings_path(global: '1') :
-                                                edit_admin_email_sender_settings_path
-        redirect_to destination,
-                    flash: { swal_message: t('admin.email_templates.saved') }
-      else
-        render_sender_errors
-      end
     end
 
-    private
+    def sender_destination
+      return edit_admin_email_sender_settings_path(global: '1') if selected_organization.nil?
+
+      edit_admin_email_sender_settings_path
+    end
 
     def render_sender_errors
       load_sender_editor

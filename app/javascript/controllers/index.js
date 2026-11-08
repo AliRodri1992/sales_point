@@ -173,6 +173,9 @@ application.register("email-template-actions", EmailTemplateActionsController)
 import EmailTemplateIdentityController from "./email_template_identity_controller"
 application.register("email-template-identity", EmailTemplateIdentityController)
 
+import EmailTemplateUnsavedController from "./email_template_unsaved_controller"
+application.register("email-template-unsaved", EmailTemplateUnsavedController)
+
 import EmailTemplatePreviewController from "./email_template_preview_controller"
 application.register("email-template-preview", EmailTemplatePreviewController)
 

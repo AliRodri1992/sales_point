@@ -85,6 +85,10 @@ export default class extends Controller {
     } catch (error) {
       if (error.name === "AbortError" || this.request !== request) return
 
+      this.desktopTarget.srcdoc = ""
+      this.mobileTarget.srcdoc = ""
+      this.subjectTarget.textContent = ""
+      this.plainTarget.textContent = ""
       this.statusTarget.textContent = error.message || this.errorValue
       this.statusTarget.classList.add("text-rose-700")
     }

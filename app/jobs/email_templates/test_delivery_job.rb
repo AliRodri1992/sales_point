@@ -14,7 +14,12 @@ module EmailTemplates
     def perform(template_id, actor_id, recipient, version_id = nil)
       EmailTemplateTestMailer.sample(template_id, recipient, version_id).deliver_now
       template = EmailTemplate.find(template_id)
-      template.audit!(action: 'test_delivered', actor: User.find_by(id: actor_id))
+      begin
+        template.audit!(action: 'test_delivered', actor: User.find_by(id: actor_id))
+      rescue ActiveRecord::ActiveRecordError => e
+        # Never re-send an accepted message solely because the audit store failed.
+        Rails.logger.error("Test email delivery audit failed: #{e.class}")
+      end
     end
   end
 end

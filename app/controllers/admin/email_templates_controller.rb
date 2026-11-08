@@ -5,7 +5,7 @@ module Admin
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :load_template, except: %i[index new create]
-    before_action :load_version, only: %i[update_draft publish restore]
+    before_action :load_version, only: %i[publish restore]
     after_action :clear_email_template_access, only: :index
 
     include EmailTemplatePreviews

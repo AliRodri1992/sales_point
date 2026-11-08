@@ -18,8 +18,9 @@
 
   <%= form_with model: @draft, url: draft_admin_email_template_path(@template, version_id: @draft.id),
                 method: :patch, html: { novalidate: true }, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]',
-                data: { controller: 'email-template-preview email-template-editor',
-                        action: 'input->email-template-preview#schedule change->email-template-preview#schedule',
+                data: { controller: 'email-template-preview email-template-editor email-template-unsaved',
+                        email_template_unsaved_warning_value: t('admin.email_templates.unsaved_warning'),
+                        action: 'input->email-template-preview#schedule change->email-template-preview#schedule input->email-template-unsaved#changed change->email-template-unsaved#changed submit->email-template-unsaved#submitting turbo:submit-end->email-template-unsaved#submitted',
                         email_template_preview_url_value: preview_draft_admin_email_template_path(@template, version_id: @draft.id),
                         email_template_preview_error_value: t('admin.email_templates.preview_error'),
                         email_template_preview_loading_value: t('admin.email_templates.preview_loading') } do |f| %>

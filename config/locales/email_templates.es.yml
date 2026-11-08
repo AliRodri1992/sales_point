@@ -22,6 +22,7 @@ es:
           deactivated: "Plantilla desactivada: %{name}"
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
+      unsaved_warning: "Tienes cambios sin guardar. ¿Quieres salir y descartarlos?"
       restore_existing_draft: "Ya existe un borrador en edición. Publícalo antes de restaurar otra versión."
       test_enqueue_failed: "No se pudo poner el correo de prueba en la cola. Inténtalo nuevamente."
       section: "Comunicación"

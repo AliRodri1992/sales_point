@@ -22,6 +22,7 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
+      unsaved_warning: "You have unsaved changes. Leave this page and discard them?"
       restore_existing_draft: "An editable draft already exists. Publish it before restoring another version."
       test_enqueue_failed: "The test email could not be queued. Please try again."
       section: "Communication"

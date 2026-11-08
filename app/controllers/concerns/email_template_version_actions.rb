@@ -2,6 +2,12 @@
 
 # Version comparisons and inline publication failure handling.
 module EmailTemplateVersionActions
+  extend ActiveSupport::Concern
+
+  included do
+    before_action :load_version, only: :update_draft
+  end
+
   def compare
     authorize @template, :versions?
     load_comparison_versions

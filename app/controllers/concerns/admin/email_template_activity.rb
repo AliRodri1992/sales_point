@@ -37,8 +37,8 @@ module Admin
       EmailTemplateNotification.with(action:, record: @template, user: current_user)
                                .deliver(current_user, enqueue_job: false)
       current_user.broadcast_notifications_refresh
-    rescue StandardError => error
-      Rails.logger.error("Email notification delivery failed: #{error.class}")
+    rescue StandardError => e
+      Rails.logger.error("Email notification delivery failed: #{e.class}")
     end
   end
 end

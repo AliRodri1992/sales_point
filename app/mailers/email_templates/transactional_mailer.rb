@@ -17,7 +17,11 @@ module EmailTemplates
     private
 
     def version_for(template, version_id)
-      version = version_id ? template.versions.find_by!(id: version_id, status: 'published') : template.published_version
+      version = if version_id
+                  template.versions.find_by!(id: version_id, status: 'published')
+                else
+                  template.published_version
+                end
       raise ArgumentError, 'Template has no published version' unless version
 
       version
