@@ -72,4 +72,50 @@ RSpec.describe 'Concurrent branch transitions', :concurrent_db do
     expect(movements).to be_between(0, 1)
   end
 
+  it 'cannot close a branch and concurrently add an active role to it' do
+    organization = create(:organization)
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization:, user: admin)
+    employee = create(:user)
+    branch = create(:branch, organization:)
+    role = create(:system_role, :branch)
+    barrier = Queue.new
+
+    closure = Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        barrier.pop
+        begin
+          Branches::TransitionStatus.call(
+            branch: Branch.find(branch.id), actor: User.find(admin.id),
+            to: 'closed', reason: 'Permanent closure'
+          )
+          :closed
+        rescue Branches::TransitionStatus::InvalidTransition
+          :blocked
+        end
+      end
+    end
+    assignment = Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        barrier.pop
+        begin
+          user_role = UserRole.new(user: User.find(employee.id),
+                                   system_role: SystemRole.find(role.id), branch: Branch.find(branch.id))
+          user_role.save ? :assigned : :blocked
+        rescue ActiveRecord::RecordInvalid
+          :blocked
+        end
+      end
+    end
+    2.times { barrier << true }
+    expect(%i[closed blocked]).to include(closure.value)
+    expect(%i[assigned blocked]).to include(assignment.value)
+
+    if branch.reload.closed?
+      expect(UserRole.active.where(branch_id: branch.id)).not_to exist
+    else
+      expect(UserRole.active.where(branch_id: branch.id)).to exist
+    end
+  end
+
 end
