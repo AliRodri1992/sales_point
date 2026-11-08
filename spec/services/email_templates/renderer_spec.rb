@@ -73,6 +73,7 @@ RSpec.describe EmailTemplates::Renderer do
       ).render
     end.to raise_error(ArgumentError, /Unapproved/)
   end
+
   it 'injects an escaped, variable-aware preheader into sent HTML' do
     source = template('<p>Body</p>')
     source.preheader = 'Hola {{recipient_name}} & gracias'
@@ -85,5 +86,4 @@ RSpec.describe EmailTemplates::Renderer do
     expect(html).to include('Hola &lt;Pat&gt; &amp; gracias')
     expect(html).not_to include('<Pat>')
   end
-
 end

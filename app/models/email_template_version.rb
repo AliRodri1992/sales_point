@@ -62,14 +62,16 @@ class EmailTemplateVersion < ApplicationRecord
     return if email_template.organization_id.nil?
 
     required = EmailTemplate::REQUIRED_CUSTOMIZATION_VARIABLES.fetch(email_template.key, [])
-    required.each do |variable|
-      token = "{{#{variable}}}"
-      message = I18n.t('admin.email_templates.required_customization_variable', variable:)
-      declared = allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
-      errors.add(:allowed_variables, message) unless declared
-      errors.add(:html_body, message) unless html_body.to_s.include?(token)
-      errors.add(:text_body, message) unless text_body.to_s.include?(token)
-    end
+    required.each { |variable| validate_required_security_variable(variable) }
+  end
+
+  def validate_required_security_variable(variable)
+    token = "{{#{variable}}}"
+    message = I18n.t('admin.email_templates.required_customization_variable', variable:)
+    declared = allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
+    errors.add(:allowed_variables, message) unless declared
+    errors.add(:html_body, message) unless html_body.to_s.include?(token)
+    errors.add(:text_body, message) unless text_body.to_s.include?(token)
   end
 
   def protect_published_version

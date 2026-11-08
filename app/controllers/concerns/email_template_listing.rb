@@ -16,14 +16,21 @@ module EmailTemplateListing
   end
 
   def preload_email_template_access
-    permissions = current_user.user_roles.active.joins(system_role: :permissions)
-                              .where(permissions: { status: 'active' }).pluck('permissions.code').to_set
     current_user.email_template_policy_snapshot = EmailTemplatePolicy::ListingSnapshot.new(
       active_admin: current_user.active? && current_user.admin?,
       super_admin: current_user.role?('super_admin'),
-      permissions:, organization_ids: current_user.organization_memberships.accessible
-                                                   .pluck(:organization_id).to_set
+      permissions: email_template_permissions,
+      organization_ids: accessible_email_organization_ids
     )
+  end
+
+  def email_template_permissions
+    current_user.user_roles.active.joins(system_role: :permissions)
+                .where(permissions: { status: 'active' }).pluck('permissions.code').to_set
+  end
+
+  def accessible_email_organization_ids
+    current_user.organization_memberships.accessible.pluck(:organization_id).to_set
   end
 
   def clear_email_template_access

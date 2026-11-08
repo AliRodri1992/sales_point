@@ -116,6 +116,7 @@ RSpec.describe 'Published email template delivery', type: :mailer do
       EmailTemplates::Dispatcher.call(key: template.key, locale: 'es', recipient: 'invalid', values: {})
     end.to raise_error(ArgumentError, 'Invalid recipient')
   end
+
   it 'uses a verified Reply-To address on transactional delivery' do
     organization = create(:organization)
     template.update!(organization:)
@@ -131,5 +132,4 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     expect(message.reply_to).to eq(['support@shop.test'])
     expect(message.from).to eq(['noreply@shop.test'])
   end
-
 end

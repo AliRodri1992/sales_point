@@ -47,7 +47,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get new_admin_email_template_path
     document = Nokogiri::HTML(response.body)
     expect(document.at_css('select#email_template_category')).to be_present
-    expect(document.css('select#email_template_category option').map { |node| node['value'] })
+    expect(document.css('select#email_template_category option').pluck('value'))
       .to include('transactional', 'security', 'notifications')
   end
 
@@ -447,7 +447,7 @@ RSpec.describe 'Admin email templates', type: :request do
     third = template.new_draft!(actor: administrator)
     get admin_email_template_path(template)
     doc = Nokogiri::HTML(response.body)
-    expect(doc.css('select[name="left"] option').map { |option| option['value'] })
+    expect(doc.css('select[name="left"] option').pluck('value'))
       .to include(first.id.to_s, second.id.to_s, third.id.to_s)
     get compare_admin_email_template_path(template, left: first.id, right: third.id)
     expect(response).to have_http_status(:ok)
