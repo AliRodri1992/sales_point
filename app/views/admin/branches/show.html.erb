@@ -100,11 +100,15 @@
                           id: "branch-transition-reason-#{next_status}",
                           value: (@transition_to == next_status ? @transition_reason : nil),
                           aria: { invalid: @transition_to == next_status &&
-                                           %w[reason_required reason_too_long].include?(@transition_error_code) },
+                                           %w[reason_required reason_too_long].include?(@transition_error_code),
+                                  describedby: (@transition_to == next_status &&
+                                                %w[reason_required reason_too_long].include?(@transition_error_code) ?
+                                                "branch-transition-reason-error-#{next_status}" : nil) },
                           class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
               <% if @transition_to == next_status &&
                      %w[reason_required reason_too_long].include?(@transition_error_code) %>
-                <p class="text-xs text-rose-700" role="alert"><%= @transition_error %></p>
+                <p id="branch-transition-reason-error-<%= next_status %>" class="text-xs text-rose-700"
+                   role="alert"><%= t('admin.branch_lifecycle.reason') %> <%= @transition_error %></p>
               <% end %>
             </div>
             <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
