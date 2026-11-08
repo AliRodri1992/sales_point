@@ -18,15 +18,17 @@ module Purchases
     def call
       return existing if existing
 
-      @order.with_lock do
-        return existing if existing
+      @order.branch.with_lock do
+        @order.with_lock do
+          return existing if existing
 
-        validate_order!
-        receipt = create_receipt
-        @entries.each { |entry| ReceiveLine.call(receipt:, data: entry.symbolize_keys) }
-        Purchases::Costing.apply!(receipt)
-        refresh_order_status!
-        receipt
+          validate_order!
+          receipt = create_receipt
+          @entries.each { |entry| ReceiveLine.call(receipt:, data: entry.symbolize_keys) }
+          Purchases::Costing.apply!(receipt)
+          refresh_order_status!
+          receipt
+        end
       end
     rescue ActiveRecord::RecordNotUnique
       existing || raise
@@ -63,6 +65,7 @@ module Purchases
 
     def validate_order!
       raise ArgumentError, 'Receipt needs a unique operation key' if @idempotency_key.blank?
+      raise ArgumentError, 'Branch must be active to receive goods' unless @order.branch.operationally_active?
       raise ArgumentError, 'Order must be sent before receiving' unless @order.receivable?
       raise ArgumentError, 'Receipt must contain items' if @entries.blank?
     end
