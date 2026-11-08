@@ -12,6 +12,7 @@ class Inventory < ApplicationRecord
   validates :stock, :min_stock, numericality: { greater_than_or_equal_to: 0 }
   validates :max_stock, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :consistent_organization
+  validate :branch_accepts_new_inventory, on: :create
   validate :valid_stock_limits
 
   scope :low_stock, -> { where('min_stock > 0 AND stock <= min_stock') }
@@ -19,6 +20,10 @@ class Inventory < ApplicationRecord
   def low_stock? = min_stock.positive? && stock <= min_stock
 
   private
+
+  def branch_accepts_new_inventory
+    errors.add(:branch, :invalid) if branch&.suspended?
+  end
 
   def consistent_organization
     errors.add(:branch, :invalid) if branch && branch.organization_id != organization_id
