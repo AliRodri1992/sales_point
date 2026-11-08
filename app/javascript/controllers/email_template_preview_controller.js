@@ -95,6 +95,13 @@ export default class extends Controller {
     this.element.querySelectorAll("[data-email-preview-invalid]").forEach(field => {
       field.removeAttribute("data-email-preview-invalid")
       field.setAttribute("aria-invalid", "false")
+      field.classList.remove("ring-1", "ring-rose-400")
+      if (field.dataset.emailPreviewOriginalDescribedby !== undefined) {
+        const original = field.dataset.emailPreviewOriginalDescribedby
+        if (original) field.setAttribute("aria-describedby", original)
+        else field.removeAttribute("aria-describedby")
+        delete field.dataset.emailPreviewOriginalDescribedby
+      }
     })
   }
 
@@ -109,10 +116,15 @@ export default class extends Controller {
       const title = (label?.textContent || name).replace("*", "").trim()
       const node = document.createElement("p")
       node.dataset.emailPreviewFieldError = "true"
-      node.className = "mt-1 text-xs text-rose-600"
+      node.id = `email-preview-error-${name}`
+      node.setAttribute("role", "alert")
+      node.className = "mt-1 text-xs text-rose-700"
       node.textContent = `${title} ${messages.join(". ")}`
       field.insertAdjacentElement("afterend", node)
+      field.dataset.emailPreviewOriginalDescribedby = field.getAttribute("aria-describedby") || ""
+      field.setAttribute("aria-describedby", [field.getAttribute("aria-describedby"), node.id].filter(Boolean).join(" "))
       field.setAttribute("aria-invalid", "true")
+      field.classList.add("ring-1", "ring-rose-400")
       field.dataset.emailPreviewInvalid = "true"
     })
   }
