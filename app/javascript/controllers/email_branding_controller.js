@@ -25,11 +25,12 @@ export default class extends Controller {
   updatePreview() {
     if (this.hasPreviewNameTarget) this.previewNameTarget.textContent = this.nameTarget.value.trim() || "Delta POS"
     if (this.hasPreviewEmailTarget) {
-      const value = this.supportEmailTarget.value.trim()
-      if (value) this.previewEmailTarget.textContent = value
+      this.previewEmailTarget.textContent = this.supportEmailTarget.value.trim() ||
+        this.previewEmailTarget.dataset.defaultText
     }
-    if (this.hasPreviewFooterTextTarget && this.footerTarget.value.trim()) {
-      this.previewFooterTextTarget.textContent = this.footerTarget.value.trim()
+    if (this.hasPreviewFooterTextTarget) {
+      this.previewFooterTextTarget.textContent = this.footerTarget.value.trim() ||
+        this.previewFooterTextTarget.dataset.defaultText
     }
   }
 
@@ -62,6 +63,8 @@ export default class extends Controller {
     if (values.button_color) {
       this.previewButtonTarget.style.backgroundColor = values.button_color
       const sufficient = this.whiteContrast(values.button_color) >= 4.5
+      const buttonInput = this.colorInputTargets.find(item => item.dataset.brandColor === "button_color")
+      if (buttonInput) buttonInput.setCustomValidity(sufficient ? "" : this.contrastLowValue)
       this.contrastTarget.textContent = sufficient ? this.contrastGoodValue : this.contrastLowValue
       this.contrastTarget.classList.toggle("text-rose-700", !sufficient)
       this.contrastTarget.classList.toggle("text-emerald-800", sufficient)

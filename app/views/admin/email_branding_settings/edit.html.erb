@@ -184,9 +184,9 @@
                     style="background-color: <%= @branding.button_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.button_color : '#047857' %>"><%= t('admin.email_templates.branding_preview_action') %></span>
             </div>
             <div class="border-t border-slate-100 bg-slate-50 px-5 py-4" data-email-branding-target="previewFooter">
-              <p class="break-words text-xs leading-5 text-slate-600" data-email-branding-target="previewFooterText"><%= @branding.footer_text.presence || t('admin.email_templates.branding_preview_footer') %></p>
+              <p class="break-words text-xs leading-5 text-slate-600" data-email-branding-target="previewFooterText" data-default-text="<%= t('admin.email_templates.branding_preview_footer') %>"><%= @branding.footer_text.presence || t('admin.email_templates.branding_preview_footer') %></p>
               <p class="mt-2 break-all text-xs font-semibold" data-email-branding-target="previewSecondary" style="color: <%= @branding.secondary_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.secondary_color : '#047857' %>">
-                <span data-email-branding-target="previewEmail"><%= @branding.support_email.presence || t('admin.email_templates.branding_preview_support') %></span>
+                <span data-email-branding-target="previewEmail" data-default-text="<%= t('admin.email_templates.branding_preview_support') %>"><%= @branding.support_email.presence || t('admin.email_templates.branding_preview_support') %></span>
               </p>
             </div>
           </div>
