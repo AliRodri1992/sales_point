@@ -80,6 +80,19 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     expect(email.text_part.body.decoded).to include('Usuario de ejemplo')
   end
 
+  it 'renders security test mail in production without actionable example-domain links' do
+    EmailTemplates::InvitationContent.ensure_published!
+    invitation = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    message = EmailTemplateTestMailer.sample(invitation.id, 'preview@example.org').message
+    document = Nokogiri::HTML(message.html_part.body.decoded)
+
+    expect(message.subject).to start_with('[TEST]')
+    expect(document.css('a[href*="example.org"]')).to be_empty
+    expect(message.text_part.body.decoded).not_to include('https://example.org/activation-demo')
+  end
+
   it 'rejects test delivery after a template is deactivated' do
     publish
     template.update!(status: 'inactive', enabled: false)
