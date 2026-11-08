@@ -39,6 +39,53 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.reload.stock).to eq(3)
   end
 
+  it 'updates tracked lot and aggregate stock together for an adjustment' do
+    inventory = create(:inventory, stock: 5)
+    inventory.product.update!(tracking_mode: 'lot')
+    lot = InventoryLot.create!(
+      inventory:, organization: inventory.organization,
+      code: 'ADJUST-LOT-001', quantity: 5, status: :available
+    )
+
+    movement = described_class.call(
+      inventory:, quantity: -2, kind: 'adjustment', inventory_lot: lot
+    )
+
+    expect(movement.inventory_lot).to eq(lot)
+    expect(inventory.reload.stock).to eq(3)
+    expect(lot.reload.quantity).to eq(3)
+  end
+
+  it 'rejects an adjustment that would make a tracked lot negative' do
+    inventory = create(:inventory, stock: 5)
+    inventory.product.update!(tracking_mode: 'lot')
+    lot = InventoryLot.create!(
+      inventory:, organization: inventory.organization,
+      code: 'ADJUST-LOT-002', quantity: 1, status: :available
+    )
+
+    expect do
+      described_class.call(inventory:, quantity: -2, kind: 'adjustment', inventory_lot: lot)
+    end.to raise_error(ArgumentError, /Lot quantity cannot become negative/)
+    expect(inventory.reload.stock).to eq(5)
+    expect(lot.reload.quantity).to eq(1)
+  end
+
+  it 'requires serial-level reconciliation for serialized stock adjustments' do
+    inventory = create(:inventory, stock: 1)
+    inventory.product.update!(tracking_mode: 'serial')
+    lot = InventoryLot.create!(
+      inventory:, organization: inventory.organization,
+      code: 'SERIAL-RECONCILE', quantity: 1, status: :available
+    )
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'adjustment', inventory_lot: lot)
+    end.to raise_error(ArgumentError, /serial-level reconciliation/)
+    expect(inventory.reload.stock).to eq(1)
+    expect(lot.reload.quantity).to eq(1)
+  end
+
   it 'rejects a movement linked to a different branch inventory lot' do
     inventory = create(:inventory)
     other = create(:inventory, organization: inventory.organization,
