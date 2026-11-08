@@ -20,6 +20,7 @@ class EmailTemplateVersion < ApplicationRecord
   validates :subject, :html_body, :text_body, presence: true
   validate :variables_are_safe
   validate :declared_variables, if: -> { status == 'published' }
+  validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
   before_destroy :protect_published_version
 
@@ -49,6 +50,18 @@ class EmailTemplateVersion < ApplicationRecord
     content = [subject, html_body, text_body].join(' ')
     used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
     errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
+  end
+
+  def required_customization_variables
+    return unless email_template.source_template_id?
+
+    required = EmailTemplate::REQUIRED_CUSTOMIZATION_VARIABLES.fetch(email_template.key, [])
+    required.each do |variable|
+      token = "{{#{variable}}}"
+      next if allowed_variables.include?(variable) && html_body.include?(token) && text_body.include?(token)
+
+      errors.add(:base, I18n.t('admin.email_templates.required_customization_variable', variable:))
+    end
   end
 
   def protect_published_version

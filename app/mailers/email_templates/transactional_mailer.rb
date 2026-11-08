@@ -2,12 +2,13 @@
 
 module EmailTemplates
   class TransactionalMailer < ApplicationMailer
-    def notification(template_id, recipient, values)
+    def notification(template_id, recipient, values, organization_id = nil)
       template = EmailTemplate.published.find(template_id)
       raise ArgumentError, 'Template has no published version' unless template.published_version
 
       subject, html, plain = template.render_with(values.deep_symbolize_keys)
-      mail(to: recipient, from: Sender.call(organization: template.organization), subject:) do |format|
+      organization = organization_id ? Organization.find(organization_id) : template.organization
+      mail(to: recipient, from: Sender.call(organization:), subject:) do |format|
         format.html { render body: html, content_type: 'text/html' }
         format.text { render plain: }
       end

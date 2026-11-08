@@ -14,19 +14,29 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def update?
-    allowed?('email_templates.update') && same_tenant?
+    allowed?('email_templates.update') && same_tenant? && record.status != 'archived'
   end
 
   def publish?
-    allowed?('email_templates.publish') && same_tenant?
+    allowed?('email_templates.publish') && same_tenant? && record.status != 'archived'
   end
 
   def archive?
-    allowed?('email_templates.archive') && same_tenant?
+    allowed?('email_templates.archive') && same_tenant? && !record.protected_global?
   end
 
   def destroy?
     archive? && record.status != 'archived'
+  end
+
+  def personalize?
+    create? && record.organization_id.nil? && record.status == 'published' &&
+      record.enabled? && record.published_version.present?
+  end
+
+  def reactivate?
+    allowed?('email_templates.archive') && same_tenant? &&
+      record.status == 'archived' && !record.protected_global?
   end
 
   def preview?

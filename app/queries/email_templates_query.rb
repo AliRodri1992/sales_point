@@ -12,6 +12,7 @@ class EmailTemplatesQuery
     scope = filter_status(scope)
     scope = filter_category(scope)
     scope = filter_scope(scope)
+    scope = filter_origin(scope)
     filter_updated_at(scope)
   end
 
@@ -47,6 +48,15 @@ class EmailTemplatesQuery
     case @filters[:scope]
     when 'global' then scope.where(organization_id: nil)
     when 'organization' then scope.where.not(organization_id: nil)
+    else scope
+    end
+  end
+
+  def filter_origin(scope)
+    case @filters[:origin]
+    when 'system' then scope.where(organization_id: nil)
+    when 'customized' then scope.where.not(source_template_id: nil)
+    when 'organization' then scope.where.not(organization_id: nil).where(source_template_id: nil)
     else scope
     end
   end

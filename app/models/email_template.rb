@@ -1,7 +1,21 @@
 # frozen_string_literal: true
 
 class EmailTemplate < ApplicationRecord
+  CRITICAL_GLOBAL_KEYS = %w[
+    user_invitation user_invitation_resend user_welcome password_recovery
+    password_changed account_suspended account_reactivated security_alert
+    email_changed user_status_changed
+  ].freeze
+  REQUIRED_CUSTOMIZATION_VARIABLES = {
+    'user_invitation' => %w[activation_url],
+    'user_invitation_resend' => %w[activation_url],
+    'password_recovery' => %w[recovery_url]
+  }.freeze
+
   belongs_to :organization, optional: true
+  belongs_to :source_template, class_name: 'EmailTemplate', optional: true
+  has_many :customizations, class_name: 'EmailTemplate', foreign_key: :source_template_id,
+                            dependent: :restrict_with_exception
   belongs_to :created_by, class_name: 'User', optional: true
   belongs_to :updated_by, class_name: 'User', optional: true
   belongs_to :published_version, class_name: 'EmailTemplateVersion', optional: true
@@ -23,7 +37,16 @@ class EmailTemplate < ApplicationRecord
   validates :version, numericality: { only_integer: true, greater_than: 0 }
   validates :key, uniqueness: { scope: %i[organization_id locale] }
   validate :published_version_belongs_to_template
+  validate :valid_customization_source
   validate :identity_immutable_after_publish, on: :update
+
+  def protected_global?
+    organization_id.nil? && CRITICAL_GLOBAL_KEYS.include?(key)
+  end
+
+  def customized?
+    source_template_id.present?
+  end
 
   def self.resolve(key:, locale:, organization: nil)
     requested = locale.to_s.in?(%w[es en ko]) ? locale.to_s : 'es'
@@ -84,11 +107,19 @@ class EmailTemplate < ApplicationRecord
 
   private
 
+  def valid_customization_source
+    return unless source_template
+
+    valid = organization_id.present? && source_template.organization_id.nil? &&
+            source_template.key == key && source_template.locale == locale
+    errors.add(:source_template, :invalid) unless valid
+  end
+
   def identity_immutable_after_publish
     return unless published_version_id_was
 
     changed = will_save_change_to_key? || will_save_change_to_locale? ||
-              will_save_change_to_organization_id?
+              will_save_change_to_organization_id? || will_save_change_to_source_template_id?
     errors.add(:base, :published_identity_immutable) if changed
   end
 

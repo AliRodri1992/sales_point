@@ -10,7 +10,7 @@ module EmailTemplates
     def perform(ciphertext)
       payload = EncryptedPayload.decrypt(ciphertext)
       EmailTemplates::TransactionalMailer.notification(
-        payload.fetch(:template_id), payload.fetch(:recipient), payload.fetch(:values)
+        payload.fetch(:template_id), payload.fetch(:recipient), payload.fetch(:values), payload[:organization_id]
       ).deliver_now
     end
   end

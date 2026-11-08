@@ -23,6 +23,8 @@ Rails.application.routes.draw do
         post 'publish/:version_id', action: :publish, as: :publish
         post 'restore/:version_id', action: :restore, as: :restore
         patch :archive
+        patch :reactivate
+        post :personalize
         get :preview
         post 'preview_draft/:version_id', action: :preview_draft, as: :preview_draft
         get :compare
