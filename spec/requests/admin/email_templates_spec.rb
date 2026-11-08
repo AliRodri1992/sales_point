@@ -178,6 +178,22 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.text).to include('Published subject')
   end
 
+  it 'places the catalog back button in the detail header actions' do
+    template = create_template(organization:)
+
+    get admin_email_template_path(template)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    heading = document.at_css('main > header')
+    actions = heading.at_css('div.lg\\:justify-end')
+    back = actions.css('a').first
+    expect(back['href']).to eq(admin_email_templates_path)
+    expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
+    expect(back['class']).to include('border-slate-200')
+    expect(heading.at_css('div.min-w-0 a')).to be_nil
+  end
+
   it 'renders the complete Delta POS logo in the published email preview' do
     template = create_template(organization:)
     version = template.new_draft!(actor: administrator)

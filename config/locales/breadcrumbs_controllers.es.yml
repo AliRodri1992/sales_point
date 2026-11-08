@@ -10,3 +10,6 @@ es:
         supplier_product_comparisons: "Comparación de costos"
         supplier_bank_accounts: "Cuentas bancarias"
         demo_requests: "Solicitudes de demostración"
+        email_templates: "Plantillas de correo electrónico"
+        email_branding_settings: "Identidad visual"
+        email_sender_settings: "Remitentes"

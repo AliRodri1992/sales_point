@@ -10,3 +10,6 @@ ko:
         supplier_product_comparisons: "비용 비교"
         supplier_bank_accounts: "은행 계좌"
         demo_requests: "데모 요청"
+        email_templates: "이메일 템플릿"
+        email_branding_settings: "브랜드 설정"
+        email_sender_settings: "발신자"

@@ -9,11 +9,6 @@
 
   <header class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
     <div class="min-w-0">
-      <%= link_to admin_email_templates_path,
-                  class: 'inline-flex min-h-10 items-center gap-2 rounded-lg text-sm font-semibold text-emerald-700 hover:text-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
-        <%= delta_icon('arrow-left', class: 'size-4') %>
-        <%= t('admin.email_templates.back') %>
-      <% end %>
       <p class="mt-2 text-xs font-bold uppercase tracking-[.16em] text-emerald-700"><%= t('admin.email_templates.section') %></p>
       <h1 class="mt-1 break-words font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= @template.name %></h1>
       <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= t('admin.email_templates.detail_intro') %></p>
@@ -27,6 +22,11 @@
       </div>
     </div>
     <div class="flex flex-wrap items-center gap-2 lg:justify-end">
+      <%= link_to admin_email_templates_path, data: { turbo_frame: '_top' },
+                  class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+        <%= delta_icon('arrow-left', class: 'size-4') %>
+        <%= t('admin.email_templates.back') %>
+      <% end %>
       <% if can_preview && current_version %>
         <%= link_to preview_admin_email_template_path(@template),
                     class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-4 text-sm font-semibold text-emerald-800 shadow-sm hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>

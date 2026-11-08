@@ -10,3 +10,6 @@ en:
         supplier_product_comparisons: "Cost comparison"
         supplier_bank_accounts: "Bank accounts"
         demo_requests: "Demo requests"
+        email_templates: "Email templates"
+        email_branding_settings: "Brand identity"
+        email_sender_settings: "Senders"
