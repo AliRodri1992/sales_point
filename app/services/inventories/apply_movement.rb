@@ -4,33 +4,36 @@ module Inventories
   class ApplyMovement
     def self.call(inventory:, quantity:, kind:, **options)
       inventory.branch.with_lock do
-        operation = kind.to_s
-        permitted = case inventory.branch.operational_status
-                    when 'active' then true
-                    when 'preparing' then operation == 'adjustment'
-                    when 'suspended' then operation != 'sale'
-                    else false
-                    end
-        unless permitted
-          inventory.errors.add(:branch, :invalid)
-          raise ActiveRecord::RecordInvalid, inventory
-        end
+        validate_branch_status!(inventory, kind)
         inventory.with_lock do
-        amount = BigDecimal(quantity.to_s)
-        validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
-        before = inventory.stock
-        after = before + amount
-        raise ActiveRecord::RecordInvalid, inventory if after.negative?
+          amount = BigDecimal(quantity.to_s)
+          validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
+          before = inventory.stock
+          after = before + amount
+          raise ActiveRecord::RecordInvalid, inventory if after.negative?
 
-        inventory.update!(stock: after)
-        inventory.inventory_movements.create!(
-          organization: inventory.organization, user: options[:user], kind:,
-          reference: options[:reference], source: options[:source],
-          inventory_lot: options[:inventory_lot],
-          quantity: amount, stock_before: before, stock_after: after
-        )
+          inventory.update!(stock: after)
+          inventory.inventory_movements.create!(
+            organization: inventory.organization, user: options[:user], kind:,
+            reference: options[:reference], source: options[:source],
+            inventory_lot: options[:inventory_lot],
+            quantity: amount, stock_before: before, stock_after: after
+          )
         end
       end
+    end
+
+    def self.validate_branch_status!(inventory, kind)
+      permitted = case inventory.branch.operational_status
+                  when 'active' then true
+                  when 'preparing' then kind.to_s == 'adjustment'
+                  when 'suspended' then kind.to_s != 'sale'
+                  else false
+                  end
+      return if permitted
+
+      inventory.errors.add(:branch, :invalid)
+      raise ActiveRecord::RecordInvalid, inventory
     end
 
     def self.validate_movement!(inventory:, amount:, kind:, lot:)
