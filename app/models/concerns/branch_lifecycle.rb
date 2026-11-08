@@ -21,7 +21,7 @@ module BranchLifecycle
     validate :prepare_only_deletion, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
   end
 
-  def operationally_active? = active? && deleted_at.nil?
+  def operationally_active? = active? && deleted_at.nil? && organization&.active?
 
   def operational_dependencies? = active_branch_operations?
 
