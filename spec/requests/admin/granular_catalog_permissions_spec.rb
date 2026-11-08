@@ -173,7 +173,7 @@ RSpec.describe 'Granular catalog authorization', type: :request do
       expect(response).to have_http_status(:forbidden)
       sign_in actor.reload
       post admin_users_path, params: { user: { email: 'delegated-created@example.com', username: 'New colleague',
-                                               user_type: 'employee', theme: Theme::DEFAULT } }
+                                               user_type: 'customer', theme: Theme::DEFAULT } }
       expect(response).to have_http_status(:see_other)
       created = User.find_by!(email: 'delegated-created@example.com')
       expect(created).to be_pending

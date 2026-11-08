@@ -31,6 +31,18 @@ RSpec.describe User, type: :model do
     expect(user.permission?('users.access')).to be(true)
   end
 
+  it 'does not carry branch-granted permissions into another organization' do
+    first_org = create(:organization)
+    second_org = create(:organization)
+    first = create(:branch, organization: first_org, operational_state: 'active')
+    create(:user_role, user:, branch: first, system_role: branch_role)
+
+    expect(user.permission?('users.access', organization: first_org)).to be(true)
+    expect(user.permission?('users.access', organization: second_org)).to be(false)
+    expect(user.role?('effective_branch_access', organization: second_org)).to be(false)
+    expect(user.effective_permission_codes(organization: second_org)).not_to include('users.access')
+  end
+
   it 'keeps a valid global role available independently of branch state' do
     system_role = create(:system_role, :system, code: 'effective_global_role')
     create(:user_role, user:, system_role:)

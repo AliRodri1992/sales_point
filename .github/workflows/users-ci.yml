@@ -16,6 +16,7 @@ on:
       - 'app/helpers/delta_icon_shapes.rb'
       - 'app/controllers/admin/organization_selections_controller.rb'
       - 'app/views/admin/shared/_topbar.html.erb'
+      - 'app/models/current_organization_access.rb'
       - 'app/models/user.rb'
       - 'app/models/user_*'
       - 'app/models/concerns/user_*'
@@ -39,6 +40,9 @@ on:
       - 'spec/models/user_*'
       - 'spec/models/users_query_spec.rb'
       - 'spec/requests/admin/organization_selections_spec.rb'
+      - 'spec/requests/admin/granular_catalog_permissions_spec.rb'
+      - 'spec/requests/admin/users_cross_organization_permissions_spec.rb'
+      - 'spec/models/user_effective_roles_spec.rb'
       - 'spec/models/user_spec.rb'
       - 'spec/services/users/**'
       - 'spec/requests/admin/user_*'
@@ -79,16 +83,21 @@ jobs:
             app/controllers/concerns/admin/user_form_setup.rb \
             app/controllers/concerns/admin/user_listing_sorting.rb \
             app/models/user.rb app/models/user_role.rb app/models/user_invitation.rb \
-            app/models/users_query.rb app/controllers/admin/organization_selections_controller.rb \
+            app/models/users_query.rb app/models/current_organization_access.rb \
+            app/controllers/application_controller.rb app/controllers/admin/organization_selections_controller.rb \
             app/models/concerns/user_admin_access_validations.rb \
             app/models/concerns/user_effective_roles.rb \
             app/services/users spec/services/users \
             spec/models/user_spec.rb spec/models/user_*spec.rb spec/models/users_query_spec.rb \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
             spec/requests/admin/organization_selections_spec.rb \
+            spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \
             spec/models/users_query_spec.rb spec/requests/admin/organization_selections_spec.rb \
-            spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb
+            spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb \
+            spec/requests/admin/organization_selections_spec.rb \
+            spec/requests/admin/granular_catalog_permissions_spec.rb \
+            spec/requests/admin/users_cross_organization_permissions_spec.rb
 
   users_specs:
     name: Users module RSpec and browser flows
@@ -147,7 +156,7 @@ jobs:
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: |
           bundle exec rspec \
-            spec/models/user_spec.rb spec/models/user_*spec.rb \
+            spec/models/user_spec.rb spec/models/user_*spec.rb spec/models/users_query_spec.rb \
             spec/services/users \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
             spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \

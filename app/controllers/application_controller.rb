@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   around_action :with_organization_timezone
+  around_action :with_user_permission_context
   before_action :set_locale
   before_action :enforce_active_account
   before_action :configure_permitted_parameters, if: :devise_controller?
@@ -70,6 +71,10 @@ class ApplicationController < ActionController::Base
 
     issued_at = session[:user_session_issued_at]
     issued_at.present? && issued_at.to_f > revoked_at.to_f
+  end
+
+  def with_user_permission_context(&)
+    CurrentOrganizationAccess.set(organization: current_organization, &)
   end
 
   def with_organization_timezone(&)
