@@ -10,25 +10,19 @@ module Admin
     def edit
       authorize @user, :manage_status?
       @target = params[:transition].to_s
-      allowed = helpers.allowed_user_transitions(@user, organization: current_organization)
-      head :unprocessable_content unless allowed.include?(@target)
+      return head :unprocessable_content unless permitted_transition?
       @status_form = Users::StatusTransition.new(**transition_attributes)
     end
 
     def update
       authorize @user, :manage_status?
       @target = params[:transition].to_s
-      allowed = helpers.allowed_user_transitions(@user, organization: current_organization)
-      return head :unprocessable_content unless allowed.include?(@target)
+      return head :unprocessable_content unless permitted_transition?
 
       @status_form = Users::StatusTransition.new(**transition_attributes)
-      if @status_form.call
-        membership = @user.organization_memberships.active.find_by(organization: current_organization)
-        destination = membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
-        redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
-      else
-        render :edit, status: :unprocessable_content
-      end
+      return render :edit, status: :unprocessable_content unless @status_form.call
+
+      redirect_to status_destination, flash: { swal_message: t('admin.users.status_management.changed') }
     rescue Users::InvitationDispatcher::DeliveryError
       redirect_to admin_user_path(@user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError => e
@@ -37,6 +31,15 @@ module Admin
     end
 
     private
+
+    def permitted_transition?
+      helpers.allowed_user_transitions(@user, organization: current_organization).include?(@target)
+    end
+
+    def status_destination
+      membership = @user.organization_memberships.active.find_by(organization: current_organization)
+      membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
+    end
 
     def transition_attributes
       {
