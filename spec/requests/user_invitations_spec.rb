@@ -31,8 +31,10 @@ RSpec.describe 'User invitation activation', type: :request do
     expect(response).to have_http_status(:forbidden)
 
     sign_in user
+    encrypted_password = user.reload.encrypted_password
     patch accept_user_invitation_path(token: invitation.raw_token)
     expect(response).to redirect_to(admin_dashboard_path)
+    expect(user.reload.encrypted_password).to eq(encrypted_password)
     expect(user.organization_memberships.find_by!(organization:)).to be_account_active
     expect(invitation.reload.accepted_at).to be_present
   end

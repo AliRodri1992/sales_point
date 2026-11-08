@@ -65,6 +65,17 @@ RSpec.describe 'Admin user invitation delivery', type: :request do
     expect(response).to redirect_to(admin_user_path(user))
   end
 
+  it 'does not expose resend for a pending employee without any active roles' do
+    user.update!(user_type: :employee)
+    get admin_user_path(user)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.users.ui.invitation_not_ready'))
+    expect(Nokogiri::HTML(response.body).css("form[action='#{admin_user_invitation_path(user)}']")).to be_empty
+    expect { resend }.not_to change(UserInvitation, :count)
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'requires the account to be pending locally' do
     user.organization_memberships.find_by!(organization:).update!(account_status: :active)
     expect { resend }.not_to change(UserInvitation, :count)

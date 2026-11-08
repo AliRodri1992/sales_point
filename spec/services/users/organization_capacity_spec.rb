@@ -30,6 +30,17 @@ RSpec.describe Users::OrganizationCapacity do
     expect { capacity.ensure_available! }.not_to raise_error
   end
 
+  it 'uses the selected language for seat-limit errors' do
+    2.times do
+      create(:organization_membership, user: create(:user), organization:)
+    end
+
+    I18n.with_locale(:es) do
+      expect { described_class.new(organization:).ensure_available! }
+        .to raise_error(Users::OrganizationCapacity::CapacityExceeded, I18n.t('user_capacity.errors.exceeded', limit: 2))
+    end
+  end
+
   it 'does not impose a limit without an assigned plan' do
     organization.update!(membership_plan: nil)
     expect(described_class.new(organization:).limit).to be_nil

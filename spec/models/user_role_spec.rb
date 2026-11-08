@@ -92,6 +92,16 @@ RSpec.describe UserRole, type: :model do
     expect(assignment.errors[:branch]).to be_present
   end
 
+  it 'translates branch assignment validation messages by locale' do
+    role = create(:system_role, :branch)
+    assignment = build(:user_role, system_role: role, branch: nil)
+
+    I18n.with_locale(:es) do
+      expect(assignment).to be_invalid
+      expect(assignment.errors[:branch]).to include(I18n.t('user_role_errors.branch_required'))
+    end
+  end
+
   describe '.active' do
     it 'returns active assignments for active system roles' do
       user = create(:user)
