@@ -55,6 +55,7 @@ class EmailTemplate < ApplicationRecord
     requested = locale.to_s.in?(%w[es en ko]) ? locale.to_s : 'es'
     published.where(key:).find_by(organization:, locale: requested) ||
       published.global.find_by(key:, locale: requested) ||
+      published.where(key:).find_by(organization:, locale: 'es') ||
       published.global.find_by(key:, locale: 'es')
   end
 
@@ -82,6 +83,9 @@ class EmailTemplate < ApplicationRecord
 
   def new_draft!(actor:)
     with_lock do
+      existing_draft = versions.where(status: 'draft').order(version_number: :desc).first
+      return existing_draft if existing_draft
+
       source = published_version || versions.order(version_number: :desc).first
       versions.create!(
         version_number: versions.maximum(:version_number).to_i + 1,
