@@ -4,6 +4,17 @@ en:
       pending_for: "Requirements before: %{action}"
       resolve_blocker: "Resolve"
       unavailable: "Resolve the outstanding requirements first"
+      changes_title: "Branch data change history"
+      changes_hint: "Recent changes to branch details, address, phone numbers and notes."
+      audit_subjects:
+        branch: "Branch"
+        address: "Address"
+        phone: "Phone"
+        note: "Note"
+      audit_events:
+        create: "Created"
+        update: "Updated"
+        destroy: "Deleted"
       title: "Operational status"
       created_reason: "Branch registration"
       audit_immutable: "Branch lifecycle audit events cannot be changed or deleted."
