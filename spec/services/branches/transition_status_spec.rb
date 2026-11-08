@@ -23,6 +23,32 @@ RSpec.describe Branches::TransitionStatus do
                                      reason: 'Temporary maintenance', changed_by: actor)
   end
 
+  it 'activates a prepared branch with an authorized administrator and complete configuration' do
+    configured = create(:organization, :with_settings)
+    create(:organization_membership, organization: configured, user: actor)
+    office = create(:branch, organization: configured, operational_state: 'preparing')
+
+    expect do
+      described_class.call(branch: office, actor:, to: 'active', reason: 'Ready to open')
+    end.to change { office.branch_status_transitions.count }.by(1)
+
+    expect(office.reload).to be_active
+    expect(office.status).to be(true)
+  end
+
+  it 'requires disabling all terminals before suspension' do
+    terminal = create(:terminal, branch:, status: 'active')
+
+    expect do
+      described_class.call(branch:, actor:, to: 'suspended', reason: 'Maintenance')
+    end.to raise_error(described_class::InvalidTransition)
+
+    terminal.update!(status: 'inactive')
+    expect do
+      described_class.call(branch:, actor:, to: 'suspended', reason: 'Maintenance')
+    end.not_to raise_error
+  end
+
   it 'requires a reason for every transition' do
     expect do
       described_class.call(branch:, actor:, to: 'suspended', reason: ' ')
