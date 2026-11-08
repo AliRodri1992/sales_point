@@ -1,0 +1,23 @@
+<% organizations = available_organizations %>
+<% if organizations.many? %>
+  <div class="relative">
+    <details class="group">
+      <summary class="flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-emerald-600"
+               aria-label="<%= t('admin.users.ui.organization_selector_hint') %>: <%= current_organization&.name %>">
+        <%= delta_icon('building-office-2', class: 'size-4 shrink-0 text-emerald-700') %>
+        <span class="hidden max-w-36 truncate md:inline"><%= current_organization&.name %></span>
+        <%= delta_icon('chevron-down', class: 'size-3 text-slate-400 transition group-open:rotate-180') %>
+      </summary>
+      <div class="absolute right-0 top-full z-50 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+        <p class="px-2 py-2 text-xs font-bold uppercase tracking-wide text-slate-500"><%= t('admin.users.ui.organization_selector_label') %></p>
+        <% organizations.each do |organization| %>
+          <%= button_to admin_select_organization_path(organization), method: :patch,
+                        class: "flex min-h-11 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium focus-visible:outline-2 focus-visible:outline-emerald-600 #{'bg-emerald-50 text-emerald-900' if organization.id == current_organization&.id}" do %>
+            <span class="min-w-0 flex-1 break-words"><%= organization.name %></span>
+            <% if organization.id == current_organization&.id %><%= delta_icon('check', class: 'size-4 text-emerald-700') %><% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </details>
+  </div>
+<% end %>

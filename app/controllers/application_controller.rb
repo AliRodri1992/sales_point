@@ -13,13 +13,22 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
-  helper_method :current_language, :current_organization, :available_branches, :current_branch
+  helper_method :current_language, :current_organization, :available_organizations,
+                :available_branches, :current_branch
+
+  def available_organizations
+    return Organization.none unless current_user
+
+    @available_organizations ||= Organization.active_records.where(
+      id: current_user.organization_memberships.accessible.select(:organization_id)
+    ).order(:id)
+  end
 
   def current_organization
     return unless current_user
 
-    active_ids = current_user.organization_memberships.accessible.select(:organization_id)
-    @current_organization ||= Organization.active_records.where(id: active_ids).first
+    @current_organization ||= available_organizations.find_by(id: session[:current_organization_id]) ||
+                              available_organizations.first
   end
 
   def available_branches

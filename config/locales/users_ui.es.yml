@@ -2,6 +2,9 @@ es:
   admin:
     users:
       ui:
+        organization_selector_label: "Empresa"
+        organization_selector_hint: "Cambiar empresa activa"
+        shared_deleted_restore_blocked: "No se puede restaurar esta cuenta porque tiene acceso activo en otra empresa mientras su estado global está inactivo. Requiere revisión de seguridad."
         eyebrow: "Gestión de accesos"
         description: "Consulta las cuentas de tu organización, revisa sus permisos y administra su acceso desde un solo lugar."
         summary: "Resumen de usuarios"

@@ -2,6 +2,9 @@ ko:
   admin:
     users:
       ui:
+        organization_selector_label: "조직"
+        organization_selector_hint: "활성 조직 변경"
+        shared_deleted_restore_blocked: "다른 조직에 활성 멤버십이 있고 전역 상태가 비활성이므로 계정을 복구할 수 없습니다. 보안 검토가 필요합니다."
         eyebrow: "접근 권한 관리"
         description: "조직의 사용자 계정과 권한을 확인하고 접근을 관리하세요."
         summary: "사용자 현황"

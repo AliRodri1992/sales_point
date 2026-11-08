@@ -2,6 +2,9 @@ en:
   admin:
     users:
       ui:
+        organization_selector_label: "Organization"
+        organization_selector_hint: "Switch active organization"
+        shared_deleted_restore_blocked: "This account cannot be restored while it has an active membership in another organization and its global status is inactive. A security review is required."
         eyebrow: "Access management"
         description: "Review accounts in your organization, inspect their permissions, and manage access in one place."
         summary: "User overview"

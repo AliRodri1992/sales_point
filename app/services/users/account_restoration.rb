@@ -58,15 +58,27 @@ module Users
 
     def restore_account!
       shared = @user.organization_memberships.active.where.not(organization: @organization).exists?
-      next_status = shared && @user.active? ? 'active' : 'pending'
+      globally_active = @user.active? && @user.deleted_at.nil?
+      if shared && !globally_active && other_accessible_membership?
+        raise ArgumentError, I18n.t('admin.users.ui.shared_deleted_restore_blocked')
+      end
+
+      next_status = shared && globally_active ? 'active' : 'pending'
       @membership.update!(account_status: next_status, status_review_at: nil)
-      reset_local_access! if shared
-      reset_global_account! unless shared
+      if shared && globally_active
+        reset_local_access!
+      else
+        reset_global_account!
+      end
 
       UserStatusEvent.create!(
         user: @user, actor: @actor, organization: @organization,
         from_status: 'deleted', to_status: next_status, reason: @reason
       )
+    end
+
+    def other_accessible_membership?
+      @user.organization_memberships.accessible.where.not(organization: @organization).exists?
     end
 
     def reset_local_access!

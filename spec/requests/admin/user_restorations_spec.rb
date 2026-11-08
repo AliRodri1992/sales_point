@@ -79,6 +79,17 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(Nokogiri::HTML(response.body).at_css('nav[aria-label]')).to be_present
   end
 
+  it 'reports when restoring a shared global deletion would revive access elsewhere' do
+    other = create(:organization)
+    create(:organization_membership, user:, organization: other, account_status: :active)
+
+    post admin_user_restoration_path(user), params: { reason: 'Authorized review' }
+
+    expect(response).to redirect_to(admin_user_restorations_path)
+    expect(user.reload).to be_deleted
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_deleted
+  end
+
   it 'rejects an archived account from another organization' do
     user.organization_memberships.find_by!(organization:).update!(organization: create(:organization))
     post admin_user_restoration_path(user), params: { reason: 'Review' }

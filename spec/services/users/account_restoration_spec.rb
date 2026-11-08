@@ -74,13 +74,22 @@ RSpec.describe Users::AccountRestoration do
     expect(user.organization_memberships.find_by!(organization:)).to be_account_active
   end
 
-  it 'restores a shared inactive account as pending in the selected organization' do
+  it 'refuses a misleading local restoration when another organization is accessible globally' do
     create(:organization_membership, user:)
+
+    expect { restore }.to raise_error(ArgumentError, I18n.t('admin.users.ui.shared_deleted_restore_blocked'))
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_deleted
+    expect(user.reload).to be_deleted
+  end
+
+  it 'restores a globally deleted shared account when all other memberships are inaccessible' do
+    other = create(:organization_membership, user:, account_status: :suspended)
 
     restore
 
     expect(user.organization_memberships.find_by!(organization:)).to be_account_pending
-    expect(user.reload).to be_deleted
+    expect(user.reload).to be_pending
+    expect(other.reload).to be_account_suspended
   end
 
   ['', 'x' * 1001].each do |reason|

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    patch 'organizations/:id/select', to: 'organization_selections#update', as: :select_organization
     resources :email_templates, only: %i[index show new create edit destroy] do
       member do
         patch 'draft/:version_id', action: :update_draft, as: :draft
