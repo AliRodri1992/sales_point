@@ -69,7 +69,7 @@ module Branches
       end
 
       # Closed branches must not retain active operational dependencies.
-      reject!('open_operations') if branch.active_branch_operations?
+      reject!('open_operations') if branch.operational_dependencies?
       reject!('assigned_team') if branch.user_roles.active.exists?
       reject!('outstanding_stock') if branch.inventories.where('stock > 0').exists?
       return unless branch.organization&.active? && branch.organization.onboarding_completed?
