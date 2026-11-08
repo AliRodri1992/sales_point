@@ -102,7 +102,7 @@ module Admin
 
       draft = EmailTemplate.transaction do
         @template.with_lock do
-          raise ArgumentError, t('admin.email_templates.create_draft_first') if @template.versions.exists?(status: 'draft')
+          raise ArgumentError, t('admin.email_templates.restore_existing_draft') if @template.versions.exists?(status: 'draft')
 
           restored = @template.new_draft!(actor: current_user)
           restored.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
