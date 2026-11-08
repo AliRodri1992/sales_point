@@ -75,6 +75,30 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('[data-user-access-target="empty"]:not(.hidden)', text: /No roles match/)
   end
 
+  scenario 'shows a dynamic review, default invitation language and theme swatch' do
+    visit new_admin_user_path
+
+    fill_in 'Email address', with: 'team@example.com'
+    expect(page).to have_css('[data-user-access-target="reviewEmail"]', text: 'team@example.com')
+    expect(page).to have_css('[data-user-access-target="reviewUserType"]', text: 'Employee')
+    expect(find('[data-user-access-target="themeSwatch"]')[:style]).to include('background-color')
+    expect(page).to have_css('[data-user-access-target="roleWarning"]:not(.hidden)')
+    expect(page).to have_css('[data-user-access-target="reviewLanguage"]', text: /English|Español/)
+  end
+
+  scenario 'places model-aligned email and type errors immediately below fields' do
+    visit new_admin_user_path
+
+    fill_in 'Email address', with: 'invalid-address'
+    find('#user_email').send_keys(:tab)
+    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)', text: /Email address/)
+    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)', text: /invalid/i)
+
+    click_button 'Create user'
+    expect(page).to have_current_path(new_admin_user_path)
+    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)')
+  end
+
   scenario 'edits branch access through accessible accordion checkboxes' do
     target = create(:user, username: 'Branch Employee')
     create(:organization_membership, organization:, user: target)

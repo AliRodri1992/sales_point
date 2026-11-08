@@ -100,6 +100,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(theme.at_css("option[value='#{Theme::DEFAULT}'][selected]")).to be_present
       expect(response.body).to include('id="users-create-deltin"')
       expect(response.body).to include('id="users-review-title"')
+      expect(response.body).to include('data-user-access-target="reviewEmail"')
+      expect(response.body).to include('data-user-access-target="themeSwatch"')
       expect(response.body).not_to include('xl:sticky xl:top-24')
     end
   end

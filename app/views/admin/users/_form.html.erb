@@ -21,7 +21,12 @@
   </header>
 
   <%= form_with model: @user, url: editing ? admin_user_path(@user) : admin_users_path,
-                html: { novalidate: true }, data: { controller: 'user-access', action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission' }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
+                html: { novalidate: true }, data: { controller: 'user-access',
+                        action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission input->user-access#formChanged change->user-access#formChanged focusout->user-access#validateField',
+                        empty_value: t('admin.users.ui.not_provided'),
+                        role_warning: t('admin.users.ui.no_role_warning'),
+                        validation_blank: t('errors.messages.blank'),
+                        validation_invalid: t('errors.messages.invalid') }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
     <div class="min-w-0 space-y-5">
       <%= catalog_errors(@user) %>
 
@@ -37,7 +42,7 @@
               <h2 id="users-create-deltin-title" class="mt-3 font-jakarta text-xl font-bold tracking-tight text-slate-900 sm:text-2xl"><%= t('admin.users.ui.create_hero_title') %></h2>
               <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= t('admin.users.ui.create_hero_hint') %></p>
               <ol class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-emerald-800" aria-label="<%= t('admin.users.ui.create_steps_label') %>">
-                <% %w[identity access invitation].each_with_index do |step, index| %>
+                <% %w[identity access preferences].each_with_index do |step, index| %>
                   <li class="inline-flex items-center gap-1.5">
                     <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-[10px] font-bold text-white"><%= index + 1 %></span>
                     <%= t("admin.users.ui.create_step_#{step}") %>
@@ -70,13 +75,16 @@
           <div class="min-w-0">
             <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= form.email_field :email, autocomplete: 'email', maxlength: 254, inputmode: 'email',
+                                 data: { user_access_target: 'email', validation_field: 'email' },
                                  aria: { invalid: @user.errors[:email].any? },
                                  class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :email)} px-3.5 py-2.5 text-sm text-slate-800" %>
             <%= error_message_for(@user, :email) %>
+            <p class="mt-1 hidden text-xs font-medium text-rose-600" data-user-access-target="emailError" role="alert"></p>
           </div>
           <div class="min-w-0">
             <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= form.text_field :username, autocomplete: 'username', maxlength: 100, spellcheck: false,
+                                data: { user_access_target: 'username' },
                                 aria: { invalid: @user.errors[:username].any? },
                                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :username)} px-3.5 py-2.5 text-sm text-slate-800" %>
             <%= error_message_for(@user, :username) %>
@@ -87,10 +95,12 @@
               <%= form.select :user_type, options_for_select(
                 User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
                 { include_blank: t('admin.users.form.fields.user_type_placeholder') },
+                data: { user_access_target: 'userType', validation_field: 'user_type' },
                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :user_type)} px-3.5 py-2.5 text-sm",
                 aria: { invalid: @user.errors[:user_type].any? } %>
             </div>
             <%= error_message_for(@user, :user_type) %>
+            <p class="mt-1 hidden text-xs font-medium text-rose-600" data-user-access-target="userTypeError" role="alert"></p>
           </div>
           <div class="min-w-0">
             <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %></span>
@@ -199,7 +209,7 @@
                         <%= check_box_tag 'user[branch_role_assignments][]', "#{branch.id}:#{role.id}",
                                           selected_branch_assignments.include?("#{branch.id}:#{role.id}"),
                                           disabled: (!branch.status || branch.deleted_at.present?) && !selected_branch_assignments.include?("#{branch.id}:#{role.id}"),
-                                          id: input_id, data: { action: 'change->user-access#updateBranchSummary' }, class: 'mt-0.5 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
+                                          id: input_id, data: { action: 'change->user-access#updateBranchSummary', user_access_target: 'branchRole' }, class: 'mt-0.5 size-4 shrink-0 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500' %>
                         <span class="min-w-0">
                           <span class="block break-words font-semibold"><%= system_role_name(role) %></span>
                     <% if role.inactive? %><span class="mt-1 block text-xs text-amber-800"><%= t('admin.system_roles.lifecycle.assignment_hint') %></span><% end %>
@@ -235,6 +245,7 @@
             <div class="relative" data-controller="delta-select">
               <%= form.collection_select :language_id, @languages, :id, :name,
                                          { include_blank: t('admin.users.form.fields.language_placeholder') },
+                                         data: { user_access_target: 'language' },
                                          class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :language_id)} px-3.5 py-2.5 text-sm",
                                          aria: { invalid: @user.errors[:language_id].any? } %>
             </div>
@@ -244,12 +255,20 @@
             <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <div class="relative" data-controller="delta-select">
               <%= form.select :theme,
-                              @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize), theme[:id]] },
+                              @themes.map do |theme|
+                                [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize),
+                                 theme[:id], { 'data-swatch-color': theme[:color] }]
+                              end,
                               {},
+                              data: { user_access_target: 'theme' },
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
                               aria: { invalid: @user.errors[:theme].any? } %>
             </div>
             <%= error_message_for(@user, :theme) %>
+            <p class="mt-2 flex items-center gap-2 text-xs text-slate-600">
+              <span data-user-access-target="themeSwatch" class="size-5 shrink-0 rounded-md border border-slate-300 shadow-sm" aria-hidden="true"></span>
+              <span data-user-access-target="themeLabel"></span>
+            </p>
           </div>
         </div>
       </section>
@@ -265,14 +284,17 @@
               <p class="mt-1 text-sm leading-6 text-slate-600"><%= t('admin.users.ui.create_review_hint') %></p>
             </div>
           </div>
-          <ul class="grid gap-2 border-t border-emerald-100 bg-emerald-50/40 px-5 py-4 text-xs font-semibold text-emerald-900 sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <% %w[identity permissions invitation].each_with_index do |item, index| %>
-              <li class="flex items-start gap-2">
-                <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-[11px] text-emerald-700 shadow-sm"><%= index + 1 %></span>
-                <span><%= t("admin.users.ui.create_review_#{item}") %></span>
-              </li>
+          <dl class="grid gap-4 border-t border-emerald-100 bg-emerald-50/40 px-5 py-4 text-sm sm:grid-cols-2 sm:px-6 lg:grid-cols-3">
+            <% %w[email username user_type language theme roles branches].each do |key| %>
+              <div class="min-w-0">
+                <dt class="text-xs font-semibold text-emerald-900"><%= t("admin.users.ui.review_#{key}") %></dt>
+                <dd class="mt-1 break-words font-semibold text-slate-900" data-user-access-target="review<%= key.camelize %>"><%= t('admin.users.ui.not_provided') %></dd>
+              </div>
             <% end %>
-          </ul>
+          </dl>
+          <p class="mx-5 mb-4 mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900 sm:mx-6"
+             data-user-access-target="roleWarning"><%= t('admin.users.ui.no_role_warning') %></p>
+          <p class="mx-5 mb-5 text-xs leading-5 text-emerald-800 sm:mx-6"><%= t('admin.users.form.invitation_hint') %></p>
         </section>
       <% end %>
 
@@ -290,7 +312,7 @@
         <span class="flex size-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('information-circle', class: 'size-6') %></span>
         <h2 class="mt-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.users.ui.form_help_title') %></h2>
         <p class="mt-2 text-xs leading-6 text-slate-600"><%= t('admin.catalog_design.user_help') %></p>
-        <% unless editing %><p class="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-xs leading-5 text-emerald-900"><%= t('admin.users.form.invitation_hint') %></p><% end %>
+        
       </div>
       <% if editing %>
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
