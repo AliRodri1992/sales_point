@@ -28,6 +28,7 @@ module DeltaIconShapes
     'chevron-right' => 'M9 5l7 7-7 7',
     'chevron-up' => 'M5 15l7-7 7 7',
     'clipboard-document-list' => 'r:5,5,14,17,2|r:9,2,6,5,1|M9 11h6|M9 15h6|M9 19h4',
+    'pause-circle' => 'c:12,12,9|M10 8v8|M14 8v8',
     'clock' => 'c:12,12,9|M12 6v6l4 2',
     'cloud-arrow-up' => 'M7 18H6a4 4 0 0 1-1-8 7 7 0 0 1 13 1h1a3.5 3.5 0 0 1 0 7h-2|M12 21V11|M8.5 14.5 12 11l3.5 3.5',
     'cog' => [

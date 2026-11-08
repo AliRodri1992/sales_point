@@ -58,6 +58,9 @@ class UsersQuery
     return scope.none unless branches.exists?(id: @params[:branch])
 
     assignments = UserRole.active.where(branch_id: @params[:branch])
+    if @params[:role].present? && SystemRole.branch.exists?(id: @params[:role])
+      assignments = assignments.where(system_role_id: @params[:role])
+    end
     scope.where(id: assignments.select(:user_id))
   end
 end

@@ -14,10 +14,10 @@ class UserInvitation < ApplicationRecord
   scope :pending, -> { where(accepted_at: nil, revoked_at: nil) }
 
   def self.issue!(user:, organization:)
-    raise ArgumentError, 'User must be pending' unless user.pending?
-    raise ArgumentError, 'Membership required' unless pending_membership?(user:, organization:)
-
     user.with_lock do
+      raise ArgumentError, 'User must be pending' unless user.pending? && user.deleted_at.nil?
+      raise ArgumentError, 'Membership required' unless pending_membership?(user:, organization:)
+
       user.user_invitations.pending.where(organization:).find_each do |old|
         old.update!(revoked_at: Time.current)
       end

@@ -2,6 +2,9 @@
      assignment.deleted_at.nil? && assignment.system_role && assignment.system_role.deleted_at.nil? &&
        (assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
                                      assignment.branch.deleted_at.nil?))
+   end.sort_by do |assignment|
+     available = assignment.system_role.active? && (assignment.branch.nil? || assignment.branch.operationally_active?)
+     [available ? 0 : 1, assignment.id]
    end %>
 <% if roles.any? %>
   <div class="flex flex-wrap items-center gap-1.5">

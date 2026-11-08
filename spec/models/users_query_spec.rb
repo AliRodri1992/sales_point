@@ -54,6 +54,21 @@ RSpec.describe UsersQuery, type: :model do
     expect(described_class.new(scope, { branch: foreign.id }, organization:).call).to be_empty
   end
 
+  it 'matches a branch role on the same assignment when both filters are selected' do
+    organization = create(:organization)
+    center = create(:branch, organization:)
+    north = create(:branch, organization:, name: 'North')
+    cashier = create(:system_role, :branch, code: 'cashier_filter')
+    supervisor = create(:system_role, :branch, code: 'supervisor_filter')
+
+    create(:user_role, user: matching_user, system_role: cashier, branch: center)
+    create(:user_role, user: other_user, system_role: cashier, branch: north)
+    create(:user_role, user: other_user, system_role: supervisor, branch: center)
+
+    results = described_class.new(scope, { role: cashier.id, branch: center.id }, organization:).call
+    expect(results).to contain_exactly(matching_user)
+  end
+
   it 'never expands the relation supplied by the caller' do
     other_user.update!(username: 'john from another organization')
     restricted = User.where(id: matching_user.id)

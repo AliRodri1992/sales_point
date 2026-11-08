@@ -19,7 +19,9 @@
           <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
         <% end %>
         <%= text_area_tag :reason, @status_form.reason, maxlength: 1000, rows: 4,
-                          aria: { invalid: @status_form.errors[:reason].any? },
+                          aria: { invalid: @status_form.errors[:reason].any?,
+                                  describedby: @status_form.errors[:reason].any? ?
+                                    'users_status_transition_reason_error' : nil },
                           class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :reason)}" %>
         <%= error_message_for(@status_form, :reason, label: t('admin.users.status_management.reason')) %>
       </div>
@@ -27,7 +29,9 @@
         <div>
           <%= label_tag :review_at, t('admin.users.status_management.review_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
           <%= datetime_local_field_tag :review_at, @status_form.review_at,
-                                       aria: { invalid: @status_form.errors[:review_at].any? },
+                                       aria: { invalid: @status_form.errors[:review_at].any?,
+                                  describedby: @status_form.errors[:review_at].any? ?
+                                    'users_status_transition_review_at_error' : nil },
                                        class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :review_at)}" %>
           <%= error_message_for(@status_form, :review_at, label: t('admin.users.status_management.review_at')) %>
         </div>
@@ -38,7 +42,9 @@
             <%= t('admin.users.status_management.resolution') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
           <% end %>
           <%= text_area_tag :resolution, @status_form.resolution, maxlength: 1000, rows: 3,
-                            aria: { invalid: @status_form.errors[:resolution].any? },
+                            aria: { invalid: @status_form.errors[:resolution].any?,
+                                  describedby: @status_form.errors[:resolution].any? ?
+                                    'users_status_transition_resolution_error' : nil },
                             class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :resolution)}" %>
           <%= error_message_for(@status_form, :resolution, label: t('admin.users.status_management.resolution')) %>
         </div>
