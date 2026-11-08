@@ -13,7 +13,7 @@ module Admin
     end
 
     def load_inventory_list
-      @inventories = @branch.inventories.includes(:product).order('products.name')
+      @inventories = @branch.inventories.includes(:product, :inventory_lots).order('products.name')
       load_recent_movements
     end
 
@@ -73,15 +73,22 @@ module Admin
     end
 
     def adjust
+      lot = @inventory.inventory_lots.find(params[:inventory_lot_id]) if params[:inventory_lot_id].present?
       Inventories::ApplyMovement.call(
         inventory: @inventory, quantity: params[:quantity],
-        kind: 'adjustment', user: current_user, reference: params[:reference]
+        kind: 'adjustment', user: current_user, reference: params[:reference],
+        inventory_lot: lot
       )
       redirect_to admin_branch_inventories_path(@branch), status: :see_other
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
       @adjustment_inventory_id = @inventory.id
       @adjustment_value = params[:quantity]
-      @adjustment_error = quantity_error_message(e)
+      @adjustment_lot_id = params[:inventory_lot_id].to_s
+      if e.is_a?(ArgumentError) && e.message.match?(/lot/i)
+        @adjustment_lot_error = t('admin.branch_lifecycle.inventory_lot_invalid')
+      else
+        @adjustment_error = quantity_error_message(e)
+      end
       load_inventory_list
       render :index, status: :unprocessable_content
     end
