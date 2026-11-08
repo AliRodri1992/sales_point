@@ -147,10 +147,10 @@ RSpec.describe 'Email settings audit history', type: :request do
 
   it 'renders an accessible branding editor with live preview and existing logos' do
     branding = EmailBrandingSetting.create!(organization:, display_name: 'North Shop')
-    branding.logo.attach(
-      io: StringIO.new(Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')),
-      filename: 'logo.png', content_type: 'image/png'
+    png = Base64.decode64(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII='
     )
+    branding.logo.attach(io: StringIO.new(png), filename: 'logo.png', content_type: 'image/png')
     get edit_admin_email_branding_settings_path
 
     expect(response).to have_http_status(:ok)
@@ -162,7 +162,7 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(page.at_css('input#email_branding_setting_support_url[type="url"]')).to be_present
     expect(page.at_css('input#email_branding_setting_privacy_url[type="url"]')).to be_present
     expect(page.at_css('input[name="remove_logo"][type="checkbox"]')).to be_present
-    expect(page.css('img').map { |img| img['alt'] })
+    expect(page.css('img').pluck('alt'))
       .to include(I18n.t('admin.email_templates.branding_platform_logo_alt'))
   end
 
@@ -183,10 +183,10 @@ RSpec.describe 'Email settings audit history', type: :request do
 
   it 'removes an optional organization logo without deleting the required platform logo' do
     branding = EmailBrandingSetting.create!(organization:, display_name: 'North Shop')
-    branding.logo.attach(
-      io: StringIO.new(Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')),
-      filename: 'logo.png', content_type: 'image/png'
+    png = Base64.decode64(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII='
     )
+    branding.logo.attach(io: StringIO.new(png), filename: 'logo.png', content_type: 'image/png')
 
     patch admin_email_branding_settings_path, params: {
       remove_logo: '1', email_branding_setting: { display_name: 'North Shop' }
@@ -197,5 +197,4 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSettingAudit.find_by!(organization:, setting_type: 'branding').changeset)
       .to include('logo_removed' => true)
   end
-
 end

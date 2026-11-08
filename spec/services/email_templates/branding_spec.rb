@@ -54,5 +54,4 @@ RSpec.describe EmailTemplates::Branding do
 
     expect(setting).to be_valid
   end
-
 end

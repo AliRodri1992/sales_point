@@ -18,17 +18,8 @@ module Admin
       verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
       attributes = branding_params
-      remove_logo = params[:remove_logo] == '1' && attributes[:logo].blank?
-      remove_logo &&= @branding.logo.attached?
-      saved = EmailBrandingSetting.transaction do
-        next false unless @branding.update(attributes)
-
-        extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
-        extra['logo_removed'] = true if remove_logo
-        EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
-        true
-      end
-      return render_branding_errors unless saved
+      remove_logo = should_remove_logo?(attributes)
+      return render_branding_errors unless save_branding(attributes, remove_logo:)
 
       @branding.logo.purge_later if remove_logo
       notify_email_setting('branding_updated', @branding)
@@ -37,6 +28,22 @@ module Admin
     end
 
     private
+
+    def should_remove_logo?(attributes)
+      params[:remove_logo] == '1' && attributes[:logo].blank? && @branding.logo.attached?
+    end
+
+    def save_branding(attributes, remove_logo:)
+      EmailBrandingSetting.transaction do
+        next false unless @branding.update(attributes)
+
+        extra = {}
+        extra['logo_updated'] = true if attributes.key?(:logo)
+        extra['logo_removed'] = true if remove_logo
+        EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
+        true
+      end
+    end
 
     def render_branding_errors
       @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')

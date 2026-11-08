@@ -28,9 +28,13 @@ class EmailBrandingSetting < ApplicationRecord
   def accessible_button_color
     return unless button_color.to_s.match?(/\A#[0-9a-fA-F]{6}\z/)
 
-    rgb = button_color.delete_prefix('#').scan(/../).map { |part| part.to_i(16) / 255.0 }
-    linear = rgb.map { |value| value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055)**2.4 }
+    errors.add(:button_color, :insufficient_contrast) if button_contrast_ratio < 4.5
+  end
+
+  def button_contrast_ratio
+    channels = button_color.delete_prefix('#').scan(/../).map { |part| part.to_i(16) / 255.0 }
+    linear = channels.map { |value| value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055)**2.4 }
     luminance = linear.zip([0.2126, 0.7152, 0.0722]).sum { |channel, weight| channel * weight }
-    errors.add(:button_color, :insufficient_contrast) if 1.05 / (luminance + 0.05) < 4.5
+    1.05 / (luminance + 0.05)
   end
 end
