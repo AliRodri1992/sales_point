@@ -76,6 +76,21 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSettingAudit.where(setting_type: 'branding', organization:).count).to eq(1)
     expect(administrator.notifications.count).to eq(1)
   end
+  it 'shows non-sensitive setting differences but never exposes email values' do
+    EmailSettingAudit.create!(
+      organization:, actor: administrator, setting_type: 'branding',
+      changeset: {
+        'primary_color' => ['#064e3b', '#047857'],
+        'support_email' => ['private@before.test', 'private@after.test']
+      }
+    )
+    get edit_admin_email_branding_settings_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('#064e3b', '#047857')
+    expect(response.body).not_to include('private@before.test', 'private@after.test')
+  end
+
   it 'hides audit history without the dedicated permission' do
     EmailSettingAudit.create!(organization:, actor: administrator, setting_type: 'sender',
                               changeset: { 'display_name' => %w[Before After] })

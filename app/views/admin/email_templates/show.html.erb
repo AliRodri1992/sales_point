@@ -279,7 +279,12 @@
             <ol class="max-h-96 divide-y divide-slate-100 overflow-y-auto px-5">
               <% @audits.each do |audit| %>
                 <li class="flex flex-col gap-1 py-3 text-sm">
-                  <span class="font-semibold text-slate-800"><%= t("admin.email_templates.audit_actions.#{audit.action}", default: audit.action.humanize) %></span>
+                  <span class="font-semibold text-slate-800">
+                    <%= t("admin.email_templates.audit_actions.#{audit.action}", default: audit.action.humanize) %>
+                    <% if audit.email_template_version %>
+                      · v<%= audit.email_template_version.version_number %>
+                    <% end %>
+                  </span>
                   <span class="break-words text-xs leading-5 text-slate-500">
                     <%= audit.actor&.display_name || t('admin.email_templates.unknown_actor') %>
                     · <%= l(audit.created_at, format: :short) %>

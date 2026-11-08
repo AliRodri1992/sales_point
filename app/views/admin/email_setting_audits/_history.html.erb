@@ -8,7 +8,13 @@
         <li class="flex flex-wrap items-start justify-between gap-3 py-3 text-sm">
           <div class="min-w-0">
             <p class="font-semibold text-slate-800"><%= audit.actor&.display_name || t('admin.email_templates.unknown_actor') %></p>
-            <p class="mt-1 break-words text-xs text-slate-500"><%= audit.changeset.keys.map { |key| t("admin.email_templates.settings_fields.#{key}", default: key.to_s.humanize) }.join(', ') %></p>
+            <% changes = audit.changeset.map do |key, values|
+                 label = t("admin.email_templates.settings_fields.#{key}", default: key.to_s.humanize)
+                 safe_detail = %w[primary_color secondary_color button_color default_locale].include?(key)
+                 safe_detail && values.is_a?(Array) && values.size == 2 ?
+                   "#{label}: #{values.first.presence || '—'} → #{values.last.presence || '—'}" : label
+               end %>
+            <p class="mt-1 break-words text-xs text-slate-500"><%= changes.join(', ') %></p>
           </div>
           <time datetime="<%= audit.created_at.iso8601 %>" class="shrink-0 text-xs text-slate-500"><%= l(audit.created_at, format: :short) %></time>
         </li>

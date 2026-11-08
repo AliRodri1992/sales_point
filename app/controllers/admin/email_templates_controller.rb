@@ -135,7 +135,7 @@ module Admin
     def load_show_details
       @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
       @can_view_audits = policy(EmailTemplateAudit).index?
-      @audits = @can_view_audits ? @template.audits.includes(:actor).order(created_at: :desc).limit(30) : []
+      @audits = @can_view_audits ? @template.audits.includes(:actor, :email_template_version).order(created_at: :desc).limit(30) : []
       load_show_preview if policy(@template).preview? && @template.published_version
     end
 

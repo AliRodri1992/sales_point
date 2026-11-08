@@ -510,6 +510,16 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'archived')).to exist
   end
 
+  it 'shows the audited version number alongside a lifecycle event' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    template.audit!(action: 'draft_updated', actor: administrator, version:)
+    get admin_email_template_path(template)
+
+    expect(response.body).to include('v1')
+    expect(response.body).to include(I18n.t('admin.email_templates.audit_actions.draft_updated'))
+  end
+
   it 'queues a published test message and reports invalid recipients' do
     template = create_template(organization:)
     template.new_draft!(actor: administrator).publish!(actor: administrator)
