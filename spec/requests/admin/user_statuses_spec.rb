@@ -34,6 +34,32 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(UserStatusEvent.last.reason).to eq('Ausencia temporal')
   end
 
+  it 'renders inline model errors without HTML required when the reason is blank' do
+    get edit_admin_user_status_path(target), params: { transition: 'suspended' }
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).css('form [required]')).to be_empty
+
+    patch admin_user_status_path(target), params: { transition: 'suspended', reason: '' }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#users_status_transition_reason_error')).to be_present
+    expect(target.reload).to be_active
+  end
+
+  it 'validates a future suspension review date in the model' do
+    patch admin_user_status_path(target), params: {
+      transition: 'suspended', reason: 'Future check', review_at: 1.day.ago.iso8601
+    }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#users_status_transition_review_at_error')).to be_present
+  end
+
+  it 'renders a field error when an incident resolution is missing' do
+    patch admin_user_status_path(target), params: { transition: 'blocked', reason: 'Incident review' }
+    patch admin_user_status_path(target), params: { transition: 'active', reason: 'Reviewed' }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#users_status_transition_resolution_error')).to be_present
+  end
+
   it 'prevents an administrator from changing their own status' do
     patch admin_user_status_path(admin), params: { transition: 'suspended', reason: 'Self change' }
     expect(admin.reload).to be_active
