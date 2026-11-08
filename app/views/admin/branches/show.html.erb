@@ -64,29 +64,35 @@
            role="alert"><%= @transition_error %></p>
       <% end %>
       <% if can_change_lifecycle && !@branch.closed? %>
-        <% blockers = @branch.active? ? branch_suspension_blockers(@branch) : branch_closure_blockers(@branch) %>
-        <% closure_blockers = branch_closure_blockers(@branch) %>
-        <% if blockers.any? || closure_blockers.any? %>
-          <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
-            <h3 class="text-sm font-bold text-amber-900"><%= t('admin.branch_lifecycle.pending_title') %></h3>
-            <p class="mt-1 text-xs text-amber-900"><%= t('admin.branch_lifecycle.pending_hint') %></p>
-            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
-              <% closure_blockers.each do |blocker| %>
-                <li><%= t("admin.branch_lifecycle.blockers.#{blocker}") %></li>
-              <% end %>
-            </ul>
-          </div>
+        <% Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []).each do |target| %>
+          <% blockers = branch_transition_blockers(@branch, target) %>
+          <% if blockers.any? %>
+            <section class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4"
+                     aria-label="<%= t('admin.branch_lifecycle.pending_for', action: t("admin.branch_lifecycle.actions.#{target}")) %>">
+              <h3 class="text-sm font-bold text-amber-900">
+                <%= t('admin.branch_lifecycle.pending_for', action: t("admin.branch_lifecycle.actions.#{target}")) %>
+              </h3>
+              <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
+                <% blockers.each do |blocker| %>
+                  <li>
+                    <%= t(target == 'active' ? "admin.branch_lifecycle.requirements.#{blocker}" :
+                                                 "admin.branch_lifecycle.blockers.#{blocker}") %>
+                    <% if (destination = branch_blocker_path(@branch, blocker)) %>
+                      <%= link_to t('admin.branch_lifecycle.resolve_blocker'), destination,
+                                  class: 'ml-1 font-semibold underline hover:text-amber-700',
+                                  data: { turbo_frame: '_top' } %>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </section>
+          <% end %>
         <% end %>
       <% end %>
       <% if can_change_lifecycle %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
-          <% blockers = case next_status
-                        when 'active' then branch_activation_requirements(@branch).reject { |_key, ready| ready }.keys
-                        when 'suspended' then branch_suspension_blockers(@branch)
-                        when 'closed' then branch_closure_blockers(@branch)
-                        else []
-                        end %>
+          <% blockers = branch_transition_blockers(@branch, next_status) %>
           <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
                         method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3',
                         data: { turbo_confirm: t("admin.branch_lifecycle.confirmations.#{next_status}"),
@@ -114,7 +120,8 @@
             <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
                                        class: next_status == 'closed' ? 'catalog-button border-rose-600 text-rose-700' :
                                          'catalog-button catalog-button-primary',
-                                       disabled: blockers.any? %>
+                                       disabled: blockers.any?,
+                                       title: (blockers.any? ? t('admin.branch_lifecycle.unavailable') : nil) %>
           <% end %>
         <% end %>
       <% end %>
