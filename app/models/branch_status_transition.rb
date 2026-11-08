@@ -20,7 +20,7 @@ class BranchStatusTransition < ApplicationRecord
   end
 
   def prevent_mutation
-    errors.add(:base, 'Lifecycle audit records are immutable')
+    errors.add(:base, I18n.t('admin.branch_lifecycle.audit_immutable'))
     throw :abort
   end
 end
