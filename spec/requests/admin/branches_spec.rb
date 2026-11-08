@@ -323,7 +323,12 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to redirect_to(admin_branches_path)
       expect(flash[:swal_message]).to eq(I18n.t('admin.branches.created'))
-      expect(Branch.order(:id).last).to be_preparing
+      created = Branch.order(:id).last
+      expect(created).to be_preparing
+      expect(created.branch_status_transitions.sole).to have_attributes(
+        from_status: nil, to_status: 'preparing', changed_by: admin_user,
+        reason: I18n.t('admin.branch_lifecycle.created_reason')
+      )
       notification = admin_user.notifications.last
       expect(notification.event.params[:action]).to eq('created')
       expect(notification.event.params[:user]).to eq(admin_user)
