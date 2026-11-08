@@ -13,9 +13,10 @@ module EmailTemplates
       primary_color secondary_color button_color footer_text
     ].freeze
 
-    def initialize(source:, values:)
+    def initialize(source:, values:, preview: false)
       @source = source
       @values = values.symbolize_keys
+      @preview = preview
     end
 
     def render
@@ -93,7 +94,7 @@ module EmailTemplates
     end
 
     def example_host?(host)
-      return false unless Rails.env.production?
+      return false unless Rails.env.production? && !@preview
 
       normalized = host.downcase
       %w[example.com example.org example.net].any? do |domain|

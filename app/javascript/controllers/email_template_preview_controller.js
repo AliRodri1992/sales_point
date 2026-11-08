@@ -98,7 +98,7 @@ export default class extends Controller {
     this.element.querySelectorAll("[data-email-preview-field-error]").forEach(node => node.remove())
     this.element.querySelectorAll("[data-email-preview-invalid]").forEach(field => {
       field.removeAttribute("data-email-preview-invalid")
-      field.setAttribute("aria-invalid", "false")
+      field.setAttribute("aria-invalid", String(this.hasServerError(field)))
       field.classList.remove("ring-1", "ring-rose-400")
       if (field.dataset.emailPreviewOriginalDescribedby !== undefined) {
         const original = field.dataset.emailPreviewOriginalDescribedby
@@ -109,24 +109,33 @@ export default class extends Controller {
     })
   }
 
+  hasServerError(field) {
+    const id = field.id.replace("allowed_variables_csv", "allowed_variables")
+    return Boolean(this.element.querySelector(`#${id}_error[data-server-field-error]`))
+  }
+
   showErrors(errors) {
     if (!errors || typeof errors !== "object") return
     Object.entries(errors).forEach(([attribute, messages]) => {
       const name = attribute === "allowed_variables" ? "allowed_variables_csv" : attribute
       const field = this.element.querySelector(`[name="email_template_version[${name}]"]`)
-      if (!field || !Array.isArray(messages) || !messages.length) return
+      if (!field || !Array.isArray(messages) || !messages.length || this.hasServerError(field)) return
 
+      const unique = [...new Set(messages)]
       const label = this.element.querySelector(`label[for="${field.id}"]`)
       const title = (label?.textContent || name).replace("*", "").trim()
-      const node = document.createElement("p")
-      node.dataset.emailPreviewFieldError = "true"
-      node.id = `email-preview-error-${name}`
-      node.setAttribute("role", "alert")
-      node.className = "mt-1 text-xs text-rose-700"
-      node.textContent = `${title} ${messages.join(". ")}`
-      field.insertAdjacentElement("afterend", node)
+      const descriptionIds = unique.map((message, index) => {
+        const node = document.createElement("p")
+        node.dataset.emailPreviewFieldError = "true"
+        node.id = `email-preview-error-${name}-${index}`
+        node.setAttribute("role", "alert")
+        node.className = "mt-1 text-xs text-rose-700"
+        node.textContent = `${title} ${message}`
+        field.insertAdjacentElement("afterend", node)
+        return node.id
+      })
       field.dataset.emailPreviewOriginalDescribedby = field.getAttribute("aria-describedby") || ""
-      field.setAttribute("aria-describedby", [field.getAttribute("aria-describedby"), node.id].filter(Boolean).join(" "))
+      field.setAttribute("aria-describedby", [field.getAttribute("aria-describedby"), ...descriptionIds].filter(Boolean).join(" "))
       field.setAttribute("aria-invalid", "true")
       field.classList.add("ring-1", "ring-rose-400")
       field.dataset.emailPreviewInvalid = "true"

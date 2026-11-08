@@ -90,6 +90,16 @@ RSpec.describe EmailTemplates::Renderer do
     expect { described_class.new(source:, values:).render }.not_to raise_error
   end
 
+  it 'permits example links only in sandboxed previews, never in production delivery' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    source = template('<a href="{{activation_url}}">Activate</a>')
+    values = { recipient_name: 'Sample', activation_url: 'https://example.org/demo' }
+
+    expect { described_class.new(source:, values:).render }.to raise_error(ArgumentError, /Unconfigured/)
+    _subject, html, _plain = described_class.new(source:, values:, preview: true).render
+    expect(html).to include('https://example.org/demo')
+  end
+
   it 'rejects unknown and missing variables' do
     expect do
       described_class.new(

@@ -54,6 +54,23 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     expect(template.versions.where(status: 'draft')).to exist
   end
 
+  scenario 'keeps server field errors visible without duplicating them in the live preview' do
+    template = EmailTemplate.create!(
+      organization:, key: 'server_error_notice', name: 'Notice', locale: 'en',
+      category: 'notifications', status: 'draft', enabled: false,
+      subject: 'Notice', html_body: '<p>Notice</p>', text_body: 'Notice'
+    )
+    template.new_draft!(actor: admin)
+    visit edit_admin_email_template_path(template)
+
+    find('#email_template_version_subject').set('')
+    click_button I18n.t('admin.email_templates.save_draft', locale: :en)
+
+    expect(page).to have_css('#email_template_version_subject_error', text: /blank|empty/i)
+    expect(page).to have_css('#email_template_version_subject[aria-invalid="true"]')
+    expect(page).to have_no_css('[data-email-preview-field-error]')
+  end
+
   scenario 'inserts an allowed placeholder into the draft HTML at the cursor' do
     template = EmailTemplate.create!(
       organization:, key: 'staff_news', name: 'Staff news', locale: 'en',

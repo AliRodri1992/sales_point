@@ -79,6 +79,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.reload.published_version).to eq(draft)
     expect(template.audits.where(action: 'published')).to exist
   end
+  it 'renders a saved preview using demonstration links even when production rules reject sending them' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    draft.update!(subject: 'Invite', html_body: '<a href="{{activation_url}}">Join</a>',
+                  text_body: '{{activation_url}}', allowed_variables: ['activation_url'])
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    get preview_admin_email_template_path(template, version_id: draft.id)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('activation-demo')
+  end
+
   it 'previews unsaved draft content without persisting changes' do
     template = create_template(organization:)
     draft = template.new_draft!(actor: administrator)

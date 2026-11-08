@@ -19,7 +19,7 @@ module Admin
       raise ActiveRecord::RecordNotFound unless @version
 
       @subject, @html, @plain = EmailTemplates::Renderer.new(
-        source: @version, values: EmailTemplates::SampleData.call(@template)
+        source: @version, values: EmailTemplates::SampleData.call(@template), preview: true
       ).render
       render :preview
     end
@@ -36,7 +36,7 @@ module Admin
 
       validate_draft_preview_variables!(source)
       subject, html, plain = EmailTemplates::Renderer.new(
-        source:, values: EmailTemplates::SampleData.call(@template)
+        source:, values: EmailTemplates::SampleData.call(@template), preview: true
       ).render
       render json: { subject:, html:, plain: }
     rescue ArgumentError => e
@@ -56,7 +56,7 @@ module Admin
 
     def load_show_preview
       @preview_subject, @preview_html, @preview_plain = EmailTemplates::Renderer.new(
-        source: @template.published_version, values: EmailTemplates::SampleData.call(@template)
+        source: @template.published_version, values: EmailTemplates::SampleData.call(@template), preview: true
       ).render
     rescue ArgumentError
       @preview_error = true
@@ -73,7 +73,7 @@ module Admin
 
     def comparison_preview(version)
       _subject, html, plain = EmailTemplates::Renderer.new(
-        source: version, values: EmailTemplates::SampleData.call(@template)
+        source: version, values: EmailTemplates::SampleData.call(@template), preview: true
       ).render
       { html:, plain: }
     rescue ArgumentError
