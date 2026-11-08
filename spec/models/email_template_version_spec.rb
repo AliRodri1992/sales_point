@@ -56,6 +56,15 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(version.errors[:allowed_variables].size).to eq(1)
   end
 
+  it 'does not stack undeclared-variable errors on top of invalid variable-list errors' do
+    version = template.new_draft!(actor: nil)
+    version.subject = 'Hello {{recipient_name}}'
+    version.allowed_variables = ['unknown_variable']
+
+    expect(version).not_to be_valid
+    expect(version.errors[:allowed_variables].size).to eq(1)
+  end
+
   it 'rejects malformed or unknown allowed variables' do
     version = template.new_draft!(actor: nil)
     expect(version.update(allowed_variables: 'recipient_name')).to be(false)

@@ -12,6 +12,17 @@ RSpec.describe EmailTemplate, type: :model do
     expect(html).not_to include('<script>')
     expect(plain).to include('<script>')
   end
+  it 'reports one error for missing key and locale without redundant format errors' do
+    template = described_class.new(
+      key: '', locale: '', name: 'Notice', category: 'security',
+      subject: 'Subject', html_body: '<p>Notice</p>', text_body: 'Notice'
+    )
+
+    expect(template).not_to be_valid
+    expect(template.errors[:key].size).to eq(1)
+    expect(template.errors[:locale].size).to eq(1)
+  end
+
   it 'validates identity field lengths on the server, including non-browser clients' do
     template = described_class.new(key: 'n' * 101, name: 'N' * 151, category: 'C' * 101,
                                    locale: 'es', subject: 'Subject', html_body: '<p>Body</p>',

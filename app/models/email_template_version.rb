@@ -71,6 +71,7 @@ class EmailTemplateVersion < ApplicationRecord
 
   def declared_variables
     return unless allowed_variables.is_a?(Array)
+    return if errors[:allowed_variables].any?
 
     content = [subject, preheader, html_body, text_body].join(' ')
     used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq

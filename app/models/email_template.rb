@@ -33,13 +33,13 @@ class EmailTemplate < ApplicationRecord
 
   validates :key, :locale, :name, :category, :subject, :html_body, :text_body, presence: true
   validates :status, inclusion: { in: STATUSES }
-  validates :locale, inclusion: { in: %w[es en ko] }
+  validates :locale, inclusion: { in: %w[es en ko] }, allow_blank: true
   validates :name, length: { maximum: 150 }
   validates :key, length: { maximum: 100 }
   validates :category, length: { maximum: 100 }
-  validates :key, format: { with: /\A[a-z][a-z0-9_]*\z/ }
+  validates :key, format: { with: /\A[a-z][a-z0-9_]*\z/ }, allow_blank: true
   validates :version, numericality: { only_integer: true, greater_than: 0 }
-  validates :key, uniqueness: { scope: %i[organization_id locale] }
+  validates :key, uniqueness: { scope: %i[organization_id locale] }, allow_blank: true
   validates :subject, length: { maximum: 250 }
   validates :html_body, length: { maximum: 300_000 }
   validates :text_body, length: { maximum: 100_000 }
