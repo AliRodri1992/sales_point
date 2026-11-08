@@ -18,6 +18,9 @@ module Admin
     def update
       authorize @user, :manage_status?
       @target = params[:transition].to_s
+      allowed = helpers.allowed_user_transitions(@user, organization: current_organization)
+      return head :unprocessable_content unless allowed.include?(@target)
+
       @status_form = Users::StatusTransition.new(**transition_attributes)
       if @status_form.call
         membership = @user.organization_memberships.active.find_by(organization: current_organization)
