@@ -29,7 +29,9 @@ module BranchLifecycle
   private
 
   def record_initial_operational_status
-    branch_status_transitions.create!(to_status: operational_status)
+    reason = I18n.t('admin.branch_lifecycle.created_reason') if lifecycle_created_by
+    branch_status_transitions.create!(to_status: operational_status,
+                                      changed_by: lifecycle_created_by, reason:)
   end
 
   def sync_legacy_status
