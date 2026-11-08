@@ -47,7 +47,7 @@ RSpec.describe EmailTemplates::Renderer do
     ).render
 
     images = Nokogiri::HTML.fragment(html).css('img')
-    expect(images.map { |img| img['width'] }).to eq(%w[380 244])
+    expect(images.pluck('width')).to eq(%w[380 244])
   end
 
   it 'rejects a dangerous activation URL' do
