@@ -37,12 +37,13 @@ module EmailTemplates
                 <img src="{{platform_logo}}" alt="Delta POS" width="320" style="display:block;width:320px;max-width:100%;height:auto;border:0;">
               </td></tr>
               <tr><td style="padding:36px 32px;">
-                <h1 style="margin:0 0 20px;font-size:25px;line-height:1.3;color:#064e3b;">__DELTA_HEADING__</h1>
+                <h1 style="margin:0 0 20px;font-size:25px;line-height:1.3;color:{{primary_color}};">__DELTA_HEADING__</h1>
                 <p style="margin:0 0 12px;font-size:15px;line-height:1.7;color:#334155;">__DELTA_HELLO__ <strong>{{recipient_name}}</strong>.</p>
                 <p style="margin:0;font-size:15px;line-height:1.7;color:#475569;">__DELTA_INTRO__</p>
               </td></tr>
               <tr><td style="padding:20px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;">
                 <p style="margin:0;font-size:12px;line-height:1.6;color:#64748b;">__DELTA_FOOTER__</p>
+                <p style="margin:10px 0 0;font-size:12px;line-height:1.6;color:{{secondary_color}};">{{footer_text}}</p>
               </td></tr>
             </table>
           </td></tr>

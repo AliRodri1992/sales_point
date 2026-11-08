@@ -55,7 +55,7 @@ module EmailTemplates
     def self.publish_content!(template, data)
       draft = template.new_draft!(actor: nil)
       draft.update!(
-        subject: data.fetch(:subject), html_body: data.fetch(:html_body),
+        subject: data.fetch(:subject), preheader: data.fetch(:preheader), html_body: data.fetch(:html_body),
         text_body: data.fetch(:text_body),
         allowed_variables: data.fetch(:allowed_variables)
       )

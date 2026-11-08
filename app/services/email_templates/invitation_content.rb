@@ -69,7 +69,7 @@ module EmailTemplates
 
     VARIABLES = %w[
       platform_logo invited_name recipient_email organization_name
-      activation_url expiration_hours current_year
+      activation_url expiration_hours current_year primary_color secondary_color button_color footer_text
     ].freeze
 
     def self.build(locale)
@@ -77,6 +77,7 @@ module EmailTemplates
       copy = COPY.fetch(code)
       {
         subject: copy.fetch(:subject),
+        preheader: copy.fetch(:preheader),
         html_body: InvitationMarkup.html(code, copy),
         text_body: InvitationMarkup.plain(copy),
         allowed_variables: VARIABLES

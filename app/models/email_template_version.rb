@@ -51,7 +51,7 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def declared_variables
-    content = [subject, html_body, text_body].join(' ')
+    content = [subject, preheader, html_body, text_body].join(' ')
     used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
     errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
   end

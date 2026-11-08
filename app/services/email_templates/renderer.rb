@@ -10,6 +10,7 @@ module EmailTemplates
       name recipient_name recipient_email invited_name organization_name organization_logo
       platform_logo platform_name logo_url support_email support_url privacy_url
       current_year activation_url recovery_url expiration_hours status_label
+      primary_color secondary_color button_color footer_text
     ].freeze
 
     def initialize(source:, values:)
@@ -32,11 +33,12 @@ module EmailTemplates
 
     def render_html
       html = replace(enlarge_standard_logo(@source.html_body), :html)
-      ActionController::Base.helpers.sanitize(
+      sanitized = ActionController::Base.helpers.sanitize(
         html,
         tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
         attributes: %w[lang charset name content width height role cellpadding cellspacing style href src alt align]
       )
+      inject_preheader(sanitized)
     end
 
     # Adapt legacy stock logo markup without editing immutable published versions.
@@ -45,6 +47,16 @@ module EmailTemplates
         tag.gsub(/\bwidth=(["'])(?:210|214|220|222|244)\1/, 'width="320"')
            .gsub(/(?<![-\w])width:\s*(?:210|214|220|222|244)px\b/, 'width:320px')
       end
+    end
+
+    def inject_preheader(html)
+      return html unless @source.respond_to?(:preheader) && @source.preheader.present?
+
+      content = ERB::Util.html_escape(replace(@source.preheader, :plain))
+      hidden = %(<div style="display:none!important;max-height:0;overflow:hidden;opacity:0;">#{content}</div>)
+      return html.sub(/<body\b[^>]*>/i) { |match| "#{match}#{hidden}" } if html.match?(/<body\b/i)
+
+      "#{hidden}#{html}"
     end
 
     def render_plain
@@ -61,7 +73,7 @@ module EmailTemplates
     end
 
     def validate_variables!(allowed)
-      used = [@source.subject, @source.html_body, @source.text_body].flat_map do |body|
+      used = [@source.subject, @source.preheader, @source.html_body, @source.text_body].flat_map do |body|
         body.to_s.scan(VARIABLE_PATTERN).flatten
       end.uniq
       raise ArgumentError, 'Unapproved email variables' unless (used - allowed).empty?

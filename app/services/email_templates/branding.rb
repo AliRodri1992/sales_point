@@ -14,6 +14,10 @@ module EmailTemplates
         support_email: setting_value(local, global, :support_email, 'support@example.org'),
         support_url: setting_value(local, global, :support_url, 'https://example.org/support'),
         privacy_url: setting_value(local, global, :privacy_url, 'https://example.org/privacy'),
+        primary_color: setting_value(local, global, :primary_color, '#064e3b'),
+        secondary_color: setting_value(local, global, :secondary_color, '#047857'),
+        button_color: setting_value(local, global, :button_color, '#047857'),
+        footer_text: setting_value(local, global, :footer_text, ''),
         platform_logo: platform_logo_url,
         organization_logo: asset_logo(local),
         logo_url: platform_logo_url

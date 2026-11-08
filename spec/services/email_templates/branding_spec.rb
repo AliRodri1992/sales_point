@@ -77,4 +77,15 @@ RSpec.describe EmailTemplates::Branding do
 
     expect(setting).to be_valid
   end
+  it 'passes tenant color settings and footer through the renderer values' do
+    EmailBrandingSetting.create!(
+      organization:, display_name: 'Store', primary_color: '#123456',
+      secondary_color: '#456789', button_color: '#047857', footer_text: 'Store footer'
+    )
+    expect(described_class.values(organization:)).to include(
+      primary_color: '#123456', secondary_color: '#456789',
+      button_color: '#047857', footer_text: 'Store footer'
+    )
+  end
+
 end
