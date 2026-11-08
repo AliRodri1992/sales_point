@@ -32,7 +32,7 @@ module Onboarding
     private
 
     def create_terminal
-      branch = @organization.branches.not_deleted.where(status: true).find_by(id: @branch&.id)
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).find_by(id: @branch&.id)
       unless branch
         @record.errors.add(:base, I18n.t('admin.onboarding_ui.recovery.active_branch_required'))
         return false
