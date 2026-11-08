@@ -100,7 +100,7 @@ module DemoPurchasingExamples
   end
 
   def catalog(organization)
-    branches = organization.branches.not_deleted.order(:id).limit(5).to_a
+    branches = organization.branches.not_deleted.where(operational_status: 'active').order(:id).limit(5).to_a
     products = organization.products.not_deleted.order(:id).to_a
     raise 'Se requieren sucursales y dos productos para datos de compras demo' if branches.empty? || products.size < 2
 
