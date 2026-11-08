@@ -128,7 +128,9 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
       type.value = 'customer'
       type.dispatchEvent(new Event('change', { bubbles: true }))
     JS
-    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"].hidden', visible: :all)
+    expect(page).to have_css(
+      '#users-access-title [data-user-access-target="employeeRolesRequired"].hidden', visible: :all
+    )
     expect(page).to have_css('[data-user-access-target="roleWarning"]', text: /without roles/)
     page.execute_script(<<~JS)
       const type = document.querySelector('#user_user_type')
