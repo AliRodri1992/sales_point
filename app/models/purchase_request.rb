@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseRequest < ApplicationRecord
+  OPERATIONAL_COMMITMENT_STATUSES = %w[submitted approved].freeze
   include RestrictsClosedBranchMutations
   include HasPolymorphicNotes
   include RequiresOperationalBranch
