@@ -544,5 +544,4 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(branch.reload.deleted_at).to be_nil
     end
   end
-
 end

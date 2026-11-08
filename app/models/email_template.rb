@@ -96,7 +96,8 @@ class EmailTemplate < ApplicationRecord
     plain = source&.text_body || text_body
     variables = source&.allowed_variables.presence ||
                 [title, body, plain].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
-    { subject: title, preheader: source&.preheader.to_s, html_body: body, text_body: plain, allowed_variables: variables }
+    { subject: title, preheader: source&.preheader.to_s, html_body: body, text_body: plain,
+      allowed_variables: variables }
   end
 
   def audit!(action:, actor:, version: nil)

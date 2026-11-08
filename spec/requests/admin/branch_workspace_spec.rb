@@ -264,4 +264,3 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     expect(page.at_css('#branch_status_error')).to be_present
   end
 end
-

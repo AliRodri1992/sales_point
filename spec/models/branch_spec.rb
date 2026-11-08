@@ -97,4 +97,3 @@ RSpec.describe Branch, type: :model do
     expect(branch.reload.deleted_at).to be_nil
   end
 end
-

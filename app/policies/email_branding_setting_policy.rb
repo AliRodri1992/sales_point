@@ -7,12 +7,14 @@ class EmailBrandingSettingPolicy < ApplicationPolicy
 
   def update?
     return false unless user&.active? && user.admin?
+    return user.role?('super_admin') && user.permission?('email_settings.manage') if record.organization_id.nil?
 
-    if record.organization_id.nil?
-      user.role?('super_admin') && user.permission?('email_settings.manage')
-    else
-      user.permission?('email_branding.manage') &&
-        user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
-    end
+    user.permission?('email_branding.manage') && member_of_organization?
+  end
+
+  private
+
+  def member_of_organization?
+    user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
   end
 end

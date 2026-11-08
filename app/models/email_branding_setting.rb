@@ -40,8 +40,8 @@ class EmailBrandingSetting < ApplicationRecord
       next unless value.start_with?('https://')
 
       uri = URI.parse(value)
-      errors.add(attribute, :invalid) unless uri.is_a?(URI::HTTPS) && uri.host.present? &&
-                                            uri.userinfo.nil?
+      valid = uri.is_a?(URI::HTTPS) && uri.host.present? && uri.userinfo.nil?
+      errors.add(attribute, :invalid) unless valid
     rescue URI::InvalidURIError
       errors.add(attribute, :invalid)
     end
