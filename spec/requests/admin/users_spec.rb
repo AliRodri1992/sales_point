@@ -118,6 +118,17 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response.body).to include('Usuarios')
     end
 
+    it 'does not mark roles mandatory when editing an existing employee' do
+      existing = add_member(create(:user, email: 'existing-employee@example.com'))
+
+      get edit_admin_user_path(existing)
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('form[data-controller="user-access"]')['data-new-account']).to eq('false')
+      required = document.at_css('#users-access-title [data-user-access-target="employeeRolesRequired"]')
+      expect(required['class'].split).to include('hidden')
+    end
+
     it 'renders the edit form for an existing user' do
       target = add_member(create(:user, email: 'edit-profile@example.com'))
 

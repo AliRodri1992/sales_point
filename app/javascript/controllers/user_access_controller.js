@@ -77,7 +77,8 @@ export default class extends Controller {
     }
     const roles = this.selectedRoles()
     update("reviewRoles", roles.length > 0 ? roles.map((role) => role.dataset.roleName).join(" · ") : "")
-    const employee = this.hasUserTypeTarget && this.userTypeTarget.value === "employee"
+    const employee = this.element.dataset.newAccount === "true" &&
+      this.hasUserTypeTarget && this.userTypeTarget.value === "employee"
     if (this.hasEmployeeRolesRequiredTarget) this.employeeRolesRequiredTarget.classList.toggle("hidden", !employee)
     if (this.hasEmployeeRoleScreenReaderTarget) this.employeeRoleScreenReaderTarget.classList.toggle("hidden", !employee)
     if (this.hasRoleWarningTarget) {

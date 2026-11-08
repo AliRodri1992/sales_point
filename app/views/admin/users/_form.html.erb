@@ -24,7 +24,8 @@
                 html: { novalidate: true }, data: { controller: 'user-access',
                         action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission input->user-access#formChanged change->user-access#formChanged',
                         empty_value: t('admin.users.ui.not_provided'),
-                        role_warning: t('admin.users.ui.no_role_warning') }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
+                        role_warning: t('admin.users.ui.no_role_warning'),
+                        new_account: !editing }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
     <div class="min-w-0 space-y-5">
       <%# Field errors belong to their controls; only non-field errors appear here. %>
       <% @user.errors[:base].uniq.each do |message| %>
@@ -126,8 +127,8 @@
           <div>
             <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900">
               <%= t('admin.users.form.fields.system_roles') %>
-              <span data-user-access-target="employeeRolesRequired" class="ml-1 font-bold text-rose-600 <%= 'hidden' unless @user.employee? %>" aria-hidden="true">*</span>
-              <span data-user-access-target="employeeRoleScreenReader" class="sr-only <%= 'hidden' unless @user.employee? %>"><%= t('admin.users.ui.required_field') %></span>
+              <span data-user-access-target="employeeRolesRequired" class="ml-1 font-bold text-rose-600 <%= 'hidden' unless !editing && @user.employee? %>" aria-hidden="true">*</span>
+              <span data-user-access-target="employeeRoleScreenReader" class="sr-only <%= 'hidden' unless !editing && @user.employee? %>"><%= t('admin.users.ui.required_field') %></span>
             </h2>
             <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.employee_role_hint') %></p>
           </div>
