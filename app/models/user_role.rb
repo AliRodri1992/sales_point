@@ -27,8 +27,9 @@ class UserRole < ApplicationRecord
   end
 
   def serialize_branch_assignment
-    Branch.find(branch_id).with_lock do
-      if branch.closed? || branch.deleted_at.present?
+    locked_branch = Branch.find(branch_id)
+    locked_branch.with_lock do
+      if locked_branch.closed? || locked_branch.deleted_at.present?
         errors.add(:branch, :invalid)
         raise ActiveRecord::RecordInvalid, self
       end
