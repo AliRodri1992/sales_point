@@ -216,4 +216,82 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSettingAudit.find_by!(organization:, setting_type: 'branding').changeset)
       .to include('logo_removed' => true)
   end
+  it 'renders the redesigned sender editor with accurate delivery guidance' do
+    get edit_admin_email_sender_settings_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('[data-controller="email-sender"]')).to be_present
+    expect(document.at_css('#sender-identity-title')).to be_present
+    expect(document.at_css('#sender-preferences-title')).to be_present
+    expect(document.at_css('#sender-preview-title')).to be_present
+    expect(document.at_css('#sender-verification-title')).to be_present
+    expect(document.at_css('[data-email-sender-target="previewName"]')).to be_present
+    expect(document.at_css('#email_sender_setting_domain')).to be_nil
+    expect(document.at_css('#email_sender_setting_domain_status')).to be_nil
+    expect(document.text).to include(I18n.t('admin.email_templates.sender_delivery_default'))
+  end
+
+  it 'explains the verified global fallback without revealing the other organizations senders' do
+    EmailSenderSetting.create!(
+      organization: nil, display_name: 'Delta POS',
+      from_address: 'notifications@global.example', domain: 'global.example',
+      domain_status: 'verified', default_locale: 'es'
+    )
+
+    get edit_admin_email_sender_settings_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.sender_delivery_global'))
+    expect(response.body).not_to include('notifications@global.example')
+  end
+
+  it 'shows a mismatch status instead of presenting an unusable domain as verified' do
+    EmailSenderSetting.create!(
+      organization:, display_name: 'Mismatched',
+      from_address: 'alerts@other.example', domain: 'expected.example',
+      domain_status: 'verified', default_locale: 'es'
+    )
+
+    get edit_admin_email_sender_settings_path
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.sender_status.mismatch'))
+    expect(response.body).to include(I18n.t('admin.email_templates.sender_delivery_default'))
+  end
+
+  it 'normalizes addresses and never allows forging domain verification from the form' do
+    patch admin_email_sender_settings_path, params: {
+      email_sender_setting: {
+        display_name: 'Local Shop', from_address: ' NOTICE@Example.COM ',
+        reply_to: ' HELP@Example.COM ', default_locale: 'en',
+        domain_status: 'verified', domain: 'example.com'
+      }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    sender = EmailSenderSetting.find_by!(organization:)
+    expect(sender).to have_attributes(
+      display_name: 'Local Shop', from_address: 'notice@example.com',
+      reply_to: 'help@example.com', default_locale: 'en',
+      domain_status: 'unverified', domain: nil
+    )
+  end
+
+  it 'shows inline validation messages without persisting invalid sender addresses' do
+    patch admin_email_sender_settings_path, params: {
+      email_sender_setting: {
+        display_name: '', from_address: 'invalid-email', reply_to: 'invalid-reply', default_locale: 'xx'
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    %w[display_name from_address reply_to default_locale].each do |field|
+      expect(document.at_css("#email_sender_setting_#{field}_error")).to be_present
+    end
+    expect(EmailSenderSetting.find_by(organization:)).to be_nil
+    expect(EmailSettingAudit.where(organization:, setting_type: 'sender')).to be_empty
+  end
+
 end

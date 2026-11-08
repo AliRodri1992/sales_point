@@ -175,6 +175,7 @@ es:
       sender_errors_hint: "Corrige los campos marcados debajo de cada entrada."
       sender_status:
         verified: "Verificado"
+        mismatch: "Dominio o dirección no coinciden"
         pending: "Pendiente"
         unverified: "Sin verificar"
         rejected: "Rechazado"

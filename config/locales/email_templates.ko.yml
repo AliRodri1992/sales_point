@@ -175,6 +175,7 @@ ko:
       sender_errors_hint: "각 입력란 아래의 오류를 확인하고 수정하세요."
       sender_status:
         verified: "확인됨"
+        mismatch: "도메인과 발신 주소가 일치하지 않음"
         pending: "대기 중"
         unverified: "미확인"
         rejected: "거부됨"

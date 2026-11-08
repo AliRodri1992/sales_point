@@ -1,5 +1,5 @@
 <% content_for :title, t('admin.email_templates.sender') %>
-<% sender_status = @sender_ready ? 'verified' : @sender.domain_status.to_s %>
+<% sender_status = @sender_ready ? 'verified' : @sender.domain_status == 'verified' ? 'mismatch' : @sender.domain_status.to_s %>
 <% status_tone = @sender_ready ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800' %>
 
 <main class="mx-auto max-w-[1560px] space-y-6 px-4 pb-10 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">

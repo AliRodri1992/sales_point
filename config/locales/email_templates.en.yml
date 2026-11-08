@@ -175,6 +175,7 @@ en:
       sender_errors_hint: "Correct the errors displayed beneath each field."
       sender_status:
         verified: "Verified"
+        mismatch: "Domain and sender address do not match"
         pending: "Pending"
         unverified: "Unverified"
         rejected: "Rejected"

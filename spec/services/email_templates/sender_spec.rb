@@ -39,4 +39,20 @@ RSpec.describe EmailTemplates::Sender do
 
     expect(described_class.headers_for(organization:)[:from]).to include('global@delta.test')
   end
+  it 'does not allow a verified flag with a mismatched email domain to override the global sender' do
+    EmailSenderSetting.create!(
+      organization:, display_name: 'Local', from_address: 'notice@wrong.example',
+      domain: 'correct.example', domain_status: 'verified'
+    )
+    EmailSenderSetting.create!(
+      organization: nil, display_name: 'Platform', from_address: 'notice@platform.example',
+      domain: 'platform.example', domain_status: 'verified'
+    )
+
+    headers = described_class.headers_for(organization:)
+
+    expect(headers[:from]).to include('notice@platform.example')
+    expect(headers[:from]).not_to include('wrong.example')
+  end
+
 end
