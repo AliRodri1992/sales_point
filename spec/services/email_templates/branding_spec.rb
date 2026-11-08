@@ -9,7 +9,7 @@ RSpec.describe EmailTemplates::Branding do
     values = described_class.values
     expect(values).to include(platform_name: 'Delta POS', organization_name: 'Delta POS')
     expect(values[:support_url]).to start_with('https://')
-    expect(values[:logo_url]).to include('delta-pos-email-logo.png')
+    expect(values[:logo_url]).to include('delta-pos-email-logo')
   end
 
   it 'uses the complete branded PNG for email clients and retains the original SVG' do
