@@ -50,6 +50,16 @@ RSpec.describe Branch, type: :model do
     end
   end
 
+  it 'allows only the registration bootstrap to create a provisional address-less branch' do
+    branch = build(:branch, :without_address)
+    branch.registration_bootstrap = true
+    expect(branch).to be_valid
+
+    branch.registration_bootstrap = false
+    expect(branch).not_to be_valid
+    expect(branch.errors[:address]).to be_present
+  end
+
   it 'requires an address when registering a branch directly through the model' do
     branch = build(:branch, :without_address)
 

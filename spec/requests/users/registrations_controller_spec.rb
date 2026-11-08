@@ -47,6 +47,7 @@ RSpec.describe Users::RegistrationsController, type: :request do
     expect(administrator.permissions).to include(permission)
     expect(OrganizationMembership.count).to eq(1)
     expect(Branch.count).to eq(1)
+    expect(Branch.first.address).to be_nil
     expect(Terminal.count).to eq(1)
     expect(User.find_by(email: 'owner@example.com').employee.organization.onboarding_status).to eq('pending')
   end

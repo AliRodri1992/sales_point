@@ -33,7 +33,8 @@ class RegistrationConfigurationProvisioner
     Branch.create!(
       organization: @organization,
       name: I18n.t('registration.initial_branch_name'),
-      status: true
+      status: true,
+      registration_bootstrap: true
     )
   end
 

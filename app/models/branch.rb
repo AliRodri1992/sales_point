@@ -3,6 +3,10 @@
 class Branch < ApplicationRecord
   include HasPolymorphicNotes
 
+  # Only the initial placeholder branch created during account registration can
+  # be saved before the business has completed its address setup.
+  attr_accessor :registration_bootstrap
+
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :phones,
                                 allow_destroy: true,
@@ -44,7 +48,7 @@ class Branch < ApplicationRecord
             },
             on: %i[create update]
   validates :status, inclusion: { in: [true, false] }, on: %i[create update]
-  validates :address, presence: true, on: :create
+  validates :address, presence: true, on: :create, unless: :registration_bootstrap
   validate :protect_branch_deactivation, if: :deactivating?
 
   validates :name,
