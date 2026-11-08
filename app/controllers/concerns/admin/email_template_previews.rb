@@ -32,10 +32,7 @@ module Admin
       # Validate a persisted version in memory: dup would trigger the unique version number constraint.
       source = @version
       source.assign_attributes(draft_attributes)
-      unless source.valid?
-        return render json: { error: t('admin.email_templates.preview_error'),
-                              errors: source.errors.to_hash }, status: :unprocessable_content
-      end
+      return render_invalid_preview(source) unless source.valid?
 
       validate_draft_preview_variables!(source)
       subject, html, plain = EmailTemplates::Renderer.new(
@@ -47,6 +44,15 @@ module Admin
     end
 
     private
+
+    def render_invalid_preview(source)
+      key = if source.errors.added?(:allowed_variables, :undeclared_placeholders)
+              'admin.email_templates.preview_undeclared_variables'
+            else
+              'admin.email_templates.preview_error'
+            end
+      render json: { error: t(key), errors: source.errors.to_hash }, status: :unprocessable_content
+    end
 
     def load_show_preview
       @preview_subject, @preview_html, @preview_plain = EmailTemplates::Renderer.new(

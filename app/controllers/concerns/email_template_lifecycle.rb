@@ -8,6 +8,7 @@ module EmailTemplateLifecycle
     @template.audit!(action: 'archived', actor: current_user)
     notify_email_template('archived')
     redirect_to admin_email_templates_path,
+                status: :see_other,
                 flash: { swal_message: t('admin.email_templates.archived') }
   end
 

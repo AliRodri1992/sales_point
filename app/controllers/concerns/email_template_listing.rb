@@ -25,8 +25,7 @@ module EmailTemplateListing
   end
 
   def email_template_permissions
-    current_user.user_roles.active.joins(system_role: :permissions)
-                .where(permissions: { status: 'active' }).pluck('permissions.code').to_set
+    current_user.effective_permission_codes
   end
 
   def accessible_email_organization_ids
