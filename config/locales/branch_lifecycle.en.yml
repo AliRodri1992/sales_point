@@ -31,6 +31,7 @@ en:
         missing_team: "Assign at least one authorized user to the branch."
       missing_currency: "Configure an active base currency before activating this branch."
       delete_requires_preparing: "Only branches still in preparation may be deleted."
+      closed_readonly: "A closed branch is read-only and cannot be edited."
         open_operations: "Resolve active operations before closing."
         assigned_team: "Reassign or remove branch users first."
         outstanding_stock: "Transfer or reconcile inventory before closing."
