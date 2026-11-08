@@ -13,7 +13,7 @@ RSpec.describe 'Admin onboarding', type: :request do
   end
   let!(:user_role) { create(:user_role, user:, system_role: role) }
   let!(:employee) { create(:employee, organization:) }
-  let!(:branch) { create(:branch, organization:) }
+  let!(:branch) { create(:branch, organization:, operational_state: 'preparing') }
   let!(:terminal) { create(:terminal, branch:) }
 
   before do
@@ -94,6 +94,10 @@ RSpec.describe 'Admin onboarding', type: :request do
     organization.reload
     terminal.reload
     expect(organization.onboarding_status).to eq('completed')
+    expect(branch.reload).to be_active
+    expect(branch.branch_status_transitions.last).to have_attributes(
+      from_status: 'preparing', to_status: 'active', changed_by: user
+    )
     expect(organization.onboarding_completed_at).to be_present
     expect(organization.onboarding_current_step).to eq(5)
     expect(terminal.name).to eq('Caja Principal')
