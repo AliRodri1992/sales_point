@@ -23,6 +23,12 @@ en:
           test_queued: "Test delivery for %{name} queued"
     email_templates:
       section: "Communication"
+      more_actions: "More actions"
+      create_draft_first: "Start a draft before opening the editor."
+      sender_from_example: "notifications@example.com"
+      sender_reply_example: "support@example.com"
+      sender_domain_setup_title: "How to verify your domain"
+      sender_domain_setup_hint: "Configure SPF, DKIM, and DMARC records with your email provider. Verification takes place outside this form; Delta POS does not automatically mark the domain as verified."
       title: "Email templates"
       intro: "Manage secure, versioned transactional emails."
       branding: "Branding"

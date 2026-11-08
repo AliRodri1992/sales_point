@@ -23,6 +23,12 @@ es:
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
       section: "Comunicación"
+      more_actions: "Más acciones"
+      create_draft_first: "Crea un borrador antes de abrir el editor."
+      sender_from_example: "notificaciones@ejemplo.com"
+      sender_reply_example: "soporte@ejemplo.com"
+      sender_domain_setup_title: "Cómo verificar el dominio"
+      sender_domain_setup_hint: "Configura los registros SPF, DKIM y DMARC con tu proveedor de correo. La verificación se realiza fuera de este formulario; Delta POS no marca automáticamente el dominio como verificado."
       title: "Plantillas de correo"
       intro: "Administra comunicaciones transaccionales seguras y versionadas."
       branding: "Identidad visual"

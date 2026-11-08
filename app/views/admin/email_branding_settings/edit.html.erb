@@ -12,7 +12,7 @@
   <%= form_with model: @branding, url: admin_email_branding_settings_path, method: :patch, html: { novalidate: true },
                 multipart: true, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]',
                 data: { controller: 'email-branding',
-                        action: 'submit->email-branding#validateForm',
+                        
                         email_branding_invalid_logo_value: t('admin.email_templates.branding_invalid_logo'),
                         email_branding_invalid_color_value: t('admin.email_templates.branding_invalid_color'),
                         email_branding_contrast_good_value: t('admin.email_templates.branding_contrast_good'),

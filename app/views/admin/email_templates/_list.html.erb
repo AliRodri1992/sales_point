@@ -50,11 +50,11 @@
 
   <% if @templates.any? %>
     <div class="overflow-x-auto">
-      <table class="w-full min-w-[1040px] text-left text-sm">
+      <table class="w-full min-w-[940px] text-left text-sm">
         <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
           <tr>
             <% %w[name key locale scope state version updated actions].each do |column| %>
-              <th scope="col" class="px-4 py-3.5 first:pl-5 last:pr-5"><%= t("admin.email_templates.columns.#{column}") %></th>
+              <th scope="col" class="px-4 py-3.5 first:pl-5 last:pr-5 <%= 'sticky right-0 z-10 bg-slate-50' if column == 'actions' %>"><%= t("admin.email_templates.columns.#{column}") %></th>
             <% end %>
           </tr>
         </thead>
@@ -86,27 +86,34 @@
               </td>
               <td class="px-4 py-4 font-medium tabular-nums text-slate-700"><%= template.published_version&.version_number ? "v#{template.published_version.version_number}" : '—' %></td>
               <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500"><%= l(template.updated_at, format: :short) %></td>
-              <td class="px-4 py-4 pr-5">
+              <td class="sticky right-0 z-10 bg-white px-3 py-3 pr-5 align-top">
                 <div class="flex items-center justify-end gap-1.5">
                   <%= link_to admin_email_template_path(template), data: { turbo_frame: '_top', tooltip: t('admin.email_templates.view') },
                               aria: { label: t('admin.email_templates.view_named', name: template.name) },
                               class: 'inline-flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-emerald-50 hover:text-emerald-800' do %>
                     <%= delta_icon('eye', class: 'size-5') %>
                   <% end %>
-                  <% if current_organization && policy(template).personalize? %>
+                  <% if policy(template).update? %>
+                    <%= button_to start_draft_admin_email_template_path(template), method: :post, data: { turbo_frame: '_top', tooltip: t('admin.email_templates.edit') },
+                                aria: { label: t('admin.email_templates.edit_named', name: template.name) },
+                                class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' do %>
+                      <%= delta_icon('pencil-square', class: 'size-5') %>
+                    <% end %>
+                  <% end %>
+                  <% if policy(template).personalize? || policy(template).deactivate? || policy(template).activate? ||
+                        policy(template).reactivate? || (policy(template).archive? && template.status != 'archived') %>
+                    <details class="group w-40 shrink-0">
+                      <summary class="flex min-h-10 cursor-pointer list-none items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600">
+                        <%= delta_icon('ellipsis-horizontal', class: 'size-5') %>
+                        <span><%= t('admin.email_templates.more_actions') %></span>
+                      </summary>
+                      <div class="mt-2 flex flex-wrap justify-end gap-1.5">                  <% if current_organization && policy(template).personalize? %>
                     <%= button_to personalize_admin_email_template_path(template), method: :post,
                                   form: { data: { turbo_confirm: t('admin.email_templates.confirm_personalize', name: template.name), turbo_frame: '_top' } },
                                   data: { tooltip: t('admin.email_templates.personalize') },
                                   aria: { label: t('admin.email_templates.personalize_named', name: template.name) },
                                   class: 'inline-flex size-10 items-center justify-center rounded-xl border border-teal-200 bg-teal-50 text-teal-800 hover:bg-teal-100' do %>
                       <%= delta_icon('document-text', class: 'size-5') %>
-                    <% end %>
-                  <% end %>
-                  <% if policy(template).update? %>
-                    <%= button_to start_draft_admin_email_template_path(template), method: :post, data: { turbo_frame: '_top', tooltip: t('admin.email_templates.edit') },
-                                aria: { label: t('admin.email_templates.edit_named', name: template.name) },
-                                class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' do %>
-                      <%= delta_icon('pencil-square', class: 'size-5') %>
                     <% end %>
                   <% end %>
                   <% if policy(template).deactivate? %>
@@ -144,6 +151,9 @@
                                   class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' do %>
                       <%= delta_icon('arrow-path', class: 'size-5') %>
                     <% end %>
+                  <% end %>
+                      </div>
+                    </details>
                   <% end %>
                 </div>
               </td>

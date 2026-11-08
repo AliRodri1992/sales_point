@@ -42,7 +42,6 @@ export default class extends Controller {
     if (!input) return
 
     input.value = event.target.value.toUpperCase()
-    input.setCustomValidity("")
     this.updateColors()
   }
 
@@ -51,7 +50,6 @@ export default class extends Controller {
     const key = input.dataset.brandColor
     const picker = this.pickerTargets.find(item => item.dataset.brandColor === key)
     if (picker && this.validColor(input.value)) picker.value = input.value
-    input.setCustomValidity("")
     this.updateColors()
   }
 
@@ -66,7 +64,7 @@ export default class extends Controller {
       this.previewButtonTarget.style.backgroundColor = values.button_color
       const sufficient = this.whiteContrast(values.button_color) >= 4.5
       const buttonInput = this.colorInputTargets.find(item => item.dataset.brandColor === "button_color")
-      if (buttonInput) buttonInput.setCustomValidity(sufficient ? "" : this.contrastLowValue)
+      if (buttonInput) buttonInput.setAttribute("aria-invalid", String(!sufficient))
       this.contrastTarget.textContent = sufficient ? this.contrastGoodValue : this.contrastLowValue
       this.contrastTarget.classList.toggle("text-rose-700", !sufficient)
       this.contrastTarget.classList.toggle("text-emerald-800", sufficient)
@@ -110,16 +108,6 @@ export default class extends Controller {
     this.logoPreviewTarget.src = this.originalLogoSrc
     this.logoPreviewTarget.classList.toggle("hidden", this.originalLogoHidden)
     this.logoNameTarget.textContent = ""
-  }
-
-  validateForm(event) {
-    this.colorInputTargets.forEach(input => {
-      input.setCustomValidity(this.validColor(input.value) ? "" : this.invalidColorValue)
-    })
-    if (!this.element.checkValidity()) {
-      event.preventDefault()
-      this.element.reportValidity()
-    }
   }
 
   validColor(value) {
