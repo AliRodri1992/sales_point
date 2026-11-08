@@ -15,12 +15,19 @@ module Admin
       user = restore_target
       @restoration_form = restoration_service(user)
       if @restoration_form.call
+        if user.pending? && user.organization_memberships.active.exists?(
+          organization: current_organization, account_status: 'pending'
+        )
+          Users::InvitationDispatcher.call(user:, organization: current_organization)
+        end
         redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
       else
         @restoration_error_target_id = user.id
         load_deleted_users
         render :index, status: :unprocessable_content
       end
+    rescue Users::InvitationDispatcher::DeliveryError
+      redirect_to admin_user_path(user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError, Users::OrganizationCapacity::CapacityExceeded => e
       redirect_to admin_user_restorations_path, alert: e.message
     end
