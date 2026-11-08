@@ -64,6 +64,25 @@ module BranchesHelper
     attributes.merge(invalid: true, describedby: 'branch_address_error')
   end
 
+  def branch_audit_attribute(type, attribute)
+    return t('admin.branch_lifecycle.audit_availability') if attribute == 'deleted_at'
+
+    type.safe_constantize.human_attribute_name(attribute)
+  end
+
+  def branch_audit_value(attribute, value)
+    case attribute
+    when 'deleted_at'
+      t("admin.branch_lifecycle.audit_#{value.present? ? 'removed' : 'present'}")
+    when 'country_id'
+      @branch_change_countries[value.to_i]&.localized_name || value.to_s
+    when 'primary', 'whatsapp_enabled'
+      t("admin.branch_lifecycle.audit_#{value ? 'yes' : 'no'}")
+    else
+      value.presence&.to_s&.truncate(160) || '—'
+    end
+  end
+
   def branch_mobile(branch)
     branch.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }
   end
