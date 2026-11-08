@@ -57,11 +57,8 @@ module BranchesHelper
     attributes
   end
 
-  def branch_country_aria(branch, address)
-    attributes = branch_field_aria(address, :country, required: true)
-    return attributes if branch.errors[:address].empty? || address.errors[:country].any?
-
-    attributes.merge(invalid: true, describedby: 'branch_address_error')
+  def branch_country_aria(_branch, address)
+    branch_field_aria(address, :country, required: true)
   end
 
   def branch_audit_attribute(type, attribute)
