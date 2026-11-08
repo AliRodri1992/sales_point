@@ -5,13 +5,20 @@ class Branch < ApplicationRecord
 
   # Only the initial placeholder branch created during account registration can
   # be saved before the business has completed its address setup.
-  attr_accessor :registration_bootstrap
+  attr_accessor :registration_bootstrap, :lifecycle_transition_authorized
+
+  enum :operational_status, { preparing: 'preparing', active: 'active',
+                              suspended: 'suspended', closed: 'closed' },
+       default: :preparing, validate: true
+
+  has_many :branch_status_transitions, dependent: :restrict_with_exception
 
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :phones,
                                 allow_destroy: true,
                                 reject_if: ->(attrs) { attrs['number'].blank? && attrs['id'].blank? }
   belongs_to :organization, optional: true
+  validates :organization, presence: true, unless: :registration_bootstrap
   has_one :address, as: :addressable, dependent: :destroy
   accepts_nested_attributes_for :address
 
@@ -23,7 +30,9 @@ class Branch < ApplicationRecord
   has_many :goods_receipts, dependent: :restrict_with_exception
   has_many :terminals, dependent: :restrict_with_exception
 
-  attribute :status, :boolean, default: true
+  attribute :status, :boolean, default: false
+  before_validation :sync_legacy_status
+  validate :protect_operational_status_change, if: :restricted_lifecycle_change?
   normalizes :code, with: ->(value) { value.strip.upcase.presence }
   normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
   normalizes :notes, with: ->(value) { value.strip.presence }
@@ -61,6 +70,8 @@ class Branch < ApplicationRecord
             },
             on: :onboardingstep2
 
+  def operationally_active? = active? && deleted_at.nil?
+
   def self.team_assignments(organization)
     people = OrganizationMembership.accessible.where(organization:).select(:user_id)
     UserRole.active.joins(:user).merge(User.active).where(user_id: people)
@@ -68,8 +79,21 @@ class Branch < ApplicationRecord
 
   private
 
+  def sync_legacy_status
+    self.status = operational_status == 'active' unless registration_bootstrap
+  end
+
+  def restricted_lifecycle_change?
+    persisted? && will_save_change_to_operational_status? && !lifecycle_transition_authorized
+  end
+
+  def protect_operational_status_change
+    errors.add(:operational_status, :invalid)
+  end
+
   def deactivating?
-    persisted? && will_save_change_to_status? && !status && deleted_at.nil?
+    persisted? && will_save_change_to_status? && !status && deleted_at.nil? &&
+      !lifecycle_transition_authorized
   end
 
   def protect_branch_deactivation
