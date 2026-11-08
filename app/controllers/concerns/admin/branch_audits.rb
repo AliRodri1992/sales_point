@@ -4,12 +4,12 @@ module Admin
   # Read-only audit feed for branch attributes and polymorphic contact details.
   module BranchAudits
     AUDITED_FIELDS = {
-      'Branch' => %w[name code contact_email],
+      'Branch' => %w[name code contact_email deleted_at],
       'Address' => %w[
-        street exterior_number interior_number neighborhood city state postal_code country_id reference_notes
+        street exterior_number interior_number neighborhood city state postal_code country_id reference_notes deleted_at
       ],
-      'Phone' => %w[number kind primary whatsapp_enabled],
-      'Note' => %w[body]
+      'Phone' => %w[number kind primary whatsapp_enabled deleted_at],
+      'Note' => %w[body deleted_at]
     }.freeze
 
     private
@@ -19,14 +19,15 @@ module Admin
       @branch_change_events = events.filter_map { |event| branch_audit_entry(event) }
                                     .sort_by { |entry| entry[:event].created_at }.reverse.first(20)
       load_branch_change_actors
+      load_branch_change_countries
     end
 
     def branch_audit_sources
       {
         'Branch' => [@branch.id],
-        'Address' => Array(@branch.address&.id),
-        'Phone' => @branch.phones.pluck(:id),
-        'Note' => @branch.note_entries.pluck(:id)
+        'Address' => Address.with_deleted.where(addressable_type: 'Branch', addressable_id: @branch.id).pluck(:id),
+        'Phone' => Phone.with_deleted.where(phoneable_type: 'Branch', phoneable_id: @branch.id).pluck(:id),
+        'Note' => Note.with_deleted.where(notable_type: 'Branch', notable_id: @branch.id).pluck(:id)
       }
     end
 
@@ -40,6 +41,13 @@ module Admin
     def branch_audit_entry(event)
       fields = event.changeset.to_h.slice(*AUDITED_FIELDS.fetch(event.item_type))
       { event:, fields: } if fields.present?
+    end
+
+    def load_branch_change_countries
+      ids = @branch_change_events.flat_map do |entry|
+        entry[:event].item_type == 'Address' ? entry[:fields].fetch('country_id', []) : []
+      end.compact
+      @branch_change_countries = Country.with_deleted.where(id: ids).index_by(&:id)
     end
 
     def load_branch_change_actors
