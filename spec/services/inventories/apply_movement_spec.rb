@@ -71,6 +71,21 @@ RSpec.describe Inventories::ApplyMovement do
     expect(lot.reload.quantity).to eq(1)
   end
 
+  it 'prevents a quarantined lot from being reconciled as available stock' do
+    inventory = create(:inventory, stock: 0)
+    inventory.product.update!(tracking_mode: 'lot')
+    lot = InventoryLot.create!(
+      inventory:, organization: inventory.organization,
+      code: 'QUARANTINED-LOT', quantity: 2, status: :quarantined
+    )
+
+    expect do
+      described_class.call(inventory:, quantity: 1, kind: 'adjustment', inventory_lot: lot)
+    end.to raise_error(ArgumentError, /Quarantined lots/)
+    expect(inventory.reload.stock).to eq(0)
+    expect(lot.reload.quantity).to eq(2)
+  end
+
   it 'requires serial-level reconciliation for serialized stock adjustments' do
     inventory = create(:inventory, stock: 1)
     inventory.product.update!(tracking_mode: 'serial')
