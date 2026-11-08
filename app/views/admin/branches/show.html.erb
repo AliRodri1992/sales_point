@@ -46,22 +46,29 @@
     <div class="catalog-card-body">
       <h2 id="branch-lifecycle-title" class="font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
       <p class="catalog-hint"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
-      <% if @transition_error.present? %><p class="catalog-error" role="alert"><%= @transition_error %></p><% end %>
+
       <% if can_change_lifecycle %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
           <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
                         method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3' do |transition_form| %>
-            <%= transition_form.hidden_field :to_status, value: next_status %>
+            <%= transition_form.hidden_field :to_status, value: next_status,
+                                         id: "branch-transition-target-#{next_status}" %>
             <div class="catalog-field flex-1">
-              <%= transition_form.label :reason, t('admin.branch_lifecycle.reason'), class: 'catalog-label' %>
+              <%= transition_form.label :reason, branch_required_label(t('admin.branch_lifecycle.reason')),
+                            for: "branch-transition-reason-#{next_status}", class: 'catalog-label' %>
               <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
+                          id: "branch-transition-reason-#{next_status}",
                           value: (@transition_to == next_status ? @transition_reason : nil),
                           aria: { invalid: @transition_to == next_status && @transition_error.present? },
                           class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
+              <% if @transition_to == next_status && @transition_error.present? %>
+                <p class="text-xs text-rose-700" role="alert"><%= @transition_error %></p>
+              <% end %>
             </div>
             <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
-                                       class: 'catalog-button catalog-button-primary' %>
+                                       class: next_status == 'closed' ? 'catalog-button border-rose-600 text-rose-700' :
+                                         'catalog-button catalog-button-primary' %>
           <% end %>
         <% end %>
       <% end %>
