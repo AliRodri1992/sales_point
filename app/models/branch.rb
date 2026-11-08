@@ -98,7 +98,12 @@ class Branch < ApplicationRecord
     inventories.where('stock > 0').exists? ||
       terminals.active_records.exists? ||
       purchase_requests.exists?(status: %w[draft submitted approved]) ||
-      purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received])
+      purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received]) ||
+      pending_purchase_returns?
+  end
+
+  def pending_purchase_returns?
+    PurchaseReturn.joins(:goods_receipt).where(goods_receipts: { branch_id: id }, status: 'draft').exists?
   end
 
   def preserve_operational_history
