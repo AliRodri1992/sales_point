@@ -107,7 +107,7 @@ RSpec.describe Inventories::ApplyMovement do
 
   it 'permits supplier returns only for receipt items recorded before suspension' do
     inventory = create(:inventory, stock: 5)
-    suspend_branch(inventory.branch)
+    admin = suspend_branch(inventory.branch)
     receipt = instance_double(
       GoodsReceipt, id: 17, branch_id: inventory.branch_id, created_at: 3.days.ago
     )
@@ -123,6 +123,12 @@ RSpec.describe Inventories::ApplyMovement do
       .and_return(instance_double(PurchaseReturn, goods_receipt_id: receipt.id))
 
     expect(described_class.established_supplier_return?(inventory, return_record)).to be(true)
+    expect(
+      described_class.suspended_movement?(inventory, 'return', -1, { source: return_record, user: admin })
+    ).to be(true)
+    expect(
+      described_class.suspended_movement?(inventory, 'return', -1, { source: return_record, user: nil })
+    ).to be(false)
 
     allow(receipt_item).to receive(:created_at).and_return(1.hour.from_now)
     expect(described_class.established_supplier_return?(inventory, return_record)).to be(false)
