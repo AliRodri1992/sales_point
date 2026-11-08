@@ -12,12 +12,14 @@ class CreateEmailCommunicationsSettings < ActiveRecord::Migration[8.1]
       t.string :support_url
       t.string :privacy_url
       t.text :footer_text
+      t.timestamp :deleted_at
       t.timestamps
     end
+    add_index :email_branding_settings, :deleted_at
     add_index :email_branding_settings, :organization_id, unique: true,
-              where: 'organization_id IS NOT NULL', name: 'idx_email_branding_tenant_unique'
+              where: 'organization_id IS NOT NULL AND deleted_at IS NULL', name: 'idx_email_branding_tenant_unique'
     add_index :email_branding_settings, '((organization_id IS NULL))', unique: true,
-              where: 'organization_id IS NULL', name: 'idx_email_branding_one_global'
+              where: 'organization_id IS NULL AND deleted_at IS NULL', name: 'idx_email_branding_one_global'
 
     create_table :email_sender_settings do |t|
       t.references :organization, null: true, foreign_key: true
@@ -27,12 +29,14 @@ class CreateEmailCommunicationsSettings < ActiveRecord::Migration[8.1]
       t.string :default_locale, null: false, default: 'es'
       t.string :domain
       t.string :domain_status, null: false, default: 'unverified'
+      t.timestamp :deleted_at
       t.timestamps
     end
+    add_index :email_sender_settings, :deleted_at
     add_index :email_sender_settings, :organization_id, unique: true,
-              where: 'organization_id IS NOT NULL', name: 'idx_email_senders_tenant_unique'
+              where: 'organization_id IS NOT NULL AND deleted_at IS NULL', name: 'idx_email_senders_tenant_unique'
     add_index :email_sender_settings, '((organization_id IS NULL))', unique: true,
-              where: 'organization_id IS NULL', name: 'idx_email_senders_one_global'
+              where: 'organization_id IS NULL AND deleted_at IS NULL', name: 'idx_email_senders_one_global'
 
     create_table :email_template_audits do |t|
       t.references :email_template, null: false, foreign_key: true
@@ -41,8 +45,10 @@ class CreateEmailCommunicationsSettings < ActiveRecord::Migration[8.1]
       t.references :actor, null: true, foreign_key: { to_table: :users }
       t.string :action, null: false
       t.jsonb :metadata, null: false, default: {}
+      t.timestamp :deleted_at
       t.timestamps
     end
+    add_index :email_template_audits, :deleted_at
     add_index :email_template_audits, [:email_template_id, :created_at],
               name: 'idx_email_template_audits_history'
     add_index :email_template_audits, [:organization_id, :created_at],

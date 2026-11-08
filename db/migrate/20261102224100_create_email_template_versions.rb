@@ -14,8 +14,10 @@ class CreateEmailTemplateVersions < ActiveRecord::Migration[8.1]
       t.references :created_by, null: true, foreign_key: { to_table: :users }
       t.references :published_by, null: true, foreign_key: { to_table: :users }
       t.datetime :published_at
+      t.timestamp :deleted_at
       t.timestamps
     end
+    add_index :email_template_versions, :deleted_at
     add_index :email_template_versions, [:email_template_id, :version_number],
               unique: true, name: 'idx_email_template_versions_number'
     add_index :email_template_versions, [:email_template_id, :status],

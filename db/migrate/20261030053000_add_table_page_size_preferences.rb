@@ -12,11 +12,14 @@ class AddTablePageSizePreferences < ActiveRecord::Migration[8.1]
       t.references :organization, null: false, foreign_key: true
       t.string :table_key, null: false, limit: 70
       t.integer :per_page, null: false
+      t.timestamp :deleted_at
       t.timestamps
     end
 
     add_index :table_page_preferences, %i[user_id organization_id table_key],
-              unique: true, name: 'idx_table_page_preferences_owner_and_table'
+              unique: true, where: 'deleted_at IS NULL',
+              name: 'idx_table_page_preferences_owner_and_table'
+    add_index :table_page_preferences, :deleted_at
     add_check_constraint :table_page_preferences, 'per_page IN (5, 10, 15, 25, 50)',
                          name: 'chk_table_page_preferences_per_page'
   end

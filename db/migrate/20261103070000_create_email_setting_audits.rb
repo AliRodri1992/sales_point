@@ -7,9 +7,11 @@ class CreateEmailSettingAudits < ActiveRecord::Migration[8.1]
       t.references :actor, foreign_key: { to_table: :users }, null: false
       t.string :setting_type, null: false
       t.jsonb :changeset, default: {}, null: false
+      t.timestamp :deleted_at
       t.timestamps
     end
 
+    add_index :email_setting_audits, :deleted_at
     add_index :email_setting_audits, %i[organization_id created_at],
               name: 'idx_email_setting_audits_tenant_history'
     add_check_constraint :email_setting_audits,
