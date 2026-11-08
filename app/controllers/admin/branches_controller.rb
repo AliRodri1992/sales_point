@@ -8,6 +8,7 @@ module Admin
     include Admin::BranchTransitions
     include Admin::BranchSupport
     include Admin::BranchTerminals
+    include Admin::BranchAudits
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -111,6 +112,7 @@ module Admin
 
       @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
                                    terminals: @branch.terminals.count }
+      load_branch_change_events
     end
 
     def set_branch
