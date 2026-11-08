@@ -41,6 +41,19 @@ RSpec.describe EmailTemplates::TestDelivery do
     end.to raise_error(ArgumentError, 'Template not published')
   end
 
+  it 'rechecks publication after acquiring the lock and does not queue a disabled template' do
+    allow(template).to receive(:with_lock) do |&block|
+      template.update!(enabled: false)
+      block.call
+    end
+
+    expect do
+      described_class.call(template:, actor:, recipient: actor.email)
+    end.to raise_error(ArgumentError, 'Template not published')
+    expect(EmailTemplates::TestDeliveryJob).not_to have_been_enqueued
+    expect(template.audits.where(action: 'test_queued')).not_to exist
+  end
+
   it 'allows root administrators to test delivery to another valid recipient' do
     create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'super_admin'))
     expect do

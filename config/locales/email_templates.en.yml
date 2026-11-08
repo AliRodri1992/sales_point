@@ -22,6 +22,7 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
+      sender_verification_disclaimer: "Matching the domain and its saved status does not confirm active SPF/DKIM or successful delivery. Check verification directly with your email provider."
       date_filter_invalid: "must contain a valid date"
       date_filter_before_start: "must be on or after the start date"
       current_published: "Currently published version"

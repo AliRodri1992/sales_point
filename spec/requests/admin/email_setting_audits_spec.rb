@@ -33,6 +33,15 @@ RSpec.describe 'Email settings audit history', type: :request do
     end
   end
 
+  it 'clarifies that stored domain status is not independent DNS verification' do
+    EmailSenderSetting.create!(organization:, display_name: 'Platform',
+                               from_address: 'notify@platform.example', domain: 'platform.example',
+                               domain_status: 'verified')
+    get edit_admin_email_sender_settings_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.sender_verification_disclaimer'))
+  end
+
   it 'records a sender setting update with the actor and organization' do
     patch admin_email_sender_settings_path, params: {
       email_sender_setting: {

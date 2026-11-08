@@ -6,10 +6,10 @@ module EmailTemplates
 
     def self.call(template:, actor:, recipient:)
       recipient = validate_recipient!(actor, recipient)
-      available = template.status == 'published' && template.enabled? && template.published_version.present?
-      raise ArgumentError, 'Template not published' unless available
-
       template.with_lock do
+        available = template.status == 'published' && template.enabled? && template.published_version.present?
+        raise ArgumentError, 'Template not published' unless available
+
         check_limit!(template, actor)
         job = EmailTemplates::TestDeliveryJob.perform_later(
           template.id, actor.id, recipient, template.published_version_id

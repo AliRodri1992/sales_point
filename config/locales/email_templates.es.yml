@@ -22,6 +22,7 @@ es:
           deactivated: "Plantilla desactivada: %{name}"
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
+      sender_verification_disclaimer: "La coincidencia del dominio y su estado guardado no confirman que SPF/DKIM estén activos ni que el correo sea entregable. Comprueba la verificación directamente con tu proveedor."
       date_filter_invalid: "debe contener una fecha válida"
       date_filter_before_start: "debe ser igual o posterior a la fecha inicial"
       current_published: "Versión actualmente publicada"
