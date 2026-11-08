@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseOrder < ApplicationRecord
+  OPERATIONAL_COMMITMENT_STATUSES = %w[pending_approval approved ordered].freeze
   include RestrictsClosedBranchMutations
   include HasPolymorphicNotes
   include RequiresOperationalBranch
