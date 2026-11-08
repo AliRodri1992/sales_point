@@ -361,6 +361,7 @@ en:
         draft: "Draft"
         inactive: "Inactive"
         archived: "Archived"
+      current_draft: "Current working draft"
       audit_actions:
         created: "Template created"
         draft_updated: "Draft updated"

@@ -361,6 +361,7 @@ ko:
         draft: "초안"
         inactive: "비활성"
         archived: "보관됨"
+      current_draft: "현재 작업 중인 초안"
       audit_actions:
         created: "템플릿 생성"
         draft_updated: "초안 수정"

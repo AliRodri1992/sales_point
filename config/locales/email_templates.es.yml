@@ -361,6 +361,7 @@ es:
         draft: "Borrador"
         inactive: "Inactiva"
         archived: "Archivada"
+      current_draft: "Borrador de trabajo actual"
       audit_actions:
         created: "Plantilla creada"
         draft_updated: "Borrador actualizado"

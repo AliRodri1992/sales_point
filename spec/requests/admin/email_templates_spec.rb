@@ -439,6 +439,18 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(flash[:swal_message]).to be_present
   end
 
+  it 'highlights only the newest editable draft in version history' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator)
+    latest = template.new_draft!(actor: administrator)
+    get admin_email_template_path(template)
+
+    document = Nokogiri::HTML(response.body)
+    tags = document.css('[data-current-email-draft]')
+    expect(tags.size).to eq(1)
+    expect(tags.first['data-current-email-draft']).to eq(latest.id.to_s)
+  end
+
   it 'offers any historical version in the comparison selector' do
     template = create_template(organization:)
     first = template.new_draft!(actor: administrator)
