@@ -14,6 +14,7 @@ class UserRole < ApplicationRecord
   validate :branch_role_requires_branch
   validate :global_role_cannot_have_branch
   validate :assignable_role
+  validate :no_new_assignments_to_closed_branch, if: :new_assignment?
   before_save :lock_assignable_role
 
   scope :active, -> { joins(:system_role).where(deleted_at: nil, system_roles: { status: 'active', deleted_at: nil }) }
@@ -40,6 +41,12 @@ class UserRole < ApplicationRecord
 
     errors.add(:system_role, I18n.t('admin.system_roles.lifecycle.errors.not_assignable'))
     raise ActiveRecord::RecordInvalid, self
+  end
+
+  def no_new_assignments_to_closed_branch
+    return unless branch&.closed?
+
+    errors.add(:branch, :invalid)
   end
 
   def branch_role_requires_branch
