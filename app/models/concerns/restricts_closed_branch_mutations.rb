@@ -19,6 +19,10 @@ module RestrictsClosedBranchMutations
 
   def serialize_branch_owned_destroy(&)
     with_locked_branch_owner(&)
+  rescue ActiveRecord::RecordInvalid => e
+    raise unless e.record.equal?(self)
+
+    false
   end
 
   def with_locked_branch_owner
