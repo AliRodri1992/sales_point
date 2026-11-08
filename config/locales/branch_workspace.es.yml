@@ -62,7 +62,7 @@
         "no_matches_hint": "Prueba otra búsqueda o quita algún filtro para ampliar los resultados.",
         "form_intro": "Organiza los datos de la sucursal para facilitar el contacto y la operación diaria.",
         "identity": "Identificación",
-        "identity_hint": "Nombre visible y una clave opcional para identificarla en tu operación.",
+        "identity_hint": "Nombre identificable y clave interna automática.",
         "code": "Clave interna",
         "code_placeholder": "Se asignará al guardar",
         "code_hint": "Se genera automáticamente al guardar la sucursal y no puede modificarse.",
@@ -70,7 +70,7 @@
         "active_team_block": "no se puede desactivar mientras tenga usuarios asignados. Reasígnalos primero.",
         "last_active_block": "no se puede desactivar porque es la última sucursal activa.",
         "delete_team_block": "No se puede eliminar la sucursal mientras tenga usuarios asignados.",
-        "status_hint": "Disponible para la operación y selección de sucursal. Desactivarla conserva su historial.",
+        "status_hint": "La operación depende del estado de la sucursal. La suspensión conserva sus datos y su historial.",
         "contact_hint": "Canales de contacto de esta ubicación, independientes de los de tu organización.",
         "contact_email": "Correo de contacto",
         "email_hint": "Para consultas y coordinación con esta sucursal.",
@@ -85,7 +85,7 @@
         "setup_identity": "Un nombre reconocible y una clave consistente.",
         "setup_contact": "Al menos un canal de contacto, cuando esté disponible.",
         "setup_location": "Dirección completa y referencias de acceso.",
-        "optional_hint": "La clave, el celular, el correo y las notas son opcionales. Puedes completar la ficha más adelante.",
+        "optional_hint": "El celular, el correo y las notas son opcionales. La clave se genera al guardar.",
         "history_title": "Conservación del historial",
         "detail_hint": "Identificadores, equipo asignado y fechas de registro.",
         "assigned_team": "Equipo asignado",
@@ -104,7 +104,7 @@
         "remove_confirmation": "Retirar esta sucursal la ocultará del catálogo activo, pero conservará su historial. No se permite retirarla si tiene operaciones o usuarios asignados.",
         "remove_title": "¿Retirar sucursal?",
         "status_transition_hint": "Reasigna a los usuarios, transfiere el inventario y finaliza los pedidos y terminales pendientes. Debe quedar al menos una sucursal activa.",
-        "history_hint": "Desactivar una sucursal conserva sus datos. Si ya tiene registros operativos, debe desactivarse en lugar de eliminarse."
+        "history_hint": "El cierre es definitivo y conserva el historial; la suspensión detiene operaciones nuevas."
       }
     },
     "activerecord": {
