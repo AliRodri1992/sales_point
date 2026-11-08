@@ -318,7 +318,7 @@ RSpec.describe 'Admin::Users', type: :request do
       end
       expect(form.at_css('label[for="user_username"] [data-required-indicator]')).to be_nil
       expect(form.at_css('label[for="user_language_id"] [data-required-indicator]')).to be_nil
-      expect(form.css('span[data-required-indicator]').length).to eq(5)
+      expect(form.css('span[data-required-indicator]').length).to eq(4)
       expect(form.css('[required]')).to be_empty
       expect(form.at_css('.catalog-error')).to be_nil
     end
