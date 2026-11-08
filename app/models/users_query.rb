@@ -53,14 +53,20 @@ class UsersQuery
 
   def by_branch(scope)
     return scope if @params[:branch].blank? || @organization.nil?
+    return scope.none unless active_branch_selected?
 
-    branches = @organization.branches.not_deleted.where(operational_status: 'active')
-    return scope.none unless branches.exists?(id: @params[:branch])
+    scope.where(id: branch_assignment_scope.select(:user_id))
+  end
 
+  def active_branch_selected?
+    @organization.branches.not_deleted.where(operational_status: 'active')
+                 .exists?(id: @params[:branch])
+  end
+
+  def branch_assignment_scope
     assignments = UserRole.active.where(branch_id: @params[:branch])
-    if @params[:role].present? && SystemRole.branch.exists?(id: @params[:role])
-      assignments = assignments.where(system_role_id: @params[:role])
-    end
-    scope.where(id: assignments.select(:user_id))
+    return assignments unless @params[:role].present? && SystemRole.branch.exists?(id: @params[:role])
+
+    assignments.where(system_role_id: @params[:role])
   end
 end

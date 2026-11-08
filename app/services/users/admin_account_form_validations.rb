@@ -30,6 +30,5 @@ module Users
       @user.errors.add(attribute, :invalid)
       false
     end
-
   end
 end
