@@ -3,7 +3,7 @@
 <% selected_role_ids = if submitted_role_ids
                          Array(submitted_role_ids).map(&:to_i)
                        elsif editing
-                         @user.user_roles.where(branch_id: nil).pluck(:system_role_id)
+                         @user.user_roles.where(branch_id: nil, deleted_at: nil).pluck(:system_role_id)
                        else
                          []
                        end %>
@@ -113,6 +113,15 @@
         </header>
         <div class="p-5 sm:p-6">
           <%= hidden_field_tag 'user[system_role_ids][]', '' %>
+          <% if editing && !current_user.role?('super_admin') %>
+            <% protected_ids = @user.user_roles.where(deleted_at: nil, branch_id: nil)
+                                   .joins(:system_role)
+                                   .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
+                                   .pluck(:system_role_id) %>
+            <% protected_ids.each do |role_id| %>
+              <%= hidden_field_tag 'user[system_role_ids][]', role_id %>
+            <% end %>
+          <% end %>
           <% if @roles.any? %>
             <div class="catalog-field mb-4"><label for="user-role-search"><%= t('admin.catalog_design.find_role') %></label><input id="user-role-search" type="search" data-action="input->user-access#filter" placeholder="<%= t('admin.catalog_design.find_role_hint') %>"></div><p class="catalog-hint mb-3" role="status" aria-live="polite" data-user-access-target="summary" data-empty-label="<%= t('admin.users.ui.roles_none_selected') %>" data-selected-label="<%= t('admin.users.ui.roles_selected') %>"></p><p class="hidden mb-3 text-sm text-slate-500" data-user-access-target="empty" role="status"><%= t('admin.users.ui.roles_no_matches') %></p>
             <div class="grid gap-3 sm:grid-cols-2 <%= 'lg:grid-cols-3' unless editing %>">
@@ -164,7 +173,7 @@
           <% selected_branch_assignments = if params.dig(:user, :branch_role_assignments)
                Array(params.dig(:user, :branch_role_assignments))
              elsif editing
-               @user.user_roles.where(branch_id: @branches.select(:id))
+               @user.user_roles.where(deleted_at: nil, branch_id: @branches.select(:id))
                     .pluck(:branch_id, :system_role_id).map { |branch_id, role_id| "#{branch_id}:#{role_id}" }
              else
                []

@@ -32,6 +32,8 @@ module Admin
 
     def new
       @user = User.new(status: 'pending', user_type: 'employee', theme: Theme::DEFAULT)
+      @user.language = Language.selectable.find_by(code: I18n.locale.to_s) ||
+                       Language.selectable.find_by(code: 'es')
       authorize @user
     end
 
@@ -131,13 +133,19 @@ module Admin
     end
 
     def account_writer
-      Users::AdminAccountWriter.new(user: @user, organization: current_organization, attributes: user_params)
+      Users::AdminAccountWriter.new(
+        user: @user, organization: current_organization, attributes: user_params, actor: current_user
+      )
     end
 
     def load_form_options
       @languages = Language.selectable.or(Language.where(id: @user&.language_id)).order(:name)
       @themes = Theme.all
-      @roles = SystemRole.selectable_for(@user).system.order(:name)
+      @roles = SystemRole.selectable_for(@user).system
+      unless current_user.role?('super_admin')
+        @roles = @roles.where.not(code: SystemRole::ADMINISTRATIVE_CODES)
+      end
+      @roles = @roles.order(:name)
       @branches = Users::BranchRoleAssignments.branch_options(user: @user, organization: current_organization)
       @branch_roles = SystemRole.selectable_for(@user).branch.order(:name)
     end

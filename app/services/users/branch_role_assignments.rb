@@ -7,7 +7,7 @@ module Users
       return Branch.none unless organization
 
       scope = organization.branches.with_deleted
-      retained_ids = user&.persisted? ? user.user_roles.select(:branch_id) : []
+      retained_ids = user&.persisted? ? user.user_roles.where(deleted_at: nil).select(:branch_id) : []
       scope.where(status: true, deleted_at: nil).or(scope.where(id: retained_ids)).order(:name)
     end
 
@@ -50,7 +50,8 @@ module Users
     end
 
     def local_assignments
-      @user.user_roles.joins(:system_role).where(branch_id: @organization.branches.with_deleted.select(:id))
+      @user.user_roles.joins(:system_role).where(deleted_at: nil)
+           .where(branch_id: @organization.branches.with_deleted.select(:id))
            .where(system_roles: { role_type: 'branch' })
     end
 

@@ -65,6 +65,22 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
     end
   end
 
+  it 'reassigns a previously revoked branch role without treating it as active' do
+    revoked = create(:user_role, user: target, branch:, system_role: branch_role, deleted_at: 2.days.ago)
+
+    get edit_admin_user_path(target)
+    expect(Nokogiri::HTML(response.body).at_css("input#user_branch_role_#{branch.id}_#{branch_role.id}[checked]"))
+      .to be_nil
+
+    patch admin_user_path(target), params: {
+      user: { branch_role_assignments: ['', "#{branch.id}:#{branch_role.id}"] }
+    }
+
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(revoked.reload.deleted_at).to be_present
+    expect(target.user_roles.active.where(branch:, system_role: branch_role).count).to eq(1)
+  end
+
   it 'renders branch choices as checkboxes without altering the rest of the form' do
     get edit_admin_user_path(target)
 

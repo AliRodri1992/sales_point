@@ -169,6 +169,62 @@ RSpec.describe 'Admin::Users', type: :request do
     end
   end
 
+    it 'prevents ordinary administrators from assigning or revoking elevated system roles' do
+      privileged = create(:system_role, :system, code: 'super_admin')
+      normal = create(:system_role, :system, code: 'cashier')
+
+      get new_admin_user_path
+      expect(response.body).not_to include("value=\"#{privileged.id}\"")
+
+      post admin_users_path, params: {
+        user: { email: 'elevated@example.com', user_type: 'employee',
+                theme: Theme::DEFAULT, system_role_ids: ['', privileged.id.to_s] }
+      }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(User.exists?(email: 'elevated@example.com')).to be(false)
+      expect(Nokogiri::HTML(response.body).at_css('p[data-server-field-error]')).to be_present
+
+      target = add_member(create(:user, email: 'protected@example.com'))
+      create(:user_role, user: target, system_role: privileged)
+      patch admin_user_path(target), params: {
+        user: { system_role_ids: ['', normal.id.to_s], username: 'malicious-update' }
+      }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(target.reload.username).not_to eq('malicious-update')
+      expect(target.user_roles.active.exists?(system_role: privileged)).to be(true)
+    end
+
+    it 'allows superadministrators to assign administrative roles' do
+      super_role = create(:system_role, :system, code: 'super_admin')
+      create(:user_role, user: admin_user, system_role: super_role)
+      get new_admin_user_path
+      expect(response.body).to include("value=\"#{super_role.id}\"")
+
+      post admin_users_path, params: {
+        user: { email: 'authorized@example.com', user_type: 'employee', theme: Theme::DEFAULT,
+                system_role_ids: ['', super_role.id.to_s] }
+      }
+      expect(response).to redirect_to(admin_users_path)
+      created = User.find_by!(email: 'authorized@example.com')
+      expect(created.user_roles.active.exists?(system_role: super_role)).to be(true)
+    end
+
+    it 'reassigns a soft-deleted system role without leaving it revoked' do
+      staff = create(:system_role, :system, code: 'staff')
+      target = add_member(create(:user, email: 'revoked@example.com'))
+      previous = create(:user_role, user: target, system_role: staff, deleted_at: 1.day.ago)
+
+      get edit_admin_user_path(target)
+      expect(Nokogiri::HTML(response.body).at_css("input#user_role_#{staff.id}[checked]")).to be_nil
+
+      patch admin_user_path(target), params: {
+        user: { system_role_ids: ['', staff.id.to_s] }
+      }
+      expect(response).to redirect_to(admin_user_path(target))
+      expect(previous.reload.deleted_at).to be_present
+      expect(target.user_roles.active.where(system_role: staff).count).to eq(1)
+    end
+
   describe 'PATCH /admin/users/:id' do
     it 'updates a user and sends the success notification message' do
       target = add_member(create(:user, email: 'before-update@example.com'))

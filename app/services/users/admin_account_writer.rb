@@ -4,10 +4,11 @@ module Users
   # Persists admin-edited accounts without replacing branch-scoped role assignments.
   # User creation, organization membership and global role updates are atomic.
   class AdminAccountWriter
-    def initialize(user:, organization:, attributes:)
+    def initialize(user:, organization:, attributes:, actor: nil)
       @user = user
       @organization = organization
       @attributes = attributes
+      @actor = actor
     end
 
     def save
@@ -52,7 +53,19 @@ module Users
 
       ids = provided.map(&:to_i).uniq
       allowed = SystemRole.selectable_for(@user).system.where(id: ids).pluck(:id)
-      ids.sort == allowed.sort ? ids : :invalid
+      return :invalid unless ids.sort == allowed.sort
+      return :invalid unless permitted_administrative_roles?(ids)
+
+      ids
+    end
+
+    def permitted_administrative_roles?(ids)
+      return true if @actor&.role?('super_admin')
+
+      protected = SystemRole.system.where(code: SystemRole::ADMINISTRATIVE_CODES).pluck(:id)
+      current = @user.user_roles.where(deleted_at: nil, branch_id: nil, system_role_id: protected)
+                     .pluck(:system_role_id)
+      (ids & protected).sort == current.sort
     end
 
     def branch_role_editor
@@ -90,7 +103,7 @@ module Users
     end
 
     def sync_system_roles!(role_ids)
-      assignments = @user.user_roles.joins(:system_role).where(branch_id: nil)
+      assignments = @user.user_roles.joins(:system_role).where(branch_id: nil, deleted_at: nil)
                          .where(system_roles: { role_type: 'system' })
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
