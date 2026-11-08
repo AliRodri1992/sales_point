@@ -9,9 +9,10 @@ export default class extends Controller {
 
   connect() {
     this.ready = false
+    this.serverInvalid = this.inputTarget.getAttribute("aria-invalid") === "true"
     this.inputTarget.dataset.phoneStatus = "loading"
     this.inputTarget.dataset.valid = "false"
-    this.inputTarget.setAttribute("aria-invalid", "false")
+    this.inputTarget.setAttribute("aria-invalid", String(this.serverInvalid))
 
     const storedCountry = this.inputTarget.dataset.countryCode?.toLowerCase()
     const initialCountry = /^[a-z]{2}$/.test(storedCountry || "") ? storedCountry : "mx"
@@ -61,9 +62,9 @@ export default class extends Controller {
     }
   }
 
-  handleCountryChange = () => {
+  handleCountryChange = (event) => {
     this.syncCountryCode()
-    this.updateValidity()
+    this.updateValidity(event)
   }
 
   syncCountryCode = () => {
@@ -84,15 +85,17 @@ export default class extends Controller {
     field.value = selectedCode
   }
 
-  updateValidity = () => {
+  updateValidity = (event) => {
     if (!this.ready) return
 
+    if (event?.type === "input" || event?.type === "countrychange") this.serverInvalid = false
     const hasValue = this.inputTarget.value.trim().length > 0
     const valid = this.iti.isValidNumber()
+    const invalid = this.serverInvalid || (hasValue && !valid)
     this.inputTarget.dataset.valid = valid ? "true" : "false"
-    this.inputTarget.setAttribute("aria-invalid", String(hasValue && !valid))
-    this.inputTarget.classList.toggle("border-rose-500", hasValue && !valid)
-    this.inputTarget.classList.toggle("bg-rose-50", hasValue && !valid)
+    this.inputTarget.setAttribute("aria-invalid", String(invalid))
+    this.inputTarget.classList.toggle("border-rose-500", invalid)
+    this.inputTarget.classList.toggle("bg-rose-50", invalid)
     this.inputTarget.dispatchEvent(new CustomEvent("international-phone:validated", { bubbles: true }))
   }
 }
