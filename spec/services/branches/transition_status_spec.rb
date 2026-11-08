@@ -10,12 +10,14 @@ RSpec.describe Branches::TransitionStatus do
   before { create(:organization_membership, organization:, user: actor) }
 
   it 'suspends a branch and records an immutable audit event' do
+    branch
     expect do
       described_class.call(branch:, actor:, to: 'suspended', reason: 'Temporary maintenance')
     end.to change(BranchStatusTransition, :count).by(1)
 
     expect(branch.reload).to be_suspended
     expect(branch.status).to be(false)
+    expect(branch.branch_status_transitions.count).to eq(2)
     entry = branch.branch_status_transitions.last
     expect(entry).to have_attributes(from_status: 'active', to_status: 'suspended',
                                      reason: 'Temporary maintenance', changed_by: actor)
