@@ -102,7 +102,7 @@ module Admin
     end
 
     def transition_status
-      authorize @branch, :update?
+      authorize @branch, :manage?
       Branches::TransitionStatus.call(branch: @branch, actor: current_user,
                                       to: params[:to_status], reason: params[:reason])
       redirect_to admin_branch_path(@branch, branch_directory_parameters),
@@ -130,7 +130,7 @@ module Admin
     def load_branch_detail
       @branch_team_count = Branch.team_assignments(current_organization)
                                  .where(branch_id: @branch.id).distinct.count(:user_id)
-      return unless policy(@branch).update?
+      return unless policy(@branch).manage?
 
       @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
                                    terminals: @branch.terminals.count }
