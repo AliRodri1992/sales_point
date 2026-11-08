@@ -22,7 +22,7 @@ RSpec.describe 'Branch-owned inventory and receipt records', type: :model do
     )
     close_branch!
 
-    expect(lot.update(quantity: 1)).to be(false)
+    expect { lot.update!(quantity: 1) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(lot.errors[:base]).to be_present
     expect(lot.reload.quantity).to eq(0)
 
@@ -42,7 +42,7 @@ RSpec.describe 'Branch-owned inventory and receipt records', type: :model do
     )
     close_branch!
 
-    expect(serial.update(status: :sold)).to be(false)
+    expect { serial.update!(status: :sold) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(serial.errors[:base]).to be_present
     expect(serial.reload).to be_available
   end
