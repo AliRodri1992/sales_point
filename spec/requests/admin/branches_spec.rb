@@ -416,7 +416,7 @@ RSpec.describe 'Admin::Branches', type: :request do
 
   describe 'DELETE /admin/branches/:id' do
     it 'soft deletes a branch and creates a notification with the actor' do
-      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}")
+      branch = create(:branch, organization:, name: "Sucursal #{Branch.count + 1}", operational_state: 'preparing')
 
       expect do
         delete admin_branch_path(branch)
@@ -438,7 +438,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'updates the list and shows a success toast for Turbo requests' do
-      branch = create(:branch, organization:, name: 'Sucursal Centro')
+      branch = create(:branch, organization:, name: 'Sucursal Centro', operational_state: 'preparing')
 
       delete admin_branch_path(branch), headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
@@ -461,6 +461,37 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:forbidden)
       expect(branch.reload.deleted_at).to be_nil
+    end
+  end
+
+  describe 'PATCH /admin/branches/:id/transition_status' do
+    it 'requires a reason and does not mutate the branch' do
+      office = create(:branch, organization:, name: 'Operational Branch')
+      patch transition_status_admin_branch_path(office), params: { to_status: 'suspended', reason: '' }
+      expect(response).to redirect_to(admin_branch_path(office))
+      expect(flash[:alert]).to be_present
+      expect(office.reload).to be_active
+      expect(office.branch_status_transitions.count).to eq(0)
+    end
+
+    it 'suspends a branch and records the actor and reason' do
+      office = create(:branch, organization:, name: 'Operational Branch')
+      patch transition_status_admin_branch_path(office),
+            params: { to_status: 'suspended', reason: 'Temporary closure' }
+      expect(response).to redirect_to(admin_branch_path(office))
+      expect(office.reload).to be_suspended
+      expect(office.status).to be(false)
+      log = office.branch_status_transitions.last
+      expect(log.changed_by).to eq(admin_user)
+      expect(log.from_status).to eq('active')
+      expect(log.to_status).to eq('suspended')
+      expect(log.reason).to eq('Temporary closure')
+    end
+
+    it 'disallows changing status through generic branch attributes' do
+      office = create(:branch, organization:, name: 'Operational Branch')
+      patch admin_branch_path(office), params: { branch: { status: false, operational_status: 'closed' } }
+      expect(office.reload).to be_active
     end
   end
 
