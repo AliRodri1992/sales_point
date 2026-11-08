@@ -59,6 +59,7 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(template.new_draft!(actor: nil).destroy).to be_truthy
     expect(published.update(updated_at: 1.second.from_now)).to be(true)
   end
+
   it 'requires security links in both versions of a customized invitation' do
     EmailTemplate.ensure_invitation_template!
     global = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
@@ -77,6 +78,7 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(local.reload.published_version).to eq(draft)
     expect(global.reload.published_version).to eq(source)
   end
+
   it 'rejects locally authored security templates without required recovery links' do
     local = EmailTemplate.create!(
       organization: create(:organization), key: 'password_recovery', name: 'Recover access',
@@ -88,5 +90,4 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(local.reload.published_version).to be_nil
   end
-
 end

@@ -962,4 +962,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:forbidden)
     expect(global.reload).to have_attributes(status: 'published', enabled: true)
   end
+  it 'hides destructive controls on protected system templates' do
+    role.update!(code: 'super_admin')
+    EmailTemplate.ensure_invitation_template!
+    template = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+
+    get admin_email_templates_path, params: { q: 'user_invitation', origin: 'system' }
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    archive_action = "form[action='#{archive_admin_email_template_path(template)}']"
+    deactivate_action = "form[action='#{deactivate_admin_email_template_path(template)}']"
+    expect(document.at_css(archive_action)).to be_nil
+    expect(document.at_css(deactivate_action)).to be_nil
+    expect(document.text).to include(I18n.t('admin.email_templates.origins.system'))
+  end
 end

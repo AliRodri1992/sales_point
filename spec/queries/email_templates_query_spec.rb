@@ -26,10 +26,12 @@ RSpec.describe EmailTemplatesQuery do
     )
   end
 
+  let(:filtered_scope) { EmailTemplate.where(key: %w[query_global query_own]) }
+
   it 'filters global, customized and organization-authored templates by origin' do
-    expect(described_class.new(EmailTemplate.all, origin: 'system').call).to include(global)
-    expect(described_class.new(EmailTemplate.all, origin: 'customized').call).to contain_exactly(customized)
-    expect(described_class.new(EmailTemplate.all, origin: 'organization').call)
-      .to contain_exactly(organization_template)
+    expect(described_class.new(filtered_scope, origin: 'system').call).to include(global)
+    expect(described_class.new(filtered_scope, origin: 'customized').call).to contain_exactly(customized)
+    organization_results = described_class.new(filtered_scope, origin: 'organization').call
+    expect(organization_results).to contain_exactly(organization_template)
   end
 end
