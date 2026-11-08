@@ -17,6 +17,9 @@ RSpec.describe 'Purchase requests and branch lifecycle', type: :model do
     create(:organization_membership, organization:, user: admin)
     Branches::TransitionStatus.call(branch:, actor: admin, to: 'suspended', reason: 'Maintenance')
 
+    expect(request.update(status: 'submitted')).to be(false)
+    expect(request.errors[:branch]).to be_present
+
     blocked = PurchaseRequest.new(
       organization:, branch:, requested_by: requester, status: 'draft'
     )
