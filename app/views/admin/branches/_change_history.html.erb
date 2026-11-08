@@ -26,10 +26,10 @@
               <% item.fetch(:fields).each do |attribute, values| %>
                 <div class="flex flex-wrap gap-2">
                   <dt class="font-semibold text-slate-700">
-                    <%= event.item_type.safe_constantize.human_attribute_name(attribute) %>:
+                    <%= branch_audit_attribute(event.item_type, attribute) %>:
                   </dt>
                   <dd class="break-all text-slate-600">
-                    <%= Array(values).map { |value| value.presence || '—' }.join(' → ') %>
+                    <%= Array(values).map { |value| branch_audit_value(attribute, value) }.join(' → ') %>
                   </dd>
                 </div>
               <% end %>
