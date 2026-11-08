@@ -81,7 +81,8 @@
             <% end %>
             <%= form.email_field :email, autocomplete: 'email', maxlength: 254, inputmode: 'email',
                                  data: { user_access_target: 'email' },
-                                 aria: { invalid: @user.errors[:email].any? },
+                                 aria: { invalid: @user.errors[:email].any?,
+                         describedby: @user.errors[:email].any? ? "user_email_error" : nil },
                                  class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :email)} px-3.5 py-2.5 text-sm text-slate-800" %>
             <%= error_message_for(@user, :email, label: t('admin.users.form.fields.email')) %>
           </div>
@@ -89,7 +90,8 @@
             <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= form.text_field :username, autocomplete: 'username', maxlength: 100, spellcheck: false,
                                 data: { user_access_target: 'username' },
-                                aria: { invalid: @user.errors[:username].any? },
+                                aria: { invalid: @user.errors[:username].any?,
+                         describedby: @user.errors[:username].any? ? "user_username_error" : nil },
                                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :username)} px-3.5 py-2.5 text-sm text-slate-800" %>
             <%= error_message_for(@user, :username) %>
           </div>
@@ -100,11 +102,13 @@
             <% end %>
             <div class="relative" data-controller="delta-select">
               <%= form.select :user_type, options_for_select(
-                User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
+                (current_user.admin? || editing ? User.user_types.keys : User.user_types.keys - ["employee"])
+                   .map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
                 { include_blank: t('admin.users.form.fields.user_type_placeholder') },
                 data: { user_access_target: 'userType' },
                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :user_type)} px-3.5 py-2.5 text-sm",
-                aria: { invalid: @user.errors[:user_type].any? } %>
+                aria: { invalid: @user.errors[:user_type].any?,
+                         describedby: @user.errors[:user_type].any? ? "user_user_type_error" : nil } %>
             </div>
             <%= error_message_for(@user, :user_type) %>
           </div>
@@ -127,8 +131,8 @@
           <div>
             <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900">
               <%= t('admin.users.form.fields.system_roles') %>
-              <span data-required-indicator data-user-access-target="employeeRolesRequired" class="ml-1 font-bold text-rose-600 <%= 'hidden' unless !editing && @user.employee? %>" aria-hidden="true">*</span>
-              <span data-user-access-target="employeeRoleScreenReader" class="sr-only <%= 'hidden' unless !editing && @user.employee? %>"><%= t('admin.users.ui.required_field') %></span>
+              <span data-required-indicator data-user-access-target="employeeRolesRequired" class="ml-1 font-bold text-rose-600 <%= 'hidden' unless @user.employee? %>" aria-hidden="true">*</span>
+              <span data-user-access-target="employeeRoleScreenReader" class="sr-only <%= 'hidden' unless @user.employee? %>"><%= t('admin.users.ui.required_field') %></span>
             </h2>
             <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.employee_role_hint') %></p>
           </div>
@@ -259,7 +263,8 @@
                                          { include_blank: t('admin.users.form.fields.language_placeholder') },
                                          data: { user_access_target: 'language' },
                                          class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :language_id)} px-3.5 py-2.5 text-sm",
-                                         aria: { invalid: @user.errors[:language_id].any? } %>
+                                         aria: { invalid: @user.errors[:language_id].any?,
+                         describedby: @user.errors[:language_id].any? ? "user_language_id_error" : nil } %>
             </div>
             <%= error_message_for(@user, :language_id, label: t('admin.users.form.fields.language')) %>
           </div>
@@ -275,7 +280,8 @@
                               {},
                               data: { user_access_target: 'theme' },
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
-                              aria: { invalid: @user.errors[:theme].any? } %>
+                              aria: { invalid: @user.errors[:theme].any?,
+                         describedby: @user.errors[:theme].any? ? "user_theme_error" : nil } %>
             </div>
             <%= error_message_for(@user, :theme, label: t('admin.users.form.fields.theme')) %>
             <p class="mt-2 flex items-center gap-2 text-xs text-slate-600">

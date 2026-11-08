@@ -74,7 +74,9 @@ module Users
     end
 
     def prepare_admin_access_validation(role_ids, branch_roles)
-      @user.admin_role_selection_required = @user.new_record?
+      @user.admin_role_selection_required = @user.new_record? || !role_ids.nil? ||
+                                            !@attributes[:branch_role_assignments].nil? ||
+                                            @user.will_save_change_to_user_type?
       @user.admin_selected_system_roles = role_ids ||
                                           @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
       @user.admin_selected_branch_roles = branch_roles.selected_pairs
@@ -87,6 +89,11 @@ module Users
     end
 
     def valid_access_selection?(role_ids, branch_roles)
+      if @user.new_record? && @user.employee? && @actor && !@actor.admin?
+        @user.errors.add(:user_type, I18n.t('admin.users.ui.delegated_employee_restricted'))
+        return false
+      end
+
       return invalid_role_error?(:system_role_ids) if role_ids == :invalid
       return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
 

@@ -46,6 +46,7 @@ ko:
         review_roles: "전체 역할"
         review_branches: "접근 권한이 있는 지점"
         roles_and_permissions: "역할 및 권한"
+        delegated_employee_restricted: "직원 계정은 관리자의 역할 지정이 필요합니다."
         employee_role_hint: "직원에게는 전체 역할 또는 지점별 역할이 최소 하나 필요합니다."
         optional_role_warning: "역할 없이 계정을 만들 수 있지만 접근 권한은 부여되지 않습니다."
         employee_role_warning: "직원을 생성하려면 전체 역할 또는 지점별 역할을 하나 이상 지정하세요."

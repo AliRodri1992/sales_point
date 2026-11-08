@@ -46,6 +46,7 @@ en:
         review_roles: "Global roles"
         review_branches: "Branches with access"
         roles_and_permissions: "Roles and permissions"
+        delegated_employee_restricted: "Employees require role assignment by an administrator."
         employee_role_hint: "Employees need at least one global or branch role."
         optional_role_warning: "This account can be created without roles and will have no assigned access."
         employee_role_warning: "To create an employee, assign at least one global or branch role."

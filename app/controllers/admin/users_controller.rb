@@ -34,7 +34,8 @@ module Admin
     end
 
     def new
-      @user = User.new(status: 'pending', user_type: 'employee', theme: Theme::DEFAULT)
+      @user = User.new(status: 'pending', user_type: current_user.admin? ? 'employee' : 'customer',
+                       theme: Theme::DEFAULT)
       @user.language = Language.selectable.find_by(code: I18n.locale.to_s) ||
                        Language.selectable.find_by(code: 'es')
       authorize @user

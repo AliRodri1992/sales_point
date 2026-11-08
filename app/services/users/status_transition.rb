@@ -54,7 +54,8 @@ module Users
     def call!
       raise ArgumentError, 'Reason required' if @reason.blank? || @reason.length > 1000
 
-      User.transaction { execute_transition! }
+      # Serialize account status and role changes against the same organization lock.
+      @organization.with_lock { User.transaction { execute_transition! } }
       SessionRevoker.call(@user)
       if @target == 'pending' && @user.pending?
         Users::InvitationDispatcher.call(user: @user, organization: @organization)

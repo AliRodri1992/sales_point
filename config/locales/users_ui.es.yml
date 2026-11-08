@@ -46,6 +46,7 @@ es:
         review_roles: "Roles generales"
         review_branches: "Sucursales con permisos"
         roles_and_permissions: "Roles y permisos"
+        delegated_employee_restricted: "Los empleados requieren asignación de roles por parte de un administrador."
         employee_role_hint: "Para empleados, selecciona al menos un rol general o por sucursal."
         optional_role_warning: "Esta cuenta puede crearse sin roles, pero no tendrá permisos asignados."
         employee_role_warning: "Para crear un empleado debes asignar al menos un rol general o por sucursal."
