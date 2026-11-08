@@ -7,10 +7,11 @@ module Admin
     include Admin::BranchForm
     include Admin::BranchTransitions
     include Admin::BranchSupport
+    include Admin::BranchTerminals
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
-    before_action :set_branch, only: %i[show edit update destroy transition_status]
+    before_action :set_branch, only: %i[show edit update destroy transition_status add_terminal change_terminal]
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
     rescue_from ActiveRecord::RecordNotUnique, with: :branch_identifier_taken
