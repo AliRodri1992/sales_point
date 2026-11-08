@@ -1,0 +1,8 @@
+ko:
+  user_restore_ui:
+    search_title: "삭제된 계정 검색"
+    search_placeholder: "이메일 또는 이름으로 검색"
+    search_button: "검색"
+    clear_filters: "필터 지우기"
+    results: "검색된 계정: %{count}"
+    pagination: "삭제된 계정 페이지"

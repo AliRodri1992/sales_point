@@ -1,0 +1,8 @@
+es:
+  user_restore_ui:
+    search_title: "Buscar cuentas eliminadas"
+    search_placeholder: "Buscar por correo o nombre"
+    search_button: "Buscar"
+    clear_filters: "Limpiar filtros"
+    results: "Cuentas encontradas: %{count}"
+    pagination: "Páginas de cuentas eliminadas"

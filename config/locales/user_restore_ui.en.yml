@@ -1,0 +1,8 @@
+en:
+  user_restore_ui:
+    search_title: "Search deleted accounts"
+    search_placeholder: "Search by email or name"
+    search_button: "Search"
+    clear_filters: "Clear filters"
+    results: "Accounts found: %{count}"
+    pagination: "Deleted account pages"

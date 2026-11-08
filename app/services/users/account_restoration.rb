@@ -2,11 +2,24 @@
 
 module Users
   class AccountRestoration
+    include ActiveModel::Validations
+
+    attr_reader :reason
+
+    validates :reason, presence: true, length: { maximum: 1000 }
+
     def initialize(user:, actor:, organization:, reason:)
       @user = user
       @actor = actor
       @organization = organization
       @reason = reason.to_s.strip
+    end
+
+    def call
+      return false unless valid?
+
+      call!
+      true
     end
 
     def call!

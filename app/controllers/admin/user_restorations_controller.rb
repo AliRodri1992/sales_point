@@ -8,16 +8,19 @@ module Admin
     before_action :verify_restore_permission!
 
     def index
-      members = current_organization.organization_memberships.active
-                                    .where(account_status: 'deleted').select(:user_id)
-      @deleted_users = User.with_deleted.where(id: members)
-                           .order(created_at: :desc).limit(100)
+      load_deleted_users
     end
 
     def create
       user = restore_target
-      restore_user!(user)
-      redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
+      @restoration_form = restoration_service(user)
+      if @restoration_form.call
+        redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
+      else
+        @restoration_error_target_id = user.id
+        load_deleted_users
+        render :index, status: :unprocessable_content
+      end
     rescue ArgumentError, Users::OrganizationCapacity::CapacityExceeded => e
       redirect_to admin_user_restorations_path, alert: e.message
     end
@@ -30,10 +33,24 @@ module Admin
       User.with_deleted.where(id: members).find(params[:user_id])
     end
 
-    def restore_user!(user)
+    def restoration_service(user)
       Users::AccountRestoration.new(
         user:, actor: current_user, organization: current_organization, reason: params[:reason]
-      ).call!
+      )
+    end
+
+    def load_deleted_users
+      members = current_organization.organization_memberships.active
+                                    .where(account_status: 'deleted').select(:user_id)
+      scope = User.with_deleted.where(id: members)
+      query = params[:q].to_s.strip
+      scope = scope.where('users.email ILIKE :q OR users.username ILIKE :q', q: "%#{query}%") if query.present?
+      @total_count = scope.count
+      @per_page = 20
+      @total_pages = [(@total_count / @per_page.to_f).ceil, 1].max
+      @current_page = params[:page].to_i.clamp(1, @total_pages)
+      @deleted_users = scope.order(created_at: :desc, id: :desc)
+                            .limit(@per_page).offset((@current_page - 1) * @per_page)
     end
 
     def verify_restore_permission!
