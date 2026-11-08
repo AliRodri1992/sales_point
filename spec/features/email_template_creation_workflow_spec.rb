@@ -70,6 +70,7 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     first('button[data-variable="platform_logo"]').click
     expect(editor.value).to include('{{platform_logo}}')
     expect(find('#email_template_version_allowed_variables_csv').value).to include('platform_logo')
+    expect(page).to have_css('[data-email-template-editor-target="variablePills"]', text: 'platform_logo')
     expect(page).to have_css('#email-preview-title')
   end
 end

@@ -66,6 +66,17 @@ RSpec.describe EmailTemplates::Renderer do
     end.to raise_error(ArgumentError, /Unsafe email URL/)
   end
 
+  it 'rejects URL credentials and links without a valid host' do
+    ['https://user:password@example.org/private', 'https:///missing-host'].each do |url|
+      expect do
+        described_class.new(
+          source: template('<a href="{{activation_url}}">Activate</a>'),
+          values: { recipient_name: 'Sample', activation_url: url }
+        ).render
+      end.to raise_error(ArgumentError, /Unsafe email URL|Invalid email URL/)
+    end
+  end
+
   it 'rejects unknown and missing variables' do
     expect do
       described_class.new(

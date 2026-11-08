@@ -84,9 +84,11 @@
         <div>
           <%= f.label :allowed_variables_csv, t('admin.email_templates.variables'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :allowed_variables_csv, autocomplete: 'off', spellcheck: false,
-                           data: { email_template_editor_target: 'variables' },
+                           data: { email_template_editor_target: 'variables',
+                                   action: 'input->email-template-editor#renderDeclaredVariables' },
                            aria: { invalid: @draft.errors[:allowed_variables].any? },
                            class: "min-h-11 w-full rounded-xl border px-4 py-2.5 font-mono text-xs focus:ring-2 #{ @draft.errors[:allowed_variables].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
+          <div data-email-template-editor-target="variablePills" class="mt-2 flex flex-wrap gap-1.5" aria-live="polite"></div>
           <%= error_message_for(@draft, :allowed_variables, label: t('admin.email_templates.variables')) %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.variables_hint') %></p>
           <details class="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">

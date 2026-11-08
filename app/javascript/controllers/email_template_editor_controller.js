@@ -2,10 +2,11 @@ import { Controller } from "@hotwired/stimulus"
 
 // Insert a known placeholder at the caret and declare it before live preview.
 export default class extends Controller {
-  static targets = ["htmlBody", "variables"]
+  static targets = ["htmlBody", "variables", "variablePills"]
 
   connect() {
     this.activeField = this.hasHtmlBodyTarget ? this.htmlBodyTarget : null
+    this.renderDeclaredVariables()
   }
 
   rememberField(event) {
@@ -29,6 +30,20 @@ export default class extends Controller {
     }
     field.dispatchEvent(new Event("input", { bubbles: true }))
     this.variablesTarget.dispatchEvent(new Event("input", { bubbles: true }))
+    this.renderDeclaredVariables()
     field.focus()
+  }
+
+  renderDeclaredVariables() {
+    if (!this.hasVariablesTarget || !this.hasVariablePillsTarget) return
+
+    const names = [...new Set(this.variablesTarget.value.split(",").map(v => v.trim()).filter(Boolean))]
+    const pills = names.map(name => {
+      const pill = document.createElement("span")
+      pill.className = "inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 font-mono text-[11px] font-semibold text-emerald-800"
+      pill.textContent = name
+      return pill
+    })
+    this.variablePillsTarget.replaceChildren(...pills)
   }
 }
