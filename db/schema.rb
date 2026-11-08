@@ -348,9 +348,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "((organization_id IS NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
-    t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
   end
 
@@ -365,9 +365,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at"
-    t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "(organization_id IS NULL)"
+    t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "((organization_id IS NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_email_sender_settings_on_deleted_at"
-    t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["organization_id"], name: "index_email_sender_settings_on_organization_id"
   end
 
