@@ -47,11 +47,25 @@
       <h2 id="branch-lifecycle-title" class="font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
       <p class="catalog-hint"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
 
+      <% if @branch.preparing? || @branch.suspended? %>
+        <h3 class="mt-4 font-semibold"><%= t('admin.branch_lifecycle.requirements_title') %></h3>
+        <ul class="mt-2 grid gap-2 sm:grid-cols-2">
+          <% branch_activation_requirements(@branch).each do |key, complete| %>
+            <li class="flex items-center gap-2 text-sm">
+              <%= delta_icon(complete ? 'check-circle' : 'exclamation-circle',
+                             class: "size-4 #{complete ? 'text-emerald-600' : 'text-amber-600'}") %>
+              <%= t("admin.branch_lifecycle.requirements.#{key}") %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
       <% if can_change_lifecycle %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
           <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
-                        method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3' do |transition_form| %>
+                        method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3',
+                        data: { turbo_confirm: t("admin.branch_lifecycle.confirmations.#{next_status}"),
+                                confirm_record: @branch.name } do |transition_form| %>
             <%= transition_form.hidden_field :to_status, value: next_status,
                                          id: "branch-transition-target-#{next_status}" %>
             <div class="catalog-field flex-1">
@@ -79,6 +93,7 @@
             <li class="text-sm">
               <time datetime="<%= entry.created_at.iso8601 %>"><%= l(entry.created_at, format: :long) %></time>
               · <%= t("admin.branch_lifecycle.statuses.#{entry.to_status}") %>
+              · <%= entry.changed_by&.display_name || t('admin.branch_lifecycle.system_actor') %>
               <% if entry.reason.present? %> — <%= entry.reason %><% end %>
             </li>
           <% end %>
