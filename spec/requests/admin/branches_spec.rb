@@ -56,7 +56,10 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(statements.grep(/FROM "?phones"?/i).size).to be <= 2
     end
 
-    before { Branch.unscoped.delete_all }
+    before do
+      BranchStatusTransition.unscoped.delete_all
+      Branch.unscoped.delete_all
+    end
 
     def listed_branch_names
       Nokogiri::HTML(response.body).css('.branch-table tbody .branch-name').map(&:text)
