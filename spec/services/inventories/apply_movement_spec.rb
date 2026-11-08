@@ -44,4 +44,15 @@ RSpec.describe Inventories::ApplyMovement do
     end.to raise_error(ArgumentError, /another inventory/)
     expect(inventory.reload.stock).to eq(0)
   end
+  it 'blocks a sale from a suspended branch without changing stock' do
+    office = create(:branch, status: false)
+    item = create(:product, organization: office.organization)
+    inventory = create(:inventory, branch: office, organization: office.organization, product: item, stock: 10)
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'sale')
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(10)
+    expect(inventory.inventory_movements.count).to eq(0)
+  end
 end
