@@ -6,6 +6,9 @@ module UserAdminAccessValidations
   extend ActiveSupport::Concern
 
   included do
+    normalizes :email, with: ->(value) { value.strip.downcase }
+    normalizes :username, with: ->(value) { value.strip }
+
     attr_accessor :admin_role_selection_required, :admin_selected_system_roles, :admin_selected_branch_roles
 
     validate :admin_employee_requires_role, if: :admin_role_selection_required

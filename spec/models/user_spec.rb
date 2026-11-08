@@ -3,7 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
-
   describe 'admin user creation validation' do
     it 'requires a global or branch role for an employee only in the admin creation context' do
       user = build(:user)
@@ -38,7 +37,8 @@ RSpec.describe User, type: :model do
     end
 
     it 'rejects unavailable selected languages while allowing no language' do
-      language = create(:language, :english, status: :inactive)
+      language = Language.find_by(code: 'en') || create(:language, :english)
+      language.update!(status: :inactive)
       user = build(:user, language:)
       expect(user).to be_invalid
       expect(user.errors.added?(:language_id, :unavailable)).to be(true)

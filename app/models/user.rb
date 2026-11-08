@@ -2,9 +2,6 @@ class User < ApplicationRecord
   extend UserChatPresence
   include UserAdminAccessValidations
 
-  normalizes :email, with: ->(value) { value.strip.downcase }
-  normalizes :username, with: ->(value) { value.strip }
-
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :session_limitable,

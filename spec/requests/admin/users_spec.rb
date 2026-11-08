@@ -174,7 +174,6 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(User.exists?(created_user.id)).to be(true)
     end
 
-
     it 'requires an employee to have at least one global or branch role' do
       post admin_users_path, params: {
         user: { email: 'without-roles@example.com', user_type: 'employee',
@@ -233,6 +232,10 @@ RSpec.describe 'Admin::Users', type: :request do
     end
 
     it 'normalizes account identity and uses a selectable language by default' do
+      Language.find_or_create_by!(code: 'es') do |language|
+        language.name = 'Español'
+        language.flag_iso = 'mx'
+      end
       post admin_users_path, params: {
         user: { email: '  MIXED@Example.com  ', username: '  Store Team  ', user_type: 'employee',
                 theme: Theme::DEFAULT, system_role_ids: ['', employee_role.id.to_s] }
@@ -246,7 +249,8 @@ RSpec.describe 'Admin::Users', type: :request do
     end
 
     it 'rejects inactive languages from crafted requests' do
-      language = create(:language, :english, status: :inactive)
+      language = Language.find_by(code: 'en') || create(:language, :english)
+      language.update!(status: :inactive)
       post admin_users_path, params: {
         user: { email: 'inactive-language@example.com', user_type: 'employee',
                 theme: Theme::DEFAULT, language_id: language.id,
