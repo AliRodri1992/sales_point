@@ -1,0 +1,5 @@
+<%= link_to path, data: { turbo_frame: '_top', loading_message: t('admin.action_loader.returning') },
+            class: 'ml-auto inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+  <%= delta_icon('arrow-left', class: 'size-4') %>
+  <%= t('admin.email_templates.back') %>
+<% end %>

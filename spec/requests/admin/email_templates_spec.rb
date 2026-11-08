@@ -186,14 +186,44 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
     document = Nokogiri::HTML(response.body)
     heading = document.at_css('main > header')
-    actions = heading.at_css('div.lg\\:justify-end')
+    actions = heading.at_css('div.ml-auto')
     back = actions.css('a').first
     expect(back['href']).to eq(admin_email_templates_path)
     expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
-    expect(back['class']).to include('border-slate-200')
+    expect(back['class']).to include('border-slate-200', 'ml-auto')
+    expect(back['data-loading-message']).to eq(I18n.t('admin.action_loader.returning'))
     breadcrumb = document.at_css('nav[aria-label] a[href="/admin/email_templates"]')
     expect(breadcrumb.text.strip).to eq(I18n.t('admin.breadcrumbs.controllers.email_templates'))
     expect(heading.at_css('div.min-w-0 a')).to be_nil
+  end
+
+  it 'keeps Volver at the right of every email template subpage header' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    draft = template.new_draft!(actor: administrator)
+
+    pages = [
+      [new_admin_email_template_path, admin_email_templates_path],
+      [admin_email_template_path(template), admin_email_templates_path],
+      [edit_admin_email_template_path(template), admin_email_template_path(template)],
+      [preview_admin_email_template_path(template, version_id: published.id), admin_email_template_path(template)],
+      [compare_admin_email_template_path(template, left: published.id, right: draft.id),
+       admin_email_template_path(template)]
+    ]
+
+    pages.each do |url, destination|
+      get url
+      expect(response).to have_http_status(:ok)
+      header = Nokogiri::HTML(response.body).at_css('main > header')
+      expect(header).to be_present
+      expect(header['class']).to include('justify-between', 'flex-wrap')
+      back = header.at_css("a[data-loading-message][href='#{destination}']")
+      expect(back).to be_present
+      expect(back['class']).to include('ml-auto', 'border-slate-200')
+      expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
+      expect(header.element_children.first.css('a[data-loading-message]')).to be_empty
+    end
   end
 
   it 'renders the complete Delta POS logo in the published email preview' do

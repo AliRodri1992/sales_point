@@ -20,6 +20,19 @@ RSpec.describe 'Email settings audit history', type: :request do
     sign_in administrator
   end
 
+  it 'aligns Volver on the right for branding and sender settings' do
+    [edit_admin_email_branding_settings_path, edit_admin_email_sender_settings_path].each do |url|
+      get url
+      expect(response).to have_http_status(:ok)
+      header = Nokogiri::HTML(response.body).at_css('main > header')
+      expect(header['class']).to include('justify-between', 'flex-wrap')
+      back = header.at_css("a[data-loading-message][href='#{admin_email_templates_path}']")
+      expect(back).to be_present
+      expect(back['class']).to include('ml-auto', 'border-slate-200')
+      expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
+    end
+  end
+
   it 'records a sender setting update with the actor and organization' do
     patch admin_email_sender_settings_path, params: {
       email_sender_setting: {
