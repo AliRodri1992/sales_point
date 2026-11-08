@@ -47,10 +47,10 @@ RSpec.describe EmailTemplates::TestDelivery do
       block.call
     end
 
+    expect(EmailTemplates::TestDeliveryJob).not_to receive(:perform_later)
     expect do
       described_class.call(template:, actor:, recipient: actor.email)
     end.to raise_error(ArgumentError, 'Template not published')
-    expect(EmailTemplates::TestDeliveryJob).not_to have_been_enqueued
     expect(template.audits.where(action: 'test_queued')).not_to exist
   end
 
