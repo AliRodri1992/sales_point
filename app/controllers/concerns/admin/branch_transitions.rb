@@ -20,6 +20,7 @@ module Admin
                           else
                             error.message
                           end
+      @transition_error_code = error.code if error.respond_to?(:code)
       @transition_to = params[:to_status].to_s
       @transition_reason = params[:reason].to_s
       @branch.reload
