@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PurchaseOrder < ApplicationRecord
+  include RestrictsClosedBranchMutations
   include HasPolymorphicNotes
   include RequiresOperationalBranch
 
