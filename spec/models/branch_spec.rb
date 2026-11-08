@@ -107,6 +107,15 @@ RSpec.describe Branch, type: :model do
     expect(fallback.reload).to be_active
   end
 
+  it 'allows soft deletion of a preparing branch and retains its initial audit history' do
+    branch = create(:branch, operational_state: 'preparing')
+    initial_event = branch.branch_status_transitions.sole
+
+    expect(branch.update(deleted_at: Time.current)).to be(true)
+    expect(branch.reload.deleted_at).to be_present
+    expect(BranchStatusTransition.unscoped.find(initial_event.id).to_status).to eq('preparing')
+  end
+
   it 'prevents soft deletion while a branch still has assigned users' do
     branch = create(:branch)
     person = create(:user)
