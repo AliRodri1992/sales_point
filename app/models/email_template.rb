@@ -84,13 +84,15 @@ class EmailTemplate < ApplicationRecord
   def new_draft!(actor:)
     with_lock do
       existing_draft = versions.where(status: 'draft').order(version_number: :desc).first
-      return existing_draft if existing_draft
-
-      source = published_version || versions.order(version_number: :desc).first
-      versions.create!(
-        version_number: versions.maximum(:version_number).to_i + 1,
-        status: 'draft', created_by: actor, **draft_content(source)
-      )
+      if existing_draft
+        existing_draft
+      else
+        source = published_version || versions.order(version_number: :desc).first
+        versions.create!(
+          version_number: versions.maximum(:version_number).to_i + 1,
+          status: 'draft', created_by: actor, **draft_content(source)
+        )
+      end
     end
   end
 
