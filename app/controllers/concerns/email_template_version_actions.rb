@@ -37,8 +37,7 @@ module EmailTemplateVersionActions
     EmailTemplate.transaction do
       next false unless @version.update(draft_attributes)
 
-      @template.update!(updated_by: current_user)
-      @template.touch
+      @template.update!(updated_by: current_user, updated_at: Time.current)
       @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
       true
     end
