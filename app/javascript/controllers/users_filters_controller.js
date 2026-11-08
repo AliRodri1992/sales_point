@@ -5,6 +5,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     this.pendingSearch = null
+    this.restoreSearchFocus()
   }
 
   disconnect() {
@@ -26,6 +27,36 @@ export default class extends Controller {
   }
 
   submitFilters() {
-    if (this.element.isConnected) this.element.requestSubmit()
+    if (!this.element.isConnected) return
+
+    const search = this.element.querySelector("#users-filter-search")
+    if (search && document.activeElement === search) {
+      sessionStorage.setItem("delta-users-search-focus", JSON.stringify({
+        path: window.location.pathname,
+        start: search.selectionStart,
+        end: search.selectionEnd
+      }))
+    }
+    this.element.requestSubmit()
+  }
+
+  restoreSearchFocus() {
+    const raw = sessionStorage.getItem("delta-users-search-focus")
+    if (!raw) return
+
+    sessionStorage.removeItem("delta-users-search-focus")
+    try {
+      const saved = JSON.parse(raw)
+      if (saved.path !== window.location.pathname) return
+      const search = this.element.querySelector("#users-filter-search")
+      if (!search) return
+
+      search.focus({ preventScroll: true })
+      if (saved.start !== null && saved.end !== null) {
+        search.setSelectionRange(saved.start, saved.end)
+      }
+    } catch (_error) {
+      // Ignore stale focus state while keeping the filter form functional.
+    }
   }
 }
