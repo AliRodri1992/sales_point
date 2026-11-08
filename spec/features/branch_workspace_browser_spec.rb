@@ -129,6 +129,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page).to have_no_css('#branch_address_attributes_exterior_number[required]')
     expect(page).to have_css('form[novalidate]')
     expect(page).to have_css('label[for="branch_name"] .branch-required-mark')
+    expect(page).to have_css('[data-country-flags] button[aria-required="true"]')
     fill_in 'branch_address_attributes_street', with: 'Airport avenue'
     fill_in 'branch_address_attributes_exterior_number', with: '20'
     fill_in 'branch_address_attributes_neighborhood', with: 'Centro'

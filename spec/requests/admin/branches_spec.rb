@@ -555,4 +555,3 @@ RSpec.describe 'Admin::Branches', type: :request do
     expect(form['data-turbo-confirm']).to eq(I18n.t('admin.branch_workspace.remove_confirmation'))
   end
 end
-

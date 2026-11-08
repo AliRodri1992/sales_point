@@ -158,7 +158,7 @@ export default class extends Controller {
     const description = this.select.getAttribute("aria-describedby")
     if (description) this.button.setAttribute("aria-describedby", description)
     else this.button.removeAttribute("aria-describedby")
-    this.button.setAttribute("aria-required", String(this.select.required))
+    this.button.setAttribute("aria-required", String(this.select.required || this.select.getAttribute("aria-required") === "true"))
     this.button.setAttribute("aria-invalid", String(this.select.getAttribute("aria-invalid") === "true" ||
       this.select.classList.contains("input-field-error")))
     const options = [...this.select.options]

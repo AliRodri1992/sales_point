@@ -5,6 +5,21 @@ module BranchesHelper
     safe_join([text, content_tag(:span, ' *', class: 'branch-required-mark', aria: { hidden: true })])
   end
 
+  def branch_field_aria(record, attribute, required: false)
+    error = record.errors[attribute].any?
+    attributes = { invalid: error }
+    attributes[:required] = true if required
+    attributes[:describedby] = "#{record.class.name.underscore}_#{attribute}_error" if error
+    attributes
+  end
+
+  def branch_country_aria(branch, address)
+    attributes = branch_field_aria(address, :country, required: true)
+    return attributes if branch.errors[:address].empty? || address.errors[:country].any?
+
+    attributes.merge(invalid: true, describedby: 'branch_address_error')
+  end
+
   def branch_mobile(branch)
     branch.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }
   end
