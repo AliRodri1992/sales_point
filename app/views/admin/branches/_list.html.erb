@@ -3,7 +3,7 @@
   <div class="branch-table-wrap"><table class="branch-table"><thead><tr>
     <th><%= sort_link('branches.name', t('admin.branches.index.columns.branch'), frame: 'branches_list') %></th>
     <th><%= t('admin.branch_workspace.contact') %></th><th><%= sort_link('addresses.street', t('admin.branches.index.columns.address'), frame: 'branches_list') %></th>
-    <th><%= sort_link('branches.status', t('admin.branches.index.columns.status'), frame: 'branches_list') %></th><th class="branch-actions-heading"><%= t('admin.branches.index.columns.actions') %></th>
+    <th><%= sort_link('branches.operational_status', t('admin.branches.index.columns.status'), frame: 'branches_list') %></th><th class="branch-actions-heading"><%= t('admin.branches.index.columns.actions') %></th>
   </tr></thead><tbody>
     <% branches.each do |branch| %><tr>
       <td><div class="branch-identity"><span class="branch-avatar"><%= delta_icon('building-storefront', class: 'size-5') %></span><div><%= link_to branch.name, admin_branch_path(branch, branch_directory_parameters), class: 'branch-name', data: { turbo_frame: '_top' } %><p class="branch-secondary"><span class="branch-code"><%= branch_code(branch) %></span> · <%= t('admin.branch_workspace.assigned_people', count: @branch_team_counts.fetch(branch.id, 0)) %></p></div></div></td>
