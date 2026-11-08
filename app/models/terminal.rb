@@ -10,7 +10,7 @@ class Terminal < ApplicationRecord
   }
 
   validate :branch_active_when_terminal_activated
-  validate :branch_accepts_new_terminal, on: :create
+  validate :branch_accepts_new_terminal, if: :new_or_reassigned?
   around_save :with_branch_lock, if: :branch_state_sensitive_change?
 
   validates :name, presence: true, length: { in: 2..80 }, on: %i[create update]
@@ -40,7 +40,7 @@ class Terminal < ApplicationRecord
 
   def with_branch_lock
     branch.with_lock do
-      branch_accepts_new_terminal if new_record?
+      branch_accepts_new_terminal if new_or_reassigned?
       branch_active_when_terminal_activated
       raise ActiveRecord::RecordInvalid, self if errors[:branch].any?
 
@@ -48,12 +48,16 @@ class Terminal < ApplicationRecord
     end
   end
 
+  def new_or_reassigned?
+    new_record? || will_save_change_to_branch_id?
+  end
+
   def branch_accepts_new_terminal
     errors.add(:branch, :invalid) if branch&.suspended? || branch&.closed?
   end
 
   def branch_active_when_terminal_activated
-    return unless active? && (new_record? || will_save_change_to_status?)
+    return unless active? && branch_state_sensitive_change?
 
     return if branch&.operationally_active?
     return if branch&.preparing? && !branch.organization&.onboarding_completed?
