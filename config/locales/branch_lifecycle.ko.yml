@@ -2,6 +2,7 @@ ko:
   admin:
     branch_lifecycle:
       title: "지점 운영 상태"
+      loading_results: "지점 목록을 업데이트하고 있습니다…"
       global_summary: "조직 전체 현황입니다. 필터를 적용해도 이 수치는 변경되지 않습니다."
       initial_hint: "새 지점은 준비 상태로 생성됩니다. 필수 설정을 완료한 후 활성화하세요."
       edit_hint: "운영 상태는 이 양식이 아니라 지점 상세 화면에서 관리합니다."
@@ -17,7 +18,7 @@ ko:
         code: "지점 코드"
         address: "완전한 주소"
         currency: "활성 기본 통화"
-        team: "배정된 사용자"
+        team: "권한이 있는 관리자 또는 배정된 직원"
       confirmations:
         active: "이 지점을 활성화하시겠습니까?"
         suspended: "이 지점을 일시 중지하시겠습니까?"
