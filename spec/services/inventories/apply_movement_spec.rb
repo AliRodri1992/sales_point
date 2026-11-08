@@ -105,6 +105,29 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.inventory_movements.count).to eq(0)
   end
 
+  it 'permits supplier returns only for receipt items recorded before suspension' do
+    inventory = create(:inventory, stock: 5)
+    suspend_branch(inventory.branch)
+    receipt = instance_double(
+      GoodsReceipt, id: 17, branch_id: inventory.branch_id, created_at: 3.days.ago
+    )
+    order_item = instance_double(PurchaseOrderItem, product_id: inventory.product_id)
+    receipt_item = instance_double(
+      GoodsReceiptItem, goods_receipt: receipt, purchase_order_item: order_item,
+                        created_at: 2.days.ago, persisted?: true
+    )
+    return_record = PurchaseReturnItem.new
+    allow(return_record).to receive(:persisted?).and_return(true)
+    allow(return_record).to receive(:goods_receipt_item).and_return(receipt_item)
+    allow(return_record).to receive(:purchase_return)
+      .and_return(instance_double(PurchaseReturn, goods_receipt_id: receipt.id))
+
+    expect(described_class.established_supplier_return?(inventory, return_record)).to be(true)
+
+    allow(receipt_item).to receive(:created_at).and_return(1.hour.from_now)
+    expect(described_class.established_supplier_return?(inventory, return_record)).to be(false)
+  end
+
   it 'blocks a sale from a suspended branch without changing stock' do
     office = create(:branch)
     item = create(:product, organization: office.organization)
