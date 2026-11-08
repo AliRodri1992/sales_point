@@ -4,6 +4,11 @@ en:
       pending_for: "Requirements before: %{action}"
       resolve_blocker: "Resolve"
       unavailable: "Resolve the outstanding requirements first"
+      audit_yes: "Yes"
+      audit_no: "No"
+      audit_availability: "Record availability"
+      audit_removed: "Removed"
+      audit_present: "Active"
       changes_title: "Branch data change history"
       changes_hint: "Recent changes to branch details, address, phone numbers and notes."
       audit_subjects:
