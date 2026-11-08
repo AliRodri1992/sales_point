@@ -11,6 +11,9 @@ module UserAdminAccessValidations
 
     attr_accessor :admin_role_selection_required, :admin_selected_system_roles, :admin_selected_branch_roles
 
+    validates :email, length: { maximum: 254 }
+    validates :username, length: { maximum: 100 }, allow_blank: true
+
     validate :admin_employee_requires_role, if: :admin_role_selection_required
     validate :selected_language_must_be_available, if: :validate_selected_language?
   end

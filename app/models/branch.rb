@@ -76,9 +76,7 @@ class Branch < ApplicationRecord
   end
 
   def preserve_operational_history
-    if user_roles.active.exists?
-      errors.add(:base, I18n.t('admin.branch_workspace.delete_team_block'))
-    end
+    errors.add(:base, I18n.t('admin.branch_workspace.delete_team_block')) if user_roles.active.exists?
     protected_records = [inventories, purchase_requests, purchase_orders, goods_receipts, terminals]
     return unless protected_records.any? { |records| records.with_deleted.exists? }
 
