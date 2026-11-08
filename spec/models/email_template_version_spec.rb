@@ -125,4 +125,13 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(template.versions.where(status: 'draft').count).to eq(1)
   end
 
+  it 'rejects header line breaks in subjects and preheaders' do
+    version = template.new_draft!(actor: nil)
+
+    expect(version.update(subject: "Hello\nUnexpected header")).to be(false)
+    expect(version.errors[:subject]).to be_present
+    expect(version.update(subject: 'Hello', preheader: "Preview\r\nInjected")).to be(false)
+    expect(version.errors[:preheader]).to be_present
+  end
+
 end
