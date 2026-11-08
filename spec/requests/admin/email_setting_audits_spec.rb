@@ -313,7 +313,7 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(sender).to have_attributes(
       display_name: 'Local Shop', from_address: 'notice@example.com',
       reply_to: 'help@example.com', default_locale: 'en',
-      domain_status: 'unverified', domain: nil
+      domain_status: 'unverified', domain: 'example.com'
     )
   end
 

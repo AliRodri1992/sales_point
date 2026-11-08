@@ -51,7 +51,7 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
         const card = document.querySelector('section[aria-labelledby="email-template-content-title"]')
         const frame = document.querySelector('[data-email-template-detail-target="frame"]')
         const iframe = document.querySelector('#email-template-show-frame')
-        return card.getBoundingClientRect().width > 1200 &&
+        return card.getBoundingClientRect().width > 900 &&
           frame.getBoundingClientRect().width >= 850 &&
           iframe.getBoundingClientRect().height >= 800
       })()

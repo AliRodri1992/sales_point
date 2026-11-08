@@ -79,7 +79,8 @@ RSpec.describe EmailTemplateVersion, type: :model do
     local, = EmailTemplates::Personalizer.call(source: global, organization:, actor: nil)
     draft = local.versions.first
 
-    draft.update!(html_body: '<p>Welcome</p>', text_body: 'Welcome', allowed_variables: [])
+    draft.update!(subject: 'Welcome', preheader: '', html_body: '<p>Welcome</p>',
+                  text_body: 'Welcome', allowed_variables: [])
     expect { draft.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(local.reload.published_version).to be_nil
     expect(draft.errors[:html_body]).to be_present

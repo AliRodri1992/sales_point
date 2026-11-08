@@ -24,7 +24,7 @@ RSpec.describe 'Published email template delivery', type: :mailer do
         EmailTemplates::SampleData.call(built_in)
       )
       expect(subject).to be_present
-      expect(html).to include('LOGOTIPO')
+      expect(html).to include('delta-pos-email-logo')
       expect(html).to include('example.org/activation-demo')
       expect(plain).to include('activation-demo')
     end
@@ -48,8 +48,9 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     built_in = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
     draft = built_in.new_draft!(actor: nil)
     draft.update!(
-      subject: 'Edited invitation', html_body: '<p>{{invited_name}}</p>',
-      text_body: '{{invited_name}}', allowed_variables: ['invited_name']
+      subject: 'Edited invitation', preheader: '',
+      html_body: '<p>{{invited_name}}</p><a href="{{activation_url}}">Accept</a>',
+      text_body: '{{invited_name}} {{activation_url}}', allowed_variables: %w[invited_name activation_url]
     )
     draft.publish!(actor: nil)
 
@@ -64,8 +65,8 @@ RSpec.describe 'Published email template delivery', type: :mailer do
       sample_template = EmailTemplate.new(locale:)
       values = EmailTemplates::SampleData.call(sample_template)
 
-      expect(values.fetch(:platform_logo)).to include('LOGOTIPO')
-      expect(values.fetch(:logo_url)).to include('LOGOTIPO')
+      expect(values.fetch(:platform_logo)).to include('delta-pos-email-logo')
+      expect(values.fetch(:logo_url)).to include('delta-pos-email-logo')
       expect(values.fetch(:recipient_name)).to eq(expected_names.fetch(locale))
     end
   end

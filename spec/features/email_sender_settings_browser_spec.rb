@@ -44,6 +44,7 @@ RSpec.describe 'Sender settings editor', type: :feature, js: true do
 
     click_button I18n.t('admin.email_templates.save', locale: :en)
 
+    expect(page).to have_field('email_sender_setting_from_address', with: 'info@north.example')
     expect(page).to have_css('#sender-preview-title')
     expect(EmailSenderSetting.find_by!(organization:).from_address).to eq('info@north.example')
     expect(EmailSenderSetting.find_by!(organization:).domain_status).to eq('unverified')

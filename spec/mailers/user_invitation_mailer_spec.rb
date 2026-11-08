@@ -58,8 +58,9 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     custom = EmailTemplate.create!(
       organization:, key: 'user_invitation', locale: 'es', name: 'Custom invitation',
       category: 'security', status: 'draft', enabled: false,
-      subject: 'Personal invitation', html_body: '<p>Custom {{invited_name}}</p>',
-      text_body: 'Custom {{invited_name}}'
+      subject: 'Personal invitation',
+      html_body: '<p>Custom {{invited_name}}</p><a href="{{activation_url}}">Accept</a>',
+      text_body: 'Custom {{invited_name}} {{activation_url}}'
     )
     custom.new_draft!(actor: nil).publish!(actor: nil)
 
