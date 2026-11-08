@@ -29,6 +29,8 @@ es:
         missing_address: "La dirección debe estar completa y ser válida."
         missing_code: "Registra el código de la sucursal antes de activarla."
         missing_team: "Asigna al menos un usuario autorizado a la sucursal."
+      missing_currency: "Configura una moneda base activa antes de activar la sucursal."
+      delete_requires_preparing: "Solo se pueden eliminar sucursales que aún están en preparación."
         open_operations: "Resuelve primero las operaciones activas."
         assigned_team: "Reasigna o retira primero los usuarios de la sucursal."
         outstanding_stock: "Transfiere o ajusta el inventario antes del cierre."
