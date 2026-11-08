@@ -456,6 +456,7 @@ RSpec.describe 'Admin email templates', type: :request do
     first = template.new_draft!(actor: administrator)
     first.publish!(actor: administrator)
     second = template.new_draft!(actor: administrator)
+    second.publish!(actor: administrator)
     third = template.new_draft!(actor: administrator)
     get admin_email_template_path(template)
     doc = Nokogiri::HTML(response.body)
@@ -483,6 +484,21 @@ RSpec.describe 'Admin email templates', type: :request do
     get compare_admin_email_template_path(template), params: { left: published.id, right: changed.id }
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(I18n.t('admin.email_templates.compare_changed'))
+  end
+
+  it 'preserves in-progress draft content when restoring a published version' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    draft = template.new_draft!(actor: administrator)
+    draft.update!(subject: 'Work in progress')
+
+    expect do
+      post restore_admin_email_template_path(template, version_id: published.id)
+    end.not_to change(template.versions, :count)
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(draft.reload.subject).to eq('Work in progress')
+    expect(template.audits.where(action: 'restored')).not_to exist
   end
 
   it 'restores published content into a new draft and compares versions' do
