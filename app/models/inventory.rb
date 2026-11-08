@@ -14,12 +14,24 @@ class Inventory < ApplicationRecord
   validate :consistent_organization
   validate :branch_accepts_new_inventory, on: :create
   validate :valid_stock_limits
+  around_save :with_branch_lifecycle_lock
 
   scope :low_stock, -> { where('min_stock > 0 AND stock <= min_stock') }
 
   def low_stock? = min_stock.positive? && stock <= min_stock
 
   private
+
+  def with_branch_lifecycle_lock
+    branch.with_lock do
+      if branch.closed? || (new_record? && branch.suspended?)
+        errors.add(:branch, :invalid)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      yield
+    end
+  end
 
   def branch_accepts_new_inventory
     errors.add(:branch, :invalid) if branch&.suspended?
