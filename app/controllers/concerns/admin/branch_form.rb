@@ -8,7 +8,6 @@ module Admin
       params.expect(
         branch: [
           :name,
-          :code,
           :contact_email,
           :notes,
           { phones_attributes: [%i[id number country_code kind label extension primary whatsapp_enabled _destroy]],
