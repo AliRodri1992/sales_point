@@ -2,6 +2,7 @@
 
 class EmailTemplatePolicy < ApplicationPolicy
   ListingSnapshot = Struct.new(:active_admin, :super_admin, :permissions, :organization_ids, keyword_init: true)
+
   def index?
     allowed?('email_templates.access')
   end

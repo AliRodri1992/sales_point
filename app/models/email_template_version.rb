@@ -65,7 +65,8 @@ class EmailTemplateVersion < ApplicationRecord
     required.each do |variable|
       token = "{{#{variable}}}"
       message = I18n.t('admin.email_templates.required_customization_variable', variable:)
-      errors.add(:allowed_variables, message) unless allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
+      declared = allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
+      errors.add(:allowed_variables, message) unless declared
       errors.add(:html_body, message) unless html_body.to_s.include?(token)
       errors.add(:text_body, message) unless text_body.to_s.include?(token)
     end

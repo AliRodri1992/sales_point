@@ -11,8 +11,8 @@ module EmailTemplateListing
     scope = EmailTemplatesQuery.new(visible, params).call
     prepare_template_pagination(scope)
     @templates = paginated_templates(scope)
-    @counts = EmailTemplatesQuery.new(visible, params.except(:status), include_archived: true)
-                                  .call.group(:status).count
+    counter_scope = EmailTemplatesQuery.new(visible, params.except(:status), include_archived: true).call
+    @counts = counter_scope.group(:status).count
   end
 
   def preload_email_template_access
