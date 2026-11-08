@@ -1,6 +1,9 @@
 ko:
   admin:
     branch_lifecycle:
+      pending_for: "%{action} 전 확인 사항"
+      resolve_blocker: "해결"
+      unavailable: "남은 조건을 먼저 해결하세요"
       title: "지점 운영 상태"
       created_reason: "지점 등록"
       audit_immutable: "지점 상태 변경 기록은 수정하거나 삭제할 수 없습니다."
@@ -67,6 +70,7 @@ ko:
         suspended: "신규 작업이 차단되며 미결 업무는 정리할 수 있습니다."
         closed: "신규 작업을 진행할 수 없으며 기록은 보존됩니다."
       errors:
+        operational_address_required: "활성 또는 일시 중지된 지점에는 유효한 주소가 있어야 합니다."
         missing_organization: "조직이 활성 상태여야 합니다."
         missing_name: "지점 이름은 3~150자여야 합니다."
         active_terminals: "일시 중지 또는 폐쇄 전에 터미널을 비활성화하세요."
