@@ -80,6 +80,18 @@ RSpec.describe UserRole, type: :model do
     end
   end
 
+  it 'rejects assigning a branch role once the branch is permanently closed' do
+    branch = create(:branch)
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization: branch.organization, user: admin)
+    Branches::TransitionStatus.call(branch:, actor: admin, to: 'closed', reason: 'Permanent closure')
+
+    assignment = build(:user_role, user: create(:user),
+                                   branch:, system_role: create(:system_role, :branch))
+    expect(assignment).not_to be_valid
+    expect(assignment.errors[:branch]).to be_present
+  end
+
   describe '.active' do
     it 'returns active assignments for active system roles' do
       user = create(:user)
