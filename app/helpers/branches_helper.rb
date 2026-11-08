@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module BranchesHelper
+  def branch_operational_status(branch)
+    content_tag(:span, t("admin.branch_lifecycle.statuses.#{branch.operational_status}"),
+                class: 'branch-status-card')
+  end
+
   def branch_required_label(text)
     safe_join([text, content_tag(:span, ' *', class: 'branch-required-mark', aria: { hidden: true })])
   end
