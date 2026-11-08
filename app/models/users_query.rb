@@ -43,6 +43,11 @@ class UsersQuery
   def by_role(scope)
     return scope if @params[:role].blank?
 
-    scope.joins(:system_roles).where(system_roles: { id: @params[:role] }).distinct
+    assignments = UserRole.active.where(system_role_id: @params[:role])
+    if @organization
+      branch_ids = @organization.branches.where(status: true, deleted_at: nil).select(:id)
+      assignments = assignments.where(branch_id: nil).or(assignments.where(branch_id: branch_ids))
+    end
+    scope.where(id: assignments.select(:user_id))
   end
 end

@@ -19,11 +19,11 @@
             <% { 'users.username' => 'username', 'users.user_type' => 'user_type',
                  'users.status' => 'status' }.each do |column, label| %>
               <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
-                <%= sort_link(column, t("admin.users.index.columns.#{label}"), frame: 'users_list') %>
+                <%= sort_link(column, t("admin.users.index.columns.#{label}"), frame: '_top') %>
               </th>
             <% end %>
             <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= t('admin.users.index.columns.roles') %></th>
-            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= sort_link('users.created_at', t('admin.users.index.columns.created_at'), frame: 'users_list') %></th>
+            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= sort_link('users.created_at', t('admin.users.index.columns.created_at'), frame: '_top') %></th>
             <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-600"><%= t('admin.users.index.columns.actions') %></th>
           </tr>
         </thead>
@@ -63,7 +63,7 @@
             </div>
           </div>
           <div class="mt-4 flex flex-wrap items-center gap-2">
-            <%= user_status_badge(user.status) %>
+            <%= user_status_badge(user.organization_memberships.find { |membership| membership.organization_id == current_organization.id && membership.active? && membership.deleted_at.nil? }&.account_status || user.status) %>
             <span class="text-xs text-slate-500"><%= t("admin.users.user_types.#{user.user_type}") %></span>
           </div>
           <div class="mt-4 border-t border-slate-100 pt-3">
@@ -93,7 +93,7 @@
       </div>
       <% if total_pages > 1 %>
         <nav class="flex flex-wrap items-center gap-1" aria-label="<%= t('admin.users.index.pagination.navigation') %>">
-          <%= pagination_links(total_pages, frame: 'users_list', window: 2) %>
+          <%= pagination_links(total_pages, frame: '_top', window: 2) %>
         </nav>
       <% end %>
     </footer>

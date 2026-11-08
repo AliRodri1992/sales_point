@@ -28,7 +28,8 @@ module Admin
 
     def show
       authorize @user
-      @can_manage_users = current_user.admin?
+      @can_manage_users = policy(@user).update? || policy(@user).manage_status? ||
+                          policy(@user).resend_invitation?
     end
 
     def new
@@ -65,6 +66,9 @@ module Admin
       authorize @user
 
       if account_writer.save
+        if @user.saved_change_to_email? && @user.pending?
+          Users::InvitationDispatcher.call(user: @user, organization: current_organization)
+        end
         notify_user(current_user, @user, 'updated')
         return if redirect_without_catalog_listing(@user, :updated)
 
@@ -112,7 +116,13 @@ module Admin
       sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'users.email'
       sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
-      scope.order(sort_column => sort_direction)
+      return scope.order(sort_column => sort_direction) unless sort_column == 'users.status'
+
+      scope.joins(:organization_memberships)
+           .where(organization_memberships: { organization_id: current_organization.id,
+                                              status: 'active', deleted_at: nil })
+           .order(Arel.sql("organization_memberships.account_status #{sort_direction.upcase}"))
+           .order('users.id': :asc)
     end
 
     def user_params
