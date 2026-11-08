@@ -54,6 +54,44 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     expect(template.versions.where(status: 'draft')).to exist
   end
 
+  scenario 'displays an accessible compact catalog on a mobile viewport' do
+    EmailTemplate.create!(
+      organization:, key: 'mobile_notification', name: 'Mobile notice', locale: 'en',
+      category: 'notifications', status: 'draft', enabled: false,
+      subject: 'Notice', html_body: '<p>Notice</p>', text_body: 'Notice'
+    )
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_email_templates_path
+
+    expect(page).to have_css('table tbody tr', count: 1)
+    expect(page).to have_css('table tbody tr a', text: 'Mobile notice')
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const table = document.querySelector('table')
+        const headers = Array.from(table.querySelectorAll('thead th'))
+        const hidden = headers.filter(cell => getComputedStyle(cell).display === 'none')
+        return hidden.length === 5 && document.documentElement.scrollWidth <= window.innerWidth + 2
+      })()
+    JS
+  end
+
+  scenario 'keeps unsaved changes when canceling the Delta POS navigation confirmation' do
+    template = EmailTemplate.create!(
+      organization:, key: 'unsaved_notification', name: 'Unsaved notice', locale: 'en',
+      category: 'notifications', status: 'draft', enabled: false,
+      subject: 'Notice', html_body: '<p>Notice</p>', text_body: 'Notice'
+    )
+    template.new_draft!(actor: admin)
+    visit edit_admin_email_template_path(template)
+    find('#email_template_version_subject').set('Pending changes')
+    find('main > header a[href]', match: :first).click
+
+    expect(page).to have_css('.delta-confirm-popup')
+    find('.delta-confirm-cancel').click
+    expect(page).to have_css('#template-editor-title')
+    expect(find('#email_template_version_subject').value).to eq('Pending changes')
+  end
+
   scenario 'keeps server field errors visible without duplicating them in the live preview' do
     template = EmailTemplate.create!(
       organization:, key: 'server_error_notice', name: 'Notice', locale: 'en',

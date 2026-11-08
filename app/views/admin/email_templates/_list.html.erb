@@ -50,11 +50,11 @@
 
   <% if @templates.any? %>
     <div class="overflow-x-auto">
-      <table class="w-full min-w-[940px] text-left text-sm">
+      <table class="w-full min-w-0 table-fixed text-left text-sm lg:min-w-[940px] lg:table-auto">
         <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
           <tr>
             <% %w[name key locale scope state version updated actions].each do |column| %>
-              <th scope="col" class="px-4 py-3.5 first:pl-5 last:pr-5 <%= 'sticky right-0 z-10 bg-slate-50' if column == 'actions' %>"><%= t("admin.email_templates.columns.#{column}") %></th>
+              <th scope="col" class="px-2 py-3.5 sm:px-4 <%= 'hidden lg:table-cell' if column.in?(%w[key locale scope version updated]) %> <%= 'sticky right-0 z-10 bg-slate-50' if column == 'actions' %>"><%= t("admin.email_templates.columns.#{column}") %></th>
             <% end %>
           </tr>
         </thead>
@@ -65,7 +65,7 @@
                         'inactive' => 'bg-slate-100 text-slate-700 ring-slate-200',
                         'archived' => 'bg-rose-50 text-rose-700 ring-rose-200' }.fetch(template.status, 'bg-slate-100 text-slate-700 ring-slate-200') %>
             <tr class="transition hover:bg-slate-50/80" data-skeleton-record>
-              <td class="max-w-64 px-4 py-4 pl-5">
+              <td class="min-w-0 max-w-64 px-2 py-3 sm:px-4 sm:py-4 sm:pl-5">
                 <%= link_to template.name, admin_email_template_path(template), data: { turbo_frame: '_top' },
                             class: 'block break-words font-semibold text-slate-900 hover:text-emerald-700 hover:underline' %>
                 <span class="mt-1 block text-xs text-slate-500"><%= t("admin.email_templates.categories.#{template.category}", default: template.category) %></span>
@@ -78,15 +78,15 @@
                             end %>
                 <span class="mt-2 inline-flex rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600"><%= t("admin.email_templates.origins.#{origin}") %></span>
               </td>
-              <td class="max-w-44 break-all px-4 py-4 font-mono text-xs text-slate-600"><%= template.key %></td>
-              <td class="px-4 py-4"><%= t("admin.email_templates.languages.#{template.locale}") %></td>
-              <td class="px-4 py-4 text-slate-600"><%= template.organization&.name || t('admin.email_templates.global') %></td>
-              <td class="px-4 py-4">
+              <td class="hidden max-w-44 break-all px-4 py-4 font-mono text-xs text-slate-600 lg:table-cell"><%= template.key %></td>
+              <td class="hidden px-4 py-4 lg:table-cell"><%= t("admin.email_templates.languages.#{template.locale}") %></td>
+              <td class="hidden px-4 py-4 text-slate-600 lg:table-cell"><%= template.organization&.name || t('admin.email_templates.global') %></td>
+              <td class="px-1 py-3 sm:px-4 sm:py-4">
                 <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset <%= tone %>"><%= t("admin.email_templates.status_labels.#{template.status}") %></span>
               </td>
-              <td class="px-4 py-4 font-medium tabular-nums text-slate-700"><%= template.published_version&.version_number ? "v#{template.published_version.version_number}" : '—' %></td>
-              <td class="whitespace-nowrap px-4 py-4 text-xs text-slate-500"><%= l(template.updated_at, format: :short) %></td>
-              <td class="sticky right-0 z-10 bg-white px-3 py-3 pr-5 align-top">
+              <td class="hidden px-4 py-4 font-medium tabular-nums text-slate-700 lg:table-cell"><%= template.published_version&.version_number ? "v#{template.published_version.version_number}" : '—' %></td>
+              <td class="hidden whitespace-nowrap px-4 py-4 text-xs text-slate-500 lg:table-cell"><%= l(template.updated_at, format: :short) %></td>
+              <td class="sticky right-0 z-10 bg-white px-1.5 py-3 align-top sm:px-3 sm:pr-5">
                 <div class="flex items-center justify-end gap-1.5">
                   <%= link_to admin_email_template_path(template), data: { turbo_frame: '_top', tooltip: t('admin.email_templates.view') },
                               aria: { label: t('admin.email_templates.view_named', name: template.name) },
