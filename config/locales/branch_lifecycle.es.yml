@@ -33,6 +33,7 @@ es:
       edit_hint: "El estado operativo se administra desde la vista de detalle y no puede modificarse mediante este formulario."
       changed: "Estado de sucursal actualizado"
       onboarding_reason: "Activación automática al completar la configuración inicial"
+      next_status: "Cambiar a estado"
       reason: "Motivo del cambio"
       history: "Historial de estados"
       system_actor: "Sistema"
