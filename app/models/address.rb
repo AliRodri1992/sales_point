@@ -2,6 +2,7 @@
 
 class Address < ApplicationRecord
   include AddressLocation
+  include RestrictsClosedBranchMutations
 
   has_paper_trail if: ->(record) { record.addressable_type == 'Supplier' }
 
