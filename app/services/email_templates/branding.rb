@@ -2,6 +2,9 @@
 
 module EmailTemplates
   class Branding
+    PLATFORM_LOGO_WEB = 'delta-pos-email-logo.svg'.freeze
+    PLATFORM_LOGO_EMAIL = 'delta-pos-email-logo.png'.freeze
+
     def self.values(organization: nil)
       global = EmailBrandingSetting.find_by(organization_id: nil)
       local = EmailBrandingSetting.find_by(organization:) if organization
@@ -30,7 +33,7 @@ module EmailTemplates
     def self.platform_logo_url
       asset_host = Rails.application.config.action_mailer.asset_host if Rails.env.development?
       asset_host ||= "https://#{configured_host}"
-      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: asset_host)
+      ActionController::Base.helpers.image_url(PLATFORM_LOGO_EMAIL, host: asset_host)
     end
 
     def self.configured_host

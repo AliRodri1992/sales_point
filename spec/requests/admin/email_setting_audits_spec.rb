@@ -175,8 +175,14 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(page.at_css('input#email_branding_setting_support_url[type="url"]')).to be_present
     expect(page.at_css('input#email_branding_setting_privacy_url[type="url"]')).to be_present
     expect(page.at_css('input[name="remove_logo"][type="checkbox"]')).to be_present
-    expect(page.css('img').pluck('alt'))
-      .to include(I18n.t('admin.email_templates.branding_platform_logo_alt'))
+    platform_alt = I18n.t('admin.email_templates.branding_platform_logo_alt')
+    platform_logos = page.css('img').select { |image| image['alt'] == platform_alt }
+    expect(platform_logos.length).to eq(2)
+    platform_logos.each do |image|
+      expect(image['src']).to include(EmailTemplates::Branding::PLATFORM_LOGO_WEB.delete_suffix('.svg'))
+      expect(image['src']).to match(/\.svg(?:\?.*)?\z/)
+    end
+    expect(response.body).not_to include('LOGOTIPO COMPLETO.jpeg', 'NEXO POS')
   end
 
   it 'validates accessibility and contact details on the server without notifying' do

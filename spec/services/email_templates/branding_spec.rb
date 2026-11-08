@@ -12,13 +12,19 @@ RSpec.describe EmailTemplates::Branding do
     expect(values[:logo_url]).to include('delta-pos-email-logo')
   end
 
-  it 'uses the complete branded PNG for email clients and retains the original SVG' do
+  it 'uses the official Delta POS SVG on screen and its matching PNG for email clients' do
     values = described_class.values
+    expect(described_class::PLATFORM_LOGO_WEB).to eq('delta-pos-email-logo.svg')
+    expect(described_class::PLATFORM_LOGO_EMAIL).to eq('delta-pos-email-logo.png')
     expect(values[:platform_logo]).to match(%r{\Ahttps://.+/delta-pos-email-logo[^/]*\.png\z})
     expect(values[:logo_url]).to eq(values[:platform_logo])
     expect(values[:organization_logo]).to eq(values[:platform_logo])
-    expect(Rails.root.join('app/assets/images/delta-pos-email-logo.svg')).to exist
-    expect(Rails.root.join('app/assets/images/delta-pos-email-logo.png')).to exist
+    svg = Rails.root.join('app/assets/images', described_class::PLATFORM_LOGO_WEB)
+    png = Rails.root.join('app/assets/images', described_class::PLATFORM_LOGO_EMAIL)
+    expect(svg).to exist
+    expect(png).to exist
+    expect(svg.read).to include('DELTA POS', 'Point of Sale')
+    expect(svg.read).not_to include('NEXO')
   end
 
   it 'uses the local HTTP asset host while editing email previews in development' do
