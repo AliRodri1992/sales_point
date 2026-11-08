@@ -625,6 +625,20 @@ RSpec.describe 'Admin::Branches', type: :request do
         .to include(I18n.t('admin.branch_workspace.location'))
     end
 
+    it 'does not attribute a street error to the country dropdown' do
+      branch = create(:branch, organization:)
+      patch admin_branch_path(branch), params: {
+        branch: { address_attributes: { id: branch.address.id, street: '' } }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#address_street_error')).to be_present
+      country = document.at_css('select[name="branch[address_attributes][country_id]"]')
+      expect(country['aria-invalid']).to eq('false')
+      expect(document.at_css('#branch_address_error')).to be_nil
+    end
+
     it 'keeps malformed email and address messages below each input' do
       post admin_branches_path, params: {
         branch: {
