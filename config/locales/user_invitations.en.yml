@@ -8,3 +8,8 @@ en:
     activated: Your account has been activated. You can sign in now.
     invalid_title: Invitation unavailable
     invalid_description: This link has expired, been revoked or already used. Request another invitation.
+    existing_account: "This account is already active. Join the new organization using your existing signed-in account; no password change is needed."
+    sign_in_first: "Sign in with the account that received this invitation to continue."
+    sign_in: "Sign in"
+    join: "Accept invitation"
+    joined: "You have joined the new organization."

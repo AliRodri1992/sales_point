@@ -2,6 +2,9 @@ en:
   admin:
     users:
       ui:
+        invitation_not_ready: "Assign at least one active role in this organization before inviting this employee."
+        restored_needs_roles: "Account restored as pending. Assign the employee's roles before sending an invitation."
+        effective_access_unavailable: "This account's global state prevents sign-in."
         organization_selector_label: "Organization"
         organization_selector_hint: "Switch active organization"
         shared_deleted_restore_blocked: "This account cannot be restored while it has an active membership in another organization and its global status is inactive. A security review is required."

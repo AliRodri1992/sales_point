@@ -8,3 +8,8 @@ es:
     activated: Tu cuenta fue activada. Ya puedes iniciar sesión.
     invalid_title: Invitación no disponible
     invalid_description: El enlace venció, fue revocado o ya se utilizó. Solicita una nueva invitación.
+    existing_account: "Esta cuenta ya está activa. Puedes incorporarte a la nueva empresa con tu sesión actual, sin cambiar la contraseña."
+    sign_in_first: "Inicia sesión con la cuenta que recibió la invitación para continuar."
+    sign_in: "Iniciar sesión"
+    join: "Aceptar invitación"
+    joined: "Ya tienes acceso a la nueva empresa."
