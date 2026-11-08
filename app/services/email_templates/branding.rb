@@ -2,8 +2,8 @@
 
 module EmailTemplates
   class Branding
-    PLATFORM_LOGO_WEB = 'delta-pos-email-logo.svg'.freeze
-    PLATFORM_LOGO_EMAIL = 'delta-pos-email-logo.png'.freeze
+    PLATFORM_LOGO_WEB = 'delta-pos-email-logo.svg'
+    PLATFORM_LOGO_EMAIL = 'delta-pos-email-logo.png'
 
     def self.values(organization: nil)
       global = EmailBrandingSetting.find_by(organization_id: nil)
