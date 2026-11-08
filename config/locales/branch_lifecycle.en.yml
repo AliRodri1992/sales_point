@@ -2,6 +2,7 @@ en:
   admin:
     branch_lifecycle:
       title: "Operational status"
+      loading_results: "Updating branches…"
       global_summary: "Organization-wide totals; these figures do not change with filters."
       initial_hint: "New branches start in preparation. Activate them after completing setup."
       edit_hint: "Manage the operational status from the branch details page, not from this form."
@@ -17,7 +18,7 @@ en:
         code: "Branch code"
         address: "Complete address"
         currency: "Active base currency"
-        team: "Assigned user"
+        team: "Authorized administrator or assigned staff"
       confirmations:
         active: "Do you want to activate this branch?"
         suspended: "Do you want to temporarily suspend this branch?"
