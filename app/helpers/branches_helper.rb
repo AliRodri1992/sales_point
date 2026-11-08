@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module BranchesHelper
+  def branch_required_label(text)
+    safe_join([text, content_tag(:span, ' *', class: 'branch-required-mark', aria: { hidden: true })])
+  end
+
   def branch_mobile(branch)
     branch.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }
   end

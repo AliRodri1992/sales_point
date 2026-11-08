@@ -36,7 +36,7 @@ class Branch < ApplicationRecord
 
   validates :name,
             presence: true,
-            length: { in: 2..100 },
+            length: { in: 3..150 },
             uniqueness: {
               scope: :organization_id,
               case_sensitive: false,
@@ -44,10 +44,12 @@ class Branch < ApplicationRecord
             },
             on: %i[create update]
   validates :status, inclusion: { in: [true, false] }, on: %i[create update]
+  validates :address, presence: true, on: :create
+  validate :protect_branch_deactivation, if: :deactivating?
 
   validates :name,
             presence: true,
-            length: { in: 2..100 },
+            length: { in: 3..150 },
             uniqueness: {
               scope: :organization_id,
               case_sensitive: false,
@@ -62,7 +64,21 @@ class Branch < ApplicationRecord
 
   private
 
+  def deactivating?
+    persisted? && will_save_change_to_status? && !status && deleted_at.nil?
+  end
+
+  def protect_branch_deactivation
+    errors.add(:status, I18n.t('admin.branch_workspace.active_team_block')) if user_roles.active.exists?
+    return unless organization && organization.branches.not_deleted.where(status: true).where.not(id: id).none?
+
+    errors.add(:status, I18n.t('admin.branch_workspace.last_active_block'))
+  end
+
   def preserve_operational_history
+    if user_roles.active.exists?
+      errors.add(:base, I18n.t('admin.branch_workspace.delete_team_block'))
+    end
     protected_records = [inventories, purchase_requests, purchase_orders, goods_receipts, terminals]
     return unless protected_records.any? { |records| records.with_deleted.exists? }
 

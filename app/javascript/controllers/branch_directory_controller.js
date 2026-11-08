@@ -68,6 +68,8 @@ export default class extends Controller {
     const field = this.field(key)
     if (!field) return
     this.resetField(key)
+    if (key === "country_id" || key === "state") this.resetField("city")
+    if (key === "country_id") this.resetField("state")
     this.apply(undefined, ["country_id", "state"].includes(key))
     this.field("search").focus()
   }

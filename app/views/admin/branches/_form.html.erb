@@ -10,14 +10,17 @@
       <%= t('admin.branches.form.buttons.back') %>
     <% end %>
   </header>
-  <%= form_with model: @branch, url: @branch.persisted? ? admin_branch_path(@branch, branch_directory_parameters) : admin_branches_path(branch_directory_parameters), class: 'catalog-layout branch-form-layout', data: { turbo: false } do |form| %>
+  <%= form_with model: @branch, url: @branch.persisted? ? admin_branch_path(@branch, branch_directory_parameters) : admin_branches_path(branch_directory_parameters), class: 'catalog-layout branch-form-layout', html: { novalidate: true }, data: { turbo: false } do |form| %>
     <div class="catalog-main branch-form-main">
       <%= catalog_errors(@branch) %>
       <nav class="catalog-nav branch-form-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><% %w[identity contact location notes].each do |section| %><a href="#branch-<%= section %>"><%= t("admin.branch_workspace.#{section}") %></a><% end %></nav>
       <section class="catalog-card branch-form-section" id="branch-identity"><%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.identity_hint'), icon: 'building-storefront') %><div class="catalog-card-body catalog-fields">
-        <div class="catalog-full"><%= catalog_field(form, :name, label: t('admin.branches.form.fields.name'), required: true, maxlength: 100, autocomplete: 'organization') %></div>
-        <div><%= catalog_field(form, :code, label: t('admin.branch_workspace.code'), maxlength: 30, pattern: '[A-Za-z0-9_-]{1,30}', autocomplete: 'off', placeholder: t('admin.branch_workspace.code_placeholder')) %><p class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p></div>
-        <label class="catalog-toggle branch-status-card"><%= form.check_box :status %><span><strong><%= t('admin.branches.form.status.active') %></strong><small><%= t('admin.branch_workspace.status_hint') %></small></span></label>
+        <div class="catalog-full"><%= catalog_field(form, :name, label: branch_required_label(t('admin.branches.form.fields.name')), maxlength: 150, autocomplete: 'organization', aria: { required: true }) %></div>
+        <div><%= catalog_field(form, :code, label: t('admin.branch_workspace.code'), maxlength: 30, autocomplete: 'off', placeholder: t('admin.branch_workspace.code_placeholder')) %><p class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p></div>
+        <div class="catalog-field" data-controller="branch-status" data-branch-status-active-value="<%= t('admin.branches.statuses.active') %>" data-branch-status-inactive-value="<%= t('admin.branches.statuses.inactive') %>">
+          <label class="catalog-toggle branch-status-card"><%= form.check_box :status, data: { branch_status_target: 'input', action: 'change->branch-status#update' }, aria: { invalid: @branch.errors[:status].any? } %><span><strong data-branch-status-target="label"><%= t("admin.branches.statuses.#{@branch.status ? 'active' : 'inactive'}") %></strong><small><%= t('admin.branch_workspace.status_hint') %></small></span></label>
+          <%= error_message_for(@branch, :status) %>
+        </div>
       </div></section>
       <section class="catalog-card branch-form-section" id="branch-contact"><%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'), icon: 'phone') %><div class="catalog-card-body catalog-fields">
         <%= render 'phone_fields', form: form %>
@@ -38,20 +41,22 @@
                  data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
                  data-supplier-postal-assist-unavailable-value="<%= t('admin.supplier_details.address_form.postal_unavailable') %>">
               <div class="catalog-field">
-                <%= address_form.label :country_id, t('admin.branches.form.fields.country') %>
+                <%= address_form.label :country_id, branch_required_label(t('admin.branches.form.fields.country')) %>
                 <div data-controller="delta-select" data-country-flags="true" data-search-placeholder="<%= t('admin.country_select.search') %>">
                   <%= address_form.select :country_id, options_for_select(branch_country_options(address_form.object), address_form.object.country_id),
                       { include_blank: t('admin.supplier_placeholders.country') },
-                      required: true, data: { branch_address_target: 'country', supplier_postal_field: 'country_id' } %>
+                      data: { branch_address_target: 'country', supplier_postal_field: 'country_id' },
+                      aria: { required: true, invalid: address_form.object.errors[:country].any? } %>
                 </div>
                 <%= error_message_for(address_form.object, :country) %>
+                <%= error_message_for(@branch, :address, label: t('admin.branches.form.fields.country')) if @branch.errors[:address].any? && address_form.object.errors[:country].empty? %>
               </div>
               <div class="catalog-field" data-country-postal-wrapper>
                 <%= address_form.label :postal_code do %>
                   <span data-country-label
                         data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %>"
                         data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.postal_code.other') %>"><%= t('admin.supplier_details.address_form.country_labels.postal_code.mx') %></span>
-                  <span data-required-when="postal" class="text-rose-600" aria-hidden="true">*</span>
+                  <span data-required-when="postal" class="branch-required-mark" aria-hidden="true">*</span>
                 <% end %>
                 <%= address_form.text_field :postal_code, maxlength: 10, autocomplete: 'postal-code', inputmode: 'text',
                     data: { branch_address_target: 'field', branch_attribute: 'postal_code', supplier_postal_field: 'postal_code' } %>
@@ -64,7 +69,7 @@
                     <span data-country-label
                           data-country-label-mx="<%= t("admin.supplier_details.address_form.country_labels.#{attribute}.mx") %>"
                           data-country-label-other="<%= t("admin.supplier_details.address_form.country_labels.#{attribute}.other") %>"><%= t("admin.supplier_details.address_form.country_labels.#{attribute}.mx") %></span>
-                    <span data-required-when="<%= attribute == :city ? 'always' : 'state' %>" class="text-rose-600" aria-hidden="true">*</span>
+                    <span data-required-when="<%= attribute == :city ? 'always' : 'state' %>" class="branch-required-mark" aria-hidden="true">*</span>
                   <% end %>
                   <%= address_form.text_field attribute, maxlength: 100, autocomplete: attribute == :state ? 'address-level1' : 'address-level2',
                       data: { branch_address_target: 'field', branch_attribute: attribute, supplier_postal_field: attribute } %>
@@ -91,8 +96,9 @@
                 <%= error_message_for(address_form.object, :neighborhood) %>
               </div>
               <div class="catalog-field">
-                <%= address_form.label :street, t('admin.branches.form.fields.street') %>
-                <%= address_form.text_field :street, maxlength: 150, autocomplete: 'address-line1', required: true,
+                <%= address_form.label :street, branch_required_label(t('admin.branches.form.fields.street')) %>
+                <%= address_form.text_field :street, maxlength: 150, autocomplete: 'address-line1',
+                    aria: { required: true, invalid: address_form.object.errors[:street].any? },
                     data: { branch_address_target: 'field', branch_attribute: 'street' } %>
                 <%= error_message_for(address_form.object, :street) %>
               </div>
@@ -117,7 +123,7 @@
           <% end %>
         </div>
       </section>
-      <section class="catalog-card branch-form-section" id="branch-notes"><%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'), icon: 'document-text') %><div class="catalog-card-body"><%= form.label :notes, t('admin.branch_workspace.notes'), class: 'catalog-label' %><%= form.text_area :note_body, name: "#{form.object_name}[notes]", id: form.field_id(:notes), maxlength: 2000, rows: 4, class: 'min-h-28 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %><%= error_message_for(@branch, :notes) %></div></section>
+      <section class="catalog-card branch-form-section" id="branch-notes"><%= catalog_heading(t('admin.branch_workspace.notes'), t('admin.branch_workspace.notes_hint'), icon: 'document-text') %><div class="catalog-card-body"><%= form.label :notes, t('admin.branch_workspace.notes'), class: 'catalog-label' %><%= form.text_area :note_body, aria: { invalid: @branch.errors[:notes].any? }, name: "#{form.object_name}[notes]", id: form.field_id(:notes), maxlength: 2000, rows: 4, class: 'min-h-28 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-emerald-500' %><%= error_message_for(@branch, :notes) %></div></section>
       <footer class="catalog-footer branch-form-footer"><%= link_to t('admin.catalog_design.cancel'), branch_directory_path, class: 'catalog-button' %><%= form.submit submit_label, class: 'catalog-button catalog-button-primary' %></footer>
     </div>
     <aside class="catalog-aside branch-form-aside" aria-label="<%= t('admin.branch_workspace.setup_title') %>"><section class="catalog-card catalog-card-body"><span class="branch-avatar"><%= delta_icon('building-storefront', class: 'size-6') %></span><h2><%= t('admin.branch_workspace.setup_title') %></h2><p><%= t('admin.branch_workspace.setup_hint') %></p><ul class="branch-checklist"><li><%= t('admin.branch_workspace.setup_identity') %></li><li><%= t('admin.branch_workspace.setup_contact') %></li><li><%= t('admin.branch_workspace.setup_location') %></li></ul></section><div class="catalog-notice"><%= t('admin.branch_workspace.optional_hint') %></div><section class="catalog-card catalog-card-body"><h2><%= t('admin.branch_workspace.history_title') %></h2><p><%= t('admin.catalog_design.branch_status_hint') %></p></section></aside>

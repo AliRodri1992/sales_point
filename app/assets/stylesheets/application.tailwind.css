@@ -15,6 +15,7 @@
 @import "./components/skeleton.css";
 @import "./components/supplier_edit_uppy.css";
 @import "./components/catalog_workspace.css";
+@import "./components/branch_workspace.css";
 
 @theme {
     --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;

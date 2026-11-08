@@ -44,7 +44,7 @@ en:
         state: State
         street: Street
       branch:
-        name: Name
+        name: Branch name
         phone: Phone
         status: Status
       category:

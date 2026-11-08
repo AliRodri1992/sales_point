@@ -44,7 +44,7 @@ ko:
         state: 주/도
         street: 도로명
       branch:
-        name: 지점명
+        name: 지점 이름
         phone: 전화번호
         status: 상태
       category:

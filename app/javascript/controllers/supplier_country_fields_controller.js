@@ -86,7 +86,11 @@ export default class extends Controller {
     this.switchCountry(code)
 
     const stateField = this.fields().state
-    if (stateField) stateField.required = stateRequired
+    if (stateField) {
+      const branchForm = Boolean(this.element.closest(".branch-workspace"))
+      stateField.required = branchForm ? false : stateRequired
+      stateField.setAttribute("aria-required", String(stateRequired))
+    }
 
     this.element.querySelectorAll("[data-country-label]").forEach((label) => {
       label.textContent = mexico ? label.dataset.countryLabelMx : label.dataset.countryLabelOther

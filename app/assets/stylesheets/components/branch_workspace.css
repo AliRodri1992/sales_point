@@ -96,7 +96,15 @@
 
 .branch-workspace #branch-contact,.branch-workspace #branch-location { overflow:visible; }
 
-.branch-workspace .catalog-field:has(input[required],select[required]) > label:not(:has([data-required-when]))::after { content:" *"; color:#047857; }
+.branch-workspace .branch-required-mark { color:#e11d48; font-weight:700; margin-left:.2rem; }
+.branch-workspace .catalog-field :is(input,select,textarea)[aria-invalid="true"],
+.branch-workspace .catalog-field:has([data-server-field-error]) :is(input,select,textarea) {
+  border-color:#e11d48; background-color:#fffafa;
+}
+.branch-workspace .catalog-field [data-server-field-error] { margin-top:.4rem; color:#be123c; line-height:1.5; }
+.branch-workspace .catalog-field:has([data-server-field-error]) [data-delta-select-generated] { border-color:#e11d48; }
+.branch-workspace .branch-status-card [data-branch-status-target="label"] { display:block; }
+.branch-workspace [aria-invalid="true"]:focus-visible { outline:2px solid #e11d48; outline-offset:2px; }
 
 .branch-pagination [data-controller~="delta-select"] { width:90px; flex:0 0 90px; }
 

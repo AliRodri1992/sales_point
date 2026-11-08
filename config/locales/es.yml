@@ -44,7 +44,7 @@ es:
         state: Estado
         street: Calle
       branch:
-        name: Nombre
+        name: Nombre de sucursal
         phone: Teléfono
         status: Estado
       category:
