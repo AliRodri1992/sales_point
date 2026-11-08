@@ -22,6 +22,8 @@ es:
           deactivated: "Plantilla desactivada: %{name}"
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
+      date_filter_invalid: "debe contener una fecha válida"
+      date_filter_before_start: "debe ser igual o posterior a la fecha inicial"
       current_published: "Versión actualmente publicada"
       last_published: "Última versión publicada"
       stale_draft: "El borrador fue modificado en otra sesión. Recarga la página antes de guardar."

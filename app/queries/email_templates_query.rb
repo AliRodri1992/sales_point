@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 class EmailTemplatesQuery
+  attr_reader :date_errors
+
   def initialize(scope, filters = {}, include_archived: false, **filter_keywords)
     @scope = scope
     @filters = filters.merge(filter_keywords)
     @include_archived = include_archived
+    @date_errors = {}
   end
 
   def call
@@ -66,6 +69,11 @@ class EmailTemplatesQuery
   def filter_updated_at(scope)
     from = parsed_date(:updated_from)
     to = parsed_date(:updated_to)
+    if from && to && from > to
+      @date_errors[:updated_to] = :before_start
+    end
+    return scope if @date_errors.any?
+
     scope = scope.where(updated_at: from.beginning_of_day..) if from
     scope = scope.where(updated_at: ..to.end_of_day) if to
     scope
@@ -73,10 +81,16 @@ class EmailTemplatesQuery
 
   def parsed_date(key)
     value = @filters[key].to_s
-    return unless value.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+    return if value.blank?
+
+    unless value.match?(/\A\d{4}-\d{2}-\d{2}\z/)
+      @date_errors[key] = :invalid
+      return
+    end
 
     Date.iso8601(value)
   rescue ArgumentError
+    @date_errors[key] = :invalid
     nil
   end
 end

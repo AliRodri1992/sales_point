@@ -38,6 +38,18 @@ RSpec.describe EmailTemplatesQuery do
     expect(described_class.new(filtered_scope, category: 'security').call).not_to include(global)
   end
 
+  it 'reports impossible date values instead of silently dropping filters' do
+    query = described_class.new(filtered_scope, updated_from: '2026-02-30')
+    expect(query.call).to be_present
+    expect(query.date_errors).to eq(updated_from: :invalid)
+  end
+
+  it 'reports an inverted range on its end-date field' do
+    query = described_class.new(filtered_scope, updated_from: '2026-11-08', updated_to: '2026-11-01')
+    query.call
+    expect(query.date_errors).to eq(updated_to: :before_start)
+  end
+
   it 'filters global, customized and organization-authored templates by origin' do
     expect(described_class.new(filtered_scope, origin: 'system').call).to include(global)
     expect(described_class.new(filtered_scope, origin: 'customized').call).to contain_exactly(customized)

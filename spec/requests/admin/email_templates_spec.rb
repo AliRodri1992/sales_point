@@ -867,6 +867,14 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('form[action*="/compare"]')).to be_present
   end
 
+  it 'shows inline feedback for invalid advanced date filters' do
+    get admin_email_templates_path, params: { updated_from: '2026-02-30', updated_to: '2026-02-01' }
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#email-updated-from-error')).to be_present
+    expect(page.at_css('#updated_from[aria-invalid="true"]')).to be_present
+  end
+
   it 'has matching, nonempty email catalog translations for es, en, and ko' do
     paths = lambda do |hash, prefix = ''|
       hash.flat_map do |key, value|
