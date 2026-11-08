@@ -22,12 +22,12 @@ RSpec.describe 'Concurrent last administrator role removal', :concurrent_db do
             attributes: { system_role_ids: [] }
           )
           barrier.pop
-          writer.save
+          writer.save ? :saved : :rejected
         end
       end
     end
     2.times { barrier << true }
-    expect(workers.map(&:value)).to contain_exactly(true, false)
+    expect(workers.map(&:value)).to contain_exactly(:saved, :rejected)
 
     active_roots = UserRole.active.where(user_id: [first.id, second.id], branch_id: nil)
     expect(active_roots.count).to eq(1)
