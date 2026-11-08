@@ -210,7 +210,7 @@ RSpec.describe 'Admin::Users', type: :request do
       patch admin_user_path(target), params: {
         user: { system_role_ids: ['', normal.id.to_s], username: 'malicious-update' }
       }
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:forbidden)
       expect(target.reload.username).not_to eq('malicious-update')
       expect(target.user_roles.active.exists?(system_role: privileged)).to be(true)
     end

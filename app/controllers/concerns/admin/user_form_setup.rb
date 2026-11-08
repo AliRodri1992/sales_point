@@ -20,6 +20,5 @@ module Admin
       @branches = Users::BranchRoleAssignments.branch_options(user: @user, organization: current_organization)
       @branch_roles = SystemRole.selectable_for(@user).branch.order(:name)
     end
-
   end
 end
