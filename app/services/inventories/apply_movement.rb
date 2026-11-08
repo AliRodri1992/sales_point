@@ -8,6 +8,7 @@ module Inventories
         validate_branch_status!(inventory, kind, amount:, **options)
         inventory.with_lock do
           validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
+          reconcile_adjusted_lot!(inventory:, amount:, kind:, lot: options[:inventory_lot])
           before = inventory.stock
           after_stock = before + amount
           raise ActiveRecord::RecordInvalid, inventory if after_stock.negative?
@@ -73,6 +74,20 @@ module Inventories
         receipt.created_at <= suspension_at && item.created_at <= suspension_at &&
         item.purchase_order_item&.product_id == inventory.product_id &&
         source.purchase_return&.goods_receipt_id == receipt.id
+    end
+
+    def self.reconcile_adjusted_lot!(inventory:, amount:, kind:, lot:)
+      return unless kind.to_s == 'adjustment' && lot
+
+      raise ArgumentError, 'Serialized stock requires serial-level reconciliation' if inventory.product.tracking_serial?
+
+      lot.with_lock do
+        new_quantity = lot.quantity + amount
+        raise ArgumentError, 'Lot quantity cannot become negative' if new_quantity.negative?
+
+        status = new_quantity.zero? ? :depleted : (lot.depleted? ? :available : lot.status)
+        lot.update!(quantity: new_quantity, status:)
+      end
     end
 
     def self.validate_movement!(inventory:, amount:, kind:, lot:)
