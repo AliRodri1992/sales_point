@@ -128,7 +128,7 @@ RSpec.describe 'Email template locale and activity', type: :request do
       delete admin_email_template_path(template)
     end.to change { administrator.notifications.count }.by(1)
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.archived', locale: :en))
-    expect(template.reload.status).to include('archived')
+    expect(template.reload.status).to eq('archived')
     expect(template.versions.find(version.id)).to be_present
     expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('archived')
   end
