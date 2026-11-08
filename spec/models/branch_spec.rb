@@ -116,6 +116,43 @@ RSpec.describe Branch, type: :model do
     expect(BranchStatusTransition.unscoped.find(initial_event.id).to_status).to eq('preparing')
   end
 
+  it 'keeps the branch identifier stable when blank or changed on update' do
+    branch = create(:branch)
+    original = branch.code
+
+    expect(branch.update(code: '')).to be(false)
+    expect(branch.errors[:code]).to be_present
+    expect(branch.reload.code).to eq(original)
+
+    expect(branch.update(name: 'Central Updated')).to be(true)
+    expect(branch.reload.code).to eq(original)
+  end
+
+  it 'requires a complete address after activation and prevents its removal' do
+    branch = create(:branch)
+    address = branch.address
+    address.city = ''
+    expect(branch).not_to be_valid
+    expect(branch.errors[:address]).to be_present
+
+    address.reload
+    expect(address.destroy).to be(false)
+    expect(address.reload.deleted_at).to be_nil
+    expect(address.update(deleted_at: Time.current)).to be(false)
+    expect(address.reload.deleted_at).to be_nil
+  end
+
+  it 'also requires a valid address for a suspended branch' do
+    branch = create(:branch)
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization: branch.organization, user: admin)
+    Branches::TransitionStatus.call(branch:, actor: admin, to: 'suspended', reason: 'Maintenance')
+
+    branch.address.city = ''
+    expect(branch).not_to be_valid
+    expect(branch.errors[:address]).to be_present
+  end
+
   it 'prevents soft deletion while a branch still has assigned users' do
     branch = create(:branch)
     person = create(:user)
