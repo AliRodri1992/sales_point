@@ -36,7 +36,8 @@ module Admin
     def validate_access!(user)
       authorize user, :resend_invitation?
       membership = user.organization_memberships.active.find_by(organization: current_organization)
-      allowed = membership&.account_pending? && current_user.permission?('users.resend_invitation', organization: current_organization)
+      permitted = current_user.permission?('users.resend_invitation', organization: current_organization)
+      allowed = membership&.account_pending? && permitted
       raise Pundit::NotAuthorizedError unless allowed
       raise Pundit::NotAuthorizedError unless Users::InvitationEligibility.ready?(
         user:, organization: current_organization
