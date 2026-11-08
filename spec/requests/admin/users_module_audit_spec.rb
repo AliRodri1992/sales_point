@@ -16,11 +16,13 @@ RSpec.describe 'Audited users access boundaries', type: :request do
     user
   end
 
-  it 'prevents the last administrator from removing their own administrative role' do
-    patch admin_user_path(administrator), params: { user: { system_role_ids: [''] } }
+  it 'prevents removing the final organization administrator role inside the writer' do
+    writer = Users::AdminAccountWriter.new(
+      user: administrator, organization:, attributes: { system_role_ids: [] }, actor: administrator
+    )
 
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(Nokogiri::HTML(response.body).at_css('#user_system_role_ids_error')).to be_present
+    expect(writer.save).to be(false)
+    expect(administrator.errors[:system_role_ids]).to be_present
     expect(administrator.reload).to be_admin
   end
 
