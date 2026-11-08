@@ -93,18 +93,21 @@ export default class extends Controller {
     if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
     clearTimeout(this.timer)
-    this.request?.abort()
-    ++this.sequence
-    this.setLoading(true)
-    this.navigating = true
-    Turbo.visit(link.href, { frame: "branches_list", action: "advance" })
+    this.fetchResults(new URL(link.href), { history: "push", focus: true })
   }
 
   navigated(event) {
-    if (event.target.id !== "branches_list" || !this.navigating) return
-    this.navigating = false
+    if (event.target.id !== "branches_list") return
     this.setLoading(false)
-    this.element.querySelector("#branches-result-title")?.focus({ preventScroll: true })
+  }
+
+  navigationFailed(event) {
+    if (event.target.id !== "branches_list") return
+    if (event.type === "turbo:frame-missing") event.preventDefault()
+    this.setLoading(false)
+    this.errorTarget.hidden = false
+    this.lastUrl ||= new URL(window.location.href)
+    this.lastOptions ||= { history: false }
   }
 
   restore() {
@@ -116,7 +119,10 @@ export default class extends Controller {
     this.fetchResults(url, { history: false, locations: true })
   }
 
-  retry(event) { event.preventDefault(); this.fetchResults(this.lastUrl, this.lastOptions) }
+  retry(event) {
+    event.preventDefault()
+    this.fetchResults(this.lastUrl || new URL(window.location.href), this.lastOptions || { history: false })
+  }
 
   async fetchResults(url, options = {}) {
     this.lastUrl = url
