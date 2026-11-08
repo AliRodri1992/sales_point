@@ -72,6 +72,8 @@ class Branch < ApplicationRecord
 
   def operationally_active? = active? && deleted_at.nil?
 
+  def operational_dependencies? = active_branch_operations?
+
   def self.team_assignments(organization)
     people = OrganizationMembership.accessible.where(organization:).select(:user_id)
     UserRole.active.joins(:user).merge(User.active).where(user_id: people)
