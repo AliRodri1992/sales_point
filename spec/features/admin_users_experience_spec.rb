@@ -35,6 +35,20 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end
 
+  scenario 'removes a filter chip without losing other active filters on mobile' do
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_users_path(q: 'example', status: 'active')
+
+    expect(page).to have_css('#users-active-filters a[data-user-filter]', count: 2)
+    find('#users-active-filters a[data-user-filter="status"]').click
+
+    expect(page).to have_current_path(admin_users_path(q: 'example'))
+    expect(page).to have_css('#users-active-filters a[data-user-filter="q"]')
+    expect(page).to have_no_css('#users-active-filters a[data-user-filter="status"]')
+    expect(page).to have_field('q', with: 'example')
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+  end
+
   scenario 'places the review near submit and shows Deltín without horizontal overflow' do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit new_admin_user_path

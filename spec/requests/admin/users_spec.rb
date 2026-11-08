@@ -37,6 +37,51 @@ RSpec.describe 'Admin::Users', type: :request do
     end
   end
 
+  describe 'Active users filter chips' do
+    it 'shows a removable chip for every applied filter and preserves the other criteria' do
+      get admin_users_path, params: {
+        q: 'staff', user_type: 'employee', status: 'pending',
+        role: system_admin_role.id, sort: 'users.username', direction: 'desc', per_page: 5, page: 2
+      }
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      section = document.at_css('#users-active-filters')
+      expect(section).to be_present
+      chips = section.css('a[data-user-filter]')
+      expect(chips.map { |chip| chip['data-user-filter'] }).to eq(%w[q user_type status role])
+      expect(section.text).to include(
+        'staff',
+        I18n.t('admin.users.user_types.employee'),
+        I18n.t('admin.users.statuses.pending')
+      )
+
+      remove_status = chips.find { |chip| chip['data-user-filter'] == 'status' }
+      query = Rack::Utils.parse_query(URI.parse(remove_status['href']).query)
+      expect(query).to include(
+        'q' => 'staff', 'user_type' => 'employee', 'role' => system_admin_role.id.to_s,
+        'sort' => 'users.username', 'direction' => 'desc', 'per_page' => '5'
+      )
+      expect(query).not_to have_key('status')
+      expect(query).not_to have_key('page')
+      expect(remove_status['data-turbo-frame']).to eq('_top')
+    end
+
+    it 'hides chips without filters and offers removal of all filters' do
+      get admin_users_path
+
+      expect(Nokogiri::HTML(response.body).at_css('#users-active-filters')).to be_nil
+
+      get admin_users_path, params: { q: 'staff', status: 'active', per_page: 10 }
+
+      section = Nokogiri::HTML(response.body).at_css('#users-active-filters')
+      expect(section).to be_present
+      clear = section.css('a').find { |link| link.text.include?(I18n.t('admin.users.ui.clear_active_filters')) }
+      expect(clear).to be_present
+      expect(Rack::Utils.parse_query(URI.parse(clear['href']).query)).to eq('per_page' => '10')
+    end
+  end
+
   describe 'GET /admin/users/new' do
     it 'renders the form with default user settings' do
       get new_admin_user_path
