@@ -1,0 +1,133 @@
+name: Users CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/users-ci.yml'
+      - 'app/controllers/admin/users_controller.rb'
+      - 'app/controllers/admin/user_*'
+      - 'app/controllers/concerns/admin/user_*'
+      - 'app/models/user.rb'
+      - 'app/models/user_*'
+      - 'app/models/concerns/user_*'
+      - 'app/services/users/**'
+      - 'app/views/admin/users/**'
+      - 'app/views/admin/user_statuses/**'
+      - 'app/views/admin/user_restorations/**'
+      - 'app/javascript/controllers/user_access_controller.js'
+      - 'app/javascript/controllers/users_filters_controller.js'
+      - 'config/locales/user_*'
+      - 'config/locales/users.*'
+      - 'config/locales/users_ui.*'
+      - 'spec/models/user_*'
+      - 'spec/models/user_spec.rb'
+      - 'spec/services/users/**'
+      - 'spec/requests/admin/user_*'
+      - 'spec/requests/admin/users*'
+      - 'spec/features/admin_users*'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  users_lint:
+    name: Users module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - name: Lint user administration and access control
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/users_controller.rb \
+            app/controllers/admin/user_statuses_controller.rb \
+            app/controllers/admin/user_restorations_controller.rb \
+            app/controllers/admin/user_invitations_controller.rb \
+            app/controllers/concerns/admin/user_form_setup.rb \
+            app/controllers/concerns/admin/user_listing_sorting.rb \
+            app/models/user.rb app/models/user_role.rb app/models/user_invitation.rb \
+            app/models/concerns/user_admin_access_validations.rb \
+            app/models/concerns/user_effective_roles.rb \
+            app/services/users spec/services/users \
+            spec/models/user_spec.rb spec/models/user_*spec.rb \
+            spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
+            spec/features/admin_users*spec.rb
+
+  users_specs:
+    name: Users module RSpec and browser flows
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Prepare test database
+        run: bin/rails db:prepare
+      - name: Run user lifecycle, authorization, request and browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/user_spec.rb spec/models/user_*spec.rb \
+            spec/services/users \
+            spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
+            spec/features/admin_users*spec.rb
