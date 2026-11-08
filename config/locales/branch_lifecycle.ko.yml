@@ -2,6 +2,8 @@ ko:
   admin:
     branch_lifecycle:
       title: "지점 운영 상태"
+      created_reason: "지점 등록"
+      audit_immutable: "지점 상태 변경 기록은 수정하거나 삭제할 수 없습니다."
       loading_results: "지점 목록을 업데이트하고 있습니다…"
       global_summary: "조직 전체 현황입니다. 필터를 적용해도 이 수치는 변경되지 않습니다."
       initial_hint: "새 지점은 준비 상태로 생성됩니다. 필수 설정을 완료한 후 활성화하세요."
@@ -86,3 +88,7 @@ ko:
         assigned_team: "지점 사용자를 재배정하거나 제거하세요."
         outstanding_stock: "폐쇄 전에 재고를 이동 또는 조정하세요."
         last_active_branch: "운영 중인 조직은 활성 지점을 최소 한 곳 유지해야 합니다."
+  activerecord:
+    attributes:
+      branch:
+        operational_status: "운영 상태"
