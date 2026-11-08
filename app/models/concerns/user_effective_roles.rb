@@ -13,15 +13,15 @@ module UserEffectiveRoles
   end
 
   def effective_permission_codes(organization: CurrentOrganizationAccess.organization)
-    effective_permission_scope(organization:).where(permissions: { status: 'active' })
-                              .distinct.pluck('permissions.code').to_set
+    scope = effective_permission_scope(organization:)
+    scope.where(permissions: { status: 'active' }).distinct.pluck('permissions.code').to_set
   end
 
   private
 
   def effective_permission_scope(organization:)
-    effective_role_assignments(organization:).joins(system_role: :permissions)
-                              .where(system_role_permissions: { deleted_at: nil })
+    assignments = effective_role_assignments(organization:)
+    assignments.joins(system_role: :permissions).where(system_role_permissions: { deleted_at: nil })
   end
 
   def effective_role_assignments(organization:)

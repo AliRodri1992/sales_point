@@ -15,10 +15,7 @@ class UserInvitation < ApplicationRecord
 
   def self.issue!(user:, organization:)
     user.with_lock do
-      raise ArgumentError, 'User must be pending' unless (user.pending? || user.active?) && user.deleted_at.nil?
-      raise ArgumentError, 'Membership required' unless pending_membership?(user:, organization:)
-      raise ArgumentError, 'Role required' unless Users::InvitationEligibility.roles_ready?(user:, organization:)
-
+      validate_issuance!(user:, organization:)
       user.user_invitations.pending.where(organization:).find_each do |old|
         old.update!(revoked_at: Time.current)
       end
@@ -27,6 +24,13 @@ class UserInvitation < ApplicationRecord
               expires_at: EXPIRATION.from_now).tap { |record| record.raw_token = token }
     end
   end
+
+  def self.validate_issuance!(user:, organization:)
+    raise ArgumentError, 'User must be pending' unless (user.pending? || user.active?) && user.deleted_at.nil?
+    raise ArgumentError, 'Membership required' unless pending_membership?(user:, organization:)
+    raise ArgumentError, 'Role required' unless Users::InvitationEligibility.roles_ready?(user:, organization:)
+  end
+  private_class_method :validate_issuance!
 
   def self.pending_membership?(user:, organization:)
     organization.active? && organization.deleted_at.nil? &&
@@ -52,10 +56,7 @@ class UserInvitation < ApplicationRecord
       lock!
       return false unless user.pending? && usable?
 
-      digest = Digest::SHA256.hexdigest(token.to_s)
-      return false unless ActiveSupport::SecurityUtils.secure_compare(token_digest, digest)
-
-      return false unless acceptable_password?(password)
+      return false unless token_matches?(token) && acceptable_password?(password)
 
       activate_account?(password, password_confirmation)
     end
@@ -67,16 +68,24 @@ class UserInvitation < ApplicationRecord
       lock!
       return false unless signed_in_user&.id == user.id && user.active? && usable?
 
-      digest = Digest::SHA256.hexdigest(token.to_s)
-      return false unless ActiveSupport::SecurityUtils.secure_compare(token_digest, digest)
+      return false unless token_matches?(token)
 
-      user.organization_memberships.active.find_by!(organization:).update!(account_status: :active)
-      update!(accepted_at: Time.current)
+      activate_existing_membership!
       true
     end
   end
 
   private
+
+  def token_matches?(token)
+    digest = Digest::SHA256.hexdigest(token.to_s)
+    ActiveSupport::SecurityUtils.secure_compare(token_digest, digest)
+  end
+
+  def activate_existing_membership!
+    user.organization_memberships.active.find_by!(organization:).update!(account_status: :active)
+    update!(accepted_at: Time.current)
+  end
 
   def activate_account?(password, confirmation)
     user.password = password
