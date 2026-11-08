@@ -114,18 +114,26 @@ module Users
         raise ActiveRecord::RecordInvalid, @user unless last_admin_role_safe?(role_ids)
 
         previous_access = active_assignment_pairs
-        @email_changed = !created && @user.saved_change_to_email? && @user.pending?
-        UserInvitation.revoke_for!(@user) if @email_changed
-        if created
-          @user.organization_memberships.create!(
-            organization: @organization, status: :active, account_status: :pending
-          )
-        end
+        handle_account_membership(created)
         sync_system_roles!(role_ids) unless role_ids.nil?
         branch_roles.apply!
-        @access_changed = !created && previous_access != active_assignment_pairs
-        @user.update!(session_revoked_at: Time.current) if @access_changed
+        revoke_changed_access!(created, previous_access)
       end
+    end
+
+    def handle_account_membership(created)
+      @email_changed = !created && @user.saved_change_to_email? && @user.pending?
+      UserInvitation.revoke_for!(@user) if @email_changed
+      return unless created
+
+      @user.organization_memberships.create!(
+        organization: @organization, status: :active, account_status: :pending
+      )
+    end
+
+    def revoke_changed_access!(created, previous_access)
+      @access_changed = !created && previous_access != active_assignment_pairs
+      @user.update!(session_revoked_at: Time.current) if @access_changed
     end
 
     def active_assignment_pairs
