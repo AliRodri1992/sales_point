@@ -10,6 +10,10 @@ module Admin
       direction = self.class::SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
       return scope.order(column => direction) unless column == 'users.status'
 
+      order_by_membership_status(scope, direction)
+    end
+
+    def order_by_membership_status(scope, direction)
       scope.joins(:organization_memberships)
            .where(organization_memberships: { organization_id: current_organization.id,
                                               status: 'active', deleted_at: nil })
