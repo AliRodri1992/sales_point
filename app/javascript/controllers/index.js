@@ -212,6 +212,9 @@ application.register("product-upload", ProductUploadController)
 import BranchDirectoryController from "./branch_directory_controller"
 application.register("branch-directory", BranchDirectoryController)
 
+import BranchTransitionController from "./branch_transition_controller"
+application.register("branch-transition", BranchTransitionController)
+
 import BranchAddressController from "./branch_address_controller"
 application.register("branch-address", BranchAddressController)
 
