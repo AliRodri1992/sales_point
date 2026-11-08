@@ -526,9 +526,11 @@ RSpec.describe 'Admin::Branches', type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
       document = Nokogiri::HTML(response.body)
-      %w[branch_name branch_contact_email address_street address_city address_country].each do |id|
+      %w[branch_name branch_contact_email address_street address_city address_country address_postal_code].each do |id|
         expect(document.at_css("##{id}_error")).to be_present
       end
+      expect(document.at_css('.catalog-error')).to be_nil
+      expect(document.text).not_to include(I18n.t('admin.catalog_design.fix_errors'))
     end
 
     it 'rejects removing a branch with assigned users' do

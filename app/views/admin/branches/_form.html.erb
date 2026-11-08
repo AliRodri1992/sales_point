@@ -12,7 +12,6 @@
   </header>
   <%= form_with model: @branch, url: @branch.persisted? ? admin_branch_path(@branch, branch_directory_parameters) : admin_branches_path(branch_directory_parameters), class: 'catalog-layout branch-form-layout', html: { novalidate: true }, data: { turbo: false } do |form| %>
     <div class="catalog-main branch-form-main">
-      <%= catalog_errors(@branch) %>
       <nav class="catalog-nav branch-form-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><% %w[identity contact location notes].each do |section| %><a href="#branch-<%= section %>"><%= t("admin.branch_workspace.#{section}") %></a><% end %></nav>
       <section class="catalog-card branch-form-section" id="branch-identity"><%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.identity_hint'), icon: 'building-storefront') %><div class="catalog-card-body catalog-fields">
         <div class="catalog-full"><%= catalog_field(form, :name, label: branch_required_label(t('admin.branches.form.fields.name')), maxlength: 150, autocomplete: 'organization', aria: branch_field_aria(@branch, :name, required: true)) %></div>
