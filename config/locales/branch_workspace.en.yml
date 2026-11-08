@@ -62,7 +62,7 @@
         "no_matches_hint": "Try another search or remove a filter to widen the results.",
         "form_intro": "Organize branch details to make contact and daily operations easier.",
         "identity": "Identification",
-        "identity_hint": "A recognizable name and an optional code for your operations.",
+        "identity_hint": "Recognizable name and an automatically generated internal code.",
         "code": "Internal code",
         "code_placeholder": "Assigned when saved",
         "code_hint": "Automatically generated when the branch is saved. It cannot be edited.",
@@ -70,7 +70,7 @@
         "active_team_block": "cannot be deactivated while users are assigned. Reassign them first.",
         "last_active_block": "cannot be deactivated because this is the last active branch.",
         "delete_team_block": "The branch cannot be deleted while users are assigned.",
-        "status_hint": "Available for operations and branch selection. Deactivation preserves its history.",
+        "status_hint": "Branch operations depend on its lifecycle status. Suspension preserves data and history.",
         "contact_hint": "Contact channels for this location, separate from those of your organization.",
         "contact_email": "Contact email",
         "email_hint": "For inquiries and coordination with this location.",
@@ -85,7 +85,7 @@
         "setup_identity": "A recognizable name and a consistent code.",
         "setup_contact": "At least one contact channel, when available.",
         "setup_location": "A complete address and arrival directions.",
-        "optional_hint": "Code, mobile number, email and notes are optional. You can complete them later.",
+        "optional_hint": "Mobile number, email and notes are optional. The code is generated on save.",
         "history_title": "Preserving history",
         "detail_hint": "Identifiers, assigned team and registration dates.",
         "assigned_team": "Assigned team",
@@ -104,7 +104,7 @@
         "remove_confirmation": "Removing this branch hides it from the active directory and preserves its history. Branches with operations or assigned users cannot be removed.",
         "remove_title": "Remove branch?",
         "status_transition_hint": "Reassign users, transfer stock, and close pending orders and terminals. At least one active branch must remain.",
-        "history_hint": "Deactivating a branch preserves its data. Branches with operational records must be deactivated instead of deleted."
+        "history_hint": "Closure is permanent and preserves history; suspension pauses new operations."
       }
     },
     "activerecord": {
