@@ -16,12 +16,8 @@ module Users
       prepare_new_account if @user.new_record?
       role_ids = requested_role_ids
       branch_roles = branch_role_editor
-      return invalid_role_error?(:system_role_ids) if role_ids == :invalid
-      return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
-
-      prepare_admin_access_validation(role_ids, branch_roles)
-      return false unless @user.valid?
-      return false unless tenant_safe_update?(role_ids)
+      return false unless valid_access_selection?(role_ids, branch_roles)
+      return false unless @user.valid? && tenant_safe_update?(role_ids)
 
       persist!(role_ids, branch_roles)
       Users::SessionRevoker.call(@user) if @access_changed
@@ -84,6 +80,14 @@ module Users
       )
     end
 
+    def valid_access_selection?(role_ids, branch_roles)
+      return invalid_role_error?(:system_role_ids) if role_ids == :invalid
+      return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
+
+      prepare_admin_access_validation(role_ids, branch_roles)
+      true
+    end
+
     def invalid_role_error?(attribute)
       @user.valid?
       @user.errors.add(attribute, :invalid)
@@ -97,15 +101,16 @@ module Users
       field = %i[email username user_type theme language_id].find do |attribute|
         @user.will_save_change_to_attribute?(attribute)
       end
-      if field
-        @user.errors.add(field, :shared_account)
-        return false
-      end
+      return shared_account_error(field) if field
 
       original_ids = @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
       return true if role_ids.nil? || role_ids.sort == original_ids.sort
 
-      @user.errors.add(:system_role_ids, :shared_account)
+      shared_account_error(:system_role_ids)
+    end
+
+    def shared_account_error(attribute)
+      @user.errors.add(attribute, :shared_account)
       false
     end
 
