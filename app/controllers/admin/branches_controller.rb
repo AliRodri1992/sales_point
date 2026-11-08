@@ -92,6 +92,9 @@ module Admin
         @branch.build_address unless @branch.address
         render :edit, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                  alert: e.record.errors.full_messages.to_sentence, status: :see_other
     end
 
     def destroy
@@ -101,6 +104,9 @@ module Admin
                            alert: @branch.errors.full_messages.to_sentence, status: :see_other
       end
       render_destroyed_branch
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                  alert: e.record.errors.full_messages.to_sentence, status: :see_other
     end
 
     private
