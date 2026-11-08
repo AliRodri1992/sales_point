@@ -19,7 +19,7 @@ module Admin
     SORTABLE_COLUMNS = %w[
       branches.name
       addresses.street
-      branches.status
+      branches.operational_status
       branches.code
       branches.created_at
     ].freeze
