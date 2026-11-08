@@ -311,6 +311,20 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'validates the test recipient with ActiveModel and shows an inline field error' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+
+    post send_test_admin_email_template_path(template), params: { email: '' }
+    expect(response).to have_http_status(:unprocessable_content)
+    page = Nokogiri::HTML(response.body)
+    error = page.at_css('#email_templates_test_recipient_email_error')
+    expect(error).to be_present
+    expect(error.text).to start_with(I18n.t('admin.email_templates.test_recipient'))
+    expect(page.at_css("form[novalidate]")).to be_present
+    expect(template.audits.where(action: 'test_sent')).not_to exist
+  end
+
   it 'shows version history and reuses the current editable draft' do
     template = create_template(organization:)
     get admin_email_template_path(template)

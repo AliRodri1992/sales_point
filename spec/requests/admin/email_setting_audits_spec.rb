@@ -76,6 +76,28 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSettingAudit.where(setting_type: 'branding', organization:).count).to eq(1)
     expect(administrator.notifications.count).to eq(1)
   end
+  it 'hides audit history without the dedicated permission' do
+    EmailSettingAudit.create!(organization:, actor: administrator, setting_type: 'sender',
+                              changeset: { 'display_name' => %w[Before After] })
+    permission = Permission.find_by!(code: 'email_setting_audits.view')
+    SystemRolePermission.where(system_role: role, permission:).destroy_all
+
+    [edit_admin_email_sender_settings_path, edit_admin_email_branding_settings_path].each do |path|
+      get path
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).at_css('#email-settings-audit-title')).to be_nil
+    end
+  end
+
+  it 'rejects unauthorized writes to sender and branding settings' do
+    role.system_role_permissions.destroy_all
+
+    patch admin_email_sender_settings_path, params: { email_sender_setting: { display_name: 'Blocked' } }
+    expect(response).to have_http_status(:forbidden)
+    patch admin_email_branding_settings_path, params: { email_branding_setting: { display_name: 'Blocked' } }
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'does not display audit history from another organization' do
     foreign = create(:organization)
     EmailSettingAudit.create!(

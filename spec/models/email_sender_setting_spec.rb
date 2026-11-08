@@ -14,6 +14,12 @@ RSpec.describe EmailSenderSetting, type: :model do
     expect(sender.reply_to).to eq('help@example.com')
   end
 
+  it 'rejects a missing sender address on the model' do
+    sender = described_class.new(display_name: 'Shop', default_locale: 'es', from_address: ' ')
+    expect(sender).not_to be_valid
+    expect(sender.errors[:from_address]).to be_present
+  end
+
   it 'rejects invalid addresses, excessively long names and unsupported locales' do
     sender = described_class.new(
       display_name: 'x' * 151, from_address: 'invalid-address',

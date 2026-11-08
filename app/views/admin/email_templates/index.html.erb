@@ -6,11 +6,11 @@
       <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500"><%= t('admin.email_templates.intro') %></p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
-      <% if current_user.permission?('email_branding.manage') %>
+      <% if policy(EmailBrandingSetting.new(organization: current_organization)).edit? %>
         <%= link_to t('admin.email_templates.branding'), edit_admin_email_branding_settings_path,
                     class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
       <% end %>
-      <% if current_user.permission?('email_settings.manage') %>
+      <% if policy(EmailSenderSetting.new(organization: current_organization)).edit? %>
         <%= link_to t('admin.email_templates.sender'), edit_admin_email_sender_settings_path,
                     class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
       <% end %>

@@ -24,6 +24,7 @@ RSpec.describe EmailTemplateVersion, type: :model do
 
   it 'restores a previous published version as a new draft' do
     published = template.new_draft!(actor: nil)
+    published.update!(preheader: 'Important message preview')
     published.publish!(actor: nil)
     draft = template.new_draft!(actor: nil)
 
@@ -31,6 +32,14 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(draft.status).to eq('draft')
     expect(draft.subject).to eq(published.subject)
     expect(draft.preheader).to eq(published.preheader)
+  end
+
+  it 'rejects content that exceeds model limits even without HTML5 validation' do
+    version = template.new_draft!(actor: nil)
+    expect(version.update(subject: 'x' * 251)).to be(false)
+    expect(version.errors[:subject]).to be_present
+    expect(version.update(preheader: 'x' * 251)).to be(false)
+    expect(version.errors[:preheader]).to be_present
   end
 
   it 'normalizes editor variable lists' do
