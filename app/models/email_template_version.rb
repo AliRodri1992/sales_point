@@ -64,9 +64,9 @@ class EmailTemplateVersion < ApplicationRecord
   def variables_are_safe
     return errors.add(:allowed_variables, :invalid) unless allowed_variables.is_a?(Array)
 
-    allowed_variables.each do |variable|
-      errors.add(:allowed_variables, :invalid) unless EmailTemplates::Renderer::KNOWN_VARIABLES.include?(variable)
-    end
+    return if allowed_variables.all? { |variable| EmailTemplates::Renderer::KNOWN_VARIABLES.include?(variable) }
+
+    errors.add(:allowed_variables, :invalid)
   end
 
   def declared_variables

@@ -49,6 +49,13 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(version.allowed_variables_csv).to eq('recipient_name, organization_name')
   end
 
+  it 'reports an invalid variables list once even with several unknown entries' do
+    version = template.new_draft!(actor: nil)
+
+    expect(version.update(allowed_variables: %w[unknown_one unknown_two unknown_three])).to be(false)
+    expect(version.errors[:allowed_variables].size).to eq(1)
+  end
+
   it 'rejects malformed or unknown allowed variables' do
     version = template.new_draft!(actor: nil)
     expect(version.update(allowed_variables: 'recipient_name')).to be(false)

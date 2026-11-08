@@ -14,6 +14,25 @@ RSpec.describe EmailBrandingSetting, type: :model do
     end
   end
 
+  it 'shows one model validation message for each invalid URL' do
+    setting = described_class.new(
+      display_name: 'Shop', support_url: 'https://',
+      privacy_url: 'http://example.com'
+    )
+
+    expect(setting).not_to be_valid
+    expect(setting.errors[:support_url].size).to eq(1)
+    expect(setting.errors[:privacy_url].size).to eq(1)
+  end
+
+  it 'does not repeat presence and format errors for empty required colors' do
+    setting = described_class.new(display_name: 'Shop', primary_color: '', secondary_color: nil)
+
+    expect(setting).not_to be_valid
+    expect(setting.errors[:primary_color].size).to eq(1)
+    expect(setting.errors[:secondary_color].size).to eq(1)
+  end
+
   it 'requires HTTPS URLs with actual hosts and does not accept credentials' do
     setting = described_class.new(
       display_name: 'Shop', support_url: 'https://',

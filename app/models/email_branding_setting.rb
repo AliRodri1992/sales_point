@@ -7,11 +7,10 @@ class EmailBrandingSetting < ApplicationRecord
   validates :display_name, presence: true, length: { maximum: 150 }
   validates :primary_color, :secondary_color, :button_color, presence: true
   validates :primary_color, :secondary_color, :button_color,
-            format: { with: /\A#[0-9a-fA-F]{6}\z/ }
+            format: { with: /\A#[0-9a-fA-F]{6}\z/ }, allow_blank: true
   validates :support_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validates :support_email, length: { maximum: 254 }
-  validates :support_url, :privacy_url, format: { with: %r{\Ahttps://[^\s]+\z} }, allow_blank: true
-  validates :support_url, :privacy_url, length: { maximum: 2048 }
+   validates :support_url, :privacy_url, length: { maximum: 2048 }
   validates :footer_text, length: { maximum: 2000 }
   validate :safe_logo
   validate :accessible_button_color
@@ -38,10 +37,10 @@ class EmailBrandingSetting < ApplicationRecord
     %i[support_url privacy_url].each do |attribute|
       value = public_send(attribute)
       next if value.blank?
-      next unless value.start_with?('https://')
 
       uri = URI.parse(value)
-      valid = uri.is_a?(URI::HTTPS) && uri.host.present? && uri.userinfo.nil?
+      valid = uri.is_a?(URI::HTTPS) && uri.host.present? && uri.userinfo.nil? &&
+              value.match?(%r{\Ahttps://[^\s]+\z})
       errors.add(attribute, :invalid) unless valid
     rescue URI::InvalidURIError
       errors.add(attribute, :invalid)
