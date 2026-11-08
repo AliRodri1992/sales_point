@@ -968,7 +968,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(administrator.reload.permission?('email_templates.archive')).to be(false)
     expect(EmailTemplatePolicy.new(administrator, own).destroy?).to be(false)
     delete admin_email_template_path(own)
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to have_http_status(:forbidden), "Redirected to: #{response.location}"
     expect(own.reload.status).to eq('draft')
   end
 
