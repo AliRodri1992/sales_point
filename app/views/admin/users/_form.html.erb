@@ -236,7 +236,7 @@
             <div class="relative" data-controller="delta-select">
               <%= form.select :theme,
                               @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize), theme[:id]] },
-                              { include_blank: true },
+                              {},
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
                               aria: { invalid: @user.errors[:theme].any? } %>
             </div>
