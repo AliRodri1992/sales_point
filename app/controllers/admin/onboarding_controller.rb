@@ -84,7 +84,7 @@ module Admin
 
     def load_business
       @branch = active_branch || Branch.new(organization_id: @organization.id,
-                                            name: t('registration.initial_branch_name'), status: true)
+                                            name: t('registration.initial_branch_name'), operational_status: 'preparing')
       @settings = @organization.organization_settings.first ||
                   OrganizationSetting.new(organization_id: @organization.id, payment_method: :cash)
       @terminals = terminals_for(@branch)
@@ -98,7 +98,7 @@ module Admin
     end
 
     def active_branch
-      @organization.branches.not_deleted.where(status: true).first ||
+      @organization.branches.not_deleted.where(operational_status: 'active').first ||
         @organization.branches.not_deleted.first
     end
 
