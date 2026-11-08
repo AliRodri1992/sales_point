@@ -21,6 +21,14 @@ RSpec.describe EmailTemplates::Branding do
     expect(Rails.root.join('app/assets/images/delta-pos-email-logo.png')).to exist
   end
 
+  it 'uses the local HTTP asset host while editing email previews in development' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+    allow(Rails.application.config.action_mailer).to receive(:asset_host).and_return('http://localhost:3000')
+
+    expect(described_class.platform_logo_url).to start_with('http://localhost:3000/')
+    expect(described_class.platform_logo_url).to include('delta-pos-email-logo')
+  end
+
   it 'combines local identity with global contact fallbacks' do
     EmailBrandingSetting.create!(
       display_name: 'Platform', support_email: 'help@platform.example', support_url: 'https://platform.example/help'
