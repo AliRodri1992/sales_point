@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Branch < ApplicationRecord
+  has_paper_trail only: %i[name code contact_email operational_status deleted_at]
   include HasPolymorphicNotes
 
   # Only the initial placeholder branch created during account registration can
@@ -30,6 +31,7 @@ class Branch < ApplicationRecord
   normalizes :code, with: ->(value) { value.strip.upcase.presence }
   normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
   normalizes :notes, with: ->(value) { value.strip.presence }
+  validates :code, presence: true, on: %i[create update], unless: :registration_bootstrap
   validates :code, length: { maximum: 30 }, format: { with: /\A[A-Z0-9_-]+\z/ },
                    uniqueness: { scope: :organization_id, case_sensitive: false,
                                  conditions: -> { where(deleted_at: nil) } }, allow_nil: true
@@ -52,6 +54,7 @@ class Branch < ApplicationRecord
             on: %i[create update]
   validates :status, inclusion: { in: [true, false] }, on: %i[create update]
   validates :address, presence: true, on: :create, unless: :registration_bootstrap
+  validate :operational_address_required, if: :operational_address_required?
   validate :protect_branch_deactivation, if: :deactivating?
 
   validates :name,
@@ -72,7 +75,15 @@ class Branch < ApplicationRecord
   private
 
   def assign_branch_code
-    self.code = "BR-#{SecureRandom.hex(6).upcase}" if code.blank?
+    self.code = "BR-#{SecureRandom.hex(6).upcase}" if new_record? && code.blank?
+  end
+
+  def operational_address_required?
+    persisted? && !closed? && !preparing? && deleted_at.nil?
+  end
+
+  def operational_address_required
+    errors.add(:address, :invalid) unless address && !address.marked_for_destruction? && address.valid?
   end
 
   def deactivating?
