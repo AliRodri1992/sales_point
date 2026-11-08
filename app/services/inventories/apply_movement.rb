@@ -59,8 +59,12 @@ module Inventories
       receipt = item&.goods_receipt
       suspension_at = inventory.branch.branch_status_transitions
                                .where(to_status: 'suspended').order(created_at: :desc).pick(:created_at)
-      receipt && suspension_at && receipt.branch_id == inventory.branch_id &&
-        receipt.created_at <= suspension_at && item.purchase_order_item&.product_id == inventory.product_id
+      return false unless receipt && item.persisted? && suspension_at
+
+      receipt.branch_id == inventory.branch_id &&
+        receipt.created_at <= suspension_at && item.created_at <= suspension_at &&
+        item.purchase_order_item&.product_id == inventory.product_id &&
+        source.purchase_return&.goods_receipt_id == receipt.id
     end
 
     def self.validate_movement!(inventory:, amount:, kind:, lot:)
