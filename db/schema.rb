@@ -95,6 +95,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
     t.check_constraint "purpose::text = ANY (ARRAY['general'::character varying, 'fiscal'::character varying, 'commercial'::character varying, 'delivery'::character varying]::text[])", name: "chk_addresses_purpose"
   end
 
+  create_table "branch_status_transitions", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.bigint "changed_by_id"
+    t.string "from_status"
+    t.string "to_status", null: false
+    t.text "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id", "created_at"], name: "idx_branch_status_transitions_chronological"
+    t.index ["branch_id"], name: "index_branch_status_transitions_on_branch_id"
+    t.index ["changed_by_id"], name: "index_branch_status_transitions_on_changed_by_id"
+  end
+
   create_table "branches", force: :cascade do |t|
     t.string "name"
     t.string "address"
@@ -106,13 +119,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
     t.bigint "organization_id"
     t.string "code", limit: 30
     t.string "contact_email", limit: 254
+    t.string "operational_status", default: "preparing", null: false
     t.index "organization_id, lower((code)::text)", name: "idx_branches_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (code IS NOT NULL))"
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
+    t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
     t.index ["organization_id"], name: "index_branches_on_organization_id"
     t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
     t.check_constraint "operational_status IN (\'preparing\', \'active\', \'suspended\', \'closed\')", name: "branches_operational_status_valid"
     t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
+    t.check_constraint "operational_status::text = ANY (ARRAY['preparing'::character varying, 'active'::character varying, 'suspended'::character varying, 'closed'::character varying]::text[])", name: "branches_operational_status_valid"
   end
 
   create_table "branch_status_transitions", force: :cascade do |t|
@@ -2389,6 +2405,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "countries"
+  add_foreign_key "branch_status_transitions", "branches"
+  add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
   add_foreign_key "branches", "organizations"
   add_foreign_key "branch_status_transitions", "branches"
   add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
