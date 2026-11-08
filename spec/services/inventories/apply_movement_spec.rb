@@ -55,6 +55,22 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.reload.stock).to eq(10)
   end
 
+  it 'permits stock reconciliation but blocks inbound transfers while suspended' do
+    branch = create(:branch, status: false)
+    product = create(:product, organization: branch.organization)
+    inventory = create(:inventory, branch:, organization: branch.organization,
+                                   product:, stock: 5)
+
+    expect do
+      described_class.call(inventory:, quantity: 2, kind: 'transfer_in')
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(5)
+
+    adjustment = described_class.call(inventory:, quantity: -1, kind: 'adjustment')
+    expect(adjustment.kind).to eq('adjustment')
+    expect(inventory.reload.stock).to eq(4)
+  end
+
   it 'blocks a sale from a suspended branch without changing stock' do
     office = create(:branch, status: false)
     item = create(:product, organization: office.organization)
