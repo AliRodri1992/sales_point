@@ -379,6 +379,29 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
   end
 
+  describe 'branch change history after soft deletion' do
+    it 'retains phone and note changes after the records are retired' do
+      branch = create(:branch, organization:)
+      phone = branch.phones.create!(
+        organization:, kind: 'mobile', primary: true,
+        number: '+525512345678', country_code: 'MX'
+      )
+      note = branch.note_entries.create!(
+        organization:, kind: 'general', body: 'Original operations note'
+      )
+      phone.update!(deleted_at: Time.current)
+      note.update!(deleted_at: Time.current)
+
+      get admin_branch_path(branch)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.branch_lifecycle.changes_title'))
+      expect(response.body).to include(I18n.t('admin.branch_lifecycle.audit_removed'))
+      expect(response.body).to include('Original operations note')
+      expect(response.body).to include('+525512345678')
+    end
+  end
+
   describe 'GET /admin/branches/:id/edit' do
     it 'renders the edit branch screen for a system administrator' do
       branch = create(:branch, organization:, name: 'Sucursal Centro')
