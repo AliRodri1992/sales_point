@@ -4,6 +4,18 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe '#admin?' do
+    it 'ignores revoked administrative assignments' do
+      role = create(:system_role, :system, code: 'administrator')
+      member = create(:user)
+      assignment = create(:user_role, user: member, system_role: role)
+
+      expect(member.admin?).to be(true)
+      assignment.update!(deleted_at: Time.current)
+      expect(member.reload.admin?).to be(false)
+    end
+  end
+
+  describe '#admin?' do
     let(:user) { create(:user) }
 
     it 'recognizes administrator' do

@@ -132,6 +132,17 @@ RSpec.describe 'Admin::Users', type: :request do
     end
   end
 
+  it 'forbids creation when the operator only has a revoked administrator role' do
+    admin_user.user_roles.where(system_role: system_admin_role).update_all(deleted_at: Time.current)
+
+    get new_admin_user_path
+    expect(response).to have_http_status(:forbidden)
+
+    post admin_users_path, params: { user: { email: 'blocked@example.com', user_type: 'employee' } }
+    expect(response).to have_http_status(:forbidden)
+    expect(User.exists?(email: 'blocked@example.com')).to be(false)
+  end
+
   describe 'POST /admin/users' do
     let(:valid_params) do
       {

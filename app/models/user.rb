@@ -74,7 +74,9 @@ class User < ApplicationRecord
   end
 
   def admin?
-    system_roles.active.exists?(code: %w[super_admin administrator])
+    user_roles.active.joins(:system_role)
+              .where(branch_id: nil, system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
+              .exists?
   end
 
   def role?(role_code, branch: nil)
