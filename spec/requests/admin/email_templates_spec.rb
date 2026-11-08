@@ -486,6 +486,21 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response.body).to include(I18n.t('admin.email_templates.compare_changed'))
   end
 
+  it 'disables historical restore actions while an editable draft exists' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    template.new_draft!(actor: administrator)
+
+    get admin_email_template_path(template)
+
+    document = Nokogiri::HTML(response.body)
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('button[disabled][title]')).to be_present
+    expect(document.at_css("form[action='#{restore_admin_email_template_path(template, version_id: published.id)}']"))
+      .to be_nil
+  end
+
   it 'preserves in-progress draft content when restoring a published version' do
     template = create_template(organization:)
     published = template.new_draft!(actor: administrator)
