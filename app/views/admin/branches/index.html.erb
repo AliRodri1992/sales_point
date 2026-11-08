@@ -23,6 +23,17 @@
       <button type="button" class="ml-2 font-semibold underline" data-action="branch-directory#retry"><%= t('admin.skeleton_loading.retry') %></button>
     </div>
     <div class="branch-loading-line" aria-hidden="true"></div>
+    <div class="branch-loading-skeleton" data-branch-directory-target="loading"
+         role="status" aria-live="polite" hidden>
+      <span class="sr-only"><%= t('admin.branch_lifecycle.loading_results') %></span>
+      <div aria-hidden="true">
+        <% 5.times do %>
+          <div class="branch-loading-skeleton-row">
+            <% 4.times do %><div class="branch-loading-skeleton-line"></div><% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
     <%= turbo_frame_tag 'branches_list' do %>
       <%= render 'list', branches: @branches, total_count: @total_count, total_pages: @total_pages, current_page: @current_page, per_page: @per_page, can_manage_branches: @can_manage_branches %>
     <% end %>
