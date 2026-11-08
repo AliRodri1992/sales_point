@@ -28,6 +28,7 @@ class PurchaseOrder < ApplicationRecord
   validates :freight_amount, :insurance_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :exchange_rate, numericality: { greater_than: 0 }
   validate :consistent_organization
+  validate :branch_must_be_operational, on: :create
   validate :available_supplier_for_new_order, on: :create
   before_validation :set_code, on: :create
   around_create :serialize_supplier_creation
@@ -79,6 +80,10 @@ class PurchaseOrder < ApplicationRecord
 
   def available_supplier_for_new_order
     errors.add(:supplier, :invalid) unless supplier&.active? && supplier.deleted_at.nil?
+  end
+
+  def branch_must_be_operational
+    errors.add(:branch, :invalid) unless branch&.operationally_active?
   end
 
   def validate_purchase_branch
