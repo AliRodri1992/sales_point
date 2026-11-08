@@ -2,17 +2,22 @@ import { Controller } from "@hotwired/stimulus"
 import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
-  static targets = ["form", "error"]
+  static targets = ["form", "error", "loading"]
 
   connect() {
     this.sequence = 0
     this.composing = false
-    this.element.setAttribute("aria-busy", "false")
+    this.setLoading(false)
   }
 
   disconnect() {
     clearTimeout(this.timer)
     this.request?.abort()
+  }
+
+  setLoading(loading) {
+    this.element.setAttribute("aria-busy", String(loading))
+    if (this.hasLoadingTarget) this.loadingTarget.hidden = !loading
   }
 
   compositionStart() { this.composing = true }
@@ -90,7 +95,7 @@ export default class extends Controller {
     clearTimeout(this.timer)
     this.request?.abort()
     ++this.sequence
-    this.element.setAttribute("aria-busy", "false")
+    this.setLoading(true)
     this.navigating = true
     Turbo.visit(link.href, { frame: "branches_list", action: "advance" })
   }
@@ -98,6 +103,7 @@ export default class extends Controller {
   navigated(event) {
     if (event.target.id !== "branches_list" || !this.navigating) return
     this.navigating = false
+    this.setLoading(false)
     this.element.querySelector("#branches-result-title")?.focus({ preventScroll: true })
   }
 
@@ -120,7 +126,7 @@ export default class extends Controller {
     this.request = request
     const sequence = ++this.sequence
     this.errorTarget.hidden = true
-    this.element.setAttribute("aria-busy", "true")
+    this.setLoading(true)
     try {
       const response = await fetch(url, {
         headers: { Accept: "text/vnd.turbo-stream.html", "X-Branch-Locations": options.locations ? "1" : "0" },
@@ -136,7 +142,7 @@ export default class extends Controller {
     } catch (error) {
       if (error.name !== "AbortError" && sequence === this.sequence) this.errorTarget.hidden = false
     } finally {
-      if (sequence === this.sequence) this.element.setAttribute("aria-busy", "false")
+      if (sequence === this.sequence) this.setLoading(false)
     }
   }
 }
