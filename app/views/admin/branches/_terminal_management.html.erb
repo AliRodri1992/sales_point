@@ -1,0 +1,57 @@
+<section class="mt-5 border-t border-slate-200 pt-4" aria-labelledby="branch-terminals-title">
+  <h3 id="branch-terminals-title" class="font-jakarta text-sm font-bold text-slate-800">
+    <%= t('admin.branch_lifecycle.terminals_title') %>
+  </h3>
+  <p class="mt-1 text-xs text-slate-600"><%= t('admin.branch_lifecycle.terminals_hint') %></p>
+
+  <% if @branch.terminals.any? %>
+    <ul class="mt-3 space-y-2">
+      <% @branch.terminals.order(:id).each do |terminal| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 p-3">
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-slate-800"><%= terminal.name %></p>
+            <p class="text-xs text-slate-600">
+              <%= terminal.code %> · <%= t("admin.branch_lifecycle.terminal_statuses.#{terminal.status}") %>
+            </p>
+          </div>
+          <% if @branch.active? || (terminal.active? && !@branch.closed?) %>
+            <% destination = terminal.active? ? 'inactive' : 'active' %>
+            <%= button_to t("admin.branch_lifecycle.terminal_actions.#{destination}"),
+                          change_terminal_admin_branch_path(@branch),
+                          method: :patch,
+                          params: { terminal_id: terminal.id, terminal_status: destination },
+                          class: 'catalog-button text-xs',
+                          form: { data: {
+                            turbo_confirm: t("admin.branch_lifecycle.terminal_confirmations.#{destination}"),
+                            confirm_record: terminal.name
+                          } } %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="mt-3 text-sm text-slate-600"><%= t('admin.branch_lifecycle.no_terminals') %></p>
+  <% end %>
+
+  <% if @branch.preparing? || @branch.active? %>
+    <%= form_with url: add_terminal_admin_branch_path(@branch), scope: :terminal,
+                  class: 'mt-4 space-y-2', html: { novalidate: true } do |terminal_form| %>
+      <%= terminal_form.label :name, branch_required_label(t('admin.branch_lifecycle.terminal_name')),
+                              class: 'catalog-label' %>
+      <%= terminal_form.text_field :name, value: @terminal&.name, maxlength: 80,
+                                  autocomplete: 'off',
+                                  class: 'w-full rounded-xl border border-slate-300 px-3 py-2 text-sm',
+                                  aria: { invalid: @terminal_error.present?,
+                                          describedby: (@terminal_error.present? ? 'branch-terminal-name-error' : nil) } %>
+      <% if @terminal_error.present? %>
+        <p id="branch-terminal-name-error" data-server-field-error role="alert" class="text-xs text-rose-700">
+          <%= t('admin.branch_lifecycle.terminal_name') %>
+          <%= @terminal&.errors&.full_messages_for(:name)&.map { |message| message.sub(/\A[^ ]+ /, '') }&.join(', ').presence ||
+              t('admin.branch_lifecycle.terminal_invalid') %>
+        </p>
+      <% end %>
+      <%= terminal_form.submit t('admin.branch_lifecycle.add_terminal'),
+                               class: 'catalog-button catalog-button-primary' %>
+    <% end %>
+  <% end %>
+</section>
