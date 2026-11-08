@@ -9,7 +9,7 @@ RSpec.describe EmailTemplates::Branding do
     values = described_class.values
     expect(values).to include(platform_name: 'Delta POS', organization_name: 'Delta POS')
     expect(values[:support_url]).to start_with('https://')
-    expect(values[:logo_url]).to include('delta-pos-logo')
+    expect(values[:logo_url]).to include('delta-pos-email-logo.png')
   end
 
   it 'combines local identity with global contact fallbacks' do
