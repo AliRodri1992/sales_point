@@ -86,7 +86,7 @@ class Branch < ApplicationRecord
   end
 
   def last_active_branch?
-    organization && organization.branches.not_deleted.where(status: true).where.not(id: id).none?
+    organization && organization.branches.not_deleted.where(operational_status: 'active').where.not(id: id).none?
   end
 
   def active_branch_operations?
