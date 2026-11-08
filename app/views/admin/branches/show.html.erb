@@ -59,9 +59,34 @@
           <% end %>
         </ul>
       <% end %>
+      <% if @transition_error.present? && !%w[reason_required reason_too_long].include?(@transition_error_code) %>
+        <p class="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"
+           role="alert"><%= @transition_error %></p>
+      <% end %>
+      <% if can_change_lifecycle && !@branch.closed? %>
+        <% blockers = @branch.active? ? branch_suspension_blockers(@branch) : branch_closure_blockers(@branch) %>
+        <% closure_blockers = branch_closure_blockers(@branch) %>
+        <% if blockers.any? || closure_blockers.any? %>
+          <div class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <h3 class="text-sm font-bold text-amber-900"><%= t('admin.branch_lifecycle.pending_title') %></h3>
+            <p class="mt-1 text-xs text-amber-900"><%= t('admin.branch_lifecycle.pending_hint') %></p>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-amber-900">
+              <% closure_blockers.each do |blocker| %>
+                <li><%= t("admin.branch_lifecycle.blockers.#{blocker}") %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      <% end %>
       <% if can_change_lifecycle %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
+          <% blockers = case next_status
+                        when 'active' then branch_activation_requirements(@branch).reject { |_key, ready| ready }.keys
+                        when 'suspended' then branch_suspension_blockers(@branch)
+                        when 'closed' then branch_closure_blockers(@branch)
+                        else []
+                        end %>
           <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
                         method: :patch, class: 'mt-3 flex flex-wrap items-end gap-3',
                         data: { turbo_confirm: t("admin.branch_lifecycle.confirmations.#{next_status}"),
@@ -74,9 +99,11 @@
               <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
                           id: "branch-transition-reason-#{next_status}",
                           value: (@transition_to == next_status ? @transition_reason : nil),
-                          aria: { invalid: @transition_to == next_status && @transition_error.present? },
+                          aria: { invalid: @transition_to == next_status &&
+                                           %w[reason_required reason_too_long].include?(@transition_error_code) },
                           class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
-              <% if @transition_to == next_status && @transition_error.present? %>
+              <% if @transition_to == next_status &&
+                     %w[reason_required reason_too_long].include?(@transition_error_code) %>
                 <p class="text-xs text-rose-700" role="alert"><%= @transition_error %></p>
               <% end %>
             </div>
@@ -244,6 +271,7 @@
               <%= delta_icon('cube', class: 'size-4') %>
               <%= t('admin.inventory.title') %>
             <% end %>
+            <%= render 'terminal_management' %>
           </div>
         </section>
         <div class="catalog-notice branch-detail-notice" role="note">
