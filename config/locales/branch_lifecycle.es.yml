@@ -4,6 +4,17 @@ es:
       pending_for: "Pendientes para %{action}"
       resolve_blocker: "Resolver"
       unavailable: "Resuelve primero las condiciones pendientes"
+      changes_title: "Historial de cambios en datos"
+      changes_hint: "Últimos cambios registrados en los datos de la sucursal, domicilio, teléfonos y notas."
+      audit_subjects:
+        branch: "Sucursal"
+        address: "Domicilio"
+        phone: "Teléfono"
+        note: "Nota"
+      audit_events:
+        create: "Creación"
+        update: "Modificación"
+        destroy: "Eliminación"
       title: "Estado operativo"
       created_reason: "Registro de sucursal"
       audit_immutable: "Los eventos de auditoría de sucursales no pueden modificarse ni eliminarse."
