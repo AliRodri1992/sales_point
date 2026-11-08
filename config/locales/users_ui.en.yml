@@ -2,6 +2,7 @@ en:
   admin:
     users:
       ui:
+        shared_sessions_warning: "This user belongs to other organizations. For security, this change may also sign out their sessions in those organizations."
         invitation_not_ready: "Assign at least one active role in this organization before inviting this employee."
         restored_needs_roles: "Account restored as pending. Assign the employee's roles before sending an invitation."
         effective_access_unavailable: "This account's global state prevents sign-in."

@@ -2,6 +2,7 @@ es:
   admin:
     users:
       ui:
+        shared_sessions_warning: "Este usuario pertenece a otras empresas. Por seguridad, el cambio puede cerrar también las sesiones que tenga abiertas en ellas."
         invitation_not_ready: "Antes de enviar la invitación, asigna al empleado al menos un rol vigente en esta empresa."
         restored_needs_roles: "Cuenta restaurada como pendiente. Asigna los roles del empleado y después envía su invitación."
         effective_access_unavailable: "El estado global de esta cuenta impide iniciar sesión."

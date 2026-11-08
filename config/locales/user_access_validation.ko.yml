@@ -1,0 +1,7 @@
+ko:
+  user_capacity:
+    errors:
+      exceeded: "이 조직의 요금제에서 허용하는 사용자 수 %{limit}명에 도달했습니다."
+  user_role_errors:
+    branch_required: "지점 역할에는 필수입니다"
+    system_role_global: "전체 역할에서는 비워 두어야 합니다"

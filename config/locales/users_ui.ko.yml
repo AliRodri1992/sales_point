@@ -2,6 +2,7 @@ ko:
   admin:
     users:
       ui:
+        shared_sessions_warning: "이 사용자는 다른 조직에도 속해 있습니다. 보안을 위해 이 변경으로 다른 조직의 세션도 종료될 수 있습니다."
         invitation_not_ready: "직원을 초대하기 전에 이 조직에서 유효한 역할을 하나 이상 지정하세요."
         restored_needs_roles: "계정이 대기 상태로 복원되었습니다. 초대를 보내기 전에 직원 역할을 지정하세요."
         effective_access_unavailable: "계정의 전체 상태 때문에 로그인할 수 없습니다."

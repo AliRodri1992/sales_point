@@ -1,0 +1,7 @@
+en:
+  user_capacity:
+    errors:
+      exceeded: "This organization's plan allows a maximum of %{limit} users."
+  user_role_errors:
+    branch_required: "is required for branch roles"
+    system_role_global: "must be blank for system roles"

@@ -1,0 +1,7 @@
+es:
+  user_capacity:
+    errors:
+      exceeded: "Se alcanzó el límite de %{limit} usuarios permitido por el plan de esta empresa."
+  user_role_errors:
+    branch_required: "es obligatorio para un rol de sucursal"
+    system_role_global: "debe quedar vacío para los roles generales"
