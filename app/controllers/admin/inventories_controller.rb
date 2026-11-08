@@ -33,6 +33,8 @@ module Admin
     end
 
     def create
+      return head :forbidden unless @branch.operationally_active?
+
       build_inventory.save!
       redirect_to admin_branch_inventories_path(@branch)
     rescue ActiveRecord::RecordInvalid => e
