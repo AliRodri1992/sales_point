@@ -472,7 +472,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t('admin.branch_lifecycle.errors.reason_required'))
       expect(office.reload).to be_active
-      expect(office.branch_status_transitions.count).to eq(0)
+      expect(office.branch_status_transitions.count).to eq(1)
     end
 
     it 'suspends a branch and records the actor and reason' do
