@@ -3,6 +3,7 @@ es:
     branch_lifecycle:
       title: "Estado operativo"
       initial_hint: "La sucursal nueva inicia en preparación. La activación se realiza después de completar los requisitos."
+      edit_hint: "El estado operativo se administra desde la vista de detalle y no puede modificarse mediante este formulario."
       changed: "Estado de sucursal actualizado"
       reason: "Motivo del cambio"
       history: "Historial de estados"
