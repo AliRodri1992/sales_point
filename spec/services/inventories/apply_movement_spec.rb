@@ -44,6 +44,17 @@ RSpec.describe Inventories::ApplyMovement do
     end.to raise_error(ArgumentError, /another inventory/)
     expect(inventory.reload.stock).to eq(0)
   end
+  it 'blocks sales when the owning organization is inactive' do
+    inventory = create(:inventory, stock: 10)
+    inventory.organization.update!(status: 'inactive')
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'sale')
+    end.to raise_error(ActiveRecord::RecordInvalid)
+
+    expect(inventory.reload.stock).to eq(10)
+  end
+
   it 'blocks a sale from a suspended branch without changing stock' do
     office = create(:branch, status: false)
     item = create(:product, organization: office.organization)
