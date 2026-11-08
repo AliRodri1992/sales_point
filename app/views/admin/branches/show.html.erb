@@ -45,6 +45,7 @@
     <div class="catalog-card-body">
       <h2 id="branch-lifecycle-title" class="font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
       <p class="catalog-hint"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
+      <% if @transition_error.present? %><p class="catalog-error" role="alert"><%= @transition_error %></p><% end %>
       <% if can_manage_branch %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
@@ -54,6 +55,8 @@
             <div class="catalog-field flex-1">
               <%= transition_form.label :reason, t('admin.branch_lifecycle.reason'), class: 'catalog-label' %>
               <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
+                          value: (@transition_to == next_status ? @transition_reason : nil),
+                          aria: { invalid: @transition_to == next_status && @transition_error.present? },
                           class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
             </div>
             <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
