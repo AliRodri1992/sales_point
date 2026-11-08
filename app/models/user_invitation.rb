@@ -18,7 +18,9 @@ class UserInvitation < ApplicationRecord
     raise ArgumentError, 'Membership required' unless user.organization_memberships.active.exists?(organization:)
 
     user.with_lock do
-      user.user_invitations.pending.find_each { |old| old.update!(revoked_at: Time.current) }
+      user.user_invitations.pending.where(organization:).find_each do |old|
+        old.update!(revoked_at: Time.current)
+      end
       token = SecureRandom.urlsafe_base64(48)
       create!(user:, organization:, token_digest: Digest::SHA256.hexdigest(token),
               expires_at: EXPIRATION.from_now).tap { |record| record.raw_token = token }
