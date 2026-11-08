@@ -16,6 +16,7 @@ module BranchLifecycle
     after_create :record_initial_operational_status
 
     before_validation :sync_legacy_status
+    around_save :serialize_branch_details_update, if: :regular_branch_update?
     validate :protect_operational_status_change, if: :restricted_lifecycle_change?
     validate :protect_legacy_status_change, if: :direct_legacy_status_change
     validate :protect_closed_changes, if: -> { persisted? && closed? && !lifecycle_transition_authorized }
@@ -27,6 +28,22 @@ module BranchLifecycle
   def operational_dependencies? = active_branch_operations?
 
   private
+
+  def regular_branch_update?
+    persisted? && !lifecycle_transition_authorized
+  end
+
+  def serialize_branch_details_update
+    locked = self.class.with_deleted.find(id)
+    locked.with_lock do
+      if locked.closed? || locked.deleted_at.present?
+        errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly'))
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      yield
+    end
+  end
 
   def record_initial_operational_status
     reason = I18n.t('admin.branch_lifecycle.created_reason') if lifecycle_created_by
