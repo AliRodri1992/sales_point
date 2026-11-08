@@ -285,7 +285,7 @@ RSpec.describe 'Admin email templates', type: :request do
     version.update!(
       html_body: EmailTemplates::DraftStarter.html('es'),
       text_body: EmailTemplates::DraftStarter.plain('es'),
-      allowed_variables: %w[platform_logo recipient_name organization_name]
+      allowed_variables: %w[platform_logo recipient_name organization_name primary_color secondary_color footer_text]
     )
     version.publish!(actor: administrator)
 
@@ -326,7 +326,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
     expect(Nokogiri::HTML(response.body).at_css('#email-audit-title')).to be_nil
 
-    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    SystemRolePermission.with_deleted.find_by!(system_role: role, permission:).update!(deleted_at: nil)
 
     get admin_email_template_path(template)
 
@@ -526,6 +526,12 @@ RSpec.describe 'Admin email templates', type: :request do
     template = create_template(organization:)
     version = template.new_draft!(actor: administrator)
     template.audit!(action: 'draft_updated', actor: administrator, version:)
+    permission = Permission.find_or_create_by!(code: 'email_template_audits.view') do |entry|
+      entry.name = 'View email template audits'
+      entry.module_name = 'Communication'
+      entry.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: role, permission:)
     get admin_email_template_path(template)
 
     expect(response.body).to include('v1')
@@ -537,7 +543,7 @@ RSpec.describe 'Admin email templates', type: :request do
     template.new_draft!(actor: administrator).publish!(actor: administrator)
     expect do
       post send_test_admin_email_template_path(template), params: { email: administrator.email }
-    end.to have_enqueued_mail(EmailTemplateTestMailer, :sample).with(template.id, administrator.email)
+    end.to have_enqueued_job(EmailTemplates::TestDeliveryJob).with(template.id, administrator.id, administrator.email)
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(template.audits.where(action: 'test_queued')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }
@@ -599,7 +605,8 @@ RSpec.describe 'Admin email templates', type: :request do
     get admin_email_templates_path,
         params: { q: 'Mail notice', locale: 'en', status: 'draft', page: '9999' }
     expect(response).to have_http_status(:ok)
-    expect(Nokogiri::HTML(response.body).at_css('[aria-current="page"]').text).to eq('3')
+    expect(Nokogiri::HTML(response.body).css('nav[aria-label] [aria-current="page"]')
+      .map(&:text)).to include('3')
     expect(response.body).not_to include(I18n.t('admin.email_templates.empty_title'))
   end
 
@@ -607,14 +614,14 @@ RSpec.describe 'Admin email templates', type: :request do
     get new_admin_email_template_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('#email-template-language-display')).to be_present
+    expect(document.at_css('select#email_template_locale')).to be_present
     expect(document.at_css('input#email_template_key')).to be_present
 
     post admin_email_templates_path, params: {
       email_template: { key: 'welcome_mail', name: 'Welcome mail', category: 'transactional', locale: 'ko' }
     }
     template = EmailTemplate.find_by!(key: 'welcome_mail', organization:)
-    expect(template.locale).to eq(I18n.locale.to_s)
+    expect(template.locale).to eq('ko')
     expect(template.subject).to eq(I18n.t('admin.email_templates.default_subject', locale: template.locale))
   end
 
@@ -648,10 +655,11 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-guidance-title')).to be_present
     expect(page.at_css('#email-template-create-actions button[type="submit"]')).to be_present
     expect(page.at_css("img[alt=\"#{I18n.t('admin.email_templates.deltin_alt')}\"]")).to be_present
-    expect(page.at_css('input#email_template_key[pattern="[a-z][a-z0-9_]*"]')).to be_present
+    expect(page.at_css('input#email_template_key')).to be_present
+    expect(page.at_css('input#email_template_key[pattern]')).to be_nil
     expect(page.at_css('[data-controller="email-template-identity"]')).to be_present
-    expect(page.at_css('#email-template-language-display')).to be_present
-    expect(page.at_css('select#email_template_locale')).to be_nil
+    expect(page.at_css('select#email_template_locale')).to be_present
+    expect(page.css('select#email_template_locale option').pluck('value')).to match_array(%w[es en ko])
     expect(page.text).to include(I18n.t('admin.email_templates.automatic_locale_hint'))
   end
 
@@ -665,7 +673,9 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-key-hint')).to be_present
     expect(page.at_css('input#email_template_key')['value']).to eq('invalid-key')
     expect(page.at_css('input#email_template_key')['aria-invalid']).to eq('true')
-    expect(page.at_css('#email-template-errors-title')).to be_present
+    expect(page.at_css('#email-template-errors-title')).to be_nil
+    expect(page.at_css('#email_template_key_error')).to be_present
+    expect(page.at_css('#email_template_name_error')).to be_present
     expect(EmailTemplate.where(key: 'invalid-key')).to be_empty
   end
 
@@ -731,7 +741,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('#email-template-guidance-title')).to be_present
     expect(page.at_css('#email-template-review-title')).to be_present
     expect(page.at_css('[data-email-template-identity-target="summaryKey"]')).to be_present
-    expect(page.at_css('button[data-category-value="security"][type="button"]')).to be_present
+    expect(page.css('select#email_template_category option').pluck('value')).to include('security')
     expect(page.at_css('main[data-loading-scope="true"] aside')).to be_nil
     expect(page.at_css('button[data-turbo-submits-with]')).to be_present
     expect(page.at_css('#email-template-create-actions')).to be_present
@@ -797,7 +807,7 @@ RSpec.describe 'Admin email templates', type: :request do
     page = Nokogiri::HTML(response.body)
     expect(page.css('iframe[sandbox]').size).to eq(2)
     expect(page.text).to include('Second design')
-    expect(page.css('details summary').size).to eq(4)
+    expect(page.css('main .divide-y details summary').size).to eq(4)
     expect(page.at_css('nav li[aria-current="step"]')).to be_present
   end
 
@@ -897,7 +907,7 @@ RSpec.describe 'Admin email templates', type: :request do
     doc = Nokogiri::HTML(response.body)
     expect(doc.css('tbody tr').size).to eq(5)
     expect(doc.at_css('select#email-templates-per-page')['data-table-page-size-key-value']).to eq('email_templates')
-    expect(doc.at_css('[aria-current="page"]').text).to eq('2')
+    expect(doc.css('nav[aria-label] [aria-current="page"]').map(&:text)).to include('2')
     expect(doc.text).to include(I18n.t('admin.email_templates.range', first: 6, last: 10, total: 12))
     expect(doc.at_css('turbo-frame#email_templates_list')).to be_present
   end
@@ -1052,7 +1062,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get admin_email_templates_path, params: { origin: 'system' }
     doc = Nokogiri::HTML(response.body)
     expect(doc.at_css("form[action='#{personalize_admin_email_template_path(global)}']")).to be_present
-    expect(doc.at_css("form[action='#{archive_admin_email_template_path(global)}']")).to be_present
+    expect(doc.at_css("form[action='#{archive_admin_email_template_path(global)}']")).to be_nil
   end
 
   it 'deactivates and reactivates published organization templates without changing versions' do
