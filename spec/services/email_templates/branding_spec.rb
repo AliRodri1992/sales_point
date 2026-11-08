@@ -5,6 +5,18 @@ require 'rails_helper'
 RSpec.describe EmailTemplates::Branding do
   let(:organization) { create(:organization) }
 
+  it 'supports real configured contact fallbacks without changing tenant overrides' do
+    allow(ENV).to receive(:fetch).with('DELTA_POS_SUPPORT_EMAIL', 'support@example.org').and_return('help@delta.test')
+    allow(ENV).to receive(:fetch).with('DELTA_POS_SUPPORT_URL', 'https://example.org/support')
+                              .and_return('https://delta.test/support')
+    allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', 'https://example.org/privacy')
+                              .and_return('https://delta.test/privacy')
+
+    values = described_class.values
+    expect(values).to include(support_email: 'help@delta.test', support_url: 'https://delta.test/support',
+                              privacy_url: 'https://delta.test/privacy')
+  end
+
   it 'uses platform defaults when no branding is configured' do
     values = described_class.values
     expect(values).to include(platform_name: 'Delta POS', organization_name: 'Delta POS')

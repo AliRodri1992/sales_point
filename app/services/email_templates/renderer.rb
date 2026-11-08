@@ -70,6 +70,7 @@ module EmailTemplates
         key = Regexp.last_match(1)
         value = @values.fetch(key.to_sym) { raise ArgumentError, "Missing email variable: #{key}" }
         validate_url!(key, value) if URL_VARIABLES.include?(key)
+        validate_support_email!(value) if key == 'support_email'
         mode == :html ? ERB::Util.html_escape(value.to_s) : value.to_s
       end
     end
@@ -91,6 +92,15 @@ module EmailTemplates
       raise ArgumentError, "Unconfigured email URL: #{key}" if example_host?(parsed.host)
     rescue URI::InvalidURIError
       raise ArgumentError, "Invalid email URL: #{key}"
+    end
+
+    def validate_support_email!(value)
+      address = value.to_s
+      valid = address.match?(URI::MailTo::EMAIL_REGEXP)
+      raise ArgumentError, 'Invalid support email' unless valid
+
+      domain = address.split('@', 2).last
+      raise ArgumentError, 'Unconfigured support email' if example_host?(domain)
     end
 
     def example_host?(host)

@@ -100,6 +100,18 @@ RSpec.describe EmailTemplates::Renderer do
     expect(html).to include('https://example.org/demo')
   end
 
+  it 'rejects placeholder support email addresses in production delivery' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    source = template('<p>{{support_email}}</p>')
+    source.allowed_variables = %w[recipient_name support_email]
+    values = { recipient_name: 'Sample', support_email: 'support@example.org' }
+
+    expect { described_class.new(source:, values:).render }.to raise_error(ArgumentError, /Unconfigured support email/)
+    expect { described_class.new(source:, values:, preview: true).render }.not_to raise_error
+    values[:support_email] = 'support@delta.test'
+    expect { described_class.new(source:, values:).render }.not_to raise_error
+  end
+
   it 'rejects unknown and missing variables' do
     expect do
       described_class.new(
