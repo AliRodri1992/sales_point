@@ -6,22 +6,24 @@ module Inventories
       inventory.branch.with_lock do
         amount = BigDecimal(quantity.to_s)
         validate_branch_status!(inventory, kind, amount:, **options)
-        inventory.with_lock do
-          validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
-          reconcile_adjusted_lot!(inventory:, amount:, kind:, lot: options[:inventory_lot])
-          before = inventory.stock
-          after_stock = before + amount
-          raise ActiveRecord::RecordInvalid, inventory if after_stock.negative?
-
-          inventory.update!(stock: after_stock)
-          inventory.inventory_movements.create!(
-            organization: inventory.organization, user: options[:user], kind:,
-            reference: options[:reference], source: options[:source],
-            inventory_lot: options[:inventory_lot],
-            quantity: amount, stock_before: before, stock_after: after_stock
-          )
-        end
+        inventory.with_lock { record_movement(inventory:, amount:, kind:, options:) }
       end
+    end
+
+    def self.record_movement(inventory:, amount:, kind:, options:)
+      validate_movement!(inventory:, amount:, kind:, lot: options[:inventory_lot])
+      reconcile_adjusted_lot!(inventory:, amount:, kind:, lot: options[:inventory_lot])
+      before = inventory.stock
+      after_stock = before + amount
+      raise ActiveRecord::RecordInvalid, inventory if after_stock.negative?
+
+      inventory.update!(stock: after_stock)
+      inventory.inventory_movements.create!(
+        organization: inventory.organization, user: options[:user], kind:,
+        reference: options[:reference], source: options[:source],
+        inventory_lot: options[:inventory_lot],
+        quantity: amount, stock_before: before, stock_after: after_stock
+      )
     end
 
     def self.validate_branch_status!(inventory, kind, amount:, **options)
