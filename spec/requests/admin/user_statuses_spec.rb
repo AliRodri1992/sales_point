@@ -91,6 +91,26 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(UserSecurityIncident.find_by!(user: target, organization:).resolved_at).to be_present
   end
 
+  it 'issues a new invitation when a pending account is unblocked' do
+    target.update!(status: :pending)
+    target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
+
+    patch admin_user_status_path(target), params: {
+      transition: 'blocked', reason: 'Seguridad de la cuenta'
+    }
+    expect(target.reload).to be_blocked
+
+    expect do
+      patch admin_user_status_path(target), params: {
+        transition: 'pending', reason: 'Verificación completada', resolution: 'Identidad confirmada'
+      }
+    end.to change(UserInvitation, :count).by(1)
+
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(target.reload).to be_pending
+    expect(target.user_invitations.last).to be_usable
+  end
+
   it 'revokes the account session on an authorized block' do
     patch admin_user_status_path(target), params: { transition: 'blocked', reason: 'Security incident' }
     expect(target.reload).to be_blocked
