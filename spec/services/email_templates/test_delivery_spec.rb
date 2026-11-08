@@ -48,4 +48,13 @@ RSpec.describe EmailTemplates::TestDelivery do
     end.to have_enqueued_job(EmailTemplates::TestDeliveryJob).with(template.id, actor.id, 'other@example.org')
     expect(template.audits.where(action: 'test_queued', actor:)).to exist
   end
+  it 'does not count an email test when the job cannot be enqueued' do
+    allow(EmailTemplates::TestDeliveryJob).to receive(:perform_later).and_return(nil)
+
+    expect do
+      described_class.call(template:, actor:, recipient: actor.email)
+    end.to raise_error(RuntimeError, /Unable to enqueue/)
+    expect(template.audits.where(action: 'test_queued', actor:)).not_to exist
+  end
+
 end
