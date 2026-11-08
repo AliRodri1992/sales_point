@@ -39,6 +39,16 @@ RSpec.describe UserInvitation, type: :model do
     expect(foreign).to be_usable
   end
 
+  it 'rechecks local membership under the account lock before issuing a token' do
+    allow(user).to receive(:with_lock) do |&block|
+      user.organization_memberships.find_by!(organization:).update!(account_status: :suspended)
+      block.call
+    end
+
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
+    expect(described_class.where(user:, organization:)).to be_empty
+  end
+
   it 'rejects activation after a security block without changing the password' do
     invitation = described_class.issue!(user:, organization:)
     user.update!(status: :blocked)
