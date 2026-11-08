@@ -15,7 +15,10 @@ class UserInvitation < ApplicationRecord
 
   def self.issue!(user:, organization:)
     raise ArgumentError, 'User must be pending' unless user.pending?
-    raise ArgumentError, 'Membership required' unless user.organization_memberships.active.exists?(organization:)
+    raise ArgumentError, 'Membership required' unless organization.active? && organization.deleted_at.nil? &&
+                                                      user.organization_memberships.active.exists?(
+                                                        organization:, account_status: 'pending', deleted_at: nil
+                                                      )
 
     user.with_lock do
       user.user_invitations.pending.where(organization:).find_each do |old|
@@ -36,7 +39,10 @@ class UserInvitation < ApplicationRecord
   def usable?
     accepted_at.nil? && revoked_at.nil? && expires_at.future? &&
       user.pending? && user.deleted_at.nil? &&
-      user.organization_memberships.active.exists?(organization:)
+      organization.active? && organization.deleted_at.nil? &&
+      user.organization_memberships.active.exists?(
+        organization:, account_status: 'pending', deleted_at: nil
+      )
   end
 
   def accept!(token:, password:, password_confirmation:)

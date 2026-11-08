@@ -8,6 +8,8 @@ on:
     paths:
       - '.github/workflows/users-ci.yml'
       - 'app/controllers/admin/users_controller.rb'
+      - 'app/controllers/user_invitations_controller.rb'
+      - 'app/controllers/application_controller.rb'
       - 'app/controllers/admin/user_*'
       - 'app/controllers/concerns/admin/user_*'
       - 'app/models/user.rb'
@@ -15,6 +17,8 @@ on:
       - 'app/models/concerns/user_*'
       - 'app/services/users/**'
       - 'app/views/admin/users/**'
+      - 'app/views/user_invitations/**'
+      - 'app/views/admin/shared/_organization_selector.html.erb'
       - 'app/views/admin/user_statuses/**'
       - 'app/views/admin/user_restorations/**'
       - 'app/javascript/controllers/user_access_controller.js'
@@ -25,6 +29,9 @@ on:
       - 'config/locales/user_*'
       - 'config/locales/users.*'
       - 'config/locales/users_ui.*'
+      - 'spec/requests/user_invitations_spec.rb'
+      - 'spec/jobs/users/**'
+      - 'spec/mailers/user_invitation_mailer_spec.rb'
       - 'spec/models/user_*'
       - 'spec/models/user_spec.rb'
       - 'spec/services/users/**'
@@ -59,7 +66,7 @@ jobs:
       - name: Lint user administration and access control
         run: |
           bin/rubocop -f simple \
-            app/controllers/admin/users_controller.rb \
+            app/controllers/admin/users_controller.rb app/controllers/user_invitations_controller.rb \
             app/controllers/admin/user_statuses_controller.rb \
             app/controllers/admin/user_restorations_controller.rb \
             app/controllers/admin/user_invitations_controller.rb \
@@ -71,7 +78,8 @@ jobs:
             app/services/users spec/services/users \
             spec/models/user_spec.rb spec/models/user_*spec.rb \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
-            spec/features/admin_users*spec.rb
+            spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \
+            spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb
 
   users_specs:
     name: Users module RSpec and browser flows
@@ -133,4 +141,5 @@ jobs:
             spec/models/user_spec.rb spec/models/user_*spec.rb \
             spec/services/users \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
-            spec/features/admin_users*spec.rb
+            spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \
+            spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb

@@ -6,7 +6,7 @@ RSpec.describe UserInvitation, type: :model do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, status: :pending) }
 
-  before { create(:organization_membership, user:, organization:) }
+  before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
   it 'issues a one-use invitation and activates a pending account' do
     invitation = described_class.issue!(user:, organization:)
@@ -29,7 +29,7 @@ RSpec.describe UserInvitation, type: :model do
 
   it 'does not revoke an invitation issued for another organization' do
     secondary = create(:organization)
-    create(:organization_membership, user:, organization: secondary)
+    create(:organization_membership, user:, organization: secondary, account_status: :pending)
     foreign = described_class.issue!(user:, organization: secondary)
 
     local = described_class.issue!(user:, organization:)
@@ -64,6 +64,27 @@ RSpec.describe UserInvitation, type: :model do
     invitation.update!(expires_at: 1.minute.ago)
     expect(invitation).not_to be_usable
     expect(user.reload).to be_pending
+  end
+
+  it 'blocks activation after the local membership is suspended' do
+    invitation = described_class.issue!(user:, organization:)
+    user.organization_memberships.find_by!(organization:).update!(account_status: :suspended)
+    expect(invitation).not_to be_usable
+    expect(invitation.accept!(token: invitation.raw_token, password: 'newpassword123',
+                              password_confirmation: 'newpassword123')).to be(false)
+    expect(user.reload).to be_pending
+  end
+
+  it 'does not issue or accept invitations for an inactive organization' do
+    invitation = described_class.issue!(user:, organization:)
+    organization.update!(status: :inactive)
+    expect(invitation).not_to be_usable
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
+  end
+
+  it 'rejects issuing an invitation for a locally active account' do
+    user.organization_memberships.find_by!(organization:).update!(account_status: :active)
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
   end
 
   it 'does not issue invitations for accounts that are already active' do

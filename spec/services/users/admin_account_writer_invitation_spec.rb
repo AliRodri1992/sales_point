@@ -6,7 +6,7 @@ RSpec.describe Users::AdminAccountWriter, type: :model do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, status: :pending, email: 'old-invite@example.com') }
 
-  before { create(:organization_membership, user:, organization:) }
+  before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
   it 'revokes an outstanding invitation when the email changes' do
     invitation = UserInvitation.issue!(user:, organization:)

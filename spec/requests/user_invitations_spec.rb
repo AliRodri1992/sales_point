@@ -6,7 +6,7 @@ RSpec.describe 'User invitation activation', type: :request do
   let(:organization) { create(:organization) }
   let(:user) { create(:user, status: :pending) }
 
-  before { create(:organization_membership, user:, organization:) }
+  before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
   it 'renders activation and accepts a valid one-time token' do
     invitation = UserInvitation.issue!(user:, organization:)
@@ -33,6 +33,21 @@ RSpec.describe 'User invitation activation', type: :request do
       expect(response).to have_http_status(:gone)
     end
     expect(user.reload).to be_pending
+  end
+
+  it 'shows model validation below password fields without native required attributes' do
+    invitation = UserInvitation.issue!(user:, organization:)
+    get user_invitation_path(token: invitation.raw_token)
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('form[novalidate]')).not_to be_empty
+    expect(document.css('input[required], input[minlength]')).to be_empty
+
+    patch accept_user_invitation_path(token: invitation.raw_token), params: {
+      invitation: { password: 'short', password_confirmation: 'different' }
+    }
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#user_password_error')).to be_present
+    expect(document.at_css('#invitation_password[aria-describedby="user_password_error"]')).to be_present
   end
 
   it 'keeps a usable invitation pending after password validation fails' do
