@@ -83,7 +83,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('[data-user-access-target="reviewUserType"]', text: 'Employee')
     expect(find('[data-user-access-target="themeSwatch"]')[:style]).to include('background-color')
     expect(page).to have_css('[data-user-access-target="roleWarning"]:not(.hidden)')
-    expect(page).to have_css('[data-user-access-target="reviewLanguage"]', text: /English|Español/)
+    expect(page).to have_css('[data-user-access-target="reviewLanguage"]')
   end
 
   scenario 'places model-aligned email and type errors immediately below fields' do

@@ -54,7 +54,11 @@ export default class extends Controller {
 
   formChanged(event) {
     this.updateReview()
-    if (event.target.matches("[data-validation-field]")) this.renderFieldError(event.target, false)
+    if (event.target.matches("[data-validation-field]")) {
+      this.renderFieldError(event.target, false)
+      event.target.closest(".min-w-0")?.querySelectorAll("[data-server-field-error]")
+        .forEach((message) => { message.hidden = true })
+    }
   }
 
   validateField(event) {
@@ -71,6 +75,11 @@ export default class extends Controller {
     target.textContent = issue ? `${label} ${issue}` : ""
     target.classList.toggle("hidden", !show || !issue)
     field.setAttribute("aria-invalid", String(show && Boolean(issue)))
+    if (field.tagName === "SELECT") {
+      const button = field.closest("[data-controller='delta-select']")
+        ?.querySelector("button[data-delta-select-generated]")
+      button?.classList.toggle("border-rose-500", show && Boolean(issue))
+    }
     return !issue
   }
 

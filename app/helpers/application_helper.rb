@@ -81,20 +81,22 @@ module ApplicationHelper
     'border border-slate-200 bg-slate-50'
   end
 
-  def error_message_for(object, attribute)
+  def error_message_for(object, attribute, label: nil)
     return '' unless object && object.errors[attribute].any?
 
     model = object.class.name.underscore
     model_attribute = "errors.attributes.#{model}.#{attribute}"
     general_attribute = "errors.attributes.#{attribute}"
+    fallback = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
+    name = label || I18n.t(model_attribute, default: fallback)
+    messages = object.errors[attribute].uniq
 
-    fallback_name = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
-    attribute_name = I18n.t(model_attribute, default: fallback_name)
-    error_message = object.errors[attribute].first
-    formatted_message = "#{attribute_name} #{error_message}"
-
-    content_tag(:p, formatted_message,
-                class: 'mt-1 text-xs text-rose-600', data: { server_field_error: true })
+    safe_join(messages.each_with_index.map do |message, index|
+      content_tag(:p, "#{name} #{message}",
+                  id: index.zero? ? "#{model}_#{attribute}_error" : nil,
+                  class: 'mt-1 text-xs text-rose-600',
+                  data: { server_field_error: true })
+    end)
   end
 
   def sort_link(column, title = nil, frame: nil)

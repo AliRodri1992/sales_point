@@ -159,6 +159,24 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(User.exists?(created_user.id)).to be(true)
     end
 
+    it 'places all model validation messages beneath the correct field' do
+      post admin_users_path, params: {
+        user: { email: 'not-an-email', user_type: '', theme: 'invalid-theme' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#user_email_error').text).to start_with(
+        I18n.t('admin.users.form.fields.email')
+      )
+      expect(document.at_css('#user_user_type_error').text).to start_with(
+        I18n.t('admin.users.form.fields.user_type')
+      )
+      expect(document.at_css('#user_theme_error').text).to start_with(
+        I18n.t('admin.users.form.fields.theme')
+      )
+    end
+
     it 're-renders the form with validation errors and no required attributes' do
       post admin_users_path,
            params: { user: { email: '', password: 'pw', password_confirmation: 'pw',

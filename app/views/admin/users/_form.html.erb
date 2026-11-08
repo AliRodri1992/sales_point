@@ -153,7 +153,7 @@
           <% else %>
             <p class="text-sm text-slate-500"><%= t('admin.users.ui.no_roles_available') %></p>
           <% end %>
-          <%= error_message_for(@user, :system_role_ids) %>
+          <%= error_message_for(@user, :system_role_ids, label: t('admin.users.form.fields.system_roles')) %>
           <% if editing %>
             <% branch_assignments = @user.user_roles.active.includes(:system_role, :branch).select { |assignment| assignment.branch_id.present? && assignment.branch&.organization_id == current_organization&.id } %>
             <% if branch_assignments.any? %>
@@ -226,7 +226,7 @@
           <% else %>
             <p class="text-sm text-slate-500"><%= t('admin.users.ui.branch_access_empty') %></p>
           <% end %>
-          <%= error_message_for(@user, :branch_role_assignments) %>
+          <%= error_message_for(@user, :branch_role_assignments, label: t('admin.users.ui.branch_access_title')) %>
         </div>
       </section>
 
