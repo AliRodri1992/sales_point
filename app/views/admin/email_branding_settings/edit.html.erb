@@ -171,6 +171,15 @@
           <div class="mx-auto max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
             <div class="border-b border-slate-100 px-5 py-5">
               <%= image_tag EmailTemplates::Branding::PLATFORM_LOGO_WEB, alt: t('admin.email_templates.branding_platform_logo_alt'), class: 'block h-auto w-full max-w-[310px] object-contain' %>
+               <% if @branding.logo.attached? %>
+                 <%= image_tag url_for(@branding.logo), alt: t('admin.email_templates.branding_organization_logo_alt'),
+                               class: 'mt-3 max-h-16 max-w-40 object-contain',
+                               data: { email_branding_target: 'previewOrganizationLogo' } %>
+               <% else %>
+                 <%= image_tag 'delta-pos-logo.svg', alt: t('admin.email_templates.branding_organization_logo_alt'),
+                               class: 'mt-3 hidden max-h-16 max-w-40 object-contain',
+                               data: { email_branding_target: 'previewOrganizationLogo' } %>
+               <% end %>
             </div>
             <div class="space-y-4 px-5 py-6">
               <p class="text-[11px] font-bold uppercase tracking-wider" data-email-branding-target="previewPrimary" style="color: <%= @branding.primary_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.primary_color : '#064e3b' %>"><%= t('admin.email_templates.branding_preview_eyebrow') %></p>
@@ -199,5 +208,5 @@
     </aside>
   <% end %>
 
-  <%= render 'admin/email_setting_audits/history', audits: @audits %> if @can_view_audits
+  <%= render 'admin/email_setting_audits/history', audits: @audits if @can_view_audits %>
 </main>

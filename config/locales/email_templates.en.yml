@@ -23,6 +23,7 @@ en:
           test_queued: "Test delivery for %{name} queued"
     email_templates:
       section: "Communication"
+      compare_changed: "Changed"
       more_actions: "More actions"
       create_draft_first: "Start a draft before opening the editor."
       sender_from_example: "notifications@example.com"

@@ -197,5 +197,5 @@
     </aside>
   <% end %>
 
-  <%= render 'admin/email_setting_audits/history', audits: @audits %> if @can_view_audits
+  <%= render 'admin/email_setting_audits/history', audits: @audits if @can_view_audits %>
 </main>

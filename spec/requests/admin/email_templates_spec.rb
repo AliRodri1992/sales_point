@@ -387,6 +387,18 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(flash[:swal_message]).to be_present
   end
 
+  it 'highlights differences between subjects when comparing versions' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+    changed = template.new_draft!(actor: administrator)
+    changed.update!(subject: 'A different subject')
+
+    get compare_admin_email_template_path(template), params: { left: published.id, right: changed.id }
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.email_templates.compare_changed'))
+  end
+
   it 'restores published content into a new draft and compares versions' do
     template = create_template(organization:)
     published = template.new_draft!(actor: administrator)

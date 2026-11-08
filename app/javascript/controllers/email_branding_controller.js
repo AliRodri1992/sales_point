@@ -5,7 +5,7 @@ export default class extends Controller {
   static targets = [
     "name", "previewName", "footer", "previewFooterText", "supportEmail", "previewEmail",
     "previewPrimary", "previewSecondary", "previewButton", "colorInput", "picker",
-    "contrast", "logo", "logoPreview", "logoName", "logoError", "removeLogo"
+    "contrast", "logo", "logoPreview", "previewOrganizationLogo", "logoName", "logoError", "removeLogo"
   ]
 
   static values = {
@@ -16,6 +16,8 @@ export default class extends Controller {
     this.objectUrl = null
     this.originalLogoSrc = this.logoPreviewTarget.getAttribute("src")
     this.originalLogoHidden = this.logoPreviewTarget.classList.contains("hidden")
+    this.originalOrganizationLogoSrc = this.previewOrganizationLogoTarget.getAttribute("src")
+    this.originalOrganizationLogoHidden = this.previewOrganizationLogoTarget.classList.contains("hidden")
     this.updatePreview()
     this.updateColors()
   }
@@ -89,14 +91,18 @@ export default class extends Controller {
     this.objectUrl = URL.createObjectURL(file)
     this.logoPreviewTarget.src = this.objectUrl
     this.logoPreviewTarget.classList.remove("hidden")
+    this.previewOrganizationLogoTarget.src = this.objectUrl
+    this.previewOrganizationLogoTarget.classList.remove("hidden")
     this.logoNameTarget.textContent = file.name
     if (this.hasRemoveLogoTarget) this.removeLogoTarget.checked = false
   }
 
   removeLogoChanged(event) {
     if (event.target.checked) {
+      this.logoTarget.value = ""
       this.resetLogoPreview()
       this.logoPreviewTarget.classList.add("hidden")
+      this.previewOrganizationLogoTarget.classList.add("hidden")
     } else if (!this.logoTarget.files.length) {
       this.resetLogoPreview()
     }
@@ -107,6 +113,8 @@ export default class extends Controller {
     this.objectUrl = null
     this.logoPreviewTarget.src = this.originalLogoSrc
     this.logoPreviewTarget.classList.toggle("hidden", this.originalLogoHidden)
+    this.previewOrganizationLogoTarget.src = this.originalOrganizationLogoSrc
+    this.previewOrganizationLogoTarget.classList.toggle("hidden", this.originalOrganizationLogoHidden)
     this.logoNameTarget.textContent = ""
   }
 

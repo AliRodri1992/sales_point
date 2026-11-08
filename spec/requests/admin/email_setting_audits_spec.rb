@@ -191,6 +191,7 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(response).to have_http_status(:ok)
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('[data-controller="email-branding"]')).to be_present
+    expect(page.at_css('[data-email-branding-target="previewOrganizationLogo"]')).to be_present
     expect(page.at_css('[data-email-branding-target="previewButton"]')).to be_present
     expect(page.css('input[type="color"][data-email-branding-target="picker"]').size).to eq(3)
     expect(page.at_css('input#email_branding_setting_support_email[type="email"]')).to be_present

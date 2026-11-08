@@ -23,6 +23,7 @@ es:
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
       section: "Comunicación"
+      compare_changed: "Modificado"
       more_actions: "Más acciones"
       create_draft_first: "Crea un borrador antes de abrir el editor."
       sender_from_example: "notificaciones@ejemplo.com"
