@@ -8,15 +8,14 @@ module Admin
     before_action :authenticate_user!
 
     def edit
-      verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
-      @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                 .includes(:actor).order(created_at: :desc).limit(20)
+      authorize @branding, :edit?
+      load_branding_audits
     end
 
     def update
-      verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
+      authorize @branding, :update?
       attributes = branding_params
       remove_logo = should_remove_logo?(attributes)
       return render_branding_errors unless save_branding(attributes, remove_logo:)
@@ -46,8 +45,7 @@ module Admin
     end
 
     def render_branding_errors
-      @audits = EmailSettingAudit.where(organization: selected_organization, setting_type: 'branding')
-                                 .includes(:actor).order(created_at: :desc).limit(20)
+      load_branding_audits
       render :edit, status: :unprocessable_content
     end
 
@@ -55,11 +53,14 @@ module Admin
       params[:global] == '1' && current_user.role?('super_admin') ? nil : current_organization
     end
 
-    def verify_permission!
-      permission = selected_organization ? 'email_branding.manage' : 'email_settings.manage'
-      allowed = (selected_organization || current_user.role?('super_admin')) &&
-                current_user.admin? && current_user.permission?(permission)
-      raise Pundit::NotAuthorizedError unless allowed
+    def load_branding_audits
+      @can_view_audits = policy(EmailSettingAudit).index?
+      @audits = if @can_view_audits
+                  policy_scope(EmailSettingAudit).where(organization: selected_organization, setting_type: 'branding')
+                                                 .includes(:actor).order(created_at: :desc).limit(20)
+                else
+                  []
+                end
     end
 
     def branding_params

@@ -5,6 +5,7 @@ class EmailBrandingSetting < ApplicationRecord
   has_one_attached :logo
 
   validates :display_name, presence: true, length: { maximum: 150 }
+  validates :primary_color, :secondary_color, :button_color, presence: true
   validates :primary_color, :secondary_color, :button_color,
             format: { with: /\A#[0-9a-fA-F]{6}\z/ }
   validates :support_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
@@ -14,6 +15,7 @@ class EmailBrandingSetting < ApplicationRecord
   validates :footer_text, length: { maximum: 2000 }
   validate :safe_logo
   validate :accessible_button_color
+  validate :valid_https_hosts
 
   private
 
@@ -29,6 +31,20 @@ class EmailBrandingSetting < ApplicationRecord
     return unless button_color.to_s.match?(/\A#[0-9a-fA-F]{6}\z/)
 
     errors.add(:button_color, :insufficient_contrast) if button_contrast_ratio < 4.5
+  end
+
+  def valid_https_hosts
+    %i[support_url privacy_url].each do |attribute|
+      value = public_send(attribute)
+      next if value.blank?
+      next unless value.start_with?('https://')
+
+      uri = URI.parse(value)
+      errors.add(attribute, :invalid) unless uri.is_a?(URI::HTTPS) && uri.host.present? &&
+                                            uri.userinfo.nil?
+    rescue URI::InvalidURIError
+      errors.add(attribute, :invalid)
+    end
   end
 
   def button_contrast_ratio

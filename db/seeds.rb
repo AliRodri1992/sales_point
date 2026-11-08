@@ -77,6 +77,8 @@ end
 
 unless defined?(DEFAULT_PERMISSIONS)
   DEFAULT_PERMISSIONS = [
+    { code: 'email_setting_audits.view', name: 'View email setting audit history',
+      module_name: 'Comunicación', description: 'Consulta el historial de remitentes e identidad visual.' },
     {
       code: 'users.invite',
       name: 'Invite users',

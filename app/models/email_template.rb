@@ -36,6 +36,9 @@ class EmailTemplate < ApplicationRecord
   validates :key, format: { with: /\A[a-z][a-z0-9_]*\z/ }
   validates :version, numericality: { only_integer: true, greater_than: 0 }
   validates :key, uniqueness: { scope: %i[organization_id locale] }
+  validates :subject, length: { maximum: 250 }
+  validates :html_body, length: { maximum: 300_000 }
+  validates :text_body, length: { maximum: 100_000 }
   validate :published_version_belongs_to_template
   validate :valid_customization_source
   validate :identity_immutable_after_publish, on: :update
@@ -93,7 +96,7 @@ class EmailTemplate < ApplicationRecord
     plain = source&.text_body || text_body
     variables = source&.allowed_variables.presence ||
                 [title, body, plain].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
-    { subject: title, html_body: body, text_body: plain, allowed_variables: variables }
+    { subject: title, preheader: source&.preheader.to_s, html_body: body, text_body: plain, allowed_variables: variables }
   end
 
   def audit!(action:, actor:, version: nil)

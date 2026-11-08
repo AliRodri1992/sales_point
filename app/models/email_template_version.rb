@@ -18,6 +18,9 @@ class EmailTemplateVersion < ApplicationRecord
                              uniqueness: { scope: :email_template_id }
   validates :status, inclusion: { in: STATUSES }
   validates :subject, :html_body, :text_body, presence: true
+  validates :subject, :preheader, length: { maximum: 250 }
+  validates :html_body, length: { maximum: 300_000 }
+  validates :text_body, length: { maximum: 100_000 }
   validate :variables_are_safe
   validate :declared_variables, if: -> { status == 'published' }
   validate :required_customization_variables, if: -> { status == 'published' }

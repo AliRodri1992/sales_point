@@ -8,14 +8,14 @@ module Admin
     before_action :authenticate_user!
 
     def edit
-      verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
+      authorize @sender, :edit?
       load_sender_editor
     end
 
     def update
-      verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
+      authorize @sender, :update?
       saved = EmailSenderSetting.transaction do
         next false unless @sender.update(sender_params)
 
@@ -42,13 +42,13 @@ module Admin
       @sender_ready = EmailTemplates::Sender.verified?(@sender)
       global = EmailSenderSetting.find_by(organization_id: nil)
       @global_sender_ready = EmailTemplates::Sender.verified?(global)
-      @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                 .includes(:actor).order(created_at: :desc).limit(20)
-    end
-
-    def verify_permission!
-      allowed = current_organization && current_user.admin? && current_user.permission?('email_settings.manage')
-      raise Pundit::NotAuthorizedError unless allowed
+      @can_view_audits = policy(EmailSettingAudit).index?
+      @audits = if @can_view_audits
+                  policy_scope(EmailSettingAudit).where(organization: current_organization, setting_type: 'sender')
+                                                 .includes(:actor).order(created_at: :desc).limit(20)
+                else
+                  []
+                end
     end
 
     def sender_params

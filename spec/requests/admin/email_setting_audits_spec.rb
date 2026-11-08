@@ -8,7 +8,7 @@ RSpec.describe 'Email settings audit history', type: :request do
   let(:administrator) { create(:user, system_roles: [role]) }
 
   before do
-    %w[email_branding.manage email_settings.manage].each do |code|
+    %w[email_branding.manage email_settings.manage email_setting_audits.view].each do |code|
       permission = Permission.find_or_create_by!(code:) do |record|
         record.name = code
         record.module_name = 'Communication'
