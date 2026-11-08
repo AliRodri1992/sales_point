@@ -31,7 +31,7 @@ module Users
       maximum = limit
       return if maximum.nil? || occupied + additional <= maximum
 
-      raise CapacityExceeded, "Organization user limit of #{maximum} reached"
+      raise CapacityExceeded, I18n.t('user_capacity.errors.exceeded', limit: maximum)
     end
   end
 end

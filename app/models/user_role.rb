@@ -69,12 +69,12 @@ class UserRole < ApplicationRecord
   def branch_role_requires_branch
     return unless system_role&.branch? && branch_id.blank?
 
-    errors.add(:branch, 'is required for branch roles')
+    errors.add(:branch, I18n.t('user_role_errors.branch_required'))
   end
 
   def global_role_cannot_have_branch
     return unless system_role&.system? && branch_id.present?
 
-    errors.add(:branch, 'must be blank for system roles')
+    errors.add(:branch, I18n.t('user_role_errors.system_role_global'))
   end
 end

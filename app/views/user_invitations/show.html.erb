@@ -16,7 +16,7 @@
     <div>
       <%= form.label :password, t('user_invitations.password'), class: 'block text-sm font-semibold' %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
       <%= form.password_field :password, autocomplete: 'new-password',
-                              aria: { invalid: @invitation.user.errors[:password].any?,
+                              aria: { required: true, invalid: @invitation.user.errors[:password].any?,
                                       describedby: @invitation.user.errors[:password].any? ? 'user_password_error' : nil },
                               class: 'input-field min-h-11 w-full rounded-xl' %>
       <%= error_message_for(@invitation.user, :password, label: t('user_invitations.password')) %>
@@ -24,7 +24,7 @@
     <div>
       <%= form.label :password_confirmation, t('user_invitations.password_confirmation'), class: 'block text-sm font-semibold' %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
       <%= form.password_field :password_confirmation, autocomplete: 'new-password',
-                              aria: { invalid: @invitation.user.errors[:password_confirmation].any?,
+                              aria: { required: true, invalid: @invitation.user.errors[:password_confirmation].any?,
                                       describedby: @invitation.user.errors[:password_confirmation].any? ? 'user_password_confirmation_error' : nil },
                               class: 'input-field min-h-11 w-full rounded-xl' %>
       <%= error_message_for(@invitation.user, :password_confirmation, label: t('user_invitations.password_confirmation')) %>

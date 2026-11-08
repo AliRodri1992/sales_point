@@ -8,7 +8,7 @@ module Users
 
       scope = organization.branches.with_deleted
       retained_ids = user&.persisted? ? user.user_roles.where(deleted_at: nil).select(:branch_id) : []
-      scope.where(status: true, deleted_at: nil).or(scope.where(id: retained_ids)).order(:name)
+      scope.where(operational_status: 'active', deleted_at: nil).or(scope.where(id: retained_ids)).order(:name)
     end
 
     def initialize(user:, organization:, tokens:)
@@ -43,7 +43,7 @@ module Users
 
     def valid_branch_ids?(parsed)
       ids = parsed.map(&:first).uniq
-      allowed = @organization.branches.not_deleted.where(status: true, id: ids).pluck(:id)
+      allowed = @organization.branches.not_deleted.where(operational_status: 'active', id: ids).pluck(:id)
       existing = local_assignments.pluck(:branch_id, :system_role_id)
       parsed.all? { |pair| allowed.include?(pair.first) || existing.include?(pair) }
     end

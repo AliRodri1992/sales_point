@@ -43,7 +43,9 @@
               <% end %>
               <% current_error = @restoration_error_target_id == user.id %>
               <%= form.text_field :reason, id: "restore_reason_#{user.id}", value: current_error ? @restoration_form.reason : nil, maxlength: 1000,
-                                  aria: { invalid: current_error && @restoration_form.errors[:reason].any? },
+                                  aria: { invalid: current_error && @restoration_form.errors[:reason].any?,
+                                          describedby: current_error && @restoration_form.errors[:reason].any? ?
+                                            'users_account_restoration_reason_error' : nil },
                                   class: "w-full rounded-xl border px-3 py-2 text-sm #{current_error ? form_state_classes(@restoration_form, :reason) : 'border-slate-300'}" %>
               <% if current_error %>
                 <%= error_message_for(@restoration_form, :reason, label: t('admin.users.status_management.reason')) %>
