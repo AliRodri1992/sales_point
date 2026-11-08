@@ -191,6 +191,20 @@ RSpec.describe Branch, type: :model do
     expect(branch.branch_status_transitions.last.to_status).to eq('closed')
   end
 
+  it 'rejects stale branch edits submitted after a concurrent closure' do
+    branch = create(:branch, name: 'Initial office')
+    stale = Branch.find(branch.id)
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization: branch.organization, user: admin)
+    Branches::TransitionStatus.call(
+      branch:, actor: admin, to: 'closed', reason: 'Final closure'
+    )
+
+    stale.name = 'Late edit'
+    expect { stale.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(branch.reload.name).to eq('Initial office')
+  end
+
   it 'rejects a lifecycle change outside the transition service' do
     branch = create(:branch)
     expect(branch.update(operational_status: 'closed')).to be(false)
