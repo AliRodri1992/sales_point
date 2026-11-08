@@ -50,7 +50,8 @@ module Admin
     end
 
     def create
-      @template = EmailTemplate.new(template_attributes.merge(locale: I18n.locale.to_s))
+      @template = EmailTemplate.new(template_attributes)
+      @template.locale ||= I18n.locale.to_s
       authorize @template
       raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
 
@@ -129,7 +130,7 @@ module Admin
     end
 
     def template_attributes
-      params.expect(email_template: %i[key name category])
+      params.expect(email_template: %i[key name category locale])
     end
 
     def draft_attributes

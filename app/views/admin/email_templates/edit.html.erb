@@ -36,12 +36,6 @@
         </div>
       </div>
 
-      <% if @draft.errors.any? %>
-        <div role="alert" class="mx-5 mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 sm:mx-6">
-          <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
-          <ul class="mt-2 list-disc space-y-1 pl-5"><% @draft.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-        </div>
-      <% end %>
 
       <div class="space-y-6 px-5 py-5 sm:px-6">
         <div class="grid gap-4 lg:grid-cols-2">
@@ -79,7 +73,7 @@
         </div>
         <div>
           <%= f.label :text_body, required_field_label(t('admin.email_templates.plain_text')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_area :text_body, rows: 7, required: true,
+          <%= f.text_area :text_body, rows: 7,
                           data: { action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:text_body].any? },
                           class: 'block min-h-32 w-full resize-y rounded-xl border border-slate-300 bg-slate-50/60 px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>

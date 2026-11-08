@@ -20,14 +20,6 @@
     <%= hidden_field_tag :global, '1' if @branding.organization_id.nil? %>
 
     <div class="min-w-0 space-y-5">
-      <% if @branding.errors.any? %>
-        <div role="alert" class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800" tabindex="-1">
-          <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
-          <ul class="mt-2 list-disc space-y-1 pl-5">
-            <% @branding.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
-          </ul>
-        </div>
-      <% end %>
 
       <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branding-identity-title">
         <header class="border-b border-slate-100 px-5 py-4 sm:px-6">

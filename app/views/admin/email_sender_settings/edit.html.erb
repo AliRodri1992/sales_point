@@ -42,12 +42,6 @@
                         email_sender_default_reply_value: t('admin.email_templates.sender_preview_reply_placeholder'),
                         email_sender_default_domain_value: t('admin.email_templates.sender_domain_unavailable') } do |f| %>
     <div class="min-w-0 space-y-5">
-      <% if @sender.errors.any? %>
-        <div role="alert" tabindex="-1" class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800">
-          <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
-          <p class="mt-1"><%= t('admin.email_templates.sender_errors_hint') %></p>
-        </div>
-      <% end %>
 
       <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="sender-identity-title">
         <header class="flex items-start gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">

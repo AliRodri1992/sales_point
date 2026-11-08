@@ -151,6 +151,14 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(draft.reload.subject).to eq('Order')
   end
 
+  it 'accepts an explicit language independently of the interface locale' do
+    post admin_email_templates_path, params: {
+      email_template: { key: 'order_en', name: 'English order', category: 'transactional', locale: 'en' }
+    }
+    expect(response).to have_http_status(:redirect)
+    expect(EmailTemplate.find_by!(key: 'order_en', organization:).locale).to eq('en')
+  end
+
   it 'renders the creation form and rejects invalid template details' do
     get new_admin_email_template_path
     expect(response).to have_http_status(:ok)
@@ -158,6 +166,9 @@ RSpec.describe 'Admin email templates', type: :request do
       email_template: { key: 'Invalid key', name: '', category: 'transactions', locale: 'es' }
     }
     expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#email_template_name_error')).to be_present
+    expect(document.at_css('#email-template-errors-title')).to be_nil
   end
 
   it 'allows root administrators to create global templates without an organization' do

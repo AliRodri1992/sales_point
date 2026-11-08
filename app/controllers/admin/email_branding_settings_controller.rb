@@ -22,8 +22,9 @@ module Admin
 
       @branding.logo.purge_later if remove_logo
       notify_email_setting('branding_updated', @branding)
-      redirect_to edit_admin_email_branding_settings_path,
-                  flash: { swal_message: t('admin.email_templates.saved') }
+      destination = selected_organization.nil? ? edit_admin_email_branding_settings_path(global: '1') :
+                                              edit_admin_email_branding_settings_path
+      redirect_to destination, flash: { swal_message: t('admin.email_templates.saved') }
     end
 
     private

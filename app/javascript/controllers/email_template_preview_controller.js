@@ -55,6 +55,7 @@ export default class extends Controller {
     this.request = request
     this.statusTarget.textContent = this.loadingValue
     this.statusTarget.classList.remove("text-rose-700")
+    this.clearErrors()
 
     try {
       const dataToPreview = new FormData(this.element)
@@ -71,7 +72,8 @@ export default class extends Controller {
       })
       const data = await response.json().catch(() => ({}))
       if (!response.ok || typeof data.html !== "string") {
-        throw new Error(this.errorValue)
+        if (this.request === request) this.showErrors(data.errors)
+        throw new Error(data.error || this.errorValue)
       }
       if (this.request !== request) return
 
@@ -83,8 +85,30 @@ export default class extends Controller {
     } catch (error) {
       if (error.name === "AbortError" || this.request !== request) return
 
-      this.statusTarget.textContent = this.errorValue
+      this.statusTarget.textContent = error.message || this.errorValue
       this.statusTarget.classList.add("text-rose-700")
     }
+  }
+
+  clearErrors() {
+    this.element.querySelectorAll("[data-email-preview-field-error]").forEach(node => node.remove())
+  }
+
+  showErrors(errors) {
+    if (!errors || typeof errors !== "object") return
+    Object.entries(errors).forEach(([attribute, messages]) => {
+      const name = attribute === "allowed_variables" ? "allowed_variables_csv" : attribute
+      const field = this.element.querySelector(`[name="email_template_version[${name}]"]`)
+      if (!field || !Array.isArray(messages) || !messages.length) return
+
+      const label = this.element.querySelector(`label[for="${field.id}"]`)
+      const title = (label?.textContent || name).replace("*", "").trim()
+      const node = document.createElement("p")
+      node.dataset.emailPreviewFieldError = "true"
+      node.className = "mt-1 text-xs text-rose-600"
+      node.textContent = `${title} ${messages.join(". ")}`
+      field.insertAdjacentElement("afterend", node)
+      field.setAttribute("aria-invalid", "true")
+    })
   }
 }
