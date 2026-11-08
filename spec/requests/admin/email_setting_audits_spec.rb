@@ -167,6 +167,21 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it 'permits a root administrator to configure the global sender' do
+    role.update!(code: 'super_admin')
+    sign_in administrator
+
+    patch admin_email_sender_settings_path, params: {
+      global: '1', email_sender_setting: {
+        display_name: 'Platform Mail', from_address: 'notice@platform.example', default_locale: 'es'
+      }
+    }
+
+    expect(response).to redirect_to(edit_admin_email_sender_settings_path(global: '1'))
+    expect(EmailSenderSetting.find_by!(organization_id: nil).from_address).to eq('notice@platform.example')
+    expect(EmailSenderSetting.find_by(organization:)).to be_nil
+  end
+
   it 'allows a root administrator to audit global branding changes' do
     role.update!(code: 'super_admin')
     patch admin_email_branding_settings_path, params: {

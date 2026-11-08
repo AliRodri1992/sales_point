@@ -136,6 +136,17 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(template.versions.where(status: 'draft').count).to eq(1)
   end
 
+  it 'rejects concurrent modifications of the same draft' do
+    draft = template.new_draft!(actor: nil)
+    stale = described_class.find(draft.id)
+    draft.update!(subject: 'First change')
+
+    expect do
+      stale.update!(subject: 'Overwritten change')
+    end.to raise_error(ActiveRecord::StaleObjectError)
+    expect(draft.reload.subject).to eq('First change')
+  end
+
   it 'rejects header line breaks in subjects and preheaders' do
     version = template.new_draft!(actor: nil)
 

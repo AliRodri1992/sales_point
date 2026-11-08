@@ -12,6 +12,16 @@ RSpec.describe EmailTemplates::TestDeliveryJob, type: :job do
     )
   end
 
+  it 'does not resend an accepted email because the audit write fails' do
+    template.new_draft!(actor:).publish!(actor:)
+    allow_any_instance_of(EmailTemplate).to receive(:audit!).and_raise(ActiveRecord::StatementInvalid)
+    allow(Rails.logger).to receive(:error)
+
+    expect do
+      described_class.perform_now(template.id, actor.id, 'recipient@example.org')
+    end.to change(ActionMailer::Base.deliveries, :count).by(1)
+  end
+
   it 'records delivery only after the email has been sent' do
     template.new_draft!(actor:).publish!(actor:)
     expect do

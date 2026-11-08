@@ -401,6 +401,21 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'draft_updated')).to exist
   end
 
+  it 'shows an inline error when another editor saved a newer draft' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    lock_version = draft.lock_version
+    draft.update!(subject: 'Newer editor content')
+
+    patch draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: { subject: 'Outdated editor content', lock_version: }
+    }
+
+    expect(response).to have_http_status(:conflict)
+    expect(draft.reload.subject).to eq('Newer editor content')
+    expect(Nokogiri::HTML(response.body).at_css('#email_template_version_subject_error')).to be_present
+  end
+
   it 'keeps invalid draft changes out of storage' do
     template = create_template(organization:)
     draft = template.new_draft!(actor: administrator)

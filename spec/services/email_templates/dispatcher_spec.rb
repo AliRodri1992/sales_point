@@ -37,7 +37,7 @@ RSpec.describe EmailTemplates::Dispatcher do
   end
   it 'uses the configured sender locale when the caller does not provide one' do
     organization = create(:organization)
-    EmailSenderSetting.create!(organization:, default_locale: 'en')
+    EmailSenderSetting.create!(organization:, from_address: 'notice@tenant.example', default_locale: 'en')
     en = EmailTemplate.create!(
       key: template.key, name: 'Generic English', locale: 'en', category: 'transactional',
       subject: 'English', html_body: '<p>English</p>', text_body: 'English', status: 'draft'
@@ -50,6 +50,21 @@ RSpec.describe EmailTemplates::Dispatcher do
     end
 
     described_class.call(key: template.key, recipient: 'buyer@example.org', values: {}, organization:)
+  end
+
+  it 'encrypts the selected verified sender for delivery' do
+    organization = create(:organization)
+    EmailSenderSetting.create!(
+      organization:, from_address: 'notice@tenant.example',
+      domain: 'tenant.example', domain_status: 'verified'
+    )
+    expect(EmailTemplates::DeliveryJob).to receive(:perform_later) do |ciphertext|
+      payload = EmailTemplates::EncryptedPayload.decrypt(ciphertext)
+      expect(payload[:sender_headers][:from]).to include('notice@tenant.example')
+    end
+
+    described_class.call(key: template.key, locale: 'es', recipient: 'buyer@example.org',
+                         values: { recipient_name: 'Buyer' }, organization:)
   end
 
   it 'uses organization branding even when the global template is selected' do
