@@ -34,7 +34,7 @@ module EmailTemplates
           <tr><td align="center" style="padding:32px 14px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;">
               <tr><td style="padding:26px 32px;border-bottom:1px solid #e2e8f0;">
-                <img src="{{platform_logo}}" alt="Delta POS" width="220" style="display:block;width:220px;max-width:100%;height:auto;border:0;">
+                <img src="{{platform_logo}}" alt="Delta POS" width="244" style="display:block;width:244px;max-width:100%;height:auto;border:0;">
               </td></tr>
               <tr><td style="padding:36px 32px;">
                 <h1 style="margin:0 0 20px;font-size:25px;line-height:1.3;color:#064e3b;">__DELTA_HEADING__</h1>
