@@ -178,6 +178,24 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.text).to include('Published subject')
   end
 
+  it 'renders the complete Delta POS logo in the published email preview' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    version.update!(
+      html_body: EmailTemplates::DraftStarter.html('es'),
+      text_body: EmailTemplates::DraftStarter.plain('es'),
+      allowed_variables: %w[platform_logo recipient_name organization_name]
+    )
+    version.publish!(actor: administrator)
+
+    get admin_email_template_path(template)
+
+    preview = Nokogiri::HTML(response.body).at_css('#email-template-show-frame')
+    expect(preview).to be_present
+    expect(preview['srcdoc']).to include('delta-pos-email-logo')
+    expect(preview['srcdoc']).not_to include('LOGOTIPO COMPLETO.jpeg')
+  end
+
   it 'shows Deltín and a clear next action when the template is not published' do
     template = create_template(organization:)
 
