@@ -11,9 +11,11 @@ class AddDemoRequestWorkflow < ActiveRecord::Migration[8.1]
       t.references :user, null: true, foreign_key: true
       t.string :action, null: false
       t.text :details
+      t.timestamp :deleted_at
       t.timestamps
     end
 
     add_index :demo_request_activities, :action
+    add_index :demo_request_activities, :deleted_at
   end
 end

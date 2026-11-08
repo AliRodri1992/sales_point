@@ -12,9 +12,11 @@ class AddSupplierDossier < ActiveRecord::Migration[8.1]
       t.integer :weekday, null: false
       t.time :starts_at, null: false
       t.time :ends_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :supplier_schedules, "kind IN ('visit', 'order', 'delivery')",
+    add_index :supplier_schedules, :deleted_at
                          name: 'chk_supplier_schedules_kind'
     add_check_constraint :supplier_schedules, 'weekday BETWEEN 0 AND 6',
                          name: 'chk_supplier_schedules_weekday'

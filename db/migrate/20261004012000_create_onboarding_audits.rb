@@ -9,11 +9,13 @@ class CreateOnboardingAudits < ActiveRecord::Migration[8.1]
       t.integer :step
       t.string :section, limit: 50
       t.jsonb :metadata, null: false, default: {}
+      t.timestamp :deleted_at
       t.timestamps
     end
 
     add_index :onboarding_audits, %i[organization_id created_at]
     add_index :onboarding_audits, %i[user_id created_at]
     add_index :onboarding_audits, :action
+    add_index :onboarding_audits, :deleted_at
   end
 end
