@@ -7,6 +7,7 @@ FactoryBot.define do
 
     transient do
       without_address { false }
+      operational_state { nil }
     end
 
     trait :without_address do
@@ -20,7 +21,7 @@ FactoryBot.define do
     end
 
     after(:build) do |branch, evaluator|
-      branch.operational_status = branch.status ? 'active' : 'suspended'
+      branch.operational_status = evaluator.operational_state || (branch.status ? 'active' : 'suspended')
       unless evaluator.without_address || branch.address
         branch.build_address(
           street: 'Av. Reforma',
