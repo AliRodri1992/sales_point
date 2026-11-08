@@ -489,6 +489,25 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(log.reason).to eq('Temporary closure')
     end
 
+    it 'keeps a closed branch read-only and prevents changes after closure' do
+      office = create(:branch, organization:, name: 'Closed Branch')
+      patch transition_status_admin_branch_path(office),
+            params: { to_status: 'closed', reason: 'No longer operating' }
+      expect(office.reload).to be_closed
+
+      get edit_admin_branch_path(office)
+      expect(response).to have_http_status(:forbidden)
+
+      patch admin_branch_path(office), params: { branch: { name: 'Reopened' } }
+      expect(response).to have_http_status(:forbidden)
+      expect(office.reload.name).to eq('Closed Branch')
+
+      patch transition_status_admin_branch_path(office),
+            params: { to_status: 'active', reason: 'Not permitted' }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(office.reload).to be_closed
+    end
+
     it 'disallows changing status through generic branch attributes' do
       office = create(:branch, organization:, name: 'Operational Branch')
       patch admin_branch_path(office), params: { branch: { status: false, operational_status: 'closed' } }
