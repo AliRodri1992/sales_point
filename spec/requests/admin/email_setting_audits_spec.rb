@@ -160,6 +160,7 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(response).to have_http_status(:redirect)
     expect(EmailBrandingSetting.find_by!(organization_id: nil).display_name).to eq('Platform identity')
     expect(EmailSettingAudit.where(organization_id: nil, setting_type: 'branding')).to exist
+    expect(response).to redirect_to(edit_admin_email_branding_settings_path(global: '1'))
   end
 
   it 'records logo replacement without storing the uploaded file in the audit' do

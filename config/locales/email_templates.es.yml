@@ -88,6 +88,7 @@ es:
       desktop: "Escritorio"
       mobile: "Móvil"
       plain_text: "Texto plano"
+      compare_distinct: "Selecciona dos versiones diferentes para comparar."
       compare_left: "Versión A"
       compare_right: "Versión B"
       compare: "Comparar versiones"

@@ -122,7 +122,7 @@ module Admin
       @right = @template.versions.find(params[:right])
       if @left.id == @right.id
         redirect_to admin_email_template_path(@template),
-                    flash: { swal_message: t('admin.email_templates.compare_preview_error'), swal_icon: 'error' }
+                    flash: { swal_message: t('admin.email_templates.compare_distinct'), swal_icon: 'error' }
         return
       end
 

@@ -92,6 +92,10 @@ export default class extends Controller {
 
   clearErrors() {
     this.element.querySelectorAll("[data-email-preview-field-error]").forEach(node => node.remove())
+    this.element.querySelectorAll("[data-email-preview-invalid]").forEach(field => {
+      field.removeAttribute("data-email-preview-invalid")
+      field.setAttribute("aria-invalid", "false")
+    })
   }
 
   showErrors(errors) {
@@ -109,6 +113,7 @@ export default class extends Controller {
       node.textContent = `${title} ${messages.join(". ")}`
       field.insertAdjacentElement("afterend", node)
       field.setAttribute("aria-invalid", "true")
+      field.dataset.emailPreviewInvalid = "true"
     })
   }
 }

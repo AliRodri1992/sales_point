@@ -453,6 +453,14 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'rejects selecting the same email version on both sides' do
+    template = create_template(organization:)
+    version = template.new_draft!(actor: administrator)
+    get compare_admin_email_template_path(template, left: version.id, right: version.id)
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.compare_distinct'))
+  end
+
   it 'highlights differences between subjects when comparing versions' do
     template = create_template(organization:)
     published = template.new_draft!(actor: administrator)

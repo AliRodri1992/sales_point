@@ -34,6 +34,7 @@ export default class extends Controller {
     this.position()
     document.addEventListener("pointerdown", this.onOutside)
     document.addEventListener("keydown", this.onKeydown)
+    this.menu.querySelector("button")?.focus()
     window.addEventListener("resize", this.onReposition)
     window.addEventListener("scroll", this.onReposition, true)
   }
