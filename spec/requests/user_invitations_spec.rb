@@ -26,6 +26,9 @@ RSpec.describe 'User invitation activation', type: :request do
     get user_invitation_path(token: invitation.raw_token)
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(I18n.t('user_invitations.sign_in_first'))
+    expect(response.body).to include(I18n.t('user_invitations.existing_description',
+                                            organization: organization.name))
+    expect(response.body).not_to include(I18n.t('user_invitations.description', organization: organization.name))
 
     patch accept_user_invitation_path(token: invitation.raw_token)
     expect(response).to have_http_status(:forbidden)

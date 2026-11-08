@@ -3,14 +3,15 @@
 module Users
   # Clarifies the safe acceptance flow without rewriting published email templates.
   class ExistingInvitationPresentation
-    def self.call(html:, plain:, locale:)
+    def self.call(html:, plain:, locale:, organization_name:)
       code = EmailTemplates::InvitationContent::COPY.key?(locale.to_s) ? locale.to_s : 'es'
       copy = EmailTemplates::InvitationContent::COPY.fetch(code)
       substitutions = {
         copy.fetch(:action) => I18n.t('user_invitations.join', locale: code),
         copy.fetch(:invite) => I18n.t('user_invitations.existing_mail_invite', locale: code),
         copy.fetch(:guide) => I18n.t('user_invitations.existing_mail_guide', locale: code),
-        copy.fetch(:preheader) => I18n.t('user_invitations.existing_mail_preheader', locale: code)
+        copy.fetch(:preheader).gsub('{{organization_name}}', ERB::Util.html_escape(organization_name)) =>
+          I18n.t('user_invitations.existing_mail_preheader', locale: code)
       }
       substitutions.each do |old, replacement|
         html = html.gsub(old, replacement)

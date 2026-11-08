@@ -42,6 +42,8 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     expect(message.html_part.body.decoded).to include(I18n.t('user_invitations.join', locale: :es))
     expect(message.html_part.body.decoded).to include(I18n.t('user_invitations.existing_account', locale: :es))
     expect(message.html_part.body.decoded).not_to include('Crear mi contraseña')
+    expect(message.html_part.body.decoded).not_to include('Crea tu contraseña')
+    expect(message.html_part.body.decoded).to include(I18n.t('user_invitations.existing_mail_preheader', locale: :es))
     expect(message.text_part.body.decoded).to include(I18n.t('user_invitations.existing_mail_guide', locale: :es))
   end
 

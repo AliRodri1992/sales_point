@@ -16,7 +16,9 @@ class UserInvitationMailer < ApplicationMailer
     template = invitation_template(invitation)
     subject, html, plain = template.render_with(template_variables(invitation, raw_token))
     if invitation.user.active?
-      html, plain = Users::ExistingInvitationPresentation.call(html:, plain:, locale: template.locale)
+      html, plain = Users::ExistingInvitationPresentation.call(
+        html:, plain:, locale: template.locale, organization_name: invitation.organization.name
+      )
     end
     headers = EmailTemplates::Sender.headers_for(organization: invitation.organization)
     mail(to: invitation.user.email, subject:, **headers) do |format|
