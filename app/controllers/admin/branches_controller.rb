@@ -8,7 +8,7 @@ module Admin
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
-    before_action :set_branch, only: %i[show edit update destroy]
+    before_action :set_branch, only: %i[show edit update destroy transition_status]
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
     rescue_from ActiveRecord::RecordNotUnique, with: :branch_identifier_taken
@@ -104,6 +104,20 @@ module Admin
         @branch.build_address unless @branch.address
         render :edit, status: :unprocessable_content
       end
+    end
+
+    def transition_status
+      authorize @branch, :update?
+      Branches::TransitionStatus.call(branch: @branch, actor: current_user,
+                                      to: params[:to_status], reason: params[:reason])
+      redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                  flash: { swal_message: t('admin.branch_lifecycle.changed') }, status: :see_other
+    rescue Branches::TransitionStatus::InvalidTransition => e
+      redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                  alert: e.message, status: :see_other
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                  alert: e.record.errors.full_messages.to_sentence, status: :see_other
     end
 
     def destroy
