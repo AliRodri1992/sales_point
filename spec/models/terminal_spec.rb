@@ -39,4 +39,11 @@ RSpec.describe Terminal, type: :model do
     expect(second).to be_valid
     expect(first.branch).not_to eq(second.branch)
   end
+  it 'prevents activating a terminal at a suspended branch' do
+    office = create(:branch, status: false)
+    terminal = build(:terminal, branch: office, status: 'active')
+
+    expect(terminal).not_to be_valid
+    expect(terminal.errors[:branch]).to be_present
+  end
 end
