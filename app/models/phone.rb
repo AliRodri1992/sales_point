@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Phone < ApplicationRecord
+  include RestrictsClosedBranchMutations
   KINDS = %w[mobile landline other].freeze
   PHONEABLE_TYPES = %w[Contact Client Branch Employee].freeze
 
