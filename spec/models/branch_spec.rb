@@ -33,6 +33,14 @@ RSpec.describe Branch, type: :model do
     end
   end
 
+  it 'records the initial operational status without an actor' do
+    branch = create(:branch, operational_state: 'preparing')
+    expect(branch.branch_status_transitions.count).to eq(1)
+    expect(branch.branch_status_transitions.first).to have_attributes(
+      from_status: nil, to_status: 'preparing', changed_by: nil
+    )
+  end
+
   describe 'nested address' do
     it 'accepts nested address attributes' do
       branch = build(:branch)
