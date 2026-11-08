@@ -1,6 +1,9 @@
 en:
   admin:
     branch_lifecycle:
+      pending_for: "Requirements before: %{action}"
+      resolve_blocker: "Resolve"
+      unavailable: "Resolve the outstanding requirements first"
       title: "Operational status"
       created_reason: "Branch registration"
       audit_immutable: "Branch lifecycle audit events cannot be changed or deleted."
@@ -67,6 +70,7 @@ en:
         suspended: "New operations are blocked; outstanding work can be resolved."
         closed: "New operations are disabled. Historical records are preserved."
       errors:
+        operational_address_required: "An active or suspended branch must retain a valid address."
         missing_organization: "The organization must be active."
         missing_name: "The branch name must contain 3 to 150 characters."
         active_terminals: "Disable enabled terminals before suspension or closure."
