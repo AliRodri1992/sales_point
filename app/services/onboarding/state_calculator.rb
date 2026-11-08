@@ -29,8 +29,7 @@ module Onboarding
     end
 
     def branch_state
-      branch = @organization.branches.not_deleted.where(status: true).first ||
-               @organization.branches.not_deleted.first
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first
       return {} unless branch
 
       {
@@ -43,8 +42,7 @@ module Onboarding
     end
 
     def terminals_state
-      branch = @organization.branches.not_deleted.where(status: true).first ||
-               @organization.branches.not_deleted.first
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first
       return {} unless branch
 
       branch.terminals.active_records.order(:id).each_with_index.to_h do |terminal, index|
