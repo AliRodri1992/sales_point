@@ -25,7 +25,7 @@ module Inventories
 
     def self.validate_branch_status!(inventory, kind)
       permitted = case inventory.branch.operational_status
-                  when 'active' then true
+                  when 'active' then inventory.branch.operationally_active?
                   when 'preparing' then kind.to_s == 'adjustment'
                   when 'suspended' then kind.to_s != 'sale'
                   else false
