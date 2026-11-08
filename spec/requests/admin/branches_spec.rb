@@ -468,8 +468,8 @@ RSpec.describe 'Admin::Branches', type: :request do
     it 'requires a reason and does not mutate the branch' do
       office = create(:branch, organization:, name: 'Operational Branch')
       patch transition_status_admin_branch_path(office), params: { to_status: 'suspended', reason: '' }
-      expect(response).to redirect_to(admin_branch_path(office))
-      expect(flash[:alert]).to be_present
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t('admin.branch_lifecycle.errors.reason_required'))
       expect(office.reload).to be_active
       expect(office.branch_status_transitions.count).to eq(0)
     end
