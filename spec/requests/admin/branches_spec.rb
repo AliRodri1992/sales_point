@@ -578,7 +578,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
   end
   it 'explains branch soft removal and includes its name in the confirmation' do
-    branch = create(:branch, organization:, name: 'Confirm removal')
+    branch = create(:branch, organization:, name: 'Confirm removal', operational_state: 'preparing')
     get admin_branches_path
 
     document = Nokogiri::HTML(response.body)
