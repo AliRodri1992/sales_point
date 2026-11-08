@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = [
     "role", "summary", "empty", "submitButton", "email", "username",
     "userType", "language", "theme", "themeSwatch", "themeLabel",
+    "employeeRolesRequired", "employeeRoleScreenReader",
     "branchRole", "roleWarning",
     "reviewEmail", "reviewUsername", "reviewUserType", "reviewLanguage",
     "reviewTheme", "reviewRoles", "reviewBranches"
@@ -76,7 +77,17 @@ export default class extends Controller {
     }
     const roles = this.selectedRoles()
     update("reviewRoles", roles.length > 0 ? roles.map((role) => role.dataset.roleName).join(" · ") : "")
-    if (this.hasRoleWarningTarget) this.roleWarningTarget.classList.toggle("hidden", roles.length > 0 || this.branchRoleTargets.some((input) => input.checked))
+    const employee = this.hasUserTypeTarget && this.userTypeTarget.value === "employee"
+    if (this.hasEmployeeRolesRequiredTarget) this.employeeRolesRequiredTarget.classList.toggle("hidden", !employee)
+    if (this.hasEmployeeRoleScreenReaderTarget) this.employeeRoleScreenReaderTarget.classList.toggle("hidden", !employee)
+    if (this.hasRoleWarningTarget) {
+      this.roleWarningTarget.textContent = employee
+        ? this.roleWarningTarget.dataset.employeeMessage
+        : this.roleWarningTarget.dataset.optionalMessage
+      this.roleWarningTarget.classList.toggle(
+        "hidden", roles.length > 0 || this.branchRoleTargets.some((input) => input.checked)
+      )
+    }
     const branchNames = [...new Set(this.branchRoleTargets.filter((input) => input.checked)
       .map((input) => input.closest("details")?.querySelector("summary span.flex-1")?.textContent?.trim())
       .filter(Boolean))]

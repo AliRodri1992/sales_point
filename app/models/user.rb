@@ -1,5 +1,9 @@
 class User < ApplicationRecord
   extend UserChatPresence
+  include UserAdminAccessValidations
+
+  normalizes :email, with: ->(value) { value.strip.downcase }
+  normalizes :username, with: ->(value) { value.strip }
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -49,8 +53,11 @@ class User < ApplicationRecord
 
   validates :email,
             presence: true,
+            length: { maximum: 254 },
             uniqueness: { case_sensitive: false },
             'valid_email_2/email': true
+
+  validates :username, length: { maximum: 100 }, allow_blank: true
 
   validates :user_type,
             presence: true

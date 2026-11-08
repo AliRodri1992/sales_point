@@ -19,6 +19,9 @@ module Users
       return invalid_role_error?(:system_role_ids) if role_ids == :invalid
       return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
 
+      prepare_admin_access_validation(role_ids, branch_roles)
+      return false unless @user.valid?
+
       persist!(role_ids, branch_roles)
       true
     rescue ActiveRecord::RecordInvalid, Users::OrganizationCapacity::CapacityExceeded => e
@@ -32,16 +35,14 @@ module Users
       @user.status = :pending
       @user.password = SecureRandom.urlsafe_base64(36)
       @user.password_confirmation = @user.password
+      return if @user.language_id.present?
+
+      @user.language = Language.selectable.find_by(code: I18n.locale.to_s) ||
+                       Language.selectable.find_by(code: 'es')
     end
 
     def user_attributes
-      permitted = @attributes.except(:system_role_ids, :branch_role_assignments, :status)
-      permitted = permitted.except(:password, :password_confirmation)
-      if permitted[:password].blank?
-        permitted.delete(:password)
-        permitted.delete(:password_confirmation) if permitted[:password_confirmation].blank?
-      end
-      permitted
+      @attributes.except(:system_role_ids, :branch_role_assignments, :status, :password, :password_confirmation)
     end
 
     def requested_role_ids
@@ -66,6 +67,13 @@ module Users
       current = @user.user_roles.where(deleted_at: nil, branch_id: nil, system_role_id: protected)
                      .pluck(:system_role_id)
       (ids & protected).sort == current.sort
+    end
+
+    def prepare_admin_access_validation(role_ids, branch_roles)
+      @user.admin_role_selection_required = @user.new_record?
+      @user.admin_selected_system_roles = role_ids ||
+                                          @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
+      @user.admin_selected_branch_roles = branch_roles.selected_pairs
     end
 
     def branch_role_editor

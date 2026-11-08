@@ -124,8 +124,12 @@
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('shield-check', class: 'size-6') %></span>
           <div>
-            <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.form.fields.system_roles') %></h2>
-            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.catalog_design.user_roles_hint') %></p>
+            <h2 id="users-access-title" class="font-jakarta text-base font-bold text-slate-900">
+              <%= t('admin.users.form.fields.system_roles') %>
+              <span data-user-access-target="employeeRolesRequired" class="ml-1 font-bold text-rose-600 <%= 'hidden' unless @user.employee? %>" aria-hidden="true">*</span>
+              <span data-user-access-target="employeeRoleScreenReader" class="sr-only <%= 'hidden' unless @user.employee? %>"><%= t('admin.users.ui.required_field') %></span>
+            </h2>
+            <p class="mt-0.5 text-xs text-slate-500"><%= t('admin.users.ui.employee_role_hint') %></p>
           </div>
         </header>
         <div class="p-5 sm:p-6">
@@ -160,7 +164,7 @@
           <% else %>
             <p class="text-sm text-slate-500"><%= t('admin.users.ui.no_roles_available') %></p>
           <% end %>
-          <%= error_message_for(@user, :system_role_ids, label: t('admin.users.form.fields.system_roles')) %>
+          <%= error_message_for(@user, :system_role_ids, label: t('admin.users.ui.roles_and_permissions')) %>
           <% if editing %>
             <% branch_assignments = @user.user_roles.active.includes(:system_role, :branch).select { |assignment| assignment.branch_id.present? && assignment.branch&.organization_id == current_organization&.id } %>
             <% if branch_assignments.any? %>
@@ -256,7 +260,7 @@
                                          class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :language_id)} px-3.5 py-2.5 text-sm",
                                          aria: { invalid: @user.errors[:language_id].any? } %>
             </div>
-            <%= error_message_for(@user, :language_id) %>
+            <%= error_message_for(@user, :language_id, label: t('admin.users.form.fields.language')) %>
           </div>
           <div class="min-w-0">
             <%= form.label :theme, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
@@ -301,7 +305,9 @@
             <% end %>
           </dl>
           <p class="mx-5 mb-4 mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-5 text-amber-900 sm:mx-6"
-             data-user-access-target="roleWarning"><%= t('admin.users.ui.no_role_warning') %></p>
+             data-user-access-target="roleWarning"
+             data-employee-message="<%= t('admin.users.ui.employee_role_warning') %>"
+             data-optional-message="<%= t('admin.users.ui.optional_role_warning') %>"><%= t('admin.users.ui.employee_role_warning') %></p>
           <p class="mx-5 mb-5 text-xs leading-5 text-emerald-800 sm:mx-6"><%= t('admin.users.form.invitation_hint') %></p>
         </section>
       <% end %>

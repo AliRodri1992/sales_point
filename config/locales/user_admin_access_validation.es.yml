@@ -1,0 +1,10 @@
+es:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              at_least_one: "debe tener al menos un rol general o por sucursal asignado."
+            language_id:
+              unavailable: "no está disponible."

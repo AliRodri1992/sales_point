@@ -24,6 +24,12 @@ module Users
       parsed && valid_branch_ids?(parsed) && valid_role_ids?(parsed)
     end
 
+    def selected_pairs
+      return local_assignments.pluck(:branch_id, :system_role_id) if @tokens.nil?
+
+      parse_tokens || []
+    end
+
     def apply!
       return if @tokens.nil?
 

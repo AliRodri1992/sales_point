@@ -1,0 +1,10 @@
+ko:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              at_least_one: "전체 역할 또는 지점별 역할을 최소 하나 이상 지정해야 합니다."
+            language_id:
+              unavailable: "사용할 수 없는 언어입니다."

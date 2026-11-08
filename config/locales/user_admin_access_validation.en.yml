@@ -1,0 +1,10 @@
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              at_least_one: "must have at least one global or branch role assigned."
+            language_id:
+              unavailable: "is not available."
