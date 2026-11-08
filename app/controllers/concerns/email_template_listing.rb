@@ -8,7 +8,9 @@ module EmailTemplateListing
     visible = policy_scope(EmailTemplate)
     preload_email_template_access
     @categories = visible.distinct.order(:category).pluck(:category).compact_blank
-    scope = EmailTemplatesQuery.new(visible, params).call
+    query = EmailTemplatesQuery.new(visible, params)
+    scope = query.call
+    @filter_errors = query.date_errors
     prepare_template_pagination(scope)
     @templates = paginated_templates(scope)
     counter_scope = EmailTemplatesQuery.new(visible, params.except(:status), include_archived: true).call

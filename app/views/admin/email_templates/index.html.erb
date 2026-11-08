@@ -94,11 +94,27 @@
           </div>
           <div>
             <%= f.label :updated_from, t('admin.email_templates.updated_from'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
-            <%= f.date_field :updated_from, value: params[:updated_from], class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
+            <%= f.date_field :updated_from, value: params[:updated_from],
+                             aria: { invalid: @filter_errors&.key?(:updated_from), describedby: 'email-updated-from-error' },
+                             class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
+            <% if @filter_errors&.key?(:updated_from) %>
+              <p id="email-updated-from-error" role="alert" class="mt-1.5 text-xs text-rose-700">
+                <%= t('admin.email_templates.updated_from') %> <%= t('admin.email_templates.date_filter_invalid') %>
+              </p>
+            <% end %>
           </div>
           <div>
             <%= f.label :updated_to, t('admin.email_templates.updated_to'), class: 'mb-1.5 block text-xs font-semibold text-slate-600' %>
-            <%= f.date_field :updated_to, value: params[:updated_to], class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
+            <%= f.date_field :updated_to, value: params[:updated_to],
+                             aria: { invalid: @filter_errors&.key?(:updated_to), describedby: 'email-updated-to-error' },
+                             class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
+            <% if @filter_errors&.key?(:updated_to) %>
+              <p id="email-updated-to-error" role="alert" class="mt-1.5 text-xs text-rose-700">
+                <%= t('admin.email_templates.updated_to') %>
+                <%= t(@filter_errors[:updated_to] == :before_start ? 'admin.email_templates.date_filter_before_start' :
+                      'admin.email_templates.date_filter_invalid') %>
+              </p>
+            <% end %>
           </div>
         </div>
       </details>

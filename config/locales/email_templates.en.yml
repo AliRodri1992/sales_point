@@ -22,6 +22,8 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
+      date_filter_invalid: "must contain a valid date"
+      date_filter_before_start: "must be on or after the start date"
       current_published: "Currently published version"
       last_published: "Last published version"
       stale_draft: "This draft was updated in another session. Reload the page before saving."

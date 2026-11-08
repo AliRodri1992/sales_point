@@ -22,6 +22,8 @@ ko:
           deactivated: "템플릿 비활성화: %{name}"
           test_queued: "%{name} 테스트 발송이 대기열에 추가되었습니다"
     email_templates:
+      date_filter_invalid: "유효한 날짜여야 합니다"
+      date_filter_before_start: "시작일보다 빠를 수 없습니다"
       current_published: "현재 게시된 버전"
       last_published: "마지막 게시 버전"
       stale_draft: "다른 세션에서 이 초안이 수정되었습니다. 저장하기 전에 페이지를 새로고침하세요."
