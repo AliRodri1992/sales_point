@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Terminal < ApplicationRecord
+  include RestrictsClosedBranchMutations
   belongs_to :branch
 
   enum :status, {
