@@ -10,7 +10,14 @@ module Branches
       'closed' => []
     }.freeze
 
-    class InvalidTransition < StandardError; end
+    class InvalidTransition < StandardError
+      attr_reader :code
+
+      def initialize(code)
+        @code = code.to_s
+        super(I18n.t("admin.branch_lifecycle.errors.#{code}"))
+      end
+    end
 
     def self.call(branch:, actor:, to:, reason:)
       new(branch:, actor:, to:, reason:).call
@@ -63,40 +70,23 @@ module Branches
     end
 
     def check_readiness!
+      requirements = LifecycleRequirements.new(branch:, actor:)
       case to
-      when 'active' then check_activation!
-      when 'suspended' then check_last_active_branch!
-      when 'closed' then check_closure!
+      when 'active'
+        requirements.activation.each do |requirement, ready|
+          reject!("missing_#{requirement}") unless ready
+        end
+      when 'suspended'
+        blockers = requirements.suspension_blockers
+        reject!(blockers.first) if blockers.any?
+      when 'closed'
+        blockers = requirements.closure_blockers
+        reject!(blockers.first) if blockers.any?
       end
     end
 
-    def check_activation!
-      reject!('organization_inactive') unless branch.organization&.active?
-      reject!('missing_address') unless branch.address&.valid?
-      reject!('missing_code') if branch.code.blank?
-      settings = branch.organization.organization_settings.active_records.first
-      reject!('missing_currency') unless settings&.base_currency&.active?
-      team = Branch.team_assignments(branch.organization).where(branch_id: branch.id)
-      # Organization administrators are authorized managers even without a branch-scoped role.
-      reject!('missing_team') unless team.exists? || actor.admin?
-    end
-
-    def check_closure!
-      reject!('open_operations') if branch.operational_dependencies?
-      reject!('assigned_team') if branch.user_roles.active.exists?
-      check_last_active_branch!
-    end
-
-    def check_last_active_branch!
-      return unless branch.organization&.active? && branch.organization.onboarding_completed?
-      return unless branch.active?
-
-      remaining = branch.organization.branches.not_deleted.where(operational_status: 'active').where.not(id: branch.id)
-      reject!('last_active_branch') if remaining.none?
-    end
-
     def reject!(code)
-      raise InvalidTransition, I18n.t("admin.branch_lifecycle.errors.#{code}")
+      raise InvalidTransition, code
     end
   end
 end
