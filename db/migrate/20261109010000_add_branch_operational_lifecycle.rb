@@ -18,9 +18,11 @@ class AddBranchOperationalLifecycle < ActiveRecord::Migration[8.1]
       t.string :from_status
       t.string :to_status, null: false
       t.text :reason
+      t.datetime :deleted_at, precision: nil
       t.timestamps
     end
     add_index :branch_status_transitions, %i[branch_id created_at], name: 'idx_branch_status_transitions_chronological'
+    add_index :branch_status_transitions, :deleted_at
   end
 
   def down
