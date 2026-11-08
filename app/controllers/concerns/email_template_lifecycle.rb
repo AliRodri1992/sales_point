@@ -42,13 +42,9 @@ module EmailTemplateLifecycle
                 flash: { swal_message: t('admin.email_templates.reactivated_toast') }
   end
 
+  # Legacy DELETE stays available, but uses the canonical archive workflow.
   def destroy
     authorize @template, :destroy?
-    @template.update!(status: 'archived', enabled: false, updated_by: current_user)
-    @template.audit!(action: 'archived', actor: current_user)
-    notify_email_template('removed')
-    redirect_to admin_email_templates_path,
-                status: :see_other,
-                flash: { swal_message: t('admin.email_templates.removed') }
+    archive
   end
 end

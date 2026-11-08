@@ -43,6 +43,14 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to be_nil
   end
 
+  it 'offers predefined and already-used categories in a dropdown' do
+    get new_admin_email_template_path
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('select#email_template_category')).to be_present
+    expect(document.css('select#email_template_category option').map { |node| node['value'] })
+      .to include('transactional', 'security', 'notifications')
+  end
+
   it 'loads the catalog query and filters only permitted templates' do
     own = create_template(organization:)
     own.update!(name: 'Welcome notice')

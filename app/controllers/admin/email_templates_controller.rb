@@ -6,6 +6,7 @@ module Admin
     before_action :authenticate_user!
     before_action :load_template, except: %i[index new create]
     before_action :load_version, only: %i[update_draft publish restore]
+    after_action :clear_email_template_access, only: :index
 
     include EmailTemplatePreviews
     include EmailTemplateListing
@@ -31,6 +32,7 @@ module Admin
       @template = EmailTemplate.new(locale: I18n.locale.to_s, category: 'transactional')
       authorize @template
       raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
+      load_new_categories
     end
 
     def edit
@@ -57,6 +59,7 @@ module Admin
 
       @template.prepare_for_creation!(actor: current_user, organization: current_organization,
                                       global: current_user.role?('super_admin') && params[:global] == '1')
+      load_new_categories
       save_new_template
     end
 
@@ -127,6 +130,12 @@ module Admin
 
     def load_version
       @version = @template.versions.find(params[:version_id])
+    end
+
+    def load_new_categories
+      defaults = %w[transactional security notifications marketing system]
+      existing = policy_scope(EmailTemplate).distinct.pluck(:category)
+      @categories = (defaults + existing + [@template.category]).compact_blank.uniq.sort
     end
 
     def template_attributes

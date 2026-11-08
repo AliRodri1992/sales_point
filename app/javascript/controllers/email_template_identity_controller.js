@@ -31,13 +31,6 @@ export default class extends Controller {
     this.updateSummary()
   }
 
-  selectCategory(event) {
-    if (!this.hasCategoryTarget) return
-    this.categoryTarget.value = event.currentTarget.dataset.categoryValue
-    this.categoryTarget.dispatchEvent(new Event("input", { bubbles: true }))
-    this.categoryTarget.focus()
-  }
-
   updateSummary() {
     if (this.hasSummaryNameTarget) this.summaryNameTarget.textContent = this.nameTarget.value.trim() || "—"
     if (this.hasSummaryKeyTarget) this.summaryKeyTarget.textContent = this.keyTarget.value.trim() || "—"

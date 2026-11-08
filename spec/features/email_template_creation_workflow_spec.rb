@@ -39,8 +39,10 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     find('#email_template_name').set('Welcome staff')
 
     expect(find('#email_template_key').value).to eq('welcome_staff')
-    find('button[data-category-value="security"]').click
-    expect(find('#email_template_category').value).to eq('security')
+    category = find('#email_template_category', visible: :all).find(:xpath, '..')
+    category.find('button[data-delta-select-generated]').click
+    category.find('[role="option"]', text: I18n.t('admin.email_templates.categories.security', locale: :en)).click
+    expect(find('#email_template_category', visible: :all).value).to eq('security')
     expect(find('[data-email-template-identity-target="summaryKey"]').text).to eq('welcome_staff')
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
 

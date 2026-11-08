@@ -7,7 +7,7 @@ module Admin
 
     def save_new_template
       if current_organization.nil? && params[:global] != '1'
-        @template.errors.add(:base, t('admin.email_templates.organization_required'))
+        @template.errors.add(:organization, t('admin.email_templates.organization_required'))
         return render :new, status: :unprocessable_content
       end
 
