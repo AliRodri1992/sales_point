@@ -38,8 +38,9 @@ RSpec.describe 'Admin archived user restoration', type: :request do
 
   it 'reports a missing reason without restoring the account' do
     post admin_user_restoration_path(user), params: { reason: '' }
-    expect(response).to redirect_to(admin_user_restorations_path)
-    expect(flash[:alert]).to eq('Reason required')
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#users_account_restoration_reason_error')).to be_present
+    expect(Nokogiri::HTML(response.body).css('form input[required]')).to be_empty
     expect(user.reload).to be_deleted
   end
 
