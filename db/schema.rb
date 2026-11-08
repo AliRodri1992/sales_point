@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_020000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -422,6 +422,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_020000) do
     t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
     t.index ["deleted_at"], name: "index_email_template_versions_on_deleted_at"
     t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
+    t.index ["email_template_id"], name: "idx_email_template_versions_single_draft", unique: true, where: "((status)::text = 'draft'::text)"
     t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
     t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
     t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
