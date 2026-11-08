@@ -97,7 +97,7 @@ class Branch < ApplicationRecord
   def active_branch_operations?
     inventories.where('stock > 0').exists? ||
       terminals.active_records.exists? ||
-      purchase_requests.exists?(status: %w[draft submitted]) ||
+      purchase_requests.exists?(status: %w[draft submitted approved]) ||
       purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received])
   end
 
