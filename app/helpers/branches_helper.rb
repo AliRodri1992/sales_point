@@ -57,7 +57,8 @@ module BranchesHelper
 
       label = t("admin.branch_workspace.filters.#{key}")
       display = case key
-                when 'status', 'contact', 'team' then t("admin.branch_workspace.options.#{value}")
+                when 'status' then t("admin.branch_lifecycle.statuses.#{value}")
+                when 'contact', 'team' then t("admin.branch_workspace.options.#{value}")
                 when 'country_id' then countries.find { |country| country.id.to_s == value }&.localized_name
                 when 'created_from', 'created_to' then l(Date.iso8601(value))
                 else value
