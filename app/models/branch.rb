@@ -5,13 +5,8 @@ class Branch < ApplicationRecord
 
   # Only the initial placeholder branch created during account registration can
   # be saved before the business has completed its address setup.
-  attr_accessor :registration_bootstrap, :lifecycle_transition_authorized, :direct_legacy_status_change
-
-  enum :operational_status, { preparing: 'preparing', active: 'active',
-                              suspended: 'suspended', closed: 'closed' },
-       default: :preparing, validate: true
-
-  has_many :branch_status_transitions, dependent: :restrict_with_exception
+  include BranchLifecycle
+  attr_accessor :registration_bootstrap
 
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :phones,
@@ -31,10 +26,6 @@ class Branch < ApplicationRecord
   has_many :terminals, dependent: :restrict_with_exception
 
   attribute :status, :boolean, default: false
-  before_validation :sync_legacy_status
-  validate :protect_operational_status_change, if: :restricted_lifecycle_change?
-  validate :protect_legacy_status_change, if: :direct_legacy_status_change
-  validate :protect_closed_changes, if: -> { persisted? && closed? && !lifecycle_transition_authorized }
   normalizes :code, with: ->(value) { value.strip.upcase.presence }
   normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
   normalizes :notes, with: ->(value) { value.strip.presence }
@@ -46,7 +37,6 @@ class Branch < ApplicationRecord
 
   normalizes :name, with: ->(value) { value.strip }
   validate :preserve_operational_history, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
-  validate :prepare_only_deletion, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 
@@ -73,39 +63,12 @@ class Branch < ApplicationRecord
             },
             on: :onboardingstep2
 
-  def operationally_active? = active? && deleted_at.nil?
-
-  def operational_dependencies? = active_branch_operations?
-
   def self.team_assignments(organization)
     people = OrganizationMembership.accessible.where(organization:).select(:user_id)
     UserRole.active.joins(:user).merge(User.active).where(user_id: people)
   end
 
   private
-
-  def sync_legacy_status
-    self.direct_legacy_status_change = persisted? && will_save_change_to_status? &&
-                                       !lifecycle_transition_authorized
-    self.status = operational_status == 'active' unless registration_bootstrap
-  end
-
-  def protect_legacy_status_change
-    errors.add(:status, :invalid)
-  end
-
-  def protect_closed_changes
-    changes = changes_to_save.keys - %w[updated_at]
-    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly')) if changes.any?
-  end
-
-  def restricted_lifecycle_change?
-    persisted? && will_save_change_to_operational_status? && !lifecycle_transition_authorized
-  end
-
-  def protect_operational_status_change
-    errors.add(:operational_status, :invalid)
-  end
 
   def deactivating?
     persisted? && will_save_change_to_status? && !status && deleted_at.nil? &&
@@ -131,10 +94,6 @@ class Branch < ApplicationRecord
       terminals.active_records.exists? ||
       purchase_requests.exists?(status: %w[draft submitted]) ||
       purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received])
-  end
-
-  def prepare_only_deletion
-    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.delete_requires_preparing')) unless preparing?
   end
 
   def preserve_operational_history
