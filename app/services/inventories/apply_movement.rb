@@ -103,9 +103,9 @@ module Inventories
     def self.validate_tracking!(inventory:, lot:)
       raise ArgumentError, 'Inventory lot belongs to another inventory' if lot && lot.inventory_id != inventory.id
 
-      return if inventory.product.tracking_none? || lot
+      return if lot || (inventory.product.tracking_none? && !inventory.inventory_lots.exists?)
 
-      raise ArgumentError, 'Tracked inventory requires a lot-specific stock movement'
+      raise ArgumentError, 'Inventory with recorded lots requires a lot-specific stock movement'
     end
   end
 end
