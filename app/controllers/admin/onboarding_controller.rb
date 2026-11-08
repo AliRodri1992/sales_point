@@ -98,8 +98,8 @@ module Admin
     end
 
     def active_branch
-      @organization.branches.not_deleted.where(operational_status: 'active').first ||
-        @organization.branches.not_deleted.first
+      @organization.branches.not_deleted.where(operational_status: 'preparing').first ||
+        @organization.branches.not_deleted.where(operational_status: 'active').first
     end
 
     def reset_attributes
