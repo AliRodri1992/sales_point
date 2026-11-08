@@ -125,6 +125,7 @@ es:
           language_placeholder: Selecciona un idioma
         password_hint: Déjalo en blanco para mantener la contraseña actual.
         buttons:
+          cancel: "Cancelar"
           back: Volver
           create: Crear usuario
           update: Guardar cambios

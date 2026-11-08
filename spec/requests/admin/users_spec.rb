@@ -133,7 +133,9 @@ RSpec.describe 'Admin::Users', type: :request do
   end
 
   it 'forbids creation when the operator only has a revoked administrator role' do
-    admin_user.user_roles.where(system_role: system_admin_role).update_all(deleted_at: Time.current)
+    admin_user.user_roles.where(system_role: system_admin_role).find_each do |assignment|
+      assignment.update!(deleted_at: Time.current)
+    end
 
     get new_admin_user_path
     expect(response).to have_http_status(:forbidden)
@@ -269,7 +271,6 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(previous.reload.deleted_at).to be_present
       expect(target.user_roles.active.where(system_role: staff).count).to eq(1)
     end
-
   end
 
   describe 'PATCH /admin/users/:id' do

@@ -125,6 +125,7 @@ en:
           language_placeholder: Select a language
         password_hint: Leave blank to keep the current password.
         buttons:
+          cancel: "Cancel"
           back: Back
           create: Create user
           update: Save changes
