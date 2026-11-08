@@ -6,7 +6,7 @@ RSpec.describe Users::InvitationDeliveryJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
 
   before { create(:organization_membership, user:, organization:, account_status: :pending) }
 

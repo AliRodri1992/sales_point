@@ -6,7 +6,7 @@ RSpec.describe 'Admin user invitation delivery', type: :request do
   let(:organization) { create(:organization) }
   let(:role) { create(:system_role, :system, code: 'administrator') }
   let(:administrator) { create(:user, system_roles: [role]) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
 
   before do
     permission = Permission.find_or_create_by!(code: 'users.resend_invitation') do |record|
@@ -59,10 +59,10 @@ RSpec.describe 'Admin user invitation delivery', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
-  it 'does not reset shared account credentials through a local invitation' do
+  it 'allows a pending invitation to a second organization without resetting credentials' do
     create(:organization_membership, user:)
-    expect { resend }.not_to change(UserInvitation, :count)
-    expect(response).to have_http_status(:forbidden)
+    expect { resend }.to change(UserInvitation, :count).by(1)
+    expect(response).to redirect_to(admin_user_path(user))
   end
 
   it 'requires the account to be pending locally' do

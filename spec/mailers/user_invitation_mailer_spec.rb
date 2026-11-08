@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe UserInvitationMailer, type: :mailer do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
   let(:invitation) { UserInvitation.issue!(user:, organization:) }
 
   before do

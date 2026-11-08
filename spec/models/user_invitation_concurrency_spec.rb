@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Concurrent user invitation activation', :concurrent_db do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
 
   before { create(:organization_membership, user:, organization:, account_status: :pending) }
 

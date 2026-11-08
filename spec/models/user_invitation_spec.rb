@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe UserInvitation, type: :model do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
 
   before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
@@ -97,10 +97,28 @@ RSpec.describe UserInvitation, type: :model do
     expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
   end
 
-  it 'does not issue invitations for accounts that are already active' do
+  it 'allows an existing active account to receive a pending organization invitation' do
     user.update!(status: :active)
-    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'User must be pending')
-    expect(described_class.where(user:)).to be_empty
+    invitation = described_class.issue!(user:, organization:)
+    expect(invitation).to be_usable
+    expect(invitation.accept!(token: invitation.raw_token, password: 'password999',
+                              password_confirmation: 'password999')).to be(false)
+    expect(user.reload).to be_active
+  end
+
+  it 'accepts an active account invitation only with a matching authenticated account' do
+    user.update!(status: :active)
+    invitation = described_class.issue!(user:, organization:)
+    stranger = create(:user)
+    expect(invitation.accept_existing!(token: invitation.raw_token, signed_in_user: stranger)).to be(false)
+    expect(invitation.accept_existing!(token: invitation.raw_token, signed_in_user: user)).to be(true)
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_active
+    expect(invitation.reload.accepted_at).to be_present
+  end
+
+  it 'requires employees to have an applicable role before receiving an invitation' do
+    user.update!(user_type: :employee)
+    expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Role required')
   end
 
   it 'does not issue invitations without active organization membership' do

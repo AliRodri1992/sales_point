@@ -6,7 +6,7 @@ RSpec.describe 'Admin archived user restoration', type: :request do
   let(:organization) { create(:organization) }
   let(:role) { create(:system_role, :system, code: 'super_admin') }
   let(:administrator) { create(:user, system_roles: [role]) }
-  let(:user) { create(:user, status: :deleted, deleted_at: Time.current) }
+  let(:user) { create(:user, status: :deleted, user_type: :customer, deleted_at: Time.current) }
 
   before do
     permission = Permission.find_or_create_by!(code: 'users.restore') do |record|
@@ -44,6 +44,17 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(response).to redirect_to(admin_user_path(user))
     expect(user.reload).to be_pending
     expect(user.user_invitations.last).to be_usable
+  end
+
+  it 'does not invite a restored employee until new roles have been assigned' do
+    user.update!(user_type: :employee)
+
+    expect do
+      post admin_user_restoration_path(user), params: { reason: 'Authorized review' }
+    end.not_to change(UserInvitation, :count)
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(user.reload).to be_pending
+    expect(flash[:notice]).to eq(I18n.t('admin.users.ui.restored_needs_roles'))
   end
 
   it 'reports a missing reason without restoring the account' do

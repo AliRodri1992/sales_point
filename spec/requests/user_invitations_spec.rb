@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'User invitation activation', type: :request do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending) }
+  let(:user) { create(:user, status: :pending, user_type: :customer) }
 
   before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
@@ -16,6 +16,23 @@ RSpec.describe 'User invitation activation', type: :request do
           params: { invitation: { password: 'newpassword123', password_confirmation: 'newpassword123' } }
     expect(response).to redirect_to(new_user_session_path)
     expect(user.reload).to be_active
+  end
+
+  it 'requires authenticated ownership before accepting an invitation to a second organization' do
+    user.update!(status: :active)
+    invitation = UserInvitation.issue!(user:, organization:)
+    get user_invitation_path(token: invitation.raw_token)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('user_invitations.sign_in_first'))
+
+    patch accept_user_invitation_path(token: invitation.raw_token)
+    expect(response).to have_http_status(:forbidden)
+
+    sign_in user
+    patch accept_user_invitation_path(token: invitation.raw_token)
+    expect(response).to redirect_to(admin_dashboard_path)
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_active
+    expect(invitation.reload.accepted_at).to be_present
   end
 
   it 'does not allow an expired invitation' do

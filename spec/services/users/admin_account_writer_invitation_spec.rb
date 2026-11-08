@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Users::AdminAccountWriter, type: :model do
   let(:organization) { create(:organization) }
-  let(:user) { create(:user, status: :pending, email: 'old-invite@example.com') }
+  let(:user) { create(:user, status: :pending, user_type: :customer, email: 'old-invite@example.com') }
 
   before { create(:organization_membership, user:, organization:, account_status: :pending) }
 
