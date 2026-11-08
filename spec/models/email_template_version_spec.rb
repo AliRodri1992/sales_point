@@ -105,4 +105,15 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(local.reload.published_version).to be_nil
   end
+  it 'reuses an existing draft without creating duplicate versions' do
+    first = template.new_draft!(actor: nil)
+    first.update!(subject: 'Unsaved editor work')
+
+    second = template.new_draft!(actor: nil)
+
+    expect(second.id).to eq(first.id)
+    expect(second.subject).to eq('Unsaved editor work')
+    expect(template.versions.where(status: 'draft').count).to eq(1)
+  end
+
 end
