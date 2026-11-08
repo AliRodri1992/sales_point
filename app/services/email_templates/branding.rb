@@ -18,22 +18,25 @@ module EmailTemplates
     end
 
     def self.asset_logo(setting)
-      host = ENV['DELTA_POS_PUBLIC_HOST'].presence ||
-             Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
-             'www.example.com'
-      base_url = "https://#{host}"
-      if setting&.logo&.attached?
-        return Rails.application.routes.url_helpers.rails_blob_url(setting.logo, host:, protocol: 'https')
-      end
+      return platform_logo_url unless setting&.logo&.attached?
 
-      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: base_url)
+      mailer_options = Rails.application.config.action_mailer.default_url_options || {}
+      Rails.application.routes.url_helpers.rails_blob_url(
+        setting.logo, host: configured_host, port: mailer_options[:port],
+        protocol: Rails.env.development? ? 'http' : 'https'
+      )
     end
 
     def self.platform_logo_url
-      host = ENV['DELTA_POS_PUBLIC_HOST'].presence ||
-             Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
-             'www.example.com'
-      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: "https://#{host}")
+      asset_host = Rails.application.config.action_mailer.asset_host if Rails.env.development?
+      asset_host ||= "https://#{configured_host}"
+      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: asset_host)
+    end
+
+    def self.configured_host
+      ENV['DELTA_POS_PUBLIC_HOST'].presence ||
+        Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
+        'www.example.com'
     end
 
     def self.organization_name(local, organization)
