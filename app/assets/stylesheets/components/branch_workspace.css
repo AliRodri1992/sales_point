@@ -45,7 +45,7 @@
 .branch-filter-error button { margin-left:.5rem; text-decoration:underline; font-weight:600; }
 .branch-loading-line { height:2px; background:transparent; transition:background .15s; }
 .branch-workspace[aria-busy=true] .branch-loading-line { background:#10b981; }
-.branch-workspace[aria-busy=true] #branches_list { opacity:.65; }
+
 .branch-results-heading { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 1.5rem; }
 .branch-results-heading h2 { font-size:.875rem; font-weight:700; }
 .branch-table-wrap { overflow-x:auto; }
@@ -79,7 +79,7 @@
 .branch-empty { display:grid; justify-items:center; text-align:center; padding:3rem 1.25rem; gap:.875rem; }
 .branch-empty h3 { font-size:1rem; font-weight:700; }
 .branch-empty p { max-width:48ch; color:#64748b; font-size:.8125rem; line-height:1.75; }
-.branch-status-card { margin-top:1.8rem; }
+
 .branch-checkbox { display:flex!important; align-items:center; gap:.5rem; margin-top:.875rem; font-size:.75rem!important; color:#475569!important; font-weight:400!important; }
 .branch-checkbox input { width:16px; height:16px; accent-color:#047857; }
 .branch-phone-removal { color:#9f1239!important; }
@@ -103,7 +103,7 @@
 }
 .branch-workspace .catalog-field [data-server-field-error] { margin-top:.4rem; color:#be123c; line-height:1.5; }
 .branch-workspace .catalog-field:has([data-server-field-error]) [data-delta-select-generated] { border-color:#e11d48; }
-.branch-workspace .branch-status-card [data-branch-status-target="label"] { display:block; }
+
 .branch-workspace [aria-invalid="true"]:focus-visible { outline:2px solid #e11d48; outline-offset:2px; }
 
 .branch-pagination [data-controller~="delta-select"] { width:90px; flex:0 0 90px; }
@@ -133,10 +133,10 @@
 .branch-form-section .catalog-field { min-width:0; }
 .branch-form-section .catalog-field :is(input:not([type=checkbox]),select,textarea) { max-width:100%; }
 .branch-form-section .catalog-hint { margin-top:.375rem; }
-.branch-form-section .branch-status-card { margin-top:0; align-self:end; min-height:76px; border-radius:.75rem; background:#f8fafc; }
-.branch-form-section .branch-status-card span { min-width:0; }
-.branch-form-section .branch-status-card strong { color:#0f172a; }
-.branch-form-section .branch-status-card small { margin-top:.25rem; }
+.branch-form-section .branch-status-card { margin-top:.375rem; align-self:flex-start; }
+
+
+
 .branch-form-aside { top:6rem; gap:1rem; }
 .branch-form-aside .catalog-card-body { padding:1.25rem; }
 .branch-form-aside .branch-avatar { width:44px; height:44px; margin-bottom:.75rem; }
@@ -229,4 +229,24 @@
   .branch-detail-card .catalog-card-body { padding:1.125rem; }
   .branch-detail-definition { grid-template-columns:minmax(0,1fr); gap:1rem; }
   .branch-detail-address-summary { padding:.875rem; }
+}
+
+/* Replace stale results with a layout-matched skeleton during async filters. */
+.branch-loading-skeleton { padding:1rem 1.5rem 1.5rem; }
+.branch-loading-skeleton:not([hidden]) { display:grid; gap:.75rem; }
+.branch-loading-skeleton[hidden] { display:none!important; }
+.branch-loading-skeleton-row { display:grid; grid-template-columns:2fr 1.3fr 1.4fr 1fr; gap:1.25rem; padding:1rem .25rem; border-bottom:1px solid #f1f5f9; }
+.branch-loading-skeleton-line { height:1rem; border-radius:.375rem; background:#e2e8f0; }
+.branch-loading-skeleton-line:nth-child(2n) { max-width:75%; }
+.branch-workspace[aria-busy="true"] #branches_list { display:none; }
+.branch-workspace[aria-busy="true"] .branch-loading-skeleton-line { animation:branch-skeleton-pulse 1.15s ease-in-out infinite alternate; }
+.branch-lifecycle-panel .catalog-button:disabled { opacity:.45; cursor:not-allowed; }
+.branch-lifecycle-panel .catalog-button:disabled:hover { box-shadow:none; }
+@keyframes branch-skeleton-pulse { to { background:#f1f5f9; } }
+@media(max-width:1099px) {
+  .branch-loading-skeleton-row { grid-template-columns:1.2fr 1fr; gap:.875rem; }
+  .branch-loading-skeleton-line:nth-child(n+3) { display:none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .branch-workspace[aria-busy="true"] .branch-loading-skeleton-line { animation:none; }
 }
