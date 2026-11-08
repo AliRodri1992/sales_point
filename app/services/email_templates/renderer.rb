@@ -86,6 +86,13 @@ module EmailTemplates
       valid_scheme = parsed.is_a?(URI::HTTPS) || (Rails.env.development? && parsed.is_a?(URI::HTTP))
       valid = valid_scheme && parsed.host.present? && parsed.userinfo.nil?
       raise ArgumentError, "Unsafe email URL: #{key}" unless valid
+
+      # Never deliver links pointing at documentation/example domains in production.
+      host = parsed.host.downcase
+      reserved = %w[example.com example.org example.net].any? do |domain|
+        host == domain || host.end_with?(".#{domain}")
+      end
+      raise ArgumentError, "Unconfigured email URL: #{key}" if Rails.env.production? && reserved
     rescue URI::InvalidURIError
       raise ArgumentError, "Invalid email URL: #{key}"
     end

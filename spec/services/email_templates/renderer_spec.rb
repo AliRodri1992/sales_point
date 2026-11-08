@@ -77,6 +77,19 @@ RSpec.describe EmailTemplates::Renderer do
     end
   end
 
+  it 'rejects example-domain links in production but accepts real configured hosts' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    source = template('<a href="{{activation_url}}">Activate</a>')
+    values = { recipient_name: 'Sample', activation_url: 'https://example.org/activate' }
+
+    expect do
+      described_class.new(source:, values:).render
+    end.to raise_error(ArgumentError, /Unconfigured email URL/)
+
+    values[:activation_url] = 'https://notifications.delta-pos.mx/activate'
+    expect { described_class.new(source:, values:).render }.not_to raise_error
+  end
+
   it 'rejects unknown and missing variables' do
     expect do
       described_class.new(
