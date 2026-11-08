@@ -50,6 +50,23 @@ RSpec.describe 'Audited users access boundaries', type: :request do
     expect(target.user_roles.active.exists?(system_role: role)).to be(true)
   end
 
+  it 'reissues the invitation when email and roles change together' do
+    target = add_member(create(:user, status: :pending, email: 'combined-original@example.com'))
+    target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
+    role = create(:system_role, :system, code: 'combined_role_change')
+
+    expect do
+      patch admin_user_path(target), params: {
+        user: { email: 'combined-updated@example.com', system_role_ids: ['', role.id.to_s] }
+      }
+    end.to change(UserInvitation, :count).by(1)
+
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(target.reload.email).to eq('combined-updated@example.com')
+    expect(target.session_revoked_at).to be_present
+    expect(target.user_roles.active.exists?(system_role: role)).to be(true)
+  end
+
   it 'reissues the invitation when the email of a pending user is changed' do
     target = add_member(create(:user, status: :pending, email: 'original-invite@example.com'))
     target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
