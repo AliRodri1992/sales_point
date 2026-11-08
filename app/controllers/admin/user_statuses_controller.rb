@@ -29,6 +29,8 @@ module Admin
       else
         render :edit, status: :unprocessable_content
       end
+    rescue Users::InvitationDispatcher::DeliveryError
+      redirect_to admin_user_path(@user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError => e
       @status_form.errors.add(:base, e.message)
       render :edit, status: :unprocessable_content
