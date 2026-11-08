@@ -33,7 +33,7 @@ module Admin
     end
 
     def create
-      return head :forbidden unless @branch.operationally_active?
+      return head :forbidden if @branch.closed? || @branch.suspended?
 
       build_inventory.save!
       redirect_to admin_branch_inventories_path(@branch)
@@ -50,6 +50,8 @@ module Admin
     end
 
     def update
+      return head :forbidden if @branch.closed?
+
       @inventory.update!(inventory_params.except(:product_id, :stock))
       redirect_to admin_branch_inventories_path(@branch)
     rescue ActiveRecord::RecordInvalid => e
