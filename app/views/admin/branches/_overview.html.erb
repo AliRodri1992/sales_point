@@ -1,23 +1,14 @@
-<dl id="branch-overview"
-    class="branch-overview"
+<dl id="branch-overview" class="branch-overview"
     aria-label="<%= t('admin.branch_workspace.overview') %>">
   <div class="branch-overview-item">
     <dt class="text-sm font-medium text-slate-600"><%= t('admin.catalog_design.total') %></dt>
     <dd class="font-jakarta text-base font-bold tabular-nums text-slate-900"><%= @branch_counts.values.sum %></dd>
   </div>
-  <div class="branch-overview-divider" aria-hidden="true"></div>
-  <div class="branch-overview-item">
-    <dt class="branch-overview-label">
-      <span class="branch-overview-dot branch-overview-dot-active" aria-hidden="true"></span>
-      <%= t('admin.catalog_design.active') %>
-    </dt>
-    <dd class="font-jakarta text-sm font-bold tabular-nums text-emerald-700"><%= @branch_counts.fetch('active', 0) %></dd>
-  </div>
-  <div class="branch-overview-item">
-    <dt class="branch-overview-label">
-      <span class="branch-overview-dot branch-overview-dot-inactive" aria-hidden="true"></span>
-      <%= t('admin.catalog_design.inactive') %>
-    </dt>
-    <dd class="font-jakarta text-sm font-bold tabular-nums text-slate-700"><%= @branch_counts.fetch('suspended', 0) + @branch_counts.fetch('closed', 0) + @branch_counts.fetch('preparing', 0) %></dd>
-  </div>
+  <% %w[preparing active suspended closed].each do |state| %>
+    <div class="branch-overview-divider" aria-hidden="true"></div>
+    <div class="branch-overview-item">
+      <dt class="branch-overview-label"><%= t("admin.branch_lifecycle.statuses.#{state}") %></dt>
+      <dd class="font-jakarta text-sm font-bold tabular-nums"><%= @branch_counts.fetch(state, 0) %></dd>
+    </div>
+  <% end %>
 </dl>
