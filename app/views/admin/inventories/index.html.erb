@@ -85,13 +85,12 @@
                         <%= label_tag "inventory-lot-#{inventory.id}",
                                       branch_required_label(t('admin.branch_lifecycle.inventory_lot_label')),
                                       class: 'catalog-label' %>
+                        <% available_lots = inventory.inventory_lots.reject(&:quarantined?).sort_by(&:code) %>
+                        <% lot_options = available_lots.map { |lot| ["#{lot.code} · #{lot.quantity}", lot.id] } %>
                         <div data-controller="delta-select" data-searchable="false">
                           <%= select_tag :inventory_lot_id,
                                          options_for_select(
-                                           [[t('admin.branch_lifecycle.inventory_lot_choose'), ''],
-                                            *inventory.inventory_lots.reject(&:quarantined?).sort_by(&:code).map do |lot|
-                                              ["#{lot.code} · #{lot.quantity}", lot.id]
-                                            end],
+                                           [[t('admin.branch_lifecycle.inventory_lot_choose'), ''], *lot_options],
                                            @adjustment_inventory_id == inventory.id ? @adjustment_lot_id : nil
                                          ),
                                          id: "inventory-lot-#{inventory.id}",
