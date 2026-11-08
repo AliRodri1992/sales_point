@@ -53,7 +53,7 @@ RSpec.describe EmailTemplates::TestDelivery do
 
     expect do
       described_class.call(template:, actor:, recipient: actor.email)
-    end.to raise_error(RuntimeError, /Unable to enqueue/)
+    end.to raise_error(ArgumentError, /Unable to enqueue/)
     expect(template.audits.where(action: 'test_queued', actor:)).not_to exist
   end
 
