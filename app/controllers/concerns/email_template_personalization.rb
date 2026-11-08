@@ -15,5 +15,4 @@ module EmailTemplatePersonalization
     message = created ? 'personalized_toast' : 'customization_exists'
     redirect_to destination, status: :see_other, flash: { swal_message: t("admin.email_templates.#{message}") }
   end
-
 end
