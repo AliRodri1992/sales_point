@@ -24,7 +24,8 @@ module Admin
       @can_manage_users = policy(User).create?
       @user_status_counts = current_organization.organization_memberships.active
                                                 .where(deleted_at: nil).group(:account_status).count
-      @filter_roles = SystemRole.system.active.not_deleted.order(:name)
+      @filter_roles = SystemRole.active.not_deleted.order(:role_type, :name)
+      @filter_branches = current_organization.branches.not_deleted.order(:name)
     end
 
     def show

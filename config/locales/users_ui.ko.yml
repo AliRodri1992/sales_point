@@ -14,6 +14,8 @@ ko:
           active: "활성"
           suspended: "일시 중지"
           blocked: "차단"
+        branch_filter_label: "지점"
+        all_branches: "모든 지점"
         filters_title: "사용자 검색 및 필터"
         search_label: "이메일 또는 사용자명"
         results_title: "사용자 목록"

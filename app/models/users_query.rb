@@ -11,7 +11,7 @@ class UsersQuery
   end
 
   def call
-    by_role(by_status(by_user_type(by_search(@scope))))
+    by_branch(by_role(by_status(by_user_type(by_search(@scope)))))
   end
 
   private
@@ -45,9 +45,19 @@ class UsersQuery
 
     assignments = UserRole.active.where(system_role_id: @params[:role])
     if @organization
-      branch_ids = @organization.branches.where(status: true, deleted_at: nil).select(:id)
+      branch_ids = @organization.branches.not_deleted.where(operational_status: 'active').select(:id)
       assignments = assignments.where(branch_id: nil).or(assignments.where(branch_id: branch_ids))
     end
+    scope.where(id: assignments.select(:user_id))
+  end
+
+  def by_branch(scope)
+    return scope if @params[:branch].blank? || @organization.nil?
+
+    branches = @organization.branches.not_deleted.where(operational_status: 'active')
+    return scope.none unless branches.exists?(id: @params[:branch])
+
+    assignments = UserRole.active.where(branch_id: @params[:branch])
     scope.where(id: assignments.select(:user_id))
   end
 end

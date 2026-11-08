@@ -1,5 +1,5 @@
 <%# Render active filters inside the Turbo list frame so it updates with each search. %>
-<% active_query = request.query_parameters.slice('q', 'user_type', 'status', 'role', 'sort', 'direction', 'per_page') %>
+<% active_query = request.query_parameters.slice('q', 'user_type', 'status', 'role', 'branch', 'sort', 'direction', 'per_page') %>
 <% active_filters = [] %>
 <% if params[:q].present? %>
   <% active_filters << { key: 'q', label: t('admin.users.ui.search_label'), value: params[:q].to_s.strip } %>
@@ -16,6 +16,12 @@
   <% selected_role = @filter_roles.find { |role| role.id.to_s == params[:role].to_s } %>
   <% active_filters << { key: 'role', label: t('admin.users.form.fields.system_roles'),
                          value: selected_role ? system_role_name(selected_role) : params[:role].to_s } %>
+<% end %>
+
+<% if params[:branch].present? %>
+  <% selected_branch = @filter_branches.find { |branch| branch.id.to_s == params[:branch].to_s } %>
+  <% active_filters << { key: 'branch', label: t('admin.users.ui.branch_filter_label'),
+                         value: selected_branch ? selected_branch.name : params[:branch].to_s } %>
 <% end %>
 
 <% if active_filters.any? %>
@@ -39,7 +45,7 @@
           <%= delta_icon('x-mark', class: 'size-3.5 shrink-0 text-slate-500') %>
         <% end %>
       <% end %>
-      <%= link_to t('admin.users.ui.clear_active_filters'), admin_users_path(active_query.except('q', 'user_type', 'status', 'role')),
+      <%= link_to t('admin.users.ui.clear_active_filters'), admin_users_path(active_query.except('q', 'user_type', 'status', 'role', 'branch')),
                   data: { turbo_frame: '_top' },
                   class: 'inline-flex min-h-9 items-center rounded-lg px-2 text-xs font-semibold text-emerald-800 underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
     </div>

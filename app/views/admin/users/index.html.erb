@@ -30,11 +30,12 @@
     </p>
   <% end %>
 
-  <section class="grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="<%= t('admin.users.ui.summary') %>">
+  <section class="grid grid-cols-2 gap-3 xl:grid-cols-5" aria-label="<%= t('admin.users.ui.summary') %>">
     <% [
       ['total', counts.except('deleted').values.sum, 'users', 'bg-slate-100 text-slate-700'],
       ['active', counts.fetch('active', 0), 'check-circle', 'bg-emerald-50 text-emerald-700'],
       ['pending', counts.fetch('pending', 0), 'clock', 'bg-amber-50 text-amber-700'],
+      ['suspended', counts.fetch('suspended', 0), 'pause-circle', 'bg-orange-50 text-orange-700'],
       ['blocked', counts.fetch('blocked', 0), 'shield-exclamation', 'bg-rose-50 text-rose-700']
     ].each do |key, count, icon, theme| %>
       <div class="flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -58,7 +59,7 @@
     <%= form_with url: admin_users_path, method: :get,
                   data: { controller: 'users-filters', turbo_frame: '_top',
                           action: 'input->users-filters#searchChanged change->users-filters#filterChanged' },
-                  class: 'grid gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,2fr)_repeat(3,minmax(9rem,1fr))_auto]' do %>
+                  class: 'grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(12rem,2fr)_repeat(4,minmax(8rem,1fr))_auto]' do %>
       <div class="min-w-0 sm:col-span-2 xl:col-span-1">
         <label for="users-filter-search" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.users.ui.search_label') %></label>
         <div class="relative">
@@ -93,6 +94,15 @@
                 [[t('admin.users.index.filters.all_roles'), '']] +
                   @filter_roles.map { |role| [system_role_name(role), role.id] }, params[:role]),
                 id: 'users-filter-role', class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
+        </div>
+      </div>
+      <div class="min-w-0">
+        <label for="users-filter-branch" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.users.ui.branch_filter_label') %></label>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :branch, options_for_select(
+                [[t('admin.users.ui.all_branches'), '']] +
+                  @filter_branches.map { |branch| [branch.name, branch.id] }, params[:branch]),
+                id: 'users-filter-branch', class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
         </div>
       </div>
       <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>

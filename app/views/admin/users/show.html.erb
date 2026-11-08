@@ -1,8 +1,9 @@
 <% member_status = @user.organization_memberships.active.find_by(organization: current_organization)&.account_status || @user.status %>
 <% content_for :title, "#{@user.display_name} | #{t('admin.users.index.title')}" %>
-<% assignments = @user.user_roles.active.includes(:system_role, :branch).to_a.select do |assignment|
-     assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
-                                 assignment.branch.status && assignment.branch.deleted_at.nil?)
+<% assignments = @user.user_roles.where(deleted_at: nil).includes(:system_role, :branch).to_a.select do |assignment|
+     assignment.system_role && assignment.system_role.deleted_at.nil? &&
+       (assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
+                                    assignment.branch.deleted_at.nil?))
    end %>
 <% global_roles = assignments.select { |assignment| assignment.branch_id.nil? } %>
 <% branch_roles = assignments.reject { |assignment| assignment.branch_id.nil? } %>
@@ -133,7 +134,7 @@
         <% if branch_roles.any? %>
           <div class="flex flex-wrap gap-2">
             <% branch_roles.each do |assignment| %>
-              <span class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700"><%= delta_icon(system_role_icon(assignment.system_role), class: 'mr-1 inline size-4') %><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %><% if assignment.system_role.inactive? || !assignment.branch.status %><small class="mt-1 block font-normal text-amber-800"><%= t(assignment.system_role.inactive? ? 'admin.system_roles.lifecycle.assignment_hint' : 'admin.system_roles.lifecycle.inactive_branch') %></small><% end %></span>
+              <span class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700"><%= delta_icon(system_role_icon(assignment.system_role), class: 'mr-1 inline size-4') %><%= system_role_name(assignment.system_role) %> · <%= assignment.branch.name %><% if assignment.system_role.inactive? || !assignment.branch.operationally_active? %><small class="mt-1 block font-normal text-amber-800"><%= t(assignment.system_role.inactive? ? 'admin.system_roles.lifecycle.assignment_hint' : 'admin.system_roles.lifecycle.inactive_branch') %></small><% end %></span>
             <% end %>
           </div>
         <% else %>

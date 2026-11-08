@@ -19,7 +19,7 @@ export default class extends Controller {
   }
 
   filterChanged(event) {
-    if (!["user_type", "status", "role"].includes(event.target.name)) return
+    if (!["user_type", "status", "role", "branch"].includes(event.target.name)) return
 
     clearTimeout(this.pendingSearch)
     this.submitFilters()

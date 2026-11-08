@@ -41,6 +41,19 @@ RSpec.describe UsersQuery, type: :model do
     expect(described_class.new(scope, { role: '' }).call).to include(matching_user, other_user)
   end
 
+  it 'filters organization-local branches and rejects foreign branch filters' do
+    organization = create(:organization)
+    local = create(:branch, organization:)
+    foreign = create(:branch)
+    role = create(:system_role, :branch, code: 'store_checkout')
+    create(:user_role, user: matching_user, system_role: role, branch: local)
+    create(:user_role, user: other_user, system_role: role, branch: foreign)
+
+    expect(described_class.new(scope, { branch: local.id }, organization:).call)
+      .to contain_exactly(matching_user)
+    expect(described_class.new(scope, { branch: foreign.id }, organization:).call).to be_empty
+  end
+
   it 'never expands the relation supplied by the caller' do
     other_user.update!(username: 'john from another organization')
     restricted = User.where(id: matching_user.id)
