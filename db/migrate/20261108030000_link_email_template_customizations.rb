@@ -6,3 +6,4 @@ class LinkEmailTemplateCustomizations < ActiveRecord::Migration[8.1]
                   foreign_key: { to_table: :email_templates },
                   index: { name: 'idx_email_templates_source_template' }
   end
+end
