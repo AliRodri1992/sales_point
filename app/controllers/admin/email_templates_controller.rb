@@ -49,7 +49,7 @@ module Admin
 
     def start_draft
       authorize @template, :update?
-      @template.new_draft!(actor: current_user) unless @template.versions.exists?(status: 'draft')
+      @template.new_draft!(actor: current_user)
       redirect_to edit_admin_email_template_path(@template), status: :see_other
     end
 
@@ -82,8 +82,10 @@ module Admin
 
     def publish
       authorize @template, :publish?
-      @version.publish!(actor: current_user)
-      @template.audit!(action: 'published', actor: current_user, version: @version)
+      EmailTemplate.transaction do
+        @version.publish!(actor: current_user)
+        @template.audit!(action: 'published', actor: current_user, version: @version)
+      end
       notify_email_template('published')
       redirect_to admin_email_template_path(@template),
                   flash: { swal_message: t('admin.email_templates.published') }
@@ -98,9 +100,16 @@ module Admin
       authorize @template, :update?
       raise ArgumentError, t('admin.email_templates.restore_not_published') unless @version.status == 'published'
 
-      draft = @template.new_draft!(actor: current_user)
-      draft.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
-      @template.audit!(action: 'restored', actor: current_user, version: draft)
+      draft = EmailTemplate.transaction do
+        @template.with_lock do
+          raise ArgumentError, t('admin.email_templates.create_draft_first') if @template.versions.exists?(status: 'draft')
+
+          restored = @template.new_draft!(actor: current_user)
+          restored.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
+          @template.audit!(action: 'restored', actor: current_user, version: restored)
+          restored
+        end
+      end
       notify_email_template('restored')
       redirect_to edit_admin_email_template_path(@template),
                   flash: { swal_message: t('admin.email_templates.restored') }
