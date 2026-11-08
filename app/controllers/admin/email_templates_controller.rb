@@ -85,10 +85,18 @@ module Admin
       notify_email_template('published')
       redirect_to admin_email_template_path(@template),
                   flash: { swal_message: t('admin.email_templates.published') }
-    rescue ActiveRecord::RecordInvalid, ArgumentError => e
-      message = @version.status == 'draft' ? e.message : t('admin.email_templates.publish_not_draft')
+    rescue ActiveRecord::RecordInvalid => e
+      if e.record.is_a?(EmailTemplateVersion) && policy(@template).update?
+        @draft = @version
+        @draft.status = 'draft'
+        render :edit, status: :unprocessable_content
+      else
+        redirect_to admin_email_template_path(@template),
+                    flash: { swal_message: e.message, swal_icon: 'error' }
+      end
+    rescue ArgumentError => e
       redirect_to admin_email_template_path(@template),
-                  flash: { swal_message: message, swal_icon: 'error' }
+                  flash: { swal_message: e.message, swal_icon: 'error' }
     end
 
     def restore

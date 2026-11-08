@@ -51,6 +51,8 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def declared_variables
+    return unless allowed_variables.is_a?(Array)
+
     content = [subject, preheader, html_body, text_body].join(' ')
     used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
     errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
@@ -62,9 +64,10 @@ class EmailTemplateVersion < ApplicationRecord
     required = EmailTemplate::REQUIRED_CUSTOMIZATION_VARIABLES.fetch(email_template.key, [])
     required.each do |variable|
       token = "{{#{variable}}}"
-      next if allowed_variables.include?(variable) && html_body.include?(token) && text_body.include?(token)
-
-      errors.add(:base, I18n.t('admin.email_templates.required_customization_variable', variable:))
+      message = I18n.t('admin.email_templates.required_customization_variable', variable:)
+      errors.add(:allowed_variables, message) unless allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
+      errors.add(:html_body, message) unless html_body.to_s.include?(token)
+      errors.add(:text_body, message) unless text_body.to_s.include?(token)
     end
   end
 

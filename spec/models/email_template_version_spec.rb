@@ -82,6 +82,9 @@ RSpec.describe EmailTemplateVersion, type: :model do
     draft.update!(html_body: '<p>Welcome</p>', text_body: 'Welcome', allowed_variables: [])
     expect { draft.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(local.reload.published_version).to be_nil
+    expect(draft.errors[:html_body]).to be_present
+    expect(draft.errors[:text_body]).to be_present
+    expect(draft.errors[:allowed_variables]).to be_present
 
     draft.update!(html_body: '<a href="{{activation_url}}">Join</a>',
                   text_body: '{{activation_url}}', allowed_variables: ['activation_url'])
