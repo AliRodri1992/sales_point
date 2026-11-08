@@ -24,7 +24,8 @@ module Branches
     end
 
     def call
-      branch.with_lock do
+      branch.organization.with_lock do
+        branch.with_lock do
         check_permission!
         check_transition!
         check_readiness!
@@ -34,8 +35,9 @@ module Branches
         branch.branch_status_transitions.create!(
           changed_by: actor, from_status: previous, to_status: to, reason:
         )
-      ensure
-        branch.lifecycle_transition_authorized = false
+        ensure
+          branch.lifecycle_transition_authorized = false
+        end
       end
       true
     end
@@ -57,12 +59,17 @@ module Branches
     end
 
     def check_readiness!
-      return if to == 'suspended'
+      if to == 'suspended'
+        check_last_active_branch!
+        return
+      end
 
       if to == 'active'
         reject!('organization_inactive') unless branch.organization&.active?
         reject!('missing_address') unless branch.address&.valid?
         reject!('missing_code') if branch.code.blank?
+        settings = branch.organization.organization_settings.active_records.first
+        reject!('missing_currency') unless settings&.base_currency&.active?
         team = Branch.team_assignments(branch.organization).where(branch_id: branch.id)
         reject!('missing_team') unless team.exists?
         return
@@ -72,10 +79,15 @@ module Branches
       reject!('open_operations') if branch.operational_dependencies?
       reject!('assigned_team') if branch.user_roles.active.exists?
       reject!('outstanding_stock') if branch.inventories.where('stock > 0').exists?
+      check_last_active_branch!
+    end
+
+    def check_last_active_branch!
       return unless branch.organization&.active? && branch.organization.onboarding_completed?
+      return unless branch.active?
 
       remaining = branch.organization.branches.not_deleted.where(operational_status: 'active').where.not(id: branch.id)
-      reject!('last_active_branch') if branch.active? && remaining.none?
+      reject!('last_active_branch') if remaining.none?
     end
 
     def reject!(code)
