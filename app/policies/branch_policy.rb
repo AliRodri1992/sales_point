@@ -13,8 +13,9 @@ class BranchPolicy < ApplicationPolicy
     admin? && (record == Branch || managed_branch?)
   end
 
-  def update? = managed_branch?
-  def destroy? = managed_branch?
+  def manage? = managed_branch?
+  def update? = managed_branch? && !record.closed?
+  def destroy? = managed_branch? && record.preparing?
 
   class Scope < ApplicationPolicy::Scope
     def resolve
