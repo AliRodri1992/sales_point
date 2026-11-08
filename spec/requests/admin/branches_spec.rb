@@ -353,6 +353,32 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
   end
 
+  describe 'automatic identifiers and change history' do
+    it 'does not permit changing the generated branch code through update parameters' do
+      branch = create(:branch, organization:)
+      original = branch.code
+
+      patch admin_branch_path(branch), params: {
+        branch: { name: 'Updated business location', code: 'MANUAL-CODE' }
+      }
+
+      expect(response).to redirect_to(admin_branches_path)
+      expect(branch.reload.name).to eq('Updated business location')
+      expect(branch.code).to eq(original)
+    end
+
+    it 'shows administrator-attributed changes to branch data' do
+      branch = create(:branch, organization:)
+      patch admin_branch_path(branch), params: { branch: { name: 'Changed branch name' } }
+      get admin_branch_path(branch)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.branch_lifecycle.changes_title'))
+      expect(response.body).to include('Changed branch name')
+      expect(response.body).to include(admin_user.display_name)
+    end
+  end
+
   describe 'GET /admin/branches/:id/edit' do
     it 'renders the edit branch screen for a system administrator' do
       branch = create(:branch, organization:, name: 'Sucursal Centro')
