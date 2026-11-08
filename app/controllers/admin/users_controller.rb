@@ -7,6 +7,7 @@ module Admin
     before_action { head :forbidden unless current_organization }
     include CatalogNavigation
     include Admin::UserFormSetup
+    include Admin::UserListingSorting
 
     before_action :set_user, only: %i[show edit update destroy]
     before_action :load_form_options, only: %i[new create edit update]
@@ -110,19 +111,6 @@ module Admin
     def filtered_users
       UsersQuery.new(scoped_users.includes(:organization_memberships, user_roles: %i[system_role branch]), params,
                      organization: current_organization).call
-    end
-
-    def apply_sorting(scope)
-      sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'users.email'
-      sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
-
-      return scope.order(sort_column => sort_direction) unless sort_column == 'users.status'
-
-      scope.joins(:organization_memberships)
-           .where(organization_memberships: { organization_id: current_organization.id,
-                                              status: 'active', deleted_at: nil })
-           .order(Arel.sql("organization_memberships.account_status #{sort_direction.upcase}"))
-           .order('users.id': :asc)
     end
 
     def user_params
