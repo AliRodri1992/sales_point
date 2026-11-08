@@ -42,7 +42,9 @@ module Inventories
 
       case kind.to_s
       when 'adjustment' then authorized_adjustment?(inventory, options[:user])
-      when 'return' then established_supplier_return?(inventory, options[:source])
+      when 'return'
+        authorized_branch_operator?(inventory, options[:user]) &&
+          established_supplier_return?(inventory, options[:source])
       else false # No new receipts, transfers, or sales during suspension.
       end
     end
@@ -50,6 +52,11 @@ module Inventories
     def self.authorized_adjustment?(inventory, user)
       user&.admin? && user.organization_memberships.accessible
                            .exists?(organization_id: inventory.organization_id)
+    end
+
+    def self.authorized_branch_operator?(inventory, user)
+      user&.organization_memberships&.accessible
+          &.exists?(organization_id: inventory.organization_id)
     end
 
     def self.established_supplier_return?(inventory, source)
