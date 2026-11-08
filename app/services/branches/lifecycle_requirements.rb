@@ -36,8 +36,9 @@ module Branches
       blockers << :outstanding_stock if branch.inventories.where('stock > 0').exists?
       blockers << :pending_requests if branch.purchase_requests.where(status: OPEN_REQUESTS).exists?
       blockers << :pending_orders if branch.purchase_orders.where(status: OPEN_ORDERS).exists?
-      blockers << :pending_returns if PurchaseReturn.joins(:goods_receipt)
-                                                 .where(goods_receipts: { branch_id: branch.id }, status: 'draft').exists?
+      returns = PurchaseReturn.joins(:goods_receipt)
+                              .where(goods_receipts: { branch_id: branch.id }, status: 'draft')
+      blockers << :pending_returns if returns.exists?
       blockers << :assigned_team if branch.user_roles.active.exists?
       blockers
     end
