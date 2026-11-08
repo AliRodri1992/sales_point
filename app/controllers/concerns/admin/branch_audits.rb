@@ -5,7 +5,9 @@ module Admin
   module BranchAudits
     AUDITED_FIELDS = {
       'Branch' => %w[name code contact_email],
-      'Address' => %w[street exterior_number interior_number neighborhood city state postal_code country_id reference_notes],
+      'Address' => %w[
+        street exterior_number interior_number neighborhood city state postal_code country_id reference_notes
+      ],
       'Phone' => %w[number kind primary whatsapp_enabled],
       'Note' => %w[body]
     }.freeze
