@@ -11,6 +11,7 @@ module Admin
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action :set_paper_trail_whodunnit
     before_action :set_branch, only: %i[show edit update destroy transition_status add_terminal change_terminal]
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
