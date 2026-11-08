@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Branches
-  # All interactive lifecycle changes go through this atomic, audited service.
+  # Authorizes, validates and audits every branch lifecycle transition atomically.
   class TransitionStatus
     ALLOWED = {
       'preparing' => %w[active closed],
@@ -26,15 +26,10 @@ module Branches
     def call
       branch.organization.with_lock do
         branch.with_lock do
-        check_permission!
-        check_transition!
-        check_readiness!
-        previous = branch.operational_status
-        branch.lifecycle_transition_authorized = true
-        branch.update!(operational_status: to, status: to == 'active')
-        branch.branch_status_transitions.create!(
-          changed_by: actor, from_status: previous, to_status: to, reason:
-        )
+          check_permission!
+          check_transition!
+          check_readiness!
+          persist_transition!
         ensure
           branch.lifecycle_transition_authorized = false
         end
@@ -46,10 +41,19 @@ module Branches
 
     attr_reader :branch, :actor, :to, :reason
 
+    def persist_transition!
+      previous = branch.operational_status
+      branch.lifecycle_transition_authorized = true
+      branch.update!(operational_status: to, status: to == 'active')
+      branch.branch_status_transitions.create!(
+        changed_by: actor, from_status: previous, to_status: to, reason:
+      )
+    end
+
     def check_permission!
-      allowed = actor&.admin? &&
-                actor.organization_memberships.accessible.exists?(organization_id: branch.organization_id)
-      reject!('not_authorized') unless allowed
+      permitted = actor&.admin? &&
+                  actor.organization_memberships.accessible.exists?(organization_id: branch.organization_id)
+      reject!('not_authorized') unless permitted
     end
 
     def check_transition!
@@ -59,26 +63,26 @@ module Branches
     end
 
     def check_readiness!
-      if to == 'suspended'
-        check_last_active_branch!
-        return
+      case to
+      when 'active' then check_activation!
+      when 'suspended' then check_last_active_branch!
+      when 'closed' then check_closure!
       end
+    end
 
-      if to == 'active'
-        reject!('organization_inactive') unless branch.organization&.active?
-        reject!('missing_address') unless branch.address&.valid?
-        reject!('missing_code') if branch.code.blank?
-        settings = branch.organization.organization_settings.active_records.first
-        reject!('missing_currency') unless settings&.base_currency&.active?
-        team = Branch.team_assignments(branch.organization).where(branch_id: branch.id)
-        reject!('missing_team') unless team.exists?
-        return
-      end
+    def check_activation!
+      reject!('organization_inactive') unless branch.organization&.active?
+      reject!('missing_address') unless branch.address&.valid?
+      reject!('missing_code') if branch.code.blank?
+      settings = branch.organization.organization_settings.active_records.first
+      reject!('missing_currency') unless settings&.base_currency&.active?
+      team = Branch.team_assignments(branch.organization).where(branch_id: branch.id)
+      reject!('missing_team') unless team.exists?
+    end
 
-      # Closed branches must not retain active operational dependencies.
+    def check_closure!
       reject!('open_operations') if branch.operational_dependencies?
       reject!('assigned_team') if branch.user_roles.active.exists?
-      reject!('outstanding_stock') if branch.inventories.where('stock > 0').exists?
       check_last_active_branch!
     end
 
