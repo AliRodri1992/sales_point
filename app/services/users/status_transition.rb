@@ -54,6 +54,9 @@ module Users
 
       User.transaction { execute_transition! }
       SessionRevoker.call(@user)
+      if @target == 'pending' && @user.pending?
+        Users::InvitationDispatcher.call(user: @user, organization: @organization)
+      end
       notify_account_holder
     end
 
