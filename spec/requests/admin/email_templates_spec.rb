@@ -439,6 +439,20 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(flash[:swal_message]).to be_present
   end
 
+  it 'offers any historical version in the comparison selector' do
+    template = create_template(organization:)
+    first = template.new_draft!(actor: administrator)
+    first.publish!(actor: administrator)
+    second = template.new_draft!(actor: administrator)
+    third = template.new_draft!(actor: administrator)
+    get admin_email_template_path(template)
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.css('select[name="left"] option').map { |option| option['value'] })
+      .to include(first.id.to_s, second.id.to_s, third.id.to_s)
+    get compare_admin_email_template_path(template, left: first.id, right: third.id)
+    expect(response).to have_http_status(:ok)
+  end
+
   it 'highlights differences between subjects when comparing versions' do
     template = create_template(organization:)
     published = template.new_draft!(actor: administrator)

@@ -109,8 +109,15 @@ module Admin
 
     def compare
       authorize @template, :versions?
+      @versions = @template.versions.order(version_number: :desc).to_a
       @left = @template.versions.find(params[:left])
       @right = @template.versions.find(params[:right])
+      if @left.id == @right.id
+        redirect_to admin_email_template_path(@template),
+                    flash: { swal_message: t('admin.email_templates.compare_preview_error'), swal_icon: 'error' }
+        return
+      end
+
       @comparison_previews = [@left, @right].to_h { |version| [version.id, comparison_preview(version)] }
       render :compare
     end

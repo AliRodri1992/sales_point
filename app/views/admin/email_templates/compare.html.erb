@@ -15,6 +15,10 @@
 
   <%= render 'workflow_steps', step: 3 %>
 
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <%= render 'compare_selector', left_id: @left.id, right_id: @right.id %>
+  </section>
+
   <div class="grid min-w-0 items-start gap-5 lg:grid-cols-2">
     <% [@left, @right].each_with_index do |version, index| %>
       <% result = @comparison_previews.fetch(version.id) %>

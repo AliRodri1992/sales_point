@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class EmailTemplatesQuery
-  def initialize(scope, filters, include_archived: false)
+  def initialize(scope, filters = {}, include_archived: false, **filter_keywords)
     @scope = scope
-    @filters = filters
+    @filters = filters.merge(filter_keywords)
     @include_archived = include_archived
   end
 
