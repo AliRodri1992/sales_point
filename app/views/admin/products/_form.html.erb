@@ -1,12 +1,12 @@
-<%= form_with model: [:admin, product], multipart: true, data: { turbo: false, controller: 'product-upload nested-catalog', action: 'submit->product-upload#guardSubmit', product_upload_url_value: admin_product_images_path(product_id: product.persisted? ? product.id : nil), product_upload_locale_value: I18n.locale, product_upload_busy_value: t('admin.catalog_design.image_uploading'), product_upload_error_value: t('admin.catalog_design.image_upload_error'), product_upload_ready_value: t('admin.catalog_design.image_ready') }, class: 'catalog-layout' do |form| %>
+<%= form_with model: [:admin, product], multipart: true, html: { novalidate: true }, data: { turbo: false, controller: 'product-upload nested-catalog', action: 'submit->product-upload#guardSubmit', product_upload_url_value: admin_product_images_path(product_id: product.persisted? ? product.id : nil), product_upload_locale_value: I18n.locale, product_upload_busy_value: t('admin.catalog_design.image_uploading'), product_upload_error_value: t('admin.catalog_design.image_upload_error'), product_upload_ready_value: t('admin.catalog_design.image_ready') }, class: 'catalog-layout' do |form| %>
   <div class="catalog-main">
     <%= catalog_errors(product) %>
     <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><% %w[identity pricing classification variants presentations barcodes].each do |section| %><a href="#product-<%= section %>"><%= t("admin.catalog_design.#{section}") %></a><% end %></nav>
     <section class="catalog-card" id="product-identity">
       <%= catalog_heading(t('admin.catalog_design.identity'), t('admin.catalog_design.product_identity_hint'), icon: 'cube') %>
       <div class="catalog-card-body catalog-fields">
-        <%= catalog_field(form, :name, label: t('admin.products.form.name'), required: true, maxlength: 100) %>
-        <%= catalog_field(form, :code, label: t('admin.products.form.code'), required: true, maxlength: 50, autocomplete: 'off') %>
+        <%= catalog_field(form, :name, label: required_field_label(t('admin.products.form.name')), maxlength: 100) %>
+        <%= catalog_field(form, :code, label: required_field_label(t('admin.products.form.code')), maxlength: 50, autocomplete: 'off') %>
         <%= catalog_field(form, :sku, label: t('admin.products.form.sku'), maxlength: 50, autocomplete: 'off') %>
         <%= catalog_field(form, :barcode, label: t('admin.products.form.barcode'), maxlength: 100, autocomplete: 'off') %>
         <div class="catalog-full"><%= catalog_field(form, :description, type: :text_area, label: t('admin.products.form.description'), maxlength: 500, rows: 3) %></div>
@@ -15,7 +15,7 @@
     <section class="catalog-card" id="product-pricing">
       <%= catalog_heading(t('admin.catalog_design.pricing'), t('admin.catalog_design.pricing_hint'), icon: 'currency-dollar') %>
       <div class="catalog-card-body catalog-fields">
-        <%= catalog_field(form, :price, type: :number_field, label: t('admin.products.form.price'), required: true, min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
+        <%= catalog_field(form, :price, type: :number_field, label: required_field_label(t('admin.products.form.price')), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
         <%= catalog_field(form, :cost, type: :number_field, label: t('admin.products.form.cost'), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
         <% if product.persisted? %><div class="catalog-full"><%= catalog_field(form, :price_change_reason, type: :text_area, maxlength: 1000, rows: 2) %><p class="catalog-hint"><%= t('admin.catalog_design.price_approval_hint') %></p></div><% end %>
       </div>

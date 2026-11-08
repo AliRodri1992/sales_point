@@ -1,14 +1,14 @@
 <div class="catalog-nested-row" data-nested-catalog-row>
   <%= form.hidden_field :id if form.object.persisted? %>
   <% if section == :variants %>
-    <%= catalog_field(form, :name, required: true, maxlength: 100) %><%= catalog_field(form, :sku, maxlength: 50) %>
+    <%= catalog_field(form, :name, label: required_field_label(t('admin.catalog_design.name')), maxlength: 100) %><%= catalog_field(form, :sku, maxlength: 50) %>
     <%= catalog_select(form, :status, ProductVariant.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] }, include_blank: false) %>
     <% [:size, :color, :model].each do |attribute| %><%= catalog_field(form, attribute, maxlength: 100) %><% end %>
   <% elsif section == :presentations %>
-    <%= catalog_field(form, :name, required: true, maxlength: 100) %><%= catalog_field(form, :units, type: :number_field, required: true, min: '0.000001', step: '0.000001', inputmode: 'decimal') %>
+    <%= catalog_field(form, :name, required: true, maxlength: 100) %><%= catalog_field(form, :units, type: :number_field, label: required_field_label(t('admin.catalog_design.units')), min: '0.000001', step: '0.000001', inputmode: 'decimal') %>
     <%= catalog_select(form, :status, ProductPresentation.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] }, include_blank: false) %>
   <% else %>
-    <%= catalog_field(form, :value, required: true, maxlength: 100) %><%= catalog_select(form, :symbology, %w[code128 ean13 ean8 upca qr].map { |code| [code.upcase, code] }, include_blank: false) %>
+    <%= catalog_field(form, :value, label: required_field_label(t('admin.catalog_design.value')), maxlength: 100) %><%= catalog_select(form, :symbology, %w[code128 ean13 ean8 upca qr].map { |code| [code.upcase, code] }, include_blank: false) %>
     <%= catalog_select(form, :product_variant_id, @product.product_variants.select(&:persisted?).map { |variant| [variant.name, variant.id] }) %>
     <%= catalog_select(form, :product_presentation_id, @product.product_presentations.select(&:persisted?).map { |presentation| [presentation.name, presentation.id] }) %>
   <% end %>

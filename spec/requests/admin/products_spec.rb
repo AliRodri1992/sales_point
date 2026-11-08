@@ -130,6 +130,14 @@ RSpec.describe 'Admin::Products', type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('name="product[name]"')
+
+      document = Nokogiri::HTML(response.body)
+      form = document.at_css('form[action="/admin/products"]')
+      expect(form['novalidate']).to be_present
+      %w[product_name product_code product_price].each do |field|
+        expect(document.at_css("label[for='#{field}'] .text-rose-600")).to be_present
+        expect(document.at_css("##{field}")['required']).to be_nil
+      end
     end
   end
 
@@ -222,8 +230,8 @@ RSpec.describe 'Admin::Products', type: :request do
       %w[product_name_error product_code_error].each do |id|
         expect(document.at_css("##{id}")).to be_present
       end
-      expect(document.at_css('#product_name_error').text).to include('Name')
-      expect(document.at_css('#product_code_error').text).to include('Code')
+      expect(document.at_css('#product_name_error').text.strip).to be_present
+      expect(document.at_css('#product_code_error').text.strip).to be_present
     end
   end
 

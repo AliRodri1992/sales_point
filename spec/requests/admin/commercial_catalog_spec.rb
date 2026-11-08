@@ -81,6 +81,19 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     expect(promotion.promotion_benefits.sole.value).to eq(15)
   end
 
+  it 'marks mandatory fields but lets Rails validate them instead of HTML5' do
+    get new_admin_price_list_path
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css('form[action="/admin/price_lists"]')
+    expect(form['novalidate']).to be_present
+    %w[price_list_name price_list_code].each do |field|
+      expect(document.at_css("label[for='#{field}'] .text-rose-600")).to be_present
+      expect(document.at_css("##{field}")['required']).to be_nil
+    end
+  end
+
   it 'shows name and code errors beside each field without a duplicate summary' do
     post admin_price_lists_path, params: { price_list: { name: '', code: '', currency: 'MXN', status: 'draft' } }
 
