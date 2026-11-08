@@ -872,6 +872,16 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(doc.at_css('turbo-frame#email_templates_list')).to be_present
   end
 
+  it 'renders compact accessible row actions without expanding the table row' do
+    create_template(organization:)
+    get admin_email_templates_path
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('[data-controller="email-template-actions"]')).to be_present
+    expect(doc.at_css('[data-email-template-actions-target="button"][aria-expanded="false"]')).to be_present
+    expect(doc.at_css('[data-email-template-actions-target="panel"][hidden]')).to be_present
+  end
+
   it 'exposes authorized edit and archive actions from the catalog' do
     template = create_template(organization:)
     get admin_email_templates_path
