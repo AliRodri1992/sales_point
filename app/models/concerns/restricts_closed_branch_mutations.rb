@@ -26,6 +26,10 @@ module RestrictsClosedBranchMutations
       notable
     elsif respond_to?(:branch)
       branch
+    elsif respond_to?(:inventory)
+      inventory&.branch
+    elsif respond_to?(:goods_receipt)
+      goods_receipt&.branch
     end
   end
 end
