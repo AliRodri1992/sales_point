@@ -212,5 +212,4 @@ application.register("branch-directory", BranchDirectoryController)
 import BranchAddressController from "./branch_address_controller"
 application.register("branch-address", BranchAddressController)
 
-import BranchStatusController from "./branch_status_controller"
-application.register("branch-status", BranchStatusController)
+// Branch status transitions are server-rendered; no Stimulus controller is required.
