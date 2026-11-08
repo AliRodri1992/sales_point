@@ -29,6 +29,8 @@ ko:
         missing_address: "유효한 주소를 입력하세요."
         missing_code: "활성화 전에 지점 코드를 입력하세요."
         missing_team: "권한이 있는 사용자를 최소 한 명 배정하세요."
+      missing_currency: "활성화 전에 사용할 기본 통화를 설정하세요."
+      delete_requires_preparing: "준비 중인 지점만 삭제할 수 있습니다."
         open_operations: "폐쇄 전에 진행 중인 업무를 마무리하세요."
         assigned_team: "지점 사용자를 재배정하거나 제거하세요."
         outstanding_stock: "폐쇄 전에 재고를 이동 또는 조정하세요."
