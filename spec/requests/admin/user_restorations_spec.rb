@@ -57,8 +57,8 @@ RSpec.describe 'Admin archived user restoration', type: :request do
 
   it 'paginates more than twenty archived user memberships' do
     20.times do |index|
-      archived = create(:user, status: :deleted, deleted_at: Time.current,
-                        email: "archive-page-#{index}@example.com")
+      email = "archive-page-#{index}@example.com"
+      archived = create(:user, status: :deleted, deleted_at: Time.current, email:)
       create(:organization_membership, user: archived, organization:, account_status: :deleted)
     end
 
