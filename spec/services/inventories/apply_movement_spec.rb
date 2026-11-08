@@ -39,6 +39,23 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.reload.stock).to eq(3)
   end
 
+  it 'requires selecting a lot for untracked products when receipt lots already exist' do
+    inventory = create(:inventory, stock: 4)
+    lot = InventoryLot.create!(
+      inventory:, organization: inventory.organization,
+      code: 'UNTRACKED-RECEIPT-LOT', quantity: 4, status: :available
+    )
+
+    expect do
+      described_class.call(inventory:, quantity: -2, kind: 'adjustment')
+    end.to raise_error(ArgumentError, /requires a lot-specific/)
+    expect(inventory.reload.stock).to eq(4)
+
+    described_class.call(inventory:, quantity: -2, kind: 'adjustment', inventory_lot: lot)
+    expect(inventory.reload.stock).to eq(2)
+    expect(lot.reload.quantity).to eq(2)
+  end
+
   it 'updates tracked lot and aggregate stock together for an adjustment' do
     inventory = create(:inventory, stock: 5)
     inventory.product.update!(tracking_mode: 'lot')
