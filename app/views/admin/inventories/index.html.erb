@@ -4,6 +4,7 @@
     <p class="mt-2 text-sm text-slate-500"><%= t('admin.inventory.description') %></p>
   </header>
 
+  <% unless @branch.closed? || @branch.suspended? %>
   <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
     <%= form_with url: admin_branch_inventories_path(@branch), scope: :inventory, class: 'flex flex-wrap gap-3' do |form| %>
       <%= form.collection_select :product_id, current_organization.products.not_deleted.order(:name),
@@ -16,6 +17,7 @@
       <%= form.submit t('admin.inventory.add'), class: 'rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white' %>
     <% end %>
   </div>
+  <% end %>
 
   <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
     <table class="min-w-full divide-y divide-slate-100 text-sm">
@@ -35,12 +37,14 @@
               <%= link_to t('admin.purchases.lot_traceability'),
                           admin_branch_inventory_inventory_lots_path(@branch, inventory),
                           class: 'mb-2 inline-block font-semibold text-emerald-700 hover:underline' %>
+              <% unless @branch.closed? %>
               <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory), class: 'flex gap-2' do |form| %>
                 <%= form.number_field :quantity, required: true, step: 0.001,
                                       placeholder: t('admin.inventory.quantity'),
                                       class: 'w-32 rounded-xl border border-slate-200 p-2' %>
                 <%= form.submit t('admin.inventory.adjust'),
                                 class: 'rounded-lg bg-emerald-600 px-3 py-2 font-semibold text-white' %>
+              <% end %>
               <% end %>
               <% (@recent_movements_by_inventory[inventory.id] || []).each do |movement| %>
                 <p class="mt-1 text-xs text-slate-500"><%= movement.kind %>: <%= movement.quantity %></p>
