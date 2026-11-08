@@ -49,14 +49,14 @@ RSpec.describe 'Branch terminal administration', type: :request do
     expect(branch.reload).to be_suspended
   end
 
-  it 'prevents a non-admin member from modifying terminal states' do
+  it 'does not expose a branch to a member without branch access' do
     employee = create(:user)
     create(:organization_membership, organization:, user: employee)
     sign_out admin_user
     sign_in employee
 
     post add_terminal_admin_branch_path(branch), params: { terminal: { name: 'Unauthorized' } }
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to have_http_status(:not_found)
     expect(branch.terminals.count).to eq(0)
   end
 end
