@@ -26,7 +26,10 @@
                         empty_value: t('admin.users.ui.not_provided'),
                         role_warning: t('admin.users.ui.no_role_warning') }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
     <div class="min-w-0 space-y-5">
-      <%= catalog_errors(@user) %>
+      <%# Field errors belong to their controls; only non-field errors appear here. %>
+      <% @user.errors[:base].uniq.each do |message| %>
+        <p role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700"><%= message %></p>
+      <% end %>
 
       <% unless editing %>
         <section id="users-create-deltin" class="relative overflow-hidden rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50 shadow-sm" aria-labelledby="users-create-deltin-title">
@@ -71,7 +74,10 @@
         </header>
         <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
           <div class="min-w-0">
-            <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.label :email, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.users.form.fields.email') %><span data-required-indicator class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+              <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
+            <% end %>
             <%= form.email_field :email, autocomplete: 'email', maxlength: 254, inputmode: 'email',
                                  data: { user_access_target: 'email' },
                                  aria: { invalid: @user.errors[:email].any? },
@@ -87,7 +93,10 @@
             <%= error_message_for(@user, :username) %>
           </div>
           <div class="min-w-0">
-            <%= form.label :user_type, t('admin.users.form.fields.user_type'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.label :user_type, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.users.form.fields.user_type') %><span data-required-indicator class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+              <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
+            <% end %>
             <div class="relative" data-controller="delta-select">
               <%= form.select :user_type, options_for_select(
                 User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
@@ -99,7 +108,9 @@
             <%= error_message_for(@user, :user_type) %>
           </div>
           <div class="min-w-0">
-            <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %></span>
+            <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %><span data-required-indicator class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+              <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
+            </span>
             <div class="flex min-h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm font-semibold text-slate-700"><% tenant_status = editing ? @user.organization_memberships.active.find_by(organization: current_organization)&.account_status : 'pending' %>
               <%= t("admin.users.statuses.#{tenant_status || @user.status || 'pending'}") %></div>
             <p class="mt-1.5 text-xs text-slate-500"><%= t(editing ? 'admin.users.form.status_edit_hint' : 'admin.users.form.status_new_hint') %></p>
@@ -248,7 +259,10 @@
             <%= error_message_for(@user, :language_id) %>
           </div>
           <div class="min-w-0">
-            <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= form.label :theme, class: 'mb-1.5 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.users.form.fields.theme') %><span data-required-indicator class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+              <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
+            <% end %>
             <div class="relative" data-controller="delta-select">
               <%= form.select :theme,
                               @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize),

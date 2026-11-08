@@ -45,6 +45,7 @@ en:
         review_theme: "Selected theme"
         review_roles: "Global roles"
         review_branches: "Branches with access"
+        required_field: "Required"
         form_identity: "Account identity"
         form_identity_hint: "Details used to identify the user across the system."
         form_security: "Credentials and security"

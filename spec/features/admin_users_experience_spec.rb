@@ -118,6 +118,16 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.user_roles.active.where(branch_id: branch.id).pluck(:system_role_id)).to eq([branch_role.id])
   end
 
+  scenario 'renders red required stars without browser required attributes' do
+    visit new_admin_user_path
+
+    expect(page).to have_css('label[for="user_email"] [data-required-indicator].text-rose-600', text: '*')
+    expect(page).to have_css('label[for="user_user_type"] [data-required-indicator].text-rose-600', text: '*')
+    expect(page).to have_css('label[for="user_theme"] [data-required-indicator].text-rose-600', text: '*')
+    expect(page).to have_no_css('label[for="user_username"] [data-required-indicator]')
+    expect(page).to have_no_css('form[data-controller="user-access"] [required]')
+  end
+
   scenario 'renders field validation directly beneath the email input' do
     target = create(:user, username: 'Validation Employee')
     create(:organization_membership, organization:, user: target)

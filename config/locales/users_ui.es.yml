@@ -45,6 +45,7 @@ es:
         review_theme: "Tema seleccionado"
         review_roles: "Roles generales"
         review_branches: "Sucursales con permisos"
+        required_field: "Obligatorio"
         form_identity: "Identidad de la cuenta"
         form_identity_hint: "Datos con los que el usuario se identificará en el sistema."
         form_security: "Credenciales y seguridad"

@@ -190,6 +190,42 @@ RSpec.describe 'Admin::Users', type: :request do
       )
     end
 
+    it 'shows red mandatory indicators only for required model attributes without a global error list' do
+      get new_admin_user_path
+
+      document = Nokogiri::HTML(response.body)
+      form = document.at_css('form[data-controller="user-access"]')
+      expect(form).to be_present
+      %w[email user_type theme].each do |attribute|
+        label = form.at_css("label[for='user_#{attribute}']")
+        expect(label.at_css('span[data-required-indicator].text-rose-600').text).to eq('*')
+        expect(label.at_css('.sr-only').text).to include(I18n.t('admin.users.ui.required_field'))
+      end
+      expect(form.at_css('label[for="user_username"] [data-required-indicator]')).to be_nil
+      expect(form.at_css('label[for="user_language_id"] [data-required-indicator]')).to be_nil
+      expect(form.css('span[data-required-indicator]').length).to eq(4)
+      expect(form.css('[required]')).to be_empty
+      expect(form.at_css('.catalog-error')).to be_nil
+    end
+
+    it 'keeps field errors beneath each control without repeating the validation summary' do
+      post admin_users_path, params: {
+        user: { email: 'incorrect-email', user_type: '', theme: 'not-a-theme' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.catalog-error')).to be_nil
+      expect(document.text).not_to include(I18n.t('admin.catalog_design.fix_errors'))
+      %w[email user_type theme].each do |attribute|
+        field = document.at_css("#user_#{attribute}")
+        message = document.at_css("#user_#{attribute}_error")
+        expect(field).to be_present
+        expect(message).to be_present
+        expect(message.parent).to eq(field.parent) if attribute == 'email'
+      end
+    end
+
     it 'does not apply browser required checks to any user form field' do
       get new_admin_user_path
 

@@ -45,6 +45,7 @@ ko:
         review_theme: "선택한 테마"
         review_roles: "전체 역할"
         review_branches: "접근 권한이 있는 지점"
+        required_field: "필수"
         form_identity: "계정 정보"
         form_identity_hint: "시스템에서 사용자를 식별하는 기본 정보입니다."
         form_security: "인증 정보 및 보안"
