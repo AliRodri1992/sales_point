@@ -47,6 +47,15 @@ RSpec.describe Terminal, type: :model do
     expect(terminal.errors[:branch]).to be_present
   end
 
+  it 'prevents moving an active terminal to a suspended branch' do
+    terminal = create(:terminal)
+    suspended = create(:branch, organization: terminal.branch.organization, status: false)
+
+    expect(terminal.update(branch: suspended)).to be(false)
+    expect(terminal.errors[:branch]).to be_present
+    expect(terminal.reload.branch_id).not_to eq(suspended.id)
+  end
+
   it 'prevents activating a terminal at a suspended branch' do
     office = create(:branch, status: false)
     terminal = build(:terminal, branch: office, status: 'active')
