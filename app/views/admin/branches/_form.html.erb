@@ -19,9 +19,9 @@
           <%= form.label :code, t('admin.branch_workspace.code'), class: 'catalog-label' %>
           <%= form.text_field :code, value: @branch.persisted? ? @branch.code : '',
                               placeholder: t('admin.branch_workspace.code_placeholder'),
-                              readonly: true, tabindex: -1, autocomplete: 'off',
-                              aria: { readonly: true }, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500' %>
-          <p class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p>
+                              readonly: true, autocomplete: 'off',
+                              aria: { readonly: true, describedby: 'branch-code-hint' }, class: 'w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500' %>
+          <p id="branch-code-hint" class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p>
         </div>
         <div class="catalog-field">
           <span class="catalog-label"><%= t('admin.branch_lifecycle.title') %></span>
@@ -36,6 +36,11 @@
       <section class="catalog-card branch-form-section" id="branch-location">
         <%= catalog_heading(t('admin.branch_workspace.location'), t('admin.branch_workspace.location_hint'), icon: 'map-pin') %>
         <div class="catalog-card-body">
+          <% if @branch.errors[:address].any? && @branch.address&.errors&.empty? %>
+            <p id="branch_address_error" class="mt-1 text-xs text-rose-700" role="alert">
+              <%= t('admin.branch_workspace.location') %> <%= @branch.errors[:address].join(', ') %>
+            </p>
+          <% end %>
           <%= form.fields_for :address do |address_form| %>
             <%= address_form.hidden_field :id if address_form.object.persisted? %>
             <div class="catalog-fields" data-controller="branch-address supplier-postal-assist supplier-country-fields"
@@ -56,7 +61,7 @@
                       aria: branch_country_aria(@branch, address_form.object) %>
                 </div>
                 <%= error_message_for(address_form.object, :country) %>
-                <%= error_message_for(@branch, :address, label: t('admin.branches.form.fields.country')) if @branch.errors[:address].any? && address_form.object.errors[:country].empty? %>
+
               </div>
               <div class="catalog-field" data-country-postal-wrapper>
                 <%= address_form.label :postal_code do %>
