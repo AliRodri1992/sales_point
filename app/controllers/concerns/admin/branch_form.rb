@@ -11,7 +11,6 @@ module Admin
           :code,
           :contact_email,
           :notes,
-          :status,
           { phones_attributes: [%i[id number country_code kind label extension primary whatsapp_enabled _destroy]],
             address_attributes: %i[
               id street exterior_number interior_number neighborhood city state country_id postal_code reference_notes
