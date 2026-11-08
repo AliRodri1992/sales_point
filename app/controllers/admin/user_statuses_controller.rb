@@ -12,16 +12,23 @@ module Admin
       @target = params[:transition].to_s
       allowed = helpers.allowed_user_transitions(@user, organization: current_organization)
       head :unprocessable_content unless allowed.include?(@target)
+      @status_form = Users::StatusTransition.new(**transition_attributes)
     end
 
     def update
       authorize @user, :manage_status?
-      Users::StatusTransition.new(**transition_attributes).call!
-      membership = @user.organization_memberships.active.find_by(organization: current_organization)
-      destination = membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
-      redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
+      @target = params[:transition].to_s
+      @status_form = Users::StatusTransition.new(**transition_attributes)
+      if @status_form.call
+        membership = @user.organization_memberships.active.find_by(organization: current_organization)
+        destination = membership&.account_deleted? ? admin_users_path : admin_user_path(@user)
+        redirect_to destination, flash: { swal_message: t('admin.users.status_management.changed') }
+      else
+        render :edit, status: :unprocessable_content
+      end
     rescue ArgumentError => e
-      redirect_to admin_user_path(@user), alert: e.message
+      @status_form.errors.add(:base, e.message)
+      render :edit, status: :unprocessable_content
     end
 
     private

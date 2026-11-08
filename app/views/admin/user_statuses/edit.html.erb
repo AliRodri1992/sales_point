@@ -6,28 +6,41 @@
   </header>
   <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
     <div class="mb-5 flex flex-wrap items-center gap-3 text-sm">
-      <%= user_status_badge(@user.status) %><span aria-hidden="true">→</span>
+      <%= user_status_badge(@user.organization_memberships.active.find_by(organization: current_organization)&.account_status || @user.status) %><span aria-hidden="true">→</span>
       <span class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-semibold"><%= t("admin.users.statuses.#{@target}") %></span>
     </div>
-    <%= form_with url: admin_user_status_path(@user), method: :patch, class: 'space-y-5' do |form| %>
+    <%= form_with url: admin_user_status_path(@user), method: :patch, html: { novalidate: true }, class: 'space-y-5' do |form| %>
+      <% @status_form.errors[:base].each do |error| %>
+        <p role="alert" class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"><%= error %></p>
+      <% end %>
       <%= hidden_field_tag :transition, @target %>
       <div>
-        <%= form.label :reason, t('admin.users.status_management.reason'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= text_area_tag :reason, nil, required: true, maxlength: 1000, rows: 4,
-                          class: 'w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-emerald-600 focus:ring-emerald-100' %>
+        <%= label_tag :reason, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+          <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+        <% end %>
+        <%= text_area_tag :reason, @status_form.reason, maxlength: 1000, rows: 4,
+                          aria: { invalid: @status_form.errors[:reason].any? },
+                          class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :reason)}" %>
+        <%= error_message_for(@status_form, :reason, label: t('admin.users.status_management.reason')) %>
       </div>
       <% if @target == 'suspended' %>
         <div>
           <%= label_tag :review_at, t('admin.users.status_management.review_at'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= datetime_local_field_tag :review_at, nil, min: Time.current.strftime('%Y-%m-%dT%H:%M'),
-                                       class: 'w-full rounded-xl border border-slate-300 p-3 text-sm' %>
+          <%= datetime_local_field_tag :review_at, @status_form.review_at,
+                                       aria: { invalid: @status_form.errors[:review_at].any? },
+                                       class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :review_at)}" %>
+          <%= error_message_for(@status_form, :review_at, label: t('admin.users.status_management.review_at')) %>
         </div>
       <% end %>
       <% if @user.organization_memberships.active.find_by(organization: current_organization)&.account_blocked? && @target != 'deleted' %>
         <div>
-          <%= label_tag :resolution, t('admin.users.status_management.resolution'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-          <%= text_area_tag :resolution, nil, required: true, maxlength: 1000, rows: 3,
-                            class: 'w-full rounded-xl border border-slate-300 p-3 text-sm' %>
+          <%= label_tag :resolution, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+            <%= t('admin.users.status_management.resolution') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+          <% end %>
+          <%= text_area_tag :resolution, @status_form.resolution, maxlength: 1000, rows: 3,
+                            aria: { invalid: @status_form.errors[:resolution].any? },
+                            class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :resolution)}" %>
+          <%= error_message_for(@status_form, :resolution, label: t('admin.users.status_management.resolution')) %>
         </div>
       <% end %>
       <p class="rounded-xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><%= t('admin.users.status_management.warning') %></p>

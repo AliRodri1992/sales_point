@@ -2,6 +2,8 @@
 
 module Users
   class StatusTransition
+    include StatusTransitionValidations
+
     ALLOWED = {
       'active' => %w[suspended blocked deleted],
       'pending' => %w[blocked deleted],
@@ -36,6 +38,15 @@ module Users
       @reason = attributes.fetch(:reason).to_s.strip
       @review_at = attributes.fetch(:details, {})[:review_at].presence
       @resolution = attributes.fetch(:details, {})[:resolution].to_s.strip
+    end
+
+    attr_reader :reason, :resolution, :review_at, :target
+
+    def call
+      return false unless valid?
+
+      call!
+      true
     end
 
     def call!

@@ -1,0 +1,3 @@
+es:
+  user_status_form:
+    review_date_future: "debe ser una fecha y hora futura."
