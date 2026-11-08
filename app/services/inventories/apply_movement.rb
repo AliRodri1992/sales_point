@@ -55,8 +55,9 @@ module Inventories
     end
 
     def self.authorized_branch_operator?(inventory, user)
-      user&.organization_memberships&.accessible
-          &.exists?(organization_id: inventory.organization_id)
+      return false unless user
+
+      user.organization_memberships.accessible.exists?(organization_id: inventory.organization_id)
     end
 
     def self.established_supplier_return?(inventory, source)
