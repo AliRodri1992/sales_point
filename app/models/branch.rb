@@ -5,7 +5,7 @@ class Branch < ApplicationRecord
 
   # Only the initial placeholder branch created during account registration can
   # be saved before the business has completed its address setup.
-  attr_accessor :registration_bootstrap, :lifecycle_transition_authorized
+  attr_accessor :registration_bootstrap, :lifecycle_transition_authorized, :direct_legacy_status_change
 
   enum :operational_status, { preparing: 'preparing', active: 'active',
                               suspended: 'suspended', closed: 'closed' },
@@ -33,6 +33,8 @@ class Branch < ApplicationRecord
   attribute :status, :boolean, default: false
   before_validation :sync_legacy_status
   validate :protect_operational_status_change, if: :restricted_lifecycle_change?
+  validate :protect_legacy_status_change, if: :direct_legacy_status_change
+  validate :protect_closed_changes, if: -> { persisted? && closed? && !lifecycle_transition_authorized }
   normalizes :code, with: ->(value) { value.strip.upcase.presence }
   normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
   normalizes :notes, with: ->(value) { value.strip.presence }
@@ -83,7 +85,18 @@ class Branch < ApplicationRecord
   private
 
   def sync_legacy_status
+    self.direct_legacy_status_change = persisted? && will_save_change_to_status? &&
+                                       !lifecycle_transition_authorized
     self.status = operational_status == 'active' unless registration_bootstrap
+  end
+
+  def protect_legacy_status_change
+    errors.add(:status, :invalid)
+  end
+
+  def protect_closed_changes
+    changes = changes_to_save.keys - %w[updated_at]
+    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly')) if changes.any?
   end
 
   def restricted_lifecycle_change?
