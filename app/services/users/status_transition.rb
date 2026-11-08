@@ -3,6 +3,7 @@
 module Users
   class StatusTransition
     include StatusTransitionValidations
+    include StatusTransitionNotifications
 
     ALLOWED = {
       'active' => %w[suspended blocked deleted],
@@ -113,17 +114,6 @@ module Users
                           .where(users: { status: 'active', deleted_at: nil })
                           .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
       raise ArgumentError, 'Cannot disable the last administrator' unless remaining.exists?
-    end
-
-    def notify_account_holder
-      EmailTemplate.ensure_status_template!
-      UserStatusMailer.changed(@status_event.id).deliver_later
-      return if @user.deleted?
-
-      UserStatusNotification.with(record: @user, action: @target, user: @actor)
-                            .deliver(@user, enqueue_job: false)
-    rescue StandardError => e
-      Rails.logger.error("User status notification failed: #{e.class}")
     end
 
     def persist_transition!
