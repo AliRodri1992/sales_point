@@ -27,6 +27,18 @@ RSpec.describe UserInvitation, type: :model do
     expect(current).to be_usable
   end
 
+  it 'does not revoke an invitation issued for another organization' do
+    secondary = create(:organization)
+    create(:organization_membership, user:, organization: secondary)
+    foreign = described_class.issue!(user:, organization: secondary)
+
+    local = described_class.issue!(user:, organization:)
+
+    expect(foreign.reload.revoked_at).to be_nil
+    expect(local).to be_usable
+    expect(foreign).to be_usable
+  end
+
   it 'rejects activation after a security block without changing the password' do
     invitation = described_class.issue!(user:, organization:)
     user.update!(status: :blocked)
