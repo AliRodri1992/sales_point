@@ -33,7 +33,6 @@ RSpec.describe InventoryLot, type: :model do
       code: 'MATCHED-RECEIPT-LOT', quantity: 0
     )
 
-    expect(lot.errors[:goods_receipt_item]).to be_empty if lot.valid?
     expect(lot).to be_valid
   end
 
