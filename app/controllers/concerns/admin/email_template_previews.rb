@@ -51,8 +51,8 @@ module Admin
 
     def redirect_invalid_saved_preview
       message = t('admin.email_templates.detail_preview_error')
-      redirect_to admin_email_template_path(@template), status: :see_other,
-                  flash: { swal_message: message, swal_icon: 'error' }
+      redirect_to admin_email_template_path(@template),
+                  status: :see_other, flash: { swal_message: message, swal_icon: 'error' }
     end
 
     def render_invalid_preview(source)
