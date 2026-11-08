@@ -20,6 +20,7 @@ FactoryBot.define do
     end
 
     after(:build) do |branch, evaluator|
+      branch.operational_status = branch.status ? 'active' : 'suspended'
       unless evaluator.without_address || branch.address
         branch.build_address(
           street: 'Av. Reforma',
