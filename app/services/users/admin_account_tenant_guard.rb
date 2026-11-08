@@ -23,19 +23,18 @@ module Users
     def last_admin_role_safe?(role_ids)
       return true if @user.new_record? || role_ids.nil? || !@user.admin?
 
-      retained_admin = SystemRole.system.active.where(
-        id: role_ids, code: SystemRole::ADMINISTRATIVE_CODES
-      ).exists?
-      return true if retained_admin
-
-      members = @organization.organization_memberships.accessible
-                             .where.not(user_id: @user.id).select(:user_id)
-      remaining = UserRole.active.where(branch_id: nil, user_id: members)
-                          .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
-      return true if remaining.exists?
+      return true if SystemRole.system.active.exists?(id: role_ids, code: SystemRole::ADMINISTRATIVE_CODES)
+      return true if another_administrator_available?
 
       @user.errors.add(:system_role_ids, :last_administrator)
       false
+    end
+
+    def another_administrator_available?
+      members = @organization.organization_memberships.accessible
+                             .where.not(user_id: @user.id).select(:user_id)
+      UserRole.active.where(branch_id: nil, user_id: members)
+              .exists?(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
     end
 
     def reject_shared_change?(attribute)
