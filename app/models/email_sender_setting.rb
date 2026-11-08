@@ -4,6 +4,7 @@ class EmailSenderSetting < ApplicationRecord
   belongs_to :organization, optional: true
 
   before_validation :normalize_addresses
+  before_validation :normalize_display_name
   before_validation :sync_domain_from_sender
 
   validates :display_name, presence: true, length: { maximum: 150 }
@@ -27,6 +28,10 @@ class EmailSenderSetting < ApplicationRecord
       self.domain = candidate
       self.domain_status = 'unverified'
     end
+  end
+
+  def normalize_display_name
+    self.display_name = display_name.strip if display_name.is_a?(String)
   end
 
   def normalize_addresses
