@@ -50,7 +50,10 @@ RSpec.describe 'Retained inactive role assignments' do
   it 'permits retaining or removing an existing assignment on an archived branch' do
     assignment = create(:user_role, user:, system_role: branch_role, branch:)
     # Simulate a legacy archived branch without bypassing production lifecycle rules.
+    # Simulate legacy archived data that current lifecycle rules disallow.
+    # rubocop:disable Rails/SkipsModelValidations
     branch.update_columns(status: false, operational_status: 'suspended', deleted_at: Time.current)
+    # rubocop:enable Rails/SkipsModelValidations
     expect(Users::BranchRoleAssignments.branch_options(user:, organization:)).to include(branch)
     expect(Users::BranchRoleAssignments.branch_options(user: User.new, organization:)).not_to include(branch)
     token = "#{branch.id}:#{branch_role.id}"
