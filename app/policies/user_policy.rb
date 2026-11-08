@@ -40,9 +40,11 @@ class UserPolicy < CatalogPolicy
   private
 
   def editable_account?(account = record)
-    return true if administrator? || !account.is_a?(User) || account.new_record?
+    return true unless account.is_a?(User) && account.persisted?
+    return false if administrative_account?(account) && !user.role?('super_admin')
+    return true if administrator?
 
-    !administrative_account?(account) && account != user && single_organization?(account)
+    account != user && single_organization?(account)
   end
 
   def manageable_status_target?(account = record)

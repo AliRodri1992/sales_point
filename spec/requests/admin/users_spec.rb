@@ -214,6 +214,19 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(target.user_roles.active.exists?(system_role: privileged)).to be(true)
     end
 
+    it 'prevents administrators from editing an existing elevated account' do
+      protected_role = create(:system_role, :system, code: 'super_admin')
+      privileged = add_member(create(:user, email: 'privileged@example.com'))
+      create(:user_role, user: privileged, system_role: protected_role)
+
+      get edit_admin_user_path(privileged)
+      expect(response).to have_http_status(:forbidden)
+
+      patch admin_user_path(privileged), params: { user: { email: 'changed@example.com' } }
+      expect(response).to have_http_status(:forbidden)
+      expect(privileged.reload.email).to eq('privileged@example.com')
+    end
+
     it 'allows superadministrators to assign administrative roles' do
       super_role = create(:system_role, :system, code: 'super_admin')
       create(:user_role, user: admin_user, system_role: super_role)

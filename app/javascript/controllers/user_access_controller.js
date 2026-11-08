@@ -86,7 +86,8 @@ export default class extends Controller {
   updateReview() {
     const empty = this.element.dataset.emptyValue || "—"
     const update = (targetName, value) => {
-      if (this[`has${targetName}Target`]) this[`${targetName}Target`].textContent = value || empty
+      const accessor = targetName[0].toUpperCase() + targetName.slice(1)
+      if (this[`has${accessor}Target`]) this[`${targetName}Target`].textContent = value || empty
     }
     if (this.hasEmailTarget) update("reviewEmail", this.emailTarget.value.trim())
     if (this.hasUsernameTarget) update("reviewUsername", this.usernameTarget.value.trim())
