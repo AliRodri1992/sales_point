@@ -12,6 +12,15 @@ RSpec.describe EmailTemplates::Branding do
     expect(values[:logo_url]).to include('delta-pos-email-logo.png')
   end
 
+  it 'uses the complete branded PNG for email clients and retains the original SVG' do
+    values = described_class.values
+    expect(values[:platform_logo]).to match(%r{\Ahttps://.+/delta-pos-email-logo[^/]*\.png\z})
+    expect(values[:logo_url]).to eq(values[:platform_logo])
+    expect(values[:organization_logo]).to eq(values[:platform_logo])
+    expect(Rails.root.join('app/assets/images/delta-pos-email-logo.svg')).to exist
+    expect(Rails.root.join('app/assets/images/delta-pos-email-logo.png')).to exist
+  end
+
   it 'combines local identity with global contact fallbacks' do
     EmailBrandingSetting.create!(
       display_name: 'Platform', support_email: 'help@platform.example', support_url: 'https://platform.example/help'
