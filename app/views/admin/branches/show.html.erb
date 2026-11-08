@@ -107,7 +107,7 @@
           <div class="catalog-field">
             <%= transition_form.label :to_status,
                                       branch_required_label(t('admin.branch_lifecycle.next_status')),
-                                      class: 'catalog-label' %>
+                                      for: 'branch-transition-target', class: 'catalog-label' %>
             <div data-controller="delta-select" data-searchable="false">
               <%= select_tag :to_status,
                              options_for_select(allowed.map { |state|
@@ -120,7 +120,8 @@
                              id: 'branch-transition-target',
                              data: { branch_transition_target: 'status',
                                      action: 'change->branch-transition#update' },
-                             aria: { describedby: 'branch-transition-help branch-transition-availability' },
+                             aria: { required: true,
+                                     describedby: 'branch-transition-help branch-transition-availability' },
                              class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
             </div>
             <p id="branch-transition-help" data-branch-transition-target="description"
