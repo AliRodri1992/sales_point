@@ -6,8 +6,9 @@ class EmailSenderSettingPolicy < ApplicationPolicy
   end
 
   def update?
-    user&.active? && user.admin? && user.permission?('email_settings.manage') &&
-      (record.organization_id.nil? ? user.role?('super_admin') :
-        user.organization_memberships.accessible.exists?(organization_id: record.organization_id))
+    return false unless user&.active? && user.admin? && user.permission?('email_settings.manage')
+    return user.role?('super_admin') if record.organization_id.nil?
+
+    user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
   end
 end
