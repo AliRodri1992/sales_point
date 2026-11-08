@@ -18,7 +18,8 @@ module Admin
                   flash: { swal_message: t('admin.branch_lifecycle.terminal_added') }, status: :see_other
     rescue ActiveRecord::RecordInvalid => e
       @terminal ||= e.record
-      @terminal_error = true
+      @terminal_error = @terminal.errors[:name].any?
+      @terminal_operation_error = @terminal.errors.full_messages_for(:branch).to_sentence
       load_branch_detail
       render :show, status: :unprocessable_content
     rescue Branches::TransitionStatus::InvalidTransition => e
