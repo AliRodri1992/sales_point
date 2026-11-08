@@ -13,7 +13,11 @@ class UserInvitationMailer < ApplicationMailer
     return unless valid_invitation?(invitation, raw_token)
 
     @deliverable_invitation = invitation
-    subject, html, plain = invitation_template(invitation).render_with(template_variables(invitation, raw_token))
+    template = invitation_template(invitation)
+    subject, html, plain = template.render_with(template_variables(invitation, raw_token))
+    if invitation.user.active?
+      html, plain = Users::ExistingInvitationPresentation.call(html:, plain:, locale: template.locale)
+    end
     headers = EmailTemplates::Sender.headers_for(organization: invitation.organization)
     mail(to: invitation.user.email, subject:, **headers) do |format|
       format.html { render body: html, content_type: 'text/html' }

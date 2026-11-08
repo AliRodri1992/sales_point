@@ -34,6 +34,17 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     expect(invitation.sent_at).to be_present
   end
 
+  it 'tells an already active account to join without creating a new password' do
+    user.update!(status: :active)
+    deliver
+
+    message = ActionMailer::Base.deliveries.last
+    expect(message.html_part.body.decoded).to include(I18n.t('user_invitations.join', locale: :es))
+    expect(message.html_part.body.decoded).to include(I18n.t('user_invitations.existing_account', locale: :es))
+    expect(message.html_part.body.decoded).not_to include('Crear mi contraseña')
+    expect(message.text_part.body.decoded).to include(I18n.t('user_invitations.existing_mail_guide', locale: :es))
+  end
+
   it 'uses the user language when a localized invitation is published' do
     user.update!(language: create(:language, :english))
     deliver
