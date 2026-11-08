@@ -4,6 +4,8 @@ module Users
   # Persists admin-edited accounts without replacing branch-scoped role assignments.
   # User creation, organization membership and global role updates are atomic.
   class AdminAccountWriter
+    include AdminAccountTenantGuard
+
     def initialize(user:, organization:, attributes:, actor: nil)
       @user = user
       @organization = organization
@@ -91,26 +93,6 @@ module Users
     def invalid_role_error?(attribute)
       @user.valid?
       @user.errors.add(attribute, :invalid)
-      false
-    end
-
-    def tenant_safe_update?(role_ids)
-      return true if @user.new_record?
-      return true unless @user.organization_memberships.active.where.not(organization: @organization).exists?
-
-      field = %i[email username user_type theme language_id].find do |attribute|
-        @user.will_save_change_to_attribute?(attribute)
-      end
-      return shared_account_error(field) if field
-
-      original_ids = @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
-      return true if role_ids.nil? || role_ids.sort == original_ids.sort
-
-      shared_account_error(:system_role_ids)
-    end
-
-    def shared_account_error(attribute)
-      @user.errors.add(attribute, :shared_account)
       false
     end
 
