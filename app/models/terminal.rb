@@ -10,6 +10,8 @@ class Terminal < ApplicationRecord
   }
 
   validate :branch_active_when_terminal_activated
+  validate :branch_accepts_new_terminal, on: :create
+  around_save :with_branch_lock, if: :branch_state_sensitive_change?
 
   validates :name, presence: true, length: { in: 2..80 }, on: %i[create update]
   validates :code,
@@ -31,6 +33,24 @@ class Terminal < ApplicationRecord
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
 
   private
+
+  def branch_state_sensitive_change?
+    new_record? || will_save_change_to_status? || will_save_change_to_branch_id?
+  end
+
+  def with_branch_lock
+    branch.with_lock do
+      branch_accepts_new_terminal if new_record?
+      branch_active_when_terminal_activated
+      raise ActiveRecord::RecordInvalid, self if errors[:branch].any?
+
+      yield
+    end
+  end
+
+  def branch_accepts_new_terminal
+    errors.add(:branch, :invalid) if branch&.suspended? || branch&.closed?
+  end
 
   def branch_active_when_terminal_activated
     return unless active? && (new_record? || will_save_change_to_status?)
