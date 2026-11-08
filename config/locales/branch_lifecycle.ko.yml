@@ -4,6 +4,17 @@ ko:
       pending_for: "%{action} 전 확인 사항"
       resolve_blocker: "해결"
       unavailable: "남은 조건을 먼저 해결하세요"
+      changes_title: "지점 데이터 변경 내역"
+      changes_hint: "지점 정보, 주소, 전화번호 및 메모의 최근 변경 사항입니다."
+      audit_subjects:
+        branch: "지점"
+        address: "주소"
+        phone: "전화번호"
+        note: "메모"
+      audit_events:
+        create: "생성"
+        update: "수정"
+        destroy: "삭제"
       title: "지점 운영 상태"
       created_reason: "지점 등록"
       audit_immutable: "지점 상태 변경 기록은 수정하거나 삭제할 수 없습니다."
