@@ -329,6 +329,18 @@
         <p class="mt-2 text-xs leading-6 text-slate-600"><%= t('admin.catalog_design.user_help') %></p>
         
       </div>
+      <section class="rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm"
+               aria-labelledby="users-edit-access-summary">
+        <h2 id="users-edit-access-summary" class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.users.ui.create_review_permissions') %></h2>
+        <dl class="mt-4 grid gap-3 text-sm">
+          <% %w[roles branches language theme].each do |key| %>
+            <div class="min-w-0">
+              <dt class="text-xs font-semibold text-slate-500"><%= t("admin.users.ui.review_#{key}") %></dt>
+              <dd class="mt-1 break-words font-semibold text-slate-800" data-user-access-target="review<%= key.camelize %>"><%= t('admin.users.ui.not_provided') %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </section>
       <% if editing %>
         <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div class="flex items-center gap-3">
